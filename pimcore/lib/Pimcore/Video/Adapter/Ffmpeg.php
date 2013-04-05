@@ -38,7 +38,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     public static function getFfmpegCli () {
 
         if(Pimcore_Config::getSystemConfig()->assets->ffmpeg) {
-            if(is_executable(Pimcore_Config::getSystemConfig()->assets->ffmpeg)) {
+            if(@is_executable(Pimcore_Config::getSystemConfig()->assets->ffmpeg)) {
                 return Pimcore_Config::getSystemConfig()->assets->ffmpeg;
             } else {
                 Logger::critical("FFMPEG binary: " . Pimcore_Config::getSystemConfig()->assets->ffmpeg . " is not executable");
@@ -48,7 +48,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         $paths = array("/usr/bin/ffmpeg","/usr/local/bin/ffmpeg", "/bin/ffmpeg");
 
         foreach ($paths as $path) {
-            if(is_executable($path)) {
+            if(@is_executable($path)) {
                 return $path;
             }
         }
@@ -114,7 +114,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     public static function getQtfaststartCli () {
 
         if(Pimcore_Config::getSystemConfig()->assets->qtfaststart) {
-            if(is_executable(Pimcore_Config::getSystemConfig()->assets->qtfaststart)) {
+            if(@is_executable(Pimcore_Config::getSystemConfig()->assets->qtfaststart)) {
                 return Pimcore_Config::getSystemConfig()->assets->qtfaststart;
             } else {
                 Logger::critical("qtfaststart binary: " . Pimcore_Config::getSystemConfig()->assets->qtfaststart . " is not executable");
@@ -123,7 +123,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
 
         $paths = array("/usr/bin/qtfaststart","/usr/local/bin/qtfaststart", "/bin/qtfaststart");
         foreach ($paths as $path) {
-            if(is_executable($path)) {
+            if(@is_executable($path)) {
                 return $path;
             }
         }
@@ -141,8 +141,14 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         }
 
         if(self::getQtfaststartCli()) {
-            $cmd = self::getQtfaststartCli() . " " . $this->getDestinationFile();
+            $tmpFile = $this->getDestinationFile() . ".tmp-qt-faststart";
+            $cmd = self::getQtfaststartCli() . " " . $this->getDestinationFile() . " " . $tmpFile;
             Pimcore_Tool_Console::exec($cmd);
+
+            if(filesize($tmpFile) >= filesize($this->getDestinationFile())) {
+                unlink($this->getDestinationFile());
+                rename($tmpFile, $this->getDestinationFile());
+            }
         } else {
             Logger::error("qtfaststart is not installed on your system, unable to move (to the beginning -> pseudo streaming) metadata in the converted mp4 file: " . $this->getDestinationFile());
         }
@@ -161,6 +167,19 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
 
         $cmd = self::getFfmpegCli() . " -i " . realpath($this->file) . " -vcodec png -vframes 1 -ss " . $timeOffset . " " . str_replace("/", DIRECTORY_SEPARATOR, $file);
         Pimcore_Tool_Console::exec($cmd);
+    }
+
+    public function getDuration () {
+
+        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/video-info-" . uniqid() . ".out";
+
+        $cmd = self::getFfmpegCli() . " -i " . realpath($this->file);
+        Pimcore_Tool_Console::exec($cmd, $tmpFile);
+
+        $contents = file_get_contents($tmpFile);
+        unlink($tmpFile);
+
+        return $this->extractDuration($contents);
     }
 
     /**
@@ -183,6 +202,22 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     }
 
     /**
+     * @param $output
+     * @return int
+     */
+    protected function extractDuration($output) {
+        // get total video duration
+        preg_match("/Duration: ([0-9:\.]+),/", $output, $matches);
+        $durationRaw = $matches[1];
+        $durationParts = explode(":",$durationRaw);
+
+        // calculate duration in seconds
+        $duration = (intval($durationParts[0]) * 3600) + (intval($durationParts[1]) * 60) + floatval($durationParts[2]);
+
+        return $duration;
+    }
+
+    /**
      *
      */
     public function getConversionStatus() {
@@ -200,13 +235,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
             return "error";
         }
 
-        // get total video duration
-        preg_match("/Duration: ([0-9:\.]+),/", $log, $matches);
-        $durationRaw = $matches[1];
-        $durationParts = explode(":",$durationRaw);
-
-        // calculate duration in seconds
-        $duration = (intval($durationParts[0]) * 3600) + (intval($durationParts[1]) * 60) + floatval($durationParts[2]);
+        $duration = $this->extractDuration($log);
 
         // get conversion time
         preg_match_all("/time=([0-9:\.]+) bitrate/", $log, $matches);
@@ -249,6 +278,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     public function setProcessId($processId)
     {
         $this->processId = $processId;
+        return $this;
     }
 
     /**
@@ -271,12 +301,14 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         parent::setVideoBitrate($videoBitrate);
 
         $this->addArgument("videoBitrate", "-vb " . $videoBitrate . "k");
+        return $this;
     }
 
     public function setAudioBitrate($audioBitrate) {
         parent::setAudioBitrate($audioBitrate);
 
         $this->addArgument("audioBitrate", "-ab " . $audioBitrate . "k");
+        return $this;
     }
 
     public function resize ($width, $height) {

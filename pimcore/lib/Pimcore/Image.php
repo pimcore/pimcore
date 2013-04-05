@@ -16,15 +16,29 @@
 class Pimcore_Image {
 
     /**
-     * @static
-     * @return null|Pimcore_Image_Adapter
+     * @var string
+     */
+    protected static $defaultAdapter = null;
+
+    /**
+     * @param null $adapter
+     * @return null|Pimcore_Image_Adapter_GD|Pimcore_Image_Adapter_Imagick
+     * @throws Exception
      */
     public static function getInstance ($adapter = null) {
+
+        // use the default adapter if set manually (!= null) and no specify adapter is given
+        if(!$adapter && self::$defaultAdapter) {
+            $adapter = self::$defaultAdapter;
+        }
+
         try {
             if($adapter) {
                 $adapterClass = "Pimcore_Image_Adapter_" . $adapter;
                 if(Pimcore_Tool::classExists($adapterClass)) {
                     return new $adapterClass();
+                } else if (Pimcore_Tool::classExists($adapter)) {
+                    return new $adapter();
                 } else {
                     throw new Exception("Image-transform adapter `" . $adapter . "´ does not exist.");
                 }
@@ -41,5 +55,13 @@ class Pimcore_Image {
         }
 
         return null;
+    }
+
+    /**
+     * @param $adapter
+     */
+    public static function setDefaultAdapter($adapter) {
+        self::$defaultAdapter = $adapter;
+        return self;
     }
 }

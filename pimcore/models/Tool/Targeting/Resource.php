@@ -46,9 +46,33 @@ class Tool_Targeting_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         $data = $this->db->fetchRow("SELECT * FROM targeting WHERE id = ?", $this->model->getId());
-        $data["conditions"] = unserialize($data["conditions"]);
-        $data["actions"] = unserialize($data["actions"]);
-        $this->assignVariablesToModel($data);
+
+        if($data["id"]) {
+            $data["conditions"] = unserialize($data["conditions"]);
+            $data["actions"] = unserialize($data["actions"]);
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new Exception("target with id " . $this->model->getId() . " doesn't exist");
+        }
+    }
+
+    /**
+     * @param string $name
+     * @throws Exception
+     */
+    public function getByName($name = null) {
+
+        if ($name != null) {
+            $this->model->setName($name);
+        }
+
+        $data = $this->db->fetchAll("SELECT id FROM targeting WHERE name = ?", $this->model->getName());
+
+        if(count($data) === 1) {
+            $this->getById($data[0]["id"]);
+        } else {
+            throw new Exception("target with name " . $this->model->getId() . " doesn't exist or isn't unique");
+        }
     }
 
     /**
@@ -78,13 +102,6 @@ class Tool_Targeting_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function update() {
-
-        if($this->model->getDocumentId()) {
-            $doc = Document::getById($this->model->getDocumentId());
-            if($doc instanceof Document) {
-                $doc->clearDependedCache();
-            }
-        }
 
         try {
             $type = get_object_vars($this->model);

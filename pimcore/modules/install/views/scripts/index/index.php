@@ -1,6 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title><?php echo htmlentities($this->getRequest()->getHttpHost(), ENT_QUOTES, 'UTF-8') ?> :: Pimcore</title>
@@ -35,7 +34,7 @@
 $scripts = array(
     // library
     "lib/prototype-light.js",
-    "lib/jquery-1.7.1.min.js",
+    "lib/jquery.min.js",
     "lib/ext/adapter/jquery/ext-jquery-adapter.js",
     "lib/ext/ext-all-debug.js"
 );

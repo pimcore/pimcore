@@ -15,6 +15,15 @@
 pimcore.registerNS("pimcore.object.classes.data.data");
 pimcore.object.classes.data.data = Class.create({
 
+    invalidFieldNames: false,
+    forbiddenNames: [
+                "id","key","path","type","index","classname","creationdate","userowner","value","class","list",
+                "fullpath","childs","values","cachetag","cachetags","parent","published","valuefromparent",
+                "userpermissions","dependencies","modificationdate","usermodification","byid","bypath","data",
+                "versions","properties","permissions","permissionsforuser","childamount","apipluginbroker","resource",
+                "parentClass","definition","locked","language","omitmandatorycheck", "idPath"
+            ],
+
     /**
      * define where this datatype is allowed
      */
@@ -43,7 +52,8 @@ pimcore.object.classes.data.data = Class.create({
         }
 
         // per default all settings are available
-        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible","visibleGridView","visibleSearch","index","style"];
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
+                                        "visibleGridView","visibleSearch","index","style"];
     },
 
     getGroup: function () {
@@ -71,6 +81,7 @@ pimcore.object.classes.data.data = Class.create({
                 name: "name",
                 width: 300,
                 maxLength: 70,
+                itemId: "name",
                 autoCreate: {tag: 'input', type: 'text', maxlength: '70', autocomplete: 'off'},
                 enableKeyEvents: true,
                 value: this.datax.name,
@@ -80,6 +91,7 @@ pimcore.object.classes.data.data = Class.create({
                 xtype: "textfield",
                 fieldLabel: t("title") + " (" + t("label") + ")",
                 name: "title",
+                itemId: "title",
                 width: 300,
                 value: this.datax.title,
                 disabled: !in_array("title",this.availableSettingsFields)
@@ -104,6 +116,7 @@ pimcore.object.classes.data.data = Class.create({
                 xtype: "checkbox",
                 fieldLabel: t("not_editable"),
                 name: "noteditable",
+                itemId: "noteditable",
                 checked: this.datax.noteditable,
                 disabled: !in_array("noteditable",this.availableSettingsFields)
             },
@@ -152,10 +165,11 @@ pimcore.object.classes.data.data = Class.create({
             items: [
                 {
                     xtype: "form",
-                    title: t("general_settings"),
+                    title: t("general_settings") + " (" + t(this.getType()) + ")",
                     bodyStyle: "padding: 10px;",
                     style: "margin: 10px 0 10px 0",
                     labelWidth: 140,
+                    itemId: "standardSettings",
                     items: standardSettings
                 },
                 {
@@ -210,21 +224,19 @@ pimcore.object.classes.data.data = Class.create({
 
     isValid: function () {
 
-        var forbiddenNames = [
-            "id","key","path","type","index","classname","creationdate","userowner","value","class","list","fullpath",
-            "childs","values","cachetag","cachetags","parent","published","valuefromparent","userpermissions",
-            "dependencies","modificationdate","usermodification","byid","bypath","data","versions","properties",
-            "permissions","permissionsforuser","childamount","apipluginbroker","resource","parentClass","definition",
-            "locked","language","omitmandatorycheck", "idPath"
-        ];
+
         var data = this.getData();
         data.name = trim(data.name);
-        var regresult = data.name.match(/[a-zA-Z0-9_]+/);
+        var regresult = data.name.match(/[a-zA-Z][a-zA-Z0-9_]*/);
 
-        if (data.name.length > 1 && regresult == data.name && in_array(data.name.toLowerCase(), forbiddenNames) == false) {
+        if (data.name.length > 1 && regresult == data.name
+                            && in_array(data.name.toLowerCase(), this.forbiddenNames) == false) {
             return true;
         }
 
+        if(in_array(data.name.toLowerCase(), this.forbiddenNames)==true){
+            this.invalidFieldNames = true;
+        }
         return false;
     },
 

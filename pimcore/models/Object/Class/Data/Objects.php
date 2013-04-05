@@ -242,7 +242,8 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -257,7 +258,8 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      * @return void
      */
     public function setHeight($height) {
-        $this->height = $height;
+        $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
     /**
@@ -401,37 +403,63 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport ($value, $object = null) {
-        $objects = array();
+    public function getFromWebserviceImport ($value, $object = null, $idMapper = null) {
+        $relatedObjects = array();
         if(empty($value)){
            return null;  
         } else if(is_array($value)){
             foreach($value as $key => $item){
-                $object = Object_Abstract::getById($item['id']);
-                if($object instanceof Object_Abstract){
-                    $objects[] = $object;
+                $item = (array) $item;
+                $id = $item['id'];
+
+                if ($idMapper) {
+                    $id = $idMapper->getMappedId("object", $id);
+                }
+
+                if ($id) {
+                    $relatedObject = Object_Abstract::getById($id);
+                }
+
+                if($relatedObject instanceof Object_Abstract){
+                    $relatedObjects[] = $relatedObject;
                 } else {
-                    throw new Exception("cannot get values from web service import - references unknown object with id [ ".$item['id']." ]");
+                    if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
+                        throw new Exception("cannot get values from web service import - references unknown object with id [ ".$item['id']." ]");
+                    } else {
+                        $idMapper->recordMappingFailure($object->getId(), "object", $item['id']);
+                    }
                 }
             }
         } else {
             throw new Exception("cannot get values from web service import - invalid data");
         }
-        return $objects;
+        return $relatedObjects;
     }
 
 
-    public function preGetData ($object) { 
-        $data = $object->{$this->getName()};
-        if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
-            //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
-            $data = $this->load($object, array("force" => true));
+    public function preGetData ($object, $params = array()) {
 
-            $setter = "set" . ucfirst($this->getName());
-            if(method_exists($object, $setter)) {
-                $object->$setter($data);
+        $data = null;
+        if($object instanceof Object_Concrete) {
+            $data = $object->{$this->getName()};
+            if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
+                //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
+                $data = $this->load($object, array("force" => true));
+
+                $setter = "set" . ucfirst($this->getName());
+                if(method_exists($object, $setter)) {
+                    $object->$setter($data);
+                }
             }
+        } else if ($object instanceof Object_Localizedfield) {
+            $data = $params["data"];
+        } else if ($object instanceof Object_Fieldcollection_Data_Abstract) {
+            $data = $object->{$this->getName()};
+        } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
+            $data = $object->{$this->getName()};
         }
+
+
         if(Object_Abstract::doHideUnpublished() and is_array($data)) {
             $publishedList = array();
             foreach($data as $listElement){
@@ -444,13 +472,16 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         return is_array($data) ? $data : array();
     }
 
-    public function preSetData ($object, $data) {
+    public function preSetData ($object, $data, $params = array()) {
 
         if($data === null) $data = array();
 
-        if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
-            $object->addO__loadedLazyField($this->getName());
+        if($object instanceof Object_Concrete) {
+            if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
+                $object->addO__loadedLazyField($this->getName());
+            }
         }
+
         return $data;
     }
 
@@ -460,6 +491,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function setFieldtype($fieldtype)
     {
         $this->fieldtype = $fieldtype;
+        return $this;
     }
 
     /**
@@ -475,7 +507,8 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      */
     public function setMaxItems($maxItems)
     {
-        $this->maxItems = $maxItems;
+        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        return $this;
     }
 
     /**
@@ -484,5 +517,58 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function getMaxItems()
     {
         return $this->maxItems;
+    }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        $value = array();
+        $value["type"] = "html";
+        $value["html"] = "";
+
+        if ($data) {
+            $html = $this->getVersionPreview($data);
+            $value["html"] = $html;
+        }
+        return $value;
+    }
+
+    /** See parent class.
+     * @param $data
+     * @param null $object
+     * @return null|Pimcore_Date
+     */
+
+    public function getDiffDataFromEditmode($data, $object = null) {
+        if ($data) {
+            $tabledata = $data[0]["data"];
+
+            if (!$tabledata) {
+                return;
+            }
+
+            $result = array();
+            foreach ($tabledata as $in) {
+                $out = array();
+                $out["id"] = $in[0];
+                $out["path"] = $in[1];
+                $out["type"] = $in[2];
+                $result[] = $out;
+            }
+
+            return $this->getDataFromEditmode($result);
+        }
+        return;
     }
 }

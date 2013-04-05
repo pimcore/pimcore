@@ -13,6 +13,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+// adminer isn'T fully php 5.4 compatible
+error_reporting(E_ERROR);
 
 $workingDirectory = getcwd();
 include("../../../cli/startup.php");

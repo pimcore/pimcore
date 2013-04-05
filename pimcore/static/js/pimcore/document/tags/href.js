@@ -56,21 +56,10 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
 
 
         this.element.on("render", function (el) {
-            var domElement = el.getEl().dom;
-            domElement.dndOver = false;
-
-            domElement.reference = this;
-
-            dndZones.push(domElement);
-            el.getEl().on("mouseover", function (options, e) {
-                this.dndOver = true;
-            }.bind(domElement, this.options));
-            el.getEl().on("mouseout", function (e) {
-                this.dndOver = false;
-            }.bind(domElement));
+            // register at global DnD manager
+            dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
 
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
-
         }.bind(this));
 
         // disable typing into the textfield
@@ -91,7 +80,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
                         var found = false;
                         var typeKeys = Object.keys(this.options.subtypes);
                         for (var st = 0; st < typeKeys.length; st++) {
-                            for (i = 0; i < this.options.subtypes[typeKeys[st]].length; i++) {
+                            for (var i = 0; i < this.options.subtypes[typeKeys[st]].length; i++) {
                                 if (this.options.subtypes[typeKeys[st]][i] == data["type"]) {
                                     found = true;
                                     break;
@@ -148,6 +137,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
     dndAllowed: function(data) {
 
         var i;
+        var found;
 
         //only is legacy
         if (this.options.only && !this.options.types) {
@@ -156,7 +146,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
 
         //type check   (asset,document,object)
         if (this.options.types) {
-            var found = false;
+            found = false;
             for (i = 0; i < this.options.types.length; i++) {
                 if (this.options.types[i] == data.node.attributes.elementType) {
                     found = true;
@@ -170,7 +160,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
 
         //subtype check  (folder,page,snippet ... )
         if (this.options.subtypes) {
-            var found = false;
+            found = false;
             var typeKeys = Object.keys(this.options.subtypes);
             for (var st = 0; st < typeKeys.length; st++) {
                 for (i = 0; i < this.options.subtypes[typeKeys[st]].length; i++) {
@@ -187,7 +177,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
 
         //object class check
         if (data.node.attributes.elementType == "object" && this.options.classes) {
-            var found = false;
+            found = false;
             for (i = 0; i < this.options.classes.length; i++) {
                 if (this.options.classes[i] == data.node.attributes.className) {
                     found = true;
@@ -205,36 +195,48 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
     onContextMenu: function (e) {
 
         var menu = new Ext.menu.Menu();
-        menu.add(new Ext.menu.Item({
-            text: t('empty'),
-            iconCls: "pimcore_icon_delete",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                this.data = {};
-                this.element.setValue(this.data.path);
-                if (this.options.reload) {
-                    this.reloadDocument();
-                }
 
-            }.bind(this)
-        }));
+        if(this.data["id"]) {
+            menu.add(new Ext.menu.Item({
+                text: t('empty'),
+                iconCls: "pimcore_icon_delete",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.data = {};
+                    this.element.setValue(this.data.path);
+                    if (this.options.reload) {
+                        this.reloadDocument();
+                    }
 
-        menu.add(new Ext.menu.Item({
-            text: t('open'),
-            iconCls: "pimcore_icon_open",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                if (this.data.elementType == "document") {
-                    pimcore.helpers.openDocument(this.data.id, this.data.subtype);
-                }
-                else if (this.data.elementType == "asset") {
-                    pimcore.helpers.openAsset(this.data.id, this.data.subtype);
-                }
-                else if (this.data.elementType == "object") {
-                    pimcore.helpers.openObject(this.data.id, this.data.subtype);
-                }
-            }.bind(this)
-        }));
+                }.bind(this)
+            }));
+
+            menu.add(new Ext.menu.Item({
+                text: t('open'),
+                iconCls: "pimcore_icon_open",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    if (this.data.elementType == "document") {
+                        pimcore.helpers.openDocument(this.data.id, this.data.subtype);
+                    }
+                    else if (this.data.elementType == "asset") {
+                        pimcore.helpers.openAsset(this.data.id, this.data.subtype);
+                    }
+                    else if (this.data.elementType == "object") {
+                        pimcore.helpers.openObject(this.data.id, this.data.subtype);
+                    }
+                }.bind(this)
+            }));
+
+            menu.add(new Ext.menu.Item({
+                text: t('show_in_tree'),
+                iconCls: "pimcore_icon_fileexplorer",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    pimcore.helpers.selectElementInTree(this.data.elementType, this.data.id);
+                }.bind(this)
+            }));
+        }
 
         menu.add(new Ext.menu.Item({
             text: t('search'),

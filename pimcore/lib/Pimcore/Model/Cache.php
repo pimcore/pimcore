@@ -77,7 +77,15 @@ class Pimcore_Model_Cache {
      * if set to truq items are directly written into the cache, and do not get into the queue
      * @var bool
      */
-    protected static $forceImmendiateWrite = false;
+    protected static $forceImmediateWrite = false;
+
+    /**
+     * contains the timestamp of the writeLockTime from the current process
+     * this is to recheck when removing the write lock (if the value is different -> higher) do not remove the lock
+     * because then another process has acquired a lock
+     * @var int
+     */
+    protected static $writeLockTimestamp;
     
     /**
      * Returns a instance of the cache, if the instance isn't available it creates a new one
@@ -104,7 +112,7 @@ class Pimcore_Model_Cache {
                     if ($conf->frontend) {
                         $config["frontendType"] = (string) $conf->frontend->type;
                         $config["customFrontendNaming"] = (bool) $conf->frontend->custom;
-                        if ($conf->frontend->options && method_exists($conf->backend->options,"toArray")) {
+                        if ($conf->frontend->options && method_exists($conf->frontend->options,"toArray")) {
                             $config["frontendConfig"] = $conf->frontend->options->toArray();
                         }
                     }
@@ -187,6 +195,11 @@ class Pimcore_Model_Cache {
         );
         $config["customBackendNaming"] = false;
 
+        // create cache dir
+        if(!is_dir(PIMCORE_CACHE_DIRECTORY)) {
+            mkdir(PIMCORE_CACHE_DIRECTORY, 0777, true);
+        }
+
         return $config;
     }
     
@@ -228,11 +241,11 @@ class Pimcore_Model_Cache {
      * @param string $key
      * @return void
      */
-    public static function save($data, $key, $tags = array(), $lifetime = null, $priority = 0) {
-        if(self::getForceImmendiateWrite()) {
-            self::storeToCache($data, $key, $tags, $lifetime, $priority);
+    public static function save($data, $key, $tags = array(), $lifetime = null, $priority = 0, $force = false) {
+        if(self::getForceImmediateWrite() || $force) {
+            self::storeToCache($data, $key, $tags, $lifetime, $priority, $force);
         } else {
-            self::addToSaveStack(array($data, $key, $tags, $lifetime, $priority));
+            self::addToSaveStack(array($data, $key, $tags, $lifetime, $priority, $force));
         }
     }
     
@@ -242,13 +255,13 @@ class Pimcore_Model_Cache {
      * @param array $config
      * @return void
      */
-    public static function storeToCache ($data, $key, $tags = array(), $lifetime = null, $priority = null) {
+    public static function storeToCache ($data, $key, $tags = array(), $lifetime = null, $priority = null, $force = false) {
         if (!self::$enabled) {
             return;
         }
 
         // don't put anything into the cache, when cache is cleared
-        if(in_array("__CLEAR_ALL__",self::$clearedTagsStack)) {
+        if(in_array("__CLEAR_ALL__",self::$clearedTagsStack) && !$force) {
             return;
         }
 
@@ -263,10 +276,9 @@ class Pimcore_Model_Cache {
         // get cache instance
         if($cache = self::getInstance()) {
 
-            if ($lifetime !== null) {
-                $cache->setLifetime($lifetime);
-            }
-
+            //if ($lifetime !== null) {
+            //    $cache->setLifetime($lifetime);
+            //}
 
             if ($data instanceof Element_Interface) {
                 // check for currupt data
@@ -294,14 +306,19 @@ class Pimcore_Model_Cache {
                         return;
                     }
                 }
+            } else {
+                $tags = array();
             }
+
+            // always add the key as tag
+            $tags[] = $key;
 
             if(is_object($data) && isset($data->____pimcore_cache_item__)) {
                 unset($data->____pimcore_cache_item__);
             }
 
             $key = self::$cachePrefix . $key;
-            $success = $cache->save($data, $key, $tags);
+            $success = $cache->save($data, $key, $tags, $lifetime);
             if($success !== true) {
                 Logger::error("Failed to add entry $key to the cache, item-size was " . formatBytes(strlen(serialize($data))));
             }
@@ -336,6 +353,13 @@ class Pimcore_Model_Cache {
         // remove items which are too much, and cannot be added to the cache anymore
         array_splice(self::$saveStack,self::$maxWriteToCacheItems);
     }
+
+    /**
+     *
+     */
+    public function clearSaveStack() {
+        self::$saveStack = array();
+    }
     
     /**
      * Write the stack to the cache
@@ -344,6 +368,9 @@ class Pimcore_Model_Cache {
      */
     public static function write () {
 
+        if(self::hasWriteLock()) {
+            return;
+        }
 
         $processedKeys = array();
         $count = 0;
@@ -373,19 +400,87 @@ class Pimcore_Model_Cache {
         self::$saveStack = array();
         self::$clearedTagsStack = array();
     }
-    
+
+
+    /**
+     *
+     */
+    public static function setWriteLock ($force = false) {
+        if(!self::$writeLockTimestamp || $force) {
+            self::$writeLockTimestamp = time();
+            self::save(self::$writeLockTimestamp, "system_cache_write_lock", array(), 30, 0, true);
+        }
+        return self;
+    }
+
+    /**
+     *
+     */
+    public static function removeWriteLock () {
+        if(self::$writeLockTimestamp) {
+            $lock = self::load("system_cache_write_lock");
+
+            // only remove the lock if it was created by this process
+            if($lock <= self::$writeLockTimestamp) {
+                self::remove("system_cache_write_lock");
+            }
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public static function hasWriteLock() {
+        $lock = self::load("system_cache_write_lock");
+
+        // lock is valid for 30 secs
+        if($lock && $lock > (time()-30)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param $key
+     */
+    public static function remove($key) {
+
+        if (!self::$enabled) {
+            Logger::debug("Cache is not cleared because it is disabled");
+            return;
+        }
+
+        self::setWriteLock();
+
+        $key = self::$cachePrefix . $key;
+        if($cache = self::getInstance()) {
+            $cache->remove($key);
+        }
+    }
+
     /**
      * Empty the cache
      *
      * @return void
      */
     public static function clearAll() {
+
+        if (!self::$enabled) {
+            Logger::debug("Cache is not cleared because it is disabled");
+            return;
+        }
+
+        self::setWriteLock();
+
         if($cache = self::getInstance()) {
             $cache->clean(Zend_Cache::CLEANING_MODE_ALL);
         }
         
         // add tag to clear stack
         self::$clearedTagsStack[] = "__CLEAR_ALL__";
+
+        // immediately acquire the write lock again (force), because the lock is in the cache too
+        self::setWriteLock(true);
     }
 
     /**
@@ -401,10 +496,18 @@ class Pimcore_Model_Cache {
     /**
      * Removes entries from the cache matching the given tags
      *
-     * @param string $tag
+     * @param array $tags
      * @return void
      */
     public static function clearTags($tags = array()) {
+
+        if (!self::$enabled) {
+            Logger::debug("Cache is not cleared because it is disabled");
+            return;
+        }
+
+        self::setWriteLock();
+
         Logger::info("clear cache tags: " . implode(",",$tags));
 
         // ensure that every tag is unique
@@ -448,6 +551,8 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function addClearTagOnShutdown($tag) {
+        self::setWriteLock();
+
         self::$_clearTagsOnShutdown[] = $tag;
     }
 
@@ -458,6 +563,12 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function clearTagsOnShutdown() {
+
+        if (!self::$enabled) {
+            Logger::debug("Cache is not cleared because it is disabled");
+            return;
+        }
+
         if(!empty(self::$_clearTagsOnShutdown)) {
             $tags = array_unique(self::$_clearTagsOnShutdown);
             if($cache = self::getInstance()) {
@@ -510,18 +621,19 @@ class Pimcore_Model_Cache {
     }
 
     /**
-     * @param boolean $forceImmendiateWrite
+     * @param boolean $forceImmediateWrite
      */
-    public static function setForceImmendiateWrite($forceImmendiateWrite)
+    public static function setForceImmediateWrite($forceImmediateWrite)
     {
-        self::$forceImmendiateWrite = $forceImmendiateWrite;
+        self::$forceImmediateWrite = $forceImmediateWrite;
+        return self;
     }
 
     /**
      * @return boolean
      */
-    public static function getForceImmendiateWrite()
+    public static function getForceImmediateWrite()
     {
-        return self::$forceImmendiateWrite;
+        return self::$forceImmediateWrite;
     }
 }

@@ -43,13 +43,20 @@ class User_Abstract extends Pimcore_Model_Abstract {
      */
     public static function getById($id) {
 
+        $cacheKey = "user_" . $id;
         try {
-            $user = new static();
-            $user->getResource()->getById($id);
+            if(Zend_Registry::isRegistered($cacheKey)) {
+                $user =  Zend_Registry::get($cacheKey);
+            } else {
+                $user = new static();
+                $user->getResource()->getById($id);
 
-            if(get_class($user) == "User_Abstract") {
-                $className = User_Service::getClassNameForType($user->getType());
-                $user = $className::getById($user->getId());
+                if(get_class($user) == "User_Abstract") {
+                    $className = User_Service::getClassNameForType($user->getType());
+                    $user = $className::getById($user->getId());
+                }
+
+                Zend_Registry::set($cacheKey, $user);
             }
 
             return $user;
@@ -99,6 +106,7 @@ class User_Abstract extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = $id;
+        return $this;
     }
 
     /**
@@ -114,6 +122,7 @@ class User_Abstract extends Pimcore_Model_Abstract {
      */
     public function setParentId($parentId) {
         $this->parentId = $parentId;
+        return $this;
     }
 
     /**
@@ -129,6 +138,7 @@ class User_Abstract extends Pimcore_Model_Abstract {
      */
     public function setName($name) {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -143,6 +153,18 @@ class User_Abstract extends Pimcore_Model_Abstract {
      */
     public function delete() {
 
+        // delete all childs
+        $list = new User_List();
+        $list->setCondition("parentId = ?", $this->getId());
+        $list->load();
+
+        if(is_array($list->getUsers())){
+            foreach ($list->getUsers() as $user) {
+                $user->delete();
+            }
+        }
+
+        // now delete the current user
         $this->getResource()->delete();
         Pimcore_Model_Cache::clearAll();
     }
@@ -153,5 +175,6 @@ class User_Abstract extends Pimcore_Model_Abstract {
     public function setType($type)
     {
         $this->type = $type;
+        return $this;
     }
 }

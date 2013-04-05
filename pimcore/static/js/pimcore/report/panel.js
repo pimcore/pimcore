@@ -71,7 +71,7 @@ pimcore.report.panel = Class.create({
                 // add report groups
                 var groupNode;
                 var group;
-                var report;
+                var reportClass, reportConfig;
                 var reportCount;
 
                 for (var i = 0; i < pimcore.report.broker.groups.length; i++) {
@@ -93,14 +93,19 @@ pimcore.report.panel = Class.create({
                     // add reports to group
                     if (typeof pimcore.report.broker.reports[group.id] == "object") {
                         for (var r = 0; r < pimcore.report.broker.reports[group.id].length; r++) {
-                            report = pimcore.report.broker.reports[group.id][r];
-                            if (report.prototype.matchType(this.type)) {
+                            reportClass = pimcore.report.broker.reports[group.id][r]["class"];
+                            reportConfig = pimcore.report.broker.reports[group.id][r]["config"];
+                            if(!reportConfig) {
+                                reportConfig = {};
+                            }
+
+                            if (reportClass.prototype.matchType(this.type)) {
                                 groupNode.appendChild(new Ext.tree.TreeNode({
-                                    text: t(report.prototype.getName()),
-                                    iconCls: report.prototype.getIconCls(),
+                                    text: reportConfig["text"] ? ts(reportConfig["text"]) : t(reportClass.prototype.getName()),
+                                    iconCls: reportConfig["iconCls"] ? reportConfig["iconCls"] : reportClass.prototype.getIconCls(),
                                     leaf: true,
                                     listeners: {
-                                        "click": this.openReport.bind(this, report)
+                                        "click": this.openReport.bind(this, reportClass, reportConfig)
                                     }
                                 }));
                                 reportCount++;
@@ -156,9 +161,9 @@ pimcore.report.panel = Class.create({
         return this.layout;
     },
 
-    openReport: function (reportClass) {
+    openReport: function (reportClass, reportConfig) {
 
-        var report = new reportClass(this, this.type, this.reference);
+        var report = new reportClass(this, this.type, this.reference, reportConfig);
     },
 
     addReport: function (report) {
@@ -179,7 +184,7 @@ pimcore.report.panel = Class.create({
             // add reports to group
             if (typeof pimcore.report.broker.reports[group.id] == "object") {
                 for (var r = 0; r < pimcore.report.broker.reports[group.id].length; r++) {
-                    report = pimcore.report.broker.reports[group.id][r];
+                    report = pimcore.report.broker.reports[group.id][r]["class"];
                     if (report.prototype.matchType(this.type)) {
                         reportCount++;
                     }

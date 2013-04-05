@@ -75,6 +75,6 @@ pimcore.settings.user.panels.abstract = Class.create({
                 });
             }
         }.bind(this));
-    },
+    }
 });
 

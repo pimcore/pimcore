@@ -138,6 +138,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      */
     public function setName($name) {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -146,6 +147,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      */
     public function setDocumentId($id) {
         $this->documentId = (int) $id;
+        return $this;
     }
 
     /**
@@ -168,6 +170,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      */
     public function setOptions($options) {
         $this->options = $options;
+        return $this;
     }
 
     /**
@@ -176,6 +179,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      */
     public function setController($controller) {
         $this->controller = $controller;
+        return $this;
     }
 
     /**
@@ -191,6 +195,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      */
     public function setView($view) {
         $this->view = $view;
+        return $this;
     }
 
     /**
@@ -231,7 +236,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
                 $return = $this->frontend();
             }
         } catch (Exception $e) {
-            Logger::error("to string not possible");
+            Logger::error("to string not possible - " . $e->getMessage());
         }
 
         if (is_string($return)) {
@@ -255,6 +260,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      */
     public function setEditmode($editmode) {
         $this->editmode = (bool) $editmode;
+        return $this;
     }
 
 
@@ -340,6 +346,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     public function setInherited($inherited)
     {
         $this->inherited = $inherited;
+        return $this;
     }
 
     /**

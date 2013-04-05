@@ -19,6 +19,8 @@ pimcore.document.tree = Class.create({
 
     initialize: function(config) {
 
+        this.position = "left";
+
         if (!config) {
             this.config = {
                 rootId: 1,
@@ -58,7 +60,7 @@ pimcore.document.tree = Class.create({
     init: function(rootNodeConfig) {
 
         rootNodeConfig.nodeType = "async";
-        rootNodeConfig.text = "home";
+        rootNodeConfig.text = t("home");
         rootNodeConfig.draggable = true;
         rootNodeConfig.iconCls = "pimcore_icon_home";
         rootNodeConfig.expanded = true;
@@ -113,6 +115,7 @@ pimcore.document.tree = Class.create({
             this.tree.loadMask.enable();
         }.bind(this));
 
+        this.tree.on("append", pimcore.helpers.treeNodeThumbnailPreview.bind(this));
 
         this.config.parentPanel.insert(this.config.index, this.tree);
         this.config.parentPanel.doLayout();
@@ -203,6 +206,10 @@ pimcore.document.tree = Class.create({
             return false;
         }
 
+        if(element.attributes.reference.isDisallowedKey(newParent.id, element.text)) {
+            return false;
+        }
+
         // check permissions
         if (element.attributes.permissions.settings) {
             tree.loadMask.show();
@@ -219,7 +226,9 @@ pimcore.document.tree = Class.create({
 
         var menu = new Ext.menu.Menu();
         //ckogler added "email"
-        if ((this.attributes.type == "page" || this.attributes.type == "email" || this.attributes.type == "folder" || this.attributes.type == "link" || this.attributes.type == "hardlink") && this.attributes.permissions.create) {
+        if ((this.attributes.type == "page" || this.attributes.type == "email" || this.attributes.type == "folder"
+                                    || this.attributes.type == "link" || this.attributes.type == "hardlink")
+                                    && this.attributes.permissions.create) {
 
             var document_types = pimcore.globalmanager.get("document_types_store");
 
@@ -230,7 +239,8 @@ pimcore.document.tree = Class.create({
                 ref: this
             };
 
-            document_types.sort([ { field : 'priority', direction: 'DESC' }, { field : 'name', direction: 'ASC' } ],'DESC');
+            document_types.sort([ { field : 'priority', direction: 'DESC' },
+                                  { field : 'name', direction: 'ASC' } ],'DESC');
 
             document_types.each(function(record) {
                 if (record.get("type") == "page") {
@@ -360,7 +370,8 @@ pimcore.document.tree = Class.create({
                 text: t("paste_cut_element"),
                 iconCls: "pimcore_icon_paste",
                 handler: function() {
-                    this.attributes.reference.pasteCutDocument(this.attributes.reference.cutDocument, this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
+                    this.attributes.reference.pasteCutDocument(this.attributes.reference.cutDocument,
+                                this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
                     this.attributes.reference.cutParentNode = null;
                     this.attributes.reference.cutDocument = null;
                 }.bind(this)
@@ -395,13 +406,11 @@ pimcore.document.tree = Class.create({
             }));
         }
 
-        if (this.id != 1) {
-            menu.add(new Ext.menu.Item({
-                text: t('copy'),
-                iconCls: "pimcore_icon_copy",
-                handler: this.attributes.reference.copy.bind(this)
-            }));
-        }
+        menu.add(new Ext.menu.Item({
+            text: t('copy'),
+            iconCls: "pimcore_icon_copy",
+            handler: this.attributes.reference.copy.bind(this)
+        }));
 
         if (this.id != 1 && !this.attributes.locked) {
             menu.add(new Ext.menu.Item({
@@ -419,37 +428,40 @@ pimcore.document.tree = Class.create({
             }));
         }
 
-        menu.add(new Ext.menu.Item({
-            text: t('convert_to'),
-            iconCls: "pimcore_icon_convert",
-            hideOnClick: false,
-            menu: [{
-                text: t("page"),
-                iconCls: "pimcore_icon_page",
-                handler: this.attributes.reference.convert.bind(this, "page"),
-                hidden: this.attributes.type == "page"
-            }, {
-                text: t("snippet"),
-                iconCls: "pimcore_icon_snippet",
-                handler: this.attributes.reference.convert.bind(this, "snippet"),
-                hidden: this.attributes.type == "snippet"
-            }, {
-                text: t("email"),
-                iconCls: "pimcore_icon_email",
-                handler: this.attributes.reference.convert.bind(this, "email"),
-                hidden: this.attributes.type == "email"
-            },{
-                text: t("link"),
-                iconCls: "pimcore_icon_link",
-                handler: this.attributes.reference.convert.bind(this, "link"),
-                hidden: this.attributes.type == "link"
-            }, {
-                text: t("hardlink"),
-                iconCls: "pimcore_icon_hardlink",
-                handler: this.attributes.reference.convert.bind(this, "hardlink"),
-                hidden: this.attributes.type == "hardlink"
-            }]
-        }));
+        // not for the home document
+        if(this.id != 1) {
+            menu.add(new Ext.menu.Item({
+                text: t('convert_to'),
+                iconCls: "pimcore_icon_convert",
+                hideOnClick: false,
+                menu: [{
+                    text: t("page"),
+                    iconCls: "pimcore_icon_page",
+                    handler: this.attributes.reference.convert.bind(this, "page"),
+                    hidden: this.attributes.type == "page"
+                }, {
+                    text: t("snippet"),
+                    iconCls: "pimcore_icon_snippet",
+                    handler: this.attributes.reference.convert.bind(this, "snippet"),
+                    hidden: this.attributes.type == "snippet"
+                }, {
+                    text: t("email"),
+                    iconCls: "pimcore_icon_email",
+                    handler: this.attributes.reference.convert.bind(this, "email"),
+                    hidden: this.attributes.type == "email"
+                },{
+                    text: t("link"),
+                    iconCls: "pimcore_icon_link",
+                    handler: this.attributes.reference.convert.bind(this, "link"),
+                    hidden: this.attributes.type == "link"
+                }, {
+                    text: t("hardlink"),
+                    iconCls: "pimcore_icon_hardlink",
+                    handler: this.attributes.reference.convert.bind(this, "hardlink"),
+                    hidden: this.attributes.type == "hardlink"
+                }]
+            }));
+        }
 
         //publish
         if (this.attributes.permissions.publish && this.attributes.type != "folder") {
@@ -457,13 +469,15 @@ pimcore.document.tree = Class.create({
                 menu.add(new Ext.menu.Item({
                     text: t('unpublish'),
                     iconCls: "pimcore_icon_tree_unpublish",
-                    handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type, this.attributes.id, 'unpublish')
+                    handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type,
+                                                                                this.attributes.id, 'unpublish')
                 }));
             } else {
                 menu.add(new Ext.menu.Item({
                     text: t('publish'),
                     iconCls: "pimcore_icon_tree_publish",
-                    handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type, this.attributes.id, 'publish')
+                    handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type,
+                                                                                this.attributes.id, 'publish')
                 }));
             }
         }
@@ -528,7 +542,7 @@ pimcore.document.tree = Class.create({
                         handler: function () {
                             this.attributes.reference.updateDocument(this.attributes.id, {locked: null}, function () {
                                 this.attributes.reference.tree.getRootNode().reload();
-                            }.bind(this))
+                            }.bind(this));
                         }.bind(this)
                     });
                 } else {
@@ -538,7 +552,7 @@ pimcore.document.tree = Class.create({
                         handler: function () {
                             this.attributes.reference.updateDocument(this.attributes.id, {locked: "self"}, function () {
                                 this.attributes.reference.tree.getRootNode().reload();
-                            }.bind(this))
+                            }.bind(this));
                         }.bind(this)
                     });
                     
@@ -547,9 +561,10 @@ pimcore.document.tree = Class.create({
                             text: t('lock_and_propagate_to_childs'),
                             iconCls: "pimcore_icon_lock_add_propagate",
                             handler: function () {
-                                this.attributes.reference.updateDocument(this.attributes.id, {locked: "propagate"}, function () {
-                                    this.attributes.reference.tree.getRootNode().reload();
-                                }.bind(this))
+                                this.attributes.reference.updateDocument(this.attributes.id, {locked: "propagate"},
+                                    function () {
+                                        this.attributes.reference.tree.getRootNode().reload();
+                                    }.bind(this));
                             }.bind(this)
                         });
                     }
@@ -720,7 +735,9 @@ pimcore.document.tree = Class.create({
     },
 
     useAsSite: function () {
-        Ext.MessageBox.prompt(t('use_this_as_document_root_for_new_site'), t('please_enter_the_domains_for_the_new_site'), this.attributes.reference.useAsSiteCreate.bind(this), null, null, "");
+        Ext.MessageBox.prompt(t('use_this_as_document_root_for_new_site'),
+                              t('please_enter_the_domains_for_the_new_site'),
+                              this.attributes.reference.useAsSiteCreate.bind(this), null, null, "");
     },
 
     useAsSiteCreate: function (button, value, object) {
@@ -761,7 +778,9 @@ pimcore.document.tree = Class.create({
     },
 
     editSite: function () {
-        Ext.MessageBox.prompt(t('edit_site_domains'), t('please_enter_the_domains_for_the_site'), this.attributes.reference.editSiteSave.bind(this), null, null, this.attributes.site.domains.join(","));
+        Ext.MessageBox.prompt(t('edit_site_domains'), t('please_enter_the_domains_for_the_site'),
+                              this.attributes.reference.editSiteSave.bind(this), null, null,
+                              this.attributes.site.domains.join(","));
     },
 
     editSiteSave: function (button, value, object) {
@@ -783,7 +802,8 @@ pimcore.document.tree = Class.create({
     },
 
     addDocument : function (type, docTypeId) {
-        Ext.MessageBox.prompt(t('add_document'), t('please_enter_the_name_of_the_new_document'), this.attributes.reference.addDocumentCreate.bind(this, type, docTypeId));
+        Ext.MessageBox.prompt(t('add_document'), t('please_enter_the_name_of_the_new_document'),
+                            this.attributes.reference.addDocumentCreate.bind(this, type, docTypeId));
     },
 
     publishDocument: function (type, id, task) {
@@ -818,16 +838,19 @@ pimcore.document.tree = Class.create({
                         if (pimcore.globalmanager.exists("document_" + this.id)) {
                             // reload versions
                             if (pimcore.globalmanager.get("document_" + this.id).versions) {
-                                if (typeof pimcore.globalmanager.get("document_" + this.id).versions.reload == "function") {
+                                if (typeof pimcore.globalmanager.get("document_" + this.id).versions.reload
+                                                                                                == "function") {
                                     pimcore.globalmanager.get("document_" + this.id).versions.reload();
                                 }
                             }
                         }
 
-                        pimcore.helpers.showNotification(t("success"), t("successful_" + task + "_document"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("successful_" + task + "_document"),
+                                                                                                        "success");
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_" + task + "_document"), "error", t(rdata.message));
+                        pimcore.helpers.showNotification(t("error"), t("error_" + task + "_document"),
+                                                                                            "error", t(rdata.message));
                     }
                 } catch (e) {
                     pimcore.helpers.showNotification(t("error"), t("error_" + task + "_document"), "error");
@@ -843,6 +866,10 @@ pimcore.document.tree = Class.create({
 
             // check for ident filename in current level
             if(this.attributes.reference.isExistingKeyInLevel(this, value)) {
+                return;
+            }
+
+            if(this.attributes.reference.isDisallowedKey(this.id, value)) {
                 return;
             }
 
@@ -862,16 +889,17 @@ pimcore.document.tree = Class.create({
 
     addDocumentComplete: function (response) {
         try {
-            var response = Ext.decode(response.responseText);
+            response = Ext.decode(response.responseText);
             if (response && response.success) {
                 this.leaf = false;
                 this.expand();
-                if (response.type == "page" || response.type == "snippet" || response.type == "email") {   //ckogler
+                if(pimcore.globalmanager.get("document_documenttype_store").indexOf(response.type) >= 0) {
                     pimcore.helpers.openDocument(response.id, response.type);
                 }
             }
             else {
-                pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error", t(response.message));
+                pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error",
+                                                                                            t(response.message));
             }
         } catch(e) {
             pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error");
@@ -880,7 +908,8 @@ pimcore.document.tree = Class.create({
     },
 
     editDocumentKey : function () {
-        Ext.MessageBox.prompt(t('edit_key'), t('please_enter_the_new_key'), this.attributes.reference.editDocumentKeyComplete.bind(this), null, null, this.text);
+        Ext.MessageBox.prompt(t('edit_key'), t('please_enter_the_new_key'),
+                                this.attributes.reference.editDocumentKeyComplete.bind(this), null, null, this.text);
     },
 
     editDocumentKeyComplete: function (button, value, object) {
@@ -888,6 +917,10 @@ pimcore.document.tree = Class.create({
 
             // check for ident filename in current level
             if(this.attributes.reference.isExistingKeyInLevel(this.parentNode, value, this)) {
+                return;
+            }
+
+            if(this.attributes.reference.isDisallowedKey(this.parentNode.id, value)) {
                 return;
             }
 
@@ -916,7 +949,8 @@ pimcore.document.tree = Class.create({
                         }
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error", t(rdata.message));
+                        pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error",
+                                                                                        t(rdata.message));
                         this.parentNode.reload();
                     }
                 } catch(e) {
@@ -933,7 +967,21 @@ pimcore.document.tree = Class.create({
         var parentChilds = parentNode.childNodes;
         for (var i = 0; i < parentChilds.length; i++) {
             if (parentChilds[i].text == key && node != parentChilds[i]) {
-                Ext.MessageBox.alert(t('edit_key'), t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                Ext.MessageBox.alert(t('edit_key'),
+                                            t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                return true;
+            }
+        }
+        return false;
+    },
+
+    isDisallowedKey: function (parentNodeId, key) {
+
+        if(parentNodeId === 1) {
+            var disallowedKeys = ["admin","install","webservice","plugin"];
+            if(in_arrayi(key, disallowedKeys)) {
+                Ext.MessageBox.alert(t('name_is_not_allowed'),
+                    t('name_is_not_allowed'));
                 return true;
             }
         }

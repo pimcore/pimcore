@@ -49,7 +49,24 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
             $objectData = array();
             foreach($data as $key => $value) {
                 $parts = explode("~", $key);
-                if(count($parts) > 1) {
+                if (substr($key, 0, 1) == "~") {
+                    $type = $parts[1];
+                    $field = $parts[2];
+                    $keyid = $parts[3];
+
+                    $getter = "get" . ucfirst($field);
+                    $setter = "set" . ucfirst($field);
+                    $keyValuePairs = $object->$getter();
+
+                    if (!$keyValuePairs) {
+                        $keyValuePairs = new Object_Data_KeyValue();
+                        $keyValuePairs->setObjectId($object->getId());
+                        $keyValuePairs->setClass($object->getClass());
+                    }
+
+                    $keyValuePairs->setPropertyWithId($keyid, $value, true);
+                    $object->$setter($keyValuePairs);
+                } else if(count($parts) > 1) {
                     $brickType = $parts[0];
                     $brickKey = $parts[1];
                     $brickField = Object_Service::getFieldForBrickType($object->getClass(), $brickType);
@@ -138,13 +155,13 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
 
             $listClass = "Object_" . ucfirst($className) . "_List";
 
-            $conditionFilters = "o_parentId = " . $parentObject->getId();
+            $conditionFilters = array("o_parentId = " . $parentObject->getId());
             // create filter condition
             if ($this->getParam("filter")) {
-                $conditionFilters .=  Object_Service::getFilterCondition($this->getParam("filter"), $class);
+                $conditionFilters[] =  Object_Service::getFilterCondition($this->getParam("filter"), $class);
             }
             if ($this->getParam("condition")) {
-                $conditionFilters .= " AND (" . $this->getParam("condition") . ")";
+                $conditionFilters[] = "(" . $this->getParam("condition") . ")";
             }
 
             $list = new $listClass();
@@ -153,12 +170,12 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
                     $list->addObjectbrick($b);
                 }
             }
-            $list->setCondition($conditionFilters);
+            $list->setCondition(implode(" AND ", $conditionFilters));
             $list->setLimit($limit);
             $list->setOffset($start);
             $list->setOrder($order);
             $list->setOrderKey($orderKey);
-            $list->setIgnoreLocale(true);
+            //$list->setIgnoreLocale(true);
             $list->setObjectTypes(array(Object_Abstract::OBJECT_TYPE_VARIANT));
 
             $list->load();

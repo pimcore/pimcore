@@ -23,6 +23,7 @@ class Pimcore_Liveconnect {
         $session = self::getSession();
         $session->liveconnectToken = $token;
         $session->liveconnectLastUpdate = time();
+        return self;
     }
 
     public static function getToken () {

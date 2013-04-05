@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+<!DOCTYPE html>
+<html>
 <head>
 
     <title>Welcome to pimcore!</title>
@@ -46,16 +46,16 @@ $browser = new Pimcore_Browser();
 $browserVersion = (int) $browser->getVersion();
 $platform = $browser->getPlatform();
 
-if ($browser->getBrowser() == Pimcore_Browser::BROWSER_FIREFOX && $browserVersion >= 3) {
+if ($browser->getBrowser() == Pimcore_Browser::BROWSER_FIREFOX && $browserVersion >= 4) {
     $supported = true;
 }
 if ($browser->getBrowser() == Pimcore_Browser::BROWSER_IE && $browserVersion >= 8) {
     $supported = true;
 }
-if ($browser->getBrowser() == Pimcore_Browser::BROWSER_CHROME && $browserVersion >= 5) {
+if ($browser->getBrowser() == Pimcore_Browser::BROWSER_CHROME && $browserVersion >= 6) {
     $supported = true;
 }
-if ($browser->getBrowser() == Pimcore_Browser::BROWSER_SAFARI && $browserVersion >= 4) {
+if ($browser->getBrowser() == Pimcore_Browser::BROWSER_SAFARI && $browserVersion >= 5) {
     $supported = true;
 }
 
@@ -72,7 +72,7 @@ $config = Pimcore_Config::getSystemConfig();
 <img src="/pimcore/static/img/loading.gif" width="1" height="1"/>
 
 <div id="vcenter">
-    <div id="content">
+    <div id="content" class="hidden">
 
         <?php if ($this->error) { ?>
             <div class="error">
@@ -134,7 +134,41 @@ $config = Pimcore_Config::getSystemConfig();
 
 
 <script type="text/javascript">
-    document.getElementById("username").focus();
+
+    // check for animation support
+    var animation = false,
+            animationstring = 'animation',
+            keyframeprefix = '',
+            elm = document.getElementById( 'content' ),
+            domPrefixes = 'Webkit Moz O ms Khtml'.split(' '),
+            pfx  = '';
+
+    if( elm.style.animationName ) { animation = true; }
+
+    if( animation === false ) {
+        for( var i = 0; i < domPrefixes.length; i++ ) {
+            if( elm.style[ domPrefixes[i] + 'AnimationName' ] !== undefined ) {
+                pfx = domPrefixes[ i ];
+                animationstring = pfx + 'Animation';
+                keyframeprefix = '-' + pfx.toLowerCase() + '-';
+                animation = true;
+                break;
+            }
+        }
+    }
+
+    if(animation) {
+        window.setTimeout(function () {
+            document.getElementById("content").className = "animated flipInX";
+            document.getElementById("username").focus();
+        }, 1000);
+    } else {
+        document.getElementById("content").className = "";
+        document.getElementById("username").focus();
+    }
+
+
+
 </script>
 
 <?php if ($config->general->loginscreenimageservice) { ?>

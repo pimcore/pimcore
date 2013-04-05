@@ -57,6 +57,7 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
     public function setItems($items)
     {
         $this->items = $items;
+        return $this;
     }
 
     /**
@@ -74,7 +75,8 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
     public function setObject(Object_Concrete $object)
     {
         $this->object = $object;
-        $this->setClass($this->getObject()->getClass());
+        //$this->setClass($this->getObject()->getClass());
+        return $this;
     }
 
     /**
@@ -92,6 +94,7 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
     public function setClass(Object_Class $class)
     {
         $this->class = $class;
+        return $this;
     }
 
     /**
@@ -99,6 +102,9 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
      */
     public function getClass()
     {
+        if(!$this->class && $this->getObject()) {
+            $this->class = $this->getObject()->getClass();
+        }
         return $this->class;
     }
 
@@ -144,11 +150,23 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
      */
     public function getLocalizedValue ($name, $language = null) {
         $language = $this->getLanguage($language);
+        $data = null;
         if($this->languageExists($language)) {
             if(array_key_exists($name, $this->items[$language])) {
-                return $this->items[$language][$name];
+                $data = $this->items[$language][$name];
             }
         }
+
+        $fieldDefinition = $this->getObject()->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($name);
+        if($fieldDefinition && method_exists($fieldDefinition, "preGetData")) {
+            $data =  $fieldDefinition->preGetData($this, array(
+                "data" => $this->items[$language][$name],
+                "language" => $language,
+                "name" => $name
+            ));
+        }
+
+        return $data;
     }
 
     /**
@@ -163,6 +181,23 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
             $this->items[$language] = array();
         }
 
+        $fieldDefinition = $this->getObject()->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($name);
+
+        if(method_exists($fieldDefinition, "preSetData")) {
+            $value =  $fieldDefinition->preSetData($this, $value, array(
+                "language" => $language,
+                "name" => $name
+            ));
+        }
+
         $this->items[$language][$name] = $value;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep() {
+        return array("items");
     }
 }

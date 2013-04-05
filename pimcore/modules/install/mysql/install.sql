@@ -21,7 +21,7 @@ CREATE TABLE `assets` (
 DROP TABLE IF EXISTS `cache_tags`;
 CREATE TABLE `cache_tags` (
   `id` varchar(165) NOT NULL DEFAULT '',
-  `tag` varchar(165) NULL DEFAULT NULL,
+  `tag` varchar(165) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`,`tag`),
   INDEX `id` (`id`),
   INDEX `tag` (`tag`)
@@ -44,6 +44,56 @@ CREATE TABLE `classes` (
   `propertyVisibility` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `content_analysis`;
+CREATE TABLE `content_analysis` (
+  `id` varchar(44) NOT NULL DEFAULT '',
+  `host` varchar(255) DEFAULT NULL,
+  `site` int(11) DEFAULT NULL,
+  `url` varchar(2000) NOT NULL DEFAULT '',
+  `type` enum('document','route') DEFAULT NULL,
+  `typeReference` int(11) DEFAULT NULL,
+  `facebookShares` int(11) DEFAULT NULL,
+  `googlePlusOne` int(11) DEFAULT NULL,
+  `links` int(5) DEFAULT NULL,
+  `linksExternal` int(5) DEFAULT NULL,
+  `h1` int(3) DEFAULT NULL,
+  `h2` int(3) DEFAULT NULL,
+  `h3` int(3) DEFAULT NULL,
+  `h4` int(3) DEFAULT NULL,
+  `h5` int(3) DEFAULT NULL,
+  `h6` int(3) DEFAULT NULL,
+  `h1Text` varchar(1000) DEFAULT NULL,
+  `imgWithoutAlt` int(3) DEFAULT NULL,
+  `imgWithAlt` int(3) DEFAULT NULL,
+  `title` varchar(1000) DEFAULT NULL,
+  `description` varchar(1000) DEFAULT NULL,
+  `urlLength` int(4) DEFAULT NULL,
+  `urlParameters` int(2) DEFAULT NULL,
+  `microdata` int(3) DEFAULT NULL,
+  `opengraph` int(3) DEFAULT NULL,
+  `twitter` int(3) DEFAULT NULL,
+  `robotsTxtBlocked` tinyint(1) DEFAULT NULL,
+  `robotsMetaBlocked` tinyint(1) DEFAULT NULL,
+  `lastUpdate` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `host` (`host`),
+  KEY `lastUpdate` (`lastUpdate`),
+  KEY `site` (`site`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `content_index`;
+CREATE TABLE `content_index` (
+  `id` varchar(44) NOT NULL DEFAULT '',
+  `site` int(11) DEFAULT NULL,
+  `url` varchar(2000) NOT NULL DEFAULT '',
+  `content` longtext,
+  `type` enum('document','route') DEFAULT NULL,
+  `typeReference` int(11) DEFAULT NULL,
+  `lastUpdate` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lastUpdate` (`lastUpdate`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `dependencies` ;
@@ -148,8 +198,10 @@ CREATE TABLE `documents_page` (
   `title` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `keywords` varchar(255) DEFAULT NULL,
+  `metaData` text,
   `prettyUrl` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
+  `css` longtext,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8;
@@ -225,6 +277,34 @@ CREATE TABLE `http_error_log` (
   KEY `code` (`code`),
   KEY `date` (`date`)
 ) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `keyvalue_groups`;
+CREATE TABLE `keyvalue_groups` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL DEFAULT '',
+    `description` VARCHAR(255),
+    PRIMARY KEY  (`id`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `keyvalue_keys`;
+CREATE TABLE `keyvalue_keys` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL DEFAULT '',
+  `description` TEXT,
+  `type` enum('bool','number','select','text') DEFAULT NULL,
+  `unit` VARCHAR(255),
+  `possiblevalues` TEXT,
+  `group` INT,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`group`) REFERENCES keyvalue_groups(`id`) ON DELETE SET NULL
+) DEFAULT CHARSET=utf8;;
+
+DROP TABLE IF EXISTS `locks`;
+CREATE TABLE `locks` (
+  `id` varchar(150) NOT NULL DEFAULT '',
+  `date` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MEMORY DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE `notes` (
@@ -328,6 +408,7 @@ CREATE TABLE `redirects` (
   `source` varchar(255) DEFAULT NULL,
   `sourceEntireUrl` tinyint(1) DEFAULT NULL,
   `sourceSite` int(11) DEFAULT NULL,
+  `passThroughParameters` tinyint(1) DEFAULT NULL,
   `target` varchar(255) DEFAULT NULL,
   `targetSite` int(11) DEFAULT NULL,
   `statusCode` varchar(3) DEFAULT NULL,
@@ -415,14 +496,45 @@ CREATE TABLE `staticroutes` (
 DROP TABLE IF EXISTS `targeting`;
 CREATE TABLE `targeting` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `documentId` int(11) DEFAULT NULL,
   `name` varchar(255) NOT NULL DEFAULT '',
   `description` text,
   `conditions` longtext,
   `actions` longtext,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `tracking_events`;
+CREATE TABLE `tracking_events` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `category` varchar(255) DEFAULT NULL,
+  `action` varchar(255) DEFAULT NULL,
+  `label` varchar(255) DEFAULT NULL,
+  `data` varchar(255) DEFAULT NULL,
+  `timestamp` bigint(20) unsigned DEFAULT NULL,
+  `year` int(5) unsigned DEFAULT NULL,
+  `month` int(2) unsigned DEFAULT NULL,
+  `day` int(2) unsigned DEFAULT NULL,
+  `dayOfWeek` int(1) unsigned DEFAULT NULL,
+  `dayOfYear` int(3) unsigned DEFAULT NULL,
+  `weekOfYear` int(2) unsigned DEFAULT NULL,
+  `hour` int(2) unsigned DEFAULT NULL,
+  `minute` int(2) unsigned DEFAULT NULL,
+  `second` int(2) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `name_documentId` (`documentId`,`name`),
-  KEY `documentId` (`documentId`)
+  KEY `timestamp` (`timestamp`),
+  KEY `year` (`year`),
+  KEY `month` (`month`),
+  KEY `day` (`day`),
+  KEY `dayOfWeek` (`dayOfWeek`),
+  KEY `dayOfYear` (`dayOfYear`),
+  KEY `weekOfYear` (`weekOfYear`),
+  KEY `hour` (`hour`),
+  KEY `minute` (`minute`),
+  KEY `second` (`second`),
+  KEY `category` (`category`),
+  KEY `action` (`action`),
+  KEY `label` (`label`),
+  KEY `data` (`data`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `translations_admin`;
@@ -475,6 +587,7 @@ CREATE TABLE `users` (
   `roles` varchar(1000) DEFAULT NULL,
   `welcomescreen` tinyint(1) DEFAULT NULL,
   `closeWarning` tinyint(1) DEFAULT NULL,
+  `memorizeTabs` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type`,`name`),
   KEY `parentId` (`parentId`),

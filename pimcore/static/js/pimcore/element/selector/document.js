@@ -59,7 +59,8 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         var filterStore = [];
         var selectedStore = [];
         for (var i=0; i<possibleRestrictions.length; i++) {
-           if(this.parent.restrictions.subtype.document && in_array(possibleRestrictions[i], this.parent.restrictions.subtype.document )) {
+           if(this.parent.restrictions.subtype.document && in_array(possibleRestrictions[i],
+                                    this.parent.restrictions.subtype.document )) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
                 selectedStore.push(possibleRestrictions[i]);
            }
@@ -137,9 +138,13 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                width: 200,
                store: this.selectionStore,
                columns: [
-                    {header: t("type"), width: 25, sortable: true, dataIndex: 'subtype', renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) center center no-repeat; height: 16px;" name="' + t(record.data.subtype) + '">&nbsp;</div>';
-                    }},
+                    {header: t("type"), width: 25, sortable: true, dataIndex: 'subtype',
+                        renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                            return '<div style="background: url(/pimcore/static/img/icon/'
+                                + value + '.png) center center no-repeat; height: 16px;" name="'
+                                + t(record.data.subtype) + '">&nbsp;</div>';
+                        }
+                    },
                     {header: t("filename"), width: 40, sortable: true, dataIndex: 'filename'}
                 ],
                 viewConfig: {
@@ -185,9 +190,13 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 region: "center",
                 store: this.store,
                 columns: [
-                    {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype', renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) center center no-repeat; height: 16px;" name="' + t(record.data.subtype) + '">&nbsp;</div>';
-                    }},
+                    {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
+                        renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                            return '<div style="background: url(/pimcore/static/img/icon/' + value
+                                + '.png) center center no-repeat; height: 16px;" name="'
+                                + t(record.data.subtype) + '">&nbsp;</div>';
+                        }
+                    },
                     {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
                     {header: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
                     {header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath'},

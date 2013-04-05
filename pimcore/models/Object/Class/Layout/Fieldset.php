@@ -40,6 +40,7 @@ class Object_Class_Layout_Fieldset extends Object_Class_Layout {
         if(!empty($labelWidth)) {
             $this->labelWidth = intval($labelWidth);
         }
+        return $this;
     }
 
     /**

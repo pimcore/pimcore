@@ -46,6 +46,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
      */
     public function setKey($key) {
         $this->key = $key;
+        return $this;
     }
     
     /**
@@ -61,6 +62,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
      */
     public function setParentClass($parentClass) {
         $this->parentClass = $parentClass;
+        return $this;
     }
     
     /**
@@ -79,6 +81,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         
         $this->fieldDefinitions = array();
         $this->extractDataDefinitions($this->layoutDefinitions);
+        return $this;
     }
     
     /**
@@ -94,6 +97,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
      */
     public function setFieldDefinitions($fieldDefinitions) {
         $this->fieldDefinitions = $fieldDefinitions;
+        return $this;
     }
 
     /**
@@ -103,6 +107,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
      */
     public function setFieldDefinition($key, $data) {
         $this->fieldDefinitions[$key] = $data;
+        return $this;
     }
 
     /**
@@ -222,23 +227,6 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
 
                 $cd .= $def->getGetterCodeFieldcollection($this);
                 $cd .= $def->getSetterCodeFieldcollection($this);
-
-
-//                $cd .= '/**' . "\n";
-//                $cd .= '* @return ' . $def->getPhpdocType() . "\n";
-//                $cd .= '*/' . "\n";
-//                $cd .= "public function get" . ucfirst($key) . " () {\n";
-//                $cd .= "\t return " . '$this->' . $key . ";\n";
-//                $cd .= "}\n\n";
-//
-//                $cd .= '/**' . "\n";
-//                $cd .= '* @param ' . $def->getPhpdocType() . ' $' . $key . "\n";
-//                $cd .= "* @return void\n";
-//                $cd .= '*/' . "\n";
-//                $cd .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
-//                $cd .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
-//                $cd .= "}\n\n";
-            
             }
         }
 

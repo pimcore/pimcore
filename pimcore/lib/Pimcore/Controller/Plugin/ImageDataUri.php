@@ -113,6 +113,10 @@ class Pimcore_Controller_Plugin_ImageDataUri extends Zend_Controller_Plugin_Abst
                 }
 
                 $body = $html->save();
+
+                $html->clear();
+                unset($html);
+
                 $this->getResponse()->setBody($body);
             }
         }

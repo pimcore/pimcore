@@ -111,7 +111,7 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
 
         this.fieldCombo = new Ext.form.ComboBox({
             fieldLabel: t('owner_field'),
-            name: 'objects' ,
+//            name: 'objects' ,
             value: this.datax.ownerFieldName,
             store: this.fieldComboStore,
             listWidth: 'auto',

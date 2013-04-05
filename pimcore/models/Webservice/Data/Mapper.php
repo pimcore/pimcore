@@ -41,9 +41,13 @@ abstract class Webservice_Data_Mapper {
             $retVal = "Webservice_Data_Property";
         } else if ($object instanceof Document_Tag) {
             $retVal = "Webservice_Data_Document_Element";
-        } else if ($object instanceof Object_Class_Data) {
-            $retVal = "Webservice_Data_Object_Element";
-        }  else if (is_object($object)) {
+        }
+// commented this out as it causes problems with the REST class definition API - not sure
+// what the original intention was.
+//        else if ($object instanceof Object_Class_Data) {
+//            $retVal = "Webservice_Data_Object_Element";
+//        }
+        else if (is_object($object)) {
             $orgclass = get_class($object);
 
             if (in_array($orgclass,$mappingClasses)) {

@@ -83,15 +83,16 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      */
     protected function saveTags($id, $tags) {
 
-        $this->getDb()->beginTransaction();
+        //$this->getDb()->beginTransaction();
 
         try {
             while ($tag = array_shift($tags)) {
                 try {
-                    $this->getDb()->insert("cache_tags", array(
+                    /*$this->getDb()->insert("cache_tags", array(
                         "id" => $id,
                         "tag" => $tag
-                    ));
+                    ));*/
+                    $this->getDb()->query("INSERT INTO cache_tags (id,tag) VALUES('" . $id . "', '" . $tag . "') ON DUPLICATE KEY UPDATE id = '" . $id . "'");
                 }
                 catch (Exception $e) {
                     if(strpos(strtolower($e->getMessage()), "is full") !== false) {
@@ -110,7 +111,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                     }
                 }
             }
-            $this->getDb()->commit();
+            //$this->getDb()->commit();
 
         } catch (Exception $e) {
             Logger::error($e);
@@ -121,7 +122,8 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @return void
      */
     protected function clearTags () {
-        $this->getDb()->delete("cache_tags");
+        $this->getDb()->query("TRUNCATE TABLE `cache_tags`");
+        $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=MEMORY");
     }
 
     /**
@@ -151,21 +153,16 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
         $this->checkCacheConsistency();
 
-        $lifetime = $this->getLifetime($specificLifetime);
-        if ($this->_options['compression']) {
-            $flag = MEMCACHE_COMPRESSED;
-        } else {
-            $flag = 0;
-        }
-        
+        $result = parent::save($data, $id, array(), $specificLifetime);
+
         // hack may it works also without it
-        $this->_memcache->delete($id);
+        //$this->_memcache->delete($id);
         // hack end
-        
-        $result = $this->_memcache->replace($id, array($data, time()), $flag, $lifetime);
-        if( $result == false ) { 
-            $result = $this->_memcache->set($id, array($data, time()), $flag, $lifetime);
-        } 
+
+        //$result = $this->_memcache->replace($id, array($data, time()), $flag, $lifetime);
+        //if( $result == false ) {
+        //    $result = $this->_memcache->set($id, array($data, time()), $flag, $lifetime);
+        //}
         
         
         if (count($tags) > 0) {
@@ -245,10 +242,11 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
         // insert dummy for the consistency check
         try {
-            $this->getDb()->insert("cache_tags", array(
+            /*$this->getDb()->insert("cache_tags", array(
                 "id" => "___consistency_check___",
                 "tag" => "___consistency_check___"
-            ));
+            ));*/
+            $this->getDb()->query("INSERT INTO cache_tags (id,tag) VALUES('___consistency_check___', '___consistency_check___') ON DUPLICATE KEY UPDATE id = '___consistency_check___'");
         } catch (Exception $e) {
             // doesn't matter as long as the item exists
         }

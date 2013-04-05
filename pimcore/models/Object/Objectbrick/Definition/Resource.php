@@ -66,13 +66,12 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
             
             $key = $value->getName();
 
-            // nullable & default value
-            list($defaultvalue, $nullable) = $this->getDefaultValueAndNullableForField($value);
+
 
             // if a datafield requires more than one column in the query table
             if (is_array($value->getQueryColumnType())) {
                 foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                    $this->addModifyColumn($tableQuery, $key . "__" . $fkey, $fvalue, $defaultvalue, $nullable);
+                    $this->addModifyColumn($tableQuery, $key . "__" . $fkey, $fvalue, "", "NULL");
                     $protectedColumnsQuery[] = $key . "__" . $fkey;
                 }
             }
@@ -80,7 +79,7 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
             // if a datafield requires more than one column in the datastore table => only for non-relation types
             if(!$value->isRelationType() && is_array($value->getColumnType())) {
                 foreach ($value->getColumnType() as $fkey => $fvalue) {
-                    $this->addModifyColumn($tableStore, $key . "__" . $fkey, $fvalue, $defaultvalue, $nullable);
+                    $this->addModifyColumn($tableStore, $key . "__" . $fkey, $fvalue, "", "NULL");
                     $protectedColumnsStore[] = $key . "__" . $fkey;
                 }
             }
@@ -88,11 +87,11 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
             // everything else
             if (!is_array($value->getQueryColumnType()) && !is_array($value->getColumnType())) {
                 if ($value->getQueryColumnType()) {
-                    $this->addModifyColumn($tableQuery, $key, $value->getQueryColumnType(), $defaultvalue, $nullable);
+                    $this->addModifyColumn($tableQuery, $key, $value->getQueryColumnType(), "", "NULL");
                     $protectedColumnsQuery[] = $key;
                 }
                 if ($value->getColumnType() && !$value->isRelationType()) {
-                    $this->addModifyColumn($tableStore, $key, $value->getColumnType(), $defaultvalue, $nullable);
+                    $this->addModifyColumn($tableStore, $key, $value->getColumnType(), "", "NULL");
                     $protectedColumnsStore[] = $key;
                 }
             }

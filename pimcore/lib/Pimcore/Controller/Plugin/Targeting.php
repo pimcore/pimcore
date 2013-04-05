@@ -45,7 +45,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
     public function routeShutdown(Zend_Controller_Request_Abstract $request) {
 
         $config = Pimcore_Config::getSystemConfig();
-        if(!Pimcore_Tool::useFrontendOutputFilters($request) || !$config->general->targeting) {
+        if(!Pimcore_Tool::useFrontendOutputFilters($request) || /*!$config->general->targeting*/ !PIMCORE_DEVMODE) {
             return $this->disable();
         }
         
@@ -68,7 +68,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
      *
      */
     public function dispatchLoopShutdown() {
-        
+
         if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
@@ -79,7 +79,6 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
 
             if($this->document) {
                 $list = new Tool_Targeting_List();
-                $list->setCondition("documentId = ? OR documentId = '' OR documentId IS NULL", $this->document->getId());
 
                 foreach($list->load() as $target) {
 
@@ -110,7 +109,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
 
             // search for the end <head> tag, and insert the google analytics code before
             // this method is much faster than using simple_html_dom and uses less memory
-            $headEndPosition = strpos($body, "<head>");
+            $headEndPosition = stripos($body, "<head>");
             if($headEndPosition !== false) {
                 $body = substr_replace($body, "<head>\n".$code, $headEndPosition, 7);
             }
@@ -118,7 +117,11 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
             $this->getResponse()->setBody($body);
 
             if(count($this->events) > 0) {
-                setcookie("pimcore__~__targeting", Zend_Json::encode($this->events));
+                setcookie("pimcore__~__targeting_event", Zend_Json::encode($this->events));
+            }
+
+            if($this->document instanceof Document) {
+                setcookie("pimcore__~__targeting_document", $this->document->getId());
             }
         }
     }

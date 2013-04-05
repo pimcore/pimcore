@@ -70,6 +70,7 @@ class Object_Class_Data_Select extends Object_Class_Data {
      */
     public function setOptions($options) {
         $this->options = $options;
+        return $this;
     }
     
     /**
@@ -84,7 +85,8 @@ class Object_Class_Data_Select extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -146,5 +148,41 @@ class Object_Class_Data_Select extends Object_Class_Data {
         return $data;
     }
 
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
 
+    /** See parent class.
+     * @param mixed $data
+     * @param null $object
+     * @return array|null
+     */
+    public function getDiffDataForEditMode($data, $object = null) {
+        $result = array();
+
+        $diffdata = array();
+        $diffdata["data"] = $data;
+        $diffdata["disabled"] = false;
+        $diffdata["field"] = $this->getName();
+        $diffdata["key"] = $this->getName();
+        $diffdata["type"] = $this->fieldtype;
+
+        $value = "";
+        foreach ($this->options as $option) {
+            if ($option["value"] == $data) {
+                $value = $option["key"];
+                break;
+            }
+        }
+
+        $diffdata["value"] = $value;
+        $diffdata["title"] = !empty($this->title) ? $this->title : $this->name;
+
+        $result[] = $diffdata;
+
+        return $result;
+    }
 }

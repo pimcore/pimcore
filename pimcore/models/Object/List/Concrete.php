@@ -33,14 +33,18 @@ abstract class Object_List_Concrete extends Object_List {
     public $locale;
 
     /**
-     * @var bool
-     */
-    public $ignoreLocale;
-
-    /**
+     * do not use the localized views for this list (in the case the class contains localized fields),
+     * conditions on localized fields are not possible
      * @var bool
      */
     public $ignoreLocalizedFields = false;
+
+    /**
+    * ignore the locale and use the concatinated object_localized_ID_default view instead
+    * @var bool
+    */
+    public $ignoreLocale;
+
 
     /**
      * @return void
@@ -80,6 +84,7 @@ abstract class Object_List_Concrete extends Object_List {
      */
     public function setClassId($classId) {
         $this->classId = $classId;
+        return $this;
     }
 
     /**
@@ -87,6 +92,7 @@ abstract class Object_List_Concrete extends Object_List {
      */
     public function setClassName($className) {
         $this->className = $className;
+        return $this;
     }
 
     /**
@@ -104,6 +110,7 @@ abstract class Object_List_Concrete extends Object_List {
     public function setLocale($locale)
     {
         $this->locale = $locale;
+        return $this;
     }
 
     /**
@@ -121,6 +128,7 @@ abstract class Object_List_Concrete extends Object_List {
     public function setIgnoreLocale($ignoreLocale)
     {
         $this->ignoreLocale = $ignoreLocale;
+        return $this;
     }
 
     /**
@@ -138,6 +146,7 @@ abstract class Object_List_Concrete extends Object_List {
     public function setIgnoreLocalizedFields($ignoreLocalizedFields)
     {
         $this->ignoreLocalizedFields = $ignoreLocalizedFields;
+        return $this;
     }
 
     /**
@@ -177,6 +186,7 @@ abstract class Object_List_Concrete extends Object_List {
         foreach($fieldCollections as $fc) {
             $this->addFieldCollection($fc['type'], $fc['fieldname']);
         }
+        return $this;
     }
 
     /**
@@ -204,7 +214,9 @@ abstract class Object_List_Concrete extends Object_List {
         }
 
         Object_Objectbrick_Definition::getByKey($type);
-        $this->objectBrickConfigs[] = $type;  ;
+        if (!in_array($type, $this->objectBrickConfigs)) {
+            $this->objectBrickConfigs[] = $type;
+        }
     }
 
     /**
@@ -216,6 +228,7 @@ abstract class Object_List_Concrete extends Object_List {
                 $this->addObjectbrick($ob);
             }
         }
+        return $this;
     }
 
     /**

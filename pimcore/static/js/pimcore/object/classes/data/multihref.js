@@ -32,7 +32,8 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
         this.initData(initData);
 
         // overwrite default settings
-        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible","visibleGridView","visibleSearch","style"];
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
+                                        "visibleGridView","visibleSearch","style"];
 
         this.treeNode = treeNode;
     },
@@ -56,11 +57,12 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
         this.specificPanel.removeAll();
 
         this.uniqeFieldId = uniqid();
+        var i;
 
         var allowedClasses = [];
         if(typeof this.datax.classes == "object") {
             // this is when it comes from the server
-            for(var i=0; i<this.datax.classes.length; i++) {
+            for(i=0; i<this.datax.classes.length; i++) {
                 allowedClasses.push(this.datax.classes[i]["classes"]);
             }
         } else if(typeof this.datax.classes == "string") {
@@ -71,7 +73,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
         var allowedDocuments = [];
         if(typeof this.datax.documentTypes == "object") {
             // this is when it comes from the server
-            for(var i=0; i<this.datax.documentTypes.length; i++) {
+            for(i=0; i<this.datax.documentTypes.length; i++) {
                 allowedDocuments.push(this.datax.documentTypes[i]["documentTypes"]);
             }
         } else if(typeof this.datax.documentTypes == "string") {
@@ -82,7 +84,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
         var allowedAssets = [];
         if(typeof this.datax.assetTypes == "object") {
             // this is when it comes from the server
-            for(var i=0; i<this.datax.assetTypes.length; i++) {
+            for(i=0; i<this.datax.assetTypes.length; i++) {
                 allowedAssets.push(this.datax.assetTypes[i]["assetTypes"]);
             }
         } else if(typeof this.datax.assetTypes == "string") {
@@ -143,6 +145,11 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         fieldLabel: t("height"),
                         name: "height",
                         value: this.datax.height
+                    },{
+                        xtype: "spinnerfield",
+                        fieldLabel: t("maximum_items"),
+                        name: "maxItems",
+                        value: this.datax.maxItems
                     },
                     {
                         xtype: "checkbox",
@@ -154,12 +161,15 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         xtype: "displayfield",
                         hideLabel: true,
                         value: t('lazy_loading_description'),
-                        cls: "pimcore_extra_label_bottom"
-                    },{
-                        xtype: "spinnerfield",
-                        fieldLabel: t("maximum_items"),
-                        name: "maxItems",
-                        value: this.datax.maxItems
+                        cls: "pimcore_extra_label_bottom",
+                        style: "padding-bottom:0;"
+                    },
+                    {
+                        xtype: "displayfield",
+                        hideLabel: true,
+                        value: t('lazy_loading_warning'),
+                        cls: "pimcore_extra_label_bottom",
+                        style: "color:red; font-weight: bold; padding-bottom:0;"
                     }
                 ]
             },

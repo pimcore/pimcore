@@ -33,6 +33,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
      */
     public function setClassDefinitions($classDefinitions) {
         $this->classDefinitions = $classDefinitions;
+        return $this;
     }
 
     /**
@@ -286,7 +287,11 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
 
         foreach($containerDefinition as $classId => $cd) {
-             $class = Object_Class::getById($classId);
+            $class = Object_Class::getById($classId);
+
+            if(!$class) {
+                continue;
+            }
 
             foreach($cd as $fieldname => $brickKeys) {
                 $className = $this->getContainerClassName($class->getName(), $fieldname);
@@ -327,6 +332,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                     $cd .= '*/' . "\n";
                     $cd .= "public function set" . ucfirst($brickKey) . " (" . '$' . $brickKey . ") {\n";
                     $cd .= "\t" . '$this->' . $brickKey . " = " . '$' . $brickKey . ";\n";
+                    $cd .= "\t" . 'return $this;' . ";\n";
                     $cd .= "}\n\n";
 
                 }

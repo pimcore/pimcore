@@ -160,13 +160,24 @@ pimcore.report.qrcode.panel = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_qr_code'), t('enter_the_name_of_the_new_qrcode') + "(a-zA-Z-_)", this.addFieldComplete.bind(this), null, null, "");
+        Ext.MessageBox.prompt(t('add_qr_code'), t('enter_the_name_of_the_new_qrcode') + "(a-zA-Z-_)",
+                                                this.addFieldComplete.bind(this), null, null, "");
     },
 
     addFieldComplete: function (button, value, object) {
 
         var regresult = value.match(/[a-zA-Z0-9_\-]+/);
         if (button == "ok" && value.length > 2 && regresult == value) {
+
+            var codes = this.tree.getRootNode().childNodes;
+            for (var i = 0; i < codes.length; i++) {
+                if (codes[i].text == value) {
+                    Ext.MessageBox.alert(t('add_thumbnail'),
+                                         t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                    return;
+                }
+            }
+
             Ext.Ajax.request({
                 url: "/admin/reports/qrcode/add",
                 params: {

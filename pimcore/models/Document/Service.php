@@ -30,7 +30,7 @@ class Document_Service extends Element_Service {
      * @param  User $user
      * @return void
      */
-    public function __construct($user) {
+    public function __construct($user = null) {
         $this->_user = $user;
     }
 
@@ -95,9 +95,7 @@ class Document_Service extends Element_Service {
                 $layout->{$layout->getContentKey()} = $content;
                 if (is_array($params)) {
                     foreach ($params as $key => $value) {
-                        if (!$layout->getView()->$key) { //otherwise we could overwrite e.g. controller, content...
                             $layout->getView()->$key = $value;
-                        }
                     }
                 }
 
@@ -124,6 +122,10 @@ class Document_Service extends Element_Service {
 
         if($documentBackup) {
             $view->document = $documentBackup;
+        }
+
+        if(Pimcore_Config::getSystemConfig()->outputfilters->less){
+            $content = Pimcore_Tool_Less::processHtml($content);
         }
 
         return $content;

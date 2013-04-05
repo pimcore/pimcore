@@ -54,7 +54,6 @@ class Asset_Image_Thumbnail_Config {
      */
     public $quality = 90;
 
-
     /**
      * @static
      * @param  $name
@@ -81,6 +80,31 @@ class Asset_Image_Thumbnail_Config {
         }
 
         return $dir;
+    }
+
+    public static function getPreviewConfig () {
+        $thumbnail = new self();
+        $thumbnail->setName("pimcore-system-treepreview");
+        $thumbnail->addItem("scaleByWidth", array(
+            "width" => 400
+        ));
+        $thumbnail->addItem("setBackgroundColor", array(
+            "color" => "#323232"
+        ));
+        $thumbnail->setQuality(60);
+        $thumbnail->setFormat("PJPEG");
+
+        return $thumbnail;
+    }
+
+    /**
+     * Returns thumbnail config for webservice export.
+     */
+    public function getForWebserviceExport() {
+        $arrayConfig = object2array($this);
+        $items = $arrayConfig["items"];
+        $arrayConfig["items"] = $items;
+        return $arrayConfig;
     }
 
 
@@ -190,6 +214,7 @@ class Asset_Image_Thumbnail_Config {
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     /**
@@ -206,6 +231,7 @@ class Asset_Image_Thumbnail_Config {
     public function setItems($items)
     {
         $this->items = $items;
+        return $this;
     }
 
     /**
@@ -222,6 +248,7 @@ class Asset_Image_Thumbnail_Config {
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -238,6 +265,7 @@ class Asset_Image_Thumbnail_Config {
     public function setFormat($format)
     {
         $this->format = $format;
+        return $this;
     }
 
     /**
@@ -256,6 +284,7 @@ class Asset_Image_Thumbnail_Config {
         if($quality) {
             $this->quality = (int) $quality;
         }
+        return $this;
     }
 
     /**

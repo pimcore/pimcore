@@ -122,7 +122,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
             });
 
             this.toolbarButtons.remove = new Ext.Button({
-                text: t('delete'),
+                text: t('delete_folder'),
                 iconCls: "pimcore_icon_delete_medium",
                 scale: "medium",
                 handler: this.remove.bind(this)
@@ -189,7 +189,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
             items.push(this.notes.getLayout());
         }
 
-        var tabbar = new Ext.TabPanel({
+        this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
             deferredRender:true,
@@ -199,7 +199,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
             activeTab: 0
         });
 
-        return tabbar;
+        return this.tabbar;
     }
 });
 

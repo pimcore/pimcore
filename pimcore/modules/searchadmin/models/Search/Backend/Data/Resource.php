@@ -50,27 +50,7 @@ class Search_Backend_Data_Resource extends Pimcore_Model_Resource_Abstract {
      */
     public function save() {
         try {
-            try {
-                $this->create();
-            } catch (Exception $e) {
-                //probably dulplicate
-                $this->update();
-            }
-        } catch (Exception $e) {
-            Logger::error($e);
-        }
-
-    }
-
-
-    /**
-     * Create a new record in database
-     *
-     * @return boolean
-     */
-    protected function create() {
-        if($this->model->getId() instanceof Search_Backend_Data_Id){
-            $this->db->insert("search_backend_data", array(
+            $data = array(
                 "id" => $this->model->getId()->getId(),
                 "fullpath" => $this->model->getFullPath(),
                 "maintype" => $this->model->getId()->getType(),
@@ -83,39 +63,15 @@ class Search_Backend_Data_Resource extends Pimcore_Model_Resource_Abstract {
                 "usermodification" => $this->model->getUserModification(),
                 "data" => $this->model->getData(),
                 "properties" => $this->model->getProperties()
-            ));
-        } else {
-            Logger::alert("Cannot create Search_Backend_Data, ID is empty");
+            );
+
+            $this->db->insertOrUpdate("search_backend_data", $data);
+
+        } catch (Exception $e) {
+            Logger::error($e);
         }
 
     }
-
-    /**
-     * Save changes to database
-     *
-     * @return void
-     */
-    protected function update() {
-        if($this->model->getId() instanceof Search_Backend_Data_Id){
-            $data["id"] = $this->model->getId()->getId();
-            $data["fullpath"] = $this->model->getFullPath();
-            $data["maintype"] = $this->model->getId()->getType();
-            $data["type"] = $this->model->getType();
-            $data["subtype"] = $this->model->getSubtype();
-            $data["published"] = $this->model->isPublished();
-            $data["creationdate"] = $this->model->getCreationDate();
-            $data["modificationdate"] = $this->model->getmodificationDate();
-            $data["userowner"] = $this->model->getUserOwner();
-            $data["usermodification"] = $this->model->getUserModification();
-            $data["data"] = $this->model->getData();
-            $data["properties"] = $this->model->getProperties();
-
-            $this->db->update("search_backend_data", $data, "id='" . $data["id"] . "' AND maintype ='" . $data["maintype"] . "'");
-        } else {
-            Logger::alert("Cannot update Search_Backend_Data, ID is empty");
-        }
-    }
-
 
     /**
      * Deletes from database

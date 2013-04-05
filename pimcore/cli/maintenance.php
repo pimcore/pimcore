@@ -15,15 +15,28 @@
 
 include_once("startup.php");    
 
-
 try {
-    $opts = new Zend_Console_Getopt(array(
-        'job|j=s' => 'call just a specific job(s), use "," (comma) to execute more than one job (valid options: scheduledtasks, logmaintenance, sanitycheck, cleanupoldpidfiles, versioncleanup, redirectcleanup, cleanupbrokenviews, and plugin classes if you want to call a plugin maintenance)',
+    $optsConfig = array(
+        'job|j=s' => 'call just a specific job(s), use "," (comma) to execute more than one job (valid options: scheduledtasks, logmaintenance, sanitycheck, cleanupoldpidfiles, versioncleanup, redirectcleanup, cleanupbrokenviews, contentanalysis and plugin classes if you want to call a plugin maintenance)',
         'manager|m=s' => 'force a specific manager (valid options: procedural, daemon)',
         'ignore-maintenance-mode' => 'forces the script execution even when the maintenance mode is activated',
         'verbose|v' => 'show detailed information during the maintenance (for debug, ...)',
         'help|h' => 'display this help'
-    ));
+    );
+
+    // dynamically add non recognized options to avoid error messages
+    // @ TODO the code below doesn't check if an option is already defined in $optsConfig
+    /*$arguments = $_SERVER['argv'];
+    array_shift($arguments);
+    foreach ($arguments as $arg) {
+        $arg = preg_match("/\-\-?([a-zA-Z0-9]+)(=| )?/", $arg, $matches);
+        if(array_key_exists(1, $matches)) {
+            $optsConfig[$matches[1]] = "custom parameter";
+        }
+    }*/
+
+    $opts = new Zend_Console_Getopt($optsConfig);
+
 } catch (Exception $e) {
     echo $e->getMessage();
 }
@@ -82,6 +95,7 @@ $manager->registerJob(new Schedule_Maintenance_Job("cleanupoldpidfiles", "Schedu
 $manager->registerJob(new Schedule_Maintenance_Job("versioncleanup", new Version(), "maintenanceCleanUp"));
 $manager->registerJob(new Schedule_Maintenance_Job("redirectcleanup", "Redirect", "maintenanceCleanUp"));
 $manager->registerJob(new Schedule_Maintenance_Job("cleanupbrokenviews", "Pimcore_Resource", "cleanupBrokenViews"));
+$manager->registerJob(new Schedule_Maintenance_Job("contentanalysis", "Tool_ContentAnalysis", "run"));
 
 // call plugins
 $plugins = Pimcore_API_Plugin_Broker::getInstance()->getPlugins();

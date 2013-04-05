@@ -221,7 +221,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             items.push(this.variants.getLayout());
         }
 
-        var tabbar = new Ext.TabPanel({
+        this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
             deferredRender:true,
@@ -231,7 +231,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             activeTab: 0
         });
 
-        return tabbar;
+        return this.tabbar;
     },
 
     getLayoutToolbar : function () {
@@ -334,11 +334,18 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 scale: "medium"
             });
 
+            buttons.push("-");
+            buttons.push({
+                xtype: 'tbtext',
+                text: ts(this.data.general.o_className),
+                scale: "medium"
+            });
 
             // version notification
             this.newerVersionNotification = new Ext.Toolbar.TextItem({
                 xtype: 'tbtext',
-                text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;' + t("this_is_a_newer_not_published_version"),
+                text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;'
+                                                            + t("this_is_a_newer_not_published_version"),
                 scale: "medium",
                 hidden: true
             });
@@ -412,31 +419,31 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         try {
             data.data = Ext.encode(this.edit.getValues(omitMandatoryCheck));
         }
-        catch (e) {
-            //console.log(e)
+        catch (e1) {
+            //console.log(e1)
         }
 
         // properties
         try {
             data.properties = Ext.encode(this.properties.getValues());
         }
-        catch (e) {
-            //console.log(e);
+        catch (e2) {
+            //console.log(e2);
         }
 
         try {
             data.general = Ext.encode(this.data.general);
         }
-        catch (e) {
-            //console.log(e);
+        catch (e3) {
+            //console.log(e3);
         }
 
         // scheduler
         try {
             data.scheduler = Ext.encode(this.scheduler.getValues());
         }
-        catch (e) {
-            //console.log(e);
+        catch (e4) {
+            //console.log(e4);
         }
 
 
@@ -469,8 +476,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             // remove class in tree panel
             try {
-                pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI().removeClass("pimcore_unpublished");
-            } catch (e) { };
+                pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI()
+                                                            .removeClass("pimcore_unpublished");
+            } catch (e) { }
         }
 
         return state;
@@ -486,8 +494,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     
             // set class in tree panel
             try {
-                pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI().addClass("pimcore_unpublished");
-            } catch (e) {};
+                pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI()
+                                                        .addClass("pimcore_unpublished");
+            } catch (e) {}
         }
     },
 
@@ -510,7 +519,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             omitMandatoryCheck = true;
         }
 
-        var callback = callback;
+//        var callback = callback;
         var saveData = this.getSaveData(only, omitMandatoryCheck);
 
         if (saveData.data != false && saveData.data != "false") {
@@ -534,10 +543,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         try{
                             var rdata = Ext.decode(response.responseText);
                             if (rdata && rdata.success) {
-                                pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"), "success");
+                                pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
+                                                            "success");
+                                this.resetChanges();
                             }
                             else {
-                                pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error",t(rdata.message));
+                                pimcore.helpers.showNotification(t("error"), t("error_saving_object"),
+                                                            "error",t(rdata.message));
                             }
                         } catch(e){
                             pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
@@ -555,8 +567,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     }
                 }.bind(this)
             });
-            
-            this.resetChanges();
             
             return true;
         }

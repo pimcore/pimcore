@@ -55,10 +55,13 @@ class Pimcore_Tool_Text
                         if($element instanceof Document) {
                             // get parameters
                             preg_match("/href=\"([^\"]+)*\"/", $oldTag, $oldHref);
-                            if($oldHref[1] && strpos($oldHref[1], "?") !== false) {
-                                $parameters = explode("?",$oldHref[1]);
-                                if(!empty($parameters[1])) {
-                                    $path .= "?" . $parameters[1];
+                            if($oldHref[1] && (strpos($oldHref[1], "?") !== false || strpos($oldHref[1], "#") !== false)) {
+                                $urlParts = parse_url($oldHref[1]);
+                                if(array_key_exists("query", $urlParts) && !empty($urlParts["query"])) {
+                                    $path .= "?" . $urlParts["query"];
+                                }
+                                if(array_key_exists("fragment", $urlParts) && !empty($urlParts["fragment"])) {
+                                    $path .= "#" . $urlParts["fragment"];
                                 }
                             }
                         }
@@ -93,12 +96,12 @@ class Pimcore_Tool_Text
                             $cleanedStyle = preg_replace('#[ ]+#', '', $styleAttr[1]);
                             $styles = explode(";", $cleanedStyle);
                             foreach ($styles as $style) {
-                                if (strpos($style, "width") !== false) {
+                                if (strpos(trim($style), "width") === 0) {
                                     if (preg_match("/([0-9]+)(px)/i", $style, $match)) {
                                         $config["width"] = $match[1];
                                     }
                                 }
-                                else if (strpos($style, "height") !== false) {
+                                else if (strpos(trim($style), "height") === 0) {
                                     if (preg_match("/([0-9]+)(px)/i", $style, $match)) {
                                         $config["height"] = $match[1];
                                     }
@@ -110,11 +113,14 @@ class Pimcore_Tool_Text
                         if(!preg_match("/pimcore_disable_thumbnail=\"([^\"]+)*\"/", $oldTag)) {
                             if (!empty($config)) {
                                 $path = $element->getThumbnail($config);
-                            } else {
+                            } else if($element->getWidth() > 2000 || $element->getHeight() > 2000) {
+                                // if the image is too large, size it down to 2000px this is the max. for wysiwyg
                                 $path = $element->getThumbnail(array(
-                                    "width" => $element->getWidth(),
-                                    "height" => $element->getHeight()
+                                    "width" => 2000,
                                 ));
+                            } else {
+                                // return the original
+                                $path = $element->getFullPath();
                             }
                         }
                     }
@@ -188,7 +194,13 @@ class Pimcore_Tool_Text
                     $el->src=null;
                 }
             }
-            return $html->save();
+
+            $return = $html->save();
+
+            $html->clear();
+            unset($html);
+
+            return $return;
         }
     }
 

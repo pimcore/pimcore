@@ -34,6 +34,11 @@ class Tool_Tag_Config {
     public $description = "";
 
     /**
+     * @var int
+     */
+    public $siteId;
+
+    /**
      * @var string
      */
     public $urlPattern = "";
@@ -107,6 +112,9 @@ class Tool_Tag_Config {
             "filename" => $this->getConfigFile()
         ));
         $writer->write();
+
+        // clear cache tags
+        Pimcore_Model_Cache::clearTags(array("tagmanagement","output"));
 
         return true;
     }
@@ -197,6 +205,7 @@ class Tool_Tag_Config {
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     /**
@@ -213,6 +222,7 @@ class Tool_Tag_Config {
     public function setItems($items)
     {
         $this->items = $items;
+        return $this;
     }
 
     /**
@@ -229,6 +239,7 @@ class Tool_Tag_Config {
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -245,6 +256,7 @@ class Tool_Tag_Config {
     public function setHttpMethod($httpMethod)
     {
         $this->httpMethod = $httpMethod;
+        return $this;
     }
 
     /**
@@ -261,6 +273,7 @@ class Tool_Tag_Config {
     public function setUrlPattern($urlPattern)
     {
         $this->urlPattern = $urlPattern;
+        return $this;
     }
 
     /**
@@ -272,11 +285,28 @@ class Tool_Tag_Config {
     }
 
     /**
+     * @param int $siteId
+     */
+    public function setSiteId($siteId)
+    {
+        $this->siteId = $siteId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSiteId()
+    {
+        return $this->siteId;
+    }
+
+    /**
      * @param array $params
      */
     public function setParams($params)
     {
         $this->params = $params;
+        return $this;
     }
 
     /**
@@ -293,6 +323,7 @@ class Tool_Tag_Config {
     public function setTextPattern($textPattern)
     {
         $this->textPattern = $textPattern;
+        return $this;
     }
 
     /**

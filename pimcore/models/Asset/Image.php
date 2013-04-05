@@ -18,6 +18,11 @@
 class Asset_Image extends Asset {
 
     /**
+     * @var string
+     */
+    public $type = "image";
+
+    /**
      * @return void
      */
     public function update() {
@@ -47,13 +52,14 @@ class Asset_Image extends Asset {
 
         $this->clearThumbnails();
 
-        // @TODO: this is for the upload useless, because there the non-specific Asset class is initialized
         // now directly create "system" thumbnails (eg. for the tree, ...)
         try {
-            $this->getThumbnail($this->getThumbnailConfig(array(
-                "width" => 130,
-                "aspectratio" => true
-            )));
+            $path = $this->getThumbnail(Asset_Image_Thumbnail_Config::getPreviewConfig());
+            $path = PIMCORE_DOCUMENT_ROOT . $path;
+
+            // set the modification time of the thumbnail to the same time from the asset
+            // so that the thumbnail check doesn't fail in Asset_Image_Thumbnail_Processor::process();
+            touch($path, $this->getModificationDate());
         } catch (Exception $e) {
             Logger::error("Problem while creating system-thumbnails for image " . $this->getFullPath());
             Logger::error($e);
@@ -64,12 +70,10 @@ class Asset_Image extends Asset {
      * @return void
      */
     public function clearThumbnails() {
-        $files = scandir(PIMCORE_TEMPORARY_DIRECTORY);
-        foreach ($files as $file) {
-            if (is_file(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file)) {
-                if (preg_match("/thumb_" . $this->getId() . "/", $file)) {
-                    unlink(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file);
-                }
+        $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/thumb_" . $this->getId() . "__*");
+        if(is_array($files)) {
+            foreach ($files as $file) {
+                unlink($file);
             }
         }
     }

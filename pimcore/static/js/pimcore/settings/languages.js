@@ -42,10 +42,18 @@ pimcore.settings.languages = Class.create({
             store: this.availableStore,
             columns: [
                 {header: "", sortable: true, dataIndex: 'key', editable: false, width: 40},
-                {header: "", sortable: true, dataIndex: 'icon', editable: false, width: 40, renderer: function(data){ return '<img src="'+data+'" alt="" />'}},
+                {header: "", sortable: true, dataIndex: 'icon', editable: false, width: 40,
+                                renderer: function(data){
+                                    return '<img src="'+data+'" alt="" />';
+                                }
+                },
 
                 {header: "", sortable: true, dataIndex: 'name', editable: false, width: 200},
-                {header: "", sortable: true, dataIndex: 'percent', editable: false, width: 150, renderer: function(data){ return data+'% '+t('language_translation_percentage')}},
+                {header: "", sortable: true, dataIndex: 'percent', editable: false, width: 150,
+                                renderer: function(data){
+                                    return data+'% '+t('language_translation_percentage');
+                                }
+                },
                 {
                     xtype: 'actioncolumn',
                     width: 30,
@@ -80,10 +88,14 @@ pimcore.settings.languages = Class.create({
                         '<ul>',
                         '<tpl for=".">',
                         '<li class="language">',
-                        '<div class="language-key">{key}</div><img src="{icon}" /><div class="language-name">{name}</div><div class="language-percent">{percent}% {[t(\'language_translation_percentage\')]}</div>',
+                        '<div class="language-key">{key}</div><img src="{icon}" /><div class="language-name">{name}'
+                                    + '</div><div class="language-percent">{percent}%'
+                                    + '{[t(\'language_translation_percentage\')]}</div>',
                         '<div class="buttons">',
-                        '<tpl if="exists"><input type="button" class="settings" name="update" value="{[t(\'update\')]}"/></tpl>',
-                        '<tpl if="!exists"><input type="button" class="settings" name="download" value="{[t(\'download\')]}"/></tpl>',
+                        '<tpl if="exists"><input type="button" class="settings" '
+                        + 'name="update" value="{[t(\'update\')]}"/></tpl>',
+                        '<tpl if="!exists"><input type="button" class="settings" '
+                        + 'name="download" value="{[t(\'download\')]}"/></tpl>',
                         '</div>',
                         '</li>',
                         '</tpl>',

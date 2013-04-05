@@ -24,7 +24,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         var classStore = pimcore.globalmanager.get("object_types_store");
         var className = classStore.getById(fieldConfig.allowedClassId);
 
-        this.fieldConfig.classes = [{classes: className.data.text, id: fieldConfig.allowedClassId}];
+        var classNameText = (typeof(className) != 'undefined') ? className.data.text : '';
+        this.fieldConfig.classes = [{classes: classNameText, id: fieldConfig.allowedClassId}];
 
         if (data) {
             this.data = data;
@@ -35,11 +36,13 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         fields.push("id");
 
-        for(var i = 0; i < visibleFields.length; i++) {
+        var i;
+
+        for(i = 0; i < visibleFields.length; i++) {
             fields.push(visibleFields[i]);
         }
 
-        for(var i = 0; i < this.fieldConfig.columns.length; i++) {
+        for(i = 0; i < this.fieldConfig.columns.length; i++) {
             fields.push(this.fieldConfig.columns[i].key);
         }
 
@@ -71,20 +74,22 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         }
 
         var cls = 'object_field';
+        var i;
 
         var visibleFields = this.fieldConfig.visibleFields.split(",");
 
         var columns = [];
         columns.push({header: 'ID', dataIndex: 'id', width: 50});
 
-        for(var i = 0; i < visibleFields.length; i++) {
-            columns.push({header: ts(visibleFields[i]), dataIndex: visibleFields[i], width: 100, editor: null, renderer: renderer});
+        for (i = 0; i < visibleFields.length; i++) {
+            columns.push({header: ts(visibleFields[i]), dataIndex: visibleFields[i], width: 100, editor: null,
+                                                                    renderer: renderer});
         }
 
-        for(var i = 0; i < this.fieldConfig.columns.length; i++) {
+        for (i = 0; i < this.fieldConfig.columns.length; i++) {
             var width = 100;
             if(this.fieldConfig.columns[i].width) {
-                width = this.fieldConfig.columns[i].width
+                width = this.fieldConfig.columns[i].width;
             }
 
             var editor = null;
@@ -122,24 +127,20 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 });
             } else if(this.fieldConfig.columns[i].type == "bool") {
                 if(!readOnly) {
-                    editor = new Ext.form.Checkbox();
-
-                    listeners = {
-                        "mousedown": function (col, grid, rowIndex, event) {
-                            var store = grid.getStore();
-                            var record = store.getAt(rowIndex);
-                            record.set(col.dataIndex, !record.data[col.dataIndex]);
-                            this.dataChanged = true;
-                        }.bind(this)
-                    };
-
+                    columns.push(new Ext.grid.CheckColumn({
+                        header: ts(this.fieldConfig.columns[i].label),
+                        dataIndex: this.fieldConfig.columns[i].key,
+                        width: width
+                    }));
+                    continue;
                 }
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     metaData.css += ' x-grid3-check-col-td';
                     if(!value || value == "0") {
                         value = false;
                     }
-                    return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
+                    return String.format('<div class="x-grid3-check-col{0}"'
+                        + 'style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
                 };
 
             }
@@ -156,20 +157,58 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         }
 
 
-        columns.push({
-                        xtype: 'actioncolumn',
-                        width: 30,
-                        items: [
-                            {
-                                tooltip: t('open'),
-                                icon: "/pimcore/static/img/icon/pencil_go.png",
-                                handler: function (grid, rowIndex) {
-                                    var data = grid.getStore().getAt(rowIndex);
-                                    pimcore.helpers.openObject(data.data.id, "object");
-                                }.bind(this)
+        if(!readOnly) {
+            columns.push({
+                xtype: 'actioncolumn',
+                width: 30,
+                items: [
+                    {
+                        tooltip: t('up'),
+                        icon: "/pimcore/static/img/icon/arrow_up.png",
+                        handler: function (grid, rowIndex) {
+                            if(rowIndex > 0) {
+                                var rec = grid.getStore().getAt(rowIndex);
+                                grid.getStore().removeAt(rowIndex);
+                                grid.getStore().insert(rowIndex-1, [rec]);
                             }
-                        ]
-                    });
+                        }.bind(this)
+                    }
+                ]
+            });
+            columns.push({
+                xtype: 'actioncolumn',
+                width: 30,
+                items: [
+                    {
+                        tooltip: t('down'),
+                        icon: "/pimcore/static/img/icon/arrow_down.png",
+                        handler: function (grid, rowIndex) {
+                            if(rowIndex < (grid.getStore().getCount()-1)) {
+                                var rec = grid.getStore().getAt(rowIndex);
+                                grid.getStore().removeAt(rowIndex);
+                                grid.getStore().insert(rowIndex+1, [rec]);
+                            }
+                        }.bind(this)
+                    }
+                ]
+            });
+        }
+
+        columns.push({
+            xtype: 'actioncolumn',
+            width: 30,
+            items: [
+                {
+                    tooltip: t('open'),
+                    icon: "/pimcore/static/img/icon/pencil_go.png",
+                    handler: function (grid, rowIndex) {
+                        var data = grid.getStore().getAt(rowIndex);
+                        pimcore.helpers.openObject(data.data.id, "object");
+                    }.bind(this)
+                }
+            ]
+        });
+
         if(!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
@@ -184,13 +223,15 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     }
                 ]
             });
-
         }
 
 
         this.component = new Ext.grid.EditorGridPanel({
-            //plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
             store: this.store,
+            trackMouseOver: true,
+            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+            columnLines: true,
+            stripeRows: true,
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
                     sortable: false

@@ -92,7 +92,8 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -107,7 +108,8 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setHeight($height) {
-        $this->height = $height;
+        $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
 
@@ -123,7 +125,8 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setMinValue($minValue) {
-        $this->minValue = $minValue;
+        $this->minValue = $this->getAsFloatCast($minValue);
+        return $this;
     }
 
     /**
@@ -138,7 +141,8 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setMaxValue($maxValue) {
-        $this->maxValue = $maxValue;
+        $this->maxValue = $this->getAsFloatCast($maxValue);
+        return $this;
     }
 
     /**
@@ -162,6 +166,7 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      */
     public function setVertical($vertical) {
         $this->vertical = (bool) $vertical;
+        return $this;
     }
 
     /**
@@ -176,7 +181,8 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setIncrement($increment) {
-        $this->increment = $increment;
+        $this->increment = $this->getAsFloatCast($increment);
+        return $this;
     }
     
     
@@ -192,7 +198,8 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setDecimalPrecision($decimalPrecision) {
-        $this->decimalPrecision = $decimalPrecision;
+        $this->decimalPrecision = $this->getAsIntegerCast($decimalPrecision);
+        return $this;
     }
 
     /**
@@ -272,6 +279,11 @@ class Object_Class_Data_Slider extends Object_Class_Data {
     }
 
 
-
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
 
 }

@@ -165,7 +165,11 @@ class Document_Tag_Area extends Document_Tag {
             if(is_file($view)) {
                 $editmode = $this->getView()->editmode;
 
-                echo '<div class="pimcore_area_' . $options["type"] . ' pimcore_area_content">';
+                if(method_exists($actionObject,"getBrickHtmlTagOpen")) {
+                    echo $actionObject->getBrickHtmlTagOpen($this);
+                }else{
+                    echo '<div class="pimcore_area_' . $options["type"] . ' pimcore_area_content">';
+                }
 
                 if(is_file($edit) && $editmode) {
                     echo '<div class="pimcore_area_edit_button"></div>';
@@ -186,7 +190,12 @@ class Document_Tag_Area extends Document_Tag {
                     echo '</div>';
                 }
 
-                echo '</div>';
+                if(method_exists($actionObject,"getBrickHtmlTagClose")) {
+                    echo $actionObject->getBrickHtmlTagClose($this);
+                }else{
+                    echo '</div>';
+                }
+
 
                 if(is_object($actionObject) && method_exists($actionObject,"postRenderAction")) {
                     $actionObject->postRenderAction();
@@ -210,7 +219,7 @@ class Document_Tag_Area extends Document_Tag {
      * @return void
      */
     public function setDataFromResource($data) {
-
+        return $this;
     }
 
     /**
@@ -219,7 +228,7 @@ class Document_Tag_Area extends Document_Tag {
      * @return void
      */
     public function setDataFromEditmode($data) {
-
+        return $this;
     }
 
     /**
@@ -267,7 +276,7 @@ class Document_Tag_Area extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement){
+    public function getFromWebserviceImport($wsElement, $idMapper = null){
         throw new Exception("It's not possible to set areas via the webservice");
     }
 

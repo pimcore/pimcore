@@ -99,6 +99,10 @@ class Pimcore_Controller_Plugin_CssMinify extends Zend_Controller_Plugin_Abstrac
                 }
 
                 $body = $html->save();
+
+                $html->clear();
+                unset($html);
+
                 $this->getResponse()->setBody($body);
             }
         }

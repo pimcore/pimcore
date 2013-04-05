@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -308,6 +308,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         }
 
         $this->allowedTypes = (array)$allowedTypes;
+        return $this;
     }
 
     /**
@@ -343,6 +344,9 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                     $el->name = $fd->getName();
                     $el->type = $fd->getFieldType();
                     $el->value = $fd->getForWebserviceExport($item);
+                    if ($el->value ==  null && self::$dropNullValues) {
+                        continue;
+                    }
 
                     $wsDataItem->value[] = $el;
 
@@ -363,13 +367,18 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($data, $object)
+    public function getFromWebserviceImport($data, $relatedObject, $idMapper = null)
     {
-        $containerName = "Object_" . ucfirst($object->getClass()->getName()) . "_" . ucfirst($this->getName());
-        $container = new $containerName($object, $this->getName());
+        $containerName = "Object_" . ucfirst($relatedObject->getClass()->getName()) . "_" . ucfirst($this->getName());
+        $container = new $containerName($relatedObject, $this->getName());
 
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
+                if ($collectionRaw instanceof stdClass) {
+                    $class = "Webservice_Data_Object_Element";
+                    $collectionRaw = Pimcore_Tool_Cast::castToClass($class, $collectionRaw);
+                }
+
                 if($collectionRaw != null) {
                     if (!$collectionRaw instanceof Webservice_Data_Object_Element) {
 
@@ -386,6 +395,10 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         foreach ($collectionRaw->value as $field) {
+                            if ($field instanceof stdClass) {
+                                $class = "Webservice_Data_Object_Element";
+                                $field = Pimcore_Tool_Cast::castToClass($class, $field);
+                            }
                             if (!$field instanceof Webservice_Data_Object_Element) {
                                 throw new Exception("invalid data in objectbricks [" . $this->getName() . "]");
                             } else if ($field->name == $fd->getName()) {
@@ -393,7 +406,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                                 if ($field->type != $fd->getFieldType()) {
                                     throw new Exception("Type mismatch for objectbricks field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
                                 }
-                                $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value);
+                                $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $relatedObject, $idMapper);
                                 break;
                             }
 
@@ -403,7 +416,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                     }
 
                     $collectionClass = "Object_Objectbrick_Data_" . ucfirst($brick);
-                    $collection = new $collectionClass($object);
+                    $collection = new $collectionClass($relatedObject);
                     $collection->setValues($collectionData);
                     $collection->setFieldname($this->getName());
 
@@ -420,7 +433,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     }
 
 
-    public function preSetData($object, $value)
+    public function preSetData($object, $value, $params = array())
     {
         if ($value instanceof Object_Objectbrick) {
             $value->setFieldname($this->getName());
@@ -579,4 +592,154 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     public function getDataForGrid($data, $object = null) {
         return "NOT SUPPORTED";
     }
+
+
+    private function getDiffDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $objectFromVersion) {
+        $parent = Object_Service::hasInheritableParentObject($baseObject);
+        $valueGetter = "get" . ucfirst($key);
+
+        $value = $fielddefinition->getDiffDataForEditmode($item->$valueGetter(), $baseObject);
+        return $value;
+    }
+
+    /** See parent class.
+     * @param mixed $data
+     * @param null $object
+     * @return array|null
+     */
+    private function doGetDiffDataForEditmode($data, $getter, $objectFromVersion, $level = 0) {
+//        p_r($data); die();
+        $parent = Object_Service::hasInheritableParentObject($data->getObject());
+        $item = $data->$getter();
+
+        if(!$item && !empty($parent)) {
+            $data = $parent->{"get" . ucfirst($this->getName())}();
+            return $this->doGetDiffDataForEditmode($data, $getter, $objectFromVersion, $level + 1);
+        }
+
+        if (!$item instanceof Object_Objectbrick_Data_Abstract) {
+            return null;
+        }
+
+        try {
+            $collectionDef = Object_Objectbrick_Definition::getByKey($item->getType());
+        } catch (Exception $e) {
+            return null;
+        }
+
+        $brickData = array();
+        $brickMetaData = array();
+
+        $result = array();
+
+        foreach ($collectionDef->getFieldDefinitions() as $fd) {
+            $fieldData = $this->getDiffDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter, $objectFromVersion); //$fd->getDataForEditmode($item->{$fd->getName()});
+
+            $diffdata = array();
+
+            foreach ($fieldData as $subdata) {
+                $diffdata["field"] = $this->getName();
+                $diffdata["key"] = $this->getName() . "~" . $fd->getName();
+                $diffdata["value"] = $subdata["value"];
+                $diffdata["type"] = $subdata["type"];
+                $diffdata["disabled"] = $subdata["disabled"];
+
+                // this is not needed anymoe
+                unset($subdata["type"]);
+                unset($subdata["value"]);
+
+                $diffdata["title"] = $this->getName() . " / " . $subdata["title"];
+                $brickdata = array(
+                    "brick" => substr($getter, 3),
+                    "name" => $fd->getName(),
+                    "subdata" => $subdata
+                );
+                $diffdata["data"] = $brickdata;
+            }
+
+            $result[] = $diffdata;
+        }
+
+        return $result;
+    }
+
+    /** See parent class.
+     * @param mixed $data
+     * @param null $object
+     * @return array|null
+     */
+    public function getDiffDataForEditMode($data, $object = null, $objectFromVersion = null)
+    {
+        $editmodeData = array();
+
+        if ($data instanceof Object_Objectbrick) {
+            $getters = $data->getBrickGetters();
+
+            foreach ($getters as $getter) {
+                $brickdata = $this->doGetDiffDataForEditmode($data, $getter, $objectFromVersion);
+                if ($brickdata) {
+                    foreach ($brickdata as $item) {
+                        $editmodeData[] = $item;
+                    }
+                }
+            }
+        }
+
+        return $editmodeData;
+    }
+
+    /** See parent class.
+     * @param $data
+     * @param null $object
+     * @return null|Pimcore_Date
+     */
+
+    public function getDiffDataFromEditmode($data, $object = null) {
+
+        $valueGetter = "get" . ucfirst($this->getName());
+        $valueSetter = "set" . ucfirst($this->getName());
+        $brickdata = $object->$valueGetter();
+
+        foreach ($data as $item) {
+            $subdata = $item["data"];
+            if (!$subdata) {
+                continue;
+            }
+            $brickname = $subdata["brick"];
+
+            $getter = "get" . ucfirst($brickname);
+            $setter = "set" . ucfirst($brickname);
+
+            $brick = $brickdata->$getter();
+            if (!$brick) {
+                // brick must be added to object
+                $brickClass = "Object_Objectbrick_Data_" . ucfirst($brickname);
+                $brick = new $brickClass($object);
+            }
+
+            $fieldname = $subdata["name"];
+            $fielddata = array($subdata["subdata"]);
+
+            $collectionDef = Object_Objectbrick_Definition::getByKey($brickname);
+
+            $fd = $collectionDef->getFieldDefinition($fieldname);
+            if ($fd && $fd->isDiffChangeAllowed()) {
+                $value = $fd->getDiffDataFromEditmode($fielddata, $object);
+                $brick->setValue($fieldname, $value);
+
+                $brickdata->$setter($brick);
+            }
+
+            $object->$valueSetter($brickdata);
+        }
+        return $brickdata;
+    }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
 }

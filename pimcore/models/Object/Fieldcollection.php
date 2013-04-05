@@ -53,6 +53,7 @@ class Object_Fieldcollection extends Pimcore_Model_Abstract implements Iterator 
      */
     public function setItems ($items) {
         $this->items = $items;
+        return $this;
     }
 
     /**
@@ -68,6 +69,7 @@ class Object_Fieldcollection extends Pimcore_Model_Abstract implements Iterator 
      */
     public function setFieldname ($fieldname) {
         $this->fieldname = $fieldname;
+        return $this;
     }
 
     /**
@@ -88,10 +90,10 @@ class Object_Fieldcollection extends Pimcore_Model_Abstract implements Iterator 
      * @return void
      */
     public function save ($object) {
-        
+
         $this->getResource()->save($object);
         $allowedTypes = $object->getClass()->getFieldDefinition($this->getFieldname())->getAllowedTypes();
-        
+
         if(is_array($this->getItems())) {
             $index = 0;
             foreach ($this->getItems() as $collection) {

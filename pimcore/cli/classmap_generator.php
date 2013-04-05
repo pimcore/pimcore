@@ -50,24 +50,12 @@ if($opts->getOption("core")) {
     );
     $output = PIMCORE_PATH . "/config/autoload-classmap.php";
 } else {
-    $paths = explode(":", get_include_path());
+    $paths = explode(PATH_SEPARATOR, get_include_path());
     $output = PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php";
 }
 
 $globalMap = array();
-
-function createMap(Iterator $i, $map) {
-    $file      = $i->current();
-    $namespace = empty($file->namespace) ? '' : $file->namespace . '\\';
-    $filename  = str_replace(PIMCORE_DOCUMENT_ROOT, "' . \$pdr . '", $file->getRealpath());
-
-    // Windows portability
-    $filename  = str_replace(array('/', '\\'), "' . \$dsp . '", $filename);
-
-    $map->{$namespace . $file->classname} = $filename;
-
-    return true;
-}
+$map = new stdClass();
 
 foreach ($paths as $path) {
 
@@ -76,8 +64,17 @@ foreach ($paths as $path) {
 
     // Iterate over each element in the path, and create a map of
     // classname => filename, where the filename is relative to the library path
-    $map    = new stdClass;
-    iterator_apply($l, 'createMap', array($l, $map));
+    //$map    = new stdClass;
+    //iterator_apply($l, 'createMap', array($l, $map));
+
+    foreach ($l as $file) {
+        $namespace = empty($file->namespace) ? '' : $file->namespace . '\\';
+        $filename  = str_replace(PIMCORE_DOCUMENT_ROOT, "\$pdr . '", $file->getRealpath());
+
+        // Windows portability
+        $filename  = str_replace(array('/', '\\'), "/", $filename);
+        $map->{$namespace . $file->classname} = $filename;
+    }
 
     $globalMap = array_merge($globalMap, (array) $map);
 }
@@ -85,11 +82,12 @@ foreach ($paths as $path) {
 // Create a file with the class/file map.
 // Stupid syntax highlighters make separating < from PHP declaration necessary
 $content = '<' . "?php\n"
-         . '$pdr = PIMCORE_DOCUMENT_ROOT;' . "\n" . '$dsp = DIRECTORY_SEPARATOR;' . "\n"
+         . '$pdr = PIMCORE_DOCUMENT_ROOT;' . "\n"
          . 'return ' . var_export((array) $globalMap, true) . ';';
 
 // Prefix with dirname(__FILE__); modify the generated content
 $content = str_replace("\\'", "'", $content);
+$content = str_replace("'\$pdr", "\$pdr", $content);
 
 // Write the contents to disk
 file_put_contents($output, $content);

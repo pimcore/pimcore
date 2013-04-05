@@ -145,7 +145,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             });
 
             this.toolbarButtons.remove = new Ext.Button({
-                text: t('delete'),
+                text: t('delete_folder'),
                 iconCls: "pimcore_icon_delete_medium",
                 scale: "medium",
                 handler: this.remove.bind(this)
@@ -214,7 +214,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             items.push(this.notes.getLayout());
         }
 
-        var tabbar = new Ext.TabPanel({
+        this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
             deferredRender:true,
@@ -224,7 +224,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             activeTab: 0
         });
 
-        return tabbar;
+        return this.tabbar;
     },
     
     getSaveData: function () {
@@ -236,23 +236,23 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         try {
             data.properties = Ext.encode(this.properties.getValues());
         }
-        catch (e) {
-            //console.log(e);
+        catch (e1) {
+            //console.log(e1);
         }
 
 
         try {
             data.general = Ext.encode(this.data.general);
         }
-        catch (e) {
-            //console.log(e);
+        catch (e2) {
+            //console.log(e2);
         }
         
         try {
             data.gridconfig = Ext.encode(this.search.getGridConfig());
             data.class_id = this.search.currentClass;
-        } catch (e) {
-            //console.log(e);
+        } catch (e3) {
+            //console.log(e3);
         }
         
         return data;
@@ -260,8 +260,6 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
     
     save : function (task) {
 
-        
-        
         Ext.Ajax.request({
             url: '/admin/object/save-folder/task/' + task,
             method: "post",
@@ -271,17 +269,18 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
                         pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"), "success");
+                        this.resetChanges();
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error",t(rdata.message));
+                        pimcore.helpers.showNotification(t("error"), t("error_saving_object"),
+                                                                                "error",t(rdata.message));
                     }
                 } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");    
+                    pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
                 }
-            }
+            }.bind(this)
         });
-        
-        this.resetChanges();
+
     },
 
 

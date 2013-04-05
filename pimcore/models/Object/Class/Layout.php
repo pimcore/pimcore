@@ -144,6 +144,7 @@ class Object_Class_Layout {
      */
     public function setName($name) {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -152,6 +153,7 @@ class Object_Class_Layout {
      */
     public function setType($type) {
         $this->type = $type;
+        return $this;
     }
 
     /**
@@ -160,6 +162,7 @@ class Object_Class_Layout {
      */
     public function setRegion($region) {
         $this->region = $region;
+        return $this;
     }
 
     /**
@@ -168,6 +171,7 @@ class Object_Class_Layout {
      */
     public function setTitle($title) {
         $this->title = $title;
+        return $this;
     }
 
     /**
@@ -180,6 +184,7 @@ class Object_Class_Layout {
         } else {
             $this->width = $width;
         }
+        return $this;
     }
 
     /**
@@ -192,6 +197,7 @@ class Object_Class_Layout {
         } else {
             $this->height = $height;
         }
+        return $this;
     }
 
     /**
@@ -200,6 +206,7 @@ class Object_Class_Layout {
      */
     public function setCollapsible($collapsible) {
         $this->collapsible = (bool) $collapsible;
+        return $this;
     }
 
     /**
@@ -208,6 +215,7 @@ class Object_Class_Layout {
      */
     public function setPermissions($permissions) {
         $this->permissions = $permissions;
+        return $this;
     }
 
     /**
@@ -223,6 +231,7 @@ class Object_Class_Layout {
      */
     public function setChilds($childs) {
         $this->childs = $childs;
+        return $this;
     }
 
     /**
@@ -257,6 +266,7 @@ class Object_Class_Layout {
                 }
             }
         }
+        return $this;
     }
 
     /**
@@ -272,6 +282,7 @@ class Object_Class_Layout {
      */
     public function setDatatype($datatype) {
         $this->datatype = $datatype;
+        return $this;
     }
 
     /**
@@ -287,6 +298,7 @@ class Object_Class_Layout {
      */
     public function setLocked($locked) {
         $this->locked = (bool) $locked;
+        return $this;
     }
 
     /**
@@ -295,6 +307,7 @@ class Object_Class_Layout {
     public function setCollapsed($collapsed)
     {
         $this->collapsed = $collapsed;
+        return $this;
     }
 
     /**
@@ -311,6 +324,7 @@ class Object_Class_Layout {
     public function setBodyStyle($bodyStyle)
     {
         $this->bodyStyle = $bodyStyle;
+        return $this;
     }
 
     /**

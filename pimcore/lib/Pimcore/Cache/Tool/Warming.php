@@ -119,6 +119,7 @@ class Pimcore_Cache_Tool_Warming {
     public static function setTimoutBetweenIteration($timoutBetweenIteration)
     {
         self::$timoutBetweenIteration = $timoutBetweenIteration;
+        return self;
     }
 
     /**
@@ -135,6 +136,7 @@ class Pimcore_Cache_Tool_Warming {
     public static function setPerIteration($perIteration)
     {
         self::$perIteration = $perIteration;
+        return self;
     }
 
     /**

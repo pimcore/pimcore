@@ -56,6 +56,7 @@ class Document_Tag_Checkbox extends Document_Tag {
      */
     public function setDataFromResource($data) {
         $this->value = $data;
+        return $this;
     }
 
     /**
@@ -65,6 +66,7 @@ class Document_Tag_Checkbox extends Document_Tag {
      */
     public function setDataFromEditmode($data) {
         $this->value = $data;
+        return $this;
     }
 
 
@@ -90,7 +92,7 @@ class Document_Tag_Checkbox extends Document_Tag {
         * @param  Webservice_Data_Document_Element $data
         * @return void
         */
-       public function getFromWebserviceImport($wsElement){
+       public function getFromWebserviceImport($wsElement, $idMapper = null){
            $data = $wsElement->value;
            if($data->bool === null or is_bool($data)){
                 $this->value = (bool) $data->value;

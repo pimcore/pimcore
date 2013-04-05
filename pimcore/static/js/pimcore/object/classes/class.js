@@ -151,7 +151,7 @@ pimcore.object.classes.klass = Class.create({
     },
 
     reload: function(response) {
-        
+
     },
 
     initLayoutFields: function () {
@@ -159,7 +159,8 @@ pimcore.object.classes.klass = Class.create({
         if (this.data.layoutDefinitions) {
             if (this.data.layoutDefinitions.childs) {
                 for (var i = 0; i < this.data.layoutDefinitions.childs.length; i++) {
-                    this.tree.getRootNode().appendChild(this.recursiveAddNode(this.data.layoutDefinitions.childs[i], this.tree.getRootNode()));
+                    this.tree.getRootNode().appendChild(this.recursiveAddNode(this.data.layoutDefinitions.childs[i],
+                                                                                this.tree.getRootNode()));
                 }
                 this.tree.getRootNode().expand();
             }
@@ -224,15 +225,106 @@ pimcore.object.classes.klass = Class.create({
         this.attributes.reference.editpanel.doLayout();
     },
 
+    getDataMenu: function(allowedTypes, parentType, editMode) {
+        // get available data types
+        var dataMenu = [];
+        var dataComps = Object.keys(pimcore.object.classes.data);
+
+        var parentRestrictions;
+        var groups = new Array();
+        var groupNames = ["text","numeric","date","select","relation","structured","geo","other"];
+        for (var i = 0; i < dataComps.length; i++) {
+
+            var dataComp = pimcore.object.classes.data[dataComps[i]];
+
+            // check for disallowed types
+            var allowed = false;
+
+//            if(changeTypeAllowed && dataComp.prototype.allowIn[this.parentNode.attributes.reference.allowedInType]) {
+//                allowed = true;
+//            }
+
+            var theNode;
+            if (editMode) {
+                theNode = this.parentNode.attributes.reference;
+            } else {
+                theNode = this.attributes.reference;
+            }
+
+            if(dataComp.prototype.allowIn[theNode.allowedInType]) {
+                allowed = true;
+            }
+
+            if (!allowed) {
+                continue;
+            }
+
+//                if (in_array(dataComps[i], this.attributes.reference.disallowedDataTypes)) {
+//                    continue;
+//                }
+
+            if (dataComps[i] != "data") { // class data is an abstract class => disallow
+                if (in_array("data", allowedTypes[parentType]) || in_array(dataComps[i], allowedTypes[parentType])
+                /* || changeTypeAllowed */ ) {
+
+                    // check for restrictions from a parent field (eg. localized fields)
+                    if(in_array("data", allowedTypes[parentType])) {
+                        parentRestrictions = this.attributes.reference.getRestrictionsFromParent(this);
+                        if(parentRestrictions != null) {
+                            if(!in_array(dataComps[i], allowedTypes[parentRestrictions])) {
+                                continue;
+                            }
+                        }
+                    }
+
+                    var group = pimcore.object.classes.data[dataComps[i]].prototype.getGroup();
+                    if (!groups[group]) {
+                        if (!in_array(group, groupNames)) {
+                            groupNames.push(group);
+                        }
+                        groups[group] = new Array();
+                    }
+                    var handler;
+                    if (editMode) {
+                        handler = this.attributes.reference.changeDataType.bind(this, dataComps[i]);
+                    } else {
+                        handler = this.attributes.reference.addDataChild.bind(this, dataComps[i]);
+                    }
+
+                    groups[group].push({
+                        text: pimcore.object.classes.data[dataComps[i]].prototype.getTypeName(),
+                        iconCls: pimcore.object.classes.data[dataComps[i]].prototype.getIconClass(),
+                        handler: handler
+                    });
+                }
+            }
+        }
+
+        for (i = 0; i < groupNames.length; i++) {
+            if (groups[groupNames[i]] && groups[groupNames[i]].length > 0) {
+                dataMenu.push(new Ext.menu.Item({
+                    text: t(groupNames[i]),
+                    iconCls: "pimcore_icon_data_group_" + groupNames[i],
+                    hideOnClick: false,
+                    menu: groups[groupNames[i]]
+                }));
+            }
+        }
+        return dataMenu;
+    },
+
+
     onTreeNodeContextmenu: function () {
         this.select();
 
         var menu = new Ext.menu.Menu();
 
-
         //get all allowed data types for localized fields
         var lftypes = ["panel","tabpanel","accordion","fieldset","text","region","button"];
-        //["checkbox","select","date","datetime","time","image","input","link","numeric","slider","table","wysiwyg","textarea","panel","tabpanel","accordion","fieldset","text","html","region","multiselect", "countrymultiselect","languagemultiselect","objects","multihref","href","hotspotimage","geopoint","geobounds","geopolygon","structuredTable"]
+        //["checkbox","select","date","datetime","time","image","input","link","numeric","slider","table","wysiwyg",
+        // "textarea","panel","tabpanel","accordion","fieldset","text","html","region","multiselect",
+        // "countrymultiselect","languagemultiselect","objects","multihref","href","hotspotimage","geopoint",
+        // "geobounds","geopolygon","structuredTable"]
 
         var dataComps = Object.keys(pimcore.object.classes.data);
 
@@ -262,12 +354,18 @@ pimcore.object.classes.klass = Class.create({
             parentType = this.attributes.object.type;
         }
 
+        var changeTypeAllowed = false;
+        var changeTypeItem;
+        if (this.attributes.type == "data") {
+            changeTypeAllowed = true;
+        }
+
         var childsAllowed = false;
         if (allowedTypes[parentType] && allowedTypes[parentType].length > 0) {
             childsAllowed = true;
         }
 
-        if (childsAllowed) {
+        if (childsAllowed || changeTypeAllowed) {
             // get available layouts
             var layoutMenu = [];
             var layouts = Object.keys(pimcore.object.classes.layout);
@@ -285,62 +383,8 @@ pimcore.object.classes.klass = Class.create({
                 }
             }
 
-            // get available data types
-            var dataMenu = [];
-            var dataComps = Object.keys(pimcore.object.classes.data);
-
-            var parentRestrictions;
-            var groups = new Array();
-            var groupNames = ["text","numeric","date","select","relation","structured","geo","other"];
-            for (var i = 0; i < dataComps.length; i++) {
-
-                // check for disallowed types
-                if(pimcore.object.classes.data[dataComps[i]].prototype.allowIn[this.attributes.reference.allowedInType] == false) {
-                    continue;
-                }
-//                if (in_array(dataComps[i], this.attributes.reference.disallowedDataTypes)) {
-//                    continue;
-//                }
-
-                if (dataComps[i] != "data") { // class data is an abstract class => disallow
-                    if (in_array("data", allowedTypes[parentType]) || in_array(dataComps[i], allowedTypes[parentType])) {
-
-                        // check for restrictions from a parent field (eg. localized fields)
-                        if(in_array("data", allowedTypes[parentType])) {
-                            parentRestrictions = this.attributes.reference.getRestrictionsFromParent(this);
-                            if(parentRestrictions != null) {
-                                if(!in_array(dataComps[i], allowedTypes[parentRestrictions])) {
-                                    continue;
-                                }
-                            }
-                        }
-
-                        var group = pimcore.object.classes.data[dataComps[i]].prototype.getGroup();
-                        if (!groups[group]) {
-                            if (!in_array(group, groupNames)) {
-                                groupNames.push(group);
-                            }
-                            groups[group] = new Array();
-                        }
-                        groups[group].push({
-                            text: pimcore.object.classes.data[dataComps[i]].prototype.getTypeName(),
-                            iconCls: pimcore.object.classes.data[dataComps[i]].prototype.getIconClass(),
-                            handler: this.attributes.reference.addDataChild.bind(this, dataComps[i])
-                        });
-                    }
-                }
-            }
-
-            for (i = 0; i < groupNames.length; i++) {
-                if (groups[groupNames[i]] && groups[groupNames[i]].length > 0) {
-                    dataMenu.push(new Ext.menu.Item({
-                        text: t(groupNames[i]),
-                        iconCls: "pimcore_icon_data_group_" + groupNames[i],
-                        hideOnClick: false,
-                        menu: groups[groupNames[i]]
-                    }));
-                }
-            }
+            var getDataMenu = this.attributes.reference.getDataMenu.bind(this);
+            var addDataMenu = getDataMenu(allowedTypes, parentType, false);
 
             if (layoutMenu.length > 0) {
                 menu.add(new Ext.menu.Item({
@@ -351,14 +395,25 @@ pimcore.object.classes.klass = Class.create({
                 }));
             }
 
-            if (dataMenu.length > 0) {
+            if (addDataMenu.length > 0) {
                 menu.add(new Ext.menu.Item({
                     text: t('add_data_component'),
                     iconCls: "pimcore_icon_add",
                     hideOnClick: false,
-                    menu: dataMenu
+                    menu: addDataMenu
                 }));
             }
+
+            if (changeTypeAllowed) {
+                var changeDataMenu = getDataMenu(allowedTypes, this.parentNode.attributes.object.type, true);
+                menu.add(new Ext.menu.Item({
+                    text: t('change_type'),
+                    iconCls: "pimcore_icon_change_type",
+                    hideOnClick: false,
+                    menu: changeDataMenu
+                }));
+            }
+
         }
 
         var deleteAllowed = true;
@@ -637,6 +692,53 @@ pimcore.object.classes.klass = Class.create({
         return newNode;
     },
 
+    changeDataType: function (type, initData) {
+        try {
+            this.attributes.object.applyData();
+        } catch (e) {
+            // an exception will be thrown if the right-clicked treenode is not the currently selected one.
+        }
+        var nodeLabel = this.text;
+
+        var theData = {};
+
+        theData.name = nodeLabel;
+        theData.datatype = "data";
+        theData.fieldtype = type;
+
+        var isLeaf = this.leaf;
+
+        var newNode = new Ext.tree.TreeNode({
+            text: nodeLabel,
+            type: "data",
+            reference: this.parentNode.attributes.reference,
+            leaf: true,
+            iconCls: "pimcore_icon_" + type,
+            listeners: this.parentNode.attributes.reference.getTreeNodeListeners()
+        });
+
+        newNode.attributes.object = new pimcore.object.classes.data[type](newNode, theData);
+
+        var availableFields = newNode.attributes.object.availableSettingsFields;
+        for (var i = 0;  i < availableFields.length; i++) {
+            var field = availableFields[i];
+            if (this.attributes.object.datax[field]) {
+                newNode.attributes.object.datax[field] = this.attributes.object.datax[field];
+            }
+        }
+
+        this.parentNode.insertBefore(newNode, this);
+
+        this.remove();
+
+        var f = this.attributes.reference.onTreeNodeClick.bind(newNode);
+        f();
+
+        return newNode;
+    },
+
+
+
     removeChild: function () {
         if (this.id != 0) {
             if (this.attributes.reference.currentNode == this.attributes.object) {
@@ -665,6 +767,7 @@ pimcore.object.classes.klass = Class.create({
                 }
 
                 if (fieldValidation && in_arrayi(data.name,this.usedFieldNames) == false) {
+
                     if(data.datatype == "data") {
                         this.usedFieldNames.push(data.name);
                     }
@@ -673,7 +776,18 @@ pimcore.object.classes.klass = Class.create({
                 }
                 else {
                     node.getUI().addClass("tree_node_error");
-                    pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error");
+
+
+                    var invalidFieldsText = null;
+
+                    if(node.attributes.object.invalidFieldNames){
+                        invalidFieldsText = t("reserved_field_names_error")
+                                +(implode(',',node.attributes.object.forbiddenNames));
+                    }
+                    pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error",
+                                                                        invalidFieldsText);
+
+
 
                     this.getDataSuccess = false;
                     return false;
@@ -709,23 +823,30 @@ pimcore.object.classes.klass = Class.create({
 
         this.saveCurrentNode();
 
-        delete this.data.layoutDefinitions;
+        var regresult = this.data["name"].match(/[a-zA-Z]+/);
 
-        var m = Ext.encode(this.getData());
-        var n = Ext.encode(this.data);
+        if (this.data["name"].length > 2 && regresult == this.data["name"] && !in_array(this.data["name"].toLowerCase(),
+                                                        this.parentPanel.forbiddennames)) {
+            delete this.data.layoutDefinitions;
 
-        if (this.getDataSuccess) {
-            Ext.Ajax.request({
-                url: "/admin/class/save",
-                method: "post",
-                params: {
-                    configuration: m,
-                    values: n,
-                    id: this.data.id
-                },
-                success: this.saveOnComplete.bind(this),
-                failure: this.saveOnError.bind(this)
-            });
+            var m = Ext.encode(this.getData());
+            var n = Ext.encode(this.data);
+
+            if (this.getDataSuccess) {
+                Ext.Ajax.request({
+                    url: "/admin/class/save",
+                    method: "post",
+                    params: {
+                        configuration: m,
+                        values: n,
+                        id: this.data.id
+                    },
+                    success: this.saveOnComplete.bind(this),
+                    failure: this.saveOnError.bind(this)
+                });
+            }
+        } else {
+            Ext.Msg.alert(t('add_class'), t('invalid_class_name'));
         }
     },
 

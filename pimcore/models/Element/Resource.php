@@ -28,6 +28,13 @@ abstract class Element_Resource extends Pimcore_Model_Resource_Abstract {
 
         if($obj) {
             while($obj) {
+                if($obj->getId() == 1) {
+                    break;
+                }
+                if(in_array($obj->getId(), $parentIds)) {
+                    throw new \Exception("detected infinite loop while resolving all parents from " . $this->model->getId() . " on " . $obj->getId());
+                }
+
                 $parentIds[] = $obj->getId();
                 $obj = $obj->getParent();
             }

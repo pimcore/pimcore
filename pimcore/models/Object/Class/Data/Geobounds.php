@@ -215,12 +215,22 @@ class Object_Class_Data_Geobounds extends Object_Class_Data_Geo_Abstract {
     public function getFromWebserviceImport ($value) {
         if(empty($value)){
             return null;
-        } else if($value["NElongitude"] !== null && $value["NElatitude"] !== null && $value["SWlongitude"] !== null && $value["SWlatitude"] !== null) {
-            $ne = new Object_Data_Geopoint($value["NElongitude"], $value["NElatitude"]);
-            $sw = new Object_Data_Geopoint($value["SWlongitude"], $value["SWlatitude"]);
-            return new Object_Data_Geobounds($ne,$sw);
         } else {
-            throw new Exception("cannot get values from web service import - invalid data");
+            $value = (array) $value;
+            if($value["NElongitude"] !== null && $value["NElatitude"] !== null && $value["SWlongitude"] !== null && $value["SWlatitude"] !== null) {
+                $ne = new Object_Data_Geopoint($value["NElongitude"], $value["NElatitude"]);
+                $sw = new Object_Data_Geopoint($value["SWlongitude"], $value["SWlatitude"]);
+                return new Object_Data_Geobounds($ne,$sw);
+            } else {
+                throw new Exception("cannot get values from web service import - invalid data");
+            }
         }
+    }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
     }
 }

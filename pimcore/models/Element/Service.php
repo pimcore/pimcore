@@ -15,7 +15,41 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Service {
+class Element_Service extends Pimcore_Model_Abstract {
+
+    /**
+     * @static
+     * @param  $element
+     * @return string
+     */
+    public static function getIdPath($element) {
+
+        $path = "";
+
+        if ($element instanceof Document) {
+            $nid = $element->getParentId();
+            $ne = Document::getById($nid);
+        }
+        else if ($element instanceof Asset) {
+            $nid = $element->getParentId();
+            $ne = Asset::getById($nid);
+        }
+        else if ($element instanceof Object_Abstract) {
+            $nid = $element->getO_parentId();
+            $ne = Object_Abstract::getById($nid);
+        }
+
+        if ($ne) {
+            $path = self::getIdPath($ne, $path);
+        }
+
+        if ($element) {
+            $path = $path . "/" . $element->getId();
+        }
+
+        return $path;
+    }
+
 
     /**
      * @param Dependency $d
@@ -23,8 +57,6 @@ class Element_Service {
      */
     public static function getRequiredByDependenciesForFrontend(Dependency $d)
     {
-
-        $user = Zend_Registry::get("pimcore_user");
         $dependencies["hasHidden"] = false;
         $dependencies["requiredBy"] = array();
 
@@ -47,8 +79,6 @@ class Element_Service {
      */
     public static function getRequiresDependenciesForFrontend(Dependency $d)
     {
-
-        $user = Zend_Registry::get("pimcore_user");
         $dependencies["hasHidden"] = false;
         $dependencies["requires"] = array();
 
@@ -300,6 +330,12 @@ class Element_Service {
      */
     protected static function performSanityCheck($element)
     {
+        if($latestVersion = $element->getLatestVersion()) {
+            if($latestVersion->getDate() > $element->getModificationDate()) {
+                return;
+            }
+        }
+
         $element->setUserModification(0);
         $element->save();
 
@@ -543,5 +579,79 @@ class Element_Service {
     public function cleanupBrokenViews () {
 
         $this->getResource()->cleanupBrokenViews();
+    }
+
+
+    /**
+     * Creates Object/Document/Asset folders by a path
+     *
+     * @param string $path
+     * @param Object | Document | Asset $type
+     * @param array $options
+     * @throws Exception
+     */
+    public static function createFolderByPath($path,$options = array()) {
+        $calledClass = get_called_class();
+
+        if($calledClass == __CLASS__){
+            throw new Exception("This method must be called from a extended class. e.g Asset_Service, Object_Service, Document_Service");
+        }
+
+        $type = str_replace('_Service','',$calledClass);
+        $folderType = $type . '_Folder';
+
+        $lastFolder = null;
+        $pathsArray = array();
+        if (!$folderType::getByPath($path)) {
+            $parts = explode('/', $path);
+            $parts = array_filter($parts);
+
+            foreach ($parts as $part) {
+                $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . Pimcore_File::getValidFilename($part);
+            }
+
+            for ($i = 0; $i < count($pathsArray); $i++) {
+                $currentPath = $pathsArray[$i];
+                if (!$folderType::getByPath($currentPath) instanceof $folderType) {
+                    $parentFolderPath = ($i ==0) ? '/' : $pathsArray[$i - 1];
+
+                    $parentFolder = $folderType::getByPath($parentFolderPath);
+
+                    $folder = new $folderType();
+                    $folder->setParent($parentFolder);
+                    if ($parentFolder) {
+                        $folder->setParentId($parentFolder->getId());
+                    } else {
+                        $folder->setParentId(1);
+                    }
+
+                    $key = substr($currentPath, strrpos($currentPath, '/') + 1, strlen($currentPath));
+
+                    if (method_exists($folder, 'setKey')) {
+                        $folder->setKey($key);
+                    }
+
+                    if (method_exists($folder, 'setFilename')) {
+                        $folder->setFilename($key);
+                    }
+
+                    if (method_exists($folder, 'setType')) {
+                        $folder->setType('folder');
+                    }
+
+                    $folder->setPath($currentPath);
+                    $folder->setUserModification(0);
+                    $folder->setUserOwner(1);
+                    $folder->setCreationDate(time());
+                    $folder->setModificationDate(time());
+                    $folder->setValues($options);
+                    $folder->save();
+                    $lastFolder = $folder;
+                }
+            }
+        } else {
+            return $folderType::getByPath($path);
+        }
+        return $lastFolder;
     }
 }

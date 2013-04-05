@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2001-2013, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,28 +34,23 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @subpackage Framework
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 2.0.0
  */
 
-require_once 'PHPUnit/Framework.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * A TestFailure collects a failed test together with the caught exception.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.14
+ * @subpackage Framework
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 2.0.0
  */
@@ -119,71 +114,14 @@ class PHPUnit_Framework_TestFailure
     public static function exceptionToString(Exception $e)
     {
         if ($e instanceof PHPUnit_Framework_SelfDescribing) {
-            if ($e instanceof PHPUnit_Framework_ExpectationFailedException) {
-                $comparisonFailure = $e->getComparisonFailure();
-                $description       = $e->getDescription();
-                $message           = $e->getCustomMessage();
+            $buffer = $e->toString();
 
-                if ($message == '') {
-                    $buffer = '';
-                } else {
-                    $buffer = $message . "\n";
-                }
-
-                if ($comparisonFailure !== NULL) {
-                    if ($comparisonFailure->identical()) {
-                        if ($comparisonFailure instanceof PHPUnit_Framework_ComparisonFailure_Object) {
-                            $buffer .= 'Failed asserting that two variables ' .
-                                       "reference the same object.\n";
-                        } else {
-                            $buffer .= $comparisonFailure->toString() . "\n";
-                        }
-                    } else {
-                        if ($comparisonFailure instanceof PHPUnit_Framework_ComparisonFailure_Scalar) {
-                            $buffer .= sprintf(
-                              "Failed asserting that %s matches expected %s.\n",
-
-                              PHPUnit_Util_Type::toString(
-                                $comparisonFailure->getActual()
-                              ),
-                              PHPUnit_Util_Type::toString(
-                                $comparisonFailure->getExpected()
-                              )
-                            );
-                        }
-
-                        else if ($comparisonFailure instanceof PHPUnit_Framework_ComparisonFailure_Array ||
-                                 $comparisonFailure instanceof PHPUnit_Framework_ComparisonFailure_Object ||
-                                 $comparisonFailure instanceof PHPUnit_Framework_ComparisonFailure_String) {
-                            $buffer .= sprintf(
-                              "Failed asserting that two %ss are equal.\n%s\n",
-
-                              strtolower(
-                                substr(get_class($comparisonFailure), 36)
-                              ),
-                              $comparisonFailure->toString()
-                            );
-                        }
-                    }
-                } else {
-                    $buffer .= $e->toString();
-
-                    if (!empty($buffer)) {
-                        $buffer .= "\n";
-                    }
-
-                    if (strpos($buffer, $description) === FALSE) {
-                        $buffer .= $description . "\n";
-                    }
-                }
+            if ($e instanceof PHPUnit_Framework_ExpectationFailedException && $e->getComparisonFailure()) {
+                $buffer = $buffer . "\n" . $e->getComparisonFailure()->getDiff();
             }
 
-            else {
-                $buffer = $e->toString();
-
-                if (!empty($buffer)) {
-                    $buffer .= "\n";
-                }
+            if (!empty($buffer)) {
+                $buffer = trim($buffer) . "\n";
             }
         }
 
@@ -239,4 +177,3 @@ class PHPUnit_Framework_TestFailure
         return ($this->thrownException() instanceof PHPUnit_Framework_AssertionFailedError);
     }
 }
-?>

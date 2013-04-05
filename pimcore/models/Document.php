@@ -24,11 +24,21 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public static $types = array("folder", "page", "snippet", "link", "hardlink", "email");  //ck added "email"
 
+    public static function addDocumentType($type) {
+        if(!in_array($type, self::$types)) {
+            self::$types[] = $type;
+        }
+    }
+
+
     
     private static $hidePublished = false;
+
     public static function setHideUnpublished($hidePublished) {
         self::$hidePublished = $hidePublished;
+        return self;
     }
+
     public static function doHideUnpublished() {
         return self::$hidePublished;
     }
@@ -74,11 +84,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @var string
      */
     public $path;
-
-    /**
-     * @var string old path before update, later needed to update children
-     */
-    protected $_oldPath;
 
     /**
      * Sorter index in the tree, can also be used for generating a navigation and so on
@@ -312,6 +317,24 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         }
     }
 
+    /**
+     * @param array $config
+     * @return total count
+     */
+    public static function getTotalCount($config = array()) {
+
+        if (is_array($config)) {
+            $listClass = "Document_List";
+            $listClass = Pimcore_Tool::getModelClassMapping($listClass);
+            $list = new $listClass();
+
+            $list->setValues($config);
+            $count = $list->getTotalCount();
+
+            return $count;
+        }
+    }
+
 
     /**
      * Saves the document
@@ -320,28 +343,68 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function save() {
 
-        if (!Pimcore_Tool::isValidKey($this->getKey())) {
-            throw new Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
-        }
-
-        $this->correctPath();
-        // set date
-        $this->setModificationDate(time());
-
+        $isUpdate = false;
         if ($this->getId()) {
-            $this->update();
-        }
-        else {
+            $isUpdate = true;
+            Pimcore_API_Plugin_Broker::getInstance()->preUpdateDocument($this);
+        } else {
             Pimcore_API_Plugin_Broker::getInstance()->preAddDocument($this);
-            $this->getResource()->create();
-            Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
-            $this->update();
         }
+
+        $this->beginTransaction();
+
+        try {
+            // check for a valid key, home has no key, so omit the check
+            if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
+                throw new Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
+            }
+
+            $this->correctPath();
+            // set date
+            $this->setModificationDate(time());
+
+            if (!$isUpdate) {
+                $this->getResource()->create();
+            }
+
+            // get the old path from the database before the update is done
+            $oldPath = null;
+            if ($isUpdate) {
+                $oldPath = $this->getResource()->getCurrentFullPath();
+            }
+
+            $this->update();
+
+            // if the old path is different from the new path, update all children
+            if($oldPath && $oldPath != $this->getFullPath()) {
+                $this->getResource()->updateChildsPaths($oldPath);
+            }
+
+            $this->commit();
+        } catch (Exception $e) {
+            $this->rollBack();
+
+            throw $e;
+        }
+
+        if ($isUpdate) {
+            Pimcore_API_Plugin_Broker::getInstance()->postUpdateDocument($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
+        }
+
+        // empty object cache
+        $this->clearDependentCache();
     }
 
     public function correctPath() {
         // set path
         if ($this->getId() != 1) { // not for the root node
+
+            if($this->getParentId() == $this->getId()) {
+                throw new Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+            }
+
             $parent = Document::getById($this->getParentId());
             if($parent) {
                 $this->setPath(str_replace("//", "/", $parent->getRealFullPath() . "/"));
@@ -370,14 +433,17 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      *
      * @return void
      */
-    public function update() {
+    protected function update() {
 
         if (!$this->getKey() && $this->getId() != 1) {
             $this->delete();
             throw new Exception("Document requires key, document with id " . $this->getId() . " deleted");
         }
 
-        Pimcore_API_Plugin_Broker::getInstance()->preUpdateDocument($this);
+        $disallowedKeysInFirstLevel = array("install","admin","webservice","plugin");
+        if($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
+            throw new Exception("Key: " . $this->getKey() . " is not allowed in first level (root-level)");
+        }
 
         // save properties
         $this->getProperties();
@@ -387,6 +453,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                 if (!$property->getInherited()) {
                     $property->setResource(null);
                     $property->setCid($this->getId());
+                    $property->setCtype("document");
                     $property->setCpath($this->getRealFullPath());
                     $property->save();
                 }
@@ -410,22 +477,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
         $this->getResource()->update();
 
-        if ($this->_oldPath) {
-            // update childs path
-            $this->getResource()->updateChildsPaths($this->_oldPath);
-        }
-
-        // empty object cache
-        $this->clearDependedCache();
-
         //set object to registry
         Zend_Registry::set("document_" . $this->getId(), $this);
-
-        Pimcore_API_Plugin_Broker::getInstance()->postUpdateDocument($this);
-
     }
 
-    public function clearDependedCache() {
+    public function clearDependentCache() {
         try {
             Pimcore_Model_Cache::clearTag("document_" . $this->getId());
         }
@@ -514,6 +570,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         } else {
             $this->hasChilds=false;
         }
+        return $this;
     }
 
     /**
@@ -577,6 +634,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setLocked($locked){
         $this->locked = $locked;
+        return $this;
     }
 
     /**
@@ -621,7 +679,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $this->getResource()->delete();
 
         // clear cache
-        $this->clearDependedCache();
+        $this->clearDependentCache();
 
         //set object to registry
         Zend_Registry::set("document_" . $this->getId(), null);
@@ -638,8 +696,8 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
         // check if this document is also the site root, if so return /
         try {
-            if(Zend_Registry::isRegistered("pimcore_site")) {
-                $site = Zend_Registry::get("pimcore_site");
+            if(Site::isSiteRequest()) {
+                $site = Site::getCurrentSite();
                 if ($site instanceof Site) {
                     if ($site->getRootDocument()->getId() == $this->getId()) {
                         return "/";
@@ -648,6 +706,49 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             }
         } catch (Exception $e) {
             Logger::error($e);
+        }
+
+        // @TODO please forgive me, this is the dirtiest hack I've ever made :(
+        // if you got confused by this functionality drop me a line and I'll buy you some beers :)
+
+        // this is for the case that a link points to a document outside of the current site
+        // in this case we look for a hardlink in the current site which points to the current document
+        // why this could happen: we have 2 sites, in one site there's a hardlink to the other site and on a page inside
+        // the hardlink there are snippets embedded and this snippets have links pointing to a document which is also
+        // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
+        // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
+        if(!Pimcore::inAdmin() && Site::isSiteRequest() && !Pimcore_Tool_Frontend::isDocumentInCurrentSite($this)) {
+
+            $documentService = new Document_Service();
+            $parent = $this;
+            while($parent) {
+                if($hardlinkId = $documentService->getDocumentIdFromHardlinkInSameSite(Site::getCurrentSite(), $parent)) {
+                    $hardlink = Document::getById($hardlinkId);
+                    if(Pimcore_Tool_Frontend::isDocumentInCurrentSite($hardlink)) {
+
+                        $siteRootPath = Site::getCurrentSite()->getRootPath();
+                        $siteRootPath = preg_quote($siteRootPath);
+                        $hardlinkPath = preg_replace("@^" . $siteRootPath . "@", "", $hardlink->getRealFullPath());
+
+                        return preg_replace("@^" . preg_quote($parent->getRealFullPath()) . "@", $hardlinkPath, $this->getRealFullPath());
+                        break;
+                    }
+                }
+                $parent = $parent->getParent();
+            }
+
+            $config = Pimcore_Config::getSystemConfig();
+            $front = Zend_Controller_Front::getInstance();
+            $scheme = ($front->getRequest()->isSecure() ? "https" : "http") . "://";
+            if($site = Pimcore_Tool_Frontend::getSiteForDocument($this)) {
+                // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /
+                if ($site->getRootDocument()->getId() == $this->getId()) {
+                    return $scheme . $site->getMainDomain() . "/";
+                }
+                return $scheme . $site->getMainDomain() . preg_replace("@^" . $site->getRootPath() . "/@", "/", $this->getRealFullPath());
+            } else if ($config->general->domain) {
+                return $scheme . $config->general->domain . $this->getRealFullPath();
+            }
         }
 
         $path = $this->getPath() . $this->getKey();
@@ -694,23 +795,20 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function getPath() {
 
-        if(!Pimcore::inAdmin()) {
-            // check for site
-            try {
-                if(Zend_Registry::isRegistered("pimcore_site")) {
-                    $site = Zend_Registry::get("pimcore_site");
-                    if ($site instanceof Site) {
-                        if ($site->getRootDocument() instanceof Document_Page && $site->getRootDocument() !== $this) {
-                            $rootPath = $site->getRootPath();
-                            $rootPath = addcslashes($rootPath, "/");
-
-                            return preg_replace("/^" . $rootPath . "/", "", $this->path);
-                        }
+        // check for site, if so rewrite the path for output
+        try {
+            if(!Pimcore::inAdmin() && Site::isSiteRequest()) {
+                $site = Site::getCurrentSite();
+                if ($site instanceof Site) {
+                    if ($site->getRootDocument() instanceof Document_Page && $site->getRootDocument() !== $this) {
+                        $rootPath = $site->getRootPath();
+                        $rootPath = preg_quote($rootPath);
+                        return preg_replace("@^" . $rootPath . "@", "", $this->path);
                     }
                 }
-            } catch (Exception $e) {
-                Logger::error($e);
             }
+        } catch (Exception $e) {
+            Logger::error($e);
         }
 
         return $this->path;
@@ -737,6 +835,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setCreationDate($creationDate) {
         $this->creationDate = (int) $creationDate;
+        return $this;
     }
 
     /**
@@ -744,10 +843,8 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setId($id) {
-        //TODO: why can't I set a document ID null through setter?
-        if ($id) {
-            $this->id = (int) $id;
-        }
+        $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -755,12 +852,8 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setKey($key) {
-        //set old path so that child paths are updated after this document was saved
-        if ($this->key != null and $key != null and $key != $this->key) {
-            $this->_oldPath = $this->getResource()->getCurrentFullPath();
-        }
         $this->key = $key;
-
+        return $this;
     }
 
 
@@ -770,6 +863,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setModificationDate($modificationDate) {
         $this->modificationDate = (int) $modificationDate;
+        return $this;
     }
 
 
@@ -778,11 +872,8 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setParentId($parentId) {
-
-        if ($this->parentId != null and $parentId != null and $this->parentId != $parentId) {
-            $this->_oldPath = $this->getResource()->getCurrentFullPath();
-        }
         $this->parentId = (int) $parentId;
+        return $this;
     }
 
     /**
@@ -791,6 +882,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setPath($path) {
         $this->path = $path;
+        return $this;
     }
 
     /**
@@ -806,6 +898,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setIndex($index) {
         $this->index = (int) $index;
+        return $this;
     }
 
     /**
@@ -821,6 +914,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setType($type) {
         $this->type = $type;
+        return $this;
     }
 
     /**
@@ -843,6 +937,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setUserModification($userModification) {
         $this->userModification = (int) $userModification;
+        return $this;
     }
 
     /**
@@ -851,6 +946,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setUserOwner($userOwner) {
         $this->userOwner = (int) $userOwner;
+        return $this;
     }
 
     /**
@@ -873,6 +969,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setPublished($published) {
         $this->published = (bool) $published;
+        return $this;
     }
 
     /**
@@ -901,6 +998,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setProperties($properties) {
         $this->properties = $properties;
+        return $this;
     }
 
     /**
@@ -953,6 +1051,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $property->setInheritable($inheritable);
 
         $this->properties[$name] = $property;
+        return $this;
     }
 
     /**
@@ -973,6 +1072,10 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setParent ($parent) {
         $this->parent = $parent;
+        if($parent instanceof Document) {
+            $this->parentId = $parent->getId();
+        }
+        return $this;
     }
 
     /**
@@ -1028,12 +1131,12 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         
         if(isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = array("dependencies", "userPermissions", "hasChilds", "_oldPath", "versions", "scheduledTasks", "parent");
+            $blockedVars = array("dependencies", "userPermissions", "hasChilds", "versions", "scheduledTasks", "parent");
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array("dependencies", "userPermissions", "childs", "hasChilds", "_oldPath", "versions", "scheduledTasks", "properties", "parent");
+            $blockedVars = array("dependencies", "userPermissions", "childs", "hasChilds", "versions", "scheduledTasks", "properties", "parent");
         }
         
 
@@ -1048,7 +1151,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     
     public function __wakeup() {
         if(isset($this->_fulldump) && $this->properties !== null) {
-            unset($this->_fulldump);
             $this->renewInheritedProperties();
         }
 
@@ -1059,9 +1161,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                 $this->setKey($originalElement->getKey());
                 $this->setPath($originalElement->getPath());
             }
+
+            unset($this->_fulldump);
         }
     }
-    
+
     public function removeInheritedProperties () {
         $myProperties = array();
         if($this->properties !== null) {
@@ -1082,4 +1186,5 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $inheritedProperties = $this->getResource()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
+
 }

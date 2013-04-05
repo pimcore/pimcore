@@ -32,7 +32,8 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
         this.initData(initData);
 
         // overwrite default settings
-        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible","visibleGridView","visibleSearch","style"];
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
+                                        "visibleGridView","visibleSearch","style"];
 
         this.treeNode = treeNode;
     },

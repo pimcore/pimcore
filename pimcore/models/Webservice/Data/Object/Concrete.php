@@ -45,14 +45,19 @@ class Webservice_Data_Object_Concrete extends Webservice_Data_Object {
                 $el = new Webservice_Data_Object_Element();
                 $el->name = $field->getName();
                 $el->type = $field->getFieldType();
+
                 $el->value = $field->getForWebserviceExport($object);
+                if ($el->value == null && self::$dropNullValues) {
+                    continue;
+                }
+
                 $this->elements[] = $el;
             }
 
         }
     }
 
-    public function reverseMap($object, $disableMappingExceptions = false) {
+    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null) {
 
         $keys = get_object_vars($this);
         foreach ($keys as $key => $value) {
@@ -63,7 +68,7 @@ class Webservice_Data_Object_Concrete extends Webservice_Data_Object {
         }
 
         //must be after generic setters above!!
-        parent::reverseMap($object, $disableMappingExceptions);
+        parent::reverseMap($object, $disableMappingExceptions, $idMapper);
 
         if (is_array($this->elements)) {
             foreach ($this->elements as $element) {
@@ -73,9 +78,10 @@ class Webservice_Data_Object_Concrete extends Webservice_Data_Object {
                     if (method_exists($object, $setter)) {
                         $tag = $object->getO_class()->getFieldDefinition($element->name);
                         if($class instanceof Object_Class_Data_Fieldcollections){
-                            $object->$setter($tag->getFromWebserviceImport($element->fieldcollection));
+                            $object->$setter($tag->getFromWebserviceImport($element->fieldcollection, $object,
+                                                                                        $idMapper));
                         } else {
-                            $object->$setter($tag->getFromWebserviceImport($element->value, $object));
+                            $object->$setter($tag->getFromWebserviceImport($element->value, $object, $idMapper));
                         }
 
                         

@@ -47,23 +47,24 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                metaData.css += " grid_value_inherited";
-            }
-
-            if (value && value.length > 0) {
-
-                // only show 10 relations in the grid
-                var maxAmount = 10;
-                if(value.length > maxAmount) {
-                    value.splice(maxAmount, (value.length - maxAmount) );
-                    value.push("...");
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer:
+            function (key, value, metaData, record) {
+                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    metaData.css += " grid_value_inherited";
                 }
 
-                return value.join("<br />");
-            }
-        }.bind(this, field.key)};
+                if (value && value.length > 0) {
+
+                    // only show 10 relations in the grid
+                    var maxAmount = 10;
+                    if(value.length > maxAmount) {
+                        value.splice(maxAmount, (value.length - maxAmount) );
+                        value.push("...");
+                    }
+
+                    return value.join("<br />");
+                }
+            }.bind(this, field.key)};
     },    
 
     openParentSearchEditor: function(){
@@ -202,6 +203,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     getCreateControl: function () {
 
         var allowedClasses;
+        var i;
+
         var classStore = pimcore.globalmanager.get("object_types_store");
         if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
             allowedClasses = [];
@@ -266,8 +269,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         var cls = 'object_field';
 
         this.component = new Ext.grid.GridPanel({
-            plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
             store: this.store,
+            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
                     sortable: false
@@ -276,6 +279,40 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     {header: 'ID', dataIndex: 'id', width: 50},
                     {id: "path", header: t("path"), dataIndex: 'path', width: 200},
                     {header: t("type"), dataIndex: 'type', width: 100},
+                    {
+                        xtype:'actioncolumn',
+                        width:30,
+                        items:[
+                            {
+                                tooltip:t('up'),
+                                icon:"/pimcore/static/img/icon/arrow_up.png",
+                                handler:function (grid, rowIndex) {
+                                    if (rowIndex > 0) {
+                                        var rec = grid.getStore().getAt(rowIndex);
+                                        grid.getStore().removeAt(rowIndex);
+                                        grid.getStore().insert(rowIndex - 1, [rec]);
+                                    }
+                                }.bind(this)
+                            }
+                        ]
+                    },
+                    {
+                        xtype:'actioncolumn',
+                        width:30,
+                        items:[
+                            {
+                                tooltip:t('down'),
+                                icon:"/pimcore/static/img/icon/arrow_down.png",
+                                handler:function (grid, rowIndex) {
+                                    if (rowIndex < (grid.getStore().getCount() - 1)) {
+                                        var rec = grid.getStore().getAt(rowIndex);
+                                        grid.getStore().removeAt(rowIndex);
+                                        grid.getStore().insert(rowIndex + 1, [rec]);
+                                    }
+                                }.bind(this)
+                            }
+                        ]
+                    },
                     {
                         xtype: 'actioncolumn',
                         width: 30,
@@ -609,7 +646,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         var classname = data.node.attributes.className;
         var isAllowedClass = false;
         if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
-            for (i = 0; i < this.fieldConfig.classes.length; i++) {
+            for (var i = 0; i < this.fieldConfig.classes.length; i++) {
                 if (this.fieldConfig.classes[i].classes == classname) {
                     isAllowedClass = true;
                     break;

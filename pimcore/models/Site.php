@@ -176,6 +176,7 @@ class Site extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -187,6 +188,7 @@ class Site extends Pimcore_Model_Abstract {
             $domains = Pimcore_Tool_Serialize::unserialize($domains);
         }
         $this->domains = $domains;
+        return $this;
     }
 
     /**
@@ -198,6 +200,7 @@ class Site extends Pimcore_Model_Abstract {
 
         $rd = Document::getById($this->rootId);
         $this->setRootDocument($rd);
+        return $this;
     }
 
     /**
@@ -206,6 +209,7 @@ class Site extends Pimcore_Model_Abstract {
      */
     public function setRootDocument($rootDocument) {
         $this->rootDocument = $rootDocument;
+        return $this;
     }
 
     /**
@@ -213,12 +217,16 @@ class Site extends Pimcore_Model_Abstract {
      */
     public function setRootPath($path) {
         $this->rootPath = $path;
+        return $this;
     }
 
     /**
      * @return string
      */
     public function getRootPath() {
+        if(!$this->rootPath && $this->getRootDocument()) {
+            return $this->getRootDocument()->getRealFullPath();
+        }
         return $this->rootPath;
     }
     
@@ -226,7 +234,7 @@ class Site extends Pimcore_Model_Abstract {
     /**
      * @return void
      */
-    public function clearDependedCache() {
+    public function clearDependentCache() {
         
         // this is mostly called in Site_Resource not here
         try {

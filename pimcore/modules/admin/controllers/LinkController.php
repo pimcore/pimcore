@@ -27,7 +27,7 @@ class Admin_LinkController extends Pimcore_Controller_Action_Admin_Document {
 
         $link = Document_Link::getById($this->getParam("id"));
         $link->setObject(null);
-        $link->idPath = Pimcore_Tool::getIdPathForElement($link);
+        $link->idPath = Element_Service::getIdPath($link);
         $link->userPermissions = $link->getUserPermissions();
         $link->setLocked($link->isLocked());
 

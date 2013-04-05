@@ -29,13 +29,13 @@ class Webservice_Data_Asset_File extends Webservice_Data_Asset {
     }
 
 
-    public function reverseMap($object) {
+    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null) {
 
         $data = base64_decode($this->data);
         unset($this->data);
-        parent::reverseMap($object);
+        parent::reverseMap($object, $disableMappingExceptions, $idMapper);
         $object->setData($data);
-         
+
     }
    
 }

@@ -114,6 +114,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setObjectsAllowed($objectsAllowed)
     {
         $this->objectsAllowed = $objectsAllowed;
+        return $this;
     }
 
     /**
@@ -131,6 +132,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setDocumentsAllowed($documentsAllowed)
     {
         $this->documentsAllowed = $documentsAllowed;
+        return $this;
     }
 
 
@@ -158,6 +160,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         }
 
         $this->documentTypes = $documentTypes;
+        return $this;
     }
 
     /**
@@ -177,6 +180,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setAssetsAllowed($assetsAllowed)
     {
         $this->assetsAllowed = $assetsAllowed;
+        return $this;
     }
 
     /**
@@ -203,6 +207,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         }
 
         $this->assetTypes = $assetTypes;
+        return $this;
     }
 
 
@@ -425,7 +430,8 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
      */
     public function setWidth($width)
     {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -442,7 +448,8 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
      */
     public function setHeight($height)
     {
-        $this->height = $height;
+        $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
 
@@ -626,7 +633,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($value)
+    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null)
     {
 
         if (empty($value)) {
@@ -634,14 +641,26 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         } else if (is_array($value)) {
             $hrefs = array();
             foreach ($value as $href) {
+                // cast is needed to make it work for both SOAP and REST
+                $href = (array) $href;
                 if (is_array($href) and key_exists("id", $href) and key_exists("type", $href)) {
-
-                    $e = Element_Service::getElementById($href["type"], $href["id"]);
+                    $type = $href["type"];
+                    $id = $href["id"];
+                    if ($idMapper) {
+                        $id = $idMapper->getMappedId($type, $id);
+                    }
+                    if ($id) {
+                        $e = Element_Service::getElementById($type, $id);
+                    }
 
                     if ($e instanceof Element_Interface) {
                         $hrefs[] = $e;
                     } else {
-                        throw new Exception("cannot get values from web service import - unknown element of type [ " . $href["type"] . " ] with id [" . $href["id"] . "] is referenced");
+                        if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
+                            throw new Exception("cannot get values from web service import - unknown element of type [ " . $href["type"] . " ] with id [" . $href["id"] . "] is referenced");
+                        } else {
+                            $idMapper->recordMappingFailure($relatedObject->getId(), $type, $href["id"]);
+                        }
                     }
                 }
             }
@@ -651,18 +670,26 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         }
     }
 
-    public function preGetData($object)  
+    public function preGetData($object, $params = array())
     {
-        $data = $object->{$this->getName()};
+        $data = null;
+        if($object instanceof Object_Concrete) {
+            $data = $object->{$this->getName()};
+            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+                //$data = $this->getDataFromResource($object->getRelationData($this->getName(), true, null));
+                $data = $this->load($object, array("force" => true));
 
-        if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-            //$data = $this->getDataFromResource($object->getRelationData($this->getName(), true, null));
-            $data = $this->load($object, array("force" => true));
-
-            $setter = "set" . ucfirst($this->getName());
-            if (method_exists($object, $setter)) {
-                $object->$setter($data);
+                $setter = "set" . ucfirst($this->getName());
+                if (method_exists($object, $setter)) {
+                    $object->$setter($data);
+                }
             }
+        } else if ($object instanceof Object_Localizedfield) {
+            $data = $params["data"];
+        } else if ($object instanceof Object_Fieldcollection_Data_Abstract) {
+            $data = $object->{$this->getName()};
+        } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
+            $data = $object->{$this->getName()};
         }
 
         if (Object_Abstract::doHideUnpublished() and is_array($data)) {
@@ -678,13 +705,15 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         return is_array($data) ? $data : array();
     }
 
-    public function preSetData($object, $data)
+    public function preSetData($object, $data, $params = array())
     {
 
         if ($data === null) $data = array();
 
-        if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-            $object->addO__loadedLazyField($this->getName());
+        if($object instanceof Object_Concrete) {
+            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+                $object->addO__loadedLazyField($this->getName());
+            }
         }
 
         return $data;
@@ -695,7 +724,8 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
      */
     public function setMaxItems($maxItems)
     {
-        $this->maxItems = $maxItems;
+        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        return $this;
     }
 
     /**
@@ -712,6 +742,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setAssetUploadPath($assetUploadPath)
     {
         $this->assetUploadPath = $assetUploadPath;
+        return $this;
     }
 
     /**
@@ -720,5 +751,57 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function getAssetUploadPath()
     {
         return $this->assetUploadPath;
+    }
+
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        $value = array();
+        $value["type"] = "html";
+        $value["html"] = "";
+
+        if ($data) {
+            $html = $this->getVersionPreview($data);
+            $value["html"] = $html;
+        }
+        return $value;
+    }
+
+    /** See parent class.
+     * @param $data
+     * @param null $object
+     * @return null|Pimcore_Date
+     */
+    public function getDiffDataFromEditmode($data, $object = null) {
+        if ($data) {
+            $tabledata = $data[0]["data"];
+
+            $result = array();
+            if ($tabledata) {
+                foreach ($tabledata as $in) {
+                    $out = array();
+                    $out["id"] = $in[0];
+                    $out["path"] = $in[1];
+                    $out["type"] = $in[2];
+                    $out["subtype"] = $in[3];
+                    $result[] = $out;
+                }
+            }
+
+            return $this->getDataFromEditmode($result);
+        }
+        return;
     }
 }

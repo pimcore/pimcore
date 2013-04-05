@@ -51,13 +51,10 @@ pimcore.report.qrcode.item = Class.create({
             handler: this.save.bind(this)
         }); 
 
-
-        fieldListeners = {
-            "keyup": this.generateCode.bind(this)
-        };
+        var store;
 
         if(pimcore.settings.google_analytics_enabled) {
-            var store = new Ext.data.JsonStore({
+            store = new Ext.data.JsonStore({
                 autoDestroy: true,
                 autoLoad: true,
                 url: '/admin/reports/analytics/chartmetricdata',
@@ -69,15 +66,13 @@ pimcore.report.qrcode.item = Class.create({
                 fields: ['timestamp','datetext','visits']
             });
         } else {
-            var store = new Ext.data.ArrayStore({
+            store = new Ext.data.ArrayStore({
                 autoDestroy: true,
                 autoLoad: true,
                 data: [],
                 fields: ['timestamp','datetext','visits']
             });
         }
-
-
 
         this.analytics = new Ext.form.FieldSet({
             hidden: !this.getAnalyticsVisiblity(),
@@ -103,7 +98,8 @@ pimcore.report.qrcode.item = Class.create({
                 iconCls: "pimcore_icon_analytics",
                 handler: function () {
                     var analyticsUrl = "#report/trafficsources-campaigns/a{accountId}w{internalWebPropertyId}p{id}/"
-                        + "%3F_r.drilldown%3Danalytics.campaign%3A" + this.data.name + "%2Canalytics.sourceMedium%3AQR-Code/";
+                        + "%3F_r.drilldown%3Danalytics.campaign%3A" + this.data.name
+                                                                    + "%2Canalytics.sourceMedium%3AQR-Code/";
                     window.open("/admin/reports/analytics/deeplink?url=" + encodeURIComponent(analyticsUrl));
                 }.bind(this)
             }]
@@ -143,7 +139,6 @@ pimcore.report.qrcode.item = Class.create({
                     cls: "input_drop_target",
                     enableKeyEvents: true,
                     listeners: {
-                        "keyup": this.generateCode.bind(this),
                         "render": function (el) {
                             new Ext.dd.DropZone(el.getEl(), {
                                 reference: el,
@@ -159,7 +154,6 @@ pimcore.report.qrcode.item = Class.create({
                                 onNodeDrop : function (el, target, dd, e, data) {
                                     if (data.node.attributes.elementType == "document") {
                                         el.setValue(data.node.attributes.path);
-                                        this.generateCode();
                                         return true;
                                     }
                                     return false;
@@ -173,8 +167,6 @@ pimcore.report.qrcode.item = Class.create({
                     checked: this.data.googleAnalytics,
                     fieldLabel: t("google_analytics"),
                     handler: function () {
-                        this.generateCode();
-
                         if(this.getAnalyticsVisiblity()) {
                             this.analytics.show();
                         } else {
@@ -199,8 +191,7 @@ pimcore.report.qrcode.item = Class.create({
                     fieldLabel: t("foreground_color"),
                     width: 70,
                     emptyText: "#000000",
-                    enableKeyEvents: true,
-                    listeners: fieldListeners
+                    enableKeyEvents: true
                 }, {
                     xtype: "textfield",
                     name: "backgroundColor",
@@ -208,14 +199,14 @@ pimcore.report.qrcode.item = Class.create({
                     fieldLabel: t("background_color"),
                     width: 70,
                     emptyText: "#FFFFFF",
-                    enableKeyEvents: true,
-                    listeners: fieldListeners
+                    enableKeyEvents: true
                 }]
             }, this.analytics]
         });
 
+        var codeUrl = "/admin/reports/qrcode/code/name/" + this.data.name;
         this.codePanel = new Ext.Panel({
-            html: '',
+            html: '<img src="' + codeUrl + '" style="padding:10px; width:228px;" />',
             border: true,
             height: 250
         });
@@ -259,22 +250,6 @@ pimcore.report.qrcode.item = Class.create({
         this.parentPanel.getEditPanel().activate(this.panel);
 
         pimcore.layout.refresh();
-
-        this.generateCode();
-    },
-
-
-    generateCode: function () {
-        var params = this.form.getForm().getFieldValues();
-        delete params["description"];
-        delete params["undefined"];
-
-        var d = new Date();
-        params["_dc"] = d.getTime();
-        params["name"] = this.data.name;
-
-        var codeUrl = "/admin/reports/qrcode/code/?" + Ext.urlEncode(params);
-        this.codePanel.update('<img src="' + codeUrl + '" style="padding:10px; width:228px;" />');
     },
 
     save: function () {
@@ -297,17 +272,8 @@ pimcore.report.qrcode.item = Class.create({
     },
 
     download: function (format) {
-
-        var params = this.form.getForm().getFieldValues();
-        delete params["description"];
-        delete params["undefined"];
-
-        params["renderer"] = format;
-        params["download"] = "true";
-        params["name"] = this.data.name;
-        params["moduleSize"] = 20;
-
-        var codeUrl = "/admin/reports/qrcode/code/?" + Ext.urlEncode(params);
+        var codeUrl = "/admin/reports/qrcode/code/name/" + this.data.name + "/renderer/" + format + "/download/true" +
+            "/moduleSize/20";
         pimcore.helpers.download(codeUrl);
     }
 });

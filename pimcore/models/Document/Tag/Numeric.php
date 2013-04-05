@@ -56,6 +56,7 @@ class Document_Tag_Numeric extends Document_Tag {
      */
     public function setDataFromResource($data) {
         $this->number = $data;
+        return $this;
     }
 
     /**
@@ -65,6 +66,7 @@ class Document_Tag_Numeric extends Document_Tag {
      */
     public function setDataFromEditmode($data) {
         $this->number = $data;
+        return $this;
     }
 
     /**
@@ -81,13 +83,13 @@ class Document_Tag_Numeric extends Document_Tag {
         * @param  Webservice_Data_Document_Element $data
         * @return void
         */
-       public function getFromWebserviceImport($wsElement){
-           $data = $wsElement->value;
-           if($data->number === null or is_numeric($data->number)){
-                $this->number = $data->number;
-           } else {
-               throw new Exception("cannot get values from web service import - invalid data");
-           }
+    public function getFromWebserviceImport($wsElement, $idMapper = null){
+        $data = $wsElement->value;
+        if(empty($data->number) or is_numeric($data->number)){
+            $this->number = $data->number;
+        } else {
+            throw new Exception("cannot get values from web service import - invalid data");
+        }
 
-       }
+    }
 }

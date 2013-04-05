@@ -151,15 +151,24 @@ pimcore.settings.staticroutes = Class.create({
         }));
 
         var typesColumns = [
-            {header: t("name"), width: 50, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
-            {header: t("pattern"), width: 100, sortable: true, dataIndex: 'pattern', editor: new Ext.form.TextField({})},
-            {header: t("reverse"), width: 100, sortable: true, dataIndex: 'reverse', editor: new Ext.form.TextField({})},
-            {header: t("module_optional"), width: 50, sortable: false, dataIndex: 'module', editor: new Ext.form.TextField({})},
-            {header: t("controller"), width: 50, sortable: false, dataIndex: 'controller', editor: new Ext.form.TextField({})},
-            {header: t("action"), width: 50, sortable: false, dataIndex: 'action', editor: new Ext.form.TextField({})},
-            {header: t("variables"), width: 50, sortable: false, dataIndex: 'variables', editor: new Ext.form.TextField({})},
-            {header: t("defaults"), width: 50, sortable: false, dataIndex: 'defaults', editor: new Ext.form.TextField({})},
-            {header: t("site"), width: 100, sortable:true, dataIndex: "siteId", editor: new Ext.form.ComboBox({
+            {header: t("name"), width: 50, sortable: true, dataIndex: 'name',
+                                                                    editor: new Ext.form.TextField({})},
+            {header: t("pattern"), width: 100, sortable: true, dataIndex: 'pattern',
+                                                                    editor: new Ext.form.TextField({})},
+            {header: t("reverse"), width: 100, sortable: true, dataIndex: 'reverse',
+                                                                    editor: new Ext.form.TextField({})},
+            {header: t("module_optional"), width: 50, sortable: false, dataIndex: 'module',
+                                                                    editor: new Ext.form.TextField({})},
+            {header: t("controller"), width: 50, sortable: false, dataIndex: 'controller',
+                                                                    editor: new Ext.form.TextField({})},
+            {header: t("action"), width: 50, sortable: false, dataIndex: 'action',
+                                                                    editor: new Ext.form.TextField({})},
+            {header: t("variables"), width: 50, sortable: false, dataIndex: 'variables',
+                                                                    editor: new Ext.form.TextField({})},
+            {header: t("defaults"), width: 50, sortable: false, dataIndex: 'defaults',
+                                                                    editor: new Ext.form.TextField({})},
+            {header: t("site"), width: 100, sortable:true, dataIndex: "siteId",
+                                                                    editor: new Ext.form.ComboBox({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
                 displayField: "domain",

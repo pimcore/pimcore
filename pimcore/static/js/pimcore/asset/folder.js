@@ -66,7 +66,10 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         var tpl = new Ext.XTemplate(
                 '<tpl for=".">',
                 '<div class="thumb-wrap">',
-                '<div class="thumb"><table cellspacing="0" cellpadding="0" border="0"><tr><td align="center" valign="middle"><img src="{url}"  id="{type}_{id}" align="center" title="{name}"></td></tr></table></div>',
+                '<div class="thumb"><table cellspacing="0" cellpadding="0" border="0"><tr><td align="center" '
+                    + 'valign="middle" style="background: url({url}) center center no-repeat; ' +
+                    'background-size: contain;" id="{type}_{id}">'
+                    + '</td></tr></table></div>',
                 '<span class="filename">{filename}</span></div>',
                 '</tpl>',
                 '<div class="x-clear"></div>'
@@ -145,7 +148,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             }
 
             this.toolbarButtons.remove = new Ext.Button({
-                 text: t('delete'),
+                 text: t('delete_folder'),
                  iconCls: "pimcore_icon_delete_medium",
                  scale: "medium",
                  handler: this.remove.bind(this)
@@ -200,7 +203,58 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
     },
     
     downloadZip: function () {
-        pimcore.helpers.download('/admin/asset/download-as-zip/?id='+ this.id);
+        //pimcore.helpers.download('/admin/asset/download-as-zip/?id='+ this.id);
+
+        Ext.Ajax.request({
+            url: "/admin/asset/download-as-zip-jobs",
+            params: {id: this.id},
+            success: function(response) {
+                var res = Ext.decode(response.responseText);
+
+                this.downloadProgressBar = new Ext.ProgressBar({
+                    text: t('initializing')
+                });
+
+                this.downloadProgressWin = new Ext.Window({
+                    title: t("download_as_zip"),
+                    layout:'fit',
+                    width:500,
+                    bodyStyle: "padding: 10px;",
+                    closable:false,
+                    plain: true,
+                    modal: true,
+                    items: [this.downloadProgressBar]
+                });
+
+                this.downloadProgressWin.show();
+
+
+                var pj = new pimcore.tool.paralleljobs({
+                    success: function (jobId) {
+                        if(this.downloadProgressWin) {
+                            this.downloadProgressWin.close();
+                        }
+
+                        this.downloadProgressBar = null;
+                        this.downloadProgressWin = null;
+
+                        pimcore.helpers.download('/admin/asset/download-as-zip/?jobId='+ jobId + "&id=" + this.id);
+                    }.bind(this, res.jobId),
+                    update: function (currentStep, steps, percent) {
+                        if(this.downloadProgressBar) {
+                            var status = currentStep / steps;
+                            this.downloadProgressBar.updateProgress(status, percent + "%");
+                        }
+                    }.bind(this),
+                    failure: function (message) {
+                        this.downloadProgressWin.close();
+                        pimcore.helpers.showNotification(t("error"), t("error"),
+                            "error", t(message));
+                    }.bind(this),
+                    jobs: res.jobs
+                });
+            }.bind(this)
+        });
     }
 });
 

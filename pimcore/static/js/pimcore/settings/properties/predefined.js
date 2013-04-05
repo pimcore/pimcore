@@ -158,12 +158,13 @@ pimcore.settings.properties.predefined = Class.create({
 
         var propertiesColumns = [
             {header: t("name"), width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
-            {header: t("description"), sortable: true, dataIndex: 'description', editor: new Ext.form.TextArea({}), renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                if(empty(value)) {
-                    return "";
-                }
-                return nl2br(value);
-            }
+            {header: t("description"), sortable: true, dataIndex: 'description', editor: new Ext.form.TextArea({}),
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                                    if(empty(value)) {
+                                        return "";
+                                    }
+                                    return nl2br(value);
+                               }
             },
             {header: t("key"), width: 50, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({})},
             {header: t("type"), width: 50, sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
@@ -173,7 +174,8 @@ pimcore.settings.properties.predefined = Class.create({
 
             })},
             {header: t("value"), width: 50, sortable: true, dataIndex: 'data', editor: new Ext.form.TextField({})},
-            {header: t("configuration"), width: 50, sortable: false, dataIndex: 'config', editor: new Ext.form.TextField({})},
+            {header: t("configuration"), width: 50, sortable: false, dataIndex: 'config',
+                                                                editor: new Ext.form.TextField({})},
             {header: t("content_type"), width: 50, sortable: true, dataIndex: 'ctype', editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
                 editable: false,
@@ -202,7 +204,8 @@ pimcore.settings.properties.predefined = Class.create({
                             pimcore.globalmanager.get("translationadminmanager").activate(rec.data.name);
                         }
                         catch (e) {
-                            pimcore.globalmanager.add("translationadminmanager", new pimcore.settings.translation.admin(rec.data.name));
+                            pimcore.globalmanager.add("translationadminmanager",
+                                                        new pimcore.settings.translation.admin(rec.data.name));
                         }
                     }.bind(this)
                 }]

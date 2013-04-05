@@ -18,7 +18,9 @@ pimcore.object.tree = Class.create({
     treeDataUrl: "/admin/object/tree-get-childs-by-id/",
 
     initialize: function(config) {
-        
+
+        this.position = "left";
+
         if (!config) {
             this.config = {
                 rootId: 1,
@@ -58,7 +60,7 @@ pimcore.object.tree = Class.create({
     init: function(rootNodeConfig) {
 
         rootNodeConfig.nodeType = "async";
-        rootNodeConfig.text = "home";
+        rootNodeConfig.text = t("home");
         rootNodeConfig.draggable = true;
         rootNodeConfig.iconCls = "pimcore_icon_home";
 
@@ -228,12 +230,14 @@ pimcore.object.tree = Class.create({
 
         object_types.each(function(record) {
 
-            if (this.ref.attributes.reference.config.allowedClasses == "all" || in_array(record.get("id"), this.ref.attributes.reference.config.allowedClasses)) {
+            if (this.ref.attributes.reference.config.allowedClasses == "all" || in_array(record.get("id"),
+                                                                this.ref.attributes.reference.config.allowedClasses)) {
                 // for create new object
                 tmpMenuEntry = {
                     text: record.get("translatedText"),
                     iconCls: "pimcore_icon_object_add",
-                    handler: this.ref.attributes.reference.addObject.bind(this.ref, record.get("id"), record.get("text"))
+                    handler: this.ref.attributes.reference.addObject.bind(this.ref, record.get("id"),
+                                                                record.get("text"))
                 };
                 if (record.get("icon")) {
                     tmpMenuEntry.icon = record.get("icon");
@@ -245,7 +249,8 @@ pimcore.object.tree = Class.create({
                 tmpMenuEntryImport = {
                     text: record.get("translatedText"),
                     iconCls: "pimcore_icon_object_import",
-                    handler: this.ref.attributes.reference.importObjects.bind(this.ref, record.get("id"), record.get("text"))
+                    handler: this.ref.attributes.reference.importObjects.bind(this.ref, record.get("id"),
+                                                                record.get("text"))
                 };
                 if (record.get("icon")) {
                     tmpMenuEntryImport.icon = record.get("icon");
@@ -311,7 +316,8 @@ pimcore.object.tree = Class.create({
                     text: t("paste_cut_element"),
                     iconCls: "pimcore_icon_paste",
                     handler: function() {
-                        this.attributes.reference.pasteCutObject(this.attributes.reference.cutObject, this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
+                        this.attributes.reference.pasteCutObject(this.attributes.reference.cutObject,
+                                        this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
                         this.attributes.reference.cutParentNode = null;
                         this.attributes.reference.cutObject = null;
                     }.bind(this)
@@ -392,7 +398,7 @@ pimcore.object.tree = Class.create({
                         handler: function () {
                             this.attributes.reference.updateObject(this.attributes.id, {locked: null}, function () {
                                 this.attributes.reference.tree.getRootNode().reload();
-                            }.bind(this))
+                            }.bind(this));
                         }.bind(this)
                     });
                 } else {
@@ -402,7 +408,7 @@ pimcore.object.tree = Class.create({
                         handler: function () {
                             this.attributes.reference.updateObject(this.attributes.id, {locked: "self"}, function () {
                                 this.attributes.reference.tree.getRootNode().reload();
-                            }.bind(this))
+                            }.bind(this));
                         }.bind(this)
                     });
                     
@@ -410,10 +416,11 @@ pimcore.object.tree = Class.create({
                         text: t('lock_and_propagate_to_childs'),
                         iconCls: "pimcore_icon_lock_add_propagate",
                         handler: function () {
-                            this.attributes.reference.updateObject(this.attributes.id, {locked: "propagate"}, function () {
-                                this.attributes.reference.tree.getRootNode().reload();
-                            }.bind(this))
-                        }.bind(this)
+                            this.attributes.reference.updateObject(this.attributes.id, {locked: "propagate"},
+                                            function () {
+                                                this.attributes.reference.tree.getRootNode().reload();
+                                            }.bind(this));
+                            }.bind(this)
                     });
                 }
                 
@@ -572,7 +579,8 @@ pimcore.object.tree = Class.create({
     },
 
     addObject : function (classId, className) {
-        Ext.MessageBox.prompt(t('add_object'), t('please_enter_the_name_of_the_new_object'), this.attributes.reference.addObjectCreate.bind(this, classId, className));
+        Ext.MessageBox.prompt(t('add_object'), t('please_enter_the_name_of_the_new_object'),
+                                        this.attributes.reference.addObjectCreate.bind(this, classId, className));
     },
 
     addObjectCreate: function (classId, className, button, value, object) {
@@ -597,7 +605,8 @@ pimcore.object.tree = Class.create({
     },
 
     addFolder : function (classId, className) {
-        Ext.MessageBox.prompt(t('add_object'), t('please_enter_the_name_of_the_new_object'), this.attributes.reference.addFolderCreate.bind(this));
+        Ext.MessageBox.prompt(t('add_object'), t('please_enter_the_name_of_the_new_object'),
+                                        this.attributes.reference.addFolderCreate.bind(this));
     },
 
     addFolderCreate: function (button, value, object) {
@@ -649,7 +658,8 @@ pimcore.object.tree = Class.create({
         var parentChilds = parentNode.childNodes;
         for (var i = 0; i < parentChilds.length; i++) {
             if (parentChilds[i].text == key && node != parentChilds[i]) {
-                Ext.MessageBox.alert(t('edit_key'), t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                Ext.MessageBox.alert(t('edit_key'),
+                                     t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
                 return true;
             }
         }
@@ -661,7 +671,8 @@ pimcore.object.tree = Class.create({
     },
 
     editKey: function () {
-        Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'), this.attributes.reference.editKeyComplete.bind(this), null, null, this.text);
+        Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
+                                        this.attributes.reference.editKeyComplete.bind(this), null, null, this.text);
     },
 
     editKeyComplete: function (button, value, object) {
@@ -713,7 +724,8 @@ pimcore.object.tree = Class.create({
                         }
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_renaming_object"), "error", t(rdata.message));
+                        pimcore.helpers.showNotification(t("error"), t("error_renaming_object"), "error",
+                                                                t(rdata.message));
                         this.parentNode.reload();
                     }
                 } catch(e) {
@@ -756,7 +768,8 @@ pimcore.object.tree = Class.create({
                         if (pimcore.globalmanager.exists("object_" + this.id)) {
                             // reload versions
                             if (pimcore.globalmanager.get("object_" + this.id).versions) {
-                                if (typeof pimcore.globalmanager.get("object_" + this.id).versions.reload == "function") {
+                                if (typeof pimcore.globalmanager.get("object_" + this.id).versions.reload
+                                    == "function") {
                                     pimcore.globalmanager.get("object_" + this.id).versions.reload();
                                 }
                             }
@@ -765,7 +778,8 @@ pimcore.object.tree = Class.create({
                         pimcore.helpers.showNotification(t("success"), t("successful_" + task + "_object"), "success");
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_" + task + "_object"), "error", t(rdata.message));
+                        pimcore.helpers.showNotification(t("error"), t("error_" + task + "_object"), "error",
+                                                                                t(rdata.message));
                     }
                 } catch (e) {
                     pimcore.helpers.showNotification(t("error"), t("error_" + task + "_object"), "error");

@@ -74,7 +74,8 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -89,7 +90,8 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @return void
      */
     public function setHeight($height) {
-        $this->height = $height;
+        $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
     public function getDefaultValue() {
@@ -252,18 +254,30 @@ class Object_Class_Data_Image extends Object_Class_Data {
     /**
      * converts data to be imported via webservices
      * @param mixed $value
-     * @param mixed $object
+     * @param mixed $relatedObject
      * @return mixed
      */
-    public function getFromWebserviceImport($value, $object = null) {
-        
-        $asset = Asset::getById($value);
-        if(empty($value)){
+    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null) {
+
+        $id = $value;
+
+        if ($idMapper && !empty($value)) {
+            $id = $idMapper->getMappedId("asset", $value);
+            $fromMapper = true;
+
+        }
+
+        $asset = Asset::getById($id);
+        if(empty($id) && !$fromMapper){
             return null;
         } else if (is_numeric($value) and $asset instanceof Asset) {
             return $asset;
         } else {
-            throw new Exception("cannot get values from web service import - invalid data, referencing unknown asset with id [ ".$value." ]");
+            if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
+                throw new Exception("cannot get values from web service import - invalid data, referencing unknown asset with id [ ".$value." ]");
+            } else {
+                $idMapper->recordMappingFailure($relatedObject->getId(), "asset", $value);
+            }
         }
     }
 
@@ -273,6 +287,7 @@ class Object_Class_Data_Image extends Object_Class_Data {
     public function setUploadPath($uploadPath)
     {
         $this->uploadPath = $uploadPath;
+        return $this;
     }
 
     /**
@@ -283,5 +298,32 @@ class Object_Class_Data_Image extends Object_Class_Data {
         return $this->uploadPath;
     }
 
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
 
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        $versionPreview = null;
+        if ($data instanceof Asset_Image) {
+            $versionPreview = "/admin/asset/get-image-thumbnail/id/" . $data->getId() . "/width/150/height/150/aspectratio/true";
+        }
+
+        if ($versionPreview) {
+            $value = array();
+            $value["src"] = $versionPreview;
+            $value["type"] = "img";
+            return $value;
+        } else {
+            return "";
+        }
+    }
 }

@@ -121,20 +121,9 @@ class Document_Hardlink_Resource extends Document_Resource {
                     $dataHardlink[$key] = $value;
                 }
             }
-            
-            // first try to insert a new record, this is because of the recyclebin restore
-            try {
-                $this->db->insert("documents", $dataDocument);
-            }
-            catch (Exception $e) {
-                $this->db->update("documents", $dataDocument, $this->db->quoteInto("id = ?", $this->model->getId()));
-            }
-            try {
-                $this->db->insert("documents_hardlink", $dataHardlink);
-            }
-            catch (Exception $e) {
-                $this->db->update("documents_hardlink", $dataHardlink, $this->db->quoteInto("id = ?", $this->model->getId()));
-            }
+
+            $this->db->insertOrUpdate("documents", $dataDocument);
+            $this->db->insertOrUpdate("documents_hardlink", $dataHardlink);
 
             $this->updateLocks();
         }

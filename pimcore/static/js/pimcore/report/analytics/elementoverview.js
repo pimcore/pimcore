@@ -17,10 +17,12 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
 
     matchType: function (type) {
         var types = ["document_page","document_snippet","global","object_concrete"];
-        if (pimcore.report.abstract.prototype.matchTypeValidate(type, types) && pimcore.settings.google_analytics_enabled) {
+        if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)
+                                                        && pimcore.settings.google_analytics_enabled) {
             
             // check for object_concrete||document_snippet, they are only available in advanced mode
-            if((type == "object_concrete" || type == "document_snippet") && !pimcore.settings.google_analytics_advanced) {
+            if((type == "object_concrete" || type == "document_snippet")
+                                                        && !pimcore.settings.google_analytics_advanced) {
                 return false;
             }
             return true;
@@ -205,7 +207,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                                 params: values
                             });
                             
-                            values.metric = "pageviews"
+                            values.metric = "pageviews";
                             this.chartStore.load({
                                 params: values
                             });

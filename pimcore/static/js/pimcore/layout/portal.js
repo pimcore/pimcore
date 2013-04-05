@@ -105,13 +105,13 @@ pimcore.layout.portal = Class.create({
                         items:[
                             {
                                 id: "pimcore_portal_col0",
-                                columnWidth:.5,
+                                columnWidth: 0.5,
                                 style:'padding:10px',
                                 items:[config[0]]
                             },
                             {
                                 id: "pimcore_portal_col1",
-                                columnWidth:.5,
+                                columnWidth: 0.5,
                                 style:'padding:10px 10px 10px 0',
                                 items:[config[1]]
                             }
@@ -152,9 +152,9 @@ pimcore.layout.portal = Class.create({
             return;
         }
 
-        dynClass = eval(type);
+        var dynClass = eval(type);
         if (dynClass) {
-            portletInstance = new dynClass();
+            var portletInstance = new dynClass();
             portletInstance.setPortal(this);
 
             var col = Ext.getCmp("pimcore_portal_col0");

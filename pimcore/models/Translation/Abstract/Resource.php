@@ -58,15 +58,11 @@ abstract class Translation_Abstract_Resource extends Pimcore_Model_Resource_Abst
                     "date" => time()
                 );
 
-                try {
-                    $this->db->insert(static::getTableName() , $data);
-                } catch (Exception $e) {
-                    $this->db->update(static::getTableName() , $data, $this->db->quoteInto("`key` = ?", $this->model->getKey()) . " AND " . $this->db->quoteInto("language = ?", $language));
-                }
+                $this->db->insertOrUpdate(static::getTableName() , $data);
             }
         }
 
-        $this->model->clearDependedCache();
+        $this->model->clearDependentCache();
     }
 
 
@@ -78,7 +74,7 @@ abstract class Translation_Abstract_Resource extends Pimcore_Model_Resource_Abst
     public function delete() {
         $this->db->delete(static::getTableName() , $this->db->quoteInto("`key`= ?", $this->model->getKey()));
 
-        $this->model->clearDependedCache();
+        $this->model->clearDependentCache();
     }
 
     /**

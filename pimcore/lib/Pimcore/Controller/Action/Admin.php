@@ -150,16 +150,17 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
 
     public function setUser(User $user) {
         $this->user = $user;
-        Zend_Registry::set("pimcore_user", $this->user);
+        Zend_Registry::set("pimcore_admin_user", $this->user);
 
         $this->setLanguage($this->user->getLanguage());
+        return $this;
     }
 
     public function getLanguage() {
         return $this->language;
     }
 
-    public function setLanguage($language) {
+    public function setLanguage($language, $useFrontendLanguages = false) {
 
         if (Zend_Locale::isLocale($language, true)) {
             $locale = new Zend_Locale($language);
@@ -168,21 +169,30 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             $locale = new Zend_Locale("en");
         }
 
-        // check if given language is installed if not => skip
-        if(!in_array((string) $locale, Pimcore_Tool_Admin::getLanguages())) {
-            return;
+        if($useFrontendLanguages) {
+            // check if given language is a valid language
+            if(!Pimcore_Tool::isValidLanguage($locale)) {
+                return;
+            }
+
+            Zend_Registry::set("Zend_Locale", $locale);
+        } else {
+            // check if given language is installed if not => skip
+            if(!in_array((string) $locale, Pimcore_Tool_Admin::getLanguages())) {
+                return;
+            }
+
+            Zend_Registry::set("Zend_Locale", $locale);
+            if(Zend_Registry::isRegistered("Zend_Translate")) {
+                $t = Zend_Registry::get("Zend_Translate");
+                $t->setLocale($locale);
+            }
+
         }
 
         $this->language = (string) $locale;
         $this->view->language = $this->getLanguage();
-
-        Zend_Registry::set("Zend_Locale", $locale);
-
-        if(Zend_Registry::isRegistered("Zend_Translate")) {
-            $t = Zend_Registry::get("Zend_Translate");
-            $t->setLocale($locale);
-        }
-
+        return $this;
     }
 
     /**
@@ -223,11 +233,23 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
 
     public function setTranslator(Zend_Translate $t) {
         $this->translator = $t;
+        return $this;
     }
 
     public function getTranslator() {
         return $this->translator;
     }
 
+    /**
+     * @param $permission
+     * @throws Exception
+     */
+    protected function checkPermission($permission) {
+        if (!$this->getUser() || !$this->getUser()->isAllowed($permission)) {
+            $message = "attempt to access " . $permission . ", but has no permission to do so.";
+            Logger::err($message);
+            throw new \Exception($message);
+        }
+    }
 
 }

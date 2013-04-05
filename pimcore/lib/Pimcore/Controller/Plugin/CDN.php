@@ -127,6 +127,10 @@ class Pimcore_Controller_Plugin_CDN extends Zend_Controller_Plugin_Abstract {
                 }
 
                 $body = $html->save();
+
+                $html->clear();
+                unset($html);
+
                 $this->getResponse()->setBody($body);
 
                 // save storage
@@ -138,6 +142,7 @@ class Pimcore_Controller_Plugin_CDN extends Zend_Controller_Plugin_Abstract {
     public function setCdnhostnames($cdnhostnames)
     {
         $this->cdnhostnames = $cdnhostnames;
+        return $this;
     }
 
     public function getCdnhostnames()
@@ -148,6 +153,7 @@ class Pimcore_Controller_Plugin_CDN extends Zend_Controller_Plugin_Abstract {
     public function setCdnpatterns($cdnpatterns)
     {
         $this->cdnpatterns = $cdnpatterns;
+        return $this;
     }
 
     public function getCdnpatterns()

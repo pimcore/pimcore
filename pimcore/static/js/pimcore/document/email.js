@@ -74,7 +74,7 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
             items.push(this.notes.getLayout());
         }
 
-        var tabbar = new Ext.TabPanel({
+        this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
             deferredRender:true,
@@ -84,7 +84,7 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
             items: items,
             activeTab: 0
         });
-        return tabbar;
+        return this.tabbar;
     },
 
     getSaveData : function (only) {
@@ -111,8 +111,8 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
             try {
                 parameters.properties = Ext.encode(this.properties.getValues());
             }
-            catch (e) {
-                //console.log(e);
+            catch (e2) {
+                //console.log(e2);
             }
         }
 
@@ -121,16 +121,16 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
             try {
                 parameters.settings = Ext.encode(this.settings.getValues());
             }
-            catch (e) {
-                //console.log(e);
+            catch (e3) {
+                //console.log(e3);
             }
 
             // scheduler
             try {
                 parameters.scheduler = Ext.encode(this.scheduler.getValues());
             }
-            catch (e) {
-                //console.log(e);
+            catch (e4) {
+                //console.log(e4);
             }
         }
 
@@ -138,8 +138,8 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
         try {
             parameters.data = Ext.encode(this.edit.getValues());
         }
-        catch (e) {
-            //console.log(e);
+        catch (e5) {
+            //console.log(e5);
         }
 
         return parameters;

@@ -39,6 +39,7 @@ class Tool_Targeting_List extends Pimcore_Model_List_Abstract {
     public function setTargets($targets)
     {
         $this->targets = $targets;
+        return $this;
     }
 
     /**

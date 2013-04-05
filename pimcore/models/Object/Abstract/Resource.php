@@ -113,18 +113,7 @@ class Object_Abstract_Resource extends Element_Resource {
             }
         }
 
-        // first try to insert a new record, this is because of the recyclebin restore
-        if($this->insertOrUpdate && $this->insertOrUpdate["object"]) {
-            // this is for object_concrete which exist already
-            $this->db->update("objects", $data, $this->db->quoteInto("o_id = ?", $this->model->getO_id() ));
-        } else {
-            // insert and fallback for folders etc. where the $this->insertOrUpdate is not set
-            try {
-                $this->db->insert("objects", $data);
-            } catch (Exception $e) {
-                $this->db->update("objects", $data, $this->db->quoteInto("o_id = ?", $this->model->getO_id() ));
-            }
-        }
+        $this->db->insertOrUpdate("objects", $data);
 
         // tree_locks
         $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'object'");
@@ -158,14 +147,19 @@ class Object_Abstract_Resource extends Element_Resource {
             //get objects to empty their cache
             $objects = $this->db->fetchAll("SELECT o_id,o_path FROM objects WHERE o_path LIKE ?", $oldPath . "%");
 
+            $userId = "0";
+            if($user = Pimcore_Tool_Admin::getCurrentUser()) {
+                $userId = $user->getId();
+            }
+
             //update object child paths
-            $this->db->query("update objects set o_path = replace(o_path," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where o_path like " . $this->db->quote($oldPath . "/%") .";");
+            $this->db->query("update objects set o_path = replace(o_path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . "), o_modificationDate = '" . time() . "', o_userModification = '" . $userId . "' where o_path like " . $this->db->quote($oldPath . "/%") .";");
 
             //update object child permission paths
-            $this->db->query("update users_workspaces_object set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
+            $this->db->query("update users_workspaces_object set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
             //update object child properties paths
-            $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
+            $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
 
             foreach ($objects as $object) {
@@ -193,6 +187,8 @@ class Object_Abstract_Resource extends Element_Resource {
      * @return string retrieves the current full object path from DB
      */
     public function getCurrentFullPath() {
+
+        $path = null;
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(o_path,`o_key`) as o_path FROM objects WHERE o_id = ?", $this->model->getId());
         }
@@ -318,7 +314,11 @@ class Object_Abstract_Resource extends Element_Resource {
 
     public function getClasses() {
         if($this->getChildAmount()) {
-            $classIds = $this->db->fetchCol("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", $this->model->getFullPath() . "%");
+            $path = $this->model->getFullPath();
+            if(!$this->model->getId()) {
+                $path = "";
+            }
+            $classIds = $this->db->fetchCol("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", $path . "/%");
 
             $classes = array();
             foreach ($classIds as $classId) {

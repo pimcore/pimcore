@@ -17,4 +17,9 @@
 
 class Asset_Text extends Asset {
 
+    /**
+     * @var string
+     */
+    public $type = "text";
+
 }

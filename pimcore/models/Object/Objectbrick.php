@@ -81,6 +81,7 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
      */
     public function setItems ($items) {
         $this->items = $items;
+        return $this;
     }
 
     /**
@@ -96,6 +97,7 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
      */
     public function setFieldname ($fieldname) {
         $this->fieldname = $fieldname;
+        return $this;
     }
 
     /**
@@ -202,6 +204,7 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
      */
     public function setObject($object) {
         $this->object = $object;
+        return $this;
     }
 
     /**

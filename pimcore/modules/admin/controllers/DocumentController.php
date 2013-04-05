@@ -26,11 +26,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         // check permissions
         $notRestrictedActions = array("doc-types");
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
-            if (!$this->getUser()->isAllowed("documents")) {
-
-                $this->redirect("/admin/login");
-                die();
-            }
+            $this->checkPermission("documents");
         }
 
         $this->_documentService = new Document_Service($this->getUser());
@@ -182,7 +178,19 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         }
                         break;
                     default:
-                        Logger::debug("Unknown document type, can't add [ " . $this->getParam("type") . " ] ");
+                        $classname = "Document_" . ucfirst($this->getParam("type"));
+                        if(class_exists($classname)) {
+                            $document = $classname::create($this->getParam("parentId"), $createValues);
+                            try {
+                                $document->save();
+                                $success = true;
+                            } catch (Exception $e) {
+                                $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                            }
+                            break;
+                        } else {
+                            Logger::debug("Unknown document type, can't add [ " . $this->getParam("type") . " ] ");
+                        }
                         break;
                 }
             }
@@ -235,9 +243,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         } else if($this->getParam("id")) {
             $document = Document::getById($this->getParam("id"));
             if ($document->isAllowed("delete")) {
-                Element_Recyclebin_Item::create($document, $this->getUser());
                 $document->delete();
-
                 $this->_helper->json(array("success" => true));
             }
         }
@@ -437,40 +443,41 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
     public function docTypesAction() {
 
         if ($this->getParam("data")) {
-            if ($this->getUser()->isAllowed("document_types")) {
-                if ($this->getParam("xaction") == "destroy") {
 
-                    $id = Zend_Json::decode($this->getParam("data"));
+            $this->checkPermission("document_types");
 
-                    $type = Document_DocType::getById($id);
-                    $type->delete();
+            if ($this->getParam("xaction") == "destroy") {
 
-                    $this->_helper->json(array("success" => true, "data" => array()));
-                }
-                else if ($this->getParam("xaction") == "update") {
+                $id = Zend_Json::decode($this->getParam("data"));
 
-                    $data = Zend_Json::decode($this->getParam("data"));
+                $type = Document_DocType::getById($id);
+                $type->delete();
 
-                    // save type
-                    $type = Document_DocType::getById($data["id"]);
+                $this->_helper->json(array("success" => true, "data" => array()));
+            }
+            else if ($this->getParam("xaction") == "update") {
 
-                    $type->setValues($data);
-                    $type->save();
+                $data = Zend_Json::decode($this->getParam("data"));
 
-                    $this->_helper->json(array("data" => $type, "success" => true));
-                }
-                else if ($this->getParam("xaction") == "create") {
-                    $data = Zend_Json::decode($this->getParam("data"));
-                    unset($data["id"]);
+                // save type
+                $type = Document_DocType::getById($data["id"]);
 
-                    // save type
-                    $type = Document_DocType::create();
-                    $type->setValues($data);
+                $type->setValues($data);
+                $type->save();
 
-                    $type->save();
+                $this->_helper->json(array("data" => $type, "success" => true));
+            }
+            else if ($this->getParam("xaction") == "create") {
+                $data = Zend_Json::decode($this->getParam("data"));
+                unset($data["id"]);
 
-                    $this->_helper->json(array("data" => $type, "success" => true));
-                }
+                // save type
+                $type = Document_DocType::create();
+                $type->setValues($data);
+
+                $type->save();
+
+                $this->_helper->json(array("data" => $type, "success" => true));
             }
         }
         else {
@@ -927,6 +934,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             try {
                 $site = Site::getByRootId($childDocument->getId());
                 $tmpDocument["iconCls"] = "pimcore_icon_site";
+                unset($site->rootDocument);
                 $tmpDocument["site"] = $site;
             }
             catch (Exception $e) {
@@ -941,11 +949,26 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             }
             $tmpDocument["permissions"]["create"] = $childDocument->isAllowed("create");
         }
+        else if(method_exists($childDocument, "getTreeNodeConfig")) {
+            $tmp = $childDocument->getTreeNodeConfig();
+            $tmpDocument = array_merge($tmpDocument, $tmp);
+        }
 
         $tmpDocument["qtipCfg"] = array(
             "title" => "ID: " . $childDocument->getId(),
             "text" => "Type: " . $childDocument->getType()
         );
+
+        // PREVIEWS temporary disabled, need's to be optimized some time
+        if($childDocument instanceof Document_Page && Pimcore_Config::getSystemConfig()->documents->generatepreview) {
+            $thumbnailFile = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-screenshot-" . $childDocument->getId() . ".jpg";
+
+            // only if the thumbnail exists and isn't out of time
+            if(file_exists($thumbnailFile) && filemtime($thumbnailFile) > ($childDocument->getModificationDate()-20)) {
+                $thumbnailPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $thumbnailFile);
+                $tmpDocument["thumbnail"] = $thumbnailPath;
+            }
+        }
 
         $tmpDocument["cls"] = "";
         
@@ -994,6 +1017,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
      * SEO PANEL
      */
     public function seopanelTreeRootAction() {
+
+        $this->checkPermission("seo_document_editor");
+
         $root = Document::getById(1);
         if ($root->isAllowed("list")) {
 
@@ -1009,6 +1035,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
 
     public function seopanelTreeAction() {
+
+        $this->checkPermission("seo_document_editor");
 
         $document = Document::getById($this->getParam("node"));
 
@@ -1036,8 +1064,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                             $nodeConfig["title"] = $childDocument->getTitle();
                             $nodeConfig["description"] = $childDocument->getDescription();
 
-                            $nodeConfig["title_length"] = strlen($childDocument->getTitle());
-                            $nodeConfig["description_length"] = strlen($childDocument->getDescription());
+                            $nodeConfig["title_length"] = mb_strlen($childDocument->getTitle());
+                            $nodeConfig["description_length"] = mb_strlen($childDocument->getDescription());
 
                             // anaylze content
                             $nodeConfig["links"] = 0;
@@ -1087,16 +1115,19 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                                                 }
                                             }
                                         }
+
+                                        $html->clear();
+                                        unset($html);
                                     }
                                 }
                             } catch (Exception $e) {
                                 Logger::debug($e);
                             }
 
-                            if(strlen($childDocument->getTitle()) > 80
-                              || strlen($childDocument->getTitle()) < 5
-                              || strlen($childDocument->getDescription()) > 180
-                              || strlen($childDocument->getDescription()) < 20
+                            if(mb_strlen($childDocument->getTitle()) > 80
+                              || mb_strlen($childDocument->getTitle()) < 5
+                              || mb_strlen($childDocument->getDescription()) > 180
+                              || mb_strlen($childDocument->getDescription()) < 20
                               || $nodeConfig["h1"] != 1
                               || $nodeConfig["hx"] < 1) {
                                 $nodeConfig["cls"] = "pimcore_document_seo_warning";
@@ -1179,6 +1210,21 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $urlParts = parse_url($this->getParam("url"));
         if($urlParts["path"]) {
             $document = Document::getByPath($urlParts["path"]);
+
+            // search for a page in a site
+            if(!$document) {
+                $sitesList = new Site_List();
+                $sitesObjects = $sitesList->load();
+
+                foreach ($sitesObjects as $site) {
+                    if ($site->getRootDocument() && in_array($urlParts["host"],$site->getDomains())) {
+                        if($document = Document::getByPath($site->getRootDocument() . $urlParts["path"])) {
+                            break;
+                        }
+                    }
+                }
+            }
+
             if($document) {
                 $this->_helper->json(array(
                     "success" => true,

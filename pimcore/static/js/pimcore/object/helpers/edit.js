@@ -14,7 +14,8 @@
 
 
 /**
- * NOTE: This helper-methods are added to the classes pimcore.object.edit, pimcore.object.fieldcollection, pimcore.object.tags.localizedfields
+ * NOTE: This helper-methods are added to the classes pimcore.object.edit, pimcore.object.fieldcollection,
+ * pimcore.object.tags.localizedfields
  */
 
 pimcore.registerNS("pimcore.object.helpers.edit");
@@ -23,6 +24,25 @@ pimcore.object.helpers.edit = {
     getRecursiveLayout: function (l) {
 
         var panelListenerConfig = {};
+
+        var tabpanelCorrection = function (panel) {
+            window.setTimeout(function () {
+                try {
+                    if(typeof panel["pimcoreLayoutCorrected"] == "undefined") {
+                        var parentEl = panel.body.findParent(".x-tab-panel");
+                        if(parentEl && Ext.get(parentEl).getWidth()) {
+                            panel.setWidth(Ext.get(parentEl).getWidth()-50);
+                            //panel.getEl().applyStyles("position:relative;");
+                            panel.ownerCt.doLayout();
+
+                            panel["pimcoreLayoutCorrected"] = true;
+                        }
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            }, 2000);
+        };
 
         var xTypeLayoutMapping = {
             accordion: {
@@ -64,21 +84,8 @@ pimcore.object.helpers.edit = {
                 hideMode: "offsets",
                 enableTabScroll: true,
                 listeners: {
-                    afterrender: function (panel) {
-                        window.setTimeout(function () {
-                            try {
-                                var parentEl = panel.body.findParent(".x-tab-panel");
-                                if(parentEl) {
-                                    panel.setWidth(Ext.get(parentEl).getWidth()-50);
-                                    //panel.getEl().applyStyles("position:relative;");
-                                    panel.ownerCt.doLayout();
-                                }
-
-                            } catch (e) {
-                                console.log(e);
-                            }
-                        }, 2000);
-                    }
+                    afterrender:tabpanelCorrection,
+                    tabchange: tabpanelCorrection
                 }
             },
             button: {
@@ -94,7 +101,8 @@ pimcore.object.helpers.edit = {
             }
         };
 
-        var validKeys = ["xtype","title","layout","items","region","width","height","name","text","html","handler","labelWidth","collapsible","collapsed","bodyStyle"];
+        var validKeys = ["xtype","title","layout","items","region","width","height","name","text","html","handler",
+                                        "labelWidth","collapsible","collapsed","bodyStyle"];
 
         var tmpItems;
 
@@ -184,9 +192,9 @@ pimcore.object.helpers.edit = {
                     if (typeof this.getMetaDataForField(l.name) != "function") {
                         metaData = this.getMetaDataForField(l.name);
                     }
-                } catch (e) {
+                } catch (e2) {
                     metaData = null;
-                    console.log(e);
+                    console.log(e2);
                 }
 
                 // add asterisk to mandatory field
@@ -216,7 +224,8 @@ pimcore.object.helpers.edit = {
                     dLayout = field.getLayoutEdit();
                 }
 
-                // set title back to original (necessary for localized fields because they use the same config several times, for each language )
+                // set title back to original (necessary for localized fields because they use the same config several
+                // times, for each language )
                 l.title = l.titleOriginal;
 
 
@@ -227,9 +236,9 @@ pimcore.object.helpers.edit = {
                         }
                     }.bind(field, metaData));
                 }
-                catch (e) {
+                catch (e3) {
                     console.log(l.name + " event render not supported (tag type: " + l.fieldtype + ")");
-                    console.log(e);
+                    console.log(e3);
                 }
 
                 // set styling
@@ -242,8 +251,8 @@ pimcore.object.helpers.edit = {
                                 if(!el.hasClass("object_field")) {
                                     el = el.parent(".object_field");
                                 }
-                            } catch (e) {
-                                console.log(e);
+                            } catch (e4) {
+                                console.log(e4);
                                 return;
                             }
 
@@ -257,8 +266,8 @@ pimcore.object.helpers.edit = {
                             if(field.style) {
                                 try {
                                     el.applyStyles(field.style);
-                                } catch (e) {
-                                    console.log(e);
+                                } catch (e5) {
+                                    console.log(e5);
                                 }
                             }
 
@@ -273,15 +282,15 @@ pimcore.object.helpers.edit = {
                                         trackMouse:true,
                                         showDelay: 200
                                     });
-                                } catch (e) {
-                                    console.log(e);
+                                } catch (e6) {
+                                    console.log(e6);
                                 }
                             }
                         }.bind(dLayout, l));
                     }
-                    catch (e) {
+                    catch (e7) {
                         console.log(l.name + " event render not supported (tag type: " + l.fieldtype + ")");
-                        console.log(e);
+                        console.log(e7);
                     }
                 }
 

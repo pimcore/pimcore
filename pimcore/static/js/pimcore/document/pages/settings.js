@@ -30,7 +30,7 @@ pimcore.document.pages.settings = Class.create({
                 root: "docTypes"
             });
 
-
+            // redirects
             var addUrlAlias = function (url, id) {
 
                 if(typeof url != "string") {
@@ -56,7 +56,7 @@ pimcore.document.pages.settings = Class.create({
                             keyup: function () {
                                 if(this.getValue().indexOf("http") >= 0) {
                                     try {
-                                        var newUrl = "@" + parse_url(this.getValue(), "path") + "@";
+                                        var newUrl = "@" + preg_quote(parse_url(this.getValue(), "path")) + "@";
                                         this.setValue(newUrl);
                                     } catch (e) {
                                         console.log(e);
@@ -111,6 +111,141 @@ pimcore.document.pages.settings = Class.create({
                 addUrlAlias(this.page.data.redirects[r].source, this.page.data.redirects[r]["id"]);
             }
 
+
+
+            // meta-data
+            var addMetaData = function (idName, idValue, contentName, contentValue) {
+
+                if(typeof idName != "string") {
+                    idName = "";
+                }
+                if(typeof idValue != "string") {
+                    idValue = "";
+                }
+                if(typeof contentName != "string") {
+                    contentName = "";
+                }
+                if(typeof contentValue != "string") {
+                    contentValue = "";
+                }
+
+                var count = this.metaDataPanel.findByType("button").length+1;
+
+                var combolisteners = {
+                    "afterrender": function (el) {
+                        el.getEl().parent().applyStyles({
+                            float: "left",
+                            "margin-right": "5px"
+                        });
+                    }
+                };
+
+                var compositeField = new Ext.Container({
+                    hideLabel: true,
+                    style: "padding-bottom:5px;",
+                    items: [{
+                        xtype: "label",
+                        text: "<meta ",
+                        style: "float:left;margin-right:5px;"
+                    },{
+                        xtype: "combo",
+                        store: ["name","property"],
+                        typeAhead: false,
+                        forceSelection: true,
+                        triggerAction: "all",
+                        value: idName,
+                        mode: "local",
+                        width: 120,
+                        name: "metadata_idName_" + count,
+                        listeners: combolisteners
+                    },{
+                        xtype: "label",
+                        text: ' = ',
+                        style: "float:left;margin-right:5px;"
+                    },{
+                        xtype: "combo",
+                        store: ["","og:title","og:type","og:url","og:image","og:description","og:locale",
+                                                                "twitter:card","twitter:site","twitter:creator"],
+                        value: idValue,
+                        editable: true,
+                        mode: "local",
+                        triggerAction: "all",
+                        width: 120,
+                        name: "metadata_idValue_" + count,
+                        listeners: combolisteners
+                    },{
+                        xtype: "combo",
+                        store: ["content"],
+                        typeAhead: false,
+                        forceSelection: true,
+                        triggerAction: "all",
+                        value: "content",
+                        editable: true,
+                        mode: "local",
+                        width: 120,
+                        name: "metadata_contentName_" + count,
+                        listeners: combolisteners
+                    },{
+                        xtype: "label",
+                        text: ' = ',
+                        style: "float:left;margin-right:5px;"
+                    },{
+                        xtype: "textfield",
+                        value: contentValue,
+                        width: 140,
+                        name: "metadata_contentValue_" + count,
+                        style: "float:left;margin-right:5px;"
+                    },{
+                        xtype: "label",
+                        text: ' />',
+                        style: "float:left;margin-right:5px;"
+                    }]
+                });
+
+                compositeField.add([{
+                    xtype: "button",
+                    iconCls: "pimcore_icon_delete",
+                    style: "float:left;",
+                    handler: function (compositeField, el) {
+                        this.metaDataPanel.remove(compositeField);
+                        this.metaDataPanel.doLayout();
+                    }.bind(this, compositeField)
+                },{
+                    xtype: "box",
+                    style: "clear:both;"
+                }]);
+
+
+                this.metaDataPanel.add(compositeField);
+                this.metaDataPanel.doLayout();
+            }.bind(this);
+
+            this.metaDataPanel = new Ext.form.FieldSet({
+                title: t("meta_data"),
+                collapsible: false,
+                autoHeight:true,
+                width: 700,
+                style: "margin-top: 20px;",
+                items: [],
+                buttons: [{
+                    text: t("add"),
+                    iconCls: "pimcore_icon_add",
+                    handler: addMetaData
+                }]
+            });
+
+            try {
+                if(typeof this.page.data.metaData == "object" && this.page.data.metaData.length > 0) {
+                    for(var r=0; r<this.page.data.metaData.length; r++) {
+                        addMetaData(this.page.data.metaData[r]["idName"], this.page.data.metaData[r]["idValue"],
+                            this.page.data.metaData[r]["contentName"], this.page.data.metaData[r]["contentValue"]);
+                    }
+                }
+            } catch (e) {}
+
+
+
+            // create layout
             this.layout = new Ext.FormPanel({
                 title: t('settings'),
                 bodyStyle:'padding:20px 5px 20px 5px;',
@@ -125,7 +260,6 @@ pimcore.document.pages.settings = Class.create({
                         collapsible: true,
                         autoHeight:true,
                         labelWidth: 200,
-                        defaults: {width: 500},
                         defaultType: 'textarea',
                         items :[
                             {
@@ -133,12 +267,14 @@ pimcore.document.pages.settings = Class.create({
                                 name: 'title',
                                 maxLength: 255,
                                 height: 51,
+                                width: 500,
                                 value: this.page.data.title
                             },
                             {
                                 fieldLabel: t('description'),
                                 maxLength: 255,
                                 height: 51,
+                                width: 500,
                                 name: 'description',
                                 value: this.page.data.description
                             },
@@ -147,8 +283,10 @@ pimcore.document.pages.settings = Class.create({
                                 name: 'keywords',
                                 maxLength: 255,
                                 height: 51,
+                                width: 500,
                                 value: this.page.data.keywords
-                            }
+                            },
+                            this.metaDataPanel
                         ]
                     },
                     {
@@ -165,16 +303,25 @@ pimcore.document.pages.settings = Class.create({
                                 maxLength: 255,
                                 width: 400,
                                 value: this.page.data.prettyUrl,
-                                validator: function (url) {
-                                    if(url.charAt(0) == "/") {
-                                        var result = url.match(/[a-zA-Z0-9_.\-\/]+/);
-                                        if (result == url) {
-                                            return true;
-                                        }
-                                    } else if (url.length < 1) {
-                                        return true;
-                                    }
-                                    return t("path_error_message");
+                                enableKeyEvents: true,
+                                listeners: {
+                                    "keyup": function (el) {
+                                        Ext.Ajax.request({
+                                            url: "/admin/page/check-pretty-url",
+                                            params: {
+                                                id: this.page.id,
+                                                path: el.getValue()
+                                            },
+                                            success: function (res) {
+                                                res = Ext.decode(res.responseText);
+                                                if(!res.success) {
+                                                    el.getEl().addClass("pimcore_error_input");
+                                                } else {
+                                                    el.getEl().removeClass("pimcore_error_input");
+                                                }
+                                            }
+                                        });
+                                    }.bind(this)
                                 }
                             }, this.urlAliasPanel
                         ]
@@ -253,7 +400,8 @@ pimcore.document.pages.settings = Class.create({
                                     "focus": function (el) {
                                         el.getStore().reload({
                                             params: {
-                                                controllerName: Ext.getCmp("pimcore_document_settings_controller_" + this.page.id).getValue()
+                                                controllerName: Ext.getCmp("pimcore_document_settings_controller_"
+                                                                                    + this.page.id).getValue()
                                             }
                                         });
                                     }.bind(this)
@@ -327,6 +475,7 @@ pimcore.document.pages.settings = Class.create({
                                 name: "contentMasterDocumentPath",
                                 value: this.page.data.contentMasterDocumentPath,
                                 cls: "input_drop_target",
+                                id: "contentMasterDocumentPath_" + this.page.id,
                                 listeners: {
                                     "render": function (el) {
                                         new Ext.dd.DropZone(el.getEl(), {
@@ -350,24 +499,56 @@ pimcore.document.pages.settings = Class.create({
                                         });
                                     }
                                 }
-                            }, {
-                                xtype: "button",
-                                text: t("apply_new_master_document"),
-                                iconCls: "pimcore_icon_apply",
-                                autoWidth: true,
-                                handler: function () {
-                                    Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"), function (buttonValue) {
-                                        if (buttonValue == "yes") {
-                                            Ext.Ajax.request({
-                                                url: "/admin/page/change-master-document/id/" + this.page.id,
-                                                params: this.getValues(),
-                                                success: function () {
-                                                    this.page.reload();
-                                                }.bind(this)
-                                            });
-                                        }
-                                    }.bind(this));
-                                }.bind(this)
+                            },
+                            {
+                                xtype: "toolbar",
+                                width: 605,
+                                items: [{
+                                    text:t("apply_new_master_document"),
+                                    iconCls:"pimcore_icon_apply",
+                                    autoWidth:true,
+                                    handler:function () {
+                                        Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"),
+                                            function (buttonValue) {
+                                                if (buttonValue == "yes") {
+                                                    Ext.Ajax.request({
+                                                        url:"/admin/page/change-master-document/id/" + this.page.id,
+                                                        params:{
+                                                            contentMasterDocumentPath:Ext.getCmp(
+                                                                "contentMasterDocumentPath_" + this.page.id).getValue()
+                                                        },
+                                                        success:function () {
+                                                            this.page.reload();
+                                                        }.bind(this)
+                                                    });
+                                                }
+                                            }.bind(this));
+                                    }.bind(this)
+                                },
+                                    {
+                                        text:t("delete_master_document"),
+                                        iconCls:"pimcore_icon_delete",
+                                        autoWidth:true,
+                                        handler:function () {
+                                            Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"),
+                                                function (buttonValue) {
+                                                    if (buttonValue == "yes") {
+                                                        Ext.getCmp("contentMasterDocumentPath_"
+                                                                                        + this.page.id).setValue("");
+                                                        Ext.Ajax.request({
+                                                            url:"/admin/page/change-master-document/id/"
+                                                                                        + this.page.id,
+                                                            params:{
+                                                                contentMasterDocumentPath:""
+                                                            },
+                                                            success:function () {
+                                                                this.page.reload();
+                                                            }.bind(this)
+                                                        });
+                                                    }
+                                                }.bind(this));
+                                        }.bind(this)
+                                    }]
                             }
                         ]
                     }

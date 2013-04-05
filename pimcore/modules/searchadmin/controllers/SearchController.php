@@ -116,7 +116,12 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
             foreach($fields as $f) {
                 $parts = explode("~", $f);
-                if(count($parts) > 1) {
+                if (substr($f, 0, 1) == "~") {
+//                    $type = $parts[1];
+//                    $field = $parts[2];
+//                    $keyid = $parts[3];
+                    // key value, ignore for now
+                } else if(count($parts) > 1) {
                     $bricks[$parts[0]] = $parts[0];
                 }
             }
@@ -134,7 +139,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
                 $join .= " ON `" . $ob . "`.o_id = `object_" . $class->getId() . "`.o_id";
             }
 
-            $conditionParts[] = "( id IN (SELECT `object_" . $class->getId() . "`.o_id FROM object_" . $class->getId() . $join . " WHERE 1=1 " . $conditionFilters . ") )";
+            $conditionParts[] = "( id IN (SELECT `object_" . $class->getId() . "`.o_id FROM object_" . $class->getId() . $join . " " . $conditionFilters . ") )";
         }
 
         if (is_array($types) and !empty($types[0])) {

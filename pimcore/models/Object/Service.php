@@ -31,7 +31,7 @@ class Object_Service extends Element_Service {
      * @param  User $user
      * @return void
      */
-    public function __construct($user) {
+    public function __construct($user = null) {
         $this->_user = $user;
     }
 
@@ -199,7 +199,7 @@ class Object_Service extends Element_Service {
 
         if ($object instanceof Object_Concrete) {
             $data["classname"] = $object->geto_ClassName();
-            $data["idPath"] = Pimcore_Tool::getIdPathForElement($object);
+            $data["idPath"] = Element_Service::getIdPath($object);
             $data['inheritedFields'] = array();
 
             if(empty($fields)) {
@@ -213,7 +213,40 @@ class Object_Service extends Element_Service {
 
                 $def = $object->getClass()->getFieldDefinition($key);
 
-                if(count($keyParts) > 1) {
+                if (substr($key, 0, 1) == "~") {
+                    $type = $keyParts[1];
+                    if ($type == "keyvalue") {
+                        $field = $keyParts[2];
+                        $keyid = $keyParts[3];
+
+                        $getter = "get" . ucfirst($field);
+                        if(method_exists($object,$getter)) {
+                            $keyValuePairs = $object->$getter();
+                            if ($keyValuePairs) {
+                                // get with inheritance
+
+                                $props = $keyValuePairs->getProperties();
+
+                                foreach ($props as $pair) {
+                                    if ($pair["key"] == $keyid) {
+                                        if (isset($pair["translated"])) {
+                                            $data['#kv-tr'][$dataKey] = $pair["translated"];
+                                        }
+
+                                        $data[$dataKey] = $pair["value"];
+
+                                        if ($pair["inherited"]) {
+                                            $data['inheritedFields'][$dataKey] = array("inherited" => $pair["inherited"], "objectid" => $pair["source"]);
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                } else if(count($keyParts) > 1) {
+                    // brick
                     $brickType = $keyParts[0];
                     $brickKey = $keyParts[1];
                     $key = self::getFieldForBrickType($object->getclass(), $brickType);
@@ -412,7 +445,13 @@ class Object_Service extends Element_Service {
 
                     //if the definition doesn't exist check for object brick
                     $keyParts = explode("~", $filter["field"]);
-                    if(count($keyParts) > 1) {
+
+                    if (substr($filter["field"], 0, 1) == "~") {
+                        // not needed for now
+//                            $type = $keyParts[1];
+//                            $field = $keyParts[2];
+//                            $keyid = $keyParts[3];
+                    } else if(count($keyParts) > 1) {
                         $brickType = $keyParts[0];
                         $brickKey = $keyParts[1];
 
@@ -457,7 +496,7 @@ class Object_Service extends Element_Service {
 
         $conditionFilters = "";
         if (count($conditionPartsFilters) > 0) {
-            $conditionFilters = " AND (" . implode(" AND ", $conditionPartsFilters) . ")";
+            $conditionFilters = "(" . implode(" AND ", $conditionPartsFilters) . ")";
         }
         Logger::log("ObjectController filter condition:" . $conditionFilters);
         return $conditionFilters;

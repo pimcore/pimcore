@@ -61,12 +61,12 @@ class Staticroute_Resource extends Pimcore_Model_Resource_Abstract {
      * @param integer $id
      * @return void
      */
-    public function getByName($name = null) {
+    public function getByName($name = null, $siteId = null) {
 
         if ($name != null) {
             $this->model->setName($name);
         }
-        $data = $this->db->fetchRow("SELECT id FROM staticroutes WHERE name = ?", $this->model->getName());
+        $data = $this->db->fetchRow("SELECT id FROM staticroutes WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) ORDER BY siteId DESC", array($this->model->getName(), $siteId));
         
         if($data["id"]) {
             $this->assignVariablesToModel($data);
@@ -95,7 +95,7 @@ class Staticroute_Resource extends Pimcore_Model_Resource_Abstract {
     public function delete() {
         $this->db->delete("staticroutes", $this->db->quoteInto("id = ?", $this->model->getId()));
         
-        $this->model->clearDependedCache();
+        $this->model->clearDependentCache();
     }
 
     /**
@@ -119,7 +119,7 @@ class Staticroute_Resource extends Pimcore_Model_Resource_Abstract {
             throw $e;
         }
         
-        $this->model->clearDependedCache();
+        $this->model->clearDependentCache();
     }
 
     /**

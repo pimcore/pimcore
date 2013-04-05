@@ -125,12 +125,7 @@ class Asset_Resource extends Element_Resource {
             }
 
             // first try to insert a new record, this is because of the recyclebin restore
-            try {
-                $this->db->insert("assets", $data);
-            }
-            catch (Exception $e) {
-                $this->db->update("assets", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
-            }
+            $this->db->insertOrUpdate("assets", $data);
 
             // tree_locks
             $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'asset'");
@@ -165,14 +160,19 @@ class Asset_Resource extends Element_Resource {
         //get assets to empty their cache
         $assets = $this->db->fetchAll("SELECT id,path FROM assets WHERE path LIKE " . $this->db->quote($oldPath . "%"));
 
+        $userId = "0";
+        if($user = Pimcore_Tool_Admin::getCurrentUser()) {
+            $userId = $user->getId();
+        }
+
         //update assets child paths
-        $this->db->query("update assets set path = replace(path," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where path like " . $this->db->quote($oldPath . "/%")  . ";");
+        $this->db->query("update assets set path = replace(path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . "), modificationDate = '" . time() . "', userModification = '" . $userId . "' where path like " . $this->db->quote($oldPath . "/%")  . ";");
 
         //update assets child permission paths
-        $this->db->query("update users_workspaces_asset set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
+        $this->db->query("update users_workspaces_asset set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
         //update assets child properties paths
-        $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
+        $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
 
         foreach ($assets as $asset) {

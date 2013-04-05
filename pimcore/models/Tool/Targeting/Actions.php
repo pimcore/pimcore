@@ -78,6 +78,7 @@ class Tool_Targeting_Actions {
     public function setProgrammaticallyEnabled($programmaticallyEnabled)
     {
         $this->programmaticallyEnabled = $programmaticallyEnabled;
+        return $this;
     }
 
     /**
@@ -94,6 +95,7 @@ class Tool_Targeting_Actions {
     public function setCodesnippetCode($codesnippetCode)
     {
         $this->codesnippetCode = $codesnippetCode;
+        return $this;
     }
 
     /**
@@ -110,6 +112,7 @@ class Tool_Targeting_Actions {
     public function setCodesnippetPosition($codesnippetPosition)
     {
         $this->codesnippetPosition = $codesnippetPosition;
+        return $this;
     }
 
     /**
@@ -126,6 +129,7 @@ class Tool_Targeting_Actions {
     public function setCodesnippetSelector($codesnippetSelector)
     {
         $this->codesnippetSelector = $codesnippetSelector;
+        return $this;
     }
 
     /**
@@ -142,6 +146,7 @@ class Tool_Targeting_Actions {
     public function setEventKey($eventKey)
     {
         $this->eventKey = $eventKey;
+        return $this;
     }
 
     /**
@@ -158,6 +163,7 @@ class Tool_Targeting_Actions {
     public function setEventValue($eventValue)
     {
         $this->eventValue = $eventValue;
+        return $this;
     }
 
     /**
@@ -174,6 +180,7 @@ class Tool_Targeting_Actions {
     public function setRedirectCode($redirectCode)
     {
         $this->redirectCode = $redirectCode;
+        return $this;
     }
 
     /**
@@ -195,6 +202,7 @@ class Tool_Targeting_Actions {
             }
         }
         $this->redirectUrl = $redirectUrl;
+        return $this;
     }
 
     /**
@@ -211,6 +219,7 @@ class Tool_Targeting_Actions {
     public function setCodesnippetEnabled($codesnippetEnabled)
     {
         $this->codesnippetEnabled = $codesnippetEnabled;
+        return $this;
     }
 
     /**
@@ -227,6 +236,7 @@ class Tool_Targeting_Actions {
     public function setEventEnabled($eventEnabled)
     {
         $this->eventEnabled = $eventEnabled;
+        return $this;
     }
 
     /**
@@ -243,6 +253,7 @@ class Tool_Targeting_Actions {
     public function setRedirectEnabled($redirectEnabled)
     {
         $this->redirectEnabled = $redirectEnabled;
+        return $this;
     }
 
     /**

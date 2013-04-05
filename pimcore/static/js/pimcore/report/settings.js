@@ -151,7 +151,8 @@ pimcore.report.settings = Class.create({
                             }
                         }.bind(this));
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"), "error",t(res.message));
+                        pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"),
+                                                                                        "error",t(res.message));
                     }
                 } catch(e){
                     pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"), "error");

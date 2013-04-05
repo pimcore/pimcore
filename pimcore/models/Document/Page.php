@@ -40,6 +40,11 @@ class Document_Page extends Document_PageSnippet {
     public $keywords = "";
 
     /**
+     * @var array
+     */
+    public $metaData = array();
+
+    /**
      * Static type of the document
      *
      * @var string
@@ -50,6 +55,11 @@ class Document_Page extends Document_PageSnippet {
      * @var string
      */
     public $prettyUrl;
+
+    /**
+     * @var string
+     */
+    public $css = "";
 
 
     /**
@@ -76,16 +86,18 @@ class Document_Page extends Document_PageSnippet {
     /**
      *
      */
-    public function update() {
+    protected function update() {
+
+        $oldPath = $this->getResource()->getCurrentFullPath();
 
         parent::update();
 
         $config = Pimcore_Config::getSystemConfig();
-        if ($this->_oldPath && $config->documents->createredirectwhenmoved) {
+        if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getFullPath()) {
             // create redirect for old path
             $redirect = new Redirect();
             $redirect->setTarget($this->getId());
-            $redirect->setSource("@" . $this->_oldPath . "/?@");
+            $redirect->setSource("@" . $oldPath . "/?@");
             $redirect->setStatusCode(301);
             $redirect->setExpiry(time() + 86400 * 60); // this entry is removed automatically after 60 days
             $redirect->save();
@@ -111,6 +123,7 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setName($name) {
         $this->setProperty("navigation_name","text",$name,false);
+        return $this;
     }
 
     /**
@@ -140,6 +153,7 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setDescription($description) {
         $this->description = str_replace("\n"," ",$description);
+        return $this;
     }
 
     /**
@@ -148,6 +162,7 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setKeywords($keywords) {
         $this->keywords = str_replace("\n"," ",$keywords);
+        return $this;
     }
 
     /**
@@ -156,6 +171,24 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setTitle($title) {
         $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * @param array $metaData
+     */
+    public function setMetaData($metaData)
+    {
+        $this->metaData = $metaData;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetaData()
+    {
+        return $this->metaData;
     }
 
     /**
@@ -164,7 +197,9 @@ class Document_Page extends Document_PageSnippet {
     public function getFullPath() {
 
         $path = parent::getFullPath();
-        if(!Pimcore::inAdmin()) {
+
+        // do not use pretty url's when in admin, the current document is wrapped by a hardlink or this document isn't in the current site
+        if(!Pimcore::inAdmin() && !($this instanceof Document_Hardlink_Wrapper_Interface) && Pimcore_Tool_Frontend::isDocumentInCurrentSite($this)) {
             // check for a pretty url
             $prettyUrl = $this->getPrettyUrl();
             if(!empty($prettyUrl) && strlen($prettyUrl) > 1) {
@@ -181,6 +216,7 @@ class Document_Page extends Document_PageSnippet {
     public function setPrettyUrl($prettyUrl)
     {
         $this->prettyUrl = rtrim($prettyUrl, " /");
+        return $this;
     }
 
     /**
@@ -190,4 +226,23 @@ class Document_Page extends Document_PageSnippet {
     {
         return $this->prettyUrl;
     }
+
+    /**
+     * @param string $css
+     */
+    public function setCss($css)
+    {
+        $this->css = $css;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCss()
+    {
+        return $this->css;
+    }
+
+
 }

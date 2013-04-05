@@ -96,6 +96,7 @@ class Document_Resource extends Element_Resource {
 
         try {
             $this->db->insert("documents", array(
+                "key" => $this->model->getKey(),
                 "path" => $this->model->getRealPath(),
                 "parentId" => $this->model->getParentId()
             ));
@@ -147,13 +148,7 @@ class Document_Resource extends Element_Resource {
                 }
             }
 
-            // first try to insert a new record, this is because of the recyclebin restore
-            try {
-                $this->db->insert("documents", $data);
-            }
-            catch (Exception $e) {
-                $this->db->update("documents", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
-            }
+            $this->db->insertOrUpdate("documents", $data);
 
             $this->updateLocks();
         }
@@ -180,14 +175,19 @@ class Document_Resource extends Element_Resource {
         //get documents to empty their cache
         $documents = $this->db->fetchAll("SELECT id,path FROM documents WHERE path LIKE ?", $oldPath . "%");
 
+        $userId = "0";
+        if($user = Pimcore_Tool_Admin::getCurrentUser()) {
+            $userId = $user->getId();
+        }
+
         //update documents child paths
-        $this->db->query("update documents set path = replace(path," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getRealFullPath()) . ") where path like " . $this->db->quote($oldPath . "/%") . ";");
+        $this->db->query("update documents set path = replace(path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getRealFullPath() . "/") . "), modificationDate = '" . time() . "', userModification = '" . $userId . "' where path like " . $this->db->quote($oldPath . "/%") . ";");
 
         //update documents child permission paths
-        $this->db->query("update users_workspaces_document set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getRealFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") .";");
+        $this->db->query("update users_workspaces_document set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getRealFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") .";");
 
         //update documents child properties paths
-        $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getRealFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%" ) . ";");
+        $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getRealFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%" ) . ";");
 
 
         foreach ($documents as $document) {
@@ -205,6 +205,8 @@ class Document_Resource extends Element_Resource {
      * @return string retrieves the current full document path from DB
      */
     public function getCurrentFullPath() {
+
+        $path = null;
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?", $this->model->getId());
         }

@@ -121,6 +121,7 @@ class SearchPhp_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = $id;
+        return $this;
     }
 
     /**
@@ -136,6 +137,7 @@ class SearchPhp_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setFullPath($fullpath) {
         $this->fullPath = $fullpath;
+        return $this;
     }
 
     /**
@@ -151,6 +153,7 @@ class SearchPhp_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setType($type) {
         $this->type = $type;
+        return $this;
     }
 
 
@@ -167,6 +170,7 @@ class SearchPhp_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setSubtype($subtype) {
         $this->subtype = $subtype;
+        return $this;
     }
 
     /**
@@ -178,6 +182,7 @@ class SearchPhp_Backend_Data extends Pimcore_Model_Abstract {
 
     public function setCreationDate($creationDate) {
         $this->creationDate = $creationDate;
+        return $this;
     }
 
 
@@ -194,6 +199,7 @@ class SearchPhp_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setModificationDate($modificationDate) {
         $this->modificationDate = $modificationDate;
+        return $this;
     }
 
     /**
@@ -209,6 +215,7 @@ class SearchPhp_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setUserModification($userModification) {
         $this->userModification = $userModification;
+        return $this;
     }
 
     /**
@@ -224,6 +231,7 @@ class SearchPhp_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setUserOwner($userOwner) {
         $this->userOwner = $userOwner;
+        return $this;
     }
 
     /**
@@ -246,6 +254,7 @@ class SearchPhp_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setPublished($published) {
         $this->published = (bool) $published;
+        return $this;
     }
 
     /**
@@ -261,6 +270,7 @@ class SearchPhp_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setData($data){
         $this->data = $data;
+        return $this;
     }
 
     /**
@@ -276,6 +286,7 @@ class SearchPhp_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setProperties($properties){
         $this->properties = $properties;
+        return $this;
     }
 
 
@@ -285,68 +296,68 @@ class SearchPhp_Backend_Data extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setDataFromElement($element){
-            $this->id = new SearchPhp_Backend_Data_Id($element);
-            $this->fullPath = $element->getFullPath();
-            $this->creationDate=$element->getCreationDate();
-            $this->modificationDate=$element->getModificationDate();
-            $this->userModification = $element->getUserModification();
-            $this->userOwner = $element->getUserOwner();
+        $this->id = new SearchPhp_Backend_Data_Id($element);
+        $this->fullPath = $element->getFullPath();
+        $this->creationDate=$element->getCreationDate();
+        $this->modificationDate=$element->getModificationDate();
+        $this->userModification = $element->getUserModification();
+        $this->userOwner = $element->getUserOwner();
 
-            $this->type = $element->getType();
-            if($element instanceof Object_Abstract){
-                $this->subtype = $element->getClassName();
-            } else {
-                $this->subtype = $this->type;
-            }
+        $this->type = $element->getType();
+        if($element instanceof Object_Abstract){
+            $this->subtype = $element->getClassName();
+        } else {
+            $this->subtype = $this->type;
+        }
 
-            $properties = $element->getProperties();
-            if(is_array($properties)){
-                foreach($properties as $nextProperty){
-                    if($nextProperty->getType() == 'text'){
-                        $this->properties.=$nextProperty->getData()." ";
-                    }
+        $properties = $element->getProperties();
+        if(is_array($properties)){
+            foreach($properties as $nextProperty){
+                if($nextProperty->getType() == 'text'){
+                    $this->properties.=$nextProperty->getData()." ";
                 }
             }
+        }
 
-            if($element instanceof Document){
-                if($element instanceof Document_Folder){
-                    $this->data = $element->getKey();
-                    $this->published = true;
-                } else if ($element instanceof Document_Link){
-                    $this->published = $element->isPublished();
-                    $this->data = $element->getName()." ".$element->getTitle()." ".$element->getHref();
-                } else if ($element instanceof Document_PageSnippet){
-                    $this->published = $element->isPublished();
-                    $elements = $element->getElements();
-                    if(is_array($elements)){
-                        foreach($elements as $tag){
-                            if($tag instanceof Document_Tag_Interface){
-                                $this->data.=strip_tags($tag->frontend())." ";
-                            }
+        if($element instanceof Document){
+            if($element instanceof Document_Folder){
+                $this->data = $element->getKey();
+                $this->published = true;
+            } else if ($element instanceof Document_Link){
+                $this->published = $element->isPublished();
+                $this->data = $element->getName()." ".$element->getTitle()." ".$element->getHref();
+            } else if ($element instanceof Document_PageSnippet){
+                $this->published = $element->isPublished();
+                $elements = $element->getElements();
+                if(is_array($elements)){
+                    foreach($elements as $tag){
+                        if($tag instanceof Document_Tag_Interface){
+                            $this->data.=strip_tags($tag->frontend())." ";
                         }
                     }
-                    if($element instanceof Document_Page){
-                        $this->published = $element->isPublished();
-                        $this->data.=" ".$element->getName()." ".$element->getTitle()." ".$element->getDescription()." ".$element->getKeywords();
-                    }
                 }
-            } else if($element instanceof Asset) {
-                $this->data = $element->getFilename();
-                $this->published = true;
-            } else if ($element instanceof Object_Abstract){
-                if ($element instanceof Object_Concrete) {
+                if($element instanceof Document_Page){
                     $this->published = $element->isPublished();
-                    foreach ($element->getClass()->getFieldDefinitions() as $key => $value) {
-                        $this->data.=$value->getForCsvExport($element)." ";
-                    }
-                } else if ($element instanceof Object_Folder){
-                    $this->data=$element->getKey();
-                    $this->published = true;
+                    $this->data.=" ".$element->getName()." ".$element->getTitle()." ".$element->getDescription()." ".$element->getKeywords();
                 }
-            } else {
-                Logger::crit("SearchPhp_Backend_Data received an unknown element!");
             }
-
+        } else if($element instanceof Asset) {
+            $this->data = $element->getFilename();
+            $this->published = true;
+        } else if ($element instanceof Object_Abstract){
+            if ($element instanceof Object_Concrete) {
+                $this->published = $element->isPublished();
+                foreach ($element->getClass()->getFieldDefinitions() as $key => $value) {
+                    $this->data.=$value->getForCsvExport($element)." ";
+                }
+            } else if ($element instanceof Object_Folder){
+                $this->data=$element->getKey();
+                $this->published = true;
+            }
+        } else {
+            Logger::crit("SearchPhp_Backend_Data received an unknown element!");
+        }
+        return $this;
     }
 
     /**

@@ -16,5 +16,10 @@
  */
 
 class Asset_Audio extends Asset {
-    
+
+    /**
+     * @var string
+     */
+    public $type = "audio";
+
 }

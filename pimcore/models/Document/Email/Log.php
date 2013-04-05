@@ -131,6 +131,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setDocumentId($id)
     {
         $this->documentId = $id;
+        return $this;
     }
 
     /**
@@ -141,6 +142,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setRequestUri($requestUri)
     {
         $this->requestUri = $requestUri;
+        return $this;
     }
 
     /**
@@ -171,6 +173,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setId($id)
     {
         $this->id = (int)$id;
+        return $this;
     }
 
     /**
@@ -181,6 +184,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setSubject($subject)
     {
         $this->subject = $subject;
+        return $this;
     }
 
     /**
@@ -232,6 +236,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setParams($params)
     {
         $this->params = $params;
+        return $this;
     }
 
     /**
@@ -253,6 +258,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = $modificationDate;
+        return $this;
     }
 
     /**
@@ -274,6 +280,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setSentDate($sentDate)
     {
         $this->sentDate = $sentDate;
+        return $this;
     }
 
     /**
@@ -293,6 +300,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     {
         $file = PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log';
         $this->emailLogExistsHtml = (is_file($file) && is_readable($file)) ? 1 : 0;
+        return $this;
     }
 
     /**
@@ -312,6 +320,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     {
         $file = PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log';
         $this->emailLogExistsText = (is_file($file) && is_readable($file)) ? 1 : 0;
+        return $this;
     }
 
     /**
@@ -368,6 +377,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setCreationDate($creationDate)
     {
         $this->creationDate = $creationDate;
+        return $this;
     }
 
     /**
@@ -423,6 +433,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setTo($to)
     {
         $this->to = $to;
+        return $this;
     }
 
     /**
@@ -452,6 +463,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setCc($cc)
     {
         $this->cc = $cc;
+        return $this;
     }
 
     /**
@@ -481,6 +493,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setBcc($bcc)
     {
         $this->bcc = $bcc;
+        return $this;
     }
 
     /**
@@ -510,6 +523,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setFrom($from)
     {
         $this->from = $from;
+        return $this;
     }
 
     /**
@@ -530,6 +544,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setBodyHtml($html)
     {
         $this->bodyHtml = $html;
+        return $this;
     }
 
     /**
@@ -550,6 +565,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function setBodyText($text)
     {
         $this->bodyText = $text;
+        return $this;
     }
 
     /**

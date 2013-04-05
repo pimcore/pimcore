@@ -74,6 +74,7 @@ class Document_Tag_Table extends Document_Tag {
      */
     public function setDataFromResource($data) {
         $this->data = Pimcore_Tool_Serialize::unserialize($data);
+        return $this;
     }
 
     /**
@@ -83,6 +84,7 @@ class Document_Tag_Table extends Document_Tag {
      */
     public function setDataFromEditmode($data) {
         $this->data = $data;
+        return $this;
     }
 
     /**
@@ -99,7 +101,7 @@ class Document_Tag_Table extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
         if ($data->data === null or is_array($data->data)) {
             $this->data = $data->data;

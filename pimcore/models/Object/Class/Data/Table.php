@@ -85,7 +85,8 @@ class Object_Class_Data_Table extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -100,7 +101,8 @@ class Object_Class_Data_Table extends Object_Class_Data {
      * @return void
      */
     public function setHeight($height) {
-        $this->height = $height;
+        $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
     /**
@@ -115,7 +117,8 @@ class Object_Class_Data_Table extends Object_Class_Data {
      * @return void
      */
     public function setCols($cols) {
-        $this->cols = $cols;
+        $this->cols = $this->getAsIntegerCast($cols);
+        return $this;
     }
 
     /**
@@ -130,7 +133,8 @@ class Object_Class_Data_Table extends Object_Class_Data {
      * @return void
      */
     public function setRows($rows) {
-        $this->rows = $rows;
+        $this->rows = $this->getAsIntegerCast($rows);
+        return $this;
     }
 
 
@@ -147,6 +151,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      */
     public function setData($data) {
         $this->data = $data;
+        return $this;
     }
 
 
@@ -285,4 +290,67 @@ class Object_Class_Data_Table extends Object_Class_Data {
         } else return null;
 
     }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        if ($data) {
+            $html = "<table>";
+
+            foreach ($data as $row) {
+                $html .= "<tr>";
+
+                if (is_array($row)) {
+                    foreach ($row as $cell) {
+                        $html .= "<td>";
+                        $html .= $cell;
+                        $html .= "</th>";
+                    }
+                }
+                $html .= "</tr>";
+            }
+            $html .= "</table>";
+
+            $value = array();
+            $value["html"] = $html;
+            $value["type"] = "html";
+            return $value;
+        } else {
+            return "";
+        }
+    }
+
+
+    /** converts data to be imported via webservices
+     * @param mixed $value
+     * @param null $object
+     * @return array|mixed
+     */
+    public function getFromWebserviceImport($value, $object = null)
+    {
+        if ($value && is_array($value)) {
+            $result = array();
+            foreach ($value as $item) {
+                $item = (array) $item;
+                $result[] = $item;
+            }
+
+            return $result;
+        }
+
+        return $value;
+    }
+
 }

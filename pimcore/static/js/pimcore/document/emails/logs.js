@@ -141,7 +141,8 @@ pimcore.document.emails.logs = Class.create({
                         layout: 'fit',
                         items : [{
                                 xtype : "box",
-                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log/?id=" + rec.get('id') + "&type=html"}
+                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log/?id=" + rec.get('id')
+                                                                                + "&type=html"}
                             }]
                     });
                     iframe.show();
@@ -171,7 +172,8 @@ pimcore.document.emails.logs = Class.create({
                         layout: 'fit',
                         items : [{
                                 xtype : "box",
-                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log/?id=" + rec.get('id') + "&type=text"}
+                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log/?id=" + rec.get('id')
+                                                                    + "&type=text"}
                             }]
                     });
                     iframe.show();
@@ -214,12 +216,17 @@ pimcore.document.emails.logs = Class.create({
                                     if(data.type == 'simple'){
                                         return data.value;
                                     }else{
-                                        //when the objectPath is set -> the object is still available otherwise it was deleted in the meantime
+                                        //when the objectPath is set -> the object is still available otherwise it was
+                                        // deleted in the meantime
                                         if(data.objectPath){
                                             var subtype = data.objectClassSubType.toLowerCase();
-                                            return '<span onclick="pimcore.helpers.open' + data.objectClassBase + '(' + data.objectId + ', \'' + subtype + '\');" class="input_drop_target" style="display: block;">' + data.objectPath + '</span>';
+                                            return '<span onclick="pimcore.helpers.open'
+                                                + data.objectClassBase + '(' + data.objectId + ', \''
+                                                + subtype + '\');" class="input_drop_target" style="display: block;">'
+                                                                + data.objectPath + '</span>';
                                         }else{
-                                            return '"' + data.objectClass + '" with Id: ' + data.objectId + ' (deleted)';
+                                            return '"' + data.objectClass + '" with Id: '
+                                                + data.objectId + ' (deleted)';
                                         }
                                     }
                                 }
@@ -251,16 +258,19 @@ pimcore.document.emails.logs = Class.create({
                     icon:"/pimcore/static/img/icon/email_start.png",
                     handler:function (grid, rowIndex) {
                         var rec = grid.getStore().getAt(rowIndex);
-                            Ext.Msg.confirm(t('email_log_resend_window_title'), t('email_log_resend_window_msg'), function(btn){
+                            Ext.Msg.confirm(t('email_log_resend_window_title'), t('email_log_resend_window_msg'),
+                                function(btn){
                                 if (btn == 'yes'){
                                     Ext.Ajax.request({
                                         url: '/admin/email/resend-email/',
                                         success: function(response){
                                             var data = Ext.decode( response.responseText );
                                             if(data.success){
-                                                Ext.Msg.alert(t('email_log_resend_window_title'),t('email_log_resend_window_success_message'));
+                                                Ext.Msg.alert(t('email_log_resend_window_title'),
+                                                              t('email_log_resend_window_success_message'));
                                             }else{
-                                                Ext.Msg.alert(t('email_log_resend_window_title'),t('email_log_resend_window_error_message'));
+                                                Ext.Msg.alert(t('email_log_resend_window_title'),
+                                                              t('email_log_resend_window_error_message'));
                                             }
                                         },
                                         failure: function () {
@@ -307,7 +317,9 @@ pimcore.document.emails.logs = Class.create({
 
         ];
 
-       var storeFields = ["id","documentId","subject","emailLogExistsHtml","params","sentDate","params","modificationDate","requestUri","from","to","cc","bcc","emailLogExistsHtml","emailLogExistsText"];
+       var storeFields = ["id","documentId","subject","emailLogExistsHtml","params","sentDate","params",
+                          "modificationDate","requestUri","from","to","cc","bcc","emailLogExistsHtml",
+                          "emailLogExistsText"];
 
 
 

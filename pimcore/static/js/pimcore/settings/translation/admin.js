@@ -41,13 +41,15 @@ pimcore.settings.translation.admin = Class.create(pimcore.settings.translations,
                 try {
                     var languages = Ext.decode(response.responseText);
                     this.languages = [];
-                    for(i=0;i<languages.length;i++){
-                        this.languages.push(languages[i]["language"]);    
+                    for(var i=0; i<languages.length; i++){
+                        this.languages.push(languages[i]["language"]);
                     }
                     this.getTabPanel();
                 }
                 catch (e) {
-                    Ext.MessageBox.alert(t('error'), t('translations_are_not_configured') + '<br /><br /><a href="http://www.pimcore.org/documentation/" target="_blank">' + t("read_more_here") + '</a>');
+                    Ext.MessageBox.alert(t('error'), t('translations_are_not_configured')
+                        + '<br /><br /><a href="http://www.pimcore.org/documentation/" target="_blank">'
+                        + t("read_more_here") + '</a>');
                 }
             }.bind(this)
         });

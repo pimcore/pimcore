@@ -103,6 +103,7 @@ class Schedule_Maintenance_Job {
      */
     public function setId($id) {
         $this->id = $id;
+        return $this;
     }
 
     /**
@@ -118,6 +119,7 @@ class Schedule_Maintenance_Job {
      */
     public function setObject($object) {
         $this->object = $object;
+        return $this;
     }
 
     /**
@@ -133,6 +135,7 @@ class Schedule_Maintenance_Job {
      */
     public function setMethod($method) {
         $this->method = $method;
+        return $this;
     }
 
     /**
@@ -155,6 +158,7 @@ class Schedule_Maintenance_Job {
      */
     public function setArguments($args){
         $this->arguments = $args;
+        return $this;
     }
 
 }

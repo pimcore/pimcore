@@ -89,7 +89,8 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -104,7 +105,8 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      * @return void
      */
     public function setHeight($height) {
-        $this->height = $height;
+        $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
     /**
@@ -120,6 +122,7 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      */
     public function setLabelWidth($labelWidth) {
         $this->labelWidth = $labelWidth;
+        return $this;
     }
 
     /**
@@ -127,6 +130,7 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      */
     public function setLabelFirstCell($labelFirstCell) {
         $this->labelFirstCell = $labelFirstCell;
+        return $this;
     }
 
     /**
@@ -158,6 +162,7 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
             $c['key'] = strtolower($c['key']);
             $this->cols[] = $c;
         }
+        return $this;
     }
 
     /**
@@ -184,7 +189,7 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
             $r['key'] = strtolower($r['key']);
             $this->rows[] = $r;
         }
-
+        return $this;
     }
 
     public function sort($a, $b) {
@@ -423,18 +428,23 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
     public function getFromWebserviceImport ($value) {
         if(empty($value)){
             return null;
-        } else if(is_array($value)){
-            $dataArray = array();
-            foreach($this->getRows() as $r) {
-                foreach($this->getCols() as $c) {
-                    $name = $r['key'] . "#" . $c['key'];
-                    $dataArray[$r['key']][$c['key']] = $value[$name];
-                }
-            }
-
-            return new Object_Data_StructuredTable($dataArray);
         } else {
-            throw new Exception("cannot get values from web service import - invalid data");
+            if ($value instanceof stdClass) {
+                $value = (array) $value;
+            }
+            if(is_array($value)){
+                $dataArray = array();
+                foreach($this->getRows() as $r) {
+                    foreach($this->getCols() as $c) {
+                        $name = $r['key'] . "#" . $c['key'];
+                        $dataArray[$r['key']][$c['key']] = $value[$name];
+                    }
+                }
+
+                return new Object_Data_StructuredTable($dataArray);
+            } else {
+                throw new Exception("cannot get values from web service import - invalid data");
+            }
         }
     }
 
@@ -530,22 +540,51 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      * @param $brickClass
      * @return string
      */
-    public function getGetterCodeObjectbrick ($brickClass) {
+    public function getGetterCodeObjectbrick($brickClass)
+    {
         $key = $this->getName();
         $code = '/**' . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . " () {\n";
 
-        $code .= "\t" . 'if((!$this->' . $key . '|| $this->' . $key . '->isEmpty()) && Object_Abstract::doGetInheritedValues($this->getObject())) {' . "\n";
+        if (method_exists($this, "preGetData")) {
+            $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+        } else {
+            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        }
+
+        $code .= "\t" . 'if((!$data || $data->isEmpty()) && Object_Abstract::doGetInheritedValues($this->getObject())) {' . "\n";
         $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
         $code .= "\t" . '}' . "\n";
 
-        $code .= "\t return " . '$this->' . $key . ";\n";
+
+        $code .= "\t return " . '$data' . ";\n";
         $code .= "}\n\n";
 
         return $code;
+    }
 
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+    /** See parent class.
+     * @param mixed $data
+     * @param null $object
+     * @return array|null
+     */
+    public function getDiffDataForEditMode($data, $object = null) {
+        $defaultData = parent::getDiffDataForEditMode($data, $object);
+        $html =  $defaultData[0]["value"];
+        $value = array();
+        $value["html"] = $html;
+        $value["type"] = "html";
+        $defaultData[0]["value"] = $value;
+        return $defaultData;
     }
 
 }

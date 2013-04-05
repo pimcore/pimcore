@@ -101,24 +101,19 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
      */
     public function getDataFromEditmode($data, $object = null)
     {
-        $localFields = $object->{"get" . ucfirst($this->getName())}();
-        $localData = array();
+        $localizedFields = $object->{"get" . ucfirst($this->getName())}();
 
-        // get existing data
-        if($localFields instanceof Object_Localizedfield) {
-            $localData = $localFields->getItems();
+        if(!$localizedFields instanceof Object_Localizedfield) {
+            $localizedFields = new Object_Localizedfield();
         }
-
 
         if (is_array($data)) {
             foreach ($data as $language => $fields) {
                 foreach ($fields as $name => $fdata) {
-                    $localData[$language][$name] = $this->getFielddefinition($name)->getDataFromEditmode($fdata);
+                    $localizedFields->setLocalizedValue($name, $this->getFielddefinition($name)->getDataFromEditmode($fdata), $language);
                 }
             }
         }
-
-        $localizedFields = new Object_Localizedfield($localData);
 
         return $localizedFields;
     }
@@ -191,6 +186,9 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                 $el->name = $fd->getName();
                 $el->type = $fd->getFieldType();
                 $el->value = $fd->getForWebserviceExport($object);
+                if ($el->value ==  null && self::$dropNullValues) {
+                    continue;
+                }
                 $el->language = $language;
                 $wsData[] = $el;
             }
@@ -206,34 +204,48 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($value)
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
     {
         if (is_array($value)) {
 
             $validLanguages = Pimcore_Tool::getValidLanguages();
-            foreach($value as $v){
-                if (!in_array($v->language, $validLanguages)) {
-                    throw new Exception("Invalid language in localized fields");
+
+            if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
+                foreach($value as $v){
+                        if (!in_array($v->language, $validLanguages)) {
+                            throw new Exception("Invalid language in localized fields");
+                    }
                 }
             }
 
-            $data = array();
-            foreach ($value as $field) {
-
-                    if(!$field instanceof Webservice_Data_Object_Element){
-                        throw new Exception("Invalid import data in field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]");
-                    }
-                    $fd = $this->getFielddefinition($field->name);
-                    if (!$fd instanceof Object_Class_Data) {
-                        throw new Exception("Unknnown field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ] ");
-                    } else if ($fd->getFieldtype() != $field->type){
-                        throw new Exception("Type mismatch for field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]. Should be [ ".$fd->getFieldtype()." ], but is [ ".$field->type." ] ");
-                    }
-                    $data[$field->language][$field->name] = $this->getFielddefinition($field->name)->getFromWebserviceImport($field->value);
-
+            $localizedFields = new Object_Localizedfield();
+            if($object instanceof Object_Concrete) {
+                $localizedFields->setObject($object);
             }
 
-            $localizedFields = new Object_Localizedfield($data);
+            foreach ($value as $field) {
+                if ($field instanceof stdClass) {
+                    $field = Pimcore_Tool_Cast::castToClass("Webservice_Data_Object_Element", $field);
+                }
+
+                if ($idMapper && $idMapper->ignoreMappingFailures()){
+                    if (!in_array($field->language, $validLanguages)) {
+                        continue;
+                    }
+                }
+
+                if(!$field instanceof Webservice_Data_Object_Element){
+                    throw new Exception("Invalid import data in field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]");
+                }
+                $fd = $this->getFielddefinition($field->name);
+                if (!$fd instanceof Object_Class_Data) {
+                    throw new Exception("Unknnown field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ] ");
+                } else if ($fd->getFieldtype() != $field->type){
+                    throw new Exception("Type mismatch for field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]. Should be [ ".$fd->getFieldtype()." ], but is [ ".$field->type." ] ");
+                }
+
+                $localizedFields->setLocalizedValue($field->name, $this->getFielddefinition($field->name)->getFromWebserviceImport($field->value, $object, $idMapper), $field->language);
+            }
 
             return $localizedFields;
         } else if (!empty($value)) {
@@ -257,6 +269,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setChilds($childs)
     {
         $this->childs = $childs;
+        return $this;
     }
 
     /**
@@ -294,6 +307,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                 }
             }
         }
+        return $this;
     }
 
 
@@ -336,8 +350,12 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         $localizedFields->createUpdateTable();
     }
 
-    public function preGetData($object)
+    public function preGetData($object, $params = array())
     {
+        if(!$object instanceof Object_Concrete) {
+            throw new \Exception("Localized Fields are only valid in Objects");
+        }
+
         if (!$object->localizedfields instanceof Object_Localizedfield) {
             $lf = new Object_Localizedfield();
             $lf->setObject($object);
@@ -464,7 +482,8 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
     public function setHeight($height)
     {
-        $this->height = $height;
+        $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
     public function getHeight()
@@ -475,6 +494,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setLayout($layout)
     {
         $this->layout = $layout;
+        return $this;
     }
 
     public function getLayout()
@@ -485,6 +505,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     public function getName()
@@ -495,6 +516,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setRegion($region)
     {
         $this->region = $region;
+        return $this;
     }
 
     public function getRegion()
@@ -505,6 +527,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
     }
 
     public function getTitle()
@@ -514,7 +537,8 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
     public function setWidth($width)
     {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     public function getWidth()
@@ -545,5 +569,118 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
             }
         }
     }
+
+
+    /** See parent class.
+     * @param mixed $data
+     * @param null $object
+     * @return array|null
+     */
+    public function getDiffDataForEditmode($data, $object = null)
+    {
+        $return = array();
+
+        $myname = $this->getName();
+
+        if (!$data instanceof Object_Localizedfield) {
+            return array();
+        }
+
+        foreach ($data->getItems() as $language => $values) {
+            foreach ($this->getFieldDefinitions() as $fd) {
+                $fieldname = $fd->getName();
+
+                $subdata = $fd->getDiffDataForEditmode($values[$fieldname], $object);
+
+                foreach ($subdata as $item) {
+                    $diffdata["field"] = $this->getName();
+                    $diffdata["key"] = $this->getName() . "~" . $fieldname . "~" . $item["key"] . "~". $language;
+
+                    $diffdata["type"] = $item["type"];
+                    $diffdata["value"] = $item["value"];
+
+                    // this is not needed anymoe
+                    unset($item["type"]);
+                    unset($item["value"]);
+
+                    $diffdata["title"] = $this->getName() . " / " . $item["title"];
+                    $diffdata["lang"] = $language;
+                    $diffdata["data"] = $item;
+                    $diffdata["extData"] = array(
+                        "fieldname" => $fieldname
+                        );
+
+                    $diffdata["disabled"] = $item["disabled"];
+                    $return[] = $diffdata;
+                }
+            }
+        }
+
+        return $return;
+    }
+
+    /** See parent class.
+     * @param $data
+     * @param null $object
+     * @return null|Pimcore_Date
+     */
+
+    public function getDiffDataFromEditmode($data, $object = null)
+    {
+        $localFields = $object->{"get" . ucfirst($this->getName())}();
+        $localData = array();
+
+        // get existing data
+        if($localFields instanceof Object_Localizedfield) {
+            $localData = $localFields->getItems();
+        }
+
+        $mapping = array();
+        foreach ($data as $item) {
+            $extData = $item["extData"];
+            $fieldname = $extData["fieldname"];
+            $language = $item["lang"];
+            $values = $mapping[$fieldname];
+
+            $itemdata = $item["data"];
+
+            if ($itemdata) {
+                if (!$values) {
+                    $values = array();
+                }
+
+                $values[] = $itemdata;
+            }
+
+            $mapping[$language][$fieldname] = $values;
+        }
+
+        foreach ($mapping as $language => $fields) {
+
+            foreach ($fields as $key => $value) {
+
+                $fd = $this->getFielddefinition($key);
+                if ($fd & $fd->isDiffChangeAllowed()) {
+
+                    if ($value == null) {
+                        unset($localData[$language][$key]);
+                    } else {
+                        $localData[$language][$key] = $fd->getDiffDataFromEditmode($value);
+                    }
+                }
+            }
+        }
+
+        $localizedFields = new Object_Localizedfield($localData);
+        return $localizedFields;
+    }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
 
 }

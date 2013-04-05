@@ -28,7 +28,12 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
             }
         }
 
-        if($name && $route = Staticroute::getByName($name)) {
+        $siteId = null;
+        if(Site::isSiteRequest()) {
+            $siteId = Site::getCurrentSite()->getId();
+        }
+
+        if($name && $route = Staticroute::getByName($name, $siteId)) {
             return $route->assemble($urlOptions, $reset, $encode);
         }
 

@@ -98,8 +98,9 @@ pimcore.settings.thumbnail.item = Class.create({
                 value: this.data.format,
                 triggerAction: 'all',
                 editable: false,
-                store: ["PNG","GIF","JPEG","SOURCE"],
-                width: 75
+                store: [["PNG","PNG"],["GIF","GIF"], ["JPEG","JPEG"], ["PJPEG","JPEG (progressive)"],["TIFF","TIFF"],
+                        ["SOURCE", "SOURCE"], ["PRINT","Print (PNG,JPG,SVG,TIFF)"]],
+                width: 180
             }, {
                 xtype: "spinnerfield",
                 name: "quality",
@@ -510,7 +511,8 @@ pimcore.settings.thumbnail.items = {
                 value: data.positioning,
                 triggerAction: 'all',
                 editable: false,
-                store: ["center","topleft","topright","bottomleft","bottomright","centerleft","centerright","topcenter","bottomcenter"],
+                store: ["center","topleft","topright","bottomleft","bottomright","centerleft","centerright",
+                            "topcenter","bottomcenter"],
                 width: 150
             },{
                 xtype: "hidden",
@@ -868,5 +870,34 @@ pimcore.settings.thumbnail.items = {
         });
 
         return item;
+    },
+
+    itemTifforiginal: function (panel, data, getName) {
+
+        var niceName = t("use_original_tiff");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            html: t("use_original_tiff_description"),
+            items: [{
+                xtype: "hidden",
+                name: "type",
+                value: "tifforiginal"
+            }]
+        });
+
+        return item;
     }
-}
+};

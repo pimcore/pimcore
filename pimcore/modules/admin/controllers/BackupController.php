@@ -19,6 +19,8 @@ class Admin_BackupController extends Pimcore_Controller_Action_Admin {
     public function init() {
         parent::init();
 
+        $this->checkPermission("backup");
+
         @ini_set("memory_limit", "-1");
 
         $this->session = new Zend_Session_Namespace("pimcore_backup");
@@ -89,6 +91,10 @@ class Admin_BackupController extends Pimcore_Controller_Action_Admin {
         
         header("Content-Type: application/tar");
         header('Content-Disposition: attachment; filename="' . basename($backup->getBackupFile()) . '"');
+
+        while(@ob_end_flush());
+        flush();
+
         readfile($backup->getBackupFile());
         
         exit;

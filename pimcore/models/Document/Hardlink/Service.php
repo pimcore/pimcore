@@ -28,13 +28,16 @@ class Document_Hardlink_Service {
             if($sourceDoc = $doc->getSourceDocument()) {
                 $destDoc = self::upperCastDocument($sourceDoc);
                 $destDoc->setKey($doc->getKey());
-                $destDoc->setPath($doc->getPath());
+                $destDoc->setPath($doc->getRealPath());
                 $destDoc->initResource(get_class($sourceDoc));
                 $destDoc->setHardLinkSource($doc);
                 return $destDoc;
             }
         } else {
-            return self::upperCastDocument($doc);
+            $sourceClass = get_class($doc);
+            $doc = self::upperCastDocument($doc);
+            $doc->initResource($sourceClass);
+            return $doc;
         }
 
         return;
@@ -70,7 +73,7 @@ class Document_Hardlink_Service {
      */
     public static function getChildByPath (Document_Hardlink $hardlink, $path) {
         if($hardlink->getChildsFromSource() && $hardlink->getSourceDocument()) {
-            $hardlinkRealPath = preg_replace("@^" . preg_quote($hardlink->getRealFullPath()) . "@", $hardlink->getSourceDocument()->getFullpath(), $path);
+            $hardlinkRealPath = preg_replace("@^" . preg_quote($hardlink->getRealFullPath()) . "@", $hardlink->getSourceDocument()->getRealFullPath(), $path);
             $hardLinkedDocument = Document::getByPath($hardlinkRealPath);
             if($hardLinkedDocument instanceof Document) {
                 $hardLinkedDocument = Document_Hardlink_Service::wrap($hardLinkedDocument);

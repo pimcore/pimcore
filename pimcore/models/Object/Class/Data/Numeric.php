@@ -67,7 +67,8 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -87,6 +88,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
         if(strlen(strval($defaultValue)) > 0) {
             $this->defaultValue = $defaultValue;
         }
+        return $this;
     }
 
     /**
@@ -109,6 +111,9 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      * @return float
      */
     public function getDataFromResource($data) {
+        if(is_numeric($data)) {
+            return (float) $data;
+        }
         return $data;
     }
 
@@ -191,4 +196,12 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
         $value = (double) str_replace(",",".",$importValue);
         return $value;
     }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
 }

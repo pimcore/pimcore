@@ -39,10 +39,16 @@ class Pimcore_Resource_Mysql {
     }
 
     /**
-     * @static
-     * @return Zend_Db_Adapter_Abstract
+     * @param bool $raw
+     * @return Pimcore_Resource_Wrapper|Zend_Db_Adapter_Abstract
      */
-    public static function getConnection () {
+    public static function getConnection ($raw = false) {
+
+        // just return the wrapper (for compatibility reasons)
+        // the wrapper itself get's then the connection using $raw = true
+        if(!$raw) {
+            return new Pimcore_Resource_Wrapper();
+        }
 
         $charset = "UTF8";
 
@@ -67,13 +73,7 @@ class Pimcore_Resource_Mysql {
             $db->setProfiler($profiler);
         }
 
-        // set some defaults
-        Zend_Db_Table::setDefaultAdapter($db);
-
-        // put the connection into a wrapper to handle connection timeouts, ...
-        $db = new Pimcore_Resource_Wrapper($db);
-
-        Logger::debug("Successfully established connection to MySQL-Server");
+        Logger::debug(get_class($db) . ": Successfully established connection to MySQL-Server");
 
         return $db;
     }
@@ -87,21 +87,7 @@ class Pimcore_Resource_Mysql {
         // close old connections
         self::close();
 
-        // get new connection
-        try {
-            $db = self::getConnection();
-            self::set($db);
-
-            return $db;
-        }
-        catch (Exception $e) {
-
-            $errorMessage = "Unable to establish the database connection with the given configuration in /website/var/config/system.xml, for details see the debug.log. \nReason: " . $e->getMessage();
-
-            Logger::emergency($errorMessage);
-            Logger::emergency($e);
-            die($errorMessage);
-        }
+        return self::get();
     }
 
     /**
@@ -122,16 +108,38 @@ class Pimcore_Resource_Mysql {
             Logger::error($e);
         }
 
-        return self::reset();
+        // get new connection
+        try {
+            $db = self::getConnection();
+            self::set($db);
+            return $db;
+        }
+        catch (Exception $e) {
+
+            $errorMessage = "Unable to establish the database connection with the given configuration in /website/var/config/system.xml, for details see the debug.log. \nReason: " . $e->getMessage();
+
+            Logger::emergency($errorMessage);
+            Logger::emergency($e);
+            Pimcore_Tool::exitWithError($errorMessage);
+        }
     }
 
     /**
      * @static
-     * @param $connection
+     * @param Pimcore_Resource_Wrapper $connection
      * @return void
      */
     public static function set($connection) {
+
+        if($connection instanceof Pimcore_Resource_Wrapper) {
+            // set default adapter for Zend_Db_Table -> use getResource() because setDefaultAdapter()
+            // accepts only instances of Zend_Db but $connection is an instance of Pimcore_Resource_Wrapper
+            Zend_Db_Table::setDefaultAdapter($connection->getResource());
+        }
+
+        // register globally
         Zend_Registry::set("Pimcore_Resource_Mysql", $connection);
+        return self;
     }
 
     /**
@@ -144,15 +152,25 @@ class Pimcore_Resource_Mysql {
                 $db = Zend_Registry::get("Pimcore_Resource_Mysql");
 
                 if($db instanceof Pimcore_Resource_Wrapper) {
-                    $db->closeConnection();
+                    // the following select causes an infinite loop (eg. when the connection is lost -> error handler)
+                    //Logger::debug("closing mysql connection with ID: " . $db->fetchOne("SELECT CONNECTION_ID()"));
+                    $db->closeResource();
+                    $db->closeDDLResource();
                 }
-
-                // set it explicit to null to be sure it can be removed by the GC
-                self::set("Pimcore_Resource_Mysql", null);
             }
         } catch (Exception $e) {
             Logger::error($e);
         }
+
+        Zend_Registry::set("Pimcore_Resource_Mysql", null);
+    }
+
+    /**
+     * @param $query
+     * @return bool
+     */
+    public static function isDDLQuery($query) {
+        return (bool) preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE)(.*)(DATABASE|EVENT|FUNCTION|PROCEDURE|TABLE|TABLESPACE|VIEW|INDEX|TRIGGER)/i", $query);
     }
 
     /**
@@ -160,17 +178,17 @@ class Pimcore_Resource_Mysql {
      * @param string $method
      * @param array $args
      */
-    public static function startCapturingDefinitionModifications ($method, $args) {
+    public static function startCapturingDefinitionModifications ($connection, $method, $args) {
         if($method == "query") {
-            if(preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE)(.*)(DATABASE|EVENT|FUNCTION|PROCEDURE|TABLE|TABLESPACE|VIEW|INDEX|TRIGGER)/i",$args[0])) {
+            if(self::isDDLQuery($args[0])) {
                 self::logDefinitionModification($args[0]);
             }
         } else {
             $tablesToCheck = array("classes","users_permission_definitions");
 
             if(in_array($args[0], $tablesToCheck)) {
-                self::$_logProfilerWasEnabled = self::get()->getProfiler()->getEnabled();
-                self::get()->getProfiler()->setEnabled(true);
+                self::$_logProfilerWasEnabled = $connection->getProfiler()->getEnabled();
+                $connection->getProfiler()->setEnabled(true);
                 self::$_logCaptureActive = true;
             }
         }
@@ -180,25 +198,21 @@ class Pimcore_Resource_Mysql {
      * @static
      *
      */
-    public static function stopCapturingDefinitionModifications () {
+    public static function stopCapturingDefinitionModifications ($connection) {
 
         if(self::$_logCaptureActive) {
-            $search = array();
-            $replace = array();
-            $query = self::get()->getProfiler()->getLastQueryProfile()->getQuery();
-            $params = self::get()->getProfiler()->getLastQueryProfile()->getQueryParams();
+            $query = $connection->getProfiler()->getLastQueryProfile()->getQuery();
+            $params = $connection->getProfiler()->getLastQueryProfile()->getQueryParams();
 
             // @TODO named parameters
             if(!empty($params)) {
-                for ($i=0; $i<count($params); $i++) {
-                    $search[] = "?";
-                    $replace[] = self::get()->quote($params[$i]);
+                for ($i=1; $i<count($params); $i++) {
+                    $query = substr_replace($query, $connection->quote($params[$i]), strpos($query, "?"), 1);
                 }
-                $query = str_replace($search, $replace, $query);
             }
 
             self::logDefinitionModification($query);
-            self::get()->getProfiler()->setEnabled(self::$_logProfilerWasEnabled);
+            $connection->getProfiler()->setEnabled(self::$_logProfilerWasEnabled);
         }
 
         self::$_logCaptureActive = false;
@@ -238,7 +252,16 @@ class Pimcore_Resource_Mysql {
      * @param Exception $exception
      * @return
      */
-    public static function errorHandler ($method, $args, $exception) {
+    public static function errorHandler ($method, $args, $exception, $logError = true) {
+
+        if($logError) {
+            Logger::error($exception);
+            Logger::error(array(
+                "message" => $exception->getMessage(),
+                "method" => $method,
+                "arguments" => $args
+            ));
+        }
 
         $lowerErrorMessage = strtolower($exception->getMessage());
 
@@ -249,19 +272,19 @@ class Pimcore_Resource_Mysql {
 
             // the connection to the server has probably been lost, try to reconnect and call the method again
             try {
-                Logger::info("the connection to the MySQL-Server has probably been lost, try to reconnect...");
+                Logger::warning("The connection to the MySQL-Server has probably been lost, try to reconnect...");
                 self::reset();
-                Logger::info("Reconnecting to the MySQL-Server was successful, sending the command again to the server.");
+                Logger::warning("Reconnecting to the MySQL-Server was successful, sending the command again to the server.");
                 $r = self::get()->callResourceMethod($method, $args);
+                Logger::warning("Resending the command was successful");
                 return $r;
             } catch (Exception $e) {
-                Logger::debug($e);
+                Logger::error($e);
                 throw $e;
             }
         }
 
-        // no handling just log the exception and then throw it
-        Logger::debug($exception);
+        // no handling throw it again
         throw $exception;
     }
 

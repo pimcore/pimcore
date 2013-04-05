@@ -197,6 +197,7 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
         } else if (is_array($value)) {
             $points = array();
             foreach ($value as $point) {
+                $point = (array) $point;
                 if($point["longitude"]!=null and  $point["latitude"]!=null){
                     $points[] = new Object_Data_Geopoint($point["longitude"], $point["latitude"]);
                 } else {
@@ -207,6 +208,40 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
         } else {
             throw new Exception("cannot get values from web service import - invalid data");
         }
+    }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        if (!empty($data)) {
+            $line = "";
+            $isFirst = true;
+            if (is_array($data)) {
+                $points = array();
+                foreach ($data as $point) {
+                    if (!$isFirst) {
+                        $line .= " ";
+                    }
+                    $line .= $point->getLatitude() . "," . $point->getLongitude();
+                    $isFirst = false;
+                }
+
+
+                return $line;
+            }
+        }
+        return;
     }
 
 }

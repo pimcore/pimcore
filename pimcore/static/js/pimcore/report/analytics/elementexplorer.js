@@ -17,10 +17,12 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
 
     matchType: function (type) {        
         var types = ["document_page","document_snippet","object_concrete","global"];
-        if (pimcore.report.abstract.prototype.matchTypeValidate(type, types) && pimcore.settings.google_analytics_enabled) {
+        if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)
+                                                    && pimcore.settings.google_analytics_enabled) {
             
             // check for object_concrete||document_snippet, they are only available in advanced mode
-            if((type == "object_concrete" || type == "document_snippet") && !pimcore.settings.google_analytics_advanced) {
+            if((type == "object_concrete" || type == "document_snippet")
+                                                    && !pimcore.settings.google_analytics_advanced) {
                 return false;
             }
             return true;
@@ -234,7 +236,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                         handler: function () {
                             this.store.load({
                                 params: this.filterPanel.getForm().getFieldValues()
-                            })
+                            });
                         }.bind(this)
                     }
                 ]

@@ -94,6 +94,7 @@ class Pimcore_Google_Cse_Item {
                 $this->setValue($key,$value);
             }
         }
+        return $this;
     }
 
     /**
@@ -106,6 +107,7 @@ class Pimcore_Google_Cse_Item {
         if (method_exists($this, $method)) {
             $this->$method($value);
         }
+        return $this;
     }
 
     /**
@@ -114,6 +116,7 @@ class Pimcore_Google_Cse_Item {
     public function setDisplayLink($displayLink)
     {
         $this->displayLink = $displayLink;
+        return $this;
     }
 
     /**
@@ -130,6 +133,7 @@ class Pimcore_Google_Cse_Item {
     public function setDocument($document)
     {
         $this->document = $document;
+        return $this;
     }
 
     /**
@@ -146,6 +150,7 @@ class Pimcore_Google_Cse_Item {
     public function setFormattedUrl($formattedUrl)
     {
         $this->formattedUrl = $formattedUrl;
+        return $this;
     }
 
     /**
@@ -162,6 +167,7 @@ class Pimcore_Google_Cse_Item {
     public function setHtmlFormattedUrl($htmlFormattedUrl)
     {
         $this->htmlFormattedUrl = $htmlFormattedUrl;
+        return $this;
     }
 
     /**
@@ -178,6 +184,7 @@ class Pimcore_Google_Cse_Item {
     public function setHtmlSnippet($htmlSnippet)
     {
         $this->htmlSnippet = $htmlSnippet;
+        return $this;
     }
 
     /**
@@ -194,6 +201,7 @@ class Pimcore_Google_Cse_Item {
     public function setHtmlTitle($htmlTitle)
     {
         $this->htmlTitle = $htmlTitle;
+        return $this;
     }
 
     /**
@@ -210,6 +218,7 @@ class Pimcore_Google_Cse_Item {
     public function setImage($image)
     {
         $this->image = $image;
+        return $this;
     }
 
     /**
@@ -226,6 +235,7 @@ class Pimcore_Google_Cse_Item {
     public function setLink($link)
     {
         $this->link = $link;
+        return $this;
     }
 
     /**
@@ -242,6 +252,7 @@ class Pimcore_Google_Cse_Item {
     public function setRaw($raw)
     {
         $this->raw = $raw;
+        return $this;
     }
 
     /**
@@ -258,6 +269,7 @@ class Pimcore_Google_Cse_Item {
     public function setSnippet($snippet)
     {
         $this->snippet = $snippet;
+        return $this;
     }
 
     /**
@@ -274,6 +286,7 @@ class Pimcore_Google_Cse_Item {
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
     }
 
     /**
@@ -290,6 +303,7 @@ class Pimcore_Google_Cse_Item {
     public function setType($type)
     {
         $this->type = $type;
+        return $this;
     }
 
     /**

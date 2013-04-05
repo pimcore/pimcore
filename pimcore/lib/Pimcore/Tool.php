@@ -22,15 +22,7 @@ class Pimcore_Tool {
      * @return void
      */
     public static function isValidKey($key){
-        $key = (string) $key;
-        $validChars = "abcdefghijklmnopqrstuvwxyz1234567890-_.~";
-        for($i=0;$i<strlen($key);$i++){
-            if(strpos($validChars,$key[$i])===FALSE){
-                Logger::error("Invalid character in filename: " . $key[$i] . " - complete filename is: " . $key);
-                return false;
-            }
-        }
-        return true;
+        return (bool) preg_match("/^[a-z0-9_~\.\-]+$/", $key);
     }
 
     /**
@@ -39,45 +31,7 @@ class Pimcore_Tool {
      * @return bool
      */
     public static function isValidPath($path) {
-        if (preg_match("/[a-zA-Z0-9_~.\-\/]+/", $path, $matches)) {
-            if ($matches[0] == $path) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @static
-     * @param  $element
-     * @return string
-     */
-    public static function getIdPathForElement($element) {
-
-        $path = "";
-
-        if ($element instanceof Document) {
-            $nid = $element->getParentId();
-            $ne = Document::getById($nid);
-        }
-        else if ($element instanceof Asset) {
-            $nid = $element->getParentId();
-            $ne = Asset::getById($nid);
-        }
-        else if ($element instanceof Object_Abstract) {
-            $nid = $element->getO_parentId();
-            $ne = Object_Abstract::getById($nid);
-        }
-
-        if ($ne) {
-            $path = self::getIdPathForElement($ne, $path);
-        }
-
-        if ($element) {
-            $path = $path . "/" . $element->getId();
-        }
-
-        return $path;
+        return (bool) preg_match("/^[a-zA-Z0-9_~\.\-\/]+$/", $path, $matches);
     }
 
     /**
@@ -211,6 +165,23 @@ class Pimcore_Tool {
     }
 
     /**
+     * eg. editmode, preview, version preview, always when it is a "frontend-request", but called out of the admin
+     */
+    public static function isFrontentRequestByAdmin () {
+        if (array_key_exists("pimcore_editmode", $_REQUEST)
+            || array_key_exists("pimcore_preview", $_REQUEST)
+            || array_key_exists("pimcore_admin", $_REQUEST)
+            || array_key_exists("pimcore_object_preview", $_REQUEST)
+            || array_key_exists("pimcore_version", $_REQUEST)
+            || preg_match("@^/pimcore_document_tag_renderlet@", $_SERVER["REQUEST_URI"])) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @static
      * @param Zend_Controller_Request_Abstract $request
      * @return bool
@@ -222,19 +193,7 @@ class Pimcore_Tool {
             return false;
         }
 
-
-        // check for editmode
-        if ($request->getParam("pimcore_editmode")) {
-            return false;
-        }
-
-        // check for version
-        if ($request->getParam("pimcore_version")) {
-            return false;
-        }
-
-        // check for preview
-        if ($request->getParam("pimcore_preview")) {
+        if(Pimcore_Tool::isFrontentRequestByAdmin()) {
             return false;
         }
 
@@ -421,10 +380,14 @@ class Pimcore_Tool {
             $requestType = Zend_Http_Client::POST;
         }
 
-        $response = $client->request($requestType);
+        try {
+            $response = $client->request($requestType);
 
-        if ($response->isSuccessful()) {
-            return $response->getBody();
+            if ($response->isSuccessful()) {
+                return $response->getBody();
+            }
+        } catch (Exception $e) {
+
         }
 
         return false;
@@ -451,7 +414,11 @@ class Pimcore_Tool {
                 if(Pimcore_Tool::classExists($tmpClassName)) {
                     if(is_subclass_of($tmpClassName, $sourceClassName)) {
                         $targetClassName = $tmpClassName;
+                    } else {
+                        Logger::error("Classmapping for " . $sourceClassName . " failed. '" . $tmpClassName . " is not a subclass of '" . $sourceClassName . "'. " . $tmpClassName . " has to extend " . $sourceClassName);
                     }
+                } else {
+                    Logger::error("Classmapping for " . $sourceClassName . " failed. Cannot find class '" . $tmpClassName . "'");
                 }
             }
         }
@@ -512,4 +479,13 @@ class Pimcore_Tool {
 
         return $exists;
     }
+
+    /**
+     * @param $message
+     */
+    public static function exitWithError($message) {
+        header('HTTP/1.1 503 Service Temporarily Unavailable');
+        die($message);
+    }
+
 }

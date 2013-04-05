@@ -119,19 +119,9 @@ class Document_Email_Resource extends Document_PageSnippet_Resource {
                     $dataPage[$key] = $value;
                 }
             }
-            // first try to insert a new record, this is because of the recyclebin restore
-            try {
-                $this->db->insert("documents", $dataDocument);
-            }
-            catch (Exception $e) {
-                $this->db->update("documents", $dataDocument, $this->db->quoteInto("id = ?", $this->model->getId()));
-            }
-            try {
-                $this->db->insert("documents_email", $dataPage);
-            }
-            catch (Exception $e) {
-                $this->db->update("documents_email", $dataPage, $this->db->quoteInto("id = ?", $this->model->getId()));
-            }
+
+            $this->db->insertOrUpdate("documents", $dataDocument);
+            $this->db->insertOrUpdate("documents_email", $dataPage);
 
             $this->updateLocks();
         }
@@ -149,14 +139,16 @@ class Document_Email_Resource extends Document_PageSnippet_Resource {
         try {
             $this->deleteAllProperties();
 
-            $this->db->delete("documents_page", $this->db->quoteInto("id = ?", $this->model->getId()));
             $this->db->delete("documents_email", $this->db->quoteInto("id = ?", $this->model->getId()));
             //deleting log files
-            $mailLogs = new Document_Email_Log_List();
+            $this->db->delete("email_log", $this->db->quoteInto("documentId = ?", $this->model->getId()));
+
+            /*$mailLogs = new Document_Email_Log_List();
             $mailLogs->setCondition(" documentId= " . $this->model->getId());
             foreach($mailLogs->load() as $logEntry){
                 $logEntry->delete();
-            }
+            }*/
+
             parent::delete();
         }
         catch (Exception $e) {

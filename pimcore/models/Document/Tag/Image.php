@@ -64,6 +64,16 @@ class Document_Tag_Image extends Document_Tag {
     public $cropLeft;
 
     /**
+     * @var array
+     */
+    public $hotspots = array();
+
+    /**
+     * @var array
+     */
+    public $marker = array();
+
+    /**
      * @see Document_Tag_Interface::getType
      * @return string
      */
@@ -83,7 +93,48 @@ class Document_Tag_Image extends Document_Tag {
             "cropWidth" => $this->cropWidth,
             "cropHeight" => $this->cropHeight,
             "cropTop" => $this->cropTop,
-            "cropLeft" => $this->cropLeft
+            "cropLeft" => $this->cropLeft,
+            "hotspots" => $this->hotspots,
+            "marker" => $this->marker
+        );
+    }
+
+    /**
+     *
+     */
+    public function getDataForResource() {
+
+        $rewritePath = function ($data) {
+
+            if(!is_array($data)) {
+                return array();
+            }
+
+            foreach ($data as &$element) {
+                if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                    foreach($element["data"] as &$metaData) {
+                        if($metaData["value"] instanceof Element_Interface) {
+                            $metaData["value"] = $metaData["value"]->getId();
+                        }
+                    }
+                }
+            }
+            return $data;
+        };
+
+        $marker = $rewritePath($this->marker);
+        $hotspots = $rewritePath($this->hotspots);
+
+        return array(
+            "id" => $this->id,
+            "alt" => $this->alt,
+            "cropPercent" => $this->cropPercent,
+            "cropWidth" => $this->cropWidth,
+            "cropHeight" => $this->cropHeight,
+            "cropTop" => $this->cropTop,
+            "cropLeft" => $this->cropLeft,
+            "hotspots" => $hotspots,
+            "marker" => $marker
         );
     }
 
@@ -94,6 +145,28 @@ class Document_Tag_Image extends Document_Tag {
      */
     public function getDataEditmode() {
         if ($this->image instanceof Asset_Image) {
+
+            $rewritePath = function ($data) {
+
+                if(!is_array($data)) {
+                    return array();
+                }
+
+                foreach ($data as &$element) {
+                    if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                        foreach($element["data"] as &$metaData) {
+                            if($metaData["value"] instanceof Element_Interface) {
+                                $metaData["value"] = $metaData["value"]->getFullPath();
+                            }
+                        }
+                    }
+                }
+                return $data;
+            };
+
+            $marker = $rewritePath($this->marker);
+            $hotspots = $rewritePath($this->hotspots);
+
             return array(
                 "id" => $this->id,
                 "path" => $this->image->getPath() . $this->image->getFilename(),
@@ -102,7 +175,9 @@ class Document_Tag_Image extends Document_Tag {
                 "cropWidth" => $this->cropWidth,
                 "cropHeight" => $this->cropHeight,
                 "cropTop" => $this->cropTop,
-                "cropLeft" => $this->cropLeft
+                "cropLeft" => $this->cropLeft,
+                "hotspots" => $hotspots,
+                "marker" => $marker
             );
         }
         return null;
@@ -116,10 +191,14 @@ class Document_Tag_Image extends Document_Tag {
         if ($this->image instanceof Asset) {
 
             $thumbnailInUse = false;
-            if ($this->options["thumbnail"]) {
+            if ($this->options["thumbnail"] || $this->cropPercent) {
                 // create a thumbnail first
 
                 $thumbConfig = $this->image->getThumbnailConfig($this->options["thumbnail"]);
+                if(!$thumbConfig && $this->cropPercent) {
+                    $thumbConfig = new Asset_Image_Thumbnail_Config();
+                }
+
                 if($this->cropPercent) {
                     $thumbConfig->addItemAt(0,"cropPercent", array(
                         "width" => $this->cropWidth,
@@ -151,8 +230,14 @@ class Document_Tag_Image extends Document_Tag {
             }
 
             // add attributes to image
-            $allowedAttributes = array("alt", "align", "border", "height", "hspace", "ismap", "longdesc", "usemap", "vspace", "width", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onmouseover", "onabort", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseup", "onkeydown", "onkeypress", "onkeyup");
-            $htmlEscapeAttributes = array("alt", "align", "border", "height", "hspace",  "longdesc", "usemap", "vspace", "width", "class", "dir", "id", "lang",  "title");
+            $allowedAttributes = array("alt", "align", "border", "height", "hspace", "ismap", "longdesc", "usemap",
+                "vspace", "width", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onmouseover",
+                "onabort", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseup",
+                "onkeydown", "onkeypress", "onkeyup", "itemprop", "itemscope", "itemtype");
+
+            $htmlEscapeAttributes = array("alt", "align", "border", "height", "hspace",  "longdesc", "usemap",
+                "vspace", "width", "class", "dir", "id", "lang",  "title");
+
             $defaultAttributes = array(
                 "alt" => $this->alt,
                 "title" => $this->alt,
@@ -169,7 +254,7 @@ class Document_Tag_Image extends Document_Tag {
                 $customAttributes = $this->options["attributes"];
             }
 
-            $availableAttribs = array_merge($defaultAttributes, $customAttributes, $this->options);
+            $availableAttribs = array_merge($this->options, $customAttributes, $defaultAttributes);
 
             foreach ($availableAttribs as $key => $value) {
                 if ((is_string($value) || is_numeric($value)) && (in_array($key, $allowedAttributes) || array_key_exists($key, $customAttributes))) {
@@ -195,6 +280,34 @@ class Document_Tag_Image extends Document_Tag {
             $data = Pimcore_Tool_Serialize::unserialize($data);
         }
 
+
+        $rewritePath = function ($data) {
+
+            if(!is_array($data)) {
+                return array();
+            }
+
+            foreach ($data as &$element) {
+                if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                    foreach($element["data"] as &$metaData) {
+                        if(in_array($metaData["type"], array("object","asset","document"))) {
+                            $el = Element_Service::getElementById($metaData["type"], $metaData["value"]);
+                            $metaData["value"] = $el;
+                        }
+                    }
+                }
+            }
+            return $data;
+        };
+
+        if(array_key_exists("marker",$data) && is_array($data["marker"]) && count($data["marker"]) > 0) {
+            $data["marker"] = $rewritePath($data["marker"]);
+        }
+
+        if(array_key_exists("hotspots",$data) && is_array($data["hotspots"]) && count($data["hotspots"]) > 0) {
+            $data["hotspots"] = $rewritePath($data["hotspots"]);
+        }
+
         $this->id = $data["id"];
         $this->alt = $data["alt"];
         $this->cropPercent = $data["cropPercent"];
@@ -202,12 +315,15 @@ class Document_Tag_Image extends Document_Tag {
         $this->cropHeight = $data["cropHeight"];
         $this->cropTop = $data["cropTop"];
         $this->cropLeft = $data["cropLeft"];
+        $this->marker = $data["marker"];
+        $this->hotspots = $data["hotspots"];
 
         try {
             $this->image = Asset_Image::getById($this->id);
         }
         catch (Exception $e) {
         }
+        return $this;
     }
 
     /**
@@ -216,6 +332,34 @@ class Document_Tag_Image extends Document_Tag {
      * @return void
      */
     public function setDataFromEditmode($data) {
+
+        $rewritePath = function ($data) {
+
+            if(!is_array($data)) {
+                return array();
+            }
+
+            foreach ($data as &$element) {
+                if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                    foreach($element["data"] as &$metaData) {
+                        if(in_array($metaData["type"], array("object","asset","document"))) {
+                            $el = Element_Service::getElementByPath($metaData["type"], $metaData["value"]);
+                            $metaData["value"] = $el;
+                        }
+                    }
+                }
+            }
+            return $data;
+        };
+
+        if(array_key_exists("marker",$data) && is_array($data["marker"]) && count($data["marker"]) > 0) {
+            $data["marker"] = $rewritePath($data["marker"]);
+        }
+
+        if(array_key_exists("hotspots",$data) && is_array($data["hotspots"]) && count($data["hotspots"]) > 0) {
+            $data["hotspots"] = $rewritePath($data["hotspots"]);
+        }
+
         $this->id = $data["id"];
         $this->alt = $data["alt"];
         $this->cropPercent = $data["cropPercent"];
@@ -223,8 +367,11 @@ class Document_Tag_Image extends Document_Tag {
         $this->cropHeight = $data["cropHeight"];
         $this->cropTop = $data["cropTop"];
         $this->cropLeft = $data["cropLeft"];
+        $this->marker = $data["marker"];
+        $this->hotspots = $data["hotspots"];
 
         $this->image = Asset_Image::getById($this->id);
+        return $this;
     }
 
     /*
@@ -306,6 +453,27 @@ class Document_Tag_Image extends Document_Tag {
             }
         }
 
+        $getMetaDataCacheTags = function ($data, $tags) {
+
+            if(!is_array($data)) {
+                return $tags;
+            }
+
+            foreach ($data as $element) {
+                if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                    foreach($element["data"] as $metaData) {
+                        if($metaData["value"] instanceof Element_Interface) {
+                            $tags = $metaData["value"]->getCacheTags($tags);
+                        }
+                    }
+                }
+            }
+            return $tags;
+        };
+
+        $tags = $getMetaDataCacheTags($this->marker, $tags);
+        $tags = $getMetaDataCacheTags($this->hotspots, $tags);
+
         return $tags;
     }
 
@@ -325,6 +493,30 @@ class Document_Tag_Image extends Document_Tag {
             );
         }
 
+        $getMetaDataDependencies = function ($data, $dependencies) {
+
+            if(!is_array($data)) {
+                return $dependencies;
+            }
+
+            foreach ($data as $element) {
+                if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                    foreach($element["data"] as $metaData) {
+                        if($metaData["value"] instanceof Element_Interface) {
+                            $dependencies[$metaData["type"] . "_" . $metaData["value"]->getId()] = array(
+                                "id" => $metaData["value"]->getId(),
+                                "type" => $metaData["type"]
+                            );
+                        }
+                    }
+                }
+            }
+            return $dependencies;
+        };
+
+        $dependencies = $getMetaDataDependencies($this->marker, $dependencies);
+        $dependencies = $getMetaDataDependencies($this->hotspots, $dependencies);
+
         return $dependencies;
     }
 
@@ -336,25 +528,33 @@ class Document_Tag_Image extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
         if ($data->id !==null) {
-
             $this->alt = $data->alt;
             $this->id = $data->id;
+
+            if ($idMapper) {
+                $this->id = $idMapper->getMappedId("asset", $data->id);
+            }
+
             if (is_numeric($this->id)) {
                 $this->image = Asset_Image::getById($this->id);
                 if (!$this->image instanceof Asset_Image) {
-                    throw new Exception("cannot get values from web service import - referenced image with id [ " . $this->id . " ] is unknown");
+                    if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                        $idMapper->recordMappingFailure($this->getDocumentId(), "asset", $data->id);
+                    } else {
+                        throw new Exception("cannot get values from web service import - referenced image with id [ " . $this->id . " ] is unknown");
+                    }
                 }
             } else {
-                throw new Exception("cannot get values from web service import - id is not valid");
+                if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                    $idMapper->recordMappingFailure($this->getDocumentId(), "asset", $data->id);
+                } else {
+                    throw new Exception("cannot get values from web service import - id is not valid");
+                }
             }
-
-
         }
-
-
     }
 
     /**
@@ -363,6 +563,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropHeight($cropHeight)
     {
         $this->cropHeight = $cropHeight;
+        return $this;
     }
 
     /**
@@ -379,6 +580,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropLeft($cropLeft)
     {
         $this->cropLeft = $cropLeft;
+        return $this;
     }
 
     /**
@@ -395,6 +597,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropPercent($cropPercent)
     {
         $this->cropPercent = $cropPercent;
+        return $this;
     }
 
     /**
@@ -411,6 +614,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropTop($cropTop)
     {
         $this->cropTop = $cropTop;
+        return $this;
     }
 
     /**
@@ -427,6 +631,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropWidth($cropWidth)
     {
         $this->cropWidth = $cropWidth;
+        return $this;
     }
 
     /**
@@ -437,4 +642,35 @@ class Document_Tag_Image extends Document_Tag {
         return $this->cropWidth;
     }
 
+    /**
+     * @param array $hotspots
+     */
+    public function setHotspots($hotspots)
+    {
+        $this->hotspots = $hotspots;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHotspots()
+    {
+        return $this->hotspots;
+    }
+
+    /**
+     * @param array $marker
+     */
+    public function setMarker($marker)
+    {
+        $this->marker = $marker;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMarker()
+    {
+        return $this->marker;
+    }
 }

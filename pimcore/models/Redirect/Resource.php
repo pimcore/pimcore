@@ -69,7 +69,7 @@ class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
     public function delete() {
         $this->db->delete("redirects", $this->db->quoteInto("id = ?", $this->model->getId()));
         
-        $this->model->clearDependedCache();
+        $this->model->clearDependentCache();
     }
 
     /**
@@ -96,7 +96,7 @@ class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
             throw $e;
         }
         
-        $this->model->clearDependedCache();
+        $this->model->clearDependentCache();
     }
 
     /**

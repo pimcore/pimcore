@@ -102,6 +102,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      */
     public function setObjectsAllowed($objectsAllowed) {
         $this->objectsAllowed = $objectsAllowed;
+        return $this;
     }
     
     /**
@@ -117,6 +118,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      */
     public function setDocumentsAllowed($documentsAllowed) {
         $this->documentsAllowed = $documentsAllowed;
+        return $this;
     }
 
 
@@ -143,6 +145,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         }
 
         $this->documentTypes = $documentTypes;
+        return $this;
     }
 
     /**
@@ -160,6 +163,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      */
     public function setAssetsAllowed($assetsAllowed) {
         $this->assetsAllowed = $assetsAllowed;
+        return $this;
     }
 
     /**
@@ -185,6 +189,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         }
 
         $this->assetTypes = $assetTypes;
+        return $this;
     }
 
     /**
@@ -324,7 +329,8 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -478,32 +484,60 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport ($value) {
+    public function getFromWebserviceImport ($value, $relatedObject = null, $idMapper = null) {
         if(empty($value)){
             return null;        
-        } else if(is_array($value) and key_exists("id",$value) and key_exists("type",$value)){
-            $el =  $this->getDataFromEditmode($value);
-            if(!empty($value['id']) and !$el instanceof Element_Interface){
-                throw new Exception("cannot get values from web service import - invalid href relation");
+        } else  {
+            $value = (array) $value;
+            if(key_exists("id",$value) and key_exists("type",$value)){
+                $type = $value["type"];
+                $id = $value["id"];
+
+                if ($idMapper) {
+                    $id = $idMapper->getMappedId($type, $id);
+                }
+
+                if ($id) {
+                    $el = Element_Service::getElementById($type, $id);
+                }
+
+                if($el instanceof Element_Interface){
+                    return $el;
+                } else {
+                    if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                        $idMapper->recordMappingFailure($relatedObject->getId(), $type,  $value["id"]);
+                    } else {
+                        throw new Exception("cannot get values from web service import - invalid href relation");
+                    }
+                }
+
+            } else {
+                throw new Exception("cannot get values from web service import - invalid data");
             }
-            return $el;
-        } else {
-            throw new Exception("cannot get values from web service import - invalid data");
         }
     }
 
-    public function preGetData ($object) {
+    public function preGetData ($object, $params = array()) {
 
-        $data = $object->{$this->getName()};
+        $data = null;
+        if($object instanceof Object_Concrete) {
+            $data = $object->{$this->getName()};
 
-        if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
-            //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
-            $data = $this->load($object, array("force" => true));
+            if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
+                //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
+                $data = $this->load($object, array("force" => true));
 
-            $setter = "set" . ucfirst($this->getName());
-            if(method_exists($object, $setter)) {
-                $object->$setter($data);
+                $setter = "set" . ucfirst($this->getName());
+                if(method_exists($object, $setter)) {
+                    $object->$setter($data);
+                }
             }
+        } else if ($object instanceof Object_Localizedfield) {
+            $data = $params["data"];
+        } else if ($object instanceof Object_Fieldcollection_Data_Abstract) {
+            $data = $object->{$this->getName()};
+        } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
+            $data = $object->{$this->getName()};
         }
 
         if(Object_Abstract::doHideUnpublished() and ($data instanceof Element_Interface)) {
@@ -515,10 +549,12 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         return $data;
     }
 
-    public function preSetData ($object, $data) {
+    public function preSetData ($object, $data, $params = array()) {
 
-        if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
-            $object->addO__loadedLazyField($this->getName());
+        if($object instanceof Object_Concrete) {
+            if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
+                $object->addO__loadedLazyField($this->getName());
+            }
         }
 
         return $data;
@@ -530,6 +566,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
     public function setAssetUploadPath($assetUploadPath)
     {
         $this->assetUploadPath = $assetUploadPath;
+        return $this;
     }
 
     /**
@@ -538,5 +575,12 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
     public function getAssetUploadPath()
     {
         return $this->assetUploadPath;
+    }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
     }
 }

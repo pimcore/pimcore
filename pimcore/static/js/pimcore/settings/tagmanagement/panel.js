@@ -160,13 +160,24 @@ pimcore.settings.tagmanagement.panel = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_tag'), t('enter_the_name_of_the_new_tag') + "(a-zA-Z-_)", this.addFieldComplete.bind(this), null, null, "");
+        Ext.MessageBox.prompt(t('add_tag'), t('enter_the_name_of_the_new_tag') + "(a-zA-Z-_)",
+                                                        this.addFieldComplete.bind(this), null, null, "");
     },
 
     addFieldComplete: function (button, value, object) {
 
         var regresult = value.match(/[a-zA-Z0-9_\-]+/);
         if (button == "ok" && value.length > 0 && regresult == value) {
+
+            var tags = this.tree.getRootNode().childNodes;
+            for (var i = 0; i < tags.length; i++) {
+                if (tags[i].text == value) {
+                    Ext.MessageBox.alert(t('add_tag'),
+                                         t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                    return;
+                }
+            }
+
             Ext.Ajax.request({
                 url: "/admin/settings/tag-management-add",
                 params: {

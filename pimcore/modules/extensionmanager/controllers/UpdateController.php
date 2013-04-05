@@ -24,7 +24,7 @@ class Extensionmanager_UpdateController extends Pimcore_Controller_Action_Admin 
         if($type == "plugin") {
             $extensionPath = PIMCORE_PLUGINS_PATH . "/" . $id;
         } else if ($type = "brick") {
-            $extensionPath = PIMCORE_WEBSITE_PATH . "/var/areas/" . $id;
+            $extensionPath = PIMCORE_WEBSITE_VAR . "/areas/" . $id;
         }
 
         $remoteConfig = array(
@@ -87,7 +87,7 @@ class Extensionmanager_UpdateController extends Pimcore_Controller_Action_Admin 
         if($type == "plugin") {
             $extensionPath = PIMCORE_PLUGINS_PATH . "/" . $id;
         } else if ($type = "brick") {
-            $extensionPath = PIMCORE_WEBSITE_PATH . "/var/areas/" . $id;
+            $extensionPath = PIMCORE_WEBSITE_VAR . "/areas/" . $id;
         }
 
 

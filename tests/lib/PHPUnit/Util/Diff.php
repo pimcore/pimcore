@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2001-2013, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,38 +34,32 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @author     Kore Nordmann <mail@kore-nordmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.4.0
  */
 
-require_once 'PHPUnit/Util/Filesystem.php';
-require_once 'PHPUnit/Util/Filter.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * Diff implementation.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @author     Kore Nordmann <mail@kore-nordmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.14
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.4.0
  */
 class PHPUnit_Util_Diff
 {
     /**
-     * Returns the diff between two arrays or strings.
+     * Returns the diff between two arrays or strings as string.
      *
      * @param  array|string $from
      * @param  array|string $to
@@ -73,6 +67,89 @@ class PHPUnit_Util_Diff
      */
     public static function diff($from, $to)
     {
+        $buffer= "--- Expected\n+++ Actual\n";
+        $diff  = self::diffToArray($from,$to);
+
+        $inOld = FALSE;
+        $i     = 0;
+        $old   = array();
+
+        foreach ($diff as $line) {
+            if ($line[1] ===  0 /* OLD */) {
+                if ($inOld === FALSE) {
+                    $inOld = $i;
+                }
+            }
+
+            else if ($inOld !== FALSE) {
+                if (($i - $inOld) > 5) {
+                    $old[$inOld] = $i - 1;
+                }
+
+                $inOld = FALSE;
+            }
+
+            ++$i;
+        }
+
+        $start = isset($old[0]) ? $old[0] : 0;
+        $end   = count($diff);
+        $i     = 0;
+
+        if ($tmp = array_search($end, $old)) {
+            $end = $tmp;
+        }
+
+        $newChunk = TRUE;
+
+        for ($i = $start; $i < $end; $i++) {
+            if (isset($old[$i])) {
+                $buffer  .= "\n";
+                $newChunk = TRUE;
+                $i        = $old[$i];
+            }
+
+            if ($newChunk) {
+                $buffer  .= "@@ @@\n";
+                $newChunk = FALSE;
+            }
+
+            if ($diff[$i][1] === 1 /* ADDED */) {
+                $buffer .= '+' . $diff[$i][0] . "\n";
+            }
+
+            else if ($diff[$i][1] === 2 /* REMOVED */) {
+                $buffer .= '-' . $diff[$i][0] . "\n";
+            }
+
+            else {
+                $buffer .= ' ' . $diff[$i][0] . "\n";
+            }
+        }
+
+        return $buffer;
+    }
+
+    /**
+     * Returns the diff between two arrays or strings as array.
+     *
+     * every array-entry containts two elements:
+     *   - [0] => string $token
+     *   - [1] => 2|1|0
+     *
+     * - 2: REMOVED: $token was removed from $from
+     * - 1: ADDED: $token was added to $from
+     * - 0: OLD: $token is not changed in $to
+     *
+     * @param  array|string $from
+     * @param  array|string $to
+     * @return array
+     */
+    public static function diffToArray($from, $to)
+    {
+        preg_match_all('(\r\n|\r|\n)', $from, $fromMatches);
+        preg_match_all('(\r\n|\r|\n)', $to, $toMatches);
+
         if (is_string($from)) {
             $from = preg_split('(\r\n|\r|\n)', $from);
         }
@@ -81,7 +158,6 @@ class PHPUnit_Util_Diff
             $to = preg_split('(\r\n|\r|\n)', $to);
         }
 
-        $buffer     = "--- Expected\n+++ Actual\n";
         $start      = array();
         $end        = array();
         $fromLength = count($from);
@@ -114,6 +190,14 @@ class PHPUnit_Util_Diff
 
         $diff = array();
         $line = 0;
+
+        if (isset($fromMatches[0]) && $toMatches[0] &&
+            count($fromMatches[0]) === count($toMatches[0]) &&
+            $fromMatches[0] !== $toMatches[0]) {
+            $diff[] = array(
+              '#Warning: Strings contain different line endings!', 0
+            );
+        }
 
         foreach ($start as $token) {
             $diff[] = array($token, 0 /* OLD */);
@@ -149,65 +233,7 @@ class PHPUnit_Util_Diff
             $diff[] = array($token, 0 /* OLD */);
         }
 
-        $inOld = FALSE;
-        $i     = 0;
-        $old   = array();
-
-        foreach ($diff as $line) {
-            if ($line[1] === 0 /* OLD */) {
-                if ($inOld === FALSE) {
-                    $inOld = $i;
-                }
-            }
-
-            else if ($inOld !== FALSE) {
-                if (($i - $inOld) > 5) {
-                    $old[$inOld] = $i - 1;
-                }
-
-                $inOld = FALSE;
-            }
-
-            ++$i;
-        }
-
-        $start = isset($old[0]) ? $old[0] : 0;
-        $end   = count($diff);
-        $i     = 0;
-
-        if ($tmp = array_search($end, $old)) {
-            $end = $tmp;
-        }
-
-        $newChunk = TRUE;
-
-        for ($i = $start; $i < $end; $i++) {
-            if (isset($old[$i])) {
-                $buffer  .= "\n";
-                $newChunk = TRUE;
-                $i        = $old[$i];
-            }
-
-            if ($newChunk) {
-                // TODO: Implement chunk range information.
-                $buffer  .= "@@ @@\n";
-                $newChunk = FALSE;
-            }
-
-            if ($diff[$i][1] === 1 /* ADDED */) {
-                $buffer .= '+' . $diff[$i][0] . "\n";
-            }
-
-            else if ($diff[$i][1] === 2 /* REMOVED */) {
-                $buffer .= '-' . $diff[$i][0] . "\n";
-            }
-
-            else {
-                $buffer .= ' ' . $diff[$i][0] . "\n";
-            }
-        }
-
-        return $buffer;
+        return $diff;
     }
 
     /**
@@ -220,7 +246,6 @@ class PHPUnit_Util_Diff
     protected static function longestCommonSubsequence(array $from, array $to)
     {
         $common     = array();
-        $longest    = 0;
         $matrix     = array();
         $fromLength = count($from);
         $toLength   = count($to);
@@ -265,4 +290,3 @@ class PHPUnit_Util_Diff
         return $common;
     }
 }
-?>

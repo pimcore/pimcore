@@ -235,6 +235,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         var allowedTypes = [];
         var allowedSpecific = {};
         var allowedSubtypes = {};
+        var i;
         
         if (this.fieldConfig.objectsAllowed) {
             allowedTypes.push("object");
@@ -305,11 +306,13 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
     dndAllowed: function(data) {
         var type = data.node.attributes.elementType;
+        var i;
+        var subType;
         var isAllowed = false;
         if (type == "object" && this.fieldConfig.objectsAllowed) {
 
             var classname = data.node.attributes.className;
-            var isAllowed = false;
+            isAllowed = false;
             if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
                 for (i = 0; i < this.fieldConfig.classes.length; i++) {
                     if (this.fieldConfig.classes[i].classes == classname) {
@@ -324,8 +327,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
 
         } else if (type == "asset" && this.fieldConfig.assetsAllowed) {
-            var subType = data.node.attributes.type;
-            var isAllowed = false;
+            subType = data.node.attributes.type;
+            isAllowed = false;
             if (this.fieldConfig.assetTypes != null && this.fieldConfig.assetTypes.length > 0) {
                 for (i = 0; i < this.fieldConfig.assetTypes.length; i++) {
                     if (this.fieldConfig.assetTypes[i].assetTypes == subType) {
@@ -339,8 +342,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             }
 
         } else if (type == "document" && this.fieldConfig.documentsAllowed) {
-            var subType = data.node.attributes.type;
-            var isAllowed = false;
+            subType = data.node.attributes.type;
+            isAllowed = false;
             if (this.fieldConfig.documentTypes != null && this.fieldConfig.documentTypes.length > 0) {
                 for (i = 0; i < this.fieldConfig.documentTypes.length; i++) {
                     if (this.fieldConfig.documentTypes[i].documentTypes == subType) {

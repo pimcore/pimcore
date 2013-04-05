@@ -451,7 +451,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         // website/var writable
         $websiteVarWritable = true;
-        $files = rscandir(PIMCORE_WEBSITE_PATH . "/var");
+        $files = rscandir(PIMCORE_WEBSITE_VAR);
 
         foreach ($files as $file) {
             if (!is_writable($file)) {

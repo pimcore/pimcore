@@ -61,6 +61,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      */
     public function setLazyLoading($lazyLoading){
         $this->lazyLoading = $lazyLoading;
+        return $this;
     }
 
     /**
@@ -228,6 +229,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         }
 
         $this->allowedTypes = (array)$allowedTypes;
+        return $this;
     }
 
     /**
@@ -262,6 +264,9 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                     $el->name = $fd->getName();
                     $el->type = $fd->getFieldType();
                     $el->value = $fd->getForWebserviceExport($item);
+                    if ($el->value ==  null && self::$dropNullValues) {
+                        continue;
+                    }
 
                     $wsDataItem->value[] = $el;
 
@@ -282,7 +287,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($data)
+    public function getFromWebserviceImport($data, $object = null, $idMapper = null)
     {
         $values = array();
         $count = 0;
@@ -290,6 +295,9 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
 
+                if ($collectionRaw instanceof stdClass) {
+                    $collectionRaw = Pimcore_Tool_Cast::castToClass("Webservice_Data_Object_Element", $collectionRaw);
+                }
                 if (!$collectionRaw instanceof Webservice_Data_Object_Element) {
 
                     throw new Exception("invalid data in fieldcollections [" . $this->getName() . "]");
@@ -305,6 +313,9 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     foreach ($collectionRaw->value as $field) {
+                        if ($field instanceof stdClass) {
+                            $field = Pimcore_Tool_Cast::castToClass("Webservice_Data_Object_Element", $field);
+                        }
                         if (!$field instanceof Webservice_Data_Object_Element) {
                             throw new Exception("invalid data in fieldcollections [" . $this->getName() . "]");
                         } else if ($field->name == $fd->getName()) {
@@ -312,7 +323,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                             if ($field->type != $fd->getFieldType()) {
                                 throw new Exception("Type mismatch for fieldcollection field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
                             }
-                            $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value);
+                            $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, $idMapper);
                             break;
                         }
 
@@ -439,7 +450,12 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
     }
  
 
-    public function preGetData ($object) {
+    public function preGetData ($object, $params = array()) {
+
+        if(!$object instanceof Object_Concrete) {
+            throw new \Exception("Field Collections are only valid in Objects");
+        }
+
         $data = $object->{$this->getName()};
         if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
             $data = $this->load($object, array("force" => true));
@@ -452,7 +468,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         return $data;
     }
 
-    public function preSetData ($object, $data) {
+    public function preSetData ($object, $data, $params = array()) {
 
         if($data === null) $data = array();
 
@@ -510,7 +526,8 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      */
     public function setMaxItems($maxItems)
     {
-        $this->maxItems = $maxItems;
+        $this->maxItems = $this->getAsIntegerCast($maxItems);
+        return $this;
     }
 
     /**
@@ -520,4 +537,64 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
     {
         return $this->maxItems;
     }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        $html = "";
+        if ($data instanceof Object_Fieldcollection) {
+
+            $html = "<table>";
+            foreach ($data as $item) {
+                if (!$item instanceof Object_Fieldcollection_Data_Abstract) {
+                    continue;
+                }
+
+                $type = $item->getType();
+                $html .= "<tr><th><b>" . $type . "</b></th><th>&nbsp;</th><th>&nbsp;</th></tr>";
+
+                try {
+                    $collectionDef = Object_Fieldcollection_Definition::getByKey($item->getType());
+                } catch (Exception $e) {
+                    continue;
+                }
+
+                $collectionData = array();
+
+                foreach ($collectionDef->getFieldDefinitions() as $fd) {
+
+                    $title = !empty($fd->title) ? $fd->title : $fd->getName();
+                    $html .= "<tr><td>&nbsp;</td><td>" . $title . "</td><td>";
+                    $html .= $fd->getVersionPreview($item->{$fd->getName()});
+                    $html .= "</td></tr>";
+                }
+            }
+
+            $html .= "</table>";
+        }
+
+        $value = array();
+        $value["html"] = $html;
+        $value["type"] = "html";
+        return $value;
+    }
+
+    public function getDiffDataFromEditmode($data, $object = null) {
+        $result = parent::getDiffDataFromEditmode($data, $object);
+        Logger::debug("bla");
+        return $result;
+    }
+
 }

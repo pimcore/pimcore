@@ -22,11 +22,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         // check permissions
         $notRestrictedActions = array("get-tree", "fieldcollection-list", "fieldcollection-tree", "fieldcollection-get", "get-class-definition-for-column-config", "objectbrick-list", "objectbrick-tree", "objectbrick-get");
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
-            if (!$this->getUser()->isAllowed("classes")) {
-
-                $this->redirect("/admin/login");
-                die();
-            }
+            $this->checkPermission("classes");
         }
     }
 
@@ -99,63 +95,6 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $class->delete();
 
         $this->removeViewRenderer();
-    }
-
-    public function importClassAction() {
-
-        $class = Object_Class::getById(intval($this->getParam("id")));
-
-        $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
-        $conf = new Zend_Config_Xml($data);
-        $importData = $conf->toArray();
-
-        $values["modificationDate"] = time();
-        $values["userModification"] = $this->user->getId();
-
-        // set layout-definition
-        $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-        $class->setLayoutDefinitions($layout);
-
-        // set properties of class
-        $class->setModificationDate(time());
-        $class->setUserModification($this->user->getId());
-        $class->setIcon($importData["icon"]);
-        $class->setAllowInherit($importData["allowInherit"]);
-        $class->setAllowVariants($importData["allowVariants"]);
-        $class->setParentClass($importData["parentClass"]);
-        $class->setPreviewUrl($importData["previewUrl"]);
-        $class->setPropertyVisibility($importData["propertyVisibility"]);
-        
-        $class->save();
-
-        $this->removeViewRenderer();
-
-        $this->_helper->json(array(
-            "success" => true
-        ), false);
-
-        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
-        // Ext.form.Action.Submit and mark the submission as failed
-        $this->getResponse()->setHeader("Content-Type", "text/html");
-    }
-
-
-    public function exportClassAction() {
-
-        $this->removeViewRenderer();
-        $class = Object_Class::getById(intval($this->getParam("id")));
-
-        if (!$class instanceof Object_Class) {
-            $errorMessage = ": Class with id [ " . $this->getParam("id") . " not found. ]";
-            Logger::error($errorMessage);
-            echo $errorMessage;
-        } else {
-            $xml = Object_Class_Service::generateClassDefinitionXml($class);
-            header("Content-type: application/xml");
-            header("Content-Disposition: attachment; filename=\"class_" . $class->getName() . "_export.xml\"");
-            echo $xml;
-        }
-
     }
 
     public function saveAction() {
@@ -231,6 +170,45 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     }
 
 
+
+    public function importClassAction() {
+
+        $class = Object_Class::getById(intval($this->getParam("id")));
+        $json = file_get_contents($_FILES["Filedata"]["tmp_name"]);
+
+        $success = Object_Class_Service::importClassDefinitionFromJson($class, $json);
+
+        $this->removeViewRenderer();
+
+        $this->_helper->json(array(
+            "success" => $success
+        ), false);
+
+        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+        // Ext.form.Action.Submit and mark the submission as failed
+        $this->getResponse()->setHeader("Content-Type", "text/html");
+    }
+
+
+    public function exportClassAction() {
+
+        $this->removeViewRenderer();
+        $class = Object_Class::getById(intval($this->getParam("id")));
+
+        if (!$class instanceof Object_Class) {
+            $errorMessage = ": Class with id [ " . $this->getParam("id") . " not found. ]";
+            Logger::error($errorMessage);
+            echo $errorMessage;
+        } else {
+            $json = Object_Class_Service::generateClassDefinitionJson($class);
+            header("Content-type: application/json");
+            header("Content-Disposition: attachment; filename=\"class_" . $class->getName() . "_export.json\"");
+            echo $json;
+        }
+
+    }
+
+
     /**
      * FIELDCOLLECTIONS
      */
@@ -272,17 +250,13 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $fieldCollection = Object_Fieldcollection_Definition::getByKey($this->getParam("id"));
 
         $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
-        $conf = new Zend_Config_Xml($data);
-        $importData = $conf->toArray();
 
-        $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-        $fieldCollection->setLayoutDefinitions($layout);
-        $fieldCollection->save();
+        $success = Object_Class_Service::importFieldCollectionFromJson($fieldCollection, $data);
 
         $this->removeViewRenderer();
 
         $this->_helper->json(array(
-            "success" => true
+            "success" => $success
         ), false);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
@@ -294,17 +268,17 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         $this->removeViewRenderer();
         $fieldCollection = Object_Fieldcollection_Definition::getByKey($this->getParam("id"));
+        $key = $fieldCollection->getKey();
         if (!$fieldCollection instanceof Object_Fieldcollection_Definition) {
             $errorMessage = ": Field-Collection with id [ " . $this->getParam("id") . " not found. ]";
             Logger::error($errorMessage);
             echo $errorMessage;
         } else {
-            $xml = Object_Class_Service::generateFieldCollectionXml($fieldCollection);
-            header("Content-type: application/xml");
-            header("Content-Disposition: attachment; filename=\"class_" . $fieldCollection->getKey() . "_export.xml\"");
-            echo $xml;
+            $json = Object_Class_Service::generateFieldCollectionJson($fieldCollection);
+            header("Content-type: application/json");
+            header("Content-Disposition: attachment; filename=\"fieldcollection_" . $key . "_export.json\"");
+            echo $json;
         }
-
     }
 
     public function fieldcollectionDeleteAction() {
@@ -439,17 +413,12 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $objectBrick = Object_Objectbrick_Definition::getByKey($this->getParam("id"));
 
         $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
-        $conf = new Zend_Config_Xml($data);
-        $importData = $conf->toArray();
-
-        $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-        $objectBrick->setLayoutDefinitions($layout);
-        $objectBrick->save();
+        $success = Object_Class_Service::importObjectBrickFromJson($objectBrick, $data);
 
         $this->removeViewRenderer();
 
         $this->_helper->json(array(
-            "success" => true
+            "success" => $success
         ), false);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
@@ -461,14 +430,15 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         $this->removeViewRenderer();
         $objectBrick = Object_Objectbrick_Definition::getByKey($this->getParam("id"));
+        $key = $objectBrick->getKey();
         if (!$objectBrick instanceof Object_Objectbrick_Definition) {
             $errorMessage = ": Object-Brick with id [ " . $this->getParam("id") . " not found. ]";
             Logger::error($errorMessage);
             echo $errorMessage;
         } else {
-            $xml = Object_Class_Service::generateFieldCollectionXml($objectBrick);
-            header("Content-type: application/xml");
-            header("Content-Disposition: attachment; filename=\"class_" . $objectBrick->getKey() . "_export.xml\"");
+            $xml = Object_Class_Service::generateObjectBrickJson($objectBrick);
+            header("Content-type: application/json");
+            header("Content-Disposition: attachment; filename=\"objectbrick_" . $key . "_export.json\"");
             echo $xml;
         }
 

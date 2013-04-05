@@ -69,6 +69,7 @@ pimcore.settings.redirects = Class.create({
             {name: 'source', allowBlank: false},
             {name: 'sourceEntireUrl', allowBlank: true},
             {name: 'sourceSite', allowBlank: true},
+            {name: 'passThroughParameters', allowBlank: true},
             {name: 'target', allowBlank: false},
             {name: 'targetSite', allowBlank: true},
             {name: 'statusCode', allowBlank: true},
@@ -160,10 +161,17 @@ pimcore.settings.redirects = Class.create({
             width: 70
         });
 
+        var passThroughParametersCheck = new Ext.grid.CheckColumn({
+            header: t("pass_through_params"),
+            dataIndex: "passThroughParameters",
+            width: 70
+        });
+
         var typesColumns = [
             {header: t("source"), width: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
             sourceEntireUrlCheck,
-            {header: t("source_site"), width: 200, sortable:true, dataIndex: "sourceSite", editor: new Ext.form.ComboBox({
+            {header: t("source_site"), width: 200, sortable:true, dataIndex: "sourceSite",
+                editor: new Ext.form.ComboBox({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
                 displayField: "domain",
@@ -175,8 +183,12 @@ pimcore.settings.redirects = Class.create({
                     return store.getAt(pos).get("domain");
                 }
             }},
-            {header: t("target"), width: 200, sortable: false, dataIndex: 'target', editor: new Ext.form.TextField({}), css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"},
-            {header: t("target_site"), width: 200, sortable:true, dataIndex: "targetSite", editor: new Ext.form.ComboBox({
+            passThroughParametersCheck,
+            {header: t("target"), width: 200, sortable: false, dataIndex: 'target',
+                editor: new Ext.form.TextField({}),
+                css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"},
+            {header: t("target_site"), width: 200, sortable:true, dataIndex: "targetSite",
+                editor: new Ext.form.ComboBox({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
                 displayField: "domain",
@@ -222,7 +234,8 @@ pimcore.settings.redirects = Class.create({
                 forceSelection: true,
                 triggerAction: "all"
             })},
-            {header: t("expiry"), width: 60, sortable:true, dataIndex: "expiry", editor: new Ext.form.DateField(),renderer: function(d) {
+            {header: t("expiry"), width: 60, sortable:true, dataIndex: "expiry", editor: new Ext.form.DateField(),
+                                                                            renderer: function(d) {
                 if(d instanceof Date) {
                     return d.format("Y-m-d");
                 }
@@ -342,7 +355,8 @@ pimcore.settings.redirects = Class.create({
                         ["begin", t("beginning_with")],
                         ["exact", t("matching_exact")],
                         ["contain", t("contain")],
-                        ["begin_end_slash", t("short_url")]
+                        ["begin_end_slash", t("short_url")],
+                        ["domain", t("domain")]
                     ],
                     mode: "local",
                     typeAhead: false,
@@ -377,6 +391,8 @@ pimcore.settings.redirects = Class.create({
     saveWizard: function () {
 
         var source = "";
+        var sourceEntireUrl = false;
+        var priority = 1;
         var values = this.wizardForm.getForm().getFieldValues();
         var pattern = preg_quote(values.pattern);
         pattern = str_replace("@","\\@",pattern);
@@ -392,10 +408,22 @@ pimcore.settings.redirects = Class.create({
                 pattern = "/" + pattern;
             }
             source = "@^" + pattern + "[\\/]?$@";
+        } else if (values.mode == "domain") {
+            if(values.pattern.indexOf("http") >= 0) {
+                pattern = parse_url(values.pattern, "host");
+            } else {
+                pattern = values.pattern;
+            }
+            pattern = preg_quote(pattern);
+            source = "@https?://" + pattern + "@";
+            sourceEntireUrl = true;
+            priority = 99;
         }
 
         var u = new this.grid.store.recordType({
-            source: source
+            source: source,
+            sourceEntireUrl: sourceEntireUrl,
+            priority: priority
         });
         this.grid.store.insert(0, u);
 

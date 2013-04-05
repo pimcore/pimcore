@@ -12,6 +12,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+/*global google */
 pimcore.registerNS("pimcore.settings.targeting.item");
 pimcore.settings.targeting.item = Class.create({
 
@@ -91,40 +92,6 @@ pimcore.settings.targeting.item = Class.create({
                             });
                         }
                     }
-                }, {
-                    xtype: "button",
-                    hidden: (this.parent.page ? false : true),
-                    text: t("create_a_variant_from_this_page"),
-                    iconCls: "pimcore_icon_tab_variants",
-                    handler: function () {
-                        Ext.Ajax.request({
-                            url: "/admin/reports/targeting/create-variant",
-                            params: {
-                                documentId: this.parent.page.id,
-                                tragetingId: this.data.id
-                            },
-                            method: "get",
-                            success: function (response) {
-                                var res = Ext.decode(response.responseText);
-                                if(res["id"]) {
-
-                                    var urlField = this.actionsForm.findBy(function (el) {
-                                        try {
-                                            if(el.getName() == "redirect.url") {
-                                                return true;
-                                            }
-                                        } catch (e) {}
-                                    });
-
-                                    if(urlField[0]) {
-                                        urlField[0].setValue(res["path"]);
-                                    }
-
-                                    pimcore.helpers.openDocument(res["id"], "page");
-                                }
-                            }.bind(this)
-                        });
-                    }.bind(this)
                 }]
             }, {
                 xtype: "fieldset",
@@ -227,13 +194,13 @@ pimcore.settings.targeting.item = Class.create({
 
     getConditions: function() {
         var addMenu = [];
-        var itemTypes = Object.keys(pimcore.document.pages.target.conditions);
+        var itemTypes = Object.keys(pimcore.settings.targeting.target.conditions);
         for(var i=0; i<itemTypes.length; i++) {
             if(itemTypes[i].indexOf("item") == 0) {
                 addMenu.push({
                     iconCls: "pimcore_icon_add",
                     handler: this.addCondition.bind(this, itemTypes[i]),
-                    text: pimcore.document.pages.target.conditions[itemTypes[i]](null, null,true)
+                    text: pimcore.settings.targeting.target.conditions[itemTypes[i]](null, null,true)
                 });
             }
         }
@@ -254,13 +221,15 @@ pimcore.settings.targeting.item = Class.create({
 
     addCondition: function (type, data) {
 
-        var item = pimcore.document.pages.target.conditions[type](this, data);
+        var item = pimcore.settings.targeting.target.conditions[type](this, data);
 
         // add logic for brackets
         item.on("afterrender", function (el) {
             el.getEl().applyStyles({position: "relative", "min-height": "40px"});
-            var leftBracket = el.getEl().insertHtml("beforeEnd", '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_left">(</div>', true);
-            var rightBracket = el.getEl().insertHtml("beforeEnd", '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
+            var leftBracket = el.getEl().insertHtml("beforeEnd",
+                                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_left">(</div>', true);
+            var rightBracket = el.getEl().insertHtml("beforeEnd",
+                                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
 
             if(data["bracketLeft"]){
                 leftBracket.addClass("pimcore_targeting_bracket_active");
@@ -295,7 +264,8 @@ pimcore.settings.targeting.item = Class.create({
         saveData["actions"]["redirect.enabled"] = !this.actionsForm.getComponent("actions_redirect").collapsed;
         saveData["actions"]["event.enabled"] = !this.actionsForm.getComponent("actions_event").collapsed;
         saveData["actions"]["codesnippet.enabled"] = !this.actionsForm.getComponent("actions_codesnippet").collapsed;
-        saveData["actions"]["programmatically.enabled"] = !this.actionsForm.getComponent("actions_programmatically").collapsed;
+        saveData["actions"]["programmatically.enabled"] = !this.actionsForm.getComponent("actions_programmatically")
+                                                                                                    .collapsed;
 
         var conditionsData = [];
         var condition, tb, operator;
@@ -315,8 +285,10 @@ pimcore.settings.targeting.item = Class.create({
             condition["operator"] = operator;
 
             // get the brackets
-            condition["bracketLeft"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_left")[0]).hasClass("pimcore_targeting_bracket_active");
-            condition["bracketRight"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_right")[0]).hasClass("pimcore_targeting_bracket_active");
+            condition["bracketLeft"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_left")[0])
+                                                                .hasClass("pimcore_targeting_bracket_active");
+            condition["bracketRight"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_right")[0])
+                                                                .hasClass("pimcore_targeting_bracket_active");
 
             conditionsData.push(condition);
         }
@@ -357,9 +329,8 @@ pimcore.settings.targeting.item = Class.create({
 
 /* CONDITION TYPES */
 
-pimcore.registerNS("pimcore.document.pages.target.conditions");
-
-pimcore.document.pages.target.conditions = {
+pimcore.registerNS("pimcore.settings.targeting.target.conditions");
+pimcore.settings.targeting.target.conditions = {
 
     detectBlockIndex: function (blockElement, container) {
         // detect index
@@ -390,7 +361,7 @@ pimcore.document.pages.target.conditions = {
 
                 var container = parent.conditionsContainer;
                 var blockElement = Ext.getCmp(blockId);
-                var index = pimcore.document.pages.target.conditions.detectBlockIndex(blockElement, container);
+                var index = pimcore.settings.targeting.target.conditions.detectBlockIndex(blockElement, container);
                 var tmpContainer = pimcore.viewport;
 
                 var newIndex = index-1;
@@ -420,7 +391,7 @@ pimcore.document.pages.target.conditions = {
 
                 var container = parent.conditionsContainer;
                 var blockElement = Ext.getCmp(blockId);
-                var index = pimcore.document.pages.target.conditions.detectBlockIndex(blockElement, container);
+                var index = pimcore.settings.targeting.target.conditions.detectBlockIndex(blockElement, container);
                 var tmpContainer = pimcore.viewport;
 
                 // move this node temorary to an other so ext recognizes a change
@@ -699,7 +670,7 @@ pimcore.document.pages.target.conditions = {
         var myId = Ext.id();
 
         var longitude = new Ext.form.NumberField({
-            decimalPrecision: 25,
+            decimalPrecision: 20,
             fieldLabel: t('longitude'),
             name: "longitude",
             value: data.longitude,
@@ -707,7 +678,7 @@ pimcore.document.pages.target.conditions = {
         });
 
         var latitude = new Ext.form.NumberField({
-            decimalPrecision: 25,
+            decimalPrecision: 20,
             fieldLabel: t('latitude'),
             name: "latitude",
             value: data.latitude,
@@ -848,7 +819,8 @@ pimcore.document.pages.target.conditions = {
                         if (angle < 0) {
                           angle += 360;
                         }
-                        var zoom = Math.round(Math.log(searchWindow.body.getWidth() * 360 / angle / GLOBE_WIDTH) / Math.LN2);
+                        var zoom = Math.round(Math.log(searchWindow.body.getWidth()
+                                                                            * 360 / angle / GLOBE_WIDTH) / Math.LN2);
                         gmap.setZoom(zoom-1);
                     });
 
@@ -1188,7 +1160,8 @@ pimcore.document.pages.target.conditions = {
                 fieldLabel: t('operating_system'),
                 name: "system",
                 disableKeyFilter: true,
-                store: [["",t("all")],["windows","Windows"],["macos", "Mac OS"], ["linux", "Linux"], ["android","Android"], ["ios", "iOS"]],
+                store: [["",t("all")],["windows","Windows"],["macos", "Mac OS"], ["linux", "Linux"],
+                                                                ["android","Android"], ["ios", "iOS"]],
                 triggerAction: "all",
                 mode: "local",
                 width: 250,

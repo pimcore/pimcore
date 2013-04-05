@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+<!DOCTYPE html>
+<html>
 <head>
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -85,7 +85,7 @@
 
             // library
             "lib/prototype-light.js",
-            "lib/jquery-1.7.1.min.js",
+            "lib/jquery.min.js",
             "lib/jquery.color.js",
             $scriptExtAdapter,
 
@@ -127,24 +127,12 @@
             "lib/ext-plugins/ux/gridfilters/filter/BooleanFilter.js",
             "lib/ext-plugins/ux/fileuploadfield/FileUploadField.js",
             "lib/ckeditor/ckeditor.js",
-            "lib/ckeditor-plugins/pimcore-image.js",
-            "lib/ckeditor-plugins/pimcore-link.js",
+            "lib/ckeditor-plugins/htmlsourceinline.js",
 
             // locale
             "lib/ext/locale/ext-lang-" . $this->language . ".js",
+            "lib/html2canvas.min.js",
         );
-
-        // browser specific lib includes
-        $browser = new Pimcore_Browser();
-        $browserVersion = (int) $browser->getVersion();
-        $platform = $browser->getPlatform();
-
-
-        // ace editor (code editor in server file explorer) is only for => IE9, FF, Chrome
-        if ( ($browser->getBrowser() == Pimcore_Browser::BROWSER_IE && $browserVersion >= 9) || $browser->getBrowser() != Pimcore_Browser::BROWSER_IE) {
-            $scriptLibs[] = "lib/ace/ace-noconflict.js";
-        }
-
 
         // PIMCORE SCRIPTS
         $scripts = array(
@@ -210,6 +198,7 @@
             "pimcore/settings/liveconnect.js",
             "pimcore/settings/robotstxt.js",
             "pimcore/settings/httpErrorLog.js",
+            "pimcore/settings/bouncemailinbox.js",
             "pimcore/settings/targeting/panel.js",
             "pimcore/settings/targeting/item.js",
 
@@ -225,6 +214,7 @@
             "pimcore/element/notes.js",
             "pimcore/object/helpers/grid.js",
             "pimcore/object/helpers/gridConfigDialog.js",
+            "pimcore/object/helpers/classTree.js",
             "pimcore/object/helpers/gridTabAbstract.js",
             "pimcore/element/selector/object.js",
 
@@ -236,8 +226,6 @@
             "pimcore/document/versions.js",
             "pimcore/document/pages/settings.js",
             "pimcore/document/pages/preview.js",
-            "pimcore/document/pages/targeting.js",
-            "pimcore/document/pages/target/item.js",
             "pimcore/document/snippets/settings.js",
             "pimcore/document/emails/settings.js",
             "pimcore/document/emails/logs.js",
@@ -299,6 +287,13 @@
             "pimcore/object/classes/data/localizedfields.js",
             "pimcore/object/classes/data/countrymultiselect.js",
             "pimcore/object/classes/data/languagemultiselect.js",
+            "pimcore/object/classes/data/keyValue.js",
+            "pimcore/object/classes/data/firstname.js",
+            "pimcore/object/classes/data/lastname.js",
+            "pimcore/object/classes/data/email.js",
+            "pimcore/object/classes/data/gender.js",
+            "pimcore/object/classes/data/newsletterActive.js",
+            "pimcore/object/classes/data/newsletterConfirmed.js",
             "pimcore/object/classes/layout/layout.js",
             "pimcore/object/classes/layout/accordion.js",
             "pimcore/object/classes/layout/fieldset.js",
@@ -345,6 +340,13 @@
             "pimcore/object/tags/countrymultiselect.js",
             "pimcore/object/tags/languagemultiselect.js",
             "pimcore/object/tags/objectbricks.js",
+            "pimcore/object/tags/keyValue.js",
+            "pimcore/object/tags/firstname.js",
+            "pimcore/object/tags/lastname.js",
+            "pimcore/object/tags/email.js",
+            "pimcore/object/tags/gender.js",
+            "pimcore/object/tags/newsletterActive.js",
+            "pimcore/object/tags/newsletterConfirmed.js",
             "pimcore/object/preview.js",
             "pimcore/object/versions.js",
             "pimcore/object/variantsTab.js",
@@ -373,6 +375,13 @@
             "pimcore/report/analytics/elementexplorer.js",
             "pimcore/report/analytics/elementnavigation.js",
             "pimcore/report/webmastertools/settings.js",
+            "pimcore/report/contentanalysis/settings.js",
+            "pimcore/report/seo/detail.js",
+            "pimcore/report/seo/socialoverview.js",
+            "pimcore/report/sql/item.js",
+            "pimcore/report/sql/panel.js",
+            "pimcore/report/sql/settings.js",
+            "pimcore/report/sql/report.js",
 
             "pimcore/settings/tagmanagement/panel.js",
             "pimcore/settings/tagmanagement/item.js",
@@ -380,8 +389,12 @@
             "pimcore/report/qrcode/panel.js",
             "pimcore/report/qrcode/item.js",
 
+            "pimcore/report/newsletter/panel.js",
+            "pimcore/report/newsletter/item.js",
+
             // extension manager
             "pimcore/extensionmanager/settings.js",
+            "pimcore/extensionmanager/xmlEditor.js",
             "pimcore/extensionmanager/admin.js",
             "pimcore/extensionmanager/download.js",
             "pimcore/extensionmanager/share.js",
@@ -398,7 +411,17 @@
             
             "pimcore/layout/toolbar.js",
             "pimcore/layout/treepanelmanager.js",
-            "pimcore/document/seemode.js"
+            "pimcore/document/seemode.js",
+
+            // keyvalue datatype
+            "pimcore/object/keyvalue/panel.js",
+            "pimcore/object/keyvalue/groupsPanel.js",
+            "pimcore/object/keyvalue/propertiesPanel.js",
+            "pimcore/object/keyvalue/selectionWindow.js",
+            "pimcore/object/keyvalue/specialConfigWindow.js",
+            "pimcore/object/keyvalue/columnConfigDialog.js",
+            "pimcore/object/keyvalue/translatorConfigWindow.js"
+
         );
 
         // they're here because they are using some pimcore core functionality like t() for i18n , ...
@@ -439,13 +462,23 @@
             liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
             showCloseConfirmation: true,
             debug_admin_translations: <?php echo Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
-            targeting_enabled: <?php echo Zend_Json::encode((bool) $this->config->general->targeting) ?>
+            targeting_enabled: <?php echo Zend_Json::encode((bool) PIMCORE_DEVMODE) ?>,
+            document_generatepreviews: <?php echo Zend_Json::encode((bool) $this->config->documents->generatepreview) ?>,
+            htmltoimage: <?php echo Zend_Json::encode(Pimcore_Image_HtmlToImage::isSupported()) ?>
         };
     </script>
     
     
     <?php // 3rd party libraries ?>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=<?php echo $googleMapsApiKey ?>"></script>
+    <script type="text/javascript">
+        var gmapInitialize = function () {}; // dummy callback
+        (function() {
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = 'https://maps.googleapis.com/maps/api/js?sensor=false&callback=gmapInitialize&key=<?php echo $googleMapsApiKey ?>';
+            document.body.appendChild(script);
+        })();
+    </script>
 
     <script type="text/javascript" src="/admin/misc/json-translations-system/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>

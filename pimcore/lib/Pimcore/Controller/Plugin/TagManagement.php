@@ -41,41 +41,56 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
             return;
         }
 
-        include_once("simple_html_dom.php");
-        $body = $this->getResponse()->getBody();
 
-        $html = str_get_html($body);
+        $html = null;
+        $body = $this->getResponse()->getBody();
         $requestParams = array_merge($_GET, $_POST);
 
-        if($html) {
 
-            foreach ($tags as $tag) {
-                $method = strtolower($tag->getHttpMethod());
-                $pattern = $tag->getUrlPattern();
-                $textPattern = $tag->getTextPattern();
-                if( ($method == strtolower($this->getRequest()->getMethod()) || empty($method)) &&
-                    (empty($pattern) || @preg_match($pattern, $this->getRequest()->getRequestUri())) &&
-                    (empty($textPattern) || strpos($body,$textPattern) !== false)
-                ) {
+        foreach ($tags as $tag) {
+            $method = strtolower($tag->getHttpMethod());
+            $pattern = $tag->getUrlPattern();
+            $textPattern = $tag->getTextPattern();
 
-                    $paramsValid = true;
-                    foreach ($tag->getParams() as $param) {
-                        if(!empty($param["name"])) {
-                            if(!empty($param["value"])) {
-                                if(!array_key_exists($param["name"], $requestParams) || $requestParams[$param["name"]] != $param["value"]) {
-                                    $paramsValid = false;
-                                }
-                            } else {
-                                if(!array_key_exists($param["name"], $requestParams)) {
-                                    $paramsValid = false;
-                                }
+            // site check
+            if(Site::isSiteRequest() && $tag->getSiteId()) {
+                if(Site::getCurrentSite()->getId() != $tag->getSiteId()) {
+                    continue;
+                }
+            } else if (!Site::isSiteRequest() && $tag->getSiteId()) {
+                continue;
+            }
+
+            if( ($method == strtolower($this->getRequest()->getMethod()) || empty($method)) &&
+                (empty($pattern) || @preg_match($pattern, $this->getRequest()->getRequestUri())) &&
+                (empty($textPattern) || strpos($body,$textPattern) !== false)
+            ) {
+
+                $paramsValid = true;
+                foreach ($tag->getParams() as $param) {
+                    if(!empty($param["name"])) {
+                        if(!empty($param["value"])) {
+                            if(!array_key_exists($param["name"], $requestParams) || $requestParams[$param["name"]] != $param["value"]) {
+                                $paramsValid = false;
+                            }
+                        } else {
+                            if(!array_key_exists($param["name"], $requestParams)) {
+                                $paramsValid = false;
                             }
                         }
                     }
+                }
 
-                    if(is_array($tag->getItems()) && $paramsValid) {
-                        foreach ($tag->getItems() as $item) {
-                            if(!empty($item["element"]) && !empty($item["code"]) && !empty($item["position"])) {
+                if(is_array($tag->getItems()) && $paramsValid) {
+                    foreach ($tag->getItems() as $item) {
+                        if(!empty($item["element"]) && !empty($item["code"]) && !empty($item["position"])) {
+
+                            if(!$html) {
+                                include_once("simple_html_dom.php");
+                                $html = str_get_html($body);
+                            }
+
+                            if($html) {
                                 $element = $html->find($item["element"],0);
                                 if($element) {
                                     if($item["position"] == "end") {
@@ -87,6 +102,10 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
 
                                     // we havve to reinitialize the html object, otherwise it causes problems with nested child selectors
                                     $body = $html->save();
+
+                                    $html->clear();
+                                    unset($html);
+
                                     $html = str_get_html($body);
                                 }
                             }
@@ -94,10 +113,14 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
                     }
                 }
             }
-
-            $this->getResponse()->setBody($body);
         }
 
+        if($html && method_exists($html, "clear")) {
+            $html->clear();
+            unset($html);
+        }
+
+        $this->getResponse()->setBody($body);
     }
 }
 

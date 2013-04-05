@@ -83,6 +83,11 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 this.edit.onClose();
             }
         }
+        if (this.preview) {
+            if (typeof this.preview.onClose == "function") {
+                this.preview.onClose();
+            }
+        }
         if (this.settings) {
             if (typeof this.settings.onClose == "function") {
                 this.settings.onClose();
@@ -177,7 +182,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                         text: pimcore.available_languages[pimcore.settings.websiteLanguages[p]],
                         handler: function (lang) {
                             Ext.Ajax.request({
-                                url: '/admin/' + this.getType() + '/translate/language/' + lang,
+                                url: this.urlprefix + this.getType() + '/translate/language/' + lang,
                                 method: "post",
                                 params: this.getSaveData(),
                                 success: function () {
@@ -270,7 +275,8 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             // version notification
             this.newerVersionNotification = new Ext.Toolbar.TextItem({
                 xtype: 'tbtext',
-                text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;' + t("this_is_a_newer_not_published_version"),
+                text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;'
+                                                                        + t("this_is_a_newer_not_published_version"),
                 scale: "medium",
                 hidden: true
             });
@@ -311,11 +317,11 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
         if (typeof onComplete != "function") {
             onComplete = function () {
-            }
+            };
         }
 
         Ext.Ajax.request({
-            url: '/admin/' + this.getType() + '/save-to-session/',
+            url: this.urlprefix + this.getType() + '/save-to-session/',
             method: "post",
             params: this.getSaveData(),
             success: onComplete
@@ -324,7 +330,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
     removeFromSession: function () {
         Ext.Ajax.request({
-            url: '/admin/' + this.getType() + '/remove-from-session/',
+            url: this.urlprefix + this.getType() + '/remove-from-session/',
             params: {id: this.data.id}
         });
     },

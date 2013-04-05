@@ -17,4 +17,9 @@
 
 class Asset_Unknown extends Asset {
 
+    /**
+     * @var string
+     */
+    public $type = "unknown";
+
 }

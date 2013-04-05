@@ -22,7 +22,7 @@ class Document_Hardlink_Wrapper_Link extends Document_Link implements Document_H
         $this->raiseHardlinkError();
     }
 
-    public function update() {
+    protected function update() {
         $this->raiseHardlinkError();
     }
 
@@ -45,7 +45,16 @@ class Document_Hardlink_Wrapper_Link extends Document_Link implements Document_H
             foreach ($hardLinkSourceProperties as $key => $prop) {
                 $prop = clone $prop;
                 $prop->setInherited(true);
+
+                // if the property doesn't exist in the source-properties just add it
+                if(!array_key_exists($key, $sourceProperties)) {
                 $hardLinkProperties[$key] = $prop;
+                } else {
+                    // if the property does exist in the source properties but it is inherited, then overwrite it with the hardlink property
+                    if($sourceProperties[$key]->isInherited()) {
+                        $hardLinkProperties[$key] = $prop;
+                    }
+                }
             }
 
 
@@ -59,15 +68,15 @@ class Document_Hardlink_Wrapper_Link extends Document_Link implements Document_H
     public function getChilds() {
 
         if ($this->childs === null) {
-            $childs = parent::getChilds();
-
             $hardLink = $this->getHardLinkSource();
+            $childs = array();
 
             if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !Pimcore::inAdmin()) {
+                $childs = parent::getChilds();
                 foreach($childs as &$c) {
                     $c = Document_Hardlink_Service::wrap($c);
                     $c->setHardLinkSource($hardLink);
-                    $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getFullpath()) . "@", $hardLink->getFullpath(), $c->getPath()));
+                    $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . "@", $hardLink->getRealFullpath(), $c->getRealPath()));
                 }
             }
 
@@ -77,6 +86,15 @@ class Document_Hardlink_Wrapper_Link extends Document_Link implements Document_H
         return $this->childs;
     }
 
+    public function hasChilds() {
+        $hardLink = $this->getHardLinkSource();
+
+        if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !Pimcore::inAdmin()) {
+            return parent::hasChilds();
+        }
+
+        return false;
+    }
 
 
     /**
@@ -98,6 +116,7 @@ class Document_Hardlink_Wrapper_Link extends Document_Link implements Document_H
     public function setHardLinkSource($hardLinkSource)
     {
         $this->hardLinkSource = $hardLinkSource;
+        return $this;
     }
 
     /**
