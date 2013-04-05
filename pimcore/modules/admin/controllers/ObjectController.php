@@ -35,9 +35,21 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
     public function treeGetChildsByIdAction()
     {
-
         $object = Object_Abstract::getById($this->getParam("node"));
-        if ($object->hasChilds()) {
+        $objectTypes = null;
+
+        if ($object instanceof Object_Concrete) {
+            $class = $object->getClass();
+            if ($class->getShowVariants()) {
+                $objectTypes = array(Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_VARIANT);
+            }
+        }
+
+        if (!$objectTypes) {
+            $objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER);
+        }
+
+        if ($object->hasChilds($objectTypes)) {
 
             $limit = intval($this->getParam("limit"));
             if (!$this->getParam("limit")) {
@@ -75,6 +87,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $childsList->setOffset($offset);
             $childsList->setOrderKey("o_key");
             $childsList->setOrder("asc");
+            $childsList->setObjectTypes($objectTypes);
 
             $childs = $childsList->load();
 
@@ -164,8 +177,12 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 //        $tmpObject["iconCls"] = "pimcore_icon_object";
 
         $tmpObject["isTarget"] = true;
-        $tmpObject["allowDrop"] = true;
+        if ($tmpObject["type"] != "variant") {
+            $tmpObject["allowDrop"] = true;
+        }
+
         $tmpObject["allowChildren"] = true;
+
         $tmpObject["leaf"] = false;
         $tmpObject["cls"] = "";
 
@@ -186,17 +203,26 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             if (!$child->isPublished()) {
                 $tmpObject["cls"] .= "pimcore_unpublished ";
             }
+
+            $tmpObject["allowVariants"] = $child->getClass()->getAllowVariants();
+
 //            if ($child->getClass()->getIcon()) {
 //                unset($tmpObject["iconCls"]);
 //                $tmpObject["icon"] = $child->getClass()->getIcon();
 //            }
         }
-        if($child->getElementAdminStyle()->getElementIcon()) {
-            $tmpObject["icon"] = $child->getO_elementAdminStyle()->getElementIcon();
+        if ($tmpObject["type"] == "variant") {
+            $tmpObject["iconCls"] = "pimcore_icon_tree_variant";
+        } else {
+            if($child->getElementAdminStyle()->getElementIcon()) {
+                $tmpObject["icon"] = $child->getO_elementAdminStyle()->getElementIcon();
+            }
+
+            if($child->getElementAdminStyle()->getElementIconClass()) {
+                $tmpObject["iconCls"] = $child->getO_elementAdminStyle()->getElementIconClass();
+            }
         }
-        if($child->getElementAdminStyle()->getElementIconClass()) {
-            $tmpObject["iconCls"] = $child->getO_elementAdminStyle()->getElementIconClass();
-        }
+
         if($child->getElementAdminStyle()->getElementCssClass()) {
             $tmpObject["cls"] .= $child->getO_elementAdminStyle()->getElementCssClass() . " ";
         }
@@ -307,6 +333,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData["versions"] = $object->getVersions();
             $objectData["scheduledTasks"] = $object->getScheduledTasks();
             $objectData["general"]["allowVariants"] = $object->getClass()->getAllowVariants();
+            $objectData["general"]["showVariants"] = $object->getClass()->getShowVariants();
 
             if($object->getElementAdminStyle()->getElementIcon()) {
                 $objectData["general"]["icon"] = $object->getO_elementAdminStyle()->getElementIcon();
@@ -519,7 +546,15 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 if($object instanceof Object_Concrete) {
                     $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
                 }
-                $object->setClassId($this->getParam("classId"));
+
+                if ($this->getParam("variantViaTree")) {
+                    $parentId = $this->getParam("parentId");
+                    $parent = Object_Abstract::getById($parentId);
+                    $object->setClassId($parent->getClass()->getId());
+                } else {
+                    $object->setClassId($this->getParam("classId"));
+                }
+
                 $object->setClassName($this->getParam("className"));
                 $object->setParentId($this->getParam("parentId"));
                 $object->setKey($this->getParam("key"));

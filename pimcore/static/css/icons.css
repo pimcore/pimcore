@@ -1309,3 +1309,7 @@
 .pimcore_icon_add_data {
     background: url(/pimcore/static/img/icon/table_row_insert.png) left center no-repeat !important;
 }
+
+.pimcore_icon_tree_variant {
+    background: url(/pimcore/static/img/icon/tree/variant.png) left center no-repeat !important;
+}

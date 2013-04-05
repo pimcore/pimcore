@@ -1188,6 +1188,7 @@
 "further_navigation_settings","More Navigation Settings"
 "navigation_exclude","Exclude from Navigation"
 "allow_variants","Allow variants"
+"show_variants","Show variants in tree"
 "variants","Variants"
 "variant","Variant"
 "add_variant","Add variant"
