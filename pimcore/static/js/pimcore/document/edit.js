@@ -141,7 +141,7 @@ pimcore.document.edit = Class.create({
 
                 offset = Ext.get(iFrames[i]).getOffsetsTo(this.frame.Ext.getBody());
                 
-                var element = this.frame.Ext.getBody().createChild({
+                element = this.frame.Ext.getBody().createChild({
                     tag: "div",
                     id: Ext.id()
                 });

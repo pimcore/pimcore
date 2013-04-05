@@ -253,7 +253,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                             params: {
                                 id: this.data.id
                             }
-                        })
+                        });
                     }.bind(this)
                 });
             }
