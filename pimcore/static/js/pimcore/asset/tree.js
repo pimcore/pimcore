@@ -882,12 +882,60 @@ pimcore.asset.tree = Class.create({
                                 parentId: this.id,
                                 serverPath: selectedNode.id
                             },
-                            success: function () {
-                                this.uploadWindow.hide();
-                                var f = this.attributes.reference.addAssetComplete.bind(this);
-                                f();
+                            success: function (response) {
+                                this.uploadWindow.close();
+                                this.uploadWindow = null;
+
+
+                                this.attributes.reference;
+
+                                var res = Ext.decode(response.responseText);
+
+                                this.downloadProgressBar = new Ext.ProgressBar({
+                                    text: t('initializing')
+                                });
+
+                                this.downloadProgressWin = new Ext.Window({
+                                    title: t("import_from_server"),
+                                    layout:'fit',
+                                    width:500,
+                                    bodyStyle: "padding: 10px;",
+                                    closable:false,
+                                    plain: true,
+                                    modal: true,
+                                    items: [this.downloadProgressBar]
+                                });
+
+                                this.downloadProgressWin.show();
+
+                                var pj = new pimcore.tool.paralleljobs({
+                                    success: function () {
+                                        if(this.downloadProgressWin) {
+                                            this.downloadProgressWin.close();
+                                        }
+
+                                        this.downloadProgressBar = null;
+                                        this.downloadProgressWin = null;
+
+                                        this.reload();
+                                    }.bind(this),
+                                    update: function (currentStep, steps, percent) {
+                                        if(this.downloadProgressBar) {
+                                            var status = currentStep / steps;
+                                            this.downloadProgressBar.updateProgress(status, percent + "%");
+                                        }
+                                    }.bind(this),
+                                    failure: function (message) {
+                                        this.downloadProgressWin.close();
+                                        pimcore.helpers.showNotification(t("error"), t("error"),
+                                            "error", t(message));
+                                    }.bind(this),
+                                    jobs: res.jobs
+                                });
                             }.bind(this)
                         });
+
+
                     } catch (e) { }
                 }.bind(this)
             }]
