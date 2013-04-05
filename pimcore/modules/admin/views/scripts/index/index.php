@@ -530,17 +530,33 @@
             if ($pluginBroker instanceof Pimcore_API_Plugin_Broker) {
                 foreach ($pluginBroker->getPlugins() as $plugin) {
                     if ($plugin->isInstalled()) {
-                        $jsPaths = $plugin->getJsPaths();
-                        if (!empty($jsPaths)) {
-                            foreach ($jsPaths as $jsPath) {
-                                $jsPath=trim($jsPath);
-                                if (!empty($jsPath)) {
+                        if (PIMCORE_DEVMODE) {
+                            $jsPaths = $plugin->getJsPaths();
+                            if (!empty($jsPaths)) {
+                                foreach ($jsPaths as $jsPath) {
+                                    $jsPath=trim($jsPath);
+                                    if (!empty($jsPath)) {
                                     ?>
-                                    <script type="text/javascript" src="<?php echo $jsPath ?>?_dc=<?php echo $pluginDcValue; ?>"></script>
+                                        <script type="text/javascript" src="<?php echo $jsPath ?>?_dc=<?php echo $pluginDcValue; ?>"></script>
                                     <?php
-        
+                                    }
                                 }
                             }
+                        } else {
+                            $pluginScr = '';
+                            $jsPaths = $plugin->getJsPaths();
+
+                        if (!empty($jsPaths)) {
+                            foreach ($jsPaths as $jsPath) {
+                                $jsPath = PIMCORE_DOCUMENT_ROOT . $jsPath;
+                                if(is_file($jsPath)) {
+                                    $pluginScr .= file_get_contents($jsPath);
+                                }
+                            }
+                            ?>
+                            <script type="text/javascript" src="<?php echo Pimcore_Tool_Admin::getMinimizedScriptPath($pluginScr) ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+                        <?php
+                        }
                         }
                         $cssPaths = $plugin->getCssPaths();
                         if (!empty($cssPaths)) {
