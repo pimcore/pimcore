@@ -1090,7 +1090,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     public function downloadAsZipJobsAction() {
 
         $jobId = uniqid();
-        $filesPerJob = 10;
+        $filesPerJob = 5;
         $jobs = array();
         $asset = Asset::getById($this->getParam("id"));
 
@@ -1204,7 +1204,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     public function importZipAction() {
 
         $jobId = uniqid();
-        $filesPerJob = 10;
+        $filesPerJob = 5;
         $jobs = array();
         $asset = Asset::getById($this->getParam("parentId"));
         $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $jobId . ".zip";
@@ -1299,14 +1299,77 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     }
 
     public function importServerAction() {
-        $success = true;
 
+        $success = true;
+        $filesPerJob = 5;
+        $jobs = array();
         $importDirectory = str_replace("/fileexplorer",PIMCORE_DOCUMENT_ROOT, $this->getParam("serverPath"));
         if(is_dir($importDirectory)) {
-            $this->importFromFileSystem($importDirectory, $this->getParam("parentId"));
+
+            $files = rscandir($importDirectory ."/");
+            $count = count($files);
+            $jobFiles = array();
+
+            for($i = 0; $i < $count; $i++) {
+
+                if(is_dir($files[$i])) continue;
+
+                $jobFiles[] = preg_replace("@^" . preg_quote($importDirectory, "@") . "@", "", $files[$i]);
+
+                if(count($jobFiles) >= $filesPerJob || $i >= ($count-1)) {
+                    $jobs[] = array(array(
+                        "url" => "/admin/asset/import-server-files",
+                        "params" => array(
+                            "parentId" => $this->getParam("parentId"),
+                            "serverPath" => $importDirectory,
+                            "files" => implode("::",$jobFiles)
+                        )
+                    ));
+                    $jobFiles = array();
+                }
+            }
         }
 
-        $this->_helper->json(array("success" => $success));
+        $this->_helper->json(array(
+            "success" => $success,
+            "jobs" => $jobs
+        ));
+    }
+
+    public function importServerFilesAction() {
+
+
+        $assetFolder = Asset::getById($this->getParam("parentId"));
+        $serverPath = $this->getParam("serverPath");
+        $files = explode("::", $this->getParam("files"));
+
+        foreach ($files as $file) {
+            $absolutePath = $serverPath . $file;
+            if(is_file($absolutePath)) {
+                $folder = Asset_Service::createFolderByPath($assetFolder->getFullPath() . dirname($file));
+                $filename = basename($file);
+
+                // check for duplicate filename
+                $filename = Pimcore_File::getValidFilename($filename);
+                $filename = $this->getSafeFilename($folder->getFullPath(), $filename);
+
+                if ($assetFolder->isAllowed("create")) {
+                    $asset = Asset::create($folder->getId(), array(
+                        "filename" => $filename,
+                        "data" => file_get_contents($absolutePath),
+                        "userOwner" => $this->getUser()->getId(),
+                        "userModification" => $this->getUser()->getId()
+                    ));
+                }
+                else {
+                    Logger::debug("prevented creating asset because of missing permissions ");
+                }
+            }
+        }
+
+        $this->_helper->json(array(
+            "success" => true
+        ));
     }
 
     public function importUrlAction() {
@@ -1354,35 +1417,5 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         $this->_helper->json(array("success" => $success));
-    }
-
-    protected function importFromFileSystem ($path, $parentId) {
-
-        $assetFolder = Asset::getById($parentId);
-        $files = rscandir($path."/");
-
-        foreach ($files as $file) {
-            if(is_file($file)) {
-                $relativePath =  $assetFolder->getFullPath() . str_replace($path, "", $file);
-                $folder = Asset_Service::createFolderByPath(dirname($relativePath));
-                $filename = basename($file);
-
-                // check for duplicate filename
-                $filename = Pimcore_File::getValidFilename($filename);
-                $filename = $this->getSafeFilename($folder->getFullPath(), $filename);
-
-                if ($assetFolder->isAllowed("create")) {
-                    $asset = Asset::create($folder->getId(), array(
-                        "filename" => $filename,
-                        "data" => file_get_contents($file),
-                        "userOwner" => $this->getUser()->getId(),
-                        "userModification" => $this->getUser()->getId()
-                    ));
-                }
-                else {
-                    Logger::debug("prevented creating asset because of missing permissions ");
-                }
-            }
-        }
     }
 }
