@@ -693,13 +693,13 @@ pimcore.layout.toolbar = Class.create({
                                             interimToolTip.hide();
                                             speechRecognitionButton.toggle();
                                         }
-                                    }
+                                    };
                                     recognition.onend = function () {
                                         if(speechRecognitionButton.pressed) {
                                             interimToolTip.hide();
                                             speechRecognitionButton.toggle();
                                         }
-                                    }
+                                    };
 
                                     recognition.start();
 

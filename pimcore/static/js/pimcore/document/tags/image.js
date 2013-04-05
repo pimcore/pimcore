@@ -627,7 +627,8 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     addMarker: function (config) {
 
         var markerId = "marker-" + (this.hotspotStore.length+1);
-        this.hotspotWindow.body.insertHtml("beforeEnd", '<div id="' + markerId + '" class="pimcore_image_marker"></div>');
+        this.hotspotWindow.body.insertHtml("beforeEnd", '<div id="' + markerId
+                                                            + '" class="pimcore_image_marker"></div>');
 
         var markerEl = Ext.get(markerId);
 
