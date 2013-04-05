@@ -26,7 +26,7 @@ pimcore.document.edit = Class.create({
                                                             + pimcore.settings.language+'&_dc=' + date.getTime();
     },
 
-    getLayout: function () {
+    getLayout: function (additionalConfig) {
 
         if (this.layout == null) {
             this.reloadInProgress = true;
@@ -34,7 +34,8 @@ pimcore.document.edit = Class.create({
 
             var html = '<iframe id="' + this.iframeName + '" width="100%" name="' + this.iframeName
                                                     + '" src="' + this.getEditLink() + '" frameborder="0"></iframe>';
-            this.layout = new Ext.Panel({
+
+            var config = {
                 id: "document_content_" + this.document.id,
                 html: html,
                 title: t('edit'),
@@ -43,7 +44,13 @@ pimcore.document.edit = Class.create({
                 forceLayout: true,
                 hideMode: "offsets",
                 iconCls: "pimcore_icon_tab_edit"
-            });
+            };
+
+            if(typeof additionalConfig == "object") {
+                config = Ext.apply(config, additionalConfig);
+            }
+
+            this.layout = new Ext.Panel(config);
             this.layout.on("resize", this.onLayoutResize.bind(this));
         }
 
