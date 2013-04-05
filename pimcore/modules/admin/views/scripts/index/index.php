@@ -543,8 +543,8 @@
                                 }
                             }
                         } else {
-                                $pluginScr = '';
-                                $jsPaths = $plugin->getJsPaths();
+                            $pluginScr = '';
+                            $jsPaths = $plugin->getJsPaths();
 
                             if (!empty($jsPaths)) {
                                 foreach ($jsPaths as $jsPath) {
