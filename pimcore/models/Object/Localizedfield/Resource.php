@@ -104,12 +104,11 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $languages = explode(",",$conf->general->validLanguages);
         }
 
-        $defaultView = 'object_' . $this->model->getClass()->getId();
+        $defaultTable = 'object_query_' . $this->model->getClass()->getId();
         
         foreach ($languages as $language) {
             try {
-
-                $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` AND `' . $this->getTableName() . '`.`language` = \'' . $language . '\';');
+                $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $defaultTable . '`.`oo_id` left JOIN `' . $this->getTableName() . '` ON `' . $defaultTable . '`.`oo_id` = `' . $this->getTableName() . '`.`ooo_id` AND `' . $this->getTableName() . '`.`language` = \'' . $language . '\';');
             }
             catch (Exception $e) {
                 Logger::error($e);
@@ -133,7 +132,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $furtherSelects = "," . $furtherSelects;
         }
 
-        $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_default` AS SELECT `' . $defaultView . '`.* ' . $furtherSelects . ' FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` GROUP BY `' . $defaultView . '`.`o_id`;');
+        $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_default` AS SELECT `' . $defaultTable . '`.*,objects.* ' . $furtherSelects . ' FROM `' . $defaultTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $defaultTable . '`.`oo_id` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` GROUP BY `' . $defaultView . '`.`o_id`;');
     }
 
     public function createUpdateTable () {
