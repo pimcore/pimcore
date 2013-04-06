@@ -19,10 +19,11 @@ abstract class Webservice_Data {
 
     public function map($object) {
         $keys = get_object_vars($this);
+        $blockedKeys = array("childs");
         foreach ($keys as $key => $value) {
 
                 $method = "get" . $key;
-                if (method_exists($object, $method)) {
+                if (method_exists($object, $method) && !in_array($key, $blockedKeys)) {
                     if ($object->$method()) {
                         $this->$key = $object->$method();
 
