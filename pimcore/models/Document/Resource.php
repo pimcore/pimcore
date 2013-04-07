@@ -396,4 +396,8 @@ class Document_Resource extends Element_Resource {
         return false;
     }
 
+    public function saveIndex($index) {
+        $this->db->update("documents", array("index" => $index), $this->db->quoteInto("id = ?", $this->model->getId() ));
+    }
+
 }
