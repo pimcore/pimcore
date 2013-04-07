@@ -404,9 +404,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         if ($count == intval($this->getParam("index"))) {
                             $count++;
                         }
-                        $child->setIndex($count);
-                        $child->setUserModification($this->getUser()->getId());
-                        $child->save();
+                        $child->saveIndex($count);
                         $count++;
                     }
                 }

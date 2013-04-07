@@ -485,6 +485,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         Zend_Registry::set("document_" . $this->getId(), $this);
     }
 
+    public function saveIndex($index) {
+        $this->getResource()->saveIndex($index);
+        $this->clearDependentCache();
+    }
+
     public function clearDependentCache() {
         try {
             Pimcore_Model_Cache::clearTag("document_" . $this->getId());
