@@ -449,6 +449,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             throw new Exception("Key: " . $this->getKey() . " is not allowed in first level (root-level)");
         }
 
+        // set index if null
+        if($this->getIndex() === null) {
+            $this->setIndex($this->getResource()->getNextIndex());
+        }
+
         // save properties
         $this->getProperties();
         $this->getResource()->deleteAllProperties();
