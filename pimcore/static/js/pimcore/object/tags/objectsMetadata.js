@@ -46,7 +46,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             fields.push(this.fieldConfig.columns[i].key);
         }
 
-        this.store = new Ext.data.ArrayStore({
+        this.store = new Ext.data.JsonStore({
             data: this.data,
             listeners: {
                 add:function() {
@@ -82,8 +82,10 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         columns.push({header: 'ID', dataIndex: 'id', width: 50});
 
         for (i = 0; i < visibleFields.length; i++) {
-            columns.push({header: ts(visibleFields[i]), dataIndex: visibleFields[i], width: 100, editor: null,
+            if(!empty(visibleFields[i])) {
+                columns.push({header: ts(visibleFields[i]), dataIndex: visibleFields[i], width: 100, editor: null,
                                                                     renderer: renderer});
+            }
         }
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {

@@ -141,9 +141,9 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                 $object = $metaObject->getObject();
                 if ($object instanceof Object_Concrete) {
 
-                    $value = array($object->geto_id());
-                    foreach($visibleFieldsArray as $v) {
-                        $getter = "get" . ucfirst($v);
+                    $value = array("id" => $object->geto_id());
+                    foreach($visibleFieldsArray as $key) {
+                        $getter = "get" . ucfirst($key);
                         if(method_exists($object, $getter)) {
                             $v = $object->$getter();
                             if(is_object($v)) {
@@ -155,12 +155,12 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
                             }
 
-                            $value[] = $v;
+                            $value[$key] = $v;
                         }
                     }
                     foreach($this->getColumns() as $c) {
                         $getter = "get" . ucfirst($c['key']);
-                        $value[] = $metaObject->$getter();
+                        $value[$c['key']] = $metaObject->$getter();
                     }
                     $return[] = $value;
                 }
