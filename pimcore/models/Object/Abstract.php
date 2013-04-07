@@ -668,6 +668,10 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         // set mod date
         $this->setO_modificationDate(time());
 
+        if(!$this->getCreationDate()) {
+            $this->setCreationDate(time());
+        }
+
         // save properties
         $this->getO_Properties();
         $this->getResource()->deleteAllProperties();

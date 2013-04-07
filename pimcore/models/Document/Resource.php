@@ -107,10 +107,6 @@ class Document_Resource extends Element_Resource {
             if (!$this->model->getKey()) {
                 $this->model->setKey($this->model->getId());
             }
-
-            $this->model->setCreationDate($date);
-            $this->model->setModificationDate($date);
-
         }
         catch (Exception $e) {
             throw $e;

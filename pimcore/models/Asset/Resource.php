@@ -83,8 +83,6 @@ class Asset_Resource extends Element_Resource {
      */
     public function create() {
         try {
-
-
             $this->db->insert("assets", array(
                 "path" => $this->model->getPath(),
                 "parentId" => $this->model->getParentId()
@@ -92,9 +90,6 @@ class Asset_Resource extends Element_Resource {
 
             $date = time();
             $this->model->setId($this->db->lastInsertId());
-            $this->model->setCreationDate($date);
-            $this->model->setModificationDate($date);
-
         }
         catch (Exception $e) {
             throw $e;

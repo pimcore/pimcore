@@ -526,6 +526,10 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         // set date
         $this->setModificationDate(time());
 
+        if(!$this->getCreationDate()) {
+            $this->setCreationDate(time());
+        }
+
         // create foldertree
         $destinationPath = $this->getFileSystemPath();
         if (!is_dir(dirname($destinationPath))) {
