@@ -44,11 +44,16 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
      */
     function setName($name) {
 
-        $user = Pimcore_Tool_Admin::getCurrentUser();
-        $this->asset->setUserModification($user->getId());
+        if($this->asset->isAllowed("rename")) {
+            $user = Pimcore_Tool_Admin::getCurrentUser();
+            $this->asset->setUserModification($user->getId());
 
-        $this->asset->setFilename(Pimcore_File::getValidFilename($name));
-        $this->asset->save();
+            $this->asset->setFilename(Pimcore_File::getValidFilename($name));
+            $this->asset->save();
+        } else {
+            throw new Sabre_DAV_Exception_Forbidden();
+        }
+
         return $this;
     }
 
@@ -57,23 +62,27 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
      */
     function delete() {
 
-        Asset_Service::loadAllFields($this->asset);
-        $this->asset->delete();
+        if($this->asset->isAllowed("delete")) {
+            Asset_Service::loadAllFields($this->asset);
+            $this->asset->delete();
 
-        // add the asset to the delete history, this is used so come over problems with programs like photoshop (delete, create instead of replace => move)
-        // for details see Asset_WebDAV_Tree::move()
-        $log = Asset_WebDAV_Service::getDeleteLog();
+            // add the asset to the delete history, this is used so come over problems with programs like photoshop (delete, create instead of replace => move)
+            // for details see Asset_WebDAV_Tree::move()
+            $log = Asset_WebDAV_Service::getDeleteLog();
 
-        $this->asset->_fulldump = true;
-        $log[$this->asset->getFullpath()] = array(
-            "id" => $this->asset->getId(),
-            "timestamp" => time(),
-            "data" => Pimcore_Tool_Serialize::serialize($this->asset)
-        );
+            $this->asset->_fulldump = true;
+            $log[$this->asset->getFullpath()] = array(
+                "id" => $this->asset->getId(),
+                "timestamp" => time(),
+                "data" => Pimcore_Tool_Serialize::serialize($this->asset)
+            );
 
-        unset($this->asset->_fulldump);
+            unset($this->asset->_fulldump);
 
-        Asset_WebDAV_Service::saveDeleteLog($log);
+            Asset_WebDAV_Service::saveDeleteLog($log);
+        } else {
+            throw new Sabre_DAV_Exception_Forbidden();
+        }
     }
 
     /**
@@ -91,14 +100,18 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
      */
     function put($data) {
 
-        // read from resource -> default for SabreDAV
-        $data = stream_get_contents($data);
+        if($this->asset->isAllowed("publish")) {
+            // read from resource -> default for SabreDAV
+            $data = stream_get_contents($data);
 
-        $user = Pimcore_Tool_Admin::getCurrentUser();
-        $this->asset->setUserModification($user->getId());
+            $user = Pimcore_Tool_Admin::getCurrentUser();
+            $this->asset->setUserModification($user->getId());
 
-        $this->asset->setData($data);
-        $this->asset->save();
+            $this->asset->setData($data);
+            $this->asset->save();
+        } else {
+            throw new Sabre_DAV_Exception_Forbidden();
+        }
     }
 
     /**
@@ -107,7 +120,11 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
      * @return mixed
      */
     function get() {
-        return fopen($this->asset->getFileSystemPath(), "r");
+        if($this->asset->isAllowed("view")) {
+            return fopen($this->asset->getFileSystemPath(), "r");
+        } else {
+            throw new Sabre_DAV_Exception_Forbidden();
+        }
     }
 
     /**

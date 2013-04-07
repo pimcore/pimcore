@@ -603,14 +603,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $lockPlugin = new Sabre_DAV_Locks_Plugin($lockBackend);
             $server->addPlugin($lockPlugin);
 
-            $plugin = new Sabre_DAV_Browser_Plugin();
-            $server->addPlugin($plugin);
-
-            //$server->addPlugin(new Sabre_DAV_Mount_Plugin());
-
-            //$tffp = new Sabre_DAV_TemporaryFileFilterPlugin(PIMCORE_WEBDAV_TEMP);
-            //$tffp->temporaryFilePatterns[] = "'/^~.(.*)tmp$/'"; // photoshop
-            //$server->addPlugin($tffp);
+            //$plugin = new Sabre_DAV_Browser_Plugin();
+            //$server->addPlugin($plugin);
 
             $server->exec();
         } catch (Exception $e) {

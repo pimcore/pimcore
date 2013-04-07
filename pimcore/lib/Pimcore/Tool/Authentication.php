@@ -71,9 +71,6 @@ class Pimcore_Tool_Authentication {
             $auth->init();
 
             if ($user = User::getByName($auth->getUsername())) {
-                if(!$user->isAdmin()) {
-                    throw new Exception("Only admins can access WebDAV");
-                }
                 if ($auth->validateA1($user->getPassword())) {
                     return $user;
                 }
