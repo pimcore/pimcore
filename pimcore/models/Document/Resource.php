@@ -98,7 +98,8 @@ class Document_Resource extends Element_Resource {
             $this->db->insert("documents", array(
                 "key" => $this->model->getKey(),
                 "path" => $this->model->getRealPath(),
-                "parentId" => $this->model->getParentId()
+                "parentId" => $this->model->getParentId(),
+                "index" => 0
             ));
 
             $date = time();
@@ -398,6 +399,12 @@ class Document_Resource extends Element_Resource {
 
     public function saveIndex($index) {
         $this->db->update("documents", array("index" => $index), $this->db->quoteInto("id = ?", $this->model->getId() ));
+    }
+
+    public function getNextIndex() {
+        $index = $this->db->fetchOne("SELECT MAX(`index`) FROM documents WHERE parentId = ?", array($this->model->getParentId()));
+        $index++;
+        return $index;
     }
 
 }

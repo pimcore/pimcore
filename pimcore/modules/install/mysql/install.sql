@@ -117,7 +117,7 @@ CREATE TABLE `documents` (
   `type` enum('page','link','snippet','folder','hardlink','email') DEFAULT NULL,
   `key` varchar(255) DEFAULT '',
   `path` varchar(255) DEFAULT NULL,
-  `index` int(11) unsigned DEFAULT '999999',
+  `index` int(11) unsigned DEFAULT '0',
   `published` tinyint(1) unsigned DEFAULT '1',
   `creationDate` bigint(20) unsigned DEFAULT NULL,
   `modificationDate` bigint(20) unsigned DEFAULT NULL,
