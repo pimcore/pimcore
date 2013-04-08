@@ -59,18 +59,22 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     private function checkPermission($element, $category) {
         if ($category == "get") {
             if (!$element->isAllowed("view")) {
+                $this->getResponse()->setHttpResponseCode(403);
                 $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission view is needed"));
             }
         } else if ($category == "delete") {
             if (!$element->isAllowed("delete")) {
+                $this->getResponse()->setHttpResponseCode(403);
                 $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission delete is needed"));
             }
         } else if ($category == "update") {
             if (!$element->isAllowed("publish")) {
+                $this->getResponse()->setHttpResponseCode(403);
                 $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission save is needed"));
             }
         } else if ($category == "create") {
             if (!$element->isAllowed("create")) {
+                $this->getResponse()->setHttpResponseCode(403);
                 $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission create is needed"));
             }
         }
@@ -82,6 +86,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 return;
             }
         }
+        $this->getResponse()->setHttpResponseCode(403);
         $this->encoder->encode(array("success" => false, "msg" => "not allowed"));
     }
 
