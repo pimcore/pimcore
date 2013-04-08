@@ -257,7 +257,7 @@ class Pimcore_Mail extends Zend_Mail
      * @static
      * @return void
      */
-    protected static function determineHtml2TextIsInstalled() {
+    public static function determineHtml2TextIsInstalled() {
 
         self::$html2textInstalled = false;
         $paths = array("/usr/bin/html2text","/usr/local/bin/html2text", "/bin/html2text");
@@ -265,6 +265,7 @@ class Pimcore_Mail extends Zend_Mail
         foreach ($paths as $path) {
             if(@is_executable($path)) {
                 self::$html2textInstalled = true;
+                return true;
             }
         }
     }

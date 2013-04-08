@@ -87,6 +87,27 @@
                         </tr>
                     <?php } ?>
                 </table>
+
+                <br />
+                <br />
+
+                <h2>Applications &amp; System</h2>
+                <table border="1" cellpadding="3" cellspacing="0">
+                    <?php foreach ($this->checksApps as $check) { ?>
+                        <tr>
+                            <td><?php echo $check["name"]; ?></td>
+                            <td><img src="/pimcore/static/img/icon/<?php
+                                if($check["state"] == "ok") {
+                                    echo "accept";
+                                } else if ($check["state"] == "warning") {
+                                    echo "error";
+                                } else {
+                                    echo "delete";
+                                }
+                            ?>.png" /></td>
+                        </tr>
+                    <?php } ?>
+                </table>
             </td>
         </tr>
     </table>
