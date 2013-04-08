@@ -37,6 +37,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
         $checksPHP = array();
         $checksMySQL = array();
         $checksFS = array();
+        $checksApps = array();
 
         // check for memory limit
         $memoryLimit = ini_get("memory_limit");
@@ -471,6 +472,74 @@ class Install_CheckController extends Pimcore_Controller_Action {
         );
 
 
+        // system & application checks
+
+        // PHP CLI BIN
+        try {
+            $phpCliBin = (bool) Pimcore_Tool_Console::getPhpCli();
+        } catch (Exception $e) {
+            $phpCliBin = false;
+        }
+
+        $checksApps[] = array(
+            "name" => "PHP CLI Binary",
+            "state" => $phpCliBin ? "ok" : "error"
+        );
+
+
+        // FFMPEG BIN
+        try {
+            $ffmpegBin = (bool) Pimcore_Video_Adapter_Ffmpeg::getFfmpegCli();
+        } catch (Exception $e) {
+            $ffmpegBin = false;
+        }
+
+        $checksApps[] = array(
+            "name" => "FFMPEG (CLI)",
+            "state" => $ffmpegBin ? "ok" : "warning"
+        );
+
+
+        // QT-FASTSTART BIN
+        try {
+            $qtfaststartBin = (bool) Pimcore_Video_Adapter_Ffmpeg::getQtfaststartCli();
+        } catch (Exception $e) {
+            $qtfaststartBin = false;
+        }
+
+        $checksApps[] = array(
+            "name" => "qt-faststart (CLI)",
+            "state" => $qtfaststartBin ? "ok" : "warning"
+        );
+
+
+        // WKHTMLTOIMAGE BIN
+        try {
+            $wkhtmltopdfBin = (bool) Pimcore_Image_HtmlToImage::getWkhtmltoimageBinary();
+        } catch (Exception $e) {
+            $wkhtmltopdfBin = false;
+        }
+
+        $checksApps[] = array(
+            "name" => "wkhtmltoimage (CLI)",
+            "state" => $wkhtmltopdfBin ? "ok" : "warning"
+        );
+
+        // HTML2TEXT BIN
+        try {
+            $html2textBin = (bool) Pimcore_Mail::determineHtml2TextIsInstalled();
+        } catch (Exception $e) {
+            $html2textBin = false;
+        }
+
+        $checksApps[] = array(
+            "name" => "mbayer html2text (CLI)",
+            "state" => $html2textBin ? "ok" : "warning"
+        );
+
+
+
+        $this->view->checksApps = $checksApps;
         $this->view->checksPHP = $checksPHP;
         $this->view->checksMySQL = $checksMySQL;
         $this->view->checksFS = $checksFS;
