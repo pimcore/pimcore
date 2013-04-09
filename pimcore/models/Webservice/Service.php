@@ -799,7 +799,7 @@ class Webservice_Service
     public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $objectClass = null)
     {
         try {
-            $params = array();
+            $params = array("objectTypes" => array(Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_VARIANT));
 
             if (!empty($condition)) $params["condition"] = $condition;
             if (!empty($order)) $params["order"] = $order;
