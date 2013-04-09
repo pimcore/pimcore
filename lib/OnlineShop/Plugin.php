@@ -7,9 +7,9 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
     public static function getConfig($readonly = true) {
         if(!$readonly) {
             $config = new Zend_Config_Xml(PIMCORE_PLUGINS_PATH . OnlineShop_Plugin::$configFile,
-			                              null,
-			                              array('skipExtends'        => true,
-		    	                                'allowModifications' => true));
+                null,
+                array('skipExtends'        => true,
+                    'allowModifications' => true));
         } else {
             $config = new Zend_Config_Xml(PIMCORE_PLUGINS_PATH . OnlineShop_Plugin::$configFile);
         }
@@ -22,7 +22,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
 
         // Write the config file
         $writer = new Zend_Config_Writer_Xml(array('config'   => $config,
-                                                   'filename' => PIMCORE_PLUGINS_PATH . OnlineShop_Plugin::$configFile));
+            'filename' => PIMCORE_PLUGINS_PATH . OnlineShop_Plugin::$configFile));
         $writer->write();
     }
 
@@ -79,15 +79,9 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         ");
 
         // Add FieldCollections
-        //chdir(__DIR__);
         $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources');
         foreach ($sourceFiles as $filename) {
             if (!is_dir($filename)) {
-                $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources/' . $filename);
-                $conf = new Zend_Config_Xml($data);
-                $importData = $conf->toArray();
-
-                $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
 
                 preg_match('/_(.*)_/', $filename, $matches);
                 $key = $matches[1];
@@ -96,37 +90,20 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
                     $fieldCollection = Object_Fieldcollection_Definition::getByKey($key);
                 } catch(Exception $e) {
                     $fieldCollection = new Object_Fieldcollection_Definition();
-                    $fieldCollection->setKey($key);
-                    $fieldCollection->setParentClass($importData['parentClass']);
-                    $fieldCollection->setLayoutDefinitions($layout);
-                    $fieldCollection->save();
+                }
+
+                $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources/' . $filename);
+                $success = Object_Class_Service::importFieldCollectionFromJson($fieldCollection, $data);
+                if(!$success){
+                    Logger::err("Could not import $key FieldCollection.");
                 }
             }
         }
 
-        // Add class
-        $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_FilterDefinition_export.xml');
-        $conf = new Zend_Config_Xml($data);
-        $importData = $conf->toArray();
-
-        $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-
-        $classname = "FilterDefinition";
-        $class = Object_Class::getByName($classname);
-        if(!$class) {
-            $class = new Object_Class();
-            $class->setLayoutDefinitions($layout);
-            $class->setModificationDate(time());
-            $class->setIcon($importData["icon"]);
-            $class->setAllowInherit($importData["allowInherit"]);
-            $class->setAllowVariants($importData["allowVariants"]);
-            $class->setParentClass($importData["parentClass"]);
-            $class->setPreviewUrl($importData["previewUrl"]);
-            $class->setPropertyVisibility($importData["propertyVisibility"]);
-            $class->setName($classname);
-
-            $class->save();
-        }
+        // Add classes
+        self::createClass("FilterDefinition", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_FilterDefinition_export.json');
+        self::createClass("OnlineShopOrderItem", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopOrderItem_export.json');
+        self::createClass("OnlineShopOrder", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopOrder_export.json');
 
         //copy config file
         if(!is_file(PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShopConfig.xml")) {
@@ -136,12 +113,25 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
 
 
         if(self::isInstalled()){
-			$statusMessage = "installed"; // $translate->_("plugin_objectassetfolderrelation_installed_successfully");
-		} else {
-			$statusMessage = "not installed"; // $translate->_("plugin_objectassetfolderrelation_could_not_install");
-		}
-		return $statusMessage;
+            $statusMessage = "installed"; // $translate->_("plugin_objectassetfolderrelation_installed_successfully");
+        } else {
+            $statusMessage = "not installed"; // $translate->_("plugin_objectassetfolderrelation_could_not_install");
+        }
+        return $statusMessage;
 
+    }
+
+    private static function createClass($classname, $filepath) {
+        $class = Object_Class::getByName($classname);
+        if(!$class) {
+            $class = new Object_Class();
+        }
+        $json = file_get_contents($filepath);
+
+        $success = Object_Class_Service::importClassDefinitionFromJson($class, $json);
+        if(!$success){
+            Logger::err("Could not import $classname Class.");
+        }
     }
 
     /**
@@ -158,10 +148,10 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
      */
     public static function isInstalled() {
         $result = null;
-		try{
-			$result = Pimcore_API_Plugin_Abstract::getDb()->describeTable("plugin_onlineshop_cartitem");
-		} catch(Exception $e){}
-		return !empty($result);
+        try{
+            $result = Pimcore_API_Plugin_Abstract::getDb()->describeTable("plugin_onlineshop_cartitem");
+        } catch(Exception $e){}
+        return !empty($result);
     }
 
     /**
@@ -175,12 +165,12 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartitem`");
         Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_customerdb_event_orderEvent`");
 
-		if(!self::isInstalled()){
-			$statusMessage = "uninstalled successfully"; //  $translate->_("plugin_objectassetfolderrelation_uninstalled_successfully");
-		} else {
-			$statusMessage = "did not uninstall"; // $translate->_("plugin_objectassetfolderrelation_could_not_uninstall");
-		}
-		return $statusMessage;
+        if(!self::isInstalled()){
+            $statusMessage = "uninstalled successfully"; //  $translate->_("plugin_objectassetfolderrelation_uninstalled_successfully");
+        } else {
+            $statusMessage = "did not uninstall"; // $translate->_("plugin_objectassetfolderrelation_could_not_uninstall");
+        }
+        return $statusMessage;
 
     }
 
@@ -226,8 +216,8 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
     }
 
     /**
-    * @var Zend_Log
-    */
+     * @var Zend_Log
+     */
     private static $sqlLogger = null;
 
     /**
