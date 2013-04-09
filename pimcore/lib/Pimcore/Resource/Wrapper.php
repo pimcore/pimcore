@@ -112,7 +112,7 @@ class Pimcore_Resource_Wrapper {
                 } else if ($resource instanceof Zend_Db_Adapter_Pdo_Mysql) {
                     $connectionId = $resource->fetchOne("SELECT CONNECTION_ID()");
                 }
-                Logger::debug(get_class($resource) . ": closing mysql connection with ID: " . $connectionId);
+                Logger::debug(get_class($resource) . ": closing MySQL-Server connection with ID: " . $connectionId);
 
                 $resource->closeConnection();
             } catch (\Exception $e) {

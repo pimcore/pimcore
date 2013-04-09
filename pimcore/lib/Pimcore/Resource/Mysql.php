@@ -73,7 +73,7 @@ class Pimcore_Resource_Mysql {
             $db->setProfiler($profiler);
         }
 
-        Logger::debug(get_class($db) . ": Successfully established connection to MySQL-Server");
+        Logger::debug(get_class($db) . ": Successfully established connection to MySQL-Server: " . $db->fetchOne("SELECT CONNECTION_ID()"));
 
         return $db;
     }
