@@ -42,6 +42,7 @@ CREATE TABLE `classes` (
   `icon` varchar(255) DEFAULT NULL,
   `previewUrl` varchar(255) DEFAULT NULL,
   `propertyVisibility` text,
+  `showVariants` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;
@@ -349,9 +350,9 @@ CREATE TABLE `objects` (
   PRIMARY KEY (`o_id`),
   KEY `key` (`o_key`),
   KEY `path` (`o_path`),
-  KEY `type` (`o_type`),
   KEY `published` (`o_published`),
-  KEY `parentId` (`o_parentId`)
+  KEY `parentId` (`o_parentId`),
+  KEY `type` (`o_type`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `properties`;
