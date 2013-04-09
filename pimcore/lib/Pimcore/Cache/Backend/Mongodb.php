@@ -5,8 +5,7 @@
  *
  * @author     Olivier Bregeras (Stunti) (olivier.bregeras@gmail.com)
  * @author     Anton Stöckl (anton@stoeckl.de)
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend_Mongo
+ * @package    Pimcore
  * @copyright  Copyright (c) 2009 Stunti. (http://www.stunti.org)
  * @copyright  Copyright (c) 2011 Anton Stöckl (http://www.stoeckl.de)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License

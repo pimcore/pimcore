@@ -1,11 +1,20 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: jaichhorn
- * Date: 11.02.13
- * Time: 16:11
- * To change this template use File | Settings | File Templates.
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @category   Pimcore
+ * @package    Object
+ * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
+ * @license    http://www.pimcore.org/license     New BSD License
  */
+
 class Object_KeyValue_Helper {
 
 
