@@ -126,6 +126,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
             }
 
+            pimcore.plugin.broker.fireEvent("preSaveDocument", this, this.getType(), task, only);
+
             Ext.Ajax.request({
                 url: this.urlprefix + this.getType() + '/save/task/' + task,
                 method: "post",
