@@ -161,8 +161,6 @@ class Pimcore_Resource_Mysql {
         } catch (Exception $e) {
             Logger::error($e);
         }
-
-        Zend_Registry::set("Pimcore_Resource_Mysql", null);
     }
 
     /**
