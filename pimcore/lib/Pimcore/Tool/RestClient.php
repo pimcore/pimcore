@@ -424,7 +424,7 @@ class Pimcore_Tool_RestClient {
         return $filename;
     }
 
-    public function getAssetById($id, $decode = true, $idMapper = null, $light = false, $thumbnail = null) {
+    public function getAssetById($id, $decode = true, $idMapper = null, $light = false, $thumbnail = null, $tolerant = false) {
         $uri = self::$baseUrl .  "asset/id/" . $id . "?apikey=" . self::$apikey;
         if ($light) {
             $uri .= "&light=1";
@@ -502,7 +502,7 @@ class Pimcore_Tool_RestClient {
                         $uri = "http://" . self::$host . "/website/var/assets" . $path . $filename;
                         $client->setUri($uri);
                         $result = $client->request();
-                        if ($result->getStatus() != 200) {
+                        if ($result->getStatus() != 200 && !$tolerant) {
                             throw new Exception("Could not retrieve asset");
                         }
                         $data = $result->getBody();
