@@ -501,6 +501,7 @@ class PHPUnit_TextUI_ResultPrinter extends PHPUnit_Util_Printer implements PHPUn
             $this->writeProgress("\x1b[31;1mE\x1b[0m");
         } else {
             $this->writeProgress('E');
+            print($e);
         }
 
         $this->lastTestFailed = TRUE;
