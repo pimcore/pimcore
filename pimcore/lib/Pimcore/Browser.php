@@ -4,8 +4,6 @@
 	 * Author: Chris Schuld (http://chrisschuld.com/)
 	 * Last Modified: August 20th, 2010
      *  based on http://chrisschuld.com/projects/browser-php-detecting-a-users-browser-from-php/
-	 * @version 1.9
-	 * @package Pimcore
 	 *
 	 * Copyright (C) 2008-2010 Chris Schuld  (chris@chrisschuld.com)
 	 *
