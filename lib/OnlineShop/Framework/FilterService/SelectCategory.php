@@ -24,7 +24,12 @@ class OnlineShop_Framework_FilterService_SelectCategory extends OnlineShop_Frame
             $explode = explode(",", $v['value']);
             foreach($explode as $e) {
                 if(!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
-                    $values[] = array('value' => $e, "count" => $v['count']);
+                    if($values[$e]) {
+                        $count = $values[$e]['count'] + $v['count'];
+                    } else {
+                        $count = $v['count'];
+                    }
+                    $values[$e] = array('value' => $e, "count" => $count);
                 }
             }
         }
@@ -32,7 +37,7 @@ class OnlineShop_Framework_FilterService_SelectCategory extends OnlineShop_Frame
         return $this->view->partial($script, array(
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$filterDefinition->getField()],
-            "values" => $values,
+            "values" => array_values($values),
             "fieldname" => $filterDefinition->getField()
         ));
     }
