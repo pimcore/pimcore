@@ -352,7 +352,7 @@ class Pimcore_Tool_RestClient {
             $object = new Object_Folder();
             $wsDocument->reverseMap($object);
             return $object;
-        } else if ($wsDocument->type == "object") {
+        } else if ($wsDocument->type == "object" || $wsDocument->type == "variant") {
             $classname = "Object_" . ucfirst($wsDocument->className);
             // check for a mapped class
             $classname = Pimcore_Tool::getModelClassMapping($classname);
