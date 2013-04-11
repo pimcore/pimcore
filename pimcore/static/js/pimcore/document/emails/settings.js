@@ -117,19 +117,79 @@ pimcore.document.emails.settings = Class.create({
                                 value: this.email.data.module
                             },
                             {
+                                xtype:'combo',
                                 fieldLabel: t('controller'),
-                                name: 'controller',
-                                value: this.email.data.controller
+                                displayField: 'name',
+                                valueField: 'name',
+                                name: "controller",
+                                disableKeyFilter: true,
+                                store: new Ext.data.JsonStore({
+                                    autoDestroy: true,
+                                    url: "/admin/document/get-available-controllers",
+                                    root: "data",
+                                    fields: ["name"]
+                                }),
+                                triggerAction: "all",
+                                mode: "local",
+                                id: "pimcore_document_settings_controller_" + this.email.id,
+                                value: this.email.data.controller,
+                                width: 250,
+                                listeners: {
+                                    afterrender: function (el) {
+                                        el.getStore().load();
+                                    }
+                                }
                             },
                             {
+                                xtype:'combo',
                                 fieldLabel: t('action'),
-                                name: 'action',
-                                value: this.email.data.action
+                                displayField: 'name',
+                                valueField: 'name',
+                                name: "action",
+                                disableKeyFilter: true,
+                                store: new Ext.data.JsonStore({
+                                    autoDestroy: true,
+                                    url: "/admin/document/get-available-actions",
+                                    root: "data",
+                                    fields: ["name"]
+                                }),
+                                triggerAction: "all",
+                                mode: "local",
+                                value: this.email.data.action,
+                                width: 250,
+                                listeners: {
+                                    "focus": function (el) {
+                                        el.getStore().reload({
+                                            params: {
+                                                controllerName: Ext.getCmp("pimcore_document_settings_controller_"
+                                                                        + this.email.id).getValue()
+                                            }
+                                        });
+                                    }.bind(this)
+                                }
                             },
                             {
+                                xtype:'combo',
                                 fieldLabel: t('template'),
-                                name: 'template',
-                                value: this.email.data.template
+                                displayField: 'path',
+                                valueField: 'path',
+                                name: "template",
+                                disableKeyFilter: true,
+                                store: new Ext.data.JsonStore({
+                                    autoDestroy: true,
+                                    url: "/admin/document/get-available-templates",
+                                    root: "data",
+                                    fields: ["path"]
+                                }),
+                                triggerAction: "all",
+                                mode: "local",
+                                value: this.email.data.template,
+                                width: 250,
+                                listeners: {
+                                    afterrender: function (el) {
+                                        el.getStore().load();
+                                    }
+                                }
                             }
                         ]
                     },
