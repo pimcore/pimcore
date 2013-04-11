@@ -1313,3 +1313,7 @@
 .pimcore_icon_tree_variant {
     background: url(/pimcore/static/img/icon/database_copy.png) left center no-repeat !important;
 }
+
+.pimcore_icon_plugin_add {
+    background: url(/pimcore/static/img/icon/plugin_add.png) left center no-repeat !important;
+}

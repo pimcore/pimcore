@@ -182,4 +182,41 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
             "success" => true
         ));
     }
+
+    public function createAction () {
+
+        $success = false;
+        $name = $this->getParam("name");
+        $name = ucfirst($name);
+        $examplePluginPath = PIMCORE_PATH . "/modules/extensionmanager/example-plugin";
+        $pluginDestinationPath = PIMCORE_PLUGINS_PATH . "/" . $name;
+
+        if(preg_match("/^[a-zA-Z0-9_]+$/", $name, $matches) && !is_dir($pluginDestinationPath)) {
+            $pluginExampleFiles = rscandir($examplePluginPath . "/");
+            foreach ($pluginExampleFiles as $pluginExampleFile) {
+                if(!is_file($pluginExampleFile)) continue;
+                $newPath = preg_replace("/^" . preg_quote($examplePluginPath . "/Example", "/") . "/", $pluginDestinationPath, $pluginExampleFile);
+                $newPath = str_replace("/Example/", "/" . $name . "/", $newPath);
+
+                $content = file_get_contents($pluginExampleFile);
+
+                // do some modifications in the content of the file
+                $content = str_replace("Example_", $name."_", $content);
+                $content = str_replace("/Example/", "/".$name."/", $content);
+                $content = str_replace(">Example<", ">".$name."<", $content);
+                $content = str_replace(".example", ".".strtolower($name), $content);
+                $content = str_replace("examplePlugin", strtolower($name)."Plugin", $content);
+                $content = str_replace("Example Plugin", $name . " Plugin", $content);
+
+                @mkdir(dirname($newPath), 0755, true);
+
+                file_put_contents($newPath, $content);
+            }
+            $success = true;
+        }
+
+        $this->_helper->json(array(
+            "success" => $success
+        ));
+    }
 }
