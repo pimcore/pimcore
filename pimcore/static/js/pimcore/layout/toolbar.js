@@ -502,7 +502,7 @@ pimcore.layout.toolbar = Class.create({
 
         if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
             settingsItems.push({
-                text: t("reports_and_marketing") + " (beta)",
+                text: t("reports_and_marketing"),
                 iconCls: "pimcore_icon_reports",
                 handler: this.reportSettings
             });

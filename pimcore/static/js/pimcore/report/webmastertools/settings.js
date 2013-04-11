@@ -80,7 +80,7 @@ pimcore.report.webmastertools.settings = Class.create({
             items: [
                 {
                     xtype: "textfield",
-                    fieldLabel: t("verification_filename_text"),
+                    fieldLabel: t("verification_filename_text") + " (google1d765d927ceexxxx.html)",
                     name: "verification",
                     width: 250,
                     value: this.parent.getValue("webmastertools.sites." + key + ".verification"),
