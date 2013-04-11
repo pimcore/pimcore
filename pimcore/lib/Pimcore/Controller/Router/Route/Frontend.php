@@ -104,16 +104,6 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             }
         }
 
-        // do not allow requests including /index.php/ => SEO
-        if(preg_match("@^/index.php(.*)@", $_SERVER["REQUEST_URI"], $matches) && strtolower($_SERVER["REQUEST_METHOD"]) == "get") {
-            $redirectUrl = $matches[1];
-            if(empty($redirectUrl)) {
-                $redirectUrl = "/";
-            }
-            header("Location: " . $redirectUrl, true, 301);
-            exit;
-        }
-
         // check for a registered site
         try {
             // do not initialize a site if it is a "special" admin request
@@ -133,6 +123,16 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             $this->checkForRedirect(true);
         }
 
+        // do not allow requests including /index.php/ => SEO
+        // this is after the first redirect check, to allow redirects in index.php?xxx
+        if(preg_match("@^/index.php(.*)@", $_SERVER["REQUEST_URI"], $matches) && strtolower($_SERVER["REQUEST_METHOD"]) == "get") {
+            $redirectUrl = $matches[1];
+            if(empty($redirectUrl)) {
+                $redirectUrl = "/";
+            }
+            header("Location: " . $redirectUrl, true, 301);
+            exit;
+        }
 
         // redirect to the main domain if specified
         try {
