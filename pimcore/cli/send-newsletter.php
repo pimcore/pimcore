@@ -21,7 +21,7 @@ if($newsletter) {
     $pidFile = $newsletter->getPidFile();
 
     if(file_exists($pidFile)) {
-        Logger::alert("Cannot send newsletters because there's already on active sending process");
+        Logger::alert("Cannot send newsletters because there's already one active sending process");
         exit;
     }
 
