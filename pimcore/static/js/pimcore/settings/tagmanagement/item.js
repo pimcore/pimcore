@@ -81,134 +81,138 @@ pimcore.settings.tagmanagement.item = Class.create({
                 width: 300,
                 height: 50
             },{
-                xtype: "combo",
-                name: "siteId",
-                fieldLabel: t("site"),
-                store: pimcore.globalmanager.get("sites"),
-                valueField: "id",
-                displayField: "domain",
-                triggerAction: "all",
-                value: this.data.siteId
-            },{
-                xtype: "textfield",
-                name: "urlPattern",
-                value: this.data.urlPattern,
-                fieldLabel: t("url_pattern"),
-                width: 400,
-                cls: "input_drop_target",
-                listeners: {
-                    "render": function (el) {
-                        new Ext.dd.DropZone(el.getEl(), {
-                            reference: el,
-                            ddGroup: "element",
-                            getTargetFromEvent: function(e) {
-                                return this.getEl();
-                            }.bind(el),
+                xtype: "fieldset",
+                title: t("conditions"),
+                items: [{
+                    xtype: "combo",
+                    name: "siteId",
+                    fieldLabel: t("site"),
+                    store: pimcore.globalmanager.get("sites"),
+                    valueField: "id",
+                    displayField: "domain",
+                    triggerAction: "all",
+                    value: this.data.siteId
+                },{
+                    xtype: "textfield",
+                    name: "urlPattern",
+                    value: this.data.urlPattern,
+                    fieldLabel: t("url_pattern"),
+                    width: 400,
+                    cls: "input_drop_target",
+                    listeners: {
+                        "render": function (el) {
+                            new Ext.dd.DropZone(el.getEl(), {
+                                reference: el,
+                                ddGroup: "element",
+                                getTargetFromEvent: function(e) {
+                                    return this.getEl();
+                                }.bind(el),
 
-                            onNodeOver : function(target, dd, e, data) {
-                                return Ext.dd.DropZone.prototype.dropAllowed;
-                            },
+                                onNodeOver : function(target, dd, e, data) {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                },
 
-                            onNodeDrop : function (el, target, dd, e, data) {
-                                if (data.node.attributes.elementType == "document") {
-                                    var pattern = preg_quote(data.node.attributes.path);
-                                    pattern = str_replace("@","\\@",pattern);
-                                    pattern = "@^" + pattern + "$@";
-                                    el.setValue(pattern);
-                                    return true;
-                                }
-                                return false;
-                            }.bind(this, el)
-                        });
-                    }.bind(this)
-                }
-            },{
-                xtype:'combo',
-                fieldLabel: t('http_method'),
-                name: "httpMethod",
-                store: [["",t("any")],["get","GET"],["post","POST"]],
-                triggerAction: "all",
-                typeAhead: false,
-                editable: false,
-                forceSelection: true,
-                mode: "local",
-                value: this.data.httpMethod,
-                width: 250
-            },{
-                xtype: "textfield",
-                name: "textPattern",
-                value: this.data.textPattern,
-                fieldLabel: t("matching_text"),
-                width: 400
-            }, {
-                xtype: "displayfield",
-                value: t("parameters") + " (GET &amp; POST)",
-                hideLabel: true,
-                style: "margin-top: 10px;"
-            }, {
-                xtype: "compositefield",
-                items: [{
-                    xtype: "textfield",
-                    fieldLabel: t("name"),
-                    name: "params.name0",
-                    value: this.data.params[0]["name"]
+                                onNodeDrop : function (el, target, dd, e, data) {
+                                    if (data.node.attributes.elementType == "document") {
+                                        var pattern = preg_quote(data.node.attributes.path);
+                                        pattern = str_replace("@","\\@",pattern);
+                                        pattern = "@^" + pattern + "$@";
+                                        el.setValue(pattern);
+                                        return true;
+                                    }
+                                    return false;
+                                }.bind(this, el)
+                            });
+                        }.bind(this)
+                    }
+                },{
+                    xtype:'combo',
+                    fieldLabel: t('http_method'),
+                    name: "httpMethod",
+                    store: [["",t("any")],["get","GET"],["post","POST"]],
+                    triggerAction: "all",
+                    typeAhead: false,
+                    editable: false,
+                    forceSelection: true,
+                    mode: "local",
+                    value: this.data.httpMethod,
+                    width: 250
                 },{
                     xtype: "textfield",
-                    fieldLabel: t("value"),
-                    name: "params.value0",
-                    value: this.data.params[0]["value"]
-                }]
-            }, {
-                xtype: "compositefield",
-                items: [{
-                    xtype: "textfield",
-                    fieldLabel: t("name"),
-                    name: "params.name1",
-                    value: this.data.params[1]["name"]
-                },{
-                    xtype: "textfield",
-                    fieldLabel: t("value"),
-                    name: "params.value1",
-                    value: this.data.params[1]["value"]
-                }]
-            }, {
-                xtype: "compositefield",
-                items: [{
-                    xtype: "textfield",
-                    fieldLabel: t("name"),
-                    name: "params.name2",
-                    value: this.data.params[2]["name"]
-                },{
-                    xtype: "textfield",
-                    fieldLabel: t("value"),
-                    name: "params.value2",
-                    value: this.data.params[2]["value"]
-                }]
-            }, {
-                xtype: "compositefield",
-                items: [{
-                    xtype: "textfield",
-                    fieldLabel: t("name"),
-                    name: "params.name3",
-                    value: this.data.params[3]["name"]
-                },{
-                    xtype: "textfield",
-                    fieldLabel: t("value"),
-                    name: "params.value3",
-                    value: this.data.params[3]["value"]
-                }]
-            }, {
-                xtype: "compositefield",
-                items: [{
-                    xtype: "textfield",
-                    fieldLabel: t("name"),
-                    name: "params.name4",
-                    value: this.data.params[4]["name"]
-                },{
-                    xtype: "textfield",
-                    fieldLabel: t("value"),
-                    name: "params.value4",
-                    value: this.data.params[4]["value"]
+                    name: "textPattern",
+                    value: this.data.textPattern,
+                    fieldLabel: t("matching_text"),
+                    width: 400
+                }, {
+                    xtype: "displayfield",
+                    value: t("parameters") + " (GET &amp; POST)",
+                    hideLabel: true,
+                    style: "margin-top: 10px;"
+                }, {
+                    xtype: "compositefield",
+                    items: [{
+                        xtype: "textfield",
+                        fieldLabel: t("name"),
+                        name: "params.name0",
+                        value: this.data.params[0]["name"]
+                    },{
+                        xtype: "textfield",
+                        fieldLabel: t("value"),
+                        name: "params.value0",
+                        value: this.data.params[0]["value"]
+                    }]
+                }, {
+                    xtype: "compositefield",
+                    items: [{
+                        xtype: "textfield",
+                        fieldLabel: t("name"),
+                        name: "params.name1",
+                        value: this.data.params[1]["name"]
+                    },{
+                        xtype: "textfield",
+                        fieldLabel: t("value"),
+                        name: "params.value1",
+                        value: this.data.params[1]["value"]
+                    }]
+                }, {
+                    xtype: "compositefield",
+                    items: [{
+                        xtype: "textfield",
+                        fieldLabel: t("name"),
+                        name: "params.name2",
+                        value: this.data.params[2]["name"]
+                    },{
+                        xtype: "textfield",
+                        fieldLabel: t("value"),
+                        name: "params.value2",
+                        value: this.data.params[2]["value"]
+                    }]
+                }, {
+                    xtype: "compositefield",
+                    items: [{
+                        xtype: "textfield",
+                        fieldLabel: t("name"),
+                        name: "params.name3",
+                        value: this.data.params[3]["name"]
+                    },{
+                        xtype: "textfield",
+                        fieldLabel: t("value"),
+                        name: "params.value3",
+                        value: this.data.params[3]["value"]
+                    }]
+                }, {
+                    xtype: "compositefield",
+                    items: [{
+                        xtype: "textfield",
+                        fieldLabel: t("name"),
+                        name: "params.name4",
+                        value: this.data.params[4]["name"]
+                    },{
+                        xtype: "textfield",
+                        fieldLabel: t("value"),
+                        name: "params.value4",
+                        value: this.data.params[4]["value"]
+                    }]
                 }]
             }, this.itemContainer],
             buttons: panelButtons
