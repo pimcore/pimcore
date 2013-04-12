@@ -131,11 +131,19 @@ class Asset_Image_Thumbnail_Processor {
                         foreach ($transformation["arguments"] as $key => $value) {
                             $position = array_search($key, $mapping);
                             if($position !== false) {
+
+                                // high res calculations if enabled
+                                if(in_array($key, array("width","height", "x", "y"))) {
+                                    if($config->getHighResolution() && $config->getHighResolution() > 1) {
+                                        $value *= $config->getHighResolution();
+                                    }
+                                }
+
                                 $arguments[$position] = $value;
                             }
                         }
                     }
-                    
+
                     ksort($arguments);
                     if(count($mapping) == count($arguments)) {
                         call_user_func_array(array($image,$transformation["method"]),$arguments);

@@ -72,6 +72,7 @@ pimcore.settings.thumbnail.item = Class.create({
         this.settings = new Ext.form.FormPanel({
             layout: "pimcoreform",
             border: false,
+            labelWidth: 150,
             items: [{
                 xtype: "panel",
                 autoHeight: true,
@@ -107,6 +108,13 @@ pimcore.settings.thumbnail.item = Class.create({
                 value: this.data.quality,
                 fieldLabel: t("quality"),
                 width: 60
+            }, {
+                xtype: "spinnerfield",
+                name: "highResolution",
+                value: this.data.highResolution,
+                fieldLabel: t("high_resolution") + "<br /><small>(2x Retina, 3.2x Print, ...)</small>",
+                width: 60,
+                decimalPrecision: 1
             }]
         });
 

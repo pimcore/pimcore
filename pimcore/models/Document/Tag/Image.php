@@ -193,6 +193,7 @@ class Document_Tag_Image extends Document_Tag {
             $thumbnailInUse = false;
             if ($this->options["thumbnail"] || $this->cropPercent) {
                 // create a thumbnail first
+                $autoName = false;
 
                 $thumbConfig = $this->image->getThumbnailConfig($this->options["thumbnail"]);
                 if(!$thumbConfig && $this->cropPercent) {
@@ -206,12 +207,24 @@ class Document_Tag_Image extends Document_Tag {
                         "y" => $this->cropTop,
                         "x" => $this->cropLeft
                     ));
+
+                    $autoName = true;
+                }
+
+                if($this->options["highResolution"] && $this->options["highResolution"] > 1) {
+                    $thumbConfig->setHighResolution($this->options["highResolution"]);
+                    $autoName = true;
+                }
+
+                // autogenerate a name for the thumbnail because it's different from the original
+                if($autoName) {
                     $hash = md5(Pimcore_Tool_Serialize::serialize($thumbConfig->getItems()));
                     $thumbConfig->setName("auto_" . $hash);
                 }
 
                 if ($imagePath = $this->image->getThumbnail($thumbConfig)) {
-                    list($width, $height) = getimagesize(PIMCORE_DOCUMENT_ROOT . $imagePath);
+                    $width = $imagePath->getWidth();
+                    $height = $imagePath->getHeight();
                     $thumbnailInUse = true;
                 }
             }
