@@ -16,11 +16,44 @@
  */
 class Asset_Image_Thumbnail {
 
-    protected $asset; //original image
+    /**
+     * @var Asset_Image
+     */
+    protected $asset;
+
+    /**
+     * @var mixed|string
+     */
     protected $path;
-    protected $width; 
+
+    /**
+     * @var int
+     */
+    protected $width;
+
+    /**
+     * @var int
+     */
     protected $height;
+
+    /**
+     * @var int
+     */
+    protected $realWidth;
+
+    /**
+     * @var int
+     */
+    protected $realHeight;
+
+    /**
+     * @var string
+     */
     protected $mimetype;
+
+    /**
+     * @var Asset_Image_Thumbnail_Config
+     */
     protected $config;
 
     /**
@@ -71,7 +104,7 @@ class Asset_Image_Thumbnail {
     */
     public function getWidth() {
         if(!$this->width) {
-            $this->getFileInfo();
+            $this->applyFileInfo();
         }
         return $this->width;
     }
@@ -82,9 +115,30 @@ class Asset_Image_Thumbnail {
     */
     public function getHeight() {
         if(!$this->height) {
-            $this->getFileInfo();
+            $this->applyFileInfo();
         }
         return $this->height;
+    }
+
+    /**
+     * @return int real Width of the generated thumbnail image. (when using high resolution option)
+    */
+    public function getRealWidth() {
+        if(!$this->realWidth) {
+            $this->applyFileInfo();
+        }
+        return $this->realWidth;
+    }
+
+    /**
+     * Get the real width of the generated thumbnail image in pixels. (when using high resolution option)
+     * @return int Height of the generated thumbnail image.
+    */
+    public function getRealHeight() {
+        if(!$this->realHeight) {
+            $this->applyFileInfo();
+        }
+        return $this->realHeight;
     }
 
     /**
@@ -93,7 +147,7 @@ class Asset_Image_Thumbnail {
     */
     public function getMimeType() {
         if(!$this->mimetype) {
-            $this->getFileInfo();
+            $this->applyFileInfo();
         }
         return $this->mimetype;
     }
@@ -110,8 +164,12 @@ class Asset_Image_Thumbnail {
 
         $attr = array();
 
-        $attr['width'] = 'width="'.$this->getWidth().'"';
-        $attr['height'] = 'height="'.$this->getHeight().'"';
+        if($this->getWidth()) {
+            $attr['width'] = 'width="'.$this->getWidth().'"';
+        }
+        if($this->getHeight()) {
+            $attr['height'] = 'height="'.$this->getHeight().'"';
+        }
 
         foreach($attributes as $key => $value) {
             //only include attributes with characters a-z and dashes in their name.
@@ -174,16 +232,26 @@ class Asset_Image_Thumbnail {
         else if ($selector instanceof Asset_Image_Thumbnail_Config) {
             $config = $selector;
         }
-        
-        return $config;
 
+        return $config;
     }
 
     /**
      * Get metadata from thumbnail image file and load it into class variables.
      * Some of the data is ignored.
     */
-    protected function getFileInfo() {
-        list($this->width, $this->height, $type, $attr, $this->mimetype) = getimagesize(PIMCORE_DOCUMENT_ROOT.$this->path);
+    protected function applyFileInfo() {
+        $info = @getimagesize(PIMCORE_DOCUMENT_ROOT.$this->path);
+        if($info) {
+            list($this->width, $this->height, $type, $attr, $this->mimetype) = $info;
+
+            $this->realHeight = $this->height;
+            $this->realWidth = $this->width;
+
+            if($this->config && $this->config->getHighResolution() && $this->config->getHighResolution() > 1) {
+                $this->width = floor($this->width / $this->config->getHighResolution());
+                $this->height = floor($this->height / $this->config->getHighResolution());
+            }
+        }
     }
 }

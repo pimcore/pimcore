@@ -55,6 +55,11 @@ class Asset_Image_Thumbnail_Config {
     public $quality = 90;
 
     /**
+     * @var float
+     */
+    public $highResolution;
+
+    /**
      * @static
      * @param  $name
      * @return Asset_Image_Thumbnail_Config
@@ -293,6 +298,26 @@ class Asset_Image_Thumbnail_Config {
     public function getQuality()
     {
         return $this->quality;
+    }
+
+    /**
+     * @param float $highResolution
+     */
+    public function setHighResolution($highResolution)
+    {
+        if(!$highResolution) {
+            $highResolution = null;
+        } else {
+            $this->highResolution = (float) $highResolution;
+        }
+    }
+
+    /**
+     * @return float
+     */
+    public function getHighResolution()
+    {
+        return $this->highResolution;
     }
 
     /**
