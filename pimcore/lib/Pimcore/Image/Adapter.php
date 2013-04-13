@@ -277,9 +277,10 @@ abstract class Pimcore_Image_Adapter {
      * @param int $x
      * @param int $y
      * @param int $alpha
+     * @param string $origin Origin of the X and Y coordinates (top-left, top-right, bottom-left, bottom-right or center)
      * @return Pimcore_Image_Adapter
      */
-    public function  addOverlay ($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT") {
+    public function  addOverlay ($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left') {
 
         return $this;
     }
