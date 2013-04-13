@@ -86,6 +86,50 @@ pimcore.document.pages.preview = Class.create({
                     text: "Smart TV",
                     iconCls: "pimcore_icon_tv",
                     menu: menues["tv"]
+                }, "-", {
+                    text: t("qr_codes"),
+                    iconCls: "pimcore_icon_qrcode",
+                    handler: function () {
+                        var codeUrl = "/admin/reports/qrcode/code/documentId/" + this.page.id;
+                        var download = function (format) {
+                            var codeUrl = "/admin/reports/qrcode/code/documentId/"
+                                + this.page.id + "/renderer/" + format + "/download/true" +
+                                "/moduleSize/20";
+                            pimcore.helpers.download(codeUrl);
+                        }
+
+                        var qrWindow = new Ext.Window({
+                            width: 280,
+                            border:false,
+                            title: t("qr_codes"),
+                            modal: true,
+                            autoScroll: true,
+                            bodyStyle: "padding: 10px;",
+                            items: [{
+                                    html: '<img src="' + codeUrl + '" style="padding:10px; width:228px;" />',
+                                    border: true,
+                                    height: 250
+                                }, {
+                                border: false,
+                                buttons: [{
+                                    text: "PNG",
+                                    iconCls: "pimcore_icon_png",
+                                    handler: download.bind(this, "image")
+                                },{
+                                    text: "EPS",
+                                    iconCls: "pimcore_icon_eps",
+                                    handler: download.bind(this, "eps")
+                                }, {
+                                    text: "SVG",
+                                    iconCls: "pimcore_icon_svg",
+                                    handler: download.bind(this, "svg")
+                                }]
+                            }]
+                        });
+
+                        qrWindow.show();
+
+                    }.bind(this)
                 }];
             }
 

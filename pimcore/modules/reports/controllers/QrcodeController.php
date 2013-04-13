@@ -18,7 +18,10 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
     public function init() {
         parent::init();
 
-        $this->checkPermission("qr_codes");
+        $notRestrictedActions = array("code");
+        if (!in_array($this->getParam("action"), $notRestrictedActions)) {
+            $this->checkPermission("qr_codes");
+        }
     }
 
     public function treeAction () {
@@ -94,8 +97,16 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
 
     public function codeAction () {
 
-        $url = $this->getRequest()->getScheme() . "://" . $this->getRequest()->getHttpHost() . "/qr~-~code/" .
-            $this->getParam("name");
+        if($this->getParam("name")) {
+            $url = $this->getRequest()->getScheme() . "://" . $this->getRequest()->getHttpHost() . "/qr~-~code/" .
+                $this->getParam("name");
+        } else if ($this->getParam("documentId")) {
+            $doc = Document::getById($this->getParam("documentId"));
+            $url = $this->getRequest()->getScheme() . "://" . $this->getRequest()->getHttpHost()
+                . $doc->getFullPath();
+        } else if ($this->getParam("url")) {
+            $url = $this->getParam("url");
+        }
 
         $codeSettings = array(
             'text' => $url,
