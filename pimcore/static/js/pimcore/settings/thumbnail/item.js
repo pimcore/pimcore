@@ -733,6 +733,24 @@ pimcore.settings.thumbnail.items = {
         if(typeof data == "undefined") {
             data = {};
         }
+
+        //set some sane default values, maybe the data parameter should already contain these values?
+        if(typeof data.x == "undefined" || data.x == "") {
+            data.x = 0;
+        }
+        if(typeof data.y == "undefined" || data.y == "") {
+            data.y = 0;
+        }
+        if(typeof data.origin == "undefined" || data.origin == "") {
+            data.origin = "top-left";
+        }
+        if(typeof data.alpha == "undefined" || data.alpha == "") {
+            data.alpha = 100;
+        }
+        if(typeof data.composite == "undefined" || data.composite == "") {
+            data.composite = "COMPOSITE_DEFAULT";
+        }
+
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
@@ -763,6 +781,15 @@ pimcore.settings.thumbnail.items = {
                     width: 50,
                     value: data.y
                 }]
+            },{
+                xtype: "combo",
+                name: "origin",
+                fieldLabel: t("origin"),
+                value: data.origin,
+                triggerAction: 'all',
+                editable: false,
+                store: ["top-left", "top-right", "bottom-left", "bottom-right", "center"],
+                width: 200
             },{
                 xtype: 'spinnerfield',
                 name: "alpha",

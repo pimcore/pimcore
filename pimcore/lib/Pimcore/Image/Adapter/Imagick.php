@@ -384,12 +384,13 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
     /**
      * @param string $image
-     * @param int $x
-     * @param int $y
-     * @param int $alpha
+     * @param int $x Amount of horizontal pixels the overlay should be offset from the origin
+     * @param int $y Amount of vertical pixels the overlay should be offset from the origin
+     * @param int $alpha Opacity in a scale of 0 (transparent) to 100 (opaque)
+     * @param string $origin Origin of the X and Y coordinates (top-left, top-right, bottom-left, bottom-right or center)
      * @return Pimcore_Image_Adapter_Imagick
      */
-    public function  addOverlay ($image, $x = 0, $y = 0, $alpha = null, $composite = "COMPOSITE_DEFAULT") {
+    public function  addOverlay ($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left') {
                 
         $image = ltrim($image,"/");
         $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
@@ -400,9 +401,27 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         }
         $alpha = round($alpha / 100, 1);
 
+        //Make sure the composite constant exists.
+        if(is_null(constant("Imagick::" . $composite))) {
+            $composite = "COMPOSITE_DEFAULT";
+        }
+
         if(is_file($image)) {
             $newImage = new Imagick();
             $newImage->readimage($image);
+
+            if($origin == 'top-right') {
+                $x = $this->resource->getImageWidth() - $newImage->getImageWidth() - $x;
+            } elseif($origin == 'bottom-left') {
+                $y = $this->resource->getImageHeight() - $newImage->getImageHeight() - $y;
+            } elseif($origin == 'bottom-right') {
+                $x = $this->resource->getImageWidth() - $newImage->getImageWidth() - $x;
+                $y = $this->resource->getImageHeight() - $newImage->getImageHeight() - $y;
+            } elseif($origin == 'center') {
+                $x = round($this->resource->getImageWidth() / 2) - round($newImage->getImageWidth() / 2) + $x;
+                $y = round($this->resource->getImageHeight() / 2) -round($newImage->getImageHeight() / 2) + $y;
+            }
+
             $newImage->evaluateImage(Imagick::EVALUATE_MULTIPLY, $alpha, Imagick::CHANNEL_ALPHA); 
             $this->resource->compositeImage($newImage, constant("Imagick::" . $composite), $x ,$y);
         }
