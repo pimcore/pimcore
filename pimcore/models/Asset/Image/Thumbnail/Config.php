@@ -338,6 +338,10 @@ class Asset_Image_Thumbnail_Config {
             $pipe->setItems($config["items"]);
         }
 
+        if($config["highResolution"]) {
+            $pipe->setHighResolution($config["highResolution"]);
+        }
+
         // set name
         $hash = md5(Pimcore_Tool_Serialize::serialize($config));
         $pipe->setName("auto_" . $hash);
