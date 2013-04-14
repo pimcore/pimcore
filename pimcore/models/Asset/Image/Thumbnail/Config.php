@@ -430,6 +430,10 @@ class Asset_Image_Thumbnail_Config {
             }
         }
 
+        if($config["highResolution"]) {
+            $pipe->setHighResolution($config["highResolution"]);
+        }
+
         return $pipe;
     }
 }
