@@ -146,7 +146,7 @@ pimcore.settings.thumbnail.item = Class.create({
         this.currentIndex++;
     },
 
-    save: function () {
+    getData: function () {
 
         var itemsData = [];
 
@@ -155,14 +155,18 @@ pimcore.settings.thumbnail.item = Class.create({
             itemsData.push(items[i].getForm().getFieldValues());
         }
 
+        return {
+            settings: Ext.encode(this.settings.getForm().getFieldValues()),
+            items: Ext.encode(itemsData),
+            name: this.data.name
+        }
+    },
+
+    save: function () {
         Ext.Ajax.request({
             url: "/admin/settings/thumbnail-update",
             method: "post",
-            params: {
-                settings: Ext.encode(this.settings.getForm().getFieldValues()),
-                items: Ext.encode(itemsData),
-                name: this.data.name
-            },
+            params: this.getData(),
             success: this.saveOnComplete.bind(this)
         });
     },
