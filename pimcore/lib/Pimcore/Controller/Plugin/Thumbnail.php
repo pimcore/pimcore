@@ -22,7 +22,7 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
 
         // this is a filter which checks for common used files (by browser, crawlers, ...) and prevent the default
         // error page, because this is more resource-intensive than exiting right here
-        if(preg_match("@^/website/var/tmp/thumb_([0-9]+)__([a-zA-Z0-9_\-]+)@",$request->getPathInfo(),$matches)) {
+        if(preg_match("@^/website/var/tmp/thumb_([0-9]+)__([a-zA-Z0-9_\-]+)(\@[0-9.]+x)?@",$request->getPathInfo(),$matches)) {
             $assetId = $matches[1];
             $thumbnailName = $matches[2];
 
@@ -30,7 +30,14 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
                 try {
                     // just check if the thumbnail exists -> throws exception otherwise
                     $thumbnailConfig = Asset_Image_Thumbnail_Config::getByName($thumbnailName);
-                    $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getThumbnail($thumbnailName);
+
+                    //check if high res image is called
+                    if(array_key_exists(3, $matches)) {
+                        $highResFactor = (float) str_replace(array("@","x"),"", $matches[3]);
+                        $thumbnailConfig->setHighResolution($highResFactor);
+                    }
+
+                    $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getThumbnail($thumbnailConfig);
                     $imageContent = file_get_contents($thumbnailFile);
 
                     $fileExtension = Pimcore_File::getFileExtension($thumbnailFile);

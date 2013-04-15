@@ -213,7 +213,6 @@ class Document_Tag_Image extends Document_Tag {
 
                 if($this->options["highResolution"] && $this->options["highResolution"] > 1) {
                     $thumbConfig->setHighResolution($this->options["highResolution"]);
-                    $autoName = true;
                 }
 
                 // autogenerate a name for the thumbnail because it's different from the original

@@ -104,7 +104,13 @@ class Asset_Image_Thumbnail_Processor {
             }
         }
 
-        $filename = "thumb_" . $asset->getId() . "__" . $config->getName() . "." . $format;
+        // add high-resolution modifier suffix to the filename
+        $highResSuffix = "";
+        if($config->getHighResolution()) {
+            $highResSuffix = "@" . $config->getHighResolution() . "x";
+        }
+
+        $filename = "thumb_" . $asset->getId() . "__" . $config->getName() . $highResSuffix . "." . $format;
 
         $fsPath = PIMCORE_TEMPORARY_DIRECTORY . "/" . $filename;
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
