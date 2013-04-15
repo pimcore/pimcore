@@ -78,6 +78,27 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         ");
 
+        // PricingRules
+        Pimcore_API_Plugin_Abstract::getDb()->query("
+            CREATE TABLE `plugin_onlineshop_pricing_rule` (
+            `id` INT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `name` VARCHAR(50) NULL DEFAULT NULL,
+            `label` VARCHAR(50) NULL DEFAULT NULL,
+            `description` TEXT NULL,
+            `behavior` ENUM('additiv','stopExecute') NULL DEFAULT NULL,
+            `active` TINYINT(1) UNSIGNED NULL DEFAULT NULL,
+            `prio` TINYINT(3) UNSIGNED NOT NULL,
+            `condition` TEXT NOT NULL COMMENT 'configuration der condition',
+            `actions` TEXT NOT NULL COMMENT 'configuration der action',
+            PRIMARY KEY (`id`),
+            UNIQUE INDEX `name` (`name`),
+            INDEX `active` (`active`)
+        )
+        ENGINE=InnoDB
+        AUTO_INCREMENT=0;
+        ");
+
+
         // Add FieldCollections
         $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources');
         foreach ($sourceFiles as $filename) {
@@ -164,6 +185,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartcheckoutdata`");
         Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartitem`");
         Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_customerdb_event_orderEvent`");
+        Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_pricing_rule`");
 
         if(!self::isInstalled()){
             $statusMessage = "uninstalled successfully"; //  $translate->_("plugin_objectassetfolderrelation_uninstalled_successfully");

@@ -37,24 +37,12 @@ class OnlineShop_Framework_Impl_Pricing_Action_CartDiscount implements OnlineSho
      */
     public function executeOnCart(OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
-        // TODO: Implement executeOnCart() method.
         $priceCalculator = $environment->getCart()->getPriceCalculator();
         $modDiscount = new OnlineShop_Framework_Impl_CartPriceModificator_Discount();
 
         $amount = $this->getAmount() !== 0 ? $this->getAmount() : ($priceCalculator->getGrandTotal()->getAmount() * ($this->getPercent() / 100));
         $modDiscount->setAmount( '-'.$amount );
         $priceCalculator->addModificator( $modDiscount );
-
-        // TODO check
-        $list = $priceCalculator->getModificators();
-        foreach($list as &$modificator)
-        {
-            /* @var OnlineShop_Framework_ICartPriceModificator $modificator_ */
-
-            // versandkosten entfernen :)
-            if($modificator instanceof OnlineShop_Framework_CartPriceModificator_IShipping)
-                $modificator->setCharge(0);
-        }
 
         return $this;
     }

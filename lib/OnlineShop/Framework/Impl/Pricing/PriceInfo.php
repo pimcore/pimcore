@@ -65,6 +65,11 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
         foreach($this->rules as $rule)
         {
             /* @var OnlineShop_Framework_Pricing_IRule $rule */
+            $env->setRule($rule);
+
+            // test rule
+            if($rule->check($env) === false)
+                continue;
 
             // execute rule
             $rule->executeOnProduct( $env );

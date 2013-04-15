@@ -57,3 +57,6 @@
 .plugin_onlineshop_pricing_icon_actionProductDiscount {
     background: url("/pimcore/static/img/icon/money.png") no-repeat scroll left center transparent !important;
 }
+.plugin_onlineshop_pricing_icon_actionFreeShipping {
+    background: url("/pimcore/static/img/icon/lorry.png") no-repeat scroll left center transparent !important;
+}

@@ -58,7 +58,7 @@ class OnlineShop_Framework_Impl_Pricing_Environment implements OnlineShop_Framew
      *
      * @return OnlineShop_Framework_Pricing_IEnvironment
      */
-    public function setProduct(OnlineShop_Framework_AbstractProduct $product)
+    public function setProduct(OnlineShop_Framework_AbstractProduct $product = null)
     {
         $this->product = $product;
         return $this;

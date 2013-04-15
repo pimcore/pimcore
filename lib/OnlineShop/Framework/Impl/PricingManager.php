@@ -39,7 +39,7 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
         // configure environment
         $env = $this->getEnvironment();
         $env->setProduct( $priceInfo->getProduct() )
-            ->setCategories( $priceInfo->getProduct()->getCategories() );
+            ->setCategories( (array)$priceInfo->getProduct()->getCategories() );
 
         // create new price info with pricing rules
         $priceInfoWithRules = $this->getPriceInfo( $priceInfo );
@@ -68,12 +68,17 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
         // configure environment
         $env = $this->getEnvironment();
         $env->setCart( $cart );
+        $env->setProduct(null);
 
         // execute all valid rules
         foreach($this->getValidRules($env) as $rule)
         {
             /* @var OnlineShop_Framework_Pricing_IRule $rule */
             $env->setRule($rule);
+
+            // test rule
+            if($rule->check($env) === false)
+                continue;
 
             // execute rule
             $rule->executeOnCart( $env );
@@ -101,22 +106,24 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
         $rules->setOrder('ASC');
         $list = $rules->getRules();
 
-        // test all rules
-        $validRules = array();
-        foreach($list as $rule)
-        {
-            /* @var OnlineShop_Framework_Pricing_IRule $rule */
+        return $list;
 
-            $environment->setRule( $rule );
-
-            // test rule
-            if($rule->check($environment))
-                $validRules[] = $rule;
-
-        }
-
-        // finish
-        return $validRules;
+//        // test all rules
+//        $validRules = array();
+//        foreach($list as $rule)
+//        {
+//            /* @var OnlineShop_Framework_Pricing_IRule $rule */
+//
+//            $environment->setRule( $rule );
+//
+//            // test rule
+//            if($rule->check($environment))
+//                $validRules[] = $rule;
+//
+//        }
+//
+//        // finish
+//        return $validRules;
     }
 
     /**

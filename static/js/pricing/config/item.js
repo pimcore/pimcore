@@ -155,8 +155,7 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
         for(var i=0; i<itemTypes.length; i++) {
             if(itemTypes[i].indexOf("condition") == 0) {
                 addMenu.push({
-//                    iconCls: "pimcore_icon_add",
-                    disabled: itemTypes[i] == 'conditionCartAmount',    // disable temporary
+//                    disabled: itemTypes[i] == 'conditionCartAmount',    // disable temporary
                     iconCls: "plugin_onlineshop_pricing_icon_" + itemTypes[i],
                     handler: this.addCondition.bind(this, itemTypes[i]),
                     text: pimcore.plugin.OnlineShop.pricing.conditions[itemTypes[i]](null, null,true)
@@ -738,39 +737,6 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             bodyStyle: "padding: 0px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionCatalogCategory"),
             items: [
-//                {
-//                xtype: "textfield",
-//                fieldLabel: t("plugin_onlineshop_pricing_config_condition_catalog_category"),
-//                name: "category",
-//                width: 400,
-//                cls: "input_drop_target",
-//                value: data.category,
-//                listeners: {
-//                    "render": function (el) {
-//                        new Ext.dd.DropZone(el.getEl(), {
-//                            reference: this,
-//                            ddGroup: "element",
-//                            getTargetFromEvent: function(e) {
-//                                return this.getEl();
-//                            }.bind(el),
-//
-//                            onNodeOver : function(target, dd, e, data) {
-//                                return Ext.dd.DropZone.prototype.dropAllowed;
-//                            },
-//
-//                            onNodeDrop : function (target, dd, e, data) {
-//                                if (data.node.attributes.elementType == "object") {
-//                                    this.setValue(data.node.attributes.path);
-//                                    return true;
-//                                }
-//                                return false;
-//                            }.bind(el)
-//                        });
-//                    }
-//                }
-//            },
-                // [93, "/categories/computers/notebooks", "ProductCategory"]
-                // pimcore.object.tags.objects
                 new pimcore.plugin.OnlineShop.pricing.config.objects(data.categories, {
                     classes: [
                         {classes: "ProductCategory"}
@@ -1054,6 +1020,43 @@ pimcore.plugin.OnlineShop.pricing.actions = {
                     value: data.percent
                 }
             ]
+        });
+
+        return item;
+    },
+
+    /**
+     * @param panel
+     * @param data
+     * @param getName
+     * @returns Ext.form.FormPanel
+     */
+    actionFreeShipping: function (panel, data, getName) {
+
+        // getName macro
+        var niceName = t("plugin_onlineshop_pricing_config_action_free_shipping");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        // check params
+        if(typeof data == "undefined") {
+            data = {};
+        }
+
+        // config
+        var iconCls = 'plugin_onlineshop_pricing_icon_actionFreeShipping';
+
+        // create item
+        var myId = Ext.id();
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            type: 'FreeShipping',
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data, iconCls)
         });
 
         return item;
