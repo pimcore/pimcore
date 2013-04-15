@@ -44,23 +44,19 @@ abstract class OnlineShop_Framework_Impl_CachingPriceSystem extends OnlineShop_F
     }
 
 
-
-
-
     /**
-     * @param  $productIds
-     * @param  $fromPrice
-     * @param  $toPrice
-     * @param  $order
+     * @param $productIds
+     * @param $fromPrice
+     * @param $toPrice
+     * @param $order
      * @param $offset
-     * @param  $limit
-     * @return array(pimcore productid => price value)
+     * @param $limit
+     *
+     * @return array|void
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
      */
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit) {
         throw new OnlineShop_Framework_Exception_UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
     }
-
-
-
 
 }

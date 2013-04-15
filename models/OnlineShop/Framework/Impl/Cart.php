@@ -9,6 +9,12 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
     protected $creationDateTimestamp;
     protected $id;
 
+    /**
+     * @var array
+     */
+    protected $giftItems = array();
+
+
     public function __construct() {
         $this->setCreationDate(Zend_Date::now());
     }
@@ -70,6 +76,91 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         }
 
         $this->items[$itemKey] = $item;
+
+        // trigger cart has been modified
+        $this->modified();
+
+        return $itemKey;
+    }
+
+    /**
+     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param int                                  $count
+     * @param null                                 $itemKey
+     * @param bool                                 $replace
+     * @param array                                $params
+     * @param array                                $subProducts
+     * @param null                                 $comment
+     *
+     * @return string
+     */
+    public function addGiftItem(OnlineShop_Framework_AbstractProduct $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null)
+    {
+        if(empty($itemKey)) {
+            $itemKey = $product->getId();
+
+            if(!empty($subProducts)) {
+                $itemKey = $itemKey . "_" . uniqid();
+            }
+        }
+
+        return $this->updateGiftItem($itemKey, $product, $count, $replace, $params, $subProducts, $comment);
+    }
+
+    /**
+     * @param string                               $itemKey
+     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param int                                  $count
+     * @param bool                                 $replace
+     * @param array                                $params
+     * @param array                                $subProducts
+     * @param null                                 $comment
+     *
+     * @return string
+     */
+    public function updateGiftItem($itemKey, OnlineShop_Framework_AbstractProduct $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null)
+    {
+        // item already exists?
+        if(!array_key_exists($itemKey, $this->giftItems))
+        {
+            $item = new OnlineShop_Framework_Impl_CartItem();
+            $item->setCart($this);
+        }
+        else
+        {
+            $item = $this->giftItems[$itemKey];
+        }
+
+        // update item
+        $item->setProduct($product);
+        $item->setItemKey($itemKey);
+        $item->setComment($comment);
+        if($replace) {
+            $item->setCount($count);
+        } else {
+            $item->setCount($item->getCount() + $count);
+        }
+
+        // handle sub products
+        if(!empty($subProducts)) {
+            $subItems = array();
+            foreach($subProducts as $subProduct) {
+                if($subItems[$subProduct->getProduct()->getId()]) {
+                    $subItem = $subItems[$subProduct->getProduct()->getId()];
+                    $subItem->setCount($subItem->getCount() + $subProduct->getQuantity());
+                } else {
+                    $subItem = new OnlineShop_Framework_Impl_CartItem();
+                    $subItem->setCart($this);
+                    $subItem->setItemKey($subProduct->getProduct()->getId());
+                    $subItem->setProduct($subProduct->getProduct());
+                    $subItem->setCount($subProduct->getQuantity());
+                    $subItems[$subProduct->getProduct()->getId()] = $subItem;
+                }
+            }
+            $item->setSubItems($subItems);
+        }
+
+        $this->giftItems[$itemKey] = $item;
         return $itemKey;
     }
 
@@ -78,6 +169,10 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         $this->subItemAmount = null;
 
         $this->items = array();
+        $this->giftItems = array();
+
+        // trigger cart has been modified
+        $this->modified();
     }
 
     protected $itemAmount;
@@ -85,6 +180,8 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
 
     /**
      * @param bool $countSubItems
+     *
+     * @return int
      */
     public function getItemAmount($countSubItems = false) {
         if($countSubItems) {
@@ -128,11 +225,22 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         return $this->items;
     }
 
+    /**
+     * @return OnlineShop_Framework_ICartItem[]
+     */
+    public function getGiftItems()
+    {
+        return $this->giftItems;
+    }
+
     public function setItems($items) {
         $this->itemAmount = null;
         $this->subItemAmount = null;
 
         $this->items = $items;
+
+        // trigger cart has been modified
+        $this->modified();
     }
 
     public function removeItem($itemKey) {
@@ -140,6 +248,9 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         $this->subItemAmount = null;
 
         unset($this->items[$itemKey]);
+
+        // trigger cart has been modified
+        $this->modified();
     }
 
     public function setName($name) {
@@ -327,5 +438,15 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         }
 
         return $this->priceCalcuator;
+    }
+
+
+    /**
+     * cart has been changed
+     */
+    protected function modified()
+    {
+        // apply pricing rules
+        OnlineShop_Framework_Factory::getInstance()->getPricingManager()->applyCartRules($this);
     }
 }

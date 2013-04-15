@@ -43,5 +43,15 @@ interface OnlineShop_Framework_IPriceInfo {
      */
     public function setPriceSystem($priceSystem);
 
+    /**
+     * @param OnlineShop_Framework_AbstractProduct $product
+     *
+     * @return void
+     */
+    public function setProduct(OnlineShop_Framework_AbstractProduct $product);
 
+    /**
+     * @return OnlineShop_Framework_AbstractProduct
+     */
+    public function getProduct();
 }

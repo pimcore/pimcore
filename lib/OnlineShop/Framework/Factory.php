@@ -1,22 +1,46 @@
 <?php
 
 class OnlineShop_Framework_Factory {
+
+    /**
+     * framework configuration file
+     */
     const CONFIG_PATH = "/OnlineShop/conf/OnlineShopConfig.xml";
 
     /**
      * @var OnlineShop_Framework_Factory
      */
     private static $instance;
+
+    /**
+     * @var Zend_Config_Xml
+     */
     private $config;
 
     /**
      * @var OnlineShop_Framework_ICartManager
      */
     private $cartManager;
+
+    /**
+     * @var OnlineShop_Framework_IPriceSystem
+     */
     private $priceSystems;
+
+    /**
+     * @var OnlineShop_Framework_IAvailabilitySystem
+     */
     private $availabilitySystems;
 
+    /**
+     * @var OnlineShop_Framework_ICheckoutManager
+     */
     private $checkoutManagers;
+
+    /**
+     * @var OnlineShop_Framework_IPricingManager
+     */
+    private $pricingManager;
 
     /**
      * @var string[]
@@ -27,6 +51,7 @@ class OnlineShop_Framework_Factory {
      * @var OnlineShop_Framework_IEnvironment
      */
     private $environment;
+
 
     public static function getInstance() {
         if (self::$instance === null) {
@@ -75,6 +100,7 @@ class OnlineShop_Framework_Factory {
         $this->configureAvailabilitySystem($config);
 
         $this->configureCheckoutManager($config);
+        $this->configurePricingManager($config);
 
     }
 
@@ -180,6 +206,27 @@ class OnlineShop_Framework_Factory {
             }
         }
     }
+
+    /**
+     * @param Zend_Config_Xml $config
+     *
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    private function configurePricingManager(Zend_Config_Xml $config) {
+        if (empty($config->onlineshop->pricingmanager->class)) {
+            throw new OnlineShop_Framework_Exception_InvalidConfigException("No PricingManager class defined.");
+        } else {
+            if (class_exists($config->onlineshop->pricingmanager->class)) {
+                $this->pricingManager = new $config->onlineshop->pricingmanager->class($config->onlineshop->pricingmanager->config);
+                if (!($this->pricingManager instanceof OnlineShop_Framework_IPricingManager)) {
+                    throw new OnlineShop_Framework_Exception_InvalidConfigException("PricingManager class " . $config->onlineshop->pricingmanager->class . " does not implement OnlineShop_Framework_IPricingManager.");
+                }
+            } else {
+                throw new OnlineShop_Framework_Exception_InvalidConfigException("PricingManager class " . $config->onlineshop->pricingmanager->class . " not found.");
+            }
+        }
+    }
+
 
     public function getCartManager() {
         return $this->cartManager;
@@ -301,4 +348,11 @@ class OnlineShop_Framework_Factory {
     }
 
 
+    /**
+     * @return OnlineShop_Framework_IPricingManager
+     */
+    public function getPricingManager()
+    {
+        return $this->pricingManager;
+    }
 }

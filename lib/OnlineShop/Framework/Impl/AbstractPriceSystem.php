@@ -29,13 +29,16 @@ abstract class OnlineShop_Framework_Impl_AbstractPriceSystem implements OnlineSh
      * @return OnlineShop_Framework_IPriceInfo
      */
     protected function initPriceInfoInstance($quantityScale,$product,$products) {
-        /** @var $priceInfo OnlineShop_Framework_IPriceInfo */
         $priceInfo = $this->createPriceInfoInstance($quantityScale,$product,$products);
         $priceInfo->setQuantity($quantityScale);
         $priceInfo->setProduct($product);
         $priceInfo->setProducts($products);
         $priceInfo->setPriceSystem($this);
-        return $priceInfo;
+
+        // apply pricing rules
+        $priceInfoWithRules = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->applyProductRules( $priceInfo );
+
+        return $priceInfoWithRules;
 
 
     }

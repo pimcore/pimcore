@@ -24,9 +24,14 @@
             <path>/OnlineShop/static/js/indexfieldselectionfield/tags/indexFieldSelectionField.js</path>
             <path>/OnlineShop/static/js/indexfieldselectionfield/data/indexFieldSelectionCombo.js</path>
             <path>/OnlineShop/static/js/indexfieldselectionfield/tags/indexFieldSelectionCombo.js</path>
+            <path>/OnlineShop/static/js/plugin.js</path>
+            <path>/OnlineShop/static/js/pricing/config/panel.js</path>
+            <path>/OnlineShop/static/js/pricing/config/item.js</path>
+            <path>/OnlineShop/static/js/pricing/config/objects.js</path>
         </pluginJsPaths>
         <pluginCssPaths>
            <path>/OnlineShop/static/css/backend.css</path>
+           <path>/OnlineShop/static/css/pricing.css</path>
         </pluginCssPaths>
     </plugin>
 </zend-config>

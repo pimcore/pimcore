@@ -61,6 +61,7 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
             $this->carts = array();
         } else {
             foreach($carts as $c) {
+                /* @var OnlineShop_Framework_ICart $c */
                 $this->carts[$c->getId()] = $c;
             }
         }

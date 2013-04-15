@@ -54,10 +54,12 @@ class OnlineShop_Framework_Impl_AttributePriceInfo extends OnlineShop_Framework_
         }
     }
 
-    function __call($name, $arguments) {
-        return $this->product->$name($arguments);
-
+    public function getTotalPrice() {
+        #return $this->product->getTotalPrice();
+        return new OnlineShop_Framework_Impl_Price(999, new Zend_Currency(new Zend_Locale('de_AT')), false);
     }
 
-
+    public function __call($name, $arguments) {
+        return $this->product->$name($arguments);
+    }
 }

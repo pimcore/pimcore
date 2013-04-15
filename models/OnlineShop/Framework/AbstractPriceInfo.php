@@ -20,8 +20,8 @@
     private $priceSystem;
 
 
-    /** @var int | string */
-    private $quantity;
+     /** @var int | string */
+     private $quantity;
 
      private $product;
      private $products;
@@ -80,7 +80,7 @@
          throw new OnlineShop_Framework_Exception_UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
      }
 
-     public function setProduct($product) {
+     public function setProduct(OnlineShop_Framework_AbstractProduct $product) {
          $this->product = $product;
      }
 
@@ -95,6 +95,4 @@
      public function getProducts() {
          return $this->products;
      }
-
- }
-
+}

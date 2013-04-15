@@ -2,19 +2,44 @@
 
 class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framework_ICartPriceCalculator {
 
+    /**
+     * @var bool
+     */
     protected $isCalculated = false;
+
+    /**
+     * @var
+     */
+    protected $subTotal;
+
+    /**
+     * @var
+     */
+    protected $gradTotal;
+
+    /**
+     * @var array|OnlineShop_Framework_ICartPriceModificator
+     */
+    protected $modificators;
+
+    /**
+     * @var array
+     */
+    protected $modifications;
 
     /**
      * @var OnlineShop_Framework_ICart
      */
     protected $cart;
 
+
     public function __construct($config, OnlineShop_Framework_ICart $cart) {
         $this->modificators = array();
         if(!empty($config->modificators) && is_object($config->modificators)) {
             foreach($config->modificators as $modificator) {
                 $step = new $modificator->class();
-                $this->modificators[] = $step;
+                #$this->modificators[] = $step;
+                $this->addModificator( $step );
             }
         }
 
@@ -23,7 +48,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
     }
 
     /**
-     * @return void
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
      */
     public function calculate() {
 
@@ -47,11 +72,12 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
         }
         $this->subTotal = new OnlineShop_Framework_Impl_Price($subTotal, $currency);
 
-        $modificationAmount = 0;
+//        $modificationAmount = 0;
         $currentSubTotal = new OnlineShop_Framework_Impl_Price($subTotal, $currency);
 
         $this->modifications = array();
         foreach($this->modificators as $modificator) {
+            /* @var OnlineShop_Framework_ICartPriceModificator $modificator */
             $modification = $modificator->modify($currentSubTotal, $this->cart);
             if($modification !== null) {
                 $this->modifications[$modificator->getName()] = $modification;
@@ -112,4 +138,41 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
     public function reset() {
         $this->isCalculated = false;
     }
+
+    /**
+     * @param OnlineShop_Framework_ICartPriceModificator $modificator
+     *
+     * @return OnlineShop_Framework_ICartPriceCalculator
+     */
+    public function addModificator(OnlineShop_Framework_ICartPriceModificator $modificator)
+    {
+        $this->reset();
+        $this->modificators[] = $modificator;
+
+        return $this;
+    }
+
+    /**
+     * @return array|OnlineShop_Framework_ICartPriceCalculator
+     */
+    public function getModificators()
+    {
+        return $this->modificators;
+    }
+
+    /**
+     * @param OnlineShop_Framework_ICartPriceModificator $modificator
+     *
+     * @return OnlineShop_Framework_ICartPriceCalculator
+     */
+    public function removeModificator(OnlineShop_Framework_ICartPriceModificator $modificator)
+    {
+        foreach($this->modificators as $key => $mod)
+            if($mod === $modificator)
+                unset($this->modificators[$key]);
+
+        return $this;
+    }
+
+
 }

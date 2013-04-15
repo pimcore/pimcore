@@ -41,7 +41,7 @@ class OnlineShop_Framework_Impl_Price implements OnlineShop_Framework_IPrice {
     }
 
     /**
-     * @param $amount int
+     * @param float $amount
      * @return void
      */
     public function setAmount($amount) {

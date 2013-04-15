@@ -157,5 +157,31 @@
             <FilterRelation class="OnlineShop_Framework_FilterService_SelectRelation" script="/product/filters/object_relation.php"/>
         </filtertypes>
 
+        <!-- pricing manager -->
+        <pricingmanager class="OnlineShop_Framework_Impl_PricingManager">
+            <config>
+                <!-- rule and priceinfo -->
+                <rule class="OnlineShop_Framework_Impl_Pricing_Rule" />
+                <priceInfo class="OnlineShop_Framework_Impl_Pricing_PriceInfo" />
+
+                <!-- rule conditions -->
+                <condition>
+                    <Bracket class="OnlineShop_Framework_Impl_Pricing_Condition_Bracket" />
+                    <DateRange class="OnlineShop_Framework_Impl_Pricing_Condition_DateRange" />
+                    <CartAmount class="OnlineShop_Framework_Impl_Pricing_Condition_CartAmount" />
+                    <CatalogProduct class="OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct" />
+                    <CatalogCategory class="OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory" />
+                </condition>
+
+                <!-- rule actions -->
+                <action>
+                    <ProductDiscount class="OnlineShop_Framework_Impl_Pricing_Action_ProductDiscount" />
+                    <CartDiscount class="OnlineShop_Framework_Impl_Pricing_Action_CartDiscount" />
+                    <Gift class="OnlineShop_Framework_Impl_Pricing_Action_Gift" />
+                </action>
+
+            </config>
+        </pricingmanager>
+
     </onlineshop>
 </zend-config>
