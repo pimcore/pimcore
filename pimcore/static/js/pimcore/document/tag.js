@@ -88,6 +88,18 @@ pimcore.document.tag = Class.create({
 
     getId: function () {
         return this.id;
+    },
+
+    /**
+     * HACK to get custom data from a grid instead of the tree
+     * better solutions are welcome ;-)
+     */
+    getCustomPimcoreDropData : function (data){
+        if(typeof(data.grid) != 'undefined' && typeof(data.grid.getCustomPimcoreDropData) == 'function'){ //droped from priceList
+             var record = data.grid.getStore().getAt(data.rowIndex);
+             var data = data.grid.getCustomPimcoreDropData(record);
+         }
+        return data;
     }
 });
 

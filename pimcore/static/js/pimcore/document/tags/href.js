@@ -105,6 +105,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function(target, dd, e, data) {
+        data = this.getCustomPimcoreDropData(data);
         if (this.dndAllowed(data)) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
@@ -114,6 +115,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
+        data = this.getCustomPimcoreDropData(data);
 
         if(!this.dndAllowed(data)){
             return false;
