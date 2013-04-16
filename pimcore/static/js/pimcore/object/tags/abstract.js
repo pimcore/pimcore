@@ -73,6 +73,10 @@ pimcore.object.tags.abstract = Class.create({
         return null;
     },
 
+    applyGridEvents: function(grid, field) {
+        //nothing to do here, but maybe in sub types
+    },
+
     getEl:function () {
         if (this.component) {
             return this.component.getEl();

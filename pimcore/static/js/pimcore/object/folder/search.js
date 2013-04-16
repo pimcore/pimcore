@@ -244,11 +244,13 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         this.grid.on("sortchange", function(grid, sortinfo) {
             this.sortinfo = sortinfo;
         }.bind(this));
-        
+
         // check for filter updates
         this.grid.on("filterupdate", function () {
             this.filterUpdateFunction(this.gridfilters, this.toolbarFilterInfo);
         }.bind(this));
+
+        gridHelper.applyGridEvents(this.grid);
         
         this.pagingtoolbar = new Ext.PagingToolbar({
             pageSize: itemsPerPage,

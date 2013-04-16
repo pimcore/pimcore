@@ -238,6 +238,21 @@ pimcore.object.helpers.grid = Class.create({
 
         return gridfilters;
 
+    },
+
+    applyGridEvents: function(grid) {
+        var fields = this.fields;
+        for (var i = 0; i < fields.length; i++) {
+
+            if(fields[i].key != "id" && fields[i].key != "published" && fields[i].key != "fullpath"
+                && fields[i].key != "filename" && fields[i].key != "classname"
+                && fields[i].key != "creationDate" && fields[i].key != "modificationDate") {
+
+
+                pimcore.object.tags[fields[i].type].prototype.applyGridEvents(grid, fields[i]);
+            }
+
+        }
     }
 
 });

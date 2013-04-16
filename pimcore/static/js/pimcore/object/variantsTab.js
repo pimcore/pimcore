@@ -108,7 +108,6 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         });
 
 
-
         this.gridfilters = gridHelper.getGridFilters();
 
         this.pagingtoolbar = new Ext.PagingToolbar({
@@ -202,6 +201,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             this.filterUpdateFunction(this.gridfilters, this.toolbarFilterInfo);
         }.bind(this));
 
+        gridHelper.applyGridEvents(this.grid);
 
         this.store.load();
 

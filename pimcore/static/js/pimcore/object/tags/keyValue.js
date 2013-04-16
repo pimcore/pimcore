@@ -609,6 +609,15 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 editor:this.getGridColumnEditor(field)};
 
         }
+    },
+
+    applyGridEvents: function(grid, field) {
+        grid.on("beforeedit", function(field, e) {
+            //TODO add correct functionality
+            if(e.field == field.key && e.value == "CAA016001") {
+                e.cancel = true;
+            }
+        }.bind(this, field));
     }
 
 
