@@ -45,6 +45,10 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
 
     }
 
+    public function getCartClassName() {
+        return $this->cartClass;
+    }
+
     protected function checkForInit() {
         if(!$this->initialized) {
             $this->initSavedCarts();

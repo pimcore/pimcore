@@ -7,6 +7,10 @@ class OnlineShop_Framework_Impl_Cart_List extends Pimcore_Model_List_Abstract {
      */
     public $carts;
 
+    public function __construct() {
+        $this->getResource()->setCartClass(OnlineShop_Framework_Factory::getInstance()->getCartManager()->getCartClassName());
+    }
+
     /**
      * @var array
      */

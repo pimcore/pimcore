@@ -1,6 +1,14 @@
 <?php
 
 interface OnlineShop_Framework_ICartManager extends OnlineShop_Framework_IComponent {
+
+    /**
+     * returns cart class name configered in the xml
+     *
+     * @return string
+     */
+    public function getCartClassName();
+    
     /**
      * @abstract
      * @param OnlineShop_Framework_AbstractProduct $product
