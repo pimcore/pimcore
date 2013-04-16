@@ -106,6 +106,8 @@ class Pimcore_View extends Zend_View {
         
         $found = false;
         $paths = $this->getScriptPaths();
+        $paths[] = PIMCORE_DOCUMENT_ROOT;
+
         foreach ($paths as $path) {
             $p = $path . $scriptPath;
             if (is_file($p) && !$found) {
