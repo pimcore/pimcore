@@ -11,7 +11,7 @@
         </params>
     </database>
     <rest>
-        <host>pimcore.elements.at</host>
+        <host>pimcore.elements.pm</host>
         <base>/webservice/rest/</base>
     </rest>
 </zend-config>
