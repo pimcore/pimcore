@@ -373,6 +373,7 @@ class Document_Tag_Areablock extends Document_Tag {
         $this->outputEditmode('<div class="pimcore_block_up_' . $this->getName() . ' pimcore_block_up"></div>');
         $this->outputEditmode('<div class="pimcore_block_down_' . $this->getName() . ' pimcore_block_down"></div>');
         $this->outputEditmode('<div class="pimcore_block_type_' . $this->getName() . ' pimcore_block_type"></div>');
+        $this->outputEditmode('<div class="pimcore_block_options_' . $this->getName() . ' pimcore_block_options"></div>');
         $this->outputEditmode('<div class="pimcore_block_clear_' . $this->getName() . ' pimcore_block_clear"></div>');
         $this->outputEditmode('</div>');
     }

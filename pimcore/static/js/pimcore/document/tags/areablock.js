@@ -28,8 +28,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             this.createToolBar();
         }
 
-        var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, typemenu, typeDiv,
-                                                                        typebuttontext, editDiv, editButton;
+        var plusButton, minusButton, upButton, downButton, optionsButton, plusDiv, minusDiv, upDiv, downDiv, optionsDiv,
+            typemenu, typeDiv, typebuttontext, editDiv, editButton;
         this.elements = Ext.get(id).query("div." + name + "[key]");
 
         // reload or not => default not
@@ -191,6 +191,19 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 }.bind(this, i));
                 typeButton.render(typeDiv);
 
+
+                // option button
+                optionsDiv = Ext.get(this.elements[i]).query(".pimcore_block_options_" + this.name)[0];
+                optionsButton = new Ext.Button({
+                    cls: "pimcore_block_button_options",
+                    iconCls: "pimcore_icon_options",
+                    listeners: {
+                        "click": this.optionsClickhandler.bind(this, this.elements[i])
+                    }
+                });
+                optionsButton.render(optionsDiv);
+
+
                 /*
                 Ext.get(this.elements[i]).on("mouseenter", function () {
                     Ext.get(this.query(".pimcore_block_buttons")[0]).show();
@@ -201,6 +214,82 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 */
             }
         }
+    },
+
+    optionsClickhandler: function (element, btn, e) {
+        var menu = new Ext.menu.Menu();
+
+        if(element != false) {
+            menu.add(new Ext.menu.Item({
+                text: t('copy'),
+                iconCls: "pimcore_icon_copy",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+
+                    var ea;
+                    var areaIdentifier = this.getName() + element.getAttribute("key");
+                    var item = {
+                        identifier: areaIdentifier,
+                        type: element.getAttribute("type"),
+                        values: {}
+                    };
+
+                    // check which editables are inside this area and get the data
+                    for (var i = 0; i < editables.length; i++) {
+                        try {
+                            ea = editables[i];
+                            if (ea.getName().indexOf(areaIdentifier) > 0 && ea.getName() && !ea.getInherited()) {
+                                item.values[ea.getName()] = {};
+                                item.values[ea.getName()].data = ea.getValue();
+                                item.values[ea.getName()].type = ea.getType();
+                            }
+                        } catch (e) { }
+                    }
+
+                    pimcore.globalmanager.add("areablock_clipboard", item);
+
+                }.bind(this)
+            }));
+        }
+
+        if(pimcore.globalmanager.exists("areablock_clipboard")) {
+            menu.add(new Ext.menu.Item({
+                text: t('paste'),
+                iconCls: "pimcore_icon_paste",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    var item = pimcore.globalmanager.get("areablock_clipboard");
+                    var areaIdentifier = this.getName() + (this.getNextKey()+1);
+
+                    // push the data as an object compatible to the pimcore.document.tag interface to the rest of
+                    // available editables so that they get read by pimcore.document.edit.getValues()
+                    Ext.iterate(item.values, function (key, value, object) {
+                        editables.push({
+                            getName: function () {
+                                return key.replace(new RegExp(item["identifier"]), areaIdentifier);
+                            },
+                            getValue: function () {
+                                return value["data"];
+                            },
+                            getInherited: function () {
+                                return false;
+                            },
+                            getType: function () {
+                                return value["type"];
+                            }
+                        });
+                    });
+
+                    this.addBlock(element, item.type);
+                }.bind(this)
+            }));
+        }
+
+        if(menu.items && menu.items.getCount()) {
+            menu.showAt(e.getXY());
+        }
+
+        e.stopEvent();
     },
 
     setInherited: function ($super, inherited) {
@@ -299,19 +388,33 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         var plusEl = document.createElement("div");
         plusEl.setAttribute("class", "pimcore_block_plus");
 
+        var optionsEl = document.createElement("div");
+        optionsEl.setAttribute("class", "pimcore_block_options");
+
         var clearEl = document.createElement("div");
         clearEl.setAttribute("class", "pimcore_block_clear");
 
         Ext.get(this.id).appendChild(plusEl);
+        Ext.get(this.id).appendChild(optionsEl);
         Ext.get(this.id).appendChild(clearEl);
 
         // plus button
-        plusButton = new Ext.Button({
+        var plusButton = new Ext.Button({
             cls: "pimcore_block_button_plus",
             iconCls: "pimcore_icon_plus",
             menu: [this.getTypeMenu(this, null)]
         });
         plusButton.render(plusEl);
+
+        // plus button
+        var optionsButton = new Ext.Button({
+            cls: "pimcore_block_button_options",
+            iconCls: "pimcore_icon_options",
+            listeners: {
+                click: this.optionsClickhandler.bind(this, false)
+            }
+        });
+        optionsButton.render(optionsEl);
     },
     
     getTypeMenu: function (scope, element) {
@@ -363,6 +466,20 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         return tmpEntry;
     },
 
+    getNextKey: function () {
+        var nextKey = 0;
+        var currentKey;
+
+        for (var i = 0; i < this.elements.length; i++) {
+            currentKey = intval(this.elements[i].key);
+            if (currentKey > nextKey) {
+                nextKey = currentKey;
+            }
+        }
+
+        return nextKey;
+    },
+
     addBlock : function (element, type) {
         
         var index = this.getElementIndex(element) + 1;
@@ -377,16 +494,9 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         }
 
         // get next heigher key
-        var nextKey = 0;
-        var currentKey;
+        var nextKey = this.getNextKey();
         var amount = 1;
 
-        for (var i = 0; i < this.elements.length; i++) {
-            currentKey = intval(this.elements[i].key);
-            if (currentKey > nextKey) {
-                nextKey = currentKey;
-            }
-        }
 
         var args = [index, 0];
 
