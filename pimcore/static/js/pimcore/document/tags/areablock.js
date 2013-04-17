@@ -216,6 +216,30 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         }
     },
 
+    copyToClipboard: function (element) {
+        var ea;
+        var areaIdentifier = this.getName() + element.getAttribute("key");
+        var item = {
+            identifier: areaIdentifier,
+            type: element.getAttribute("type"),
+            values: {}
+        };
+
+        // check which editables are inside this area and get the data
+        for (var i = 0; i < editables.length; i++) {
+            try {
+                ea = editables[i];
+                if (ea.getName().indexOf(areaIdentifier) > 0 && ea.getName() && !ea.getInherited()) {
+                    item.values[ea.getName()] = {};
+                    item.values[ea.getName()].data = ea.getValue();
+                    item.values[ea.getName()].type = ea.getType();
+                }
+            } catch (e) { }
+        }
+
+        pimcore.globalmanager.add("areablock_clipboard", item);
+    },
+
     optionsClickhandler: function (element, btn, e) {
         var menu = new Ext.menu.Menu();
 
@@ -225,29 +249,17 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 iconCls: "pimcore_icon_copy",
                 handler: function (item) {
                     item.parentMenu.destroy();
+                    this.copyToClipboard(element);
+                }.bind(this)
+            }));
 
-                    var ea;
-                    var areaIdentifier = this.getName() + element.getAttribute("key");
-                    var item = {
-                        identifier: areaIdentifier,
-                        type: element.getAttribute("type"),
-                        values: {}
-                    };
-
-                    // check which editables are inside this area and get the data
-                    for (var i = 0; i < editables.length; i++) {
-                        try {
-                            ea = editables[i];
-                            if (ea.getName().indexOf(areaIdentifier) > 0 && ea.getName() && !ea.getInherited()) {
-                                item.values[ea.getName()] = {};
-                                item.values[ea.getName()].data = ea.getValue();
-                                item.values[ea.getName()].type = ea.getType();
-                            }
-                        } catch (e) { }
-                    }
-
-                    pimcore.globalmanager.add("areablock_clipboard", item);
-
+            menu.add(new Ext.menu.Item({
+                text: t('cut'),
+                iconCls: "pimcore_icon_cut",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.copyToClipboard(element);
+                    this.removeBlock(element);
                 }.bind(this)
             }));
         }
