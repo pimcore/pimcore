@@ -63,7 +63,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
         $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
 
-        if(class_exists("Object_Customer")) {
+        if(@class_exists("Object_Customer")) {
             $customer = Object_Customer::getById($env->getCurrentUserId());
             $order->setCustomer($customer);
         }
