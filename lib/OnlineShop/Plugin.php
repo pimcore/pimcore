@@ -111,6 +111,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
                     $fieldCollection = Object_Fieldcollection_Definition::getByKey($key);
                 } catch(Exception $e) {
                     $fieldCollection = new Object_Fieldcollection_Definition();
+                    $fieldCollection->setKey($key);
                 }
 
                 $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources/' . $filename);
@@ -146,6 +147,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         $class = Object_Class::getByName($classname);
         if(!$class) {
             $class = new Object_Class();
+            $class->setName($classname);
         }
         $json = file_get_contents($filepath);
 
