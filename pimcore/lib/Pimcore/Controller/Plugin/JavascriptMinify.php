@@ -78,14 +78,16 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
             if($html) {
                 $scripts = $html->find("script[src]");
                 $scriptContent = "";
-                $async = "";
-                $prevAsync = "";
+                $async = null;
+                $prevAsync = null;
 
                 foreach ($scripts as $script) {
 
                     $source = $script->src;
-                    $async = $script->async ? $script->async : "false";
+                    $async = $script->async ? $script->async : null;
                     $path = "";
+                    $asyncAttribute = $async ? 'async="' . $async . '" ' : "";
+                    $prevAsyncAttribute = $prevAsync ? 'async="' . $prevAsync . '" ' : "";
 
                     if(!preg_match("@http(s)?://@i", $source)) {
                         if (@is_file("file://".PIMCORE_ASSET_DIRECTORY . $source)) {
@@ -100,7 +102,7 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
                     if(!empty($prevAsync) && $prevAsync != $async) {
                         $scriptPath = $this->writeJsTempFile($scriptContent);
                         $scriptContent = "";
-                        $script->prev_sibling()->outertext = '<script type="text/javascript" async="' . $prevAsync . '" src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n";
+                        $script->prev_sibling()->outertext = '<script type="text/javascript" ' . $prevAsyncAttribute . 'src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n";
                     }
 
 
@@ -110,7 +112,7 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
                         if($script->next_sibling()->tag != "script" || !$script->next_sibling()->src) {
                             $scriptPath = $this->writeJsTempFile($scriptContent);
                             $scriptContent = "";
-                            $script->outertext = '<script type="text/javascript" async="' . $async . '" src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n";
+                            $script->outertext = '<script type="text/javascript" ' . $asyncAttribute . 'src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n";
                         }
                         else {
                             $script->outertext = "";
@@ -121,7 +123,7 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
                         if (strlen($scriptContent) > 0) {
                             $scriptPath = $this->writeJsTempFile($scriptContent);
                             $scriptContent = "";
-                            $script->outertext = '<script type="text/javascript" async="' . $async . '" src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n" . $script->outertext;
+                            $script->outertext = '<script type="text/javascript" ' . $asyncAttribute . 'src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n" . $script->outertext;
                         }
                     }
 
