@@ -696,8 +696,8 @@ class Pimcore_Tool_RestClient {
         return $response["data"]->totalCount;
     }
 
-    public function getObjectCount($condition = null, $groupBy = null) {
-        $params = $this->fillParms($condition, null, null, null, null, $groupBy, null);
+    public function getObjectCount($condition = null, $groupBy = null, $objectClass = null) {
+        $params = $this->fillParms($condition, null, null, null, null, $groupBy, $objectClass);
 
         $response = (array) $this->doRequest(self::$baseUrl .  "object-count/?apikey=" . self::$apikey . $params, "GET");
         if (!$response || !$response["success"]) {
