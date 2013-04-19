@@ -117,8 +117,9 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory implements Onl
                 /* @var OnlineShop_Framework_AbstractCategory $allow */
                 #if($category->getFullPath() == $allow->getFullPath())
                 #    return true;
-                if(strpos($category->getFullPath(), $allow->getFullPath()) !== false)
+                if(strpos($category->getFullPath(), $allow->getFullPath()) !== false) {
                     return true;
+                }
             }
         }
 

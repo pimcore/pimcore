@@ -22,9 +22,12 @@ interface OnlineShop_Framework_Pricing_IPriceInfo extends OnlineShop_Framework_I
     public function addRule(OnlineShop_Framework_Pricing_IRule $rule);
 
     /**
+     * returns all valid rules, if forceRecalc, recalculation of valid rules is forced
+     *
+     * @param bool $forceRecalc
      * @return array|OnlineShop_Framework_Pricing_IRule
      */
-    public function getRules();
+    public function getRules($forceRecalc = false);
 
     /**
      * @param float $amount

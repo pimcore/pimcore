@@ -24,6 +24,11 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
      */
     protected $rules = array();
 
+    /**
+     * @var array|OnlineShop_Framework_Pricing_IRule
+     */
+    protected $validRules = array();
+
 
     /**
      * @param OnlineShop_Framework_IPriceInfo $priceInfo
@@ -46,11 +51,30 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     }
 
     /**
+     * returns all valid rules, if forceRecalc, recalculation of valid rules is forced
+     *
+     * @param bool $forceRecalc
      * @return array|OnlineShop_Framework_Pricing_IRule
      */
-    public function getRules()
+    public function getRules($forceRecalc = false)
     {
-        return $this->rules;
+
+        if($forceRecalc ||empty($this->validRules))
+        {
+            $env = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getEnvironment();
+            $env->setProduct( $this->getProduct() )
+                ->setPriceInfo( $this );
+
+            $this->validRules = array();
+            foreach($this->rules as $rule)
+            {
+                if($rule->check($env) === true) {
+                    $this->validRules[] = $rule;
+                }
+            }
+        }
+
+        return $this->validRules;
     }
 
     /**
@@ -83,8 +107,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
      */
     public function getTotalPrice()
     {
-        // TODO: Implement getTotalPrice() method.
-        return $this->priceInfo->getTotalPrice();
+        return new OnlineShop_Framework_Impl_Price($this->getPrice()->getAmount() * $this->getQuantity(), ($this->getPrice()->getCurrency()), false);
     }
 
     /**

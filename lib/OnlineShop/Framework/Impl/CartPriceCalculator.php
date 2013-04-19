@@ -90,7 +90,6 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
 
         $this->isCalculated = true;
 
-        // TODO: Implement calculate() method.
     }
 
     /**
