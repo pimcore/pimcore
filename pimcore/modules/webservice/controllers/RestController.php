@@ -751,7 +751,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $condition = urldecode($this->getParam("condition"));
         $groupBy = $this->getParam("groupBy");
         $objectClass = $this->getParam("objectClass");
-        $params = array();
+        $params = array("objectTypes" => array(Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_VARIANT));
 
         if (!empty($condition)) $params["condition"] = $condition;
         if (!empty($groupBy)) $params["groupBy"] = $groupBy;
