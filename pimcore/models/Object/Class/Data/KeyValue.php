@@ -66,6 +66,28 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      */
     public $groupDescWidth;
 
+
+    /** Whether the value can be multivalent
+     * @var
+     */
+    public $multivalent;
+
+    /**
+     * @param  $multivalent
+     */
+    public function setMultivalent($multivalent)
+    {
+        $this->multivalent = $multivalent;
+    }
+
+    /**
+     * @return
+     */
+    public function getMultivalent()
+    {
+        return $this->multivalent;
+    }
+
     /**
      * This method is called in Object_Class::save() and is used to create the database table for the localized data
      * @return void
@@ -194,6 +216,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
         $pairs = new Object_Data_KeyValue();
         $pairs->setClass($object->getClass());
         $pairs->setObjectId($object->getId());
+        $pairs->setMultivalent($this->multivalent);
         $pairs->load();
 
         return $pairs;
@@ -223,11 +246,9 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
             return $result;
         }
 
-        $properties = $data->getProperties();
+        $properties = $data->getProperties(true);
 
         foreach ($properties as $key => $property) {
-
-            // Logger::debug($property);
             $key = $property["key"];
             $keyConfig = Object_KeyValue_KeyConfig::getById($key);
             $property["type"] = $keyConfig->getType();
@@ -260,8 +281,8 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
 
         $pairs = array();
         foreach ($data as $pair) {
-            $key = $pair["key"];
-            $pairs[$key] = $pair;
+//            $key = $pair["key"];
+            $pairs[] = $pair;
         }
 
 

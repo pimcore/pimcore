@@ -33,6 +33,12 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
      */
     public $arr = array();
 
+    /** Whether multivalent values are allowed.
+     * @var
+     */
+    protected $multivalent;
+
+
     public function __construct() {
     }
 
@@ -80,7 +86,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         foreach ($arr as $key => $pair) {
 
             if (!$pair["inherited"]) {
-                $newProperties[$key] = $pair;
+                $newProperties[] = $pair;
             }
         }
 
@@ -92,25 +98,40 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         return $this->arr;
     }
 
-    public function getProperties() {
+    public function getProperties($forEditMode = false) {
         $result = array();
         $object = Object_Abstract::getById($this->objectId);
         $objectName = $object->getKey();
 
+        $internalKeys = array();
         foreach ($this->arr as $pair) {
             $pair["inherited"] = false;
             $pair["source"] = $object->getId();
             $result[] = $pair;
+            $internalKeys[] = $pair["key"];
         }
+
+        $blacklist = array();
 
         $parent = Object_Service::hasInheritableParentObject($object);
         while ($parent) {
             $kv = $parent->getKeyvaluepairs();
             $parentProperties = $kv->getInternalProperties();
 
+            $addedKeys = array();
 
             foreach ($parentProperties as $parentPair) {
-                $keyId = $parentPair["key"];
+                $parentKeyId = $parentPair["key"];
+                $parentValue = $parentPair["value"];
+
+                if (in_array($parentKeyId, $blacklist)) {
+                    continue;
+                }
+
+                if ($this->multivalent && !$forEditMode && in_array($parentKeyId, $internalKeys)) {
+                    continue;
+                }
+
                 $add = true;
 
                 for ($i = 0; $i < count($result); ++$i) {
@@ -119,28 +140,45 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
                     $resultKey = $resultPair["key"];
 
                     $existingPair = null;
-                    if ($resultKey == $keyId) {
+                    if ($resultKey == $parentKeyId) {
+                        if ($this->multivalent && !in_array($resultKey, $blacklist)) {
+
+                        } else {
                         $add = false;
+
+                        }
+                        // if the parent's key is already in the (internal) result list then
+                        // we don't add it => not inherited.
+                        if (!$this->multivalent) {
+                            $add = false;
                         if (empty($resultPair["altSource"])) {
                             $resultPair["altSource"] = $parent->getId();
                             $resultPair["altValue"] = $parentPair["value"];
                         }
+                        }
 
                         $result[$i] = $resultPair;
+                    }
+
+                    if (!$this->multivalent) {
                         break;
                     }
+
                 }
 
-
+                $addedKeys[] = $parentPair["key"];
                 if ($add) {
                     $parentPair["inherited"] = true;
                     $parentPair["source"] = $parent->getId();
                     $parentPair["altSource"] = $parent->getId();
                     $parentPair["altValue"] = $parentPair["value"];
                     $result[] = $parentPair;
-                } else {
-
                 }
+            }
+
+            foreach ($parentProperties as $parentPair) {
+                $parentKeyId = $parentPair["key"];
+                $blacklist[] = $parentKeyId;
             }
 
             $parent = Object_Service::hasInheritableParentObject($parent);
@@ -234,6 +272,23 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
             return $this->setProperty($key, $arguments[0]);
         }
         return parent::__call($name, $arguments);
+    }
+
+
+    /**
+     * @param  $multivalent
+     */
+    public function setMultivalent($multivalent)
+    {
+        $this->multivalent = $multivalent;
+    }
+
+    /**
+     * @return
+     */
+    public function getMultivalent()
+    {
+        return $this->multivalent;
     }
 
 

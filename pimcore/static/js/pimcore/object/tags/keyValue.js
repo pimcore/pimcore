@@ -17,8 +17,10 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
     type: "keyValue",
 
+
     initialize: function (data, fieldConfig) {
 
+        this.originalData = JSON.parse(JSON.stringify(data));
         this.fieldConfig = fieldConfig;
 
         var fields = [];
@@ -52,6 +54,18 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     if (this.isDeleteOperation) {
                         // do nothing
                     } else {
+                        if (record.data.inherited) {
+                            // changed inherited property, iterate over the store and delete all
+                            // properties with the same keys
+                            var count = store.getCount();
+                            for(var i= count - 1; i >= 0; i--) {
+                                var r = store.getAt(i);
+                                if (r.data.id != record.data.id && r.data.key == record.data.key) {
+                                    store.remove(r);
+                                }
+                            }
+                        }
+
                         record.set("inherited", false);
                         if (record.data.type == "translated") {
                             // whoooo, we have to go to the server and ask for a new translation
@@ -66,7 +80,20 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
         for (var i = 0; i < data.length; i++) {
             var pair = data[i];
+            var add = true;
+            if (this.fieldConfig.multivalent && pair.inherited) {
+                for (var k = 0; k < data.length; k++) {
+                    var otherPair = data[k];
+                    if (otherPair.key == pair.key && !otherPair.inherited) {
+                        add = false;
+                        break;
+                    }
+                }
+            }
+
+            if (add) {
             this.store.add(new this.store.recordType(pair));
+        }
         }
 
         this.store.sort("description", "ASC");
@@ -76,6 +103,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         }.bind(this)
         );
     },
+
 
     translate: function(record) {
         Ext.Ajax.request({
@@ -282,22 +310,46 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                             if (data.inherited) {
                                 record.set("inherited", false);
                             } else {
-                                if (data.altSource) {
+                                if (data.altSource && !this.fieldConfig.multivalent) {
                                     this.isDeleteOperation = true;
                                     record.set("inherited", true);
                                     record.set("value", data.altValue);
                                     record.set("source", data.altSource);
                                     this.isDeleteOperation = false;
                                 } else {
-                                    grid.getStore().removeAt(rowIndex);
-                                }
+                                    var store = grid.getStore();
+                                    var key = data.key;
 
+                                    store.removeAt(rowIndex);
+
+                                    if (this.fieldConfig.multivalent) {
+                                        // check if this was the last non-inherited row
+                                        var nonInheritedFound = false;
+                                        var count = store.getCount();
+                                        for (var i = 0; i < count; i++) {
+                                            var pair = store.getAt(i).data;
+                                            if (pair.key == key && !pair.inherited) {
+                                                nonInheritedFound = true;
+                                }
+                                        }
+
+                                        if (!nonInheritedFound) {
+                                            // we have to add the inherited pairs
+                                            for (var i = 0; i < this.originalData.length; i++) {
+                                                var pair = this.originalData[i];
+                                                if (pair.key == key && pair.inherited) {
+                                                    var newpair = JSON.parse(JSON.stringify(pair));
+                                                    this.store.add(new this.store.recordType(newpair));
+                            }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }.bind(this)
                     }
                 ]
             });
-
         }
 
         gridWidth += actionColWidth;
@@ -544,16 +596,18 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             for (var i=0; i < data.data.length; i++) {
                 var keyDef = data.data[i];
 
-
                 var totalCount = this.store.data.length;
 
                 var addKey = true;
                 for (var x = 0; x < totalCount; x++) {
                     var record = this.store.getAt(x);
+
+                    if (!this.fieldConfig.multivalent) {
                     if (record.data.key == keyDef.id) {
                         addKey = false;
                         break;
                     }
+                }
                 }
 
                 if (addKey) {
@@ -566,6 +620,17 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     colData.group = keyDef.groupName;
                     colData.groupDesc = keyDef.groupdescription;
                     this.store.add(new this.store.recordType(colData));
+
+                    if (this.fieldConfig.multivalent) {
+                        // iterate over the store and remove all inherited pairs
+                        var count = this.store.getCount();
+                        for (var k  = count - 1; k > 0; k--) {
+                            var p = this.store.getAt(k).data;
+                            if (p.key == keyDef.id && p.inherited) {
+                                this.store.removeAt(k);
+                }
+            }
+        }
                 }
             }
         }
@@ -578,15 +643,33 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 header:ts(field.label),
                 dataIndex:field.key,
                 renderer:function (key, value, metaData, record, rowIndex, colIndex, store) {
-                    if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    var multivalent = value instanceof  Array;
+                    var inherited = record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited;
+
+                    if (inherited && multivalent) {
+                        metaData.css += " grid_value_inherited_locked";
+                    } else if (inherited) {
                         metaData.css += " grid_value_inherited";
+                    } else if (multivalent) {
+                        metaData.css += " grid_value_locked";
                     }
+
                     metaData.css += ' x-grid3-check-col-td';g
                     return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
                 }.bind(this, field.key)
             });
         } else if (field.layout.gridType == "translated") {
             renderer = function (key, value, metaData, record) {
+                var multivalent = value instanceof  Array;
+                var inherited = record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited;
+
+                if (inherited && multivalent) {
+                    metaData.css += " grid_value_inherited_locked";
+                } else if (inherited) {
+                    metaData.css += " grid_value_inherited";
+                } else if (multivalent) {
+                    metaData.css += " grid_value_locked";
+                }
 
                 if (record.data["#kv-tr"][key] !== undefined) {
                     return record.data["#kv-tr"][key];
@@ -598,27 +681,39 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 editor:this.getGridColumnEditor(field)};
         } else {
             renderer = function (key, value, metaData, record) {
+                var multivalent = value instanceof  Array;
+                var inherited = record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited;
+
+                if (inherited && multivalent) {
+                    metaData.css += " grid_value_inherited_locked";
+                } else if (inherited) {
+                    metaData.css += " grid_value_inherited";
+                } else if (multivalent) {
+                    metaData.css += " grid_value_locked";
+                }
+
                 if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.css += " grid_value_inherited";
                 }
-
                 return value;
             }.bind(this, field.key);
 
             return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
                 editor:this.getGridColumnEditor(field)};
-
         }
     },
 
     applyGridEvents: function(grid, field) {
         grid.on("beforeedit", function(field, e) {
-            //TODO add correct functionality
-            if(e.field == field.key && e.value == "CAA016001") {
+            if(e.field == field.key && e.value instanceof Array) {
                 e.cancel = true;
+                Ext.Msg.show({
+                    title: t('keyvalue_data_locked_title'),
+                    msg: t('keyvalue_data_locked_msg'),
+                    buttons: Ext.Msg.OK
+                });
+
             }
         }.bind(this, field));
     }
-
-
 });

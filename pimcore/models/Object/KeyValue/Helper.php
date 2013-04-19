@@ -14,7 +14,6 @@
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
-
 class Object_KeyValue_Helper {
 
 

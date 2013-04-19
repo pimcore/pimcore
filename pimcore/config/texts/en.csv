@@ -1326,3 +1326,6 @@
 "keyValue_group","Group"
 "keyvalue_translators","Translators"
 "keyvalue_select_translator","Select Translator"
+"keyvalue_data_multivalent","Multivalent"
+"keyvalue_data_locked_title","Locked"
+"keyvalue_data_locked_msg","This is a multivalent property which cannot be edited in the grid view. Use the object editor instead"

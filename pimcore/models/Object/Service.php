@@ -229,16 +229,36 @@ class Object_Service extends Element_Service {
 
                                 foreach ($props as $pair) {
                                     if ($pair["key"] == $keyid) {
+
                                         if (isset($pair["translated"])) {
+                                            if (isset($data['#kv-tr'][$dataKey])) {
+                                                if (!is_array($data['#kv-tr'][$dataKey])) {
+                                                    $arr = array($data['#kv-tr'][$dataKey]);
+                                                    $data['#kv-tr'][$dataKey] = $arr;
+                                                }
+                                                $data['#kv-tr'][$dataKey][] = $pair["translated"];
+                                            }
+                                            else {
                                             $data['#kv-tr'][$dataKey] = $pair["translated"];
                                         }
+                                        }
 
+                                        if (isset($data[$dataKey])) {
+                                            if (!is_array($data[$dataKey])) {
+                                                $arr = array($data[$dataKey]);
+                                                $data[$dataKey] = $arr;
+                                            }
+                                            $data[$dataKey][] = $pair["value"];
+                                        } else {
                                         $data[$dataKey] = $pair["value"];
+                                        }
 
                                         if ($pair["inherited"]) {
                                             $data['inheritedFields'][$dataKey] = array("inherited" => $pair["inherited"], "objectid" => $pair["source"]);
                                         }
-                                        break;
+
+
+//                                   break;
                                     }
                                 }
                             }

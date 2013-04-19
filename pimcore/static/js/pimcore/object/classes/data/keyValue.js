@@ -64,6 +64,7 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
         var descWidth = 200;
         var height = 200;
         var maxheight = 0;
+        var multivalent = 0;
 
         if (this.datax.keyWidth) {
             keyWidth = this.datax.keyWidth;
@@ -88,6 +89,11 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
         if (this.datax.maxheight) {
             maxheight = this.datax.maxheight;
         }
+
+        if (this.datax.multivalent) {
+            multivalent = this.datax.multivalent;
+        }
+
 
         this.specificPanel.removeAll();
         this.specificPanel.add([
@@ -126,7 +132,16 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
                 fieldLabel: t("keyvalue_data_maxheight"),
                 name: "maxheight",
                 value: maxheight
+            },
+            {
+                xtype: "checkbox",
+                name: "multivalent",
+                value: multivalent,
+                checked: multivalent,
+                fieldLabel: t("keyvalue_data_multivalent"),
+                width: 300
             }
+
         ]);
 
         return this.layout;
