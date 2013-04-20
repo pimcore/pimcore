@@ -315,7 +315,7 @@ class Object_Abstract_Resource extends Element_Resource {
     public function getClasses() {
         if($this->getChildAmount()) {
             $path = $this->model->getFullPath();
-            if(!$this->model->getId()) {
+            if(!$this->model->getId() || $this->model->getId() == 1) {
                 $path = "";
             }
             $classIds = $this->db->fetchCol("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", $path . "/%");
