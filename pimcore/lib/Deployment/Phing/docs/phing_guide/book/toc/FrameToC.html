@@ -1,0 +1,611 @@
+<!--
+-File         $Id: 58a10283642b01c3b202be6f76aba8572f6dd87f $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2002, turing
+-Author       alex black, enigma@turingstudio.com
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Phing User Guide</title> 
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<link rel="Stylesheet" rev="Stylesheet" href="../css/FrameToc.css" type="text/css" media="All" charset="iso-8859-1" />
+</head>
+<body>
+
+<ul><li>
+<a href="../chapters/AboutThisBook.html" target="Content">About this book</a><ul>
+<li><a href="../chapters/AboutThisBook.html#Authors" target="Content">
+		Authors
+	</a></li>
+<li><a href="../chapters/AboutThisBook.html#Version" target="Content">
+		Version
+	</a></li>
+<li><a href="../chapters/AboutThisBook.html#Copyright" target="Content">
+		Copyright
+	</a></li>
+<li><a href="../chapters/AboutThisBook.html#License" target="Content">
+		License
+	</a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/Introduction.html" target="Content">Introduction</a><ul>
+<li><a href="../chapters/Introduction.html#WhatPhingIs" target="Content">
+		What Phing Is
+	</a></li>
+<li><a href="../chapters/Introduction.html#PhingAndBinarycloud" target="Content">
+		Phing &amp; Binarycloud: History
+	</a></li>
+<li><a href="../chapters/Introduction.html#HowPhingWorks" target="Content">
+		How Phing Works
+	</a></li>
+<li><a href="../chapters/Introduction.html#HowCanIHelp" target="Content">
+		Cool, so how can I help?
+	</a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/Setup.html" target="Content">
+		Setting-Up Phing
+	</a><ul>
+<li><a href="../chapters/Setup.html#SystemRequirements" target="Content">
+		System Requirements
+	</a></li>
+<li><a href="../chapters/Setup.html#ObtainingPhing" target="Content">
+		Obtaining Phing
+	</a></li>
+<li><a href="../chapters/Setup.html#Setup.PearInstall" target="Content">
+		PEAR Install
+	</a></li>
+<li><a href="../chapters/Setup.html#Setup.NonPearInstall" target="Content">
+		Non-PEAR Install
+	</a></li>
+<li><a href="../chapters/Setup.html#CallingPhing" target="Content">
+		Calling Phing
+	</a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/GettingStarted.html" target="Content">
+		Getting Started
+	</a><ul>
+<li><a href="../chapters/GettingStarted.html#XMLAndPhing" target="Content">
+		XML And Phing
+	</a></li>
+<li><a href="../chapters/GettingStarted.html#WritingASimpleBuildfile" target="Content">
+		Writing A Simple Buildfile
+	</a></li>
+<li><a href="../chapters/GettingStarted.html#ComplexBuildfile" target="Content">
+		More Complex Buildfile
+	</a></li>
+<li><a href="../chapters/GettingStarted.html#RelaxNGGrammar" target="Content">
+		Relax NG Grammar </a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/ProjectComponents.html" target="Content">Project Components</a><ul>
+<li><a href="../chapters/ProjectComponents.html#Projects" target="Content">
+		Projects
+	</a></li>
+<li><a href="../chapters/ProjectComponents.html#Version" target="Content">
+		Version
+	</a></li>
+<li><a href="../chapters/ProjectComponents.html#ComponentsInGeneral" target="Content">
+		Project Components in General
+	</a></li>
+<li><a href="../chapters/ProjectComponents.html#Targets" target="Content">
+		Targets
+	</a></li>
+<li><a href="../chapters/ProjectComponents.html#Tasks" target="Content">
+		Tasks
+	</a></li>
+<li><a href="../chapters/ProjectComponents.html#Types" target="Content">
+		Types
+	</a></li>
+<li><a href="../chapters/ProjectComponents.html#BasicTypes" target="Content">
+		Basic Types
+	</a></li>
+<li><a href="../chapters/ProjectComponents.html#Conditions" target="Content">
+		Conditions
+	</a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/ExtendingPhing.html" target="Content">
+		Extending Phing
+	</a><ul>
+<li><a href="../chapters/ExtendingPhing.html#ExtensionPossibilities" target="Content">
+		Extension Possibilities
+	</a></li>
+<li><a href="../chapters/ExtendingPhing.html#SourceLayout" target="Content">
+		Source Layout
+	</a></li>
+<li><a href="../chapters/ExtendingPhing.html#SystemInitialization" target="Content">
+		System Initialization
+	</a></li>
+<li><a href="../chapters/ExtendingPhing.html#SystemServices" target="Content">
+		System Services
+	</a></li>
+<li><a href="../chapters/ExtendingPhing.html#BuildLifecycle" target="Content">
+		Build Lifecycle
+	</a></li>
+<li><a href="../chapters/ExtendingPhing.html#WritingTasks" target="Content">
+		Writing Tasks
+	</a></li>
+<li><a href="../chapters/ExtendingPhing.html#WritingTypes" target="Content">
+		Writing Types
+	</a></li>
+<li><a href="../chapters/ExtendingPhing.html#WritingMappers" target="Content">
+		Writing Mappers
+	</a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/appendixes/AppendixA-FactSheet.html" target="Content">Appendix A: Fact Sheet</a><ul>
+<li><a href="../chapters/appendixes/AppendixA-FactSheet.html#BuiltInProperties" target="Content">
+		Built-In Properties
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixA-FactSheet.html#CommandLineArguments" target="Content">
+		Command Line Arguments
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixA-FactSheet.html#DistributionFileLayout" target="Content">
+		Distribution File Layout
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixA-FactSheet.html#ProgramExitCodes" target="Content">
+		Program Exit Codes
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixA-FactSheet.html#LGPLLicense" target="Content">
+		The LGPL License
+	</a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/appendixes/AppendixB-CoreTasks.html" target="Content">
+			Appendix B: Core Tasks </a><ul>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#AdhocTaskdefTask" target="Content">
+			AdhocTaskdefTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#AdhocTypedefTask" target="Content">
+			AdhocTypedefTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#AppendTask" target="Content">
+			AppendTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#AvailableTask" target="Content">
+			AvailableTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ChmodTask" target="Content">
+			ChmodTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ChownTask" target="Content">
+			ChownTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ConditionTask" target="Content">
+			ConditionTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#CopyTask" target="Content">
+			CopyTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#CvsTask" target="Content">
+			CvsTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#CvsPassTask" target="Content">
+			CvsPassTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#DeleteTask" target="Content">
+			 DeleteTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#EchoTask" target="Content">
+			EchoTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ExecTask" target="Content">
+			ExecTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#FailTask" target="Content">
+			FailTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ForeachTask" target="Content">
+			ForeachTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#IfTask" target="Content">
+			IfTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ImportTask" target="Content">
+			ImportTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#IncludePathTask" target="Content">
+			IncludePathTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#InputTask" target="Content">
+			InputTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#LoadFileTask" target="Content">
+			LoadFileTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#MkdirTask" target="Content">
+			MkdirTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#MoveTask" target="Content">
+			MoveTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#PhingTask" target="Content">
+			PhingTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#PhingCallTask" target="Content">
+			PhingCallTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#PhpEvalTask" target="Content">
+			PhpEvalTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#PropertyTask" target="Content">
+			PropertyTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#PropertyPromptTask" target="Content">
+			PropertyPromptTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ReflexiveTask" target="Content">
+			ReflexiveTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ResolvePathTask" target="Content">
+			ResolvePathTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#TaskdefTask" target="Content">
+			TaskdefTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#TouchTask" target="Content">
+			TouchTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#TryCatchTask" target="Content">
+			TryCatchTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#TstampTask" target="Content">
+			TstampTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#TypedefTask" target="Content">
+			TypedefTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#UpToDateTask" target="Content">
+			UpToDateTask </a></li>
+<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#XsltTask" target="Content">
+			XsltTask </a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/appendixes/AppendixC-OptionalTasks.html" target="Content">
+			Appendix C: Optional Tasks </a><ul>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#ApiGenTask" target="Content">
+			ApiGenTask
+		</a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#CoverageMergerTask" target="Content">
+			CoverageMergerTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#ComposerTask" target="Content">
+            ComposerTask
+        </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#CoverageReportTask" target="Content">
+			CoverageReportTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#CoverageSetupTask" target="Content">
+			CoverageSetupTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#CoverageThresholdTask" target="Content">
+			CoverageThresholdTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#DbDeployTask" target="Content">
+			DbDeployTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#DocBloxTask" target="Content">
+			DocBloxTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#ExportPropertiesTask" target="Content">
+			ExportPropertiesTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#FileHashTask" target="Content">
+			FileHashTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#FileSyncTask" target="Content">
+			FileSyncTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#FileSizeTask" target="Content">
+			FileSizeTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#FtpDeployTask" target="Content">
+			FtpDeployTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#GitInitTask" target="Content">
+			GitInitTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#GitCloneTask" target="Content">
+			GitCloneTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#GitGcTask" target="Content">
+			GitGcTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#GitBranchTask" target="Content">
+			GitBranchTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#GitFetchTask" target="Content">
+			GitFetchTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#GitCheckoutTask" target="Content">
+			GitCheckoutTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#GitMergeTask" target="Content">
+			GitMergeTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#GitPullTask" target="Content">
+			GitPullTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#GitPushTask" target="Content">
+			GitPushTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#GitTagTask" target="Content">
+			GitTagTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#GitLogTask" target="Content">
+			GitLogTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#GrowlNotifyTask" target="Content">
+			GrowlNotifyTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#HttpGetTask" target="Content">
+			HttpGetTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#HttpRequestTask" target="Content">
+			HttpRequestTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#IoncubeEncoderTask" target="Content">
+			IoncubeEncoderTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#IoncubeLicenseTask" target="Content">
+			IoncubeLicenseTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#JslLintTask" target="Content">
+			JslLintTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#JsMinTask" target="Content">
+			JsMinTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#LiquibaseChangeLogTask" target="Content">LiquibaseChangeLogTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#LiquibaseDbDocTask" target="Content">LiquibaseDbDocTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#LiquibaseDiffTask" target="Content">LiquibaseDiffTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#LiquibaseRollbackTask" target="Content">LiquibaseRollbackTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#LiquibaseTagTask" target="Content">LiquibaseTagTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#LiquibaseUpdateTask" target="Content">LiquibaseUpdateTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#MailTask" target="Content">
+			MailTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#ParallelTask" target="Content">
+                        ParallelTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PatchTask" target="Content">
+			PatchTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PDOSQLExecTask" target="Content">
+			PDOSQLExecTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PearPackageTask" target="Content">
+			 PearPackageTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PearPackage2Task" target="Content">
+			PearPackage2Task </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PharPackageTask" target="Content">
+			PharPackageTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PhkPackageTask" target="Content">
+			PhkPackageTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PhpCodeSnifferTask" target="Content">
+			PhpCodeSnifferTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PHPLocTask" target="Content">PHPLocTask</a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PHPCPDTask" target="Content">
+			PHPCPDTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PHPMDTask" target="Content">
+			PHPMDTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PhpDependTask" target="Content">
+			PhpDependTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PhpDocumentorTask" target="Content">
+			PhpDocumentorTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PhpDocumentor2Task" target="Content">
+			PhpDocumentor2Task</a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PhpDocumentorExternalTask" target="Content">
+			PhpDocumentorExternalTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PhpLintTask" target="Content">
+			PhpLintTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PHPUnitTask" target="Content">
+			PHPUnitTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#PHPUnitReport" target="Content">
+			PHPUnitReport </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#rSTTask" target="Content">
+			rSTTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#S3PutTask" target="Content">
+			S3PutTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#S3GetTask" target="Content">
+			S3GetTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#ScpTask" target="Content">
+			ScpTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SshTask" target="Content">
+			SshTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SimpleTestTask" target="Content">
+			SimpleTestTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SvnCheckoutTask" target="Content">
+			SvnCheckoutTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SvnCommitTask" target="Content">
+			SvnCommitTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SvnCopyTask" target="Content">
+			SvnCopyTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SvnExportTask" target="Content">
+			SvnExportTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SvnInfoTask" target="Content">
+			SvnInfoTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SvnLastRevisionTask" target="Content">
+			SvnLastRevisionTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SvnListTask" target="Content">
+			 SvnListTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SvnLogTask" target="Content">
+			 SvnLogTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SvnUpdateTask" target="Content">
+			SvnUpdateTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SvnSwitchTask" target="Content">
+			SvnSwitchTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SymfonyConsoleTask" target="Content">
+            SymfonyConsoleTask
+        </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#SymlinkTask" target="Content">
+			SymlinkTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#TarTask" target="Content">
+			TarTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#UntarTask" target="Content">
+			 UntarTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#UnzipTask" target="Content">
+			UnzipTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#VersionTask" target="Content">
+			VersionTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#XmlLintTask" target="Content">
+			XmlLintTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#XmlPropertyTask" target="Content">
+			XmlPropertyTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#ZendCodeAnalyzerTask" target="Content">
+			ZendCodeAnalyzerTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#ZendGuardEncodeTask" target="Content">
+			ZendGuardEncodeTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#ZendGuardLicenseTask" target="Content">
+			ZendGuardLicenseTask </a></li>
+<li><a href="../chapters/appendixes/AppendixC-OptionalTasks.html#ZipTask" target="Content">
+			ZipTask </a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/appendixes/AppendixD-CoreTypes.html" target="Content">
+		Appendix D: Core Types
+	</a><ul>
+<li><a href="../chapters/appendixes/AppendixD-CoreTypes.html#Excludes" target="Content">
+		Excludes
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD-CoreTypes.html#FileList" target="Content">
+		FileList
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD-CoreTypes.html#Fileset" target="Content">
+		FileSet
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD-CoreTypes.html#PatternSet" target="Content">
+        PatternSet
+    </a></li>
+<li><a href="../chapters/appendixes/AppendixD-CoreTypes.html#Path" target="Content">
+		Path / Classpath
+	</a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/appendixes/AppendixD2-CoreFilters.html" target="Content">
+		Appendix D-2: Core Filters
+	</a><ul>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#PhingFilterReader" target="Content">
+		PhingFilterReader
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#ExpandProperties" target="Content">
+		ExpandProperties
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#HeadFilter" target="Content">
+		HeadFilter
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#IconvFilter" target="Content">
+		IconvFilter
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#LineContains" target="Content">
+		Line Contains
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#LineContainsRegexp" target="Content">
+		LineContainsRegexp
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#PrefixLines" target="Content">
+		PrefixLines
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#ReplaceTokens" target="Content">
+		ReplaceTokens
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#ReplaceTokensWithFile" target="Content">
+		ReplaceTokensWithFile
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#ReplaceRegexp" target="Content">
+		ReplaceRegexp
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#StripLineBreaks" target="Content">
+		StripLineBreaks
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#StripLineComments" target="Content">
+		StripLineComments
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#StripPhpComments" target="Content">
+		StripPhpComments
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#StripWhitespace" target="Content">
+		StripWhitespace
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#TabToSpaces" target="Content">
+		TabToSpaces
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#TailFilter" target="Content">
+		TailFilter
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#TidyFilter" target="Content">
+		TidyFilter
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#XincludeFilter" target="Content">
+		XincludeFilter
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD2-CoreFilters.html#XsltFilter" target="Content">
+		XsltFilter
+	</a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/appendixes/AppendixD3-CoreMappers.html" target="Content">
+		Appendix D-3: Core Mappers
+	</a><ul>
+<li><a href="../chapters/appendixes/AppendixD3-CoreMappers.html#FlattenMapper" target="Content">
+		FlattenMapper
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD3-CoreMappers.html#GlobMapper" target="Content">
+		GlobMapper
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD3-CoreMappers.html#IdentityMapper" target="Content">
+		IdentityMapper
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD3-CoreMappers.html#MergeMapper" target="Content">
+		MergeMapper
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD3-CoreMappers.html#RegexpMapper" target="Content">
+		RegexpMapper
+	</a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/appendixes/AppendixD4-CoreSelectors.html" target="Content">
+		Appendix D-4: Selectors
+	</a><ul>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#Contains" target="Content">
+		Contains
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#Date" target="Content">
+		Date
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#Depend" target="Content">
+		Depend
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#Depth" target="Content">
+		Depth
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#Filename" target="Content">
+		Filename
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#Present" target="Content">
+		Present
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#Containsregexp" target="Content">
+		Containsregexp
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#Size" target="Content">
+		Size
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#Type" target="Content">
+		Type
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#And" target="Content">
+        And
+    </a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#Majority" target="Content">
+        Majority
+    </a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#None" target="Content">
+        None
+    </a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#Not" target="Content">
+        Not
+    </a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#Or" target="Content">
+        Or
+    </a></li>
+<li><a href="../chapters/appendixes/AppendixD4-CoreSelectors.html#Selector" target="Content">
+        Selector
+    </a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/appendixes/AppendixE-ProjectComponents.html" target="Content">
+		Appendix E: Project Components
+	</a><ul>
+<li><a href="../chapters/appendixes/AppendixE-ProjectComponents.html#Project" target="Content">
+		Phing Projects
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixE-ProjectComponents.html#Target" target="Content">
+		Targets
+	</a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/appendixes/AppendixF-FileFormats.html" target="Content">
+		Appendix F: File Formats
+	</a><ul>
+<li><a href="../chapters/appendixes/AppendixF-FileFormats.html#BuildFileFormat" target="Content">
+		Build File Format
+	</a></li>
+<li><a href="../chapters/appendixes/AppendixF-FileFormats.html#PropertyFileFormat" target="Content">
+		Property File Format
+	</a></li>
+</ul>
+</li></ul>
+<ul><li>
+<a href="../chapters/Bibliography.html" target="Content">Bibliography</a><ul>
+<li><a href="../chapters/Bibliography.html#InternationalStandards" target="Content">
+		International Standards
+	</a></li>
+<li><a href="../chapters/Bibliography.html#licenses" target="Content">
+		Licenses
+	</a></li>
+<li><a href="../chapters/Bibliography.html#os-projects" target="Content">
+		Open Source Projects
+	</a></li>
+<li><a href="../chapters/Bibliography.html#Manuals" target="Content">
+		Manuals
+	</a></li>
+<li><a href="../chapters/Bibliography.html#OtherResouces" target="Content">
+		Other Resources
+	</a></li>
+</ul>
+</li></ul>
+
+</body>
+</html>
+<!-- $Id -->

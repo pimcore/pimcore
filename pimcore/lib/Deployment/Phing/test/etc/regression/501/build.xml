@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<project name="test" default="main">
+    <target name="main" description="Unit testing and code coverage">
+        <property name="base.dir" value="../../../.." />
+        <property name="build.dir" value="." />
+        <resolvepath propertyName="base.dir.resolved" file="${base.dir}" />
+        <resolvepath propertyName="build.dir.resolved" file="${build.dir}" />
+        <coverage-setup database="${build.dir}/coverage.db">
+            <fileset dir="${base.dir.resolved}/classes/phing/system">
+                <exclude name="form/**/*.php"/>
+            </fileset>
+        </coverage-setup>
+
+        <phpunit codecoverage="true" bootstrap="${build.dir}/bootstrap.php">
+            <formatter todir="${build.dir}" type="clover"/>
+            <formatter todir="${build.dir}" type="xml"/>
+            <formatter usefile="false" type="plain"/>
+            <batchtest>
+                <fileset dir="${base.dir.resolved}/test/classes/phing/system">
+                    <include name="**/*.php"/>
+                </fileset>
+            </batchtest>
+        </phpunit>
+    </target>
+</project>

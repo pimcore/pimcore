@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<project name="imported" default="">
+
+  <property name="imported.basedir" value="${phing.dir.imported}"/>
+  <property file="${imported.basedir}/imported.properties"/>
+
+  <target name="main">
+    <echo>${imported.echo}</echo>
+    <echo>This is ${phing.file.imported} main target.</echo>
+  </target>
+
+  <target name="imported">
+    <echo>phing.file.imported=${phing.file.imported}</echo>
+    <echo>imported.basedir=${imported.basedir}</echo>
+  </target>
+
+  <target name="flip" depends="flop">
+    <echo>This is ${phing.file.imported} flip target.</echo>
+  </target>
+  <target name="flop">
+    <echo>This is ${phing.file.imported} flop target.</echo>
+  </target>
+
+  <import file="imports/importedImport.xml"/>
+</project>

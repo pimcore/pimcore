@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="DeleteTaskTest" default="main">
+    <property name="tmp.dir" value="tmp"/>
+    
+    <fileset dir="vendor" id="vendor">
+        <include name="*"/>
+    </fileset>
+    
+    <target name="setup">
+    	<mkdir dir="${tmp.dir}"/>
+    </target>
+    
+    <target name="clean">
+        <delete dir="${tmp.dir}"/>
+    </target>
+    
+    <target name="testDeleteDanglingSymlink">
+        <mkdir dir="${tmp.dir}/base"/>
+		<symlink target="${tmp.dir}/base/all" link="${tmp.dir}/base/dangling_symlink"/>
+
+        <delete>
+            <fileset dir="${tmp.dir}/base">
+                <include name="*"/>
+            </fileset>
+        </delete>
+		
+		<delete dir="${tmp.dir}/base"/>
+    </target>
+    
+    <target name="testDeleteNonExistingDirectory">
+    	<delete dir="${tmp.dir}/base/non-existing-dir" failonerror="true"/>
+    </target>
+    
+    <target name="testDeleteNonExistingFile">
+    	<delete file="${tmp.dir}/base/non-existing-file" failonerror="true"/>
+    </target>
+    
+    <target name="main"/>
+</project>

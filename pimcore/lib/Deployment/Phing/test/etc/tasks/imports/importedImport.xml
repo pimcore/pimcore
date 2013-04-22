@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<project name="imported2" default="">
+
+  <target name="imported2">
+    <echo>This is ${phing.file.imported2} imported2 target.</echo>
+  </target>
+
+  <target name="main">
+    <echo>This is ${phing.file.imported2} main target.</echo>
+  </target>
+</project>
+

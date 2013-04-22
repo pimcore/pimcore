@@ -1,0 +1,13 @@
+<project name="ReplaceTokensWithFile" default="testAll">
+	<target name="testPostfix">
+		<copy file="properties.ini"
+		tofile="properties_out.ini" overwrite="true">
+
+		<filterchain>
+			<replacetokenswithfile begintoken="#!" endtoken="##"
+			dir="" postfix=".tpl" />
+		</filterchain>
+		</copy>
+		<delete file="properties_out.ini"/>
+	</target>
+</project>

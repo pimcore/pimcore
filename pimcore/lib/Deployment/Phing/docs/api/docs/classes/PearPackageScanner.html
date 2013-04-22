@@ -1,0 +1,1213 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \PearPackageScanner</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public inherited"><a href="#method_addDefaultExcludes" title="addDefaultExcludes :: Adds the array with default exclusions to the current exclusions set."><span class="description">Adds the array with default exclusions to the current exclusions set.</span><pre>addDefaultExcludes()</pre></a></li>
+<li class="method public inherited"><a href="#method_getBasedir" title="getBasedir :: Gets the basedir that is used for scanning."><span class="description">Gets the basedir that is used for scanning.</span><pre>getBasedir()</pre></a></li>
+<li class="method public inherited"><a href="#method_getDeselectedDirectories" title="getDeselectedDirectories :: &lt;p&gt;Returns the names of the directories which were selected out and
+therefore not ultimately included.&lt;/p&gt;"><span class="description">&lt;p&gt;Returns the names of the directories which were selected out and
+therefore not ultimately included.&lt;/p&gt;</span><pre>getDeselectedDirectories()</pre></a></li>
+<li class="method public inherited"><a href="#method_getDeselectedFiles" title="getDeselectedFiles :: &lt;p&gt;Returns the names of the files which were selected out and
+therefore not ultimately included.&lt;/p&gt;"><span class="description">&lt;p&gt;Returns the names of the files which were selected out and
+therefore not ultimately included.&lt;/p&gt;</span><pre>getDeselectedFiles()</pre></a></li>
+<li class="method public inherited"><a href="#method_getExcludedDirectories" title="getExcludedDirectories :: Get the names of the directories that matched at least one of the include
+patterns, an matched also at least one of the exclude patterns."><span class="description">Get the names of the directories that matched at least one of the include
+patterns, an matched also at least one of the exclude patterns.</span><pre>getExcludedDirectories()</pre></a></li>
+<li class="method public inherited"><a href="#method_getExcludedFiles" title="getExcludedFiles :: Get the names of the files that matched at least one of the include
+patterns, an matched also at least one of the exclude patterns."><span class="description">Get the names of the files that matched at least one of the include
+patterns, an matched also at least one of the exclude patterns.</span><pre>getExcludedFiles()</pre></a></li>
+<li class="method public inherited"><a href="#method_getIncludedDirectories" title="getIncludedDirectories :: Get the names of the directories that matched at least one of the include
+patterns, an matched none of the exclude patterns."><span class="description">Get the names of the directories that matched at least one of the include
+patterns, an matched none of the exclude patterns.</span><pre>getIncludedDirectories()</pre></a></li>
+<li class="method public inherited"><a href="#method_getIncludedFiles" title="getIncludedFiles :: Get the names of the files that matched at least one of the include
+patterns, and matched none of the exclude patterns."><span class="description">Get the names of the files that matched at least one of the include
+patterns, and matched none of the exclude patterns.</span><pre>getIncludedFiles()</pre></a></li>
+<li class="method public inherited"><a href="#method_getNotIncludedDirectories" title="getNotIncludedDirectories :: Get the names of the directories that matched at none of the include
+patterns."><span class="description">Get the names of the directories that matched at none of the include
+patterns.</span><pre>getNotIncludedDirectories()</pre></a></li>
+<li class="method public inherited"><a href="#method_getNotIncludedFiles" title="getNotIncludedFiles :: Get the names of the files that matched at none of the include patterns."><span class="description">Get the names of the files that matched at none of the include patterns.</span><pre>getNotIncludedFiles()</pre></a></li>
+<li class="method public inherited"><a href="#method_isEverythingIncluded" title="isEverythingIncluded :: Returns whether or not the scanner has included all the files or
+directories it has come across so far."><span class="description">Returns whether or not the scanner has included all the files or
+directories it has come across so far.</span><pre>isEverythingIncluded()</pre></a></li>
+<li class="method public inherited"><a href="#method_listDir" title="listDir :: Lists contens of a given directory and returns array with entries"><span class="description">Lists contens of a given directory and returns array with entries</span><pre>listDir()</pre></a></li>
+<li class="method public inherited"><a href="#method_match" title="match :: Matches a string against a pattern."><span class="description">Matches a string against a pattern.</span><pre>match()</pre></a></li>
+<li class="method public inherited"><a href="#method_matchPath" title="matchPath :: Matches a path against a pattern."><span class="description">Matches a path against a pattern.</span><pre>matchPath()</pre></a></li>
+<li class="method public inherited"><a href="#method_matchPatternStart" title='matchPatternStart :: Does the path match the start of this pattern up to the first "**".'><span class="description">Does the path match the start of this pattern up to the first "**".</span><pre>matchPatternStart()</pre></a></li>
+<li class="method public "><a href="#method_scan" title="scan :: Generates the list of included files and directories"><span class="description">Generates the list of included files and directories</span><pre>scan()</pre></a></li>
+<li class="method public inherited"><a href="#method_setBasedir" title="setBasedir :: Sets the basedir for scanning."><span class="description">Sets the basedir for scanning.</span><pre>setBasedir()</pre></a></li>
+<li class="method public inherited"><a href="#method_setCaseSensitive" title="setCaseSensitive :: Sets the case sensitivity of the file system"><span class="description">Sets the case sensitivity of the file system</span><pre>setCaseSensitive()</pre></a></li>
+<li class="method public "><a href="#method_setChannel" title="setChannel :: Sets the name of the package channel name"><span class="description">Sets the name of the package channel name</span><pre>setChannel()</pre></a></li>
+<li class="method public "><a href="#method_setConfig" title="setConfig :: Sets the full path to the PEAR configuration file"><span class="description">Sets the full path to the PEAR configuration file</span><pre>setConfig()</pre></a></li>
+<li class="method public inherited"><a href="#method_setExcludes" title="setExcludes :: Sets the set of exclude patterns to use."><span class="description">Sets the set of exclude patterns to use.</span><pre>setExcludes()</pre></a></li>
+<li class="method public inherited"><a href="#method_setExpandSymbolicLinks" title="setExpandSymbolicLinks :: Sets whether to expand/dereference symbolic links"><span class="description">Sets whether to expand/dereference symbolic links</span><pre>setExpandSymbolicLinks()</pre></a></li>
+<li class="method public inherited"><a href="#method_setIncludes" title="setIncludes :: Sets the set of include patterns to use."><span class="description">Sets the set of include patterns to use.</span><pre>setIncludes()</pre></a></li>
+<li class="method public "><a href="#method_setPackage" title="setPackage :: Sets the name of the PEAR package to get the files from"><span class="description">Sets the name of the PEAR package to get the files from</span><pre>setPackage()</pre></a></li>
+<li class="method public inherited"><a href="#method_setSelectors" title="setSelectors :: Sets the selectors that will select the filelist."><span class="description">Sets the selectors that will select the filelist.</span><pre>setSelectors()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="method protected inherited"><a href="#method_couldHoldIncluded" title="couldHoldIncluded :: Tests whether a name matches the start of at least one include pattern."><span class="description">Tests whether a name matches the start of at least one include pattern.</span><pre>couldHoldIncluded()</pre></a></li>
+<li class="method protected "><a href="#method_init" title="init :: Loads the package information."><span class="description">Loads the package information.</span><pre>init()</pre></a></li>
+<li class="method protected inherited"><a href="#method_isExcluded" title="isExcluded :: Tests whether a name matches against at least one exclude pattern."><span class="description">Tests whether a name matches against at least one exclude pattern.</span><pre>isExcluded()</pre></a></li>
+<li class="method protected inherited"><a href="#method_isIncluded" title="isIncluded :: Tests whether a name matches against at least one include pattern."><span class="description">Tests whether a name matches against at least one include pattern.</span><pre>isIncluded()</pre></a></li>
+<li class="method protected inherited"><a href="#method_isSelected" title="isSelected :: Tests whether a name should be selected."><span class="description">Tests whether a name should be selected.</span><pre>isSelected()</pre></a></li>
+<li class="method protected "><a href="#method_loadPackageInfo" title="loadPackageInfo :: Loads and returns the PEAR package information."><span class="description">Loads and returns the PEAR package information.</span><pre>loadPackageInfo()</pre></a></li>
+<li class="method protected inherited"><a href="#method_slowScan" title="slowScan :: Toplevel invocation for the scan."><span class="description">Toplevel invocation for the scan.</span><pre>slowScan()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul><li class="method private inherited"><a href="#method_scandir" title="scandir :: Scans the passed dir for files and directories."><span class="description">Scans the passed dir for files and directories.</span><pre>scandir()</pre></a></li></ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul></ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="property protected inherited"><a href="#property_DEFAULTEXCLUDES" title="$DEFAULTEXCLUDES :: default set of excludes"><span class="description"></span><pre>$DEFAULTEXCLUDES</pre></a></li>
+<li class="property protected inherited"><a href="#property_basedir" title="$basedir :: The base directory which should be scanned."><span class="description"></span><pre>$basedir</pre></a></li>
+<li class="property protected "><a href="#property_channel" title="$channel :: "><span class="description"></span><pre>$channel</pre></a></li>
+<li class="property protected "><a href="#property_config" title="$config :: "><span class="description"></span><pre>$config</pre></a></li>
+<li class="property protected inherited"><a href="#property_dirsDeselected" title="$dirsDeselected :: "><span class="description"></span><pre>$dirsDeselected</pre></a></li>
+<li class="property protected inherited"><a href="#property_dirsExcluded" title="$dirsExcluded :: The files that where found and matched at least one includes, and also
+matched at least one excludes."><span class="description"></span><pre>$dirsExcluded</pre></a></li>
+<li class="property protected inherited"><a href="#property_dirsIncluded" title="$dirsIncluded :: The directories that where found and matched at least one includes, and
+matched no excludes."><span class="description"></span><pre>$dirsIncluded</pre></a></li>
+<li class="property protected inherited"><a href="#property_dirsNotIncluded" title="$dirsNotIncluded :: The directories that where found and did not match any includes."><span class="description"></span><pre>$dirsNotIncluded</pre></a></li>
+<li class="property protected inherited"><a href="#property_everythingIncluded" title="$everythingIncluded :: if there are no deselected files"><span class="description"></span><pre>$everythingIncluded</pre></a></li>
+<li class="property protected inherited"><a href="#property_excludes" title="$excludes :: The patterns for the files that should be excluded."><span class="description"></span><pre>$excludes</pre></a></li>
+<li class="property protected inherited"><a href="#property_expandSymbolicLinks" title="$expandSymbolicLinks :: Whether to expand/dereference symbolic links, default is false"><span class="description"></span><pre>$expandSymbolicLinks</pre></a></li>
+<li class="property protected inherited"><a href="#property_filesDeselected" title="$filesDeselected :: "><span class="description"></span><pre>$filesDeselected</pre></a></li>
+<li class="property protected inherited"><a href="#property_filesExcluded" title="$filesExcluded :: The files that where found and matched at least one includes, and also
+matched at least one excludes."><span class="description"></span><pre>$filesExcluded</pre></a></li>
+<li class="property protected inherited"><a href="#property_filesIncluded" title="$filesIncluded :: The files that where found and matched at least one includes, and matched
+no excludes."><span class="description"></span><pre>$filesIncluded</pre></a></li>
+<li class="property protected inherited"><a href="#property_filesNotIncluded" title="$filesNotIncluded :: The files that where found and did not match any includes."><span class="description"></span><pre>$filesNotIncluded</pre></a></li>
+<li class="property protected inherited"><a href="#property_haveSlowResults" title="$haveSlowResults :: Have the vars holding our results been built by a slow scan?"><span class="description"></span><pre>$haveSlowResults</pre></a></li>
+<li class="property protected inherited"><a href="#property_includes" title="$includes :: The patterns for the files that should be included."><span class="description"></span><pre>$includes</pre></a></li>
+<li class="property protected inherited"><a href="#property_isCaseSensitive" title="$isCaseSensitive :: Should the file system be treated as a case sensitive one?"><span class="description"></span><pre>$isCaseSensitive</pre></a></li>
+<li class="property protected "><a href="#property_package" title="$package :: "><span class="description"></span><pre>$package</pre></a></li>
+<li class="property protected "><a href="#property_packageInfo" title="$packageInfo :: "><span class="description"></span><pre>$packageInfo</pre></a></li>
+<li class="property protected "><a href="#property_role" title="$role :: "><span class="description"></span><pre>$role</pre></a></li>
+<li class="property protected inherited"><a href="#property_selectors" title="$selectors :: Selectors"><span class="description"></span><pre>$selectors</pre></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\PearPackageScanner"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/PearPackageScanner.html">PearPackageScanner</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">Scans for files in a PEAR package.</p>
+<div class="details">
+<div class="long_description"><p>These criteria consist of a set of include and exclude patterns. With these
+patterns, you can select which files you want to have included, and which
+files you want to have excluded.</p>
+
+<p>The idea is simple. A given directory is recursively scanned for all files
+and directories. Each file/directory is matched against a set of include
+and exclude patterns. Only files/directories that match at least one
+pattern of the include pattern list, and don't match a pattern of the
+exclude pattern list will be placed in the list of files/directories found.</p>
+
+<p>When no list of include patterns is supplied, "**" will be used, which
+means that everything will be matched. When no list of exclude patterns is
+supplied, an empty list is used, such that nothing will be excluded.</p>
+
+<p>The pattern matching is done as follows:
+The name to be matched is split up in path segments. A path segment is the
+name of a directory or file, which is bounded by DIRECTORY_SEPARATOR
+('/' under UNIX, '\' under Windows).
+E.g. "abc/def/ghi/xyz.php" is split up in the segments "abc", "def", "ghi"
+and "xyz.php".
+The same is done for the pattern against which should be matched.</p>
+
+<p>Then the segments of the name and the pattern will be matched against each
+other. When '**' is used for a path segment in the pattern, then it matches
+zero or more path segments of the name.</p>
+
+<p>There are special case regarding the use of DIRECTORY_SEPARATOR at
+the beginning of the pattern and the string to match:
+When a pattern starts with a DIRECTORY_SEPARATOR, the string
+to match must also start with a DIRECTORY_SEPARATOR.
+When a pattern does not start with a DIRECTORY_SEPARATOR, the
+string to match may not start with a DIRECTORY_SEPARATOR.
+When one of these rules is not obeyed, the string will not
+match.</p>
+
+<p>When a name path segment is matched against a pattern path segment, the
+following special characters can be used:
+  '*' matches zero or more characters,
+  '?' matches one character.</p>
+
+<p>Examples:</p>
+
+<p>"**&#42;.php" matches all .php files/dirs in a directory tree.</p>
+
+<p>"test\a??.php" matches all files/dirs which start with an 'a', then two
+more characters and then ".php", in a directory called test.</p>
+
+<p>"**" matches everything in a directory tree.</p>
+
+<p>"**\test&#42;<em>\XYZ</em>" matches all files/dirs that start with "XYZ" and where
+there is a parent directory called test (e.g. "abc\test\def\ghi\XYZ123").</p>
+
+<p>Case sensitivity may be turned off if necessary.  By default, it is
+turned on.</p>
+
+<p>Example of usage:
+  $ds = new DirectroyScanner();
+  $includes = array("**&#42;.php");
+  $excludes = array("modules&#42;&#42;*");
+  $ds->SetIncludes($includes);
+  $ds->SetExcludes($excludes);
+  $ds->SetBasedir("test");
+  $ds->SetCaseSensitive(true);
+  $ds->Scan();</p>
+
+<p>print("FILES:");
+  $files = ds->GetIncludedFiles();
+  for ($i = 0; $i &lt; count($files);$i++) {
+    println("$files[$i]\n");
+  }</p>
+
+<p>This will scan a directory called test for .php files, but excludes all
+.php files in all directories under a directory called "modules"</p>
+
+<p>This class is complete preg/ereg free port of the Java class
+org.apache.tools.ant.DirectoryScanner. Even functions that use preg/ereg
+internally (like split()) are not used. Only the <em>fast</em> string functions
+and comparison operators (=== !=== etc) are used for matching and tokenizing.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>category</th>
+<td>Util</td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.util.html">phing.util</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="mailto:cweiske@cweiske.de">Christian Weiske</a></td>
+</tr>
+<tr>
+<th>license</th>
+<td><a href="">LGPL v3 or later http://www.gnu.org/licenses/lgpl.html</a></td>
+</tr>
+<tr>
+<th>link</th>
+<td><a href="http://www.phing.info/">http://www.phing.info/</a></td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method_addDefaultExcludes"></a><div class="element clickable method public method_addDefaultExcludes" data-toggle="collapse" data-target=".method_addDefaultExcludes .collapse">
+<h2>Adds the array with default exclusions to the current exclusions set.</h2>
+<pre>addDefaultExcludes() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::addDefaultExcludes()</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_getBasedir"></a><div class="element clickable method public method_getBasedir" data-toggle="collapse" data-target=".method_getBasedir .collapse">
+<h2>Gets the basedir that is used for scanning.</h2>
+<pre>getBasedir() : \the</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This is the directory that
+is scanned recursively.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::getBasedir()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\the</code>basedir that is used for scanning</div>
+</div></div>
+</div>
+<a id="method_getDeselectedDirectories"></a><div class="element clickable method public method_getDeselectedDirectories" data-toggle="collapse" data-target=".method_getDeselectedDirectories .collapse">
+<h2>&lt;p&gt;Returns the names of the directories which were selected out and
+therefore not ultimately included.&lt;/p&gt;</h2>
+<pre>getDeselectedDirectories() : \the</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The names are relative to the base directory. This involves
+performing a slow scan if one has not already been completed.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>see</th>
+<td><a href="">\global\#slowScan</a></td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::getDeselectedDirectories()</td>
+</tr>
+</table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\the</code>names of the directories which were deselected.</div>
+</div></div>
+</div>
+<a id="method_getDeselectedFiles"></a><div class="element clickable method public method_getDeselectedFiles" data-toggle="collapse" data-target=".method_getDeselectedFiles .collapse">
+<h2>&lt;p&gt;Returns the names of the files which were selected out and
+therefore not ultimately included.&lt;/p&gt;</h2>
+<pre>getDeselectedFiles() : \the</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The names are relative to the base directory. This involves
+performing a slow scan if one has not already been completed.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>see</th>
+<td><a href="">\global\#slowScan</a></td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::getDeselectedFiles()</td>
+</tr>
+</table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\the</code>names of the files which were deselected.</div>
+</div></div>
+</div>
+<a id="method_getExcludedDirectories"></a><div class="element clickable method public method_getExcludedDirectories" data-toggle="collapse" data-target=".method_getExcludedDirectories .collapse">
+<h2>Get the names of the directories that matched at least one of the include
+patterns, an matched also at least one of the exclude patterns.</h2>
+<pre>getExcludedDirectories() : \the</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The names are relative to the basedir.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::getExcludedDirectories()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\the</code>names of the directories</div>
+</div></div>
+</div>
+<a id="method_getExcludedFiles"></a><div class="element clickable method public method_getExcludedFiles" data-toggle="collapse" data-target=".method_getExcludedFiles .collapse">
+<h2>Get the names of the files that matched at least one of the include
+patterns, an matched also at least one of the exclude patterns.</h2>
+<pre>getExcludedFiles() : \the</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The names are relative to the basedir.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::getExcludedFiles()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\the</code>names of the files</div>
+</div></div>
+</div>
+<a id="method_getIncludedDirectories"></a><div class="element clickable method public method_getIncludedDirectories" data-toggle="collapse" data-target=".method_getIncludedDirectories .collapse">
+<h2>Get the names of the directories that matched at least one of the include
+patterns, an matched none of the exclude patterns.</h2>
+<pre>getIncludedDirectories() : \the</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The names are relative to the basedir.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::getIncludedDirectories()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\the</code>names of the directories</div>
+</div></div>
+</div>
+<a id="method_getIncludedFiles"></a><div class="element clickable method public method_getIncludedFiles" data-toggle="collapse" data-target=".method_getIncludedFiles .collapse">
+<h2>Get the names of the files that matched at least one of the include
+patterns, and matched none of the exclude patterns.</h2>
+<pre>getIncludedFiles() : \the</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The names are relative to the basedir.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::getIncludedFiles()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\the</code>names of the files</div>
+</div></div>
+</div>
+<a id="method_getNotIncludedDirectories"></a><div class="element clickable method public method_getNotIncludedDirectories" data-toggle="collapse" data-target=".method_getNotIncludedDirectories .collapse">
+<h2>Get the names of the directories that matched at none of the include
+patterns.</h2>
+<pre>getNotIncludedDirectories() : \the</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The names are relative to the basedir.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::getNotIncludedDirectories()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\the</code>names of the directories</div>
+</div></div>
+</div>
+<a id="method_getNotIncludedFiles"></a><div class="element clickable method public method_getNotIncludedFiles" data-toggle="collapse" data-target=".method_getNotIncludedFiles .collapse">
+<h2>Get the names of the files that matched at none of the include patterns.</h2>
+<pre>getNotIncludedFiles() : \the</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The names are relative to the basedir.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::getNotIncludedFiles()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\the</code>names of the files</div>
+</div></div>
+</div>
+<a id="method_isEverythingIncluded"></a><div class="element clickable method public method_isEverythingIncluded" data-toggle="collapse" data-target=".method_isEverythingIncluded .collapse">
+<h2>Returns whether or not the scanner has included all the files or
+directories it has come across so far.</h2>
+<pre>isEverythingIncluded() : \&lt;code&gt;true&lt;/code&gt;</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::isEverythingIncluded()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\&lt;code&gt;true&lt;/code&gt;</code>if all files and directories which have
+        been found so far have been included.</div>
+</div></div>
+</div>
+<a id="method_listDir"></a><div class="element clickable method public method_listDir" data-toggle="collapse" data-target=".method_listDir .collapse">
+<h2>Lists contens of a given directory and returns array with entries</h2>
+<pre>listDir(\src $_dir) : array</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>access</th>
+<td>public</td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="">Albert Lash, alash@plateauinnovation.com</a></td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::listDir()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$_dir</h4>
+<code>\src</code><p>String. Source path and name file to copy.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code>directory entries</div>
+</div></div>
+</div>
+<a id="method_match"></a><div class="element clickable method public method_match" data-toggle="collapse" data-target=".method_match .collapse">
+<h2>Matches a string against a pattern.</h2>
+<pre>match(\pattern $pattern, \str $str, $isCaseSensitive) : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The pattern contains two special
+characters:
+'*' which means zero or more characters,
+'?' which means one and only one character.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>access</th>
+<td>public</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::match()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$pattern</h4>
+<code>\pattern</code><p>the (non-null) pattern to match against</p>
+</div>
+<div class="subelement argument">
+<h4>$str</h4>
+<code>\str</code><p>the (non-null) string that must be matched against the pattern</p>
+</div>
+<div class="subelement argument"><h4>$isCaseSensitive</h4></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true when the string matches against the pattern,
+                false otherwise.</div>
+</div></div>
+</div>
+<a id="method_matchPath"></a><div class="element clickable method public method_matchPath" data-toggle="collapse" data-target=".method_matchPath .collapse">
+<h2>Matches a path against a pattern.</h2>
+<pre>matchPath(\pattern $pattern, \str $str, \isCaseSensitive $isCaseSensitive) : true</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Static</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::matchPath()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$pattern</h4>
+<code>\pattern</code><p>the (non-null) pattern to match against</p>
+</div>
+<div class="subelement argument">
+<h4>$str</h4>
+<code>\str</code><p>the (non-null) string (path) to match</p>
+</div>
+<div class="subelement argument">
+<h4>$isCaseSensitive</h4>
+<code>\isCaseSensitive</code><p>must a case sensitive match be done?</p>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>true</code>when the pattern matches against the string.
+        false otherwise.</div>
+</div></div>
+</div>
+<a id="method_matchPatternStart"></a><div class="element clickable method public method_matchPatternStart" data-toggle="collapse" data-target=".method_matchPatternStart .collapse">
+<h2>Does the path match the start of this pattern up to the first "**".</h2>
+<pre>matchPatternStart(\pattern $pattern, \str $str, \isCaseSensitive $isCaseSensitive) : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This is a static mehtod and should always be called static</p>
+
+<p>This is not a general purpose test and should only be used if you
+can live with false positives.</p>
+
+<p>pattern=**\a and str=b will yield true.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::matchPatternStart()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$pattern</h4>
+<code>\pattern</code><p>the (non-null) pattern to match against</p>
+</div>
+<div class="subelement argument">
+<h4>$str</h4>
+<code>\str</code><p>the (non-null) string (path) to match</p>
+</div>
+<div class="subelement argument">
+<h4>$isCaseSensitive</h4>
+<code>\isCaseSensitive</code><p>must matches be case sensitive?</p>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if matches, otherwise false</div>
+</div></div>
+</div>
+<a id="method_scan"></a><div class="element clickable method public method_scan" data-toggle="collapse" data-target=".method_scan .collapse">
+<h2>Generates the list of included files and directories</h2>
+<pre>scan() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>uses</th>
+<td>\global\$filesIncluded</td>
+</tr>
+<tr>
+<th>uses</th>
+<td>\global\$filesDeselected</td>
+</tr>
+<tr>
+<th>uses</th>
+<td>\global\$filesNotIncluded</td>
+</tr>
+<tr>
+<th>uses</th>
+<td>\global\$filesExcluded</td>
+</tr>
+<tr>
+<th>uses</th>
+<td>\global\$everythingIncluded</td>
+</tr>
+<tr>
+<th>uses</th>
+<td>\global\$dirsIncluded</td>
+</tr>
+<tr>
+<th>uses</th>
+<td>\global\$dirsDeselected</td>
+</tr>
+<tr>
+<th>uses</th>
+<td>\global\$dirsNotIncluded</td>
+</tr>
+<tr>
+<th>uses</th>
+<td>\global\$dirsExcluded</td>
+</tr>
+</table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>True if all went well, false if something was wrong</div>
+</div></div>
+</div>
+<a id="method_setBasedir"></a><div class="element clickable method public method_setBasedir" data-toggle="collapse" data-target=".method_setBasedir .collapse">
+<h2>Sets the basedir for scanning.</h2>
+<pre>setBasedir(\basedir $_basedir) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This is the directory that is scanned
+recursively. All '/' and '\' characters are replaced by
+DIRECTORY_SEPARATOR</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::setBasedir()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$_basedir</h4>
+<code>\basedir</code><p>the (non-null) basedir for scanning</p>
+</div>
+</div></div>
+</div>
+<a id="method_setCaseSensitive"></a><div class="element clickable method public method_setCaseSensitive" data-toggle="collapse" data-target=".method_setCaseSensitive .collapse">
+<h2>Sets the case sensitivity of the file system</h2>
+<pre>setCaseSensitive(\specifies $_isCaseSensitive) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::setCaseSensitive()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$_isCaseSensitive</h4>
+<code>\specifies</code><p>if the filesystem is case sensitive</p></div>
+</div></div>
+</div>
+<a id="method_setChannel"></a><div class="element clickable method public method_setChannel" data-toggle="collapse" data-target=".method_setChannel .collapse">
+<h2>Sets the name of the package channel name</h2>
+<pre>setChannel(string $channel) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$channel</h4>
+<code>string</code><p>package channel name or alias</p></div>
+</div></div>
+</div>
+<a id="method_setConfig"></a><div class="element clickable method public method_setConfig" data-toggle="collapse" data-target=".method_setConfig .collapse">
+<h2>Sets the full path to the PEAR configuration file</h2>
+<pre>setConfig(string $config) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$config</h4>
+<code>string</code><p>Configuration file</p></div>
+</div></div>
+</div>
+<a id="method_setExcludes"></a><div class="element clickable method public method_setExcludes" data-toggle="collapse" data-target=".method_setExcludes .collapse">
+<h2>Sets the set of exclude patterns to use.</h2>
+<pre>setExcludes(\excludes $_excludes) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>All '/' and '\' characters are
+replaced by</p>
+
+<pre><code>File.separatorChar</code></pre>
+
+<p>. So the separator used need
+not match</p>
+
+<pre><code>File.separatorChar</code></pre>
+
+<p>.</p>
+
+<p>When a pattern ends with a '/' or '\', "**" is appended.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::setExcludes()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$_excludes</h4>
+<code>\excludes</code><p>list of exclude patterns</p></div>
+</div></div>
+</div>
+<a id="method_setExpandSymbolicLinks"></a><div class="element clickable method public method_setExpandSymbolicLinks" data-toggle="collapse" data-target=".method_setExpandSymbolicLinks .collapse">
+<h2>Sets whether to expand/dereference symbolic links</h2>
+<pre>setExpandSymbolicLinks(\expandSymbolicLinks $expandSymbolicLinks) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::setExpandSymbolicLinks()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$expandSymbolicLinks</h4>
+<code>\expandSymbolicLinks</code><p>boolean value</p></div>
+</div></div>
+</div>
+<a id="method_setIncludes"></a><div class="element clickable method public method_setIncludes" data-toggle="collapse" data-target=".method_setIncludes .collapse">
+<h2>Sets the set of include patterns to use.</h2>
+<pre>setIncludes(\includes $_includes) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>All '/' and '\' characters are
+replaced by DIRECTORY_SEPARATOR. So the separator used need
+not match DIRECTORY_SEPARATOR.</p>
+
+<p>When a pattern ends with a '/' or '\', "**" is appended.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::setIncludes()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$_includes</h4>
+<code>\includes</code><p>list of include patterns</p></div>
+</div></div>
+</div>
+<a id="method_setPackage"></a><div class="element clickable method public method_setPackage" data-toggle="collapse" data-target=".method_setPackage .collapse">
+<h2>Sets the name of the PEAR package to get the files from</h2>
+<pre>setPackage(string $package) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$package</h4>
+<code>string</code><p>Package name without channel</p></div>
+</div></div>
+</div>
+<a id="method_setSelectors"></a><div class="element clickable method public method_setSelectors" data-toggle="collapse" data-target=".method_setSelectors .collapse">
+<h2>Sets the selectors that will select the filelist.</h2>
+<pre>setSelectors(\selectors $selectors) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::setSelectors()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$selectors</h4>
+<code>\selectors</code><p>specifies the selectors to be invoked on a scan</p></div>
+</div></div>
+</div>
+<a id="method_couldHoldIncluded"></a><div class="element clickable method protected method_couldHoldIncluded" data-toggle="collapse" data-target=".method_couldHoldIncluded .collapse">
+<h2>Tests whether a name matches the start of at least one include pattern.</h2>
+<pre>couldHoldIncluded(\name $_name) : \&lt;code&gt;true&lt;/code&gt;</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::couldHoldIncluded()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$_name</h4>
+<code>\name</code><p>the name to match</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\&lt;code&gt;true&lt;/code&gt;</code>when the name matches against at least one
+        include pattern, <code>false</code> otherwise.</div>
+</div></div>
+</div>
+<a id="method_init"></a><div class="element clickable method protected method_init" data-toggle="collapse" data-target=".method_init .collapse">
+<h2>Loads the package information.</h2>
+<pre>init() : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>uses</th>
+<td>\global\$packageInfo</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_isExcluded"></a><div class="element clickable method protected method_isExcluded" data-toggle="collapse" data-target=".method_isExcluded .collapse">
+<h2>Tests whether a name matches against at least one exclude pattern.</h2>
+<pre>isExcluded(\name $_name) : \&lt;code&gt;true&lt;/code&gt;</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::isExcluded()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$_name</h4>
+<code>\name</code><p>the name to match</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\&lt;code&gt;true&lt;/code&gt;</code>when the name matches against at least one
+        exclude pattern, <code>false</code> otherwise.</div>
+</div></div>
+</div>
+<a id="method_isIncluded"></a><div class="element clickable method protected method_isIncluded" data-toggle="collapse" data-target=".method_isIncluded .collapse">
+<h2>Tests whether a name matches against at least one include pattern.</h2>
+<pre>isIncluded(\name $_name) : \&lt;code&gt;true&lt;/code&gt;</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::isIncluded()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$_name</h4>
+<code>\name</code><p>the name to match</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\&lt;code&gt;true&lt;/code&gt;</code>when the name matches against at least one
+        include pattern, <code>false</code> otherwise.</div>
+</div></div>
+</div>
+<a id="method_isSelected"></a><div class="element clickable method protected method_isSelected" data-toggle="collapse" data-target=".method_isSelected .collapse">
+<h2>Tests whether a name should be selected.</h2>
+<pre>isSelected(string $name, string $file) : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::isSelected()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code><p>The filename to check for selecting.</p></div>
+<div class="subelement argument">
+<h4>$file</h4>
+<code>string</code><p>The full file path.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>False when the selectors says that the file
+        should not be selected, True otherwise.</div>
+</div></div>
+</div>
+<a id="method_loadPackageInfo"></a><div class="element clickable method protected method_loadPackageInfo" data-toggle="collapse" data-target=".method_loadPackageInfo .collapse">
+<h2>Loads and returns the PEAR package information.</h2>
+<pre>loadPackageInfo() : \PEAR_PackageFile_v2</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/BuildException.html">\BuildException</a></code></th>
+<td>When the package does not exist</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\PEAR_PackageFile_v2</code>Package information object</div>
+</div></div>
+</div>
+<a id="method_slowScan"></a><div class="element clickable method protected method_slowScan" data-toggle="collapse" data-target=".method_slowScan .collapse">
+<h2>Toplevel invocation for the scan.</h2>
+<pre>slowScan() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Returns immediately if a slow scan has already been requested.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::slowScan()</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_scandir"></a><div class="element clickable method private method_scandir" data-toggle="collapse" data-target=".method_scandir .collapse">
+<h2>Scans the passed dir for files and directories.</h2>
+<pre>scandir(\dir $_rootdir, \vpath $_vpath, $_fast) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Found files and
+directories are placed in their respective collections, based on the
+matching of includes and excludes. When a directory is found, it is
+scanned recursively.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>access</th>
+<td>private</td>
+</tr>
+<tr>
+<th>see</th>
+<td><a href="">\global\#filesIncluded</a></td>
+</tr>
+<tr>
+<th>see</th>
+<td><a href="">\global\#filesNotIncluded</a></td>
+</tr>
+<tr>
+<th>see</th>
+<td><a href="">\global\#filesExcluded</a></td>
+</tr>
+<tr>
+<th>see</th>
+<td><a href="">\global\#dirsIncluded</a></td>
+</tr>
+<tr>
+<th>see</th>
+<td><a href="">\global\#dirsNotIncluded</a></td>
+</tr>
+<tr>
+<th>see</th>
+<td><a href="">\global\#dirsExcluded</a></td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::scandir()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$_rootdir</h4>
+<code>\dir</code><p>the directory to scan</p></div>
+<div class="subelement argument">
+<h4>$_vpath</h4>
+<code>\vpath</code><p>the path relative to the basedir (needed to prevent problems with an absolute path when using dir)</p>
+</div>
+<div class="subelement argument"><h4>$_fast</h4></div>
+</div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_DEFAULTEXCLUDES"> </a><div class="element clickable property protected property_DEFAULTEXCLUDES" data-toggle="collapse" data-target=".property_DEFAULTEXCLUDES .collapse">
+<h2></h2>
+<pre>$DEFAULTEXCLUDES </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$DEFAULTEXCLUDES</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_basedir"> </a><div class="element clickable property protected property_basedir" data-toggle="collapse" data-target=".property_basedir .collapse">
+<h2></h2>
+<pre>$basedir </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$basedir</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_channel"> </a><div class="element clickable property protected property_channel" data-toggle="collapse" data-target=".property_channel .collapse">
+<h2></h2>
+<pre>$channel </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_config"> </a><div class="element clickable property protected property_config" data-toggle="collapse" data-target=".property_config .collapse">
+<h2></h2>
+<pre>$config </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_dirsDeselected"> </a><div class="element clickable property protected property_dirsDeselected" data-toggle="collapse" data-target=".property_dirsDeselected .collapse">
+<h2></h2>
+<pre>$dirsDeselected </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$dirsDeselected</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_dirsExcluded"> </a><div class="element clickable property protected property_dirsExcluded" data-toggle="collapse" data-target=".property_dirsExcluded .collapse">
+<h2></h2>
+<pre>$dirsExcluded </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$dirsExcluded</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_dirsIncluded"> </a><div class="element clickable property protected property_dirsIncluded" data-toggle="collapse" data-target=".property_dirsIncluded .collapse">
+<h2></h2>
+<pre>$dirsIncluded </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$dirsIncluded</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_dirsNotIncluded"> </a><div class="element clickable property protected property_dirsNotIncluded" data-toggle="collapse" data-target=".property_dirsNotIncluded .collapse">
+<h2></h2>
+<pre>$dirsNotIncluded </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$dirsNotIncluded</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_everythingIncluded"> </a><div class="element clickable property protected property_everythingIncluded" data-toggle="collapse" data-target=".property_everythingIncluded .collapse">
+<h2></h2>
+<pre>$everythingIncluded </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$everythingIncluded</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_excludes"> </a><div class="element clickable property protected property_excludes" data-toggle="collapse" data-target=".property_excludes .collapse">
+<h2></h2>
+<pre>$excludes </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$excludes</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_expandSymbolicLinks"> </a><div class="element clickable property protected property_expandSymbolicLinks" data-toggle="collapse" data-target=".property_expandSymbolicLinks .collapse">
+<h2></h2>
+<pre>$expandSymbolicLinks </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$expandSymbolicLinks</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_filesDeselected"> </a><div class="element clickable property protected property_filesDeselected" data-toggle="collapse" data-target=".property_filesDeselected .collapse">
+<h2></h2>
+<pre>$filesDeselected </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$filesDeselected</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_filesExcluded"> </a><div class="element clickable property protected property_filesExcluded" data-toggle="collapse" data-target=".property_filesExcluded .collapse">
+<h2></h2>
+<pre>$filesExcluded </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Trie object.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$filesExcluded</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_filesIncluded"> </a><div class="element clickable property protected property_filesIncluded" data-toggle="collapse" data-target=".property_filesIncluded .collapse">
+<h2></h2>
+<pre>$filesIncluded </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$filesIncluded</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_filesNotIncluded"> </a><div class="element clickable property protected property_filesNotIncluded" data-toggle="collapse" data-target=".property_filesNotIncluded .collapse">
+<h2></h2>
+<pre>$filesNotIncluded </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Trie</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$filesNotIncluded</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_haveSlowResults"> </a><div class="element clickable property protected property_haveSlowResults" data-toggle="collapse" data-target=".property_haveSlowResults .collapse">
+<h2></h2>
+<pre>$haveSlowResults </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$haveSlowResults</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_includes"> </a><div class="element clickable property protected property_includes" data-toggle="collapse" data-target=".property_includes .collapse">
+<h2></h2>
+<pre>$includes </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$includes</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_isCaseSensitive"> </a><div class="element clickable property protected property_isCaseSensitive" data-toggle="collapse" data-target=".property_isCaseSensitive .collapse">
+<h2></h2>
+<pre>$isCaseSensitive </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$isCaseSensitive</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_package"> </a><div class="element clickable property protected property_package" data-toggle="collapse" data-target=".property_package .collapse">
+<h2></h2>
+<pre>$package </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_packageInfo"> </a><div class="element clickable property protected property_packageInfo" data-toggle="collapse" data-target=".property_packageInfo .collapse">
+<h2></h2>
+<pre>$packageInfo </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_role"> </a><div class="element clickable property protected property_role" data-toggle="collapse" data-target=".property_role .collapse">
+<h2></h2>
+<pre>$role </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_selectors"> </a><div class="element clickable property protected property_selectors" data-toggle="collapse" data-target=".property_selectors .collapse">
+<h2></h2>
+<pre>$selectors </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\DirectoryScanner::$$selectors</td>
+</tr></table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:50+01:00.<br></footer></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="TouchTaskTest" default="main">
+    <property name="tmp.dir" value="tmp"/>
+    
+    <target name="setup">
+    	<mkdir dir="${tmp.dir}"/>
+    </target>
+    
+    <target name="clean">
+        <delete dir="${tmp.dir}"/>
+    </target>
+    
+    <target name="testSimpleTouch">
+    	<touch file="${tmp.dir}/simple-file"/>
+    </target>
+    
+    <target name="main"/>
+</project>

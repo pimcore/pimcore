@@ -1,0 +1,1252 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \IoncubeEncoderTask</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method_addComment" title="addComment :: Adds a comment to be used in encoded files"><span class="description">Adds a comment to be used in encoded files</span><pre>addComment()</pre></a></li>
+<li class="method public "><a href="#method_getActionIfNoLoader" title="getActionIfNoLoader :: Returns the action-if-no-loader option"><span class="description">Returns the action-if-no-loader option</span><pre>getActionIfNoLoader()</pre></a></li>
+<li class="method public "><a href="#method_getAllowEncodingIntoSource" title="getAllowEncodingIntoSource :: Returns the allow-encoding-into-source option"><span class="description">Returns the allow-encoding-into-source option</span><pre>getAllowEncodingIntoSource()</pre></a></li>
+<li class="method public "><a href="#method_getAllowedServer" title="getAllowedServer :: Returns the allowed server setting"><span class="description">Returns the allowed server setting</span><pre>getAllowedServer()</pre></a></li>
+<li class="method public "><a href="#method_getBinary" title="getBinary :: Returns the binary option"><span class="description">Returns the binary option</span><pre>getBinary()</pre></a></li>
+<li class="method public "><a href="#method_getCallbackFile" title="getCallbackFile :: Returns the callback-file option"><span class="description">Returns the callback-file option</span><pre>getCallbackFile()</pre></a></li>
+<li class="method public "><a href="#method_getCopy" title="getCopy :: Returns the copy setting"><span class="description">Returns the copy setting</span><pre>getCopy()</pre></a></li>
+<li class="method public inherited"><a href="#method_getDescription" title="getDescription :: Returns the textual description of the task"><span class="description">Returns the textual description of the task</span><pre>getDescription()</pre></a></li>
+<li class="method public "><a href="#method_getEncode" title="getEncode :: Returns the encode setting"><span class="description">Returns the encode setting</span><pre>getEncode()</pre></a></li>
+<li class="method public "><a href="#method_getEncrypt" title="getEncrypt :: Returns regexps of additional files to encrypt (separated by space)"><span class="description">Returns regexps of additional files to encrypt (separated by space)</span><pre>getEncrypt()</pre></a></li>
+<li class="method public "><a href="#method_getExpirein" title="getExpirein :: Returns the expireIn setting"><span class="description">Returns the expireIn setting</span><pre>getExpirein()</pre></a></li>
+<li class="method public "><a href="#method_getExpireon" title="getExpireon :: Returns the expireOn setting"><span class="description">Returns the expireOn setting</span><pre>getExpireon()</pre></a></li>
+<li class="method public "><a href="#method_getFromDir" title="getFromDir :: Returns the source directory"><span class="description">Returns the source directory</span><pre>getFromDir()</pre></a></li>
+<li class="method public "><a href="#method_getIgnore" title="getIgnore :: Returns the ignore setting"><span class="description">Returns the ignore setting</span><pre>getIgnore()</pre></a></li>
+<li class="method public "><a href="#method_getIgnoreDeprecatedWarnings" title="getIgnoreDeprecatedWarnings :: Returns the ignore-deprecated-warnings option"><span class="description">Returns the ignore-deprecated-warnings option</span><pre>getIgnoreDeprecatedWarnings()</pre></a></li>
+<li class="method public "><a href="#method_getIgnoreStrictWarnings" title="getIgnoreStrictWarnings :: Returns the ignore-strict-warnings option"><span class="description">Returns the ignore-strict-warnings option</span><pre>getIgnoreStrictWarnings()</pre></a></li>
+<li class="method public "><a href="#method_getIoncubePath" title="getIoncubePath :: Returns the path to the ionCube encoder"><span class="description">Returns the path to the ionCube encoder</span><pre>getIoncubePath()</pre></a></li>
+<li class="method public "><a href="#method_getKeep" title="getKeep :: Returns the ignore setting"><span class="description">Returns the ignore setting</span><pre>getKeep()</pre></a></li>
+<li class="method public "><a href="#method_getLicensePath" title="getLicensePath :: Returns the path to the license file to use"><span class="description">Returns the path to the license file to use</span><pre>getLicensePath()</pre></a></li>
+<li class="method public inherited"><a href="#method_getLocation" title="getLocation :: Returns the location within the buildfile this task occurs."><span class="description">Returns the location within the buildfile this task occurs.</span><pre>getLocation()</pre></a></li>
+<li class="method public "><a href="#method_getMessageIfNoLoader" title="getMessageIfNoLoader :: Returns the message-if-no-loader option"><span class="description">Returns the message-if-no-loader option</span><pre>getMessageIfNoLoader()</pre></a></li>
+<li class="method public "><a href="#method_getNoDocComments" title="getNoDocComments :: Returns the no-doc-comments option"><span class="description">Returns the no-doc-comments option</span><pre>getNoDocComments()</pre></a></li>
+<li class="method public "><a href="#method_getNoShortOpenTags" title="getNoShortOpenTags :: Returns the no-short-open-tags option"><span class="description">Returns the no-short-open-tags option</span><pre>getNoShortOpenTags()</pre></a></li>
+<li class="method public "><a href="#method_getObfuscate" title="getObfuscate :: Returns the optimize option"><span class="description">Returns the optimize option</span><pre>getObfuscate()</pre></a></li>
+<li class="method public "><a href="#method_getObfuscationExclusionFile" title="getObfuscationExclusionFile :: Returns the obfuscation-exclusions-file option"><span class="description">Returns the obfuscation-exclusions-file option</span><pre>getObfuscationExclusionFile()</pre></a></li>
+<li class="method public "><a href="#method_getObfuscationKey" title="getObfuscationKey :: Returns the optimize option"><span class="description">Returns the optimize option</span><pre>getObfuscationKey()</pre></a></li>
+<li class="method public "><a href="#method_getOptimize" title="getOptimize :: Returns the optimize option"><span class="description">Returns the optimize option</span><pre>getOptimize()</pre></a></li>
+<li class="method public inherited"><a href="#method_getOwningTarget" title="getOwningTarget :: Returns the owning target of this task."><span class="description">Returns the owning target of this task.</span><pre>getOwningTarget()</pre></a></li>
+<li class="method public "><a href="#method_getPassPhrase" title="getPassPhrase :: Returns the passphrase to use when encoding files"><span class="description">Returns the passphrase to use when encoding files</span><pre>getPassPhrase()</pre></a></li>
+<li class="method public "><a href="#method_getPhpVersion" title="getPhpVersion :: Returns the version of PHP to use (defaults to 5)"><span class="description">Returns the version of PHP to use (defaults to 5)</span><pre>getPhpVersion()</pre></a></li>
+<li class="method public inherited"><a href="#method_getProject" title="getProject :: Returns a reference to current project"><span class="description">Returns a reference to current project</span><pre>getProject()</pre></a></li>
+<li class="method public inherited"><a href="#method_getRuntimeConfigurableWrapper" title="getRuntimeConfigurableWrapper :: Returns the wrapper object for runtime configuration"><span class="description">Returns the wrapper object for runtime configuration</span><pre>getRuntimeConfigurableWrapper()</pre></a></li>
+<li class="method public "><a href="#method_getTargetOption" title="getTargetOption :: Returns he option to use when encoding target directory already exists (defaults to none)"><span class="description">Returns he option to use when encoding target directory already exists (defaults to none)</span><pre>getTargetOption()</pre></a></li>
+<li class="method public inherited"><a href="#method_getTaskName" title="getTaskName :: Returns the name of task, used only for log messages"><span class="description">Returns the name of task, used only for log messages</span><pre>getTaskName()</pre></a></li>
+<li class="method public inherited"><a href="#method_getTaskType" title="getTaskType :: Returns the name of the task under which it was invoked,
+usually the XML tagname"><span class="description">Returns the name of the task under which it was invoked,
+usually the XML tagname</span><pre>getTaskType()</pre></a></li>
+<li class="method public "><a href="#method_getToDir" title="getToDir :: Returns the target directory"><span class="description">Returns the target directory</span><pre>getToDir()</pre></a></li>
+<li class="method public "><a href="#method_getWithoutRuntimeLoaderSupport" title="getWithoutRuntimeLoaderSupport :: Returns the without-runtime-loader-support option"><span class="description">Returns the without-runtime-loader-support option</span><pre>getWithoutRuntimeLoaderSupport()</pre></a></li>
+<li class="method public inherited"><a href="#method_init" title="init :: Called by the parser to let the task initialize properly."><span class="description">Called by the parser to let the task initialize properly.</span><pre>init()</pre></a></li>
+<li class="method public inherited"><a href="#method_log" title="log :: Provides a project level log event to the task."><span class="description">Provides a project level log event to the task.</span><pre>log()</pre></a></li>
+<li class="method public "><a href="#method_main" title="main :: The main entry point"><span class="description">The main entry point</span><pre>main()</pre></a></li>
+<li class="method public inherited"><a href="#method_maybeConfigure" title="maybeConfigure :: Configure this task if it hasn't been done already."><span class="description">Configure this task if it hasn't been done already.</span><pre>maybeConfigure()</pre></a></li>
+<li class="method public inherited"><a href="#method_perform" title="perform :: Perfrom this task"><span class="description">Perfrom this task</span><pre>perform()</pre></a></li>
+<li class="method public "><a href="#method_setActionIfNoLoader" title="setActionIfNoLoader :: Sets the action-if-no-loader option"><span class="description">Sets the action-if-no-loader option</span><pre>setActionIfNoLoader()</pre></a></li>
+<li class="method public "><a href="#method_setAllowEncodingIntoSource" title="setAllowEncodingIntoSource :: Sets the allow-encoding-into-source option"><span class="description">Sets the allow-encoding-into-source option</span><pre>setAllowEncodingIntoSource()</pre></a></li>
+<li class="method public "><a href="#method_setAllowedServer" title="setAllowedServer :: Sets the allowed server"><span class="description">Sets the allowed server</span><pre>setAllowedServer()</pre></a></li>
+<li class="method public "><a href="#method_setBinary" title="setBinary :: Sets the binary option"><span class="description">Sets the binary option</span><pre>setBinary()</pre></a></li>
+<li class="method public "><a href="#method_setCallbackFile" title="setCallbackFile :: Sets the callback-file option"><span class="description">Sets the callback-file option</span><pre>setCallbackFile()</pre></a></li>
+<li class="method public "><a href="#method_setCopy" title="setCopy :: Sets files or folders to copy (separated by space)"><span class="description">Sets files or folders to copy (separated by space)</span><pre>setCopy()</pre></a></li>
+<li class="method public inherited"><a href="#method_setDescription" title="setDescription :: Sets a textual description of the task"><span class="description">Sets a textual description of the task</span><pre>setDescription()</pre></a></li>
+<li class="method public "><a href="#method_setEncode" title="setEncode :: Sets additional file patterns, files or directories to encode,
+or to reverse the effect of copy (separated by space)"><span class="description">Sets additional file patterns, files or directories to encode,
+or to reverse the effect of copy (separated by space)</span><pre>setEncode()</pre></a></li>
+<li class="method public "><a href="#method_setEncrypt" title="setEncrypt :: Sets regexps of additional files to encrypt (separated by space)"><span class="description">Sets regexps of additional files to encrypt (separated by space)</span><pre>setEncrypt()</pre></a></li>
+<li class="method public "><a href="#method_setExpirein" title="setExpirein :: Sets a period after which the files expire"><span class="description">Sets a period after which the files expire</span><pre>setExpirein()</pre></a></li>
+<li class="method public "><a href="#method_setExpireon" title="setExpireon :: Sets a YYYY-MM-DD date to expire the files"><span class="description">Sets a YYYY-MM-DD date to expire the files</span><pre>setExpireon()</pre></a></li>
+<li class="method public "><a href="#method_setFromDir" title="setFromDir :: Sets the source directory"><span class="description">Sets the source directory</span><pre>setFromDir()</pre></a></li>
+<li class="method public "><a href="#method_setIgnore" title="setIgnore :: Set files and directories to ignore entirely and exclude from the target directory
+(separated by space)."><span class="description">Set files and directories to ignore entirely and exclude from the target directory
+(separated by space).</span><pre>setIgnore()</pre></a></li>
+<li class="method public "><a href="#method_setIgnoreDeprecatedWarnings" title="setIgnoreDeprecatedWarnings :: Sets the ignore-deprecated-warnings option"><span class="description">Sets the ignore-deprecated-warnings option</span><pre>setIgnoreDeprecatedWarnings()</pre></a></li>
+<li class="method public "><a href="#method_setIgnoreStrictWarnings" title="setIgnoreStrictWarnings :: Sets the ignore-strict-warnings option"><span class="description">Sets the ignore-strict-warnings option</span><pre>setIgnoreStrictWarnings()</pre></a></li>
+<li class="method public "><a href="#method_setIoncubePath" title="setIoncubePath :: Sets the path to the ionCube encoder"><span class="description">Sets the path to the ionCube encoder</span><pre>setIoncubePath()</pre></a></li>
+<li class="method public "><a href="#method_setKeep" title="setKeep :: Set files and directories not to be ignored (separated by space)."><span class="description">Set files and directories not to be ignored (separated by space).</span><pre>setKeep()</pre></a></li>
+<li class="method public "><a href="#method_setLicensePath" title="setLicensePath :: Sets the path to the license file to use"><span class="description">Sets the path to the license file to use</span><pre>setLicensePath()</pre></a></li>
+<li class="method public inherited"><a href="#method_setLocation" title="setLocation :: Sets the location within the buildfile this task occurs."><span class="description">Sets the location within the buildfile this task occurs.</span><pre>setLocation()</pre></a></li>
+<li class="method public "><a href="#method_setMessageIfNoLoader" title="setMessageIfNoLoader :: Sets the message-if-no-loader option"><span class="description">Sets the message-if-no-loader option</span><pre>setMessageIfNoLoader()</pre></a></li>
+<li class="method public "><a href="#method_setNoDocComments" title="setNoDocComments :: Sets the no-doc-comments option"><span class="description">Sets the no-doc-comments option</span><pre>setNoDocComments()</pre></a></li>
+<li class="method public "><a href="#method_setNoShortOpenTags" title="setNoShortOpenTags :: Sets the no-short-open-tags option"><span class="description">Sets the no-short-open-tags option</span><pre>setNoShortOpenTags()</pre></a></li>
+<li class="method public "><a href="#method_setObfuscate" title="setObfuscate :: Sets the obfuscate option"><span class="description">Sets the obfuscate option</span><pre>setObfuscate()</pre></a></li>
+<li class="method public "><a href="#method_setObfuscationExclusionFile" title="setObfuscationExclusionFile :: Sets the obfuscation-exclusions-file option"><span class="description">Sets the obfuscation-exclusions-file option</span><pre>setObfuscationExclusionFile()</pre></a></li>
+<li class="method public "><a href="#method_setObfuscationKey" title="setObfuscationKey :: Sets the obfuscation key (required if using the obfuscate option)"><span class="description">Sets the obfuscation key (required if using the obfuscate option)</span><pre>setObfuscationKey()</pre></a></li>
+<li class="method public "><a href="#method_setOptimize" title="setOptimize :: Sets the optimize option"><span class="description">Sets the optimize option</span><pre>setOptimize()</pre></a></li>
+<li class="method public inherited"><a href="#method_setOwningTarget" title="setOwningTarget :: Sets the owning target this task belongs to."><span class="description">Sets the owning target this task belongs to.</span><pre>setOwningTarget()</pre></a></li>
+<li class="method public "><a href="#method_setPassPhrase" title="setPassPhrase :: Sets the passphrase to use when encoding files"><span class="description">Sets the passphrase to use when encoding files</span><pre>setPassPhrase()</pre></a></li>
+<li class="method public "><a href="#method_setPhpVersion" title="setPhpVersion :: Sets the version of PHP to use (defaults to 5)"><span class="description">Sets the version of PHP to use (defaults to 5)</span><pre>setPhpVersion()</pre></a></li>
+<li class="method public inherited"><a href="#method_setProject" title="setProject :: References the project to the current component."><span class="description">References the project to the current component.</span><pre>setProject()</pre></a></li>
+<li class="method public inherited"><a href="#method_setRuntimeConfigurableWrapper" title="setRuntimeConfigurableWrapper :: Sets the wrapper object this task should use for runtime
+ configurable elements."><span class="description">Sets the wrapper object this task should use for runtime
+ configurable elements.</span><pre>setRuntimeConfigurableWrapper()</pre></a></li>
+<li class="method public "><a href="#method_setShowCommandLine" title="setShowCommandLine :: Sets whether to show command line before it is executed"><span class="description">Sets whether to show command line before it is executed</span><pre>setShowCommandLine()</pre></a></li>
+<li class="method public "><a href="#method_setTargetOption" title="setTargetOption :: Sets the option to use when encoding target directory already exists (defaults to none)"><span class="description">Sets the option to use when encoding target directory already exists (defaults to none)</span><pre>setTargetOption()</pre></a></li>
+<li class="method public inherited"><a href="#method_setTaskName" title="setTaskName :: Sets the name of this task for log messages"><span class="description">Sets the name of this task for log messages</span><pre>setTaskName()</pre></a></li>
+<li class="method public inherited"><a href="#method_setTaskType" title="setTaskType :: Sets the type of the task."><span class="description">Sets the type of the task.</span><pre>setTaskType()</pre></a></li>
+<li class="method public "><a href="#method_setToDir" title="setToDir :: Sets the target directory"><span class="description">Sets the target directory</span><pre>setToDir()</pre></a></li>
+<li class="method public "><a href="#method_setWithoutRuntimeLoaderSupport" title="setWithoutRuntimeLoaderSupport :: Sets the without-runtime-loader-support option"><span class="description">Sets the without-runtime-loader-support option</span><pre>setWithoutRuntimeLoaderSupport()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul><li class="method protected inherited"><a href="#method_getRegisterSlot" title="getRegisterSlot :: Returns a name"><span class="description">Returns a name</span><pre>getRegisterSlot()</pre></a></li></ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul><li class="method private "><a href="#method_constructArguments" title="constructArguments :: Constructs an argument string for the ionCube encoder"><span class="description">Constructs an argument string for the ionCube encoder</span><pre>constructArguments()</pre></a></li></ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul></ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="property protected inherited"><a href="#property_description" title="$description :: Description of the task"><span class="description"></span><pre>$description</pre></a></li>
+<li class="property protected inherited"><a href="#property_location" title="$location :: Stored buildfile location"><span class="description"></span><pre>$location</pre></a></li>
+<li class="property protected inherited"><a href="#property_project" title="$project :: Holds a reference to the project that a project component
+(a task, a target, etc.) belongs to"><span class="description"></span><pre>$project</pre></a></li>
+<li class="property protected inherited"><a href="#property_target" title="$target :: Owning Target object"><span class="description"></span><pre>$target</pre></a></li>
+<li class="property protected inherited"><a href="#property_taskName" title="$taskName :: Taskname for logger"><span class="description"></span><pre>$taskName</pre></a></li>
+<li class="property protected inherited"><a href="#property_taskType" title="$taskType :: Internal taskname (req)"><span class="description"></span><pre>$taskType</pre></a></li>
+<li class="property protected inherited"><a href="#property_wrapper" title="$wrapper :: Wrapper of the task"><span class="description"></span><pre>$wrapper</pre></a></li>
+</ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul>
+<li class="property private "><a href="#property_comments" title="$comments :: "><span class="description"></span><pre>$comments</pre></a></li>
+<li class="property private "><a href="#property_encoderName" title="$encoderName :: "><span class="description"></span><pre>$encoderName</pre></a></li>
+<li class="property private "><a href="#property_fromDir" title="$fromDir :: "><span class="description"></span><pre>$fromDir</pre></a></li>
+<li class="property private "><a href="#property_ionOptions" title="$ionOptions :: "><span class="description"></span><pre>$ionOptions</pre></a></li>
+<li class="property private "><a href="#property_ionOptionsXS" title="$ionOptionsXS :: "><span class="description"></span><pre>$ionOptionsXS</pre></a></li>
+<li class="property private "><a href="#property_ionSwitches" title="$ionSwitches :: "><span class="description"></span><pre>$ionSwitches</pre></a></li>
+<li class="property private "><a href="#property_ioncubePath" title="$ioncubePath :: "><span class="description"></span><pre>$ioncubePath</pre></a></li>
+<li class="property private "><a href="#property_phpVersion" title="$phpVersion :: "><span class="description"></span><pre>$phpVersion</pre></a></li>
+<li class="property private "><a href="#property_showCommandLine" title="$showCommandLine :: "><span class="description"></span><pre>$showCommandLine</pre></a></li>
+<li class="property private "><a href="#property_targetOption" title="$targetOption :: "><span class="description"></span><pre>$targetOption</pre></a></li>
+<li class="property private "><a href="#property_toDir" title="$toDir :: "><span class="description"></span><pre>$toDir</pre></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\IoncubeEncoderTask"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/IoncubeEncoderTask.html">IoncubeEncoderTask</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">Invokes the ionCube Encoder (PHP4 or PHP5)</p>
+<div class="details">
+<div class="long_description"><p>Use <a href="Project#createTask">Project#createTask</a> to register a new Task.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>author</th>
+<td><a href="mailto:mrook@php.net">Michiel Rook</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="mailto:andrew.eddie@jamboworks.com">Andrew Eddie</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="mailto:sbraaaa@yahoo.it">Domenico Sgarbossa</a></td>
+</tr>
+<tr>
+<th>version</th>
+<td>$Id: b72d02e8f0d73e9a0533c249bcee161beeca5fb0 $</td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.tasks.ext.ioncube.html">phing.tasks.ext.ioncube</a></td>
+</tr>
+<tr>
+<th>since</th>
+<td>2.2.0</td>
+</tr>
+<tr>
+<th>copyright</th>
+<td>2001,2002 THYRELL. All rights reserved</td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method_addComment"></a><div class="element clickable method public method_addComment" data-toggle="collapse" data-target=".method_addComment .collapse">
+<h2>Adds a comment to be used in encoded files</h2>
+<pre>addComment(\IoncubeComment $comment) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$comment</h4></div>
+</div></div>
+</div>
+<a id="method_getActionIfNoLoader"></a><div class="element clickable method public method_getActionIfNoLoader" data-toggle="collapse" data-target=".method_getActionIfNoLoader .collapse">
+<h2>Returns the action-if-no-loader option</h2>
+<pre>getActionIfNoLoader() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getAllowEncodingIntoSource"></a><div class="element clickable method public method_getAllowEncodingIntoSource" data-toggle="collapse" data-target=".method_getAllowEncodingIntoSource .collapse">
+<h2>Returns the allow-encoding-into-source option</h2>
+<pre>getAllowEncodingIntoSource() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getAllowedServer"></a><div class="element clickable method public method_getAllowedServer" data-toggle="collapse" data-target=".method_getAllowedServer .collapse">
+<h2>Returns the allowed server setting</h2>
+<pre>getAllowedServer() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getBinary"></a><div class="element clickable method public method_getBinary" data-toggle="collapse" data-target=".method_getBinary .collapse">
+<h2>Returns the binary option</h2>
+<pre>getBinary() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getCallbackFile"></a><div class="element clickable method public method_getCallbackFile" data-toggle="collapse" data-target=".method_getCallbackFile .collapse">
+<h2>Returns the callback-file option</h2>
+<pre>getCallbackFile() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getCopy"></a><div class="element clickable method public method_getCopy" data-toggle="collapse" data-target=".method_getCopy .collapse">
+<h2>Returns the copy setting</h2>
+<pre>getCopy() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getDescription"></a><div class="element clickable method public method_getDescription" data-toggle="collapse" data-target=".method_getDescription .collapse">
+<h2>Returns the textual description of the task</h2>
+<pre>getDescription() : string</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::getDescription()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>The text description of the task</div>
+</div></div>
+</div>
+<a id="method_getEncode"></a><div class="element clickable method public method_getEncode" data-toggle="collapse" data-target=".method_getEncode .collapse">
+<h2>Returns the encode setting</h2>
+<pre>getEncode() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getEncrypt"></a><div class="element clickable method public method_getEncrypt" data-toggle="collapse" data-target=".method_getEncrypt .collapse">
+<h2>Returns regexps of additional files to encrypt (separated by space)</h2>
+<pre>getEncrypt() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getExpirein"></a><div class="element clickable method public method_getExpirein" data-toggle="collapse" data-target=".method_getExpirein .collapse">
+<h2>Returns the expireIn setting</h2>
+<pre>getExpirein() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getExpireon"></a><div class="element clickable method public method_getExpireon" data-toggle="collapse" data-target=".method_getExpireon .collapse">
+<h2>Returns the expireOn setting</h2>
+<pre>getExpireon() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getFromDir"></a><div class="element clickable method public method_getFromDir" data-toggle="collapse" data-target=".method_getFromDir .collapse">
+<h2>Returns the source directory</h2>
+<pre>getFromDir() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getIgnore"></a><div class="element clickable method public method_getIgnore" data-toggle="collapse" data-target=".method_getIgnore .collapse">
+<h2>Returns the ignore setting</h2>
+<pre>getIgnore() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getIgnoreDeprecatedWarnings"></a><div class="element clickable method public method_getIgnoreDeprecatedWarnings" data-toggle="collapse" data-target=".method_getIgnoreDeprecatedWarnings .collapse">
+<h2>Returns the ignore-deprecated-warnings option</h2>
+<pre>getIgnoreDeprecatedWarnings() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getIgnoreStrictWarnings"></a><div class="element clickable method public method_getIgnoreStrictWarnings" data-toggle="collapse" data-target=".method_getIgnoreStrictWarnings .collapse">
+<h2>Returns the ignore-strict-warnings option</h2>
+<pre>getIgnoreStrictWarnings() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getIoncubePath"></a><div class="element clickable method public method_getIoncubePath" data-toggle="collapse" data-target=".method_getIoncubePath .collapse">
+<h2>Returns the path to the ionCube encoder</h2>
+<pre>getIoncubePath() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getKeep"></a><div class="element clickable method public method_getKeep" data-toggle="collapse" data-target=".method_getKeep .collapse">
+<h2>Returns the ignore setting</h2>
+<pre>getKeep() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getLicensePath"></a><div class="element clickable method public method_getLicensePath" data-toggle="collapse" data-target=".method_getLicensePath .collapse">
+<h2>Returns the path to the license file to use</h2>
+<pre>getLicensePath() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getLocation"></a><div class="element clickable method public method_getLocation" data-toggle="collapse" data-target=".method_getLocation .collapse">
+<h2>Returns the location within the buildfile this task occurs.</h2>
+<pre>getLocation() : <a href="../classes/Location.html">\Location</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Used
+by <a href="BuildException">BuildException</a> to give detailed error messages.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::getLocation()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code><a href="../classes/Location.html">\Location</a></code>The location object describing the position of this
+                 task within the buildfile.</div>
+</div></div>
+</div>
+<a id="method_getMessageIfNoLoader"></a><div class="element clickable method public method_getMessageIfNoLoader" data-toggle="collapse" data-target=".method_getMessageIfNoLoader .collapse">
+<h2>Returns the message-if-no-loader option</h2>
+<pre>getMessageIfNoLoader() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getNoDocComments"></a><div class="element clickable method public method_getNoDocComments" data-toggle="collapse" data-target=".method_getNoDocComments .collapse">
+<h2>Returns the no-doc-comments option</h2>
+<pre>getNoDocComments() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getNoShortOpenTags"></a><div class="element clickable method public method_getNoShortOpenTags" data-toggle="collapse" data-target=".method_getNoShortOpenTags .collapse">
+<h2>Returns the no-short-open-tags option</h2>
+<pre>getNoShortOpenTags() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getObfuscate"></a><div class="element clickable method public method_getObfuscate" data-toggle="collapse" data-target=".method_getObfuscate .collapse">
+<h2>Returns the optimize option</h2>
+<pre>getObfuscate() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getObfuscationExclusionFile"></a><div class="element clickable method public method_getObfuscationExclusionFile" data-toggle="collapse" data-target=".method_getObfuscationExclusionFile .collapse">
+<h2>Returns the obfuscation-exclusions-file option</h2>
+<pre>getObfuscationExclusionFile() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getObfuscationKey"></a><div class="element clickable method public method_getObfuscationKey" data-toggle="collapse" data-target=".method_getObfuscationKey .collapse">
+<h2>Returns the optimize option</h2>
+<pre>getObfuscationKey() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getOptimize"></a><div class="element clickable method public method_getOptimize" data-toggle="collapse" data-target=".method_getOptimize .collapse">
+<h2>Returns the optimize option</h2>
+<pre>getOptimize() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getOwningTarget"></a><div class="element clickable method public method_getOwningTarget" data-toggle="collapse" data-target=".method_getOwningTarget .collapse">
+<h2>Returns the owning target of this task.</h2>
+<pre>getOwningTarget() : <a href="../classes/Target.html">\Target</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::getOwningTarget()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code><a href="../classes/Target.html">\Target</a></code>The target object that owns this task</div>
+</div></div>
+</div>
+<a id="method_getPassPhrase"></a><div class="element clickable method public method_getPassPhrase" data-toggle="collapse" data-target=".method_getPassPhrase .collapse">
+<h2>Returns the passphrase to use when encoding files</h2>
+<pre>getPassPhrase() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getPhpVersion"></a><div class="element clickable method public method_getPhpVersion" data-toggle="collapse" data-target=".method_getPhpVersion .collapse">
+<h2>Returns the version of PHP to use (defaults to 5)</h2>
+<pre>getPhpVersion() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getProject"></a><div class="element clickable method public method_getProject" data-toggle="collapse" data-target=".method_getProject .collapse">
+<h2>Returns a reference to current project</h2>
+<pre>getProject() : <a href="../classes/Project.html">\Project</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\ProjectComponent::getProject()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\Task::getProject()</td>
+</tr>
+</table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code><a href="../classes/Project.html">\Project</a></code>Reference to current porject object</div>
+</div></div>
+</div>
+<a id="method_getRuntimeConfigurableWrapper"></a><div class="element clickable method public method_getRuntimeConfigurableWrapper" data-toggle="collapse" data-target=".method_getRuntimeConfigurableWrapper .collapse">
+<h2>Returns the wrapper object for runtime configuration</h2>
+<pre>getRuntimeConfigurableWrapper() : <a href="../classes/RuntimeConfigurable.html">\RuntimeConfigurable</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::getRuntimeConfigurableWrapper()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code><a href="../classes/RuntimeConfigurable.html">\RuntimeConfigurable</a></code>The wrapper object used by this task</div>
+</div></div>
+</div>
+<a id="method_getTargetOption"></a><div class="element clickable method public method_getTargetOption" data-toggle="collapse" data-target=".method_getTargetOption .collapse">
+<h2>Returns he option to use when encoding target directory already exists (defaults to none)</h2>
+<pre>getTargetOption() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getTaskName"></a><div class="element clickable method public method_getTaskName" data-toggle="collapse" data-target=".method_getTaskName .collapse">
+<h2>Returns the name of task, used only for log messages</h2>
+<pre>getTaskName() : string</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::getTaskName()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>Name of this task</div>
+</div></div>
+</div>
+<a id="method_getTaskType"></a><div class="element clickable method public method_getTaskType" data-toggle="collapse" data-target=".method_getTaskType .collapse">
+<h2>Returns the name of the task under which it was invoked,
+usually the XML tagname</h2>
+<pre>getTaskType() : string</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::getTaskType()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>The type of this task (XML Tag)</div>
+</div></div>
+</div>
+<a id="method_getToDir"></a><div class="element clickable method public method_getToDir" data-toggle="collapse" data-target=".method_getToDir .collapse">
+<h2>Returns the target directory</h2>
+<pre>getToDir() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getWithoutRuntimeLoaderSupport"></a><div class="element clickable method public method_getWithoutRuntimeLoaderSupport" data-toggle="collapse" data-target=".method_getWithoutRuntimeLoaderSupport .collapse">
+<h2>Returns the without-runtime-loader-support option</h2>
+<pre>getWithoutRuntimeLoaderSupport() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_init"></a><div class="element clickable method public method_init" data-toggle="collapse" data-target=".method_init .collapse">
+<h2>Called by the parser to let the task initialize properly.</h2>
+<pre>init() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Should throw a BuildException if something goes wrong with the build</p>
+
+<p>This is abstract here, but may not be overloaded by subclasses.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::init()</td>
+</tr></table>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/BuildException.html">\BuildException</a></code></th>
+<td></td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_log"></a><div class="element clickable method public method_log" data-toggle="collapse" data-target=".method_log .collapse">
+<h2>Provides a project level log event to the task.</h2>
+<pre>log(string $msg, integer $level) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>see</th>
+<td><a href="">\global\BuildEvent</a></td>
+</tr>
+<tr>
+<th>see</th>
+<td><a href="">\global\BuildListener</a></td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\Task::log()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$msg</h4>
+<code>string</code><p>The message to log</p></div>
+<div class="subelement argument">
+<h4>$level</h4>
+<code>integer</code><p>The priority of the message</p></div>
+</div></div>
+</div>
+<a id="method_main"></a><div class="element clickable method public method_main" data-toggle="collapse" data-target=".method_main .collapse">
+<h2>The main entry point</h2>
+<pre>main() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This method may be
+ called more than once, if the task is invoked more than once. For
+ example, if target1 and target2 both depend on target3, then running
+ <em>phing target1 target2</em> will run all tasks in target3 twice.</p>
+
+<p>Should throw a BuildException if someting goes wrong with the build</p>
+
+<p>This is abstract here. Must be overloaded by real tasks.</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/BuildException.html">\BuildException</a></code></th>
+<td></td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_maybeConfigure"></a><div class="element clickable method public method_maybeConfigure" data-toggle="collapse" data-target=".method_maybeConfigure .collapse">
+<h2>Configure this task if it hasn't been done already.</h2>
+<pre>maybeConfigure() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::maybeConfigure()</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_perform"></a><div class="element clickable method public method_perform" data-toggle="collapse" data-target=".method_perform .collapse">
+<h2>Perfrom this task</h2>
+<pre>perform() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::perform()</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_setActionIfNoLoader"></a><div class="element clickable method public method_setActionIfNoLoader" data-toggle="collapse" data-target=".method_setActionIfNoLoader .collapse">
+<h2>Sets the action-if-no-loader option</h2>
+<pre>setActionIfNoLoader($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setAllowEncodingIntoSource"></a><div class="element clickable method public method_setAllowEncodingIntoSource" data-toggle="collapse" data-target=".method_setAllowEncodingIntoSource .collapse">
+<h2>Sets the allow-encoding-into-source option</h2>
+<pre>setAllowEncodingIntoSource($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setAllowedServer"></a><div class="element clickable method public method_setAllowedServer" data-toggle="collapse" data-target=".method_setAllowedServer .collapse">
+<h2>Sets the allowed server</h2>
+<pre>setAllowedServer($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setBinary"></a><div class="element clickable method public method_setBinary" data-toggle="collapse" data-target=".method_setBinary .collapse">
+<h2>Sets the binary option</h2>
+<pre>setBinary($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setCallbackFile"></a><div class="element clickable method public method_setCallbackFile" data-toggle="collapse" data-target=".method_setCallbackFile .collapse">
+<h2>Sets the callback-file option</h2>
+<pre>setCallbackFile($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setCopy"></a><div class="element clickable method public method_setCopy" data-toggle="collapse" data-target=".method_setCopy .collapse">
+<h2>Sets files or folders to copy (separated by space)</h2>
+<pre>setCopy($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setDescription"></a><div class="element clickable method public method_setDescription" data-toggle="collapse" data-target=".method_setDescription .collapse">
+<h2>Sets a textual description of the task</h2>
+<pre>setDescription(string $desc) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::setDescription()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$desc</h4>
+<code>string</code><p>The text describing the task</p></div>
+</div></div>
+</div>
+<a id="method_setEncode"></a><div class="element clickable method public method_setEncode" data-toggle="collapse" data-target=".method_setEncode .collapse">
+<h2>Sets additional file patterns, files or directories to encode,
+or to reverse the effect of copy (separated by space)</h2>
+<pre>setEncode($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setEncrypt"></a><div class="element clickable method public method_setEncrypt" data-toggle="collapse" data-target=".method_setEncrypt .collapse">
+<h2>Sets regexps of additional files to encrypt (separated by space)</h2>
+<pre>setEncrypt($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setExpirein"></a><div class="element clickable method public method_setExpirein" data-toggle="collapse" data-target=".method_setExpirein .collapse">
+<h2>Sets a period after which the files expire</h2>
+<pre>setExpirein($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setExpireon"></a><div class="element clickable method public method_setExpireon" data-toggle="collapse" data-target=".method_setExpireon .collapse">
+<h2>Sets a YYYY-MM-DD date to expire the files</h2>
+<pre>setExpireon($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setFromDir"></a><div class="element clickable method public method_setFromDir" data-toggle="collapse" data-target=".method_setFromDir .collapse">
+<h2>Sets the source directory</h2>
+<pre>setFromDir($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setIgnore"></a><div class="element clickable method public method_setIgnore" data-toggle="collapse" data-target=".method_setIgnore .collapse">
+<h2>Set files and directories to ignore entirely and exclude from the target directory
+(separated by space).</h2>
+<pre>setIgnore($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setIgnoreDeprecatedWarnings"></a><div class="element clickable method public method_setIgnoreDeprecatedWarnings" data-toggle="collapse" data-target=".method_setIgnoreDeprecatedWarnings .collapse">
+<h2>Sets the ignore-deprecated-warnings option</h2>
+<pre>setIgnoreDeprecatedWarnings($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setIgnoreStrictWarnings"></a><div class="element clickable method public method_setIgnoreStrictWarnings" data-toggle="collapse" data-target=".method_setIgnoreStrictWarnings .collapse">
+<h2>Sets the ignore-strict-warnings option</h2>
+<pre>setIgnoreStrictWarnings($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setIoncubePath"></a><div class="element clickable method public method_setIoncubePath" data-toggle="collapse" data-target=".method_setIoncubePath .collapse">
+<h2>Sets the path to the ionCube encoder</h2>
+<pre>setIoncubePath($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setKeep"></a><div class="element clickable method public method_setKeep" data-toggle="collapse" data-target=".method_setKeep .collapse">
+<h2>Set files and directories not to be ignored (separated by space).</h2>
+<pre>setKeep($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setLicensePath"></a><div class="element clickable method public method_setLicensePath" data-toggle="collapse" data-target=".method_setLicensePath .collapse">
+<h2>Sets the path to the license file to use</h2>
+<pre>setLicensePath($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setLocation"></a><div class="element clickable method public method_setLocation" data-toggle="collapse" data-target=".method_setLocation .collapse">
+<h2>Sets the location within the buildfile this task occurs.</h2>
+<pre>setLocation(\Location $location) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Called by
+the parser to set location information.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::setLocation()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$location</h4>
+<code><a href="../classes/Location.html">\Location</a></code><p>The location object describing the position of this task within the buildfile.</p></div>
+</div></div>
+</div>
+<a id="method_setMessageIfNoLoader"></a><div class="element clickable method public method_setMessageIfNoLoader" data-toggle="collapse" data-target=".method_setMessageIfNoLoader .collapse">
+<h2>Sets the message-if-no-loader option</h2>
+<pre>setMessageIfNoLoader($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setNoDocComments"></a><div class="element clickable method public method_setNoDocComments" data-toggle="collapse" data-target=".method_setNoDocComments .collapse">
+<h2>Sets the no-doc-comments option</h2>
+<pre>setNoDocComments($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setNoShortOpenTags"></a><div class="element clickable method public method_setNoShortOpenTags" data-toggle="collapse" data-target=".method_setNoShortOpenTags .collapse">
+<h2>Sets the no-short-open-tags option</h2>
+<pre>setNoShortOpenTags($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setObfuscate"></a><div class="element clickable method public method_setObfuscate" data-toggle="collapse" data-target=".method_setObfuscate .collapse">
+<h2>Sets the obfuscate option</h2>
+<pre>setObfuscate($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setObfuscationExclusionFile"></a><div class="element clickable method public method_setObfuscationExclusionFile" data-toggle="collapse" data-target=".method_setObfuscationExclusionFile .collapse">
+<h2>Sets the obfuscation-exclusions-file option</h2>
+<pre>setObfuscationExclusionFile($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setObfuscationKey"></a><div class="element clickable method public method_setObfuscationKey" data-toggle="collapse" data-target=".method_setObfuscationKey .collapse">
+<h2>Sets the obfuscation key (required if using the obfuscate option)</h2>
+<pre>setObfuscationKey($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setOptimize"></a><div class="element clickable method public method_setOptimize" data-toggle="collapse" data-target=".method_setOptimize .collapse">
+<h2>Sets the optimize option</h2>
+<pre>setOptimize($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setOwningTarget"></a><div class="element clickable method public method_setOwningTarget" data-toggle="collapse" data-target=".method_setOwningTarget .collapse">
+<h2>Sets the owning target this task belongs to.</h2>
+<pre>setOwningTarget(\Target $target) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::setOwningTarget()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$target</h4>
+<code><a href="../classes/Target.html">\Target</a></code><p>Reference to owning target</p></div>
+</div></div>
+</div>
+<a id="method_setPassPhrase"></a><div class="element clickable method public method_setPassPhrase" data-toggle="collapse" data-target=".method_setPassPhrase .collapse">
+<h2>Sets the passphrase to use when encoding files</h2>
+<pre>setPassPhrase($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setPhpVersion"></a><div class="element clickable method public method_setPhpVersion" data-toggle="collapse" data-target=".method_setPhpVersion .collapse">
+<h2>Sets the version of PHP to use (defaults to 5)</h2>
+<pre>setPhpVersion($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setProject"></a><div class="element clickable method public method_setProject" data-toggle="collapse" data-target=".method_setProject .collapse">
+<h2>References the project to the current component.</h2>
+<pre>setProject(<a href="../classes/Project.html">\Project</a> $project) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\ProjectComponent::setProject()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\Task::setProject()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$project</h4>
+<code><a href="../classes/Project.html">\Project</a></code><p>The reference to the current project</p></div>
+</div></div>
+</div>
+<a id="method_setRuntimeConfigurableWrapper"></a><div class="element clickable method public method_setRuntimeConfigurableWrapper" data-toggle="collapse" data-target=".method_setRuntimeConfigurableWrapper .collapse">
+<h2>Sets the wrapper object this task should use for runtime
+ configurable elements.</h2>
+<pre>setRuntimeConfigurableWrapper(\RuntimeConfigurable $wrapper) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::setRuntimeConfigurableWrapper()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$wrapper</h4>
+<code><a href="../classes/RuntimeConfigurable.html">\RuntimeConfigurable</a></code><p>The wrapper object this task should use</p></div>
+</div></div>
+</div>
+<a id="method_setShowCommandLine"></a><div class="element clickable method public method_setShowCommandLine" data-toggle="collapse" data-target=".method_setShowCommandLine .collapse">
+<h2>Sets whether to show command line before it is executed</h2>
+<pre>setShowCommandLine($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setTargetOption"></a><div class="element clickable method public method_setTargetOption" data-toggle="collapse" data-target=".method_setTargetOption .collapse">
+<h2>Sets the option to use when encoding target directory already exists (defaults to none)</h2>
+<pre>setTargetOption($targetOption) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$targetOption</h4></div>
+</div></div>
+</div>
+<a id="method_setTaskName"></a><div class="element clickable method public method_setTaskName" data-toggle="collapse" data-target=".method_setTaskName .collapse">
+<h2>Sets the name of this task for log messages</h2>
+<pre>setTaskName(string $name) : string</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::setTaskName()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>A string representing the name of this task for log</div>
+</div></div>
+</div>
+<a id="method_setTaskType"></a><div class="element clickable method public method_setTaskType" data-toggle="collapse" data-target=".method_setTaskType .collapse">
+<h2>Sets the type of the task.</h2>
+<pre>setTaskType(string $name) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Usually this is the name of the XML tag</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::setTaskType()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code><p>The type of this task (XML Tag)</p>
+</div>
+</div></div>
+</div>
+<a id="method_setToDir"></a><div class="element clickable method public method_setToDir" data-toggle="collapse" data-target=".method_setToDir .collapse">
+<h2>Sets the target directory</h2>
+<pre>setToDir($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_setWithoutRuntimeLoaderSupport"></a><div class="element clickable method public method_setWithoutRuntimeLoaderSupport" data-toggle="collapse" data-target=".method_setWithoutRuntimeLoaderSupport .collapse">
+<h2>Sets the without-runtime-loader-support option</h2>
+<pre>setWithoutRuntimeLoaderSupport($value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$value</h4></div>
+</div></div>
+</div>
+<a id="method_getRegisterSlot"></a><div class="element clickable method protected method_getRegisterSlot" data-toggle="collapse" data-target=".method_getRegisterSlot .collapse">
+<h2>Returns a name</h2>
+<pre>getRegisterSlot(string $slotName) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::getRegisterSlot()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$slotName</h4>
+<code>string</code>
+</div>
+</div></div>
+</div>
+<a id="method_constructArguments"></a><div class="element clickable method private method_constructArguments" data-toggle="collapse" data-target=".method_constructArguments .collapse">
+<h2>Constructs an argument string for the ionCube encoder</h2>
+<pre>constructArguments() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_description"> </a><div class="element clickable property protected property_description" data-toggle="collapse" data-target=".property_description .collapse">
+<h2></h2>
+<pre>$description : string</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::$$description</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_location"> </a><div class="element clickable property protected property_location" data-toggle="collapse" data-target=".property_location .collapse">
+<h2></h2>
+<pre>$location : <a href="../classes/Location.html">\Location</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::$$location</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_project"> </a><div class="element clickable property protected property_project" data-toggle="collapse" data-target=".property_project .collapse">
+<h2></h2>
+<pre>$project : <a href="../classes/Project.html">\Project</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\ProjectComponent::$$project</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\Task::$$project</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_target"> </a><div class="element clickable property protected property_target" data-toggle="collapse" data-target=".property_target .collapse">
+<h2></h2>
+<pre>$target : <a href="../classes/Target.html">\Target</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::$$target</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_taskName"> </a><div class="element clickable property protected property_taskName" data-toggle="collapse" data-target=".property_taskName .collapse">
+<h2></h2>
+<pre>$taskName : string</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::$$taskName</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_taskType"> </a><div class="element clickable property protected property_taskType" data-toggle="collapse" data-target=".property_taskType .collapse">
+<h2></h2>
+<pre>$taskType : string</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::$$taskType</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_wrapper"> </a><div class="element clickable property protected property_wrapper" data-toggle="collapse" data-target=".property_wrapper .collapse">
+<h2></h2>
+<pre>$wrapper : <a href="../classes/RuntimeConfigurable.html">\RuntimeConfigurable</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\Task::$$wrapper</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_comments"> </a><div class="element clickable property private property_comments" data-toggle="collapse" data-target=".property_comments .collapse">
+<h2></h2>
+<pre>$comments </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_encoderName"> </a><div class="element clickable property private property_encoderName" data-toggle="collapse" data-target=".property_encoderName .collapse">
+<h2></h2>
+<pre>$encoderName </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_fromDir"> </a><div class="element clickable property private property_fromDir" data-toggle="collapse" data-target=".property_fromDir .collapse">
+<h2></h2>
+<pre>$fromDir </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_ionOptions"> </a><div class="element clickable property private property_ionOptions" data-toggle="collapse" data-target=".property_ionOptions .collapse">
+<h2></h2>
+<pre>$ionOptions </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_ionOptionsXS"> </a><div class="element clickable property private property_ionOptionsXS" data-toggle="collapse" data-target=".property_ionOptionsXS .collapse">
+<h2></h2>
+<pre>$ionOptionsXS </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_ionSwitches"> </a><div class="element clickable property private property_ionSwitches" data-toggle="collapse" data-target=".property_ionSwitches .collapse">
+<h2></h2>
+<pre>$ionSwitches </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_ioncubePath"> </a><div class="element clickable property private property_ioncubePath" data-toggle="collapse" data-target=".property_ioncubePath .collapse">
+<h2></h2>
+<pre>$ioncubePath </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_phpVersion"> </a><div class="element clickable property private property_phpVersion" data-toggle="collapse" data-target=".property_phpVersion .collapse">
+<h2></h2>
+<pre>$phpVersion </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_showCommandLine"> </a><div class="element clickable property private property_showCommandLine" data-toggle="collapse" data-target=".property_showCommandLine .collapse">
+<h2></h2>
+<pre>$showCommandLine </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_targetOption"> </a><div class="element clickable property private property_targetOption" data-toggle="collapse" data-target=".property_targetOption .collapse">
+<h2></h2>
+<pre>$targetOption </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_toDir"> </a><div class="element clickable property private property_toDir" data-toggle="collapse" data-target=".property_toDir .collapse">
+<h2></h2>
+<pre>$toDir </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:33+01:00.<br></footer></div>
+</div>
+</body>
+</html>

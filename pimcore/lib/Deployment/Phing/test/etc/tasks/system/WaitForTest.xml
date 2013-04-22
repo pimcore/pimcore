@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="WaitForTaskTest" default="test">
+    <target name="testConditionMet">
+    	<touch file="_wait_for.log"/>
+    	<waitfor maxwait="1" maxwaitunit="second">
+    	    <available file="_wait_for.log"/>
+    	</waitfor>
+    	<delete file="_wait_for.log"/>
+    </target>
+
+    <target name="testTimeout">
+    	<waitfor maxwait="1" maxwaitunit="second"
+    	timeoutproperty="waitfor.timeout">
+    	    <available file="_wait_for.log"/>
+    	</waitfor>
+    </target>
+</project>

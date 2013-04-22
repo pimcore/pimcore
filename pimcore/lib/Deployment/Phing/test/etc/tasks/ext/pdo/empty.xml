@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<project name="PDO delimiters test" default="test">
+    <!-- A mock task will be added here -->
+    <target name="test" />
+</project>

@@ -1,0 +1,180 @@
+<!--
+-File         $Id: 009f64e5d918a839c3c056f9676252a857a67d8e $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2002, turing
+-Author       alex black, enigma@turingstudio.com
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Phing Guide - Project Components</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="Stylesheet" rev="Stylesheet"
+	href="../../css/Documentation.css" type="text/css" media="All"
+	charset="iso-8859-1" />
+</head>
+<body>
+	<h1>
+		<a name="ProjectComponents"></a>Appendix E: Project Components
+	</h1>
+	<p>
+		This file will give you a quick introduction and a reference of the
+		things that you may see in a build files besides <a
+			href="AppendixB-CoreTasks.html">tasks</a> and <a
+			href="AppendixD-CoreTypes.html">types</a>.
+	</p>
+
+	<h2>
+		<a name="Project"></a>Phing Projects
+	</h2>
+	<p>
+		Projects are the outermost container for everything in build files.
+		The <em>&lt;project&gt;</em> tag also is the root tag in build files.
+		It contains the name, the directory, a short description and a default
+		target.
+	</p>
+	<p>Project may contain task calls and targets (see below).</p>
+	<h3>Example</h3>
+	<pre>
+&lt;?xml version=&quot;1.0&quot; ?&gt;
+
+&lt;project name=&quot;TestProject&quot; basedir=&quot;.&quot; default=&quot;main&quot;
+         description=&quot;This is a test project to show how to use projects ;-)&quot;&gt;
+
+  &lt;!-- Everything else goes here --&gt;
+
+&lt;/project&gt;
+</pre>
+	<h3>Attributes</h3>
+	<table>
+		<tbody>
+			<tr>
+				<th>Name</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+			<tr>
+				<td>basedir</td>
+				<td>String</td>
+				<td>The base directory of the project, i.e. the directory all
+					paths are relative to.</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>default</td>
+				<td>String</td>
+				<td>The name of the target that is executed if none is
+					explicitely specified when calling Phing</td>
+				<td>all</td>
+				<td>Yes</td>
+			</tr>
+			<tr>
+				<td>description</td>
+				<td>String</td>
+				<td>A free text description of the project</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>name</td>
+				<td>String</td>
+				<td>Name of the project</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>phingVersion</td>
+				<td>String</td>
+				<td>The minimum Phing version required
+				to execute the build file, in order to
+				prevent compatibility issues.</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>
+		<a name="Target"></a>Targets
+	</h2>
+	<p></p>
+	<h3>Example</h3>
+	<pre>
+&lt;target if=&quot;lang&quot; unless=&quot;lang.en&quot; depends=&quot;foo1,foo2&quot;
+       name=&quot;main&quot; description=&quot;This is an example target&quot; &gt;
+
+  &lt;!-- everything else goes here --&gt;
+
+&lt;/target&gt;
+</pre>
+	<p>
+		The target defined in the example above is only executed, if the
+		property <em>${lang}</em> is set and the property <em>${lang.en}</em>
+		is not set. Additionally, it depends on the targets <em>foo1</em> and
+		<em>foo2</em>. That means, the targets <em>foo1</em> and <em>foo2</em>
+		are executed before the target <em>main</em> is executed. The name of
+		the target is <em>main</em> and it also has a description.
+	</p>
+	<h3>Attributes</h3>
+	<table>
+		<tbody>
+			<tr>
+				<th>Name</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+			<tr>
+				<td>depends</td>
+				<td>String</td>
+				<td>One or more names of targets that have to be executed
+					before this target can be executed.</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>description</td>
+				<td>String</td>
+				<td>A free text description of the target.</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>if</td>
+				<td>String</td>
+				<td>The name of the property that is to be set if the target is
+					to be executed.</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>name</td>
+				<td>String</td>
+				<td>The name of the target</td>
+				<td>n/a</td>
+				<td>Yes</td>
+			</tr>
+			<tr>
+				<td>unless</td>
+				<td>String</td>
+				<td>The name of the property that is to be set if the target is
+					not to be executed.</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+		</tbody>
+	</table>
+	<p>
+		<b>Important:</b> the if and unless attributes only enable or disable
+		the target to which they are attached. They do not control whether or
+		not targets that a conditional target depends upon get executed. In
+		fact, they do not even get evaluated until the target is about to be
+		executed, and all its predecessors have already run.
+	</p>
+
+</body>
+</html>

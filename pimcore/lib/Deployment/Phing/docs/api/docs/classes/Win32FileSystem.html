@@ -1,0 +1,1293 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \Win32FileSystem</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method___construct" title="__construct :: "><span class="description">__construct()
+        </span><pre>__construct()</pre></a></li>
+<li class="method public "><a href="#method__driveIndex" title="_driveIndex :: private"><span class="description">private</span><pre>_driveIndex()</pre></a></li>
+<li class="method public "><a href="#method__getDrive" title="_getDrive :: "><span class="description">_getDrive()
+        </span><pre>_getDrive()</pre></a></li>
+<li class="method public "><a href="#method__getDriveDirectory" title="_getDriveDirectory :: private"><span class="description">private</span><pre>_getDriveDirectory()</pre></a></li>
+<li class="method public "><a href="#method__getUserPath" title="_getUserPath :: "><span class="description">_getUserPath()
+        </span><pre>_getUserPath()</pre></a></li>
+<li class="method public "><a href="#method__nativeListRoots" title="_nativeListRoots :: "><span class="description">_nativeListRoots()
+        </span><pre>_nativeListRoots()</pre></a></li>
+<li class="method public inherited"><a href="#method_canDelete" title="canDelete :: Whether file can be deleted."><span class="description">Whether file can be deleted.</span><pre>canDelete()</pre></a></li>
+<li class="method public inherited"><a href="#method_canonicalize" title="canonicalize :: canonicalize filename by checking on disk"><span class="description">canonicalize filename by checking on disk</span><pre>canonicalize()</pre></a></li>
+<li class="method public inherited"><a href="#method_checkAccess" title="checkAccess :: Check whether the file or directory denoted by the given abstract
+pathname may be accessed by this process."><span class="description">Check whether the file or directory denoted by the given abstract
+pathname may be accessed by this process.</span><pre>checkAccess()</pre></a></li>
+<li class="method public inherited"><a href="#method_chgrp" title="chgrp :: Change the group on a file or directory."><span class="description">Change the group on a file or directory.</span><pre>chgrp()</pre></a></li>
+<li class="method public inherited"><a href="#method_chmod" title="chmod :: Change the permissions on a file or directory."><span class="description">Change the permissions on a file or directory.</span><pre>chmod()</pre></a></li>
+<li class="method public inherited"><a href="#method_chown" title="chown :: Change the ownership on a file or directory."><span class="description">Change the ownership on a file or directory.</span><pre>chown()</pre></a></li>
+<li class="method public "><a href="#method_compare" title="compare :: compares file paths lexicographically"><span class="description">compares file paths lexicographically</span><pre>compare()</pre></a></li>
+<li class="method public inherited"><a href="#method_compareMTimes" title="compareMTimes :: Compare the modified time of two files."><span class="description">Compare the modified time of two files.</span><pre>compareMTimes()</pre></a></li>
+<li class="method public inherited"><a href="#method_copy" title="copy :: Copy a file."><span class="description">Copy a file.</span><pre>copy()</pre></a></li>
+<li class="method public inherited"><a href="#method_copyr" title="copyr :: Copy a file, or recursively copy a folder and its contents"><span class="description">Copy a file, or recursively copy a folder and its contents</span><pre>copyr()</pre></a></li>
+<li class="method public inherited"><a href="#method_createDirectory" title="createDirectory :: Create a new directory denoted by the given abstract pathname,
+returning true if and only if the operation succeeds."><span class="description">Create a new directory denoted by the given abstract pathname,
+returning true if and only if the operation succeeds.</span><pre>createDirectory()</pre></a></li>
+<li class="method public inherited"><a href="#method_createNewFile" title="createNewFile :: Create a new empty file with the given pathname."><span class="description">Create a new empty file with the given pathname.</span><pre>createNewFile()</pre></a></li>
+<li class="method public inherited"><a href="#method_delete" title="delete :: Delete the file or directory denoted by the given abstract pathname,
+returning true if and only if the operation succeeds."><span class="description">Delete the file or directory denoted by the given abstract pathname,
+returning true if and only if the operation succeeds.</span><pre>delete()</pre></a></li>
+<li class="method public inherited"><a href="#method_deleteOnExit" title="deleteOnExit :: Arrange for the file or directory denoted by the given abstract
+pathname to be deleted when Phing::shutdown is called, returning
+true if and only if the operation succeeds."><span class="description">Arrange for the file or directory denoted by the given abstract
+pathname to be deleted when Phing::shutdown is called, returning
+true if and only if the operation succeeds.</span><pre>deleteOnExit()</pre></a></li>
+<li class="method public "><a href="#method_fromURIPath" title="fromURIPath :: Post-process the given URI path string if necessary."><span class="description">Post-process the given URI path string if necessary.</span><pre>fromURIPath()</pre></a></li>
+<li class="method public inherited"><a href="#method_getBooleanAttributes" title="getBooleanAttributes :: Return the simple boolean attributes for the file or directory denoted
+by the given abstract pathname, or zero if it does not exist or some
+other I/O error occurs."><span class="description">Return the simple boolean attributes for the file or directory denoted
+by the given abstract pathname, or zero if it does not exist or some
+other I/O error occurs.</span><pre>getBooleanAttributes()</pre></a></li>
+<li class="method public "><a href="#method_getDefaultParent" title="getDefaultParent :: Return the parent pathname string to be used when the parent-directory
+argument in one of the two-argument PhingFile constructors is the empty
+pathname."><span class="description">Return the parent pathname string to be used when the parent-directory
+argument in one of the two-argument PhingFile constructors is the empty
+pathname.</span><pre>getDefaultParent()</pre></a></li>
+<li class="method public inherited"><a href="#method_getFileSystem" title="getFileSystem :: Static method to return the FileSystem singelton representing
+this platform's local filesystem driver."><span class="description">Static method to return the FileSystem singelton representing
+this platform's local filesystem driver.</span><pre>getFileSystem()</pre></a></li>
+<li class="method public inherited"><a href="#method_getLastModifiedTime" title="getLastModifiedTime :: Return the time at which the file or directory denoted by the given
+abstract pathname was last modified, or zero if it does not exist or
+some other I/O error occurs."><span class="description">Return the time at which the file or directory denoted by the given
+abstract pathname was last modified, or zero if it does not exist or
+some other I/O error occurs.</span><pre>getLastModifiedTime()</pre></a></li>
+<li class="method public inherited"><a href="#method_getLength" title="getLength :: Return the length in bytes of the file denoted by the given abstract
+pathname, or zero if it does not exist, is a directory, or some other
+I/O error occurs."><span class="description">Return the length in bytes of the file denoted by the given abstract
+pathname, or zero if it does not exist, is a directory, or some other
+I/O error occurs.</span><pre>getLength()</pre></a></li>
+<li class="method public "><a href="#method_getPathSeparator" title="getPathSeparator :: Return the local filesystem's path-separator character."><span class="description">Return the local filesystem's path-separator character.</span><pre>getPathSeparator()</pre></a></li>
+<li class="method public "><a href="#method_getSeparator" title="getSeparator :: Return the local filesystem's name-separator character."><span class="description">Return the local filesystem's name-separator character.</span><pre>getSeparator()</pre></a></li>
+<li class="method public "><a href="#method_isAbsolute" title="isAbsolute :: Tell whether or not the given abstract pathname is absolute."><span class="description">Tell whether or not the given abstract pathname is absolute.</span><pre>isAbsolute()</pre></a></li>
+<li class="method public "><a href="#method_isLetter" title="isLetter :: "><span class="description">isLetter()
+        </span><pre>isLetter()</pre></a></li>
+<li class="method public "><a href="#method_isSlash" title="isSlash :: "><span class="description">isSlash()
+        </span><pre>isSlash()</pre></a></li>
+<li class="method public inherited"><a href="#method_listDir" title="listDir :: List the elements of the directory denoted by the given abstract
+pathname."><span class="description">List the elements of the directory denoted by the given abstract
+pathname.</span><pre>listDir()</pre></a></li>
+<li class="method public "><a href="#method_listRoots" title="listRoots :: List the available filesystem roots, return array of PhingFile objects"><span class="description">List the available filesystem roots, return array of PhingFile objects</span><pre>listRoots()</pre></a></li>
+<li class="method public "><a href="#method_lister" title="lister :: returns the contents of a directory in an array"><span class="description">returns the contents of a directory in an array</span><pre>lister()</pre></a></li>
+<li class="method public inherited"><a href="#method_lock" title="lock :: Locks a file and throws an Exception if this is not possible."><span class="description">Locks a file and throws an Exception if this is not possible.</span><pre>lock()</pre></a></li>
+<li class="method public "><a href="#method_normalize" title="normalize :: Check that the given pathname is normal."><span class="description">Check that the given pathname is normal.</span><pre>normalize()</pre></a></li>
+<li class="method public "><a href="#method_normalizePrefix" title="normalizePrefix :: A normal Win32 pathname contains no duplicate slashes, except possibly
+for a UNC prefix, and does not end with a slash."><span class="description">A normal Win32 pathname contains no duplicate slashes, except possibly
+for a UNC prefix, and does not end with a slash.</span><pre>normalizePrefix()</pre></a></li>
+<li class="method public "><a href="#method_prefixLength" title="prefixLength :: Compute the length of this pathname string's prefix."><span class="description">Compute the length of this pathname string's prefix.</span><pre>prefixLength()</pre></a></li>
+<li class="method public inherited"><a href="#method_rename" title="rename :: Rename the file or directory denoted by the first abstract pathname to
+the second abstract pathname, returning true if and only if
+the operation succeeds."><span class="description">Rename the file or directory denoted by the first abstract pathname to
+the second abstract pathname, returning true if and only if
+the operation succeeds.</span><pre>rename()</pre></a></li>
+<li class="method public "><a href="#method_resolve" title="resolve :: Resolve the child pathname string against the parent."><span class="description">Resolve the child pathname string against the parent.</span><pre>resolve()</pre></a></li>
+<li class="method public "><a href="#method_resolveFile" title="resolveFile :: Resolve the given abstract pathname into absolute form."><span class="description">Resolve the given abstract pathname into absolute form.</span><pre>resolveFile()</pre></a></li>
+<li class="method public inherited"><a href="#method_rmdir" title="rmdir :: Delete an empty directory OR a directory and all of its contents."><span class="description">Delete an empty directory OR a directory and all of its contents.</span><pre>rmdir()</pre></a></li>
+<li class="method public inherited"><a href="#method_setLastModifiedTime" title="setLastModifiedTime :: Set the last-modified time of the file or directory denoted by the
+given abstract pathname returning true if and only if the
+operation succeeds."><span class="description">Set the last-modified time of the file or directory denoted by the
+given abstract pathname returning true if and only if the
+operation succeeds.</span><pre>setLastModifiedTime()</pre></a></li>
+<li class="method public "><a href="#method_setReadOnly" title="setReadOnly :: Mark the file or directory denoted by the given abstract pathname as
+read-only, returning &lt;code&gt;true&lt;/code&gt; if and only if the operation
+succeeds."><span class="description">Mark the file or directory denoted by the given abstract pathname as
+read-only, returning &lt;code&gt;true&lt;/code&gt; if and only if the operation
+succeeds.</span><pre>setReadOnly()</pre></a></li>
+<li class="method public "><a href="#method_slashify" title="slashify :: "><span class="description">slashify()
+        </span><pre>slashify()</pre></a></li>
+<li class="method public inherited"><a href="#method_symlink" title="symlink :: Symbolically link a file to another name."><span class="description">Symbolically link a file to another name.</span><pre>symlink()</pre></a></li>
+<li class="method public inherited"><a href="#method_touch" title="touch :: Set the modification and access time on a file to the present time."><span class="description">Set the modification and access time on a file to the present time.</span><pre>touch()</pre></a></li>
+<li class="method public inherited"><a href="#method_umask" title="umask :: Set the umask for file and directory creation."><span class="description">Set the umask for file and directory creation.</span><pre>umask()</pre></a></li>
+<li class="method public inherited"><a href="#method_unlink" title="unlink :: Delete a file."><span class="description">Delete a file.</span><pre>unlink()</pre></a></li>
+<li class="method public inherited"><a href="#method_unlock" title="unlock :: Unlocks a file and throws an IO Error if this is not possible."><span class="description">Unlocks a file and throws an IO Error if this is not possible.</span><pre>unlock()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="method protected "><a href="#method__access" title="_access :: "><span class="description">_access()
+        </span><pre>_access()</pre></a></li>
+<li class="method protected "><a href="#method_normalizer" title="normalizer :: Normalize the given pathname, whose length is len, starting at the given
+offset; everything before this offset is already normal."><span class="description">Normalize the given pathname, whose length is len, starting at the given
+offset; everything before this offset is already normal.</span><pre>normalizer()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul></ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="property protected "><a href="#property_altSlash" title="$altSlash :: "><span class="description"></span><pre>$altSlash</pre></a></li>
+<li class="property protected "><a href="#property_semicolon" title="$semicolon :: "><span class="description"></span><pre>$semicolon</pre></a></li>
+<li class="property protected "><a href="#property_slash" title="$slash :: "><span class="description"></span><pre>$slash</pre></a></li>
+</ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul>
+<li class="property private "><a href="#property_driveDirCache" title="$driveDirCache :: "><span class="description"></span><pre>$driveDirCache</pre></a></li>
+<li class="property private inherited"><a href="#property_fs" title="$fs :: Instance for getFileSystem() method."><span class="description"></span><pre>$fs</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-constant"></i> Constants
+                    <ul>
+<li class="constant  inherited"><a href="#constant_BA_DIRECTORY" title="BA_DIRECTORY :: "><span class="description">BA_DIRECTORY</span><pre>BA_DIRECTORY</pre></a></li>
+<li class="constant  inherited"><a href="#constant_BA_EXISTS" title="BA_EXISTS :: "><span class="description">BA_EXISTS</span><pre>BA_EXISTS</pre></a></li>
+<li class="constant  inherited"><a href="#constant_BA_HIDDEN" title="BA_HIDDEN :: "><span class="description">BA_HIDDEN</span><pre>BA_HIDDEN</pre></a></li>
+<li class="constant  inherited"><a href="#constant_BA_REGULAR" title="BA_REGULAR :: "><span class="description">BA_REGULAR</span><pre>BA_REGULAR</pre></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\Win32FileSystem"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/Win32FileSystem.html">Win32FileSystem</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">This is an abstract class for platform specific filesystem implementations
+you have to implement each method in the platform specific filesystem implementation
+classes Your local filesytem implementation must extend this class.</p>
+<div class="details">
+<div class="long_description"><p>You should also use this class as a template to write your local implementation
+Some native PHP filesystem specific methods are abstracted here as well. Anyway
+you <em>must</em> always use this methods via a PhingFile object (that by nature uses the
+*FileSystem drivers to access the real filesystem via this class using natives.</p>
+
+<p>FIXME:
+ - Error handling reduced to min fallthrough runtime exceptions
+   more precise errorhandling is done by the PhingFile class</p></div>
+<table class="table table-bordered">
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.system.io.html">phing.system.io</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="mailto:charlie@tizac.com">Charlie Killian</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="mailto:hans@xmpl.org">Hans Lellelid</a></td>
+</tr>
+<tr>
+<th>version</th>
+<td>$Id: bc979767c07b19eafeb3fc6f6efa938dd73bde18 $</td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___construct"></a><div class="element clickable method public method___construct" data-toggle="collapse" data-target=".method___construct .collapse">
+<h2>__construct()
+        </h2>
+<pre>__construct() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method__driveIndex"></a><div class="element clickable method public method__driveIndex" data-toggle="collapse" data-target=".method__driveIndex .collapse">
+<h2>private</h2>
+<pre>_driveIndex($d) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$d</h4></div>
+</div></div>
+</div>
+<a id="method__getDrive"></a><div class="element clickable method public method__getDrive" data-toggle="collapse" data-target=".method__getDrive .collapse">
+<h2>_getDrive()
+        </h2>
+<pre>_getDrive($path) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$path</h4></div>
+</div></div>
+</div>
+<a id="method__getDriveDirectory"></a><div class="element clickable method public method__getDriveDirectory" data-toggle="collapse" data-target=".method__getDriveDirectory .collapse">
+<h2>private</h2>
+<pre>_getDriveDirectory($drive) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$drive</h4></div>
+</div></div>
+</div>
+<a id="method__getUserPath"></a><div class="element clickable method public method__getUserPath" data-toggle="collapse" data-target=".method__getUserPath .collapse">
+<h2>_getUserPath()
+        </h2>
+<pre>_getUserPath() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method__nativeListRoots"></a><div class="element clickable method public method__nativeListRoots" data-toggle="collapse" data-target=".method__nativeListRoots .collapse">
+<h2>_nativeListRoots()
+        </h2>
+<pre>_nativeListRoots() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_canDelete"></a><div class="element clickable method public method_canDelete" data-toggle="collapse" data-target=".method_canDelete .collapse">
+<h2>Whether file can be deleted.</h2>
+<pre>canDelete(\PhingFile $f) : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::canDelete()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_canonicalize"></a><div class="element clickable method public method_canonicalize" data-toggle="collapse" data-target=".method_canonicalize .collapse">
+<h2>canonicalize filename by checking on disk</h2>
+<pre>canonicalize(string $strPath) : mixed</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::canonicalize()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$strPath</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>mixed</code>Canonical path or false if the file doesn't exist.</div>
+</div></div>
+</div>
+<a id="method_checkAccess"></a><div class="element clickable method public method_checkAccess" data-toggle="collapse" data-target=".method_checkAccess .collapse">
+<h2>Check whether the file or directory denoted by the given abstract
+pathname may be accessed by this process.</h2>
+<pre>checkAccess(\PhingFile $f, boolean $write) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>If the second argument is
+false, then a check for read access is made; if the second
+argument is true, then a check for write (not read-write)
+access is made.  Return false if access is denied or an I/O error
+occurs.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::checkAccess()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+<div class="subelement argument">
+<h4>$write</h4>
+<code>boolean</code>
+</div>
+</div></div>
+</div>
+<a id="method_chgrp"></a><div class="element clickable method public method_chgrp" data-toggle="collapse" data-target=".method_chgrp .collapse">
+<h2>Change the group on a file or directory.</h2>
+<pre>chgrp(string $pathname, string $group) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::chgrp()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$pathname</h4>
+<code>string</code><p>Path and name of file or directory.</p></div>
+<div class="subelement argument">
+<h4>$group</h4>
+<code>string</code><p>The group of the file or directory. See http://us.php.net/chgrp</p>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td>if operation failed.</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_chmod"></a><div class="element clickable method public method_chmod" data-toggle="collapse" data-target=".method_chmod .collapse">
+<h2>Change the permissions on a file or directory.</h2>
+<pre>chmod(string $pathname, int $mode) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::chmod()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$pathname</h4>
+<code>string</code><p>Path and name of file or directory.</p></div>
+<div class="subelement argument">
+<h4>$mode</h4>
+<code>int</code><p>The mode (permissions) of the file or directory. If using octal add leading 0. eg. 0777. Mode is affected by the umask system setting.</p>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td>if operation failed.</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_chown"></a><div class="element clickable method public method_chown" data-toggle="collapse" data-target=".method_chown .collapse">
+<h2>Change the ownership on a file or directory.</h2>
+<pre>chown(string $pathname, string $user) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::chown()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$pathname</h4>
+<code>string</code><p>Path and name of file or directory.</p></div>
+<div class="subelement argument">
+<h4>$user</h4>
+<code>string</code><p>The user name or number of the file or directory. See http://us.php.net/chown</p>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="http://php.net/manual/en/class.exception.php">\Exception</a></code></th>
+<td>if operation failed.</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_compare"></a><div class="element clickable method public method_compare" data-toggle="collapse" data-target=".method_compare .collapse">
+<h2>compares file paths lexicographically</h2>
+<pre>compare(\PhingFile $f1, \PhingFile $f2) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f1</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+<div class="subelement argument">
+<h4>$f2</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_compareMTimes"></a><div class="element clickable method public method_compareMTimes" data-toggle="collapse" data-target=".method_compareMTimes .collapse">
+<h2>Compare the modified time of two files.</h2>
+<pre>compareMTimes(\file1 $file1, \file2 $file2) : \Int.</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::compareMTimes()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$file1</h4>
+<code>\file1</code><p>String. Path and name of file1.</p></div>
+<div class="subelement argument">
+<h4>$file2</h4>
+<code>\file2</code><p>String. Path and name of file2.</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="http://php.net/manual/en/class.exception.php">\Exception</a></code></th>
+<td>- if cannot get modified time of either file.</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\Int.</code>1 if file1 is newer.
+                -1 if file2 is newer.
+                 0 if files have the same time.
+                 Err object on failure.</div>
+</div></div>
+</div>
+<a id="method_copy"></a><div class="element clickable method public method_copy" data-toggle="collapse" data-target=".method_copy .collapse">
+<h2>Copy a file.</h2>
+<pre>copy(\PhingFile $src, \PhingFile $dest) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::copy()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$src</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code><p>Source path and name file to copy.</p></div>
+<div class="subelement argument">
+<h4>$dest</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code><p>Destination path and name of new file.</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td>if file cannot be copied.</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_copyr"></a><div class="element clickable method public method_copyr" data-toggle="collapse" data-target=".method_copyr .collapse">
+<h2>Copy a file, or recursively copy a folder and its contents</h2>
+<pre>copyr(string $source, string $dest) : bool</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>author</th>
+<td><a href="mailto:aidan@php.net">Aidan Lister</a></td>
+</tr>
+<tr>
+<th>version</th>
+<td>1.0.1</td>
+</tr>
+<tr>
+<th>link</th>
+<td><a href="http://aidanlister.com/repos/v/function.copyr.php">http://aidanlister.com/repos/v/function.copyr.php</a></td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSystem::copyr()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$source</h4>
+<code>string</code><p>Source path</p></div>
+<div class="subelement argument">
+<h4>$dest</h4>
+<code>string</code><p>Destination path</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>bool</code>Returns TRUE on success, FALSE on failure</div>
+</div></div>
+</div>
+<a id="method_createDirectory"></a><div class="element clickable method public method_createDirectory" data-toggle="collapse" data-target=".method_createDirectory .collapse">
+<h2>Create a new directory denoted by the given abstract pathname,
+returning true if and only if the operation succeeds.</h2>
+<pre>createDirectory(<a href="../classes/PhingFile.html">\PhingFile</a> $f, int $mode) : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>NOTE: umask() is reset to 0 while executing mkdir(), and restored afterwards</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::createDirectory()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+<div class="subelement argument">
+<h4>$mode</h4>
+<code>int</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_createNewFile"></a><div class="element clickable method public method_createNewFile" data-toggle="collapse" data-target=".method_createNewFile .collapse">
+<h2>Create a new empty file with the given pathname.</h2>
+<pre>createNewFile(string $strPathname) : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Return
+true if the file was created and false if a
+file or directory with the given pathname already exists.  Throw an
+IOException if an I/O error occurs.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::createNewFile()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$strPathname</h4>
+<code>string</code><p>Path of the file to be created.</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_delete"></a><div class="element clickable method public method_delete" data-toggle="collapse" data-target=".method_delete .collapse">
+<h2>Delete the file or directory denoted by the given abstract pathname,
+returning true if and only if the operation succeeds.</h2>
+<pre>delete(\PhingFile $f, boolean $recursive) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::delete()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+<div class="subelement argument">
+<h4>$recursive</h4>
+<code>boolean</code>
+</div>
+</div></div>
+</div>
+<a id="method_deleteOnExit"></a><div class="element clickable method public method_deleteOnExit" data-toggle="collapse" data-target=".method_deleteOnExit .collapse">
+<h2>Arrange for the file or directory denoted by the given abstract
+pathname to be deleted when Phing::shutdown is called, returning
+true if and only if the operation succeeds.</h2>
+<pre>deleteOnExit(<a href="../classes/PhingFile.html">\PhingFile</a> $f) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::deleteOnExit()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td></td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_fromURIPath"></a><div class="element clickable method public method_fromURIPath" data-toggle="collapse" data-target=".method_fromURIPath .collapse">
+<h2>Post-process the given URI path string if necessary.</h2>
+<pre>fromURIPath($strPath) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This is used on
+win32, e.g., to transform "/c:/foo" into "c:/foo".  The path string
+still has slash separators; code in the PhingFile class will translate them
+after this method returns.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$strPath</h4></div>
+</div></div>
+</div>
+<a id="method_getBooleanAttributes"></a><div class="element clickable method public method_getBooleanAttributes" data-toggle="collapse" data-target=".method_getBooleanAttributes .collapse">
+<h2>Return the simple boolean attributes for the file or directory denoted
+by the given abstract pathname, or zero if it does not exist or some
+other I/O error occurs.</h2>
+<pre>getBooleanAttributes(<a href="../classes/PhingFile.html">\PhingFile</a> $f) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::getBooleanAttributes()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_getDefaultParent"></a><div class="element clickable method public method_getDefaultParent" data-toggle="collapse" data-target=".method_getDefaultParent .collapse">
+<h2>Return the parent pathname string to be used when the parent-directory
+argument in one of the two-argument PhingFile constructors is the empty
+pathname.</h2>
+<pre>getDefaultParent() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getFileSystem"></a><div class="element clickable method public method_getFileSystem" data-toggle="collapse" data-target=".method_getFileSystem .collapse">
+<h2>Static method to return the FileSystem singelton representing
+this platform's local filesystem driver.</h2>
+<pre>getFileSystem() : <a href="../classes/FileSystem.html">\FileSystem</a></pre>
+<div class="labels">
+<span class="label">Inherited</span><span class="label">Static</span>
+</div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::getFileSystem()</td>
+</tr></table>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/FileSystem.html">\FileSystem</a></code></div>
+</div></div>
+</div>
+<a id="method_getLastModifiedTime"></a><div class="element clickable method public method_getLastModifiedTime" data-toggle="collapse" data-target=".method_getLastModifiedTime .collapse">
+<h2>Return the time at which the file or directory denoted by the given
+abstract pathname was last modified, or zero if it does not exist or
+some other I/O error occurs.</h2>
+<pre>getLastModifiedTime(\PhingFile $f) : int</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::getLastModifiedTime()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>int</code></div>
+</div></div>
+</div>
+<a id="method_getLength"></a><div class="element clickable method public method_getLength" data-toggle="collapse" data-target=".method_getLength .collapse">
+<h2>Return the length in bytes of the file denoted by the given abstract
+pathname, or zero if it does not exist, is a directory, or some other
+I/O error occurs.</h2>
+<pre>getLength(\PhingFile $f) : int</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::getLength()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>int</code></div>
+</div></div>
+</div>
+<a id="method_getPathSeparator"></a><div class="element clickable method public method_getPathSeparator" data-toggle="collapse" data-target=".method_getPathSeparator .collapse">
+<h2>Return the local filesystem's path-separator character.</h2>
+<pre>getPathSeparator() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getSeparator"></a><div class="element clickable method public method_getSeparator" data-toggle="collapse" data-target=".method_getSeparator .collapse">
+<h2>Return the local filesystem's name-separator character.</h2>
+<pre>getSeparator() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_isAbsolute"></a><div class="element clickable method public method_isAbsolute" data-toggle="collapse" data-target=".method_isAbsolute .collapse">
+<h2>Tell whether or not the given abstract pathname is absolute.</h2>
+<pre>isAbsolute(\PhingFile $f) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_isLetter"></a><div class="element clickable method public method_isLetter" data-toggle="collapse" data-target=".method_isLetter .collapse">
+<h2>isLetter()
+        </h2>
+<pre>isLetter($c) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$c</h4></div>
+</div></div>
+</div>
+<a id="method_isSlash"></a><div class="element clickable method public method_isSlash" data-toggle="collapse" data-target=".method_isSlash .collapse">
+<h2>isSlash()
+        </h2>
+<pre>isSlash($c) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$c</h4></div>
+</div></div>
+</div>
+<a id="method_listDir"></a><div class="element clickable method public method_listDir" data-toggle="collapse" data-target=".method_listDir .collapse">
+<h2>List the elements of the directory denoted by the given abstract
+pathname.</h2>
+<pre>listDir(\PhingFile $f) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Return an array of strings naming the elements of the
+directory if successful; otherwise, return</p>
+
+<pre><code>null</code></pre>
+
+<p>.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::listDir()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_listRoots"></a><div class="element clickable method public method_listRoots" data-toggle="collapse" data-target=".method_listRoots .collapse">
+<h2>List the available filesystem roots, return array of PhingFile objects</h2>
+<pre>listRoots() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td></td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_lister"></a><div class="element clickable method public method_lister" data-toggle="collapse" data-target=".method_lister .collapse">
+<h2>returns the contents of a directory in an array</h2>
+<pre>lister($f) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$f</h4></div>
+</div></div>
+</div>
+<a id="method_lock"></a><div class="element clickable method public method_lock" data-toggle="collapse" data-target=".method_lock .collapse">
+<h2>Locks a file and throws an Exception if this is not possible.</h2>
+<pre>lock(\PhingFile $f) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::lock()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="http://php.net/manual/en/class.exception.php">\Exception</a></code></th>
+<td></td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_normalize"></a><div class="element clickable method public method_normalize" data-toggle="collapse" data-target=".method_normalize .collapse">
+<h2>Check that the given pathname is normal.</h2>
+<pre>normalize(string $strPath) : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>If not, invoke the real
+normalizer on the part of the pathname that requires normalization.
+This way we iterate through the whole pathname string only once.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$strPath</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_normalizePrefix"></a><div class="element clickable method public method_normalizePrefix" data-toggle="collapse" data-target=".method_normalizePrefix .collapse">
+<h2>A normal Win32 pathname contains no duplicate slashes, except possibly
+for a UNC prefix, and does not end with a slash.</h2>
+<pre>normalizePrefix($strPath, $len, $sb) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>It may be the empty
+string.  Normalized Win32 pathnames have the convenient property that
+the length of the prefix almost uniquely identifies the type of the path
+and whether it is absolute or relative:</p>
+
+<p>0  relative to both drive and directory
+   1  drive-relative (begins with '&#92;')
+   2  absolute UNC (if first char is '&#92;'), else directory-relative (has form "z:foo")
+   3  absolute local pathname (begins with "z:&#92;")</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$strPath</h4></div>
+<div class="subelement argument"><h4>$len</h4></div>
+<div class="subelement argument"><h4>$sb</h4></div>
+</div></div>
+</div>
+<a id="method_prefixLength"></a><div class="element clickable method public method_prefixLength" data-toggle="collapse" data-target=".method_prefixLength .collapse">
+<h2>Compute the length of this pathname string's prefix.</h2>
+<pre>prefixLength($strPath) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The pathname
+string must be in normal form.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$strPath</h4></div>
+</div></div>
+</div>
+<a id="method_rename"></a><div class="element clickable method public method_rename" data-toggle="collapse" data-target=".method_rename .collapse">
+<h2>Rename the file or directory denoted by the first abstract pathname to
+the second abstract pathname, returning true if and only if
+the operation succeeds.</h2>
+<pre>rename(\PhingFile $f1, \PhingFile $f2) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::rename()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f1</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code><p>abstract source file</p></div>
+<div class="subelement argument">
+<h4>$f2</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code><p>abstract destination file</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td>if rename cannot be performed</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_resolve"></a><div class="element clickable method public method_resolve" data-toggle="collapse" data-target=".method_resolve .collapse">
+<h2>Resolve the child pathname string against the parent.</h2>
+<pre>resolve(string $parent, string $child) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Both strings must be in normal form, and the result
+will be a string in normal form.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$parent</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$child</h4>
+<code>string</code>
+</div>
+</div></div>
+</div>
+<a id="method_resolveFile"></a><div class="element clickable method public method_resolveFile" data-toggle="collapse" data-target=".method_resolveFile .collapse">
+<h2>Resolve the given abstract pathname into absolute form.</h2>
+<pre>resolveFile(\PhingFile $f) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Invoked by the
+getAbsolutePath and getCanonicalPath methods in the PhingFile class.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_rmdir"></a><div class="element clickable method public method_rmdir" data-toggle="collapse" data-target=".method_rmdir .collapse">
+<h2>Delete an empty directory OR a directory and all of its contents.</h2>
+<pre>rmdir(\dir $dir, \children $children) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::rmdir()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$dir</h4>
+<code>\dir</code><p>String. Path and/or name of directory to delete.</p>
+</div>
+<div class="subelement argument">
+<h4>$children</h4>
+<code>\children</code><p>Boolean. False: don't delete directory contents. True: delete directory contents.</p>
+</div>
+</div></div>
+</div>
+<a id="method_setLastModifiedTime"></a><div class="element clickable method public method_setLastModifiedTime" data-toggle="collapse" data-target=".method_setLastModifiedTime .collapse">
+<h2>Set the last-modified time of the file or directory denoted by the
+given abstract pathname returning true if and only if the
+operation succeeds.</h2>
+<pre>setLastModifiedTime(\PhingFile $f, int $time) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::setLastModifiedTime()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+<div class="subelement argument">
+<h4>$time</h4>
+<code>int</code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td></td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_setReadOnly"></a><div class="element clickable method public method_setReadOnly" data-toggle="collapse" data-target=".method_setReadOnly .collapse">
+<h2>Mark the file or directory denoted by the given abstract pathname as
+read-only, returning &lt;code&gt;true&lt;/code&gt; if and only if the operation
+succeeds.</h2>
+<pre>setReadOnly(<a href="../classes/PhingFile.html">\PhingFile</a> $f) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td></td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_slashify"></a><div class="element clickable method public method_slashify" data-toggle="collapse" data-target=".method_slashify .collapse">
+<h2>slashify()
+        </h2>
+<pre>slashify($p) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$p</h4></div>
+</div></div>
+</div>
+<a id="method_symlink"></a><div class="element clickable method public method_symlink" data-toggle="collapse" data-target=".method_symlink .collapse">
+<h2>Symbolically link a file to another name.</h2>
+<pre>symlink(string $target, string $link) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Currently symlink is not implemented on Windows. Don't use if the application is to be portable.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::symlink()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$target</h4>
+<code>string</code><p>Path and/or name of file to link.</p>
+</div>
+<div class="subelement argument">
+<h4>$link</h4>
+<code>string</code><p>Path and/or name of link to be created.</p>
+</div>
+</div></div>
+</div>
+<a id="method_touch"></a><div class="element clickable method public method_touch" data-toggle="collapse" data-target=".method_touch .collapse">
+<h2>Set the modification and access time on a file to the present time.</h2>
+<pre>touch(string $file, int $time) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::touch()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$file</h4>
+<code>string</code><p>Path and/or name of file to touch.</p>
+</div>
+<div class="subelement argument">
+<h4>$time</h4>
+<code>int</code>
+</div>
+</div></div>
+</div>
+<a id="method_umask"></a><div class="element clickable method public method_umask" data-toggle="collapse" data-target=".method_umask .collapse">
+<h2>Set the umask for file and directory creation.</h2>
+<pre>umask(\mode $mode) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::umask()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$mode</h4>
+<code>\mode</code><p>Int. Permissions ususally in ocatal. Use leading 0 for octal. Number between 0 and 0777.</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="http://php.net/manual/en/class.exception.php">\Exception</a></code></th>
+<td>if there is an error performing operation.</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_unlink"></a><div class="element clickable method public method_unlink" data-toggle="collapse" data-target=".method_unlink .collapse">
+<h2>Delete a file.</h2>
+<pre>unlink(string $file) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::unlink()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$file</h4>
+<code>string</code><p>Path and/or name of file to delete.</p>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td>- if an error is encountered.</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_unlock"></a><div class="element clickable method public method_unlock" data-toggle="collapse" data-target=".method_unlock .collapse">
+<h2>Unlocks a file and throws an IO Error if this is not possible.</h2>
+<pre>unlock(\PhingFile $f) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::unlock()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$f</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td></td>
+</tr></table>
+</div></div>
+</div>
+<a id="method__access"></a><div class="element clickable method protected method__access" data-toggle="collapse" data-target=".method__access .collapse">
+<h2>_access()
+        </h2>
+<pre>_access($path) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$path</h4></div>
+</div></div>
+</div>
+<a id="method_normalizer"></a><div class="element clickable method protected method_normalizer" data-toggle="collapse" data-target=".method_normalizer .collapse">
+<h2>Normalize the given pathname, whose length is len, starting at the given
+offset; everything before this offset is already normal.</h2>
+<pre>normalizer($strPath, $len, $offset) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$strPath</h4></div>
+<div class="subelement argument"><h4>$len</h4></div>
+<div class="subelement argument"><h4>$offset</h4></div>
+</div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_altSlash"> </a><div class="element clickable property protected property_altSlash" data-toggle="collapse" data-target=".property_altSlash .collapse">
+<h2></h2>
+<pre>$altSlash </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_semicolon"> </a><div class="element clickable property protected property_semicolon" data-toggle="collapse" data-target=".property_semicolon .collapse">
+<h2></h2>
+<pre>$semicolon </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_slash"> </a><div class="element clickable property protected property_slash" data-toggle="collapse" data-target=".property_slash .collapse">
+<h2></h2>
+<pre>$slash </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_driveDirCache"> </a><div class="element clickable property private property_driveDirCache" data-toggle="collapse" data-target=".property_driveDirCache .collapse">
+<h2></h2>
+<pre>$driveDirCache </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_fs"> </a><div class="element clickable property private property_fs" data-toggle="collapse" data-target=".property_fs .collapse">
+<h2></h2>
+<pre>$fs : <a href="../classes/FileSystem.html">\FileSystem</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::$$fs</td>
+</tr></table>
+</div></div>
+</div>
+<h3>
+<i class="icon-custom icon-constant"></i> Constants</h3>
+<a id="constant_BA_DIRECTORY"> </a><div class="element clickable constant  constant_BA_DIRECTORY" data-toggle="collapse" data-target=".constant_BA_DIRECTORY .collapse">
+<h2>BA_DIRECTORY</h2>
+<pre>BA_DIRECTORY : int</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::BA_DIRECTORY</td>
+</tr></table>
+</div></div>
+</div>
+<a id="constant_BA_EXISTS"> </a><div class="element clickable constant  constant_BA_EXISTS" data-toggle="collapse" data-target=".constant_BA_EXISTS .collapse">
+<h2>BA_EXISTS</h2>
+<pre>BA_EXISTS : int</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::BA_EXISTS</td>
+</tr></table>
+</div></div>
+</div>
+<a id="constant_BA_HIDDEN"> </a><div class="element clickable constant  constant_BA_HIDDEN" data-toggle="collapse" data-target=".constant_BA_HIDDEN .collapse">
+<h2>BA_HIDDEN</h2>
+<pre>BA_HIDDEN : int</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::BA_HIDDEN</td>
+</tr></table>
+</div></div>
+</div>
+<a id="constant_BA_REGULAR"> </a><div class="element clickable constant  constant_BA_REGULAR" data-toggle="collapse" data-target=".constant_BA_REGULAR .collapse">
+<h2>BA_REGULAR</h2>
+<pre>BA_REGULAR : int</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSystem::BA_REGULAR</td>
+</tr></table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:57+01:00.<br></footer></div>
+</div>
+</body>
+</html>

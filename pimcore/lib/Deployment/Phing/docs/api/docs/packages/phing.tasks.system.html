@@ -1,0 +1,531 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » phing\tasks\system</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-map-marker"></i> Packages</li>
+<li>
+<a href="../packages/phing.tasks.system.html" title="system"><i class="icon-folder-open"></i>system</a><ul class="nav nav-list nav-packages"><li>
+<a href="../packages/phing.tasks.system.condition.html" title="condition"><i class="icon-folder-open"></i>condition</a><ul class="nav nav-list nav-packages"></ul>
+</li></ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-class"></i> Classes</li>
+<li><a href="#CreoleTask" title="Handles Creole configuration needed by SQL type tasks.">CreoleTask</a></li>
+<li><a href="#PDOTask" title="Handles PDO configuration needed by SQL type tasks.">PDOTask</a></li>
+<li><a href="#ReplaceRegexpTask" title="ReplaceRegExp is a directory based task for replacing the occurrence of a given regular expression with a substitution
+pattern in a selected file or set of files.">ReplaceRegexpTask</a></li>
+<li><a href="#WarnTask" title="Simple task to echo a warning message (Project::MSG_WARN) to all output devices.">WarnTask</a></li>
+<li><a href="#TryCatchTask" title="A wrapper task that lets you run tasks(s) when another set
+of tasks fails.">TryCatchTask</a></li>
+<li><a href="#IfTask" title="Perform some tasks based on whether a given condition holds true or
+not.">IfTask</a></li>
+<li><a href="#ElseIfTask" title='"Inner" class for IfTask.'>ElseIfTask</a></li>
+<li><a href="#TouchTask" title="Touch a file and/or fileset(s); corresponds to the Unix touch command.">TouchTask</a></li>
+<li><a href="#WaitForTask" title="Based on Apache Ant Wait For:">WaitForTask</a></li>
+<li><a href="#CVSPassTask" title="Adds an new entry to a CVS password file.">CVSPassTask</a></li>
+<li><a href="#IncludePathTask" title="Adds a normalized path to the PHP include_path.">IncludePathTask</a></li>
+<li><a href="#MkdirTask" title="Task to create a directory.">MkdirTask</a></li>
+<li><a href="#TypedefTask" title="Register a datatype for use within a buildfile.">TypedefTask</a></li>
+<li><a href="#ExecTask" title="Executes a command on the shell.">ExecTask</a></li>
+<li><a href="#CvsTask" title="Task for performing CVS operations.">CvsTask</a></li>
+<li><a href="#SequentialTask" title="Sequential is a container task that contains other Phing Task objects.">SequentialTask</a></li>
+<li><a href="#AppendTask" title="Appends text, contents of a file or set of files defined by a filelist to a destination file.">AppendTask</a></li>
+<li><a href="#ReflexiveTask" title="This task is for using filter chains to make changes to files and overwrite the original files.">ReflexiveTask</a></li>
+<li><a href="#MatchingTask" title="This is an abstract task that should be used by all those tasks that
+require to include or exclude files based on pattern matching.">MatchingTask</a></li>
+<li><a href="#FailTask" title="Exits the active build, giving an additional message
+if available.">FailTask</a></li>
+<li><a href="#TstampTask" title="Sets properties to the current time, or offsets from the current time.">TstampTask</a></li>
+<li><a href="#TstampCustomFormat" title="">TstampCustomFormat</a></li>
+<li><a href="#PropertyTask" title="Task for setting properties in buildfiles.">PropertyTask</a></li>
+<li><a href="#XsltTask" title="Implements an XSLT processing filter while copying files.">XsltTask</a></li>
+<li><a href="#ResolvePathTask" title="Task for resolving relative paths and setting absolute path in property value.">ResolvePathTask</a></li>
+<li><a href="#InputTask" title="Reads input from the InputHandler.">InputTask</a></li>
+<li><a href="#DeleteTask" title="Deletes a file or directory, or set of files defined by a fileset.">DeleteTask</a></li>
+<li><a href="#ChmodTask" title="Task that changes the permissions on a file/directory.">ChmodTask</a></li>
+<li><a href="#AdhocTaskdefTask" title="A class for creating adhoc tasks in build file.">AdhocTaskdefTask</a></li>
+<li><a href="#AdhocTypedefTask" title="A class for creating adhoc datatypes in build file.">AdhocTypedefTask</a></li>
+<li><a href="#AdhocTask" title="Abstract class for creating adhoc Phing components in buildfile.">AdhocTask</a></li>
+<li><a href="#PhingTask" title="Task that invokes phing on another build file.">PhingTask</a></li>
+<li><a href="#PhingReference" title="Helper class that implements the nested &lt;reference&gt;
+element of &lt;phing&gt; and &lt;phingcall&gt;.">PhingReference</a></li>
+<li><a href="#ForeachTask" title="&lt;foreach&gt; task">ForeachTask</a></li>
+<li><a href="#TaskdefTask" title="Register a task for use within a buildfile.">TaskdefTask</a></li>
+<li><a href="#PropertyPromptTask" title="Deprecated task that uses console to prompt user for property values.">PropertyPromptTask</a></li>
+<li><a href="#CopyTask" title="A phing copy task.">CopyTask</a></li>
+<li><a href="#UpToDateTask" title="Sets the given property if the specified target has a timestamp
+greater than all of the source files.">UpToDateTask</a></li>
+<li><a href="#PhpEvalTask" title="Executes PHP function or evaluates expression and sets return value to a property.">PhpEvalTask</a></li>
+<li><a href="#FunctionParam" title="Supports the &lt;param&gt; nested tag for PhpTask.">FunctionParam</a></li>
+<li><a href="#ImportTask" title="Imports another build file into the current project.">ImportTask</a></li>
+<li><a href="#MoveTask" title="Moves a file or directory to a new file or directory.">MoveTask</a></li>
+<li><a href="#PhingCallTask" title="Call another target in the same project.">PhingCallTask</a></li>
+<li><a href="#ChownTask" title="Task that changes the permissions on a file/directory.">ChownTask</a></li>
+</ul>
+</div>
+<div class="span8 package-contents">
+<ul class="breadcrumb"><li>
+<a href="../index.html"><i class="icon-folder-open"></i></a><span class="divider">\</span><li><a href="../packages/phing.html">phing</a></li>
+<li>
+<span class="divider">\</span><a href="../packages/phing.tasks.html">tasks</a>
+</li>
+<li class="active">
+<span class="divider">\</span><a href="../packages/phing.tasks.system.html">system</a>
+</li>
+</li></ul>
+<div class="package-indent">
+<h3>
+<i class="icon-custom icon-class"></i> Classes and interfaces</h3>
+<div id="AdhocTask" class="element ajax clickable class">
+<h1>AdhocTask<a href="../classes/AdhocTask.html">¶</a>
+</h1>
+<p class="short_description">Abstract class for creating adhoc Phing components in buildfile.</p>
+<div class="details collapse"></div>
+<a href="../classes/AdhocTask.html" class="more">« More »</a>
+</div>
+<div id="AdhocTaskdefTask" class="element ajax clickable class">
+<h1>AdhocTaskdefTask<a href="../classes/AdhocTaskdefTask.html">¶</a>
+</h1>
+<p class="short_description">A class for creating adhoc tasks in build file.</p>
+<div class="details collapse"></div>
+<a href="../classes/AdhocTaskdefTask.html" class="more">« More »</a>
+</div>
+<div id="AdhocTypedefTask" class="element ajax clickable class">
+<h1>AdhocTypedefTask<a href="../classes/AdhocTypedefTask.html">¶</a>
+</h1>
+<p class="short_description">A class for creating adhoc datatypes in build file.</p>
+<div class="details collapse"></div>
+<a href="../classes/AdhocTypedefTask.html" class="more">« More »</a>
+</div>
+<div id="AppendTask" class="element ajax clickable class">
+<h1>AppendTask<a href="../classes/AppendTask.html">¶</a>
+</h1>
+<p class="short_description">Appends text, contents of a file or set of files defined by a filelist to a destination file.</p>
+<div class="details collapse"></div>
+<a href="../classes/AppendTask.html" class="more">« More »</a>
+</div>
+<div id="CVSPassTask" class="element ajax clickable class">
+<h1>CVSPassTask<a href="../classes/CVSPassTask.html">¶</a>
+</h1>
+<p class="short_description">Adds an new entry to a CVS password file.</p>
+<div class="details collapse"></div>
+<a href="../classes/CVSPassTask.html" class="more">« More »</a>
+</div>
+<div id="ChmodTask" class="element ajax clickable class">
+<h1>ChmodTask<a href="../classes/ChmodTask.html">¶</a>
+</h1>
+<p class="short_description">Task that changes the permissions on a file/directory.</p>
+<div class="details collapse"></div>
+<a href="../classes/ChmodTask.html" class="more">« More »</a>
+</div>
+<div id="ChownTask" class="element ajax clickable class">
+<h1>ChownTask<a href="../classes/ChownTask.html">¶</a>
+</h1>
+<p class="short_description">Task that changes the permissions on a file/directory.</p>
+<div class="details collapse"></div>
+<a href="../classes/ChownTask.html" class="more">« More »</a>
+</div>
+<div id="CopyTask" class="element ajax clickable class">
+<h1>CopyTask<a href="../classes/CopyTask.html">¶</a>
+</h1>
+<p class="short_description">A phing copy task.</p>
+<div class="details collapse"></div>
+<a href="../classes/CopyTask.html" class="more">« More »</a>
+</div>
+<div id="CreoleTask" class="element ajax clickable class">
+<h1>CreoleTask<a href="../classes/CreoleTask.html">¶</a>
+</h1>
+<p class="short_description">Handles Creole configuration needed by SQL type tasks.</p>
+<div class="details collapse"></div>
+<a href="../classes/CreoleTask.html" class="more">« More »</a>
+</div>
+<div id="CvsTask" class="element ajax clickable class">
+<h1>CvsTask<a href="../classes/CvsTask.html">¶</a>
+</h1>
+<p class="short_description">Task for performing CVS operations.</p>
+<div class="details collapse"></div>
+<a href="../classes/CvsTask.html" class="more">« More »</a>
+</div>
+<div id="DeleteTask" class="element ajax clickable class">
+<h1>DeleteTask<a href="../classes/DeleteTask.html">¶</a>
+</h1>
+<p class="short_description">Deletes a file or directory, or set of files defined by a fileset.</p>
+<div class="details collapse"></div>
+<a href="../classes/DeleteTask.html" class="more">« More »</a>
+</div>
+<div id="ElseIfTask" class="element ajax clickable class">
+<h1>ElseIfTask<a href="../classes/ElseIfTask.html">¶</a>
+</h1>
+<p class="short_description">"Inner" class for IfTask.</p>
+<div class="details collapse"></div>
+<a href="../classes/ElseIfTask.html" class="more">« More »</a>
+</div>
+<div id="ExecTask" class="element ajax clickable class">
+<h1>ExecTask<a href="../classes/ExecTask.html">¶</a>
+</h1>
+<p class="short_description">Executes a command on the shell.</p>
+<div class="details collapse"></div>
+<a href="../classes/ExecTask.html" class="more">« More »</a>
+</div>
+<div id="FailTask" class="element ajax clickable class">
+<h1>FailTask<a href="../classes/FailTask.html">¶</a>
+</h1>
+<p class="short_description">Exits the active build, giving an additional message
+if available.</p>
+<div class="details collapse"></div>
+<a href="../classes/FailTask.html" class="more">« More »</a>
+</div>
+<div id="ForeachTask" class="element ajax clickable class">
+<h1>ForeachTask<a href="../classes/ForeachTask.html">¶</a>
+</h1>
+<p class="short_description"><foreach> task</p>
+<div class="details collapse"></div>
+<a href="../classes/ForeachTask.html" class="more">« More »</a>
+</div>
+<div id="FunctionParam" class="element ajax clickable class">
+<h1>FunctionParam<a href="../classes/FunctionParam.html">¶</a>
+</h1>
+<p class="short_description">Supports the <param> nested tag for PhpTask.</p>
+<div class="details collapse"></div>
+<a href="../classes/FunctionParam.html" class="more">« More »</a>
+</div>
+<div id="IfTask" class="element ajax clickable class">
+<h1>IfTask<a href="../classes/IfTask.html">¶</a>
+</h1>
+<p class="short_description">Perform some tasks based on whether a given condition holds true or
+not.</p>
+<div class="details collapse"></div>
+<a href="../classes/IfTask.html" class="more">« More »</a>
+</div>
+<div id="ImportTask" class="element ajax clickable class">
+<h1>ImportTask<a href="../classes/ImportTask.html">¶</a>
+</h1>
+<p class="short_description">Imports another build file into the current project.</p>
+<div class="details collapse"></div>
+<a href="../classes/ImportTask.html" class="more">« More »</a>
+</div>
+<div id="IncludePathTask" class="element ajax clickable class">
+<h1>IncludePathTask<a href="../classes/IncludePathTask.html">¶</a>
+</h1>
+<p class="short_description">Adds a normalized path to the PHP include_path.</p>
+<div class="details collapse"></div>
+<a href="../classes/IncludePathTask.html" class="more">« More »</a>
+</div>
+<div id="InputTask" class="element ajax clickable class">
+<h1>InputTask<a href="../classes/InputTask.html">¶</a>
+</h1>
+<p class="short_description">Reads input from the InputHandler.</p>
+<div class="details collapse"></div>
+<a href="../classes/InputTask.html" class="more">« More »</a>
+</div>
+<div id="MatchingTask" class="element ajax clickable class">
+<h1>MatchingTask<a href="../classes/MatchingTask.html">¶</a>
+</h1>
+<p class="short_description">This is an abstract task that should be used by all those tasks that
+require to include or exclude files based on pattern matching.</p>
+<div class="details collapse"></div>
+<a href="../classes/MatchingTask.html" class="more">« More »</a>
+</div>
+<div id="MkdirTask" class="element ajax clickable class">
+<h1>MkdirTask<a href="../classes/MkdirTask.html">¶</a>
+</h1>
+<p class="short_description">Task to create a directory.</p>
+<div class="details collapse"></div>
+<a href="../classes/MkdirTask.html" class="more">« More »</a>
+</div>
+<div id="MoveTask" class="element ajax clickable class">
+<h1>MoveTask<a href="../classes/MoveTask.html">¶</a>
+</h1>
+<p class="short_description">Moves a file or directory to a new file or directory.</p>
+<div class="details collapse"></div>
+<a href="../classes/MoveTask.html" class="more">« More »</a>
+</div>
+<div id="PDOTask" class="element ajax clickable class">
+<h1>PDOTask<a href="../classes/PDOTask.html">¶</a>
+</h1>
+<p class="short_description">Handles PDO configuration needed by SQL type tasks.</p>
+<div class="details collapse"></div>
+<a href="../classes/PDOTask.html" class="more">« More »</a>
+</div>
+<div id="PhingCallTask" class="element ajax clickable class">
+<h1>PhingCallTask<a href="../classes/PhingCallTask.html">¶</a>
+</h1>
+<p class="short_description">Call another target in the same project.</p>
+<div class="details collapse"></div>
+<a href="../classes/PhingCallTask.html" class="more">« More »</a>
+</div>
+<div id="PhingReference" class="element ajax clickable class">
+<h1>PhingReference<a href="../classes/PhingReference.html">¶</a>
+</h1>
+<p class="short_description">Helper class that implements the nested <reference>
+element of <phing> and <phingcall>.</p>
+<div class="details collapse"></div>
+<a href="../classes/PhingReference.html" class="more">« More »</a>
+</div>
+<div id="PhingTask" class="element ajax clickable class">
+<h1>PhingTask<a href="../classes/PhingTask.html">¶</a>
+</h1>
+<p class="short_description">Task that invokes phing on another build file.</p>
+<div class="details collapse"></div>
+<a href="../classes/PhingTask.html" class="more">« More »</a>
+</div>
+<div id="PhpEvalTask" class="element ajax clickable class">
+<h1>PhpEvalTask<a href="../classes/PhpEvalTask.html">¶</a>
+</h1>
+<p class="short_description">Executes PHP function or evaluates expression and sets return value to a property.</p>
+<div class="details collapse"></div>
+<a href="../classes/PhpEvalTask.html" class="more">« More »</a>
+</div>
+<div id="PropertyPromptTask" class="element ajax clickable class">
+<h1>PropertyPromptTask<a href="../classes/PropertyPromptTask.html">¶</a>
+</h1>
+<p class="short_description">Deprecated task that uses console to prompt user for property values.</p>
+<div class="details collapse"></div>
+<a href="../classes/PropertyPromptTask.html" class="more">« More »</a>
+</div>
+<div id="PropertyTask" class="element ajax clickable class">
+<h1>PropertyTask<a href="../classes/PropertyTask.html">¶</a>
+</h1>
+<p class="short_description">Task for setting properties in buildfiles.</p>
+<div class="details collapse"></div>
+<a href="../classes/PropertyTask.html" class="more">« More »</a>
+</div>
+<div id="ReflexiveTask" class="element ajax clickable class">
+<h1>ReflexiveTask<a href="../classes/ReflexiveTask.html">¶</a>
+</h1>
+<p class="short_description">This task is for using filter chains to make changes to files and overwrite the original files.</p>
+<div class="details collapse"></div>
+<a href="../classes/ReflexiveTask.html" class="more">« More »</a>
+</div>
+<div id="ReplaceRegexpTask" class="element ajax clickable class">
+<h1>ReplaceRegexpTask<a href="../classes/ReplaceRegexpTask.html">¶</a>
+</h1>
+<p class="short_description">ReplaceRegExp is a directory based task for replacing the occurrence of a given regular expression with a substitution
+pattern in a selected file or set of files.</p>
+<div class="details collapse"></div>
+<a href="../classes/ReplaceRegexpTask.html" class="more">« More »</a>
+</div>
+<div id="ResolvePathTask" class="element ajax clickable class">
+<h1>ResolvePathTask<a href="../classes/ResolvePathTask.html">¶</a>
+</h1>
+<p class="short_description">Task for resolving relative paths and setting absolute path in property value.</p>
+<div class="details collapse"></div>
+<a href="../classes/ResolvePathTask.html" class="more">« More »</a>
+</div>
+<div id="SequentialTask" class="element ajax clickable class">
+<h1>SequentialTask<a href="../classes/SequentialTask.html">¶</a>
+</h1>
+<p class="short_description">Sequential is a container task that contains other Phing Task objects.</p>
+<div class="details collapse"></div>
+<a href="../classes/SequentialTask.html" class="more">« More »</a>
+</div>
+<div id="TaskdefTask" class="element ajax clickable class">
+<h1>TaskdefTask<a href="../classes/TaskdefTask.html">¶</a>
+</h1>
+<p class="short_description">Register a task for use within a buildfile.</p>
+<div class="details collapse"></div>
+<a href="../classes/TaskdefTask.html" class="more">« More »</a>
+</div>
+<div id="TouchTask" class="element ajax clickable class">
+<h1>TouchTask<a href="../classes/TouchTask.html">¶</a>
+</h1>
+<p class="short_description">Touch a file and/or fileset(s); corresponds to the Unix touch command.</p>
+<div class="details collapse"></div>
+<a href="../classes/TouchTask.html" class="more">« More »</a>
+</div>
+<div id="TryCatchTask" class="element ajax clickable class">
+<h1>TryCatchTask<a href="../classes/TryCatchTask.html">¶</a>
+</h1>
+<p class="short_description">A wrapper task that lets you run tasks(s) when another set
+of tasks fails.</p>
+<div class="details collapse"></div>
+<a href="../classes/TryCatchTask.html" class="more">« More »</a>
+</div>
+<div id="TstampCustomFormat" class="element ajax clickable class">
+<h1>TstampCustomFormat<a href="../classes/TstampCustomFormat.html">¶</a>
+</h1>
+<p class="short_description"></p>
+<div class="details collapse"></div>
+<a href="../classes/TstampCustomFormat.html" class="more">« More »</a>
+</div>
+<div id="TstampTask" class="element ajax clickable class">
+<h1>TstampTask<a href="../classes/TstampTask.html">¶</a>
+</h1>
+<p class="short_description">Sets properties to the current time, or offsets from the current time.</p>
+<div class="details collapse"></div>
+<a href="../classes/TstampTask.html" class="more">« More »</a>
+</div>
+<div id="TypedefTask" class="element ajax clickable class">
+<h1>TypedefTask<a href="../classes/TypedefTask.html">¶</a>
+</h1>
+<p class="short_description">Register a datatype for use within a buildfile.</p>
+<div class="details collapse"></div>
+<a href="../classes/TypedefTask.html" class="more">« More »</a>
+</div>
+<div id="UpToDateTask" class="element ajax clickable class">
+<h1>UpToDateTask<a href="../classes/UpToDateTask.html">¶</a>
+</h1>
+<p class="short_description">Sets the given property if the specified target has a timestamp
+greater than all of the source files.</p>
+<div class="details collapse"></div>
+<a href="../classes/UpToDateTask.html" class="more">« More »</a>
+</div>
+<div id="WaitForTask" class="element ajax clickable class">
+<h1>WaitForTask<a href="../classes/WaitForTask.html">¶</a>
+</h1>
+<p class="short_description">Based on Apache Ant Wait For:</p>
+<div class="details collapse"></div>
+<a href="../classes/WaitForTask.html" class="more">« More »</a>
+</div>
+<div id="WarnTask" class="element ajax clickable class">
+<h1>WarnTask<a href="../classes/WarnTask.html">¶</a>
+</h1>
+<p class="short_description">Simple task to echo a warning message (Project::MSG_WARN) to all output devices.</p>
+<div class="details collapse"></div>
+<a href="../classes/WarnTask.html" class="more">« More »</a>
+</div>
+<div id="XsltTask" class="element ajax clickable class">
+<h1>XsltTask<a href="../classes/XsltTask.html">¶</a>
+</h1>
+<p class="short_description">Implements an XSLT processing filter while copying files.</p>
+<div class="details collapse"></div>
+<a href="../classes/XsltTask.html" class="more">« More »</a>
+</div>
+<ul class="breadcrumb"><li>
+<a href="../index.html"><i class="icon-folder-open"></i></a><span class="divider">\</span><li><a href="../packages/phing.html">phing</a></li>
+<li>
+<span class="divider">\</span><a href="../packages/phing.tasks.html">tasks</a>
+</li>
+<li>
+<span class="divider">\</span><a href="../packages/phing.tasks.system.html">system</a>
+</li>
+<li class="active">
+<span class="divider">\</span><a href="../packages/phing.tasks.system.condition.html">condition</a>
+</li>
+</li></ul>
+<div class="package-indent">
+<h3>
+<i class="icon-custom icon-class"></i> Classes and interfaces</h3>
+<div id="Condition" class="element ajax clickable interface">
+<h1>Condition<a href="../classes/Condition.html">¶</a>
+</h1>
+<p class="short_description">Condition interface specification:</p>
+<div class="details collapse"></div>
+<a href="../classes/Condition.html" class="more">« More »</a>
+</div>
+<div id="ConditionEnumeration" class="element ajax clickable class">
+<h1>ConditionEnumeration<a href="../classes/ConditionEnumeration.html">¶</a>
+</h1>
+<p class="short_description">"Inner" class for handling enumerations.</p>
+<div class="details collapse"></div>
+<a href="../classes/ConditionEnumeration.html" class="more">« More »</a>
+</div>
+<div id="ContainsCondition" class="element ajax clickable class">
+<h1>ContainsCondition<a href="../classes/ContainsCondition.html">¶</a>
+</h1>
+<p class="short_description">Is one string part of another string?</p>
+<div class="details collapse"></div>
+<a href="../classes/ContainsCondition.html" class="more">« More »</a>
+</div>
+<div id="IsFalseCondition" class="element ajax clickable class">
+<h1>IsFalseCondition<a href="../classes/IsFalseCondition.html">¶</a>
+</h1>
+<p class="short_description">Condition that tests whether a given string evals to false.</p>
+<div class="details collapse"></div>
+<a href="../classes/IsFalseCondition.html" class="more">« More »</a>
+</div>
+<div id="IsSetCondition" class="element ajax clickable class">
+<h1>IsSetCondition<a href="../classes/IsSetCondition.html">¶</a>
+</h1>
+<p class="short_description">Condition that tests whether a given property has been set.</p>
+<div class="details collapse"></div>
+<a href="../classes/IsSetCondition.html" class="more">« More »</a>
+</div>
+<div id="IsTrueCondition" class="element ajax clickable class">
+<h1>IsTrueCondition<a href="../classes/IsTrueCondition.html">¶</a>
+</h1>
+<p class="short_description">Condition that tests whether a given string evals to true.</p>
+<div class="details collapse"></div>
+<a href="../classes/IsTrueCondition.html" class="more">« More »</a>
+</div>
+<div id="ReferenceExistsCondition" class="element ajax clickable class">
+<h1>ReferenceExistsCondition<a href="../classes/ReferenceExistsCondition.html">¶</a>
+</h1>
+<p class="short_description">Condition that tests whether a given reference exists.</p>
+<div class="details collapse"></div>
+<a href="../classes/ReferenceExistsCondition.html" class="more">« More »</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:17+01:00.<br></footer></div>
+</div>
+</body>
+</html>

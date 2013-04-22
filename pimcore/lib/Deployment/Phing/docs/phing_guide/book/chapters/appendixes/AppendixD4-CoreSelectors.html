@@ -1,0 +1,669 @@
+<!--
+-File         $Id: def9f4cda12c1f71061b035a140aac27b3f973be $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2002, turing
+-Author       alex black, enigma@turingstudio.com
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Phing Guide - Core Selectors</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="Stylesheet" rev="Stylesheet"
+	href="../../css/Documentation.css" type="text/css" media="All"
+	charset="iso-8859-1" />
+</head>
+<body>
+	<h1>
+		<a name="AppendixD4"></a>Appendix D-4: Selectors
+	</h1>
+
+	<p>
+		Selectors are a specific subset of Phing <em>data types</em> that
+		allow you to fine-tune matching in a <a
+			href="AppendixD-CoreTypes.html#Fileset">FileSet</a> (or DirSet).
+	</p>
+
+	<p>Phing supports the following core selectors, which typically match on
+		both files and directories in a &lt;fileset&gt;:</p>
+
+	<ul>
+		<li><a href="#Contains">&lt;contains&gt;</a> - Select files that
+			contain a specific string</li>
+		<li><a href="#Date">&lt;date&gt;</a> - Select files/directories
+			that have been modified either before or after a specific date/time</li>
+		<li><a href="#Depend">&lt;depend&gt;</a> - Select
+			files/directories that have been modified more recently than
+			equivalent items elsewhere</li>
+		<li><a href="#Depth">&lt;depth&gt;</a> - Select files/directories
+			that appear at a specific depth in a directory tree</li>
+		<li><a href="#Filename">&lt;filename&gt;</a> - Select
+			files/directories whose name matches a particular pattern. Equivalent
+			to the include and exclude elements of a patternset.</li>
+		<li><a href="#Present">&lt;present&gt;</a> - Select
+			files/directories that either do or do not exist in some other
+			location</li>
+		<li><a href="#Containsregexp">&lt;containsregexp&gt;</a> - Select
+			files that contain text matching a regular expression</li>
+		<li><a href="#Size">&lt;size&gt;</a> - Select files that are
+			larger or smaller than a particular number of bytes.</li>
+		<li><a href="#Type">&lt;type&gt;</a> - Select files/directories
+			by type ('file' or 'dir')</li>
+	</ul>
+
+	<p>Additionally, to create more complex selections, a variety of
+		selectors that contain other selectors are available for your use.
+		They combine the selections of their child selectors in various ways.</p>
+
+	<p>Phing supports the following selector containers:</p>
+
+	<ul>
+	   <li><a href="#And">&lt;and&gt;</a> - Select a file only if all the contained selectors select it.</li>
+	   <li><a href="#Majority">&lt;majority&gt;</a> - Select a file only if all the contained selectors select it.</li>
+	   <li><a href="#None">&lt;none&gt;</a> - Select a file only if none of the contained selectors select it.</li>
+	   <li><a href="#Not">&lt;not&gt;</a> - Can contain only one selector, and reverses what it selects and doesn't select.</li>
+	   <li><a href="#Or">&lt;or&gt;</a> - Select a file if any one of the contained selectors selects it.</li>
+	   <li><a href="#Selector">&lt;selector&gt;</a> - Contains only one selector and forwards all requests to it without alteration. This is the selector to use if you want to define a reference. It is usable as an element of <em>&lt;project&gt;</em>.</li>
+	</ul>
+
+	<h2>
+		<a name="Contains"></a>Contains
+	</h2>
+
+	<p>
+		The <em>&lt;contains&gt;</em> tag selects files that contain the
+		string specified by the <em>text</em> attribute.
+	</p>
+
+	<pre>
+&lt;fileset dir=&quot;${src}&quot; includes=&quot;**/*.php&quot;&gt;
+  &lt;contains text=&quot;PHP&quot;/&gt;
+&lt;/fileset&gt;</pre>
+
+	<h3>Attributes</h3>
+	<table>
+		<caption>
+			Attributes for the <em>&lt;contains&gt;</em> selector
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>text</td>
+				<td>Specifies the text that every file must contain</td>
+				<td>n/a</td>
+				<td>Yes</td>
+			</tr>
+			<tr>
+				<td>casesensitive</td>
+				<td>Whether to pay attention to case when looking for the
+					string in the text attribute.</td>
+				<td>true</td>
+				<td>No</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>
+		<a name="Date"></a>Date
+	</h2>
+
+	<p>
+		The <em>&lt;date&gt;</em> tag selects files whose last modified date
+		meet the date limits specified by the selector.
+	</p>
+
+	<pre>
+&lt;fileset dir=&quot;${src}&quot; includes=&quot;**/*.php&quot;&gt;
+  &lt;date datetime=&quot;01/01/2001 12:00 AM&quot; when=&quot;before&quot;/&gt;
+&lt;/fileset&gt;</pre>
+
+	<h3>Attributes</h3>
+	<table>
+		<caption>
+			Attributes for the <em>&lt;date&gt;</em> selector
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>datetime</td>
+				<td>Specifies the date and time to test for. It should be in a
+					format parsable by PHP's <a href="http://www.php.net/strtotime"
+					target="_blank">strtotime()</a> function.</td>
+				<td>n/a</td>
+				<td rowspan="2">One of the two</td>
+			</tr>
+			<tr>
+				<td>seconds</td>
+				<td>The number of seconds since 1970 that should be tested for.</td>
+				<td>n/a</td>
+			</tr>
+			<tr>
+				<td>when</td>
+				<td>Indicates how to interpret the date, whether the files to
+					be selected are those whose last modified times should be before,
+					after, or equal to the specified value. Accepted values are:
+					<ul>
+						<li>before - select files whose last modified date is before
+							the indicated date</li>
+						<li>after - select files whose last modified date is after
+							the indicated date</li>
+						<li>equal - select files whose last modified date is this
+							exact date</li>
+					</ul></td>
+				<td>equal</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>granularity</td>
+				<td>The number of milliseconds leeway to use when comparing
+					file modification times. This is needed because not every file
+					system supports tracking the last modified time to the millisecond
+					level.</td>
+				<td>0</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>checkdirs</td>
+				<td>Indicates whether or not to check dates on directories.</td>
+				<td>false</td>
+				<td>No</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>
+		<a name="Depend"></a>Depend
+	</h2>
+
+	<p>
+		The <em>&lt;depend&gt;</em> tag selects files whose last modified date
+		is later than another, equivalent file in another location.
+	</p>
+
+	<p>
+		The <em>&lt;depend&gt;</em> tag supports the use of a contained <a
+			href="AppendixD3-CoreMappers.html">Mapper</a> element to define the
+		location of the file to be compared against. If no <em>mapper</em>
+		element is specified, the identity type mapper is used.
+	</p>
+
+	<p>
+		The <em>&lt;depend&gt;</em> tag is case-sensitive.
+	</p>
+
+	<pre>
+&lt;fileset dir=&quot;phing-2.4.5/classes&quot; includes=&quot;**/*.php&quot;&gt;
+  &lt;depend targetdir=&quot;phing-2.4.6/classes&quot;/&gt;
+&lt;/fileset&gt;</pre>
+
+	<h3>Attributes</h3>
+	<table>
+		<caption>
+			Attributes for the <em>&lt;depend&gt;</em> selector
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>targetdir</td>
+				<td>The base directory to look for the files to compare
+					against. The precise location depends on a combination of this
+					attribute and the <em>mapper</em> element, if any.</td>
+				<td>n/a</td>
+				<td>Yes</td>
+			</tr>
+			<tr>
+				<td>granularity</td>
+				<td>The number of milliseconds leeway to give before deciding a
+					file is out of date. This is needed because not every file system
+					supports tracking the last modified time to the millisecond level.</td>
+				<td>0</td>
+				<td>No</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>
+		<a name="Depth"></a>Depth
+	</h2>
+
+	<p>
+		The <em>&lt;depth&gt;</em> tag selects files based on how many
+		directory levels deep they are in relation to the base directory of
+		the fileset.
+	</p>
+
+	<pre>
+&lt;fileset dir=&quot;phing/classes&quot; includes=&quot;**/*.php&quot;&gt;
+  &lt;depth max=&quot;1&quot;/&gt;
+&lt;/fileset&gt;</pre>
+
+	<h3>Attributes</h3>
+	<table>
+		<caption>
+			Attributes for the <em>&lt;depth&gt;</em> selector
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>min</td>
+				<td>The minimum number of directory levels below the base
+					directory that a file must be in order to be selected.</td>
+				<td>0</td>
+				<td rowspan="2">One of the two</td>
+			</tr>
+			<tr>
+				<td>max</td>
+				<td>The maximum number of directory levels below the base
+					directory that a file can be and still be selected.</td>
+				<td>0</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>
+		<a name="Filename"></a>Filename
+	</h2>
+
+	<p>
+		The <em>&lt;filename&gt;</em> tag acts like the <em>&lt;include&gt;</em>
+		and <em>&lt;exclude&gt;</em> tags within a fileset. By using a
+		selector instead, however, one can combine it with all the other
+		selectors using whatever selector container is desired.
+	</p>
+
+	<pre>
+&lt;fileset dir=&quot;${src}&quot; includes=&quot;**/*&quot;&gt;
+  &lt;filename name=&quot;**/*.php&quot;&gt;
+&lt;/fileset&gt;</pre>
+
+	<h3>Attributes</h3>
+	<table>
+		<caption>
+			Attributes for the <em>&lt;filename&gt;</em> selector
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>name</td>
+				<td>The name of files to select. The name parameter can contain
+					the standard Ant wildcard characters.</td>
+				<td>n/a</td>
+				<td>Yes</td>
+			</tr>
+			<tr>
+				<td>casesensitive</td>
+				<td>Whether to pay attention to case when looking at file
+					names.</td>
+				<td>true</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>negate</td>
+				<td>Whether to reverse the effects of this filename selection,
+					therefore emulating an exclude rather than include tag.</td>
+				<td>false</td>
+				<td>No</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>
+		<a name="Present"></a>Present
+	</h2>
+
+	<p>
+		The <em>&lt;present&gt;</em> tag selects files that have an equivalent
+		file in another directory tree.
+	</p>
+
+	<p>
+		The <em>&lt;present&gt;</em> tag supports the use of a contained <a
+			href="AppendixD3-CoreMappers.html">Mapper</a> element to define the
+		location of the file to be compared against. If no <em>mapper</em>
+		element is specified, the identity type mapper is used.
+	</p>
+
+	<p>
+		The <em>&lt;present&gt;</em> tag is case-sensitive.
+	</p>
+
+	<pre>
+&lt;fileset dir=&quot;phing-2.4.6/classes&quot; includes=&quot;**/*.php&quot;&gt;
+  &lt;present present=&quot;srconly&quot; targetdir=&quot;phing-2.4.5/classes&quot;&gt;
+&lt;/fileset&gt;</pre>
+
+	<h3>Attributes</h3>
+	<table>
+		<caption>
+			Attributes for the <em>&lt;present&gt;</em> selector
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>targetdir</td>
+				<td>The base directory to look for the files to compare
+					against. The precise location depends on a combination of this
+					attribute and the <em>&lt;mapper&gt;</em> element, if any.</td>
+				<td>n/a</td>
+				<td>Yes</td>
+			</tr>
+			<tr>
+				<td>present</td>
+				<td>Whether we are requiring that a file is present in the src
+					directory tree only, or in both the src and the target directory
+					tree. Valid values are:
+					<ul>
+						<li>srconly - select files only if they are in the src
+							directory tree but not in the target directory tree</li>
+						<li>both - select files only if they are present both in the
+							src and target directory trees</li>
+					</ul></td>
+				<td>both</td>
+				<td>No</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>
+		<a name="Containsregexp"></a>Containsregexp
+	</h2>
+
+	<p>
+		The <em>&lt;containsregexp&gt;</em> tag selects the files whose
+		contents contain a match to the regular expression specified by the
+		expression attribute.
+	</p>
+
+	<pre>
+&lt;fileset dir=&quot;${src}&quot; includes=&quot;*.txt&quot;&gt;
+  &lt;containsregexp expression=&quot;[4-6]\.[0-9]&quot;/&gt;
+&lt;/fileset&gt;</pre>
+
+	<h3>Attributes</h3>
+	<table>
+		<caption>
+			Attributes for the <em>&lt;containsregexp&gt;</em> selector
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>expression</td>
+				<td>Specifies the regular expression that must match true in
+					every file.</td>
+				<td>n/a</td>
+				<td>Yes</td>
+			</tr>
+			<tr>
+				<td>casesensitive</td>
+				<td>Perform a case sensitive match.</td>
+				<td>true</td>
+				<td>No</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>
+		<a name="Size"></a>Size
+	</h2>
+
+	<p>
+		The <em>&lt;size&gt;</em> tag selects files matching a specified size
+		limit.
+	</p>
+
+	<pre>
+&lt;fileset dir=&quot;${src}&quot;&gt;
+  &lt;size value=&quot;4&quot; when=&quot;more&quot;/&gt;
+&lt;/fileset&gt;</pre>
+
+	<h3>Attributes</h3>
+	<table>
+		<caption>
+			Attributes for the <em>&lt;size&gt;</em> selector
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>value</td>
+				<td>The size of the file which should be tested for.</td>
+				<td>n/a</td>
+				<td>Yes</td>
+			</tr>
+			<tr>
+				<td>units</td>
+				<td>The units that the value attribute is expressed in. When
+					using the standard single letter SI designations, such as "k","M",
+					or "G", multiples of 1000 are used. If you want to use power of 2
+					units, use the IEC standard: "Ki" for 1024, "Mi" for 1048576, and
+					so on. The default is no units, which means the value attribute
+					expresses the exact number of bytes.</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>when</td>
+				<td>Indicates how to interpret the size, whether the files to
+					be selected should be larger, smaller, or equal to that value.
+					Accepted values are:
+					<ul>
+						<li>less - select files less than the indicated size</li>
+						<li>more - select files greater than the indicated size</li>
+						<li>equal - select files this exact size</li>
+					</ul></td>
+				<td>equal</td>
+				<td>No</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>
+		<a name="Type"></a>Type
+	</h2>
+
+	<p>
+		The <em>&lt;type&gt;</em> tag selects files of a certain type:
+		directory, symlink or regular.
+	</p>
+
+	<p>When it comes to symbolic links, this selector will </p>
+
+	<pre>
+&lt;fileset dir=&quot;${src}&quot;&gt;
+  &lt;type type=&quot;dir&quot;/&gt;
+&lt;/fileset&gt;</pre>
+
+	<h3>Attributes</h3>
+	<table>
+		<caption>
+			Attributes for the <em>&lt;type&gt;</em> selector
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>type</td>
+				<td>The type of file which should be tested for. Either <em>file</em>, <em>link</em>
+					or <em>dir</em>.</td>
+				<td>n/a</td>
+				<td>Yes</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>
+        <a name="And"></a>And
+    </h2>
+
+    <p>
+        The <em>&lt;and&gt;</em> tag selects files that are selected by all of the elements it contains. It returns as soon as it finds a selector that does not select the file, so it is not guaranteed to check every selector.
+    </p>
+
+    <pre>
+&lt;fileset dir=&quot;${src}&quot; includes=&quot;**/*.php&quot;&gt;
+  &lt;and&gt;
+    &lt;size value=&quot;1000&quot; when=&quot;more&quot;/&gt;
+    &lt;date datetime=&quot;01/01/2011 12:00 AM&quot; when=&quot;before&quot;/&gt;
+  &lt;/and&gt;
+&lt;/fileset&gt;</pre>
+
+    <h2>
+        <a name="Majority"></a>Majority
+    </h2>
+
+    <p>
+        The <em>&lt;majority&gt;</em> tag selects files provided that a majority of the contained elements also select it. Ties are dealt with as specified by the <em>allowtie</em> attribute.
+    </p>
+
+    <pre>
+&lt;fileset dir=&quot;${src}&quot; includes=&quot;**/*.php&quot;&gt;
+  &lt;majority&gt;
+    &lt;contains text=&quot;project&quot; casesensitive=&quot;false&quot;/&gt;
+    &lt;contains text=&quot;taskdef&quot; casesensitive=&quot;false&quot;/&gt;
+    &lt;contains text=&quot;BaseSelector&quot; casesensitive=&quot;true&quot;/&gt;
+  &lt;/majority&gt;
+&lt;/fileset&gt;</pre>
+
+    <h3>Attributes</h3>
+    <table>
+        <caption>
+            Attributes for the <em>&lt;majority&gt;</em> selector container
+        </caption>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Default</th>
+                <th>Required</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>allowtie</td>
+                <td>Whether files should be selected if there are an even number of selectors selecting them as are not selecting them.</td>
+                <td>true</td>
+                <td>No</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>
+        <a name="None"></a>None
+    </h2>
+
+    <p>
+        The <em>&lt;none&gt;</em> tag selects files that are not selected by any of the elements it contains. It returns as soon as it finds a selector that selects the file, so it is not guaranteed to check every selector.
+    </p>
+
+    <pre>
+&lt;fileset dir=&quot;${src}&quot; includes=&quot;**/*.php&quot;&gt;
+  &lt;none&gt;
+    &lt;size value=&quot;1000&quot; when=&quot;more&quot;/&gt;
+    &lt;date datetime=&quot;01/01/2011 12:00 AM&quot; when=&quot;before&quot;/&gt;
+  &lt;/none&gt;
+&lt;/fileset&gt;</pre>
+
+    <h2>
+        <a name="Not"></a>Not
+    </h2>
+
+    <p>
+        The <em>&lt;not&gt;</em> tag reverses the meaning of the single selector it contains.
+    </p>
+
+    <pre>
+&lt;fileset dir=&quot;${src}&quot; includes=&quot;**/*.php&quot;&gt;
+  &lt;not&gt;
+    &lt;contains text=&quot;Phing&quot;/&gt;
+  &lt;/not&gt;
+&lt;/fileset&gt;</pre>
+
+    <h2>
+        <a name="Or"></a>Or
+    </h2>
+
+    <p>
+        The <em>&lt;or&gt;</em> tag selects files that are selected by any one of the elements it contains. It returns as soon as it finds a selector that selects the file, so it is not guaranteed to check every selector.
+    </p>
+
+    <pre>
+&lt;fileset dir=&quot;${src}&quot;&gt;
+  &lt;or&gt;
+    &lt;depth max=&quot;0&quot;/&gt;
+    &lt;filename name=&quot;*.png&quot;/&gt;
+    &lt;filename name=&quot;*.gif&quot;/&gt;
+    &lt;filename name=&quot;*.jpg&quot;/&gt;
+  &lt;/or&gt;
+&lt;/fileset&gt;</pre>
+
+    <h2>
+        <a name="Selector"></a>Selector
+    </h2>
+
+    <p>
+        The <em>&lt;selector&gt;</em> tag is used to create selectors that can be reused through references. It is the only selector which can be used outside of any target, as an element of the <em>&lt;project&gt;</em> tag. It can contain only one other selector, but of course that selector can be a container.
+    </p>
+
+</body>
+</html>

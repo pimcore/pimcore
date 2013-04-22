@@ -1,0 +1,698 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \BaseExtendSelector</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public inherited"><a href="#method_circularReference" title="circularReference :: Creates an exception that indicates the user has generated a
+loop of data types referencing each other."><span class="description">Creates an exception that indicates the user has generated a
+loop of data types referencing each other.</span><pre>circularReference()</pre></a></li>
+<li class="method public inherited"><a href="#method_dieOnCircularReference" title="dieOnCircularReference :: Check to see whether any DataType we hold references to is
+included in the Stack (which holds all DataType instances that
+directly or indirectly reference this instance, including this
+instance itself)."><span class="description">Check to see whether any DataType we hold references to is
+included in the Stack (which holds all DataType instances that
+directly or indirectly reference this instance, including this
+instance itself).</span><pre>dieOnCircularReference()</pre></a></li>
+<li class="method public inherited"><a href="#method_getCheckedRef" title="getCheckedRef :: Performs the check for circular references and returns the referenced object."><span class="description">Performs the check for circular references and returns the referenced object.</span><pre>getCheckedRef()</pre></a></li>
+<li class="method public inherited"><a href="#method_getDescription" title="getDescription :: Return the description for the current data type."><span class="description">Return the description for the current data type.</span><pre>getDescription()</pre></a></li>
+<li class="method public inherited"><a href="#method_getError" title="getError :: Returns any error messages that have been set."><span class="description">Returns any error messages that have been set.</span><pre>getError()</pre></a></li>
+<li class="method public inherited"><a href="#method_getProject" title="getProject :: Returns a reference to current project"><span class="description">Returns a reference to current project</span><pre>getProject()</pre></a></li>
+<li class="method public inherited"><a href="#method_isReference" title="isReference :: Has the refid attribute of this element been set?"><span class="description">Has the refid attribute of this element been set?</span><pre>isReference()</pre></a></li>
+<li class="method public inherited"><a href="#method_isSelected" title="isSelected :: Method that each selector will implement to create their
+selection behaviour."><span class="description">Method that each selector will implement to create their
+selection behaviour.</span><pre>isSelected()</pre></a></li>
+<li class="method public inherited"><a href="#method_log" title="log :: Logs a message with the given priority."><span class="description">Logs a message with the given priority.</span><pre>log()</pre></a></li>
+<li class="method public inherited"><a href="#method_noChildrenAllowed" title="noChildrenAllowed :: Creates an exception that indicates that this XML element must
+not have child elements if the refid attribute is set."><span class="description">Creates an exception that indicates that this XML element must
+not have child elements if the refid attribute is set.</span><pre>noChildrenAllowed()</pre></a></li>
+<li class="method public inherited"><a href="#method_parsingComplete" title="parsingComplete :: Template method being called when the data type has been
+parsed completely."><span class="description">Template method being called when the data type has been
+parsed completely.</span><pre>parsingComplete()</pre></a></li>
+<li class="method public inherited"><a href="#method_setDescription" title="setDescription :: Sets a description of the current data type."><span class="description">Sets a description of the current data type.</span><pre>setDescription()</pre></a></li>
+<li class="method public inherited"><a href="#method_setError" title="setError :: Allows all selectors to indicate a setup error."><span class="description">Allows all selectors to indicate a setup error.</span><pre>setError()</pre></a></li>
+<li class="method public "><a href="#method_setParameters" title="setParameters :: Set all the Parameters for this custom selector, collected by
+the ExtendSelector class."><span class="description">Set all the Parameters for this custom selector, collected by
+the ExtendSelector class.</span><pre>setParameters()</pre></a></li>
+<li class="method public inherited"><a href="#method_setProject" title="setProject :: References the project to the current component."><span class="description">References the project to the current component.</span><pre>setProject()</pre></a></li>
+<li class="method public inherited"><a href="#method_setRefid" title="setRefid :: Set the value of the refid attribute."><span class="description">Set the value of the refid attribute.</span><pre>setRefid()</pre></a></li>
+<li class="method public inherited"><a href="#method_tooManyAttributes" title="tooManyAttributes :: Creates an exception that indicates that refid has to be the
+only attribute if it is set."><span class="description">Creates an exception that indicates that refid has to be the
+only attribute if it is set.</span><pre>tooManyAttributes()</pre></a></li>
+<li class="method public inherited"><a href="#method_validate" title="validate :: Subclasses can use this to throw the requisite exception
+in isSelected() in the case of an error condition."><span class="description">Subclasses can use this to throw the requisite exception
+in isSelected() in the case of an error condition.</span><pre>validate()</pre></a></li>
+<li class="method public inherited"><a href="#method_verifySettings" title="verifySettings :: &lt;p&gt;Subclasses can override this method to provide checking of their
+state."><span class="description">&lt;p&gt;Subclasses can override this method to provide checking of their
+state.</span><pre>verifySettings()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul><li class="method protected "><a href="#method_getParameters" title="getParameters :: Allows access to the parameters gathered and set within the
+&amp;lt;custom&amp;gt; tag."><span class="description">Allows access to the parameters gathered and set within the
+&amp;lt;custom&amp;gt; tag.</span><pre>getParameters()</pre></a></li></ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul>
+<li class="property public inherited"><a href="#property_description" title="$description :: The descriptin the user has set."><span class="description"></span><pre>$description</pre></a></li>
+<li class="property public inherited"><a href="#property_ref" title="$ref :: Value to the refid attribute."><span class="description"></span><pre>$ref</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="property protected inherited"><a href="#property_checked" title="$checked :: Are we sure we don't hold circular references?"><span class="description"></span><pre>$checked</pre></a></li>
+<li class="property protected "><a href="#property_parameters" title="$parameters :: The passed in parameter array."><span class="description"></span><pre>$parameters</pre></a></li>
+<li class="property protected inherited"><a href="#property_project" title="$project :: Holds a reference to the project that a project component
+(a task, a target, etc.) belongs to"><span class="description"></span><pre>$project</pre></a></li>
+</ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul><li class="property private inherited"><a href="#property_errmsg" title="$errmsg :: "><span class="description"></span><pre>$errmsg</pre></a></li></ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\BaseExtendSelector"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/BaseExtendSelector.html">BaseExtendSelector</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">Convenience base class for all selectors accessed through ExtendSelector.</p>
+<div class="details">
+<div class="long_description"><p>It provides support for gathering the parameters together as well as for
+assigning an error message and throwing a build exception if an error is
+detected.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>author</th>
+<td><a href="">Hans Lellelid, hans@xmpl.org (Phing)</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="">Bruce Atherton, bruce@callenish.com (Ant)</a></td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.types.selectors.html">phing.types.selectors</a></td>
+</tr>
+<tr>
+<th>version</th>
+<td>$Id$</td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method_circularReference"></a><div class="element clickable method public method_circularReference" data-toggle="collapse" data-target=".method_circularReference .collapse">
+<h2>Creates an exception that indicates the user has generated a
+loop of data types referencing each other.</h2>
+<pre>circularReference() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::circularReference()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::circularReference()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_dieOnCircularReference"></a><div class="element clickable method public method_dieOnCircularReference" data-toggle="collapse" data-target=".method_dieOnCircularReference .collapse">
+<h2>Check to see whether any DataType we hold references to is
+included in the Stack (which holds all DataType instances that
+directly or indirectly reference this instance, including this
+instance itself).</h2>
+<pre>dieOnCircularReference($stk, \Project $p) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>If one is included, throw a BuildException created by circularReference</p>
+
+<p>This implementation is appropriate only for a DataType that
+cannot hold other DataTypes as children.</p>
+
+<p>The general contract of this method is that it shouldn't do
+anything if checked is true and set it to true on exit.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::dieOnCircularReference()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::dieOnCircularReference()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$stk</h4></div>
+<div class="subelement argument"><h4>$p</h4></div>
+</div></div>
+</div>
+<a id="method_getCheckedRef"></a><div class="element clickable method public method_getCheckedRef" data-toggle="collapse" data-target=".method_getCheckedRef .collapse">
+<h2>Performs the check for circular references and returns the referenced object.</h2>
+<pre>getCheckedRef($requiredClass, $dataTypeName) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::getCheckedRef()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::getCheckedRef()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$requiredClass</h4></div>
+<div class="subelement argument"><h4>$dataTypeName</h4></div>
+</div></div>
+</div>
+<a id="method_getDescription"></a><div class="element clickable method public method_getDescription" data-toggle="collapse" data-target=".method_getDescription .collapse">
+<h2>Return the description for the current data type.</h2>
+<pre>getDescription() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::getDescription()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::getDescription()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_getError"></a><div class="element clickable method public method_getError" data-toggle="collapse" data-target=".method_getError .collapse">
+<h2>Returns any error messages that have been set.</h2>
+<pre>getError() : \the</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseSelector::getError()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\the</code>error condition</div>
+</div></div>
+</div>
+<a id="method_getProject"></a><div class="element clickable method public method_getProject" data-toggle="collapse" data-target=".method_getProject .collapse">
+<h2>Returns a reference to current project</h2>
+<pre>getProject() : <a href="../classes/Project.html">\Project</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\ProjectComponent::getProject()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\DataType::getProject()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::getProject()</td>
+</tr>
+</table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code><a href="../classes/Project.html">\Project</a></code>Reference to current porject object</div>
+</div></div>
+</div>
+<a id="method_isReference"></a><div class="element clickable method public method_isReference" data-toggle="collapse" data-target=".method_isReference .collapse">
+<h2>Has the refid attribute of this element been set?</h2>
+<pre>isReference() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::isReference()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::isReference()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_isSelected"></a><div class="element clickable method public method_isSelected" data-toggle="collapse" data-target=".method_isSelected .collapse">
+<h2>Method that each selector will implement to create their
+selection behaviour.</h2>
+<pre>isSelected(\PhingFile $basedir, \filename $filename, \PhingFile $file) : \whether</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>If there is a problem with the setup
+of a selector, it can throw a BuildException to indicate
+the problem.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\FileSelector::isSelected()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::isSelected()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$basedir</h4>
+<code>\basedir</code><p>A PhingFile object for the base directory</p></div>
+<div class="subelement argument">
+<h4>$filename</h4>
+<code>\filename</code><p>The name of the file to check</p></div>
+<div class="subelement argument">
+<h4>$file</h4>
+<code>\file</code><p>A PhingFile object for this filename</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/BuildException.html">\BuildException</a></code></th>
+<td>if the selector was not configured correctly</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\whether</code>the file should be selected or not</div>
+</div></div>
+</div>
+<a id="method_log"></a><div class="element clickable method public method_log" data-toggle="collapse" data-target=".method_log .collapse">
+<h2>Logs a message with the given priority.</h2>
+<pre>log(string $msg, integer $level) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\ProjectComponent::log()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\DataType::log()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::log()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$msg</h4>
+<code>string</code><p>The message to be logged.</p></div>
+<div class="subelement argument">
+<h4>$level</h4>
+<code>integer</code><p>The message's priority at this message should have</p>
+</div>
+</div></div>
+</div>
+<a id="method_noChildrenAllowed"></a><div class="element clickable method public method_noChildrenAllowed" data-toggle="collapse" data-target=".method_noChildrenAllowed .collapse">
+<h2>Creates an exception that indicates that this XML element must
+not have child elements if the refid attribute is set.</h2>
+<pre>noChildrenAllowed() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::noChildrenAllowed()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::noChildrenAllowed()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_parsingComplete"></a><div class="element clickable method public method_parsingComplete" data-toggle="collapse" data-target=".method_parsingComplete .collapse">
+<h2>Template method being called when the data type has been
+parsed completely.</h2>
+<pre>parsingComplete() : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::parsingComplete()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::parsingComplete()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_setDescription"></a><div class="element clickable method public method_setDescription" data-toggle="collapse" data-target=".method_setDescription .collapse">
+<h2>Sets a description of the current data type.</h2>
+<pre>setDescription($desc) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>It will be useful
+in commenting what we are doing.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::setDescription()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::setDescription()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$desc</h4></div>
+</div></div>
+</div>
+<a id="method_setError"></a><div class="element clickable method public method_setError" data-toggle="collapse" data-target=".method_setError .collapse">
+<h2>Allows all selectors to indicate a setup error.</h2>
+<pre>setError(\msg $msg) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Note that only
+the first error message is recorded.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseSelector::setError()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$msg</h4>
+<code>\msg</code><p>The error message any BuildException should throw.</p></div>
+</div></div>
+</div>
+<a id="method_setParameters"></a><div class="element clickable method public method_setParameters" data-toggle="collapse" data-target=".method_setParameters .collapse">
+<h2>Set all the Parameters for this custom selector, collected by
+the ExtendSelector class.</h2>
+<pre>setParameters(\parameters $parameters) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$parameters</h4>
+<code>\parameters</code><p>the complete set of parameters for this selector</p></div>
+</div></div>
+</div>
+<a id="method_setProject"></a><div class="element clickable method public method_setProject" data-toggle="collapse" data-target=".method_setProject .collapse">
+<h2>References the project to the current component.</h2>
+<pre>setProject(<a href="../classes/Project.html">\Project</a> $project) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\ProjectComponent::setProject()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\DataType::setProject()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::setProject()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$project</h4>
+<code><a href="../classes/Project.html">\Project</a></code><p>The reference to the current project</p></div>
+</div></div>
+</div>
+<a id="method_setRefid"></a><div class="element clickable method public method_setRefid" data-toggle="collapse" data-target=".method_setRefid .collapse">
+<h2>Set the value of the refid attribute.</h2>
+<pre>setRefid(\Reference $r) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Subclasses may need to check whether any other attributes
+have been set as well or child elements have been created and
+thus override this method. if they do they must call parent::setRefid()</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::setRefid()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::setRefid()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$r</h4>
+<code><a href="../classes/Reference.html">\Reference</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_tooManyAttributes"></a><div class="element clickable method public method_tooManyAttributes" data-toggle="collapse" data-target=".method_tooManyAttributes .collapse">
+<h2>Creates an exception that indicates that refid has to be the
+only attribute if it is set.</h2>
+<pre>tooManyAttributes() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::tooManyAttributes()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::tooManyAttributes()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_validate"></a><div class="element clickable method public method_validate" data-toggle="collapse" data-target=".method_validate .collapse">
+<h2>Subclasses can use this to throw the requisite exception
+in isSelected() in the case of an error condition.</h2>
+<pre>validate() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseSelector::validate()</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_verifySettings"></a><div class="element clickable method public method_verifySettings" data-toggle="collapse" data-target=".method_verifySettings .collapse">
+<h2>&lt;p&gt;Subclasses can override this method to provide checking of their
+state.</h2>
+<pre>verifySettings() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>So long as they call validate() from isSelected(), this will
+be called automatically (unless they override validate()).</p></p>
+
+<p>Implementations should check for incorrect settings and call
+setError() as necessary.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseSelector::verifySettings()</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_getParameters"></a><div class="element clickable method protected method_getParameters" data-toggle="collapse" data-target=".method_getParameters .collapse">
+<h2>Allows access to the parameters gathered and set within the
+&amp;lt;custom&amp;gt; tag.</h2>
+<pre>getParameters() : \the</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\the</code>set of parameters defined for this selector</div>
+</div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_description"> </a><div class="element clickable property public property_description" data-toggle="collapse" data-target=".property_description .collapse">
+<h2></h2>
+<pre>$description </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::$$description</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::$$description</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_ref"> </a><div class="element clickable property public property_ref" data-toggle="collapse" data-target=".property_ref .collapse">
+<h2></h2>
+<pre>$ref </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Type of Reference</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::$$ref</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::$$ref</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_checked"> </a><div class="element clickable property protected property_checked" data-toggle="collapse" data-target=".property_checked .collapse">
+<h2></h2>
+<pre>$checked : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Subclasses are responsible for setting this value to false
+if we'd need to investigate this condition (usually because a
+child element has been added that is a subclass of DataType).</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::$$checked</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::$$checked</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_parameters"> </a><div class="element clickable property protected property_parameters" data-toggle="collapse" data-target=".property_parameters .collapse">
+<h2></h2>
+<pre>$parameters </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_project"> </a><div class="element clickable property protected property_project" data-toggle="collapse" data-target=".property_project .collapse">
+<h2></h2>
+<pre>$project : <a href="../classes/Project.html">\Project</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\ProjectComponent::$$project</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\DataType::$$project</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseSelector::$$project</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_errmsg"> </a><div class="element clickable property private property_errmsg" data-toggle="collapse" data-target=".property_errmsg .collapse">
+<h2></h2>
+<pre>$errmsg </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseSelector::$$errmsg</td>
+</tr></table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:54+01:00.<br></footer></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Shell wrapper for Phing
+ * $Id: 65c6f04c4f3e8c6b47d387ad1a624d6630138bab $
+ */
+
+// turn off html errors
+ini_set('html_errors', 'off');
+
+// default logger
+if (!in_array('-logger', $argv)) {
+    $argv[] = '-logger';
+    $argv[] = 'phing.listener.AnsiColorLogger';
+}
+
+require_once dirname(__FILE__) . '/phing.php';

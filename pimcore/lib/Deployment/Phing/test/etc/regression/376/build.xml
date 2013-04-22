@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<project name="FooBar" default="main">
+	<target name="main">
+
+	<copy file="testfile" tofile="newfile" overwrite="true">
+<filterchain>
+<replacetokens>
+    <token key="TOKEN_KEY_TRUE" value="true" />
+    <token key="TOKEN_KEY_FALSE" value="false" />
+</replacetokens>
+</filterchain>
+	</copy>
+    <!-- clean up -->
+    <delete file="newfile" />
+	</target>
+</project>

@@ -1,0 +1,1117 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \PhingFile</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method___construct" title="__construct :: constructor"><span class="description">constructor</span><pre>__construct()</pre></a></li>
+<li class="method public "><a href="#method___toString" title="__toString :: Return string representation of the object"><span class="description">Return string representation of the object</span><pre>__toString()</pre></a></li>
+<li class="method public "><a href="#method__slashify" title="_slashify :: Enter description here ."><span class="description">Enter description here .</span><pre>_slashify()</pre></a></li>
+<li class="method public "><a href="#method_canRead" title="canRead :: Tests whether the application can read the file denoted by this
+abstract pathname."><span class="description">Tests whether the application can read the file denoted by this
+abstract pathname.</span><pre>canRead()</pre></a></li>
+<li class="method public "><a href="#method_canWrite" title="canWrite :: Tests whether the application can modify to the file denoted by this
+abstract pathname."><span class="description">Tests whether the application can modify to the file denoted by this
+abstract pathname.</span><pre>canWrite()</pre></a></li>
+<li class="method public "><a href="#method_compareTo" title="compareTo :: Compares two abstract pathnames lexicographically."><span class="description">Compares two abstract pathnames lexicographically.</span><pre>compareTo()</pre></a></li>
+<li class="method public "><a href="#method_contents" title="contents :: Convenience method for returning the contents of this file as a string."><span class="description">Convenience method for returning the contents of this file as a string.</span><pre>contents()</pre></a></li>
+<li class="method public "><a href="#method_copyTo" title="copyTo :: Simple-copies file denoted by this abstract pathname into another
+PhingFile"><span class="description">Simple-copies file denoted by this abstract pathname into another
+PhingFile</span><pre>copyTo()</pre></a></li>
+<li class="method public "><a href="#method_createNewFile" title="createNewFile :: Atomically creates a new, empty file named by this abstract pathname if
+and only if a file with this name does not yet exist."><span class="description">Atomically creates a new, empty file named by this abstract pathname if
+and only if a file with this name does not yet exist.</span><pre>createNewFile()</pre></a></li>
+<li class="method public "><a href="#method_createTempFile" title="createTempFile :: Static method that creates a unique filename whose name begins with
+$prefix and ends with $suffix in the directory $directory."><span class="description">Static method that creates a unique filename whose name begins with
+$prefix and ends with $suffix in the directory $directory.</span><pre>createTempFile()</pre></a></li>
+<li class="method public "><a href="#method_delete" title="delete :: Deletes the file or directory denoted by this abstract pathname."><span class="description">Deletes the file or directory denoted by this abstract pathname.</span><pre>delete()</pre></a></li>
+<li class="method public "><a href="#method_deleteOnExit" title="deleteOnExit :: Requests that the file or directory denoted by this abstract pathname
+be deleted when php terminates."><span class="description">Requests that the file or directory denoted by this abstract pathname
+be deleted when php terminates.</span><pre>deleteOnExit()</pre></a></li>
+<li class="method public "><a href="#method_equals" title="equals :: Tests this abstract pathname for equality with the given object."><span class="description">Tests this abstract pathname for equality with the given object.</span><pre>equals()</pre></a></li>
+<li class="method public "><a href="#method_exists" title="exists :: Tests whether the file denoted by this abstract pathname exists."><span class="description">Tests whether the file denoted by this abstract pathname exists.</span><pre>exists()</pre></a></li>
+<li class="method public "><a href="#method_getAbsoluteFile" title="getAbsoluteFile :: Returns the absolute form of this abstract pathname."><span class="description">Returns the absolute form of this abstract pathname.</span><pre>getAbsoluteFile()</pre></a></li>
+<li class="method public "><a href="#method_getAbsolutePath" title="getAbsolutePath :: Returns the absolute pathname string of this abstract pathname."><span class="description">Returns the absolute pathname string of this abstract pathname.</span><pre>getAbsolutePath()</pre></a></li>
+<li class="method public "><a href="#method_getCanonicalFile" title="getCanonicalFile :: Returns the canonical form of this abstract pathname."><span class="description">Returns the canonical form of this abstract pathname.</span><pre>getCanonicalFile()</pre></a></li>
+<li class="method public "><a href="#method_getCanonicalPath" title="getCanonicalPath :: Returns the canonical pathname string of this abstract pathname."><span class="description">Returns the canonical pathname string of this abstract pathname.</span><pre>getCanonicalPath()</pre></a></li>
+<li class="method public "><a href="#method_getGroup" title="getGroup :: Retrieve the group of this file."><span class="description">Retrieve the group of this file.</span><pre>getGroup()</pre></a></li>
+<li class="method public "><a href="#method_getLinkTarget" title="getLinkTarget :: Returns the target of the symbolic link denoted by this abstract pathname"><span class="description">Returns the target of the symbolic link denoted by this abstract pathname</span><pre>getLinkTarget()</pre></a></li>
+<li class="method public "><a href="#method_getMode" title="getMode :: Retrieve the mode of this file."><span class="description">Retrieve the mode of this file.</span><pre>getMode()</pre></a></li>
+<li class="method public "><a href="#method_getName" title="getName :: Returns the name of the file or directory denoted by this abstract
+pathname."><span class="description">Returns the name of the file or directory denoted by this abstract
+pathname.</span><pre>getName()</pre></a></li>
+<li class="method public "><a href="#method_getParent" title="getParent :: Returns the pathname string of this abstract pathname's parent, or
+null if this pathname does not name a parent directory."><span class="description">Returns the pathname string of this abstract pathname's parent, or
+null if this pathname does not name a parent directory.</span><pre>getParent()</pre></a></li>
+<li class="method public "><a href="#method_getParentFile" title="getParentFile :: Returns the abstract pathname of this abstract pathname's parent,
+or null if this pathname does not name a parent directory."><span class="description">Returns the abstract pathname of this abstract pathname's parent,
+or null if this pathname does not name a parent directory.</span><pre>getParentFile()</pre></a></li>
+<li class="method public "><a href="#method_getPath" title="getPath :: Converts this abstract pathname into a pathname string."><span class="description">Converts this abstract pathname into a pathname string.</span><pre>getPath()</pre></a></li>
+<li class="method public "><a href="#method_getPathWithoutBase" title="getPathWithoutBase :: Returns path without leading basedir."><span class="description">Returns path without leading basedir.</span><pre>getPathWithoutBase()</pre></a></li>
+<li class="method public "><a href="#method_getPrefixLength" title="getPrefixLength :: Returns the length of this abstract pathname's prefix."><span class="description">Returns the length of this abstract pathname's prefix.</span><pre>getPrefixLength()</pre></a></li>
+<li class="method public "><a href="#method_getTempDir" title="getTempDir :: Returns the path to the temp directory."><span class="description">Returns the path to the temp directory.</span><pre>getTempDir()</pre></a></li>
+<li class="method public "><a href="#method_getUser" title="getUser :: Retrieve the owner of this file."><span class="description">Retrieve the owner of this file.</span><pre>getUser()</pre></a></li>
+<li class="method public "><a href="#method_isAbsolute" title="isAbsolute :: Tests whether this abstract pathname is absolute."><span class="description">Tests whether this abstract pathname is absolute.</span><pre>isAbsolute()</pre></a></li>
+<li class="method public "><a href="#method_isDirectory" title="isDirectory :: Tests whether the file denoted by this abstract pathname is a
+directory."><span class="description">Tests whether the file denoted by this abstract pathname is a
+directory.</span><pre>isDirectory()</pre></a></li>
+<li class="method public "><a href="#method_isFile" title="isFile :: Tests whether the file denoted by this abstract pathname is a normal
+file."><span class="description">Tests whether the file denoted by this abstract pathname is a normal
+file.</span><pre>isFile()</pre></a></li>
+<li class="method public "><a href="#method_isHidden" title="isHidden :: Tests whether the file named by this abstract pathname is a hidden
+file."><span class="description">Tests whether the file named by this abstract pathname is a hidden
+file.</span><pre>isHidden()</pre></a></li>
+<li class="method public "><a href="#method_isLink" title="isLink :: Tests whether the file denoted by this abstract pathname is a symbolic link."><span class="description">Tests whether the file denoted by this abstract pathname is a symbolic link.</span><pre>isLink()</pre></a></li>
+<li class="method public "><a href="#method_lastModified" title="lastModified :: Returns the time that the file denoted by this abstract pathname was
+last modified."><span class="description">Returns the time that the file denoted by this abstract pathname was
+last modified.</span><pre>lastModified()</pre></a></li>
+<li class="method public "><a href="#method_length" title="length :: Returns the length of the file denoted by this abstract pathname."><span class="description">Returns the length of the file denoted by this abstract pathname.</span><pre>length()</pre></a></li>
+<li class="method public "><a href="#method_listDir" title="listDir :: Returns an array of strings naming the files and directories in the
+directory denoted by this abstract pathname."><span class="description">Returns an array of strings naming the files and directories in the
+directory denoted by this abstract pathname.</span><pre>listDir()</pre></a></li>
+<li class="method public "><a href="#method_listFiles" title="listFiles :: Enter description here ."><span class="description">Enter description here .</span><pre>listFiles()</pre></a></li>
+<li class="method public "><a href="#method_listRoots" title="listRoots :: List the available filesystem roots."><span class="description">List the available filesystem roots.</span><pre>listRoots()</pre></a></li>
+<li class="method public "><a href="#method_mkdir" title="mkdir :: Creates the directory named by this abstract pathname."><span class="description">Creates the directory named by this abstract pathname.</span><pre>mkdir()</pre></a></li>
+<li class="method public "><a href="#method_mkdirs" title="mkdirs :: Creates the directory named by this abstract pathname, including any
+necessary but nonexistent parent directories."><span class="description">Creates the directory named by this abstract pathname, including any
+necessary but nonexistent parent directories.</span><pre>mkdirs()</pre></a></li>
+<li class="method public "><a href="#method_removeTempFile" title="removeTempFile :: If necessary, $File the lock on $File is removed and then the file is
+deleted"><span class="description">If necessary, $File the lock on $File is removed and then the file is
+deleted</span><pre>removeTempFile()</pre></a></li>
+<li class="method public "><a href="#method_renameTo" title="renameTo :: Renames the file denoted by this abstract pathname."><span class="description">Renames the file denoted by this abstract pathname.</span><pre>renameTo()</pre></a></li>
+<li class="method public "><a href="#method_setGroup" title="setGroup :: Sets the group of the file."><span class="description">Sets the group of the file.</span><pre>setGroup()</pre></a></li>
+<li class="method public "><a href="#method_setLastModified" title="setLastModified :: Sets the last-modified time of the file or directory named by this
+abstract pathname."><span class="description">Sets the last-modified time of the file or directory named by this
+abstract pathname.</span><pre>setLastModified()</pre></a></li>
+<li class="method public "><a href="#method_setMode" title="setMode :: Sets the mode of the file"><span class="description">Sets the mode of the file</span><pre>setMode()</pre></a></li>
+<li class="method public "><a href="#method_setReadOnly" title="setReadOnly :: Marks the file or directory named by this abstract pathname so that
+only read operations are allowed."><span class="description">Marks the file or directory named by this abstract pathname so that
+only read operations are allowed.</span><pre>setReadOnly()</pre></a></li>
+<li class="method public "><a href="#method_setUser" title="setUser :: Sets the owner of the file."><span class="description">Sets the owner of the file.</span><pre>setUser()</pre></a></li>
+<li class="method public "><a href="#method_toString" title="toString :: Backwards compatibility - @see __toString()"><span class="description">Backwards compatibility - @see __toString()</span><pre>toString()</pre></a></li>
+<li class="method public "><a href="#method_toURI" title="toURI :: Constructs a file: URI that represents this abstract pathname."><span class="description">Constructs a file: URI that represents this abstract pathname.</span><pre>toURI()</pre></a></li>
+<li class="method public "><a href="#method_toURL" title="toURL :: Converts this abstract pathname into a file: URL."><span class="description">Converts this abstract pathname into a file: URL.</span><pre>toURL()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="method protected "><a href="#method__constructFileParentStringChild" title="_constructFileParentStringChild :: Enter description here ."><span class="description">Enter description here .</span><pre>_constructFileParentStringChild()</pre></a></li>
+<li class="method protected "><a href="#method__constructPathname" title="_constructPathname :: Enter description here ."><span class="description">Enter description here .</span><pre>_constructPathname()</pre></a></li>
+<li class="method protected "><a href="#method__constructStringParentStringChild" title="_constructStringParentStringChild :: Enter description here ."><span class="description">Enter description here .</span><pre>_constructStringParentStringChild()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul>
+<li class="property public "><a href="#property_pathSeparator" title="$pathSeparator :: path separator string, static, obtained from FileSystem (; or :)"><span class="description"></span><pre>$pathSeparator</pre></a></li>
+<li class="property public "><a href="#property_separator" title="$separator :: separator string, static, obtained from FileSystem"><span class="description"></span><pre>$separator</pre></a></li>
+</ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul>
+<li class="property private "><a href="#property_path" title="$path :: This abstract pathname's normalized pathname string."><span class="description"></span><pre>$path</pre></a></li>
+<li class="property private "><a href="#property_prefixLength" title="$prefixLength :: The length of this abstract pathname's prefix, or zero if it has no prefix."><span class="description"></span><pre>$prefixLength</pre></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\PhingFile"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/PhingFile.html">PhingFile</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">An abstract representation of file and directory pathnames.</p>
+<div class="details">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>version</th>
+<td>$Id$</td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.system.io.html">phing.system.io</a></td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___construct"></a><div class="element clickable method public method___construct" data-toggle="collapse" data-target=".method___construct .collapse">
+<h2>constructor</h2>
+<pre>__construct($arg1, $arg2) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$arg1</h4></div>
+<div class="subelement argument"><h4>$arg2</h4></div>
+</div></div>
+</div>
+<a id="method___toString"></a><div class="element clickable method public method___toString" data-toggle="collapse" data-target=".method___toString .collapse">
+<h2>Return string representation of the object</h2>
+<pre>__toString() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method__slashify"></a><div class="element clickable method public method__slashify" data-toggle="collapse" data-target=".method__slashify .collapse">
+<h2>Enter description here .</h2>
+<pre>_slashify(<a href="../classes/PhingFile.html">\PhingFile</a> | string $path, boolean $isDirectory) : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>..</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$path</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code><code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$isDirectory</h4>
+<code>boolean</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_canRead"></a><div class="element clickable method public method_canRead" data-toggle="collapse" data-target=".method_canRead .collapse">
+<h2>Tests whether the application can read the file denoted by this
+abstract pathname.</h2>
+<pre>canRead() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the file specified by this
+                abstract pathname exists and can be read by the
+                application; false otherwise</div>
+</div></div>
+</div>
+<a id="method_canWrite"></a><div class="element clickable method public method_canWrite" data-toggle="collapse" data-target=".method_canWrite .collapse">
+<h2>Tests whether the application can modify to the file denoted by this
+abstract pathname.</h2>
+<pre>canWrite() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the file system actually
+                contains a file denoted by this abstract pathname and
+                the application is allowed to write to the file;
+                false otherwise.</div>
+</div></div>
+</div>
+<a id="method_compareTo"></a><div class="element clickable method public method_compareTo" data-toggle="collapse" data-target=".method_compareTo .collapse">
+<h2>Compares two abstract pathnames lexicographically.</h2>
+<pre>compareTo(\PhingFile $file) : int</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The ordering
+defined by this method depends upon the underlying system.  On UNIX
+systems, alphabetic case is significant in comparing pathnames; on Win32
+systems it is not.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$file</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code><p>Th file whose pathname sould be compared to the pathname of this file.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>int</code>Zero if the argument is equal to this abstract pathname, a
+       value less than zero if this abstract pathname is
+       lexicographically less than the argument, or a value greater
+       than zero if this abstract pathname is lexicographically
+       greater than the argument</div>
+</div></div>
+</div>
+<a id="method_contents"></a><div class="element clickable method public method_contents" data-toggle="collapse" data-target=".method_contents .collapse">
+<h2>Convenience method for returning the contents of this file as a string.</h2>
+<pre>contents() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This method uses file_get_contents() to read file in an optimized way.</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="http://php.net/manual/en/class.exception.php">\Exception</a></code></th>
+<td>- if file cannot be read</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_copyTo"></a><div class="element clickable method public method_copyTo" data-toggle="collapse" data-target=".method_copyTo .collapse">
+<h2>Simple-copies file denoted by this abstract pathname into another
+PhingFile</h2>
+<pre>copyTo(\PhingFile $destFile) : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$destFile</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code><p>The new abstract pathname for the named file</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the renaming succeeded; false otherwise</div>
+</div></div>
+</div>
+<a id="method_createNewFile"></a><div class="element clickable method public method_createNewFile" data-toggle="collapse" data-target=".method_createNewFile .collapse">
+<h2>Atomically creates a new, empty file named by this abstract pathname if
+and only if a file with this name does not yet exist.</h2>
+<pre>createNewFile($parents, $mode) : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The check for the
+existence of the file and the creation of the file if it does not exist
+are a single operation that is atomic with respect to all other
+filesystem activities that might affect the file.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$parents</h4></div>
+<div class="subelement argument"><h4>$mode</h4></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td>if file can't be created</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if the named file does not exist and was
+                successfully created; <code>false</code> if the named file
+                already exists</div>
+</div></div>
+</div>
+<a id="method_createTempFile"></a><div class="element clickable method public method_createTempFile" data-toggle="collapse" data-target=".method_createTempFile .collapse">
+<h2>Static method that creates a unique filename whose name begins with
+$prefix and ends with $suffix in the directory $directory.</h2>
+<pre>createTempFile($prefix, $suffix, \PhingFile $directory) : <a href="../classes/PhingFile.html">\PhingFile</a></pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>$directory
+is a reference to a PhingFile Object.
+Then, the file is locked for exclusive reading/writing.</p></div>
+<table class="table table-bordered"><tr>
+<th>author</th>
+<td><a href="">manuel holtgrewe, grin@gmx.net</a></td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$prefix</h4></div>
+<div class="subelement argument"><h4>$suffix</h4></div>
+<div class="subelement argument"><h4>$directory</h4></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/PhingFile.html">\PhingFile</a></code></div>
+</div></div>
+</div>
+<a id="method_delete"></a><div class="element clickable method public method_delete" data-toggle="collapse" data-target=".method_delete .collapse">
+<h2>Deletes the file or directory denoted by this abstract pathname.</h2>
+<pre>delete($recursive) : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>If
+this pathname denotes a directory, then the directory must be empty in
+order to be deleted.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$recursive</h4></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the file or directory is
+                successfully deleted; false otherwise</div>
+</div></div>
+</div>
+<a id="method_deleteOnExit"></a><div class="element clickable method public method_deleteOnExit" data-toggle="collapse" data-target=".method_deleteOnExit .collapse">
+<h2>Requests that the file or directory denoted by this abstract pathname
+be deleted when php terminates.</h2>
+<pre>deleteOnExit() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"><p>Deletion will be attempted only for
+normal termination of php and if and if only Phing::shutdown() is
+called.</p>
+
+<p>Once deletion has been requested, it is not possible to cancel the
+request.  This method should therefore be used with care.</p></div></div></div>
+</div>
+<a id="method_equals"></a><div class="element clickable method public method_equals" data-toggle="collapse" data-target=".method_equals .collapse">
+<h2>Tests this abstract pathname for equality with the given object.</h2>
+<pre>equals($obj) : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Returns</p>
+
+<pre><code>true</code></pre>
+
+<p>if and only if the argument is not</p>
+
+<pre><code>null</code></pre>
+
+<p>and is an abstract pathname that denotes the same file
+or directory as this abstract pathname.  Whether or not two abstract
+pathnames are equal depends upon the underlying system.  On UNIX
+systems, alphabetic case is significant in comparing pathnames; on Win32
+systems it is not.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$obj</h4></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_exists"></a><div class="element clickable method public method_exists" data-toggle="collapse" data-target=".method_exists .collapse">
+<h2>Tests whether the file denoted by this abstract pathname exists.</h2>
+<pre>exists() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the file denoted by this
+                abstract pathname exists; false otherwise</div>
+</div></div>
+</div>
+<a id="method_getAbsoluteFile"></a><div class="element clickable method public method_getAbsoluteFile" data-toggle="collapse" data-target=".method_getAbsoluteFile .collapse">
+<h2>Returns the absolute form of this abstract pathname.</h2>
+<pre>getAbsoluteFile() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Equivalent to
+getAbsolutePath.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>The absolute abstract pathname denoting the same file or
+               directory as this abstract pathname</div>
+</div></div>
+</div>
+<a id="method_getAbsolutePath"></a><div class="element clickable method public method_getAbsolutePath" data-toggle="collapse" data-target=".method_getAbsolutePath .collapse">
+<h2>Returns the absolute pathname string of this abstract pathname.</h2>
+<pre>getAbsolutePath() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>If this abstract pathname is already absolute, then the pathname
+string is simply returned as if by the getPath method.
+If this abstract pathname is the empty abstract pathname then
+the pathname string of the current user directory, which is named by the
+system property user.dir, is returned.  Otherwise this
+pathname is resolved in a system-dependent way.  On UNIX systems, a
+relative pathname is made absolute by resolving it against the current
+user directory.  On Win32 systems, a relative pathname is made absolute
+by resolving it against the current directory of the drive named by the
+pathname, if any; if not, it is resolved against the current user
+directory.</p></div>
+<table class="table table-bordered"><tr>
+<th>see</th>
+<td><a href="">\global\#isAbsolute()</a></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>The absolute pathname string denoting the same file or
+               directory as this abstract pathname</div>
+</div></div>
+</div>
+<a id="method_getCanonicalFile"></a><div class="element clickable method public method_getCanonicalFile" data-toggle="collapse" data-target=".method_getCanonicalFile .collapse">
+<h2>Returns the canonical form of this abstract pathname.</h2>
+<pre>getCanonicalFile() : <a href="../classes/PhingFile.html">\PhingFile</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Equivalent to
+getCanonicalPath(.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>The canonical pathname string denoting the same file or
+         directory as this abstract pathname</div>
+</div></div>
+</div>
+<a id="method_getCanonicalPath"></a><div class="element clickable method public method_getCanonicalPath" data-toggle="collapse" data-target=".method_getCanonicalPath .collapse">
+<h2>Returns the canonical pathname string of this abstract pathname.</h2>
+<pre>getCanonicalPath() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>A canonical pathname is both absolute and unique. The precise
+definition of canonical form is system-dependent. This method first
+converts this pathname to absolute form if necessary, as if by invoking the
+getAbsolutePath() method, and then maps it to its unique form in a
+system-dependent way.  This typically involves removing redundant names
+such as "." and .. from the pathname, resolving symbolic links
+(on UNIX platforms), and converting drive letters to a standard case
+(on Win32 platforms).</p>
+
+<p>Every pathname that denotes an existing file or directory has a
+unique canonical form.  Every pathname that denotes a nonexistent file
+or directory also has a unique canonical form.  The canonical form of
+the pathname of a nonexistent file or directory may be different from
+the canonical form of the same pathname after the file or directory is
+created.  Similarly, the canonical form of the pathname of an existing
+file or directory may be different from the canonical form of the same
+pathname after the file or directory is deleted.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>The canonical pathname string denoting the same file or
+               directory as this abstract pathname</div>
+</div></div>
+</div>
+<a id="method_getGroup"></a><div class="element clickable method public method_getGroup" data-toggle="collapse" data-target=".method_getGroup .collapse">
+<h2>Retrieve the group of this file.</h2>
+<pre>getGroup() : int</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>int</code>User ID of the owner of this file.</div>
+</div></div>
+</div>
+<a id="method_getLinkTarget"></a><div class="element clickable method public method_getLinkTarget" data-toggle="collapse" data-target=".method_getLinkTarget .collapse">
+<h2>Returns the target of the symbolic link denoted by this abstract pathname</h2>
+<pre>getLinkTarget() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>the target of the symbolic link denoted by this abstract pathname</div>
+</div></div>
+</div>
+<a id="method_getMode"></a><div class="element clickable method public method_getMode" data-toggle="collapse" data-target=".method_getMode .collapse">
+<h2>Retrieve the mode of this file.</h2>
+<pre>getMode() : int</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>int</code></div>
+</div></div>
+</div>
+<a id="method_getName"></a><div class="element clickable method public method_getName" data-toggle="collapse" data-target=".method_getName .collapse">
+<h2>Returns the name of the file or directory denoted by this abstract
+pathname.</h2>
+<pre>getName() : \The</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This is just the last name in the pathname's name
+sequence.  If the pathname's name sequence is empty, then the empty
+string is returned.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\The</code>name of the file or directory denoted by this abstract
+         pathname, or the empty string if this pathname's name sequence
+         is empty</div>
+</div></div>
+</div>
+<a id="method_getParent"></a><div class="element clickable method public method_getParent" data-toggle="collapse" data-target=".method_getParent .collapse">
+<h2>Returns the pathname string of this abstract pathname's parent, or
+null if this pathname does not name a parent directory.</h2>
+<pre>getParent() : \The</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The parent of an abstract pathname consists of the pathname's prefix,
+if any, and each name in the pathname's name sequence except for the last.
+If the name sequence is empty then the pathname does not name a parent
+directory.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\The</code>pathname string of the parent directory named by this
+         abstract pathname, or null if this pathname does not name a parent</div>
+</div></div>
+</div>
+<a id="method_getParentFile"></a><div class="element clickable method public method_getParentFile" data-toggle="collapse" data-target=".method_getParentFile .collapse">
+<h2>Returns the abstract pathname of this abstract pathname's parent,
+or null if this pathname does not name a parent directory.</h2>
+<pre>getParentFile() : \The</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The parent of an abstract pathname consists of the pathname's prefix,
+if any, and each name in the pathname's name sequence except for the
+last.  If the name sequence is empty then the pathname does not name
+a parent directory.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\The</code>abstract pathname of the parent directory named by this
+         abstract pathname, or null if this pathname
+         does not name a parent</div>
+</div></div>
+</div>
+<a id="method_getPath"></a><div class="element clickable method public method_getPath" data-toggle="collapse" data-target=".method_getPath .collapse">
+<h2>Converts this abstract pathname into a pathname string.</h2>
+<pre>getPath() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The resulting
+string uses the default name-separator character to separate the names
+in the name sequence.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>The string form of this abstract pathname</div>
+</div></div>
+</div>
+<a id="method_getPathWithoutBase"></a><div class="element clickable method public method_getPathWithoutBase" data-toggle="collapse" data-target=".method_getPathWithoutBase .collapse">
+<h2>Returns path without leading basedir.</h2>
+<pre>getPathWithoutBase(string $basedir) : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>uses</th>
+<td>\global\getPath()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$basedir</h4>
+<code>string</code><p>Base directory to strip</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>Path without basedir</div>
+</div></div>
+</div>
+<a id="method_getPrefixLength"></a><div class="element clickable method public method_getPrefixLength" data-toggle="collapse" data-target=".method_getPrefixLength .collapse">
+<h2>Returns the length of this abstract pathname's prefix.</h2>
+<pre>getPrefixLength() : int</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>int</code></div>
+</div></div>
+</div>
+<a id="method_getTempDir"></a><div class="element clickable method public method_getTempDir" data-toggle="collapse" data-target=".method_getTempDir .collapse">
+<h2>Returns the path to the temp directory.</h2>
+<pre>getTempDir() : string</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_getUser"></a><div class="element clickable method public method_getUser" data-toggle="collapse" data-target=".method_getUser .collapse">
+<h2>Retrieve the owner of this file.</h2>
+<pre>getUser() : int</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>int</code>User ID of the owner of this file.</div>
+</div></div>
+</div>
+<a id="method_isAbsolute"></a><div class="element clickable method public method_isAbsolute" data-toggle="collapse" data-target=".method_isAbsolute .collapse">
+<h2>Tests whether this abstract pathname is absolute.</h2>
+<pre>isAbsolute() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The definition of
+absolute pathname is system dependent.  On UNIX systems, a pathname is
+absolute if its prefix is "/".  On Win32 systems, a pathname is absolute
+if its prefix is a drive specifier followed by "&#92;", or if its prefix
+is "&#92;".</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if this abstract pathname is absolute, false otherwise</div>
+</div></div>
+</div>
+<a id="method_isDirectory"></a><div class="element clickable method public method_isDirectory" data-toggle="collapse" data-target=".method_isDirectory .collapse">
+<h2>Tests whether the file denoted by this abstract pathname is a
+directory.</h2>
+<pre>isDirectory() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the file denoted by this
+                abstract pathname exists and is a directory;
+                false otherwise</div>
+</div></div>
+</div>
+<a id="method_isFile"></a><div class="element clickable method public method_isFile" data-toggle="collapse" data-target=".method_isFile .collapse">
+<h2>Tests whether the file denoted by this abstract pathname is a normal
+file.</h2>
+<pre>isFile() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>A file is normal if it is not a directory and, in
+addition, satisfies other system-dependent criteria.  Any non-directory
+file created by a Java application is guaranteed to be a normal file.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the file denoted by this
+                abstract pathname exists and is a normal file;
+                false otherwise</div>
+</div></div>
+</div>
+<a id="method_isHidden"></a><div class="element clickable method public method_isHidden" data-toggle="collapse" data-target=".method_isHidden .collapse">
+<h2>Tests whether the file named by this abstract pathname is a hidden
+file.</h2>
+<pre>isHidden() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The exact definition of hidden is system-dependent.  On
+UNIX systems, a file is considered to be hidden if its name begins with
+a period character ('.').  On Win32 systems, a file is considered to be
+hidden if it has been marked as such in the filesystem. Currently there
+seems to be no way to dermine isHidden on Win file systems via PHP</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the file denoted by this
+                abstract pathname is hidden according to the conventions of the
+                underlying platform</div>
+</div></div>
+</div>
+<a id="method_isLink"></a><div class="element clickable method public method_isLink" data-toggle="collapse" data-target=".method_isLink .collapse">
+<h2>Tests whether the file denoted by this abstract pathname is a symbolic link.</h2>
+<pre>isLink() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the file denoted by this
+                abstract pathname exists and is a symbolic link;
+                false otherwise</div>
+</div></div>
+</div>
+<a id="method_lastModified"></a><div class="element clickable method public method_lastModified" data-toggle="collapse" data-target=".method_lastModified .collapse">
+<h2>Returns the time that the file denoted by this abstract pathname was
+last modified.</h2>
+<pre>lastModified() : int</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>int</code>An integer value representing the time the file was
+            last modified, measured in milliseconds since the epoch
+            (00:00:00 GMT, January 1, 1970), or 0 if the
+            file does not exist or if an I/O error occurs</div>
+</div></div>
+</div>
+<a id="method_length"></a><div class="element clickable method public method_length" data-toggle="collapse" data-target=".method_length .collapse">
+<h2>Returns the length of the file denoted by this abstract pathname.</h2>
+<pre>length() : int</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The return value is unspecified if this pathname denotes a directory.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>int</code>The length, in bytes, of the file denoted by this abstract
+            pathname, or 0 if the file does not exist</div>
+</div></div>
+</div>
+<a id="method_listDir"></a><div class="element clickable method public method_listDir" data-toggle="collapse" data-target=".method_listDir .collapse">
+<h2>Returns an array of strings naming the files and directories in the
+directory denoted by this abstract pathname.</h2>
+<pre>listDir($filter) : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>If this abstract pathname does not denote a directory, then this
+method returns null  Otherwise an array of strings is
+returned, one for each file or directory in the directory.  Names
+denoting the directory itself and the directory's parent directory are
+not included in the result.  Each string is a file name rather than a
+complete path.</p>
+
+<p>There is no guarantee that the name strings in the resulting array
+will appear in any specific order; they are not, in particular,
+guaranteed to appear in alphabetical order.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$filter</h4><p>string</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code>An array of strings naming the files and directories in the
+              directory denoted by this abstract pathname.  The array will be
+              empty if the directory is empty.  Returns null if
+              this abstract pathname does not denote a directory, or if an
+              I/O error occurs.</div>
+</div></div>
+</div>
+<a id="method_listFiles"></a><div class="element clickable method public method_listFiles" data-toggle="collapse" data-target=".method_listFiles .collapse">
+<h2>Enter description here .</h2>
+<pre>listFiles(<a href="system.io.PhingFile.html#%5CPhingFile">\PhingFile[]</a> $filter) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>..</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$filter</h4>
+<code><a href="system.io.PhingFile.html#%5CPhingFile">\PhingFile[]</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_listRoots"></a><div class="element clickable method public method_listRoots" data-toggle="collapse" data-target=".method_listRoots .collapse">
+<h2>List the available filesystem roots.</h2>
+<pre>listRoots() : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>A particular platform may support zero or more hierarchically-organized
+file systems.  Each file system has a root  directory from which all
+other files in that file system can be reached.
+Windows platforms, for example, have a root directory for each active
+drive; UNIX platforms have a single root directory, namely "/".
+The set of available filesystem roots is affected by various system-level
+operations such the insertion or ejection of removable media and the
+disconnecting or unmounting of physical or virtual disk drives.</p>
+
+<p>This method returns an array of PhingFile objects that
+denote the root directories of the available filesystem roots.  It is
+guaranteed that the canonical pathname of any file physically present on
+the local machine will begin with one of the roots returned by this
+method.</p>
+
+<p>The canonical pathname of a file that resides on some other machine
+and is accessed via a remote-filesystem protocol such as SMB or NFS may
+or may not begin with one of the roots returned by this method.  If the
+pathname of a remote file is syntactically indistinguishable from the
+pathname of a local file then it will begin with one of the roots
+returned by this method.  Thus, for example, PhingFile objects
+denoting the root directories of the mapped network drives of a Windows
+platform will be returned by this method, while PhingFile
+objects containing UNC pathnames will not be returned by this method.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code>An array of PhingFile objects denoting the available
+              filesystem roots, or null if the set of roots
+              could not be determined.  The array will be empty if there are
+              no filesystem roots.</div>
+</div></div>
+</div>
+<a id="method_mkdir"></a><div class="element clickable method public method_mkdir" data-toggle="collapse" data-target=".method_mkdir .collapse">
+<h2>Creates the directory named by this abstract pathname.</h2>
+<pre>mkdir($mode) : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$mode</h4></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the directory was created; false otherwise</div>
+</div></div>
+</div>
+<a id="method_mkdirs"></a><div class="element clickable method public method_mkdirs" data-toggle="collapse" data-target=".method_mkdirs .collapse">
+<h2>Creates the directory named by this abstract pathname, including any
+necessary but nonexistent parent directories.</h2>
+<pre>mkdirs($mode) : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Note that if this
+operation fails it may have succeeded in creating some of the necessary
+parent directories.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$mode</h4></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the directory was created,
+                along with all necessary parent directories; false
+                otherwise</div>
+</div></div>
+</div>
+<a id="method_removeTempFile"></a><div class="element clickable method public method_removeTempFile" data-toggle="collapse" data-target=".method_removeTempFile .collapse">
+<h2>If necessary, $File the lock on $File is removed and then the file is
+deleted</h2>
+<pre>removeTempFile() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>access</th>
+<td>public</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_renameTo"></a><div class="element clickable method public method_renameTo" data-toggle="collapse" data-target=".method_renameTo .collapse">
+<h2>Renames the file denoted by this abstract pathname.</h2>
+<pre>renameTo(\PhingFile $destFile) : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$destFile</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code><p>The new abstract pathname for the named file</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the renaming succeeded; false otherwise</div>
+</div></div>
+</div>
+<a id="method_setGroup"></a><div class="element clickable method public method_setGroup" data-toggle="collapse" data-target=".method_setGroup .collapse">
+<h2>Sets the group of the file.</h2>
+<pre>setGroup($group) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$group</h4></div>
+</div></div>
+</div>
+<a id="method_setLastModified"></a><div class="element clickable method public method_setLastModified" data-toggle="collapse" data-target=".method_setLastModified .collapse">
+<h2>Sets the last-modified time of the file or directory named by this
+abstract pathname.</h2>
+<pre>setLastModified(int $time) : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>All platforms support file-modification times to the nearest second,
+but some provide more precision.  The argument will be truncated to fit
+the supported precision.  If the operation succeeds and no intervening
+operations on the file take place, then the next invocation of the
+lastModified method will return the (possibly truncated) time argument
+that was passed to this method.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$time</h4>
+<code>int</code><p>The new last-modified time, measured in milliseconds since the epoch (00:00:00 GMT, January 1, 1970)</p>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the operation succeeded; false otherwise</div>
+</div></div>
+</div>
+<a id="method_setMode"></a><div class="element clickable method public method_setMode" data-toggle="collapse" data-target=".method_setMode .collapse">
+<h2>Sets the mode of the file</h2>
+<pre>setMode(int $mode) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$mode</h4>
+<code>int</code><p>Ocatal mode.</p></div>
+</div></div>
+</div>
+<a id="method_setReadOnly"></a><div class="element clickable method public method_setReadOnly" data-toggle="collapse" data-target=".method_setReadOnly .collapse">
+<h2>Marks the file or directory named by this abstract pathname so that
+only read operations are allowed.</h2>
+<pre>setReadOnly() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>After invoking this method the file
+or directory is guaranteed not to change until it is either deleted or
+marked to allow write access.  Whether or not a read-only file or
+directory may be deleted depends upon the underlying system.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>true if and only if the operation succeeded; false otherwise</div>
+</div></div>
+</div>
+<a id="method_setUser"></a><div class="element clickable method public method_setUser" data-toggle="collapse" data-target=".method_setUser .collapse">
+<h2>Sets the owner of the file.</h2>
+<pre>setUser(mixed $user) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$user</h4>
+<code>mixed</code><p>User name or number.</p></div>
+</div></div>
+</div>
+<a id="method_toString"></a><div class="element clickable method public method_toString" data-toggle="collapse" data-target=".method_toString .collapse">
+<h2>Backwards compatibility - @see __toString()</h2>
+<pre>toString() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_toURI"></a><div class="element clickable method public method_toURI" data-toggle="collapse" data-target=".method_toURI .collapse">
+<h2>Constructs a file: URI that represents this abstract pathname.</h2>
+<pre>toURI() : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>todo</th>
+<td>Not implemented yet</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_toURL"></a><div class="element clickable method public method_toURL" data-toggle="collapse" data-target=".method_toURL .collapse">
+<h2>Converts this abstract pathname into a file: URL.</h2>
+<pre>toURL() : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The
+exact form of the URL is system-dependent.  If it can be determined that
+the file denoted by this abstract pathname is a directory, then the
+resulting URL will end with a slash.</p>
+
+<p>Usage note: This method does not automatically escape
+characters that are illegal in URLs.  It is recommended that new code
+convert an abstract pathname into a URL by first converting it into a
+URI, via the toURI() method, and then converting the URI
+into a URL via the URI::toURL()</p></div>
+<table class="table table-bordered"><tr>
+<th>todo</th>
+<td>Not implemented yet</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method__constructFileParentStringChild"></a><div class="element clickable method protected method__constructFileParentStringChild" data-toggle="collapse" data-target=".method__constructFileParentStringChild .collapse">
+<h2>Enter description here .</h2>
+<pre>_constructFileParentStringChild(\unknown_type $parent, \unknown_type $child) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>..</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$parent</h4>
+<code>\unknown_type</code>
+</div>
+<div class="subelement argument">
+<h4>$child</h4>
+<code>\unknown_type</code>
+</div>
+</div></div>
+</div>
+<a id="method__constructPathname"></a><div class="element clickable method protected method__constructPathname" data-toggle="collapse" data-target=".method__constructPathname .collapse">
+<h2>Enter description here .</h2>
+<pre>_constructPathname(\unknown_type $pathname) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>..</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$pathname</h4>
+<code>\unknown_type</code>
+</div>
+</div></div>
+</div>
+<a id="method__constructStringParentStringChild"></a><div class="element clickable method protected method__constructStringParentStringChild" data-toggle="collapse" data-target=".method__constructStringParentStringChild .collapse">
+<h2>Enter description here .</h2>
+<pre>_constructStringParentStringChild(\unknown_type $parent, \unknown_type $child) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>..</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$parent</h4>
+<code>\unknown_type</code>
+</div>
+<div class="subelement argument">
+<h4>$child</h4>
+<code>\unknown_type</code>
+</div>
+</div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_pathSeparator"> </a><div class="element clickable property public property_pathSeparator" data-toggle="collapse" data-target=".property_pathSeparator .collapse">
+<h2></h2>
+<pre>$pathSeparator </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_separator"> </a><div class="element clickable property public property_separator" data-toggle="collapse" data-target=".property_separator .collapse">
+<h2></h2>
+<pre>$separator </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_path"> </a><div class="element clickable property private property_path" data-toggle="collapse" data-target=".property_path .collapse">
+<h2></h2>
+<pre>$path </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"><p>A normalized
+pathname string uses the default name-separator character and does not
+contain any duplicate or redundant separators.</p></div></div></div>
+</div>
+<a id="property_prefixLength"> </a><div class="element clickable property private property_prefixLength" data-toggle="collapse" data-target=".property_prefixLength .collapse">
+<h2></h2>
+<pre>$prefixLength : int</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:58+01:00.<br></footer></div>
+</div>
+</body>
+</html>

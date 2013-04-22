@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<project name="Phing API Docs" default="build" basedir="."
+	description="This buildfile constructs the Phing API Documentation">
+	<target name="prepare">
+		<mkdir dir="docs"/>
+	</target>
+	
+	<target name="docs">
+		<phpdoc2 title="Phing API Documentation" output="docs"
+			quiet="true">
+			<fileset dir="../../classes">
+				<include name="**/*.php"/>
+			</fileset>
+		</phpdoc2>		
+ 	</target>
+	
+	<target name="build" depends="prepare,docs">
+	</target>
+
+	<target name="clean">
+		<delete dir="docs"/>
+	</target>
+</project>

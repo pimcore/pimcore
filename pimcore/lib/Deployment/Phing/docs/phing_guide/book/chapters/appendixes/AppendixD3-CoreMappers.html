@@ -1,0 +1,237 @@
+<!--
+-File         $Id: bb939d8d1924342139c3fca5fd50279ddccfbf80 $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2002, turing
+-Author       alex black, enigma@turingstudio.com
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Phing Guide - Core Mappers</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="Stylesheet" rev="Stylesheet"
+	href="../../css/Documentation.css" type="text/css" media="All"
+	charset="iso-8859-1" />
+</head>
+<body>
+	<h1>
+		<a name="CoreMappers"></a>Appendix D-3: Core Mappers
+	</h1>
+	<p>
+		While filters are applied to the <em>content</em> of files, Mappers
+		are applied to the <em>filenames</em>. All mappers have the same API,
+		i.e. the way you use them is the same:
+	</p>
+	<pre>
+&lt;mapper type=&quot;<em>mappername</em>&quot; from=&quot;<em>frompattern</em>&quot; to=&quot;<em>topattern</em>&quot; /&gt;
+</pre>
+	<h3>Attributes</h3>
+	<table>
+		<caption>
+			Attributes for the <em>&lt;mapper&gt;</em> tag
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>type</td>
+				<td>String</td>
+				<td>Type of the mapper.</td>
+				<td>n/a</td>
+				<td rowspan="2">One of these is required.</td>
+			</tr>
+			<tr>
+				<td>classname</td>
+				<td>String</td>
+				<td>Dot-path to a custom mapper class to use.</td>
+				<td>n/a</td>
+
+			</tr>
+			<tr>
+				<td>from</td>
+				<td>String</td>
+				<td>The pattern the filename is to be matched to. The exact
+					meaning is dependent on the implementation of the mapper.</td>
+				<td>n/a</td>
+				<td>depends on the implementation of the mapper</td>
+			</tr>
+			<tr>
+				<td>to</td>
+				<td>String</td>
+				<td>The pattern according to which the filename is to be
+					changed to. Here, the usage is dependent on the implementation of
+					the mapper, too.</td>
+				<td>n/a</td>
+				<td>depends on the implementation of the mapper</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>
+		<a name="FlattenMapper"></a>FlattenMapper
+	</h2>
+	<p>
+		The <em>FlattenMapper</em> removes the directories from a filename and
+		solely returns the filename.
+	</p>
+	<pre>
+&lt;copy todir=&quot;/tmp&quot;&gt;
+  &lt;mapper type=&quot;flatten&quot; /&gt;
+
+  &lt;fileset refid=&quot;someid&quot; /&gt;
+&lt;/copy&gt;
+</pre>
+	<p>This code will copy all files in the fileset to /tmp. All files
+		will be in the target directory.</p>
+	<h3>Examples</h3>
+	<pre>
+&lt;mapper type=&quot;flatten&quot; /&gt;
+</pre>
+	<p>Applying the mapper, you will get the following results from the
+		following filenames:</p>
+	<table>
+		<tr>
+			<th>From</th>
+			<th>To</th>
+		</tr>
+		<tr>
+			<td>test.txt</td>
+			<td>test.txt</td>
+		</tr>
+		<tr>
+			<td>./foo/bar/test.bak</td>
+			<td>test.bak</td>
+		</tr>
+	</table>
+
+	<h2>
+		<a name="GlobMapper"></a>GlobMapper
+	</h2>
+	<p>
+		The <em>GlobMapper</em> works like the <em>copy</em> command in DOS:
+	</p>
+	<pre>
+&lt;copy todir=&quot;/tmp&quot;&gt;
+  &lt;mapper type=&quot;glob&quot; from=&quot;*.php&quot; to=&quot;*.php.bak&quot;/&gt;
+
+  &lt;fileset refid=&quot;someid&quot; /&gt;
+&lt;/copy&gt;
+</pre>
+	<p>
+		This will change the extension of all files matching the pattern <em>*.php</em>
+		to <em>.php.bak</em>.
+	</p>
+	<h3>Examples</h3>
+	<pre>
+&lt;mapper type=&quot;glob&quot; from=&quot;*txt&quot; to=&quot;*txt.bak&quot;/&gt;
+</pre>
+	<p>Applying the mapper, you will get the following results from the
+		following filenames:</p>
+	<table>
+		<tr>
+			<th>From</th>
+			<th>To</th>
+		</tr>
+		<tr>
+			<td>test.txt</td>
+			<td>test.txt.bak</td>
+		</tr>
+		<tr>
+			<td>./foo/bar/test.txt</td>
+			<td>./foo/bar/test.txt.bak</td>
+		</tr>
+		<tr>
+			<td>mytxt</td>
+			<td>mytxt.bak</td>
+		</tr>
+		<tr>
+			<td>SomeClass.php</td>
+			<td><em>ignored</em>, SomeClass.php</td>
+		</tr>
+	</table>
+
+	<h2>
+		<a name="IdentityMapper"></a>IdentityMapper
+	</h2>
+	<p>
+		The <em>IdentityMapper</em> will not change anything on the source
+		filenames.
+	</p>
+
+	<h2>
+		<a name="MergeMapper"></a>MergeMapper
+	</h2>
+	<p>
+		The <em>MergeMapper</em> changes all source filenames to the same
+		filename.
+	</p>
+	<h3>Examples</h3>
+	<pre>
+&lt;mapper type=&quot;merge&quot; to=&quot;test.tar&quot;/&gt;
+</pre>
+	<p>Applying the mapper, you will get the following results from the
+		following filenames:</p>
+	<table>
+		<tr>
+			<th>From</th>
+			<th>To</th>
+		</tr>
+		<tr>
+			<td>test.txt</td>
+			<td>test.tar</td>
+		</tr>
+		<tr>
+			<td>./foo/bar/test.txt</td>
+			<td>test.tar</td>
+		</tr>
+		<tr>
+			<td>mytxt</td>
+			<td>test.tar</td>
+		</tr>
+		<tr>
+			<td>SomeClass.php</td>
+			<td>test.tar</td>
+		</tr>
+	</table>
+
+	<h2>
+		<a name="RegexpMapper"></a>RegexpMapper
+	</h2>
+	<p>
+		The <em>RegexpMapper</em> changes filenames according to a pattern
+		defined by a regular expression. This is the most powerful mapper and
+		you should be able to use it for every possible application.
+	</p>
+	<h3>Examples</h3>
+	<pre>
+&lt;mapper type=&quot;regexp&quot; from=&quot;^(.*)\.conf\.xml&quot; to=&quot;\1.php&quot;/&gt;
+</pre>
+	<p>The mapper as above will do the following mappings:</p>
+	<table>
+		<tr>
+			<th>From</th>
+			<th>To</th>
+		</tr>
+		<tr>
+			<td>test.txt</td>
+			<td><em>ignore</em>, test.txt</td>
+		</tr>
+		<tr>
+			<td>./foo/bar/test.conf.xml</td>
+			<td>./foo/bar/test.php</td>
+		</tr>
+		<tr>
+			<td>someconf.conf.xml</td>
+			<td>someconf.php</td>
+		</tr>
+	</table>
+
+</body>
+</html>

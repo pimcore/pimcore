@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<project name="SvnCheckoutTest" default="invalid">
+
+    <property name="tmp.dir" value="./../../../../tmp/svn" />
+    <property name="repo.url" value="https://github.com/phingofficial/phing/trunk/etc"/>
+
+    <resolvepath propertyName="tmp.dir.resolved" file="${tmp.dir}" />
+
+    <target name="invalid">
+        <fail>This file should only be run via a testcase</fail>
+    </target>
+
+    <target name="checkoutSimple" description="Checkout from existing repo">
+        <svncheckout
+            repositoryurl="${repo.url}"
+            todir="${tmp.dir.resolved}" /> 
+    </target>
+
+    <target name="noRepository" description="Required param checking">
+        <svncheckout todir="${tmp.dir.resolved}" />
+    </target>
+
+</project>

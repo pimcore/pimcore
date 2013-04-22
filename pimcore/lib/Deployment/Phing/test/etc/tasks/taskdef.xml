@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+
+<project name="test" default="invalid">
+
+  <target name="invalid">
+    <fail>This file should only be run via a testcase</fail>
+  </target>
+
+  <target name="empty">
+    <taskdef />
+  </target>
+
+  <target name="noClassname">
+    <taskdef name="dummy" />
+  </target>
+
+  <target name="noName">
+    <taskdef classname="example.tasks.TaskdefTestSimpleTask"/>
+  </target>
+
+  <target name="classNotFound">
+    <taskdef name="" classname="oops"/>
+  </target>
+
+  <path id="testclasses">
+    <pathelement dir="../../classes" />
+  </path>
+
+  <taskdef name="global" classname="example.tasks.TaskdefTestSimpleTask">
+    <classpath refid="testclasses" />
+  </taskdef>
+
+  <target name="testGlobal">
+    <global id="global">
+      <echo message="testGlobal echo"/>
+    </global>
+  </target>
+
+  <target name="testLocal">
+    <taskdef name="local" classname="example.tasks.TaskdefTestSimpleTask">      
+      <classpath refid="testclasses" />
+    </taskdef>
+    <local id="local">
+      <echo message="testLocal echo"/>
+    </local>
+  </target>
+
+  <target name="testFile">
+    <taskdef file="${phing.file}/taskdef.properties">
+      <classpath refid="testclasses" />
+    </taskdef>
+    <tdfile id="tdfile">
+      <echo message="testTdfile echo"/>
+    </tdfile>
+    <tdfile2 id="tdfile2"/>
+  </target>
+
+</project>

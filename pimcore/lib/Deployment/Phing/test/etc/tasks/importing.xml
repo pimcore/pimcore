@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<project name="importing" default="">
+
+  <import file="imports/imported.xml"/>
+
+  <target name="main">
+    <echo>This is ${phing.file} main target.</echo>
+  </target>
+
+  <target name="cascade" depends="imported.main">
+    <echo>This is ${phing.file} cascade target.</echo>
+  </target>
+
+  <target name="flipflop" depends="flip">
+    <echo>This is ${phing.file} flipflop target.</echo>
+  </target>
+  <target name="flop">
+    <echo>This is ${phing.file} flop target.</echo>
+  </target>
+</project>

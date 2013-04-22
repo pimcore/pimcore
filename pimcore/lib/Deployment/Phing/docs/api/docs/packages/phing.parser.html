@@ -1,0 +1,215 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » phing\parser</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-map-marker"></i> Packages</li>
+<li>
+<a href="../packages/phing.parser.html" title="parser"><i class="icon-folder-open"></i>parser</a><ul class="nav nav-list nav-packages"></ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-interface"></i> Interfaces</li>
+<li><a href="#CustomChildCreator" title="Interface for elements that want to be able to create custom child elements
+at runtime.">CustomChildCreator</a></li>
+<li class="nav-header">
+<i class="icon-custom icon-class"></i> Classes</li>
+<li><a href="#ExpatParseException" title="This class throws errors for Expat, the XML processor.">ExpatParseException</a></li>
+<li><a href="#NestedElementHandler" title="The nested element handler class.">NestedElementHandler</a></li>
+<li><a href="#AbstractSAXParser" title="The abstract SAX parser class.">AbstractSAXParser</a></li>
+<li><a href="#Location" title="Stores the file name and line number of a XML file">Location</a></li>
+<li><a href="#AbstractHandler" title="This is an abstract class all SAX handler classes must extend">AbstractHandler</a></li>
+<li><a href="#ProjectConfigurator" title="The datatype handler class.">ProjectConfigurator</a></li>
+<li><a href="#PhingXMLContext" title="Track the current state of the Xml parse operation.">PhingXMLContext</a></li>
+<li><a href="#TargetHandler" title="The target handler class.">TargetHandler</a></li>
+<li><a href="#DataTypeHandler" title="Configures a Project (complete with Targets and Tasks) based on
+a XML build file.">DataTypeHandler</a></li>
+<li><a href="#TaskHandler" title="The task handler class.">TaskHandler</a></li>
+<li><a href="#ExpatParser" title="This class is a wrapper for the PHP's internal expat parser.">ExpatParser</a></li>
+<li><a href="#ProjectHandler" title="Handler class for the &lt;project&gt; XML element This class handles all elements
+under the &lt;project&gt; element.">ProjectHandler</a></li>
+<li><a href="#RootHandler" title="Root filter class for a phing buildfile.">RootHandler</a></li>
+</ul>
+</div>
+<div class="span8 package-contents">
+<ul class="breadcrumb"><li>
+<a href="../index.html"><i class="icon-folder-open"></i></a><span class="divider">\</span><li><a href="../packages/phing.html">phing</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../packages/phing.parser.html">parser</a>
+</li>
+</li></ul>
+<div class="package-indent">
+<h3>
+<i class="icon-custom icon-class"></i> Classes and interfaces</h3>
+<div id="CustomChildCreator" class="element ajax clickable interface">
+<h1>CustomChildCreator<a href="../classes/CustomChildCreator.html">¶</a>
+</h1>
+<p class="short_description">Interface for elements that want to be able to create custom child elements
+at runtime.</p>
+<div class="details collapse"></div>
+<a href="../classes/CustomChildCreator.html" class="more">« More »</a>
+</div>
+<div id="AbstractHandler" class="element ajax clickable class">
+<h1>AbstractHandler<a href="../classes/AbstractHandler.html">¶</a>
+</h1>
+<p class="short_description">This is an abstract class all SAX handler classes must extend</p>
+<div class="details collapse"></div>
+<a href="../classes/AbstractHandler.html" class="more">« More »</a>
+</div>
+<div id="AbstractSAXParser" class="element ajax clickable class">
+<h1>AbstractSAXParser<a href="../classes/AbstractSAXParser.html">¶</a>
+</h1>
+<p class="short_description">The abstract SAX parser class.</p>
+<div class="details collapse"></div>
+<a href="../classes/AbstractSAXParser.html" class="more">« More »</a>
+</div>
+<div id="DataTypeHandler" class="element ajax clickable class">
+<h1>DataTypeHandler<a href="../classes/DataTypeHandler.html">¶</a>
+</h1>
+<p class="short_description">Configures a Project (complete with Targets and Tasks) based on
+a XML build file.</p>
+<div class="details collapse"></div>
+<a href="../classes/DataTypeHandler.html" class="more">« More »</a>
+</div>
+<div id="ExpatParseException" class="element ajax clickable class">
+<h1>ExpatParseException<a href="../classes/ExpatParseException.html">¶</a>
+</h1>
+<p class="short_description">This class throws errors for Expat, the XML processor.</p>
+<div class="details collapse"></div>
+<a href="../classes/ExpatParseException.html" class="more">« More »</a>
+</div>
+<div id="ExpatParser" class="element ajax clickable class">
+<h1>ExpatParser<a href="../classes/ExpatParser.html">¶</a>
+</h1>
+<p class="short_description">This class is a wrapper for the PHP's internal expat parser.</p>
+<div class="details collapse"></div>
+<a href="../classes/ExpatParser.html" class="more">« More »</a>
+</div>
+<div id="Location" class="element ajax clickable class">
+<h1>Location<a href="../classes/Location.html">¶</a>
+</h1>
+<p class="short_description">Stores the file name and line number of a XML file</p>
+<div class="details collapse"></div>
+<a href="../classes/Location.html" class="more">« More »</a>
+</div>
+<div id="NestedElementHandler" class="element ajax clickable class">
+<h1>NestedElementHandler<a href="../classes/NestedElementHandler.html">¶</a>
+</h1>
+<p class="short_description">The nested element handler class.</p>
+<div class="details collapse"></div>
+<a href="../classes/NestedElementHandler.html" class="more">« More »</a>
+</div>
+<div id="PhingXMLContext" class="element ajax clickable class">
+<h1>PhingXMLContext<a href="../classes/PhingXMLContext.html">¶</a>
+</h1>
+<p class="short_description">Track the current state of the Xml parse operation.</p>
+<div class="details collapse"></div>
+<a href="../classes/PhingXMLContext.html" class="more">« More »</a>
+</div>
+<div id="ProjectConfigurator" class="element ajax clickable class">
+<h1>ProjectConfigurator<a href="../classes/ProjectConfigurator.html">¶</a>
+</h1>
+<p class="short_description">The datatype handler class.</p>
+<div class="details collapse"></div>
+<a href="../classes/ProjectConfigurator.html" class="more">« More »</a>
+</div>
+<div id="ProjectHandler" class="element ajax clickable class">
+<h1>ProjectHandler<a href="../classes/ProjectHandler.html">¶</a>
+</h1>
+<p class="short_description">Handler class for the <project> XML element This class handles all elements
+under the <project> element.</p>
+<div class="details collapse"></div>
+<a href="../classes/ProjectHandler.html" class="more">« More »</a>
+</div>
+<div id="RootHandler" class="element ajax clickable class">
+<h1>RootHandler<a href="../classes/RootHandler.html">¶</a>
+</h1>
+<p class="short_description">Root filter class for a phing buildfile.</p>
+<div class="details collapse"></div>
+<a href="../classes/RootHandler.html" class="more">« More »</a>
+</div>
+<div id="TargetHandler" class="element ajax clickable class">
+<h1>TargetHandler<a href="../classes/TargetHandler.html">¶</a>
+</h1>
+<p class="short_description">The target handler class.</p>
+<div class="details collapse"></div>
+<a href="../classes/TargetHandler.html" class="more">« More »</a>
+</div>
+<div id="TaskHandler" class="element ajax clickable class">
+<h1>TaskHandler<a href="../classes/TaskHandler.html">¶</a>
+</h1>
+<p class="short_description">The task handler class.</p>
+<div class="details collapse"></div>
+<a href="../classes/TaskHandler.html" class="more">« More »</a>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:14+01:00.<br></footer></div>
+</div>
+</body>
+</html>

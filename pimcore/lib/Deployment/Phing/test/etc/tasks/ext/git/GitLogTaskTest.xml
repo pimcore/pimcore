@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<project name="gitLogTest" default="invalid">
+
+    <property name="tmp.dir" value="./../../../../tmp/git" />
+    <property name="repo.dir" value="phing-tests.git"/>
+
+    <resolvepath propertyName="tmp.dir.resolved" file="${tmp.dir}" />
+    <resolvepath propertyName="repo.dir.resolved" file="${repo.dir}" />
+
+    <target name="invalid">
+        <fail>This file should only be run via a testcase</fail>
+    </target>
+
+    <target name="gitLogWithoutParams" description="Run git-log w/o any params">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog repository="${tmp.dir.resolved}" />
+    </target>
+    <target name="gitLogWithMostParams" description="Run git-log w/ most params set">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog 
+            format="oneline"
+            maxCount="2"
+            stat="true"
+            noMerges="false"
+            paths="${tmp.dir.resolved}"
+            until="Mon Jan 24 09:59:33 2011 +0300"
+            repository="${tmp.dir.resolved}" />
+    </target>
+
+    <target name="gitLogOutputPropertySet" description="Run git-log w/ dumping output into property">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog 
+            format="oneline"
+            outputProperty="gitLogOutput"
+            since="Sun Jan 23 23:55:42 2011 +0300"
+            until="Mon Jan 24 09:59:33 2011 +0300"
+            repository="${tmp.dir.resolved}" />
+    </target>
+
+
+    <target name="gitLogNameStatusSet" description="Run git-log w/ --name-status">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog 
+            format="oneline"
+            nameStatus="true"
+            repository="${tmp.dir.resolved}" />
+    </target>
+
+    <target name="gitLogDateRelative" description="Run git-log w/ --date=relative">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog 
+            format="medium"
+            date="relative"
+            repository="${tmp.dir.resolved}" />
+    </target>
+
+    <target name="gitLogSinceUntilSet" description="Run git-log w/ --since + --until">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog 
+            format="oneline"
+            since="2011-01-22"
+            until="Mon Jan 24 09:50:33 2011 +0300"
+            repository="${tmp.dir.resolved}" />
+    </target>
+
+    <target name="gitLogBeforeAfterSet" description="Run git-log w/ --before + --after">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog 
+            format="oneline"
+            after="2011-01-22"
+            before="Mon Jan 24 09:50:33 2011 +0300"
+            repository="${tmp.dir.resolved}" />
+    </target>
+
+    <target name="gitLogFormatOneLine" description="Run git-log w/ --format=oneline">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog 
+            format="oneline"
+            repository="${tmp.dir.resolved}" />
+    </target>
+
+    <target name="gitLogFormatShort" description="Run git-log w/ --format=short">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog 
+            format="short"
+            repository="${tmp.dir.resolved}" />
+    </target>
+
+    <target name="gitLogFormatMedium" description="Run git-log w/ --format=medium">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog 
+            format="medium"
+            repository="${tmp.dir.resolved}" />
+    </target>
+
+    <target name="gitLogFormatFull" description="Run git-log w/ --format=full">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog 
+            format="full"
+            repository="${tmp.dir.resolved}" />
+    </target>
+
+    <target name="gitLogFormatFuller" description="Run git-log w/ --format=fuller">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog 
+            format="fuller"
+            repository="${tmp.dir.resolved}" />
+    </target>
+
+    <target name="gitLogFormatEmail" description="Run git-log w/ --format=email">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog 
+            format="email"
+            repository="${tmp.dir.resolved}" />
+    </target>
+
+    <target name="gitLogFormatCustom" description="Run git-log w/ --format=string">
+        <!-- obtain test repo -->
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitlog 
+            format="The author of %H was %an &lt;%ae&gt;"
+            repository="${tmp.dir.resolved}" />
+    </target>
+
+    <target name="noRepository" description="No repo dir argument provided">
+        <gitlog />
+    </target>
+    
+</project>

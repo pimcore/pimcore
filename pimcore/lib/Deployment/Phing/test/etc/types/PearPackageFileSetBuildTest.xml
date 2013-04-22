@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="test" basedir="." default="testConsoleGetopt">
+  <includepath classpath="../src/" />
+
+  <typedef name="pearPackageFileSet" classname="phing.types.PearPackageFileSet" />
+
+  <target name="testConsoleGetopt"
+          description=""
+  >
+    <pearPackageFileSet package="Console_Getopt" id="co"/>
+    <foreach param="filename" absparam="absfilename" target="echoFilesetFile">
+      <fileset refid="co"/>
+    </foreach>
+  </target>
+
+  <!-- FIXME: does not work yet
+  <target name="testDirect"
+          description="using a pearpackagefileset directly in a task"
+  >
+    <foreach param="filename" absparam="absfilename" target="echoFilesetFile">
+      <pearPackageFileSet package="Console_Getopt" id="co"/>
+    </foreach>
+  </target>
+  -->
+
+  <target name="testPEAR"
+          description=""
+  >
+    <pearPackageFileSet package="PEAR" id="co"/>
+    <foreach param="filename" absparam="absfilename" target="echoFilesetFile">
+      <fileset refid="co"/>
+    </foreach>
+  </target>
+
+  <target name="testRoleDoc"
+          description=""
+  >
+    <pearPackageFileSet
+         package="pear.phpunit.de/PHPUnit"
+         role="doc"
+         id="co"/>
+    <foreach param="filename" absparam="absfilename" target="echoFilesetFile">
+      <fileset refid="co"/>
+    </foreach>
+  </target>
+
+  <target name="echoFilesetFile">
+    <echo>file|rel:${filename}|abs:${absfilename}</echo>
+  </target>
+
+
+  <target name="testCopyConsoleGetopt"
+          description="uses the type with a real CopyTask"
+  >
+    <pearPackageFileSet package="Console_Getopt" role="php" id="co"/>
+    <property name="tmpdir" value="/tmp/phing-pearPackageFileSetBuildTest-test"/>
+    <delete dir="${tmpdir}" quiet="true"/>
+    <copy todir="${tmpdir}">
+      <fileset refid="co"/>
+    </copy>
+
+    <!-- check it -->
+    <property name="file" value="${tmpdir}/Console/Getopt.php"/>
+    <available file="${file}"
+               property="fileExists" value="true"/>
+    <fail unless="fileExists" message="File has not been copied: ${file}" />
+    <delete dir="${tmpdir}" quiet="true"/>
+  </target>
+
+
+  <target name="testCopyMapperConsoleGetopt"
+          description="copy package files with a mapper"
+  >
+    <pearPackageFileSet package="Console_Getopt" role="php" id="co"/>
+    <property name="tmpdir" value="/tmp/phing-pearPackageFileSetBuildTest-test"/>
+    <delete dir="${tmpdir}" quiet="true"/>
+    <copy todir="${tmpdir}">
+      <fileset refid="co"/>
+      <mapper type="glob" from="*.php" to="pre/fix/*.php"/>
+    </copy>
+
+    <!-- check it -->
+    <property name="file" value="${tmpdir}/pre/fix/Console/Getopt.php"/>
+    <available file="${file}"
+               property="fileExists" value="true"/>
+    <fail unless="fileExists" message="File has not been copied: ${file}" />
+    <delete dir="${tmpdir}" quiet="true"/>
+  </target>
+
+</project>

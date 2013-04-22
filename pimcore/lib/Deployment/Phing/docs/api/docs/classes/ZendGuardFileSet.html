@@ -1,0 +1,1625 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \ZendGuardFileSet</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public inherited"><a href="#method___clone" title="__clone :: Return a FileSet that has the same basedir and same patternsets
+as this one."><span class="description">Return a FileSet that has the same basedir and same patternsets
+as this one.</span><pre>__clone()</pre></a></li>
+<li class="method public inherited"><a href="#method___construct" title="__construct :: "><span class="description">__construct()
+        </span><pre>__construct()</pre></a></li>
+<li class="method public inherited"><a href="#method_appendSelector" title="appendSelector :: Add a new selector into this container."><span class="description">Add a new selector into this container.</span><pre>appendSelector()</pre></a></li>
+<li class="method public inherited"><a href="#method_circularReference" title="circularReference :: Creates an exception that indicates the user has generated a
+loop of data types referencing each other."><span class="description">Creates an exception that indicates the user has generated a
+loop of data types referencing each other.</span><pre>circularReference()</pre></a></li>
+<li class="method public inherited"><a href="#method_createAnd" title='createAnd :: add an "And" selector entry on the selector list'><span class="description">add an "And" selector entry on the selector list</span><pre>createAnd()</pre></a></li>
+<li class="method public inherited"><a href="#method_createContains" title="createContains :: add a contains selector entry on the selector list"><span class="description">add a contains selector entry on the selector list</span><pre>createContains()</pre></a></li>
+<li class="method public inherited"><a href="#method_createContainsRegexp" title="createContainsRegexp :: add a contains selector entry on the selector list"><span class="description">add a contains selector entry on the selector list</span><pre>createContainsRegexp()</pre></a></li>
+<li class="method public inherited"><a href="#method_createCustom" title="createCustom :: add an extended selector entry on the selector list"><span class="description">add an extended selector entry on the selector list</span><pre>createCustom()</pre></a></li>
+<li class="method public inherited"><a href="#method_createDate" title="createDate :: add a selector date entry on the selector list"><span class="description">add a selector date entry on the selector list</span><pre>createDate()</pre></a></li>
+<li class="method public inherited"><a href="#method_createDepend" title="createDepend :: add a depends selector entry on the selector list"><span class="description">add a depends selector entry on the selector list</span><pre>createDepend()</pre></a></li>
+<li class="method public inherited"><a href="#method_createDepth" title="createDepth :: add a depth selector entry on the selector list"><span class="description">add a depth selector entry on the selector list</span><pre>createDepth()</pre></a></li>
+<li class="method public inherited"><a href="#method_createExclude" title="createExclude :: add a name entry on the exclude list"><span class="description">add a name entry on the exclude list</span><pre>createExclude()</pre></a></li>
+<li class="method public inherited"><a href="#method_createExcludesFile" title="createExcludesFile :: add a name entry on the include files list"><span class="description">add a name entry on the include files list</span><pre>createExcludesFile()</pre></a></li>
+<li class="method public inherited"><a href="#method_createFilename" title="createFilename :: add a selector filename entry on the selector list"><span class="description">add a selector filename entry on the selector list</span><pre>createFilename()</pre></a></li>
+<li class="method public inherited"><a href="#method_createInclude" title="createInclude :: add a name entry on the include list"><span class="description">add a name entry on the include list</span><pre>createInclude()</pre></a></li>
+<li class="method public inherited"><a href="#method_createIncludesFile" title="createIncludesFile :: add a name entry on the include files list"><span class="description">add a name entry on the include files list</span><pre>createIncludesFile()</pre></a></li>
+<li class="method public inherited"><a href="#method_createMajority" title="createMajority :: add a majority selector entry on the selector list"><span class="description">add a majority selector entry on the selector list</span><pre>createMajority()</pre></a></li>
+<li class="method public inherited"><a href="#method_createNone" title='createNone :: add a "None" selector entry on the selector list'><span class="description">add a "None" selector entry on the selector list</span><pre>createNone()</pre></a></li>
+<li class="method public inherited"><a href="#method_createNot" title='createNot :: add a "Not" selector entry on the selector list'><span class="description">add a "Not" selector entry on the selector list</span><pre>createNot()</pre></a></li>
+<li class="method public inherited"><a href="#method_createOr" title='createOr :: add an "Or" selector entry on the selector list'><span class="description">add an "Or" selector entry on the selector list</span><pre>createOr()</pre></a></li>
+<li class="method public inherited"><a href="#method_createPatternSet" title="createPatternSet :: "><span class="description">createPatternSet()
+        </span><pre>createPatternSet()</pre></a></li>
+<li class="method public inherited"><a href="#method_createPresent" title="createPresent :: add a present selector entry on the selector list"><span class="description">add a present selector entry on the selector list</span><pre>createPresent()</pre></a></li>
+<li class="method public inherited"><a href="#method_createSelector" title='createSelector :: add a "Select" selector entry on the selector list'><span class="description">add a "Select" selector entry on the selector list</span><pre>createSelector()</pre></a></li>
+<li class="method public inherited"><a href="#method_createSize" title="createSize :: add a selector size entry on the selector list"><span class="description">add a selector size entry on the selector list</span><pre>createSize()</pre></a></li>
+<li class="method public inherited"><a href="#method_createType" title="createType :: add a type selector entry on the selector list"><span class="description">add a type selector entry on the selector list</span><pre>createType()</pre></a></li>
+<li class="method public inherited"><a href="#method_dieOnCircularReference" title="dieOnCircularReference :: Check to see whether any DataType we hold references to is
+included in the Stack (which holds all DataType instances that
+directly or indirectly reference this instance, including this
+instance itself)."><span class="description">Check to see whether any DataType we hold references to is
+included in the Stack (which holds all DataType instances that
+directly or indirectly reference this instance, including this
+instance itself).</span><pre>dieOnCircularReference()</pre></a></li>
+<li class="method public inherited"><a href="#method_getCheckedRef" title="getCheckedRef :: Performs the check for circular references and returns the referenced object."><span class="description">Performs the check for circular references and returns the referenced object.</span><pre>getCheckedRef()</pre></a></li>
+<li class="method public inherited"><a href="#method_getDescription" title="getDescription :: Return the description for the current data type."><span class="description">Return the description for the current data type.</span><pre>getDescription()</pre></a></li>
+<li class="method public inherited"><a href="#method_getDir" title="getDir :: "><span class="description">getDir()
+        </span><pre>getDir()</pre></a></li>
+<li class="method public inherited"><a href="#method_getDirectoryScanner" title="getDirectoryScanner :: returns a reference to the dirscanner object belonging to this fileset"><span class="description">returns a reference to the dirscanner object belonging to this fileset</span><pre>getDirectoryScanner()</pre></a></li>
+<li class="method public "><a href="#method_getFiles" title="getFiles :: Get a list of files and directories specified in the fileset."><span class="description">Get a list of files and directories specified in the fileset.</span><pre>getFiles()</pre></a></li>
+<li class="method public inherited"><a href="#method_getProject" title="getProject :: Returns a reference to current project"><span class="description">Returns a reference to current project</span><pre>getProject()</pre></a></li>
+<li class="method public inherited"><a href="#method_getRef" title="getRef :: Performs the check for circular references and returns the
+referenced FileSet."><span class="description">Performs the check for circular references and returns the
+referenced FileSet.</span><pre>getRef()</pre></a></li>
+<li class="method public inherited"><a href="#method_getSelectors" title="getSelectors :: Returns the set of selectors as an array."><span class="description">Returns the set of selectors as an array.</span><pre>getSelectors()</pre></a></li>
+<li class="method public inherited"><a href="#method_hasPatterns" title="hasPatterns :: Indicates whether there are any patterns here."><span class="description">Indicates whether there are any patterns here.</span><pre>hasPatterns()</pre></a></li>
+<li class="method public inherited"><a href="#method_hasSelectors" title="hasSelectors :: Indicates whether there are any selectors here."><span class="description">Indicates whether there are any selectors here.</span><pre>hasSelectors()</pre></a></li>
+<li class="method public inherited"><a href="#method_isReference" title="isReference :: Has the refid attribute of this element been set?"><span class="description">Has the refid attribute of this element been set?</span><pre>isReference()</pre></a></li>
+<li class="method public inherited"><a href="#method_log" title="log :: Logs a message with the given priority."><span class="description">Logs a message with the given priority.</span><pre>log()</pre></a></li>
+<li class="method public inherited"><a href="#method_noChildrenAllowed" title="noChildrenAllowed :: Creates an exception that indicates that this XML element must
+not have child elements if the refid attribute is set."><span class="description">Creates an exception that indicates that this XML element must
+not have child elements if the refid attribute is set.</span><pre>noChildrenAllowed()</pre></a></li>
+<li class="method public inherited"><a href="#method_parsingComplete" title="parsingComplete :: Template method being called when the data type has been
+parsed completely."><span class="description">Template method being called when the data type has been
+parsed completely.</span><pre>parsingComplete()</pre></a></li>
+<li class="method public inherited"><a href="#method_selectorCount" title="selectorCount :: Gives the count of the number of selectors in this container"><span class="description">Gives the count of the number of selectors in this container</span><pre>selectorCount()</pre></a></li>
+<li class="method public inherited"><a href="#method_selectorElements" title="selectorElements :: Returns an array for accessing the set of selectors."><span class="description">Returns an array for accessing the set of selectors.</span><pre>selectorElements()</pre></a></li>
+<li class="method public inherited"><a href="#method_setCaseSensitive" title="setCaseSensitive :: Sets case sensitivity of the file system"><span class="description">Sets case sensitivity of the file system</span><pre>setCaseSensitive()</pre></a></li>
+<li class="method public inherited"><a href="#method_setDefaultexcludes" title="setDefaultexcludes :: Sets whether default exclusions should be used or not."><span class="description">Sets whether default exclusions should be used or not.</span><pre>setDefaultexcludes()</pre></a></li>
+<li class="method public inherited"><a href="#method_setDescription" title="setDescription :: Sets a description of the current data type."><span class="description">Sets a description of the current data type.</span><pre>setDescription()</pre></a></li>
+<li class="method public inherited"><a href="#method_setDir" title="setDir :: "><span class="description">setDir()
+        </span><pre>setDir()</pre></a></li>
+<li class="method public inherited"><a href="#method_setExcludes" title="setExcludes :: Sets the set of exclude patterns."><span class="description">Sets the set of exclude patterns.</span><pre>setExcludes()</pre></a></li>
+<li class="method public inherited"><a href="#method_setExcludesfile" title="setExcludesfile :: Sets the name of the file containing the includes patterns."><span class="description">Sets the name of the file containing the includes patterns.</span><pre>setExcludesfile()</pre></a></li>
+<li class="method public inherited"><a href="#method_setExpandSymbolicLinks" title="setExpandSymbolicLinks :: Sets whether to expand/dereference symbolic links, default is false"><span class="description">Sets whether to expand/dereference symbolic links, default is false</span><pre>setExpandSymbolicLinks()</pre></a></li>
+<li class="method public inherited"><a href="#method_setIncludes" title="setIncludes :: Sets the set of include patterns."><span class="description">Sets the set of include patterns.</span><pre>setIncludes()</pre></a></li>
+<li class="method public inherited"><a href="#method_setIncludesfile" title="setIncludesfile :: Sets the name of the file containing the includes patterns."><span class="description">Sets the name of the file containing the includes patterns.</span><pre>setIncludesfile()</pre></a></li>
+<li class="method public inherited"><a href="#method_setProject" title="setProject :: References the project to the current component."><span class="description">References the project to the current component.</span><pre>setProject()</pre></a></li>
+<li class="method public inherited"><a href="#method_setRefid" title="setRefid :: Makes this instance in effect a reference to another PatternSet
+instance."><span class="description">Makes this instance in effect a reference to another PatternSet
+instance.</span><pre>setRefid()</pre></a></li>
+<li class="method public inherited"><a href="#method_tooManyAttributes" title="tooManyAttributes :: Creates an exception that indicates that refid has to be the
+only attribute if it is set."><span class="description">Creates an exception that indicates that refid has to be the
+only attribute if it is set.</span><pre>tooManyAttributes()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul><li class="method protected inherited"><a href="#method_setupDirectoryScanner" title="setupDirectoryScanner :: feed dirscanner with infos defined by this fileset"><span class="description">feed dirscanner with infos defined by this fileset</span><pre>setupDirectoryScanner()</pre></a></li></ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul>
+<li class="property public inherited"><a href="#property_additionalPatterns" title="$additionalPatterns :: "><span class="description"></span><pre>$additionalPatterns</pre></a></li>
+<li class="property public inherited"><a href="#property_defaultPatterns" title="$defaultPatterns :: "><span class="description"></span><pre>$defaultPatterns</pre></a></li>
+<li class="property public inherited"><a href="#property_description" title="$description :: The descriptin the user has set."><span class="description"></span><pre>$description</pre></a></li>
+<li class="property public inherited"><a href="#property_dir" title="$dir :: "><span class="description"></span><pre>$dir</pre></a></li>
+<li class="property public inherited"><a href="#property_isCaseSensitive" title="$isCaseSensitive :: "><span class="description"></span><pre>$isCaseSensitive</pre></a></li>
+<li class="property public inherited"><a href="#property_ref" title="$ref :: Value to the refid attribute."><span class="description"></span><pre>$ref</pre></a></li>
+<li class="property public inherited"><a href="#property_selectors" title="$selectors :: "><span class="description"></span><pre>$selectors</pre></a></li>
+<li class="property public inherited"><a href="#property_useDefaultExcludes" title="$useDefaultExcludes :: "><span class="description"></span><pre>$useDefaultExcludes</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="property protected inherited"><a href="#property_checked" title="$checked :: Are we sure we don't hold circular references?"><span class="description"></span><pre>$checked</pre></a></li>
+<li class="property protected inherited"><a href="#property_expandSymbolicLinks" title="$expandSymbolicLinks :: Whether to expand/dereference symbolic links, default is false"><span class="description"></span><pre>$expandSymbolicLinks</pre></a></li>
+<li class="property protected inherited"><a href="#property_project" title="$project :: Holds a reference to the project that a project component
+(a task, a target, etc.) belongs to"><span class="description"></span><pre>$project</pre></a></li>
+</ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul><li class="property private "><a href="#property_files" title="$files :: "><span class="description"></span><pre>$files</pre></a></li></ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\ZendGuardFileSet"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/ZendGuardFileSet.html">ZendGuardFileSet</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">This is a FileSet with the to specify permissions.</p>
+<div class="details">
+<div class="long_description"><p>Permissions are currently not implemented by PEAR Archive_Tar,
+but hopefully they will be in the future.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.tasks.ext.zendguard.html">phing.tasks.ext.zendguard</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="">Hans Lellelid &lt;hans@xmpl.org&gt; (Phing)</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="">Arnout J. Kuiper &lt;ajkuiper@wxs.nl&gt; (Ant)</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="">Stefano Mazzocchi &lt;stefano@apache.org&gt; (Ant)</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="">Sam Ruby &lt;rubys@us.ibm.com&gt; (Ant)</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="">Jon S. Stevens &lt;jon@clearink.com&gt; (Ant)</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="">Stefan Bodewig &lt;stefan.bodewig@epost.de&gt; (Ant)</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="">Magesh Umasankar (Ant)</a></td>
+</tr>
+<tr>
+<th>version</th>
+<td>$Id$</td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___clone"></a><div class="element clickable method public method___clone" data-toggle="collapse" data-target=".method___clone .collapse">
+<h2>Return a FileSet that has the same basedir and same patternsets
+as this one.</h2>
+<pre>__clone() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSet::__clone()</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method___construct"></a><div class="element clickable method public method___construct" data-toggle="collapse" data-target=".method___construct .collapse">
+<h2>__construct()
+        </h2>
+<pre>__construct($fileset) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\FileSet::__construct()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$fileset</h4></div>
+</div></div>
+</div>
+<a id="method_appendSelector"></a><div class="element clickable method public method_appendSelector" data-toggle="collapse" data-target=".method_appendSelector .collapse">
+<h2>Add a new selector into this container.</h2>
+<pre>appendSelector(\FileSelector $selector) : \the</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::appendSelector()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::appendSelector()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$selector</h4>
+<code>\selector</code><p>the new selector to add</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\the</code>selector that was added</div>
+</div></div>
+</div>
+<a id="method_circularReference"></a><div class="element clickable method public method_circularReference" data-toggle="collapse" data-target=".method_circularReference .collapse">
+<h2>Creates an exception that indicates the user has generated a
+loop of data types referencing each other.</h2>
+<pre>circularReference() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::circularReference()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::circularReference()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::circularReference()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createAnd"></a><div class="element clickable method public method_createAnd" data-toggle="collapse" data-target=".method_createAnd .collapse">
+<h2>add an "And" selector entry on the selector list</h2>
+<pre>createAnd() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createAnd()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createAnd()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createContains"></a><div class="element clickable method public method_createContains" data-toggle="collapse" data-target=".method_createContains .collapse">
+<h2>add a contains selector entry on the selector list</h2>
+<pre>createContains() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createContains()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createContains()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createContainsRegexp"></a><div class="element clickable method public method_createContainsRegexp" data-toggle="collapse" data-target=".method_createContainsRegexp .collapse">
+<h2>add a contains selector entry on the selector list</h2>
+<pre>createContainsRegexp() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createContainsRegexp()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createContainsRegexp()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createCustom"></a><div class="element clickable method public method_createCustom" data-toggle="collapse" data-target=".method_createCustom .collapse">
+<h2>add an extended selector entry on the selector list</h2>
+<pre>createCustom() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createCustom()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createCustom()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createDate"></a><div class="element clickable method public method_createDate" data-toggle="collapse" data-target=".method_createDate .collapse">
+<h2>add a selector date entry on the selector list</h2>
+<pre>createDate() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createDate()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createDate()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createDepend"></a><div class="element clickable method public method_createDepend" data-toggle="collapse" data-target=".method_createDepend .collapse">
+<h2>add a depends selector entry on the selector list</h2>
+<pre>createDepend() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createDepend()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createDepend()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createDepth"></a><div class="element clickable method public method_createDepth" data-toggle="collapse" data-target=".method_createDepth .collapse">
+<h2>add a depth selector entry on the selector list</h2>
+<pre>createDepth() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createDepth()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createDepth()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createExclude"></a><div class="element clickable method public method_createExclude" data-toggle="collapse" data-target=".method_createExclude .collapse">
+<h2>add a name entry on the exclude list</h2>
+<pre>createExclude() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createExclude()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createExclude()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createExcludesFile"></a><div class="element clickable method public method_createExcludesFile" data-toggle="collapse" data-target=".method_createExcludesFile .collapse">
+<h2>add a name entry on the include files list</h2>
+<pre>createExcludesFile() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createExcludesFile()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createExcludesFile()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createFilename"></a><div class="element clickable method public method_createFilename" data-toggle="collapse" data-target=".method_createFilename .collapse">
+<h2>add a selector filename entry on the selector list</h2>
+<pre>createFilename() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createFilename()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createFilename()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createInclude"></a><div class="element clickable method public method_createInclude" data-toggle="collapse" data-target=".method_createInclude .collapse">
+<h2>add a name entry on the include list</h2>
+<pre>createInclude() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createInclude()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createInclude()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createIncludesFile"></a><div class="element clickable method public method_createIncludesFile" data-toggle="collapse" data-target=".method_createIncludesFile .collapse">
+<h2>add a name entry on the include files list</h2>
+<pre>createIncludesFile() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createIncludesFile()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createIncludesFile()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createMajority"></a><div class="element clickable method public method_createMajority" data-toggle="collapse" data-target=".method_createMajority .collapse">
+<h2>add a majority selector entry on the selector list</h2>
+<pre>createMajority() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createMajority()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createMajority()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createNone"></a><div class="element clickable method public method_createNone" data-toggle="collapse" data-target=".method_createNone .collapse">
+<h2>add a "None" selector entry on the selector list</h2>
+<pre>createNone() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createNone()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createNone()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createNot"></a><div class="element clickable method public method_createNot" data-toggle="collapse" data-target=".method_createNot .collapse">
+<h2>add a "Not" selector entry on the selector list</h2>
+<pre>createNot() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createNot()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createNot()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createOr"></a><div class="element clickable method public method_createOr" data-toggle="collapse" data-target=".method_createOr .collapse">
+<h2>add an "Or" selector entry on the selector list</h2>
+<pre>createOr() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createOr()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createOr()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createPatternSet"></a><div class="element clickable method public method_createPatternSet" data-toggle="collapse" data-target=".method_createPatternSet .collapse">
+<h2>createPatternSet()
+        </h2>
+<pre>createPatternSet() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createPatternSet()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createPatternSet()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createPresent"></a><div class="element clickable method public method_createPresent" data-toggle="collapse" data-target=".method_createPresent .collapse">
+<h2>add a present selector entry on the selector list</h2>
+<pre>createPresent() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createPresent()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createPresent()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createSelector"></a><div class="element clickable method public method_createSelector" data-toggle="collapse" data-target=".method_createSelector .collapse">
+<h2>add a "Select" selector entry on the selector list</h2>
+<pre>createSelector() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createSelector()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createSelector()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createSize"></a><div class="element clickable method public method_createSize" data-toggle="collapse" data-target=".method_createSize .collapse">
+<h2>add a selector size entry on the selector list</h2>
+<pre>createSize() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createSize()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createSize()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_createType"></a><div class="element clickable method public method_createType" data-toggle="collapse" data-target=".method_createType .collapse">
+<h2>add a type selector entry on the selector list</h2>
+<pre>createType() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::createType()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::createType()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_dieOnCircularReference"></a><div class="element clickable method public method_dieOnCircularReference" data-toggle="collapse" data-target=".method_dieOnCircularReference .collapse">
+<h2>Check to see whether any DataType we hold references to is
+included in the Stack (which holds all DataType instances that
+directly or indirectly reference this instance, including this
+instance itself).</h2>
+<pre>dieOnCircularReference($stk, \Project $p) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>If one is included, throw a BuildException created by circularReference</p>
+
+<p>This implementation is appropriate only for a DataType that
+cannot hold other DataTypes as children.</p>
+
+<p>The general contract of this method is that it shouldn't do
+anything if checked is true and set it to true on exit.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::dieOnCircularReference()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::dieOnCircularReference()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::dieOnCircularReference()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$stk</h4></div>
+<div class="subelement argument"><h4>$p</h4></div>
+</div></div>
+</div>
+<a id="method_getCheckedRef"></a><div class="element clickable method public method_getCheckedRef" data-toggle="collapse" data-target=".method_getCheckedRef .collapse">
+<h2>Performs the check for circular references and returns the referenced object.</h2>
+<pre>getCheckedRef($requiredClass, $dataTypeName) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::getCheckedRef()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::getCheckedRef()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::getCheckedRef()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$requiredClass</h4></div>
+<div class="subelement argument"><h4>$dataTypeName</h4></div>
+</div></div>
+</div>
+<a id="method_getDescription"></a><div class="element clickable method public method_getDescription" data-toggle="collapse" data-target=".method_getDescription .collapse">
+<h2>Return the description for the current data type.</h2>
+<pre>getDescription() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::getDescription()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::getDescription()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::getDescription()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_getDir"></a><div class="element clickable method public method_getDir" data-toggle="collapse" data-target=".method_getDir .collapse">
+<h2>getDir()
+        </h2>
+<pre>getDir(\Project $p) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::getDir()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::getDir()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$p</h4></div>
+</div></div>
+</div>
+<a id="method_getDirectoryScanner"></a><div class="element clickable method public method_getDirectoryScanner" data-toggle="collapse" data-target=".method_getDirectoryScanner .collapse">
+<h2>returns a reference to the dirscanner object belonging to this fileset</h2>
+<pre>getDirectoryScanner(\Project $p) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::getDirectoryScanner()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::getDirectoryScanner()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$p</h4></div>
+</div></div>
+</div>
+<a id="method_getFiles"></a><div class="element clickable method public method_getFiles" data-toggle="collapse" data-target=".method_getFiles .collapse">
+<h2>Get a list of files and directories specified in the fileset.</h2>
+<pre>getFiles(\Project $p, $includeEmpty) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>@return array a list of file and directory names, relative to
+   the baseDir for the project.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$p</h4></div>
+<div class="subelement argument"><h4>$includeEmpty</h4></div>
+</div></div>
+</div>
+<a id="method_getProject"></a><div class="element clickable method public method_getProject" data-toggle="collapse" data-target=".method_getProject .collapse">
+<h2>Returns a reference to current project</h2>
+<pre>getProject() : <a href="../classes/Project.html">\Project</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\ProjectComponent::getProject()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\DataType::getProject()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::getProject()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::getProject()</td>
+</tr>
+</table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code><a href="../classes/Project.html">\Project</a></code>Reference to current porject object</div>
+</div></div>
+</div>
+<a id="method_getRef"></a><div class="element clickable method public method_getRef" data-toggle="collapse" data-target=".method_getRef .collapse">
+<h2>Performs the check for circular references and returns the
+referenced FileSet.</h2>
+<pre>getRef(\Project $p) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::getRef()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::getRef()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$p</h4></div>
+</div></div>
+</div>
+<a id="method_getSelectors"></a><div class="element clickable method public method_getSelectors" data-toggle="collapse" data-target=".method_getSelectors .collapse">
+<h2>Returns the set of selectors as an array.</h2>
+<pre>getSelectors(\Project $p) : \an</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::getSelectors()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::getSelectors()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$p</h4></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\an</code>array of selectors in this container</div>
+</div></div>
+</div>
+<a id="method_hasPatterns"></a><div class="element clickable method public method_hasPatterns" data-toggle="collapse" data-target=".method_hasPatterns .collapse">
+<h2>Indicates whether there are any patterns here.</h2>
+<pre>hasPatterns() : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::hasPatterns()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::hasPatterns()</td>
+</tr>
+</table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>Whether any patterns are in this container.</div>
+</div></div>
+</div>
+<a id="method_hasSelectors"></a><div class="element clickable method public method_hasSelectors" data-toggle="collapse" data-target=".method_hasSelectors .collapse">
+<h2>Indicates whether there are any selectors here.</h2>
+<pre>hasSelectors() : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::hasSelectors()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::hasSelectors()</td>
+</tr>
+</table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>Whether any selectors are in this container</div>
+</div></div>
+</div>
+<a id="method_isReference"></a><div class="element clickable method public method_isReference" data-toggle="collapse" data-target=".method_isReference .collapse">
+<h2>Has the refid attribute of this element been set?</h2>
+<pre>isReference() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::isReference()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::isReference()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::isReference()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_log"></a><div class="element clickable method public method_log" data-toggle="collapse" data-target=".method_log .collapse">
+<h2>Logs a message with the given priority.</h2>
+<pre>log(string $msg, integer $level) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\ProjectComponent::log()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\DataType::log()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::log()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::log()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$msg</h4>
+<code>string</code><p>The message to be logged.</p></div>
+<div class="subelement argument">
+<h4>$level</h4>
+<code>integer</code><p>The message's priority at this message should have</p>
+</div>
+</div></div>
+</div>
+<a id="method_noChildrenAllowed"></a><div class="element clickable method public method_noChildrenAllowed" data-toggle="collapse" data-target=".method_noChildrenAllowed .collapse">
+<h2>Creates an exception that indicates that this XML element must
+not have child elements if the refid attribute is set.</h2>
+<pre>noChildrenAllowed() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::noChildrenAllowed()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::noChildrenAllowed()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::noChildrenAllowed()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_parsingComplete"></a><div class="element clickable method public method_parsingComplete" data-toggle="collapse" data-target=".method_parsingComplete .collapse">
+<h2>Template method being called when the data type has been
+parsed completely.</h2>
+<pre>parsingComplete() : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::parsingComplete()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::parsingComplete()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::parsingComplete()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_selectorCount"></a><div class="element clickable method public method_selectorCount" data-toggle="collapse" data-target=".method_selectorCount .collapse">
+<h2>Gives the count of the number of selectors in this container</h2>
+<pre>selectorCount() : int</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::selectorCount()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::selectorCount()</td>
+</tr>
+</table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>int</code>The number of selectors in this container</div>
+</div></div>
+</div>
+<a id="method_selectorElements"></a><div class="element clickable method public method_selectorElements" data-toggle="collapse" data-target=".method_selectorElements .collapse">
+<h2>Returns an array for accessing the set of selectors.</h2>
+<pre>selectorElements() : array</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::selectorElements()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::selectorElements()</td>
+</tr>
+</table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code>The array of selectors</div>
+</div></div>
+</div>
+<a id="method_setCaseSensitive"></a><div class="element clickable method public method_setCaseSensitive" data-toggle="collapse" data-target=".method_setCaseSensitive .collapse">
+<h2>Sets case sensitivity of the file system</h2>
+<pre>setCaseSensitive($isCaseSensitive) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::setCaseSensitive()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::setCaseSensitive()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$isCaseSensitive</h4></div>
+</div></div>
+</div>
+<a id="method_setDefaultexcludes"></a><div class="element clickable method public method_setDefaultexcludes" data-toggle="collapse" data-target=".method_setDefaultexcludes .collapse">
+<h2>Sets whether default exclusions should be used or not.</h2>
+<pre>setDefaultexcludes($useDefaultExcludes) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::setDefaultexcludes()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::setDefaultexcludes()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$useDefaultExcludes</h4><p>"true"|"on"|"yes" when default exclusions should be used, "false"|"off"|"no" when they shouldn't be used.</p>
+</div>
+</div></div>
+</div>
+<a id="method_setDescription"></a><div class="element clickable method public method_setDescription" data-toggle="collapse" data-target=".method_setDescription .collapse">
+<h2>Sets a description of the current data type.</h2>
+<pre>setDescription($desc) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>It will be useful
+in commenting what we are doing.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::setDescription()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::setDescription()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::setDescription()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$desc</h4></div>
+</div></div>
+</div>
+<a id="method_setDir"></a><div class="element clickable method public method_setDir" data-toggle="collapse" data-target=".method_setDir .collapse">
+<h2>setDir()
+        </h2>
+<pre>setDir($dir) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::setDir()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::setDir()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$dir</h4></div>
+</div></div>
+</div>
+<a id="method_setExcludes"></a><div class="element clickable method public method_setExcludes" data-toggle="collapse" data-target=".method_setExcludes .collapse">
+<h2>Sets the set of exclude patterns.</h2>
+<pre>setExcludes($excludes) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Patterns may be separated by a comma
+or a space.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::setExcludes()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::setExcludes()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$excludes</h4></div>
+</div></div>
+</div>
+<a id="method_setExcludesfile"></a><div class="element clickable method public method_setExcludesfile" data-toggle="collapse" data-target=".method_setExcludesfile .collapse">
+<h2>Sets the name of the file containing the includes patterns.</h2>
+<pre>setExcludesfile($excl) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::setExcludesfile()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::setExcludesfile()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$excl</h4><p>The file to fetch the exclude patterns from.</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code>\BE</code></th>
+<td></td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_setExpandSymbolicLinks"></a><div class="element clickable method public method_setExpandSymbolicLinks" data-toggle="collapse" data-target=".method_setExpandSymbolicLinks .collapse">
+<h2>Sets whether to expand/dereference symbolic links, default is false</h2>
+<pre>setExpandSymbolicLinks($expandSymbolicLinks) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>var</th>
+<td></td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::setExpandSymbolicLinks()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::setExpandSymbolicLinks()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$expandSymbolicLinks</h4></div>
+</div></div>
+</div>
+<a id="method_setIncludes"></a><div class="element clickable method public method_setIncludes" data-toggle="collapse" data-target=".method_setIncludes .collapse">
+<h2>Sets the set of include patterns.</h2>
+<pre>setIncludes($includes) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Patterns may be separated by a comma
+or a space.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::setIncludes()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::setIncludes()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$includes</h4></div>
+</div></div>
+</div>
+<a id="method_setIncludesfile"></a><div class="element clickable method public method_setIncludesfile" data-toggle="collapse" data-target=".method_setIncludesfile .collapse">
+<h2>Sets the name of the file containing the includes patterns.</h2>
+<pre>setIncludesfile($incl) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::setIncludesfile()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::setIncludesfile()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$incl</h4><p>The file to fetch the include patterns from.</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code>\BE</code></th>
+<td></td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_setProject"></a><div class="element clickable method public method_setProject" data-toggle="collapse" data-target=".method_setProject .collapse">
+<h2>References the project to the current component.</h2>
+<pre>setProject(<a href="../classes/Project.html">\Project</a> $project) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\ProjectComponent::setProject()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\DataType::setProject()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::setProject()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::setProject()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$project</h4>
+<code><a href="../classes/Project.html">\Project</a></code><p>The reference to the current project</p></div>
+</div></div>
+</div>
+<a id="method_setRefid"></a><div class="element clickable method public method_setRefid" data-toggle="collapse" data-target=".method_setRefid .collapse">
+<h2>Makes this instance in effect a reference to another PatternSet
+instance.</h2>
+<pre>setRefid(\Reference $r) : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>You must not set another attribute or nest elements inside
+this element if you make it a reference.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::setRefid()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::setRefid()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$r</h4>
+<code><a href="../classes/Reference.html">\Reference</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_tooManyAttributes"></a><div class="element clickable method public method_tooManyAttributes" data-toggle="collapse" data-target=".method_tooManyAttributes .collapse">
+<h2>Creates an exception that indicates that refid has to be the
+only attribute if it is set.</h2>
+<pre>tooManyAttributes() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::tooManyAttributes()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::tooManyAttributes()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::tooManyAttributes()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_setupDirectoryScanner"></a><div class="element clickable method protected method_setupDirectoryScanner" data-toggle="collapse" data-target=".method_setupDirectoryScanner .collapse">
+<h2>feed dirscanner with infos defined by this fileset</h2>
+<pre>setupDirectoryScanner(\DirectoryScanner $ds, \Project $p) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::setupDirectoryScanner()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::setupDirectoryScanner()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$ds</h4></div>
+<div class="subelement argument"><h4>$p</h4></div>
+</div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_additionalPatterns"> </a><div class="element clickable property public property_additionalPatterns" data-toggle="collapse" data-target=".property_additionalPatterns .collapse">
+<h2></h2>
+<pre>$additionalPatterns </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::$$additionalPatterns</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::$$additionalPatterns</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_defaultPatterns"> </a><div class="element clickable property public property_defaultPatterns" data-toggle="collapse" data-target=".property_defaultPatterns .collapse">
+<h2></h2>
+<pre>$defaultPatterns : <a href="../classes/PatternSet.html">\PatternSet</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::$$defaultPatterns</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::$$defaultPatterns</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_description"> </a><div class="element clickable property public property_description" data-toggle="collapse" data-target=".property_description .collapse">
+<h2></h2>
+<pre>$description </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::$$description</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::$$description</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::$$description</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_dir"> </a><div class="element clickable property public property_dir" data-toggle="collapse" data-target=".property_dir .collapse">
+<h2></h2>
+<pre>$dir </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::$$dir</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::$$dir</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_isCaseSensitive"> </a><div class="element clickable property public property_isCaseSensitive" data-toggle="collapse" data-target=".property_isCaseSensitive .collapse">
+<h2></h2>
+<pre>$isCaseSensitive </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::$$isCaseSensitive</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::$$isCaseSensitive</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_ref"> </a><div class="element clickable property public property_ref" data-toggle="collapse" data-target=".property_ref .collapse">
+<h2></h2>
+<pre>$ref </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Type of Reference</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::$$ref</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::$$ref</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::$$ref</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_selectors"> </a><div class="element clickable property public property_selectors" data-toggle="collapse" data-target=".property_selectors .collapse">
+<h2></h2>
+<pre>$selectors </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::$$selectors</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::$$selectors</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_useDefaultExcludes"> </a><div class="element clickable property public property_useDefaultExcludes" data-toggle="collapse" data-target=".property_useDefaultExcludes .collapse">
+<h2></h2>
+<pre>$useDefaultExcludes : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::$$useDefaultExcludes</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::$$useDefaultExcludes</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_checked"> </a><div class="element clickable property protected property_checked" data-toggle="collapse" data-target=".property_checked .collapse">
+<h2></h2>
+<pre>$checked : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Subclasses are responsible for setting this value to false
+if we'd need to investigate this condition (usually because a
+child element has been added that is a subclass of DataType).</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\DataType::$$checked</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::$$checked</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::$$checked</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_expandSymbolicLinks"> </a><div class="element clickable property protected property_expandSymbolicLinks" data-toggle="collapse" data-target=".property_expandSymbolicLinks .collapse">
+<h2></h2>
+<pre>$expandSymbolicLinks : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::$$expandSymbolicLinks</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::$$expandSymbolicLinks</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_project"> </a><div class="element clickable property protected property_project" data-toggle="collapse" data-target=".property_project .collapse">
+<h2></h2>
+<pre>$project : <a href="../classes/Project.html">\Project</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\ProjectComponent::$$project</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\DataType::$$project</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\AbstractFileSet::$$project</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FileSet::$$project</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_files"> </a><div class="element clickable property private property_files" data-toggle="collapse" data-target=".property_files .collapse">
+<h2></h2>
+<pre>$files </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:24+01:00.<br></footer></div>
+</div>
+</body>
+</html>

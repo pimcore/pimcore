@@ -1,0 +1,490 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » phing\types</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-map-marker"></i> Packages</li>
+<li>
+<a href="../packages/phing.types.html" title="types"><i class="icon-folder-open"></i>types</a><ul class="nav nav-list nav-packages"><li>
+<a href="../packages/phing.types.selectors.html" title="selectors"><i class="icon-folder-open"></i>selectors</a><ul class="nav nav-list nav-packages"></ul>
+</li></ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-interface"></i> Interfaces</li>
+<li><a href="#Parameterizable" title="Parameterizable objects take genric key value pairs.">Parameterizable</a></li>
+<li class="nav-header">
+<i class="icon-custom icon-class"></i> Classes</li>
+<li><a href="#DataType" title="Base class for those classes that can appear inside the build file
+as stand alone data types.">DataType</a></li>
+<li><a href="#Reference" title="Class to hold a reference to another object in the project.">Reference</a></li>
+<li><a href="#Parameter" title="A parameter is composed of a name, type and value.">Parameter</a></li>
+<li><a href="#TokenSource" title="A parameter is composed of a name, type and value.">TokenSource</a></li>
+<li><a href="#PhingFilterReader" title="A PhingFilterReader is a wrapper class that encloses the className
+and configuration of a Configurable FilterReader.">PhingFilterReader</a></li>
+<li><a href="#Excludes" title="Datatype which handles excluded files, classes and methods.">Excludes</a></li>
+<li><a href="#DirSet" title="Subclass as hint for supporting tasks that the included directories
+instead of files should be used.">DirSet</a></li>
+<li><a href="#FileSet" title="Moved out of MatchingTask to make it a standalone object that could
+be referenced (by scripts for example).">FileSet</a></li>
+<li><a href="#FilterChain" title="FilterChain may contain a chained set of filter readers.">FilterChain</a></li>
+<li><a href="#Mapper" title="Filename Mapper maps source file name(s) to target file name(s).">Mapper</a></li>
+<li><a href="#RegularExpression" title="A regular expression datatype.">RegularExpression</a></li>
+<li><a href="#AbstractFileSet" title="The FileSet class provides methods and properties for accessing
+and managing filesets.">AbstractFileSet</a></li>
+<li><a href="#Description" title="Description is used to provide a project-wide description element
+(that is, a description that applies to a buildfile as a whole).">Description</a></li>
+<li><a href="#Path" title="This object represents a path as used by include_path or PATH
+environment variable.">Path</a></li>
+<li><a href="#PathElement" title="Helper class, holds the nested &lt;code&gt;&amp;lt;pathelement&amp;gt;&lt;/code&gt; values.">PathElement</a></li>
+<li><a href="#PatternSet" title="The patternset storage component.">PatternSet</a></li>
+<li><a href="#PatternSetNameEntry" title='"Internal" class for holding an include/exclude pattern.'>PatternSetNameEntry</a></li>
+<li><a href="#FileList" title="FileList represents an explicitly named list of files.">FileList</a></li>
+<li><a href="#Commandline" title="Commandline objects help handling command lines specifying processes to
+execute.">Commandline</a></li>
+<li><a href="#CommandlineArgument" title='"Inner" class used for nested xml command line definitions.'>CommandlineArgument</a></li>
+<li><a href="#CommandlineMarker" title="Class to keep track of the position of an Argument.">CommandlineMarker</a></li>
+<li><a href="#ExcludesNameEntry" title="Class for holding nested excludes elements (file, class, method).">ExcludesNameEntry</a></li>
+</ul>
+</div>
+<div class="span8 package-contents">
+<ul class="breadcrumb"><li>
+<a href="../index.html"><i class="icon-folder-open"></i></a><span class="divider">\</span><li><a href="../packages/phing.html">phing</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../packages/phing.types.html">types</a>
+</li>
+</li></ul>
+<div class="package-indent">
+<h3>
+<i class="icon-custom icon-class"></i> Classes and interfaces</h3>
+<div id="Parameterizable" class="element ajax clickable interface">
+<h1>Parameterizable<a href="../classes/Parameterizable.html">¶</a>
+</h1>
+<p class="short_description">Parameterizable objects take genric key value pairs.</p>
+<div class="details collapse"></div>
+<a href="../classes/Parameterizable.html" class="more">« More »</a>
+</div>
+<div id="AbstractFileSet" class="element ajax clickable class">
+<h1>AbstractFileSet<a href="../classes/AbstractFileSet.html">¶</a>
+</h1>
+<p class="short_description">The FileSet class provides methods and properties for accessing
+and managing filesets.</p>
+<div class="details collapse"></div>
+<a href="../classes/AbstractFileSet.html" class="more">« More »</a>
+</div>
+<div id="Commandline" class="element ajax clickable class">
+<h1>Commandline<a href="../classes/Commandline.html">¶</a>
+</h1>
+<p class="short_description">Commandline objects help handling command lines specifying processes to
+execute.</p>
+<div class="details collapse"></div>
+<a href="../classes/Commandline.html" class="more">« More »</a>
+</div>
+<div id="CommandlineArgument" class="element ajax clickable class">
+<h1>CommandlineArgument<a href="../classes/CommandlineArgument.html">¶</a>
+</h1>
+<p class="short_description">"Inner" class used for nested xml command line definitions.</p>
+<div class="details collapse"></div>
+<a href="../classes/CommandlineArgument.html" class="more">« More »</a>
+</div>
+<div id="CommandlineMarker" class="element ajax clickable class">
+<h1>CommandlineMarker<a href="../classes/CommandlineMarker.html">¶</a>
+</h1>
+<p class="short_description">Class to keep track of the position of an Argument.</p>
+<div class="details collapse"></div>
+<a href="../classes/CommandlineMarker.html" class="more">« More »</a>
+</div>
+<div id="DataType" class="element ajax clickable class">
+<h1>DataType<a href="../classes/DataType.html">¶</a>
+</h1>
+<p class="short_description">Base class for those classes that can appear inside the build file
+as stand alone data types.</p>
+<div class="details collapse"></div>
+<a href="../classes/DataType.html" class="more">« More »</a>
+</div>
+<div id="Description" class="element ajax clickable class">
+<h1>Description<a href="../classes/Description.html">¶</a>
+</h1>
+<p class="short_description">Description is used to provide a project-wide description element
+(that is, a description that applies to a buildfile as a whole).</p>
+<div class="details collapse"></div>
+<a href="../classes/Description.html" class="more">« More »</a>
+</div>
+<div id="DirSet" class="element ajax clickable class">
+<h1>DirSet<a href="../classes/DirSet.html">¶</a>
+</h1>
+<p class="short_description">Subclass as hint for supporting tasks that the included directories
+instead of files should be used.</p>
+<div class="details collapse"></div>
+<a href="../classes/DirSet.html" class="more">« More »</a>
+</div>
+<div id="Excludes" class="element ajax clickable class">
+<h1>Excludes<a href="../classes/Excludes.html">¶</a>
+</h1>
+<p class="short_description">Datatype which handles excluded files, classes and methods.</p>
+<div class="details collapse"></div>
+<a href="../classes/Excludes.html" class="more">« More »</a>
+</div>
+<div id="ExcludesNameEntry" class="element ajax clickable class">
+<h1>ExcludesNameEntry<a href="../classes/ExcludesNameEntry.html">¶</a>
+</h1>
+<p class="short_description">Class for holding nested excludes elements (file, class, method).</p>
+<div class="details collapse"></div>
+<a href="../classes/ExcludesNameEntry.html" class="more">« More »</a>
+</div>
+<div id="FileList" class="element ajax clickable class">
+<h1>FileList<a href="../classes/FileList.html">¶</a>
+</h1>
+<p class="short_description">FileList represents an explicitly named list of files.</p>
+<div class="details collapse"></div>
+<a href="../classes/FileList.html" class="more">« More »</a>
+</div>
+<div id="FileSet" class="element ajax clickable class">
+<h1>FileSet<a href="../classes/FileSet.html">¶</a>
+</h1>
+<p class="short_description">Moved out of MatchingTask to make it a standalone object that could
+be referenced (by scripts for example).</p>
+<div class="details collapse"></div>
+<a href="../classes/FileSet.html" class="more">« More »</a>
+</div>
+<div id="FilterChain" class="element ajax clickable class">
+<h1>FilterChain<a href="../classes/FilterChain.html">¶</a>
+</h1>
+<p class="short_description">FilterChain may contain a chained set of filter readers.</p>
+<div class="details collapse"></div>
+<a href="../classes/FilterChain.html" class="more">« More »</a>
+</div>
+<div id="Mapper" class="element ajax clickable class">
+<h1>Mapper<a href="../classes/Mapper.html">¶</a>
+</h1>
+<p class="short_description">Filename Mapper maps source file name(s) to target file name(s).</p>
+<div class="details collapse"></div>
+<a href="../classes/Mapper.html" class="more">« More »</a>
+</div>
+<div id="Parameter" class="element ajax clickable class">
+<h1>Parameter<a href="../classes/Parameter.html">¶</a>
+</h1>
+<p class="short_description">A parameter is composed of a name, type and value.</p>
+<div class="details collapse"></div>
+<a href="../classes/Parameter.html" class="more">« More »</a>
+</div>
+<div id="Path" class="element ajax clickable class">
+<h1>Path<a href="../classes/Path.html">¶</a>
+</h1>
+<p class="short_description">This object represents a path as used by include_path or PATH
+environment variable.</p>
+<div class="details collapse"></div>
+<a href="../classes/Path.html" class="more">« More »</a>
+</div>
+<div id="PathElement" class="element ajax clickable class">
+<h1>PathElement<a href="../classes/PathElement.html">¶</a>
+</h1>
+<p class="short_description">Helper class, holds the nested <code>&lt;pathelement&gt;</code> values.</p>
+<div class="details collapse"></div>
+<a href="../classes/PathElement.html" class="more">« More »</a>
+</div>
+<div id="PatternSet" class="element ajax clickable class">
+<h1>PatternSet<a href="../classes/PatternSet.html">¶</a>
+</h1>
+<p class="short_description">The patternset storage component.</p>
+<div class="details collapse"></div>
+<a href="../classes/PatternSet.html" class="more">« More »</a>
+</div>
+<div id="PatternSetNameEntry" class="element ajax clickable class">
+<h1>PatternSetNameEntry<a href="../classes/PatternSetNameEntry.html">¶</a>
+</h1>
+<p class="short_description">"Internal" class for holding an include/exclude pattern.</p>
+<div class="details collapse"></div>
+<a href="../classes/PatternSetNameEntry.html" class="more">« More »</a>
+</div>
+<div id="PhingFilterReader" class="element ajax clickable class">
+<h1>PhingFilterReader<a href="../classes/PhingFilterReader.html">¶</a>
+</h1>
+<p class="short_description">A PhingFilterReader is a wrapper class that encloses the className
+and configuration of a Configurable FilterReader.</p>
+<div class="details collapse"></div>
+<a href="../classes/PhingFilterReader.html" class="more">« More »</a>
+</div>
+<div id="Reference" class="element ajax clickable class">
+<h1>Reference<a href="../classes/Reference.html">¶</a>
+</h1>
+<p class="short_description">Class to hold a reference to another object in the project.</p>
+<div class="details collapse"></div>
+<a href="../classes/Reference.html" class="more">« More »</a>
+</div>
+<div id="RegularExpression" class="element ajax clickable class">
+<h1>RegularExpression<a href="../classes/RegularExpression.html">¶</a>
+</h1>
+<p class="short_description">A regular expression datatype.</p>
+<div class="details collapse"></div>
+<a href="../classes/RegularExpression.html" class="more">« More »</a>
+</div>
+<div id="TokenSource" class="element ajax clickable class">
+<h1>TokenSource<a href="../classes/TokenSource.html">¶</a>
+</h1>
+<p class="short_description">A parameter is composed of a name, type and value.</p>
+<div class="details collapse"></div>
+<a href="../classes/TokenSource.html" class="more">« More »</a>
+</div>
+<ul class="breadcrumb"><li>
+<a href="../index.html"><i class="icon-folder-open"></i></a><span class="divider">\</span><li><a href="../packages/phing.html">phing</a></li>
+<li>
+<span class="divider">\</span><a href="../packages/phing.types.html">types</a>
+</li>
+<li class="active">
+<span class="divider">\</span><a href="../packages/phing.types.selectors.html">selectors</a>
+</li>
+</li></ul>
+<div class="package-indent">
+<h3>
+<i class="icon-custom icon-class"></i> Classes and interfaces</h3>
+<div id="ExtendFileSelector" class="element ajax clickable interface">
+<h1>ExtendFileSelector<a href="../classes/ExtendFileSelector.html">¶</a>
+</h1>
+<p class="short_description">This is the interface to be used by all custom selectors, those that are
+called through the &lt;custom&gt; tag.</p>
+<div class="details collapse"></div>
+<a href="../classes/ExtendFileSelector.html" class="more">« More »</a>
+</div>
+<div id="FileSelector" class="element ajax clickable interface">
+<h1>FileSelector<a href="../classes/FileSelector.html">¶</a>
+</h1>
+<p class="short_description">This is the interface to be used by all selectors.</p>
+<div class="details collapse"></div>
+<a href="../classes/FileSelector.html" class="more">« More »</a>
+</div>
+<div id="SelectorContainer" class="element ajax clickable interface">
+<h1>SelectorContainer<a href="../classes/SelectorContainer.html">¶</a>
+</h1>
+<p class="short_description">This is the interface for selectors that can contain other selectors.</p>
+<div class="details collapse"></div>
+<a href="../classes/SelectorContainer.html" class="more">« More »</a>
+</div>
+<div id="SelectorScanner" class="element ajax clickable interface">
+<h1>SelectorScanner<a href="../classes/SelectorScanner.html">¶</a>
+</h1>
+<p class="short_description">An interface used to describe the actions required by any type of
+directory scanner that supports Selecters.</p>
+<div class="details collapse"></div>
+<a href="../classes/SelectorScanner.html" class="more">« More »</a>
+</div>
+<div id="AndSelector" class="element ajax clickable class">
+<h1>AndSelector<a href="../classes/AndSelector.html">¶</a>
+</h1>
+<p class="short_description">This selector has a collection of other selectors, all of which have to
+select a file in order for this selector to select it.</p>
+<div class="details collapse"></div>
+<a href="../classes/AndSelector.html" class="more">« More »</a>
+</div>
+<div id="BaseExtendSelector" class="element ajax clickable class">
+<h1>BaseExtendSelector<a href="../classes/BaseExtendSelector.html">¶</a>
+</h1>
+<p class="short_description">Convenience base class for all selectors accessed through ExtendSelector.</p>
+<div class="details collapse"></div>
+<a href="../classes/BaseExtendSelector.html" class="more">« More »</a>
+</div>
+<div id="BaseSelector" class="element ajax clickable class">
+<h1>BaseSelector<a href="../classes/BaseSelector.html">¶</a>
+</h1>
+<p class="short_description">A convenience base class that you can subclass Selectors from.</p>
+<div class="details collapse"></div>
+<a href="../classes/BaseSelector.html" class="more">« More »</a>
+</div>
+<div id="BaseSelectorContainer" class="element ajax clickable class">
+<h1>BaseSelectorContainer<a href="../classes/BaseSelectorContainer.html">¶</a>
+</h1>
+<p class="short_description">This is the base class for selectors that can contain other selectors.</p>
+<div class="details collapse"></div>
+<a href="../classes/BaseSelectorContainer.html" class="more">« More »</a>
+</div>
+<div id="ContainsRegexpSelector" class="element ajax clickable class">
+<h1>ContainsRegexpSelector<a href="../classes/ContainsRegexpSelector.html">¶</a>
+</h1>
+<p class="short_description">Selector that filters files based on whether they contain a
+particular string using regexp.</p>
+<div class="details collapse"></div>
+<a href="../classes/ContainsRegexpSelector.html" class="more">« More »</a>
+</div>
+<div id="ContainsSelector" class="element ajax clickable class">
+<h1>ContainsSelector<a href="../classes/ContainsSelector.html">¶</a>
+</h1>
+<p class="short_description">Selector that filters files based on whether they contain a
+particular string.</p>
+<div class="details collapse"></div>
+<a href="../classes/ContainsSelector.html" class="more">« More »</a>
+</div>
+<div id="DateSelector" class="element ajax clickable class">
+<h1>DateSelector<a href="../classes/DateSelector.html">¶</a>
+</h1>
+<p class="short_description">Selector that chooses files based on their last modified date.</p>
+<div class="details collapse"></div>
+<a href="../classes/DateSelector.html" class="more">« More »</a>
+</div>
+<div id="DependSelector" class="element ajax clickable class">
+<h1>DependSelector<a href="../classes/DependSelector.html">¶</a>
+</h1>
+<p class="short_description">Selector that filters files based on whether they are newer than
+a matching file in another directory tree.</p>
+<div class="details collapse"></div>
+<a href="../classes/DependSelector.html" class="more">« More »</a>
+</div>
+<div id="DepthSelector" class="element ajax clickable class">
+<h1>DepthSelector<a href="../classes/DepthSelector.html">¶</a>
+</h1>
+<p class="short_description">Selector that filters files based on the how deep in the directory
+tree they are.</p>
+<div class="details collapse"></div>
+<a href="../classes/DepthSelector.html" class="more">« More »</a>
+</div>
+<div id="ExtendSelector" class="element ajax clickable class">
+<h1>ExtendSelector<a href="../classes/ExtendSelector.html">¶</a>
+</h1>
+<p class="short_description">Selector that selects files by forwarding the request on to other classes.</p>
+<div class="details collapse"></div>
+<a href="../classes/ExtendSelector.html" class="more">« More »</a>
+</div>
+<div id="FilenameSelector" class="element ajax clickable class">
+<h1>FilenameSelector<a href="../classes/FilenameSelector.html">¶</a>
+</h1>
+<p class="short_description">Selector that filters files based on the filename.</p>
+<div class="details collapse"></div>
+<a href="../classes/FilenameSelector.html" class="more">« More »</a>
+</div>
+<div id="MajoritySelector" class="element ajax clickable class">
+<h1>MajoritySelector<a href="../classes/MajoritySelector.html">¶</a>
+</h1>
+<p class="short_description">This selector is here just to shake up your thinking a bit.</p>
+<div class="details collapse"></div>
+<a href="../classes/MajoritySelector.html" class="more">« More »</a>
+</div>
+<div id="NoneSelector" class="element ajax clickable class">
+<h1>NoneSelector<a href="../classes/NoneSelector.html">¶</a>
+</h1>
+<p class="short_description">This selector has a collection of other selectors.</p>
+<div class="details collapse"></div>
+<a href="../classes/NoneSelector.html" class="more">« More »</a>
+</div>
+<div id="NotSelector" class="element ajax clickable class">
+<h1>NotSelector<a href="../classes/NotSelector.html">¶</a>
+</h1>
+<p class="short_description">This selector has one other selectors whose meaning it inverts.</p>
+<div class="details collapse"></div>
+<a href="../classes/NotSelector.html" class="more">« More »</a>
+</div>
+<div id="OrSelector" class="element ajax clickable class">
+<h1>OrSelector<a href="../classes/OrSelector.html">¶</a>
+</h1>
+<p class="short_description">This selector has a collection of other selectors, any of which have to
+select a file in order for this selector to select it.</p>
+<div class="details collapse"></div>
+<a href="../classes/OrSelector.html" class="more">« More »</a>
+</div>
+<div id="PresentSelector" class="element ajax clickable class">
+<h1>PresentSelector<a href="../classes/PresentSelector.html">¶</a>
+</h1>
+<p class="short_description">Selector that filters files based on whether they appear in another
+directory tree.</p>
+<div class="details collapse"></div>
+<a href="../classes/PresentSelector.html" class="more">« More »</a>
+</div>
+<div id="SelectSelector" class="element ajax clickable class">
+<h1>SelectSelector<a href="../classes/SelectSelector.html">¶</a>
+</h1>
+<p class="short_description">This selector just holds one other selector and forwards all
+requests to it.</p>
+<div class="details collapse"></div>
+<a href="../classes/SelectSelector.html" class="more">« More »</a>
+</div>
+<div id="SelectorUtils" class="element ajax clickable class">
+<h1>SelectorUtils<a href="../classes/SelectorUtils.html">¶</a>
+</h1>
+<p class="short_description"><p>This is a utility class used by selectors and DirectoryScanner.</p>
+<div class="details collapse"></div>
+<a href="../classes/SelectorUtils.html" class="more">« More »</a>
+</div>
+<div id="SizeSelector" class="element ajax clickable class">
+<h1>SizeSelector<a href="../classes/SizeSelector.html">¶</a>
+</h1>
+<p class="short_description">Selector that filters files based on their size.</p>
+<div class="details collapse"></div>
+<a href="../classes/SizeSelector.html" class="more">« More »</a>
+</div>
+<div id="TypeSelector" class="element ajax clickable class">
+<h1>TypeSelector<a href="../classes/TypeSelector.html">¶</a>
+</h1>
+<p class="short_description">Selector that selects a certain kind of file: directory or regular file.</p>
+<div class="details collapse"></div>
+<a href="../classes/TypeSelector.html" class="more">« More »</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:17+01:00.<br></footer></div>
+</div>
+</body>
+</html>

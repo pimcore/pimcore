@@ -1,0 +1,461 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \XmlLogger</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method___construct" title="__construct :: Constructs a new BuildListener that logs build events to an XML file."><span class="description">Constructs a new BuildListener that logs build events to an XML file.</span><pre>__construct()</pre></a></li>
+<li class="method public "><a href="#method_buildFinished" title="buildFinished :: Fired when the build finishes, this adds the time taken and any
+error stacktrace to the build element and writes the document to disk."><span class="description">Fired when the build finishes, this adds the time taken and any
+error stacktrace to the build element and writes the document to disk.</span><pre>buildFinished()</pre></a></li>
+<li class="method public "><a href="#method_buildStarted" title="buildStarted :: Fired when the build starts, this builds the top-level element for the
+document and remembers the time of the start of the build."><span class="description">Fired when the build starts, this builds the top-level element for the
+document and remembers the time of the start of the build.</span><pre>buildStarted()</pre></a></li>
+<li class="method public "><a href="#method_messageLogged" title="messageLogged :: Fired when a message is logged, this adds a message element to the
+most appropriate parent element (task, target or build) and records
+the priority and text of the message."><span class="description">Fired when a message is logged, this adds a message element to the
+most appropriate parent element (task, target or build) and records
+the priority and text of the message.</span><pre>messageLogged()</pre></a></li>
+<li class="method public "><a href="#method_setErrorStream" title="setErrorStream :: Sets the error stream."><span class="description">Sets the error stream.</span><pre>setErrorStream()</pre></a></li>
+<li class="method public "><a href="#method_setMessageOutputLevel" title="setMessageOutputLevel :: Set the msgOutputLevel this logger is to respond to."><span class="description">Set the msgOutputLevel this logger is to respond to.</span><pre>setMessageOutputLevel()</pre></a></li>
+<li class="method public "><a href="#method_setOutputStream" title="setOutputStream :: Sets the output stream."><span class="description">Sets the output stream.</span><pre>setOutputStream()</pre></a></li>
+<li class="method public "><a href="#method_targetFinished" title="targetFinished :: Fired when a target finishes building, this adds the time taken
+to the appropriate target element in the log."><span class="description">Fired when a target finishes building, this adds the time taken
+to the appropriate target element in the log.</span><pre>targetFinished()</pre></a></li>
+<li class="method public "><a href="#method_targetStarted" title="targetStarted :: Fired when a target starts building, remembers the current time and the name of the target."><span class="description">Fired when a target starts building, remembers the current time and the name of the target.</span><pre>targetStarted()</pre></a></li>
+<li class="method public "><a href="#method_taskFinished" title="taskFinished :: Fired when a task finishes building, this adds the time taken
+to the appropriate task element in the log."><span class="description">Fired when a task finishes building, this adds the time taken
+to the appropriate task element in the log.</span><pre>taskFinished()</pre></a></li>
+<li class="method public "><a href="#method_taskStarted" title="taskStarted :: Fired when a task starts building, remembers the current time and the name of the task."><span class="description">Fired when a task starts building, remembers the current time and the name of the task.</span><pre>taskStarted()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul></ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul>
+<li class="property private "><a href="#property_buildElement" title="$buildElement :: "><span class="description">Top-level (root) build element</span><pre>$buildElement</pre></a></li>
+<li class="property private "><a href="#property_buildTimerStart" title="$buildTimerStart :: "><span class="description">Start time for entire build.</span><pre>$buildTimerStart</pre></a></li>
+<li class="property private "><a href="#property_doc" title="$doc :: "><span class="description">The XML document created by this logger.</span><pre>$doc</pre></a></li>
+<li class="property private "><a href="#property_elementStack" title="$elementStack :: "><span class="description">DOMElement[] The parent of the element being processed.</span><pre>$elementStack</pre></a></li>
+<li class="property private "><a href="#property_err" title="$err :: "><span class="description">Stream to use for error output.</span><pre>$err</pre></a></li>
+<li class="property private "><a href="#property_msgOutputLevel" title="$msgOutputLevel :: "><span class="description"></span><pre>$msgOutputLevel</pre></a></li>
+<li class="property private "><a href="#property_out" title="$out :: "><span class="description">Stream to use for standard output.</span><pre>$out</pre></a></li>
+<li class="property private "><a href="#property_outFilename" title="$outFilename :: "><span class="description">Name of filename to create.</span><pre>$outFilename</pre></a></li>
+<li class="property private "><a href="#property_timesStack" title="$timesStack :: "><span class="description">int[] Array of millisecond times for the various elements being processed.</span><pre>$timesStack</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-constant"></i> Constants
+                    <ul>
+<li class="constant  "><a href="#constant_BUILD_TAG" title="BUILD_TAG :: XML element name for a build."><span class="description">XML element name for a build.</span><pre>BUILD_TAG</pre></a></li>
+<li class="constant  "><a href="#constant_ERROR_ATTR" title="ERROR_ATTR :: XML attribute name for an error description."><span class="description">XML attribute name for an error description.</span><pre>ERROR_ATTR</pre></a></li>
+<li class="constant  "><a href="#constant_LOCATION_ATTR" title="LOCATION_ATTR :: XML attribute name for a file location."><span class="description">XML attribute name for a file location.</span><pre>LOCATION_ATTR</pre></a></li>
+<li class="constant  "><a href="#constant_MESSAGE_TAG" title="MESSAGE_TAG :: XML element name for a message."><span class="description">XML element name for a message.</span><pre>MESSAGE_TAG</pre></a></li>
+<li class="constant  "><a href="#constant_NAME_ATTR" title="NAME_ATTR :: XML attribute name for a name."><span class="description">XML attribute name for a name.</span><pre>NAME_ATTR</pre></a></li>
+<li class="constant  "><a href="#constant_PRIORITY_ATTR" title="PRIORITY_ATTR :: XML attribute name for a message priority."><span class="description">XML attribute name for a message priority.</span><pre>PRIORITY_ATTR</pre></a></li>
+<li class="constant  "><a href="#constant_STACKTRACE_TAG" title="STACKTRACE_TAG :: XML element name for a stack trace."><span class="description">XML element name for a stack trace.</span><pre>STACKTRACE_TAG</pre></a></li>
+<li class="constant  "><a href="#constant_TARGET_TAG" title="TARGET_TAG :: XML element name for a target."><span class="description">XML element name for a target.</span><pre>TARGET_TAG</pre></a></li>
+<li class="constant  "><a href="#constant_TASK_TAG" title="TASK_TAG :: XML element name for a task."><span class="description">XML element name for a task.</span><pre>TASK_TAG</pre></a></li>
+<li class="constant  "><a href="#constant_TIME_ATTR" title="TIME_ATTR :: XML attribute name for a time."><span class="description">XML attribute name for a time.</span><pre>TIME_ATTR</pre></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\XmlLogger"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/XmlLogger.html">XmlLogger</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">Generates a file in the current directory with
+an XML description of what happened during a build.</p>
+<div class="details">
+<div class="long_description"><p>The default filename is "log.xml", but this can be overridden
+with the property</p>
+
+<pre><code>XmlLogger.file</code></pre>
+
+<p>.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>author</th>
+<td><a href="mailto:mrook@php.net">Michiel Rook</a></td>
+</tr>
+<tr>
+<th>version</th>
+<td>$Id: aaf7d77e9952319b9598d786c556be005d34c188 $</td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.listener.html">phing.listener</a></td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___construct"></a><div class="element clickable method public method___construct" data-toggle="collapse" data-target=".method___construct .collapse">
+<h2>Constructs a new BuildListener that logs build events to an XML file.</h2>
+<pre>__construct() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_buildFinished"></a><div class="element clickable method public method_buildFinished" data-toggle="collapse" data-target=".method_buildFinished .collapse">
+<h2>Fired when the build finishes, this adds the time taken and any
+error stacktrace to the build element and writes the document to disk.</h2>
+<pre>buildFinished(\BuildEvent $event) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$event</h4>
+<code><a href="../classes/BuildEvent.html">\BuildEvent</a></code><p>An event with any relevant extra information. Will not be <code>null</code>.</p>
+</div>
+</div></div>
+</div>
+<a id="method_buildStarted"></a><div class="element clickable method public method_buildStarted" data-toggle="collapse" data-target=".method_buildStarted .collapse">
+<h2>Fired when the build starts, this builds the top-level element for the
+document and remembers the time of the start of the build.</h2>
+<pre>buildStarted(\BuildEvent $event) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$event</h4>
+<code><a href="../classes/BuildEvent.html">\BuildEvent</a></code><p>Ignored.</p></div>
+</div></div>
+</div>
+<a id="method_messageLogged"></a><div class="element clickable method public method_messageLogged" data-toggle="collapse" data-target=".method_messageLogged .collapse">
+<h2>Fired when a message is logged, this adds a message element to the
+most appropriate parent element (task, target or build) and records
+the priority and text of the message.</h2>
+<pre>messageLogged(\BuildEvent $event) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$event</h4>
+<code><a href="../classes/BuildEvent.html">\BuildEvent</a></code><p>An event with any relevant extra information. Will not be <code>null</code>.</p>
+</div>
+</div></div>
+</div>
+<a id="method_setErrorStream"></a><div class="element clickable method public method_setErrorStream" data-toggle="collapse" data-target=".method_setErrorStream .collapse">
+<h2>Sets the error stream.</h2>
+<pre>setErrorStream(\OutputStream $err) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>see</th>
+<td><a href="">\global\BuildLogger#setErrorStream()</a></td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$err</h4>
+<code><a href="../classes/OutputStream.html">\OutputStream</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_setMessageOutputLevel"></a><div class="element clickable method public method_setMessageOutputLevel" data-toggle="collapse" data-target=".method_setMessageOutputLevel .collapse">
+<h2>Set the msgOutputLevel this logger is to respond to.</h2>
+<pre>setMessageOutputLevel(int $level) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Only messages with a message level lower than or equal to the given
+ level are output to the log.</p>
+
+<p>&lt;</p>
+
+<p>p> Constants for the message levels are in Project.php. The order of
+ the levels, from least to most verbose, is:</p>
+
+<ul>
+   <li>Project::MSG_ERR</li>
+   <li>Project::MSG_WARN</li>
+   <li>Project::MSG_INFO</li>
+   <li>Project::MSG_VERBOSE</li>
+   <li>Project::MSG_DEBUG</li>
+ </ul>
+
+<p>The default message level for DefaultLogger is Project::MSG_ERR.</p></div>
+<table class="table table-bordered"><tr>
+<th>see</th>
+<td><a href="">\global\BuildLogger#setMessageOutputLevel()</a></td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$level</h4>
+<code>int</code><p>The logging level for the logger.</p></div>
+</div></div>
+</div>
+<a id="method_setOutputStream"></a><div class="element clickable method public method_setOutputStream" data-toggle="collapse" data-target=".method_setOutputStream .collapse">
+<h2>Sets the output stream.</h2>
+<pre>setOutputStream(\OutputStream $output) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>see</th>
+<td><a href="">\global\BuildLogger#setOutputStream()</a></td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$output</h4>
+<code><a href="../classes/OutputStream.html">\OutputStream</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_targetFinished"></a><div class="element clickable method public method_targetFinished" data-toggle="collapse" data-target=".method_targetFinished .collapse">
+<h2>Fired when a target finishes building, this adds the time taken
+to the appropriate target element in the log.</h2>
+<pre>targetFinished(\BuildEvent $event) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$event</h4>
+<code><a href="../classes/BuildEvent.html">\BuildEvent</a></code><p>An event with any relevant extra information. Will not be <code>null</code>.</p>
+</div>
+</div></div>
+</div>
+<a id="method_targetStarted"></a><div class="element clickable method public method_targetStarted" data-toggle="collapse" data-target=".method_targetStarted .collapse">
+<h2>Fired when a target starts building, remembers the current time and the name of the target.</h2>
+<pre>targetStarted(\BuildEvent $event) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$event</h4>
+<code><a href="../classes/BuildEvent.html">\BuildEvent</a></code><p>An event with any relevant extra information. Will not be <code>null</code>.</p>
+</div>
+</div></div>
+</div>
+<a id="method_taskFinished"></a><div class="element clickable method public method_taskFinished" data-toggle="collapse" data-target=".method_taskFinished .collapse">
+<h2>Fired when a task finishes building, this adds the time taken
+to the appropriate task element in the log.</h2>
+<pre>taskFinished(\BuildEvent $event) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$event</h4>
+<code><a href="../classes/BuildEvent.html">\BuildEvent</a></code><p>An event with any relevant extra information. Will not be <code>null</code>.</p>
+</div>
+</div></div>
+</div>
+<a id="method_taskStarted"></a><div class="element clickable method public method_taskStarted" data-toggle="collapse" data-target=".method_taskStarted .collapse">
+<h2>Fired when a task starts building, remembers the current time and the name of the task.</h2>
+<pre>taskStarted(\BuildEvent $event) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$event</h4>
+<code><a href="../classes/BuildEvent.html">\BuildEvent</a></code><p>An event with any relevant extra information. Will not be <code>null</code>.</p>
+</div>
+</div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_buildElement"> </a><div class="element clickable property private property_buildElement" data-toggle="collapse" data-target=".property_buildElement .collapse">
+<h2>Top-level (root) build element</h2>
+<pre>$buildElement : <a href="http://php.net/manual/en/class.domelement.php">\DOMElement</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_buildTimerStart"> </a><div class="element clickable property private property_buildTimerStart" data-toggle="collapse" data-target=".property_buildTimerStart .collapse">
+<h2>Start time for entire build.</h2>
+<pre>$buildTimerStart : int</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_doc"> </a><div class="element clickable property private property_doc" data-toggle="collapse" data-target=".property_doc .collapse">
+<h2>The XML document created by this logger.</h2>
+<pre>$doc : <a href="http://php.net/manual/en/class.domdocument.php">\DOMDocument</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_elementStack"> </a><div class="element clickable property private property_elementStack" data-toggle="collapse" data-target=".property_elementStack .collapse">
+<h2>DOMElement[] The parent of the element being processed.</h2>
+<pre>$elementStack : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_err"> </a><div class="element clickable property private property_err" data-toggle="collapse" data-target=".property_err .collapse">
+<h2>Stream to use for error output.</h2>
+<pre>$err : <a href="../classes/OutputStream.html">\OutputStream</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_msgOutputLevel"> </a><div class="element clickable property private property_msgOutputLevel" data-toggle="collapse" data-target=".property_msgOutputLevel .collapse">
+<h2></h2>
+<pre>$msgOutputLevel : int</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_out"> </a><div class="element clickable property private property_out" data-toggle="collapse" data-target=".property_out .collapse">
+<h2>Stream to use for standard output.</h2>
+<pre>$out : <a href="../classes/OutputStream.html">\OutputStream</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_outFilename"> </a><div class="element clickable property private property_outFilename" data-toggle="collapse" data-target=".property_outFilename .collapse">
+<h2>Name of filename to create.</h2>
+<pre>$outFilename : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_timesStack"> </a><div class="element clickable property private property_timesStack" data-toggle="collapse" data-target=".property_timesStack .collapse">
+<h2>int[] Array of millisecond times for the various elements being processed.</h2>
+<pre>$timesStack : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<h3>
+<i class="icon-custom icon-constant"></i> Constants</h3>
+<a id="constant_BUILD_TAG"> </a><div class="element clickable constant  constant_BUILD_TAG" data-toggle="collapse" data-target=".constant_BUILD_TAG .collapse">
+<h2>XML element name for a build.</h2>
+<pre>BUILD_TAG </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="constant_ERROR_ATTR"> </a><div class="element clickable constant  constant_ERROR_ATTR" data-toggle="collapse" data-target=".constant_ERROR_ATTR .collapse">
+<h2>XML attribute name for an error description.</h2>
+<pre>ERROR_ATTR </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="constant_LOCATION_ATTR"> </a><div class="element clickable constant  constant_LOCATION_ATTR" data-toggle="collapse" data-target=".constant_LOCATION_ATTR .collapse">
+<h2>XML attribute name for a file location.</h2>
+<pre>LOCATION_ATTR </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="constant_MESSAGE_TAG"> </a><div class="element clickable constant  constant_MESSAGE_TAG" data-toggle="collapse" data-target=".constant_MESSAGE_TAG .collapse">
+<h2>XML element name for a message.</h2>
+<pre>MESSAGE_TAG </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="constant_NAME_ATTR"> </a><div class="element clickable constant  constant_NAME_ATTR" data-toggle="collapse" data-target=".constant_NAME_ATTR .collapse">
+<h2>XML attribute name for a name.</h2>
+<pre>NAME_ATTR </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="constant_PRIORITY_ATTR"> </a><div class="element clickable constant  constant_PRIORITY_ATTR" data-toggle="collapse" data-target=".constant_PRIORITY_ATTR .collapse">
+<h2>XML attribute name for a message priority.</h2>
+<pre>PRIORITY_ATTR </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="constant_STACKTRACE_TAG"> </a><div class="element clickable constant  constant_STACKTRACE_TAG" data-toggle="collapse" data-target=".constant_STACKTRACE_TAG .collapse">
+<h2>XML element name for a stack trace.</h2>
+<pre>STACKTRACE_TAG </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="constant_TARGET_TAG"> </a><div class="element clickable constant  constant_TARGET_TAG" data-toggle="collapse" data-target=".constant_TARGET_TAG .collapse">
+<h2>XML element name for a target.</h2>
+<pre>TARGET_TAG </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="constant_TASK_TAG"> </a><div class="element clickable constant  constant_TASK_TAG" data-toggle="collapse" data-target=".constant_TASK_TAG .collapse">
+<h2>XML element name for a task.</h2>
+<pre>TASK_TAG </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="constant_TIME_ATTR"> </a><div class="element clickable constant  constant_TIME_ATTR" data-toggle="collapse" data-target=".constant_TIME_ATTR .collapse">
+<h2>XML attribute name for a time.</h2>
+<pre>TIME_ATTR </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:46+01:00.<br></footer></div>
+</div>
+</body>
+</html>

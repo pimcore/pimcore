@@ -1,0 +1,317 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \DataTypeHandler</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method___construct" title="__construct :: Constructs a new DataTypeHandler and sets up everything."><span class="description">Constructs a new DataTypeHandler and sets up everything.</span><pre>__construct()</pre></a></li>
+<li class="method public "><a href="#method_characters" title="characters :: Handles character data."><span class="description">Handles character data.</span><pre>characters()</pre></a></li>
+<li class="method public "><a href="#method_endElement" title="endElement :: Overrides endElement for data types."><span class="description">Overrides endElement for data types.</span><pre>endElement()</pre></a></li>
+<li class="method public "><a href="#method_init" title="init :: Executes initialization actions required to setup the data structures
+related to the tag."><span class="description">Executes initialization actions required to setup the data structures
+related to the tag.</span><pre>init()</pre></a></li>
+<li class="method public "><a href="#method_startElement" title="startElement :: Checks for nested tags within the current one."><span class="description">Checks for nested tags within the current one.</span><pre>startElement()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul><li class="method protected inherited"><a href="#method_finished" title="finished :: Gets invoked when element closes method."><span class="description">Gets invoked when element closes method.</span><pre>finished()</pre></a></li></ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul>
+<li class="property public inherited"><a href="#property_parentHandler" title="$parentHandler :: "><span class="description"></span><pre>$parentHandler</pre></a></li>
+<li class="property public inherited"><a href="#property_parser" title="$parser :: "><span class="description"></span><pre>$parser</pre></a></li>
+</ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul>
+<li class="property private "><a href="#property_element" title="$element :: "><span class="description"></span><pre>$element</pre></a></li>
+<li class="property private "><a href="#property_target" title="$target :: "><span class="description"></span><pre>$target</pre></a></li>
+<li class="property private "><a href="#property_wrapper" title="$wrapper :: "><span class="description"></span><pre>$wrapper</pre></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\DataTypeHandler"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/DataTypeHandler.html">DataTypeHandler</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">Configures a Project (complete with Targets and Tasks) based on
+a XML build file.</p>
+<div class="details">
+<div class="long_description"><p>&lt;</p>
+
+<p>p>
+Design/ZE2 migration note:
+If PHP would support nested classes. All the phing/parser/*Filter
+classes would be nested within this class</p></div>
+<table class="table table-bordered">
+<tr>
+<th>author</th>
+<td><a href="mailto:andi@binarycloud.com">Andreas Aderhold</a></td>
+</tr>
+<tr>
+<th>copyright</th>
+<td>2001,2002 THYRELL. All rights reserved</td>
+</tr>
+<tr>
+<th>version</th>
+<td>$Id$</td>
+</tr>
+<tr>
+<th>access</th>
+<td>public</td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.parser.html">phing.parser</a></td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___construct"></a><div class="element clickable method public method___construct" data-toggle="collapse" data-target=".method___construct .collapse">
+<h2>Constructs a new DataTypeHandler and sets up everything.</h2>
+<pre>__construct(\AbstractSAXParser $parser, \AbstractHandler $parentHandler, \ProjectConfigurator $configurator, <a href="../classes/Target.html">\Target</a> $target) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The constructor must be called by all derived classes.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$parser</h4>
+<code><a href="../classes/AbstractSAXParser.html">\AbstractSAXParser</a></code><p>The XML parser (default: ExpatParser)</p>
+</div>
+<div class="subelement argument">
+<h4>$parentHandler</h4>
+<code><a href="../classes/AbstractHandler.html">\AbstractHandler</a></code><p>The parent handler that invoked this handler.</p></div>
+<div class="subelement argument">
+<h4>$configurator</h4>
+<code><a href="../classes/ProjectConfigurator.html">\ProjectConfigurator</a></code><p>The ProjectConfigurator object</p></div>
+<div class="subelement argument">
+<h4>$target</h4>
+<code><a href="../classes/Target.html">\Target</a></code><p>The target object this datatype is contained in (null for top-level datatypes).</p>
+</div>
+</div></div>
+</div>
+<a id="method_characters"></a><div class="element clickable method public method_characters" data-toggle="collapse" data-target=".method_characters .collapse">
+<h2>Handles character data.</h2>
+<pre>characters(string $data) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>access</th>
+<td>public</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$data</h4>
+<code>string</code><p>the CDATA that comes in</p></div>
+</div></div>
+</div>
+<a id="method_endElement"></a><div class="element clickable method public method_endElement" data-toggle="collapse" data-target=".method_endElement .collapse">
+<h2>Overrides endElement for data types.</h2>
+<pre>endElement(string $name) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Tells the type
+handler that processing the element had been finished so
+handlers know they can perform actions that need to be
+based on the data contained within the element.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code><p>the name of the XML element</p></div>
+</div></div>
+</div>
+<a id="method_init"></a><div class="element clickable method public method_init" data-toggle="collapse" data-target=".method_init .collapse">
+<h2>Executes initialization actions required to setup the data structures
+related to the tag.</h2>
+<pre>init(string $propType, array $attrs) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>&lt;</p>
+
+<p>p>
+This includes:</p>
+
+<ul>
+<li>creation of the datatype object</li>
+<li>calling the setters for attributes</li>
+<li>adding the type to the target object if any</li>
+<li>adding a reference to the task (if id attribute is given)</li>
+</ul></div>
+<table class="table table-bordered"><tr>
+<th>access</th>
+<td>public</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$propType</h4>
+<code>string</code><p>the tag that comes in</p></div>
+<div class="subelement argument">
+<h4>$attrs</h4>
+<code>array</code><p>attributes the tag carries</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/ExpatParseException.html">\ExpatParseException</a></code></th>
+<td>if attributes are incomplete or invalid</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_startElement"></a><div class="element clickable method public method_startElement" data-toggle="collapse" data-target=".method_startElement .collapse">
+<h2>Checks for nested tags within the current one.</h2>
+<pre>startElement(string $name, array $attrs) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Creates and calls
+handlers respectively.</p></div>
+<table class="table table-bordered"><tr>
+<th>access</th>
+<td>public</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code><p>the tag that comes in</p></div>
+<div class="subelement argument">
+<h4>$attrs</h4>
+<code>array</code><p>attributes the tag carries</p></div>
+</div></div>
+</div>
+<a id="method_finished"></a><div class="element clickable method protected method_finished" data-toggle="collapse" data-target=".method_finished .collapse">
+<h2>Gets invoked when element closes method.</h2>
+<pre>finished() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\AbstractHandler::finished()</td>
+</tr></table>
+</div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_parentHandler"> </a><div class="element clickable property public property_parentHandler" data-toggle="collapse" data-target=".property_parentHandler .collapse">
+<h2></h2>
+<pre>$parentHandler </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\AbstractHandler::$$parentHandler</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_parser"> </a><div class="element clickable property public property_parser" data-toggle="collapse" data-target=".property_parser .collapse">
+<h2></h2>
+<pre>$parser </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\AbstractHandler::$$parser</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_element"> </a><div class="element clickable property private property_element" data-toggle="collapse" data-target=".property_element .collapse">
+<h2></h2>
+<pre>$element </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_target"> </a><div class="element clickable property private property_target" data-toggle="collapse" data-target=".property_target .collapse">
+<h2></h2>
+<pre>$target </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_wrapper"> </a><div class="element clickable property private property_wrapper" data-toggle="collapse" data-target=".property_wrapper .collapse">
+<h2></h2>
+<pre>$wrapper </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:45+01:00.<br></footer></div>
+</div>
+</body>
+</html>

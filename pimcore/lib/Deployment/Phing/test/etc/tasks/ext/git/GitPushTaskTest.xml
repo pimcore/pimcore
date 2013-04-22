@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<project name="gitPushTest" default="invalid">
+
+    <property name="tmp.dir" value="./../../../../tmp/git" />
+    <property name="bundle.dir" value="phing-tests.git"/>
+    <property name="repo.dir" value="./../../../../tmp/repo" />
+    
+    <resolvepath propertyName="tmp.dir.resolved" file="${tmp.dir}" />
+    <resolvepath propertyName="bundle.dir.resolved" file="${bundle.dir}" />
+    <resolvepath propertyName="repo.dir.resolved" file="${repo.dir}" />
+    
+    <delete dir="${repo.dir.resolved}" />
+    <gitclone
+    	repository="${bundle.dir.resolved}"
+    	targetPath="${repo.dir.resolved}" />
+
+    <target name="invalid">
+        <fail>This file should only be run via a testcase</fail>
+    </target>
+
+    <target name="allParamsSet" description="all parameters present">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpush
+            repository="${tmp.dir.resolved}" 
+            destination="origin" refspec="master:foobranch" 
+            force="true" quiet="true" />
+    </target>
+
+    <target name="wrongRepo" description="all parameters present">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpush
+            repository="plain-wrong" 
+            destination="origin" refspec="master:foobranch" 
+            force="true" quiet="true" />
+    </target>
+
+    <target name="noRepository" description="Required param checking">
+        <gitpush />
+    </target>
+
+    <target name="noDestination" description="Required param checking">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpush
+            repository="${tmp.dir.resolved}" destination="" />
+    </target>
+
+    <target name="allReposSet" description="git-push --all">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpush
+            repository="${tmp.dir.resolved}" all="true" />
+    </target>
+
+    <target name="tagsSet" description="git-push --tags">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpush
+            repository="${tmp.dir.resolved}" 
+            refspec="master:foobranch" tags="true" />
+    </target>
+
+    <target name="mirrorSet" description="git-push --tags">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpush
+            repository="${tmp.dir.resolved}" 
+            mirror="true" quiet="true" />
+    </target>
+    <target name="deleteSet" description="git-push --tags">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpush
+            repository="${tmp.dir.resolved}" 
+            refspec="master:newbranch" quiet="true" />
+        <gitpush
+            repository="${tmp.dir.resolved}" 
+            delete="true"
+            refspec="newbranch" quiet="true" />
+    </target>
+
+    <target name="deleteSet" description="git-push --tags">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpush
+            repository="${tmp.dir.resolved}" 
+            refspec="master:newbranch" quiet="true" />
+        <gitpush
+            repository="${tmp.dir.resolved}" 
+            delete="true"
+            refspec="newbranch" quiet="true" />
+    </target>
+</project>

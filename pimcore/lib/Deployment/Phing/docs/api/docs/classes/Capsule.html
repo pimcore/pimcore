@@ -1,0 +1,404 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \Capsule</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method___construct" title="__construct :: "><span class="description">__construct()
+        </span><pre>__construct()</pre></a></li>
+<li class="method public "><a href="#method_clear" title="clear :: Clears one or several or all variables."><span class="description">Clears one or several or all variables.</span><pre>clear()</pre></a></li>
+<li class="method public "><a href="#method_display" title="display :: Low overhead (no output buffering) method to simply dump template
+to buffer."><span class="description">Low overhead (no output buffering) method to simply dump template
+to buffer.</span><pre>display()</pre></a></li>
+<li class="method public "><a href="#method_get" title="get :: Gets value of specified var or NULL if var has not been put()."><span class="description">Gets value of specified var or NULL if var has not been put().</span><pre>get()</pre></a></li>
+<li class="method public "><a href="#method_getOutputDirectory" title="getOutputDirectory :: Get basepath to use for output file creation."><span class="description">Get basepath to use for output file creation.</span><pre>getOutputDirectory()</pre></a></li>
+<li class="method public "><a href="#method_getTemplatePath" title="getTemplatePath :: Get the basepath to use for template lookups."><span class="description">Get the basepath to use for template lookups.</span><pre>getTemplatePath()</pre></a></li>
+<li class="method public "><a href="#method_parse" title="parse :: Fetches the results of a tempalte parse and either returns
+the string or writes results to a specified output file."><span class="description">Fetches the results of a tempalte parse and either returns
+the string or writes results to a specified output file.</span><pre>parse()</pre></a></li>
+<li class="method public "><a href="#method_put" title="put :: Adds a variable to the context."><span class="description">Adds a variable to the context.</span><pre>put()</pre></a></li>
+<li class="method public "><a href="#method_putAll" title="putAll :: Merges in passed hash to vars array."><span class="description">Merges in passed hash to vars array.</span><pre>putAll()</pre></a></li>
+<li class="method public "><a href="#method_putCopy" title="putCopy :: Makes a copy of the value and puts it into the context."><span class="description">Makes a copy of the value and puts it into the context.</span><pre>putCopy()</pre></a></li>
+<li class="method public "><a href="#method_putRef" title="putRef :: Put a variable into the context, assigning it by reference."><span class="description">Put a variable into the context, assigning it by reference.</span><pre>putRef()</pre></a></li>
+<li class="method public "><a href="#method_setOutputDirectory" title="setOutputDirectory :: Set a basepath to use for output file creation."><span class="description">Set a basepath to use for output file creation.</span><pre>setOutputDirectory()</pre></a></li>
+<li class="method public "><a href="#method_setTemplatePath" title="setTemplatePath :: Set the basepath to use for template lookups."><span class="description">Set the basepath to use for template lookups.</span><pre>setTemplatePath()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul><li class="method protected "><a href="#method_resolvePath" title='resolvePath :: This returns a "best guess" path for the given file.'><span class="description">This returns a "best guess" path for the given file.</span><pre>resolvePath()</pre></a></li></ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul><li class="property public "><a href="#property_vars" title="$vars :: The variables that can be used by the templates."><span class="description"></span><pre>$vars</pre></a></li></ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="property protected "><a href="#property_initialized" title="$initialized :: Has template been initialized."><span class="description"></span><pre>$initialized</pre></a></li>
+<li class="property protected "><a href="#property_outputDirectory" title="$outputDirectory :: Where should output files be written?
+(This is named inconsistently to be compatible w/ Texen.)"><span class="description"></span><pre>$outputDirectory</pre></a></li>
+<li class="property protected "><a href="#property_templatePath" title="$templatePath :: Look for templates here (if relative path provided)."><span class="description"></span><pre>$templatePath</pre></a></li>
+</ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul><li class="property private "><a href="#property_old_include_path" title="$old_include_path :: Stores the pre-parse() include_path."><span class="description"></span><pre>$old_include_path</pre></a></li></ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\Capsule"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/Capsule.html">Capsule</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">Capsule is a simple "template" engine that essentially provides an isolated context
+for PHP scripts.</p>
+<div class="details">
+<div class="long_description"><p>There is no special templating language, and therefore no limitations to what
+can be accomplished within templates. The main purpose of Capsule is to separate
+the business logic from display / output logic.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>author</th>
+<td><a href="mailto:hans@xmpl.org">Hans Lellelid</a></td>
+</tr>
+<tr>
+<th>version</th>
+<td>$Id$</td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.lib.html">phing.lib</a></td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___construct"></a><div class="element clickable method public method___construct" data-toggle="collapse" data-target=".method___construct .collapse">
+<h2>__construct()
+        </h2>
+<pre>__construct() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_clear"></a><div class="element clickable method public method_clear" data-toggle="collapse" data-target=".method_clear .collapse">
+<h2>Clears one or several or all variables.</h2>
+<pre>clear(mixed $which) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$which</h4>
+<code>mixed</code><p>String name of var, or array of names.</p></div>
+</div></div>
+</div>
+<a id="method_display"></a><div class="element clickable method public method_display" data-toggle="collapse" data-target=".method_display .collapse">
+<h2>Low overhead (no output buffering) method to simply dump template
+to buffer.</h2>
+<pre>display(string $__template) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$__template</h4>
+<code>string</code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="http://php.net/manual/en/class.exception.php">\Exception</a></code></th>
+<td>- if template cannot be found</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_get"></a><div class="element clickable method public method_get" data-toggle="collapse" data-target=".method_get .collapse">
+<h2>Gets value of specified var or NULL if var has not been put().</h2>
+<pre>get(string $name) : mixed</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code><p>Variable name to retrieve.</p></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>mixed</code></div>
+</div></div>
+</div>
+<a id="method_getOutputDirectory"></a><div class="element clickable method public method_getOutputDirectory" data-toggle="collapse" data-target=".method_getOutputDirectory .collapse">
+<h2>Get basepath to use for output file creation.</h2>
+<pre>getOutputDirectory() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_getTemplatePath"></a><div class="element clickable method public method_getTemplatePath" data-toggle="collapse" data-target=".method_getTemplatePath .collapse">
+<h2>Get the basepath to use for template lookups.</h2>
+<pre>getTemplatePath() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_parse"></a><div class="element clickable method public method_parse" data-toggle="collapse" data-target=".method_parse .collapse">
+<h2>Fetches the results of a tempalte parse and either returns
+the string or writes results to a specified output file.</h2>
+<pre>parse(string $template, string $outputFile, boolean $append) : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$template</h4>
+<code>string</code><p>The template filename (relative to templatePath or absolute).</p>
+</div>
+<div class="subelement argument">
+<h4>$outputFile</h4>
+<code>string</code><p>If specified, contents of template will also be written to this file.</p></div>
+<div class="subelement argument">
+<h4>$append</h4>
+<code>boolean</code><p>Should output be appended to source file?</p>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="http://php.net/manual/en/class.exception.php">\Exception</a></code></th>
+<td>- if template not found.</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>The "parsed" template output.</div>
+</div></div>
+</div>
+<a id="method_put"></a><div class="element clickable method public method_put" data-toggle="collapse" data-target=".method_put .collapse">
+<h2>Adds a variable to the context.</h2>
+<pre>put(string $name, mixed $value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Resulting template will have access to ${$name$} variable.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$value</h4>
+<code>mixed</code>
+</div>
+</div></div>
+</div>
+<a id="method_putAll"></a><div class="element clickable method public method_putAll" data-toggle="collapse" data-target=".method_putAll .collapse">
+<h2>Merges in passed hash to vars array.</h2>
+<pre>putAll(array $vars, boolean $recursiveMerge) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Given an array like:</p>
+
+<pre><code>       array(     'myvar' =&gt; 'Hello',
+               'myvar2' =&gt; 'Hello')
+</code></pre>
+
+<p>Resulting template will have access to $myvar and $myvar2.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$vars</h4>
+<code>array</code>
+</div>
+<div class="subelement argument">
+<h4>$recursiveMerge</h4>
+<code>boolean</code><p>Should matching keys be recursively merged?</p>
+</div>
+</div></div>
+</div>
+<a id="method_putCopy"></a><div class="element clickable method public method_putCopy" data-toggle="collapse" data-target=".method_putCopy .collapse">
+<h2>Makes a copy of the value and puts it into the context.</h2>
+<pre>putCopy(string $name, mixed $value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This is primarily to force copying (cloning) of objects, rather
+than the default behavior which is to assign them by reference.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$value</h4>
+<code>mixed</code>
+</div>
+</div></div>
+</div>
+<a id="method_putRef"></a><div class="element clickable method public method_putRef" data-toggle="collapse" data-target=".method_putRef .collapse">
+<h2>Put a variable into the context, assigning it by reference.</h2>
+<pre>putRef($name, \$value $value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This means that if the template modifies the variable, then it
+will also be modified in the context.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$name</h4></div>
+<div class="subelement argument">
+<h4>$value</h4>
+<code>\$value</code>
+</div>
+</div></div>
+</div>
+<a id="method_setOutputDirectory"></a><div class="element clickable method public method_setOutputDirectory" data-toggle="collapse" data-target=".method_setOutputDirectory .collapse">
+<h2>Set a basepath to use for output file creation.</h2>
+<pre>setOutputDirectory(string $v) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$v</h4>
+<code>string</code>
+</div>
+</div></div>
+</div>
+<a id="method_setTemplatePath"></a><div class="element clickable method public method_setTemplatePath" data-toggle="collapse" data-target=".method_setTemplatePath .collapse">
+<h2>Set the basepath to use for template lookups.</h2>
+<pre>setTemplatePath(string $v) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$v</h4>
+<code>string</code>
+</div>
+</div></div>
+</div>
+<a id="method_resolvePath"></a><div class="element clickable method protected method_resolvePath" data-toggle="collapse" data-target=".method_resolvePath .collapse">
+<h2>This returns a "best guess" path for the given file.</h2>
+<pre>resolvePath(string $file, string $basepath) : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$file</h4>
+<code>string</code><p>File name or possibly absolute path.</p></div>
+<div class="subelement argument">
+<h4>$basepath</h4>
+<code>string</code><p>The basepath that should be prepended if $file is not absolute.</p>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>"Best guess" path for this file.</div>
+</div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_vars"> </a><div class="element clickable property public property_vars" data-toggle="collapse" data-target=".property_vars .collapse">
+<h2></h2>
+<pre>$vars : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_initialized"> </a><div class="element clickable property protected property_initialized" data-toggle="collapse" data-target=".property_initialized .collapse">
+<h2></h2>
+<pre>$initialized </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_outputDirectory"> </a><div class="element clickable property protected property_outputDirectory" data-toggle="collapse" data-target=".property_outputDirectory .collapse">
+<h2></h2>
+<pre>$outputDirectory : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_templatePath"> </a><div class="element clickable property protected property_templatePath" data-toggle="collapse" data-target=".property_templatePath .collapse">
+<h2></h2>
+<pre>$templatePath : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_old_include_path"> </a><div class="element clickable property private property_old_include_path" data-toggle="collapse" data-target=".property_old_include_path .collapse">
+<h2></h2>
+<pre>$old_include_path : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:46+01:00.<br></footer></div>
+</div>
+</body>
+</html>

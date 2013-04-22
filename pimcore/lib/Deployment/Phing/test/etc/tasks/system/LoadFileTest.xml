@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="699" default="test">
+    <target name="test-version">
+        <loadfile property="version" file="LoadFileTest-version.txt"/>
+        <echo>${version}</echo>
+    </target>
+    
+    <target name="test-filterchain">
+    	<property name="input" value="filterchain-test-123"/>
+        <loadfile property="output" file="LoadFileTest-filterchain.xml">
+        	<filterchain>
+        		<expandproperties/>
+        	</filterchain>
+        </loadfile>
+        <echo>${output}</echo>
+    </target>
+</project>

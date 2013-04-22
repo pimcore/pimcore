@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<project name="gitPullTest" default="invalid">
+
+    <property name="tmp.dir" value="./../../../../tmp/git" />
+    <property name="repo.dir" value="phing-tests.git"/>
+
+    <resolvepath propertyName="tmp.dir.resolved" file="${tmp.dir}" />
+    <resolvepath propertyName="repo.dir.resolved" file="${repo.dir}" />
+
+    <target name="invalid">
+        <fail>This file should only be run via a testcase</fail>
+    </target>
+
+    <target name="allParamsSet" description="all parameters present">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpull
+            repository="${tmp.dir.resolved}" 
+            source="origin" refspec="foobranch" 
+            strategy="recursive" keep="true"
+            force="true" quiet="true" norebase="true" />
+    </target>
+
+    <target name="allParamsSetRebase" description="all parameters present">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpull
+            repository="${tmp.dir.resolved}" 
+            source="origin" refspec="foobranch" 
+            strategy="recursive" keep="true"
+            force="true" quiet="true" rebase="true" />
+    </target>
+
+    <target name="noRepository" description="Required param checking">
+        <gitpull />
+    </target>
+
+    <target name="noSource" description="Required param checking">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpull
+            repository="${tmp.dir.resolved}" source="" />
+    </target>
+
+    <target name="wrongStrategySet" description="git-pull  --strategy">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpull
+            repository="${tmp.dir.resolved}" 
+            source="origin" refspec="foobranch" 
+            strategy="plain-wrong"
+            force="true" quiet="true" />
+    </target>
+
+    <target name="allReposSet" description="git-pull --all">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpull
+            repository="${tmp.dir.resolved}" all="true" />
+    </target>
+
+    <target name="appendSet" description="git-pull --append">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpull
+            repository="${tmp.dir.resolved}" all="true" append="true" />
+    </target>
+
+    <target name="tagsSet" description="git-pull --tags">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpull
+            repository="${tmp.dir.resolved}" 
+            refspec="foobranch" 
+            keep="true" tags="true" />
+    </target>
+
+    <target name="noTagsSet" description="git-pull --no-tags">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitpull
+            repository="${tmp.dir.resolved}" 
+            refspec="foobranch" 
+            keep="true" notags="true" />
+    </target>
+
+
+</project>

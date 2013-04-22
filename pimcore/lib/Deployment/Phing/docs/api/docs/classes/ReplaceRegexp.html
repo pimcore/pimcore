@@ -1,0 +1,607 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \ReplaceRegexp</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public inherited"><a href="#method___construct" title="__construct :: Constructor used by Phing's introspection mechanism."><span class="description">Constructor used by Phing's introspection mechanism.</span><pre>__construct()</pre></a></li>
+<li class="method public "><a href="#method_chain" title="chain :: Creates a new ReplaceRegExp filter using the passed in
+Reader for instantiation."><span class="description">Creates a new ReplaceRegExp filter using the passed in
+Reader for instantiation.</span><pre>chain()</pre></a></li>
+<li class="method public inherited"><a href="#method_close" title="close :: Close stream."><span class="description">Close stream.</span><pre>close()</pre></a></li>
+<li class="method public "><a href="#method_createRegexp" title="createRegexp :: Creator method handles nested &lt;regexp&gt; tags."><span class="description">Creator method handles nested &lt;regexp&gt; tags.</span><pre>createRegexp()</pre></a></li>
+<li class="method public inherited"><a href="#method_eof" title="eof :: Returns whether the end of file has been reached with input stream."><span class="description">Returns whether the end of file has been reached with input stream.</span><pre>eof()</pre></a></li>
+<li class="method public inherited"><a href="#method_getInitialized" title="getInitialized :: Returns the initialized status."><span class="description">Returns the initialized status.</span><pre>getInitialized()</pre></a></li>
+<li class="method public inherited"><a href="#method_getProject" title="getProject :: Returns the project this filter is part of."><span class="description">Returns the project this filter is part of.</span><pre>getProject()</pre></a></li>
+<li class="method public "><a href="#method_getRegexps" title="getRegexps :: Gets the current regexps."><span class="description">Gets the current regexps.</span><pre>getRegexps()</pre></a></li>
+<li class="method public inherited"><a href="#method_getResource" title="getResource :: Returns the filename, url, etc."><span class="description">Returns the filename, url, etc.</span><pre>getResource()</pre></a></li>
+<li class="method public inherited"><a href="#method_log" title="log :: Convenience method to support logging in filters."><span class="description">Convenience method to support logging in filters.</span><pre>log()</pre></a></li>
+<li class="method public inherited"><a href="#method_mark" title='mark :: If supported, places a "marker" (like a bookmark) at current stream position.'><span class="description">If supported, places a "marker" (like a bookmark) at current stream position.</span><pre>mark()</pre></a></li>
+<li class="method public inherited"><a href="#method_markSupported" title="markSupported :: Whether marking is supported."><span class="description">Whether marking is supported.</span><pre>markSupported()</pre></a></li>
+<li class="method public "><a href="#method_read" title="read :: Returns the filtered stream."><span class="description">Returns the filtered stream.</span><pre>read()</pre></a></li>
+<li class="method public inherited"><a href="#method_readLine" title="readLine :: Reads a line of text ending with '\n' (or until the end of the stream)."><span class="description">Reads a line of text ending with '\n' (or until the end of the stream).</span><pre>readLine()</pre></a></li>
+<li class="method public inherited"><a href="#method_ready" title="ready :: Is stream ready for reading."><span class="description">Is stream ready for reading.</span><pre>ready()</pre></a></li>
+<li class="method public inherited"><a href="#method_reset" title="reset :: Reset the current position in stream to beginning or last mark (if supported)."><span class="description">Reset the current position in stream to beginning or last mark (if supported).</span><pre>reset()</pre></a></li>
+<li class="method public inherited"><a href="#method_setInitialized" title="setInitialized :: Sets the initialized status."><span class="description">Sets the initialized status.</span><pre>setInitialized()</pre></a></li>
+<li class="method public inherited"><a href="#method_setProject" title="setProject :: Sets the project to work with."><span class="description">Sets the project to work with.</span><pre>setProject()</pre></a></li>
+<li class="method public inherited"><a href="#method_setReader" title="setReader :: "><span class="description">setReader()
+        </span><pre>setReader()</pre></a></li>
+<li class="method public "><a href="#method_setRegexps" title="setRegexps :: Sets the current regexps."><span class="description">Sets the current regexps.</span><pre>setRegexps()</pre></a></li>
+<li class="method public inherited"><a href="#method_skip" title="skip :: Move stream position relative to current pos."><span class="description">Move stream position relative to current pos.</span><pre>skip()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul></ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="property protected inherited"><a href="#property_in" title="$in :: "><span class="description"></span><pre>$in</pre></a></li>
+<li class="property protected inherited"><a href="#property_initialized" title="$initialized :: Have the parameters passed been interpreted?"><span class="description"></span><pre>$initialized</pre></a></li>
+<li class="property protected inherited"><a href="#property_project" title="$project :: The Phing project this filter is part of."><span class="description"></span><pre>$project</pre></a></li>
+</ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul><li class="property private "><a href="#property_regexps" title="$regexps :: "><span class="description">RegularExpression[]</span><pre>$regexps</pre></a></li></ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\ReplaceRegexp"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/ReplaceRegexp.html">ReplaceRegexp</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">Performs a regexp find/replace on stream.</p>
+<div class="details">
+<div class="long_description"><p>&lt;</p>
+
+<p>p>
+Example:<br></p>
+
+<pre>
+<replaceregexp>
+   <regexp pattern="\r\n" replace="\n"/>
+   <regexp pattern="(\w+)\.xml" replace="\1.php" ignoreCase="true"/>
+</replaceregexp>
+</pre></div>
+<table class="table table-bordered">
+<tr>
+<th>author</th>
+<td><a href="mailto:hans@xmpl.org">Hans Lellelid</a></td>
+</tr>
+<tr>
+<th>version</th>
+<td>$Id$</td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.filters.html">phing.filters</a></td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___construct"></a><div class="element clickable method public method___construct" data-toggle="collapse" data-target=".method___construct .collapse">
+<h2>Constructor used by Phing's introspection mechanism.</h2>
+<pre>__construct(<a href="../classes/Reader.html">\Reader</a> $in) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The original filter reader is only used for chaining
+purposes, never for filtering purposes (and indeed
+it would be useless for filtering purposes, as it has
+no real data to filter). ChainedReaderHelper uses
+this placeholder instance to create a chain of real filters.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::__construct()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$in</h4>
+<code><a href="../classes/Reader.html">\Reader</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_chain"></a><div class="element clickable method public method_chain" data-toggle="collapse" data-target=".method_chain .collapse">
+<h2>Creates a new ReplaceRegExp filter using the passed in
+Reader for instantiation.</h2>
+<pre>chain(\Reader $reader) : \ReplaceRegExp</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$reader</h4>
+<code><a href="../classes/Reader.html">\Reader</a></code><p>A Reader object providing the underlying stream. Must not be <code>null</code>.</p>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\ReplaceRegExp</code>A new filter based on this configuration, but filtering
+        the specified reader</div>
+</div></div>
+</div>
+<a id="method_close"></a><div class="element clickable method public method_close" data-toggle="collapse" data-target=".method_close .collapse">
+<h2>Close stream.</h2>
+<pre>close() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\FilterReader::close()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::close()</td>
+</tr>
+</table>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td>if there is an error closing stream</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_createRegexp"></a><div class="element clickable method public method_createRegexp" data-toggle="collapse" data-target=".method_createRegexp .collapse">
+<h2>Creator method handles nested &lt;regexp&gt; tags.</h2>
+<pre>createRegexp() : <a href="../classes/RegularExpression.html">\RegularExpression</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/RegularExpression.html">\RegularExpression</a></code></div>
+</div></div>
+</div>
+<a id="method_eof"></a><div class="element clickable method public method_eof" data-toggle="collapse" data-target=".method_eof .collapse">
+<h2>Returns whether the end of file has been reached with input stream.</h2>
+<pre>eof() : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::eof()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_getInitialized"></a><div class="element clickable method public method_getInitialized" data-toggle="collapse" data-target=".method_getInitialized .collapse">
+<h2>Returns the initialized status.</h2>
+<pre>getInitialized() : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::getInitialized()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>whether or not the filter is initialized</div>
+</div></div>
+</div>
+<a id="method_getProject"></a><div class="element clickable method public method_getProject" data-toggle="collapse" data-target=".method_getProject .collapse">
+<h2>Returns the project this filter is part of.</h2>
+<pre>getProject() : object</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::getProject()</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>object</code>The project this filter is part of</div>
+</div></div>
+</div>
+<a id="method_getRegexps"></a><div class="element clickable method public method_getRegexps" data-toggle="collapse" data-target=".method_getRegexps .collapse">
+<h2>Gets the current regexps.</h2>
+<pre>getRegexps() : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>(Used when, e.g., cloning/chaining the method.)</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code>RegularExpression[]</div>
+</div></div>
+</div>
+<a id="method_getResource"></a><div class="element clickable method public method_getResource" data-toggle="collapse" data-target=".method_getResource .collapse">
+<h2>Returns the filename, url, etc.</h2>
+<pre>getResource() : string</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>that is being read from.
+This is critical for, e.g., ExpatParser's ability to know
+the filename that is throwing an ExpatParserException, etc.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\FilterReader::getResource()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::getResource()</td>
+</tr>
+</table>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_log"></a><div class="element clickable method public method_log" data-toggle="collapse" data-target=".method_log .collapse">
+<h2>Convenience method to support logging in filters.</h2>
+<pre>log(string $msg, int $level) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::log()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$msg</h4>
+<code>string</code><p>Message to log.</p></div>
+<div class="subelement argument">
+<h4>$level</h4>
+<code>int</code><p>Priority level.</p></div>
+</div></div>
+</div>
+<a id="method_mark"></a><div class="element clickable method public method_mark" data-toggle="collapse" data-target=".method_mark .collapse">
+<h2>If supported, places a "marker" (like a bookmark) at current stream position.</h2>
+<pre>mark() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>A subsequent call to reset() will move stream position back
+to last marker (if supported).</p></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\Reader::mark()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FilterReader::mark()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::mark()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_markSupported"></a><div class="element clickable method public method_markSupported" data-toggle="collapse" data-target=".method_markSupported .collapse">
+<h2>Whether marking is supported.</h2>
+<pre>markSupported() : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\Reader::markSupported()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FilterReader::markSupported()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::markSupported()</td>
+</tr>
+</table>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_read"></a><div class="element clickable method public method_read" data-toggle="collapse" data-target=".method_read .collapse">
+<h2>Returns the filtered stream.</h2>
+<pre>read(int $len) : mixed</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The original stream is first read in fully, and the regex replace is performed.</p></div>
+<table class="table table-bordered"><tr>
+<th>exception</th>
+<td>IOException if the underlying stream throws an IOException
+during reading</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$len</h4>
+<code>int</code><p>Required $len for Reader compliance.</p>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td>If an I/O error occurs</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>mixed</code>The filtered stream, or -1 if the end of the resulting stream has been reached.</div>
+</div></div>
+</div>
+<a id="method_readLine"></a><div class="element clickable method public method_readLine" data-toggle="collapse" data-target=".method_readLine .collapse">
+<h2>Reads a line of text ending with '\n' (or until the end of the stream).</h2>
+<pre>readLine() : \the</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The returned String retains the '\n'.</p></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::readLine()</td>
+</tr></table>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/IOException.html">\IOException</a></code></th>
+<td>if the underlying reader throws one during
+                       reading</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\the</code>line read, or <code>null</code> if the end of the
+stream has already been reached</div>
+</div></div>
+</div>
+<a id="method_ready"></a><div class="element clickable method public method_ready" data-toggle="collapse" data-target=".method_ready .collapse">
+<h2>Is stream ready for reading.</h2>
+<pre>ready() : boolean</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\Reader::ready()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\FilterReader::ready()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::ready()</td>
+</tr>
+</table>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_reset"></a><div class="element clickable method public method_reset" data-toggle="collapse" data-target=".method_reset .collapse">
+<h2>Reset the current position in stream to beginning or last mark (if supported).</h2>
+<pre>reset() </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\FilterReader::reset()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::reset()</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_setInitialized"></a><div class="element clickable method public method_setInitialized" data-toggle="collapse" data-target=".method_setInitialized .collapse">
+<h2>Sets the initialized status.</h2>
+<pre>setInitialized(boolean $initialized) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::setInitialized()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$initialized</h4>
+<code>boolean</code><p>Whether or not the filter is initialized.</p></div>
+</div></div>
+</div>
+<a id="method_setProject"></a><div class="element clickable method public method_setProject" data-toggle="collapse" data-target=".method_setProject .collapse">
+<h2>Sets the project to work with.</h2>
+<pre>setProject(\Project $project) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::setProject()</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$project</h4>
+<code>object</code><p>The project this filter is part of. Should not be <code>null</code>.</p>
+</div>
+</div></div>
+</div>
+<a id="method_setReader"></a><div class="element clickable method public method_setReader" data-toggle="collapse" data-target=".method_setReader .collapse">
+<h2>setReader()
+        </h2>
+<pre>setReader(\Reader $in) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\FilterReader::setReader()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::setReader()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$in</h4></div>
+</div></div>
+</div>
+<a id="method_setRegexps"></a><div class="element clickable method public method_setRegexps" data-toggle="collapse" data-target=".method_setRegexps .collapse">
+<h2>Sets the current regexps.</h2>
+<pre>setRegexps(array $regexps) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>(Used when, e.g., cloning/chaining the method.)</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$regexps</h4>
+<code>array</code><p>RegularExpression[]</p>
+</div>
+</div></div>
+</div>
+<a id="method_skip"></a><div class="element clickable method public method_skip" data-toggle="collapse" data-target=".method_skip .collapse">
+<h2>Move stream position relative to current pos.</h2>
+<pre>skip(int $n) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\FilterReader::skip()</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::skip()</td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$n</h4>
+<code>int</code>
+</div>
+</div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_in"> </a><div class="element clickable property protected property_in" data-toggle="collapse" data-target=".property_in .collapse">
+<h2></h2>
+<pre>$in : <a href="../classes/Reader.html">\Reader</a></pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>inherited_from</th>
+<td>\FilterReader::$$in</td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::$$in</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="property_initialized"> </a><div class="element clickable property protected property_initialized" data-toggle="collapse" data-target=".property_initialized .collapse">
+<h2></h2>
+<pre>$initialized </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::$$initialized</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_project"> </a><div class="element clickable property protected property_project" data-toggle="collapse" data-target=".property_project .collapse">
+<h2></h2>
+<pre>$project </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>inherited_from</th>
+<td>\BaseFilterReader::$$project</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_regexps"> </a><div class="element clickable property private property_regexps" data-toggle="collapse" data-target=".property_regexps .collapse">
+<h2>RegularExpression[]</h2>
+<pre>$regexps : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:49+01:00.<br></footer></div>
+</div>
+</body>
+</html>

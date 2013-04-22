@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<project name="test" default="main">
+    <target name="main">
+        <echo msg="Call target explicitly" />
+    </target>
+    
+    <target name="setup">
+        <mkdir dir="out"/>
+    </target>
+    
+    <target name="teardown">
+    	<delete dir="out"/>
+    </target>
+    
+    <target name="inactive">
+        <pearpkg2 name="MockPackage" dir="./mockpackage">
+            <option name="outputdirectory" value="./out"/>
+            <option name="packagefile" value="package2.xml"/>
+            <option name="channel" value="pear.phing.info"/>
+            <option name="summary" value="Mock Package"/>
+            <option name="description" value="Mock Package"/>
+            <option name="apiversion" value="0.1"/>
+            <option name="apistability" value="beta"/>
+            <option name="releaseversion" value="0.0.1"/>
+            <option name="releasestability" value="beta"/>
+            <option name="license" value="none"/>
+            <option name="phpdep" value="5.0.0"/>
+            <option name="pearinstallerdep" value="1.4.6"/>
+            <option name="packagetype" value="php"/>
+            <option name="notes" value="none really"/>
+            <mapping name="maintainers">
+                <element>
+                    <element key="handle" value="hlellelid"/>
+                    <element key="name" value="Hans"/>
+                    <element key="email" value="hans@xmpl.org"/>
+                    <element key="role" value="lead"/>
+                    <element key="active" value="no"/>
+                </element>
+            </mapping>
+            <fileset dir="./mockpackage">
+                <include name="**/**" />
+            </fileset>
+        </pearpkg2>
+    </target>
+    
+    <target name="active">
+        <pearpkg2 name="MockPackage" dir="./mockpackage">
+            <option name="outputdirectory" value="./out"/>
+            <option name="packagefile" value="package2.xml"/>
+            <option name="channel" value="pear.phing.info"/>
+            <option name="summary" value="Mock Package"/>
+            <option name="description" value="Mock Package"/>
+            <option name="apiversion" value="0.1"/>
+            <option name="apistability" value="beta"/>
+            <option name="releaseversion" value="0.0.1"/>
+            <option name="releasestability" value="beta"/>
+            <option name="license" value="none"/>
+            <option name="phpdep" value="5.0.0"/>
+            <option name="pearinstallerdep" value="1.4.6"/>
+            <option name="packagetype" value="php"/>
+            <option name="notes" value="none really"/>
+            <mapping name="maintainers">
+                <element>
+                    <element key="handle" value="hlellelid"/>
+                    <element key="name" value="Hans"/>
+                    <element key="email" value="hans@xmpl.org"/>
+                    <element key="role" value="lead"/>
+                    <element key="active" value="yes"/>
+                </element>
+            </mapping>
+            <fileset dir="./mockpackage">
+                <include name="**/**" />
+            </fileset>
+        </pearpkg2>
+    </target>
+    
+    <target name="notset">
+        <pearpkg2 name="MockPackage" dir="./mockpackage">
+            <option name="outputdirectory" value="./out"/>
+            <option name="packagefile" value="package2.xml"/>
+            <option name="channel" value="pear.phing.info"/>
+            <option name="summary" value="Mock Package"/>
+            <option name="description" value="Mock Package"/>
+            <option name="apiversion" value="0.1"/>
+            <option name="apistability" value="beta"/>
+            <option name="releaseversion" value="0.0.1"/>
+            <option name="releasestability" value="beta"/>
+            <option name="license" value="none"/>
+            <option name="phpdep" value="5.0.0"/>
+            <option name="pearinstallerdep" value="1.4.6"/>
+            <option name="packagetype" value="php"/>
+            <option name="notes" value="none really"/>
+            <mapping name="maintainers">
+                <element>
+                    <element key="handle" value="hlellelid"/>
+                    <element key="name" value="Hans"/>
+                    <element key="email" value="hans@xmpl.org"/>
+                    <element key="role" value="lead"/>
+                </element>
+            </mapping>
+            <fileset dir="./mockpackage">
+                <include name="**/**" />
+            </fileset>
+        </pearpkg2>
+    </target>
+</project>

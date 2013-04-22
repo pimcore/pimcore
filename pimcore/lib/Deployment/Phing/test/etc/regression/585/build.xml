@@ -1,0 +1,6 @@
+<project name="test" default="main">
+	<target name="main">
+		<property file="test.properties"/>
+		<echo>${setting}</echo>
+	</target>
+</project>

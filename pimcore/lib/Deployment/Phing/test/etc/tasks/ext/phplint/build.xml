@@ -1,0 +1,21 @@
+<project name="Regression #590" default="main">
+	<target name="testSyntaxOK">
+		<phplint file="my_file_ok.php"/>
+	</target>
+
+	<target name="testSyntaxError">
+		<phplint deprecatedaserror="true" file="my_file.php"/>
+	</target>
+
+	<target name="testDeprecated">
+		<phplint deprecatedaserror="true" file="my_file_depr.php"/>
+	</target>
+	
+	<target name="testHaltOnFailure">
+		<phplint haltOnFailure="true">
+			<fileset dir=".">
+				<include name="my_file.php"/>
+			</fileset>
+		</phplint>
+	</target>
+</project>

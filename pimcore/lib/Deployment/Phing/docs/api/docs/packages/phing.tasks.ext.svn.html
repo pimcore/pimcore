@@ -1,0 +1,191 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » phing\tasks\ext\svn</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-map-marker"></i> Packages</li>
+<li>
+<a href="../packages/phing.tasks.ext.svn.html" title="svn"><i class="icon-folder-open"></i>svn</a><ul class="nav nav-list nav-packages"></ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-class"></i> Classes</li>
+<li><a href="#SvnCopyTask" title="Copies a repository from the repository url to another">SvnCopyTask</a></li>
+<li><a href="#SvnLogTask" title="Stores the output of a log command on a workingcopy or repositoryurl in a property.">SvnLogTask</a></li>
+<li><a href="#SvnSwitchTask" title="Switches a repository at a given local directory to a different location">SvnSwitchTask</a></li>
+<li><a href="#SvnCheckoutTask" title="Checks out a repository to a local directory">SvnCheckoutTask</a></li>
+<li><a href="#SvnInfoTask" title="Parses the output of 'svn info --xml' and">SvnInfoTask</a></li>
+<li><a href="#SvnListTask" title="Stores the output of a list command on a workingcopy or repositoryurl in a property.">SvnListTask</a></li>
+<li><a href="#SvnCommitTask" title="Commits changes in a local working copy to the repository">SvnCommitTask</a></li>
+<li><a href="#SvnBaseTask" title="Base class for Subversion tasks">SvnBaseTask</a></li>
+<li><a href="#SvnExportTask" title="Exports/checks out a repository to a local directory
+with authentication">SvnExportTask</a></li>
+<li><a href="#SvnUpdateTask" title="Updates a repository in local directory">SvnUpdateTask</a></li>
+<li><a href="#SvnLastRevisionTask" title="Stores the number of the last revision of a workingcopy in a property">SvnLastRevisionTask</a></li>
+</ul>
+</div>
+<div class="span8 package-contents">
+<ul class="breadcrumb"><li>
+<a href="../index.html"><i class="icon-folder-open"></i></a><span class="divider">\</span><li><a href="../packages/phing.html">phing</a></li>
+<li>
+<span class="divider">\</span><a href="../packages/phing.tasks.html">tasks</a>
+</li>
+<li>
+<span class="divider">\</span><a href="../packages/phing.tasks.ext.html">ext</a>
+</li>
+<li class="active">
+<span class="divider">\</span><a href="../packages/phing.tasks.ext.svn.html">svn</a>
+</li>
+</li></ul>
+<div class="package-indent">
+<h3>
+<i class="icon-custom icon-class"></i> Classes and interfaces</h3>
+<div id="SvnBaseTask" class="element ajax clickable class">
+<h1>SvnBaseTask<a href="../classes/SvnBaseTask.html">¶</a>
+</h1>
+<p class="short_description">Base class for Subversion tasks</p>
+<div class="details collapse"></div>
+<a href="../classes/SvnBaseTask.html" class="more">« More »</a>
+</div>
+<div id="SvnCheckoutTask" class="element ajax clickable class">
+<h1>SvnCheckoutTask<a href="../classes/SvnCheckoutTask.html">¶</a>
+</h1>
+<p class="short_description">Checks out a repository to a local directory</p>
+<div class="details collapse"></div>
+<a href="../classes/SvnCheckoutTask.html" class="more">« More »</a>
+</div>
+<div id="SvnCommitTask" class="element ajax clickable class">
+<h1>SvnCommitTask<a href="../classes/SvnCommitTask.html">¶</a>
+</h1>
+<p class="short_description">Commits changes in a local working copy to the repository</p>
+<div class="details collapse"></div>
+<a href="../classes/SvnCommitTask.html" class="more">« More »</a>
+</div>
+<div id="SvnCopyTask" class="element ajax clickable class">
+<h1>SvnCopyTask<a href="../classes/SvnCopyTask.html">¶</a>
+</h1>
+<p class="short_description">Copies a repository from the repository url to another</p>
+<div class="details collapse"></div>
+<a href="../classes/SvnCopyTask.html" class="more">« More »</a>
+</div>
+<div id="SvnExportTask" class="element ajax clickable class">
+<h1>SvnExportTask<a href="../classes/SvnExportTask.html">¶</a>
+</h1>
+<p class="short_description">Exports/checks out a repository to a local directory
+with authentication</p>
+<div class="details collapse"></div>
+<a href="../classes/SvnExportTask.html" class="more">« More »</a>
+</div>
+<div id="SvnInfoTask" class="element ajax clickable class">
+<h1>SvnInfoTask<a href="../classes/SvnInfoTask.html">¶</a>
+</h1>
+<p class="short_description">Parses the output of 'svn info --xml' and</p>
+<div class="details collapse"></div>
+<a href="../classes/SvnInfoTask.html" class="more">« More »</a>
+</div>
+<div id="SvnLastRevisionTask" class="element ajax clickable class">
+<h1>SvnLastRevisionTask<a href="../classes/SvnLastRevisionTask.html">¶</a>
+</h1>
+<p class="short_description">Stores the number of the last revision of a workingcopy in a property</p>
+<div class="details collapse"></div>
+<a href="../classes/SvnLastRevisionTask.html" class="more">« More »</a>
+</div>
+<div id="SvnListTask" class="element ajax clickable class">
+<h1>SvnListTask<a href="../classes/SvnListTask.html">¶</a>
+</h1>
+<p class="short_description">Stores the output of a list command on a workingcopy or repositoryurl in a property.</p>
+<div class="details collapse"></div>
+<a href="../classes/SvnListTask.html" class="more">« More »</a>
+</div>
+<div id="SvnLogTask" class="element ajax clickable class">
+<h1>SvnLogTask<a href="../classes/SvnLogTask.html">¶</a>
+</h1>
+<p class="short_description">Stores the output of a log command on a workingcopy or repositoryurl in a property.</p>
+<div class="details collapse"></div>
+<a href="../classes/SvnLogTask.html" class="more">« More »</a>
+</div>
+<div id="SvnSwitchTask" class="element ajax clickable class">
+<h1>SvnSwitchTask<a href="../classes/SvnSwitchTask.html">¶</a>
+</h1>
+<p class="short_description">Switches a repository at a given local directory to a different location</p>
+<div class="details collapse"></div>
+<a href="../classes/SvnSwitchTask.html" class="more">« More »</a>
+</div>
+<div id="SvnUpdateTask" class="element ajax clickable class">
+<h1>SvnUpdateTask<a href="../classes/SvnUpdateTask.html">¶</a>
+</h1>
+<p class="short_description">Updates a repository in local directory</p>
+<div class="details collapse"></div>
+<a href="../classes/SvnUpdateTask.html" class="more">« More »</a>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:16+01:00.<br></footer></div>
+</div>
+</body>
+</html>

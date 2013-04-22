@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<project name="gitCheckoutTest" default="invalid">
+
+    <property name="tmp.dir" value="./../../../../tmp/git" />
+    <property name="repo.dir" value="phing-tests.git"/>
+
+    <resolvepath propertyName="tmp.dir.resolved" file="${tmp.dir}" />
+    <resolvepath propertyName="repo.dir.resolved" file="${repo.dir}" />
+
+    <target name="invalid">
+        <fail>This file should only be run via a testcase</fail>
+    </target>
+
+    <target name="checkoutExistingBranch" description="Checkout from existing branch">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitbranch
+            repository="${tmp.dir.resolved}" 
+            branchname="co-branch"
+            startpoint="origin/master" />
+        <gitcheckout
+            repository="${tmp.dir.resolved}" 
+            branchname="co-branch" quiet="true" />
+    </target>
+
+    <target name="checkoutNonExistingBranch" description="Checkout from non-existing branch">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitcheckout
+            repository="${tmp.dir.resolved}" 
+            branchname="co-branch" quiet="true" />
+    </target>
+
+    <target name="noRepository" description="Required param checking">
+        <gitcheckout />
+    </target>
+
+    <target name="noBranchname" description="Required param checking">
+        <gitcheckout repository="${tmp.dir.resolved}" />
+    </target>
+
+    <target name="checkoutMerge" description="Checkout with -m">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitbranch
+            repository="${tmp.dir.resolved}" 
+            branchname="co-branch"
+            startpoint="origin/master" />
+        <gitcheckout
+            repository="${tmp.dir.resolved}" 
+            branchname="co-branch" quiet="true" 
+            merge="true"/>
+        <gitbranch
+            repository="${tmp.dir.resolved}" 
+            branchname="master" delete="true" />
+    </target>
+
+    <target name="checkoutCreateBranch" description="Checkout with -b">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitcheckout
+            repository="${tmp.dir.resolved}" 
+            branchname="co-create-branch" quiet="true" 
+            create="true"
+            startpoint="origin/master" />
+        <!-- get back to master branch -->
+        <gitcheckout
+            repository="${tmp.dir.resolved}" 
+            branchname="master" quiet="true" />
+        <gitbranch
+            repository="${tmp.dir.resolved}" 
+            branchname="co-create-branch" delete="true" />
+    </target>
+
+    <target name="checkoutForceCreateBranch" description="Checkout with -B">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitcheckout
+            repository="${tmp.dir.resolved}" 
+            branchname="co-create-branch" quiet="true" 
+            create="true" />
+        <!-- get back to master branch -->
+        <gitcheckout
+            repository="${tmp.dir.resolved}" 
+            branchname="master" quiet="true" />
+        <!-- try to create already created branch -->
+        <gitcheckout
+            repository="${tmp.dir.resolved}" 
+            branchname="co-create-branch" quiet="true" 
+            forceCreate="true" />
+        <!-- get back to master branch -->
+        <gitcheckout
+            repository="${tmp.dir.resolved}" 
+            branchname="master" quiet="true" />
+        <gitbranch
+            repository="${tmp.dir.resolved}" 
+            branchname="co-create-branch" delete="true" />
+    </target>
+
+    <target name="checkoutForceCreateBranchFailed" description="Checkout with -B">
+        <gitclone 
+            repository="${repo.dir.resolved}"
+            targetPath="${tmp.dir.resolved}" />
+        <gitcheckout
+            repository="${tmp.dir.resolved}" 
+            branchname="co-create-branch" quiet="true" 
+            create="true" />
+        <!-- get back to master branch -->
+        <gitcheckout
+            repository="${tmp.dir.resolved}" 
+            branchname="master" quiet="true" />
+        <!-- try to create already created branch -->
+        <gitcheckout
+            repository="${tmp.dir.resolved}" 
+            branchname="co-create-branch" quiet="true" 
+            create="true" />
+    </target>
+
+
+</project>

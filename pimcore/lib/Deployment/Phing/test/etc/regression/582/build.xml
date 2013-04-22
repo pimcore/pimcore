@@ -1,0 +1,6 @@
+<project default="main" name="Test">
+	<target name="main">
+		<move file="no_such_file.txt" tofile="other_path.txt"
+		overwrite="true" haltonerror="false" />
+	</target>
+</project>

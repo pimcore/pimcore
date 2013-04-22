@@ -1,0 +1,127 @@
+<!--
+-File         $Id: c2945a2c9d2df47f60c784a2f782e15893faa3ab $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2002, turing
+-Author       alex black, enigma@turingstudio.com
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Phing Guide - Introduction</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="Stylesheet" rev="Stylesheet" href="../css/Documentation.css"
+	type="text/css" charset="iso-8859-1" />
+</head>
+<body>
+
+	<h1>Introduction</h1>
+
+	<h2>
+		<a name="WhatPhingIs"></a>What Phing Is
+	</h2>
+
+	<p>
+		Phing is a project build system based on Apache ant <a
+			href="Bibliography.html#ant">[ant]</a>. You can do anything with
+		Phing that you could do with a traditional build system like Gnu make
+		<a href="Bibliography.html#gnumake">[gnumake]</a>, and Phing's use of
+		simple XML build files and extensible PHP &quot;task&quot; classes
+		make it an easy-to-use and highly flexible build framework.
+	</p>
+	<p>
+		Because Phing is based on Ant, parts of this manual are also adapted
+		from the ant manual (see <a href="Bibliography.html#ant">[ant]</a>).
+		We are extremely grateful to the folks in the Ant project for creating
+		(and continuing to create) such an inspiring build system model, and
+		for the open-source licensing that makes it possible for us to learn
+		from each other and build increasingly better tools.
+	</p>
+	<h2>
+		<a name="PhingAndBinarycloud"></a>Phing &amp; Binarycloud: History
+	</h2>
+
+	<p>Phing was originally a subproject of Binarycloud. Binarycloud is
+		a highly engineered application framework, designed for use in
+		enterprise environments. Binarycloud uses XML extensively for storing
+		metadata about a project (configuration, nodes, widgets, site
+		structure, etc.). Because Binarycloud is built for PHP, performing
+		extensive XML processing and transformations on each page request is
+		an unrealistic proposition. Phing is used to &quot;compile&quot; the
+		XML metadata into PHP arrays that can be processed without overhead by
+		PHP scripts.</p>
+	<p>Of course, XML &quot;compilation&quot; is only one of many ways
+		that Binarycloud uses the Phing build system. The Phing build system
+		makes it possible for you to:</p>
+	<ul>
+		<li>Build multi language pages from one source tree (see
+			binarycloud documentation and [below in this document]),</li>
+		<li>Centralize metadata (e.g. your data model) in one XML file
+			and generate several files from that XML with different XSLT.</li>
+	</ul>
+
+	<p>It the beginning, Binarycloud used the GNU make system; however,
+		this approach had some drawbacks: The
+		&quot;space-before-tab&quot;-problem in makefiles, the fact that it is
+		only natively available for Unix systems etc. So, the need for a
+		better build system arose. Apache Ant was a logical choice -- do to
+		its use of XML build files and modular design. The problem was that
+		Ant is written in Java, so you need to install a JVM on your computer
+		to use it. Besides the need for yet another interpreter (i.e. besides
+		PHP), there was also legal/ideological conflict in requiring a
+		commercial JVM (there were problems with Ant on JVMs other than Sun's)
+		for an LGPL'd Binarycloud.</p>
+
+	<p>So, the development of Phing began. Phing is a build system
+		written in PHP and uses the ideas of Ant. The first release was
+		designed &amp; developed simultaneously, and thus not very
+		sophisticated. This original system was quickly pushed to its limits
+		and the need for a better Phing became a priority. Andreas Aderhold,
+		who was responsible for Phing/r1, designed and wrote much of the
+		Phing/r2 that followed. Phing/r2 became the Phing-1.0 that exists
+		today for PHP4.</p>
+
+	<p>The current development of Phing is focused on Phing 2, which
+		has involved a number of bugfixes, functionality enhancements, and
+		most significantly a conversion of the codebase to use new PHP5
+		features such as abstract classes, interfaces, and try/catch/throw
+		exception handling.</p>
+
+	<h2>
+		<a name="HowPhingWorks"></a>How Phing Works
+	</h2>
+	<p>
+		Phing uses XML <em>buildfiles</em> that contain a description of the
+		things to do. The buildfile is structured into targets that contain
+		the actual commands to perform (e.g. commands to copy a file, delete a
+		directory, perform a DB query, etc.). So, to use Phing, you would
+		first write your buildfile and then you would run phing, specifying
+		the target in your buildfile that you want to execute.
+	</p>
+	<pre title="simple phing example">% phing -f mybuildfile.xml mytarget</pre>
+	<p>
+		By default Phing will look for a buildfile named <em>build.xml</em>
+		(so you don't have to specify the buildfile name unless it is not <em>build.xml</em>)
+		and if no target is specified Phing will try to execute the default
+		target, as specified in the &lt;project&gt; tag.
+	</p>
+
+	<h2>
+		<a name="HowCanIHelp"></a>Cool, so how can I help?
+	</h2>
+
+	<p>Phing is under active development and there are many things to
+		be done. To get involved, you can start by doing the following:</p>
+	<ul>
+		<li>Read this manual to understand Phing ;-)</li>
+		<li>Go to http://phing.tigris.org and subscribe to the
+			&quot;users&quot; and &quot;dev&quot; mailing lists</li>
+		<li>Visit the Phing <a
+			href="http://www.phing.info">website</a> and look
+			for open bugs / tickets</li>
+		<li>Go to Phing's <a
+			href="https://github.com/phingofficial/phing">GitHub</a>
+			repository and submit a pull request!</li>
+	</ul>
+
+</body>
+</html>

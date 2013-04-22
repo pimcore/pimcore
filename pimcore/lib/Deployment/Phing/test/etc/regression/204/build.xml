@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<project name="test" default="main">
+    <taskdef name="sampletask" classname="Dir_Subdir_SampleTask"/>
+    <target name="main">
+        <sampletask/>
+    </target>
+</project>

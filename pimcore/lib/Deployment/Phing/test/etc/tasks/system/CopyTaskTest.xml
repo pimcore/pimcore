@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CopyTaskTest" default="main">
+	<property name="tmp.dir" value="tmp"/>
+	
+	<fileset dir="vendor" id="vendor">
+		<include name="*"/>
+	</fileset>
+	
+	<target name="setup">
+	</target>
+	
+	<target name="clean">
+		<delete dir="${tmp.dir}"/>
+	</target>
+	
+	<target name="testCopyDanglingSymlink">
+		<mkdir dir="${tmp.dir}/base"/>
+		<symlink target="${tmp.dir}/base/all" link="${tmp.dir}/base/dangling_symlink"/>
+		
+		<copy todir="${tmp.dir}/new">
+			<fileset dir="${tmp.dir}/base">
+			    <include name="*"/>
+			</fileset>
+		</copy>
+
+		<delete dir="${tmp.dir}/base"/>
+		<delete dir="${tmp.dir}/new"/>
+	</target>
+	
+	<target name="main"/>
+</project>

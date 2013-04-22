@@ -1,0 +1,2551 @@
+<!--
+-File         $Id: 4fb4cf505a52ab696431ab23c092c7c795fa9cca $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2002, turing
+-Author       alex black, enigma@turingstudio.com
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Phing Guide - Core Tasks</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="Stylesheet" rev="Stylesheet"
+	href="../../css/Documentation.css" type="text/css" media="All"
+	charset="iso-8859-1" />
+</head>
+<body>
+		<h1>
+			<a name="AppendixB"></a>Appendix B: Core Tasks </h1>
+		<p>This appendix contains a reference of all core tasks, i.e. all tasks that are needed to
+			build a basic project. If you are looking for binarycloud related tasks, look in
+			appendix ?.</p>
+		<p> This reference lists the tasks alphabetically by the name of the classes that implement
+			the tasks. So if you are searching for the reference to the <code>&lt;copy&gt;</code>
+			tag, for example, you will want to look at the reference of <code>CopyTask</code> . </p>
+		<h2>
+			<a name="AdhocTaskdefTask"></a>AdhocTaskdefTask </h2>
+		<p>The AdhocTaskdefTask allows you to define a task within your build file.</p>
+		<pre title="Example of how to use AdhocTaskdefTask">&lt;target name=&quot;main&quot;<br />        description=&quot;==&gt;test AdhocTask &quot;&gt;<br />		<br />		&lt;adhoc-task name=&quot;foo&quot;&gt;&lt;![CDATA[<br />			class FooTest extends Task {<br />				private $bar;<br />				<br />				function setBar($bar) {<br />					$this-&gt;bar = $bar;<br />				}<br />				<br />				function main() {<br />					$this-&gt;log(&quot;In FooTest: &quot; . $this-&gt;bar);<br />				}<br />			}<br />		]]&gt;&lt;/adhoc-task&gt;<br />	<br />		&lt;foo bar=&quot;B.L.I.N.G&quot;/&gt;<br />&lt;/target&gt;</pre>
+		<p> Note that you should use &lt;![CDATA[ ... ]]&gt; so that you don't have to quote
+			entities within your<em> &lt;adhoc-task&gt;&lt;/adhoc-task&gt;</em> tags. </p>
+		<h3>Parameters</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>name</td>
+					<td>String</td>
+					<td>Name of XML tag that will represent this task.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>
+			<a name="AdhocTypedefTask"></a>AdhocTypedefTask </h2>
+		<p>The AdhocTypedefTask allows you to define a datatype within your build file.</p>
+		<pre title="Example of how to use AdhocTypedefTask">&lt;target name=&quot;main&quot;<br />        description=&quot;==&gt;test AdhocType&quot;&gt;<br />		<br />		&lt;adhoc-type name=&quot;dsn&quot;&gt;&lt;![CDATA[<br />			class CreoleDSN extends DataType {<br />				private $url;<br />				<br />				function setUrl($url) {<br />					$this-&gt;url = $url;<br />				}<br />				<br />				function getUrl() {
+  				return $this-&gt;url;
+				}				<br />			}<br />		]]&gt;&lt;/adhoc-type&gt;<br />
+     &lt;!-- creole-sql task doesn't exist; just an example --&gt;
+     &lt;creole-sql file=&quot;test.sql&quot;&gt;
+       &lt;dsn url=&quot;mysql://root@localhost/test&quot;/&gt;
+		&lt;/creole-sql&gt;<br /><br />&lt;/target&gt;</pre>
+		<p> Note that you should use &lt;![CDATA[ ... ]]&gt; so that you don't have to quote
+			entities within your<em> &lt;adhoc-type&gt;&lt;/adhoc-type&gt;</em> tags. </p>
+		<h3>Parameters</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>name</td>
+					<td>String</td>
+					<td>Name of XML tag that will represent this datatype..</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>
+			<a name="AppendTask"></a>AppendTask </h2>
+		<p>The Append Task appends text or contents of files to a specified file.</p>
+		<pre title="Example of how to use AppendTask">
+&lt;append destFile=&quot;${process.outputfile}&quot;&gt;
+  &lt;filterchain&gt;
+    &lt;xsltfilter style=&quot;${process.stylesheet}&quot;&gt;
+	     &lt;param name=&quot;mode&quot; expression=&quot;${process.xslt.mode}&quot;/&gt;
+    &lt;/xsltfilter&gt;
+  &lt;/filterchain&gt;
+  &lt;filelist dir=&quot;book/&quot; listfile=&quot;book/PhingGuide.book&quot;/&gt;
+&lt;/append&gt;</pre>
+		<p> In the example above, AppendTask is reading a filename from
+				<em>book/PhingGuide.book</em>, processing the file contents with XSLT, and then
+			appending the result to the file located at <em>${process.outputfile}</em>. This is a
+			real example from the build file used to generate this book! </p>
+		<h3>Parameters</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>destFile</td>
+					<td>File</td>
+					<td>Path of file to which text should be appended.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>file</td>
+					<td>File</td>
+					<td>Path to file that should be appended to destFile.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>text</td>
+					<td>String</td>
+					<td>Some literal text to append to file.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>FileList</li>
+			<li>FileSet</li>
+			<li>FilterChain</li>
+		</ul>
+		<h2>
+			<a name="AvailableTask"></a>AvailableTask </h2>
+		<p>Available Task tests if a resource/file is set and sets a certain property to a certain
+			value if it exists.</p>
+		<pre title="Example of how to use AvailableTask">
+&lt;available file=&quot;/tmp/test.txt&quot; property=&quot;test_txt_exists&quot; value=&quot;Yes&quot;/&gt;
+
+&lt;available file=&quot;/home/foo&quot; type=&quot;dir&quot; property=&quot;properties.yetanother&quot; /&gt;
+
+&lt;available file=&quot;/home/foo/bar&quot; property=&quot;foo.bar&quot; value=&quot;Well, yes&quot; /&gt;
+</pre>
+		<p> Here, <em>AvailableTask</em> first checks for the existance of either file or directory
+			named <em>test.txt</em> in <em>/tmp</em>. Then, it checks for the directory <em>foo</em>
+			in <em>/home</em> and then for the file or directory <em>bar</em> in <em>/home/foo</em>.
+			If <em>/tmp/test.txt</em> is found, the property <em>test_txt_exists</em> is set to
+				<em>&quot;Yes&quot;</em>, if <em>/home/foo</em> is found and a directory,
+				<em>properties.yetanother</em> is set to <em>&quot;true&quot;</em> (default). If
+				<em>/home/foo/bar</em> exists, <em>AvailableTask</em> will set <em>foo.bar</em> to
+				<em>&quot;Well, yes&quot;</em>. </p>
+		<p><b>NB:</b> the Available task can also be used as a <a
+				href="../ProjectComponents.html#Conditions">condition</a>.</p>
+		<h3>Parameters</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>property</td>
+					<td>string</td>
+					<td>Name of the property that is to be set.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>value</td>
+					<td>String</td>
+					<td>The value the property is to be set to.</td>
+					<td><em>&quot;true&quot;</em></td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>file</td>
+					<td>String</td>
+					<td>File/directory to check existence.</td>
+					<td>n/a</td>
+					<td>Yes (or <em>resource</em>)</td>
+				</tr>
+				<tr>
+					<td>resource</td>
+					<td>String</td>
+					<td>Path of the resource to look for.</td>
+					<td>n/a</td>
+					<td>Yes (or <em>file</em>)</td>
+				</tr>
+				<tr>
+					<td>type</td>
+					<td>String (file|dir)</td>
+					<td>Determines if <em>AvailableTask</em> should look for a file or a directory
+						at the position set by <em>file</em>. If empty, it checks for either file or
+						directory.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>filepath</td>
+					<td>String</td>
+					<td>The path to use when looking up <em>file</em>.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>followSymlinks</td>
+					<td>Boolean</td>
+					<td>Whether to dereference symbolic links when looking up <em>file</em>.</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>
+			<a name="ChmodTask"></a>ChmodTask </h2>
+		<p>Sets the mode of a file or directory.</p>
+		<h3>Example</h3>
+		<pre>
+&lt;chmod file=&quot;test.txt&quot; mode=&quot;0755&quot; /&gt;
+&lt;chmod file=&quot;/home/test&quot; mode=&quot;0775&quot; /&gt;
+&lt;chmod file=&quot;/home/test/mine.txt&quot; mode=&quot;0500&quot; verbose=&quot;true&quot; /&gt;
+</pre>
+		<p> For more informations, see <a href="http://php.net/chmod">chmod</a> in the PHP Manual. </p>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>file</td>
+					<td>String</td>
+					<td>The name of the file or directory. You either have to specify this
+						attribute, or use a fileset.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>mode</td>
+					<td>String</td>
+					<td>The new mode (octal) for the file. Specified in octal, even if the first
+						digit is not a '0'.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>quiet</td>
+					<td>Boolean</td>
+					<td>Set quiet mode, which suppresses warnings if <code>chmod()</code> fails</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>failonerror</td>
+					<td>Boolean</td>
+					<td>This flag means 'note errors to the output, but keep going'</td>
+					<td>true</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>verbose</td>
+					<td>Boolean</td>
+					<td>Give more information in error message in case of a failure</td>
+					<td>true</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>fileset</li>
+		</ul>
+		<h2>
+			<a name="ChownTask"></a>ChownTask </h2>
+		<p>Changes the owner of a file or directory.</p>
+		<h3>Example</h3>
+		<pre>
+&lt;chown file=&quot;my-file.txt&quot; user=&quot;foo&quot; /&gt;
+&lt;chown file=&quot;my-file.txt&quot; user=&quot;username.groupname&quot; /&gt;
+&lt;chown file=&quot;/home/test/my-directory&quot; user=&quot;bar&quot; /&gt;
+&lt;chown file=&quot;/home/test/my-file.txt&quot; user=&quot;foo&quot; verbose=&quot;true&quot; failonerror=&quot;false&quot; /&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>file</td>
+					<td>String</td>
+					<td>The name of the file or directory. You either have to specify this
+						attribute, or use a fileset.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>user</td>
+					<td>String</td>
+					<td>The new owner of the file. Can contain a username and a groupname, separated
+						by a dot.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>group</td>
+					<td>String</td>
+					<td>The new group owner of the file.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>quiet</td>
+					<td>Boolean</td>
+					<td>Set quiet mode, which suppresses warnings if <code>chmod()</code> fails</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>failonerror</td>
+					<td>Boolean</td>
+					<td>This flag means 'note errors to the output, but keep going'</td>
+					<td>true</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>verbose</td>
+					<td>Boolean</td>
+					<td>Give more information in in error message in case of a failure</td>
+					<td>true</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>fileset</li>
+		</ul>
+		<h2>
+			<a name="ConditionTask"></a>ConditionTask </h2>
+		<p> Sets a property if a certain condition holds true - this is a generalization of <a
+				href="#AvailableTask">Available</a> and <a href="#UpToDateTask">UpToDate</a>. </p>
+		<p> If the condition holds true, the property value is set to true by default; otherwise,
+			the property is not set. You can set the value to something other than the default by
+			specifying the <code>value</code> attribute. </p>
+		<p> Conditions are specified as nested elements, you must specify exactly one condition -
+			see the <a href="../ProjectComponents.html#Conditions">documentation</a> for a complete
+			list of nested elements. </p>
+		<h3>Example</h3>
+		<pre>
+&lt;condition property="isMacOrWindows"&gt;
+    &lt;or&gt;
+      &lt;os family="mac"/&gt;
+      &lt;os family="windows"/&gt;
+    &lt;/or&gt;
+  &lt;/condition&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>property</td>
+					<td>String</td>
+					<td>The name of the property to set.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>value</td>
+					<td>String</td>
+					<td>The value to set the property to. Defaults to "true".</td>
+					<td>true</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>or</li>
+			<li>and</li>
+		</ul>
+		<h2>
+			<a name="CopyTask"></a>CopyTask </h2>
+		<p>Copies files or directories. Files are only copied if the source file is newer than the
+			destination file, or when the destination file does not exist. It is possible to
+			explictly overwrite existing files.</p>
+		<h3>Example</h3>
+		<p>On the one hand, CopyTask can be used to copy file by file:</p>
+		<pre>
+&lt;copy file=&quot;somefile.txt&quot; tofile=&quot;/tmp/anotherfile.bak&quot; overwrite=&quot;true&quot;/&gt;
+</pre>
+		<p> Additionally, <em>CopyTask</em> supports Filesets, i.e. you can easily include/exclude
+			one or more files. For more information, see <a href="AppendixD-CoreTypes.html#Fileset"
+				>Appendix D</a> -- pay particular attention to the <em>defaultexcludes</em>
+			attribute. <a href="AppendixD3-CoreMappers.html">Mappers</a> and <a
+				href="AppendixD2-CoreFilters.html">Filters</a> are also supported by
+				<em>CopyTask</em>, so you can do almost everything that needs processing the content
+			of the files or the filename. </p>
+		<pre>
+&lt;copy todir=&quot;/tmp/backup&quot; &gt;
+  &lt;fileset dir=&quot;.&quot;&gt;
+    &lt;include name=&quot;**/*.txt&quot; /&gt;
+    &lt;include name=&quot;**/*.doc&quot; /&gt;
+    &lt;include name=&quot;**/*.swx&quot; /&gt;
+  &lt;/fileset&gt;
+  &lt;filelist dir=&quot;.&quot; files=&quot;test.html&quot;/&gt;
+&lt;/copy&gt;
+</pre>
+		<pre>
+&lt;copy todir=&quot;build&quot; &gt;
+  &lt;fileset defaultexcludes=&quot;false&quot; expandsymboliclinks=&quot;true&quot; dir=&quot;.&quot;&gt;
+    &lt;include name=&quot;**/*.php&quot; /&gt;
+  &lt;/fileset&gt;
+&lt;/copy&gt;
+</pre>
+		<p>
+			<em>Notice:</em>
+			<em>CopyTask</em> does not allow self copying, i.e. copying a file to the same name for
+			security reasons. </p>
+		<h3>Symbolic links</h3>
+		<p> By default, <em>CopyTask</em> does not expand / dereference symbolic links, and will
+			simply copy the link itself. To enable dereferencing, set <em>expandsymboliclinks</em>
+			to <em>true</em> in the <em>&lt;fileset&gt;</em> tag. </p>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>file</td>
+					<td>String</td>
+					<td>The source file.</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>tofile</td>
+					<td>String</td>
+					<td>
+						<p> The destination the file is to be written to. <em>tofile</em> specifies
+							a <em>full</em> filename. If you only want to specify a directory to
+							copy to, use <em>todir</em>. </p>
+						<p> Either this or the <em>todir</em> attribute is required. </p>
+					</td>
+					<td>n/a</td>
+					<td>Yes (or <em>todir</em>)</td>
+				</tr>
+				<tr>
+					<td>todir</td>
+					<td>String</td>
+					<td>The directory the file is to be copied to. The file will have the same name
+						of the source file. If you want to specify a different name, use
+							<em>tofile</em>. The directory must exist.</td>
+					<td>n/a</td>
+					<td>Yes (or <em>tofile</em>)</td>
+				</tr>
+				<tr>
+					<td>overwrite</td>
+					<td>Boolean</td>
+					<td>Overwrite existing files even if
+					the destination files are newer.</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>tstamp<br />or<br />preservelastmodified</td>
+					<td>Boolean</td>
+					<td>If set to <em>true</em>, the new file will have the same mtime as the old
+						one.</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>includeemptydirs</td>
+					<td>Boolean</td>
+					<td>If set to <em>true</em>, also empty directories are copied. </td>
+					<td>true</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>mode</td>
+					<td>Integer</td>
+					<td>Mode (octal) to create directories with.</td>
+					<td>From umask</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>haltonerror</td>
+					<td>Boolean</td>
+					<td>If set to <em>true</em>, halts the build when errors are encountered.</td>
+					<td>true</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>Fileset</li>
+			<li>Filelist</li>
+			<li>Filterchain</li>
+			<li>Mapper</li>
+		</ul>
+		<h2>
+			<a name="CvsTask"></a>CvsTask </h2>
+		<p>Allows rudimentary interfacing with the CVS versioning system.</p>
+		<p>As you would expect, this lets you do pretty much anything with CVS. The CvsTask calls
+			ExecTask which actually does the command execution.</p>
+		<h3>Example</h3>
+		<pre>
+&lt;cvs cvsRoot=":pserver:guest@cvs.tigris.org:/cvs"
+       module="phing" dest="${ws.dir}"/&gt;
+</pre>
+		<p>or, using the optional command line arguments:</p>
+		<pre>
+&lt;cvs output="patch" command="-q diff -u -N" /&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>cvsRoot</td>
+					<td>String</td>
+					<td>The root directory on the CVS server</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>CvsRsh</td>
+					<td>String</td>
+					<td>Path to the rsh to execute</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>port</td>
+					<td>Integer</td>
+					<td>Port ion the server to use</td>
+					<td>0</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>passfile</td>
+					<td>String<br />
+						<em>filename</em></td>
+					<td>Name of file with CVS passwords</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>dest</td>
+					<td>String</td>
+					<td>The directory where checked out files should be placed</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>modules</td>
+					<td>String</td>
+					<td>The package/module to operate upon</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>tag</td>
+					<td>String</td>
+					<td>The tag of the package/module to operate upon</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>date</td>
+					<td>String</td>
+					<td>Use the most recent revision no later than the given date</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>quiet</td>
+					<td>Boolean</td>
+					<td>Quiet run</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>noexec</td>
+					<td>Boolean</td>
+					<td>If true, only report changes don't actually do anything</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>failonerror</td>
+					<td>Boolean</td>
+					<td>Stop the build process if the command returns any errors</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>compression</td>
+					<td>Boolean</td>
+					<td>If true, turns on compression using default (3) compression level</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>compressionlevel</td>
+					<td>Integer</td>
+					<td>Specifies compression level 1-9</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>output</td>
+					<td>String<br />
+						<em>filename</em></td>
+					<td>File to which output should be written</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>error</td>
+					<td>String<br />
+						<em>filename</em></td>
+					<td>File to which error output should be written</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>command</td>
+					<td>String</td>
+					<td>Optional command line to be given to the CVS task</td>
+					<td>null</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>
+			<a name="CvsPassTask"></a>CvsPassTask </h2>
+		<p>This lets you create your own cvs password file -- i.e. this is necessary if you want to
+			provide a password in your build file.</p>
+		<p> If no password file is specified the default location <em>.cvspass</em> in users home
+			directory is used. </p>
+		<h3>Example</h3>
+		<pre>
+&lt;!-- create a password file --&gt;
+&lt;cvspass cvsRoot=":pserver:guest@cvs.tigris.org:/cvs" passfile="cvspass" password="guest"/&gt;
+
+&lt;!-- use the just-created password file --&gt;
+&lt;cvs cvsRoot=":pserver:guest@cvs.tigris.org:/cvs" module="phing" passFile="cvspass" /&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>cvsRoot</td>
+					<td>String</td>
+					<td>The root directory on the CVS server</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>passFile</td>
+					<td>String</td>
+					<td>Password file to add password to</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>password</td>
+					<td>String</td>
+					<td>Password to add to file</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>
+			<a name="DeleteTask"></a> DeleteTask </h2>
+		<p> Deletes a file or directory, or set of files defined by a fileset. See <a
+				href="AppendixD-CoreTypes.html#Fileset">Appendix D</a> for information on Filesets. </p>
+		<h3>Example</h3>
+		<pre>&lt;-- Delete a specific file --&gt;
+&lt;delete file=&quot;/tmp/foo.bar&quot; /&gt;
+
+&lt;-- Delete a directory --&gt;
+&lt;delete dir=&quot;/tmp/darl&quot; includeemptydirs=&quot;true&quot; verbose=&quot;true&quot; failonerror=&quot;true&quot; /&gt;
+
+&lt;-- Delete using a fileset --&gt;
+&lt;delete&gt;
+  &lt;fileset dir=&quot;/tmp&quot;&gt;
+    &lt;include name=&quot;*.bar&quot; /&gt;
+  &lt;/fileset&gt;
+&lt;/delete&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>file</td>
+					<td>String</td>
+					<td>The file that is to be deleted. You either have to specify this attribute,
+							<em>dir</em>, or use a fileset.</td>
+					<td>n/a</td>
+					<td>Yes (or <em>dir</em>)</td>
+				</tr>
+				<tr>
+					<td>dir</td>
+					<td>String</td>
+					<td>The directory that is to be deleted. You either have to specify this
+						attribute, <em>file</em>, or use a fileset.</td>
+					<td>n/a</td>
+					<td>Yes (or <em>file</em>)</td>
+				</tr>
+				<tr>
+					<td>verbose</td>
+					<td>Boolean</td>
+					<td>Used to force listing of all names of deleted files.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>quiet</td>
+					<td>Boolean</td>
+					<td>
+						<p>If the file does not exist, do not display a diagnostic message or modify
+							the exit status to reflect an error. This means that if a file or
+							directory cannot be deleted, then no error is reported.</p>
+						<p> This setting emulates the -f option to the Unix <em>rm</em> command.
+							Default is false meaning things are verbose </p>
+					</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>failonerror</td>
+					<td>Boolean</td>
+					<td>If this attribute is set to <em>true</em>, DeleteTask will verbose on errors
+						but the build process will not be stopped.</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>includeemptydirs</td>
+					<td>Boolean</td>
+					<td>Determines if empty directories are also to be deleted.</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>Fileset</li>
+		</ul>
+		<h2>
+			<a name="EchoTask"></a>EchoTask </h2>
+		<p>Echoes a message to the current loggers and listeners which means standard out unless
+			overridden. A level can be specified, which controls at what logging level the message
+			is filtered at.</p>
+		<p>The task can also echo to a file, in which case the option to append rather than
+			overwrite the file is available, and the level option is ignored</p>
+		<p>Additionally, the task can echo the contents of a nested fileset element.</p>
+		<h3>Examples</h3>
+		<pre>&lt;echo msg=&quot;Phing rocks!&quot; /&gt;
+
+&lt;echo message=&quot;Binarycloud, too.&quot; /&gt;
+
+&lt;echo&gt;And don't forget Propel.&lt;/echo&gt;
+
+&lt;echo file="test.txt" append="false"&gt;This is a test message&lt;/echo&gt;</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>msg</td>
+					<td>String</td>
+					<td>The string that is to be send to the output.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>message</td>
+					<td>String</td>
+					<td>Alias for <em>msg</em>.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>file</td>
+					<td>String</td>
+					<td>The file to write the message to.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>append</td>
+					<td>Boolean</td>
+					<td>Append to an existing file?</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>level</td>
+					<td>String</td>
+					<td>Control the level at which this message is reported. One of <em>error</em>,
+							<em>warning</em>, <em>info</em>, <em>verbose</em>, <em>debug</em>.</td>
+					<td><em>info</em></td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>Fileset</li>
+		</ul>
+		<h2>
+			<a name="ExecTask"></a>ExecTask </h2>
+		<p>Executes a shell command. You can use this to quickly add a new command to Phing.
+			However, if you want to use this regularly, you should think about writing a Task for
+			it.</p>
+		<h3>Example</h3>
+		<pre>&lt;-- List the contents of &quot;/home&quot;. --&gt;
+&lt;exec command=&quot;ls -l&quot; dir=&quot;/home&quot; /&gt;
+
+&lt;-- Start the make process in &quot;/usr/src/php-4.0&quot;. --&gt;
+&lt;exec command=&quot;make&quot; dir=&quot;/usr/src/php-4.0&quot; /&gt;
+
+&lt;-- List the contents of &quot;/tmp&quot; out to a file. --&gt;
+&lt;exec command=&quot;ls -l /tmp &gt; foo.out&quot; escape=&quot;false&quot; /&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>command</td>
+					<td>String</td>
+					<td>The command that is to be executed.</td>
+					<td>n/a</td>
+					<td rowspan="2">One of the two</td>
+				</tr>
+				<tr>
+					<td>executable</td>
+					<td>String</td>
+					<td>The command to execute without any command line arguments.</td>
+					<td>n/a</td>
+				</tr>
+				<tr>
+					<td>dir</td>
+					<td>String</td>
+					<td>The directory the command is to be executed in.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>output</td>
+					<td>String</td>
+					<td>Where to direct stdout.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>error</td>
+					<td>String</td>
+					<td>Where to direct stderr.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>os</td>
+					<td>String</td>
+					<td>Only execute if the <a href="AppendixA-FactSheet.html#BuiltInProperties"
+							>os.name</a> property contains specified text.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>escape</td>
+					<td>Boolean</td>
+					<td>By default, we escape shell metacharacters before executing. Setting this to
+						false will disable this precaution.</td>
+					<td>TRUE</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>passthru</td>
+					<td>Boolean</td>
+					<td>Whether to use PHP's passthru() function instead of exec().</td>
+					<td>FALSE</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>logoutput</td>
+					<td>Boolean</td>
+					<td>Whether to log returned output as MSG_INFO instead of MSG_VERBOSE.</td>
+					<td>FALSE</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>spawn</td>
+					<td>Boolean</td>
+					<td>Whether to spawn unix programs to the background, redirecting stdout.</td>
+					<td>FALSE</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>returnProperty</td>
+					<td>String</td>
+					<td>Property name to set return value to from exec() call.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>outputProperty</td>
+					<td>String</td>
+					<td>Property name to set output value to from exec() call.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>checkreturn</td>
+					<td>Boolean</td>
+					<td>Whether to check the return code of the program, throws a BuildException
+						when returncode != 0.</td>
+					<td>FALSE</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>level</td>
+					<td>String</td>
+					<td>Control the level at which status messages are reported. One of
+							<em>error</em>, <em>warning</em>, <em>info</em>, <em>verbose</em>,
+							<em>debug</em>.</td>
+					<td><em>verbose</em></td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>arg <table>
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Type</th>
+							<th>Description</th>
+							<th>Default</th>
+							<th>Required</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>value</td>
+							<td>String</td>
+							<td>A single command-line argument; can contain space characters.
+							To pass an empty argument, enclose two double quotes in single quotes
+							('""').</td>
+							<td>n/a</td>
+							<td rowspan="4">One of these</td>
+						</tr>
+						<tr>
+							<td>file</td>
+							<td>String</td>
+							<td>The name of a file as a single command-line argument; will be
+								replaced with the absolute filename of the file.</td>
+							<td>n/a</td>
+						</tr>
+						<tr>
+							<td>path</td>
+							<td>String</td>
+							<td>A string that will be treated as a path-like string as a single
+								command-line argument; you can use ; or : as path separators and Ant
+								will convert it to the platform's local conventions.</td>
+							<td>n/a</td>
+						</tr>
+						<tr>
+							<td>line</td>
+							<td>String</td>
+							<td>A space-delimited list of command-line arguments.</td>
+							<td>n/a</td>
+						</tr>
+					</tbody>
+				</table>
+			</li>
+		</ul>
+		<h2>
+			<a name="FailTask"></a>FailTask </h2>
+		<p>Causes the current build script execution to fail (throwing a BuildException) and the script to exit with an
+			(optional) error message.</p>
+		<h3>Example</h3>
+		<pre>&lt;-- Exit with message --&gt;
+&lt;fail message=&quot;Failed for some reason!&quot; /&gt;
+
+&lt;--  Exit if ${errorprop} is defined --&gt;
+&lt;fail if=&quot;errorprop&quot; message=&quot;Detected error!&quot; /&gt;
+
+&lt;-- Exit unless ${dontfail} prop is defined. --&gt;
+&lt;fail unless=&quot;dontfail&quot; message=&quot;Detected error!&quot; /&gt;
+
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>message</td>
+					<td>String</td>
+					<td>The message to display (reason for script abort).</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>msg</td>
+					<td>String</td>
+					<td>Alias for message</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>if</td>
+					<td>String</td>
+					<td>Name of property that must be set for script to exit.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>unless</td>
+					<td>String</td>
+					<td>Name of property that must <em>not</em> be set in order for script to
+						exit.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>
+			<a name="ForeachTask"></a>ForeachTask </h2>
+		<p>The foreach task iterates over a list, a list of filesets, or both. If both, list and
+			filesets, are specified, the list will be evaluated first. Nested filesets are evaluated
+			in the order they appear in the task.</p>
+		<h3>Example</h3>
+		<pre>
+&lt;!-- loop through languages, and call buildlang task with setted param --&gt;
+&lt;property name="languages" value="en,fr,de" /&gt;
+&lt;foreach list="${languages}" param="lang" target="buildlang" /&gt;
+
+&lt;!-- loop through files, and call subtask task with set param and absparam --&gt;
+&lt;foreach param=&quot;filename&quot; absparam=&quot;absfilename&quot; target="subtask"&gt;
+  &lt;fileset dir=&quot;.&quot;&gt;
+    &lt;include name=&quot;*.php&quot;/&gt;
+  &lt;/fileset&gt;
+&lt;/foreach&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>list</td>
+					<td>String</td>
+					<td>The list of values to process, with the delimiter character, indicated by
+						the "delimiter" attribute, separating each value.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>target</td>
+					<td>String</td>
+					<td>The target to call for each token, passing the token as the parameter with
+						the name indicated by the "param" attribute.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>param</td>
+					<td>String</td>
+					<td>The name of the parameter to pass the tokens in as to the target.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>absparam</td>
+					<td>String</td>
+					<td>The name of the absolute pathparameter to pass the tokens in as to the
+						target (used while processing nested filesets).</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>delimiter</td>
+					<td>String</td>
+					<td>The delimiter string that separates the values in the "list" parameter. The
+						default is ",".</td>
+					<td>,</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>Fileset</li>
+			<li>Mapper</li>
+		</ul>
+		<h2>
+			<a name="IfTask"></a>IfTask </h2>
+		<p>Perform some tasks based on whether a given condition holds true or not.</p>
+		<h3>Attributes</h3>
+		<p> This task doesn't have any attributes, the condition to test is specified by a nested
+			element - see the <a href="../ProjectComponents.html#Conditions">documentation</a> for a
+			complete list of nested elements. </p>
+		<p> Just like the <code>&lt;condition&gt;</code> task, only a single condition can be
+			specified - you combine them using <code>&lt;and&gt;</code> or <code>&lt;or&gt;</code>
+			conditions. </p>
+		<p> In addition to the condition, you can specify three different child elements,
+				<code>&lt;elseif&gt;</code> , <code>&lt;then&gt;</code> and
+				<code>&lt;else&gt;</code> . All three subelements are optional. Both
+				<code>&lt;then&gt;</code> and <code>&lt;else&gt;</code> must not be used more than
+			once inside the if task. Both are containers for Phing tasks. </p>
+		<p> The <code>&lt;elseif&gt;</code> behaves exactly like an <code>&lt;if&gt;</code> except
+			that it cannot contain the <code>&lt;else&gt;</code> element inside of it. You may
+			specify as may of these as you like, and the order they are specified is the order they
+			are evaluated in. If the condition on the <code>&lt;if&gt;</code> is false, then the
+			first <code>&lt;elseif&gt;</code> who's conditional evaluates to true will be executed.
+			The <code>&lt;else&gt;</code> will be executed only if the <code>&lt;if&gt;</code> and
+			all <code>&lt;elseif&gt;</code> conditions are false. </p>
+		<h3>Example</h3>
+		<pre>
+&lt;if&gt;
+ &lt;equals arg1="${foo}" arg2="bar" /&gt;
+ &lt;then&gt;
+   &lt;echo message="The value of property foo is bar" /&gt;
+ &lt;/then&gt;
+ &lt;else&gt;
+   &lt;echo message="The value of property foo is not bar" /&gt;
+ &lt;/else&gt;
+&lt;/if&gt;
+</pre>
+		<pre>
+&lt;if&gt;
+ &lt;equals arg1="${foo}" arg2="bar" /&gt;
+ &lt;then&gt;
+   &lt;echo message="The value of property foo is 'bar'" /&gt;
+ &lt;/then&gt;
+
+ &lt;elseif&gt;
+  &lt;equals arg1="${foo}" arg2="foo" /&gt;
+  &lt;then&gt;
+   &lt;echo message="The value of property foo is 'foo'" /&gt;
+  &lt;/then&gt;
+ &lt;/elseif&gt;
+
+ &lt;else&gt;
+   &lt;echo message="The value of property foo is not 'foo' or 'bar'" /&gt;
+ &lt;/else&gt;
+&lt;/if&gt;
+</pre>
+		<h2>
+			<a name="ImportTask"></a>ImportTask </h2>
+		<p>Imports another build file into the current project.</p>
+		<p>On execution it will read another Phing file into the same Project. Functionally it is
+			nearly the same as copy and pasting the imported file onto the end of the importing
+			file.</p>
+		<h3>Target Overriding</h3>
+		<p>If a target in the main file is also present in at least one of the imported files, the
+			one from the main file takes precedence.</p>
+		<p> So if I import for example a <em>docs/build.xml</em> file named
+				<strong>builddocs</strong>, that contains a "<strong>docs</strong>" target, I can
+			redefine it in my main buildfile and that is the one that will be called. This makes it
+			easy to keep the same target name, so that the overriding target is still called by any
+			other targets--in either the main or imported buildfile(s)--for which it is a
+			dependency, with a different implementation. The target from <em>docs/build.xml</em> is
+			made available by the name "<strong>builddocs.docs</strong>". This enables the new
+			implementation to call the old target, thus enhancing it with tasks called before or
+			after it. </p>
+		<h3>Special Properties</h3>
+		<p>Imported files are treated as they are present in the main buildfile. This makes it easy
+			to understand, but it makes it impossible for them to reference files and resources
+			relative to their path. Because of this, for every imported file, Phing adds a property
+			that contains the path to the imported buildfile. With this path, the imported buildfile
+			can keep resources and be able to reference them relative to its position.</p>
+		<p> So if I import for example a <em>docs/build.xml</em> file named
+				<strong>builddocs</strong>, I can get its path as
+				<strong>phing.file.builddocs</strong>, similarly to the <strong>phing.file</strong>
+			property of the main buildfile. Additionally, the directory will be stored in 
+			<strong>phing.dir.builddocs</strong>.</p>
+		<p>Note that "builddocs" is not the filename, but the name attribute present in the imported
+			project tag.</p>
+		<p>If import file does not have a name attribute, the <strong>phing.file.projectname</strong>
+		    and <strong>phing.dir.projectname</strong> properties will not be set.</p>
+		<h3>Resolving Files Against the Imported File</h3>
+		<p> Suppose your main build file called <code>importing.xml</code> imports a build file
+				<code>imported.xml</code> , located anywhere on the file system, and
+				<code>imported.xml</code> reads a set of properties from
+				<code>imported.properties</code> : </p>
+		<pre>
+&lt;!-- importing.xml --&gt;
+&lt;project name=&quot;importing&quot; basedir=&quot;.&quot; default=&quot;...&quot;&gt;
+  &lt;import file=&quot;${path_to_imported}/imported.xml&quot;/&gt;
+&lt;/project&gt;
+
+&lt;!-- imported.xml --&gt;
+&lt;project name=&quot;imported&quot; basedir=&quot;.&quot; default=&quot;...&quot;&gt;
+  &lt;property file=&quot;imported.properties&quot;/&gt;
+&lt;/project&gt;
+</pre>
+		<p> This snippet however will resolve <code>imported.properties</code> against the basedir
+			of <code>importing.xml</code> , because the basedir of <code>imported.xml</code> is
+			ignored by Phing. The right way to use <code>imported.properties</code> is: </p>
+		<pre>
+&lt;!-- imported.xml --&gt;
+&lt;project name=&quot;imported&quot; basedir=&quot;.&quot; default=&quot;...&quot;&gt;
+  &lt;property file=&quot;${phing.dir.imported}/imported.properties&quot;/&gt;
+&lt;/project&gt;
+</pre>
+		<p> As explained above <code>${phing.file.imported}</code> stores the full path of the build
+			script, that defines the project called <strong>imported</strong>, (in short it stores
+			the path to <em>imported.xml</em>) and <code>${phing.dir.imported}</code> stores its
+			directory. This technique also allows <em>imported.xml</em> to be used as a standalone
+			file (without being imported in other project). </p>
+		<h3>Example</h3>
+		<pre>
+&lt;import file=&quot;path/to/build.xml&quot;/&gt;
+&lt;import file=&quot;path/to/build.xml&quot; optional=&quot;true&quot;/&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>file</td>
+					<td>String</td>
+					<td>The file to import.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>optional</td>
+					<td>Boolean</td>
+					<td>If true, do not stop the build if the file does not exist.</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>
+			<a name="IncludePathTask"></a>IncludePathTask </h2>
+		<p>Sets the PHP include_path configuration option for the duration of this phing run.</p>
+		<h3>Example 1 - Trivial use</h3>
+		<pre>&lt;includepath classpath=&quot;new/path/here&quot; /&gt;
+&lt;includepath classpath=&quot;path1:path2&quot; /&gt;</pre>
+		<h3>Example 2 - Referencing a previously defined path</h3>
+		<pre>&lt;path id="project.class.path">
+  &lt;pathelement dir="lib/"/>
+  &lt;pathelement dir="ext/"/>
+&lt;/path>
+
+&lt;includepath classpathref="project.class.path" />
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>classpath</td>
+					<td>String</td>
+					<td>the new include path[s]</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>classPathRef</td>
+					<td>String</td>
+					<td>Reference to a previously defined Path type</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>
+			<a name="InputTask"></a>InputTask </h2>
+		<p> The <em>InputTask</em> can be used to interactively set property values based on input
+			from the console (or other Reader). </p>
+		<h3>Example</h3>
+		<pre>
+&lt;!-- Getting string input --&gt;
+&lt;echo&gt;HTML pages installing to: ${documentRoot}&lt;/echo&gt;
+&lt;echo&gt;PHP classes installing to: ${servletDirectory}&lt;/echo&gt;
+
+&lt;input propertyname=&quot;documentRoot&quot;&gt;Web application document root&lt;/input&gt;
+&lt;input propertyname=&quot;servletDirectory&quot;
+  defaultValue=&quot;/usr/servlets&quot; promptChar=&quot;?&quot;&gt;PHP classes install dir&lt;/input&gt;
+
+&lt;echo&gt;HTML pages installed to ${documentRoot}&lt;/echo&gt;
+&lt;echo&gt;PHP classes installed to ${servletDirectory}&lt;/echo&gt;
+
+&lt;!-- Having the user choose from a set of valid choices --&gt;
+&lt;echo&gt;Choose a valid option:&lt;/echo&gt;
+
+&lt;input propertyname=&quot;optionsChoice&quot; validargs=&quot;foo,bar,bob&quot;&gt;
+  Which item would you like to use
+&lt;/input&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>propertyName</td>
+					<td>String</td>
+					<td>The name of the property to set.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>defaultValue</td>
+					<td>String</td>
+					<td>The default value to be set if no new value is provided.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>message</td>
+					<td>String</td>
+					<td>Prompt text (same as CDATA).</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>promptChar</td>
+					<td>String</td>
+					<td>The prompt character to follow prompt text.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>validArgs</td>
+					<td>String</td>
+					<td>Comma-separated list of valid choices the user must supply. If used, one of
+						these options must be chosen.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<!-- TODO : Add "os" as soon as it is supported -->
+			</tbody>
+		</table>
+		<h2>
+			<a name="LoadFileTask"></a>LoadFileTask </h2>
+		<p> The <em>LoadFileTask</em> loads the contents of a (text) file into a single property. </p>
+		<h3>Example</h3>
+		<pre>
+&lt;loadfile property=&quot;version&quot; file=&quot;version.txt&quot;/&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>property</td>
+					<td>String</td>
+					<td>The name of the property to set.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>file (or <em>srcFile</em>)</td>
+					<td>String</td>
+					<td>The file to load.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags:</h3>
+		<ul>
+			<li>filterchain</li>
+		</ul>
+		<h2>
+			<a name="MkdirTask"></a>MkdirTask </h2>
+		<p>Creates a directory, including any necessary but non-existent parent directories. Does
+			nothing if the directory already exists.</p>
+		<h3>Example</h3>
+		<pre>&lt;-- Create a temp directory --&gt;
+&lt;mkdir dir=&quot;/tmp/foo&quot; /&gt;
+
+&lt;-- Using mkdir with a property --&gt;
+&lt;mkdir dir=&quot;${dirs.install}/tmp&quot; /&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>dir</td>
+					<td>String</td>
+					<td>The directory that is to be created.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>mode</td>
+					<td>Integer</td>
+					<td>The mode to create the directory with.</td>
+					<td>From umask</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>
+			<a name="MoveTask"></a>MoveTask </h2>
+		<p>Moves a file or directory to a new file or directory. By default, the destination file is
+			overwritten if it already exists. When overwrite is turned off, then files are only
+			moved if the source file is newer than the destination file, or when the destination
+			file does not exist.</p>
+		<p>Source files and directories are only deleted if the file or directory has been copied to
+			the destination successfully.</p>
+		<h3>Example</h3>
+		<pre>&lt;-- The following will move the file &quot;somefile.txt&quot; to &quot;/tmp&quot; and
+    change its filename to &quot;anotherfile.bak&quot;. It will overwrite
+    an existing file. --&gt;
+&lt;move file=&quot;somefile.txt&quot; tofile=&quot;/tmp/anotherfile.bak&quot; overwrite=&quot;true&quot;/&gt;
+
+&lt;-- This will move the &quot;/tmp&quot; directory to &quot;/home/default/tmp&quot;,
+    preserving the directory name. So the final name is
+    &quot;/home/default/tmp/tmp&quot;. Empty directories are also copied --&gt;
+&lt;move file=&quot;/tmp&quot; todir=&quot;/home/default/tmp&quot; includeemptydirs=&quot;true&quot; /&gt;
+</pre>
+		<h3>Attributes and Nested Elements</h3>
+		<p> For further documentation, see <a href="#CopyTask">CopyTask</a>, since MoveTask only is
+			a child of CopyTask and inherits all attributes. </p>
+		<h2>
+			<a name="PhingTask"></a>PhingTask </h2>
+		<p> This task calls another build file. You may specify the target that is to be called
+			within the build file. Additionally, the <code>&lt;phing&gt;</code> Tag may contain
+				<code>&lt;property&gt;</code> Tags (see <a href="#PropertyTask">PropertyTask</a>). </p>
+		<h3>Example</h3>
+		<pre>&lt;-- Call target &quot;xslttest&quot; from buildfile &quot;alternativebuildfile.xml&quot; --&gt;
+ &lt;phing phingfile=&quot;alternativebuild.xml&quot; inheritRefs=&quot;true&quot; target=&quot;xslttest&quot; /&gt;
+
+&lt;-- Do a more complex call --&gt;
+&lt;phing phingfile=&quot;somebuild.xml&quot; target=&quot;sometarget&quot;&gt;
+  &lt;property name=&quot;foo&quot; value=&quot;bar&quot; /&gt;
+  &lt;property name=&quot;anotherone&quot; value=&quot;32&quot; /&gt;
+&lt;/phing&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>inheritAll</td>
+					<td>Boolean</td>
+					<td>If true, pass all properties to the new phing project.</td>
+					<td>true</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>inheritRefs</td>
+					<td>Boolean</td>
+					<td>If true, pass all references to the new phing project.</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>dir</td>
+					<td>String</td>
+					<td>The directory to use as a base directory for the new phing project. Default
+						is the current project's basedir, unless inheritall has been set to
+							<em>false</em>, in which case it doesn't have a default value. This will
+						override the basedir setting of the called project.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>phingFile</td>
+					<td>String</td>
+					<td>The build file to use. Defaults to &quot;build.xml&quot;. This file is
+						expected to be a filename relative to the dir attribute given.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>target</td>
+					<td>String</td>
+					<td>The target of the new Phing project to execute. Default is the new project's
+						default target.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>haltonfailure</td>
+					<td>Boolean</td>
+					<td>If true, fail the build process when the called build fails</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>Fileset</li>
+		</ul>
+		<h3>Base directory of the new project</h3>
+		<p> The base directory of the new project is set dependant on the <em>dir</em> and the
+				<em>inheritAll</em> attribute. This is important to keep in mind or else you might
+			run into bugs in your build.xml's. The following table shows when which value is used: </p>
+		<table>
+			<tbody>
+				<tr>
+					<th><em>dir</em> attribute</th>
+					<th><em>inheritAll</em> attribute</th>
+					<th>new project's basedir</th>
+				</tr>
+				<tr>
+					<td>value provided</td>
+					<td>true</td>
+					<td>value of <em>dir</em> attribute</td>
+				</tr>
+				<tr>
+					<td>value provided</td>
+					<td>false</td>
+					<td>value of <em>dir</em> attribute</td>
+				</tr>
+				<tr>
+					<td>omitted</td>
+					<td>true</td>
+					<td>basedir of calling task (the build file containing the
+							<em>&lt;phing&gt;</em> call.</td>
+				</tr>
+				<tr>
+					<td>omitted</td>
+					<td>false</td>
+					<td>basedir attribute of the <em>&lt;project&gt;</em> element of the new
+						project</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>
+			<a name="PhingCallTask"></a>PhingCallTask </h2>
+		<p> The PhingCallTask calls a target within the same Phing project. </p>
+		<p> A <em>&lt;phingcall&gt;</em> tag may contain <em>&lt;property&gt;</em> tags that define
+			new properties. These properties are only set if properties of the same name have not
+			been set outside the <code>&quot;phingcall&quot;</code> tag. </p>
+		<p>
+			<b>Important note about scope:</b> every <em>&lt;phingcall&gt;</em> tag creates a new
+			local scope. Thus, any properties or other variables set inside that scope will cease to
+			exist (or revert to their previous value) once the <em>&lt;phingcall&gt;</em> tag
+			completes. </p>
+		<h3>Example</h3>
+		<pre>&lt;target name=&quot;foo&quot;&gt;
+    &lt;phingcall target=&quot;bar&quot;&gt;
+        &lt;property name=&quot;property1&quot; value=&quot;aaaaa&quot; /&gt;
+        &lt;property name=&quot;foo&quot; value=&quot;baz&quot; /&gt;
+    &lt;/phingcall&gt;
+&lt;/target&gt;</pre>
+		<p> In the example above, the properties <em>property1</em> and <em>foo</em> are defined and
+			only accessible inside the called target. </p>
+		<pre>&lt;target name=&quot;bar&quot; depends=&quot;init&quot;&gt;
+    &lt;echo message=&quot;prop is ${property1} ${foo}&quot; /&gt;
+&lt;/target&gt;</pre>
+		<h3>Parameters</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type/Values</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>target</td>
+					<td>string</td>
+					<td>The name of the target in the same project that is to be called.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<!-- Not used yet. TODO: Document if it is
+    <tr>
+      <td>inheritAll</td>
+      <td>Boolean</td>
+      <td>
+        If true, all
+      </td>
+      <td>true</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>inheritRefs</td>
+      <td>Boolean</td>
+      <td>
+      </td>
+      <td>false</td>
+      <td>No</td>
+    </tr>
+    -->
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>property</li>
+			<li>param (alias for property)</li>
+		</ul>
+		<h2>
+			<a name="PhpEvalTask"></a>PhpEvalTask </h2>
+		<p>With the PhpEvalTask, you can set a property to the results of evaluating a PHP
+			expression or the result returned by a function/method call.</p>
+		<h3>Examples</h3>
+		<pre>&lt;php function=&quot;crypt&quot; returnProperty=&quot;enc_passwd&quot;&gt;
+  &lt;param value=&quot;${auth.root_passwd}&quot;/&gt;
+&lt;/php&gt;</pre>
+		<pre>&lt;php expression=&quot;3 + 4&quot; returnProperty=&quot;sum&quot;/&gt;</pre>
+		<pre>&lt;php expression=&quot;echo 'test';&quot;&gt;</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>function</td>
+					<td>String</td>
+					<td>The name of the Property.</td>
+					<td>n/a</td>
+					<td rowspan="2">One of these is required.</td>
+				</tr>
+				<tr>
+					<td>expression</td>
+					<td>String</td>
+					<td>The expression to evaluate.</td>
+					<td>n/a</td>
+				</tr>
+				<tr>
+					<td>class</td>
+					<td>String</td>
+					<td>The static class which contains function.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>returnProperty</td>
+					<td>String</td>
+					<td>The name of the property to set with result of expression or function call.
+							<strong>Note:</strong> if this attribute is set, the expression must
+						return a value.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>level</td>
+					<td>String</td>
+					<td>Control the level at which phplint reports status messages. One of
+							<em>error</em>, <em>warning</em>, <em>info</em>, <em>verbose</em>,
+							<em>debug</em>.</td>
+					<td><em>info</em></td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>param</li>
+		</ul>
+		<h2>
+			<a name="PropertyTask"></a>PropertyTask </h2>
+		<p> With PropertyTask, you can define <em>user</em> properties in your build file. </p>
+		<p>
+			<b>Important note about scope:</b> when the <em>&lt;property&gt;</em> tag is called
+			inside a <em>&lt;phingcall&gt;</em> tag, any properties are set in a new local scope.
+			Thus, any properties or other variables set inside that scope will cease to exist (or
+			revert to their previous value) once the parent <em>&lt;phingcall&gt;</em> tag
+			completes. </p>
+		<h3>Example</h3>
+		<pre>&lt;property name=&quot;strings.test&quot; value=&quot;Harr harr, more power!&quot; /&gt;
+&lt;echo message=&quot;${strings.test}&quot; /&gt;
+
+&lt;property name=&quot;foo.bar&quot; value=&quot;Yet another property...&quot; /&gt;
+&lt;echo message=&quot;${foo.bar}&quot; /&gt;
+
+&lt;property file=&quot;build.properties&quot;  /&gt;
+
+&lt;property name=&quot;newproperty&quot; value=&quot;Hello&quot;&gt;
+  &lt;filterchain&gt;
+    &lt;replaceregexp&gt;
+      &lt;regexp pattern=&quot;Hello&quot; replace=&quot;World&quot; ignoreCase=&quot;true&quot;/&gt;
+    &lt;/replaceregexp&gt;
+  &lt;filterchain&gt;
+&lt;/property&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>name</td>
+					<td>String</td>
+					<td>The name of the Property.</td>
+					<td>n/a</td>
+					<td>Yes (unless using file)</td>
+				</tr>
+				<tr>
+					<td>value</td>
+					<td>String</td>
+					<td>The value of the Property.</td>
+					<td>n/a</td>
+					<td>Yes (unless using file)</td>
+				</tr>
+				<tr>
+					<td>override</td>
+					<td>Boolean</td>
+					<td>Whether to force override of existing value.</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>file</td>
+					<td>String</td>
+					<td>Path to properties file.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>prefix</td>
+					<td>String</td>
+					<td>Used when properites are loaded from file. Prefix is applied to properties
+						loaded from specified file. A "." is appended to the prefix if not
+						specified.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>environment</td>
+					<td>String</td>
+					<td>The prefix to use when retrieving environment variables. * Thus if you
+						specify environment="myenv" you will be able to access OS-specific *
+						environment variables via property names "myenv.PATH" or "myenv.TERM".</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>refid</td>
+					<td>String</td>
+					<td>A reference to a previously defined propeprty</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>fallback</td>
+					<td>String</td>
+					<td>If a reference cannot be found within the current project scope this
+						attribute specifies a fallback project scope.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags:</h3>
+		<ul>
+			<li>filterchain</li>
+		</ul>
+		<h2>
+			<a name="PropertyPromptTask"></a>PropertyPromptTask </h2>
+		<p> PropertyPromptTask is a simple task to read in user input into a property. If you need
+			something more advanced, see the <a href="#InputTask">InputTask</a>. </p>
+		<h3>Example</h3>
+		<pre>&lt;propertyprompt propertyName=&quot;someprop&quot; defaultValue=&quot;/var/www&quot;
+		promptText=&quot;Enter your web root&quot; /&gt;
+&lt;echo&gt;${someprop}&lt;/echo&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>propertyName</td>
+					<td>String</td>
+					<td>The name of the Property to set.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>promptText</td>
+					<td>String</td>
+					<td>The text to use for the prompt.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>promptCharacter</td>
+					<td>String</td>
+					<td>The character to use after the prompt.</td>
+					<td>?</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>defaultValue</td>
+					<td>String</td>
+					<td>A default value to use (if user just hits enter).</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>useExistingValue</td>
+					<td>String</td>
+					<td>Whether existing property should be used if available. (This will result in
+						user only being prompted if the propertyName property is not already
+						set.)</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>
+			<a name="ReflexiveTask"></a>ReflexiveTask </h2>
+		<p>The ReflexiveTask performs operations on files. It is essentially a convenient way to
+			transform (using filter chains) files without copying them.</p>
+		<h3>Example</h3>
+		<pre>&lt;reflexive&gt;
+  &lt;fileset dir=&quot;.&quot;&gt;
+    &lt;include pattern=&quot;*.html&quot;&gt;
+  &lt;/fileset&gt;
+  &lt;filterchain&gt;
+    &lt;replaceregexp&gt;
+      &lt;regexp pattern=&quot;\r(\n)&quot; replace=&quot;\1&quot;/&gt;
+    &lt;/replaceregexp&gt;
+  &lt;/filterchain&gt;
+&lt;/reflexive&gt;</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>file</td>
+					<td>String</td>
+					<td>A single file to be processed.</td>
+					<td>n/a</td>
+					<td>Yes (unless &lt;fileset&gt; provided)</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags:</h3>
+		<ul>
+			<li>fileset</li>
+			<li>filterchain</li>
+		</ul>
+		<h2>
+			<a name="ResolvePathTask"></a>ResolvePathTask </h2>
+		<p>The ResolvePathTask turns a relative path into an absolute path, with respect to
+			specified directory or the project basedir (if no dir attribute specified).</p>
+		<p>This task is useful for turning a user-defined relative path into an absolute path in
+			cases where buildfiles will be called in different directories. Without this task,
+			buildfiles lower in the directory tree would mis-interpret the user-defined relative
+			paths.</p>
+		<h3>Example</h3>
+		<pre>&lt;property name=&quot;relative_path&quot; value=&quot;./dirname&quot;/&gt;
+
+&lt;resolvepath propertyName=&quot;absolute_path&quot; file=&quot;${relative_path}&quot;/&gt;
+
+&lt;echo&gt;Resolved [absolute] path: ${absolute_path}&lt;/echo&gt;</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+				<tr>
+					<td>file</td>
+					<td>String</td>
+					<td>The file or directory path to resolve.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>dir</td>
+					<td>File</td>
+					<td>The base directory to use when resolving &quot;file&quot;.</td>
+					<td>project.basedir</td>
+					<td>No</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>propertyName</td>
+					<td>String</td>
+					<td>The name of the property to set with resolved (absolute) path.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>level</td>
+					<td>String</td>
+					<td>Control the level at which status messages are reported. One of
+							<em>error</em>, <em>warning</em>, <em>info</em>, <em>verbose</em>,
+							<em>debug</em>.</td>
+					<td><em>verbose</em></td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>
+			<a name="TaskdefTask"></a>TaskdefTask </h2>
+		<p>With the TaskdefTask you can import a user task into your buildfile.</p>
+		<h3>Example</h3>
+		<pre>&lt;!-- Includes the Task named &quot;ValidateHTMLTask&quot; and makes it available by
+     &lt;validatehtml&gt; --&gt;
+&lt;taskdef classname=&quot;user.tasks.ValidateHTMLTask&quot; name=&quot;validatehtml&quot; /&gt;
+
+&lt;!-- Includes the Task &quot;RebootTask&quot; from &quot;user/sometasks&quot; somewhere inside
+     the $PHP_CLASSPATH --&gt;
+&lt;taskdef classname=&quot;user.sometasks.RebootTask&quot; name=&quot;reboot&quot; /&gt;
+
+&lt;!-- Includes all tasks from the property file. Each line in the property 
+file defines a task in the format: name=path.to.Task --&gt;
+&lt;taskdef file=&quot;/path/to/mytasks.properties&quot; /&gt;
+</pre>
+		<p>
+			<b>NB:</b> Taskdef now supports the PEAR-style naming convention to define and load
+			tasks: </p>
+		<pre>
+&lt;taskdef name=&quot;sampletask&quot; classname=&quot;Dir_Subdir_SampleTask&quot;/&gt;
+</pre>
+		<p> will load class <i>Dir_Subdir_SampleTask</i> from file <i>Dir/Subdir/SampleTask.php</i>. </p>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>classname</td>
+					<td>String</td>
+					<td>The path to the class that defines the TaskClass.</td>
+					<td>n/a</td>
+					<td>Yes, unless the <code>file</code> attribute has been specified.</td>
+				</tr>
+				<tr>
+					<td>name</td>
+					<td>String</td>
+					<td>The name the task is available as after importing. If you specify
+						&quot;validate&quot;, for example, you can access the task imported here
+						with <code>&lt;validate&gt;</code>.</td>
+					<td>n/a</td>
+					<td>Yes, unless the <code>file</code> attribute has been specified.</td>
+				</tr>
+				<tr>
+					<td>file</td>
+					<td>String</td>
+					<td>Name of the file to load definitions from.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>classpath</td>
+					<td>String</td>
+					<td>The classpath to use when including classes. This is added to PHP's
+						include_path.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>classpathref</td>
+					<td>String</td>
+					<td>Reference to classpath to use when including classes. This is added to PHP's
+						include_path.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>classpath</li>
+		</ul>
+		<h2>
+			<a name="TouchTask"></a>TouchTask </h2>
+		<p> The TouchTask works like the Unix <em>touch</em> command: It sets the modtime of a file
+			to a specific time. Default is the current time. </p>
+		<h3>Example</h3>
+		<pre>&lt;touch file=&quot;README.txt&quot; millis=&quot;102134111&quot; /&gt;
+
+&lt;touch file=&quot;COPYING.lib&quot; datetime=&quot;10/10/1999 09:31 AM&quot; /&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>file</td>
+					<td>String</td>
+					<td>The file which time is to be changed.</td>
+					<td>n/a</td>
+					<td>Yes, or nested <em>&lt;fileset&gt;</em> tag</td>
+				</tr>
+				<tr>
+					<td>datetime</td>
+					<td>DateTime</td>
+					<td>The date and time the mtime of the file is to be set to. The format is
+						&quot;MM/DD/YYYY HH:MM AM or PM&quot;</td>
+					<td><em>now</em></td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>millis</td>
+					<td>Integer</td>
+					<td>The number of milliseconds since Midnight Jan 1 1970 (Unix epoche).</td>
+					<td><em>now</em></td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>fileset</li>
+		</ul>
+		<h2>
+			<a name="TryCatchTask"></a>TryCatchTask </h2>
+		<p>This task is a wrapper task that lets you run tasks(s)
+			when another set of tasks fails, mirroring PHP's
+			<em>try/catch</em> functionality (with the addition of
+			a <em>finally</em> block)</p>
+		<p>The tasks inside of the <em>try</em> block will always be
+			run. If one of them throws a BuildException, the
+			following things can happen:</p>
+		<ul>
+			<li>If there is no <em>catch</em> block, the
+			exception will be passed to Phing.</li>
+			<li>If the <em>property</em> attribute has been set,
+			a property of that name will contain the message of
+			the exception.</li>
+			<li>If there is a <em>catch</em> block, the nested
+			tasks will be run.</li>
+		</ul>
+		<p>If a <em>finally</em> block is present, the nested tasks
+			will be run regardless of whether the tasks in the
+			<em>try</em> block have thrown an exception or not.</p>
+		<p>This task was inspired by <a
+			href="http://ant-contrib.sourceforge.net/tasks/tasks/trycatch.html">http://ant-contrib.sourceforge.net/tasks/tasks/trycatch.html</a>.</p>
+		<h3>Example</h3>
+		<pre>&lt;trycatch property=&quot;foo&quot;&gt;
+    &lt;try&gt;
+        &lt;fail&gt;Tada!&lt;/fail&gt;
+    &lt;/try&gt;
+
+    &lt;catch&gt;
+        &lt;echo&gt;In catch.&lt;/echo&gt;
+    &lt;/catch&gt;
+		                
+    &lt;finally&gt;
+        &lt;echo&gt;In finally.&lt;/echo&gt;
+    &lt;/finally&gt;
+&lt;/trycatch&gt;
+
+&lt;echo&gt;As property: ${foo}&lt;/echo&gt;</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>property</td>
+					<td>String</td>
+					<td>Name of a property that will
+					receive the message of the exception
+					that has been caught (if any)</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>
+			<a name="TstampTask"></a>TstampTask </h2>
+		<p>Sets the DSTAMP, TSTAMP, and TODAY properties in the current project. By default, the
+			DSTAMP property is in the format "%Y%m%d", TSTAMP is in the format "%H%M", and TODAY is
+			in the format "%B %d %Y". Use the nested &lt;format&gt; element to specify a different
+			format.</p>
+		<p>These properties can be used in the build-file, for instance, to create time-stamped
+			filenames, or used to replace placeholder tags inside documents to indicate, for
+			example, the release date. The best place for this task is probably in an initialization
+			target.</p>
+		<h3>Examples</h3>
+		<pre>&lt;tstamp/&gt;</pre>
+		<p>sets the standard DSTAMP, TSTAMP, and TODAY properties according to the default
+			formats.</p>
+		<pre>&lt;tstamp&gt;
+  &lt;format property=&quot;DATE&quot; pattern=&quot;%c&quot; locale=&quot;nl_NL&quot;/&gt;
+&lt;/tstamp&gt;</pre>
+		<p>sets the standard properties as well as the property DATE with the date/time pattern "%c"
+			using the Dutch locale.</p>
+		<pre>&lt;tstamp prefix=&quot;start&quot;/&gt;</pre>
+		<p>sets three properties with the standard formats, prefixed with "start.": start.DSTAMP,
+			start.TSTAMP, and start.TODAY.</p>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>prefix</td>
+					<td>String</td>
+					<td>Prefix used for all properties set.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>format <p>The Tstamp task supports a &lt;format&gt; nested element that allows a
+					property to be set to the current date and time in a given format. The date/time
+					patterns are as defined in the PHP strftime() function.</p>
+				<h3>Attributes</h3>
+				<table>
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Type</th>
+							<th>Description</th>
+							<th>Default</th>
+							<th>Required</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>property</td>
+							<td>String</td>
+							<td>The property to receive the date/time string in the given
+								pattern.</td>
+							<td>n/a</td>
+							<td>Yes</td>
+						</tr>
+						<tr>
+							<td>classname</td>
+							<td>String</td>
+							<td>The date/time pattern to be used. The values are as defined by the
+								PHP strftime() function.</td>
+							<td>n/a</td>
+							<td>Yes</td>
+						</tr>
+						<tr>
+							<td>locale</td>
+							<td>String</td>
+							<td>The locale used to create date/time string. For more information see
+								the PHP setlocale() function.</td>
+							<td>n/a</td>
+							<td>No</td>
+						</tr>
+					</tbody>
+				</table>
+			</li>
+		</ul>
+		<h2>
+			<a name="TypedefTask"></a>TypedefTask </h2>
+		<p>With the TypedefTask you can import a user type into your buildfile.</p>
+		<h3>Example</h3>
+		<pre>&lt;!-- Includes the Type named &quot;CustomProject&quot; and makes it available by
+     &lt;cproject&gt; --&gt;
+&lt;taskdef classname=&quot;user.types.CustomProject&quot; name=&quot;cproject&quot; /&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>classname</td>
+					<td>String</td>
+					<td>The path to the class that defines the type class.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>name</td>
+					<td>String</td>
+					<td>The name the type is available as after importing. If you specify
+						&quot;cproject&quot;, for example, you can access the type imported here
+						with <code>&lt;cproject&gt;</code>.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>classpath</td>
+					<td>String</td>
+					<td>The classpath to use when including classes. This is added to PHP's
+						include_path.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>classpathref</td>
+					<td>String</td>
+					<td>Reference to classpath to use when including classes. This is added to PHP's
+						include_path.</td>
+					<td>n/a</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>classpath</li>
+		</ul>
+		<h2>
+			<a name="UpToDateTask"></a>UpToDateTask </h2>
+		<p>UpToDateTask tests if a resource/file is set and sets a certain property to a certain
+			value if it exists.</p>
+		<pre title="Example of how to use AvailableTask">&lt;uptodate property=&quot;propelBuild.notRequired&quot; targetfile=&quot;${deploy}/propelClasses.tgz&quot; &gt;
+  &lt;fileset dir=&quot;${src}/propel&quot;&gt;
+    &lt;include=&quot;**/*.php&quot;/&gt;
+  &lt;/fileset&gt;
+&lt;/uptodate&gt;</pre>
+		<p> sets the property <em>propelBuild.notRequired</em> to true if the
+				<em>${deploy}/propelClasses.tgz</em> file is more up-to-date than any of the PHP
+			class files in the <em>${src}/propel</em> directory. </p>
+		<p>Parameters</p>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>property</td>
+					<td>string</td>
+					<td>Name of the property that is to be set.</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>value</td>
+					<td>String</td>
+					<td>The value the propert is to be set to.</td>
+					<td><em>&quot;true&quot;</em></td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>srcfile</td>
+					<td>String</td>
+					<td>The file to check against target file(s).</td>
+					<td>n/a</td>
+					<td>Yes (or nested <em>fileset</em>)</td>
+				</tr>
+				<tr>
+					<td>targetfile</td>
+					<td>String</td>
+					<td>The file for which we want to determine the status.</td>
+					<td>n/a</td>
+					<td>Yes (or nested<em> mapper</em>)</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Supported Nested Tags</h3>
+		<ul>
+			<li>FileList</li>
+			<li>FileSet</li>
+			<li>Mapper</li>
+		</ul>
+		<p>&nbsp;</p>
+		<h2>
+			<a name="XsltTask"></a>XsltTask </h2>
+		<p> With <em>XsltTask</em>, you can run a XSLT tranformation on an XML file. Actually,
+				<em>XsltTask</em> extends <em>CopyTask</em>, so you can use all the elements allowed
+			there. </p><p><em>XsltTask</em> is implemented by means of the <em>XsltFlter</em> and
+			hence relies on PHP5 XSLT support via (<em>libxslt</em>) which must be available in
+			php5. The <em>XsltTask</em> is equivalent to running command line <b>xsltproc</b> since
+			that is a frontend for libxslt.</p>
+		<h3>Example</h3>
+		<pre>&lt;!-- Transform docbook with an imaginary XSLT file --&gt;
+&lt;xslt todir=&quot;/srv/docs/phing&quot; style=&quot;dbk2html.xslt&quot; &gt;
+  &lt;fileset dir=&quot;.&quot;&gt;
+    &lt;include name=&quot;**/*.xml&quot; /&gt;
+  &lt;/fileset&gt;
+&lt;/xslt&gt;
+</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Default</th>
+					<th>Required</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>style</td>
+					<td>String</td>
+					<td>The path where the Xslt file is located</td>
+					<td>n/a</td>
+					<td>Yes</td>
+				</tr>
+				<tr>
+					<td>resolvedocumentexternals</td>
+					<td>Boolean</td>
+					<td>Whether to resolve entities in the XML document. (see <a
+							href="http://www.php.net/manual/en/class.domdocument.php#domdocument.props.resolveexternals"
+							target="_blank">this link</a> for details)</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>resolvestylesheetexternals</td>
+					<td>Boolean</td>
+					<td>Whether to resolve entities in the stylesheet.</td>
+					<td>false</td>
+					<td>No</td>
+				</tr>
+			</tbody>
+		</table>
+		<p><em>Note:</em> You can also use all the attributes available for <a href="#CopyTask"
+				>CopyTask</a>. </p>
+		<h3>Suppported Nested Elements</h3>
+		<ul>
+			<li>mapper</li>
+			<li>filterchain</li>
+			<li>param</li>
+		</ul>
+		<p>
+			<em>Note:</em> You can use all the elements also available for <a href="#CopyTask"
+				>CopyTask</a>. </p>
+		<p>Additionally, you can use <em>&lt;param&gt;</em> tags with a <em>name</em> and a
+				<em>expression</em> (or <em>value</em> alias) attribute. These parameters are then
+			available from within the xsl style sheet. </p>
+	</body>
+</html>

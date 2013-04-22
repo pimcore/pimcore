@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="TryCatchTest" default="test">
+    <target name="testTryCatchFinally">
+        <trycatch property="prop.testTryCatchFinally">
+            <try>
+                <fail>Tada!</fail>
+            </try>
+
+            <catch>
+                <echo>In &lt;catch&gt;.</echo>
+            </catch>
+
+            <finally>
+                <echo>In &lt;finally&gt;.</echo>
+            </finally>
+        </trycatch>
+        <echo>${prop.testTryCatchFinally}</echo>
+    </target>
+</project>

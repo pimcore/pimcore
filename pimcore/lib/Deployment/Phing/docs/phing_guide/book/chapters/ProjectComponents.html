@@ -1,0 +1,680 @@
+<!--
+-File         $Id: 49ac8c05020743864b31924f487b6e8f3c7c3db5 $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2002, turing
+-Author       alex black, enigma@turingstudio.com
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Phing Guide - Project Components</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="Stylesheet" rev="Stylesheet" href="../css/Documentation.css"
+	type="text/css" media="All" charset="iso-8859-1" />
+</head>
+<body>
+
+	<h1>Project Components</h1>
+
+	<p>This goal of this chapter is to make you familiar with the basic
+		components of a buildfile. After reading this chapter, you should be
+		able to read and understand the basic structure of any buildfile even
+		if you don't know exactly what the individual pieces do.</p>
+	<p>
+		For supplemental reference information, you should see <a
+			href="appendixes/AppendixB-CoreTasks.html">Appendix B</a>, <a
+			href="appendixes/AppendixD-CoreTypes.html">Appendix D</a> and <a
+			href="appendixes/AppendixE-ProjectComponents.html">Appendix E</a>.
+	</p>
+
+	<h2>
+		<a name="Projects"></a>Projects
+	</h2>
+
+	<p>
+		In the structure of a Phing buildfile, there must be exactly one <em>Project</em>
+		defined; the <em>&lt;project&gt; </em>tag is the root element of the
+		buildfile, meaning that everything else in the buildfile is contained
+		within the <em>&lt;project</em> &gt; element.
+	</p>
+
+	<pre title="An Example for the use of Projects">
+&lt;?xml version=&quot;1.0&quot;?&gt;
+
+&lt;project name=&quot;test&quot; description=&quot;Simple test build file&quot; default=&quot;main&quot; &gt;
+  &lt;!-- Everything else here --&gt;
+&lt;/project&gt;
+</pre>
+
+	<p>
+		The listing above shows a sample <em>&lt;project&gt;</em> tag that has
+		all attributes available for Projects. The <em>name</em> and <em>description</em>
+		attributes are fairly self-explanatory; the <em>default</em> attribute
+		specifies the default <em>Target</em> to execute if no target is
+		specified (<a href="#Target">Targets</a> are described below). For a
+		complete reference, see <a
+			href="appendixes/AppendixE-ProjectComponents.html#Project">Appendix
+			E</a>.
+	</p>
+
+	<h2>
+		<a name="Version"></a>Version
+	</h2>
+
+	<p>
+		Since Phing 2.4.2 it is possible to include a <em>phingVersion</em>
+		attribute in the <em>&lt;project&gt;</em> tag. This attribute allows
+		you to define the minimum Phing version required to execute a build
+		file, in order to prevent compatibility issues.
+	</p>
+
+	<pre title="An Example for the use of the Version attribute">
+&lt;?xml version=&quot;1.0&quot;?&gt;
+
+&lt;project name=&quot;test&quot; phingVersion=&quot;2.4.2&quot; &gt;
+  &lt;!-- Everything else here --&gt;
+&lt;/project&gt;
+</pre>
+
+	<h2>
+		<a name="ComponentsInGeneral"></a>Project Components in General
+	</h2>
+
+	<p>
+		Project Components are all the elements found inside a project, i.e.
+		targets, tasks, types, etc. Project components may have attributes and
+		nested tags. Attributes only contain simple values, i.e. strings,
+		integers etc. Nested elements may be complex Phing types (like
+		FileSets) or simple wrapper classes for values with custom keys (see <a
+			href="appendixes/AppendixD-CoreTypes.html#Fileset">FileSet</a> for
+		example).
+	</p>
+
+	<p>
+		Any nested elements must be supported by the class that implements the
+		project component, and because the nested tags are handled by the
+		project component class the same nested tag may have different
+		meanings (and different attributes) depending on the context. So, for
+		example, the nested tag <em>&lt;param</em>.../&gt; within the <em>&lt;phingcall&gt;</em>
+		tag is handled very differently from the<em>&lt;param.../&gt;</em> tag
+		within the <em>&lt;xsltfilter&gt;</em> tag -- in the first case
+		setting project properties, in the second case setting XSLT
+		parameters.
+	</p>
+
+	<h2>
+		<a name="Targets"></a>Targets
+	</h2>
+
+	<p>
+		Targets are collections of project components (but not other targets)
+		that are assigned a unique name within their project. A target
+		generally performs a specific task -- or calls other targets that
+		perform specific tasks -- and therefore a target is a bit like a <em>
+			function</em> (but a target has no return value).
+	</p>
+	<p>
+		Targets may <em>depend</em> on other targets. For example, if target A
+		depends on a target B, then when target A is called to be executed,
+		target B will be executed first. Phing automatically resolves these
+		dependencies. You cannot have circular references like: &quot;target A
+		depends on target B that depends on target A&quot;.
+	</p>
+
+	<p>The following code snippet shows an example of the use of
+		targets.</p>
+
+	<pre title="Simple target">
+&lt;target name=&quot;othertask&quot; depends=&quot;buildpage&quot; description=&quot;Whatever&quot;&gt;
+  &lt;!-- Task calls here --&gt;
+&lt;/target&gt;
+
+&lt;target name=&quot;buildpage&quot; description=&quot;Some description&quot;&gt;
+  &lt;!-- Task calls here --&gt;
+&lt;/target&gt;
+</pre>
+
+	<p>
+		When Phing is asked to execute the <em>othertask</em> target, it will
+		see the dependency and execute <em>buildpage </em>first. Notice that
+		the the dependency task can be defined after the dependent task.
+	</p>
+
+	<h2>
+		<a name="Tasks"></a>Tasks
+	</h2>
+
+	<p>
+		Tasks are responsible for doing the work in Phing. Basically, tasks
+		are the individual actions that your buildfile can perform. For
+		example, tasks exist to copy a file, create a directory, TAR files in
+		a directory. Tasks may also be more complex such as XsltTask which
+		copies a file and transforms the file using XSLT, SmartyTask which
+		does something similar using Smarty templates, or CreoleTask which
+		executes SQL statements against a specified DB. See <a
+			href="appendixes/AppendixB-CoreTasks.html#XsltTask">Appendix B</a>
+		for descriptions of Phing tasks.
+	</p>
+
+	<p>Tasks support parameters in the form of:</p>
+
+	<ul>
+		<li>Simple parameters (i.e. strings) passed as XML attributes, or</li>
+		<li>More complex parameters that are passed by nested tags</li>
+	</ul>
+
+	<p>
+		Simple parameters are basically strings. For example, if you pass a
+		value <em>&quot;A simple string.&quot;</em> as a parameter, it is
+		evaluated as a string and accessible as one. You can also reference
+		properties as described in <a
+			href="GettingStarted.html#PropertyElement">Getting Started</a>.
+	</p>
+
+	<p>
+		<em>Note:</em> There are special values that are not mapped to
+		strings, but to boolean values instead. The values <em>true</em>, <em>false</em>,
+		<em>yes</em>, <em>no</em>, <em>on</em> and <em>off</em> are translated
+		to true/false boolean values.
+	</p>
+
+	<pre title="Simple parameter example">&lt;property name=&quot;myprop&quot; value=&quot;value&quot; override=&quot;true&quot;/&gt;</pre>
+	<p>
+		However, some tasks support more complex data types as parameters.
+		These are passed to the task with <em>nested tags</em>. Consider the
+		following example:
+	</p>
+
+	<pre title="Example for a task with complex parameters">
+&lt;copy&gt;
+  &lt;fileset dir=&quot;.&quot;&gt;
+    &lt;include name=&quot;**&quot; /&gt;
+  &lt;/fileset&gt;
+&lt;/copy&gt;
+</pre>
+
+	<p>
+		Here, <em>CopyTask</em> is passed a complex parameter, a Fileset.
+		Tasks may support multiple complex types in addition to simple
+		parameters. Note that the names of the nested tags used to create the
+		complex types depend on the task implementation. Tasks may support
+		default Phing types (see <a href="#Types">below</a>) or may introduce
+		other types, for example to wrap key/value pairs.
+	</p>
+
+	<p>
+		Refer to <a href="appendixes/AppendixB-CoreTasks.html">Appendix B</a>
+		for a list of system tasks and their parameters.
+	</p>
+
+	<h2>
+		<a name="Types"></a>Types
+	</h2>
+
+	<h3>
+		<a name="TypesBasics"></a>Basics
+	</h3>
+
+	<p>
+		Besides the simple types (strings, integer, booleans) you can use in
+		the parameters of tasks, there are more complex Phing <em>Types</em>.
+		As mentioned above, they are passed to a task by using nesting tags:
+	</p>
+
+	<pre>
+&lt;task&gt;
+  &lt;type /&gt;
+&lt;/task&gt;
+
+&lt;!-- or: --&gt;
+
+&lt;task&gt;
+  &lt;type1&gt;
+    &lt;subtype1&gt;
+      &lt;!-- etc. --&gt;
+    &lt;/subtype1&gt;
+  &lt;/type1&gt;
+&lt;/task&gt;
+</pre>
+
+	<p>Note that types may consist of multiple nested tags -- and
+		multiple levels of nested tags, as you can see in the second task call
+		above.</p>
+
+	<h3>
+		<a name="TypesReferencing"></a>Referencing Types
+	</h3>
+
+	<p>
+		An additional fact about types you should notice is the possibility of
+		<em>referencing</em> type instances, i.e. you define your type
+		somewhere in your build file and assign an id to it. Later, you can
+		refer to that type by the id you assigned. Example:
+	</p>
+
+	<pre>
+&lt;project&gt;
+  &lt;fileset id=&quot;foo&quot;&gt;
+    &lt;include name=&quot;*.php&quot; /&gt;
+  &lt;/fileset&gt;
+
+  &lt;!-- Target that uses the type --&gt;
+  &lt;target name=&quot;foo&quot; &gt;
+    &lt;copy todir=&quot;/tmp&quot;&gt;
+      &lt;fileset refid=&quot;foo&quot; /&gt;
+    &lt;/copy&gt;
+  &lt;/target&gt;
+&lt;/project&gt;
+</pre>
+
+	<p>
+		As you can see, the type instance is assigned an id with the <em>id</em>
+		attribute and later on called by passing a plain <em>fileset</em> tag
+		to <em>CopyTask</em> that only contains the <em>refid</em> attribute.
+	</p>
+
+	<h2>
+		<a name="BasicTypes"></a>Basic Types
+	</h2>
+
+	<p>
+		The following section gives you a quick introduction into the basic
+		Phing types. For a complete reference see <a
+			href="appendixes/AppendixD-CoreTypes.html">Appendix D</a>.
+	</p>
+
+	<h3>
+		<a name="FileSet"></a>FileSet
+	</h3>
+
+	<p>FileSets are groups of files. You can include or exclude
+		specific files and patterns to/from a FileSet. The use of patterns is
+		explained below. For a start, look at the following example:</p>
+
+	<pre>
+&lt;fileset dir=&quot;/tmp&quot; id=&quot;fileset1&quot;&gt;
+  &lt;include name=&quot;sometemp/file.txt&quot; /&gt;
+  &lt;include name=&quot;othertemp/**&quot; /&gt;
+  &lt;exclude name=&quot;othertemp/file.txt&quot; /&gt;
+&lt;/fileset&gt;
+
+&lt;fileset dir=&quot;/home&quot; id=&quot;fileset2&quot;&gt;
+  &lt;include name=&quot;foo/**&quot; /&gt;
+  &lt;include name=&quot;bar/**/*.php&quot; /&gt;
+  &lt;exclude name=&quot;foo/tmp/**&quot; /&gt;
+&lt;/fileset&gt;
+</pre>
+
+	<p>
+		The use of patterns is quite straightforward: If you simply want to
+		match a part of a filename or dirname, you use <strong>*</strong>. If
+		you want to include multiple directories and/or files, you use <strong>**</strong>.
+		This way, filesets provide an easy but powerful way to include files.
+	</p>
+
+	<h3>
+		<a name="FileList"></a>FileList
+	</h3>
+	<p>FileLists, like FileSets, are collections of files; however, a
+		FileList is an explicitly defined list of files -- and the files don't
+		necessarily have to exist on the filesystem.</p>
+	<p>
+		Besides being able to refer to nonexistent files, another thing that
+		FileLists allow you to do is specify files <em>in a certain order</em>.
+		Files in FileSets are ordered based on the OS-level directory listing
+		functions, in some cases you may want to specify a list of files to be
+		processed in a certain order -- e.g. when concatenating files using
+		the <em>&lt;append&gt;</em> task.
+	</p>
+	<pre title="FileList example">&lt;filelist dir=&quot;base/&quot; files=&quot;file1.txt,file2.txt,file3.txt&quot;/&gt;
+
+&lt;!-- OR: --&gt;
+&lt;filelist dir=&quot;basedir/&quot; listfile=&quot;files_to_process.txt&quot;/&gt;</pre>
+
+	<h4>
+		<a name="FilterchainsFilters"></a>FilterChains and Filters
+	</h4>
+
+	<p>
+		FilterChains can be compared to Unix pipes. Unix pipes add a great
+		deal of flexibility to command line operations; for example, if you
+		wanted to copy just those lines that contained the string <em>blee</em>
+		from the first 10 lines of a file called <em>foo</em> to a file called
+		<em>bar</em>, you could do:
+	</p>
+
+	<pre>
+cat foo | head -n10 | grep blee &gt; bar
+</pre>
+
+	<p>
+		Something like this is not possible with the tasks and types that we
+		have learned about thus far, and this is where the incredible
+		usefulness of <em>FilterChains</em> becomes apparent. They emulate
+		Unix pipes and provide a powerful dimension of file/stream
+		manipulation for the tasks that support them.
+	</p>
+
+	<p>
+		FilterChain usage is quite straightforward: you pass the complex Phing
+		type <em>filterchain</em> to a task that supports FilterChains and add
+		individual filters to the FilterChain. In the course of executing the
+		task, the filters are applied (in the order in which they appear in
+		the XML) to the contents of the files that are being manipulated by
+		your task.
+	</p>
+
+	<pre>
+&lt;filterchain&gt;
+  &lt;replacetokens&gt;
+    &lt;token key=&quot;BC_PATH&quot; value=&quot;${top.builddir}/&quot;/&gt;
+    &lt;token key=&quot;BC_PATH_USER&quot; value=&quot;${top.builddir}/testsite/user/${lang}/&quot;/&gt;
+  &lt;/replacetokens&gt;
+
+  &lt;filterreader classname=&quot;phing.filters.TailFilter&quot;&gt;
+    &lt;param name=&quot;lines&quot; value=&quot;10&quot;/&gt;
+  &lt;/filterreader&gt;
+&lt;/filterchain&gt;
+</pre>
+	<p>
+		The code listing above shows you some example of how to use filter
+		chains. For a complete reference see <a
+			href="appendixes/AppendixD-CoreTypes.html#Filters">Appendix D</a>.
+		This filter chain would replace all occurences of <em>BC_PATH</em> and
+		<em>BC_PATH_USER</em> with the values assigned to them in lines 4 and
+		5. Additionally, it will only return the last 10 lines of the files.
+	</p>
+	<p>Notice above that FilterChain filters have a
+		&quot;shorthand&quot; notation and a long, generic notation. Most
+		filters can be described using both of these forms:</p>
+	<pre title="Filter shorthand / longhand comparison">&lt;replacetokens&gt;
+  &lt;token key=&quot;BC_PATH&quot; value=&quot;${top.builddir}/&quot;/&gt;
+  &lt;token key=&quot;BC_PATH_USER&quot; value=&quot;${top.builddir}/testsite/user/${lang}/&quot;/&gt;
+&lt;/replacetokens&gt;
+
+&lt;!-- OR: --&gt;
+
+&lt;filterreader classname=&quot;phing.filters.ReplaceTokens&quot;&gt;
+  &lt;param type=&quot;token&quot; name=&quot;BC_PATH&quot; value=&quot;${top.builddir}/&quot;/&gt;
+  &lt;param type=&quot;token&quot; name=&quot;BC_PATH&quot; value=&quot;${top.builddir}/testsite/user/${lang}/&quot;/&gt;
+&lt;/filterreader&gt;
+</pre>
+	<p>
+		As the pipe concept in Unix, the filter concept is quite complex but
+		powerful. To get a better understanding of different filters and how
+		they can be used, take a look at any of the many uses of FilterChains
+		in the build files for the binarycloud <a href="Bibliography.html#bc">[bc]</a>
+		project.
+	</p>
+
+	<h4>
+		<a name="Mappers"></a>File Mappers
+	</h4>
+
+	<p>
+		With FilterChains and filters provide a powerful tool for changing <em>contents</em>
+		of files, Mappers provide a powerful tool for changing the <em>names</em>
+		of files.
+	</p>
+
+	<p>
+		To use a Mapper, you must specify a pattern to match on and a
+		replacement pattern that describes how the matched pattern should be
+		transformed. The simplest form is basically no different from the DOS
+		<em>copy</em> command:
+	</p>
+
+	<pre>
+copy *.bat *.txt
+</pre>
+
+	<p>
+		In Phing this is the <em>glob</em> Mapper:
+	</p>
+	<pre title="">&lt;mapper type=&quot;glob&quot; from=&quot;*.bat&quot; to=&quot;*.txt&quot;/&gt;</pre>
+	<p>Phing also provides support for more complex mapping using
+		regular expressions:</p>
+
+	<pre>
+&lt;mapper type=&quot;regexp&quot; from=&quot;^(.*)\.conf\.xml$$&quot; to=&quot;\1.php&quot;/&gt;
+</pre>
+
+	<p>Consider the example below to see how Mappers can be used in a
+		build file. This example includes some of the other concepts
+		introduced in this chapter, such as FilterChains and FileSets. If you
+		don't understand everything, don't worry. The important point is that
+		Mappers are types too, which can be used in tasks that support them.</p>
+	<pre>&lt;copy&gt;
+  &lt;fileset dir="."&gt;
+    &lt;include name="*.ent.xml" /&gt;
+  &lt;/fileset&gt;
+
+  &lt;mapper type="regexp" from="^(.*)\.ent\.xml$" to="\1.php"/&gt;
+
+  &lt;filterchain&gt;
+    &lt;filterreader classname="phing.filters.XsltFilter"&gt;
+      &lt;param name="style" value="ent2php.xsl" /&gt;
+    &lt;/filterreader&gt;
+  &lt;/filterchain&gt;
+&lt;/copy&gt;
+</pre>
+
+	<p>
+		For a complete reference, see <a
+			href="appendixes/AppendixD-CoreTypes.html#Mappers">Appendix D</a>.
+	</p>
+
+	<h2>
+		<a name="Conditions">Conditions</a>
+	</h2>
+
+	<p>
+		Conditions are nested elements of the <a
+			href="appendixes/AppendixB-CoreTasks.html#ConditionTask">condition</a>
+		and <a href="appendixes/AppendixB-CoreTasks.html#IfTask">if</a> tasks.
+	</p>
+
+	<h4>not</h4>
+	<p>
+		The
+		<code>&lt;not&gt;</code>
+		element expects exactly one other condition to be nested into this
+		element, negating the result of the condition. It doesn't have any
+		attributes and accepts all nested elements of the condition task as
+		nested elements as well.
+	</p>
+
+	<h4>and</h4>
+	<p>
+		The
+		<code>&lt;and&gt;</code>
+		element doesn't have any attributes and accepts an arbitrary number of
+		conditions as nested elements. This condition is true if all of its
+		contained conditions are, conditions will be evaluated in the order
+		they have been specified in the build file.
+	</p>
+
+	<p>
+		The
+		<code>&lt;and&gt;</code>
+		condition has the same shortcut semantics as the &amp;&amp; operator
+		in some programming languages, as soon as one of the nested conditions
+		is false, no other condition will be evaluated.
+	</p>
+
+	<h4>or</h4>
+	<p>
+		The
+		<code>&lt;or&gt;</code>
+		element doesn't have any attributes and accepts an arbitrary number of
+		conditions as nested elements. This condition is true if at least one
+		of its contained conditions is, conditions will be evaluated in the
+		order they have been specified in the build file.
+	</p>
+
+	<p>
+		The
+		<code>&lt;or&gt;</code>
+		condition has the same shortcut semantics as the || operator in some
+		programming languages, as soon as one of the nested conditions is
+		true, no other condition will be evaluated.
+	</p>
+
+	<h4>os</h4>
+	<p>Test whether the current operating system is of a given type.</p>
+
+	<table border="1" cellpadding="2" cellspacing="0">
+		<tr>
+			<td valign="top"><b>Attribute</b></td>
+			<td valign="top"><b>Description</b></td>
+			<td align="center" valign="top"><b>Required</b></td>
+		</tr>
+		<tr>
+			<td valign="top">family</td>
+			<td valign="top">The name of the operating system family to
+				expect.</td>
+			<td valign="top" align="center">Yes</td>
+		</tr>
+	</table>
+	<p>Supported values for the family attribute are:</p>
+	<ul>
+		<li>windows (for all versions of Microsoft Windows)</li>
+		<li>mac (for all Apple Macintosh systems)</li>
+		<li>unix (for all Unix and Unix-like operating systems)</li>
+	</ul>
+
+	<h4>equals</h4>
+	<p>Tests whether the two given Strings are identical</p>
+	<table border="1" cellpadding="2" cellspacing="0">
+		<tr>
+			<td valign="top"><b>Attribute</b></td>
+			<td valign="top"><b>Description</b></td>
+			<td align="center" valign="top"><b>Required</b></td>
+		</tr>
+		<tr>
+			<td valign="top">arg1</td>
+			<td valign="top">First string to test.</td>
+			<td valign="top" align="center">Yes</td>
+		</tr>
+		<tr>
+			<td valign="top">arg2</td>
+			<td valign="top">Second string to test.</td>
+			<td valign="top" align="center">Yes</td>
+		</tr>
+		<tr>
+			<td valign="top">casesensitive</td>
+			<td valign="top">Perform a case sensitive comparision. Default
+				is true.</td>
+			<td valign="top" align="center">No</td>
+		</tr>
+		<tr>
+			<td valign="top">trim</td>
+			<td valign="top">Trim whitespace from arguments before comparing
+				them. Default is false.</td>
+			<td valign="top" align="center">No</td>
+		</tr>
+	</table>
+
+	<h4>isset</h4>
+	<p>Test whether a given property has been set in this project.</p>
+	<table border="1" cellpadding="2" cellspacing="0">
+		<tr>
+			<td valign="top"><b>Attribute</b></td>
+			<td valign="top"><b>Description</b></td>
+			<td align="center" valign="top"><b>Required</b></td>
+		</tr>
+		<tr>
+			<td valign="top">property</td>
+			<td valign="top">The name of the property to test.</td>
+			<td valign="top" align="center">Yes</td>
+		</tr>
+	</table>
+
+	<h4>contains</h4>
+	<p>Tests whether a string contains another one.</p>
+	<table border="1" cellpadding="2" cellspacing="0">
+		<tr>
+			<td valign="top"><b>Attribute</b></td>
+			<td valign="top"><b>Description</b></td>
+			<td align="center" valign="top"><b>Required</b></td>
+		</tr>
+		<tr>
+			<td valign="top">string</td>
+			<td valign="top">The string to search in.</td>
+			<td valign="top" align="center">Yes</td>
+		</tr>
+		<tr>
+			<td valign="top">substring</td>
+			<td valign="top">The string to search for.</td>
+			<td valign="top" align="center">Yes</td>
+		</tr>
+		<tr>
+			<td valign="top">casesensitive</td>
+			<td valign="top">Perform a case sensitive comparision. Default
+				is true.</td>
+			<td valign="top" align="center">No</td>
+		</tr>
+	</table>
+
+	<h4>istrue</h4>
+	<p>Tests whether a string evals to true.</p>
+
+	<table border="1" cellpadding="2" cellspacing="0">
+		<tr>
+			<td valign="top"><b>Attribute</b></td>
+			<td valign="top"><b>Description</b></td>
+			<td align="center" valign="top"><b>Required</b></td>
+		</tr>
+		<tr>
+			<td valign="top">value</td>
+			<td valign="top">value to test</td>
+			<td valign="top" align="center">Yes</td>
+		</tr>
+	</table>
+	<pre>
+    &lt;istrue value=&quot;${someproperty}&quot;/&gt;
+    &lt;istrue value=&quot;false&quot;/&gt;
+</pre>
+
+	<h4>isfalse</h4>
+	<p>Tests whether a string evals to not true, the negation of
+		&lt;istrue&gt;</p>
+	<table border="1" cellpadding="2" cellspacing="0">
+		<tr>
+			<td valign="top"><b>Attribute</b></td>
+			<td valign="top"><b>Description</b></td>
+			<td align="center" valign="top"><b>Required</b></td>
+		</tr>
+		<tr>
+			<td valign="top">value</td>
+			<td valign="top">value to test</td>
+			<td valign="top" align="center">Yes</td>
+		</tr>
+	</table>
+	<pre>
+    &lt;isfalse value=&quot;${someproperty}&quot;/&gt;
+    &lt;isfalse value=&quot;false&quot;/&gt;
+</pre>
+
+	<h4>referenceexists</h4>
+	<p>Tests whether a specified reference exists.</p>
+	<table border="1" cellpadding="2" cellspacing="0">
+		<tr>
+			<td valign="top"><b>Attribute</b></td>
+			<td valign="top"><b>Description</b></td>
+			<td align="center" valign="top"><b>Required</b></td>
+		</tr>
+		<tr>
+			<td valign="top">ref</td>
+			<td valign="top">reference to test for</td>
+			<td valign="top" align="center">Yes</td>
+		</tr>
+	</table>
+	<pre>
+    &lt;referenceexists ref=&quot;${someid}&quot;/&gt;
+</pre>
+    
+    <h4>available</h4>
+    <p>This condition is identical to the <a href="appendixes/AppendixB-CoreTasks.html#AvailableTask">Available</a> task, all attributes and nested elements of that task are supported, the property and value attributes are redundant and will be ignored.</p>
+</body>
+</html>

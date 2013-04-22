@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<project name="SvnInfoTest" default="invalid">
+
+    <property name="tmp.dir" value="./../../../../tmp/svn" />
+    <property name="repo.url" value="https://github.com/phingofficial/phing/tags/2.4.12/etc"/>
+
+    <resolvepath propertyName="tmp.dir.resolved" file="${tmp.dir}" />
+
+    <target name="invalid">
+        <fail>This file should only be run via a testcase</fail>
+    </target>
+
+    <target name="getUrl" description="Get the url">
+        <svninfo
+            repositoryurl="${repo.url}"
+            element="url"
+            propertyname="svn.url" />
+    </target>
+
+    <target name="getAuthor" description="Get the author">
+        <svninfo
+            repositoryurl="${repo.url}"
+            element="commit"
+            subelement="author"
+            propertyname="svn.author" />
+    </target>
+
+</project>

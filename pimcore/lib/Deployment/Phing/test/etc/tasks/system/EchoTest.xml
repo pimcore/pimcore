@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="EchoTaskTest" default="test">
+    <target name="testPropertyMsg">
+        <echo msg="This is a msg"/>
+    </target>
+
+    <target name="testPropertyMessage">
+        <echo msg="This is a message"/>
+    </target>
+
+    <target name="testInlineText">
+        <echo>This is a nested inline text message</echo>
+    </target>
+
+    <target name="testFileset">
+        <echo>
+            <fileset dir="./">
+                <include name="**"/>
+            </fileset>
+        </echo>
+    </target>
+
+    <target name="testFilesetMsg">
+        <echo msg="foo">
+            <fileset dir="./">
+                <include name="**"/>
+            </fileset>
+        </echo>
+    </target>
+
+    <target name="testFilesetInline">
+        <echo>
+            <fileset dir="./">
+                <include name="**"/>
+            </fileset>
+            foo
+        </echo>
+    </target>
+</project>

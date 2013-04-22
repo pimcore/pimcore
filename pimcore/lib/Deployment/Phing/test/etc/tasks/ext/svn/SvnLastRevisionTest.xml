@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<project name="SvnLastRevisionTest" default="invalid">
+
+    <property name="repo.url" value="https://github.com/phingofficial/phing/tags/2.4.12/etc"/>
+
+    <target name="invalid">
+        <fail>This file should only be run via a testcase</fail>
+    </target>
+
+    <target name="getLastRevision" description="Get the last revision of the
+    repository (should be 1560)">
+        <svnlastrevision
+            lastChanged="true"
+            repositoryurl="${repo.url}"
+            propertyname="svn.lastrevision" />
+    </target>
+
+</project>

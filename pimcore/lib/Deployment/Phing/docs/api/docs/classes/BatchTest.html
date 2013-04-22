@@ -1,0 +1,325 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \BatchTest</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method___construct" title="__construct :: Create a new batchtest instance"><span class="description">Create a new batchtest instance</span><pre>__construct()</pre></a></li>
+<li class="method public "><a href="#method_addFileSet" title="addFileSet :: Add a new fileset containing the XML results to aggregate"><span class="description">Add a new fileset containing the XML results to aggregate</span><pre>addFileSet()</pre></a></li>
+<li class="method public "><a href="#method_addToTestSuite" title="addToTestSuite :: Add the tests in this batchtest to a test suite"><span class="description">Add the tests in this batchtest to a test suite</span><pre>addToTestSuite()</pre></a></li>
+<li class="method public "><a href="#method_createClasspath" title="createClasspath :: Creates a new Path object"><span class="description">Creates a new Path object</span><pre>createClasspath()</pre></a></li>
+<li class="method public "><a href="#method_getClasspath" title="getClasspath :: Returns the classpath"><span class="description">Returns the classpath</span><pre>getClasspath()</pre></a></li>
+<li class="method public "><a href="#method_getTestSuite" title="getTestSuite :: Returns a testsuite containing all the tests in this batch"><span class="description">Returns a testsuite containing all the tests in this batch</span><pre>getTestSuite()</pre></a></li>
+<li class="method public "><a href="#method_setClasspath" title="setClasspath :: Sets the classpath"><span class="description">Sets the classpath</span><pre>setClasspath()</pre></a></li>
+<li class="method public "><a href="#method_setExclude" title="setExclude :: Sets the classes to exclude"><span class="description">Sets the classes to exclude</span><pre>setExclude()</pre></a></li>
+<li class="method public "><a href="#method_setName" title="setName :: Sets the name of the batchtest/suite"><span class="description">Sets the name of the batchtest/suite</span><pre>setName()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul><li class="method protected "><a href="#method_elements" title="elements :: Returns an array of test cases and test suites that are declared
+by the files included by the filesets"><span class="description">Returns an array of test cases and test suites that are declared
+by the files included by the filesets</span><pre>elements()</pre></a></li></ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul>
+<li class="method private "><a href="#method_filterTests" title="filterTests :: Filters an array of classes, removes all classes that are not test cases or test suites,
+or classes that are declared abstract"><span class="description">Filters an array of classes, removes all classes that are not test cases or test suites,
+or classes that are declared abstract</span><pre>filterTests()</pre></a></li>
+<li class="method private "><a href="#method_getFilenames" title="getFilenames :: Iterate over all filesets and return the filename of all files."><span class="description">Iterate over all filesets and return the filename of all files.</span><pre>getFilenames()</pre></a></li>
+<li class="method private "><a href="#method_isTestCase" title="isTestCase :: Checks wheter $input is a PHPUnit Test"><span class="description">Checks wheter $input is a PHPUnit Test</span><pre>isTestCase()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul></ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul><li class="property protected "><a href="#property_name" title="$name :: name of the batchtest/suite"><span class="description"></span><pre>$name</pre></a></li></ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul>
+<li class="property private "><a href="#property_classpath" title="$classpath :: the classpath to use with Phing::__import() calls"><span class="description"></span><pre>$classpath</pre></a></li>
+<li class="property private "><a href="#property_excludeClasses" title="$excludeClasses :: names of classes to exclude"><span class="description"></span><pre>$excludeClasses</pre></a></li>
+<li class="property private "><a href="#property_filesets" title="$filesets :: the list of filesets containing the testcase filename rules"><span class="description"></span><pre>$filesets</pre></a></li>
+<li class="property private "><a href="#property_project" title="$project :: the reference to the project"><span class="description"></span><pre>$project</pre></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\BatchTest"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/BatchTest.html">BatchTest</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">Scans a list of files given by the fileset attribute, extracts valid test cases</p>
+<div class="details">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>author</th>
+<td><a href="mailto:mrook@php.net">Michiel Rook</a></td>
+</tr>
+<tr>
+<th>version</th>
+<td>$Id: 4067d915614ff7a864c31f19549bcf6a96c0f92d $</td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.tasks.ext.phpunit.html">phing.tasks.ext.phpunit</a></td>
+</tr>
+<tr>
+<th>since</th>
+<td>2.1.0</td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___construct"></a><div class="element clickable method public method___construct" data-toggle="collapse" data-target=".method___construct .collapse">
+<h2>Create a new batchtest instance</h2>
+<pre>__construct(\Project $project) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$project</h4>
+<code><a href="../classes/Project.html">\Project</a></code><p>the project it depends on.</p></div>
+</div></div>
+</div>
+<a id="method_addFileSet"></a><div class="element clickable method public method_addFileSet" data-toggle="collapse" data-target=".method_addFileSet .collapse">
+<h2>Add a new fileset containing the XML results to aggregate</h2>
+<pre>addFileSet(\FileSet $fileset) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$fileset</h4>
+<code><a href="../classes/FileSet.html">\FileSet</a></code><p>the new fileset containing XML results.</p></div>
+</div></div>
+</div>
+<a id="method_addToTestSuite"></a><div class="element clickable method public method_addToTestSuite" data-toggle="collapse" data-target=".method_addToTestSuite .collapse">
+<h2>Add the tests in this batchtest to a test suite</h2>
+<pre>addToTestSuite(\PHPUnit_Framework_TestSuite $suite) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$suite</h4>
+<code>\PHPUnit_Framework_TestSuite</code>
+</div>
+</div></div>
+</div>
+<a id="method_createClasspath"></a><div class="element clickable method public method_createClasspath" data-toggle="collapse" data-target=".method_createClasspath .collapse">
+<h2>Creates a new Path object</h2>
+<pre>createClasspath() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getClasspath"></a><div class="element clickable method public method_getClasspath" data-toggle="collapse" data-target=".method_getClasspath .collapse">
+<h2>Returns the classpath</h2>
+<pre>getClasspath() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getTestSuite"></a><div class="element clickable method public method_getTestSuite" data-toggle="collapse" data-target=".method_getTestSuite .collapse">
+<h2>Returns a testsuite containing all the tests in this batch</h2>
+<pre>getTestSuite() : \PHPUnit_Framework_TestSuite</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>deprecated</th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>\PHPUnit_Framework_TestSuite</code></div>
+</div></div>
+</div>
+<a id="method_setClasspath"></a><div class="element clickable method public method_setClasspath" data-toggle="collapse" data-target=".method_setClasspath .collapse">
+<h2>Sets the classpath</h2>
+<pre>setClasspath(\Path $classpath) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$classpath</h4></div>
+</div></div>
+</div>
+<a id="method_setExclude"></a><div class="element clickable method public method_setExclude" data-toggle="collapse" data-target=".method_setExclude .collapse">
+<h2>Sets the classes to exclude</h2>
+<pre>setExclude($exclude) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$exclude</h4></div>
+</div></div>
+</div>
+<a id="method_setName"></a><div class="element clickable method public method_setName" data-toggle="collapse" data-target=".method_setName .collapse">
+<h2>Sets the name of the batchtest/suite</h2>
+<pre>setName($name) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$name</h4></div>
+</div></div>
+</div>
+<a id="method_elements"></a><div class="element clickable method protected method_elements" data-toggle="collapse" data-target=".method_elements .collapse">
+<h2>Returns an array of test cases and test suites that are declared
+by the files included by the filesets</h2>
+<pre>elements() : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code>an array of tests.</div>
+</div></div>
+</div>
+<a id="method_filterTests"></a><div class="element clickable method private method_filterTests" data-toggle="collapse" data-target=".method_filterTests .collapse">
+<h2>Filters an array of classes, removes all classes that are not test cases or test suites,
+or classes that are declared abstract</h2>
+<pre>filterTests($input) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$input</h4></div>
+</div></div>
+</div>
+<a id="method_getFilenames"></a><div class="element clickable method private method_getFilenames" data-toggle="collapse" data-target=".method_getFilenames .collapse">
+<h2>Iterate over all filesets and return the filename of all files.</h2>
+<pre>getFilenames() : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code>an array of filenames</div>
+</div></div>
+</div>
+<a id="method_isTestCase"></a><div class="element clickable method private method_isTestCase" data-toggle="collapse" data-target=".method_isTestCase .collapse">
+<h2>Checks wheter $input is a PHPUnit Test</h2>
+<pre>isTestCase($input) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$input</h4></div>
+</div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_name"> </a><div class="element clickable property protected property_name" data-toggle="collapse" data-target=".property_name .collapse">
+<h2></h2>
+<pre>$name </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_classpath"> </a><div class="element clickable property private property_classpath" data-toggle="collapse" data-target=".property_classpath .collapse">
+<h2></h2>
+<pre>$classpath </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_excludeClasses"> </a><div class="element clickable property private property_excludeClasses" data-toggle="collapse" data-target=".property_excludeClasses .collapse">
+<h2></h2>
+<pre>$excludeClasses </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_filesets"> </a><div class="element clickable property private property_filesets" data-toggle="collapse" data-target=".property_filesets .collapse">
+<h2></h2>
+<pre>$filesets </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_project"> </a><div class="element clickable property private property_project" data-toggle="collapse" data-target=".property_project .collapse">
+<h2></h2>
+<pre>$project </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:35+01:00.<br></footer></div>
+</div>
+</body>
+</html>

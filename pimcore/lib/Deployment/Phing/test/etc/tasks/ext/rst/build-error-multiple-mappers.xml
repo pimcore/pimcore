@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="test" basedir="." default="testMultipleMappers">
+	<target name="testMultipleMappers" description="try to use multiple mappers, which fails">
+		<rST>
+			<fileset dir=".">
+				<include name="files/single.rst" />
+			</fileset>
+			<mapper type="glob" from="*.rst" to="*.my.html" />
+			<mapper type="glob" from="*.rst" to="*.foo.html" />
+		</rST>
+	</target>
+
+</project>

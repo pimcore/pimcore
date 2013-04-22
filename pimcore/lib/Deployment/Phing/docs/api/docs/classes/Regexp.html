@@ -1,0 +1,350 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \Regexp</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method___construct" title="__construct :: Constructor sets the regex engine to use (preg by default)."><span class="description">Constructor sets the regex engine to use (preg by default).</span><pre>__construct()</pre></a></li>
+<li class="method public "><a href="#method_getGroup" title="getGroup :: Get specific matched group."><span class="description">Get specific matched group.</span><pre>getGroup()</pre></a></li>
+<li class="method public "><a href="#method_getGroups" title="getGroups :: Get array of matched groups."><span class="description">Get array of matched groups.</span><pre>getGroups()</pre></a></li>
+<li class="method public "><a href="#method_getIgnoreCase" title="getIgnoreCase :: Gets whether the regexp matching is case insensitive."><span class="description">Gets whether the regexp matching is case insensitive.</span><pre>getIgnoreCase()</pre></a></li>
+<li class="method public "><a href="#method_getModifiers" title="getModifiers :: Gets pattern modifiers."><span class="description">Gets pattern modifiers.</span><pre>getModifiers()</pre></a></li>
+<li class="method public "><a href="#method_getMultiline" title="getMultiline :: Gets whether regexp is to be applied in multiline mode."><span class="description">Gets whether regexp is to be applied in multiline mode.</span><pre>getMultiline()</pre></a></li>
+<li class="method public "><a href="#method_getPattern" title="getPattern :: Gets pattern to use for matching."><span class="description">Gets pattern to use for matching.</span><pre>getPattern()</pre></a></li>
+<li class="method public "><a href="#method_getReplace" title="getReplace :: Gets replacement string."><span class="description">Gets replacement string.</span><pre>getReplace()</pre></a></li>
+<li class="method public "><a href="#method_matches" title="matches :: Performs match of specified pattern against $subject."><span class="description">Performs match of specified pattern against $subject.</span><pre>matches()</pre></a></li>
+<li class="method public "><a href="#method_replace" title="replace :: Performs replacement of specified pattern and replacement strings."><span class="description">Performs replacement of specified pattern and replacement strings.</span><pre>replace()</pre></a></li>
+<li class="method public "><a href="#method_setIgnoreCase" title="setIgnoreCase :: Sets whether the regexp matching is case insensitive."><span class="description">Sets whether the regexp matching is case insensitive.</span><pre>setIgnoreCase()</pre></a></li>
+<li class="method public "><a href="#method_setModifiers" title="setModifiers :: Sets pattern modifiers for regex engine"><span class="description">Sets pattern modifiers for regex engine</span><pre>setModifiers()</pre></a></li>
+<li class="method public "><a href="#method_setMultiline" title="setMultiline :: Sets whether regexp should be applied in multiline mode."><span class="description">Sets whether regexp should be applied in multiline mode.</span><pre>setMultiline()</pre></a></li>
+<li class="method public "><a href="#method_setPattern" title="setPattern :: Sets pattern to use for matching."><span class="description">Sets pattern to use for matching.</span><pre>setPattern()</pre></a></li>
+<li class="method public "><a href="#method_setReplace" title="setReplace :: Sets replacement string."><span class="description">Sets replacement string.</span><pre>setReplace()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul></ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul>
+<li class="property private "><a href="#property_engine" title="$engine :: The regex engine -- e.g."><span class="description"></span><pre>$engine</pre></a></li>
+<li class="property private "><a href="#property_groups" title="$groups :: Matching groups found."><span class="description"></span><pre>$groups</pre></a></li>
+<li class="property private "><a href="#property_pattern" title="$pattern :: Pattern to match."><span class="description"></span><pre>$pattern</pre></a></li>
+<li class="property private "><a href="#property_replace" title="$replace :: Replacement pattern."><span class="description"></span><pre>$replace</pre></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\Regexp"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/Regexp.html">Regexp</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">A factory class for regex functions.</p>
+<div class="details">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>author</th>
+<td><a href="mailto:hans@xmpl.org">Hans Lellelid</a></td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.util.regexp.html">phing.util.regexp</a></td>
+</tr>
+<tr>
+<th>version</th>
+<td>$Id$</td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___construct"></a><div class="element clickable method public method___construct" data-toggle="collapse" data-target=".method___construct .collapse">
+<h2>Constructor sets the regex engine to use (preg by default).</h2>
+<pre>__construct($engineType) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$engineType</h4></div>
+</div></div>
+</div>
+<a id="method_getGroup"></a><div class="element clickable method public method_getGroup" data-toggle="collapse" data-target=".method_getGroup .collapse">
+<h2>Get specific matched group.</h2>
+<pre>getGroup(integer $idx) : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$idx</h4>
+<code>integer</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>specified group or NULL if group is not set.</div>
+</div></div>
+</div>
+<a id="method_getGroups"></a><div class="element clickable method public method_getGroups" data-toggle="collapse" data-target=".method_getGroups .collapse">
+<h2>Get array of matched groups.</h2>
+<pre>getGroups() : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code>Matched groups</div>
+</div></div>
+</div>
+<a id="method_getIgnoreCase"></a><div class="element clickable method public method_getIgnoreCase" data-toggle="collapse" data-target=".method_getIgnoreCase .collapse">
+<h2>Gets whether the regexp matching is case insensitive.</h2>
+<pre>getIgnoreCase() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_getModifiers"></a><div class="element clickable method public method_getModifiers" data-toggle="collapse" data-target=".method_getModifiers .collapse">
+<h2>Gets pattern modifiers.</h2>
+<pre>getModifiers() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Subsequent call to engines getModifiers() filters out duplicates
+i.e. if i is provided in $mods, and setIgnoreCase(true), "i"
+modifier would be included only once</p></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_getMultiline"></a><div class="element clickable method public method_getMultiline" data-toggle="collapse" data-target=".method_getMultiline .collapse">
+<h2>Gets whether regexp is to be applied in multiline mode.</h2>
+<pre>getMultiline() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_getPattern"></a><div class="element clickable method public method_getPattern" data-toggle="collapse" data-target=".method_getPattern .collapse">
+<h2>Gets pattern to use for matching.</h2>
+<pre>getPattern() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>The pattern to match on.</div>
+</div></div>
+</div>
+<a id="method_getReplace"></a><div class="element clickable method public method_getReplace" data-toggle="collapse" data-target=".method_getReplace .collapse">
+<h2>Gets replacement string.</h2>
+<pre>getReplace() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>The pattern to replace matches with.</div>
+</div></div>
+</div>
+<a id="method_matches"></a><div class="element clickable method public method_matches" data-toggle="collapse" data-target=".method_matches .collapse">
+<h2>Performs match of specified pattern against $subject.</h2>
+<pre>matches(string $subject) : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$subject</h4>
+<code>string</code><p>The subject, on which to perform matches.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>Whether or not pattern matches subject string passed.</div>
+</div></div>
+</div>
+<a id="method_replace"></a><div class="element clickable method public method_replace" data-toggle="collapse" data-target=".method_replace .collapse">
+<h2>Performs replacement of specified pattern and replacement strings.</h2>
+<pre>replace(string $subject) : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$subject</h4>
+<code>string</code><p>Text on which to perform replacement.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>subject after replacement has been performed.</div>
+</div></div>
+</div>
+<a id="method_setIgnoreCase"></a><div class="element clickable method public method_setIgnoreCase" data-toggle="collapse" data-target=".method_setIgnoreCase .collapse">
+<h2>Sets whether the regexp matching is case insensitive.</h2>
+<pre>setIgnoreCase(boolean $bit) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>(default is false -- i.e. case sensisitive)</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$bit</h4>
+<code>boolean</code>
+</div>
+</div></div>
+</div>
+<a id="method_setModifiers"></a><div class="element clickable method public method_setModifiers" data-toggle="collapse" data-target=".method_setModifiers .collapse">
+<h2>Sets pattern modifiers for regex engine</h2>
+<pre>setModifiers(string $mods) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$mods</h4>
+<code>string</code><p>Modifiers to be applied to a given regex</p></div>
+</div></div>
+</div>
+<a id="method_setMultiline"></a><div class="element clickable method public method_setMultiline" data-toggle="collapse" data-target=".method_setMultiline .collapse">
+<h2>Sets whether regexp should be applied in multiline mode.</h2>
+<pre>setMultiline(boolean $bit) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$bit</h4>
+<code>boolean</code>
+</div>
+</div></div>
+</div>
+<a id="method_setPattern"></a><div class="element clickable method public method_setPattern" data-toggle="collapse" data-target=".method_setPattern .collapse">
+<h2>Sets pattern to use for matching.</h2>
+<pre>setPattern(string $pat) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$pat</h4>
+<code>string</code><p>The pattern to match on.</p></div>
+</div></div>
+</div>
+<a id="method_setReplace"></a><div class="element clickable method public method_setReplace" data-toggle="collapse" data-target=".method_setReplace .collapse">
+<h2>Sets replacement string.</h2>
+<pre>setReplace(string $rep) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$rep</h4>
+<code>string</code><p>The pattern to replace matches with.</p></div>
+</div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_engine"> </a><div class="element clickable property private property_engine" data-toggle="collapse" data-target=".property_engine .collapse">
+<h2></h2>
+<pre>$engine : <a href="../classes/RegexpEngine.html">\RegexpEngine</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"><p>'preg' or 'ereg';</p></div></div></div>
+</div>
+<a id="property_groups"> </a><div class="element clickable property private property_groups" data-toggle="collapse" data-target=".property_groups .collapse">
+<h2></h2>
+<pre>$groups : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_pattern"> </a><div class="element clickable property private property_pattern" data-toggle="collapse" data-target=".property_pattern .collapse">
+<h2></h2>
+<pre>$pattern : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_replace"> </a><div class="element clickable property private property_replace" data-toggle="collapse" data-target=".property_replace .collapse">
+<h2></h2>
+<pre>$replace : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:50+01:00.<br></footer></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,987 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \Phing</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method___import" title="__import :: Import a PHP file"><span class="description">Import a PHP file</span><pre>__import()</pre></a></li>
+<li class="method public "><a href="#method_clearCapturedPhpErrors" title="clearCapturedPhpErrors :: Clears the captured errors without affecting the starting/stopping of the capture."><span class="description">Clears the captured errors without affecting the starting/stopping of the capture.</span><pre>clearCapturedPhpErrors()</pre></a></li>
+<li class="method public "><a href="#method_currentTimeMillis" title="currentTimeMillis :: "><span class="description">currentTimeMillis()
+        </span><pre>currentTimeMillis()</pre></a></li>
+<li class="method public "><a href="#method_execute" title="execute :: Setup/initialize Phing environment from commandline args."><span class="description">Setup/initialize Phing environment from commandline args.</span><pre>execute()</pre></a></li>
+<li class="method public "><a href="#method_fire" title="fire :: Command line entry point."><span class="description">Command line entry point.</span><pre>fire()</pre></a></li>
+<li class="method public "><a href="#method_getCapturedPhpErrors" title="getCapturedPhpErrors :: Gets any PHP errors that were captured to buffer."><span class="description">Gets any PHP errors that were captured to buffer.</span><pre>getCapturedPhpErrors()</pre></a></li>
+<li class="method public "><a href="#method_getCurrentProject" title="getCurrentProject :: Gets the current Project."><span class="description">Gets the current Project.</span><pre>getCurrentProject()</pre></a></li>
+<li class="method public "><a href="#method_getDefinedProperty" title="getDefinedProperty :: This gets a property that was set via command line or otherwise passed into Phing."><span class="description">This gets a property that was set via command line or otherwise passed into Phing.</span><pre>getDefinedProperty()</pre></a></li>
+<li class="method public "><a href="#method_getErrorStream" title="getErrorStream :: Gets the stream to use for error output."><span class="description">Gets the stream to use for error output.</span><pre>getErrorStream()</pre></a></li>
+<li class="method public "><a href="#method_getMsgOutputLevel" title="getMsgOutputLevel :: Making output level a static property so that this property
+can be accessed by other parts of the system, enabling
+us to display more information -- e.g."><span class="description">Making output level a static property so that this property
+can be accessed by other parts of the system, enabling
+us to display more information -- e.g.</span><pre>getMsgOutputLevel()</pre></a></li>
+<li class="method public "><a href="#method_getOutputStream" title="getOutputStream :: Gets the stream to use for standard (non-error) output."><span class="description">Gets the stream to use for standard (non-error) output.</span><pre>getOutputStream()</pre></a></li>
+<li class="method public "><a href="#method_getPhingVersion" title="getPhingVersion :: Gets the current Phing version based on VERSION.TXT file."><span class="description">Gets the current Phing version based on VERSION.TXT file.</span><pre>getPhingVersion()</pre></a></li>
+<li class="method public "><a href="#method_getProperties" title="getProperties :: Retuns reference to all properties"><span class="description">Retuns reference to all properties</span><pre>getProperties()</pre></a></li>
+<li class="method public "><a href="#method_getProperty" title="getProperty :: Returns property value for a System property."><span class="description">Returns property value for a System property.</span><pre>getProperty()</pre></a></li>
+<li class="method public "><a href="#method_getResourcePath" title="getResourcePath :: Looks on include path for specified file."><span class="description">Looks on include path for specified file.</span><pre>getResourcePath()</pre></a></li>
+<li class="method public "><a href="#method_getTimer" title="getTimer :: Returns reference to Timer object."><span class="description">Returns reference to Timer object.</span><pre>getTimer()</pre></a></li>
+<li class="method public "><a href="#method_halt" title="halt :: Halts the system."><span class="description">Halts the system.</span><pre>halt()</pre></a></li>
+<li class="method public "><a href="#method_handlePhpError" title="handlePhpError :: Error handler for PHP errors encountered during the build."><span class="description">Error handler for PHP errors encountered during the build.</span><pre>handlePhpError()</pre></a></li>
+<li class="method public "><a href="#method_import" title="import :: Import a dot-path notation class path."><span class="description">Import a dot-path notation class path.</span><pre>import()</pre></a></li>
+<li class="method public "><a href="#method_log" title="log :: A static convenience method to send a log to the current (last-setup) Project."><span class="description">A static convenience method to send a log to the current (last-setup) Project.</span><pre>log()</pre></a></li>
+<li class="method public "><a href="#method_printDescription" title="printDescription :: Print the project description, if any"><span class="description">Print the project description, if any</span><pre>printDescription()</pre></a></li>
+<li class="method public "><a href="#method_printMessage" title="printMessage :: Prints the message of the Exception if it's not null."><span class="description">Prints the message of the Exception if it's not null.</span><pre>printMessage()</pre></a></li>
+<li class="method public "><a href="#method_printTargets" title="printTargets :: Print out a list of all targets in the current buildfile"><span class="description">Print out a list of all targets in the current buildfile</span><pre>printTargets()</pre></a></li>
+<li class="method public "><a href="#method_printUsage" title="printUsage :: Prints the usage of how to use this class"><span class="description">Prints the usage of how to use this class</span><pre>printUsage()</pre></a></li>
+<li class="method public "><a href="#method_printVersion" title="printVersion :: Prints the current Phing version."><span class="description">Prints the current Phing version.</span><pre>printVersion()</pre></a></li>
+<li class="method public "><a href="#method_runBuild" title="runBuild :: Executes the build."><span class="description">Executes the build.</span><pre>runBuild()</pre></a></li>
+<li class="method public "><a href="#method_setCurrentProject" title="setCurrentProject :: Sets the current Project"><span class="description">Sets the current Project</span><pre>setCurrentProject()</pre></a></li>
+<li class="method public "><a href="#method_setDefinedProperty" title="setDefinedProperty :: This sets a property that was set via command line or otherwise passed into Phing."><span class="description">This sets a property that was set via command line or otherwise passed into Phing.</span><pre>setDefinedProperty()</pre></a></li>
+<li class="method public "><a href="#method_setErrorStream" title="setErrorStream :: Sets the stream to use for error output."><span class="description">Sets the stream to use for error output.</span><pre>setErrorStream()</pre></a></li>
+<li class="method public "><a href="#method_setOutputStream" title="setOutputStream :: Sets the stream to use for standard (non-error) output."><span class="description">Sets the stream to use for standard (non-error) output.</span><pre>setOutputStream()</pre></a></li>
+<li class="method public "><a href="#method_setProperty" title="setProperty :: "><span class="description">setProperty()
+        </span><pre>setProperty()</pre></a></li>
+<li class="method public "><a href="#method_shutdown" title="shutdown :: Performs any shutdown routines, such as stopping timers."><span class="description">Performs any shutdown routines, such as stopping timers.</span><pre>shutdown()</pre></a></li>
+<li class="method public "><a href="#method_start" title="start :: Entry point allowing for more options from other front ends."><span class="description">Entry point allowing for more options from other front ends.</span><pre>start()</pre></a></li>
+<li class="method public "><a href="#method_startPhpErrorCapture" title="startPhpErrorCapture :: Begins capturing PHP errors to a buffer."><span class="description">Begins capturing PHP errors to a buffer.</span><pre>startPhpErrorCapture()</pre></a></li>
+<li class="method public "><a href="#method_startup" title="startup :: Start up Phing."><span class="description">Start up Phing.</span><pre>startup()</pre></a></li>
+<li class="method public "><a href="#method_stopPhpErrorCapture" title="stopPhpErrorCapture :: Stops capturing PHP errors to a buffer."><span class="description">Stops capturing PHP errors to a buffer.</span><pre>stopPhpErrorCapture()</pre></a></li>
+<li class="method public "><a href="#method_unsetCurrentProject" title="unsetCurrentProject :: Unsets the current Project"><span class="description">Unsets the current Project</span><pre>unsetCurrentProject()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul>
+<li class="method private "><a href="#method__findBuildFile" title="_findBuildFile :: Search parent directories for the build file."><span class="description">Search parent directories for the build file.</span><pre>_findBuildFile()</pre></a></li>
+<li class="method private "><a href="#method__getParentFile" title="_getParentFile :: Helper to get the parent file for a given file."><span class="description">Helper to get the parent file for a given file.</span><pre>_getParentFile()</pre></a></li>
+<li class="method private "><a href="#method__printTargets" title="_printTargets :: Writes a formatted list of target names with an optional description."><span class="description">Writes a formatted list of target names with an optional description.</span><pre>_printTargets()</pre></a></li>
+<li class="method private "><a href="#method_addBuildListeners" title="addBuildListeners :: Bind any registered build listeners to this project."><span class="description">Bind any registered build listeners to this project.</span><pre>addBuildListeners()</pre></a></li>
+<li class="method private "><a href="#method_addInputHandler" title="addInputHandler :: Creates the InputHandler and adds it to the project."><span class="description">Creates the InputHandler and adds it to the project.</span><pre>addInputHandler()</pre></a></li>
+<li class="method private "><a href="#method_comparePhingVersion" title="comparePhingVersion :: "><span class="description">comparePhingVersion()
+        </span><pre>comparePhingVersion()</pre></a></li>
+<li class="method private "><a href="#method_convertShorthand" title="convertShorthand :: Converts shorthand notation values as returned by ini_get()"><span class="description">Converts shorthand notation values as returned by ini_get()</span><pre>convertShorthand()</pre></a></li>
+<li class="method private "><a href="#method_createLogger" title="createLogger :: Creates the default build logger for sending build events to the log."><span class="description">Creates the default build logger for sending build events to the log.</span><pre>createLogger()</pre></a></li>
+<li class="method private "><a href="#method_handleLogfile" title="handleLogfile :: Close logfiles, if we have been writing to them."><span class="description">Close logfiles, if we have been writing to them.</span><pre>handleLogfile()</pre></a></li>
+<li class="method private "><a href="#method_initializeOutputStreams" title="initializeOutputStreams :: Sets the stdout and stderr streams if they are not already set."><span class="description">Sets the stdout and stderr streams if they are not already set.</span><pre>initializeOutputStreams()</pre></a></li>
+<li class="method private "><a href="#method_restoreIni" title="restoreIni :: Restores [most] PHP INI values to their pre-Phing state."><span class="description">Restores [most] PHP INI values to their pre-Phing state.</span><pre>restoreIni()</pre></a></li>
+<li class="method private "><a href="#method_setIncludePaths" title="setIncludePaths :: Sets the include path to PHP_CLASSPATH constant (if this has been defined)."><span class="description">Sets the include path to PHP_CLASSPATH constant (if this has been defined).</span><pre>setIncludePaths()</pre></a></li>
+<li class="method private "><a href="#method_setIni" title="setIni :: Sets PHP INI values that Phing needs."><span class="description">Sets PHP INI values that Phing needs.</span><pre>setIni()</pre></a></li>
+<li class="method private "><a href="#method_setSystemConstants" title="setSystemConstants :: Set System constants which can be retrieved by calling Phing::getProperty($propName)."><span class="description">Set System constants which can be retrieved by calling Phing::getProperty($propName).</span><pre>setSystemConstants()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul></ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul>
+<li class="property private "><a href="#property_buildFile" title="$buildFile :: PhingFile that we are using for configuration"><span class="description"></span><pre>$buildFile</pre></a></li>
+<li class="property private "><a href="#property_capturedPhpErrors" title="$capturedPhpErrors :: Array of captured PHP errors"><span class="description"></span><pre>$capturedPhpErrors</pre></a></li>
+<li class="property private "><a href="#property_currentProject" title="$currentProject :: The current Project"><span class="description"></span><pre>$currentProject</pre></a></li>
+<li class="property private "><a href="#property_definedProps" title="$definedProps :: Set of properties that are passed in from commandline or invoking code."><span class="description"></span><pre>$definedProps</pre></a></li>
+<li class="property private "><a href="#property_err" title="$err :: "><span class="description">Stream for error output.</span><pre>$err</pre></a></li>
+<li class="property private "><a href="#property_importPaths" title="$importPaths :: Used by utility function getResourcePath()"><span class="description"></span><pre>$importPaths</pre></a></li>
+<li class="property private "><a href="#property_inputHandlerClassname" title="$inputHandlerClassname :: The class to handle input (can be only one)."><span class="description"></span><pre>$inputHandlerClassname</pre></a></li>
+<li class="property private "><a href="#property_isLogFileUsed" title="$isLogFileUsed :: "><span class="description">Whether we are using a logfile.</span><pre>$isLogFileUsed</pre></a></li>
+<li class="property private "><a href="#property_listeners" title="$listeners :: Names of classes to add as listeners to project"><span class="description"></span><pre>$listeners</pre></a></li>
+<li class="property private "><a href="#property_loggerClassname" title="$loggerClassname :: "><span class="description"></span><pre>$loggerClassname</pre></a></li>
+<li class="property private "><a href="#property_msgOutputLevel" title="$msgOutputLevel :: Our current message output status."><span class="description"></span><pre>$msgOutputLevel</pre></a></li>
+<li class="property private "><a href="#property_origIniSettings" title="$origIniSettings :: Array to hold original ini settings that Phing changes (and needs
+to restore in restoreIni() method)."><span class="description"></span><pre>$origIniSettings</pre></a></li>
+<li class="property private "><a href="#property_out" title="$out :: "><span class="description">Stream for standard output.</span><pre>$out</pre></a></li>
+<li class="property private "><a href="#property_phpErrorCapture" title="$phpErrorCapture :: Whether to capture PHP errors to buffer."><span class="description"></span><pre>$phpErrorCapture</pre></a></li>
+<li class="property private "><a href="#property_projectHelp" title="$projectHelp :: Indicates we should only parse and display the project help information"><span class="description"></span><pre>$projectHelp</pre></a></li>
+<li class="property private "><a href="#property_properties" title="$properties :: System-wide static properties (moved from System)"><span class="description"></span><pre>$properties</pre></a></li>
+<li class="property private "><a href="#property_readyToRun" title="$readyToRun :: Indicates if this phing should be run"><span class="description"></span><pre>$readyToRun</pre></a></li>
+<li class="property private "><a href="#property_targets" title="$targets :: The build targets"><span class="description"></span><pre>$targets</pre></a></li>
+<li class="property private "><a href="#property_timer" title="$timer :: Static system timer."><span class="description"></span><pre>$timer</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-constant"></i> Constants
+                    <ul><li class="constant  "><a href="#constant_DEFAULT_BUILD_FILENAME" title="DEFAULT_BUILD_FILENAME :: The default build file name"><span class="description">The default build file name</span><pre>DEFAULT_BUILD_FILENAME</pre></a></li></ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\Phing"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/Phing.html">Phing</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">Entry point into Phing.</p>
+<div class="details">
+<div class="long_description"><p>This class handles the full lifecycle of a build -- from
+parsing &amp; handling commandline arguments to assembling the project to shutting down
+and cleaning up in the end.</p>
+
+<p>If you are invoking Phing from an external application, this is still
+the class to use.  Your applicaiton can invoke the start() method, passing
+any commandline arguments or additional properties.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>author</th>
+<td><a href="mailto:andi@binarycloud.com">Andreas Aderhold</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="mailto:hans@xmpl.org">Hans Lellelid</a></td>
+</tr>
+<tr>
+<th>version</th>
+<td>$Id: 9d949a45b45bd04264dde71edde4424a7840a4ad $</td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.html">phing</a></td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___import"></a><div class="element clickable method public method___import" data-toggle="collapse" data-target=".method___import .collapse">
+<h2>Import a PHP file</h2>
+<pre>__import(string $path, mixed $classpath) </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$path</h4>
+<code>string</code><p>Path to the PHP file</p></div>
+<div class="subelement argument">
+<h4>$classpath</h4>
+<code>mixed</code><p>String or object supporting __toString()</p>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/BuildException.html">\BuildException</a></code></th>
+<td>- if cannot find the specified file</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_clearCapturedPhpErrors"></a><div class="element clickable method public method_clearCapturedPhpErrors" data-toggle="collapse" data-target=".method_clearCapturedPhpErrors .collapse">
+<h2>Clears the captured errors without affecting the starting/stopping of the capture.</h2>
+<pre>clearCapturedPhpErrors() </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_currentTimeMillis"></a><div class="element clickable method public method_currentTimeMillis" data-toggle="collapse" data-target=".method_currentTimeMillis .collapse">
+<h2>currentTimeMillis()
+        </h2>
+<pre>currentTimeMillis() </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_execute"></a><div class="element clickable method public method_execute" data-toggle="collapse" data-target=".method_execute .collapse">
+<h2>Setup/initialize Phing environment from commandline args.</h2>
+<pre>execute(array $args) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$args</h4>
+<code>array</code><p>commandline args passed to phing shell.</p></div>
+</div></div>
+</div>
+<a id="method_fire"></a><div class="element clickable method public method_fire" data-toggle="collapse" data-target=".method_fire .collapse">
+<h2>Command line entry point.</h2>
+<pre>fire(array $args) : void</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This method kicks off the building
+of a project object and executes a build using either a given
+target or the default target.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$args</h4>
+<code>array</code><p>Command line args.</p></div>
+</div></div>
+</div>
+<a id="method_getCapturedPhpErrors"></a><div class="element clickable method public method_getCapturedPhpErrors" data-toggle="collapse" data-target=".method_getCapturedPhpErrors .collapse">
+<h2>Gets any PHP errors that were captured to buffer.</h2>
+<pre>getCapturedPhpErrors() : array</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code>array('message' => message, 'line' => line number, 'file' => file name, 'level' => error level)</div>
+</div></div>
+</div>
+<a id="method_getCurrentProject"></a><div class="element clickable method public method_getCurrentProject" data-toggle="collapse" data-target=".method_getCurrentProject .collapse">
+<h2>Gets the current Project.</h2>
+<pre>getCurrentProject() : <a href="../classes/Project.html">\Project</a></pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code><a href="../classes/Project.html">\Project</a></code>Current Project or NULL if none is set yet/still.</div>
+</div></div>
+</div>
+<a id="method_getDefinedProperty"></a><div class="element clickable method public method_getDefinedProperty" data-toggle="collapse" data-target=".method_getDefinedProperty .collapse">
+<h2>This gets a property that was set via command line or otherwise passed into Phing.</h2>
+<pre>getDefinedProperty(string $name) : string</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>"Defined" in this case means "externally defined".  The reason this method exists is to
+provide a public means of accessing commandline properties for (e.g.) logger or listener
+scripts.  E.g. to specify which logfile to use, PearLogger needs to be able to access
+the pear.log.name property.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>value of found property (or null, if none found).</div>
+</div></div>
+</div>
+<a id="method_getErrorStream"></a><div class="element clickable method public method_getErrorStream" data-toggle="collapse" data-target=".method_getErrorStream .collapse">
+<h2>Gets the stream to use for error output.</h2>
+<pre>getErrorStream() : <a href="../classes/OutputStream.html">\OutputStream</a></pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/OutputStream.html">\OutputStream</a></code></div>
+</div></div>
+</div>
+<a id="method_getMsgOutputLevel"></a><div class="element clickable method public method_getMsgOutputLevel" data-toggle="collapse" data-target=".method_getMsgOutputLevel .collapse">
+<h2>Making output level a static property so that this property
+can be accessed by other parts of the system, enabling
+us to display more information -- e.g.</h2>
+<pre>getMsgOutputLevel() : int</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>backtraces -- for "debug" level.</p></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>int</code></div>
+</div></div>
+</div>
+<a id="method_getOutputStream"></a><div class="element clickable method public method_getOutputStream" data-toggle="collapse" data-target=".method_getOutputStream .collapse">
+<h2>Gets the stream to use for standard (non-error) output.</h2>
+<pre>getOutputStream() : <a href="../classes/OutputStream.html">\OutputStream</a></pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/OutputStream.html">\OutputStream</a></code></div>
+</div></div>
+</div>
+<a id="method_getPhingVersion"></a><div class="element clickable method public method_getPhingVersion" data-toggle="collapse" data-target=".method_getPhingVersion .collapse">
+<h2>Gets the current Phing version based on VERSION.TXT file.</h2>
+<pre>getPhingVersion() : string</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/BuildException.html">\BuildException</a></code></th>
+<td>- if unable to find version file.</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_getProperties"></a><div class="element clickable method public method_getProperties" data-toggle="collapse" data-target=".method_getProperties .collapse">
+<h2>Retuns reference to all properties</h2>
+<pre>getProperties() </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getProperty"></a><div class="element clickable method public method_getProperty" data-toggle="collapse" data-target=".method_getProperty .collapse">
+<h2>Returns property value for a System property.</h2>
+<pre>getProperty($propName) : string</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>System properties are "global" properties like application.startdir,
+and user.dir.  Many of these correspond to similar properties in Java
+or Ant.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$propName</h4></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>Value of found property (or null, if none found).</div>
+</div></div>
+</div>
+<a id="method_getResourcePath"></a><div class="element clickable method public method_getResourcePath" data-toggle="collapse" data-target=".method_getResourcePath .collapse">
+<h2>Looks on include path for specified file.</h2>
+<pre>getResourcePath($path) : string</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$path</h4></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>File found (null if no file found).</div>
+</div></div>
+</div>
+<a id="method_getTimer"></a><div class="element clickable method public method_getTimer" data-toggle="collapse" data-target=".method_getTimer .collapse">
+<h2>Returns reference to Timer object.</h2>
+<pre>getTimer() : <a href="../classes/Timer.html">\Timer</a></pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/Timer.html">\Timer</a></code></div>
+</div></div>
+</div>
+<a id="method_halt"></a><div class="element clickable method public method_halt" data-toggle="collapse" data-target=".method_halt .collapse">
+<h2>Halts the system.</h2>
+<pre>halt() </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>deprecated</th>
+<td>This method is deprecated and is no longer called by Phing internally.  Any
+             normal shutdown routines are handled by the shutdown() method.</td>
+</tr>
+<tr>
+<th>see</th>
+<td><a href="">\global\shutdown()</a></td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_handlePhpError"></a><div class="element clickable method public method_handlePhpError" data-toggle="collapse" data-target=".method_handlePhpError .collapse">
+<h2>Error handler for PHP errors encountered during the build.</h2>
+<pre>handlePhpError($level, $message, $file, $line) </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This uses the logging for the currently configured project.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$level</h4></div>
+<div class="subelement argument"><h4>$message</h4></div>
+<div class="subelement argument"><h4>$file</h4></div>
+<div class="subelement argument"><h4>$line</h4></div>
+</div></div>
+</div>
+<a id="method_import"></a><div class="element clickable method public method_import" data-toggle="collapse" data-target=".method_import .collapse">
+<h2>Import a dot-path notation class path.</h2>
+<pre>import(string $dotPath, mixed $classpath) : string</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$dotPath</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$classpath</h4>
+<code>mixed</code><p>String or object supporting __toString()</p>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/BuildException.html">\BuildException</a></code></th>
+<td>- if cannot find the specified file</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>The unqualified classname (which can be instantiated).</div>
+</div></div>
+</div>
+<a id="method_log"></a><div class="element clickable method public method_log" data-toggle="collapse" data-target=".method_log .collapse">
+<h2>A static convenience method to send a log to the current (last-setup) Project.</h2>
+<pre>log(string $message, int $priority) </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>If there is no currently-configured Project, then this will do nothing.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$message</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$priority</h4>
+<code>int</code><p>Project::MSG_INFO, etc.</p></div>
+</div></div>
+</div>
+<a id="method_printDescription"></a><div class="element clickable method public method_printDescription" data-toggle="collapse" data-target=".method_printDescription .collapse">
+<h2>Print the project description, if any</h2>
+<pre>printDescription(\Project $project) </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$project</h4></div>
+</div></div>
+</div>
+<a id="method_printMessage"></a><div class="element clickable method public method_printMessage" data-toggle="collapse" data-target=".method_printMessage .collapse">
+<h2>Prints the message of the Exception if it's not null.</h2>
+<pre>printMessage(\Exception $t) </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$t</h4>
+<code><a href="http://php.net/manual/en/class.exception.php">\Exception</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_printTargets"></a><div class="element clickable method public method_printTargets" data-toggle="collapse" data-target=".method_printTargets .collapse">
+<h2>Print out a list of all targets in the current buildfile</h2>
+<pre>printTargets($project) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$project</h4></div>
+</div></div>
+</div>
+<a id="method_printUsage"></a><div class="element clickable method public method_printUsage" data-toggle="collapse" data-target=".method_printUsage .collapse">
+<h2>Prints the usage of how to use this class</h2>
+<pre>printUsage() </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_printVersion"></a><div class="element clickable method public method_printVersion" data-toggle="collapse" data-target=".method_printVersion .collapse">
+<h2>Prints the current Phing version.</h2>
+<pre>printVersion() </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_runBuild"></a><div class="element clickable method public method_runBuild" data-toggle="collapse" data-target=".method_runBuild .collapse">
+<h2>Executes the build.</h2>
+<pre>runBuild() : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_setCurrentProject"></a><div class="element clickable method public method_setCurrentProject" data-toggle="collapse" data-target=".method_setCurrentProject .collapse">
+<h2>Sets the current Project</h2>
+<pre>setCurrentProject(<a href="../classes/Project.html">\Project</a> $p) </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$p</h4>
+<code><a href="../classes/Project.html">\Project</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_setDefinedProperty"></a><div class="element clickable method public method_setDefinedProperty" data-toggle="collapse" data-target=".method_setDefinedProperty .collapse">
+<h2>This sets a property that was set via command line or otherwise passed into Phing.</h2>
+<pre>setDefinedProperty(string $name, $value) : string</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code>
+</div>
+<div class="subelement argument"><h4>$value</h4></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>value of found property (or null, if none found).</div>
+</div></div>
+</div>
+<a id="method_setErrorStream"></a><div class="element clickable method public method_setErrorStream" data-toggle="collapse" data-target=".method_setErrorStream .collapse">
+<h2>Sets the stream to use for error output.</h2>
+<pre>setErrorStream(\OutputStream $stream) </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$stream</h4>
+<code><a href="../classes/OutputStream.html">\OutputStream</a></code><p>The stream to use for error output.</p></div>
+</div></div>
+</div>
+<a id="method_setOutputStream"></a><div class="element clickable method public method_setOutputStream" data-toggle="collapse" data-target=".method_setOutputStream .collapse">
+<h2>Sets the stream to use for standard (non-error) output.</h2>
+<pre>setOutputStream(\OutputStream $stream) </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$stream</h4>
+<code><a href="../classes/OutputStream.html">\OutputStream</a></code><p>The stream to use for standard output.</p></div>
+</div></div>
+</div>
+<a id="method_setProperty"></a><div class="element clickable method public method_setProperty" data-toggle="collapse" data-target=".method_setProperty .collapse">
+<h2>setProperty()
+        </h2>
+<pre>setProperty($propName, $propValue) </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$propName</h4></div>
+<div class="subelement argument"><h4>$propValue</h4></div>
+</div></div>
+</div>
+<a id="method_shutdown"></a><div class="element clickable method public method_shutdown" data-toggle="collapse" data-target=".method_shutdown .collapse">
+<h2>Performs any shutdown routines, such as stopping timers.</h2>
+<pre>shutdown() : void</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_start"></a><div class="element clickable method public method_start" data-toggle="collapse" data-target=".method_start .collapse">
+<h2>Entry point allowing for more options from other front ends.</h2>
+<pre>start(array $args, array $additionalUserProperties) </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This method encapsulates the complete build lifecycle.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>see</th>
+<td><a href="">\global\execute()</a></td>
+</tr>
+<tr>
+<th>see</th>
+<td><a href="">\global\runBuild()</a></td>
+</tr>
+</table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$args</h4>
+<code>array</code><p>The commandline args passed to phing shell script.</p></div>
+<div class="subelement argument">
+<h4>$additionalUserProperties</h4>
+<code>array</code><p>Any additional properties to be passed to Phing (alternative front-end might implement this). These additional properties will be available using the getDefinedProperty() method and will be added to the project's "user" properties</p>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="http://php.net/manual/en/class.exception.php">\Exception</a></code></th>
+<td>- if there is an error during build</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_startPhpErrorCapture"></a><div class="element clickable method public method_startPhpErrorCapture" data-toggle="collapse" data-target=".method_startPhpErrorCapture .collapse">
+<h2>Begins capturing PHP errors to a buffer.</h2>
+<pre>startPhpErrorCapture() </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"><p>While errors are being captured, they are not logged.</p></div></div></div>
+</div>
+<a id="method_startup"></a><div class="element clickable method public method_startup" data-toggle="collapse" data-target=".method_startup .collapse">
+<h2>Start up Phing.</h2>
+<pre>startup() : void</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Sets up the Phing environment but does not initiate the build process.</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="http://php.net/manual/en/class.exception.php">\Exception</a></code></th>
+<td>- If the Phing environment cannot be initialized.</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_stopPhpErrorCapture"></a><div class="element clickable method public method_stopPhpErrorCapture" data-toggle="collapse" data-target=".method_stopPhpErrorCapture .collapse">
+<h2>Stops capturing PHP errors to a buffer.</h2>
+<pre>stopPhpErrorCapture() </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"><p>The errors will once again be logged after calling this method.</p></div></div></div>
+</div>
+<a id="method_unsetCurrentProject"></a><div class="element clickable method public method_unsetCurrentProject" data-toggle="collapse" data-target=".method_unsetCurrentProject .collapse">
+<h2>Unsets the current Project</h2>
+<pre>unsetCurrentProject() </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method__findBuildFile"></a><div class="element clickable method private method__findBuildFile" data-toggle="collapse" data-target=".method__findBuildFile .collapse">
+<h2>Search parent directories for the build file.</h2>
+<pre>_findBuildFile(string $start, string $suffix) : <a href="../classes/PhingFile.html">\PhingFile</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Takes the given target as a suffix to append to each
+parent directory in search of a build file.  Once the
+root of the file-system has been reached an exception
+is thrown.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$start</h4>
+<code>string</code><p>Start file path.</p></div>
+<div class="subelement argument">
+<h4>$suffix</h4>
+<code>string</code><p>Suffix filename to look for in parents.</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/BuildException.html">\BuildException</a></code></th>
+<td>Failed to locate a build file</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>A handle to the build file</div>
+</div></div>
+</div>
+<a id="method__getParentFile"></a><div class="element clickable method private method__getParentFile" data-toggle="collapse" data-target=".method__getParentFile .collapse">
+<h2>Helper to get the parent file for a given file.</h2>
+<pre>_getParentFile(\PhingFile $file) : <a href="../classes/PhingFile.html">\PhingFile</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$file</h4>
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code><a href="../classes/PhingFile.html">\PhingFile</a></code>Parent file or null if none</div>
+</div></div>
+</div>
+<a id="method__printTargets"></a><div class="element clickable method private method__printTargets" data-toggle="collapse" data-target=".method__printTargets .collapse">
+<h2>Writes a formatted list of target names with an optional description.</h2>
+<pre>_printTargets(array $names, array $descriptions, string $heading, int $maxlen) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$names</h4>
+<code>array</code><p>The names to be printed. Must not be <code>null</code>.</p>
+</div>
+<div class="subelement argument">
+<h4>$descriptions</h4>
+<code>array</code><p>The associated target descriptions. May be <code>null</code>, in which case no descriptions are displayed. If non-<code>null</code>, this should have as many elements as <code>names</code>.</p>
+</div>
+<div class="subelement argument">
+<h4>$heading</h4>
+<code>string</code><p>The heading to display. Should not be <code>null</code>.</p>
+</div>
+<div class="subelement argument">
+<h4>$maxlen</h4>
+<code>int</code><p>The maximum length of the names of the targets. If descriptions are given, they are padded to this position so they line up (so long as the names really <i>are</i> shorter than this).</p>
+</div>
+</div></div>
+</div>
+<a id="method_addBuildListeners"></a><div class="element clickable method private method_addBuildListeners" data-toggle="collapse" data-target=".method_addBuildListeners .collapse">
+<h2>Bind any registered build listeners to this project.</h2>
+<pre>addBuildListeners(\Project $project) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This means adding the logger and any build listeners that were specified
+with -listener arg.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$project</h4>
+<code><a href="../classes/Project.html">\Project</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_addInputHandler"></a><div class="element clickable method private method_addInputHandler" data-toggle="collapse" data-target=".method_addInputHandler .collapse">
+<h2>Creates the InputHandler and adds it to the project.</h2>
+<pre>addInputHandler(\Project $project) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$project</h4>
+<code><a href="../classes/Project.html">\Project</a></code><p>the project instance.</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/BuildException.html">\BuildException</a></code></th>
+<td>if a specified InputHandler
+                          class could not be loaded.</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_comparePhingVersion"></a><div class="element clickable method private method_comparePhingVersion" data-toggle="collapse" data-target=".method_comparePhingVersion .collapse">
+<h2>comparePhingVersion()
+        </h2>
+<pre>comparePhingVersion($version) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument"><h4>$version</h4></div>
+</div></div>
+</div>
+<a id="method_convertShorthand"></a><div class="element clickable method private method_convertShorthand" data-toggle="collapse" data-target=".method_convertShorthand .collapse">
+<h2>Converts shorthand notation values as returned by ini_get()</h2>
+<pre>convertShorthand(string $val) </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>see</th>
+<td><a href="">\global\http://www.php.net/ini_get</a></td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$val</h4>
+<code>string</code>
+</div>
+</div></div>
+</div>
+<a id="method_createLogger"></a><div class="element clickable method private method_createLogger" data-toggle="collapse" data-target=".method_createLogger .collapse">
+<h2>Creates the default build logger for sending build events to the log.</h2>
+<pre>createLogger() : <a href="../classes/BuildLogger.html">\BuildLogger</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code><a href="../classes/BuildLogger.html">\BuildLogger</a></code>The created Logger</div>
+</div></div>
+</div>
+<a id="method_handleLogfile"></a><div class="element clickable method private method_handleLogfile" data-toggle="collapse" data-target=".method_handleLogfile .collapse">
+<h2>Close logfiles, if we have been writing to them.</h2>
+<pre>handleLogfile() </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>since</th>
+<td>Phing 2.3.0</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_initializeOutputStreams"></a><div class="element clickable method private method_initializeOutputStreams" data-toggle="collapse" data-target=".method_initializeOutputStreams .collapse">
+<h2>Sets the stdout and stderr streams if they are not already set.</h2>
+<pre>initializeOutputStreams() </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_restoreIni"></a><div class="element clickable method private method_restoreIni" data-toggle="collapse" data-target=".method_restoreIni .collapse">
+<h2>Restores [most] PHP INI values to their pre-Phing state.</h2>
+<pre>restoreIni() : void</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"><p>Currently the following settings are not restored:
+ - max_execution_time (because getting current time limit is not possible)
+ - memory_limit (which may have been increased by Phing)</p></div></div></div>
+</div>
+<a id="method_setIncludePaths"></a><div class="element clickable method private method_setIncludePaths" data-toggle="collapse" data-target=".method_setIncludePaths .collapse">
+<h2>Sets the include path to PHP_CLASSPATH constant (if this has been defined).</h2>
+<pre>setIncludePaths() : void</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/ConfigurationException.html">\ConfigurationException</a></code></th>
+<td>- if the include_path could not be set (for some bizarre reason)</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_setIni"></a><div class="element clickable method private method_setIni" data-toggle="collapse" data-target=".method_setIni .collapse">
+<h2>Sets PHP INI values that Phing needs.</h2>
+<pre>setIni() : void</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_setSystemConstants"></a><div class="element clickable method private method_setSystemConstants" data-toggle="collapse" data-target=".method_setSystemConstants .collapse">
+<h2>Set System constants which can be retrieved by calling Phing::getProperty($propName).</h2>
+<pre>setSystemConstants() : void</pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_buildFile"> </a><div class="element clickable property private property_buildFile" data-toggle="collapse" data-target=".property_buildFile .collapse">
+<h2></h2>
+<pre>$buildFile </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_capturedPhpErrors"> </a><div class="element clickable property private property_capturedPhpErrors" data-toggle="collapse" data-target=".property_capturedPhpErrors .collapse">
+<h2></h2>
+<pre>$capturedPhpErrors </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_currentProject"> </a><div class="element clickable property private property_currentProject" data-toggle="collapse" data-target=".property_currentProject .collapse">
+<h2></h2>
+<pre>$currentProject </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_definedProps"> </a><div class="element clickable property private property_definedProps" data-toggle="collapse" data-target=".property_definedProps .collapse">
+<h2></h2>
+<pre>$definedProps : <a href="../classes/Properties.html">\Properties</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_err"> </a><div class="element clickable property private property_err" data-toggle="collapse" data-target=".property_err .collapse">
+<h2>Stream for error output.</h2>
+<pre>$err : <a href="../classes/OutputStream.html">\OutputStream</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_importPaths"> </a><div class="element clickable property private property_importPaths" data-toggle="collapse" data-target=".property_importPaths .collapse">
+<h2></h2>
+<pre>$importPaths </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_inputHandlerClassname"> </a><div class="element clickable property private property_inputHandlerClassname" data-toggle="collapse" data-target=".property_inputHandlerClassname .collapse">
+<h2></h2>
+<pre>$inputHandlerClassname </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_isLogFileUsed"> </a><div class="element clickable property private property_isLogFileUsed" data-toggle="collapse" data-target=".property_isLogFileUsed .collapse">
+<h2>Whether we are using a logfile.</h2>
+<pre>$isLogFileUsed : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_listeners"> </a><div class="element clickable property private property_listeners" data-toggle="collapse" data-target=".property_listeners .collapse">
+<h2></h2>
+<pre>$listeners </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_loggerClassname"> </a><div class="element clickable property private property_loggerClassname" data-toggle="collapse" data-target=".property_loggerClassname .collapse">
+<h2></h2>
+<pre>$loggerClassname </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_msgOutputLevel"> </a><div class="element clickable property private property_msgOutputLevel" data-toggle="collapse" data-target=".property_msgOutputLevel .collapse">
+<h2></h2>
+<pre>$msgOutputLevel </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"><p>Follows Project::MSG_XXX</p></div></div></div>
+</div>
+<a id="property_origIniSettings"> </a><div class="element clickable property private property_origIniSettings" data-toggle="collapse" data-target=".property_origIniSettings .collapse">
+<h2></h2>
+<pre>$origIniSettings : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>see</th>
+<td><a href="">\global\restoreIni()</a></td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_out"> </a><div class="element clickable property private property_out" data-toggle="collapse" data-target=".property_out .collapse">
+<h2>Stream for standard output.</h2>
+<pre>$out : \OUtputStream</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_phpErrorCapture"> </a><div class="element clickable property private property_phpErrorCapture" data-toggle="collapse" data-target=".property_phpErrorCapture .collapse">
+<h2></h2>
+<pre>$phpErrorCapture </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_projectHelp"> </a><div class="element clickable property private property_projectHelp" data-toggle="collapse" data-target=".property_projectHelp .collapse">
+<h2></h2>
+<pre>$projectHelp </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_properties"> </a><div class="element clickable property private property_properties" data-toggle="collapse" data-target=".property_properties .collapse">
+<h2></h2>
+<pre>$properties </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_readyToRun"> </a><div class="element clickable property private property_readyToRun" data-toggle="collapse" data-target=".property_readyToRun .collapse">
+<h2></h2>
+<pre>$readyToRun </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_targets"> </a><div class="element clickable property private property_targets" data-toggle="collapse" data-target=".property_targets .collapse">
+<h2></h2>
+<pre>$targets </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_timer"> </a><div class="element clickable property private property_timer" data-toggle="collapse" data-target=".property_timer .collapse">
+<h2></h2>
+<pre>$timer </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<h3>
+<i class="icon-custom icon-constant"></i> Constants</h3>
+<a id="constant_DEFAULT_BUILD_FILENAME"> </a><div class="element clickable constant  constant_DEFAULT_BUILD_FILENAME" data-toggle="collapse" data-target=".constant_DEFAULT_BUILD_FILENAME .collapse">
+<h2>The default build file name</h2>
+<pre>DEFAULT_BUILD_FILENAME </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:56+01:00.<br></footer></div>
+</div>
+</body>
+</html>

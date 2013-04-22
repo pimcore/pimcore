@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<project name="prompt_test" default="main">
+    <target
+        name="main"
+        description="==>test prompt">
+       
+    <property name="documentRoot" value="/usr/apache/htdocs/sample"/>
+   
+    <echo>HTML pages installing to: ${documentRoot}</echo>
+    <echo>PHP classes installing to: ${servletDirectory}</echo>
+   
+    <input propertyname="documentRoot">Enter value for web application document root</input> 
+
+    <input propertyname="servletDirectory"
+       defaultValue="/usr/servlets" promptChar="?">Where should PHP classes install</input>
+	   
+	<echo>HTML pages installed to ${documentRoot}</echo>
+	<echo>PHP classes installed to ${servletDirectory}</echo>
+
+    </target>
+
+</project>

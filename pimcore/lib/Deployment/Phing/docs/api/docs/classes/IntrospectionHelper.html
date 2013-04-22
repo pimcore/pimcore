@@ -1,0 +1,432 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Phing API Documentation » \IntrospectionHelper</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Phing API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/JSMin.html"><i class="icon-folder-open"></i> JSMin</a></li>
+<li><a href="../packages/Parallel.html"><i class="icon-folder-open"></i> Parallel</a></li>
+<li><a href="../packages/Phing.html"><i class="icon-folder-open"></i> Phing</a></li>
+<li><a href="../packages/phing.html"><i class="icon-folder-open"></i> phing</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">2573</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul>
+<li>todo 
+                <span class="label label-info">15</span>
+</li>
+<li>fixme 
+                <span class="label label-info">8</span>
+</li>
+</ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">11</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list">
+<li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method___construct" title="__construct :: This function constructs a new introspection helper for a specific class."><span class="description">This function constructs a new introspection helper for a specific class.</span><pre>__construct()</pre></a></li>
+<li class="method public "><a href="#method_addText" title="addText :: Adds PCDATA areas."><span class="description">Adds PCDATA areas.</span><pre>addText()</pre></a></li>
+<li class="method public "><a href="#method_createElement" title="createElement :: Creates a named nested element."><span class="description">Creates a named nested element.</span><pre>createElement()</pre></a></li>
+<li class="method public "><a href="#method_getAttributes" title="getAttributes :: Return all attribues supported by the introspected class."><span class="description">Return all attribues supported by the introspected class.</span><pre>getAttributes()</pre></a></li>
+<li class="method public "><a href="#method_getElementName" title="getElementName :: Get the the name for an element."><span class="description">Get the the name for an element.</span><pre>getElementName()</pre></a></li>
+<li class="method public "><a href="#method_getHelper" title="getHelper :: Factory method for helper objects."><span class="description">Factory method for helper objects.</span><pre>getHelper()</pre></a></li>
+<li class="method public "><a href="#method_getNestedElements" title="getNestedElements :: Return all nested elements supported by the introspected class."><span class="description">Return all nested elements supported by the introspected class.</span><pre>getNestedElements()</pre></a></li>
+<li class="method public "><a href="#method_getPropertyName" title="getPropertyName :: Extract the name of a property from a method name - subtracting  a given prefix."><span class="description">Extract the name of a property from a method name - subtracting  a given prefix.</span><pre>getPropertyName()</pre></a></li>
+<li class="method public "><a href="#method_setAttribute" title="setAttribute :: Sets the named attribute."><span class="description">Sets the named attribute.</span><pre>setAttribute()</pre></a></li>
+<li class="method public "><a href="#method_storeElement" title="storeElement :: Creates a named nested element."><span class="description">Creates a named nested element.</span><pre>storeElement()</pre></a></li>
+<li class="method public "><a href="#method_supportsCharacters" title="supportsCharacters :: Does the introspected class support PCDATA?"><span class="description">Does the introspected class support PCDATA?</span><pre>supportsCharacters()</pre></a></li>
+<li class="method public "><a href="#method_warn" title="warn :: Prints warning message to screen if -debug was used."><span class="description">Prints warning message to screen if -debug was used.</span><pre>warn()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i class="icon-custom icon-property"></i> Properties
+                    <ul></ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul>
+<li class="property private "><a href="#property_attributeSetters" title="$attributeSetters :: Holds the attribute setter methods."><span class="description"></span><pre>$attributeSetters</pre></a></li>
+<li class="property private "><a href="#property_bean" title="$bean :: The Class that's been introspected."><span class="description"></span><pre>$bean</pre></a></li>
+<li class="property private "><a href="#property_helpers" title="$helpers :: The cache of IntrospectionHelper classes instantiated by getHelper()."><span class="description"></span><pre>$helpers</pre></a></li>
+<li class="property private "><a href="#property_methodAddText" title="$methodAddText :: The method to add PCDATA stuff."><span class="description"></span><pre>$methodAddText</pre></a></li>
+<li class="property private "><a href="#property_nestedCreators" title="$nestedCreators :: Holds methods to create nested elements."><span class="description"></span><pre>$nestedCreators</pre></a></li>
+<li class="property private "><a href="#property_nestedStorers" title="$nestedStorers :: Holds methods to store configured nested elements."><span class="description"></span><pre>$nestedStorers</pre></a></li>
+<li class="property private "><a href="#property_nestedTypes" title="$nestedTypes :: Map from attribute names to nested types."><span class="description"></span><pre>$nestedTypes</pre></a></li>
+<li class="property private "><a href="#property_slotListeners" title="$slotListeners :: New idea in phing: any class can register certain
+keys -- e.g."><span class="description"></span><pre>$slotListeners</pre></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a id="\IntrospectionHelper"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/global.html">global</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/IntrospectionHelper.html">IntrospectionHelper</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">Helper class that collects the methods that a task or nested element
+holds to set attributes, create nested elements or hold PCDATA
+elements.</p>
+<div class="details">
+<div class="long_description"><ul>
+<li><strong>SMART-UP INLINE DOCS</strong></li>
+<li><strong>POLISH-UP THIS CLASS</strong></li>
+</ul></div>
+<table class="table table-bordered">
+<tr>
+<th>author</th>
+<td><a href="mailto:andi@binarycloud.com">Andreas Aderhold</a></td>
+</tr>
+<tr>
+<th>author</th>
+<td><a href="mailto:hans@xmpl.org">Hans Lellelid</a></td>
+</tr>
+<tr>
+<th>copyright</th>
+<td>2001,2002 THYRELL. All rights reserved</td>
+</tr>
+<tr>
+<th>version</th>
+<td>$Id: f33d6ef40fb4caf6fa12b8f1db8977e33c0cd7eb $</td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/phing.html">phing</a></td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___construct"></a><div class="element clickable method public method___construct" data-toggle="collapse" data-target=".method___construct .collapse">
+<h2>This function constructs a new introspection helper for a specific class.</h2>
+<pre>__construct(string $class) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This method loads all methods for the specified class and categorizes them
+as setters, creators, slot listeners, etc.  This way, the setAttribue() doesn't
+need to perform any introspection -- either the requested attribute setter/creator
+exists or it does not &amp; a BuildException is thrown.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$class</h4>
+<code>string</code><p>The classname for this IH.</p></div>
+</div></div>
+</div>
+<a id="method_addText"></a><div class="element clickable method public method_addText" data-toggle="collapse" data-target=".method_addText .collapse">
+<h2>Adds PCDATA areas.</h2>
+<pre>addText(\Project $project, string $element, string $text) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$project</h4>
+<code><a href="../classes/Project.html">\Project</a></code>
+</div>
+<div class="subelement argument">
+<h4>$element</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$text</h4>
+<code>string</code>
+</div>
+</div></div>
+</div>
+<a id="method_createElement"></a><div class="element clickable method public method_createElement" data-toggle="collapse" data-target=".method_createElement .collapse">
+<h2>Creates a named nested element.</h2>
+<pre>createElement(\Project $project, string $element, string $elementName) : object</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Valid creators can be in the form createFoo() or addFoo(Bar).</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$project</h4>
+<code><a href="../classes/Project.html">\Project</a></code>
+</div>
+<div class="subelement argument">
+<h4>$element</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$elementName</h4>
+<code>string</code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/BuildException.html">\BuildException</a></code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>object</code>Returns the nested element.</div>
+</div></div>
+</div>
+<a id="method_getAttributes"></a><div class="element clickable method public method_getAttributes" data-toggle="collapse" data-target=".method_getAttributes .collapse">
+<h2>Return all attribues supported by the introspected class.</h2>
+<pre>getAttributes() : string[]</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string[]</code></div>
+</div></div>
+</div>
+<a id="method_getElementName"></a><div class="element clickable method public method_getElementName" data-toggle="collapse" data-target=".method_getElementName .collapse">
+<h2>Get the the name for an element.</h2>
+<pre>getElementName(\Project $project, object $element) : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>When possible the full classnam (phing.tasks.system.PropertyTask) will
+be returned.  If not available (loaded in taskdefs or typedefs) then the
+XML element name will be returned.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$project</h4>
+<code><a href="../classes/Project.html">\Project</a></code>
+</div>
+<div class="subelement argument">
+<h4>$element</h4>
+<code>object</code><p>The Task or type element.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code>Fully qualified class name of element when possible.</div>
+</div></div>
+</div>
+<a id="method_getHelper"></a><div class="element clickable method public method_getHelper" data-toggle="collapse" data-target=".method_getHelper .collapse">
+<h2>Factory method for helper objects.</h2>
+<pre>getHelper(string $class) </pre>
+<div class="labels"><span class="label">Static</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$class</h4>
+<code>string</code><p>The class to create a Helper for</p></div>
+</div></div>
+</div>
+<a id="method_getNestedElements"></a><div class="element clickable method public method_getNestedElements" data-toggle="collapse" data-target=".method_getNestedElements .collapse">
+<h2>Return all nested elements supported by the introspected class.</h2>
+<pre>getNestedElements() : string[]</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string[]</code></div>
+</div></div>
+</div>
+<a id="method_getPropertyName"></a><div class="element clickable method public method_getPropertyName" data-toggle="collapse" data-target=".method_getPropertyName .collapse">
+<h2>Extract the name of a property from a method name - subtracting  a given prefix.</h2>
+<pre>getPropertyName(string $methodName, string $prefix) : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$methodName</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$prefix</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_setAttribute"></a><div class="element clickable method public method_setAttribute" data-toggle="collapse" data-target=".method_setAttribute .collapse">
+<h2>Sets the named attribute.</h2>
+<pre>setAttribute(\Project $project, string $element, string $attributeName, mixed $value) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$project</h4>
+<code><a href="../classes/Project.html">\Project</a></code>
+</div>
+<div class="subelement argument">
+<h4>$element</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$attributeName</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$value</h4>
+<code>mixed</code>
+</div>
+</div></div>
+</div>
+<a id="method_storeElement"></a><div class="element clickable method public method_storeElement" data-toggle="collapse" data-target=".method_storeElement .collapse">
+<h2>Creates a named nested element.</h2>
+<pre>storeElement(<a href="../classes/Project.html">\Project</a> $project, string $element, string $child, string | null $elementName) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$project</h4>
+<code><a href="../classes/Project.html">\Project</a></code>
+</div>
+<div class="subelement argument">
+<h4>$element</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$child</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$elementName</h4>
+<code>string</code><code>null</code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/BuildException.html">\BuildException</a></code></th>
+<td></td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_supportsCharacters"></a><div class="element clickable method public method_supportsCharacters" data-toggle="collapse" data-target=".method_supportsCharacters .collapse">
+<h2>Does the introspected class support PCDATA?</h2>
+<pre>supportsCharacters() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_warn"></a><div class="element clickable method public method_warn" data-toggle="collapse" data-target=".method_warn .collapse">
+<h2>Prints warning message to screen if -debug was used.</h2>
+<pre>warn(string $msg) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$msg</h4>
+<code>string</code>
+</div>
+</div></div>
+</div>
+<h3>
+<i class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_attributeSetters"> </a><div class="element clickable property private property_attributeSetters" data-toggle="collapse" data-target=".property_attributeSetters .collapse">
+<h2></h2>
+<pre>$attributeSetters : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_bean"> </a><div class="element clickable property private property_bean" data-toggle="collapse" data-target=".property_bean .collapse">
+<h2></h2>
+<pre>$bean : object</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>access</th>
+<td>private</td>
+</tr></table>
+</div></div>
+</div>
+<a id="property_helpers"> </a><div class="element clickable property private property_helpers" data-toggle="collapse" data-target=".property_helpers .collapse">
+<h2></h2>
+<pre>$helpers : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_methodAddText"> </a><div class="element clickable property private property_methodAddText" data-toggle="collapse" data-target=".property_methodAddText .collapse">
+<h2></h2>
+<pre>$methodAddText : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_nestedCreators"> </a><div class="element clickable property private property_nestedCreators" data-toggle="collapse" data-target=".property_nestedCreators .collapse">
+<h2></h2>
+<pre>$nestedCreators : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_nestedStorers"> </a><div class="element clickable property private property_nestedStorers" data-toggle="collapse" data-target=".property_nestedStorers .collapse">
+<h2></h2>
+<pre>$nestedStorers : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_nestedTypes"> </a><div class="element clickable property private property_nestedTypes" data-toggle="collapse" data-target=".property_nestedTypes .collapse">
+<h2></h2>
+<pre>$nestedTypes </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_slotListeners"> </a><div class="element clickable property private property_slotListeners" data-toggle="collapse" data-target=".property_slotListeners .collapse">
+<h2></h2>
+<pre>$slotListeners : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"><p>"task.current_file" -- which can be used in
+task attributes, if supported.  In the build XML these
+are referred to like this:
+        <regexp pattern="\n" replace="%{task.current_file}"/>
+In the type/task a listener method must be defined:
+        function setListeningReplace($slot) {}</p></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a11</a> and<br>
+            generated on 2012-11-20T07:50:50+01:00.<br></footer></div>
+</div>
+</body>
+</html>

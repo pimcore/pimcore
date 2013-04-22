@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<project name="test" default="main">
+
+<target name="main">
+    <copy file="testfile" tofile="sourcefile.txt"/>
+    <move file="sourcefile.txt" tofile="anotherfile.bak" overwrite="true">
+        <filterchain>
+            <replaceregexp>
+                <regexp pattern="FOO" replace="BAR" ignoreCase="true"/>
+            </replaceregexp>
+        </filterchain>
+    </move>
+</target>
+
+</project>

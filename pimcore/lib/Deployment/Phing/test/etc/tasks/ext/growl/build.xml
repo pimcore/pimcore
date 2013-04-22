@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="testGrowlNotifyTask" basedir="." default="testEmptyMessage">
+
+    <includepath classpath="../src/" />
+    <taskdef name="growlnotify" classname="phing.tasks.ext.GrowlNotifyTask" />
+
+    <!-- A mock task will be added here -->
+    <target name="test" />
+
+    <target name="testEmptyMessage"
+        description="cannot display empty message"
+    >
+        <growlnotify />
+    </target>
+
+    <target name="testSingleNotification"
+        description="display a single message with all default options"
+    >
+        <growlnotify message="Single sample message." />
+    </target>
+
+    <target name="testSingleStickyNotification"
+        description="display a single sticky message"
+    >
+        <growlnotify message="Sticky message."
+            sticky="true"
+        />
+    </target>
+
+    <target name="testSingleCustomAppIconNotification"
+        description="display a single message with an icon in a relative location"
+    >
+        <growlnotify message="Custom Application Icon."
+            appicon="..\..\..\..\data\growlPhing.png"
+        />
+    </target>
+
+    <target name="testSingleNotificationType"
+        description="display a single message of custom notification type"
+    >
+        <growlnotify message="Build FINISHED"
+            notification="Status"
+        />
+    </target>
+
+    <target name="testSingleNotificationTitled"
+        description="display a single message with a title"
+    >
+        <growlnotify message="Build FAILED"
+            title="PhingNotify"
+        />
+    </target>
+
+    <target name="testBroadcastNotification"
+        description="display a single message over network"
+    >
+        <growlnotify message="Broadcast Message : build FAILED"
+            host="192.168.1.2"
+            password="mamasam"
+        />
+    </target>
+
+    <target name="testSingleNotificationWithPriority"
+        description="display a single message with high priority"
+    >
+        <growlnotify message="Build FAILED"
+            priority="high"
+        />
+    </target>
+
+    <target name="testSingleCustomIconNotification"
+        description="display a single message with icons in relative location"
+    >
+        <growlnotify message="Custom Application and Icon message."
+            appicon="..\..\..\..\data\growlPhing.png"
+            icon="..\..\..\..\data\warning.png"
+        />
+    </target>
+
+</project>

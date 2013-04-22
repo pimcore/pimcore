@@ -1,0 +1,380 @@
+<!--
+-File         $Id: 30bac62b408984c59daf50ecea01ad798fb66621 $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2002, turing
+-Author       alex black, enigma@turingstudio.com
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Phing Guide - Core Types</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="Stylesheet" rev="Stylesheet"
+	href="../../css/Documentation.css" type="text/css" media="All"
+	charset="iso-8859-1" />
+</head>
+<body>
+	<h1>
+		<a name="ComplexCoreTypes"></a>Appendix D: Core Types
+	</h1>
+
+	<p>
+		This appendix contains a reference of the system <em>data types</em>
+		contained in Phing.
+	</p>
+	<h2>
+		<a name="Excludes"></a>Excludes
+	</h2>
+	<p>Specifies a set of files, classes or methods to be excluded from processing.</p>
+	<p>This element has no attributes, only nested tags</p>
+	<h3>Nested tags</h3>
+	<ul>
+		<li>File</li>
+		<li>Class</li>
+		<li>Method</li>
+	</ul>
+	<table>
+		<caption>
+			Common attributes for all <em>File, Class, Method</em> tags
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>name</td>
+				<td>String</td>
+				<td>The name of the class, method or file. This may also be specified as a pattern.</td>
+				<td>n/a</td>
+				<td>Yes</td>
+			</tr>
+		</tbody>
+	</table>
+	<h3>Usage Examples</h3>
+	<pre>
+ &lt;coverage-threshold
+    perProject="50"
+    perClass="60"
+    perMethod="70"/>
+    &lt;excludes>
+        &lt;file>**/*Processor.php&lt;/file>
+        &lt;class>Model_Filter_Windows&lt;/class>
+        &lt;method>Model_System::execute()&lt;/method>
+    &lt;/excludes>
+	</pre>
+	<h2>
+		<a name="FileList"></a>FileList
+	</h2>
+	<p>FileLists offer a way to represent a specific list of files.
+		Unlike FileSets, FileLists may contain files that do not exist on the
+		filesystem. Also, FileLists can represent files in a specific order --
+		whereas FileSets represent files in whichever order they are returned
+		by the filesystem.</p>
+	<h3>Usage Examples</h3>
+	<pre>&lt;filelist dir=&quot;/etc&quot; files=&quot;httpd/conf/httpd.conf,php.ini&quot;/&gt;
+</pre>
+	<p>
+		Or you can use a <em>listfile</em>, which is expected to contain one
+		filename per line:
+	</p>
+	<pre>&lt;filelist dir=&quot;conf/&quot; listfile=&quot;ini_files.txt&quot;/&gt;
+</pre>
+	<p>
+		This will grab each file as listed in <em>ini_files.txt</em>. This can
+		be useful if one task compiles a list of files to process and another
+		task needs to read in that list and perform some action to those
+		files.
+	</p>
+	<h3>Attributes</h3>
+	<table>
+		<caption>
+			Attributes for the <em>&lt;fileset&gt;</em> tag
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>dir</td>
+				<td>String</td>
+				<td>The directory, to which the paths given in <em>files </em>or
+					<em>listfile</em> are relative.</td>
+				<td>n/a</td>
+				<td>Yes</td>
+			</tr>
+			<tr>
+				<td>files</td>
+				<td>String</td>
+				<td>Comma or space-separated list of files.</td>
+				<td>n/a</td>
+				<td>Yes (or <em>listfile)</em>
+				</td>
+			</tr>
+			<tr>
+				<td>listfile</td>
+				<td>String</td>
+				<td>A text file with one filename per line.</td>
+				<td>n/a</td>
+				<td>Yes (or <em>files)</em>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<h2>
+		<a name="Fileset"></a>FileSet
+	</h2>
+
+	<p>
+		FileSets offer an easy and straightforward way to include files. The tag supports <a href="AppendixD4-CoreSelectors.html">Selectors</a> and <a href="#PatternSet">PatternSets</a>.
+		Additionally, you can include/exclude files in/from a fileset using the <em>&lt;include&gt;</em>/<em>&lt;exclude&gt;</em>
+		tags. In patterns, one asterisk (<strong>*</strong>) maps to a part of
+		a file/directory name within a directory level. Two asterisks (<strong>**</strong>)
+		may include above the &quot;border&quot; of the directory separator.
+	</p>
+
+	<h3>Examples</h3>
+	<ul>
+		<li><em>test*.xml</em> will include <em>test_42.xml</em>, but it
+			will not include <em>test/some.xml</em>.</li>
+		<li><em>test**.xml</em> fits to <em>test_42.xml</em> as well as
+			to <em>test/bla.xml</em>, for example.</li>
+		<li><em>**/*.ent.xml</em> fits to all files that end with <em>ent.xml</em>
+			in all subdirectories of the directory specified with the <em>dir</em>
+			attribute of the <em>&lt;fileset&gt;</em> tag. However, it will not
+			include any files that are directly in the base directory of the file
+			set.</li>
+	</ul>
+
+	<h3>Usage Example</h3>
+	<pre>&lt;fileset dir=&quot;/etc&quot; &gt;
+  &lt;include name=&quot;httpd/**&quot; /&gt;
+  &lt;include name=&quot;php.ini&quot; /&gt;
+&lt;/fileset&gt;
+
+&lt;fileset dir=&quot;/etc&quot; &gt;
+  &lt;patternset&gt;
+    &lt;include name=&quot;**/*.php&quot;/&gt;
+    &lt;exclude name=&quot;**/*Test*&quot;/&gt;
+  &lt;/patternset&gt;
+&lt;/fileset&gt;
+</pre>
+	<p>
+		This will include the apache configuration and PHP configuration file
+		from <em>/etc</em>.
+	</p>
+
+	<h3>Attributes</h3>
+	<table>
+		<caption>
+			Attributes for the <em>&lt;fileset&gt;</em> tag
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>dir</td>
+				<td>String</td>
+				<td>The directory, the paths given in <em>include</em>/<em>exclude</em>
+					are relative to.</td>
+				<td>n/a</td>
+				<td>Yes</td>
+			</tr>
+			<tr>
+				<td>defaultexcludes</td>
+				<td>Boolean</td>
+				<td>Whether default exclusions should be used or not. Default
+					excludes are: <pre>*~, #*#, .#*, %*%, CVS, CVS/**, .cvsignore, SCCS, SCCS/**, vssver.scc, .svn, .svn/**, ._*, .DS_Store, .darcs, .darcs/**</pre>
+				</td>
+				<td>True</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>casesensitive</td>
+				<td>Boolean</td>
+				<td>The case sensitivity of the file system.</td>
+				<td>True</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>expandsymboliclinks</td>
+				<td>Boolean</td>
+				<td>Whether to expand/dereference (follow) symbolic links - set
+					to 'true' to emulate old Phing behavior.</td>
+				<td>False</td>
+				<td>No</td>
+			</tr>
+			<tr>
+			    <td>includes</td>
+			    <td>String</td>
+			    <td>Comma- or space-separated list of patterns of files that must be included; all files are included when omitted.</td>
+			    <td>n/a</td>
+			    <td>No</td>
+			</tr>
+            <tr>
+                <td>includesfile</td>
+                <td>String</td>
+                <td>The name of a file; each line of this file is taken to be an include pattern.</td>
+                <td>n/a</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td>excludes</td>
+                <td>String</td>
+                <td>comma- or space-separated list of patterns of files that must be excluded; no files (except default excludes) are excluded when omitted.</td>
+                <td>n/a</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td>excludesfile</td>
+                <td>String</td>
+                <td>The name of a file; each line of this file is taken to be an exclude pattern.</td>
+                <td>n/a</td>
+                <td>No</td>
+            </tr>
+		</tbody>
+	</table>
+    <h3>Nested Tags</h3>
+	<p>
+		The tags that are supported by <em>Fileset</em> are <em>&lt;include&gt;</em>,
+		<em>&lt;exclude&gt;</em> and <em>&lt;patternset&gt;</em>. The <em>&lt;include&gt;</em>
+        and the <em>&lt;exclude&gt;</em> tags tags must have a <em>name</em>
+		attribute that contains the pattern to include/exclude.
+	</p>
+
+    <h2>
+        <a name="PatternSet"></a>PatternSet
+    </h2>
+    <p>The PatternSet data type defines patterns that can be grouped into sets and nested into <a href="#FileSet">FileSets</a>. Patterns can be specified by nested &lt;include&gt; or &lt;exclude&gt; elements.</p>
+    
+    <h3>Usage Example</h3>
+    <pre>&lt;patternset id=&quot;no.tests&quot;&gt;
+  &lt;include name=&quot;**/*.php&quot;/&gt;
+  &lt;exclude name=&quot;**/*Test*&quot;/&gt;
+&lt;/patternset&gt;
+</pre>
+    <h3>Attributes</h3>
+    <table>
+        <caption>
+            Attributes for <em>&lt;patternset&gt;</em> tag
+        </caption>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Default</th>
+                <th>Required</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>includes</td>
+                <td>String</td>
+                <td>Comma- or space-separated list of patterns of files that must be included; all files are included when omitted.</td>
+                <td>n/a</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td>includesfile</td>
+                <td>String</td>
+                <td>The name of a file; each line of this file is taken to be an include pattern.</td>
+                <td>n/a</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td>excludes</td>
+                <td>String</td>
+                <td>comma- or space-separated list of patterns of files that must be excluded; no files (except default excludes) are excluded when omitted.</td>
+                <td>n/a</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td>excludesfile</td>
+                <td>String</td>
+                <td>The name of a file; each line of this file is taken to be an exclude pattern.</td>
+                <td>n/a</td>
+                <td>No</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3>Nested Tags</h3>
+    <p>
+        The <em>&lt;patternset&gt;</em> tag only supports <em>&lt;include&gt;</em> and
+        <em>&lt;exclude&gt;</em>. The <em>&lt;include&gt;</em>
+        and the <em>&lt;exclude&gt;</em> tags tags must have a <em>name</em>
+        attribute that contains the pattern to include/exclude.
+    </p>
+
+	<h2>
+		<a name="Path"></a>Path / Classpath
+	</h2>
+	<p>The Path data type can be used to respresent path structures. In
+		many cases the path type will be used for nested &lt;classpath&gt;
+		tags. E.g.</p>
+	<pre>&lt;path id=&quot;project.class.path&quot;&gt;
+  &lt;pathelement dir=&quot;lib/&quot;/&gt;
+  &lt;pathelement dir=&quot;ext/&quot;/&gt;
+&lt;/path&gt;
+
+&lt;target name=&quot;blah&quot;&gt;
+  &lt;taskdef name=&quot;mytask&quot; path=&quot;myapp.phing.tasks.MyTask&quot;&gt;
+    &lt;classpath refid=&quot;project.class.path&quot;/&gt;
+  &lt;/taskdef&gt;<br />&lt;/target&gt;</pre>
+    <h3>Attributes</h3>
+	<table>
+		<caption>
+			Attributes for <em>&lt;path&gt;</em> tag
+		</caption>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>dir</td>
+				<td>String</td>
+				<td>Specific path to directory</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>path</td>
+				<td>String</td>
+				<td>A path (which contains multiple locations separated by
+					path.separator) to add.</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+		</tbody>
+	</table>
+	<h3>Nested Tags</h3>
+	<p>
+		The <em>&lt;path&gt; </em>tag supports nested <em>&lt;fileset&gt;</em>
+		and <em>&lt;dirset&gt;</em> tags.
+	</p>
+</body>
+</html>
