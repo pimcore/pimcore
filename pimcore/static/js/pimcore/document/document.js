@@ -142,6 +142,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                             if(typeof this["createScreenshot"] == "function") {
                                 this.createScreenshot();
                             }
+                            pimcore.plugin.broker.fireEvent("postSaveDocument", this, this.getType(), task, only);
                         }
                         else {
                             pimcore.helpers.showNotification(t("error"), t("error_saving_document"), "error",
