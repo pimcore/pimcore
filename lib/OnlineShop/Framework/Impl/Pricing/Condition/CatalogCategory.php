@@ -10,12 +10,12 @@
 class OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory implements OnlineShop_Framework_Pricing_Condition_ICategory
 {
     /**
-     * @var array|OnlineShop_Framework_AbstractCategory
+     * @var OnlineShop_Framework_AbstractCategory[]
      */
     protected $categories = array();
 
     /**
-     * @param array $categories
+     * @param OnlineShop_Framework_AbstractCategory[] $categories
      *
      * @return OnlineShop_Framework_Pricing_Condition_ICategory
      */
@@ -26,7 +26,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory implements Onl
     }
 
     /**
-     * @return array|OnlineShop_Framework_AbstractCategory
+     * @return OnlineShop_Framework_AbstractCategory[]
      */
     public function getCategories()
     {
@@ -115,8 +115,6 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory implements Onl
             foreach($this->getCategories() as $allow)
             {
                 /* @var OnlineShop_Framework_AbstractCategory $allow */
-                #if($category->getFullPath() == $allow->getFullPath())
-                #    return true;
                 if(strpos($category->getFullPath(), $allow->getFullPath()) !== false) {
                     return true;
                 }

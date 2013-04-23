@@ -10,14 +10,14 @@
 interface OnlineShop_Framework_Pricing_Condition_ICatalogProduct extends OnlineShop_Framework_Pricing_ICondition
 {
     /**
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_AbstractProduct[] $products
      *
      * @return OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct
      */
-    public function setProduct(OnlineShop_Framework_AbstractProduct $product);
+    public function setProducts(array $products);
 
     /**
-     * @return OnlineShop_Framework_AbstractProduct
+     * @return OnlineShop_Framework_AbstractProduct[]
      */
-    public function getProduct();
+    public function getProducts();
 }

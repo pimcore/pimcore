@@ -673,37 +673,41 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionCatalogProduct"),
-            items: [{
-                xtype: "textfield",
-                fieldLabel: t("plugin_onlineshop_pricing_config_condition_catalog_product"),
-                name: "product",
-                width: 400,
-                cls: "input_drop_target",
-                value: data.product,
-                listeners: {
-                    "render": function (el) {
-                        new Ext.dd.DropZone(el.getEl(), {
-                            reference: this,
-                            ddGroup: "element",
-                            getTargetFromEvent: function(e) {
-                                return this.getEl();
-                            }.bind(el),
+            items: [
+                new pimcore.plugin.OnlineShop.pricing.config.objects(data.products, {
+                    classes: [
+//                        {classes: "Product"}
+                    ],
+                    name: "products",
+                    title: "",
+                    visibleFields: "path",
+                    height: 200,
+                    width: 500,
+                    columns: [],
 
-                            onNodeOver : function(target, dd, e, data) {
-                                return Ext.dd.DropZone.prototype.dropAllowed;
-                            },
+                    // ?
+                    columnType: null,
+                    datatype: "data",
+                    fieldtype: "objects",
 
-                            onNodeDrop : function (target, dd, e, data) {
-                                if (data.node.attributes.type == "object") {
-                                    this.setValue(data.node.attributes.path);
-                                    return true;
-                                }
-                                return false;
-                            }.bind(el)
-                        });
-                    }
-                }
-            }]
+                    // ??
+                    index: false,
+                    invisible: false,
+                    lazyLoading: false,
+                    locked: false,
+                    mandatory: false,
+                    maxItems: "",
+                    noteditable: false,
+                    permissions: null,
+                    phpdocType: "array",
+                    queryColumnType: "text",
+                    relationType: true,
+                    style: "",
+                    tooltip: "",
+                    visibleGridView: false,
+                    visibleSearch: false
+                }).getLayoutEdit()
+            ]
         });
 
         return item;
@@ -739,7 +743,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             items: [
                 new pimcore.plugin.OnlineShop.pricing.config.objects(data.categories, {
                     classes: [
-                        {classes: "ProductCategory"}
+//                        {classes: "ProductCategory"}
                     ],
                     name: "categories",
                     title: "",
@@ -1055,8 +1059,14 @@ pimcore.plugin.OnlineShop.pricing.actions = {
             type: 'FreeShipping',
             forceLayout: true,
             style: "margin: 10px 0 0 0",
-            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-            tbar: this.getTopBar(niceName, myId, panel, data, iconCls)
+//            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data, iconCls),
+//            items: [
+//                {
+//                    xtype: "label",
+//                    fieldLabel: t("no_configuration")
+//                }
+//            ]
         });
 
         return item;

@@ -228,15 +228,14 @@ pimcore.plugin.OnlineShop.pricing.config.objects = Class.create(pimcore.object.t
                     "->",
                     {
                         xtype: "button",
+                        iconCls: "pimcore_icon_search",
+                        handler: this.openSearchEditor.bind(this)
+                    },
+                    {
+                        xtype: "button",
                         iconCls: "pimcore_icon_delete",
                         handler: this.empty.bind(this)
-                    },
-//                    {
-//                        xtype: "button",
-//                        iconCls: "pimcore_icon_search",
-//                        handler: this.openSearchEditor.bind(this)
-//                    },
-//                    this.getCreateControl()
+                    }
                 ],
                 ctCls: "pimcore_force_auto_width",
                 cls: "pimcore_force_auto_width"
@@ -307,6 +306,27 @@ pimcore.plugin.OnlineShop.pricing.config.objects = Class.create(pimcore.object.t
 
     getLayoutShow: function () {
         return this.createLayout(true);
+    },
+
+
+    openSearchEditor: function () {
+        var allowedClasses;
+        if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
+            allowedClasses = [];
+            for (var i = 0; i < this.fieldConfig.classes.length; i++) {
+                allowedClasses.push(this.fieldConfig.classes[i].classes);
+            }
+        }
+
+        pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
+            type: ["object"],
+            subtype: {
+                object: ["object", "folder","variant"]
+            },
+            specific: {
+                classes: allowedClasses
+            }
+        });
     },
 
 

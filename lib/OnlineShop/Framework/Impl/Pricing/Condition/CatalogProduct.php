@@ -10,9 +10,9 @@
 class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct implements OnlineShop_Framework_Pricing_Condition_ICatalogProduct
 {
     /**
-     * @var OnlineShop_Framework_AbstractProduct
+     * @var OnlineShop_Framework_AbstractProduct[]
      */
-    protected $product;
+    protected $products;
 
     /**
      * @param OnlineShop_Framework_Pricing_IEnvironment $environment
@@ -21,7 +21,21 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct implements Onli
      */
     public function check(OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
-        return $environment->getProduct() == $this->getProduct();
+        // works only if we have a product
+        if($environment->getProduct())
+        {
+            // check all valid products
+            foreach($this->getProducts() as $product)
+            {
+                /* @var OnlineShop_Framework_AbstractProduct $allow */
+                if($environment->getProduct() === $product)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -29,10 +43,23 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct implements Onli
      */
     public function toJSON()
     {
-        return json_encode(array(
-                                'type' => 'CatalogProduct',
-                                'product' => $this->getProduct() ? $this->getProduct()->getFullPath() : '',
-                           ));
+        // basic
+        $json = array(
+            'type' => 'CatalogProduct',
+            'products' => array()
+        );
+
+        // add categories
+        foreach($this->getProducts() as $product)
+        {
+            /* @var OnlineShop_Framework_AbstractProduct $product */
+            $json['products'][] = array(
+                $product->getId(),
+                $product->getFullPath()
+            );
+        }
+
+        return json_encode($json);
     }
 
     /**
@@ -43,10 +70,13 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct implements Onli
     public function fromJSON($string)
     {
         $json = json_decode($string);
-        $product = OnlineShop_Framework_AbstractProduct::getByPath( $json->product );
 
-        if($product)
-            $this->setProduct( $product );
+        $products = array();
+        foreach($json->products as $cat)
+        {
+            $products[] = OnlineShop_Framework_AbstractProduct::getById($cat->id);
+        }
+        $this->setProducts( $products );
 
         return $this;
     }
@@ -57,10 +87,13 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct implements Onli
      */
     public function __sleep()
     {
-        if($this->product)
-            $this->product = $this->product->getFullPath();
+        foreach($this->products as $key => $product)
+        {
+            /* @var OnlineShop_Framework_AbstractProduct $product */
+            $this->products[ $key ] = $product->getId();
+        }
 
-        return array('product');
+        return array('products');
     }
 
     /**
@@ -68,28 +101,29 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct implements Onli
      */
     public function __wakeup()
     {
-        if($this->product != '')
-            $this->product = OnlineShop_Framework_AbstractProduct::getByPath( $this->product );
-
+        foreach($this->products as $key => $product_id)
+        {
+            $this->products[ $key ] = OnlineShop_Framework_AbstractProduct::getById($product_id);
+        }
     }
 
     /**
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_AbstractProduct[] $products
      *
      * @return OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct
      */
-    public function setProduct(OnlineShop_Framework_AbstractProduct $product)
+    public function setProducts(array $products)
     {
-        $this->product = $product;
+        $this->products = $products;
         return $this;
     }
 
     /**
-     * @return OnlineShop_Framework_AbstractProduct
+     * @return OnlineShop_Framework_AbstractProduct[]
      */
-    public function getProduct()
+    public function getProducts()
     {
-        return $this->product;
+        return $this->products;
     }
 
 }
