@@ -188,8 +188,8 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
     }
 
 
-    function getKeyId($propName) {
-        $keyConfig = Object_KeyValue_KeyConfig::getByName($propName);
+    function getKeyId($propName, $groupId = null) {
+        $keyConfig = Object_KeyValue_KeyConfig::getByName($propName, $groupId);
 
         if (!$keyConfig) {
             throw new Exception("key does not exist");
@@ -203,17 +203,29 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
      * for this object.
      * @param $propName
      */
-    public function getProperty($propName) {
-        $keyId =  $this->getKeyId($propName);
+    public function getProperty($propName, $groupId = null) {
+        $keyId =  $this->getKeyId($propName, $groupId);
 
+        $result = array();
         // the key name is valid, now iterate over the object's pairs
         $propsWithInheritance = $this->getProperties();
         foreach ($propsWithInheritance as $pair) {
             if ($pair["key"] == $keyId) {
-                return ($pair["value"]);
+                $result[] = new Object_Data_KeyValue_Entry($pair["value"], $pair["translated"]);
             }
         }
+        $count = count($result);
+        if ($count == 0) {
+            return null;
+        } else if ($count == 1) {
+            return $result[0];
+        } else {
+            return $result;
+        }
     }
+
+
+
 
     /** Sets the value of the property with the given id
      * @param $keyId the id of the key
@@ -229,18 +241,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
             if ($pair["key"] == $keyId) {
 
                 if ($fromGrid) {
-                    $keyConfig = Object_KeyValue_KeyConfig::getById($keyId);
-                    $translatorID = $keyConfig->getTranslator();
-                    $translatorConfig = Object_KeyValue_TranslatorConfig::getById($translatorID);
-                    $className = $translatorConfig->getTranslator();
-                    if (Pimcore_Tool::classExists($className)) {
-                        $translator = new $className();
-                        $translatedValue = $translator->translate($value);
-                        if (!$translatedValue) {
-                            $translatedValue = $value;
-                        }
-                    }
-
+                    $translatedValue = $this->getTranslatedValue($keyId, $value);
                 }
 
                 $pair["value"] = $value;
@@ -257,6 +258,22 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         return $this;
     }
 
+    private function getTranslatedValue($keyId, $value) {
+        $translatedValue = "";
+        $keyConfig = Object_KeyValue_KeyConfig::getById($keyId);
+        $translatorID = $keyConfig->getTranslator();
+        $translatorConfig = Object_KeyValue_TranslatorConfig::getById($translatorID);
+        $className = $translatorConfig->getTranslator();
+        if (Pimcore_Tool::classExists($className)) {
+            $translator = new $className();
+            $translatedValue = $translator->translate($value);
+            if (!$translatedValue) {
+                $translatedValue = $value;
+            }
+        }
+        return $translatedValue;
+    }
+
 
     public function setProperty($propName, $value) {
         $keyId =  $this->getKeyId($propName);
@@ -264,7 +281,16 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
     }
 
     public function __call($name, $arguments) {
-        if(substr($name, 0, 3) == "get") {
+        $sub = substr($name, 0, 14);
+        if(substr($name, 0, 16) == "getWithGroupName") {
+            $key = substr($name, 16, strlen($name)-16);
+            $groupConfig = Object_KeyValue_GroupConfig::getByName($arguments[0]);
+            return $this->getProperty($key, $groupConfig->getId());
+        } else if(substr($name, 0, 14) == "getWithGroupId") {
+            $key = substr($name, 14, strlen($name)-14);
+            $groupConfig = Object_KeyValue_GroupConfig::getById($arguments[0]);
+            return $this->getProperty($key, $groupConfig->getId());
+        } else  if(substr($name, 0, 3) == "get") {
             $key = substr($name, 3, strlen($name)-3);
             return $this->getProperty($key);
         } else if(substr($name, 0, 3) == "set") {
@@ -272,6 +298,49 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
             return $this->setProperty($key, $arguments[0]);
         }
         return parent::__call($name, $arguments);
+    }
+
+
+    public function getEntryByKeyId($keyId) {
+        $result = array();
+        foreach($this->getProperties() as $property) {
+            if($property['key'] == $keyId) {
+                $result[] = new Object_Data_KeyValue_Entry($property["value"], $property["translated"]);
+            }
+        }
+
+        $count = count($result);
+        if ($count == 0) {
+            return null;
+        } else if ($count == 1) {
+            return $result[0];
+        } else {
+            return $result;
+        }
+
+    }
+
+    public function setValueWithKeyId($keyId, $value) {
+        $cleanedUpValues = array();
+        foreach($this->arr as $entry) {
+            if($entry['key'] != $keyId) {
+                $cleanedUpValues[] = $entry;
+            }
+        }
+        $this->arr = $cleanedUpValues;
+
+        if(!is_array($value)) {
+            $value = array($value);
+        }
+
+        foreach($value as $v) {
+            $pair = array();
+            $pair["key"] = $keyId;
+            $pair["value"] = $v;
+            $pair["translated"] = $this->getTranslatedValue($keyId, $v);
+            $this->arr[] = $pair;
+        }
+
     }
 
 
