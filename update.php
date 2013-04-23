@@ -16,7 +16,7 @@ if($revision == 18) {
     ");
 }
 
-if($revision == 36) {
+if($revision == 38) {
 
     $db = Pimcore_Resource::get();
 
