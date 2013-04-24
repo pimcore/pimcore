@@ -225,7 +225,7 @@ class Pimcore_Tool_RestClient {
         return $params;
     }
 
-    public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $objectClass = null, $decode = true) {
+    public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $decode = true, $objectClass = null) {
         $params = $this->fillParms($condition, $order, $orderKey, $offset, $limit, $groupBy, $objectClass);
 
         $response = $this->doRequest(self::$baseUrl .  "object-list/?apikey=" . self::$apikey . $params, "GET");
