@@ -35,27 +35,33 @@ interface OnlineShop_Framework_Pricing_IRule
 
     /**
      * @param string $label
+     * @param string $locale
      *
      * @return OnlineShop_Framework_Pricing_IRule
      */
-    public function setLabel($label);
+    public function setLabel($label, $locale = null);
 
     /**
+     * @param string $locale
+     *
      * @return string
      */
-    public function getLabel();
+    public function getLabel($locale = null);
 
     /**
      * @param $description
+     * @param string $locale
      *
      * @return OnlineShop_Framework_Pricing_IRule
      */
-    public function setDescription($description);
+    public function setDescription($description, $locale = null);
 
     /**
+     * @param string $locale
+     *
      * @return string mixed
      */
-    public function getDescription();
+    public function getDescription($locale = null);
 
     /**
      * @param OnlineShop_Framework_Pricing_ICondition

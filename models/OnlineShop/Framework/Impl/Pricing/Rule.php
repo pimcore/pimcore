@@ -51,12 +51,12 @@ class OnlineShop_Framework_Impl_Pricing_Rule extends Pimcore_Model_Abstract impl
     protected $name;
 
     /**
-     * @var string
+     * @var string[]
      */
     protected $label;
 
     /**
-     * @var string
+     * @var string[]
      */
     protected $description;
 
@@ -99,11 +99,28 @@ class OnlineShop_Framework_Impl_Pricing_Rule extends Pimcore_Model_Abstract impl
         {
             switch($method)
             {
+                // localized fields
+                case 'setlabel':
+                case 'setdescription':
+                    $value = unserialize($value);
+                    if($value === false)
+                    {
+                        return $this;
+                    }
+                    else
+                    {
+                        $this->$key = $value;
+                    }
+                    return $this;
+
+                // objects
                 case 'setactions':
                 case 'setcondition':
                     $value = unserialize($value);
                     if($value === false)
+                    {
                         return $this;
+                    }
             }
             $this->$method($value);
         }
@@ -131,20 +148,33 @@ class OnlineShop_Framework_Impl_Pricing_Rule extends Pimcore_Model_Abstract impl
 
     /**
      * @param string $label
+     * @param string $locale
+     *
      * @return OnlineShop_Framework_Pricing_IRule
      */
-    public function setLabel($label)
+    public function setLabel($label, $locale = null)
     {
-        $this->label = $label;
+        if($locale === NULL)
+        {
+            $locale = Zend_Registry::get('Zend_Locale')->toString();
+        }
+
+        $this->label[ $locale ] = $label;
         return $this;
     }
 
     /**
+     * @param string $locale
+     *
      * @return string
      */
-    public function getLabel()
+    public function getLabel($locale = null)
     {
-        return $this->label;
+        if($locale === NULL)
+        {
+            $locale = Zend_Registry::get('Zend_Locale')->toString();
+        }
+        return $this->label[ $locale ];
     }
 
     /**
@@ -157,10 +187,11 @@ class OnlineShop_Framework_Impl_Pricing_Rule extends Pimcore_Model_Abstract impl
 
     /**
      * @param $name
+     * @param string $locale
      *
      * @return OnlineShop_Framework_Pricing_IRule
      */
-    public function setName($name)
+    public function setName($name, $locale = null)
     {
         $this->name = $name;
         return $this;
@@ -168,20 +199,33 @@ class OnlineShop_Framework_Impl_Pricing_Rule extends Pimcore_Model_Abstract impl
 
     /**
      * @param string $description
+     * @param string $locale
+     *
      * @return OnlineShop_Framework_Pricing_IRule
      */
-    public function setDescription($description)
+    public function setDescription($description, $locale = null)
     {
-        $this->description = $description;
+        if($locale === NULL)
+        {
+            $locale = Zend_Registry::get('Zend_Locale')->toString();
+        }
+
+        $this->description[ $locale ] = $description;
         return $this;
     }
 
     /**
+     * @param string $locale
+     *
      * @return string
      */
-    public function getDescription()
+    public function getDescription($locale = null)
     {
-        return $this->description;
+        if($locale === NULL)
+        {
+            $locale = Zend_Registry::get('Zend_Locale')->toString();
+        }
+        return $this->description[ $locale ];
     }
 
     /**

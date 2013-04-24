@@ -99,7 +99,34 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
      * @returns Ext.form.FormPanel
      */
     getSettings: function () {
+        var data = this.data;
 
+        // create tabs for available languages
+        var langTabs = [];
+        Ext.each(pimcore.settings.websiteLanguages, function(lang){
+            var tab = {
+                title: pimcore.available_languages[ lang ],
+                layout:'form',
+                items: [{
+                    xtype: "textfield",
+                    name: "label." + lang,
+                    fieldLabel: t("label"),
+                    width: 250,
+                    value: data.label[ lang ]
+                }, {
+                    xtype: "textarea",
+                    name: "description." + lang,
+                    fieldLabel: t("description"),
+                    width: 400,
+                    height: 100,
+                    value: data.description[ lang ]
+                }]
+            }
+
+            langTabs.push( tab );
+        });
+
+        // ...
         this.settingsForm = new Ext.form.FormPanel({
             layout: "pimcoreform",
             iconCls: "plugin_onlineshop_pricing_icon_rule_settings",
@@ -108,18 +135,16 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
             autoScroll: true,
             border:false,
             items: [{
-                xtype: "textfield",
-                fieldLabel: t("label"),
-                name: "label",
-                width: 250,
-                value: this.data.label
+                xtype: "tabpanel",
+                activeTab: 0,
+                defaults: {
+                    autoHeight:true,
+                    bodyStyle:'padding:10px;'
+                },
+                items: langTabs
             }, {
-                name: "description",
-                fieldLabel: t("description"),
-                xtype: "textarea",
-                width: 400,
-                height: 100,
-                value: this.data.description
+                xtype: "spacer",
+                height: 15
             }, {
                 name: "behavior",
                 fieldLabel: t("plugin_onlineshop_pricing_config_behavior"),
@@ -155,7 +180,6 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
         for(var i=0; i<itemTypes.length; i++) {
             if(itemTypes[i].indexOf("condition") == 0) {
                 addMenu.push({
-//                    disabled: itemTypes[i] == 'conditionCartAmount',    // disable temporary
                     iconCls: "plugin_onlineshop_pricing_icon_" + itemTypes[i],
                     handler: this.addCondition.bind(this, itemTypes[i]),
                     text: pimcore.plugin.OnlineShop.pricing.conditions[itemTypes[i]](null, null,true)

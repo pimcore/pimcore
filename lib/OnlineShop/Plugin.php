@@ -83,7 +83,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
             CREATE TABLE `plugin_onlineshop_pricing_rule` (
             `id` INT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             `name` VARCHAR(50) NULL DEFAULT NULL,
-            `label` VARCHAR(50) NULL DEFAULT NULL,
+            `label` TEXT NULL,
             `description` TEXT NULL,
             `behavior` ENUM('additiv','stopExecute') NULL DEFAULT NULL,
             `active` TINYINT(1) UNSIGNED NULL DEFAULT NULL,

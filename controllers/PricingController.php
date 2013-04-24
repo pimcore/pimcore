@@ -58,12 +58,20 @@ class OnlineShop_PricingController extends Pimcore_Controller_Action_Admin
         $rule = OnlineShop_Framework_Impl_Pricing_Rule::getById( (int)$this->getParam('id') );
         if($rule)
         {
+            // get data
             $condition = $rule->getCondition();
+            foreach(Pimcore_Tool::getValidLanguages() as $lang)
+            {
+                $localizedLabel[ $lang ] = $rule->getLabel( $lang );
+                $localizedDescription[ $lang ] = $rule->getDescription( $lang );
+            }
+
+            // create json config
             $json = array(
                 'id' => $rule->getId(),
                 'name' => $rule->getName(),
-                'label' => $rule->getLabel(),
-                'description' => $rule->getDescription(),
+                'label' => $localizedLabel,
+                'description' => $localizedDescription,
                 'behavior' => $rule->getBehavior(),
                 'active' => $rule->getActive(),
                 'condition' => $condition ? json_decode($condition->toJSON()) : '',
@@ -157,11 +165,15 @@ class OnlineShop_PricingController extends Pimcore_Controller_Action_Admin
             $rule = OnlineShop_Framework_Impl_Pricing_Rule::getById( (int)$this->getParam('id') );
 
             // apply basic settings
-            $rule
-                ->setLabel( $data->settings->label )
-                ->setDescription( $data->settings->description )
-                ->setBehavior( $data->settings->behavior )
+            $rule->setBehavior( $data->settings->behavior )
                 ->setActive( (bool)$data->settings->active );
+
+            // apply lang fields
+            foreach(Pimcore_Tool::getValidLanguages() as $lang)
+            {
+                $rule->setLabel( $data->settings->{'label.' . $lang}, $lang );
+                $rule->setDescription( $data->settings->{'description.' . $lang}, $lang );
+            }
 
 
             // create root condition
@@ -193,22 +205,7 @@ class OnlineShop_PricingController extends Pimcore_Controller_Action_Admin
                 {
                     $currentContainer = $currentContainer->parent;
                 }
-
             }
-//
-//            /**
-//             * remove parent reference
-//             * @param stdClass $container
-//             */
-//            $clean
-//                = function(stdClass $container) use (&$clean){
-//                foreach($container->conditions as &$cont) {
-//                    $cont->parent = null;
-////                    $clean($cont);
-//                }
-//            };
-//
-//            $clean($rootContainer);
 
             // create rule condition
             $condition = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getCondition( $rootContainer->type );

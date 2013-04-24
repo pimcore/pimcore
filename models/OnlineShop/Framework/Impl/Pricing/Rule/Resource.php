@@ -18,6 +18,11 @@ class OnlineShop_Framework_Impl_Pricing_Rule_Resource extends Pimcore_Model_Reso
     protected $fieldsToSave = array('name', 'label', 'description', 'behavior', 'active', 'prio', 'condition', 'actions');
 
     /**
+     * @var array
+     */
+    protected $localizedFields = array('label', 'description');
+
+    /**
      * Get the valid columns from the database
      *
      * @return void
@@ -32,24 +37,13 @@ class OnlineShop_Framework_Impl_Pricing_Rule_Resource extends Pimcore_Model_Reso
      *
      * @throws Exception
      */
-    public function getById($id) {
-
+    public function getById($id)
+    {
         $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
         if(empty($classRaw)) {
             throw new Exception('pricing rule ' . $id . ' not found.');
         }
         $this->assignVariablesToModel($classRaw);
-
-        // TODO config fields
-
-//        if($data["id"]) {
-//            $data["conditions"] = unserialize($data["conditions"]);
-//            $data["actions"] = unserialize($data["actions"]);
-//            $this->assignVariablesToModel($data);
-//        } else {
-//            throw new Exception("target with id " . $this->model->getId() . " doesn't exist");
-//        }
-
     }
 
 
@@ -87,7 +81,22 @@ class OnlineShop_Framework_Impl_Pricing_Rule_Resource extends Pimcore_Model_Reso
         foreach ($this->fieldsToSave as $field) {
             if (in_array($field, $this->validColumns)) {
                 $getter = 'get' . ucfirst($field);
-                $value = $this->model->$getter();
+
+                if(in_array($field, $this->localizedFields))
+                {
+                    // handle localized Fields
+                    $localizedValues = array();
+                    foreach(Pimcore_Tool::getValidLanguages() as $lang)
+                    {
+                        $localizedValues[ $lang ] = $value = $this->model->$getter($lang);
+                    }
+                    $value = $localizedValues;
+                }
+                else
+                {
+                    // normal case
+                    $value = $this->model->$getter();
+                }
 
                 if (is_array($value) || is_object($value)) {
                     $value = serialize($value);
