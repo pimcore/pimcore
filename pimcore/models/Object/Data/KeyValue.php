@@ -98,6 +98,20 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         return $this->arr;
     }
 
+    public function getKeyvaluepairsByGroup($groupName){
+        $data = array();
+        $group = Object_KeyValue_GroupConfig::getByName($groupName);
+        if (!empty($group)) {
+            $properties = $this->getProperties();
+            foreach ((array)$properties as $property) {
+                if ($property['groupId'] == $group->getId()) {
+                    $data[] = $property;
+                }
+            }
+        }
+        return $data;
+    }
+
     public function getProperties($forEditMode = false) {
         $result = array();
         $object = Object_Abstract::getById($this->objectId);
@@ -107,6 +121,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         foreach ($this->arr as $pair) {
             $pair["inherited"] = false;
             $pair["source"] = $object->getId();
+            $pair["groupId"] = Object_KeyValue_KeyConfig::getById($pair['key'])->getGroup();
             $result[] = $pair;
             $internalKeys[] = $pair["key"];
         }

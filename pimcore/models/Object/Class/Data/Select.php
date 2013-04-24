@@ -194,7 +194,7 @@ class Object_Class_Data_Select extends Object_Class_Data {
      * @throws Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false) {
-        if (!$omitMandatoryCheck and $this->getMandatory() and strlen( (string) $data ) > 0) {
+        if (!$omitMandatoryCheck and $this->getMandatory() and strlen( (string) $data ) == 0) {
             throw new Exception("Empty mandatory field [ " . $this->getName() . " ]");
         }
     }
