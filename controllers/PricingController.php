@@ -10,6 +10,23 @@
 class OnlineShop_PricingController extends Pimcore_Controller_Action_Admin
 {
     /**
+     * init pricing config system
+     */
+    public function init()
+    {
+        parent::init();
+
+        // permission check
+        $key = 'plugin_onlineshop_pricing_rules';
+        $access = $this->getUser()->getPermission( $key );
+        if(!$access)
+        {
+            throw new Exception('this function requires "plugin_onlineshop_pricing_rules" permission!');
+        }
+    }
+
+
+    /**
      * definierte preisregeln ausgeben
      */
     public function listAction()

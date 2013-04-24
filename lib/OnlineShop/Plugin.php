@@ -78,25 +78,6 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         ");
 
-        // PricingRules
-        Pimcore_API_Plugin_Abstract::getDb()->query("
-            CREATE TABLE `plugin_onlineshop_pricing_rule` (
-            `id` INT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            `name` VARCHAR(50) NULL DEFAULT NULL,
-            `label` TEXT NULL,
-            `description` TEXT NULL,
-            `behavior` ENUM('additiv','stopExecute') NULL DEFAULT NULL,
-            `active` TINYINT(1) UNSIGNED NULL DEFAULT NULL,
-            `prio` TINYINT(3) UNSIGNED NOT NULL,
-            `condition` TEXT NOT NULL COMMENT 'configuration der condition',
-            `actions` TEXT NOT NULL COMMENT 'configuration der action',
-            PRIMARY KEY (`id`),
-            UNIQUE INDEX `name` (`name`),
-            INDEX `active` (`active`)
-        )
-        ENGINE=InnoDB
-        AUTO_INCREMENT=0;
-        ");
 
 
         // Add FieldCollections
@@ -134,6 +115,21 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         self::setConfig("/website/var/plugins/OnlineShopConfig.xml");
 
 
+        // execute installations from subsystems
+        $reflection = new ReflectionClass( __CLASS__ );
+        $methods = $reflection->getMethods( ReflectionMethod::IS_STATIC );
+        foreach($methods as $method)
+        {
+            /* @var ReflectionMethod $method */
+            if(preg_match('#^install[A-Z]#', $method->name))
+            {
+                $func = $method->name;
+                $success = self::$func();
+            }
+        }
+
+
+        // create status message
         if(self::isInstalled()){
             $statusMessage = "installed"; // $translate->_("plugin_objectassetfolderrelation_installed_successfully");
         } else {
@@ -187,8 +183,23 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartcheckoutdata`");
         Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartitem`");
         Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_customerdb_event_orderEvent`");
-        Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_pricing_rule`");
 
+
+        // execute uninstallation from subsystems
+        $reflection = new ReflectionClass( __CLASS__ );
+        $methods = $reflection->getMethods( ReflectionMethod::IS_STATIC );
+        foreach($methods as $method)
+        {
+            /* @var ReflectionMethod $method */
+            if(preg_match('#^uninstall[A-Z]#', $method->name))
+            {
+                $func = $method->name;
+                $success = self::$func();
+            }
+        }
+
+
+        // create status message
         if(!self::isInstalled()){
             $statusMessage = "uninstalled successfully"; //  $translate->_("plugin_objectassetfolderrelation_uninstalled_successfully");
         } else {
@@ -257,4 +268,62 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
     }
 
 
+    /**
+     * install pricing rule system
+     *
+     * @return bool
+     */
+    private static function installPricingRules()
+    {
+        // PricingRules
+        Pimcore_API_Plugin_Abstract::getDb()->query("
+            CREATE TABLE IF NOT EXISTS `plugin_onlineshop_pricing_rule` (
+            `id` INT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `name` VARCHAR(50) NULL DEFAULT NULL,
+            `label` TEXT NULL,
+            `description` TEXT NULL,
+            `behavior` ENUM('additiv','stopExecute') NULL DEFAULT NULL,
+            `active` TINYINT(1) UNSIGNED NULL DEFAULT NULL,
+            `prio` TINYINT(3) UNSIGNED NOT NULL,
+            `condition` TEXT NOT NULL COMMENT 'configuration der condition',
+            `actions` TEXT NOT NULL COMMENT 'configuration der action',
+            PRIMARY KEY (`id`),
+            UNIQUE INDEX `name` (`name`),
+            INDEX `active` (`active`)
+        )
+        ENGINE=InnoDB
+        AUTO_INCREMENT=0;
+        ");
+
+        // create permission key
+        $key = 'plugin_onlineshop_pricing_rules';
+        $permission = new User_Permission_Definition();
+        $permission->setKey( $key );
+
+        $res = new User_Permission_Definition_Resource();
+        $res->configure( Pimcore_Resource::get() );
+        $res->setModel( $permission );
+        $res->save();
+
+        return true;
+    }
+
+
+    /**
+     * remove pricing rule system
+     *
+     * @return bool
+     */
+    private static function uninstallPricingRules()
+    {
+        // remove tables
+        Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_pricing_rule`");
+
+        // remove permissions
+        $key = 'plugin_onlineshop_pricing_rules';
+        $db = Pimcore_Resource::get();
+        $db->delete('users_permission_definitions', '`key` = ' . $db->quote($key) );
+
+        return true;
+    }
 }

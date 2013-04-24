@@ -37,8 +37,8 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
             // create new panel
             this.layout = new Ext.Panel({
                 id: this.layoutId,
-                title: t("plugin_onlineshop_pricing_config"),
-                iconCls: "plugin_onlineshop_pricing_icon_config",
+                title: t("plugin_onlineshop_pricing_rules"),
+                iconCls: "plugin_onlineshop_pricing_rules",
                 border: false,
                 layout: "border",
                 closable: true,

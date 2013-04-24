@@ -3,7 +3,7 @@
     background: url("/plugins/OnlineShop/static/img/icon/onlineshop.png") no-repeat left center transparent !important;
     padding-left: 24px !important;
 }
-.plugin_onlineshop_pricing_icon_config {
+.plugin_onlineshop_pricing_rules {
     background: url("/pimcore/static/img/icon/calculator_edit.png") no-repeat scroll left center transparent !important;
 }
 
