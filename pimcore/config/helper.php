@@ -217,6 +217,27 @@ function rscandir($base = '', &$data = array()) {
     return $data;
 }
 
+/**
+ * Wrapper for explode() to get a trimmed array
+ *
+ * @param string $delimiter
+ * @param string $string
+ * @param string $limit
+ *
+ * @return array
+ */
+function explode_and_trim($delimiter,$string = '',$limit = ''){
+    if($limit === ''){
+        $exploded = explode($delimiter,$string);
+    }else{
+        $exploded = explode($delimiter,$string,$limit);
+    }
+    foreach($exploded as $key => $value){
+        $exploded[$key] = trim($value);
+    }
+    return $exploded;
+}
+
 
 /**
  * Recursively delete a directory

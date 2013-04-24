@@ -648,11 +648,12 @@ class Pimcore {
 
         $conf = Pimcore_Config::getSystemConfig();
         $debug = (bool) $conf->general->debug;
-
         // enable debug mode only for one IP
         if($conf->general->debug_ip && $conf->general->debug) {
             $debug = false;
-            if(Pimcore_Tool::getClientIp() == trim($conf->general->debug_ip)) {
+
+            $debugIpAddresses = explode_and_trim(',',$conf->general->debug_ip);
+            if(in_array(Pimcore_Tool::getClientIp(),$debugIpAddresses)) {
                 $debug = true;
             }
         }
