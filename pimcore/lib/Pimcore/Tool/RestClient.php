@@ -424,7 +424,7 @@ class Pimcore_Tool_RestClient {
         return $filename;
     }
 
-    public function getAssetById($id, $decode = true, $idMapper = null, $light = false, $thumbnail = null, $tolerant = false) {
+    public function getAssetById($id, $decode = true, $idMapper = null, $light = false, $thumbnail = null, $tolerant = false, $protocol = "http://") {
         $uri = self::$baseUrl .  "asset/id/" . $id . "?apikey=" . self::$apikey;
         if ($light) {
             $uri .= "&light=1";
@@ -466,8 +466,13 @@ class Pimcore_Tool_RestClient {
                     if  ($assetType == "image" && strlen($thumbnail) > 0) {
                         // try to retrieve thumbnail first
                         // http://frischeis.pim.elements.pm/website/var/tmp/thumb_9__fancybox_thumb
-                        $uri = "http://" . self::$host . "/website/var/tmp/thumb_" . $asset->getId() . "__" . $thumbnail;
+                        $uri = $protocol . self::$host . "/website/var/tmp/thumb_" . $asset->getId() . "__" . $thumbnail;
                         $client->setUri($uri);
+
+                        if (self::$loggingEnabled) {
+                            print("    =>" . $uri . "\n");
+                        }
+
                         $result = $client->request();
                         if ($result->getStatus() == 200) {
                             $data = $result->getBody();
@@ -499,7 +504,7 @@ class Pimcore_Tool_RestClient {
                     if (!$data) {
                         $path = $wsDocument->path;
                         $filename = $wsDocument->filename;
-                        $uri = "http://" . self::$host . "/website/var/assets" . $path . $filename;
+                        $uri = $protocol . self::$host . "/website/var/assets" . $path . $filename;
                         $client->setUri($uri);
                         $result = $client->request();
                         if ($result->getStatus() != 200 && !$tolerant) {
