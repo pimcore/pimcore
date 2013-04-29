@@ -18,7 +18,7 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
 
         // init
         var menuItems = [];
-        var user = pimcore.globalmanager.get("user")
+        var user = pimcore.globalmanager.get("user");
 
 
         // add pricing rules to menu
