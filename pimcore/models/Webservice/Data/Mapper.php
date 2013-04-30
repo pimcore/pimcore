@@ -29,11 +29,13 @@ abstract class Webservice_Data_Mapper {
             "Asset_File",
             "Asset_Folder",
             "Document_Folder",
-            "Document_Link",
             "Document_Page",
             "Document_Snippet",
+            "Document_Link",
+            "Document_Hardlink",
+            "Document_Email",
             "Object_Folder",
-            "Object_Concrete",
+            "Object_Concrete"
         );
 
         $retVal = null;
