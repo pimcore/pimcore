@@ -255,7 +255,7 @@ class Document_Tag_Href extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement, $idMapper = null, $idMapper = null) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
         if ($data->id !==null) {
 
