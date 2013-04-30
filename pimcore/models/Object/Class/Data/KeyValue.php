@@ -440,7 +440,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
                         $newKey = $idMapper->getMappedId("kvkey", $key);
                         if (!$newKey) {
                             if ($idMapper->ignoreMappingFailures()) {
-                                $idMapper->recordMappingFailure($relatedObject->getId(), "kvkey", $key);
+                                $idMapper->recordMappingFailure("object", $relatedObject->getId(), "kvkey", $key);
                                 continue;
                             } else {
                                 throw new Exception("Key " . $key . " could not be mapped");

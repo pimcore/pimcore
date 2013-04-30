@@ -364,7 +364,7 @@ class Document_Tag_Link extends Document_Tag
                         $referencedDocument = Document::getById($id);
                         if (!$referencedDocument instanceof Document) {
                             if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                                $idMapper->recordMappingFailure($this->getDocumentId(), $this->data["internalType"], $this->data["internalId"]);
+                                $idMapper->recordMappingFailure("document", $this->getDocumentId(), $this->data["internalType"], $this->data["internalId"]);
                             } else {
                                 throw new Exception("cannot get values from web service import - link references unknown document with id [ " . $this->data["internalId"] . " ] ");
                             }
@@ -376,7 +376,7 @@ class Document_Tag_Link extends Document_Tag
                         $referencedAsset = Asset::getById($id);
                         if (!$referencedAsset instanceof Asset) {
                             if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                                $idMapper->recordMappingFailure($this->getDocumentId(), $this->data["internalType"], $this->data["internalId"]);
+                                $idMapper->recordMappingFailure("document", $this->getDocumentId(), $this->data["internalType"], $this->data["internalId"]);
                             } else {
                                 throw new Exception("cannot get values from web service import - link references unknown asset with id [ " . $this->data["internalId"] . " ] ");
                             }

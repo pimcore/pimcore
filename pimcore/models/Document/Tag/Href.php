@@ -276,7 +276,7 @@ class Document_Tag_Href extends Document_Tag {
                 $this->element = Asset::getById($this->id);
                 if(!$this->element instanceof Asset){
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                        $idMapper->recordMappingFailure($this->getDocumentId(), $data->type, $data->id);
+                        $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
                     } else {
                         throw new Exception("cannot get values from web service import - referenced asset with id [ ".$data->id." ] is unknown");
                     }
@@ -285,7 +285,7 @@ class Document_Tag_Href extends Document_Tag {
                 $this->element = Document::getById($this->id);
                 if(!$this->element instanceof Document){
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                        $idMapper->recordMappingFailure($this->getDocumentId(), $data->type, $data->id);
+                        $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
                     } else {
                         throw new Exception("cannot get values from web service import - referenced document with id [ ".$data->id." ] is unknown");
                     }
@@ -294,14 +294,14 @@ class Document_Tag_Href extends Document_Tag {
                 $this->element = Object_Abstract::getById($this->id);
                 if(!$this->element instanceof Object_Abstract){
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                        $idMapper->recordMappingFailure($this->getDocumentId(), $data->type, $data->id);
+                        $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
                     } else {
                         throw new Exception("cannot get values from web service import - referenced object with id [ ".$data->id." ] is unknown");
                     }
                 }
             } else {
                 if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                    $idMapper->recordMappingFailure($this->getDocumentId(), $data->type, $data->id);
+                    $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
                 } else {
                     throw new Exception("cannot get values from web service import - type is not valid");
                 }

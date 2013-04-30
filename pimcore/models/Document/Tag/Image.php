@@ -554,14 +554,14 @@ class Document_Tag_Image extends Document_Tag {
                 $this->image = Asset_Image::getById($this->id);
                 if (!$this->image instanceof Asset_Image) {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                        $idMapper->recordMappingFailure($this->getDocumentId(), "asset", $data->id);
+                        $idMapper->recordMappingFailure("document", $this->getDocumentId(), "asset", $data->id);
                     } else {
                         throw new Exception("cannot get values from web service import - referenced image with id [ " . $this->id . " ] is unknown");
                     }
                 }
             } else {
                 if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                    $idMapper->recordMappingFailure($this->getDocumentId(), "asset", $data->id);
+                    $idMapper->recordMappingFailure("document", $this->getDocumentId(), "asset", $data->id);
                 } else {
                     throw new Exception("cannot get values from web service import - id is not valid");
                 }
