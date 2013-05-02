@@ -352,9 +352,8 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
                 }
 
-
+                $wsData[] = $wsDataItem;
             }
-            $wsData[] = $wsDataItem;
 
         }
 
