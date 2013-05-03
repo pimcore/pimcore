@@ -32,33 +32,7 @@ class Pimcore_View extends Zend_View {
         $type = strtolower($type);
 
         try {
-            // @todo add document-id to registry key | for example for embeded snippets
-            // set suffixes if the tag is inside a block
-            if(Zend_Registry::isRegistered("pimcore_tag_block_current")) {
-                $blocks = Zend_Registry::get("pimcore_tag_block_current");
-
-                $numeration = Zend_Registry::get("pimcore_tag_block_numeration");
-                if (is_array($blocks) and count($blocks) > 0) {
-
-                    if ($type == "block") {
-                        $tmpBlocks = $blocks;
-                        $tmpNumeration = $numeration;
-                        array_pop($tmpBlocks);
-                        array_pop($tmpNumeration);
-
-                        $tmpName = $name;
-                        if (is_array($tmpBlocks)) {
-                            $tmpName = $name . implode("_", $tmpBlocks) . implode("_", $tmpNumeration);
-                        }
-
-                        if ($blocks[count($blocks) - 1] == $tmpName) {
-                            array_pop($blocks);
-                            array_pop($numeration);
-                        }
-                    }
-                    $name = $name . implode("_", $blocks) . implode("_", $numeration);
-                }
-            }
+            $name = Document_Tag::buildTagName($type,$name);
 
             $document = $this->document;
             

@@ -357,5 +357,46 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
         return $this->inherited;
     }
 
+    /**
+     * Creates the Tag name for an element - must be called at runtime because of the block numeration
+     * @param $type
+     * @param $name
+     *
+     * @return string
+     */
+    public static function buildTagName($type,$name){
+        // @todo add document-id to registry key | for example for embeded snippets
+        // set suffixes if the tag is inside a block
+        if(Zend_Registry::isRegistered("pimcore_tag_block_current")) {
+            $blocks = Zend_Registry::get("pimcore_tag_block_current");
+
+            $numeration = Zend_Registry::get("pimcore_tag_block_numeration");
+            if (is_array($blocks) and count($blocks) > 0) {
+
+                if ($type == "block") {
+                    $tmpBlocks = $blocks;
+                    $tmpNumeration = $numeration;
+                    array_pop($tmpBlocks);
+                    array_pop($tmpNumeration);
+
+                    $tmpName = $name;
+                    if (is_array($tmpBlocks)) {
+                        $tmpName = $name . implode("_", $tmpBlocks) . implode("_", $tmpNumeration);
+                    }
+
+                    if ($blocks[count($blocks) - 1] == $tmpName) {
+                        array_pop($blocks);
+                        array_pop($numeration);
+                    }
+
+                }
+                $name = $name . implode("_", $blocks) . implode("_", $numeration);
+            }
+        }
+        return $name;
+    }
+
+
+
 
 }
