@@ -505,7 +505,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             modal: true,
             closeAction: "close",
             resizable: false,
-            bodyStyle: "background: url(" + imageUrl + ") center center no-repeat;",
+            bodyStyle: "background: url(" + imageUrl + ") center center no-repeat; position:relative; ",
             tbar: [{
                 xtype: "button",
                 text: t("add_marker"),
@@ -586,7 +586,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                         clearInterval(this.hotspotWindowInterval);
                         this.hotspotWindowInitCount = 0;
 
-                        this.hotspotWindow.setSize(imageWidth + 14, imageHeight + 32 + 27);
+                        this.hotspotWindow.setSize(imageWidth + 14, imageHeight + 32 + 27 + 27); // 27px is the toolbar
                         Ext.get("hotspotImage").remove();
 
                         if(this.datax && this.datax["hotspots"]) {
