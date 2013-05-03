@@ -11,7 +11,7 @@ class OnlineShop_Framework_FilterService_MultiSelect extends OnlineShop_Framewor
         return $this->view->partial($script, array(
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$filterDefinition->getField()],
-            "values" => $productList->getGroupByValues($filterDefinition->getField(), true),
+            "values" => $productList->getGroupByValues($filterDefinition->getField(), true, !$filterDefinition->getUseAndCondition()),
             "fieldname" => $filterDefinition->getField()
         ));
     }
@@ -35,11 +35,23 @@ class OnlineShop_Framework_FilterService_MultiSelect extends OnlineShop_Framewor
                 }
             }
             if(!empty($quotedValues)) {
-                if($isPrecondition) {
-                    $productList->addCondition($filterDefinition->getField() . " IN (" . implode(",", $quotedValues) . ")", "PRECONDITION_" . $filterDefinition->getField());
+                if($filterDefinition->getUseAndCondition()) {
+                    foreach ($quotedValues as $value) {
+                        if($isPrecondition) {
+                            $productList->addCondition($filterDefinition->getField() . " = " . $value, "PRECONDITION_" . $filterDefinition->getField());
+                        } else {
+                            $productList->addCondition($filterDefinition->getField() . " = " . $value, $filterDefinition->getField());
+                        }
+                    }
                 } else {
-                    $productList->addCondition($filterDefinition->getField() . " IN (" . implode(",", $quotedValues) . ")", $filterDefinition->getField());
+                    if($isPrecondition) {
+                        $productList->addCondition($filterDefinition->getField() . " IN (" . implode(",", $quotedValues) . ")", "PRECONDITION_" . $filterDefinition->getField());
+                    } else {
+                        $productList->addCondition($filterDefinition->getField() . " IN (" . implode(",", $quotedValues) . ")", $filterDefinition->getField());
+                    }
                 }
+
+
 
             }
         }
