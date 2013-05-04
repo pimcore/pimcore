@@ -179,7 +179,12 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
         $this->checkCacheConsistency();
 
-        $this->getDb()->delete("cache_tags", "id = '".$id."'");
+
+        // using func_get_arg() to be compatible with the interface
+        // when the 2ng argument is true, do not clean the cache tags
+        if(func_get_arg(1) !== true) {
+            $this->getDb()->delete("cache_tags", "id = '".$id."'");
+        }
 
         $result = parent::remove($id);
 
@@ -222,8 +227,9 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                 $items = $this->getItemsByTag($tag);
                 foreach ($items as $item) {
                     // We call delete directly here because the ID in the cache is already specific for this site
-                    $this->remove($item);
+                    $this->remove($item, true);
                 }
+                $this->getDb()->delete("cache_tags", "tag = '".$tag."'");
             }            
         }
         if ($mode == Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG) {
