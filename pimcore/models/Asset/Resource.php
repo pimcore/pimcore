@@ -84,6 +84,7 @@ class Asset_Resource extends Element_Resource {
     public function create() {
         try {
             $this->db->insert("assets", array(
+                "filename" => $this->model->getFilename(),
                 "path" => $this->model->getPath(),
                 "parentId" => $this->model->getParentId()
             ));

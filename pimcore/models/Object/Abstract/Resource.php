@@ -85,7 +85,10 @@ class Object_Abstract_Resource extends Element_Resource {
     public function create() {
 
 
-        $this->db->insert("objects", array());
+        $this->db->insert("objects", array(
+            "o_key" => $this->model->getKey(),
+            "o_path" => $this->model->getPath()
+        ));
         $this->model->setO_id($this->db->lastInsertId());
 
         if (!$this->model->geto_key()) {
