@@ -147,6 +147,16 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
             CKEDITOR.config.language = pimcore.globalmanager.get("user").language;
 
+            // IE Hack see: http://dev.ckeditor.com/ticket/9958
+            // problem is that every button in a CKEDITOR window fires the onbeforeunload event
+            CKEDITOR.on('instanceReady', function (event) {
+                event.editor.on('dialogShow', function (dialogShowEvent) {
+                    if (CKEDITOR.env.ie) {
+                        $(dialogShowEvent.data._.element.$).find('a[href*="void(0)"]').removeAttr('href');
+                    }
+                });
+            });
+
             var eConfig = Object.clone(this.options);
 
             // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible
