@@ -118,6 +118,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
     public function addAction() {
 
         $success = false;
+        $errorMessage = "";
 
         // check for permission
         $parentDocument = Document::getById(intval($this->getParam("parentId")));
@@ -195,11 +196,13 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 }
             }
             else {
-                Logger::debug("prevented adding a document because document with same path+key [ $intendedPath ] already exists");
+                $errorMessage = "prevented adding a document because document with same path+key [ $intendedPath ] already exists";
+                Logger::debug($errorMessage);
             }
         }
         else {
-            Logger::debug("prevented adding a document because of missing permissions");
+            $errorMessage = "prevented adding a document because of missing permissions";
+            Logger::debug($errorMessage);
         }
 
         if ($success) {
@@ -211,7 +214,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         }
         else {
             $this->_helper->json(array(
-                "success" => $success
+                "success" => $success,
+                "message" => $errorMessage
             ));
         }
 

@@ -504,13 +504,13 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
         }
 
-        if(Asset_Service::pathExists($this->getFullPath())) {
+        // this is now handled directly by the database -> unique key on path, filename
+        /*if(Asset_Service::pathExists($this->getFullPath())) {
             $duplicate = Asset::getByPath($this->getFullPath());
             if ($duplicate instanceof Asset  and $duplicate->getId() != $this->getId()) {
                 throw new Exception("Duplicate full path [ " . $this->getFullPath() . " ] - cannot create asset");
             }
-        }
-
+        }*/
     }
 
     /**

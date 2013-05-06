@@ -540,7 +540,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         if ($parent->isAllowed("create")) {
             $intendedPath = $parent->getFullPath() . "/" . $this->getParam("key");
 
-            if (!Object_Service::pathExists($intendedPath)) {
+            if (!Object_Service::pathExists($intendedPath) || true) {
 
                 $object = new $className();
                 if($object instanceof Object_Concrete) {
