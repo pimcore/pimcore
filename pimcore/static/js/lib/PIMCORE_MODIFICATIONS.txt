@@ -1,7 +1,10 @@
 
 
 # CKEDITOR
-
++ full distribution
++ plugin sourcedialog
++ plugin autogrow
++ plugin tableresize
 
 
 # EXT JS
