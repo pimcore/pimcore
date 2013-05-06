@@ -1,9 +1,7 @@
 
 
 # CKEDITOR
-- removed the following files / directories
-    /ckeditor/_samples/
-    /ckeditor/_source/
+
 
 
 # EXT JS

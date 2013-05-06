@@ -127,7 +127,6 @@
             "lib/ext-plugins/ux/gridfilters/filter/BooleanFilter.js",
             "lib/ext-plugins/ux/fileuploadfield/FileUploadField.js",
             "lib/ckeditor/ckeditor.js",
-            "lib/ckeditor-plugins/htmlsourceinline.js",
 
             // locale
             "lib/ext/locale/ext-lang-" . $this->language . ".js",

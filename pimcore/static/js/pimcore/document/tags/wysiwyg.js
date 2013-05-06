@@ -153,7 +153,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             // is also Basic
             if (!this.options["toolbar"] && !this.options["toolbarGroups"]) {
                 eConfig.toolbarGroups = [
-                    { name: 'clipboard', groups: [ "htmlsourceinline", 'clipboard', 'undo', "find" ] },
+                    { name: 'clipboard', groups: [ "sourcedialog", 'clipboard', 'undo', "find" ] },
                     { name: 'basicstyles', groups: [ 'basicstyles', 'list'] },
                     '/',
                     { name: 'paragraph', groups: [ 'align', 'indent'] },
@@ -190,7 +190,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 }
                 this.ckeditor = CKEDITOR.replace(this.textarea, eConfig);
             } else {
-                eConfig.extraPlugins = "htmlsourceinline";
+                eConfig.extraPlugins = "sourcedialog";
                 this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
                 this.ckeditor.on('focus', function () {
