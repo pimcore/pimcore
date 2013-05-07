@@ -60,6 +60,38 @@ class Asset_Image_Thumbnail_Config {
     public $highResolution;
 
     /**
+     * @param $config
+     * @return Asset_Image_Thumbnail_Config|bool
+     */
+    public static function getByAutoDetect ($config) {
+
+        $thumbnail = null;
+
+        if (is_string($config)) {
+            try {
+                $thumbnail = Asset_Image_Thumbnail_Config::getByName($config);
+            }
+            catch (Exception $e) {
+                Logger::error("requested thumbnail " . $config . " is not defined");
+                return false;
+            }
+        }
+        else if (is_array($config)) {
+            // check if it is a legacy config or a new one
+            if(array_key_exists("items", $config)) {
+                $thumbnail = Asset_Image_Thumbnail_Config::getByArrayConfig($config);
+            } else {
+                $thumbnail = Asset_Image_Thumbnail_Config::getByLegacyConfig($config);
+            }
+        }
+        else if ($config instanceof Asset_Image_Thumbnail_Config) {
+            $thumbnail = $config;
+        }
+
+        return $thumbnail;
+    }
+
+    /**
      * @static
      * @param  $name
      * @return Asset_Image_Thumbnail_Config

@@ -210,30 +210,7 @@ class Asset_Image_Thumbnail {
      * @return Asset_Image_Thumbnail_Config
     */
     protected function createConfig($selector) {
-
-        if (is_string($selector)) {
-
-            try {
-                $config = Asset_Image_Thumbnail_Config::getByName($selector);
-            }
-            catch (Exception $e) {
-                Logger::error("requested thumbnail " . $selector . " is not defined");
-                return false;
-            }
-        }
-        else if (is_array($selector)) {
-            // check if it is a legacy config or a new one
-            if(array_key_exists("items", $selector)) {
-                $config = Asset_Image_Thumbnail_Config::getByArrayConfig($selector);
-            } else {
-                $config = Asset_Image_Thumbnail_Config::getByLegacyConfig($selector);
-            }
-        }
-        else if ($selector instanceof Asset_Image_Thumbnail_Config) {
-            $config = $selector;
-        }
-
-        return $config;
+        return Asset_Image_Thumbnail_Config::getByAutoDetect($selector);
     }
 
     /**

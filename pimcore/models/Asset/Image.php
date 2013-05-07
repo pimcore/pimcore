@@ -69,11 +69,14 @@ class Asset_Image extends Asset {
     /**
      * @return void
      */
-    public function clearThumbnails() {
-        $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/thumb_" . $this->getId() . "__*");
-        if(is_array($files)) {
-            foreach ($files as $file) {
-                unlink($file);
+    public function clearThumbnails($force = false) {
+
+        if($this->_dataChanged || $force) {
+            $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/thumb_" . $this->getId() . "__*");
+            if(is_array($files)) {
+                foreach ($files as $file) {
+                    unlink($file);
+                }
             }
         }
     }

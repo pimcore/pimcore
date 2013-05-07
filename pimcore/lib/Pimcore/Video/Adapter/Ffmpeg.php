@@ -63,6 +63,8 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     public function load($file) {
         $this->file = $file;
         $this->setProcessId(uniqid());
+
+        return $this;
     }
 
     /**

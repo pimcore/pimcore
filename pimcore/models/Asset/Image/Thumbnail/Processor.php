@@ -75,7 +75,15 @@ class Asset_Image_Thumbnail_Processor {
             $fileSystemPath = $asset->getFileSystemPath();
         }
 
-        $fileExt = Pimcore_File::getFileExtension($asset->getFilename());
+        if($asset instanceof Asset) {
+            $id = $asset->getId();
+            $modificationDate = $asset->getModificationDate();
+        } else {
+            $id = "dyn~" . crc32($fileSystemPath);
+            $modificationDate = filemtime($fileSystemPath);
+        }
+
+        $fileExt = Pimcore_File::getFileExtension(basename($fileSystemPath));
 
         // simple detection for source type if SOURCE is selected
         if($format == "source" || empty($format)) {
@@ -94,13 +102,13 @@ class Asset_Image_Thumbnail_Processor {
                     foreach ($transformations as $transformation) {
                         if(!empty($transformation)) {
                             if($transformation["method"] == "tifforiginal") {
-                                return str_replace(PIMCORE_DOCUMENT_ROOT, "", $asset->getFilesystemPath());
+                                return str_replace(PIMCORE_DOCUMENT_ROOT, "", $fileSystemPath);
                             }
                         }
                     }
                 }
             } else if($format == "svg") {
-                return str_replace(PIMCORE_DOCUMENT_ROOT, "", $asset->getFilesystemPath());
+                return str_replace(PIMCORE_DOCUMENT_ROOT, "", $fileSystemPath);
             }
         }
 
@@ -110,13 +118,13 @@ class Asset_Image_Thumbnail_Processor {
             $highResSuffix = "@" . $config->getHighResolution() . "x";
         }
 
-        $filename = "thumb_" . $asset->getId() . "__" . $config->getName() . $highResSuffix . "." . $format;
+        $filename = "thumb_" . $id . "__" . $config->getName() . $highResSuffix . "." . $format;
 
         $fsPath = PIMCORE_TEMPORARY_DIRECTORY . "/" . $filename;
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
 
         // check for existing and still valid thumbnail
-        if (is_file($fsPath) and filemtime($fsPath) >= $asset->getModificationDate()) {
+        if (is_file($fsPath) and filemtime($fsPath) >= $modificationDate) {
             return $path;
         }
 

@@ -67,6 +67,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             "/pimcore/static/js/pimcore/document/tags/multiselect.js",
             "/pimcore/static/js/pimcore/document/tags/areablock.js",
             "/pimcore/static/js/pimcore/document/tags/area.js",
+            "/pimcore/static/js/pimcore/document/tags/pdf.js",
             "/pimcore/static/js/pimcore/document/edit/helper.js"
         );
 

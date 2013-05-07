@@ -115,35 +115,18 @@ class Asset_Video extends Asset {
      * @return Asset_Image_Thumbnail|bool|Thumbnail
      */
     public function getImageThumbnailConfig ($config) {
-
-        if (is_string($config)) {
-            try {
-                $thumbnail = Asset_Image_Thumbnail_Config::getByName($config);
-            }
-            catch (Exception $e) {
-                Logger::error("requested thumbnail " . $config . " is not defined");
-                return false;
-            }
-        }
-        else if (is_array($config)) {
-            // check if it is a legacy config or a new one
-            if(array_key_exists("items", $config)) {
-                $thumbnail = Asset_Image_Thumbnail_Config::getByArrayConfig($config);
-            } else {
-                $thumbnail = Asset_Image_Thumbnail_Config::getByLegacyConfig($config);
-            }
-        }
-        else if ($config instanceof Asset_Image_Thumbnail_Config) {
-            $thumbnail = $config;
-        }
-
-        return $thumbnail;
+        return Asset_Image_Thumbnail_Config::getByAutoDetect($config);
     }
 
     /**
      * @param $thumbnailName
      */
     public function getImageThumbnail($thumbnailName, $timeOffset = null, $imageAsset = null) {
+
+        if(!Pimcore_Video::isAvailable()) {
+            Logger::error("Couldn't create image-thumbnail of video " . $this->getFullPath() . " no video adapter is available");
+            return "/pimcore/static/img/filetype-not-supported.png";
+        }
 
         $cs = $this->getCustomSetting("image_thumbnail_time");
         $im = $this->getCustomSetting("image_thumbnail_asset");
@@ -187,7 +170,6 @@ class Asset_Video extends Asset {
         if(empty($path)) {
             $fsPath = $this->getFileSystemPath();
             $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
-            return $path;
         }
 
         return $path;

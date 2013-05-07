@@ -33,6 +33,7 @@ interface Document_Tag_Interface {
 
     /**
      * Get the current data stored for the element
+     * this is used as general fallback for the methods getDataForResource(), admin(), getValue()
      *
      * @return mixed
      */

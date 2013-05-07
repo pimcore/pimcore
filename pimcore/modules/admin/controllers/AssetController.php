@@ -24,7 +24,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         parent::init();
 
         // check permissions
-        $notRestrictedActions = array("get-image-thumbnail");
+        $notRestrictedActions = array("get-image-thumbnail", "get-video-thumbnail", "get-document-thumbnail");
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
             $this->checkPermission("assets");
         }
@@ -847,14 +847,46 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $video->save();
         }
 
-        $this->getResponse()->setHeader("Content-Type", "image/" . $format, true);
+        header("Content-type: image/" . $format, true);
 
         while(@ob_end_flush());
         flush();
 
         readfile(PIMCORE_DOCUMENT_ROOT . $video->getImageThumbnail($thumbnail, $time, $image));
-        $this->removeViewRenderer();
+        exit;
     }
+
+    public function getDocumentThumbnailAction() {
+
+        $document = Asset::getById(intval($this->getParam("id")));
+        $thumbnail = Asset_Image_Thumbnail_Config::getByAutoDetect($this->getAllParams());
+
+        $format = strtolower($thumbnail->getFormat());
+        if ($format == "source") {
+            $thumbnail->setFormat("PNG");
+            $format = "png";
+        }
+
+        if($this->getParam("treepreview")) {
+            $thumbnail = Asset_Image_Thumbnail_Config::getPreviewConfig();
+        }
+
+        $page = 1;
+        if(is_numeric($this->getParam("page"))) {
+            $page = (int) $this->getParam("page");
+        }
+
+
+        $format = "png";
+        header("Content-type: image/" . $format, true);
+
+        while(@ob_end_flush());
+        flush();
+
+        readfile(PIMCORE_DOCUMENT_ROOT . $document->getImageThumbnail($thumbnail, $page));
+        exit;
+    }
+
 
     public function getPreviewDocumentAction() {
         $asset = Asset::getById($this->getParam("id"));
