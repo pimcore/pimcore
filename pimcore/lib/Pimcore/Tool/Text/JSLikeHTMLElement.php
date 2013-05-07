@@ -107,4 +107,3 @@ class Pimcore_Tool_Text_JSLikeHTMLElement extends DOMElement
 		return '['.$this->tagName.']';
 	}
 }
-?>

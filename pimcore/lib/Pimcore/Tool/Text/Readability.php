@@ -1082,4 +1082,3 @@ class Pimcore_Tool_Text_Readability
 		$this->flags = $this->flags & ~$flag;
 	}
 }
-?>
