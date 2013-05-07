@@ -236,7 +236,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             return;
         }
 
-        path = "/admin/asset/get-image-thumbnail/id/6624/width/" + this.element.getEl().getWidth()
+        path = "/admin/asset/get-document-thumbnail/id/" + this.data.id + "/width/" + this.element.getEl().getWidth()
                         + "/aspectratio/true?" + Ext.urlEncode(this.data);
 
         var image = document.createElement("img");
