@@ -69,6 +69,11 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
      */
     public $height;
 
+    /**
+     * @var array
+     */
+    private $fieldDefinitionsCache;
+
 
     /**
      * @see Object_Class_Data::getDataForEditmode
@@ -409,7 +414,16 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         return;
     }
 
-    public function getFieldDefinitions($def = null, $fields = array())
+    public function getFieldDefinitions()
+    {
+        if(empty($this->fieldDefinitionsCache)) {
+            $this->fieldDefinitionsCache = $this->doGetFieldDefinitions();
+        }
+
+        return $this->fieldDefinitionsCache;
+    }
+
+    public function doGetFieldDefinitions($def = null, $fields = array())
     {
 
         if ($def === null) {
@@ -418,14 +432,14 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
         if (is_array($def)) {
             foreach ($def as $child) {
-                $fields = array_merge($fields, $this->getFieldDefinitions($child, $fields));
+                $fields = array_merge($fields, $this->doGetFieldDefinitions($child, $fields));
             }
         }
 
         if ($def instanceof Object_Class_Layout) {
             if ($def->hasChilds()) {
                 foreach ($def->getChilds() as $child) {
-                    $fields = array_merge($fields, $this->getFieldDefinitions($child, $fields));
+                    $fields = array_merge($fields, $this->doGetFieldDefinitions($child, $fields));
                 }
             }
         }
@@ -681,6 +695,14 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function isDiffChangeAllowed() {
         return true;
     }
+
+
+    public function __sleep() {
+        $vars = get_object_vars($this);
+        unset($vars['fieldDefinitionsCache']);
+        return array_keys($vars);
+    }
+
 
 
 }
