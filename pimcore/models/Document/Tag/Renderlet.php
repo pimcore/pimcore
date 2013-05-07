@@ -268,37 +268,36 @@ class Document_Tag_Renderlet extends Document_Tag {
 
             $this->type = $data->type;
             $this->subtype = $data->subtype;
-            $this->id = $data->id;
             if (is_numeric($this->id)) {
                 if ($idMapper) {
-                    $this->id = $idMapper->getMappedId($this->type, $this->id);
+                    $id = $idMapper->getMappedId($this->type, $this->id);
                 }
 
                 if ($this->type == "asset") {
-                    $this->o = Asset::getById($this->id);
+                    $this->o = Asset::getById($id);
                     if(!$this->o instanceof Asset){
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure("document", $this->getDocumentId(),$this->type, $data->id);
+                            $idMapper->recordMappingFailure($this->getDocumentId(),$this->type, $this->id);
                         } else {
-                            throw new Exception("cannot get values from web service import - referenced asset with id [ ".$data->id." ] is unknown");
+                            throw new Exception("cannot get values from web service import - referenced asset with id [ ".$this->id." ] is unknown");
                         }
                     }
                 } else if ($this->type == "document") {
-                    $this->o = Document::getById($this->id);
+                    $this->o = Document::getById($id);
                     if(!$this->o instanceof Document){
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure("document", $this->getDocumentId(),$this->type, $data->id);
+                            $idMapper->recordMappingFailure($this->getDocumentId(),$this->type, $this->id);
                         } else {
-                            throw new Exception("cannot get values from web service import - referenced document with id [ ".$data->id." ] is unknown");
+                            throw new Exception("cannot get values from web service import - referenced document with id [ ".$this->id." ] is unknown");
                         }
                     }
                 } else if ($this->type == "object") {
-                    $this->o = Object_Abstract::getById($this->id);
+                    $this->o = Object_Abstract::getById($id);
                     if(!$this->o instanceof Object_Abstract){
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure("document", $this->getDocumentId(),$this->type, $data->id);
+                            $idMapper->recordMappingFailure($this->getDocumentId(),$this->type, $this->id);
                         } else {
-                            throw new Exception("cannot get values from web service import - referenced object with id [ ".$data->id." ] is unknown");
+                            throw new Exception("cannot get values from web service import - referenced object with id [ ".$this->id." ] is unknown");
                         }
                     }
                 } else {
