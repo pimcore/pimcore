@@ -202,9 +202,12 @@ function filesize2bytes($str) {
  * @return array
  */
 function rscandir($base = '', &$data = array()) {
-	
-	$array = array_diff(scandir($base), array('.', '..', '.svn'));
 
+    if(substr($base,-1,1) != DIRECTORY_SEPARATOR){ //add trailing slash if it doesn't exists
+        $base .= DIRECTORY_SEPARATOR;
+    }
+
+	$array = array_diff(scandir($base), array('.', '..', '.svn'));
     foreach ($array as $value) {
         if (is_dir($base . $value)) {
             $data[] = $base . $value . DIRECTORY_SEPARATOR;
