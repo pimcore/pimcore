@@ -39,6 +39,11 @@ class Pimcore_Tool_Archive {
             throw new Exception('No destinationFile provided!');
         }
 
+        $destinationDir = dirname($destinationFile);
+        if(!is_dir($destinationDir)){
+            mkdir($destinationDir,0755,true);
+        }
+
         $zip = new ZipArchive();
         $zip->open($destinationFile, $mode);
         foreach($items as $item){
@@ -57,7 +62,11 @@ class Pimcore_Tool_Archive {
             }
         }
 
-        return $zip->close();
+        if(!$zip->close()){
+            throw new Exception("Couldn't close zip file!");
+        }
+
+        return $zip;
     }
 
 }
