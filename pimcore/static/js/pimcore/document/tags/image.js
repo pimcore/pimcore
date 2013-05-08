@@ -672,7 +672,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             hotspotEl.applyStyles({
                 top: (originalHeight * (config["top"]/100)) + "px",
                 left: (originalWidth * (config["left"]/100)) + "px",
-                width: (originalHeight * (config["width"]/100)) + "px",
+                width: (originalWidth * (config["width"]/100)) + "px",
                 height: (originalHeight * (config["height"]/100)) + "px"
             });
         }

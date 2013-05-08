@@ -66,11 +66,14 @@ class Asset_Image_Thumbnail_Processor {
      * @param $asset
      * @param Asset_Image_Thumbnail_Config $config
      * @param null $fileSystemPath
+     * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
      * @return mixed|string
      */
-    public static function process ($asset, Asset_Image_Thumbnail_Config $config, $fileSystemPath = null) {
+    public static function process ($asset, Asset_Image_Thumbnail_Config $config, $fileSystemPath = null, $deferred = false) {
 
         $format = strtolower($config->getFormat());
+        $modificationDate = 0;
+
         if(!$fileSystemPath) {
             $fileSystemPath = $asset->getFileSystemPath();
         }
@@ -80,7 +83,9 @@ class Asset_Image_Thumbnail_Processor {
             $modificationDate = $asset->getModificationDate();
         } else {
             $id = "dyn~" . crc32($fileSystemPath);
-            $modificationDate = filemtime($fileSystemPath);
+            if(file_exists($fileSystemPath)) {
+                $modificationDate = filemtime($fileSystemPath);
+            }
         }
 
         $fileExt = Pimcore_File::getFileExtension(basename($fileSystemPath));
@@ -122,6 +127,16 @@ class Asset_Image_Thumbnail_Processor {
 
         $fsPath = PIMCORE_TEMPORARY_DIRECTORY . "/" . $filename;
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
+
+        // deferred means that the image will be generated on-the-fly (when requested by the browser)
+        // the configuration is saved for later use in Pimcore_Controller_Plugin_Thumbnail::routeStartup()
+        // so that it can be used also with dynamic configurations
+        if($deferred) {
+            $configPath = $fsPath . ".deferred.config";
+            file_put_contents($configPath, serialize($config));
+
+            return $path;
+        }
 
         // check for existing and still valid thumbnail
         if (is_file($fsPath) and filemtime($fsPath) >= $modificationDate) {

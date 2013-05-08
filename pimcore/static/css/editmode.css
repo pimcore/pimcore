@@ -405,6 +405,11 @@
 .pimcore_image_hotspot {
     cursor: pointer;
     position: absolute;
+    background: rgba(0, 255, 0, 0.5);
+}
+
+.pimcore_pdf_hotspot {
+    background: rgba(0, 255, 0, 0.5);
 }
 
 .pimcore_droptarget_input  {

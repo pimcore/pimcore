@@ -25,7 +25,7 @@ class Asset_Video extends Asset {
     /**
      * @return void
      */
-    public function update() {
+    protected function update() {
         $this->clearThumbnails();
         parent::update();
     }

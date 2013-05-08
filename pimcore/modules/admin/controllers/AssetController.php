@@ -498,6 +498,15 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             } catch (Exception $e) {
                 Logger::debug("Cannot get dimensions of video, seems to be broken.");
             }
+        } else if ($asset->getType() == "document") {
+            try {
+                // add the PDF check here, otherwise the preview layer in admin is shown without content
+                if(Pimcore_Document::isAvailable() && preg_match("/\.pdf$/", $asset->getFilename())) {
+                    $tmpAsset["thumbnail"] = "/admin/asset/get-document-thumbnail/id/" . $asset->getId() . "/treepreview/true";
+                }
+            } catch (Exception $e) {
+                Logger::debug("Cannot get dimensions of video, seems to be broken.");
+            }
         }
 
         $tmpAsset["cls"] = "";

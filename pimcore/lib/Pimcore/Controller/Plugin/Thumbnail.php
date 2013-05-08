@@ -28,18 +28,41 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
 
             if($asset = Asset::getById($assetId)) {
                 try {
-                    // just check if the thumbnail exists -> throws exception otherwise
-                    $thumbnailConfig = Asset_Image_Thumbnail_Config::getByName($thumbnailName);
 
-                    //check if high res image is called
-                    if(array_key_exists(3, $matches)) {
-                        $highResFactor = (float) str_replace(array("@","x"),"", $matches[3]);
-                        $thumbnailConfig->setHighResolution($highResFactor);
+                    $thumbnailConfig = null;
+
+                    $deferredConfig = PIMCORE_DOCUMENT_ROOT . $request->getPathInfo() . ".deferred.config";
+                    if(file_exists($deferredConfig)) {
+                        $thumbnailConfig = unserialize(file_get_contents($deferredConfig));
+                        @unlink($deferredConfig); // cleanup, this isn't needed anymore
+                        if(!$thumbnailConfig instanceof Asset_Image_Thumbnail_Config) {
+                            throw new \Exception("Deferred thumbnail config file doesn't contain a valid Asset_Image_Thumbnail_Config object");
+                        }
+                    } else {
+                        // just check if the thumbnail exists -> throws exception otherwise
+                        $thumbnailConfig = Asset_Image_Thumbnail_Config::getByName($thumbnailName);
                     }
 
-                    $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getThumbnail($thumbnailConfig);
-                    $imageContent = file_get_contents($thumbnailFile);
+                    if($asset instanceof Asset_Document) {
+                        $page = 1;
 
+                        $tmpPage = array_pop(explode("-", $thumbnailName));
+                        if(is_numeric($tmpPage)) {
+                            $page = $tmpPage;
+                        }
+
+                        $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getImageThumbnail($thumbnailConfig, $page);
+                    } else if ($asset instanceof Asset_Image) {
+                        //check if high res image is called
+                        if(array_key_exists(3, $matches)) {
+                            $highResFactor = (float) str_replace(array("@","x"),"", $matches[3]);
+                            $thumbnailConfig->setHighResolution($highResFactor);
+                        }
+
+                        $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getThumbnail($thumbnailConfig);
+                    }
+
+                    $imageContent = file_get_contents($thumbnailFile);
                     $fileExtension = Pimcore_File::getFileExtension($thumbnailFile);
                     if(in_array($fileExtension, array("gif","jpeg","jpeg","png","pjpeg"))) {
                         header("Content-Type: image/".$fileExtension, true);

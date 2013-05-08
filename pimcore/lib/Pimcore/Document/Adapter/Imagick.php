@@ -29,8 +29,12 @@ class Pimcore_Document_Adapter_Imagick extends Pimcore_Document_Adapter {
     /**
      * @param $path
      * @return $this
+     * @throws Exception
      */
     public function load($path) {
+
+        // avoid timeouts
+        set_time_limit(250);
 
         if(!preg_match("/\.pdf$/", $path)) {
             $message = "Couldn't load document " . $path . " only PDF documents are currently supported";
@@ -48,12 +52,38 @@ class Pimcore_Document_Adapter_Imagick extends Pimcore_Document_Adapter {
         return $this;
     }
 
+    /**
+     * @param bool $blob
+     * @return int
+     * @throws Exception
+     */
+    public function getPageCount($blob = false) {
+        $this->resource = new Imagick();
+
+        if($blob !== false) {
+            $status = $this->resource->readimageblob($blob);
+        } else {
+            $status = $this->resource->readImage($this->path);
+        }
+
+        if(!$status) {
+            throw new \Exception("Unable to get page-count of " . $this->path);
+        }
+
+        return $this->resource->getnumberimages();
+    }
+
+    /**
+     * @param $path
+     * @param int $page
+     * @return $this|bool
+     */
     public function saveImage($path, $page = 1) {
 
         try {
             $this->resource = new Imagick();
 
-            $this->resource->setResolution(300, 300);
+            $this->resource->setResolution(200, 200);
             if(!$this->resource->readImage($this->path."[" . ($page-1) . "]")) {
                 return false;
             }

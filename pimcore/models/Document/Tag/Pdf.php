@@ -23,6 +23,11 @@ class Document_Tag_Pdf extends Document_Tag
     public $id;
 
     /**
+     * @var array
+     */
+    public $hotspots = array();
+
+    /**
      * @see Document_Tag_Interface::getType
      * @return string
      */
@@ -38,7 +43,22 @@ class Document_Tag_Pdf extends Document_Tag
     public function getData()
     {
         return array(
-            "id" => $this->id
+            "id" => $this->id,
+            "hotspots" => $this->hotspots
+        );
+    }
+
+    public function getDataEditmode() {
+
+        $pages = 0;
+        if($asset = Asset::getById($this->id)) {
+            $pages = $asset->getPageCount();
+        }
+
+        return array(
+            "id" => $this->id,
+            "pageCount" => $pages,
+            "hotspots" => empty($this->hotspots) ? null : $this->hotspots
         );
     }
 
@@ -91,6 +111,7 @@ class Document_Tag_Pdf extends Document_Tag
         }
 
         $this->id = $data["id"];
+        $this->hotspots = $data["hotspots"];
 
         return $this;
     }
@@ -105,6 +126,9 @@ class Document_Tag_Pdf extends Document_Tag
         $pdf = Asset::getById($data["id"]);
         if($pdf instanceof Asset_Document) {
             $this->id = $pdf->getId();
+            if(array_key_exists("hotspots", $data) && !empty($data["hotspots"])) {
+                $this->hotspots = $data["hotspots"];
+            }
         }
         return $this;
     }
@@ -135,8 +159,17 @@ class Document_Tag_Pdf extends Document_Tag
 
         $options = $this->getOptions();
 
-        if ($asset instanceof Asset_Document) {
-            return "PDF";
+        if ($asset instanceof Asset_Document && $asset->getPageCount()) {
+
+            $pageCount = $asset->getPageCount();
+            //$pageCount = 10;
+            $code = '<div class="pages">';
+            for($i=1; $i <=$pageCount; $i++) {
+                $code .= '<img src="' . $asset->getImageThumbnail(array("width" => 400, "format" => "pjpeg"), $i, true) . '" />';
+            }
+            $code .= '</div>';
+
+            return $code;
         } else {
             return $this->getErrorCode("Asset is not a valid PDF");
         }
@@ -192,4 +225,22 @@ class Document_Tag_Pdf extends Document_Tag
             }
         }
     }
+
+    /**
+     * @param array $hotspots
+     */
+    public function setHotspots($hotspots)
+    {
+        $this->hotspots = $hotspots;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHotspots()
+    {
+        return $this->hotspots;
+    }
+
+
 }

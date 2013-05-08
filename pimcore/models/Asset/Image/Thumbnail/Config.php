@@ -472,4 +472,26 @@ class Asset_Image_Thumbnail_Config {
 
         return $pipe;
     }
+
+
+    public function getEstimatedDimensions() {
+
+        $dimensions = array();
+        $transformations = $this->getItems();
+        if(is_array($transformations) && count($transformations) > 0) {
+            foreach ($transformations as $transformation) {
+                if(!empty($transformation)) {
+                    if(is_array($transformation["arguments"])) {
+                        foreach ($transformation["arguments"] as $key => $value) {
+                            if($key == "width" || $key == "height") {
+                                $dimensions[$key] = $value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $dimensions;
+    }
 }
