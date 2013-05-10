@@ -425,5 +425,22 @@ class Document_Tag_Pdf extends Document_Tag
         return $this->hotspots;
     }
 
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+
 
 }
