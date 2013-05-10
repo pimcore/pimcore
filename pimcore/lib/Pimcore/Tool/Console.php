@@ -16,6 +16,17 @@
 class Pimcore_Tool_Console {
 
     /**
+     * @return string "windows" or "unix"
+     */
+    public static function getSystemEnvironment(){
+        if(stripos(php_uname("s"), "windows") !== false) {
+            return 'windows';
+        }else{
+            return 'unix';
+        }
+    }
+
+    /**
      * @static
      * @return string
      */
@@ -48,7 +59,7 @@ class Pimcore_Tool_Console {
     public static function exec ($cmd, $outputFile = null) {
 
         if(!$outputFile) {
-            if(stripos(php_uname("s"), "windows") !== false) {
+            if(self::getSystemEnvironment() == 'windows') {
                 $outputFile = "NUL";
             } else {
                 $outputFile = "/dev/null";
@@ -71,7 +82,7 @@ class Pimcore_Tool_Console {
     public static function execInBackground($cmd, $outputFile = null) {
 
         // windows systems
-        if(stripos(php_uname("s"), "windows") !== false) {
+        if(self::getSystemEnvironment() == 'windows') {
             return self::execInBackgroundWindows($cmd, $outputFile);
         } else {
             return self::execInBackgroundUnix($cmd, $outputFile);
