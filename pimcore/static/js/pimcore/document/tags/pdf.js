@@ -286,6 +286,8 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         var pages = [];
 
         this.hotspotStore = {};
+        this.hotspotMetaData = {};
+
         if(this.data["hotspots"]) {
             this.hotspotStore = this.data["hotspots"];
         }
@@ -432,12 +434,16 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
                 width: (originalWidth * (config["width"]/100)) + "px",
                 height: (originalHeight * (config["height"]/100)) + "px"
             });
+
+            if(config["data"]) {
+                this.hotspotMetaData[hotspotId] = config["data"];
+            }
         }
 
         hotspotEl.on("contextmenu", function (id, e) {
             var menu = new Ext.menu.Menu();
 
-            /*menu.add(new Ext.menu.Item({
+            menu.add(new Ext.menu.Item({
                 text: t("add_data"),
                 iconCls: "pimcore_icon_add_data",
                 handler: function (id, item) {
@@ -445,7 +451,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
 
                     this.editMarkerHotspotData(id);
                 }.bind(this, id)
-            }));*/
+            }));
 
             menu.add(new Ext.menu.Item({
                 text: t("remove"),
@@ -475,6 +481,268 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         return hotspotId;
     },
 
+    editMarkerHotspotData: function (id) {
+
+        var hotspotMetaDataWin = new Ext.Window({
+            width: 600,
+            height: 440,
+            modal: true,
+            closeAction: "close",
+            resizable: false,
+            autoScroll: true,
+            items: [{
+               xtype: "form",
+               itemId: "form",
+               bodyStyle: "padding: 10px;"
+            }],
+            tbar: [{
+                xtype: "button",
+                iconCls: "pimcore_icon_add",
+                menu: [{
+                    text: t("link"),
+                    iconCls: "pimcore_icon_input",
+                    handler: function () {
+                        addItem("link");
+                    }
+                },"-",{
+                    text: t("textfield"),
+                    iconCls: "pimcore_icon_input",
+                    handler: function () {
+                        addItem("textfield");
+                    }
+                }, {
+                    text: t("textarea"),
+                    iconCls: "pimcore_icon_textarea",
+                    handler: function () {
+                        addItem("textarea");
+                    }
+                }, {
+                    text: t("checkbox"),
+                    iconCls: "pimcore_icon_checkbox",
+                    handler: function () {
+                        addItem("checkbox");
+                    }
+                }, {
+                    text: t("object"),
+                    iconCls: "pimcore_icon_object",
+                    handler: function () {
+                        addItem("object");
+                    }
+                }, {
+                    text: t("document"),
+                    iconCls: "pimcore_icon_document",
+                    handler: function () {
+                        addItem("document");
+                    }
+                }, {
+                    text: t("asset"),
+                    iconCls: "pimcore_icon_asset",
+                    handler: function () {
+                        addItem("asset");
+                    }
+                }]
+            }],
+            buttons: [{
+                text: t("save"),
+                iconCls: "pimcore_icon_apply",
+                handler: function (id) {
+
+                    var data = hotspotMetaDataWin.getComponent("form").getForm().getFieldValues();
+                    var normalizedData = [];
+
+                    // when only one item is in the form
+                    if(typeof data["name"] == "string") {
+                        data = {
+                            name: [data["name"]],
+                            type: [data["type"]],
+                            value: [data["value"]]
+                        };
+                    }
+
+                    if(data && data["name"] && data["name"].length > 0) {
+                        for(var i=0; i<data["name"].length; i++) {
+                            normalizedData.push({
+                                name: data["name"][i],
+                                value: data["value"][i],
+                                type: data["type"][i]
+                            });
+                        }
+                    }
+
+                    this.hotspotMetaData[id] = normalizedData;
+
+                    hotspotMetaDataWin.close();
+                }.bind(this, id)
+            }],
+            listeners: {
+                afterrender: function (id) {
+                   if(this.hotspotMetaData && this.hotspotMetaData[id]) {
+                        var data = this.hotspotMetaData[id];
+                        for(var i=0; i<data.length; i++) {
+                            addItem(data[i]["type"], data[i]);
+                        }
+                   }
+                }.bind(this, id)
+            }
+        });
+
+        var addItem = function (hotspotMetaDataWin, type, data) {
+
+            var id = "item-" + uniqid();
+            var valueField;
+
+            if(!data || !data["name"]) {
+                data = {
+                    name: "",
+                    value: ""
+                };
+            }
+
+            if(type == "textfield") {
+                valueField = {
+                    xtype: "textfield",
+                    name: "value",
+                    fieldLabel: t("value"),
+                    width: 400,
+                    value: data["value"]
+                };
+            } else if(type == "textarea") {
+                valueField = {
+                    xtype: "textarea",
+                    name: "value",
+                    fieldLabel: t("value"),
+                    width: 400,
+                    value: data["value"]
+                };
+            } else if(type == "checkbox") {
+                valueField = {
+                    xtype: "checkbox",
+                    name: "value",
+                    fieldLabel: t("value"),
+                    checked: data["value"]
+                };
+            } else if(type == "object") {
+                valueField = {
+                    xtype: "textfield",
+                    cls: "pimcore_droptarget_input",
+                    name: "value",
+                    fieldLabel: t("value"),
+                    value: data["value"],
+                    width: 400,
+                    listeners: {
+                        render: function (el) {
+                            // register at global DnD manager
+                            dndManager.addDropTarget(el.getEl(), function (target, dd, e, data) {
+                                if(data.node.attributes.elementType == "object") {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
+                                return Ext.dd.DropZone.prototype.dropNotAllowed;
+                            }, function (target, dd, e, data) {
+                                if(data.node.attributes.elementType == "object") {
+                                    target.dom.value = data.node.attributes.path;
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            }.bind(this));
+                        }.bind(this)
+                    }
+                };
+            } else if(type == "asset") {
+                valueField = {
+                    xtype: "textfield",
+                    cls: "pimcore_droptarget_input",
+                    name: "value",
+                    fieldLabel: t("value"),
+                    value: data["value"],
+                    width: 400,
+                    listeners: {
+                        render: function (el) {
+                            // register at global DnD manager
+                            dndManager.addDropTarget(el.getEl(), function (target, dd, e, data) {
+                                if(data.node.attributes.elementType == "asset") {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
+                                return Ext.dd.DropZone.prototype.dropNotAllowed;
+                            }, function (target, dd, e, data) {
+                                if(data.node.attributes.elementType == "asset") {
+                                    target.dom.value = data.node.attributes.path;
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            }.bind(this));
+                        }.bind(this)
+                    }
+                };
+            } else if(type == "document" || type == "link") {
+
+                if(type == "link") {
+                    data["name"] = "link";
+                }
+
+                valueField = {
+                    xtype: "textfield",
+                    cls: "pimcore_droptarget_input",
+                    name: "value",
+                    fieldLabel: t("value"),
+                    value: data["value"],
+                    width: 400,
+                    listeners: {
+                        render: function (el) {
+                            // register at global DnD manager
+                            dndManager.addDropTarget(el.getEl(), function (target, dd, e, data) {
+                                if(data.node.attributes.elementType == "document") {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
+                                return Ext.dd.DropZone.prototype.dropNotAllowed;
+                            }, function (target, dd, e, data) {
+                                if(data.node.attributes.elementType == "document") {
+                                    target.dom.value = data.node.attributes.path;
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            }.bind(this));
+                        }.bind(this)
+                    }
+                };
+            } else {
+                // no valid type
+                return;
+            }
+
+            hotspotMetaDataWin.getComponent("form").add({
+                xtype: "fieldset",
+                style: "padding: 0;",
+                bodyStyle: "padding: 5px;",
+                itemId: id,
+                items: [{
+                    xtype: "hidden",
+                    name: "type",
+                    value: type
+                },{
+                    xtype: "textfield",
+                    name: "name",
+                    value: data["name"],
+                    fieldLabel: t("name")
+                }, valueField],
+                tbar: ["->", {
+                    iconCls: "pimcore_icon_delete",
+                    handler: function (hotspotMetaDataWin) {
+                        var form = hotspotMetaDataWin.getComponent("form");
+                        form.remove(form.getComponent(id));
+                        hotspotMetaDataWin.doLayout();
+                    }.bind(this, hotspotMetaDataWin)
+                }]
+            });
+
+            hotspotMetaDataWin.doLayout();
+        }.bind(this, hotspotMetaDataWin);
+
+        hotspotMetaDataWin.show();
+    },
+
     saveCurrentPage: function () {
 
         if(this.currentPage) {
@@ -486,13 +754,17 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             var originalWidth = imgEl.getWidth();
             var originalHeight = imgEl.getHeight();
 
-
             this.hotspotStore[this.currentPage] = [];
 
             for(var i=0; i<hotspots.length; i++) {
                 hotspot = Ext.get(hotspots[i]);
 
-                var dimensions = Ext.get(hotspot).getStyles("top","left","width","height");
+                var dimensions = hotspot.getStyles("top","left","width","height");
+
+                metaData = null;
+                if(this.hotspotMetaData[hotspot.getAttribute("id")]) {
+                    metaData = this.hotspotMetaData[hotspot.getAttribute("id")];
+                }
 
                 this.hotspotStore[this.currentPage].push({
                     top: intval(dimensions.top) * 100 / originalHeight,

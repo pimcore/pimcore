@@ -417,3 +417,7 @@
 	cursor: default;
 }
 
+/* FF >= 10 fix for menu seperator in ExtJS */
+.x-menu-sep {
+    height: 1px;
+}

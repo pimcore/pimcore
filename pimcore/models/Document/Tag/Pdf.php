@@ -48,7 +48,61 @@ class Document_Tag_Pdf extends Document_Tag
         );
     }
 
+    public function getDataForResource() {
+
+        $rewritePath = function ($data) {
+
+            if(!is_array($data)) {
+                return array();
+            }
+
+            foreach ($data as &$page) {
+                foreach ($page as &$element) {
+                    if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                        foreach($element["data"] as &$metaData) {
+                            if($metaData["value"] instanceof Element_Interface) {
+                                $metaData["value"] = $metaData["value"]->getId();
+                            }
+                        }
+                    }
+                }
+            }
+
+            return $data;
+        };
+
+        $hotspots = $rewritePath($this->hotspots);
+
+        return array(
+            "id" => $this->id,
+            "hotspots" => $hotspots,
+        );
+    }
+
     public function getDataEditmode() {
+
+
+        $rewritePath = function ($data) {
+
+            if(!is_array($data)) {
+                return array();
+            }
+
+            foreach ($data as &$page) {
+                foreach ($page as &$element) {
+                    if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                        foreach ($element["data"] as &$metaData) {
+                            if ($metaData["value"] instanceof Element_Interface) {
+                                $metaData["value"] = $metaData["value"]->getFullPath();
+                            }
+                        }
+                    }
+                }
+            }
+            return $data;
+        };
+
+        $hotspots = $rewritePath($this->hotspots);
 
         $pages = 0;
         if($asset = Asset::getById($this->id)) {
@@ -58,9 +112,47 @@ class Document_Tag_Pdf extends Document_Tag
         return array(
             "id" => $this->id,
             "pageCount" => $pages,
-            "hotspots" => empty($this->hotspots) ? null : $this->hotspots
+            "hotspots" => empty($hotspots) ? null : $hotspots
         );
     }
+
+    public function getCacheTags($ownerDocument, $tags = array()) {
+
+        $tags = is_array($tags) ? $tags : array();
+
+        $asset = Asset::getById($this->id);
+        if ($asset instanceof Asset) {
+            if (!array_key_exists($asset->getCacheTag(), $tags)) {
+                $tags = $asset->getCacheTags($tags);
+            }
+
+            $getMetaDataCacheTags = function ($data, $tags) {
+
+                if(!is_array($data)) {
+                    return $tags;
+                }
+
+                foreach ($data as $page) {
+                    foreach ($page as $element) {
+                        if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                            foreach($element["data"] as $metaData) {
+                                if($metaData["value"] instanceof Element_Interface) {
+                                    $tags = $metaData["value"]->getCacheTags($tags);
+                                }
+                            }
+                        }
+                    }
+                }
+                return $tags;
+            };
+
+            $tags = $getMetaDataCacheTags($this->hotspots, $tags);
+        }
+
+
+        return $tags;
+    }
+
 
     /**
      * @return array
@@ -77,6 +169,37 @@ class Document_Tag_Pdf extends Document_Tag
                 "type" => "asset"
             );
         }
+
+        $getMetaDataDependencies = function ($data, $dependencies) {
+
+            if(!is_array($data)) {
+                return $dependencies;
+            }
+
+            foreach ($data as $page) {
+                foreach ($page as $element) {
+                    if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                        foreach ($element["data"] as $metaData) {
+                            if ($metaData["value"] instanceof Element_Interface) {
+
+                                $elTtype = $metaData["type"];
+                                if($metaData["type"] == "link") {
+                                    $elTtype = "document";
+                                }
+
+                                $dependencies[$elTtype . "_" . $metaData["value"]->getId()] = array(
+                                    "id" => $metaData["value"]->getId(),
+                                    "type" => $elTtype
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+            return $dependencies;
+        };
+
+        $dependencies = $getMetaDataDependencies($this->hotspots, $dependencies);
 
         return $dependencies;
     }
@@ -110,6 +233,36 @@ class Document_Tag_Pdf extends Document_Tag
             $data = Pimcore_Tool_Serialize::unserialize($data);
         }
 
+        $rewritePath = function ($data) {
+
+            if(!is_array($data)) {
+                return array();
+            }
+
+            foreach ($data as &$page) {
+                foreach ($page as &$element) {
+                    if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                        foreach ($element["data"] as &$metaData) {
+                            if (in_array($metaData["type"], array("object", "asset", "document", "link"))) {
+                                $elTtype = $metaData["type"];
+                                if($metaData["type"] == "link") {
+                                    $elTtype = "document";
+                                }
+                                $el = Element_Service::getElementById($elTtype, $metaData["value"]);
+                                $metaData["value"] = $el;
+                            }
+                        }
+                    }
+                }
+            }
+            return $data;
+        };
+
+        if(array_key_exists("hotspots",$data) && is_array($data["hotspots"]) && count($data["hotspots"]) > 0) {
+            $data["hotspots"] = $rewritePath($data["hotspots"]);
+        }
+
+
         $this->id = $data["id"];
         $this->hotspots = $data["hotspots"];
 
@@ -127,6 +280,36 @@ class Document_Tag_Pdf extends Document_Tag
         if($pdf instanceof Asset_Document) {
             $this->id = $pdf->getId();
             if(array_key_exists("hotspots", $data) && !empty($data["hotspots"])) {
+
+                $rewritePath = function ($data) {
+
+                    if(!is_array($data)) {
+                        return array();
+                    }
+
+                    foreach ($data as &$page) {
+                        foreach ($page as &$element) {
+                            if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                                foreach ($element["data"] as &$metaData) {
+                                    if (in_array($metaData["type"], array("object", "asset", "document", "link"))) {
+                                        $elTtype = $metaData["type"];
+                                        if($metaData["type"] == "link") {
+                                            $elTtype = "document";
+                                        }
+                                        $el = Element_Service::getElementByPath($elTtype, $metaData["value"]);
+                                        $metaData["value"] = $el;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return $data;
+                };
+
+                if(array_key_exists("hotspots",$data) && is_array($data["hotspots"]) && count($data["hotspots"]) > 0) {
+                    $data["hotspots"] = $rewritePath($data["hotspots"]);
+                }
+
                 $this->hotspots = $data["hotspots"];
             }
         }
