@@ -14,8 +14,15 @@
  */
 
 /**
- * initializes Pimcore before when before Phing is executed
+ * initializes Pimcore before Phing is executed
  * required to get the autoloader...
  */
-$pimcoreStartupFile = realpath(dirname(__FILE__) . '/../../../../cli/startup.php');
-require_once $pimcoreStartupFile;
+require_once dirname(__FILE__) . '/../../../../cli/startup.php';
+$autoloader = Zend_Loader_Autoloader::getInstance();
+$autoloader->suppressNotFoundWarnings(true); //disable warning because Zend_Loader tries to load Phing classes...
+// do some general deployment setup stuff
+ini_set('display_errors','on');
+$deploymentStartup = PIMCORE_CONFIGURATION_DIRECTORY . "/deployment-startup.php";
+if(@is_file($deploymentStartup)) {
+    include_once($deploymentStartup);
+}
