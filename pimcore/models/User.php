@@ -342,6 +342,16 @@ class User extends User_UserRole {
         return $this->memorizeTabs;
     }
 
+    /**
+     * @return string | null
+     */
 
+    public function getApiKey(){
+        if($this->getActive()){
+            return $this->getPassword();
+        }else{
+            Logger::warn("Couldn't get API key of user (ID: ". $this->getId().") because the user is not active.");
+        }
+    }
 
 }

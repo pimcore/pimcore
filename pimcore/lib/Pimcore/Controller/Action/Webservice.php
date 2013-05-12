@@ -34,6 +34,11 @@ class Pimcore_Controller_Action_Webservice extends Pimcore_Controller_Action {
             if(!is_array($users) or count($users)!==1){
                 throw new Exception("API key error");
             }
+
+            if(!$users[0]->getApiKey()){
+                throw new Exception("Couldn't get API key for user.");
+            }
+
             $user = $users[0];
         }
 
