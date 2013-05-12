@@ -796,4 +796,14 @@ class Pimcore_Tool_RestClient {
         $response = $this->doRequest($url, "GET");
         return $response;
     }
+
+    /**
+     * Returns: server-info including pimcore version, current time and extension data.
+     * @return mixed
+     */
+    public function getServerInfo(){
+        $url = self::$baseUrl .  "server-info/?apikey=" . self::$apikey;
+        $response = $this->doRequest($url, "GET");
+        return $response;
+    }
 }
