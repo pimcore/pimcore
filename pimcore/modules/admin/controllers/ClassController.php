@@ -63,7 +63,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
             $classItems[] = array(
                 "id" => $classItem->getId(),
                 "text" => $classItem->getName(),
-                "icon" => $classItem->getIcon(),
+                "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static/img/icon/database_gear.png',
                 "propertyVisibility" => $classItem->getPropertyVisibility(),
                 "qtipCfg" => array(
                     "title" => "ID: " . $classItem->getId()

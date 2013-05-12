@@ -77,7 +77,6 @@ pimcore.object.klass = Class.create({
                         allowDrop: false,
                         allowChildren: false,
                         isTarget: false,
-                        iconCls: "pimcore_icon_class",
                         leaf: true
                     }
                 }),
