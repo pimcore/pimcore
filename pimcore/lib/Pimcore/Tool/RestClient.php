@@ -183,6 +183,11 @@ class Pimcore_Tool_RestClient {
         if ($statusCode != 200) {
             throw new Pimcore_Tool_RestClient_Exception("Status code " . $statusCode . " " . $uri);
         }
+
+        if($result->getHeader('content-type') != 'application/json'){
+            throw new Pimcore_Tool_RestClient_Exception("No JSON response " . $statusCode . " " . $uri);
+        }
+
         $body = json_decode($body);
         return $body;
     }
