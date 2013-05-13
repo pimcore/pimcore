@@ -249,7 +249,12 @@ class Document_Tag_Pdf extends Document_Tag
                                     $elTtype = "document";
                                 }
                                 $el = Element_Service::getElementById($elTtype, $metaData["value"]);
-                                $metaData["value"] = $el;
+
+                                if(!$el && $metaData["type"] == "link") {
+                                    $metaData["value"] = $metaData["value"];
+                                } else {
+                                    $metaData["value"] = $el;
+                                }
                             }
                         }
                     }
@@ -297,7 +302,12 @@ class Document_Tag_Pdf extends Document_Tag
                                             $elTtype = "document";
                                         }
                                         $el = Element_Service::getElementByPath($elTtype, $metaData["value"]);
-                                        $metaData["value"] = $el;
+
+                                        if(!$el && $metaData["type"] == "link") {
+                                            $metaData["value"] = $metaData["value"];
+                                        } else {
+                                            $metaData["value"] = $el;
+                                        }
                                     }
                                 }
                             }
@@ -341,16 +351,78 @@ class Document_Tag_Pdf extends Document_Tag
         $asset = Asset::getById($this->id);
 
         $options = $this->getOptions();
+        $pageCount = $asset->getPageCount();
 
-        if ($asset instanceof Asset_Document && $asset->getPageCount()) {
+        if ($asset instanceof Asset_Document && $pageCount) {
 
-            $pageCount = $asset->getPageCount();
-            //$pageCount = 10;
-            $code = '<div class="pages">';
+            $hotspots = $this->getHotspots();
+            $rewritePath = function ($data) {
+
+                if(!is_array($data)) {
+                    return array();
+                }
+
+                foreach ($data as &$element) {
+                    if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                        foreach($element["data"] as &$metaData) {
+                            if($metaData["value"] instanceof Document) {
+                                $metaData["value"] = $metaData["value"]->getFullPath();
+                            }
+                        }
+                    }
+                }
+
+                return $data;
+            };
+
             for($i=1; $i <=$pageCount; $i++) {
-                $code .= '<img src="' . $asset->getImageThumbnail(array("width" => 400, "format" => "pjpeg"), $i, true) . '" />';
+                $pageData = array(
+                    "thumbnail" => $asset->getImageThumbnail(array(
+                        "width" => 200,
+                        "height" => 200,
+                        "contain" => true,
+                        "format" => "pjpeg"
+                    ), $i, true),
+                    "detail" => $asset->getImageThumbnail(array(
+                        "width" => 1500,
+                        "height" => 1500,
+                        "contain" => true,
+                        "quality" => "85",
+                        "format" => "pjpeg"
+                    ), $i, true)
+                );
+
+                if(is_array($hotspots) && $hotspots[$i]) {
+                    $pageData["hotspots"] = $rewritePath($hotspots[$i]);
+                }
+
+                $data["pages"][] = $pageData;
             }
-            $code .= '</div>';
+
+            $jsVarName = "pimcore_pdf_" . $this->getName();
+            $divId = "pimcore-pdf-" . uniqid();
+            $jsonData = Zend_Json::encode($data);
+
+            $code = <<<HTML
+
+            <div id="$divId" class="pimcore-pdfViewer">
+                <div class="pimcore-pdfPages"></div>
+                <div class="pimcore-pdfZoom">+</div>
+                <div class="pimcore-pdfDownload">&#x21e9;</div>
+                <div class="pimcore-pdfFullscreenClose">x</div>
+                <div class="pimcore-pdfButtonLeft pimcore-pdfButton "><div class="pimcore-pdfArrowLeft"></div></div>
+                <div class="pimcore-pdfButtonRight pimcore-pdfButton "><div class="pimcore-pdfArrowRight"></div></div>
+            </div>
+
+            <link rel="stylesheet" type="text/css" href="/pimcore/static/js/frontend/pdfViewer/styles.css" />
+            <script type="text/javascript" src="/pimcore/static/js/frontend/pdfViewer/viewer.js"></script>
+            <script type="text/javascript">
+                var $jsVarName = new pimcore.pdf({
+                    id: "$divId",
+                    data: $jsonData
+                });
+            </script>
+HTML;
 
             return $code;
         } else {

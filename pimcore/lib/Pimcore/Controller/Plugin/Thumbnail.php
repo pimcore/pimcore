@@ -51,6 +51,9 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
                             $page = $tmpPage;
                         }
 
+                        $thumbnailConfig->setName(preg_replace("/\-[\d]+/","",$thumbnailConfig->getName()));
+                        $thumbnailConfig->setName(str_replace("document_","",$thumbnailConfig->getName()));
+
                         $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getImageThumbnail($thumbnailConfig, $page);
                     } else if ($asset instanceof Asset_Image) {
                         //check if high res image is called
