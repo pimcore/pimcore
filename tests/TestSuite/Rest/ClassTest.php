@@ -7,7 +7,7 @@
  */
 
 
-class TestSuite_Rest_ClassTest extends Test_Base {
+class TestSuite_Rest_ClassTest extends Test_BaseRest {
 
     public function setUp() {
         // every single rest test assumes a clean database
@@ -23,10 +23,10 @@ class TestSuite_Rest_ClassTest extends Test_Base {
         $classId = $object->getClassId();
 
         $this->assertEquals("unittest", Object_Class::getById($classId)->getName());
-        $restClass1 = Pimcore_Tool_RestClient::getInstance()->getClassById($classId);
+        $restClass1 = self::getRestClient()->getClassById($classId);
         $this->assertEquals("unittest", $restClass1->getName());
 
-        $restClass2 = Pimcore_Tool_RestClient::getInstance()->getObjectMetaById($object->getId());
+        $restClass2 = self::getRestClient()->getObjectMetaById($object->getId());
         $this->assertEquals("unittest", $restClass2->getName());
     }
 

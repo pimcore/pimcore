@@ -7,7 +7,7 @@
  */
 
 
-class TestSuite_Rest_DataTypeTestIn extends Test_Base {
+class TestSuite_Rest_DataTypeTestIn extends Test_BaseRest {
 
     static $seed;
 
@@ -27,7 +27,7 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
         self::$seed = 1;
 
         $tmpObject = Test_Tool::createFullyFledgedObject("local", false, self::$seed);
-        $response = Pimcore_Tool_RestClient::getInstance()->createObjectConcrete($tmpObject);
+        $response = self::getRestClient()->createObjectConcrete($tmpObject);
         if (!$response->success) {
             var_dump($response);
             throw new Exception("could not create test object");

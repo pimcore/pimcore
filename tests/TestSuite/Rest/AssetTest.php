@@ -7,7 +7,7 @@
  */
 
 
-class TestSuite_Rest_AssetTest extends Test_Base {
+class TestSuite_Rest_AssetTest extends Test_BaseRest {
 
     public function setUp() {
         // every single rest test assumes a clean database
@@ -33,7 +33,7 @@ class TestSuite_Rest_AssetTest extends Test_Base {
 
         $time = time();
 
-        $result = Pimcore_Tool_RestClient::getInstance()->createAsset($asset);
+        $result = self::getRestClient()->createAsset($asset);
         $this->assertTrue($result->id > 0, "request not successful");
         $this->assertEquals(2, Test_Tool::getAssetCount());
 
@@ -49,7 +49,7 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $this->assertEquals("bla", $property->getData());
 
         // as the asset key is unique there must be exactly one object with that key
-        $list = Pimcore_Tool_RestClient::getInstance()->getAssetList("filename = '" . $asset->getKey() . "'");
+        $list = self::getRestClient()->getAssetList("filename = '" . $asset->getKey() . "'");
         $this->assertEquals(1, count($list));
 
         // now check if the file exists
@@ -69,7 +69,7 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $savedAsset = Asset::getById($savedAsset->getId());
         $this->assertNotNull($savedAsset);
 
-        $response = Pimcore_Tool_RestClient::getInstance()->deleteAsset($savedAsset->getId());
+        $response = self::getRestClient()->deleteAsset($savedAsset->getId());
         $this->assertTrue($response->success, "request wasn't successful");
 
         // this will wipe our local cache
@@ -89,7 +89,7 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $fitem = Asset::getById($folder->getId());
         $this->assertNull($fitem);
 
-        $response = Pimcore_Tool_RestClient::getInstance()->createAssetFolder($folder);
+        $response = self::getRestClient()->createAssetFolder($folder);
         $this->assertTrue($response->id > 0, "request wasn't successful");
 
         $id = $response->id;
@@ -98,10 +98,10 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $folderDirect = Asset::getById($id);
         $this->assertTrue($folderDirect->getType() == "folder");
 
-        $folderRest = Pimcore_Tool_RestClient::getInstance()->getAssetById($id);
+        $folderRest = self::getRestClient()->getAssetById($id);
         $this->assertTrue(Test_Tool::assetsAreEqual($folderRest, $folderDirect, false), "assets are not equal");
 
-        Pimcore_Tool_RestClient::getInstance()->deleteAsset($id);
+        self::getRestClient()->deleteAsset($id);
 
         Pimcore::collectGarbage();
         $folderDirect = Asset::getById($id);

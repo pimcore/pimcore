@@ -7,7 +7,7 @@
  */
 
 
-class TestSuite_Rest_DocumentTest extends Test_Base {
+class TestSuite_Rest_DocumentTest extends Test_BaseRest {
 
     public function setUp() {
 //        // every single rest test assumes a clean database
@@ -25,7 +25,7 @@ class TestSuite_Rest_DocumentTest extends Test_Base {
 
         $time = time();
 
-        $result = Pimcore_Tool_RestClient::getInstance()->createDocument($unsavedObject);
+        $result = self::getRestClient()->createDocument($unsavedObject);
         $this->assertTrue($result->success, "request not successful");
         $this->assertEquals(2, Test_Tool::getDocoumentCount());
 
@@ -38,7 +38,7 @@ class TestSuite_Rest_DocumentTest extends Test_Base {
 
 
         // as the object key is unique there must be exactly one document with that key
-        $list = Pimcore_Tool_RestClient::getInstance()->getDocumentList("`key` = '" . $unsavedObject->getKey() . "'");
+        $list = self::getRestClient()->getDocumentList("`key` = '" . $unsavedObject->getKey() . "'");
 
 
         $this->assertEquals(1, count($list));
@@ -53,7 +53,7 @@ class TestSuite_Rest_DocumentTest extends Test_Base {
         $savedDocument = Document::getById($document->getId());
         $this->assertNotNull($savedDocument);
 
-        $response = Pimcore_Tool_RestClient::getInstance()->deleteDocument($document->getId());
+        $response = self::getRestClient()->deleteDocument($document->getId());
         $this->assertTrue($response->success, "request wasn't successful");
 
         // this will wipe our local cache
@@ -76,7 +76,7 @@ class TestSuite_Rest_DocumentTest extends Test_Base {
         $fitem = Document::getById($folder->getId());
         $this->assertNull($fitem);
 
-        $response = Pimcore_Tool_RestClient::getInstance()->createDocumentFolder($folder);
+        $response = self::getRestClient()->createDocumentFolder($folder);
         $this->assertTrue($response->success, "request wasn't successful");
 
         $id = $response->id;
@@ -85,10 +85,10 @@ class TestSuite_Rest_DocumentTest extends Test_Base {
         $folderDirect = Document::getById($id);
         $this->assertTrue($folderDirect->getType() == "folder");
 
-        $folderRest = Pimcore_Tool_RestClient::getInstance()->getDocumentById($id);
+        $folderRest = self::getRestClient()->getDocumentById($id);
         $this->assertTrue(Test_Tool::documentsAreEqual($folderRest, $folderDirect, false), "documents are not equal");
 
-        Pimcore_Tool_RestClient::getInstance()->deleteDocument($id);
+        self::getRestClient()->deleteDocument($id);
 
         Pimcore::collectGarbage();
         $folderDirect = Document::getById($id);
