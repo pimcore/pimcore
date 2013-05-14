@@ -707,7 +707,8 @@ class Document_Tag_Video extends Document_Tag
                     border-radius:20px;
                     margin: 0 20px 0 20px;
                     top: ' . (($this->getHeight()-106)/2) . 'px;
-                    left: ' . (($this->getWidth()-106)/2) . 'px;
+                    left: 50%;
+                    margin-left:-66px;
                     position:absolute;
                     opacity: 0.8;
                 }
