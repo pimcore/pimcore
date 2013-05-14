@@ -57,6 +57,8 @@ $scripts = array(
 
     Ext.onReady(function() {
 
+        Ext.Ajax.timeout = 900000;
+
         var pimcoreViewport = new Ext.Viewport({
             id: "pimcore_viewport"
         });
