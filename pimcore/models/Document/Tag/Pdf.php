@@ -351,10 +351,10 @@ class Document_Tag_Pdf extends Document_Tag
         $asset = Asset::getById($this->id);
 
         $options = $this->getOptions();
-        $pageCount = $asset->getPageCount();
 
-        if ($asset instanceof Asset_Document && $pageCount) {
 
+        if ($asset instanceof Asset_Document && $asset->getPageCount()) {
+            $pageCount = $asset->getPageCount();
             $hotspots = $this->getHotspots();
             $rewritePath = function ($data) {
 
