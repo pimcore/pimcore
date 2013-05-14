@@ -399,6 +399,8 @@ class Document_Tag_Pdf extends Document_Tag
                 $data["pages"][] = $pageData;
             }
 
+            $data["pdf"] = $asset->getFullPath();
+
             $jsVarName = "pimcore_pdf_" . $this->getName();
             $divId = "pimcore-pdf-" . uniqid();
             $jsonData = Zend_Json::encode($data);
