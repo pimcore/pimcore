@@ -1,0 +1,84 @@
+
+.carousel img {
+    position: relative;
+}
+
+.carousel .item .container {
+    left: 70px;
+    position: absolute;
+    top: 0;
+    z-index: 100;
+}
+
+.editmode-carousel-container {
+    position: absolute;
+    z-index: 1000;
+    background: rgba(255,255,255,0.5);
+    padding: 10px;
+}
+
+#content ul, #content ol {
+    margin: 0 0 10px 25px !important;
+    padding: 0 !important;
+    list-style-type: disc !important;
+}
+
+#content ol {
+    list-style-type: decimal !important;
+}
+
+.editmode-label {
+    margin-bottom: 3px;
+}
+
+.editmode-label label {
+    float: left;
+    padding-right: 5px;
+}
+
+.area-gallery-single-images .pimcore_block_entry {
+    float:left;
+    clear: none;
+    width: 22%;
+    height: 180px;
+}
+
+.area-gallery-single-images .pimcore_block_entry li {
+    width: 90%;
+}
+
+
+/* ExtJS Corrections (broken by bootstrap */
+
+
+.x-form-field-wrap .x-form-field, .x-panel-body .x-form-field {
+    cursor: inherit !important;
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    text-shadow: 0 !important;
+    box-shadow: 0 !important;
+    font: normal 12px tahoma, arial, helvetica, sans-serif !important;
+    padding: 1px 3px !important;
+    margin-bottom: 0 !important;
+}
+
+.x-form-item-label {
+    font: normal 12px tahoma, arial, helvetica, sans-serif !important;
+    padding: 1px 2px !important;
+}
+
+.x-form-item .x-form-element div.x-form-composite.x-form-field {
+    padding:0 !important;
+}
+
+.x-fieldset-header {
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+    width: auto !important;
+}
+
+
+.editable-roundup h2 {
+    margin-top: 30px;
+    clear:both;
+}
