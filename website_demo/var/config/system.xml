@@ -10,7 +10,7 @@
     <theme></theme>
     <loginscreenimageservice>1</loginscreenimageservice>
     <loginscreencustomimage></loginscreencustomimage>
-    <debug>1</debug>
+    <debug></debug>
     <debug_ip></debug_ip>
     <http_auth>
       <username></username>
@@ -18,10 +18,10 @@
     </http_auth>
     <custom_php_logfile>1</custom_php_logfile>
     <loglevel>
-      <debug>1</debug>
-      <info>1</info>
-      <notice>1</notice>
-      <warning>1</warning>
+      <debug></debug>
+      <info></info>
+      <notice></notice>
+      <warning></warning>
       <error>1</error>
       <critical>1</critical>
       <alert>1</alert>

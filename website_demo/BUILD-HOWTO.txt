@@ -18,6 +18,18 @@
     </params>
   </database>
 
+    <loglevel>
+      <debug></debug>
+      <info></info>
+      <notice></notice>
+      <warning></warning>
+      <error>1</error>
+      <critical>1</critical>
+      <alert>1</alert>
+      <emergency>1</emergency>
+    </loglevel>
+
+
 ### /website_demo/dump/pimcore.sql
 # search for the following and replace it with an empty string
 
