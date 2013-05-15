@@ -34,7 +34,11 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
         }
 
         if($name && $route = Staticroute::getByName($name, $siteId)) {
-            return $route->assemble($urlOptions, $reset, $encode);
+            $url = $route->assemble($urlOptions, $reset, $encode);
+            if(Pimcore_Config::getSystemConfig()->documents->allowcapitals == 'no'){
+                $url = strtolower($url);
+            }
+            return $url;
         }
 
 
