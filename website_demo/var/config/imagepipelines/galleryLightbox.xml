@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+  <items>
+    <item>
+      <method>scaleByWidth</method>
+      <arguments>
+        <width>900</width>
+      </arguments>
+    </item>
+  </items>
+  <name>galleryLightbox</name>
+  <description></description>
+  <format>PJPEG</format>
+  <quality>75</quality>
+  <highResolution></highResolution>
+</zend-config>
