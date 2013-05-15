@@ -36,9 +36,9 @@
     <adapter>Mysqli</adapter>
     <params>
       <host>localhost</host>
-      <username>root</username>
-      <password></password>
-      <dbname>pimcore</dbname>
+      <username>pimcore_demo</username>
+      <password>secretpassword</password>
+      <dbname>pimcore_demo_pimcore</dbname>
       <port>3306</port>
     </params>
   </database>
