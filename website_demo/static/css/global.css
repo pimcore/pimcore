@@ -1,68 +1,66 @@
-
 /* color overwrites
     dark orange: #662416
     light orange: #eb6909
     normal orange: #de640a
 */
 
-
 a {
-  color: #eb6909;
+    color: #eb6909;
 }
 
 a:hover,
 a:focus {
-  color: #662416;
+    color: #662416;
 }
 
 .btn-link:hover,
 .btn-link:focus {
-  color: #662416;
+    color: #662416;
 }
 
 .nav .dropdown-toggle:hover .caret,
 .nav .dropdown-toggle:focus .caret {
-  border-top-color: #662416;
-  border-bottom-color: #662416;
+    border-top-color: #662416;
+    border-bottom-color: #662416;
 }
 
 .dropdown-menu > li > a:hover,
 .dropdown-menu > li > a:focus,
 .dropdown-submenu:hover > a,
 .dropdown-submenu:focus > a {
-  background-color: #eb6909;
-  background-image: -moz-linear-gradient(top, #eb6909, #de640a);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#eb6909), to(#de640a));
-  background-image: -webkit-linear-gradient(top, #eb6909, #de640a);
-  background-image: -o-linear-gradient(top, #eb6909, #de640a);
-  background-image: linear-gradient(to bottom, #eb6909, #de640a);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffeb6909', endColorstr='#ffde640a', GradientType=0);
+    background-color: #eb6909;
+    background-image: -moz-linear-gradient(top, #eb6909, #de640a);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#eb6909), to(#de640a));
+    background-image: -webkit-linear-gradient(top, #eb6909, #de640a);
+    background-image: -o-linear-gradient(top, #eb6909, #de640a);
+    background-image: linear-gradient(to bottom, #eb6909, #de640a);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffeb6909', endColorstr='#ffde640a', GradientType=0);
 }
 
 .dropdown-menu > .active > a,
 .dropdown-menu > .active > a:hover,
 .dropdown-menu > .active > a:focus {
-  background-color: #eb6909;
-  background-image: -moz-linear-gradient(top, #eb6909, #de640a);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#eb6909), to(#de640a));
-  background-image: -webkit-linear-gradient(top, #eb6909, #de640a);
-  background-image: -o-linear-gradient(top, #eb6909, #de640a);
-  background-image: linear-gradient(to bottom, #eb6909, #de640a);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffeb6909', endColorstr='#ffde640a', GradientType=0);
+    background-color: #eb6909;
+    background-image: -moz-linear-gradient(top, #eb6909, #de640a);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#eb6909), to(#de640a));
+    background-image: -webkit-linear-gradient(top, #eb6909, #de640a);
+    background-image: -o-linear-gradient(top, #eb6909, #de640a);
+    background-image: linear-gradient(to bottom, #eb6909, #de640a);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffeb6909', endColorstr='#ffde640a', GradientType=0);
 }
 
 .btn-primary {
-  background-color: #662416;
-  *background-color: #662416;
-  background-image: -moz-linear-gradient(top, #eb6909, #662416);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#eb6909), to(#662416));
-  background-image: -webkit-linear-gradient(top, #eb6909, #662416);
-  background-image: -o-linear-gradient(top, #eb6909, #662416);
-  background-image: linear-gradient(to bottom, #eb6909, #662416);
-  border-color: #662416 #662416 #002a80;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffeb6909', endColorstr='#ff662416', GradientType=0);
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    background-color: #662416;
+    *background-color: #662416;
+    background-image: -moz-linear-gradient(top, #eb6909, #662416);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#eb6909), to(#662416));
+    background-image: -webkit-linear-gradient(top, #eb6909, #662416);
+    background-image: -o-linear-gradient(top, #eb6909, #662416);
+    background-image: linear-gradient(to bottom, #eb6909, #662416);
+    border-color: #662416 #662416 #002a80;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffeb6909', endColorstr='#ff662416', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
 
 .btn-primary:hover,
@@ -71,40 +69,39 @@ a:focus {
 .btn-primary.active,
 .btn-primary.disabled,
 .btn-primary[disabled] {
-  background-color: #662416;
-  *background-color: #662416;
+    background-color: #662416;
+    *background-color: #662416;
 }
 
 .btn-group.open .btn-primary.dropdown-toggle {
-  background-color: #662416;
+    background-color: #662416;
 }
 
 .btn-link {
-  color: #eb6909;
+    color: #eb6909;
 }
 
 .nav-list > .active > a,
 .nav-list > .active > a:hover,
 .nav-list > .active > a:focus {
-  background-color: #eb6909;
+    background-color: #eb6909;
 }
 
 .nav-pills > .active > a,
 .nav-pills > .active > a:hover,
 .nav-pills > .active > a:focus {
-  background-color: #eb6909;
+    background-color: #eb6909;
 }
 
 .nav .dropdown-toggle .caret {
-  border-top-color: #eb6909;
-  border-bottom-color: #eb6909;
+    border-top-color: #eb6909;
+    border-bottom-color: #eb6909;
 }
 
 a.thumbnail:hover,
 a.thumbnail:focus {
-  border-color: #eb6909;
+    border-color: #eb6909;
 }
-
 
 /* GLOBAL STYLES
     -------------------------------------------------- */
@@ -317,7 +314,7 @@ body {
 
 .bs-docs-sidenav li a {
     display: block;
-    width: 190px   \9;
+    width: 190px    \9;
     margin: 0 0 -1px;
     padding: 8px 14px;
     border: 1px solid #e5e5e5;
@@ -338,7 +335,7 @@ body {
 .bs-docs-sidenav li ul {
     padding: 0;
     list-style: none;
-    margin:0;
+    margin: 0;
 }
 
 .bs-docs-sidenav > li:first-child > a {
@@ -367,8 +364,6 @@ body {
 .bs-docs-sidenav .active>a {
     font-weight: bold;
 }
-
-
 
 /* Featurettes
 ------------------------- */
@@ -403,7 +398,6 @@ body {
     margin-top: 20px;
 }
 
-
 /* Footer
 -------------------------------------------------- */
 
@@ -433,11 +427,9 @@ body {
     padding-left: 0;
 }
 
-
 #content section {
     margin-bottom: 30px;
 }
-
 
 .thumbnail-examples .img-container {
     height: 150px;
@@ -447,13 +439,12 @@ body {
 .thumbnail-examples .row-fluid {
     margin-bottom: 20px;
     border-bottom: 1px solid #5a5a5a;
-    padding-bottom:10px;
+    padding-bottom: 10px;
 }
-
 
 .image-hotspot {
     position: absolute;
-    background:rgba(235,105,9,0.2);
+    background: rgba(235, 105, 9, 0.2);
 }
 
 .image-marker {
@@ -461,9 +452,8 @@ body {
     width: 20px;
     height: 20px;
     border-radius: 10px;
-    background:#eb6909;
+    background: #eb6909;
 }
-
 
 /* RESPONSIVE */
 
@@ -524,5 +514,95 @@ body {
 
     .navbar-inner {
         margin: -20px;
+    }
+}
+
+@media (max-width: 979px) {
+    .featurette {
+        height: auto;
+        padding: 0;
+    }
+
+    .featurette-image.pull-left,
+    .featurette-image.pull-right {
+        display: block;
+        float: none;
+        max-width: 40%;
+        margin: 0 auto 20px;
+    }
+
+    .pimcore_video {
+        width: 100% !important;
+        height: 175px !important;
+    }
+}
+
+@media (max-width: 767px) {
+
+    .featurette-heading {
+        font-size: 30px;
+    }
+
+    .featurette .lead {
+        font-size: 18px;
+        line-height: 1.5;
+    }
+}
+
+@media (min-width: 1200px) {
+    .bs-docs-sidenav {
+        width: 258px;
+    }
+
+    .bs-docs-sidenav > li > a {
+        width: 230px  \9; /* Override the previous IE8-9 hack */
+    }
+}
+
+/* Desktop
+------------------------- */
+@media (max-width: 980px) {
+    /* When affixed, space properly */
+    .bs-docs-sidenav {
+        top: 0;
+        width: 218px;
+        margin-top: 30px;
+        margin-right: 0;
+    }
+}
+
+/* Tablet to desktop
+------------------------- */
+@media (min-width: 768px) and (max-width: 979px) {
+
+    /* Widen masthead and social buttons to fill body padding */
+    .jumbotron {
+        margin-top: -20px; /* Offset bottom margin on .navbar */
+    }
+
+    /* Adjust sidenav width */
+    .bs-docs-sidenav {
+        width: 166px;
+        margin-top: 20px;
+    }
+
+    .bs-docs-sidenav.affix {
+        top: 0;
+    }
+}
+
+/* Tablet
+------------------------- */
+@media (max-width: 767px) {
+    /* Sidenav */
+    .bs-docs-sidenav {
+        width: auto;
+        margin-bottom: 20px;
+    }
+
+    .bs-docs-sidenav.affix {
+        position: static;
+        width: auto;
+        top: 0;
     }
 }

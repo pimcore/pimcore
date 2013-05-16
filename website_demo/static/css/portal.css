@@ -84,19 +84,6 @@
         width: auto;
         height: 500px;
     }
-
-    .featurette {
-        height: auto;
-        padding: 0;
-    }
-
-    .featurette-image.pull-left,
-    .featurette-image.pull-right {
-        display: block;
-        float: none;
-        max-width: 40%;
-        margin: 0 auto 20px;
-    }
 }
 
 @media (max-width: 767px) {
@@ -135,15 +122,6 @@
 
     .marketing .span4 + .span4 {
         margin-top: 40px;
-    }
-
-    .featurette-heading {
-        font-size: 30px;
-    }
-
-    .featurette .lead {
-        font-size: 18px;
-        line-height: 1.5;
     }
 
 }
