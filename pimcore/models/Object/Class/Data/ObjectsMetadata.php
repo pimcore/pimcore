@@ -87,7 +87,8 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                 $destination = Object_Abstract::getById($object["dest_id"]);
 
                 if ($source instanceof Object_Concrete && $destination instanceof Object_Concrete) {
-                    $metaData = new Object_Data_ObjectMetadata($this->getName(), $this->getColumnKeys(), $destination);
+                    $className = Pimcore_Tool::getModelClassMapping('Object_Data_ObjectMetadata');
+                    $metaData = new $className($this->getName(), $this->getColumnKeys(), $destination);
                     $metaData->load($source, $destination, $this->getName());
                     $objects[] = $metaData;
                 }
@@ -190,7 +191,8 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
                 $o = Object_Abstract::getById($object["id"]);
                 if($o) {
-                    $metaData = new Object_Data_ObjectMetadata($this->getName(), $this->getColumnKeys(), $o);
+                    $className = Pimcore_Tool::getModelClassMapping('Object_Data_ObjectMetadata');
+                    $metaData = new $className($this->getName(), $this->getColumnKeys(), $o);
                     foreach($this->getColumns() as $c) {
                         $setter = "set" . ucfirst($c["key"]);
                         $metaData->$setter($object[$c["key"]]);
@@ -302,8 +304,8 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         $value = array();
         foreach ($values as $element) {
             if ($el = Object_Abstract::getByPath($element)) {
-
-                $metaObject = new Object_Data_ObjectMetadata($this->getName(), $this->getColumnKeys(), $el);
+                $className = Pimcore_Tool::getModelClassMapping('Object_Data_ObjectMetadata');
+                $metaObject = new $className($this->getName(), $this->getColumnKeys(), $el);
 
                 $value[] = $metaObject;
             }
@@ -407,7 +409,8 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
                 if($dest instanceof Object_Abstract) {
 
-                    $metaObject = new Object_Data_ObjectMetadata($this->getName(), $this->getColumnKeys(), $dest);
+                    $className = Pimcore_Tool::getModelClassMapping('Object_Data_ObjectMetadata');
+                    $metaObject = new $className($this->getName(), $this->getColumnKeys(), $dest);
 
                     foreach($this->getColumns() as $c) {
                         $setter = "set" . ucfirst($c['key']);
@@ -576,7 +579,8 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
      * @return void
      */
     public function classSaved($class) {
-        $temp = new Object_Data_ObjectMetadata(null);
+        $className = Pimcore_Tool::getModelClassMapping('Object_Data_ObjectMetadata');
+        $temp = new $className(null);
         $temp->getResource()->createOrUpdateTable($class);
     }
 }
