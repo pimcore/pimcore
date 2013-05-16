@@ -82,3 +82,7 @@
     margin-top: 30px;
     clear:both;
 }
+
+.bs-docs-sidenav {
+    width: 228px !important;
+}
