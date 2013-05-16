@@ -8,8 +8,17 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_
 
         $objects = array();
         Logger::log("Load Objects...", Zend_Log::INFO);
+        $availableRelations = array();
+        if($filterDefinition->getAvailableRelations()) {
+            foreach($filterDefinition->getAvailableRelations() as $rel) {
+                $availableRelations[$rel->getId()] = true;
+            }
+        }
+
         foreach($values as $v) {
-            $objects[$v['value']] = Object_Abstract::getById($v['value']);
+            if(empty($availableRelations) || $availableRelations[$v['value']] === true) {
+                $objects[$v['value']] = Object_Abstract::getById($v['value']);
+            }
         }
         Logger::log("done.", Zend_Log::INFO);
 
