@@ -148,13 +148,14 @@
         <!-- assign backend implementations and views to filter type field collections -->
         <filtertypes>
             <FilterNumberRange class="OnlineShop_Framework_FilterService_NumberRange" script="/sample/filters/range.php"/>
-            <FilterNumberRangeSelection class="OnlineShop_Framework_FilterService_NumberRangeSelection" script="/product/filters/price.php"/>
-            <FilterSelect class="OnlineShop_Framework_FilterService_Select" script="/product/filters/select.php"/>
+            <FilterNumberRangeSelection class="OnlineShop_Framework_FilterService_NumberRangeSelection" script="/sample/filters/price.php"/>
+            <FilterSelect class="OnlineShop_Framework_FilterService_Select" script="/sample/filters/select.php"/>
+            <FilterSelectFromMultiSelect class="OnlineShop_Framework_FilterService_SelectFromMultiSelect" script="/sample/filters/select.php"/>
             <FilterMultiSelect class="OnlineShop_Framework_FilterService_MultiSelect" script="/sample/filters/multiselect.php"/>
+            <FilterMultiSelectFromMultiSelect class="Website_OnlineShop_FilterService_MultiSelectFromMultiSelect" script="/sample/filters/multiselect.php"/>
             <FilterMultiRelation class="OnlineShop_Framework_FilterService_MultiSelectRelation" script="/sample/filters/multiselect-relation.php"/>
-            <FilterCategory class="OnlineShop_Framework_FilterService_SelectCategory" script="/product/filters/select.php"/>
-            <FilterSelectFromMultiSelect class="OnlineShop_Framework_FilterService_SelectFromMultiSelect" script="/product/filters/select.php"/>
-            <FilterRelation class="OnlineShop_Framework_FilterService_SelectRelation" script="/product/filters/object_relation.php"/>
+            <FilterCategory class="OnlineShop_Framework_FilterService_SelectCategory" script="/sample/filters/select.php"/>
+            <FilterRelation class="OnlineShop_Framework_FilterService_SelectRelation" script="/sample/filters/object_relation.php"/>
         </filtertypes>
 
         <!-- pricing manager -->

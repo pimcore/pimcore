@@ -1,0 +1,403 @@
+{
+    "parentClass": "OnlineShop_Framework_AbstractFilterDefinitionType",
+    "layoutDefinitions": {
+        "fieldtype": "panel",
+        "labelWidth": 100,
+        "layout": null,
+        "name": null,
+        "type": null,
+        "region": null,
+        "title": null,
+        "width": null,
+        "height": null,
+        "collapsible": null,
+        "collapsed": null,
+        "bodyStyle": null,
+        "datatype": "layout",
+        "permissions": null,
+        "childs": [
+            {
+                "fieldtype": "panel",
+                "labelWidth": 100,
+                "layout": null,
+                "name": "Layout",
+                "type": null,
+                "region": null,
+                "title": "Filter Multi Select from Multi Select",
+                "width": null,
+                "height": null,
+                "collapsible": false,
+                "collapsed": null,
+                "bodyStyle": null,
+                "datatype": "layout",
+                "permissions": null,
+                "childs": [
+                    {
+                        "fieldtype": "input",
+                        "width": "",
+                        "queryColumnType": "varchar",
+                        "columnType": "varchar",
+                        "columnLength": 255,
+                        "phpdocType": "string",
+                        "name": "label",
+                        "title": "Label",
+                        "tooltip": "",
+                        "mandatory": false,
+                        "noteditable": false,
+                        "index": false,
+                        "locked": false,
+                        "style": "",
+                        "permissions": null,
+                        "datatype": "data",
+                        "relationType": false,
+                        "invisible": false,
+                        "visibleGridView": false,
+                        "visibleSearch": false
+                    },
+                    {
+                        "fieldtype": "indexFieldSelectionCombo",
+                        "specificPriceField": false,
+                        "showAllFields": false,
+                        "considerTenants": false,
+                        "options": [
+                            {
+                                "key": "categoryIds",
+                                "value": "categoryIds"
+                            },
+                            {
+                                "key": "name",
+                                "value": "name"
+                            },
+                            {
+                                "key": "seoname",
+                                "value": "seoname"
+                            },
+                            {
+                                "key": "description",
+                                "value": "description"
+                            },
+                            {
+                                "key": "ean",
+                                "value": "ean"
+                            },
+                            {
+                                "key": "remoteid",
+                                "value": "remoteid"
+                            },
+                            {
+                                "key": "availabilityamount",
+                                "value": "availabilityamount"
+                            },
+                            {
+                                "key": "specialoffer",
+                                "value": "specialoffer"
+                            },
+                            {
+                                "key": "newuntil",
+                                "value": "newuntil"
+                            },
+                            {
+                                "key": "discontinued",
+                                "value": "discontinued"
+                            },
+                            {
+                                "key": "warrantymonths",
+                                "value": "warrantymonths"
+                            },
+                            {
+                                "key": "brand",
+                                "value": "brand"
+                            },
+                            {
+                                "key": "b2Cprice",
+                                "value": "b2Cprice"
+                            },
+                            {
+                                "key": "attrDigitalTuner",
+                                "value": "attrDigitalTuner"
+                            },
+                            {
+                                "key": "attrFernseherConnections",
+                                "value": "attrFernseherConnections"
+                            },
+                            {
+                                "key": "attrEnergyRating",
+                                "value": "attrEnergyRating"
+                            },
+                            {
+                                "key": "attrScreenSize",
+                                "value": "attrScreenSize"
+                            }
+                        ],
+                        "width": "",
+                        "queryColumnType": "varchar(255)",
+                        "columnType": "varchar(255)",
+                        "phpdocType": "string",
+                        "name": "field",
+                        "title": "Field",
+                        "tooltip": "",
+                        "mandatory": false,
+                        "noteditable": false,
+                        "index": false,
+                        "locked": false,
+                        "style": "",
+                        "permissions": null,
+                        "datatype": "data",
+                        "relationType": false,
+                        "invisible": false,
+                        "visibleGridView": false,
+                        "visibleSearch": false
+                    },
+                    {
+                        "fieldtype": "input",
+                        "width": "",
+                        "queryColumnType": "varchar",
+                        "columnType": "varchar",
+                        "columnLength": 255,
+                        "phpdocType": "string",
+                        "name": "preSelect",
+                        "title": "Pre Select",
+                        "tooltip": "",
+                        "mandatory": false,
+                        "noteditable": false,
+                        "index": false,
+                        "locked": false,
+                        "style": "",
+                        "permissions": null,
+                        "datatype": "data",
+                        "relationType": false,
+                        "invisible": false,
+                        "visibleGridView": false,
+                        "visibleSearch": false
+                    },
+                    {
+                        "fieldtype": "input",
+                        "width": "",
+                        "queryColumnType": "varchar",
+                        "columnType": "varchar",
+                        "columnLength": 255,
+                        "phpdocType": "string",
+                        "name": "scriptPath",
+                        "title": "Script Path",
+                        "tooltip": "",
+                        "mandatory": false,
+                        "noteditable": false,
+                        "index": false,
+                        "locked": false,
+                        "style": "",
+                        "permissions": null,
+                        "datatype": "data",
+                        "relationType": false,
+                        "invisible": false,
+                        "visibleGridView": false,
+                        "visibleSearch": false
+                    },
+                    {
+                        "fieldtype": "checkbox",
+                        "defaultValue": 0,
+                        "queryColumnType": "tinyint(1)",
+                        "columnType": "tinyint(1)",
+                        "phpdocType": "boolean",
+                        "name": "UseAndCondition",
+                        "title": "Use And Condition",
+                        "tooltip": "",
+                        "mandatory": false,
+                        "noteditable": false,
+                        "index": false,
+                        "locked": null,
+                        "style": "",
+                        "permissions": null,
+                        "datatype": "data",
+                        "relationType": false,
+                        "invisible": false,
+                        "visibleGridView": false,
+                        "visibleSearch": false
+                    }
+                ],
+                "locked": false
+            }
+        ],
+        "locked": null
+    }, "fieldDefinitions": {
+    "label": {
+        "fieldtype": "input",
+        "width": "",
+        "queryColumnType": "varchar",
+        "columnType": "varchar",
+        "columnLength": 255,
+        "phpdocType": "string",
+        "name": "label",
+        "title": "Label",
+        "tooltip": "",
+        "mandatory": false,
+        "noteditable": false,
+        "index": false,
+        "locked": false,
+        "style": "",
+        "permissions": null,
+        "datatype": "data",
+        "relationType": false,
+        "invisible": false,
+        "visibleGridView": false,
+        "visibleSearch": false
+    },
+    "field": {
+        "fieldtype": "indexFieldSelectionCombo",
+        "specificPriceField": false,
+        "showAllFields": false,
+        "considerTenants": false,
+        "options": [
+            {
+                "key": "categoryIds",
+                "value": "categoryIds"
+            },
+            {
+                "key": "name",
+                "value": "name"
+            },
+            {
+                "key": "seoname",
+                "value": "seoname"
+            },
+            {
+                "key": "description",
+                "value": "description"
+            },
+            {
+                "key": "ean",
+                "value": "ean"
+            },
+            {
+                "key": "remoteid",
+                "value": "remoteid"
+            },
+            {
+                "key": "availabilityamount",
+                "value": "availabilityamount"
+            },
+            {
+                "key": "specialoffer",
+                "value": "specialoffer"
+            },
+            {
+                "key": "newuntil",
+                "value": "newuntil"
+            },
+            {
+                "key": "discontinued",
+                "value": "discontinued"
+            },
+            {
+                "key": "warrantymonths",
+                "value": "warrantymonths"
+            },
+            {
+                "key": "brand",
+                "value": "brand"
+            },
+            {
+                "key": "b2Cprice",
+                "value": "b2Cprice"
+            },
+            {
+                "key": "attrDigitalTuner",
+                "value": "attrDigitalTuner"
+            },
+            {
+                "key": "attrFernseherConnections",
+                "value": "attrFernseherConnections"
+            },
+            {
+                "key": "attrEnergyRating",
+                "value": "attrEnergyRating"
+            },
+            {
+                "key": "attrScreenSize",
+                "value": "attrScreenSize"
+            }
+        ],
+        "width": "",
+        "queryColumnType": "varchar(255)",
+        "columnType": "varchar(255)",
+        "phpdocType": "string",
+        "name": "field",
+        "title": "Field",
+        "tooltip": "",
+        "mandatory": false,
+        "noteditable": false,
+        "index": false,
+        "locked": false,
+        "style": "",
+        "permissions": null,
+        "datatype": "data",
+        "relationType": false,
+        "invisible": false,
+        "visibleGridView": false,
+        "visibleSearch": false
+    },
+    "preSelect": {
+        "fieldtype": "input",
+        "width": "",
+        "queryColumnType": "varchar",
+        "columnType": "varchar",
+        "columnLength": 255,
+        "phpdocType": "string",
+        "name": "preSelect",
+        "title": "Pre Select",
+        "tooltip": "",
+        "mandatory": false,
+        "noteditable": false,
+        "index": false,
+        "locked": false,
+        "style": "",
+        "permissions": null,
+        "datatype": "data",
+        "relationType": false,
+        "invisible": false,
+        "visibleGridView": false,
+        "visibleSearch": false
+    },
+    "scriptPath": {
+        "fieldtype": "input",
+        "width": "",
+        "queryColumnType": "varchar",
+        "columnType": "varchar",
+        "columnLength": 255,
+        "phpdocType": "string",
+        "name": "scriptPath",
+        "title": "Script Path",
+        "tooltip": "",
+        "mandatory": false,
+        "noteditable": false,
+        "index": false,
+        "locked": false,
+        "style": "",
+        "permissions": null,
+        "datatype": "data",
+        "relationType": false,
+        "invisible": false,
+        "visibleGridView": false,
+        "visibleSearch": false
+    },
+    "UseAndCondition": {
+        "fieldtype": "checkbox",
+        "defaultValue": 0,
+        "queryColumnType": "tinyint(1)",
+        "columnType": "tinyint(1)",
+        "phpdocType": "boolean",
+        "name": "UseAndCondition",
+        "title": "Use And Condition",
+        "tooltip": "",
+        "mandatory": false,
+        "noteditable": false,
+        "index": false,
+        "locked": null,
+        "style": "",
+        "permissions": null,
+        "datatype": "data",
+        "relationType": false,
+        "invisible": false,
+        "visibleGridView": false,
+        "visibleSearch": false
+    }
+}}
