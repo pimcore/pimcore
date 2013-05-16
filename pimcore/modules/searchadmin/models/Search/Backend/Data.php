@@ -317,9 +317,12 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
         $properties = $element->getProperties();
         if(is_array($properties)){
             foreach($properties as $nextProperty){
-                if($nextProperty->getType() == 'text'){
-                    $this->properties.=$nextProperty->getData()." ";
+                $pData = (string) $nextProperty->getData();
+                if($nextProperty->getName() == "bool") {
+                    $pData = $pData ? "true" : "false";
                 }
+
+                $this->properties .= $nextProperty->getName() . ":" . $pData ." ";
             }
         }
 
@@ -330,7 +333,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
                 $this->published = true;
             } else if ($element instanceof Document_Link){
                 $this->published = $element->isPublished();
-                $this->data = $element->getName()." ".$element->getTitle()." ".$element->getHref();
+                $this->data = $element->getTitle()." ".$element->getHref();
             } else if ($element instanceof Document_PageSnippet){
                 $this->published = $element->isPublished();
                 $elements = $element->getElements();
@@ -345,7 +348,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
                 }
                 if($element instanceof Document_Page){
                     $this->published = $element->isPublished();
-                    $this->data .= " ".$element->getName()." ".$element->getTitle()." ".$element->getDescription()." ".$element->getKeywords() . " " . $element->getPrettyUrl();
+                    $this->data .= " ".$element->getTitle()." ".$element->getDescription()." ".$element->getKeywords() . " " . $element->getPrettyUrl();
                 }
             }
         } else if($element instanceof Asset) {
