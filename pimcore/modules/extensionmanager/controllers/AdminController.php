@@ -90,15 +90,18 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         $type = $this->getParam("type");
         $id = $this->getParam("id");
         $method = $this->getParam("method");
-        $reload = false;
+        $reload = true;
 
         if($type && $id) {
             Pimcore_ExtensionManager::$method($type, $id);
         }
 
-        // force reload
+        // do not reload when toggle an area-brick
+        if($type == "brick") {
+            $reload = false;
+        }
 
-        $this->_helper->json(array("success" => true, "reload" => true));
+        $this->_helper->json(array("success" => true, "reload" => $reload));
     }
 
 
