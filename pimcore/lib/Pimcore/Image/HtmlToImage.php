@@ -48,6 +48,18 @@ class Pimcore_Image_HtmlToImage {
         return false;
     }
 
+    public static function getXvfbBinary () {
+        $paths = array("/usr/bin/xvfb-run","/usr/local/bin/xvfb-run","/bin/xvfb-run");
+
+        foreach ($paths as $path) {
+            if(@is_executable($path)) {
+                return $path;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @param $url
      * @param $outputFile
@@ -56,8 +68,16 @@ class Pimcore_Image_HtmlToImage {
      * @return bool
      */
     public static function convert($url, $outputFile, $screenWidth = 1200, $format = "png") {
-        Pimcore_Tool_Console::exec(self::getWkhtmltoimageBinary() . " --width " . $screenWidth . " --format " . $format . " \"" . $url . "\" " . $outputFile, PIMCORE_LOG_DIRECTORY . "/wkhtmltoimage.log");
-        if(filesize($outputFile) > 1000) {
+
+        // use xvfb if possible
+        if($xvfb = self::getXvfbBinary()) {
+            Pimcore_Tool_Console::exec($xvfb . " --server-args=\"-screen 0, 1280x1024x24\" " .
+                self::getWkhtmltoimageBinary() . " --use-xserver --width " . $screenWidth . " --format " . $format . " \"" . $url . "\" " . $outputFile, PIMCORE_LOG_DIRECTORY . "/wkhtmltoimage.log");
+        } else {
+            Pimcore_Tool_Console::exec(self::getWkhtmltoimageBinary() . " --width " . $screenWidth . " --format " . $format . " \"" . $url . "\" " . $outputFile, PIMCORE_LOG_DIRECTORY . "/wkhtmltoimage.log");
+        }
+
+        if(file_exists($outputFile) && filesize($outputFile) > 1000) {
             return true;
         }
         return false;
