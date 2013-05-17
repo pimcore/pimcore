@@ -45,12 +45,24 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
 
 		$sql = file_get_contents($file);
 		
-		 // we have to use the raw connection here otherwise Zend_Db uses prepared statements, which causes problems with inserts (: placeholders)
+		// we have to use the raw connection here otherwise Zend_Db uses prepared statements, which causes problems with inserts (: placeholders)
+		// and mysqli causes troubles because it doesn't support multiple queries
 		if($this->db->getResource() instanceof Zend_Db_Adapter_Mysqli) {
-			$this->db->getConnection()->multi_query($sql);
+			$mysqli = $this->db->getConnection();
+			$mysqli->multi_query($sql);
+			
+			// loop through results, because ->multi_query() is asynchronous
+			do {
+				if($result = $mysqli->store_result()){
+					$mysqli->free_result();
+				}
+			} while($mysqli->next_result());
+			
 		} else if ($this->db->getResource() instanceof Zend_Db_Adapter_Pdo_Mysql) {
 			$this->db->getConnection()->exec($sql);
 		}
+				
+		Pimcore_Resource::reset();
 	}
 
     public function contents () {
