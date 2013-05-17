@@ -191,6 +191,9 @@ $scripts = array(
                                 catch (e) {
                                     Ext.getCmp("install_errors").update(transport.responseText);
                                 }
+                            },
+                            failure: function (transport) {
+                                Ext.getCmp("install_errors").update("Failed: " + transport.responseText);
                             }
                         });
                     }
