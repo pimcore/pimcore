@@ -7,6 +7,7 @@ $initInfo = $backup->init();
 
 
 $stepMethodMapping = array(
+    "mysql-tables" => "mysqlTables",
     "mysql" => "mysqlData"
 );
 
