@@ -28,6 +28,7 @@ if(empty($initInfo["errors"])) {
     }
 }
 
+verboseMessage("Dump is here: " . PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql");
 
 function verboseMessage ($m) {
         echo $m . "\n";
