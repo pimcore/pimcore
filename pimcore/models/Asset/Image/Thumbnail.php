@@ -65,18 +65,25 @@ class Asset_Image_Thumbnail {
 
         $this->asset = $asset;
         $this->config = $this->createConfig($config);
+    }
 
-        // if no correct thumbnail config is given use the original image as thumbnail
-        if(!$this->config) {
-            $fsPath = $asset->getFileSystemPath();
-            $this->path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
-        } else {
-            try {
-                $this->path = Asset_Image_Thumbnail_Processor::process($this->asset, $this->config);
-            } catch (Exception $e) {
-                $this->path = '/pimcore/static/img/filetype-not-supported.png';
-                Logger::error("Couldn't create thumbnail of image " . $this->asset->getFullPath());
-                Logger::error($e);
+    /**
+     *
+     */
+    public function generate() {
+        if(!$this->path) {
+            // if no correct thumbnail config is given use the original image as thumbnail
+            if(!$this->config) {
+                $fsPath = $this->asset->getFileSystemPath();
+                $this->path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
+            } else {
+                try {
+                    $this->path = Asset_Image_Thumbnail_Processor::process($this->asset, $this->config);
+                } catch (Exception $e) {
+                    $this->path = '/pimcore/static/img/filetype-not-supported.png';
+                    Logger::error("Couldn't create thumbnail of image " . $this->asset->getFullPath());
+                    Logger::error($e);
+                }
             }
         }
     }
@@ -96,6 +103,7 @@ class Asset_Image_Thumbnail {
      * @return string Public path to thumbnail image.
     */
     public function getPath() {
+        $this->generate();
         return $this->path;
     }
 
@@ -218,7 +226,7 @@ class Asset_Image_Thumbnail {
      * Some of the data is ignored.
     */
     protected function applyFileInfo() {
-        $info = @getimagesize(PIMCORE_DOCUMENT_ROOT.$this->path);
+        $info = @getimagesize(PIMCORE_DOCUMENT_ROOT . $this->getPath());
         if($info) {
             list($this->width, $this->height, $type, $attr, $this->mimetype) = $info;
 
