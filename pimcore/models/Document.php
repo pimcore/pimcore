@@ -422,13 +422,13 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             }
         }
 
-        // this is now handled directly by the database -> unique key on path, key
-        /*if(Document_Service::pathExists($this->getRealFullPath())) {
+        if(Document_Service::pathExists($this->getRealFullPath())) {
             $duplicate = Document::getByPath($this->getRealFullPath());
             if ($duplicate instanceof Document  and $duplicate->getId() != $this->getId()) {
                 throw new Exception("Duplicate full path [ " . $this->getRealFullPath() . " ] - cannot create document");
             }
-        }*/
+        }
+
     }
 
     /**

@@ -646,13 +646,12 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             }
         }
 
-        // this is now handled directly by the database -> unique key on o_path, o_key
-        /*if(Object_Service::pathExists($this->getFullPath())) {
+        if(Object_Service::pathExists($this->getFullPath())) {
             $duplicate = Object_Abstract::getByPath($this->getFullPath());
             if($duplicate instanceof Object_Abstract and $duplicate->getId() != $this->getId()){
                 throw new Exception("Duplicate full path [ ".$this->getFullPath()." ] - cannot create object");
             }
-        }*/
+        }
     }
     
     
