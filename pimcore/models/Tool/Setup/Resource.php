@@ -47,7 +47,7 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
 		
 		 // we have to use the raw connection here otherwise Zend_Db uses prepared statements, which causes problems with inserts (: placeholders)
 		if($this->db->getResource() instanceof Zend_Db_Adapter_Mysqli) {
-			$this->db->getConnection()->query($sql);
+			$this->db->getConnection()->multi_query($sql);
 		} else if ($this->db->getResource() instanceof Zend_Db_Adapter_Pdo_Mysql) {
 			$this->db->getConnection()->exec($sql);
 		}

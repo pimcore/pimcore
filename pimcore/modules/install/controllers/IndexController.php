@@ -106,14 +106,14 @@ class Install_IndexController extends Pimcore_Controller_Action {
 				"username" => $this->getParam("admin_username"),
 				"password" => $this->getParam("admin_password")
 			);
-			
-			$setup->database();
-			Pimcore::initConfiguration();
-			
-			if(!file_exists($dbDataFile)) {				
+
+			if(!file_exists($dbDataFile)) {
+                $setup->database();
+                Pimcore::initConfiguration();
 				$setup->contents($contentConfig);
 			} else {
 				$setup->insertDump($dbDataFile);
+                Pimcore::initConfiguration();
 				$setup->createOrUpdateUser($contentConfig);
 			}
 
