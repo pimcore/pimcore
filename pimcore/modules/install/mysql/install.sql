@@ -681,36 +681,3 @@ CREATE TABLE `versions` (
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`)
 ) DEFAULT CHARSET=utf8;
-
-
-/* ------ DON'T REMOVE OR MODIFY THE FOLLOWING COMMENT, IT IS REQUIRED FOR BACKUPS ------ */
-/* ------ INSERT_DATA ------ */
-
-/*
-INSERT INTO `assets` VALUES (1,0,'folder','','/',NULL,0,0,1,1,NULL,NULL);
-INSERT INTO `documents` VALUES (1,0,'page','','/',999999,1,0,0,1,1,NULL);
-INSERT INTO `documents_page` VALUES (1,'','','','','','');
-INSERT INTO `objects` VALUES (1,0,'folder','','/',0,1,0,0,1,1,NULL,NULL,NULL);
-
-INSERT INTO `users_permission_definitions` VALUES ('assets','permission_assets');
-INSERT INTO `users_permission_definitions` VALUES ('classes','permission_classes');
-INSERT INTO `users_permission_definitions` VALUES ('clear_cache','permission_clear_cache');
-INSERT INTO `users_permission_definitions` VALUES ('clear_temp_files','permission_clear_temp_files');
-INSERT INTO `users_permission_definitions` VALUES ('document_types','permission_document_types');
-INSERT INTO `users_permission_definitions` VALUES ('documents','permission_documents');
-INSERT INTO `users_permission_definitions` VALUES ('objects','permission_objects');
-INSERT INTO `users_permission_definitions` VALUES ('plugins','permission_plugins');
-INSERT INTO `users_permission_definitions` VALUES ('predefined_properties','permission_predefined_properties');
-INSERT INTO `users_permission_definitions` VALUES ('routes','permission_routes');
-INSERT INTO `users_permission_definitions` VALUES ('seemode','permission_seemode');
-INSERT INTO `users_permission_definitions` VALUES ('system_settings','permission_system_settings');
-INSERT INTO `users_permission_definitions` VALUES ('thumbnails','permission_thumbnails');
-INSERT INTO `users_permission_definitions` VALUES ('translations','permission_translations');
-INSERT INTO `users_permission_definitions` VALUES ('users','permission_users');
-INSERT INTO `users_permission_definitions` VALUES ('update','permissions_update');
-INSERT INTO `users_permission_definitions` VALUES ('redirects','permissions_redirects');
-INSERT INTO `users_permission_definitions` VALUES ('glossary','permissions_glossary');
-INSERT INTO `users_permission_definitions` VALUES ('forms','permission_forms');
-INSERT INTO `users_permission_definitions` VALUES ('reports','permissions_reports_marketing');
-
-*/

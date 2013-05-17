@@ -23,6 +23,11 @@ class Install_IndexController extends Pimcore_Controller_Action {
         @ini_set("max_execution_time", $maxExecutionTime);
         set_time_limit($maxExecutionTime);
 
+		error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+		@ini_set("display_errors", "On");
+		$front = Zend_Controller_Front::getInstance(); 
+		$front->throwExceptions(true);
+		
         Zend_Controller_Action_HelperBroker::addPrefix('Pimcore_Controller_Action_Helper');
 
         if (is_file(PIMCORE_CONFIGURATION_SYSTEM)) {
@@ -94,12 +99,23 @@ class Install_IndexController extends Pimcore_Controller_Action {
                 ),
             ));
 
-            $setup->database();
-            Pimcore::initConfiguration();
-            $setup->contents(array(
-                "username" => $this->getParam("admin_username"),
-                "password" => $this->getParam("admin_password")
-            ));
+			// look for a template dump
+			// eg. for use with demo installer
+			$dbDataFile = PIMCORE_WEBSITE_PATH . "/dump/data.sql";
+			$contentConfig = array(
+				"username" => $this->getParam("admin_username"),
+				"password" => $this->getParam("admin_password")
+			);
+			
+			$setup->database();
+			Pimcore::initConfiguration();
+			
+			if(!file_exists($dbDataFile)) {				
+				$setup->contents($contentConfig);
+			} else {
+				$setup->insertDump($dbDataFile);
+				$setup->createOrUpdateUser($contentConfig);
+			}
 
             $this->_helper->json(array(
                 "success" => true
