@@ -72,12 +72,16 @@ class Pimcore_View extends Zend_View {
      * @param array $params
      * @return void
      */
-    public function template($scriptPath, $params = array(), $resetPassedParams = false) {
+    public function template($scriptPath, $params = array(), $resetPassedParams = false, $captureAndReturn = false) {
 
         foreach ($params as $key => $value) {
             $this->assign($key, $value);
         }
-        
+
+        if($captureAndReturn){
+            $this->placeholder('pimcore_capture_template')->captureStart(Zend_View_Helper_Placeholder_Container_Abstract::SET);
+        }
+
         $found = false;
         $paths = $this->getScriptPaths();
         $paths[] = PIMCORE_DOCUMENT_ROOT;
@@ -103,6 +107,11 @@ class Pimcore_View extends Zend_View {
             foreach($params as $key => $value){
                 $this->$key = null;
             }
+        }
+
+        if($captureAndReturn){
+            $this->placeholder('pimcore_capture_template')->captureEnd();
+            return trim($this->placeholder('pimcore_capture_template')->getValue());
         }
     }
 
