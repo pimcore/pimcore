@@ -58,6 +58,10 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
         "DESC"
     );
 
+    /**
+     * @var array
+     */
+    protected $conditionParams = array();
 
     /**
      * @abstract
@@ -175,10 +179,64 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
     }
 
     /**
+     * sets a Condition Param
+     *
+     * Parameter is only set when a value is given
+     * $value = null to enable calls like $list->setConditionParam(" `date` >= ? ", $this->_getParam('creationDateFrom'));
+     *
+     * @param $key
+     * @param null $value ignored when null -
+     * @param string $concatenator
+     */
+    public function setConditionParam($key, $value = null, $concatenator = 'AND'){
+        if(!is_null($value)){
+            $this->conditionParams[$key] = array('value' => $value,'concatenator' => $concatenator);
+        }
+        return $this;
+    }
+
+    public function getConditionParams(){
+        return $this->conditionParams;
+    }
+
+    public function resetConditionParams(){
+        $this->conditionParams = array();
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getCondition() {
-        return $this->condition;
+        $conditionString = '';
+        $conditionPrams = $this->getConditionParams();
+
+        if(!empty($conditionPrams)){
+
+            $params = array();
+            $i = 0;
+            foreach($conditionPrams as $key => $value){
+                if(!$this->condition && $i == 0){
+                    $conditionString .= $key . ' ';
+                }else{
+                    $conditionString .= ' ' . $value['concatenator'] . $key . ' ';
+                }
+
+                /* check value because of calls like
+                 *
+                 * if($key = $this->_getParam('key')){
+                 *   $list->setConditionParam(" `key` LIKE " . Pimcore_Resource::get()->quote("%" . $key . "%"),'');
+                 * }
+                 */
+                if($value['value'] != ''){
+                    $params[] = $value['value'];
+                }
+                $i++;
+            }
+            $this->setConditionVariables($params);
+        }
+
+        return $this->condition . $conditionString;
     }
 
     /**
