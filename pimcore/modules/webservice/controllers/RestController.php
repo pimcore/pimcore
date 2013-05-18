@@ -967,6 +967,36 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             "data" => array("currentTime" => time())));
     }
 
+    /**
+     * Returns translations
+     */
+    public function translationsAction(){
+        $this->checkUserPermission("translations");
+        $type = $this->_getParam('type');
+
+        try{
+            if(in_array($type,array('website','admin'))){
+                $listClass = 'Translation_' . ucfirst($type) .'_List';
+                /**
+                 * @var $list Translation_Website
+                 */
+                $list = new $listClass();
+                if($key = $this->_getParam('key')){
+                    $list->setConditionParam(" `key` LIKE " . Pimcore_Resource::get()->quote("%" . $key . "%"),'');
+                }
+                $list->setConditionParam(" `date` >= ? ", $this->_getParam('creationDateFrom'));
+                $list->setConditionParam(" `date` <= ? ", $this->_getParam('creationDateTill'));
+
+                $result = $list->load();
+                $this->encoder->encode(array("success" => true, "data" => $result));
+            }else{
+                throw new Exception("Parameter 'type' has to be 'website' or 'admin'");
+            }
+        } catch (Exception $e) {
+            Logger::error($e);
+            $this->encoder->encode(array("success" => false, "msg" => $e));
+        }
+    }
 
     /**
      * Returns a list of all class definitions.
