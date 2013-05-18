@@ -182,13 +182,13 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
      * sets a Condition Param
      *
      * Parameter is only set when a value is given
-     * $value = null to enable calls like $list->setConditionParam(" `date` >= ? ", $this->_getParam('creationDateFrom'));
+     * $value = null to enable calls like $list->addConditionParam(" `date` >= ? ", $this->_getParam('creationDateFrom'));
      *
      * @param $key
      * @param null $value ignored when null -
      * @param string $concatenator
      */
-    public function setConditionParam($key, $value = null, $concatenator = 'AND'){
+    public function addConditionParam($key, $value = null, $concatenator = 'AND'){
         if(!is_null($value)){
             $this->conditionParams[$key] = array('value' => $value,'concatenator' => $concatenator);
         }
@@ -225,7 +225,7 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
                 /* check value because of calls like
                  *
                  * if($key = $this->_getParam('key')){
-                 *   $list->setConditionParam(" `key` LIKE " . Pimcore_Resource::get()->quote("%" . $key . "%"),'');
+                 *   $list->addConditionParam(" `key` LIKE " . Pimcore_Resource::get()->quote("%" . $key . "%"),'');
                  * }
                  */
                 if($value['value'] != ''){
