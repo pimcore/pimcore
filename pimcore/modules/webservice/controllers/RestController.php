@@ -982,10 +982,14 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                  */
                 $list = new $listClass();
                 if($key = $this->_getParam('key')){
-                    $list->setConditionParam(" `key` LIKE " . Pimcore_Resource::get()->quote("%" . $key . "%"),'');
+                    $list->addConditionParam(" `key` LIKE " . Pimcore_Resource::get()->quote("%" . $key . "%"),'');
                 }
-                $list->setConditionParam(" `date` >= ? ", $this->_getParam('creationDateFrom'));
-                $list->setConditionParam(" `date` <= ? ", $this->_getParam('creationDateTill'));
+
+                $list->addConditionParam(" `creationDate` >= ? ", $this->_getParam('creationDateFrom'));
+                $list->addConditionParam(" `creationDate` <= ? ", $this->_getParam('creationDateTill'));
+
+                $list->addConditionParam(" `modificationDate` >= ? ", $this->_getParam('modificationDateFrom'));
+                $list->addConditionParam(" `modificationDate` <= ? ", $this->_getParam('modificationDateTill'));
 
                 $result = $list->load();
                 $this->encoder->encode(array("success" => true, "data" => $result));
