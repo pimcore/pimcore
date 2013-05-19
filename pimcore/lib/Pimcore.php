@@ -584,6 +584,7 @@ class Pimcore {
         $autoloader->registerNamespace('Search');
         $autoloader->registerNamespace('Tool');
         $autoloader->registerNamespace('KeyValue');
+        $autoloader->registerNamespace('Deployment');
 
         Pimcore_Tool::registerClassModelMappingNamespaces();
     }
