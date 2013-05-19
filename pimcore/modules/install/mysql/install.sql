@@ -543,7 +543,8 @@ CREATE TABLE `translations_admin` (
   `key` varchar(255) NOT NULL DEFAULT '',
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
-  `date` bigint(20) unsigned DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT NULL,
+  `modificationDate` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`),
   KEY `key` (`key`)
@@ -554,7 +555,8 @@ CREATE TABLE `translations_website` (
   `key` varchar(255) NOT NULL DEFAULT '',
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
-  `date` bigint(20) unsigned DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT NULL,
+  `modificationDate` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`),
   KEY `key` (`key`)
