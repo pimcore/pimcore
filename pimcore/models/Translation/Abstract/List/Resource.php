@@ -47,9 +47,13 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
 
                 $translations[$t["key"]]->addTranslation($t["language"],$t["text"]);
 
-                if($translations[$t["key"]]->getDate() < $t["date"]){
-                    $translations[$t["key"]]->setDate($t["date"]);
+                //for legacy support
+                if($translations[$t["key"]]->getDate() < $t["creationDate"]){
+                    $translations[$t["key"]]->setDate($t["creationDate"]);
                 }
+
+                $translations[$t["key"]]->setCreationDate($t["creationDate"]);
+                $translations[$t["key"]]->setModificationDate($t["modificationDate"]);
             }
 
             Pimcore_Model_Cache::save($translations, $cacheKey, array("translator","translate"), 999);

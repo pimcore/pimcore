@@ -540,7 +540,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $admin = $this->getParam("admin");
 
         // clear translation cache
-        Pimcore_Model_Cache::clearTag("translator");
+        Translation_Abstract::clearDependentCache();
 
         if ($admin) {
             $list = new Translation_Admin_List();
@@ -554,9 +554,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $translations = array();
         foreach ($list->getTranslations() as $t) {
-            $translations[] = array_merge(array("key" => $t->getKey(), "date" => $t->getDate()), $t->getTranslations());
+            $translations[] = array_merge(array("key" => $t->getKey(),
+                                                "creationDate" => $t->getCreationDate(),
+                                                "modificationDate" => $t->getModificationDate(),
+                                                ), $t->getTranslations());
         }
-
         $languages = Pimcore_Tool::getValidLanguages();
         //header column
         $columns = array_keys($translations[0]);
@@ -583,12 +585,15 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     $value = str_replace('"', '&quot;', $value);
 
                     $tempRow[$key] = '"' . $value . '"';
-                } else $tempRow[$key] = "";
+                } else {
+                    $tempRow[$key] = $value;
+                }
             }
             $csv .= implode(";", $tempRow) . "\r\n";
         }
         header("Content-type: text/csv");
         header("Content-Disposition: attachment; filename=\"export.csv\"");
+        ini_set('display_errors',false); //to prevent warning messages in csv
         echo $csv;
         die();
     }
@@ -614,7 +619,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     $t = new Translation_Admin();
 
                     $t->setKey($translationData);
-                    $t->setDate(time());
+                    $t->setCreationDate(time());
+                    $t->setModificationDate(time());
 
                     foreach ($availableLanguages as $lang) {
                         $t->addTranslation($lang, "");
@@ -643,7 +649,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         }
 
         // clear translation cache
-        Pimcore_Model_Cache::clearTags(array("translator","translate"));
+        Translation_Website::clearDependentCache();
 
         if ($this->getParam("data")) {
 
@@ -668,10 +674,13 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 if ($data["key"]) {
                     $t->setKey($data["key"]);
                 }
-
+                $t->setModificationDate(time());
                 $t->save();
 
-                $return = array_merge(array("key" => $t->getKey(), "date" => $t->getDate()), $t->getTranslations());
+                $return = array_merge(array("key" => $t->getKey(),
+                                            "creationDate" => $t->getCreationDate(),
+                                            "modificationDate" => $t->getModificationDate()),
+                                            $t->getTranslations());
 
                 $this->_helper->json(array("data" => $return, "success" => true));
             }
@@ -685,7 +694,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     $t = new $class();
 
                     $t->setKey($data["key"]);
-                    $t->setDate(time());
+                    $t->setCreationDate(time());
+                    $t->setModificationDate(time());
 
                     foreach (Pimcore_Tool::getValidLanguages() as $lang) {
                         $t->addTranslation($lang, "");
@@ -695,7 +705,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
                 $return = array_merge(array(
                     "key" => $t->getKey(),
-                    "date" => $t->getDate()
+                    "creationDate" => $t->getCreationDate(),
+                    "modificationDate" => $t->getModificationDate(),
                 ), $t->getTranslations());
 
                 $this->_helper->json(array("data" => $return, "success" => true));
@@ -730,7 +741,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
             $translations = array();
             foreach ($list->getTranslations() as $t) {
-                $translations[] = array_merge($t->getTranslations(), array("key" => $t->getKey(), "date" => $t->getDate()));
+                $translations[] = array_merge($t->getTranslations(), array("key" => $t->getKey(),
+                                                                           "creationDate" => $t->getCreationDate(),
+                                                                           "modificationDate" => $t->getModificationDate()));
             }
 
             $this->_helper->json(array("data" => $translations, "success" => true, "total" => $list->getTotalCount()));

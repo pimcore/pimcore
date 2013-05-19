@@ -24,15 +24,14 @@ abstract class Translation_Abstract_Resource extends Pimcore_Model_Resource_Abst
      * @return void
      */
     public function getByKey($key) {
-        $data = $this->db->fetchAll("SELECT * FROM " . static::getTableName() . " WHERE `key` = ? ORDER BY `date`", $key);
-
+        $data = $this->db->fetchAll("SELECT * FROM " . static::getTableName() . " WHERE `key` = ? ORDER BY `creationDate` ", $key);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $date = $d["date"];
                 $this->model->addTranslation($d["language"], $d["text"]);
             }
-            $this->model->setKey($key);
-            $this->model->setDate($date);
+            $this->model->setKey($d['key']);
+            $this->model->setCreationDate($d['creationDate']);
+            $this->model->setModificationDate($d['modificationDate']);
         }
         else {
             throw new Exception("Translation-Key -->'" . $key . "'<-- not found");
@@ -55,9 +54,9 @@ abstract class Translation_Abstract_Resource extends Pimcore_Model_Resource_Abst
                     "key" => $this->model->getKey(),
                     "language" => $language,
                     "text" => $text,
-                    "date" => time()
+                    "modificationDate" => $this->model->getModificationDate(),
+                    "creationDate" => $this->model->getCreationDate()
                 );
-
                 $this->db->insertOrUpdate(static::getTableName() , $data);
             }
         }

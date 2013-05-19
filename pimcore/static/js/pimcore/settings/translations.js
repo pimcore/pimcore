@@ -55,8 +55,10 @@ pimcore.settings.translations = Class.create({
 
         var readerFields = [
             {name: 'key', allowBlank: false},
-            {name: 'date', allowBlank: true}
+            {name: 'creationDate', allowBlank: true},
+            {name: 'modificationDate', allowBlank: true}
         ];
+
         var typesColumns = [
             {header: t("key"), sortable: true, dataIndex: 'key', editable: false}
 
@@ -68,8 +70,13 @@ pimcore.settings.translations = Class.create({
                                                                                 editor: new Ext.form.TextField({})});
         }
 
-        typesColumns.push({header: t("date"), sortable: true, dataIndex: 'date', editable: false,
+        typesColumns.push({header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                                                                                 renderer: function(d) {
+            var date = new Date(d * 1000);
+            return date.format("Y-m-d H:i:s");
+        }});
+        typesColumns.push({header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
+        renderer: function(d) {
             var date = new Date(d * 1000);
             return date.format("Y-m-d H:i:s");
         }});

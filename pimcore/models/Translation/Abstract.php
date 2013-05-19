@@ -30,7 +30,12 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
     /**
      * @var integer
      */
-    public $date;
+    public $creationDate;
+
+    /**
+     * @var integer
+     */
+    public $modificationDate;
 
     /**
      * @return string
@@ -64,18 +69,45 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
 
     /**
      * @return integer
+     * @deprecated use getCreationDate or getModificationDate instead
      */
     public function getDate() {
-        return $this->date;
+        return $this->getModificationDate();
+    }
+
+    /**
+     * @param integer $date
+     * @deprecated use setCreationDate or setModificationDate instead
+     */
+    public function setDate($date) {
+        $this->setModificationDate($date);
+        return $this;
+    }
+
+    public function getCreationDate(){
+        return $this->creationDate;
     }
 
     /**
      * @param integer $date
      */
-    public function setDate($date) {
-        $this->date = (int) $date;
+    public function setCreationDate($date){
+        $this->creationDate = (int) $date;
         return $this;
     }
+
+    public function getModificationDate(){
+        return $this->modificationDate;
+    }
+
+    /**
+     * @param integer $date
+     */
+    public function setModificationDate($date){
+        $this->modificationDate = (int) $date;
+        return $this;
+    }
+
 
     /**
      * @param string $language
@@ -127,7 +159,8 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
                  throw new Exception($e->getMessage());
              } else {
                  $translation->setKey($id);
-                 $translation->setDate(time());
+                 $translation->setCreationDate(time());
+                 $translation->setModificationDate(time());
 
                  $translations = array();
                  foreach (Pimcore_Tool::getValidLanguages() as $lang) {
@@ -223,11 +256,10 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
                         $rd = str_replace("&quot;", '"', $row[$counter]);
                         $keyValueArray[$keys[$counter]] = $rd;
                     }
-
                     if ($keyValueArray["key"]) {
                         $t = static::getByKey($keyValueArray["key"],true);
                         foreach ($keyValueArray as $key => $value) {
-                            if ($key != "key" && $key != "date" && in_array($key, $languages)) {
+                            if (in_array($key, $languages)) {
                                 if($replaceExistingTranslations){
                                     $t->addTranslation($key, $value);
                                 }else{
@@ -237,9 +269,14 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
                                 }
                             }
                         }
+                        if($keyValueArray['creationDate']){
+                            $t->setCreationDate($keyValueArray['creationDate']);
+                        }
+                        $t->setModificationDate(time()); //ignore modificationDate from file
                         $t->save();
                     }
                 }
+                Translation_Abstract::clearDependentCache();
             } else {
                 throw new Exception("less than 2 rows of data - nothing to import");
             }
