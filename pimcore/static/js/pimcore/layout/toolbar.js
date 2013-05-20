@@ -99,9 +99,18 @@ pimcore.layout.toolbar = Class.create({
 
         if (user.isAllowed("translations")) {
             extrasItems.push({
-                text: t("translations"),
+                text: t("translation"),
                 iconCls: "pimcore_icon_translations",
-                handler: this.editTranslations
+                hideOnClick: false,
+                menu: [{
+                    text: t("shared_translations"),
+                    iconCls: "pimcore_icon_translations",
+                    handler: this.editTranslations
+                }, {
+                    text: "XLIFF " + t("export") + "/" + t("import"),
+                    iconCls: "pimcore_icon_translations",
+                    handler: this.xliffImportExport
+                }]
             });
         }
 
@@ -1201,6 +1210,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("extensionmanager_download", new pimcore.extensionmanager.download());
+        }
+    },
+
+    xliffImportExport: function () {
+        try {
+            pimcore.globalmanager.get("xliff").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("xliff", new pimcore.settings.translation.xliff());
         }
     },
 

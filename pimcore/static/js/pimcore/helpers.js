@@ -942,8 +942,12 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
         failure = function () {};
     }
 
-    if(typeof filename != "function") {
-        filename = "file";
+    if(typeof filename != "string") {
+        filename = "Filedata";
+    }
+
+    if(empty(filename)) {
+        filename = "Filedata";
     }
 
     var uploadWindowCompatible = new Ext.Window({
@@ -964,7 +968,7 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
             emptyText: t("select_a_file"),
             fieldLabel: t("file"),
             width: 230,
-            name: 'Filedata',
+            name: filename,
             buttonText: "",
             buttonCfg: {
                 iconCls: 'pimcore_icon_upload_single'

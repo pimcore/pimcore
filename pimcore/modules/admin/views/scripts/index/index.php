@@ -179,6 +179,7 @@
             "pimcore/settings/translations.js",
             "pimcore/settings/translation/website.js",
             "pimcore/settings/translation/admin.js",
+            "pimcore/settings/translation/xliff.js",
             "pimcore/settings/properties/predefined.js",
             "pimcore/settings/docTypes.js",
             "pimcore/settings/system.js",
