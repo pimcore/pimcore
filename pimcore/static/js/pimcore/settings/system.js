@@ -259,6 +259,19 @@ pimcore.settings.system = Class.create({
                                 xtype: "textfield",
                                 name: "general.loginscreencustomimage",
                                 value: this.getValue("general.loginscreencustomimage")
+                            },
+                            {
+                                fieldLabel: t('turn_off_anonymous_usage_submissions'),
+                                xtype: "checkbox",
+                                name: "general.disableusagestatistics",
+                                checked: this.getValue("general.disableusagestatistics")
+                            },
+                            {
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: t('usage_statistics_info'),
+                                cls: "pimcore_extra_label_bottom"
                             }
                         ]
                     },

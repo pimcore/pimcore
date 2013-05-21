@@ -137,6 +137,9 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             Zend_Registry::set("pimcore_admin_user", $this->getUser());
             self::$adminInitialized = true;
 
+
+            // usage statistics
+            $this->logUsageStatistics();
         }
     }
 
@@ -250,6 +253,27 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             Logger::err($message);
             throw new \Exception($message);
         }
+    }
+
+    protected function logUsageStatistics() {
+
+        if(Pimcore_Config::getSystemConfig()->general->disableusagestatistics) {
+            return;
+        }
+
+        $params = array();
+        $allowedParameters = array("xaction","id","start","limit","type","subtype","parentId","node","amount","sourceId","targetId","offset","step","sort","dir","task");
+        foreach($allowedParameters as $param) {
+            if($value = $this->getParam($param)) {
+                if(is_string($value)) {
+                    $params[$param] = $value;
+                }
+            }
+        }
+
+        Pimcore_Log_Simple::log("usagelog",
+            $this->getParam("controller") . "|" .
+            $this->getParam("action")."|".Zend_Json::encode($params));
     }
 
 }

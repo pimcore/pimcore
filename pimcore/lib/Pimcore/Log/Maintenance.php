@@ -82,4 +82,25 @@ class Pimcore_Log_Maintenance {
         $db->delete("http_error_log", "date < " . $limit);
     }
 
+    /**
+     *
+     */
+    public function usageStatistics() {
+
+        if(Pimcore_Config::getSystemConfig()->general->disableusagestatistics) {
+            return;
+        }
+
+        $logFile = PIMCORE_LOG_DIRECTORY . "/usagelog.log";
+        if(is_file($logFile)) {
+            $data = gzencode(file_get_contents($logFile));
+            $response = Pimcore_Tool::getHttpData("https://www.pimcore.org/usage-statistics/", array(), array("data" => $data));
+            if(strpos($response, "true") !== false) {
+                @unlink($logFile);
+                Logger::debug("Usage statistics are transmitted and logfile was cleaned");
+            } else {
+                Logger::debug("Unable to send usage statistics");
+            }
+        }
+    }
 }
