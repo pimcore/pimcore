@@ -22,6 +22,11 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
      */
     public static function run () {
 
+        $config = Pimcore_Config::getReportConfig()->contentanalysis;
+        if(!$config->enabled) {
+            return;
+        }
+
         include_once("simple_html_dom.php");
 
         $itemsPerCycle = 5;
