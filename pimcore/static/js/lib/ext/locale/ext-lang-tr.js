@@ -1,9 +1,23 @@
-/*!
- * Ext JS Library 3.4.0
- * Copyright(c) 2006-2011 Sencha Inc.
- * licensing@sencha.com
- * http://www.sencha.com/license
- */
+/*
+This file is part of Ext JS 3.4
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-04-03 15:07:25
+*/
 /**
  * List compiled by mystix on the extjs.com forums.
  * Thank you Mystix!
@@ -22,7 +36,7 @@ if(Ext.View){
 }
 
 if(Ext.grid.Grid){
-  Ext.grid.Grid.prototype.ddText = "Seçili satýr sayýsý : {0}";
+  Ext.grid.Grid.prototype.ddText = "Seçili satır sayısı : {0}";
 }
 
 if(Ext.TabPanelItem){
@@ -42,14 +56,14 @@ Date.monthNames = [
   "Þžubat",
   "Mart",
   "Nisan",
-  "Mayýs",
+  "Mayıs",
   "Haziran",
   "Temmuz",
   "Aðustos",
   "Eylül",
   "Ekim",
-  "Kasým",
-  "Aralýk"
+  "Kasım",
+  "Aralık"
 ];
 
 Date.getShortMonthName = function(month) {
@@ -78,7 +92,7 @@ Date.getMonthNumber = function(name) {
 Date.dayNames = [
   "Pazar",
   "Pazartesi",
-  "Salý",
+  "Salı",
   "Ç‡arþŸamba",
   "PerþŸembe",
   "Cuma",
@@ -104,7 +118,7 @@ if(Ext.MessageBox){
     ok     : "Tamam",
     cancel : "Ä°ptal",
     yes    : "Evet",
-    no     : "Hayýr"
+    no     : "Hayır"
   };
 }
 
@@ -127,7 +141,7 @@ if(Ext.DatePicker){
     dayNames          : Date.dayNames,
     nextText          : 'Gelecek Ay (Control+Right)',
     prevText          : 'Ã–nceki Ay (Control+Left)',
-    monthYearText     : 'Bir ay sŸeçiniz (Yýlý artýrmak/azaltmak için Control+Up/Down)',
+    monthYearText     : 'Bir ay sŸeçiniz (Yılı artırmak/azaltmak için Control+Up/Down)',
     todayTip          : "{0} (BoþŸluk TuþŸu - Spacebar)",
     format            : "d/m/Y",
     okText            : "&#160;Tamam&#160;",
@@ -154,7 +168,7 @@ if(Ext.form.TextField){
   Ext.apply(Ext.form.TextField.prototype, {
     minLengthText : "Girilen verinin uzunluðu en az {0} olabilir",
     maxLengthText : "Girilen verinin uzunluðu en fazla {0} olabilir",
-    blankText     : "Bu alan boþŸ býrakýlamaz",
+    blankText     : "Bu alan boþŸ bırakılamaz",
     regexText     : "",
     emptyText     : null
   });
@@ -164,7 +178,7 @@ if(Ext.form.NumberField){
   Ext.apply(Ext.form.NumberField.prototype, {
     minText : "En az {0} girilebilir",
     maxText : "En çok {0} girilebilir",
-    nanText : "{0} geçersiz bir sayýdýr"
+    nanText : "{0} geçersiz bir sayıdır"
   });
 }
 
@@ -172,9 +186,9 @@ if(Ext.form.DateField){
   Ext.apply(Ext.form.DateField.prototype, {
     disabledDaysText  : "Disabled",
     disabledDatesText : "Disabled",
-    minText           : "Bu tarih, {0} tarihinden daha sonra olmalýdýr", 
-    maxText           : "Bu tarih, {0} tarihinden daha önce olmalýdýr",
-    invalidText       : "{0} geçersiz bir tarihdir - tarih formatý {1} þŸeklinde olmalýdýr",
+    minText           : "Bu tarih, {0} tarihinden daha sonra olmalıdır", 
+    maxText           : "Bu tarih, {0} tarihinden daha önce olmalıdır",
+    invalidText       : "{0} geçersiz bir tarihdir - tarih formatı {1} þŸeklinde olmalıdır",
     format            : "d/m/Y",
     altFormats        : "d.m.y|d.m.Y|d/m/y|d-m-Y|d-m-y|d.m|d/m|d-m|dm|dmY|dmy|d|Y.m.d|Y-m-d|Y/m/d",
     startDay          : 1
@@ -189,79 +203,79 @@ if(Ext.form.ComboBox){
 }
 
 if(Ext.form.VTypes){
-	Ext.form.VTypes["emailText"]='Bu alan "user@example.com" þŸeklinde elektronik posta formatýnda olmalýdýr';
-	Ext.form.VTypes["urlText"]='Bu alan "http://www.example.com" þŸeklinde URL adres formatýnda olmalýdýr';
+	Ext.form.VTypes["emailText"]='Bu alan "user@example.com" þŸeklinde elektronik posta formatında olmalıdır';
+	Ext.form.VTypes["urlText"]='Bu alan "http://www.example.com" þŸeklinde URL adres formatında olmalıdır';
 	Ext.form.VTypes["alphaText"]='Bu alan sadece harf ve _ içermeli';
-	Ext.form.VTypes["alphanumText"]='Bu alan sadece harf, sayý ve _ içermeli';
+	Ext.form.VTypes["alphanumText"]='Bu alan sadece harf, sayı ve _ içermeli';
 }
 
 if(Ext.form.HtmlEditor){
   Ext.apply(Ext.form.HtmlEditor.prototype, {
-    createLinkText : 'Lütfen bu baðlantý için gerekli URL adresini giriniz:',
+    createLinkText : 'Lütfen bu baðlantı için gerekli URL adresini giriniz:',
     buttonTips : {
       bold : {
-        title: 'Kalýn(Bold) (Ctrl+B)',
-        text: 'Þžeçili yazýyý kalýn yapar.',
+        title: 'Kalın(Bold) (Ctrl+B)',
+        text: 'Þžeçili yazıyı kalın yapar.',
         cls: 'x-html-editor-tip'
       },
       italic : {
         title: 'Ä°talik(Italic) (Ctrl+I)',
-        text: 'Þžeçili yazýyý italik yapar.',
+        text: 'Þžeçili yazıyı italik yapar.',
         cls: 'x-html-editor-tip'
       },
       underline : {
         title: 'Alt Ã‡izgi(Underline) (Ctrl+U)',
-        text: 'Þžeçili yazýnýn altýný çizer.',
+        text: 'Þžeçili yazının altını çizer.',
         cls: 'x-html-editor-tip'
       },
       increasefontsize : {
         title: 'Fontu büyült',
-        text: 'Yazý fontunu büyütür.',
+        text: 'Yazı fontunu büyütür.',
         cls: 'x-html-editor-tip'
       },
       decreasefontsize : {
         title: 'Fontu küçült',
-        text: 'Yazý fontunu küçültür.',
+        text: 'Yazı fontunu küçültür.',
         cls: 'x-html-editor-tip'
       },
       backcolor : {
         title: 'Arka Plan Rengi',
-        text: 'Seçili yazýnýn arka plan rengini deðiþŸtir.',
+        text: 'Seçili yazının arka plan rengini deðiþŸtir.',
         cls: 'x-html-editor-tip'
       },
       forecolor : {
-        title: 'Yazý Rengi',
-        text: 'Seçili yazýnýn rengini deðiþŸtir.',
+        title: 'Yazı Rengi',
+        text: 'Seçili yazının rengini deðiþŸtir.',
         cls: 'x-html-editor-tip'
       },
       justifyleft : {
         title: 'Sola Daya',
-        text: 'Yazýyý sola daya.',
+        text: 'Yazıyı sola daya.',
         cls: 'x-html-editor-tip'
       },
       justifycenter : {
         title: 'Ortala',
-        text: 'Yazýyý editörde ortala.',
+        text: 'Yazıyı editörde ortala.',
         cls: 'x-html-editor-tip'
       },
       justifyright : {
         title: 'Saða daya',
-        text: 'Yazýyý saða daya.',
+        text: 'Yazıyı saða daya.',
         cls: 'x-html-editor-tip'
       },
       insertunorderedlist : {
-        title: 'Noktalý Liste',
-        text: 'Noktalý listeye baþŸla.',
+        title: 'Noktalı Liste',
+        text: 'Noktalı listeye baþŸla.',
         cls: 'x-html-editor-tip'
       },
       insertorderedlist : {
-        title: 'Numaralý Liste',
-        text: 'Numaralý lisyeye baþŸla.',
+        title: 'Numaralı Liste',
+        text: 'Numaralı lisyeye baþŸla.',
         cls: 'x-html-editor-tip'
       },
       createlink : {
         title: 'Web Adresi(Hyperlink)',
-        text: 'Seçili yazýyý web adresi(hyperlink) yap.',
+        text: 'Seçili yazıyı web adresi(hyperlink) yap.',
         cls: 'x-html-editor-tip'
       },
       sourceedit : {
@@ -275,10 +289,10 @@ if(Ext.form.HtmlEditor){
 
 if(Ext.grid.GridView){
   Ext.apply(Ext.grid.GridView.prototype, {
-    sortAscText  : "Artan sýrada sýrala",
-    sortDescText : "Azalan sýrada sýrala",
+    sortAscText  : "Artan sırada sırala",
+    sortDescText : "Azalan sırada sırala",
     lockText     : "Kolonu kilitle",
-    unlockText   : "Kolon kilidini kaldýr",
+    unlockText   : "Kolon kilidini kaldır",
     columnsText  : "Kolonlar"
   });
 }
@@ -301,7 +315,7 @@ if(Ext.grid.PropertyColumnModel){
 
 if(Ext.layout.BorderLayout.SplitRegion){
   Ext.apply(Ext.layout.BorderLayout.SplitRegion.prototype, {
-    splitTip            : "Yeniden boyutlandýrmak için sürükle.",
-    collapsibleSplitTip : "Yeniden boyutlandýrmak için sürükle. Saklamak için çift týkla."
+    splitTip            : "Yeniden boyutlandırmak için sürükle.",
+    collapsibleSplitTip : "Yeniden boyutlandırmak için sürükle. Saklamak için çift tıkla."
   });
 }
