@@ -23,7 +23,7 @@ class Pimcore_Version {
   'Path' => 'trunk',
   'URL' => 'http',
   'Repository Root' => 'http',
-  'Repository UUID' => '1f8fe7d8-47f0-464c-8d0a-336f4953ab05',
+  'Repository UUID' => '1f8fe7d8-47f0-464c-8d0a-336f4953ab05X',
   'Revision' => '2873',
   'Node Kind' => 'directory',
   'Last Changed Author' => 'brusch',
