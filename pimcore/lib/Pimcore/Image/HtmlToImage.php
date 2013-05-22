@@ -36,8 +36,15 @@ class Pimcore_Image_HtmlToImage {
             }
         }
 
-        $paths = array("/usr/bin/wkhtmltoimage-amd64","/usr/local/bin/wkhtmltoimage-amd64","/bin/wkhtmltoimage-amd64",
-        "/usr/bin/wkhtmltoimage", "/usr/local/bin/wkhtmltoimage", "/bin/wkhtmltoimage");
+        $paths = array(
+            "/usr/bin/wkhtmltoimage-amd64",
+            "/usr/local/bin/wkhtmltoimage-amd64",
+            "/bin/wkhtmltoimage-amd64",
+            "/usr/bin/wkhtmltoimage",
+            "/usr/local/bin/wkhtmltoimage",
+            "/bin/wkhtmltoimage",
+            realpath(PIMCORE_DOCUMENT_ROOT . "/../wkhtmltox/wkhtmltoimage.exe") // for windows sample package (XAMPP)
+        );
 
         foreach ($paths as $path) {
             if(@is_executable($path)) {

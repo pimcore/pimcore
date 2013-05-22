@@ -49,7 +49,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
             "/usr/bin/ffmpeg",
             "/usr/local/bin/ffmpeg",
             "/bin/ffmpeg",
-            realpath(PIMCORE_DOCUMENT_ROOT . "/../ffmpeg/bin/ffmpeg.exe")// for windows sample package (XAMPP)
+            realpath(PIMCORE_DOCUMENT_ROOT . "/../ffmpeg/bin/ffmpeg.exe") // for windows sample package (XAMPP)
         );
 
         foreach ($paths as $path) {
@@ -128,7 +128,12 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
             }
         }
 
-        $paths = array("/usr/bin/qtfaststart","/usr/local/bin/qtfaststart", "/bin/qtfaststart");
+        $paths = array(
+            "/usr/bin/qtfaststart",
+            "/usr/local/bin/qtfaststart",
+            "/bin/qtfaststart",
+            realpath(PIMCORE_DOCUMENT_ROOT . "/../qt-faststart/qt-faststart.exe") // for windows sample package (XAMPP)
+        );
         foreach ($paths as $path) {
             if(@is_executable($path)) {
                 return $path;
