@@ -477,6 +477,15 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         return $this;
     }
 
+    public function sharpen ($radius = 0, $sigma = 0.5, $amount = 1, $threshold = 0.05, $channel = Imagick::CHANNEL_ALL) {
+
+        $this->resource->normalizeImage();
+        $this->resource->unsharpMaskImage($radius, $sigma, $amount, $threshold, $channel);
+        $this->reinitializeImage();
+
+        return $this;
+    }
+
     public function isVectorGraphic () {
 
         try {

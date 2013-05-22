@@ -911,6 +911,35 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
+    itemSharpen: function (panel, data, getName) {
+
+        var niceName = t("sharpen");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            html: t("nothing_to_configure"),
+            items: [{
+                xtype: "hidden",
+                name: "type",
+                value: "sharpen"
+            }]
+        });
+
+        return item;
+    },
+
     itemTifforiginal: function (panel, data, getName) {
 
         var niceName = t("use_original_tiff");
