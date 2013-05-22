@@ -21,7 +21,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         $this->protect();
 
         // IE compatibility
-        $this->getResponse()->setHeader("X-UA-Compatible", "IE=8; IE=9", true);
+        //$this->getResponse()->setHeader("X-UA-Compatible", "IE=8; IE=9", true);
     }
 
 
