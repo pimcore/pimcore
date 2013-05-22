@@ -340,12 +340,19 @@ class Pimcore_Tool {
 
         $config = Pimcore_Config::getSystemConfig();
         $clientConfig = $config->httpclient->toArray();
-        $clientConfig["maxredirects"] = 0;
+        $clientConfig["maxredirects"] = 2;
         $clientConfig["timeout"] = 3600;
         $type = empty($type) ? "Zend_Http_Client" : $type;
 
         if(Pimcore_Tool::classExists($type)) {
             $client = new $type(null, $clientConfig);
+
+            // workaround/for ZF (Proxy-authorization isn't added by ZF)
+            if ($clientConfig['proxy_user']) {
+                $client->setHeaders('Proxy-authorization',  Zend_Http_Client::encodeAuthHeader(
+                    $clientConfig['proxy_user'], $clientConfig['proxy_pass'], Zend_Http_Client::AUTH_BASIC
+                    ));
+            }
         } else {
             throw new Exception("Pimcore_Tool::getHttpClient: Unable to create an instance of $type");
         }
