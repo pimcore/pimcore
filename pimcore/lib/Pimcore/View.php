@@ -70,16 +70,17 @@ class Pimcore_View extends Zend_View {
      *
      * @param $scriptPath
      * @param array $params
-     * @return void
+     * @return void | string
      */
-    public function template($scriptPath, $params = array(), $resetPassedParams = false, $captureAndReturn = false) {
+    public function template($scriptPath, $params = array(), $resetPassedParams = false, $capture = false) {
 
         foreach ($params as $key => $value) {
             $this->assign($key, $value);
         }
 
-        if($captureAndReturn){
-            $this->placeholder('pimcore_capture_template')->captureStart(Zend_View_Helper_Placeholder_Container_Abstract::SET);
+        if($capture){
+            $captureKey = (is_string($capture)) ? $capture : 'pimcore_capture_template';
+            $this->placeholder($captureKey)->captureStart(Zend_View_Helper_Placeholder_Container_Abstract::SET);
         }
 
         $found = false;
@@ -91,11 +92,11 @@ class Pimcore_View extends Zend_View {
             if (is_file($p) && !$found) {
                 $found = true;
                 include($p);
-                
+
                 break;
             }
         }
-        
+
         if(!$found) {
             if(is_file($scriptPath)) {
                 $found = true;
@@ -109,9 +110,9 @@ class Pimcore_View extends Zend_View {
             }
         }
 
-        if($captureAndReturn){
-            $this->placeholder('pimcore_capture_template')->captureEnd();
-            return trim($this->placeholder('pimcore_capture_template')->getValue());
+        if($capture){
+            $this->placeholder($captureKey)->captureEnd();
+            return trim($this->placeholder($captureKey)->getValue());
         }
     }
 
