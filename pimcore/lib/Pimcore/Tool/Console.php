@@ -40,7 +40,13 @@ class Pimcore_Tool_Console {
             }
         }
 
-        $paths = array("/usr/bin/php","/usr/local/bin/php","/usr/local/zend/bin/php", "/bin/php");
+        $paths = array(
+            "/usr/bin/php",
+            "/usr/local/bin/php",
+            "/usr/local/zend/bin/php",
+            "/bin/php",
+            realpath(PIMCORE_DOCUMENT_ROOT . "/../php/php.exe") // for windows sample package (XAMPP)
+        );
 
         foreach ($paths as $path) {
             if(@is_executable($path)) {
