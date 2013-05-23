@@ -913,7 +913,7 @@ pimcore.settings.thumbnail.items = {
 
     itemSharpen: function (panel, data, getName) {
 
-        var niceName = t("sharpen");
+        var niceName = t("sharpen") + " (Imagick)";
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
