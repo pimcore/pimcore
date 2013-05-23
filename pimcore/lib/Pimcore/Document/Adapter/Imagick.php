@@ -88,6 +88,12 @@ class Pimcore_Document_Adapter_Imagick extends Pimcore_Document_Adapter {
                 return false;
             }
 
+            //set the background to white
+            $this->resource->setImageBackgroundColor('white');
+
+            //flatten the image
+            $this->resource = $this->resource->flattenImages();
+
             $this->resource->stripimage();
             $this->resource->setImageFormat("png");
 
