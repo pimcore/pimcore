@@ -765,6 +765,9 @@ pimcore.layout.toolbar = Class.create({
 
     closeAllTabs: function () {
         pimcore.helpers.closeAllElements();
+
+        // clear the opentab store, so that also non existing elements are flushed
+        pimcore.helpers.clearOpenTab();
     },
 
     editDocumentTypes: function () {

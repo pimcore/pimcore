@@ -820,6 +820,10 @@ pimcore.helpers.getOpenTab = function () {
     return openTabs;
 };
 
+pimcore.helpers.clearOpenTab = function () {
+    localStorage.setItem("pimcore_opentabs", JSON.stringify([]));
+}
+
 pimcore.helpers.rememberOpenTab = function (item) {
     var openTabs = pimcore.helpers.getOpenTab();
 
