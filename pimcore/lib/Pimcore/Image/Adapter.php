@@ -330,6 +330,13 @@ abstract class Pimcore_Image_Adapter {
         return $this;
     }
 
+    /**
+     * @return Pimcore_Image_Adapter
+     */
+    public function sharpen () {
+
+        return $this;
+    }
 
     /**
      * @abstract

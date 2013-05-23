@@ -34,7 +34,8 @@ class Asset_Image_Thumbnail_Processor {
         "applyMask" => array("path"),
         "cropPercent" => array("width","height","x","y"),
         "grayscale" => array(),
-        "sepia" => array()
+        "sepia" => array(),
+        "sharpen" => array('radius', 'sigma', 'amount', 'threshold')
     );
 
     /**

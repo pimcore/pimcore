@@ -477,6 +477,30 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         return $this;
     }
 
+    /**
+     * Sharpen the image with an unsharp mask operator. The image is convolved
+     * with a Gaussian operator of the given radius and standard deviation (sigma).
+     * For reasonable results, radius should be larger than sigma.
+     * Use a radius of 0 to have the method select a suitable radius.
+     *
+     * @param float $radius The radius of the Gaussian, in pixels, not counting
+     *        the center pixel.
+     * @param float $sigma The standard deviation of the Gaussian, in pixels.
+     * @param float $amount The fraction of the difference between the original
+     *        and the blur image that is added back into the original.
+     * @param float $threshold The threshold, as a fraction of QuantumRange,
+     *        needed to apply the difference amount.
+     * @return \Pimcore_Image_Adapter_Imagick
+     */
+    public function sharpen ($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05) {
+
+        $this->resource->normalizeImage();
+        $this->resource->unsharpMaskImage($radius, $sigma, $amount, $threshold);
+        $this->reinitializeImage();
+
+        return $this;
+    }
+
     public function isVectorGraphic () {
 
         try {
