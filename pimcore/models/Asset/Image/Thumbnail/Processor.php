@@ -35,7 +35,7 @@ class Asset_Image_Thumbnail_Processor {
         "cropPercent" => array("width","height","x","y"),
         "grayscale" => array(),
         "sepia" => array(),
-        "sharpen" => array()
+        "sharpen" => array('radius', 'sigma', 'amount', 'threshold')
     );
 
     /**

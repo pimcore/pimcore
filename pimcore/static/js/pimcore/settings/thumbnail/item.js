@@ -44,7 +44,7 @@ pimcore.settings.thumbnail.item = Class.create({
             text: t("save"),
             iconCls: "pimcore_icon_apply",
             handler: this.save.bind(this)
-        }); 
+        });
 
 
         var addMenu = [];
@@ -929,11 +929,50 @@ pimcore.settings.thumbnail.items = {
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
-            html: t("nothing_to_configure"),
             items: [{
-                xtype: "hidden",
-                name: "type",
-                value: "sharpen"
+                xtype: 'spinnerfield',
+                name: 'radius',
+                fieldLabel: t('radius'),
+                width: 50,
+                decimalPrecision: 1,
+                minValue: 0,
+                allowDecimals: true,
+                incrementValue: 0.1,
+                value: data.radius || 0
+            },{
+                xtype: 'spinnerfield',
+                name: 'sigma',
+                fieldLabel: t('sigma'),
+                width: 50,
+                decimalPrecision: 1,
+                minValue: 0,
+                allowDecimals: true,
+                incrementValue: 0.1,
+                value: data.sigma || 1
+            },{
+                xtype: 'spinnerfield',
+                name: 'amount',
+                fieldLabel: t('amount'),
+                width: 50,
+                decimalPrecision: 1,
+                minValue: 0,
+                allowDecimals: true,
+                incrementValue: 0.1,
+                value: data.amount || 1
+            },{
+                xtype: 'spinnerfield',
+                name: 'threshold',
+                fieldLabel: t('threshold'),
+                width: 50,
+                decimalPrecision: 2,
+                minValue: 0,
+                allowDecimals: true,
+                incrementValue: 0.01,
+                value: data.threshold || 0.05
+            },{
+                xtype: 'hidden',
+                name: 'type',
+                value: 'sharpen'
             }]
         });
 
