@@ -129,6 +129,7 @@ if(Ext.DatePicker){
     monthYearText     : 'Choose a month (Control+Up/Down to move years)',
     todayTip          : "{0} (Spacebar)",
     format            : "m/d/y",
+    format            : "m/d/y",
     okText            : "&#160;OK&#160;",
     cancelText        : "Cancel",
     startDay          : 0
@@ -184,8 +185,8 @@ if(Ext.form.DateField){
     minText           : "The date in this field must be after {0}",
     maxText           : "The date in this field must be before {0}",
     invalidText       : "{0} is not a valid date - it must be in the format {1}",
-    format            : "m/d/y",
-    altFormats        : "m/d/Y|m-d-y|m-d-Y|m/d|m-d|md|mdy|mdY|d|Y-m-d",
+    format            : "m/d/Y",
+    altFormats        : "m/d/y|m-d-y|m-d-Y|m/d|m-d|md|mdy|mdY|d|Y-m-d",
     startDay          : 0
   });
 }

@@ -1,9 +1,23 @@
-/*!
- * Ext JS Library 3.4.0
- * Copyright(c) 2006-2011 Sencha Inc.
- * licensing@sencha.com
- * http://www.sencha.com/license
- */
+/*
+This file is part of Ext JS 3.4
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-04-03 15:07:25
+*/
 /**
  * @class Ext.ux.ToolbarReorderer
  * @extends Ext.ux.Reorderer
@@ -44,6 +58,8 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
                 this.createIfReorderable(item);
             }
         });
+        
+        this.movedTask = new Ext.util.DelayedTask(this.finishMove, this);
         
         //super sets a reference to the toolbar in this.target
         Ext.ux.ToolbarReorderer.superclass.init.apply(this, arguments);
@@ -113,11 +129,11 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
                         if (movedLeft || movedRight) {
                             me[movedLeft ? 'onMovedLeft' : 'onMovedRight'](button, index, oldIndex);
                             break;
-                        }                        
+                        }
                     }
                 }
             },
-            
+
             /**
              * After the drag has been completed, make sure the button being dragged makes it back to
              * the correct location and resets its z index
@@ -126,55 +142,67 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
                 //we need to update the cache here for cases where the button was dragged but its
                 //position in the toolbar did not change
                 me.updateButtonXCache();
-                
+
                 el.moveTo(me.buttonXCache[button.id], el.getY(), {
                     duration: me.animationDuration,
                     scope   : this,
                     callback: function() {
+                        me.movedTask.delay(200);
                         button.resumeEvents();
                         if (button.menu) {
                             button.menu.un('beforeshow', menuDisabler, me);
                         }
-                        
+
                         tbar.fireEvent('reordered', button, tbar);
                     }
                 });
-                
+
                 el.setStyle('zIndex', this.startZIndex);
             }
         });
     },
-    
+
     onMovedLeft: function(item, newIndex, oldIndex) {
         var tbar  = this.target,
             items = tbar.items.items;
-        
+
+        this.movedTask.cancel();
         if (newIndex != undefined && newIndex != oldIndex) {
             //move the button currently under drag to its new location
             tbar.remove(item, false);
             tbar.insert(newIndex, item);
-            
+
             //set the correct x location of each item in the toolbar
             this.updateButtonXCache();
             for (var index = 0; index < items.length; index++) {
                 var obj  = items[index],
                     newX = this.buttonXCache[obj.id];
-                
+
                 if (item == obj) {
                     item.dd.startPosition[0] = newX;
                 } else {
                     var el = obj.getEl();
-                    
-                    el.moveTo(newX, el.getY(), {duration: this.animationDuration});
+
+                    el.moveTo(newX, el.getY(), {
+                        duration: this.animationDuration
+                    });
                 }
             }
         }
     },
-    
+
     onMovedRight: function(item, newIndex, oldIndex) {
         this.onMovedLeft.apply(this, arguments);
     },
-    
+
+    finishMove: function(){
+        var tbar = this.target;
+        tbar.items.each(function(btn){
+            btn.el.dom.style.left = '';
+        });
+        tbar.doLayout();
+    },
+
     /**
      * @private
      * Updates the internal cache of button X locations. 

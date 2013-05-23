@@ -63,3 +63,15 @@ background-image:url("/pimcore/static/img/icon/arrow_refresh.png") !important;
 .x-menu-sep {
     height: 1px;
 }
+
+
+
+/* composite field inside tab panel fix for chrome */
+.x-tab-panel-body .x-form-composite .x-box-inner {
+    min-height: 24px;
+}
+
+.x-tab-panel-body .x-form-composite .x-box-inner:first-child {
+    position: relative !important;
+}
+

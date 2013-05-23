@@ -83,7 +83,8 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             "/pimcore/static/css/editmode.css",
             "/pimcore/static/js/lib/ext-plugins/ux/css/Spinner.css",
             "/pimcore/static/js/lib/ext-plugins/ux/css/MultiSelect.css",
-            "/pimcore/static/js/lib/ext-plugins/ux/css/Portal.css"
+            "/pimcore/static/js/lib/ext-plugins/ux/css/Portal.css",
+            "/pimcore/static/css/ext-admin-overwrite.css"
         );
 
         //add plugin editmode JS and CSS
