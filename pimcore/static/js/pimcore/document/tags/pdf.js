@@ -300,17 +300,43 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
 
             pages.push({
                 style: "margin-bottom: 10px; text-align: center; cursor:pointer; ",
-                html: '<img src="' + thumbUrl + '" height="150" />',
+                bodyStyle: "min-height: 150px;",
+                html: '<span id="' + this.getName() + '-page-' + i + '" style="font-size:35px; line-height: 150px;" data-src="' + thumbUrl + '">' + i + '</span>', // blank gif image
                 listeners: {
                     afterrender: function (page, el) {
                         // unfortunately the panel element has no click event, so we have to add it to the image
                         // after the panel was rendered
-                        var img = Ext.get(el.body.query("img")[0]);
-                        img.on("click", this.hotspotEditPage.bind(this, page));
+                        var body = Ext.get(el.body);
+                        body.on("click", this.hotspotEditPage.bind(this, page));
                     }.bind(this, i)
                 }
             });
         }
+
+        var pagesContainer = new Ext.Panel({
+            width: 150,
+            region: "west",
+            autoScroll: true,
+            bodyStyle: "padding: 10px;",
+            items: pages
+        });
+
+        var loadingInterval = window.setInterval(function () {
+
+            if(!pagesContainer || !pagesContainer.body || !pagesContainer.body.dom) {
+                clearInterval(loadingInterval);
+            } else {
+                var el;
+                var scroll = pagesContainer.body.getScroll();
+                var startPage = Math.floor(scroll.top / 162); // 162 is the height of one thumbnail incl. border and margin
+                for(var i=startPage; i<(startPage+5); i++) {
+                    el = Ext.get(this.getName() + "-page-" + i);
+                    if(el) {
+                        el.parent().update('<img src="' + el.getAttribute("data-src") + '" height="150" />');
+                    }
+                }
+            }
+        }.bind(this), 1000);
 
         this.hotspotWindow = new Ext.Window({
             width: 700,
@@ -319,13 +345,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             closeAction: "close",
             resizable: false,
             layout: "border",
-            items: [{
-                width: 150,
-                region: "west",
-                autoScroll: true,
-                bodyStyle: "padding: 10px;",
-                items: pages
-            }, {
+            items: [pagesContainer, {
                 region: "center",
                 layout: "fit",
                 itemId: "pageContainer"
@@ -346,7 +366,6 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
     },
 
     hotspotEditPage: function (page) {
-
         this.saveCurrentPage();
 
         this.currentPage = page;
@@ -361,7 +380,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         var page = new Ext.Panel({
             border: false,
             bodyStyle: "background: #e5e5e5; ",
-            html: '<div style="margin:0 auto; position:relative; visibility: hidden; overflow: hidden;" ' +
+            html: '<div style="margin:0 auto; position:relative; overflow: hidden;" ' +
                 'class="page"><img src="' + thumbUrl + '" /></div>',
             tbar: [{
                 xtype: "button",
@@ -372,22 +391,33 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             listeners: {
                 afterrender: function (el) {
                     var el = el.body;
+                    var checks = 0;
                     var detailInterval = window.setInterval(function () {
-                        var div = Ext.get(el.query(".page")[0]);
-                        var img = Ext.get(el.query("img")[0]);
 
-                        if(img.getHeight() > 1) {
+                        try {
+                            checks++;
+
+                            var div = Ext.get(el.query(".page")[0]);
+                            var img = Ext.get(el.query("img")[0]);
+
+                            if((img.getHeight() > 100 && img.getWidth() > 100) || checks > 300 || !div || !img) {
+                                window.clearInterval(detailInterval);
+                            }
+
+                            if(img.getHeight() > 100 && img.getWidth() > 100) {
+                                div.applyStyles({
+                                    width: img.getWidth() + "px",
+                                    height: img.getHeight() + "px",
+                                    visibility: "visible",
+                                    "margin-left": ((el.getWidth()-img.getWidth())/2) + "px",
+                                    "margin-top": ((el.getHeight()-img.getHeight())/2) + "px"
+                                });
+                            }
+                        } catch (e) {
+                            // stop the timer when an error occours
                             window.clearInterval(detailInterval);
                         }
-
-                        div.applyStyles({
-                            width: img.getWidth() + "px",
-                            height: img.getHeight() + "px",
-                            visibility: "visible",
-                            "margin-left": ((el.getWidth()-img.getWidth())/2) + "px",
-                            "margin-top": ((el.getHeight()-img.getHeight())/2) + "px"
-                        });
-                    }, 50);
+                    }, 200);
 
                     // add hotspots
                     var hotspots = this.hotspotStore[this.currentPage];

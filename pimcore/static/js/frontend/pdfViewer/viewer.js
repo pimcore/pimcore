@@ -274,6 +274,10 @@ pimcore.pdf.prototype.download = function () {
 
 pimcore.pdf.prototype.toPage = function (page) {
 
+    if(this.pdfPages.offsetHeight > 20) {
+        this.pdfPages.style.minHeight = this.pdfPages.offsetHeight + "px";
+    }
+
     // hide all pages
     for(var i=0; i<this.data.pages.length; i++) {
         this.data.pages[i]["node"].style.display = "none";
