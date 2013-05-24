@@ -182,7 +182,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
         // using func_get_arg() to be compatible with the interface
         // when the 2ng argument is true, do not clean the cache tags
-        if(func_get_arg(1) !== true) {
+        if(func_num_args() > 1 && func_get_arg(1) !== true) {
             $this->getDb()->delete("cache_tags", "id = '".$id."'");
         }
 
