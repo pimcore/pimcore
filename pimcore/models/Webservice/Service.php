@@ -1054,5 +1054,26 @@ class Webservice_Service
         }
     }
 
+    public function getTranslations($type,$params){
+        if(in_array($type,array('website','admin'))){
+            $listClass = 'Translation_' . ucfirst($type) .'_List';
+            /**
+             * @var $list Translation_Website
+             */
+            $list = new $listClass();
+            if($key = $params['key']){
+                $list->addConditionParam(" `key` LIKE " . Pimcore_Resource::get()->quote("%" . $key . "%"),'');
+            }
 
+            $list->addConditionParam(" `creationDate` >= ? ", $params['creationDateFrom']);
+            $list->addConditionParam(" `creationDate` <= ? ", $params['creationDateTill']);
+
+            $list->addConditionParam(" `modificationDate` >= ? ", $params['modificationDateFrom']);
+            $list->addConditionParam(" `modificationDate` <= ? ", $params['modificationDateTill']);
+            $result = $list->load();
+            return $result;
+        }else{
+            throw new Exception("Parameter 'type' has to be 'website' or 'admin'");
+        }
+    }
 }
