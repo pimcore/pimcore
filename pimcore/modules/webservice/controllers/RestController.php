@@ -975,27 +975,9 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $type = $this->_getParam('type');
 
         try{
-            if(in_array($type,array('website','admin'))){
-                $listClass = 'Translation_' . ucfirst($type) .'_List';
-                /**
-                 * @var $list Translation_Website
-                 */
-                $list = new $listClass();
-                if($key = $this->_getParam('key')){
-                    $list->addConditionParam(" `key` LIKE " . Pimcore_Resource::get()->quote("%" . $key . "%"),'');
-                }
-
-                $list->addConditionParam(" `creationDate` >= ? ", $this->_getParam('creationDateFrom'));
-                $list->addConditionParam(" `creationDate` <= ? ", $this->_getParam('creationDateTill'));
-
-                $list->addConditionParam(" `modificationDate` >= ? ", $this->_getParam('modificationDateFrom'));
-                $list->addConditionParam(" `modificationDate` <= ? ", $this->_getParam('modificationDateTill'));
-
-                $result = $list->load();
-                $this->encoder->encode(array("success" => true, "data" => $result));
-            }else{
-                throw new Exception("Parameter 'type' has to be 'website' or 'admin'");
-            }
+            $params = $this->getRequest()->getQuery();
+            $result = $this->service->getTranslations($params['type'],$params);
+            $this->encoder->encode(array("success" => true, "data" => $result));
         } catch (Exception $e) {
             Logger::error($e);
             $this->encoder->encode(array("success" => false, "msg" => $e));
