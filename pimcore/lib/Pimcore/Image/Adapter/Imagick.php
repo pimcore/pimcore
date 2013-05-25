@@ -172,7 +172,6 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public static function setCMYKColorProfile($CMYKColorProfile)
     {
         self::$CMYKColorProfile = $CMYKColorProfile;
-        return self;
     }
 
     /**
@@ -197,7 +196,6 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public static function setRGBColorProfile($RGBColorProfile)
     {
         self::$RGBColorProfile = $RGBColorProfile;
-        return self;
     }
 
     /**

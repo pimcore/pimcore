@@ -48,7 +48,6 @@ class Pimcore_Config {
      */
     public static function setSystemConfig (Zend_Config $config) {
         Zend_Registry::set("pimcore_config_system", $config);
-        return self;
     }
 
     /**
@@ -129,7 +128,6 @@ class Pimcore_Config {
      */
     public static function setWebsiteConfig (Zend_Config $config) {
         Zend_Registry::set("pimcore_config_website", $config);
-        return self;
     }
 
 
@@ -161,7 +159,6 @@ class Pimcore_Config {
      */
     public static function setReportConfig (Zend_Config $config) {
         Zend_Registry::set("pimcore_config_report", $config);
-        return self;
     }
 
 
@@ -197,6 +194,5 @@ class Pimcore_Config {
      */
     public static function setModelClassMappingConfig (Zend_Config $config) {
         Zend_Registry::set("pimcore_config_model_classmapping", $config);
-        return self;
     }
 }

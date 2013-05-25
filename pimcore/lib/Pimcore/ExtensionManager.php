@@ -50,7 +50,6 @@ class Pimcore_ExtensionManager {
             "filename" => PIMCORE_CONFIGURATION_DIRECTORY . "/extensions.xml"
         ));
         $writer->write();
-        return self;
     }
 
     /**

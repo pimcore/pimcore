@@ -36,7 +36,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
     public static function setHideUnpublished($hidePublished) {
         self::$hidePublished = $hidePublished;
-        return self;
     }
 
     public static function doHideUnpublished() {
