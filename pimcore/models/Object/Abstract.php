@@ -52,7 +52,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public static function setHideUnpublished($hidePublished) {
         self::$hidePublished = $hidePublished;
-        return self;
     }
 
     /**
@@ -70,7 +69,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public static function setGetInheritedValues($getInheritedValues) {
         self::$getInheritedValues = $getInheritedValues;
-        return self;
     }
 
     /**

@@ -62,6 +62,5 @@ class Pimcore_Image {
      */
     public static function setDefaultAdapter($adapter) {
         self::$defaultAdapter = $adapter;
-        return self;
     }
 }

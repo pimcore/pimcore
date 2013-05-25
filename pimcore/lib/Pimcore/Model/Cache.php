@@ -410,7 +410,6 @@ class Pimcore_Model_Cache {
             self::$writeLockTimestamp = time();
             self::save(self::$writeLockTimestamp, "system_cache_write_lock", array(), 30, 0, true);
         }
-        return self;
     }
 
     /**
@@ -626,7 +625,6 @@ class Pimcore_Model_Cache {
     public static function setForceImmediateWrite($forceImmediateWrite)
     {
         self::$forceImmediateWrite = $forceImmediateWrite;
-        return self;
     }
 
     /**

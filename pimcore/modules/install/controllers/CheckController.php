@@ -191,6 +191,14 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => function_exists("curl_init") ? "ok" : "warning"
         );
 
+        // Phar to create phar archives
+        $checksPHP[] = array(
+            "name" => "Phar (is writeable)",
+            "link" => "http://www.php.net/phar",
+            "state" => ini_get("phar.readonly") == 0 ? "ok" : "warning"
+        );
+
+
 
 
         $db = null;
