@@ -142,4 +142,23 @@ class Pimcore_Tool_Console {
 
         return 0;
     }
+
+    /**
+     * Returns a hash with all options passed to a cli script
+     *
+     * @return array
+     */
+    public static function getOptions(){
+        GLOBAL $argv;
+        $options = array();
+        $tmpOptions = $argv;
+        array_shift($tmpOptions);
+
+        foreach($tmpOptions as $optionString){
+            $exploded = explode("=",$optionString,2);
+            $options[str_replace('-','',$exploded[0])] =  $exploded[1];
+        }
+
+        return $options;
+    }
 }
