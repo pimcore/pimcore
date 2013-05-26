@@ -1070,7 +1070,12 @@ class Webservice_Service
 
             $list->addConditionParam(" `modificationDate` >= ? ", $params['modificationDateFrom']);
             $list->addConditionParam(" `modificationDate` <= ? ", $params['modificationDateTill']);
-            $result = $list->load();
+            $data = $list->load();
+
+            $result = array();
+            foreach($data as $obj){
+                $result[] = $obj->getForWebserviceExport();
+            }
             return $result;
         }else{
             throw new Exception("Parameter 'type' has to be 'website' or 'admin'");
