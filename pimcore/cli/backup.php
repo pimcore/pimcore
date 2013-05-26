@@ -137,6 +137,11 @@ if(empty($initInfo["errors"])) {
 
 verboseMessage("------------------------------------------------");
 verboseMessage("------------------------------------------------");
+/*
+ * do not remove the string "backup finished"
+ * deployment will check for this string to ensure that the backup has been successfully created
+ * and no fatal error occurred during backup-creation
+ */
 verboseMessage("backup finished, you can find your backup here: " . $backupFile);
 
 
