@@ -20,11 +20,20 @@ class Pimcore_Backup {
     public $filesToBackup;
     public $fileAmount;
     public $backupFile;
+    protected $options = array();
     
     public function __construct ($backupFile) {
         $this->backupFile = $backupFile;
     }
-    
+
+    public function setOptions($options){
+        $this->options = $options;
+    }
+
+    public function getOptions(){
+        return $this->options;
+    }
+
     public function getFilesToBackup () {
         return $this->filesToBackup;
     }
@@ -75,7 +84,8 @@ class Pimcore_Backup {
         return $obj;
     }
     
-    public function init () {
+    public function init ($options = array()) {
+        $this->setOptions($options);
 
         // create backup directory if not exists
         if (!is_dir(PIMCORE_BACKUP_DIRECTORY)) {
@@ -99,10 +109,10 @@ class Pimcore_Backup {
 
         // get available tables
         $db = Pimcore_Resource::get();
-        $tables = $db->fetchAll("SHOW FULL TABLES");
+        $tables = $this->getTables();
 
 
-        $steps[] = array("mysql-tables", null);
+        $steps[] = array("mysql-tables", $this->options['mysql-tables']);
 
         // tables
         foreach ($tables as $table) {
@@ -136,54 +146,55 @@ class Pimcore_Backup {
 
         $steps[] = array("mysql-complete", null);
 
-        // check files
-        $currentFileCount = 0;
-        $currentFileSize = 0;
-        $currentStepFiles = array();
+        if(!$options['only-mysql-related-tasks']){
+            // check files
+            $currentFileCount = 0;
+            $currentFileSize = 0;
+            $currentStepFiles = array();
 
 
-        // check permissions
-        $filesIn = rscandir(PIMCORE_DOCUMENT_ROOT . "/");
-        clearstatcache();
+            // check permissions
+            $filesIn = rscandir(PIMCORE_DOCUMENT_ROOT . "/");
+            clearstatcache();
 
-        foreach ($filesIn as $fileIn) {
-            if (!is_readable($fileIn)) {
-                $errors[] = $fileIn . " is not readable.";
-            }
-
-            if ($currentFileCount > 300 || $currentFileSize > 20000000) {
-
-                $currentFileCount = 0;
-                $currentFileSize = 0;
-                if (!empty($currentStepFiles)) {
-                    $filesToBackup[] = $currentStepFiles;
+            foreach ($filesIn as $fileIn) {
+                if (!is_readable($fileIn)) {
+                    $errors[] = $fileIn . " is not readable.";
                 }
-                $currentStepFiles = array();
+
+                if ($currentFileCount > 300 || $currentFileSize > 20000000) {
+
+                    $currentFileCount = 0;
+                    $currentFileSize = 0;
+                    if (!empty($currentStepFiles)) {
+                        $filesToBackup[] = $currentStepFiles;
+                    }
+                    $currentStepFiles = array();
+                }
+
+                if(file_exists($fileIn)) {
+                    $currentFileSize += filesize($fileIn);
+                    $currentFileCount++;
+                    $currentStepFiles[] = $fileIn;
+                }
             }
 
-            if(file_exists($fileIn)) {
-                $currentFileSize += filesize($fileIn);
-                $currentFileCount++;
-                $currentStepFiles[] = $fileIn;
+            if (!empty($currentStepFiles)) {
+                $filesToBackup[] = $currentStepFiles;
             }
+
+            $this->setFilesToBackup($filesToBackup);
+
+            $fileSteps = count($filesToBackup);
+
+            for ($i = 0; $i < $fileSteps; $i++) {
+                $steps[] = array("files", array(
+                    "step" => $i
+                ));
+            }
+
+            $steps[] = array("complete", null);
         }
-
-        if (!empty($currentStepFiles)) {
-            $filesToBackup[] = $currentStepFiles;
-        }
-
-        $this->setFilesToBackup($filesToBackup);
-
-        $fileSteps = count($filesToBackup);
-
-        for ($i = 0; $i < $fileSteps; $i++) {
-            $steps[] = array("files", array(
-                "step" => $i
-            ));
-        }
-
-        $steps[] = array("complete", null);
-
 
         if (!empty($errors)) {
             $steps = null;
@@ -249,11 +260,26 @@ class Pimcore_Backup {
             "fileAmount" => $this->getFileAmount()
         );
     }
-    
+
+    protected function getTables(){
+        $db = Pimcore_Resource::get();
+
+        if($mysqlTables = $this->options['mysql-tables']){
+            $specificTables = explode(',',$mysqlTables);
+            $databaseName = (string)Pimcore_Config::getSystemConfig()->database->params->dbname;
+            $query = "SHOW FULL TABLES where Tables_in_". $databaseName . " IN(" . implode(',',wrapArrayElements($specificTables)) . ')';
+        }else{
+            $query = "SHOW FULL TABLES";
+        }
+
+        $tables = $db->fetchAll($query);
+        return $tables;
+    }
+
     public function mysqlTables () {
         $db = Pimcore_Resource::get();
 
-        $tables = $db->fetchAll("SHOW FULL TABLES");
+        $tables = $this->getTables();
 
         $dumpData = "\nSET NAMES UTF8;\n\n";
 

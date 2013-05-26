@@ -24,6 +24,8 @@ try {
         'overwrite|o' => 'overwrite existing backup with the same filename, default: true',
         'cleanup|c=s' => 'in days, backups in the target directory which are older than the given days will be deleted, default 7, use false to disable it',
         'verbose|v' => 'show detailed information during the backup',
+        'mysql-tables=s' => 'a comma seperated list of mysql tables to backup e.g "translations_website,translations_admin" ',
+        'only-mysql-related-tasks' => 'executes only mysql related tasks.',
         'help|h' => 'display this help'
     ));
 } catch (Exception $e) {
@@ -99,10 +101,16 @@ if($config["cleanup"] != "false") {
 verboseMessage("------------------------------------------------");
 verboseMessage("------------------------------------------------");
 verboseMessage("starting backup into file: " . $backupFile);
+$options = array();
+if($mysqlTables = $opts->getOption("mysql-tables")){
+    $options["mysql-tables"] = $mysqlTables;
+}
+$options['only-mysql-related-tasks'] = $opts->getOption('only-mysql-related-tasks');
+
 
 
 $backup = new Pimcore_Backup($backupFile);
-$initInfo = $backup->init();
+$initInfo = $backup->init($options);
 
 $stepMethodMapping = array(
     "mysql-tables" => "mysqlTables",

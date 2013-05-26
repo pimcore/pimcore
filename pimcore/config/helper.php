@@ -310,3 +310,10 @@ function pimcore_error_handler($errno, $errstr, $errfile, $errline, $errcontext)
     // enable php internal error handling
     return false;
 }
+
+function wrapArrayElements($array,$prefix = "'",$suffix = "'"){
+    foreach($array as $key => $value){
+        $array[$key] = $prefix . trim($value). $suffix;
+    }
+    return $array;
+}
