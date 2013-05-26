@@ -144,13 +144,16 @@ class Pimcore_Tool_Console {
         return $options;
     }
 
-    public function getOptionString($options){
+    public static function getOptionString($options,$concatenator = '=',$arrayConcatenator = ','){
         $string = '';
 
         foreach($options as $key => $value){
             $string .= '--' . $key;
             if($value){
-                $string .= " '" . $value . "'";
+                if(is_array($value)){
+                    $value = implode($arrayConcatenator,$value);
+                }
+                $string .= $concatenator . "'" . $value . "'";
             }
             $string .= ' ';
         }

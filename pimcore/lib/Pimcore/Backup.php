@@ -21,7 +21,7 @@ class Pimcore_Backup {
     public $fileAmount;
     public $backupFile;
     protected $options = array();
-    
+
     public function __construct ($backupFile) {
         $this->backupFile = $backupFile;
     }
@@ -37,21 +37,21 @@ class Pimcore_Backup {
     public function getFilesToBackup () {
         return $this->filesToBackup;
     }
-    
+
     protected function setFilesToBackup ($files) {
         $this->filesToBackup = $files;
         return $this;
     }
-    
+
     public function getFileAmount () {
         return $this->fileAmount;
     }
-    
+
     protected function setFileAmount ($fileAmount) {
         $this->fileAmount = $fileAmount;
         return $this;
     }
-    
+
     public function getBackupFile () {
         return $this->backupFile;
     }
@@ -68,7 +68,7 @@ class Pimcore_Backup {
     protected function getFormattedFilesize () {
         return formatBytes(filesize($this->getBackupFile()));
     }
-    
+
     protected function getArchive () {
         $obj = new Archive_Tar($this->getBackupFile());
 
@@ -83,7 +83,7 @@ class Pimcore_Backup {
 
         return $obj;
     }
-    
+
     public function init ($options = array()) {
         $this->setOptions($options);
 
@@ -97,7 +97,7 @@ class Pimcore_Backup {
 
         $errors = array();
         $this->setFileAmount(0);
-        
+
 
         // cleanup old backups
         if (is_file(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql")) {
@@ -205,9 +205,9 @@ class Pimcore_Backup {
             "errors" => $errors
         );
     }
-    
+
     public function fileStep ($step) {
-        
+
         $filesContainer = $this->getFilesToBackup();
         $files = $filesContainer[$step];
 
@@ -267,7 +267,7 @@ class Pimcore_Backup {
         if($mysqlTables = $this->options['mysql-tables']){
             $specificTables = explode(',',$mysqlTables);
             $databaseName = (string)Pimcore_Config::getSystemConfig()->database->params->dbname;
-            $query = "SHOW FULL TABLES where Tables_in_". $databaseName . " IN(" . implode(',',wrapArrayElements($specificTables)) . ')';
+            $query = "SHOW FULL TABLES where `Tables_in_". $databaseName . "` IN(" . implode(',',wrapArrayElements($specificTables)) . ')';
         }else{
             $query = "SHOW FULL TABLES";
         }
@@ -314,7 +314,7 @@ class Pimcore_Backup {
             "success" => true
         );
     }
-    
+
     public function mysqlData ($name, $type) {
         $db = Pimcore_Resource::reset();
 
@@ -360,7 +360,7 @@ class Pimcore_Backup {
             "success" => true
         );
     }
-    
+
     public function mysqlComplete() {
         $this->getArchive()->addString("dump.sql", file_get_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql"));
 
@@ -372,7 +372,7 @@ class Pimcore_Backup {
             "filesize" => $this->getFormattedFilesize()
         );
     }
-    
+
     public function complete () {
         $this->getArchive()->addString(PIMCORE_FRONTEND_MODULE . "/var/cache/.dummy", "dummy");
         $this->getArchive()->addString(PIMCORE_FRONTEND_MODULE . "/var/tmp/.dummy", "dummy");
@@ -386,6 +386,37 @@ class Pimcore_Backup {
             "download" => str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getBackupFile()),
             "filesystem" => $this->getBackupFile()
         );
+    }
+
+    public function restore(){
+        $archive = $this->getArchive();
+        $tmpRestoreDirectory = PIMCORE_TEMPORARY_DIRECTORY .'/backup-restore';
+        recursiveDelete($tmpRestoreDirectory);
+        mkdir($tmpRestoreDirectory,0755,true);
+        $archive->extract($tmpRestoreDirectory);
+        $dumpFile = $tmpRestoreDirectory.'/dump.sql';
+        if(is_readable($dumpFile)){
+            $dbSettings = Pimcore_Config::getSystemConfig()->database->toArray();
+
+            if(!in_array($dbSettings['adapter'],array('Mysqli','Mysql'))){
+                throw new Exception("Database restore is only supporter for Mysql/Mysqli.");
+            }
+
+            $cmd = "mysql --user=" . escapeshellarg($dbSettings['params']['username']);
+            $cmd .= " --password=" . escapeshellarg($dbSettings['params']['password']);
+            $cmd .= " --host=" . escapeshellarg($dbSettings['params']['host']);
+            $cmd .= " --database=" . escapeshellarg($dbSettings['params']['dbname']);
+            $cmd .= " < " . escapeshellarg($dumpFile);
+
+            exec($cmd,$output,$resultCode);
+            if($resultCode === 0){
+                verboseMessage("Successfully imported sql data.");
+            }else{
+                throw new Exception("Could not import sql data.");
+            }
+        }
+
+        recursiveDelete($tmpRestoreDirectory);
     }
 }
 
