@@ -284,4 +284,24 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
             throw new Exception("$file is not readable");
         }
     }
+
+
+    /**
+     * converts data to be imported via webservices
+     * @param mixed $value
+     * @return mixed
+     */
+    public function getFromWebserviceImport($data)
+    {
+        foreach($data as $key => $value){
+            $setter = 'set' . ucfirst($key);
+            $this->$setter($value);
+        }
+    }
+
+    public function getForWebserviceExport(){
+        $data = get_object_vars($this);
+        unset($data['resource']);
+        return $data;
+    }
 }

@@ -18,11 +18,21 @@
  * required to get the autoloader...
  */
 require_once dirname(__FILE__) . '/../../../../cli/startup.php';
+
+//add system and ext path to inlude path to prevent autoloading warning, that PropertyPromptTask.php and VersionTask.php could not be loaded
+set_include_path(get_include_path() . PATH_SEPARATOR . PIMCORE_DOCUMENT_ROOT . '/pimcore/lib/Deployment/Phing/classes/phing/tasks/system/');
+set_include_path(get_include_path() . PATH_SEPARATOR . PIMCORE_DOCUMENT_ROOT . '/pimcore/lib/Deployment/Phing/classes/phing/tasks/ext/');
+
 $autoloader = Zend_Loader_Autoloader::getInstance();
-$autoloader->suppressNotFoundWarnings(true); //disable warning because Zend_Loader tries to load Phing classes...
+#$autoloader->suppressNotFoundWarnings(true); //disable warning because Zend_Loader tries to load Phing classes...
+
 // do some general deployment setup stuff
-ini_set('display_errors','on');
+$deploymentAdapter = Deployment_Factory::getInstance()->getAdapter();
+$deploymentAdapter->setCommandLineParams();
+
 $deploymentStartup = PIMCORE_CONFIGURATION_DIRECTORY . "/deployment-startup.php";
 if(@is_file($deploymentStartup)) {
     include_once($deploymentStartup);
+}else{
+    $argv = $deploymentAdapter->getCleanedArgv($argv);
 }
