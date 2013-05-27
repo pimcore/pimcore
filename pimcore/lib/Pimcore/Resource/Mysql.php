@@ -203,7 +203,7 @@ class Pimcore_Resource_Mysql {
 
             // @TODO named parameters
             if(!empty($params)) {
-                for ($i=1; $i<count($params); $i++) {
+                for ($i=1; $i<=count($params); $i++) {
                     $query = substr_replace($query, $connection->quote($params[$i]), strpos($query, "?"), 1);
                 }
             }
@@ -220,6 +220,10 @@ class Pimcore_Resource_Mysql {
      * @param string $sql
      */
     public static function logDefinitionModification ($sql) {
+
+        // add trailing semicolon if necessary;
+        $sql = trim($sql, " ;");
+        $sql .= ";";
 
         if(!self::$_sqlLogFilename) {
             self::$_sqlLogFilename = "db-change-log_". time() ."-" . uniqid() . ".sql";
