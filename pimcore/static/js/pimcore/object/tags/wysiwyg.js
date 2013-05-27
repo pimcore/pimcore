@@ -172,6 +172,11 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             Ext.get(this.editableDivId).update(this.data);
             this.ckeditor = CKEDITOR.replace(this.editableDivId, eConfig);
             this.ckeditor.pimcore_tag_instance = this;
+
+            // HACK - clean all pasted html
+            this.ckeditor.on('paste', function(evt) {
+                evt.data.dataValue = '<!--class="Mso"-->' + evt.data.dataValue;
+            }, null, null, 1);
         } catch (e) {
             console.log(e);
         }
