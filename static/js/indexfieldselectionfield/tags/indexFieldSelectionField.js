@@ -15,7 +15,23 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
             root: 'data',
             fields: ['key','name'],
             listeners: {
-                load: function() {
+                load: function(store) {
+
+                    if(this.firstLoad) {
+                        var values = this.data.split(",");
+                        for(var i = 0; i < values.length; i++) {
+                            if(store.find('key', values[i]) < 0) {
+                                var defaultData = {
+                                    'key': values[i],
+                                    'name': ts(values[i])
+                                }
+                                var record = new store.recordType(defaultData, values[i]);
+                                store.add(record);
+                            }
+                        }
+                        this.firstLoad = false;
+                    }
+
                     if(this.fieldsCombobox) {
                         this.fieldsCombobox.setValue(this.data);
                     }
