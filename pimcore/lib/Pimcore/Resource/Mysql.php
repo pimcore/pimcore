@@ -230,7 +230,7 @@ class Pimcore_Resource_Mysql {
         }
 
         // write sql change log for deploying to production system
-        $sql .= "\n\n\n";
+        $sql .= "\n\n/*--NEXT--*/\n\n";
 
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY."/". self::$_sqlLogFilename;
         if(defined("PIMCORE_DB_CHANGELOG_DIRECTORY")) {
