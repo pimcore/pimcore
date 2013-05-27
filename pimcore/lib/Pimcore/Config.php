@@ -141,7 +141,12 @@ class Pimcore_Config {
             $config = Zend_Registry::get("pimcore_config_report");
         } else {
             try {
-                $config = new Zend_Config_Xml(PIMCORE_CONFIGURATION_DIRECTORY . "/reports.xml");
+                $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/reports.xml";
+                if(file_exists($configFile)) {
+                    $config = new Zend_Config_Xml($configFile);
+                } else {
+                    throw new \Exception("Config-file " . $configFile . " doesn't exist.");
+                }
             }
             catch (Exception $e) {
                 $config = new Zend_Config(array());
