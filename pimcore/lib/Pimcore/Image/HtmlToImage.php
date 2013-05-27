@@ -78,7 +78,7 @@ class Pimcore_Image_HtmlToImage {
 
         // use xvfb if possible
         if($xvfb = self::getXvfbBinary()) {
-            Pimcore_Tool_Console::exec($xvfb . " --server-args=\"-screen 0, 1280x1024x24\" " .
+            Pimcore_Tool_Console::exec($xvfb . " --auto-servernum --server-args=\"-screen 0, 1280x1024x24\" " .
                 self::getWkhtmltoimageBinary() . " --use-xserver --width " . $screenWidth . " --format " . $format . " \"" . $url . "\" " . $outputFile, PIMCORE_LOG_DIRECTORY . "/wkhtmltoimage.log");
         } else {
             Pimcore_Tool_Console::exec(self::getWkhtmltoimageBinary() . " --width " . $screenWidth . " --format " . $format . " \"" . $url . "\" " . $outputFile, PIMCORE_LOG_DIRECTORY . "/wkhtmltoimage.log");
