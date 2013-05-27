@@ -14,16 +14,23 @@
  */
 
 class Pimcore_Tool_Console {
-
+	/**
+	 * @var string system environment
+	 */
+	private static $systemEnvironment;
     /**
+     * @static
      * @return string "windows" or "unix"
      */
     public static function getSystemEnvironment(){
-        if(stripos(php_uname("s"), "windows") !== false) {
-            return 'windows';
-        }else{
-            return 'unix';
-        }
+		if (self::$systemEnvironment == null) {
+			if(stripos(php_uname("s"), "windows") !== false) {
+				self::$systemEnvironment = 'windows';
+			}else{
+				self::$systemEnvironment = 'unix';
+			}
+		}
+		return self::$systemEnvironment;
     }
 
     /**
