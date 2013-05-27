@@ -188,7 +188,6 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
-            //eConfig.startupFocus = true;
             eConfig.resize_minWidth = this.options.width - 2;
             eConfig.resize_maxWidth = this.options.width - 2;
 
@@ -206,6 +205,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 this.ckeditor.on('focus', function () {
                     Ext.get(this.textarea).removeClass("pimcore_wysiwyg_inactive");
                 }.bind(this));
+
                 this.ckeditor.on('blur', function () {
                     Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
                 }.bind(this));
