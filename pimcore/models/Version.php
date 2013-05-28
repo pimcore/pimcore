@@ -132,9 +132,16 @@ class Version extends Pimcore_Model_Abstract {
             }
 
             $this->setSerialized(true);
+
             $data->_fulldump = true;
-            $dataString = Pimcore_Tool_Serialize::serialize($this->getData());
-            unset($this->_fulldump);
+            $dataString = Pimcore_Tool_Serialize::serialize($data);
+
+            // revert all changed made by __sleep()
+            if(method_exists($data, "__wakeup")) {
+                $data->__wakeup();
+            }
+            unset($data->_fulldump);
+
         } else {
             $dataString = $data;
         }
