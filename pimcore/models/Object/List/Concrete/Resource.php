@@ -134,6 +134,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
 
             if(!$this->model->getIgnoreLocalizedFields()) {
 
+                $language = null;
                 // check for a localized field and if they should be used for this list
                 if(property_exists("Object_" . ucfirst($this->model->getClassName()), "localizedfields")) {
                     if($this->model->getLocale()) {
@@ -142,7 +143,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
                         }
                     }
 
-                    if(Zend_Registry::isRegistered("Zend_Locale") /* && $language == "default" */) {
+                    if(!$language && Zend_Registry::isRegistered("Zend_Locale")) {
                         $locale = Zend_Registry::get("Zend_Locale");
                         if(Pimcore_Tool::isValidLanguage((string) $locale)) {
                             $language = (string) $locale;
