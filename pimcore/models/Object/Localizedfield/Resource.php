@@ -220,16 +220,9 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
     public function createLocalizedViews () {
 
-        $languages = array();
-        $conf = Pimcore_Config::getSystemConfig();
-        if($conf->general->validLanguages) {
-            $languages = explode(",",$conf->general->validLanguages);
-        }
+        $languages = Pimcore_Tool::getValidLanguages();
 
         $defaultTable = 'object_query_' . $this->model->getClass()->getId();
-
-        $classDef = $this->model->getClass();
-        $localizedFieldDef = $classDef->getFieldDefinition("localizedfields");
 
         foreach ($languages as $language) {
             try {
@@ -287,7 +280,6 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColumns);
 
-        $this->createLocalizedViews();
 
 
         $validLanguages = Pimcore_Tool::getValidLanguages();
@@ -344,8 +336,9 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             // remove unused columns in the table
             $this->removeUnusedColumns($queryTable, $columnsToRemove, $protectedColumns);
         }
-    }
 
+        $this->createLocalizedViews();
+    }
 
 
     private function addIndexToField ($field, $table) {
