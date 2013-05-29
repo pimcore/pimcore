@@ -109,7 +109,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 if (this.edit.dataFields[field] && typeof this.edit.dataFields[field] == "object") {
                     currentField = this.edit.dataFields[field];
 
-                    if(currentField.isDirty()) {
+                    if(currentField.dataIsNotInherited()) {
                         currentField.unmarkInherited();
                         this.data.metaData[field].inherited = false;
                         delete this.inheritedFields[field];
