@@ -167,4 +167,27 @@ class Pimcore_Tool_Console {
 
         return $string;
     }
+
+    /**
+     * checks the user which executes a cli script
+     *
+     * @param array $allowedUsers
+     *
+     * @throws Exception
+     */
+    public static function checkExecutingUser($allowedUsers = array()){
+        $owner = fileowner(PIMCORE_CONFIGURATION_SYSTEM);
+        if($owner == false){
+            throw new Exception("Couldn't get user from file " . PIMCORE_CONFIGURATION_SYSTEM);
+        }
+        $userData = posix_getpwuid($owner);
+        $allowedUsers[] = $userData['name'];
+
+        $scriptExecutingUserData = posix_getpwuid(posix_geteuid());
+        $scriptExecutingUser = $scriptExecutingUserData['name'];
+
+        if(!in_array($scriptExecutingUser,$allowedUsers)){
+            throw new Exception("The current system user is not allowed to execute this script. Allowed users: '" . implode(',',$allowedUsers) ."' Executing user: '$scriptExecutingUser'.");
+        }
+    }
 }
