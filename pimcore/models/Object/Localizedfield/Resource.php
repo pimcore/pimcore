@@ -240,25 +240,6 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                 Logger::error($e);
             }
         }
-
-        $concats = array();
-        if($this->model->getClass()->getFielddefinition("localizedfields")) {
-            foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $fd) {
-                // only add non-relational fields with one column to the group-concat
-                if(!$fd->isRelationType() && !is_array($fd->getColumnType())) {
-                    $concats[] = "group_concat(" . $this->getTableName() . "." . $fd->getName() . ") AS `" . $fd->getName() . "`";
-                }
-            }
-        }
-
-        // and now the default view for query where the locale is missing
-
-        $furtherSelects = implode(",",$concats);
-        if(!empty($furtherSelects)) {
-            $furtherSelects = "," . $furtherSelects;
-        }
-
-        $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_default` AS SELECT `' . $defaultTable . '`.*,objects.* ' . $furtherSelects . ' FROM `' . $defaultTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $defaultTable . '`.`oo_id` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` GROUP BY `' . $defaultView . '`.`o_id`;');
     }
 
     public function createUpdateTable () {
