@@ -226,6 +226,17 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
     }
 
     /**
+     * @param string $itemKey
+     *
+     * @return OnlineShop_Framework_ICartItem
+     */
+    public function getItem($itemKey)
+    {
+        return array_key_exists($itemKey, $this->items) ? $this->items[ $itemKey ] : null;
+    }
+
+
+    /**
      * @return OnlineShop_Framework_ICartItem[]
      */
     public function getGiftItems()
@@ -233,6 +244,21 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         return $this->giftItems;
     }
 
+
+    /**
+     * @param string $itemKey
+     *
+     * @return OnlineShop_Framework_ICartItem
+     */
+    public function getGiftItem($itemKey)
+    {
+        return array_key_exists($itemKey, $this->giftItems) ? $this->giftItems[ $itemKey ] : null;
+    }
+
+
+    /**
+     * @param OnlineShop_Framework_ICartItem[] $items
+     */
     public function setItems($items) {
         $this->itemAmount = null;
         $this->subItemAmount = null;
@@ -243,6 +269,9 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         $this->modified();
     }
 
+    /**
+     * @param string $itemKey
+     */
     public function removeItem($itemKey) {
         $this->itemAmount = null;
         $this->subItemAmount = null;
@@ -253,10 +282,16 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         $this->modified();
     }
 
+    /**
+     * @param string $name
+     */
     public function setName($name) {
         $this->name = $name;
     }
 
+    /**
+     * @return string
+     */
     public function getName() {
         return $this->name;
     }

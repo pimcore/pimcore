@@ -18,9 +18,23 @@ interface OnlineShop_Framework_ICart {
     public function getItems();
 
     /**
+     * @param string $itemKey
+     *
+     * @return OnlineShop_Framework_ICartItem
+     */
+    public function getItem($itemKey);
+
+    /**
      * @return OnlineShop_Framework_ICartItem[]
      */
     public function getGiftItems();
+
+    /**
+     * @param string $itemKey
+     *
+     * @return OnlineShop_Framework_ICartItem
+     */
+    public function getGiftItem($itemKey);
 
     /**
      * @abstract

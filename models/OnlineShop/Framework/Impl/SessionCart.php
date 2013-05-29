@@ -133,6 +133,28 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
         return $this->items;
     }
 
+    /**
+     * @param string $itemKey
+     *
+     * @return OnlineShop_Framework_ICartItem
+     */
+    public function getItem($itemKey)
+    {
+        return array_key_exists($itemKey, $this->items) ? $this->items[ $itemKey ] : null;
+    }
+
+
+    /**
+     * @param string $itemKey
+     *
+     * @return OnlineShop_Framework_ICartItem
+     */
+    public function getGiftItem($itemKey)
+    {
+        return array_key_exists($itemKey, $this->giftItems) ? $this->giftItems[ $itemKey ] : null;
+    }
+
+
     public function setItems($items) {
         $this->itemAmount = null;
         $this->subItemAmount = null;
