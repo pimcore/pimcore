@@ -67,11 +67,6 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $data["ooo_id"] = $this->model->getObject()->getId();
             $data["language"] = $language;
 
-            $currentData = $this->model->items[$language];
-            if (!$currentData) {
-                continue;
-            }
-
             $this->inheritanceHelper = new Object_Concrete_Resource_InheritanceHelper($object->getClassId(), "ooo_id", $storeTable, $queryTable);
             $this->inheritanceHelper->resetFieldsToCheck();
             $sql = "SELECT * FROM " . $queryTable . " WHERE ooo_id = " . $object->getId() . " AND language = '" . $language . "'";
@@ -92,45 +87,47 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                 }
             }*/
 
-            foreach ($currentData as $key => $value) {
-                $fd = $this->model->getClass()->getFielddefinition("localizedfields")->getFieldDefinition($key);
+            $currentData = $this->model->items[$language];
+            if(is_array($currentData)) {
+                foreach ($currentData as $key => $value) {
+                    $fd = $this->model->getClass()->getFielddefinition("localizedfields")->getFieldDefinition($key);
 
-                if ($fd) {
-                    if ($fd->getQueryColumnType()) {
+                    if ($fd) {
+                        if ($fd->getQueryColumnType()) {
 
-                        // exclude untouchables if value is not an array - this means data has not been loaded
-                        if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
-                            $localizedValue = $this->model->getLocalizedValue($key, $language);
-                            $insertData = $fd->getDataForQueryResource($localizedValue, $object);
+                            // exclude untouchables if value is not an array - this means data has not been loaded
+                            if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
+                                $localizedValue = $this->model->getLocalizedValue($key, $language);
+                                $insertData = $fd->getDataForQueryResource($localizedValue, $object);
 
-                            if (is_array($insertData)) {
-                                $data = array_merge($data, $insertData);
-                            }
-                            else {
-                                $data[$key] = $insertData;
-                            }
-
-                            //get changed fields for inheritance
-                            if($this->model->getClass()->getAllowInherit()) {
                                 if (is_array($insertData)) {
-                                    foreach($insertData as $insertDataKey => $insertDataValue) {
-                                        if($oldData[$insertDataKey] != $insertDataValue) {
-                                            $this->inheritanceHelper->addFieldToCheck($insertDataKey);
+                                    $data = array_merge($data, $insertData);
+                                }
+                                else {
+                                    $data[$key] = $insertData;
+                                }
+
+                                //get changed fields for inheritance
+                                if($this->model->getClass()->getAllowInherit()) {
+                                    if (is_array($insertData)) {
+                                        foreach($insertData as $insertDataKey => $insertDataValue) {
+                                            if($oldData[$insertDataKey] != $insertDataValue) {
+                                                $this->inheritanceHelper->addFieldToCheck($insertDataKey);
+                                            }
+                                        }
+                                    } else {
+                                        if($oldData[$key] != $insertData) {
+                                            $this->inheritanceHelper->addFieldToCheck($key);
                                         }
                                     }
-                                } else {
-                                    if($oldData[$key] != $insertData) {
-                                        $this->inheritanceHelper->addFieldToCheck($key);
-                                    }
                                 }
+                            } else {
+                                Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
                             }
-                        } else {
-                            Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
                         }
                     }
                 }
             }
-
 
             $queryTable = $this->getQueryTableName() . "_" . $language;
             $this->db->insertOrUpdate($queryTable, $data);
