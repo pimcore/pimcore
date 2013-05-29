@@ -30,8 +30,9 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         $this->delete();
 
         $object = $this->model->getObject();
+        $validLanguages = Pimcore_Tool::getValidLanguages();
 
-        foreach ($this->model->getItems() as $language => $items) {
+        foreach ($validLanguages as $language) {
             $inheritedValues = Object_Abstract::doGetInheritedValues();
             Object_Abstract::setGetInheritedValues(false);
 
