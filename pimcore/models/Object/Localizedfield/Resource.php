@@ -78,16 +78,18 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
 
             // get fields which shouldn't be updated
-            $fd = $this->model->getClass()->getFieldDefinitions();
             $untouchable = array();
+
+            // @TODO: currently we do not support lazyloading in localized fields
+            /*$fd = $this->model->getClass()->getFieldDefinitions();
             foreach ($fd as $key => $value) {
                 if (method_exists($value, "getLazyLoading") && $value->getLazyLoading()) {
-                    if (!in_array($key, $this->model->getLazyLoadedFields())) {
+                    if (method_exists()!in_array($key, $this->model->getLazyLoadedFields())) {
                         //this is a relation subject to lazy loading - it has not been loaded
                         $untouchable[] = $key;
                     }
                 }
-            }
+            }*/
 
             foreach ($currentData as $key => $value) {
                 $fd = $this->model->getClass()->getFielddefinition("localizedfields")->getFieldDefinition($key);
