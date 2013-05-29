@@ -765,7 +765,11 @@ class Pimcore {
 
         Pimcore_Resource::reset();
 
-        Logger::debug("garbage collection finished");
+        // force PHP garbage collector
+        gc_enable();
+        $collectedCycles = gc_collect_cycles();
+
+        Logger::debug("garbage collection finished, collected cycles: " . $collectedCycles);
     }
 
     /**
