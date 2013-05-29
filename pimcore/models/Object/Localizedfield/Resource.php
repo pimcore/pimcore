@@ -66,97 +66,68 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $data["ooo_id"] = $this->model->getObject()->getId();
             $data["language"] = $language;
 
+            $currentData = $this->model->items[$language];
+            if (!$currentData) {
+                continue;
+            }
+
             $this->inheritanceHelper = new Object_Concrete_Resource_InheritanceHelper($object->getClassId(), "ooo_id", $storeTable, $queryTable);
-
-            if($this->model->getClass()->getAllowInherit()) {
-
-                $currentData = $this->model->items[$language];
-                if (!$currentData) {
-                    continue;
-                }
-
-                $this->inheritanceHelper->resetFieldsToCheck();
-                $sql = "SELECT * FROM " . $queryTable . " WHERE ooo_id = " . $object->getId() . " AND language = '" . $language . "'";
-                $oldData = $this->db->fetchRow($sql);
+            $this->inheritanceHelper->resetFieldsToCheck();
+            $sql = "SELECT * FROM " . $queryTable . " WHERE ooo_id = " . $object->getId() . " AND language = '" . $language . "'";
+            $oldData = $this->db->fetchRow($sql);
 
 
-                // get fields which shouldn't be updated
-                $fd = $this->model->getClass()->getFieldDefinitions();
-                $untouchable = array();
-                foreach ($fd as $key => $value) {
-                    if (method_exists($value, "getLazyLoading") && $value->getLazyLoading()) {
-                        if (!in_array($key, $this->model->getLazyLoadedFields())) {
-                            //this is a relation subject to lazy loading - it has not been loaded
-                            $untouchable[] = $key;
-                        }
+            // get fields which shouldn't be updated
+            $fd = $this->model->getClass()->getFieldDefinitions();
+            $untouchable = array();
+            foreach ($fd as $key => $value) {
+                if (method_exists($value, "getLazyLoading") && $value->getLazyLoading()) {
+                    if (!in_array($key, $this->model->getLazyLoadedFields())) {
+                        //this is a relation subject to lazy loading - it has not been loaded
+                        $untouchable[] = $key;
                     }
                 }
+            }
 
-                foreach ($currentData as $key => $value) {
-                    $fd = $this->model->getClass()->getFielddefinition("localizedfields")->getFieldDefinition($key);
+            foreach ($currentData as $key => $value) {
+                $fd = $this->model->getClass()->getFielddefinition("localizedfields")->getFieldDefinition($key);
 
-                    if ($fd) {
-                        if ($fd->getQueryColumnType()) {
+                if ($fd) {
+                    if ($fd->getQueryColumnType()) {
 
-                            if($fd->isRelationType()) {
-                                // TODO, Hmm ... for relation types there is not even a column, so skip them for now.
-                                continue;
+                        // exclude untouchables if value is not an array - this means data has not been loaded
+                        if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
+                            $localizedValue = $this->model->getLocalizedValue($key, $language);
+                            $insertData = $fd->getDataForQueryResource($localizedValue, $object);
+
+                            if (is_array($insertData)) {
+                                $data = array_merge($data, $insertData);
+                            }
+                            else {
+                                $data[$key] = $insertData;
                             }
 
-                            // exclude untouchables if value is not an array - this means data has not been loaded
-                            if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
-                                $localizedValue = $this->model->getLocalizedValue($key, $language);
-                                $insertData = $fd->getDataForQueryResource($localizedValue, $object);
-
+                            //get changed fields for inheritance
+                            if($this->model->getClass()->getAllowInherit()) {
                                 if (is_array($insertData)) {
-                                    $data = array_merge($data, $insertData);
-                                }
-                                else {
-                                    $data[$key] = $insertData;
-                                }
-
-                                //get changed fields for inheritance
-                                if($fd->isRelationType()) {
-
-// TODO, Hmm ... for relation types there is not even a column, so skip them for now.
-//                                    if (is_array($insertData)) {
-//                                        $doInsert = false;
-//                                        foreach($insertData as $insertDataKey => $insertDataValue) {
-//                                            if($oldData[$insertDataKey] != $insertDataValue) {
-//                                                $doInsert = true;
-//                                            }
-//                                        }
-//
-//                                        if($doInsert) {
-//                                            $this->inheritanceHelper->addRelationToCheck($key, array_keys($insertData));
-//                                        }
-//                                    } else {
-//                                        if($oldData[$key] != $insertData) {
-//                                            $this->inheritanceHelper->addRelationToCheck($key);
-//                                        }
-//                                    }
-
-                                } else {
-                                    if (is_array($insertData)) {
-                                        foreach($insertData as $insertDataKey => $insertDataValue) {
-                                            if($oldData[$insertDataKey] != $insertDataValue) {
-                                                $this->inheritanceHelper->addFieldToCheck($insertDataKey);
-                                            }
-                                        }
-                                    } else {
-                                        if($oldData[$key] != $insertData) {
-                                            $this->inheritanceHelper->addFieldToCheck($key);
+                                    foreach($insertData as $insertDataKey => $insertDataValue) {
+                                        if($oldData[$insertDataKey] != $insertDataValue) {
+                                            $this->inheritanceHelper->addFieldToCheck($insertDataKey);
                                         }
                                     }
+                                } else {
+                                    if($oldData[$key] != $insertData) {
+                                        $this->inheritanceHelper->addFieldToCheck($key);
+                                    }
                                 }
-
-                            } else {
-                                Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
                             }
+                        } else {
+                            Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
                         }
                     }
                 }
             }
+
 
             $queryTable = $this->getQueryTableName() . "_" . $language;
             $this->db->insertOrUpdate($queryTable, $data);
@@ -253,29 +224,24 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
         foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $value) {
 
-            // continue to the next field if the current one is a relational field
-            if($value->isRelationType()) {
-                continue;
-            }
+            if($value->getColumnType()) {
+                $key = $value->getName();
 
-            $key = $value->getName();
-
-
-
-            if (is_array($value->getColumnType())) {
-                // if a datafield requires more than one field
-                foreach ($value->getColumnType() as $fkey => $fvalue) {
-                    $this->addModifyColumn($table, $key . "__" . $fkey, $fvalue,"", "NULL");
-                    $protectedColumns[] = $key . "__" . $fkey;
+                if (is_array($value->getColumnType())) {
+                    // if a datafield requires more than one field
+                    foreach ($value->getColumnType() as $fkey => $fvalue) {
+                        $this->addModifyColumn($table, $key . "__" . $fkey, $fvalue,"", "NULL");
+                        $protectedColumns[] = $key . "__" . $fkey;
+                    }
                 }
-            }
-            else {
-                if ($value->getColumnType()) {
-                    $this->addModifyColumn($table, $key, $value->getColumnType(), "", "NULL");
-                    $protectedColumns[] = $key;
+                else {
+                    if ($value->getColumnType()) {
+                        $this->addModifyColumn($table, $key, $value->getColumnType(), "", "NULL");
+                        $protectedColumns[] = $key;
+                    }
                 }
+                $this->addIndexToField($value,$table);
             }
-            $this->addIndexToField($value,$table);
         }
 
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColumns);
@@ -307,29 +273,26 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             // add non existing columns in the table
             if (is_array($fieldDefinitions) && count($fieldDefinitions)) {
                 foreach ($fieldDefinitions as $value) {
-                    // continue to the next field if the current one is a relational field
-                    if($value->isRelationType()) {
-                        continue;
-                    }
+                    if($value->getQueryColumnType()) {
+                        $key = $value->getName();
 
-                    $key = $value->getName();
-
-                    // if a datafield requires more than one column in the query table
-                    if (is_array($value->getQueryColumnType())) {
-                        foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                            $this->addModifyColumn($queryTable, $key . "__" . $fkey, $fvalue, "", "NULL");
-                            $protectedColumns[] = $key . "__" . $fkey;
+                        // if a datafield requires more than one column in the query table
+                        if (is_array($value->getQueryColumnType())) {
+                            foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
+                                $this->addModifyColumn($queryTable, $key . "__" . $fkey, $fvalue, "", "NULL");
+                                $protectedColumns[] = $key . "__" . $fkey;
+                            }
                         }
-                    }
 
-                    // everything else
-                    if (!is_array($value->getQueryColumnType()) && $value->getQueryColumnType()) {
-                        $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), "", "NULL");
-                        $protectedColumns[] = $key;
-                    }
+                        // everything else
+                        if (!is_array($value->getQueryColumnType()) && $value->getQueryColumnType()) {
+                            $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), "", "NULL");
+                            $protectedColumns[] = $key;
+                        }
 
-                    // add indices
-                    $this->addIndexToField($value, $queryTable);
+                        // add indices
+                        $this->addIndexToField($value, $queryTable);
+                    }
                 }
             }
 
