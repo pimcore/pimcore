@@ -201,7 +201,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         foreach ($languages as $language) {
             try {
                 $tablename = $this->getQueryTableName() . "_" . $language;
-                $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $defaultTable . '`.`oo_id` left JOIN `' . $tablename . '` ON `' . $defaultTable . '`.`oo_id` = `' . $tablename . '`.`ooo_id` AND `' . $tablename . '`.`language` = \'' . $language . '\';');
+                $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $defaultTable . '`.`oo_id` left JOIN `' . $tablename . '` ON `' . $defaultTable . '`.`oo_id` = `' . $tablename . '`.`ooo_id`;');
             }
             catch (Exception $e) {
                 Logger::error($e);
