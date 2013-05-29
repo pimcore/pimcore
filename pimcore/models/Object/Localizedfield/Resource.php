@@ -21,12 +21,19 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         return "object_localized_data_" . $this->model->getClass()->getId();
     }
 
+    public function getQueryTableName () {
+        return "object_localized_query_" . $this->model->getClass()->getId();
+    }
+
+
     public function save () {
         $this->delete();
 
         $object = $this->model->getObject();
 
         foreach ($this->model->getItems() as $language => $items) {
+            $inheritedValues = Object_Abstract::doGetInheritedValues();
+            Object_Abstract::setGetInheritedValues(false);
 
             $insertData = array(
                 "ooo_id" => $this->model->getObject()->getId(),
@@ -37,7 +44,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                 if (method_exists($fd, "save")) {
                     // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                     $fd->save($this->model, array("language" => $language));
-                    
+
                 } else {
                     if (is_array($fd->getColumnType())) {
                         $insertDataArray = $fd->getDataForResource($this->model->getLocalizedValue($fd->getName(), $language), $object);
@@ -47,15 +54,130 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                     }
                 }
             }
-            
+
+            $storeTable = $this->getTableName();
+            $queryTable = $this->getQueryTableName() . "_" . $language;
+
             $this->db->insert($this->getTableName(), $insertData);
-        }
+
+            Object_Abstract::setGetInheritedValues(true);
+
+            $data = array();
+            $data["ooo_id"] = $this->model->getObject()->getId();
+            $data["language"] = $language;
+
+
+            if($this->model->getClass()->getAllowInherit()) {
+
+                $currentData = $this->model->items[$language];
+                if (!$currentData) {
+                    continue;
+                }
+
+                $this->inheritanceHelper = new Object_Concrete_Resource_InheritanceHelper($object->getClassId(), "ooo_id", $storeTable, $queryTable);
+                $this->inheritanceHelper->resetFieldsToCheck();
+                $sql = "SELECT * FROM " . $queryTable . " WHERE ooo_id = " . $object->getId() . " AND language = '" . $language . "'";
+                $oldData = $this->db->fetchRow($sql);
+
+
+                // get fields which shouldn't be updated
+                $fd = $this->model->getClass()->getFieldDefinitions();
+                $untouchable = array();
+                foreach ($fd as $key => $value) {
+                    if (method_exists($value, "getLazyLoading") && $value->getLazyLoading()) {
+                        if (!in_array($key, $this->model->getLazyLoadedFields())) {
+                            //this is a relation subject to lazy loading - it has not been loaded
+                            $untouchable[] = $key;
+                        }
+                    }
+                }
+
+                foreach ($currentData as $key => $value) {
+                    $fd = $this->model->getClass()->getFielddefinition("localizedfields")->getFieldDefinition($key);
+
+                    if ($fd) {
+                        if ($fd->getQueryColumnType()) {
+
+                            if($fd->isRelationType()) {
+                                // TODO, Hmm ... for relation types there is not even a column, so skip them for now.
+                                continue;
+                            }
+
+                            // exclude untouchables if value is not an array - this means data has not been loaded
+                            if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
+                                $localizedValue = $this->model->getLocalizedValue($key, $language);
+                                $insertData = $fd->getDataForQueryResource($localizedValue, $object);
+
+                                if (is_array($insertData)) {
+                                    $data = array_merge($data, $insertData);
+                                }
+                                else {
+                                    $data[$key] = $insertData;
+                                }
+
+                                //get changed fields for inheritance
+                                if($fd->isRelationType()) {
+
+// TODO, Hmm ... for relation types there is not even a column, so skip them for now.
+//                                    if (is_array($insertData)) {
+//                                        $doInsert = false;
+//                                        foreach($insertData as $insertDataKey => $insertDataValue) {
+//                                            if($oldData[$insertDataKey] != $insertDataValue) {
+//                                                $doInsert = true;
+//                                            }
+//                                        }
+//
+//                                        if($doInsert) {
+//                                            $this->inheritanceHelper->addRelationToCheck($key, array_keys($insertData));
+//                                        }
+//                                    } else {
+//                                        if($oldData[$key] != $insertData) {
+//                                            $this->inheritanceHelper->addRelationToCheck($key);
+//                                        }
+//                                    }
+
+                                } else {
+                                    if (is_array($insertData)) {
+                                        foreach($insertData as $insertDataKey => $insertDataValue) {
+                                            if($oldData[$insertDataKey] != $insertDataValue) {
+                                                $this->inheritanceHelper->addFieldToCheck($insertDataKey);
+                                            }
+                                        }
+                                    } else {
+                                        if($oldData[$key] != $insertData) {
+                                            $this->inheritanceHelper->addFieldToCheck($key);
+                                        }
+                                    }
+                                }
+
+                            } else {
+                                Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
+                            }
+                        }
+                    }
+                }
+            }
+
+            $queryTable = $this->getQueryTableName() . "_" . $language;
+            $this->db->insertOrUpdate($queryTable, $data);
+            $this->inheritanceHelper->doUpdate($object->getId());
+            $this->inheritanceHelper->resetFieldsToCheck();
+
+            Object_Abstract::setGetInheritedValues($inheritedValues);
+
+        } // foreach language
     }
 
-    public function delete () {
+    public function delete ($deleteQuery = false) {
 
         try {
-            $this->db->delete($this->getTableName(), $this->db->quoteInto("ooo_id = ?", $this->model->getObject()->getId()));
+            $id = $this->model->getObject()->getId();
+            $tablename = $this->getTableName();
+            $this->db->delete($tablename, $this->db->quoteInto("ooo_id = ?", $id));
+            if ($deleteQuery) {
+                $querytable = $this->getQueryTableName();
+                $this->db->delete($querytable, $this->db->quoteInto("ooo_id = ?", $id));
+            }
         } catch (Exception $e) {
             $this->createUpdateTable();
         }
@@ -105,10 +227,14 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         $defaultTable = 'object_query_' . $this->model->getClass()->getId();
-        
+
+        $classDef = $this->model->getClass();
+        $localizedFieldDef = $classDef->getFieldDefinition("localizedfields");
+
         foreach ($languages as $language) {
             try {
-                $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $defaultTable . '`.`oo_id` left JOIN `' . $this->getTableName() . '` ON `' . $defaultTable . '`.`oo_id` = `' . $this->getTableName() . '`.`ooo_id` AND `' . $this->getTableName() . '`.`language` = \'' . $language . '\';');
+                $tablename = $this->getQueryTableName() . "_" . $language;
+                $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $defaultTable . '`.`oo_id` left JOIN `' . $tablename . '` ON `' . $defaultTable . '`.`oo_id` = `' . $tablename . '`.`ooo_id` AND `' . $tablename . '`.`language` = \'' . $language . '\';');
             }
             catch (Exception $e) {
                 Logger::error($e);
@@ -149,7 +275,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;
-        $protectedColums = array("ooo_id", "language");
+        $protectedColumns = array("ooo_id", "language");
 
         foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $value) {
 
@@ -166,21 +292,77 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                 // if a datafield requires more than one field
                 foreach ($value->getColumnType() as $fkey => $fvalue) {
                     $this->addModifyColumn($table, $key . "__" . $fkey, $fvalue,"", "NULL");
-                    $protectedColums[] = $key . "__" . $fkey;
+                    $protectedColumns[] = $key . "__" . $fkey;
                 }
             }
             else {
                 if ($value->getColumnType()) {
                     $this->addModifyColumn($table, $key, $value->getColumnType(), "", "NULL");
-                    $protectedColums[] = $key;
+                    $protectedColumns[] = $key;
                 }
             }
             $this->addIndexToField($value,$table);
         }
 
-        $this->removeUnusedColumns($table, $columnsToRemove, $protectedColums);
+        $this->removeUnusedColumns($table, $columnsToRemove, $protectedColumns);
 
         $this->createLocalizedViews();
+
+
+        $validLanguages = Pimcore_Tool::getValidLanguages();
+
+        foreach ($validLanguages as &$language) {
+            $queryTable = $this->getQueryTableName();
+            $queryTable .= "_" . $language;
+
+            $this->db->query("CREATE TABLE IF NOT EXISTS `" . $queryTable . "` (
+                  `ooo_id` int(11) NOT NULL default '0',
+                  `language` varchar(10) NOT NULL DEFAULT '',
+                  PRIMARY KEY (`ooo_id`,`language`),
+                  INDEX `ooo_id` (`ooo_id`),
+                  INDEX `language` (`language`)
+                ) DEFAULT CHARSET=utf8;");
+
+            // create object table if not exists
+            $protectedColumns = array("ooo_id", "language");
+
+            $existingColumns = $this->getValidTableColumns($queryTable, false); // no caching of table definition
+            $columnsToRemove = $existingColumns;
+
+            $fieldDefinitions = $this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions();
+
+            // add non existing columns in the table
+            if (is_array($fieldDefinitions) && count($fieldDefinitions)) {
+                foreach ($fieldDefinitions as $value) {
+                    // continue to the next field if the current one is a relational field
+                    if($value->isRelationType()) {
+                        continue;
+                    }
+
+                    $key = $value->getName();
+
+                    // if a datafield requires more than one column in the query table
+                    if (is_array($value->getQueryColumnType())) {
+                        foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
+                            $this->addModifyColumn($queryTable, $key . "__" . $fkey, $fvalue, "", "NULL");
+                            $protectedColumns[] = $key . "__" . $fkey;
+                        }
+                    }
+
+                    // everything else
+                    if (!is_array($value->getQueryColumnType()) && $value->getQueryColumnType()) {
+                        $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), "", "NULL");
+                        $protectedColumns[] = $key;
+                    }
+
+                    // add indices
+                    $this->addIndexToField($value, $queryTable);
+                }
+            }
+
+            // remove unused columns in the table
+            $this->removeUnusedColumns($queryTable, $columnsToRemove, $protectedColumns);
+        }
     }
 
 
@@ -217,7 +399,8 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                 $columnName = $field->getName();
                 try {
                     $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
-                } catch (Exception $e) {}
+                } catch (Exception $e) {
+                }
             }
         }
     }

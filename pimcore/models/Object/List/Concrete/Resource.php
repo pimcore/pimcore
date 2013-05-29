@@ -28,7 +28,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
     private $tableName = null;
 
     /**
-     * Loads a list of objects for the specicifies parameters, returns an array of Object_Abstract elements
+     * Loads a list of objects for the specified parameters, returns an array of Object_Abstract elements
      *
      * @return array 
      */
@@ -38,7 +38,8 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
 
         try {
             $field = $this->getTableName() . ".o_id";
-            $objectsData = $this->db->fetchAll("SELECT " . $this->getSelectPart($field,$field) . " AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+            $sql = "SELECT " . $this->getSelectPart($field,$field) . " AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit();
+            $objectsData = $this->db->fetchAll($sql, $this->model->getConditionVariables());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
@@ -135,9 +136,6 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
 
                 // check for a localized field and if they should be used for this list
                 if(property_exists("Object_" . ucfirst($this->model->getClassName()), "localizedfields")) {
-
-                    $language = "default";
-
                     if(!$this->model->getIgnoreLocale()) {
                         if($this->model->getLocale()) {
                             if(Pimcore_Tool::isValidLanguage((string) $this->model->getLocale())) {
@@ -145,12 +143,15 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
                             }
                         }
 
-                        if(Zend_Registry::isRegistered("Zend_Locale") && $language == "default") {
+                        if(Zend_Registry::isRegistered("Zend_Locale") /* && $language == "default" */) {
                             $locale = Zend_Registry::get("Zend_Locale");
                             if(Pimcore_Tool::isValidLanguage((string) $locale)) {
                                 $language = (string) $locale;
                             }
                         }
+                    }
+                    if (!$language) {
+                        throw new Exception("No Language set");
                     }
                     $this->tableName = "object_localized_" . $this->model->getClassId() . "_" . $language;
                 }
@@ -220,13 +221,10 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
                         $name .= "~" . $fc['fieldname'];
                     }
 
-
                     if(!empty($condition)) {
                         $condition .= " AND ";
                     }
                     $condition .= "`" . $name . "`.fieldname = '" . $fc['fieldname'] . "'";
-
-
                 }
             }
 
