@@ -382,6 +382,13 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             $localizedView = current($view);
             $this->db->query("DROP VIEW IF EXISTS `".$localizedView."`");
         }
+
+        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_localized_query_" . $this->model->getId() . "_%'");
+        foreach ($allTables as $table) {
+            $queryTable = current($table);
+            $this->db->query("DROP TABLE IF EXISTS `".$queryTable."`");
+        }
+
         $this->db->query("DROP TABLE IF EXISTS object_localized_data_" . $this->model->getId());
 
         // objectbrick tables
