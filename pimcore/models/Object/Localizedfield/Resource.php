@@ -27,7 +27,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
 
     public function save () {
-        $this->delete();
+        $this->delete(false);
 
         $object = $this->model->getObject();
         $validLanguages = Pimcore_Tool::getValidLanguages();
@@ -139,15 +139,18 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         } // foreach language
     }
 
-    public function delete ($deleteQuery = false) {
+    public function delete ($deleteQuery = true) {
 
         try {
             $id = $this->model->getObject()->getId();
             $tablename = $this->getTableName();
             $this->db->delete($tablename, $this->db->quoteInto("ooo_id = ?", $id));
             if ($deleteQuery) {
-                $querytable = $this->getQueryTableName();
-                $this->db->delete($querytable, $this->db->quoteInto("ooo_id = ?", $id));
+                $validLanguages = Pimcore_Tool::getValidLanguages();
+                foreach ($validLanguages as $language) {
+                    $queryTable = $this->getQueryTableName() . "_" . $language;
+                    $this->db->delete($queryTable, $this->db->quoteInto("ooo_id = ?", $id));
+                }
             }
         } catch (Exception $e) {
             $this->createUpdateTable();
