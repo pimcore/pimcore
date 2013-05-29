@@ -66,6 +66,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $data["ooo_id"] = $this->model->getObject()->getId();
             $data["language"] = $language;
 
+            $this->inheritanceHelper = new Object_Concrete_Resource_InheritanceHelper($object->getClassId(), "ooo_id", $storeTable, $queryTable);
 
             if($this->model->getClass()->getAllowInherit()) {
 
@@ -74,7 +75,6 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                     continue;
                 }
 
-                $this->inheritanceHelper = new Object_Concrete_Resource_InheritanceHelper($object->getClassId(), "ooo_id", $storeTable, $queryTable);
                 $this->inheritanceHelper->resetFieldsToCheck();
                 $sql = "SELECT * FROM " . $queryTable . " WHERE ooo_id = " . $object->getId() . " AND language = '" . $language . "'";
                 $oldData = $this->db->fetchRow($sql);
