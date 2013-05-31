@@ -22,8 +22,14 @@ pimcore.document.edit = Class.create({
 
     getEditLink: function () {
         var date = new Date();
-        return  this.document.data.path + this.document.data.key + '?pimcore_editmode=true&systemLocale='
+        var link =  this.document.data.path + this.document.data.key + '?pimcore_editmode=true&systemLocale='
                                                             + pimcore.settings.language+'&_dc=' + date.getTime();
+
+        if(this.persona && this.persona.getValue()) {
+            link += "&pimcore_persona=" + this.persona.getValue();
+        }
+
+        return link;
     },
 
     getLayout: function (additionalConfig) {
@@ -35,7 +41,7 @@ pimcore.document.edit = Class.create({
             var html = '<iframe id="' + this.iframeName + '" width="100%" name="' + this.iframeName
                                                     + '" src="' + this.getEditLink() + '" frameborder="0"></iframe>';
 
-            var personas = new Ext.form.ComboBox({
+            this.persona = new Ext.form.ComboBox({
                 displayField:'text',
                 valueField: "id",
                 store: {
@@ -49,8 +55,8 @@ pimcore.document.edit = Class.create({
                 emptyText: t("select_a_persona"),
                 listeners: {
                     select: function (el) {
-                        console.log(el.getValue());
-                    }
+                        this.reload(true);
+                    }.bind(this)
                 }
             });
 
@@ -65,7 +71,7 @@ pimcore.document.edit = Class.create({
                 tbar.push("-", {
                     text: t("edit_content_for_persona"),
                     xtype: "tbtext"
-                }, personas);
+                }, this.persona);
             }
 
             var config = {

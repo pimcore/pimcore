@@ -269,4 +269,36 @@ class Document_Page extends Document_PageSnippet {
     {
         return $this->personas;
     }
+
+    public function getElement($name) {
+
+        // check if a persona is requested for this page, if yes deliver a different version of the element (prefixed)
+        if($_REQUEST["pimcore_persona"]) {
+            $elements = $this->getElements();
+            $personaId = $_REQUEST["pimcore_persona"];
+            $namePrefix = "persona-".$personaId."-";
+            $originalName = str_replace($namePrefix, "", $name); // name cleaned up from prefixed (multi, block, area)
+
+            $personaName = $namePrefix . $originalName;
+            if($this->hasElement($personaName)) {
+                $element = $elements[$personaName];
+                if(!$element->getInherited()) {
+                    return $element;
+                }
+            }
+
+            // if there's no dedicated content for this persona, inherit from the "original" content (unprefixed)
+            // and mark it as inherited so it is clear in the ui that the content is not specific to the selected persona
+            $inheritedElement = parent::getElement($originalName);
+            if($inheritedElement) {
+                $inheritedElement = clone $inheritedElement;
+                $inheritedElement->setResource(null);
+                $inheritedElement->setName($personaName);
+                $inheritedElement->setInherited(true);
+                return $inheritedElement;
+            }
+        }
+
+        return parent::getElement($name);
+    }
 }
