@@ -51,8 +51,6 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
         
         if($request->getParam("document") instanceof Document_Page) {
             $this->document = $request->getParam("document");
-        } else {
-            $this->disable();
         }
     }
 
@@ -77,7 +75,18 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
 
             $targets = array();
 
+            $dataPush = array();
+
+            if(count($this->events) > 0) {
+                $dataPush["events"] = $this->events;
+            }
+
+            if($this->document instanceof Document) {
+                $dataPush["document"] = $this->document->getId();
+            }
+
             if($this->document) {
+                // @TODO: Cache this
                 $list = new Tool_Targeting_Rule_List();
 
                 foreach($list->load() as $target) {
@@ -102,6 +111,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
             }
 
             $code = '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
+            $code .= '<script type="text/javascript">var _pta = ' . Zend_Json::encode($dataPush) . '</script>';
             $code .= '<script type="text/javascript">var _ptd = ' . Zend_Json::encode($targets) . '</script>';
             $code .= '<script type="text/javascript">' . $controlCode . '</script>' . "\n";
             // analytics
@@ -115,14 +125,6 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
             }
 
             $this->getResponse()->setBody($body);
-
-            if(count($this->events) > 0) {
-                setcookie("pimcore__~__targeting_event", Zend_Json::encode($this->events));
-            }
-
-            if($this->document instanceof Document) {
-                setcookie("pimcore__~__targeting_document", $this->document->getId());
-            }
         }
     }
 }

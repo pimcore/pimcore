@@ -278,22 +278,6 @@
                 doc[add](pre + 'readystatechange', init, false);
                 win[add](pre + 'load', init, false);
             }
-        },
-
-        getCookie: function (c_name) {
-            var i, x, y, ARRcookies = document.cookie.split(";");
-            for (i = 0; i < ARRcookies.length; i++) {
-                x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
-                y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
-                x = x.replace(/^\s+|\s+$/g, "");
-                if (x == c_name) {
-                    return decodeURIComponent(y);
-                }
-            }
-        },
-
-        unsetCookie: function(name) {
-            document.cookie = name + '=; expires=Thu, 01-Jan-70 00:00:01 GMT;';
         }
     };
 
@@ -555,8 +539,8 @@
             user["events"] = [];
         }
 
-        // get new events
-        var newEvents = util.getCookie("pimcore__~__targeting_event");
+        // get new events || @TODO: NEEDS TO BE REWRITTEN TO the _pta VARIABLE
+        /*var newEvents = util.getCookie("pimcore__~__targeting_event");
         if(newEvents) {
             newEvents = JSON.parse(newEvents);
             util.unsetCookie("pimcore__~__targeting_event");
@@ -564,7 +548,7 @@
             for(var ev=0; ev<newEvents.length; ev++) {
                 user["events"].push(newEvents[ev]);
             }
-        }
+        }*/
     } catch (e9) {
         util.log(e9);
     }
