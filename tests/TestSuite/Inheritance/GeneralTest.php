@@ -6,7 +6,7 @@
  */
 
 
-class TestSuite_Inheritance_LocalizedFieldTest extends Test_Base {
+class TestSuite_Inheritance_GeneralTest extends Test_Base {
 
     public function setUp() {
         $this->inAdminMode = Pimcore::inAdmin();
@@ -30,7 +30,7 @@ class TestSuite_Inheritance_LocalizedFieldTest extends Test_Base {
      *    |-one
      *        |-two
      *
-     * two is created after one, en fields inherited. two gets moved out and moved in again. Then one gets updated.
+     * two is created after one. two gets moved out and moved in again. Then one gets updated.
      */
     public function testInheritance() {
         $this->printTestName();
@@ -41,8 +41,7 @@ class TestSuite_Inheritance_LocalizedFieldTest extends Test_Base {
         $one->setParentId(1);
         $one->setPublished(1);
 
-        $one->setInput("parenttextEN", "en");
-        $one->setInput("parenttextDE", "de");
+        $one->setNormalInput("parenttext");
         $one->save();
         $id1 = $one->getId();
 
@@ -50,112 +49,85 @@ class TestSuite_Inheritance_LocalizedFieldTest extends Test_Base {
         $two->setKey("two");
         $two->setParentId($one->getId());
         $two->setPublished(1);
-        $two->setInput("childtextDE", "de");
+        $two->setNormalInput("childtext");
         $two->save();
 
         $id2 = $two->getId();
         $one = Object_Abstract::getById($id1);
         $two = Object_Abstract::getById($id2);
 
-        $this->assertEquals("parenttextEN", $one->getInput("en"));
-        $this->assertEquals("parenttextEN", $two->getInput("en"));
+        $this->assertEquals("parenttext", $one->getNormalInput());
+        // not inherited
+        $this->assertEquals("childtext", $two->getNormalInput());
 
-        $this->assertEquals("parenttextDE", $one->getInput("de"));
-        $this->assertEquals("childtextDE", $two->getInput("de"));
 
         // null it out
-        $two->setInput(null, "de");
+        $two->setNormalInput(null);
         $two->save();
         $two = Object_Abstract::getById($id2);
-        $this->assertEquals("parenttextDE", $two->getInput("de"));
+        $this->assertEquals("parenttext", $two->getNormalInput());
 
         $list = new Object_Inheritance_List();
-        $list->setCondition("input LIKE '%parenttext%'");
+        $list->setCondition("normalinput LIKE '%parenttext%'");
         $list->setLocale("de");
         $listItems = $list->load();
-        $this->assertEquals(2, count($listItems), "Expected two list items for de");
+        $this->assertEquals(2, count($listItems), "Expected two list items");
 
         // set it back
-        $two->setInput("childtextDE", "de");
+        $two->setNormalInput("childtext");
         $two->save();
         $two = Object_Abstract::getById($id2);
 
         $list = new Object_Inheritance_List();
-        $list->setCondition("input LIKE '%parenttext%'");
-        $list->setLocale("en");
-        $listItems = $list->load();
-        $this->assertEquals(2, count($listItems), "Expected two list items for en");
-
-        $list = new Object_Inheritance_List();
-        $list->setCondition("input LIKE '%parenttext%'");
+        $list->setCondition("normalinput LIKE '%parenttext%'");
         $list->setLocale("de");
         $listItems = $list->load();
         $this->assertEquals(1, count($listItems), "Expected one list item for de");
 
+        // null it out
+        $two->setNormalInput(null);
+        $two->save();
+        $two = Object_Abstract::getById($id2);
+        $this->assertEquals("parenttext", $two->getNormalInput());
 
-
+        // disable inheritance
         $getInheritedValues = Object_Abstract::getGetInheritedValues();
         Object_Abstract::setGetInheritedValues(false);
 
         $two = Object_Abstract::getById($id2);
-        $this->assertEquals(null, $two->getInput("en"));
-        $this->assertEquals("childtextDE", $two->getInput("de"));
+        $this->assertEquals(null, $two->getNormalInput());
 
+        // enable inheritance
         Object_Abstract::setGetInheritedValues($getInheritedValues);
+        $two = Object_Abstract::getById($id2);
+        $this->assertEquals("parenttext", $two->getNormalInput());
 
         // now move it out
 
         $two->setParentId(1);
         $two->save();
 
-        $this->assertEquals(null, $two->getInput("en"));
-        $this->assertEquals("childtextDE", $two->getInput("de"));
+        // value must be null now
+        $this->assertEquals(null, $two->getNormalInput());
 
         // and move it back in
 
         $two->setParentId($id1);
         $two->save();
 
-        $this->assertEquals("parenttextEN", $two->getInput("en"));
-        $this->assertEquals("childtextDE", $two->getInput("de"));
+        $this->assertEquals("parenttext", $two->getNormalInput());
 
         // modify parent object
-        $one->setInput("parenttextEN2", "en");
+        $one->setNormalInput("parenttext2");
         $one->save();
 
         $two = Object_Abstract::getById($id2);
-        $this->assertEquals("parenttextEN2", $two->getInput("en"));
-
-
-        // now turn inheritance off
-        $class = $one->getClass();
-        $class->setAllowInherit(false);
-        $class->save();
-
-        $one = Object_Abstract::getById($id2);
-        $two = Object_Abstract::getById($id2);
-
-        // save both objects again
-        $one->save();
-        $two->save();
-
-        $two = Object_Abstract::getById($id2);
-        $this->assertEquals(null, $two->getInput("en"));
-
-
-        $list = new Object_Inheritance_List();
-        $list->setCondition("input LIKE '%parenttext%'");
-        $list->setLocale("en");
-        $listItems = $list->load();
-        $this->assertEquals(1, count($listItems), "Expected one list item for en");
-
-        // turn it back on
-        $class->setAllowInherit(true);
-        $class->save();
+        // check that child objects has been updated as well
+        $this->assertEquals("parenttext2", $two->getNormalInput());
 
         // invalid locale
         $list = new Object_Inheritance_List();
-        $list->setCondition("input LIKE '%parenttext%'");
+        $list->setCondition("normalinput LIKE '%parenttext%'");
         $list->setLocale("xx");
         try {
             $listItems = $list->load();
