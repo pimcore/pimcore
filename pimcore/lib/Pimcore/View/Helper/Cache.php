@@ -82,7 +82,7 @@ class Pimcore_View_Helper_Cache_Controller {
             }
     
             $content = ob_get_clean();
-            Pimcore_Model_Cache::save($content, $this->key, $tags, $this->lifetime, 996);
+            Pimcore_Model_Cache::save($content, $this->key, $tags, $this->lifetime, 996, true);
             echo $content;
         }
     }
