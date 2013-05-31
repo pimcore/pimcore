@@ -846,6 +846,48 @@ pimcore.settings.targeting.conditions = {
         });
 
         return item;
+    },
+
+    itemPersona: function (panel, data, getName) {
+
+        var niceName = t("personas");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
+            items: [{
+                xtype: "combo",
+                name: "persona",
+                displayField:'text',
+                valueField: "id",
+                store: pimcore.globalmanager.get("personas"),
+                editable: false,
+                width: 300,
+                triggerAction: 'all',
+                listWidth: 200,
+                mode: "local",
+                value: data["persona"],
+                emptyText: t("select_a_persona")
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "persona"
+            }]
+        });
+
+        return item;
     }
 };
 

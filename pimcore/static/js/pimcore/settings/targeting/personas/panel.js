@@ -120,6 +120,8 @@ pimcore.settings.targeting.personas.panel= Class.create({
                         Ext.Msg.alert(t('add_persona'), t('problem_creating_new_persona'));
                     } else {
                         this.openPersona(intval(data.id));
+
+                        pimcore.globalmanager.get("personas").reload();
                     }
                 }.bind(this)
             });
@@ -139,6 +141,8 @@ pimcore.settings.targeting.personas.panel= Class.create({
             },
             success: function () {
                 this.attributes.reference.tree.getRootNode().reload();
+
+                pimcore.globalmanager.get("personas").reload();
             }.bind(this)
         });
     },

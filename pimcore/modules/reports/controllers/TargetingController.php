@@ -94,6 +94,8 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
         $actions->setCodesnippetCode($data["actions"]["codesnippet.code"]);
         $actions->setCodesnippetSelector($data["actions"]["codesnippet.selector"]);
         $actions->setCodesnippetPosition($data["actions"]["codesnippet.position"]);
+        $actions->setPersonaId($data["actions"]["persona.id"]);
+        $actions->setPersonaEnabled($data["actions"]["persona.enabled"]);
         $target->setActions($actions);
 
         $target->save();
@@ -110,6 +112,14 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
     public function personaListAction() {
 
         $personas = array();
+
+        if($this->getParam("add-default")) {
+            $personas[] = array(
+                "id" => "",
+                "text" => Zend_Registry::get("Zend_Translate")->translate("default")
+            );
+        }
+
         $list = new Tool_Targeting_Persona_List();
 
         foreach($list->load() as $persona) {

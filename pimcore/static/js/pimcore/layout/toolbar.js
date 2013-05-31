@@ -224,7 +224,7 @@ pimcore.layout.toolbar = Class.create({
                     iconCls: "pimcore_icon_tab_targeting",
                     handler: this.showTargeting
                 },{
-                    text: t("personas"),
+                    text: t('target_group') + " (" + t("personas") + ")",
                     iconCls: "pimcore_icon_personas",
                     handler: this.showPersonas
                 }]
@@ -1037,17 +1037,17 @@ pimcore.layout.toolbar = Class.create({
     showPersonas: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         try {
-            tabPanel.activate(pimcore.globalmanager.get("personas").getLayout());
+            tabPanel.activate(pimcore.globalmanager.get("personasPanel").getLayout());
         }
         catch (e) {
             var personas = new pimcore.settings.targeting.personas.panel();
-            pimcore.globalmanager.add("personas", personas);
+            pimcore.globalmanager.add("personasPanel", personas);
 
             tabPanel.add(personas.getLayout());
             tabPanel.activate(personas.getLayout());
 
             personas.getLayout().on("destroy", function () {
-                pimcore.globalmanager.remove("personas");
+                pimcore.globalmanager.remove("personasPanel");
             }.bind(this));
 
             pimcore.layout.refresh();
