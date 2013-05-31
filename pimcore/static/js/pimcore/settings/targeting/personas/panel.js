@@ -12,11 +12,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.settings.targeting.rules.panel");
-pimcore.settings.targeting.rules.panel= Class.create({
+pimcore.registerNS("pimcore.settings.targeting.personas.panel");
+pimcore.settings.targeting.personas.panel= Class.create({
 
     initialize: function() {
-        this.treeDataUrl = '/admin/reports/targeting/rule-list/';
+        this.treeDataUrl = '/admin/reports/targeting/persona-list/';
     },
 
 
@@ -24,11 +24,11 @@ pimcore.settings.targeting.rules.panel= Class.create({
 
         if (this.layout == null) {
             this.layout = new Ext.Panel({
-                title: t('global_targeting_rules'),
+                title: t('personas'),
                 layout: "border",
                 closable: true,
                 border: false,
-                iconCls: "pimcore_icon_tab_targeting",
+                iconCls: "pimcore_icon_personas",
                 items: [this.getTree(), this.getTabPanel()]
             });
         }
@@ -56,7 +56,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
                     requestMethod: "GET",
                     baseAttrs: {
                         listeners: {
-                            "click": this.openTarget.bind(this),
+                            "click": this.openPersona.bind(this),
                             "contextmenu": function () {
                                 this.select();
 
@@ -64,7 +64,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
                                 menu.add(new Ext.menu.Item({
                                     text: t('delete'),
                                     iconCls: "pimcore_icon_delete",
-                                    handler: this.attributes.reference.deleteTarget.bind(this)
+                                    handler: this.attributes.reference.deletePersona.bind(this)
                                 }));
 
                                 menu.show(this.ui.getAnchor());
@@ -74,7 +74,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
                         allowDrop: false,
                         allowChildren: false,
                         isTarget: false,
-                        iconCls: "pimcore_icon_targeting",
+                        iconCls: "pimcore_icon_personas",
                         leaf: true
                     }
                 }),
@@ -82,9 +82,9 @@ pimcore.settings.targeting.rules.panel= Class.create({
                 tbar: {
                     items: [
                         {
-                            text: t("add_target"),
+                            text: t("add_persona"),
                             iconCls: "pimcore_icon_add",
-                            handler: this.addTarget.bind(this)
+                            handler: this.addPersona.bind(this)
                         }
                     ]
                 }
@@ -98,17 +98,16 @@ pimcore.settings.targeting.rules.panel= Class.create({
         return this.tree;
     },
 
-    addTarget: function () {
-        Ext.MessageBox.prompt(t('add_target'), t('enter_the_name_of_the_new_target'),
-                                                this.addTargetComplete.bind(this), null, null, "");
+    addPersona: function () {
+        Ext.MessageBox.prompt(t('add_persona'), t('enter_the_name_of_the_new_persona'),
+                                                this.addPersonaComplete.bind(this), null, null, "");
     },
 
-    addTargetComplete: function (button, value, object) {
+    addPersonaComplete: function (button, value, object) {
 
-        var regresult = value.match(/[a-zA-Z0-9_\-]+/);
-        if (button == "ok" && value.length > 2 && regresult == value) {
+        if (button == "ok" && value.length > 2) {
             Ext.Ajax.request({
-                url: "/admin/reports/targeting/rule-add",
+                url: "/admin/reports/targeting/persona-add",
                 params: {
                     name: value
                 },
@@ -118,9 +117,9 @@ pimcore.settings.targeting.rules.panel= Class.create({
                     this.tree.getRootNode().reload();
 
                     if(!data || !data.success) {
-                        Ext.Msg.alert(t('add_target'), t('problem_creating_new_target'));
+                        Ext.Msg.alert(t('add_persona'), t('problem_creating_new_persona'));
                     } else {
-                        this.openTarget(intval(data.id));
+                        this.openPersona(intval(data.id));
                     }
                 }.bind(this)
             });
@@ -128,13 +127,13 @@ pimcore.settings.targeting.rules.panel= Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_target'), t('problem_creating_new_target'));
+            Ext.Msg.alert(t('add_persona'), t('problem_creating_new_persona'));
         }
     },
 
-    deleteTarget: function () {
+    deletePersona: function () {
         Ext.Ajax.request({
-            url: "/admin/reports/targeting/rule-delete",
+            url: "/admin/reports/targeting/persona-delete",
             params: {
                 id: this.id
             },
@@ -144,27 +143,27 @@ pimcore.settings.targeting.rules.panel= Class.create({
         });
     },
 
-    openTarget: function (node) {
+    openPersona: function (node) {
 
         if(!is_numeric(node)) {
             node = node.id;
         }
 
 
-        var existingPanel = Ext.getCmp("pimcore_targeting_panel_" + node);
+        var existingPanel = Ext.getCmp("pimcore_personas_panel_" + node);
         if(existingPanel) {
             this.panel.activate(existingPanel);
             return;
         }
 
         Ext.Ajax.request({
-            url: "/admin/reports/targeting/rule-get",
+            url: "/admin/reports/targeting/persona-get",
             params: {
                 id: node
             },
             success: function (response) {
                 var res = Ext.decode(response.responseText);
-                var item = new pimcore.settings.targeting.rules.item(this, res);
+                var item = new pimcore.settings.targeting.personas.item(this, res);
             }.bind(this)
         });
 

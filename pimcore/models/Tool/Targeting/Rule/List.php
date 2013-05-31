@@ -15,10 +15,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Targeting_Rules_List extends Pimcore_Model_List_Abstract {
+class Tool_Targeting_Rule_List extends Pimcore_Model_List_Abstract {
 
     /**
-     * Contains the results of the list. They are all an instance of Tool_Targeting_Rules
+     * Contains the results of the list. They are all an instance of Tool_Targeting_Rule
      *
      * @var array
      */
