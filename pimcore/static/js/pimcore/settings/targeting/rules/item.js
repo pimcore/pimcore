@@ -13,8 +13,8 @@
  */
 
 /*global google */
-pimcore.registerNS("pimcore.settings.targeting.item");
-pimcore.settings.targeting.item = Class.create({
+pimcore.registerNS("pimcore.settings.targeting.rules.item");
+pimcore.settings.targeting.rules.item = Class.create({
 
     initialize: function(parent, data) {
         this.parent = parent;
