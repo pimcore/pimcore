@@ -13,8 +13,8 @@
  */
 
 /*global google */
-pimcore.registerNS("pimcore.settings.targeting.rules.item");
-pimcore.settings.targeting.rules.item = Class.create({
+pimcore.registerNS("pimcore.settings.targeting.personas.item");
+pimcore.settings.targeting.personas.item = Class.create({
 
     initialize: function(parent, data) {
         this.parent = parent;
@@ -27,13 +27,13 @@ pimcore.settings.targeting.rules.item = Class.create({
             closable: true,
             deferredRender: false,
             forceLayout: true,
-            id: "pimcore_targeting_panel_" + this.data.id,
+            id: "pimcore_personas_panel_" + this.data.id,
             buttons: [{
                 text: t("save"),
                 iconCls: "pimcore_icon_apply",
                 handler: this.save.bind(this)
             }],
-            items: [this.getSettings(),this.getConditions(), this.getActions()]
+            items: [this.getSettings(),this.getConditions()]
         });
 
 
@@ -47,121 +47,6 @@ pimcore.settings.targeting.rules.item = Class.create({
         this.parent.panel.add(this.tabPanel);
         this.parent.panel.activate(this.tabPanel);
         this.parent.panel.doLayout();
-    },
-
-    getActions: function () {
-        this.actionsForm = new Ext.form.FormPanel({
-            layout: "pimcoreform",
-            bodyStyle: "padding: 10px",
-            title: t("actions"),
-            autoScroll: true,
-            border:false,
-            items: [{
-                xtype: "fieldset",
-                title: t("redirect"),
-                itemId: "actions_redirect",
-                collapsible: true,
-                collapsed: !this.data.actions.redirectEnabled,
-                items: [{
-                    xtype: "textfield",
-                    width: 350,
-                    fieldLabel: "URL",
-                    name: "redirect.url",
-                    value: this.data.actions.redirectUrl,
-                    cls: "input_drop_target",
-                    listeners: {
-                        "render": function (el) {
-                            new Ext.dd.DropZone(el.getEl(), {
-                                reference: this,
-                                ddGroup: "element",
-                                getTargetFromEvent: function(e) {
-                                    return this.getEl();
-                                }.bind(el),
-
-                                onNodeOver : function(target, dd, e, data) {
-                                    return Ext.dd.DropZone.prototype.dropAllowed;
-                                },
-
-                                onNodeDrop : function (target, dd, e, data) {
-                                    if (data.node.attributes.elementType == "document") {
-                                        this.setValue(data.node.attributes.path);
-                                        return true;
-                                    }
-                                    return false;
-                                }.bind(el)
-                            });
-                        }
-                    }
-                }]
-            }, {
-                xtype: "fieldset",
-                title: t("programmatically"),
-                itemId: "actions_programmatically",
-                collapsible: true,
-                collapsed: !this.data.actions.programmaticallyEnabled,
-                items: [{
-                    xtype: "displayfield",
-                    value: t("in_this_case_a_developer_has_to_implement_a_logic_which_handles_this_action")
-                }]
-            }, {
-                xtype: "fieldset",
-                title: t("event"),
-                itemId: "actions_event",
-                collapsible: true,
-                collapsed: !this.data.actions.eventEnabled,
-                items: [{
-                    xtype: "textfield",
-                    name: "event.key",
-                    width: 200,
-                    fieldLabel: t("key"),
-                    value: this.data.actions.eventKey
-                }, {
-                    xtype: "textfield",
-                    name: "event.value",
-                    width: 100,
-                    fieldLabel: t("value"),
-                    value: this.data.actions.eventValue
-                }]
-            }, {
-                xtype: "fieldset",
-                itemId: "actions_codesnippet",
-                title: t("code_snippet"),
-                collapsible: true,
-                collapsed: !this.data.actions.codesnippetEnabled,
-                items: [{
-                    xtype: "textarea",
-                    width: 500,
-                    height: 200,
-                    fieldLabel: t("code"),
-                    name: "codesnippet.code",
-                    value: this.data.actions.codesnippetCode
-                },{
-                    xtype:'combo',
-                    fieldLabel: t('element_css_selector'),
-                    name: "codesnippet.selector",
-                    disableKeyFilter: true,
-                    store: [["body","body"],["head","head"]],
-                    triggerAction: "all",
-                    mode: "local",
-                    width: 250,
-                    value: this.data.actions.codesnippetSelector
-                },{
-                    xtype:'combo',
-                    fieldLabel: t('insert_position'),
-                    name: "codesnippet.position",
-                    store: [["beginning",t("beginning")],["end",t("end")],["replace",t("replace")]],
-                    triggerAction: "all",
-                    typeAhead: false,
-                    editable: false,
-                    forceSelection: true,
-                    mode: "local",
-                    width: 250,
-                    value: this.data.actions.codesnippetPosition
-                }]
-            }]
-        });
-
-        return this.actionsForm;
     },
 
     getSettings: function () {
@@ -260,12 +145,6 @@ pimcore.settings.targeting.rules.item = Class.create({
 
         var saveData = {};
         saveData["settings"] = this.settingsForm.getForm().getFieldValues();
-        saveData["actions"] = this.actionsForm.getForm().getFieldValues();
-        saveData["actions"]["redirect.enabled"] = !this.actionsForm.getComponent("actions_redirect").collapsed;
-        saveData["actions"]["event.enabled"] = !this.actionsForm.getComponent("actions_event").collapsed;
-        saveData["actions"]["codesnippet.enabled"] = !this.actionsForm.getComponent("actions_codesnippet").collapsed;
-        saveData["actions"]["programmatically.enabled"] = !this.actionsForm.getComponent("actions_programmatically")
-                                                                                                    .collapsed;
 
         var conditionsData = [];
         var condition, tb, operator;
@@ -295,7 +174,7 @@ pimcore.settings.targeting.rules.item = Class.create({
         saveData["conditions"] = conditionsData;
 
         Ext.Ajax.request({
-            url: "/admin/reports/targeting/rule-save",
+            url: "/admin/reports/targeting/persona-save",
             params: {
                 id: this.data.id,
                 data: Ext.encode(saveData)

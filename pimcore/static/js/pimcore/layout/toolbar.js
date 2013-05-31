@@ -223,6 +223,10 @@ pimcore.layout.toolbar = Class.create({
                     text: t("global_targeting_rules"),
                     iconCls: "pimcore_icon_tab_targeting",
                     handler: this.showTargeting
+                },{
+                    text: t("personas"),
+                    iconCls: "pimcore_icon_personas",
+                    handler: this.showPersonas
                 }]
             });
         }
@@ -1024,6 +1028,26 @@ pimcore.layout.toolbar = Class.create({
 
             targeting.getLayout().on("destroy", function () {
                 pimcore.globalmanager.remove("targeting");
+            }.bind(this));
+
+            pimcore.layout.refresh();
+        }
+    },
+
+    showPersonas: function () {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        try {
+            tabPanel.activate(pimcore.globalmanager.get("personas").getLayout());
+        }
+        catch (e) {
+            var personas = new pimcore.settings.targeting.personas.panel();
+            pimcore.globalmanager.add("personas", personas);
+
+            tabPanel.add(personas.getLayout());
+            tabPanel.activate(personas.getLayout());
+
+            personas.getLayout().on("destroy", function () {
+                pimcore.globalmanager.remove("personas");
             }.bind(this));
 
             pimcore.layout.refresh();

@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Targeting_Rules_List_Resource extends Pimcore_Model_List_Resource_Abstract {
+class Tool_Targeting_Rule_List_Resource extends Pimcore_Model_List_Resource_Abstract {
 
     /**
      * Loads a list of document-types for the specicifies parameters, returns an array of Document_DocType elements
@@ -28,7 +28,7 @@ class Tool_Targeting_Rules_List_Resource extends Pimcore_Model_List_Resource_Abs
 
         $targets = array();
         foreach ($targetsData as $targetData) {
-            $targets[] = Tool_Targeting_Rules::getById($targetData);
+            $targets[] = Tool_Targeting_Rule::getById($targetData);
         }
 
         $this->model->setTargets($targets);

@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Targeting_Rules_Resource extends Pimcore_Model_Resource_Abstract {
+class Tool_Targeting_Persona_Resource extends Pimcore_Model_Resource_Abstract {
 
     /**
      * Contains all valid columns in the database table
@@ -30,7 +30,7 @@ class Tool_Targeting_Rules_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function init() {
-        $this->validColumns = $this->getValidTableColumns("targeting_rules");
+        $this->validColumns = $this->getValidTableColumns("targeting_personas");
     }
 
     /**
@@ -45,33 +45,14 @@ class Tool_Targeting_Rules_Resource extends Pimcore_Model_Resource_Abstract {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM targeting_rules WHERE id = ?", $this->model->getId());
+        $data = $this->db->fetchRow("SELECT * FROM targeting_personas WHERE id = ?", $this->model->getId());
 
         if($data["id"]) {
             $data["conditions"] = unserialize($data["conditions"]);
             $data["actions"] = unserialize($data["actions"]);
             $this->assignVariablesToModel($data);
         } else {
-            throw new Exception("target with id " . $this->model->getId() . " doesn't exist");
-        }
-    }
-
-    /**
-     * @param string $name
-     * @throws Exception
-     */
-    public function getByName($name = null) {
-
-        if ($name != null) {
-            $this->model->setName($name);
-        }
-
-        $data = $this->db->fetchAll("SELECT id FROM targeting_rules WHERE name = ?", $this->model->getName());
-
-        if(count($data) === 1) {
-            $this->getById($data[0]["id"]);
-        } else {
-            throw new Exception("target with name " . $this->model->getId() . " doesn't exist or isn't unique");
+            throw new Exception("persona with id " . $this->model->getId() . " doesn't exist");
         }
     }
 
@@ -93,7 +74,7 @@ class Tool_Targeting_Rules_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function delete() {
-        $this->db->delete("targeting_rules", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete("targeting_personas", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -115,7 +96,7 @@ class Tool_Targeting_Rules_Resource extends Pimcore_Model_Resource_Abstract {
                 }
             }
 
-            $this->db->update("targeting_rules", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->update("targeting_personas", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
         catch (Exception $e) {
             throw $e;
@@ -128,7 +109,7 @@ class Tool_Targeting_Rules_Resource extends Pimcore_Model_Resource_Abstract {
      * @return boolean
      */
     public function create() {
-        $this->db->insert("targeting_rules", array());
+        $this->db->insert("targeting_personas", array());
 
         $this->model->setId($this->db->lastInsertId());
 
