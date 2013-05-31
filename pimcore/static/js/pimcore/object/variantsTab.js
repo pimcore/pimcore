@@ -63,10 +63,16 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         this.fieldObject = {};
         for(var i = 0; i < fields.length; i++) {
             this.fieldObject[fields[i].key] = fields[i];
-        }        
-        
-        var gridHelper = new pimcore.object.helpers.grid(this.selectedClass, fields, "/admin/variants/get-variants",
-                                                                            null, false);
+        }
+
+        var gridHelper = new pimcore.object.helpers.grid(
+            this.selectedClass,
+            fields,
+            "/admin/variants/get-variants",
+            {language: this.gridLanguage},
+            false
+        );
+
         gridHelper.showSubtype = false;
         gridHelper.showKey = true;
         gridHelper.enableEditor = true;
