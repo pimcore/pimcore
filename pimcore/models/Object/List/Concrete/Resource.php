@@ -147,11 +147,11 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
                         $locale = Zend_Registry::get("Zend_Locale");
                         if(Pimcore_Tool::isValidLanguage((string) $locale)) {
                             $language = (string) $locale;
-                        }
+                        } 
                     }
 
                     if (!$language) {
-                        throw new Exception("No Language set");
+                        throw new Exception("No valid language set");
                     }
                     $this->tableName = "object_localized_" . $this->model->getClassId() . "_" . $language;
                 }
