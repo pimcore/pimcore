@@ -261,7 +261,7 @@ CREATE TABLE `edit_lock` (
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
   KEY `cidtype` (`cid`,`ctype`)
-) ENGINE=InnoDB AUTO_INCREMENT=378 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=379 DEFAULT CHARSET=utf8;
 
 
 
@@ -723,8 +723,19 @@ CREATE TABLE `staticroutes` (
 
 
 
-DROP TABLE IF EXISTS `targeting`;
-CREATE TABLE `targeting` (
+DROP TABLE IF EXISTS `targeting_personas`;
+CREATE TABLE `targeting_personas` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `description` text,
+  `conditions` longtext,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+DROP TABLE IF EXISTS `targeting_rules`;
+CREATE TABLE `targeting_rules` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `description` text,
@@ -1753,7 +1764,7 @@ INSERT INTO `documents_page` VALUES (34,'','content','default','','','','','a:0:
 INSERT INTO `documents_page` VALUES (35,'','content','default','','','','','a:0:{}','',0,'');
 INSERT INTO `documents_page` VALUES (36,'','advanced','search','','','','','a:0:{}','',0,'');
 INSERT INTO `documents_page` VALUES (37,'','advanced','contact-form','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (39,'','content','default','','','','','a:0:{}','','','');
+INSERT INTO `documents_page` VALUES (39,'','content','default','','','','','a:0:{}','',0,'');
 
 
 
@@ -2062,6 +2073,10 @@ INSERT INTO `search_backend_data` VALUES (39,'/error','document','page','page',1
 
 
 INSERT INTO `staticroutes` VALUES (1,'news','/(.*)_n([\\d]+)/','%prefix/%text_n%id','','news','detail','text,id','',0,1);
+
+
+
+
 
 
 
