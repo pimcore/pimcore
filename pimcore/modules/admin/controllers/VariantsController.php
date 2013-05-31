@@ -38,6 +38,9 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
     public function getVariantsAction() {
         // get list of variants
 
+        if($this->getParam("language")) {
+            $this->setLanguage($this->getParam("language"), true);
+        }
 
         if ($this->getParam("xaction") == "update") {
 
