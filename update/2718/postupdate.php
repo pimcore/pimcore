@@ -14,17 +14,19 @@ if(!empty($classes)){
             $tableName = "object_localized_data_" . $class->getId();
 
             $cols = $db->fetchRow("SELECT * FROM " . $tableName . " LIMIT 1");
-            $cols = array_keys($cols);
-            foreach($cols as &$col) {
-                $col = $db->quoteIdentifier($col);
-            }
+            if(is_array($cols)) {
+                $cols = array_keys($cols);
+                foreach($cols as &$col) {
+                    $col = $db->quoteIdentifier($col);
+                }
 
-            foreach ($languages as $language) {
-                $tableQueryName = "object_localized_query_" . $class->getId() . "_" . $language;
-                try {
-                    $db->query("INSERT INTO " . $tableQueryName . " (" . implode(",", $cols) . ") SELECT * FROM " . $tableName . " WHERE language = '" . $language . "'");
-                } catch (\Exception $e) {
-                    echo $e->getMessage() . "<br />";
+                foreach ($languages as $language) {
+                    $tableQueryName = "object_localized_query_" . $class->getId() . "_" . $language;
+                    try {
+                        $db->query("INSERT INTO " . $tableQueryName . " (" . implode(",", $cols) . ") SELECT * FROM " . $tableName . " WHERE language = '" . $language . "'");
+                    } catch (\Exception $e) {
+                        echo $e->getMessage() . "<br />";
+                    }
                 }
             }
         }
