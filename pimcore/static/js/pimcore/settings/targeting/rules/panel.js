@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.settings.targeting.panel");
-pimcore.settings.targeting.panel= Class.create({
+pimcore.registerNS("pimcore.settings.targeting.rules.panel");
+pimcore.settings.targeting.rules.panel= Class.create({
 
     initialize: function() {
         this.treeDataUrl = '/admin/reports/targeting/list/';
@@ -24,7 +24,7 @@ pimcore.settings.targeting.panel= Class.create({
 
         if (this.layout == null) {
             this.layout = new Ext.Panel({
-                title: t('targeting'),
+                title: t('global_targeting_rules'),
                 layout: "border",
                 closable: true,
                 border: false,
@@ -164,7 +164,7 @@ pimcore.settings.targeting.panel= Class.create({
             },
             success: function (response) {
                 var res = Ext.decode(response.responseText);
-                var item = new pimcore.settings.targeting.item(this, res);
+                var item = new pimcore.settings.targeting.rules.item(this, res);
             }.bind(this)
         });
 

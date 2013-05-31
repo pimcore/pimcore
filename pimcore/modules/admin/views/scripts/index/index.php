@@ -199,8 +199,8 @@
             "pimcore/settings/robotstxt.js",
             "pimcore/settings/httpErrorLog.js",
             "pimcore/settings/bouncemailinbox.js",
-            "pimcore/settings/targeting/panel.js",
-            "pimcore/settings/targeting/item.js",
+            "pimcore/settings/targeting/rules/panel.js",
+            "pimcore/settings/targeting/rules/item.js",
 
             // element
             "pimcore/element/abstract.js",

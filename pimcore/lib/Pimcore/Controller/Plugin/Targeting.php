@@ -78,7 +78,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
             $targets = array();
 
             if($this->document) {
-                $list = new Tool_Targeting_List();
+                $list = new Tool_Targeting_Rules_List();
 
                 foreach($list->load() as $target) {
 

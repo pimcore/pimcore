@@ -215,10 +215,15 @@ pimcore.layout.toolbar = Class.create({
 
         if (user.isAllowed("targeting")) {
             reportsMenu.push({
-                text: t("targeting"),
-                iconCls: "pimcore_icon_tab_targeting",
-                handler: this.showTargeting,
-                hidden: !pimcore.settings.targeting_enabled
+                text: t("personalization") + " / " + t("targeting"),
+                iconCls: "pimcore_icon_usergroup",
+                hidden: !pimcore.settings.targeting_enabled,
+                hideOnClick: false,
+                menu: [{
+                    text: t("global_targeting_rules"),
+                    iconCls: "pimcore_icon_tab_targeting",
+                    handler: this.showTargeting
+                }]
             });
         }
 
@@ -1011,7 +1016,7 @@ pimcore.layout.toolbar = Class.create({
             tabPanel.activate(pimcore.globalmanager.get("targeting").getLayout());
         }
         catch (e) {
-            var targeting = new pimcore.settings.targeting.panel();
+            var targeting = new pimcore.settings.targeting.rules.panel();
             pimcore.globalmanager.add("targeting", targeting);
 
             tabPanel.add(targeting.getLayout());

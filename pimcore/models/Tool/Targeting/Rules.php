@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Targeting extends Pimcore_Model_Abstract {
+class Tool_Targeting_Rules extends Pimcore_Model_Abstract {
 
     /**
      * @var int
@@ -38,16 +38,16 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     public $conditions = array();
 
     /**
-     * @var Tool_Targeting_Actions
+     * @var Tool_Targeting_Rules_Actions
      */
     public $actions;
 
     /**
-     * @param int|Tool_Targeting $targetId
+     * @param int|Tool_Targeting_Rules $targetId
      * @return bool
      */
     public static function inTarget($target) {
-        if($target instanceof Tool_Targeting) {
+        if($target instanceof Tool_Targeting_Rules) {
             $targetId = $target->getId();
         } else if (is_string($target)) {
             $target = self::getByName($target);
@@ -83,10 +83,10 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     }
 
     /**
-     * Static helper to retrieve an instance of Tool_Targeting by the given ID
+     * Static helper to retrieve an instance of Tool_Targeting_Rules by the given ID
      *
      * @param integer $id
-     * @return Tool_Targeting
+     * @return Tool_Targeting_Rules
      */
     public static function getById($id) {
         try {
@@ -100,9 +100,9 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     }
 
     /**
-     * Static helper to retrieve an instance of Tool_Targeting by the given name
+     * Static helper to retrieve an instance of Tool_Targeting_Rules by the given name
      * @param integer $id
-     * @return Tool_Targeting
+     * @return Tool_Targeting_Rules
      */
     public static function getByName($name) {
         try {
@@ -167,19 +167,19 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param \Tool_Targeting_Actions $actions
+     * @param \Tool_Targeting_Rules_Actions $actions
      */
     public function setActions($actions)
     {
         if(!$actions) {
-            $actions = new Tool_Targeting_Actions();
+            $actions = new Tool_Targeting_Rules_Actions();
         }
         $this->actions = $actions;
         return $this;
     }
 
     /**
-     * @return \Tool_Targeting_Actions
+     * @return \Tool_Targeting_Rules_Actions
      */
     public function getActions()
     {

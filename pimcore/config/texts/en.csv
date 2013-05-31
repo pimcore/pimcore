@@ -1,3 +1,5 @@
+"global_targeting_rules","Global Targeting Rules"
+"personalization","Personalization"
 "usage_statistics_info","The data sent to the developers of pimcore is 100% anonymous and is transferred securely over the internet (HTTPS). Please do not deactivate this unless you really need to. You can see the data which is submitted to the core team in /website/var/log/usagelog.log"
 "turn_off_anonymous_usage_submissions","Turn off anonymous usage submissions"
 "children","Children"

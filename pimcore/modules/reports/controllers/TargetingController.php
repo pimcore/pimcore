@@ -23,7 +23,7 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
     public function listAction() {
 
         $targets = array();
-        $list = new Tool_Targeting_List();
+        $list = new Tool_Targeting_Rules_List();
 
         foreach($list->load() as $target) {
             $targets[] = array(
@@ -37,7 +37,7 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
     public function addAction() {
 
-        $target = new Tool_Targeting();
+        $target = new Tool_Targeting_Rules();
         $target->setName($this->getParam("name"));
         $target->save();
 
@@ -48,7 +48,7 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
         $success = false;
 
-        $target = Tool_Targeting::getById($this->getParam("id"));
+        $target = Tool_Targeting_Rules::getById($this->getParam("id"));
         if($target) {
             $target->delete();
             $success = true;
@@ -59,7 +59,7 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
     public function getAction() {
 
-        $target = Tool_Targeting::getById($this->getParam("id"));
+        $target = Tool_Targeting_Rules::getById($this->getParam("id"));
         $redirectUrl = $target->getActions()->getRedirectUrl();
         if(is_numeric($redirectUrl)) {
             $doc = Document::getById($redirectUrl);
@@ -75,12 +75,12 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
         $data = Zend_Json::decode($this->getParam("data"));
 
-        $target = Tool_Targeting::getById($this->getParam("id"));
+        $target = Tool_Targeting_Rules::getById($this->getParam("id"));
         $target->setValues($data["settings"]);
 
         $target->setConditions($data["conditions"]);
 
-        $actions = new Tool_Targeting_Actions();
+        $actions = new Tool_Targeting_Rules_Actions();
         $actions->setRedirectEnabled($data["actions"]["redirect.enabled"]);
         $actions->setRedirectUrl($data["actions"]["redirect.url"]);
         $actions->setRedirectCode($data["actions"]["redirect.code"]);
