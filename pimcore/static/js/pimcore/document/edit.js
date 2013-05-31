@@ -35,6 +35,39 @@ pimcore.document.edit = Class.create({
             var html = '<iframe id="' + this.iframeName + '" width="100%" name="' + this.iframeName
                                                     + '" src="' + this.getEditLink() + '" frameborder="0"></iframe>';
 
+            var personas = new Ext.form.ComboBox({
+                displayField:'text',
+                valueField: "id",
+                store: {
+                    xtype: "jsonstore",
+                    url: "/admin/reports/targeting/persona-list/?add-default=true",
+                    fields: ["id", "text"]
+                },
+                editable: false,
+                triggerAction: 'all',
+                listWidth: 200,
+                emptyText: t("select_a_persona"),
+                listeners: {
+                    select: function (el) {
+                        console.log(el.getValue());
+                    }
+                }
+            });
+
+            var tbar = [{
+                text: t("refresh"),
+                iconCls: "pimcore_icon_reload",
+                handler: this.reload.bind(this)
+            }];
+
+            // add persona selection to toolbar
+            if(pimcore.settings.targeting_enabled && this.document.getType() == "page") {
+                tbar.push("-", {
+                    text: t("edit_content_for_persona"),
+                    xtype: "tbtext"
+                }, personas);
+            }
+
             var config = {
                 id: "document_content_" + this.document.id,
                 html: html,
@@ -43,7 +76,8 @@ pimcore.document.edit = Class.create({
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
                 forceLayout: true,
                 hideMode: "offsets",
-                iconCls: "pimcore_icon_tab_edit"
+                iconCls: "pimcore_icon_tab_edit",
+                tbar: tbar
             };
 
             if(typeof additionalConfig == "object") {
@@ -70,7 +104,7 @@ pimcore.document.edit = Class.create({
 
     setLayoutFrameDimensions: function (width, height) {
         Ext.get(this.iframeName).setStyle({
-            height: (height-5) + "px"
+            height: (height-32) + "px"
         });
     },
 

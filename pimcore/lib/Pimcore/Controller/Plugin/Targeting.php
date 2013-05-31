@@ -81,8 +81,11 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                 $dataPush["events"] = $this->events;
             }
 
-            if($this->document instanceof Document) {
+            if($this->document instanceof Document_Page) {
                 $dataPush["document"] = $this->document->getId();
+                if($this->document->getPersonas()) {
+                    $dataPush["personas"] = explode(",", trim($this->document->getPersonas(), " ,"));
+                }
             }
 
             if($this->document) {

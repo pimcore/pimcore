@@ -539,16 +539,27 @@
             user["events"] = [];
         }
 
-        // get new events || @TODO: NEEDS TO BE REWRITTEN TO the _pta VARIABLE
-        /*var newEvents = util.getCookie("pimcore__~__targeting_event");
-        if(newEvents) {
-            newEvents = JSON.parse(newEvents);
-            util.unsetCookie("pimcore__~__targeting_event");
-
-            for(var ev=0; ev<newEvents.length; ev++) {
-                user["events"].push(newEvents[ev]);
+        // get new events
+        if(window["_pta"] && window["_pta"]["events"] && window["_pta"]["events"].length > 0) {
+            for(var ev=0; ev<window["_pta"]["events"].length; ev++) {
+                user["events"].push(window["_pta"]["events"][ev]);
             }
-        }*/
+        }
+    } catch (e9) {
+        util.log(e9);
+    }
+
+    try {
+        if(!user["personas"]) {
+            user["personas"] = [];
+        }
+
+        // get new events
+        if(window["_pta"] && window["_pta"]["personas"] && window["_pta"]["personas"].length > 0) {
+            for(var ev=0; ev<window["_pta"]["personas"].length; ev++) {
+                user["personas"].push(window["_pta"]["personas"][ev]);
+            }
+        }
     } catch (e9) {
         util.log(e9);
     }

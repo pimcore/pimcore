@@ -73,6 +73,16 @@ class Tool_Targeting_Rule_Actions {
     public $programmaticallyEnabled = false;
 
     /**
+     * @var int
+     */
+    public $personaId;
+
+    /**
+     * @var bool
+     */
+    public $personaEnabled = false;
+
+    /**
      * @param boolean $programmaticallyEnabled
      */
     public function setProgrammaticallyEnabled($programmaticallyEnabled)
@@ -262,5 +272,37 @@ class Tool_Targeting_Rule_Actions {
     public function getRedirectEnabled()
     {
         return $this->redirectEnabled;
+    }
+
+    /**
+     * @param boolean $personaEnabled
+     */
+    public function setPersonaEnabled($personaEnabled)
+    {
+        $this->personaEnabled = $personaEnabled;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getPersonaEnabled()
+    {
+        return $this->personaEnabled;
+    }
+
+    /**
+     * @param int $personaId
+     */
+    public function setPersonaId($personaId)
+    {
+        $this->personaId = (int) $personaId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPersonaId()
+    {
+        return $this->personaId;
     }
 }

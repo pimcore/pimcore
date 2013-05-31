@@ -203,6 +203,7 @@ CREATE TABLE `documents_page` (
   `prettyUrl` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `css` longtext,
+  `personas` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8;

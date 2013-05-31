@@ -288,6 +288,26 @@ pimcore.document.pages.settings = Class.create({
                             },
                             this.metaDataPanel
                         ]
+                    },{
+                        xtype:'fieldset',
+                        title: t('associate_target_group') + " (" + t("personas") + ")",
+                        collapsible: true,
+                        autoHeight:true,
+                        labelWidth: 320,
+                        hidden: !pimcore.settings.targeting_enabled,
+                        defaultType: 'textfield',
+                        items :[
+                            {
+                                fieldLabel: t('visitors_of_this_page_will_be_automatically_associated_with_the_selected_personas'),
+                                xtype: "multiselect",
+                                store: pimcore.globalmanager.get("personas"),
+                                displayField: "text",
+                                valueField: "id",
+                                name: 'personas',
+                                width: 200,
+                                value: this.page.data["personas"]
+                            }
+                        ]
                     },
                     {
                         xtype:'fieldset',

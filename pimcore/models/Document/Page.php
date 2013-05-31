@@ -61,6 +61,12 @@ class Document_Page extends Document_PageSnippet {
      */
     public $css = "";
 
+    /**
+     * comma separated IDs of personas
+     * @var string
+     */
+    public $personas = "";
+
 
     /**
      * @see Document::delete and Document_PageSnippet::delete
@@ -244,5 +250,23 @@ class Document_Page extends Document_PageSnippet {
         return $this->css;
     }
 
+    /**
+     * @param string $personas
+     */
+    public function setPersonas($personas)
+    {
+        $personas = trim($personas, " ,");
+        if(!empty($personas)) {
+            $personas = "," . $personas . ",";
+        }
+        $this->personas = $personas;
+    }
 
+    /**
+     * @return string
+     */
+    public function getPersonas()
+    {
+        return $this->personas;
+    }
 }

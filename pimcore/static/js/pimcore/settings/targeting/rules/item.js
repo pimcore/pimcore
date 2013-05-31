@@ -158,6 +158,26 @@ pimcore.settings.targeting.rules.item = Class.create({
                     width: 250,
                     value: this.data.actions.codesnippetPosition
                 }]
+            }, {
+                xtype: "fieldset",
+                itemId: "actions_persona",
+                title: t('associate_target_group') + " (" + t("personas") + ")",
+                collapsible: true,
+                collapsed: !this.data.actions.personaEnabled,
+                items: [{
+                    xtype: "combo",
+                    name: "persona.id",
+                    displayField:'text',
+                    valueField: "id",
+                    store: pimcore.globalmanager.get("personas"),
+                    editable: false,
+                    width: 300,
+                    triggerAction: 'all',
+                    listWidth: 200,
+                    mode: "local",
+                    value: this.data.actions.personaId,
+                    emptyText: t("select_a_persona")
+                }]
             }]
         });
 
@@ -264,6 +284,7 @@ pimcore.settings.targeting.rules.item = Class.create({
         saveData["actions"]["redirect.enabled"] = !this.actionsForm.getComponent("actions_redirect").collapsed;
         saveData["actions"]["event.enabled"] = !this.actionsForm.getComponent("actions_event").collapsed;
         saveData["actions"]["codesnippet.enabled"] = !this.actionsForm.getComponent("actions_codesnippet").collapsed;
+        saveData["actions"]["persona.enabled"] = !this.actionsForm.getComponent("actions_persona").collapsed;
         saveData["actions"]["programmatically.enabled"] = !this.actionsForm.getComponent("actions_programmatically")
                                                                                                     .collapsed;
 
