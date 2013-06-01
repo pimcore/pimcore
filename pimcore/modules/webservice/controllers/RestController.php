@@ -1107,6 +1107,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
     }
 
-
-
+    protected function getQueryParams(){
+        return $this->getRequest()->getQuery();
+    }
 }
