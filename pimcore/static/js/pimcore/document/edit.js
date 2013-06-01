@@ -86,7 +86,7 @@ pimcore.document.edit = Class.create({
             }];
 
             // add persona selection to toolbar
-            if(pimcore.settings.targeting_enabled && this.document.getType() == "page") {
+            if(this.document.getType() == "page" && pimcore.settings.targeting_enabled) {
 
                 this.persona = new Ext.form.ComboBox({
                     displayField:'text',
@@ -126,6 +126,7 @@ pimcore.document.edit = Class.create({
                 });
             }
 
+            // edit panel configuration
             var config = {
                 id: "document_content_" + this.document.id,
                 html: html,
