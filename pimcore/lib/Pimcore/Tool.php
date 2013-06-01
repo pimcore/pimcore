@@ -336,12 +336,12 @@ class Pimcore_Tool {
      * @param string $type
      * @return Zend_Http_Client
      */
-    public static function getHttpClient ($type = "Zend_Http_Client") {
+    public static function getHttpClient ($type = "Zend_Http_Client",$options = array()) {
 
         $config = Pimcore_Config::getSystemConfig();
         $clientConfig = $config->httpclient->toArray();
-        $clientConfig["maxredirects"] = 2;
-        $clientConfig["timeout"] = 3600;
+        $clientConfig["maxredirects"] = $options["maxredirects"] ? $options["maxredirects"] : 2;
+        $clientConfig["timeout"] = $options["timeout"] ? $options["timeout"] : 3600;
         $type = empty($type) ? "Zend_Http_Client" : $type;
 
         if(Pimcore_Tool::classExists($type)) {

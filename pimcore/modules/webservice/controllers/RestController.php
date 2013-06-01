@@ -984,13 +984,66 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         }
     }
 
+
+    /**
+     *  shows meta information from a deployment package
+     */
+    public function deploymentPackageInformationAction(){
+        try{
+            $result = $this->service->getDeploymentPackage($this->_getParam('id'));
+            $this->encoder->encode(array("success" => true, "data" => $result));
+        }catch (Exception $e) {
+            Logger::error($e);
+            $this->encoder->encode(array("success" => false, "msg" => $e));
+        }
+    }
+
+    /**
+     * download a deployment package
+     */
+    public function deploymentPackagePharDataAction(){
+        try{
+            $result = $this->service->getDeploymentPackage($this->_getParam('id'));
+            $finfo = new finfo;
+            $mimeType = $finfo->file($result['pharFile'], FILEINFO_MIME);
+            header('Content-type: ' . $mimeType);
+            header('Content-Disposition: attachment; filename="' . Deployment_Task_Pimcore_Phing_AbstractPackageTask::PACKAGE_PHAR_ARCHIVE_FILE_NAME .'"');
+            readfile($result['pharFile']);
+        }catch (Exception $e) {
+            Logger::error($e);
+            $this->encoder->encode(array("success" => false, "msg" => $e));
+        }
+
+    }
+
+    /**
+     * executes a deployment target
+     */
+    public function deploymentExecuteTargetAction(){
+        try{
+            $cmd = Pimcore_Tool_Console::getPhpCli(). ' ' . PIMCORE_DOCUMENT_ROOT.'/pimcore/cli/deployment.php ';
+            $queryParams = $this->getQueryParams();
+            if(!$queryParams['target']){
+                throw new Exception("No target specified.");
+            }
+            $cmd .= ' ' . Pimcore_Tool_Console::getOptionString($queryParams);
+            Pimcore_Tool_Console::execInBackground($cmd,Pimcore_Tool_Deployment::getDefaultLogFile());
+            $this->encoder->encode(array("success" => true, "data" => 'Command "' . $cmd .'" executed in background.'));
+        }catch (Exception $e){
+            Logger::error($e);
+            $this->encoder->encode(array("success" => false, "msg" => $e));
+        }
+    }
+
     /**
      * Returns a list of all class definitions.
      */
     public function serverInfoAction() {
         $this->checkUserPermission("system_settings");
 
-        $system = array("currentTime" => time());
+        $system = array("currentTime" => time(),
+                        "phpCli" => Pimcore_Tool_Console::getPhpCli(),
+                        "PIMCORE_DOCUMENT_ROOT" => PIMCORE_DOCUMENT_ROOT);
         $result = array();
         $pimcore = array();
         $pimcore["version"] = Pimcore_Version::getVersion();

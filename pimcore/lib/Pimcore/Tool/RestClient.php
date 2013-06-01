@@ -892,6 +892,17 @@ class Pimcore_Tool_RestClient
     }
 
     /**
+     * Returns meta information about a deployment package
+     *
+     * @param $id
+     * @return mixed
+     */
+    public function getDeploymentPackageInformation($id){
+        $response = $this->doRequest($this->buildEndpointUrl("deployment-package-information/id/" . $id), "GET");
+        return $response;
+    }
+
+    /**
      * Returns: server-info including pimcore version, current time and extension data.
      * @return mixed
      */
