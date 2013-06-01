@@ -226,6 +226,7 @@ function rscandir($base = '', &$data = array()) {
  * @param string $delimiter
  * @param string $string
  * @param string $limit
+ * @param boolean $useArrayFilter
  *
  * @return array
  */
