@@ -267,7 +267,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         $doc = Document::getById($docId);
 
         foreach($doc->getElements() as $element) {
-            if($personaId) {
+            if($personaId && $doc instanceof Document_Page) {
                 if(preg_match("/^" . preg_quote($doc->getPersonaElementPrefix($personaId), "/") . "/", $element->getName())) {
                     $doc->removeElement($element->getName());
                 }
