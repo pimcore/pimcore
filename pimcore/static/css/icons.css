@@ -1325,3 +1325,8 @@
 .pimcore_icon_personas {
     background: url(/pimcore/static/img/icon/user_gray_cool.png) left center no-repeat !important;
 }
+
+.pimcore_icon_persona_select {
+    padding-left: 20px !important;
+    background: url(/pimcore/static/img/icon/user_gray_cool.png) 2px center no-repeat #fff !important;
+}
