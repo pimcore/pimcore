@@ -6,7 +6,6 @@
      *
      * _ptr -> redirect action (GET)
      * _ptc -> programmatically redirect action (GET)
-     * _ptd -> targeting content (JAVASCRIPT)
      */
 
     /* TESTS */
@@ -154,6 +153,14 @@
                 return true;
             }
             return false;
+        },
+
+        persona: function (params) {
+            if(user["persona"] == params["persona"]
+                || util.in_array(params["persona"], user["personas"])) {
+                return true;
+            }
+            return false;
         }
     };
 
@@ -173,6 +180,59 @@
                 val = "";
             }
             return val;
+        },
+
+        in_array: function (needle, haystack, argStrict) {
+            var key = '',
+                strict = !! argStrict;
+
+            if (strict) {
+                for (key in haystack) {
+                    if (haystack[key] === needle) {
+                        return true;
+                    }
+                }
+            } else {
+                for (key in haystack) {
+                    if (haystack[key] == needle) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        },
+
+        array_keys: function (input, search_value, argStrict) {
+            var search = typeof search_value !== 'undefined',
+                tmp_arr = [],
+                strict = !!argStrict,
+                include = true,
+                key = '';
+
+            if (input && typeof input === 'object' && input.change_key_case) { // Duck-type check for our own array()-created PHPJS_Array
+                return input.keys(search_value, argStrict);
+            }
+
+            for (key in input) {
+                if (input.hasOwnProperty(key)) {
+                    include = true;
+                    if (search) {
+                        if (strict && input[key] !== search_value) {
+                            include = false;
+                        }
+                        else if (input[key] != search_value) {
+                            include = false;
+                        }
+                    }
+
+                    if (include) {
+                        tmp_arr[tmp_arr.length] = key;
+                    }
+                }
+            }
+
+            return tmp_arr;
         },
 
         executeInsertedScripts: function (domelement) {
@@ -288,12 +348,13 @@
 
         processTargets: function () {
             // process targets
-            if(typeof window["_ptd"] != "undefined") {
+            var targets = pimcore.targeting["targets"];
+            if(typeof targets != "undefined") {
                 var target;
                 var matchingTargets = [];
 
-                for(var t=0; t<_ptd.length; t++) {
-                    target = _ptd[t];
+                for(var t=0; t<targets.length; t++) {
+                    target = targets[t];
 
                     if(target.conditions.length > 0) {
                         try {
@@ -426,6 +487,15 @@
             } catch (e5) {
                 util.log(e5);
             }
+
+            // append persona
+            try {
+                if(actions["personaEnabled"]) {
+                    user["personas"].push(actions["personaId"]);
+                }
+            } catch (e6) {
+                util.log(e6);
+            }
         },
 
         callTargets: function (targets) {
@@ -438,6 +508,14 @@
             localStorage.setItem("pimcore_targeting_user", JSON.stringify(user));
         }
     };
+
+
+
+
+
+
+
+
 
 
     // common used vars
@@ -534,15 +612,17 @@
     }
 
 
+    // push data
+    var pushData = pimcore.targeting["dataPush"];
     try {
         if(!user["events"]) {
             user["events"] = [];
         }
 
         // get new events
-        if(window["_pta"] && window["_pta"]["events"] && window["_pta"]["events"].length > 0) {
-            for(var ev=0; ev<window["_pta"]["events"].length; ev++) {
-                user["events"].push(window["_pta"]["events"][ev]);
+        if(pushData["events"] && pushData["events"].length > 0) {
+            for(var ev=0; ev<pushData["events"].length; ev++) {
+                user["events"].push(pushData["events"][ev]);
             }
         }
     } catch (e9) {
@@ -555,9 +635,9 @@
         }
 
         // get new events
-        if(window["_pta"] && window["_pta"]["personas"] && window["_pta"]["personas"].length > 0) {
-            for(var ev=0; ev<window["_pta"]["personas"].length; ev++) {
-                user["personas"].push(window["_pta"]["personas"][ev]);
+        if(pushData["personas"] && pushData["personas"].length > 0) {
+            for(var ev=0; ev<pushData["personas"].length; ev++) {
+                user["personas"].push(pushData["personas"][ev]);
             }
         }
     } catch (e9) {
@@ -601,6 +681,33 @@
         util.log(e11);
     }
 
+    try {
+        if(!user["persona"]) {
+            var personas = pimcore.targeting["personas"];
+            var prevConditionCount = 0;
+            if(typeof personas != "undefined") {
+                for(var pi=0; pi<personas.length; pi++) {
+                    if(personas[pi].conditions.length > 0) {
+                        try {
+                            if(app.testConditions(personas[pi].conditions)) {
+                                // if multiple persona match, use the one with the bigger amount of conditions
+                                // this should be the most accurate match then
+                                if(personas[pi].conditions.length > prevConditionCount) {
+                                    user["persona"] = personas[pi]["id"];
+                                    prevConditionCount = personas[pi].conditions.length;
+                                }
+                            }
+                        } catch (e) {
+                            util.log(e);
+                        }
+                    }
+                }
+            }
+        }
+    } catch (e11) {
+        util.log(e11);
+    }
+
     // dom stuff
     util.contentLoaded(window, function () {
         try {
@@ -621,10 +728,51 @@
         }
     });
 
-    util.log(user);
-
     app.saveUser();
     app.processTargets();
+
+    window.pimcore["targeting"]["user"] = user;
+
+    var pageVariants = pimcore["targeting"]["dataPush"]["personaPageVariants"];
+    var pageVariantMatches = {};
+    var pageVariantMatch;
+
+    if(pageVariants && pageVariants.length > 0 && !/_ptp=/.test(window.location.href)) {
+        // get the most accurate persona out of the collected data from visited pages
+        if(user["personas"] && user["personas"].length > 0) {
+            for(var pc=0; pc<user["personas"].length; pc++) {
+                if(util.in_array(user["personas"][pc], pageVariants)) {
+
+                    if(!pageVariantMatches[user["personas"][pc]]) {
+                        pageVariantMatches[user["personas"][pc]] = 0;
+                    }
+
+                    pageVariantMatches[user["personas"][pc]]++;
+                }
+            }
+
+            var pageVariantMatchesKeys = util.array_keys(pageVariantMatches);
+            var pageVariantMatchesLastAmount = 0;
+            for(pc=0; pc<pageVariantMatchesKeys.length; pc++) {
+                if(pageVariantMatches[pageVariantMatchesKeys[pc]] > pageVariantMatchesLastAmount) {
+                    pageVariantMatch = pageVariantMatchesKeys[pc];
+                    pageVariantMatchesLastAmount = pageVariantMatches[pageVariantMatchesKeys[pc]];
+                }
+            }
+        }
+
+        if(!pageVariantMatch && user["persona"]) {
+            if(util.in_array(user["persona"], pageVariants)) {
+                pageVariantMatch = user["persona"];
+            }
+        }
+
+        if(pageVariantMatch) {
+            // redirect to the persona specific version of the current page
+            window.location.href = window.location.href + (window.location.href.indexOf("?") < 0 ? "?" : "&")
+                + "_ptp=" + pageVariantMatch;
+        }
+    }
 
 })();
 

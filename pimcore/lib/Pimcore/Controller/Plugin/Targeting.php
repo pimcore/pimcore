@@ -74,7 +74,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
         if ($this->enabled) {
 
             $targets = array();
-
+            $personas = array();
             $dataPush = array();
 
             if(count($this->events) > 0) {
@@ -84,12 +84,35 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
             if($this->document instanceof Document_Page) {
                 $dataPush["document"] = $this->document->getId();
                 if($this->document->getPersonas()) {
-                    $dataPush["personas"] = explode(",", trim($this->document->getPersonas(), " ,"));
+                    if($_GET["_ptp"]) { // if a special version is requested only return this id as target group for this page
+                        $dataPush["personas"] = array((int)$_GET["_ptp"]);
+                    } else {
+                        $docPersonas = explode(",", trim($this->document->getPersonas(), " ,"));
+
+                        //  cast the values to int
+                        array_walk($docPersonas, function (&$value) {
+                            $value = (int) trim($value);
+                        });
+                        $dataPush["personas"] = $docPersonas;
+                    }
+                }
+
+                // check for persona specific variants of this page
+                $personaVariants = array();
+                foreach($this->document->getElements() as $key => $tag) {
+                    if(preg_match("/^persona_-([0-9]+)-_/", $key, $matches)) {
+                        $personaVariants[] = (int) $matches[1];
+                    }
+                }
+
+                if(!empty($personaVariants)) {
+                    $personaVariants = array_unique($personaVariants);
+                    $dataPush["personaPageVariants"] = $personaVariants;
                 }
             }
 
             if($this->document) {
-                // @TODO: Cache this
+                // @TODO: cache this
                 $list = new Tool_Targeting_Rule_List();
 
                 foreach($list->load() as $target) {
@@ -104,18 +127,28 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
 
                     $targets[] = $target;
                 }
+
+                $list = new Tool_Targeting_Persona_List();
+                foreach($list->load() as $persona) {
+                    $personas[] = $persona;
+                }
             }
 
             if(!($controlCode = Pimcore_Model_Cache::load("targeting_control_code")) || PIMCORE_DEVMODE) {
-                $controlCode = file_get_contents(__DIR__ . "/Targeting/targeting.js");
+                $controlCode = file_get_contents(PIMCORE_PATH . "/static/js/frontend/targeting.js");
                 $controlCode = JSMinPlus::minify($controlCode);
 
                 Pimcore_Model_Cache::save($controlCode, "targeting_control_code", array("output"), null, 999);
             }
 
             $code = '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
-            $code .= '<script type="text/javascript">var _pta = ' . Zend_Json::encode($dataPush) . '</script>';
-            $code .= '<script type="text/javascript">var _ptd = ' . Zend_Json::encode($targets) . '</script>';
+            $code .= '<script type="text/javascript">';
+                $code .= 'var pimcore = pimcore || {};';
+                $code .= 'pimcore["targeting"] = {};';
+                $code .= 'pimcore["targeting"]["dataPush"] = ' . Zend_Json::encode($dataPush) . ';';
+                $code .= 'pimcore["targeting"]["targets"] = ' . Zend_Json::encode($targets) . ';';
+                $code .= 'pimcore["targeting"]["personas"] = ' . Zend_Json::encode($personas) . ';';
+            $code .= '</script>';
             $code .= '<script type="text/javascript">' . $controlCode . '</script>' . "\n";
             // analytics
             $body = $this->getResponse()->getBody();
