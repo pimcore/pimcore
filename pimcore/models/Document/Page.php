@@ -274,36 +274,63 @@ class Document_Page extends Document_PageSnippet {
         return $this->personas;
     }
 
+    public function getPersonaElementPrefix($personaId = null) {
+        $prefix = null;
+
+        if(!$personaId) {
+            $personaId = $this->getUsePersona();
+        }
+
+        if($personaId) {
+            $prefix = "persona_-" . $personaId . "-_";
+        }
+
+        return $prefix;
+    }
+
+    public function getPersonaElementName($name) {
+        if($this->getUsePersona() && !preg_match("/^" . preg_quote($this->getPersonaElementPrefix(),"/") . "/", $name)) {
+            $name = $this->getPersonaElementPrefix() . $name;
+        }
+        return $name;
+    }
+
+    public function setElement($name, $data) {
+
+        if($this->getUsePersona()) {
+            $name = $this->getPersonaElementName($name);
+            $data->setName($name);
+        }
+
+        return parent::setElement($name, $data);
+    }
+
     public function getElement($name) {
 
         // check if a persona is requested for this page, if yes deliver a different version of the element (prefixed)
         if($this->getUsePersona()) {
-            $elements = $this->getElements();
-            $personaId = $this->getUsePersona();
-            $namePrefix = "persona-".$personaId."-";
-            $originalName = str_replace($namePrefix, "", $name); // name cleaned up from prefixed (multi, block, area)
+            $personaName = $this->getPersonaElementName($name);
 
-            $personaName = $namePrefix . $originalName;
             if($this->hasElement($personaName)) {
-                $element = $elements[$personaName];
-                if(!$element->getInherited()) {
-                    return $element;
+                $name = $personaName;
+            } else {
+                // if there's no dedicated content for this persona, inherit from the "original" content (unprefixed)
+                // and mark it as inherited so it is clear in the ui that the content is not specific to the selected persona
+                // replace all occurrences of the persona prefix, this is needed because of block-prefixes
+                $inheritedName = str_replace($this->getPersonaElementPrefix(), "", $name);
+                $inheritedElement = parent::getElement($inheritedName);
+                if($inheritedElement) {
+                    $inheritedElement = clone $inheritedElement;
+                    $inheritedElement->setResource(null);
+                    $inheritedElement->setName($personaName);
+                    $inheritedElement->setInherited(true);
+                    $this->setElement($personaName, $inheritedElement);
+                    return $inheritedElement;
                 }
-            }
-
-            // if there's no dedicated content for this persona, inherit from the "original" content (unprefixed)
-            // and mark it as inherited so it is clear in the ui that the content is not specific to the selected persona
-            $inheritedElement = parent::getElement($originalName);
-            if($inheritedElement) {
-                $inheritedElement = clone $inheritedElement;
-                $inheritedElement->setResource(null);
-                $inheritedElement->setName($personaName);
-                $inheritedElement->setInherited(true);
-                return $inheritedElement;
             }
         }
 
-        // no persona in use, delegate to default
+        // delegate to default
         return parent::getElement($name);
     }
 

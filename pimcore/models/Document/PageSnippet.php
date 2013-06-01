@@ -307,6 +307,19 @@ abstract class Document_PageSnippet extends Document {
 
 
     /**
+     * @param $name
+     * @return $this
+     */
+    public function removeElement($name) {
+
+        if($this->hasElement($name)) {
+            unset($this->elements[$name]);
+        }
+
+        return $this;
+    }
+
+    /**
      * Get an element with the given key/name
      *
      * @param string $name

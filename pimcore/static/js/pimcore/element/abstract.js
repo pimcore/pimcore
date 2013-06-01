@@ -15,6 +15,7 @@
 pimcore.registerNS("pimcore.element.abstract");
 pimcore.element.abstract = Class.create({
 
+    dirty: false,
     
     // CHANGE DETECTOR
     startChangeDetector: function () {
@@ -34,9 +35,14 @@ pimcore.element.abstract = Class.create({
         this.tab.on("activate", this.startChangeDetector.bind(this));
         this.tab.on("destroy", this.stopChangeDetector.bind(this));
     },
+
+    isDirty: function () {
+        return this.dirty;
+    },
     
     detectedChange: function () {
         this.tab.setTitle(this.tab.initialConfig.title + " *");
+        this.dirty = true;
         this.stopChangeDetector();
     },
     
@@ -45,6 +51,7 @@ pimcore.element.abstract = Class.create({
         
         this.tab.setTitle(this.tab.initialConfig.title);
         this.startChangeDetector();
+        this.dirty = false;
     },
     
     checkForChanges: function () {

@@ -41,24 +41,6 @@ pimcore.document.edit = Class.create({
             var html = '<iframe id="' + this.iframeName + '" width="100%" name="' + this.iframeName
                                                     + '" src="' + this.getEditLink() + '" frameborder="0"></iframe>';
 
-            this.persona = new Ext.form.ComboBox({
-                displayField:'text',
-                valueField: "id",
-                store: {
-                    xtype: "jsonstore",
-                    url: "/admin/reports/targeting/persona-list/?add-default=true",
-                    fields: ["id", "text"]
-                },
-                editable: false,
-                triggerAction: 'all',
-                listWidth: 200,
-                emptyText: t("select_a_persona"),
-                listeners: {
-                    select: function (el) {
-                        this.reload(true);
-                    }.bind(this)
-                }
-            });
 
             var tbar = [{
                 text: t("refresh"),
@@ -68,10 +50,54 @@ pimcore.document.edit = Class.create({
 
             // add persona selection to toolbar
             if(pimcore.settings.targeting_enabled && this.document.getType() == "page") {
-                tbar.push("-", {
-                    text: t("edit_content_for_persona"),
-                    xtype: "tbtext"
-                }, this.persona);
+
+                this.persona = new Ext.form.ComboBox({
+                    displayField:'text',
+                    valueField: "id",
+                    store: {
+                        xtype: "jsonstore",
+                        url: "/admin/reports/targeting/persona-list/?add-default=true",
+                        fields: ["id", "text"]
+                    },
+                    editable: false,
+                    triggerAction: 'all',
+                    listWidth: 200,
+                    cls: "pimcore_icon_persona_select",
+                    emptyText: t("edit_content_for_persona"),
+                    listeners: {
+                        select: function (el) {
+                            if(this.document.isDirty()) {
+                                Ext.Msg.confirm(t('warning'), t('you_have_unsaved_changes')
+                                    + "<br />" + t("continue") + "?",
+                                    function(btn){
+                                        if (btn == 'yes'){
+                                            this.reload(true);
+                                        }
+                                    }.bind(this)
+                                );
+                            } else {
+                                this.reload(true);
+                            }
+                        }.bind(this)
+                    }
+                });
+
+                tbar.push("-", this.persona, {
+                    tooltip: t("clear_content_of_selected_persona"),
+                    iconCls: "pimcore_icon_cleanup",
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: "/admin/page/clear-persona-data",
+                            params: {
+                                persona: this.persona.getValue(),
+                                id: this.document.id
+                            },
+                            success: function () {
+                                this.document.reload();
+                            }.bind(this)
+                        });
+                    }.bind(this)
+                }, "-");
             }
 
             var config = {
