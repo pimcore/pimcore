@@ -45,6 +45,11 @@ class Tool_Newsletter_Config {
     /**
      * @var string
      */
+    public $personas;
+
+    /**
+     * @var string
+     */
     public $testEmailAddress;
 
     /**
@@ -255,5 +260,19 @@ class Tool_Newsletter_Config {
         return $this->testEmailAddress;
     }
 
+    /**
+     * @param string $personas
+     */
+    public function setPersonas($personas)
+    {
+        $this->personas = $personas;
+    }
 
+    /**
+     * @return string
+     */
+    public function getPersonas()
+    {
+        return $this->personas;
+    }
 }

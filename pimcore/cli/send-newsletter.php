@@ -33,8 +33,21 @@ if($newsletter) {
     if($newsletter->getObjectFilterSQL()) {
         $conditions[] = $newsletter->getObjectFilterSQL();
     }
-    $list->setCondition(implode(" AND ", $conditions));
+    if($newsletter->getPersonas()) {
+        $class = Object_Class::getByName($newsletter->getClass());
+        if($class && $class->getFieldDefinition("persona")) {
+            $personas = array();
+            $p = explode(",", $newsletter->getPersonas());
+            foreach ($p as $value) {
+                if(!empty($value)) {
+                    $personas[] = $list->quote($value);
+                }
+            }
+            $conditions[] = "persona IN (" . implode(",", $personas) . ")";
+        }
+    }
 
+    $list->setCondition(implode(" AND ", $conditions));
     $list->setOrderKey("email");
     $list->setOrder("ASC");
 
