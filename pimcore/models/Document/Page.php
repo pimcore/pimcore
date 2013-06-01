@@ -67,6 +67,10 @@ class Document_Page extends Document_PageSnippet {
      */
     public $personas = "";
 
+    /**
+     * @var int
+     */
+    public $usePersona;
 
     /**
      * @see Document::delete and Document_PageSnippet::delete
@@ -273,9 +277,9 @@ class Document_Page extends Document_PageSnippet {
     public function getElement($name) {
 
         // check if a persona is requested for this page, if yes deliver a different version of the element (prefixed)
-        if($_REQUEST["pimcore_persona"]) {
+        if($this->getUsePersona()) {
             $elements = $this->getElements();
-            $personaId = $_REQUEST["pimcore_persona"];
+            $personaId = $this->getUsePersona();
             $namePrefix = "persona-".$personaId."-";
             $originalName = str_replace($namePrefix, "", $name); // name cleaned up from prefixed (multi, block, area)
 
@@ -299,6 +303,42 @@ class Document_Page extends Document_PageSnippet {
             }
         }
 
+        // no persona in use, delegate to default
         return parent::getElement($name);
+    }
+
+    /**
+     * @param int $usePersona
+     */
+    public function setUsePersona($usePersona)
+    {
+        $this->usePersona = $usePersona;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUsePersona()
+    {
+        return $this->usePersona;
+    }
+
+    /**
+     *
+     */
+    public function __sleep() {
+
+        $finalVars = array();
+        $parentVars = parent::__sleep();
+
+        $blockedVars = array("usePersona");
+
+        foreach ($parentVars as $key) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
+
+        return $finalVars;
     }
 }

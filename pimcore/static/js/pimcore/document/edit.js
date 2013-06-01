@@ -26,7 +26,7 @@ pimcore.document.edit = Class.create({
                                                             + pimcore.settings.language+'&_dc=' + date.getTime();
 
         if(this.persona && this.persona.getValue()) {
-            link += "&pimcore_persona=" + this.persona.getValue();
+            link += "&_ptp=" + this.persona.getValue();
         }
 
         return link;
