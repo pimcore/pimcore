@@ -879,7 +879,8 @@ pimcore.settings.targeting.conditions = {
                 listWidth: 200,
                 mode: "local",
                 value: data["persona"],
-                emptyText: t("select_a_persona")
+                emptyText: t("select_a_persona"),
+                fieldLabel: t("select_a_persona")
             },{
                 xtype: "hidden",
                 name: "type",
