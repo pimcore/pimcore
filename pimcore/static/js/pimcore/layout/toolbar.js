@@ -217,7 +217,6 @@ pimcore.layout.toolbar = Class.create({
             reportsMenu.push({
                 text: t("personalization") + " / " + t("targeting"),
                 iconCls: "pimcore_icon_usergroup",
-                hidden: !pimcore.settings.targeting_enabled,
                 hideOnClick: false,
                 menu: [{
                     text: t("global_targeting_rules"),

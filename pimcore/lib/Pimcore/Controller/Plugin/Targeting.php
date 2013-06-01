@@ -44,22 +44,35 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
      */
     public function routeShutdown(Zend_Controller_Request_Abstract $request) {
 
-        $config = Pimcore_Config::getSystemConfig();
-        if(!Pimcore_Tool::useFrontendOutputFilters($request) || /*!$config->general->targeting*/ !PIMCORE_DEVMODE) {
+        if(!Pimcore_Tool::useFrontendOutputFilters($request)) {
             return $this->disable();
         }
-        
+
+        $db = Pimcore_Resource::get();
+        $enabled = $db->fetchOne("SELECT id FROM targeting_personas UNION SELECT id FROM targeting_rules LIMIT 1");
+        if(!$enabled) {
+            return $this->disable();
+        }
+
         if($request->getParam("document") instanceof Document_Page) {
             $this->document = $request->getParam("document");
         }
     }
 
     /**
-     * @return bool
+     * @return $this
+     */
+    public function enable() {
+        $this->enabled = true;
+        return $this;
+    }
+
+    /**
+     * @return $this
      */
     public function disable() {
         $this->enabled = false;
-        return true;
+        return $this;
     }
 
     /**

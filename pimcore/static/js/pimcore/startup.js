@@ -255,15 +255,13 @@ Ext.onReady(function () {
     sitesStore.load();
     pimcore.globalmanager.add("sites", sitesStore);
 
-    if(pimcore.settings.targeting_enabled) {
-        // personas
-        var personaStore = new Ext.data.JsonStore({
-            url: "/admin/reports/targeting/persona-list/",
-            fields: ["id", "text"]
-        });
-        personaStore.load();
-        pimcore.globalmanager.add("personas", personaStore);
-    }
+    // personas
+    var personaStore = new Ext.data.JsonStore({
+        url: "/admin/reports/targeting/persona-list/",
+        fields: ["id", "text"]
+    });
+    personaStore.load();
+    pimcore.globalmanager.add("personas", personaStore);
 
     // STATUSBAR
     var statusbar = new Ext.ux.StatusBar({
