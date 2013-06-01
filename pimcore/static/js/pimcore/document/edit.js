@@ -42,10 +42,47 @@ pimcore.document.edit = Class.create({
                                                     + '" src="' + this.getEditLink() + '" frameborder="0"></iframe>';
 
 
+            var cleanupFunction = function () {
+                Ext.Ajax.request({
+                    url: "/admin/page/clear-editable-data",
+                    params: {
+                        persona: this["persona"] ? this.persona.getValue() : "",
+                        id: this.document.id
+                    },
+                    success: function () {
+                        this.document.reload();
+                    }.bind(this)
+                });
+            };
+
             var tbar = [{
                 text: t("refresh"),
                 iconCls: "pimcore_icon_reload",
                 handler: this.reload.bind(this)
+            },"-",{
+                tooltip: t("highlight_editable_elements"),
+                iconCls: "pimcore_icon_highlight",
+                enableToggle: true,
+                handler: function (el) {
+                    var editables = this.frame.Ext.getBody().query(".pimcore_editable");
+                    var ed;
+                    for(var i=0; i<editables.length; i++) {
+                        ed = Ext.get(editables[i]);
+                        if(!ed.hasClass("pimcore_tag_inc") && !ed.hasClass("pimcore_tag_areablock")
+                            && !ed.hasClass("pimcore_tag_block") && !ed.hasClass("pimcore_tag_area")) {
+                            if(el.pressed) {
+                                var mask = ed.mask();
+                                mask.setStyle("background-color","#f5d833");
+                            } else {
+                                ed.unmask();
+                            }
+                        }
+                    }
+                }.bind(this)
+            }, "-", {
+                tooltip: t("clear_content_of_current_view"),
+                iconCls: "pimcore_icon_cleanup",
+                handler: cleanupFunction.bind(this)
             }];
 
             // add persona selection to toolbar
@@ -82,22 +119,11 @@ pimcore.document.edit = Class.create({
                     }
                 });
 
-                tbar.push("-", this.persona, {
+                tbar.push("->", this.persona, {
                     tooltip: t("clear_content_of_selected_persona"),
                     iconCls: "pimcore_icon_cleanup",
-                    handler: function () {
-                        Ext.Ajax.request({
-                            url: "/admin/page/clear-persona-data",
-                            params: {
-                                persona: this.persona.getValue(),
-                                id: this.document.id
-                            },
-                            success: function () {
-                                this.document.reload();
-                            }.bind(this)
-                        });
-                    }.bind(this)
-                }, "-");
+                    handler: cleanupFunction.bind(this)
+                });
             }
 
             var config = {
