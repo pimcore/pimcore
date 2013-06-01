@@ -33,6 +33,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         $page->idPath = Element_Service::getIdPath($page);
         $page->userPermissions = $page->getUserPermissions();
         $page->setLocked($page->isLocked());
+        $page->setParent(null);
 
         if($page->getContentMasterDocument()) {
             $page->contentMasterDocumentPath = $page->getContentMasterDocument()->getRealFullPath();

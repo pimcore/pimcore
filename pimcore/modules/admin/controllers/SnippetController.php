@@ -35,6 +35,7 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
         $snippet->idPath = Element_Service::getIdPath($snippet);
         $snippet->userPermissions = $snippet->getUserPermissions();
         $snippet->setLocked($snippet->isLocked());
+        $snippet->setParent(null);
 
         if($snippet->getContentMasterDocument()) {
             $snippet->contentMasterDocumentPath = $snippet->getContentMasterDocument()->getRealFullPath();
