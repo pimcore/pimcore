@@ -126,6 +126,30 @@ CREATE TABLE `dependencies` (
 
 
 
+DROP TABLE IF EXISTS `deployment_packages`;
+CREATE TABLE `deployment_packages` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `type` varchar(50) NOT NULL,
+  `subType` varchar(50) NOT NULL,
+  `creationDate` bigint(20) NOT NULL,
+  `version` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+DROP TABLE IF EXISTS `deployment_target`;
+CREATE TABLE `deployment_target` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `parentId` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `name` varchar(255) NOT NULL,
+  `creationDate` bigint(20) unsigned NOT NULL,
+  `status` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 DROP TABLE IF EXISTS `documents`;
 CREATE TABLE `documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -230,6 +254,7 @@ CREATE TABLE `documents_page` (
   `prettyUrl` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `css` longtext,
+  `personas` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -1133,6 +1158,14 @@ INSERT INTO `dependencies` VALUES ('object',31,'object',30);
 
 
 
+
+
+
+
+
+
+
+
 INSERT INTO `documents` VALUES (1,0,'page','','/',999999,1,1368522989,1368689696,1,2);
 INSERT INTO `documents` VALUES (3,1,'page','basic-examples','/',1,1,1368523212,1368626600,2,2);
 INSERT INTO `documents` VALUES (4,1,'page','introduction','/',0,1,1368523285,1368689817,2,2);
@@ -1739,32 +1772,32 @@ INSERT INTO `documents_link` VALUES (32,'',0,'http://www.pimcore.org/','direct')
 
 
 
-INSERT INTO `documents_page` VALUES (1,'','content','portal','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (3,'','content','default','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (4,'','content','default','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (5,'','advanced','index','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (6,'','content','default','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (7,'','content','default','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (9,'','advanced','object-form','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (18,'','content','default','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (19,'','content','default','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (20,'','content','default','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (21,'','content','thumbnails','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (22,'','content','website-translations','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (23,'','content','website-translations','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (24,'','content','default','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (25,'','content','editable-roundup','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (26,'','content','simple-form','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (27,'','news','index','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (28,'','content','default','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (29,'','content','default','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (30,'','content','default','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (31,'','content','default','','','','','a:0:{}','',30,'');
-INSERT INTO `documents_page` VALUES (34,'','content','default','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (35,'','content','default','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (36,'','advanced','search','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (37,'','advanced','contact-form','','','','','a:0:{}','',0,'');
-INSERT INTO `documents_page` VALUES (39,'','content','default','','','','','a:0:{}','',0,'');
+INSERT INTO `documents_page` VALUES (1,'','content','portal','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (3,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (4,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (5,'','advanced','index','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (6,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (7,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (9,'','advanced','object-form','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (18,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (19,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (20,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (21,'','content','thumbnails','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (22,'','content','website-translations','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (23,'','content','website-translations','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (24,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (25,'','content','editable-roundup','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (26,'','content','simple-form','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (27,'','news','index','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (28,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (29,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (30,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (31,'','content','default','','','','','a:0:{}','',30,'','');
+INSERT INTO `documents_page` VALUES (34,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (35,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (36,'','advanced','search','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (37,'','advanced','contact-form','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (39,'','content','default','','','','','a:0:{}','',0,'','');
 
 
 
