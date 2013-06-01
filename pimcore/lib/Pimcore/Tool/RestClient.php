@@ -902,7 +902,7 @@ class Pimcore_Tool_RestClient
         return $response;
     }
 
-    protected function buildEndpointUrl($customUrlPath)
+    public function buildEndpointUrl($customUrlPath)
     {
         $url = $this->getBaseUrl() . $customUrlPath . "?apikey=" . $this->getApiKey();
         return $url;
