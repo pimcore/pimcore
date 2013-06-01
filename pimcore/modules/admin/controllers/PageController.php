@@ -260,15 +260,22 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         ));
     }
 
-    public function clearPersonaDataAction() {
+    public function clearEditableDataAction() {
         $personaId = $this->getParam("persona");
         $docId = $this->getParam("id");
 
         $doc = Document::getById($docId);
 
         foreach($doc->getElements() as $element) {
-            if(preg_match("/^" . preg_quote($doc->getPersonaElementPrefix($personaId), "/") . "/", $element->getName())) {
-                $doc->removeElement($element->getName());
+            if($personaId) {
+                if(preg_match("/^" . preg_quote($doc->getPersonaElementPrefix($personaId), "/") . "/", $element->getName())) {
+                    $doc->removeElement($element->getName());
+                }
+            } else {
+                // remove all but persona data
+                if(!preg_match("/^persona_\-/", $element->getName())) {
+                    $doc->removeElement($element->getName());
+                }
             }
         }
 

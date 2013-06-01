@@ -1330,3 +1330,7 @@
     padding-left: 20px !important;
     background: url(/pimcore/static/img/icon/user_gray_cool.png) 2px center no-repeat #fff !important;
 }
+
+.pimcore_icon_highlight {
+    background: url(/pimcore/static/img/icon/lightning.png) left center no-repeat !important;
+}
