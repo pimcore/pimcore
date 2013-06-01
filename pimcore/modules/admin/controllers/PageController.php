@@ -28,7 +28,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         $page = Document_Page::getById($this->getParam("id"));
         $page = $this->getLatestVersion($page);
         
-        $page->getVersions();
+        $page->setVersions(array_splice($page->getVersions(), 0, 1));
         $page->getScheduledTasks();
         $page->idPath = Element_Service::getIdPath($page);
         $page->userPermissions = $page->getUserPermissions();
