@@ -55,6 +55,18 @@ class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
     }
 
     /**
+     * add the persona to the current user
+     * @param $id
+     */
+    public static function fire ($id) {
+        $front = Zend_Controller_Front::getInstance();
+        $plugin = $front->getPlugin("Pimcore_Controller_Plugin_Targeting");
+        if($plugin instanceof Pimcore_Controller_Plugin_Targeting) {
+            $plugin->addPersona($id);
+        }
+    }
+
+    /**
      * @param string $description
      */
     public function setDescription($description)

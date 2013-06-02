@@ -31,11 +31,25 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
     protected $events = array();
 
     /**
+     * @var array
+     */
+    protected $personas = array();
+
+
+    /**
      * @param $key
      * @param $value
      */
     public function addEvent($key, $value) {
         $this->events[] = array("key" => $key, "value" => $value);
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     */
+    public function addPersona($id) {
+        $this->personas[] = $id;
     }
 
     /**
@@ -88,7 +102,9 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
 
             $targets = array();
             $personas = array();
-            $dataPush = array();
+            $dataPush = array(
+                "personas" => $this->personas
+            );
 
             if(count($this->events) > 0) {
                 $dataPush["events"] = $this->events;
@@ -98,7 +114,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                 $dataPush["document"] = $this->document->getId();
                 if($this->document->getPersonas()) {
                     if($_GET["_ptp"]) { // if a special version is requested only return this id as target group for this page
-                        $dataPush["personas"] = array((int)$_GET["_ptp"]);
+                        $dataPush["personas"][] = (int) $_GET["_ptp"];
                     } else {
                         $docPersonas = explode(",", trim($this->document->getPersonas(), " ,"));
 
@@ -106,7 +122,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                         array_walk($docPersonas, function (&$value) {
                             $value = (int) trim($value);
                         });
-                        $dataPush["personas"] = $docPersonas;
+                        $dataPush["personas"] = array_merge($dataPush["personas"], $docPersonas);
                     }
                 }
 
@@ -123,6 +139,9 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                     $dataPush["personaPageVariants"] = $personaVariants;
                 }
             }
+
+            // no duplicates
+            $dataPush["personas"] = array_unique($dataPush["personas"]);
 
             if($this->document) {
                 // @TODO: cache this
