@@ -98,7 +98,7 @@ pimcore.document.edit = Class.create({
                     },
                     editable: false,
                     triggerAction: 'all',
-                    listWidth: 200,
+                    width: 240,
                     cls: "pimcore_icon_persona_select",
                     emptyText: t("edit_content_for_persona"),
                     listeners: {

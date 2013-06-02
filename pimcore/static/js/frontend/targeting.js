@@ -6,6 +6,7 @@
      *
      * _ptr -> redirect action (GET)
      * _ptc -> programmatically redirect action (GET)
+     * _ptp -> persona variant of document page (GET)
      */
 
     /* TESTS */
@@ -554,7 +555,8 @@
             user["history"] = [];
         }
 
-        if(!/_ptc=/.test(window.location.href)) {
+        // do not add programmatic actions and persona content to history
+        if(!/_pt(c|p)=/.test(window.location.href)) {
             user["history"].push(location.href);
         }
     } catch (e6) {
