@@ -65,13 +65,30 @@ class Pimcore_Google_Analytics {
             $stack = array_unique($stack);
         }
 
-        $typeSrc = "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';";
-        if($config->retargetingcode) {
-            $typeSrc = "ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';";
-        }
-
         $code = "";
-        $code .= "
+
+        if($config->universalcode) {
+            $code .= "
+            <script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+              " . $config->additionalcodebeforepageview . "
+
+              ga('create', '" . $config->trackid . "');
+              ga('send', 'pageview');
+
+              " . $config->additionalcode . "
+            </script>";
+        } else {
+            $typeSrc = "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';";
+            if($config->retargetingcode) {
+                $typeSrc = "ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';";
+            }
+
+            $code .= "
             <script type=\"text/javascript\">
 
               var _gaq = _gaq || [];
@@ -85,17 +102,18 @@ class Pimcore_Google_Analytics {
               }
 
               " . $config->additionalcode . "
-            
+
               (function() {
                 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
                 " . $typeSrc . "
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
               })();
-              
+
               " . implode("\n",$stack) . "
-              
-            </script>
-        ";
+
+            </script>";
+        }
+
         
         return $code;  
     }
