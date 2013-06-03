@@ -329,12 +329,6 @@ Ext.onReady(function () {
                     cls:"pimcore_body",
                     layout:"border",
                     border:true,
-                    tbar:{
-                        ctCls:"pimcore_panel_toolbar_container",
-                        id:"pimcore_panel_toolbar",
-                        xtype:"toolbar",
-                        border:false
-                    },
                     items:[
                         {
                             region:'west',
@@ -388,6 +382,7 @@ Ext.onReady(function () {
             listeners:{
                 "afterrender":function () {
                     Ext.get("pimcore_logo").show();
+                    Ext.get("pimcore_navigation").show();
 
                     var loadMask = new Ext.LoadMask(Ext.getCmp("pimcore_viewport").getEl(), {msg:t("please_wait")});
                     loadMask.enable();
