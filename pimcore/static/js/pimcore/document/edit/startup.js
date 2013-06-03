@@ -65,6 +65,10 @@ var dndManager = new pimcore.document.edit.dnd(parent.Ext, Ext.getBody(),
 
 Ext.onReady(function () {
 
+    Ext.getBody().on("click", function () {
+       parent.Ext.menu.MenuMgr.hideAll();
+    });
+
     // this sets the height of the body and html element to the current absolute height of the page
     // this is because some pages set the body height, and the positioning is then done by "absolute"
     // the problem is that ExtJS relies on the body height for DnD, so if the body isn't as high as the whole page
