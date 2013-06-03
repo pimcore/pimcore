@@ -541,6 +541,9 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
 
         // create new object
         $className = "Object_" . ucfirst($this->getParam("className"));
+        // Instantiate child class so that we can use overwritten save method
+        $classMapping = Pimcore_Config::getModelClassMappingConfig();
+				if (!empty($classMapping->$className)) $className = $classMapping->$className;
 
         $parent = Object_Abstract::getById($this->getParam("parentId"));
 
