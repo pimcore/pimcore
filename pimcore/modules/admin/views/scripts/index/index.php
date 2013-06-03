@@ -21,8 +21,7 @@
     </div>
     
     <div id="pimcore_loading">
-        <img class="logo" src="/pimcore/static/img/loading-logo.png?_dc=<?php echo Pimcore_Version::$revision ?>" />
-        <img class="loading" src="/pimcore/static/img/loading.gif?_dc=<?php echo Pimcore_Version::$revision ?>" />
+        <img class="loading" src="/pimcore/static/img/loading-white-bg.gif?_dc=<?php echo Pimcore_Version::$revision ?>" />
     </div>
 
     <div id="pimcore_navigation" style="display:none;">
