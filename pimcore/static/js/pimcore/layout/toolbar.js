@@ -629,16 +629,22 @@ pimcore.layout.toolbar = Class.create({
             e.stopEvent();
         };
 
-        Ext.get("pimcore_menu_file").on("mouseenter", showSubmenu.bind(this.fileMenu));
-        Ext.get("pimcore_menu_extras").on("mouseenter", showSubmenu.bind(this.extrasMenu));
-        Ext.get("pimcore_menu_marketing").on("mouseenter", showSubmenu.bind(this.marketingMenu));
-        Ext.get("pimcore_menu_settings").on("mouseenter", showSubmenu.bind(this.settingsMenu));
+        Ext.get("pimcore_menu_file").on("click", showSubmenu.bind(this.fileMenu));
+        Ext.get("pimcore_menu_extras").on("click", showSubmenu.bind(this.extrasMenu));
+        Ext.get("pimcore_menu_marketing").on("click", showSubmenu.bind(this.marketingMenu));
+        Ext.get("pimcore_menu_settings").on("click", showSubmenu.bind(this.settingsMenu));
         Ext.get("pimcore_menu_search").on("click", function () {
             pimcore.helpers.itemselector(false, function (selection) {
                 pimcore.helpers.openElement(selection.id,selection.type, selection.subtype);
             }, null, {moveToTab: true} );
         });
         Ext.get("pimcore_menu_logout").on("click", this.logout);
+
+        Ext.each(Ext.query(".pimcore_menu_item"), function (el) {
+            Ext.get(el).on("mouseenter", function () {
+                Ext.menu.MenuMgr.hideAll();
+            });
+        });
 
         /*this.toolbar.add({
             text: t('file'),
