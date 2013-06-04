@@ -319,6 +319,8 @@ Ext.onReady(function () {
 
     // init general layout
     try {
+        var user = pimcore.globalmanager.get("user");
+
         pimcore.viewport = new Ext.Viewport({
             id:"pimcore_viewport",
             layout:'fit',
@@ -334,6 +336,7 @@ Ext.onReady(function () {
                             region:'west',
                             ctCls:"pimcore_body_inner",
                             id:'pimcore_panel_tree_left',
+                            title: t("user") + ": " + user["name"],
                             split:true,
                             width:250,
                             minSize:175,
@@ -393,7 +396,6 @@ Ext.onReady(function () {
 
 
         // add sidebar panels
-        var user = pimcore.globalmanager.get("user");
 
         if (user.memorizeTabs) {
             // open previous opened tabs after the trees are ready

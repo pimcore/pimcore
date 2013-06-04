@@ -97,7 +97,7 @@ label {
     float: left;
     line-height: 33px;
     font-size: 18px;
-    color: #001428;
+    color: #5a646e;
     width: 130px;
     display: inline-block;
 }
@@ -107,7 +107,7 @@ label {
     font-size: 18px;
     display: inline-block;
     border: 1px solid #bbbbbb;
-    color: #001428;
+    color: #5a646e;
 
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -142,7 +142,7 @@ p.submit {
 
 input.submit {
     font-size: 24px;
-    color: #001428;
+    color: #5a646e;
     padding: 0 50px 0 0;
     margin: 0;
     border: 0;
@@ -159,7 +159,7 @@ input.submit {
 
 .lostpassword {
     position: absolute;
-    color: #001428;
+    color: #5a646e;
     text-decoration: underline;
     font-weight: bold;
 
