@@ -330,12 +330,13 @@ Ext.onReady(function () {
                     id:"pimcore_body",
                     cls:"pimcore_body",
                     layout:"border",
-                    border:true,
+                    border:false,
                     items:[
                         {
                             region:'west',
                             ctCls:"pimcore_body_inner",
                             id:'pimcore_panel_tree_left',
+                            cls: "pimcore_panel_tree",
                             title: t("user") + ": " + user["name"],
                             split:true,
                             width:250,
@@ -362,6 +363,7 @@ Ext.onReady(function () {
                         {
                             region:'east',
                             id:'pimcore_panel_tree_right',
+                            cls: "pimcore_panel_tree",
                             split:true,
                             width:250,
                             minSize:175,

@@ -1217,16 +1217,21 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                 }
 
                 var thumbnail = node.attributes.thumbnail;
-                var position = (this.position == "right") ? "left" : "right";
                 if(thumbnail) {
+
+                    var treeEl = Ext.get("pimcore_panel_tree_" + this.position);
+                    var position = treeEl.getOffsetsTo(Ext.getBody());
+                    position = position[0];
+
+                    if(this.position == "right") {
+                        position = position - 420;
+                    } else {
+                        position = treeEl.getWidth() + position;
+                    }
+
                     var container = Ext.get("pimcore_tree_preview");
                     var imageHtml = '<img src="' + thumbnail + '" />';
-                    var styles = "";
-                    if(position == "left") {
-                        styles += "left:5px; right:auto; padding:10px 10px 10px 0";
-                    } else {
-                        styles += "right:5px; left:auto; padding:10px 0 10px 10px";
-                    }
+                    var styles = "left: " + position + "px";
 
                     if(container) {
                         container.update(imageHtml);
@@ -1240,14 +1245,18 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
             }.bind(this, node));
 
             el.on("mouseleave", function () {
-                var container = Ext.get("pimcore_tree_preview");
-                if(container) {
-                    container.hide();
-                }
+                pimcore.helpers.treeNodeThumbnailPreviewHide();
             }.bind(this));
         }.bind(this, node), 200);
     }
 };
+
+pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
+    var container = Ext.get("pimcore_tree_preview");
+    if(container) {
+        container.hide();
+    }
+}
 
 pimcore.helpers.insertTextAtCursorPosition = function (text) {
 
