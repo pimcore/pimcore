@@ -27,4 +27,8 @@ class Webservice_JsonEncoder {
         exit;
     }
 
+    public function decode($data){
+        $data = Zend_Json::decode($data);
+        return $data;
+    }
 }

@@ -84,7 +84,8 @@ class Deployment_Adapter_Phing extends Deployment_Adapter_Abstract{
             throw new Exception("'target' is not specified");
         }
 
-        $cmd = self::getBinary(). ' ' . $opts['target'] .' ';
+        //add phpCliPath to get phing to run also if environment variable "php" is not set
+        $cmd = Pimcore_Tool_Console::getPhpCli() .' ' . self::getBinary(). ' ' . $opts['target'] .' ';
 
         if(!$opts['buildfile']){
             $opts['buildfile'] = self::getDefaultBuildFile();

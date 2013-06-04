@@ -31,11 +31,15 @@ abstract class Deployment_Task_Pimcore_Phing_AbstractPackageTask extends Deploym
     }
 
     protected function getPackageId(){
-        $dbEntry = $this->getPackageDatabaseEntry();
-        if(!$dbEntry->getId()){
-            throw new BuildException("No packageId given!");
+        if($this->getParam('packageId')){
+            return $this->getParam('packageId');
+        }else{
+            $dbEntry = $this->getPackageDatabaseEntry();
+            if(!$dbEntry->getId()){
+                throw new BuildException("No packageId given!");
+            }
+            return $dbEntry->getId();
         }
-        return $dbEntry->getId();
     }
 
     protected function getTemporaryTaskDirectory(){
