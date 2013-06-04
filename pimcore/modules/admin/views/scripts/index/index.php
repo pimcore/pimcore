@@ -27,12 +27,12 @@
     <div id="pimcore_navigation" style="display:none;">
         <ul>
             <li id="pimcore_menu_avatar" class="pimcore_menu_avatar"></li>
-            <li id="pimcore_menu_file" class="pimcore_menu_item icon-th-large"></li>
-            <li id="pimcore_menu_extras" class="pimcore_menu_item icon-rocket"></li>
-            <li id="pimcore_menu_marketing" class="pimcore_menu_item icon-chart-bar"></li>
-            <li id="pimcore_menu_settings" class="pimcore_menu_item icon-cog-alt"></li>
-            <li id="pimcore_menu_search" class="pimcore_menu_item icon-search"></li>
-            <li id="pimcore_menu_logout" class="pimcore_menu_item icon-logout"></li>
+            <li id="pimcore_menu_file" class="pimcore_menu_item icon-th-large"><?php echo $this->translate("file"); ?></li>
+            <li id="pimcore_menu_extras" class="pimcore_menu_item icon-rocket"><?php echo $this->translate("extras"); ?></li>
+            <li id="pimcore_menu_marketing" class="pimcore_menu_item icon-chart-bar"><?php echo $this->translate("marketing"); ?></li>
+            <li id="pimcore_menu_settings" class="pimcore_menu_item icon-cog-alt"><?php echo $this->translate("settings"); ?></li>
+            <li id="pimcore_menu_search" class="pimcore_menu_item icon-search"><?php echo $this->translate("search"); ?></li>
+            <li id="pimcore_menu_logout" class="pimcore_menu_item icon-logout"><?php echo $this->translate("logout"); ?></li>
         </ul>
     </div>
     

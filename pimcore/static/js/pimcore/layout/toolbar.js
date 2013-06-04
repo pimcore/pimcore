@@ -23,11 +23,6 @@ pimcore.layout.toolbar = Class.create({
         var fileItems = [];
 
         fileItems.push({
-            xtype: "menutextitem",
-            text: t("file")
-        });
-
-        fileItems.push({
             text: t("welcome"),
             iconCls: "pimcore_icon_welcome",
             handler: function () {
@@ -125,11 +120,6 @@ pimcore.layout.toolbar = Class.create({
 
 
         var extrasItems = [];
-
-        extrasItems.push({
-            xtype: "menutextitem",
-            text: t("extras")
-        });
 
         if (user.isAllowed("glossary")) {
             extrasItems.push({
@@ -296,11 +286,6 @@ pimcore.layout.toolbar = Class.create({
         // marketing menu
         var marketingItems = [];
 
-        marketingItems.push({
-            xtype: "menutextitem",
-            text: t("reports_and_marketing")
-        });
-
         if (user.isAllowed("reports")) {
             marketingItems.push({
                 text: t("reports"),
@@ -410,11 +395,6 @@ pimcore.layout.toolbar = Class.create({
 
         // settings menu
         var settingsItems = [];
-
-        settingsItems.push({
-            xtype: "menutextitem",
-            text: t("settings")
-        });
 
         if (user.isAllowed("document_types")) {
             settingsItems.push({
@@ -622,18 +602,22 @@ pimcore.layout.toolbar = Class.create({
 
 
         var showSubmenu = function (e, el) {
-            el = Ext.get(el);
-            var offsets = el.getOffsetsTo(Ext.getBody());
-            offsets[0] = 60;
-            this.showAt(offsets);
-            e.stopEvent();
+            if(this.hidden) {
+                el = Ext.get(el);
+                var offsets = el.getOffsetsTo(Ext.getBody());
+                offsets[0] = 70;
+                this.showAt(offsets);
+                e.stopEvent();
+            } else {
+                this.hide();
+            }
         };
 
-        Ext.get("pimcore_menu_file").on("click", showSubmenu.bind(this.fileMenu));
-        Ext.get("pimcore_menu_extras").on("click", showSubmenu.bind(this.extrasMenu));
-        Ext.get("pimcore_menu_marketing").on("click", showSubmenu.bind(this.marketingMenu));
-        Ext.get("pimcore_menu_settings").on("click", showSubmenu.bind(this.settingsMenu));
-        Ext.get("pimcore_menu_search").on("click", function () {
+        Ext.get("pimcore_menu_file").on("mousedown", showSubmenu.bind(this.fileMenu));
+        Ext.get("pimcore_menu_extras").on("mousedown", showSubmenu.bind(this.extrasMenu));
+        Ext.get("pimcore_menu_marketing").on("mousedown", showSubmenu.bind(this.marketingMenu));
+        Ext.get("pimcore_menu_settings").on("mousedown", showSubmenu.bind(this.settingsMenu));
+        Ext.get("pimcore_menu_search").on("mousedown", function () {
             pimcore.helpers.itemselector(false, function (selection) {
                 pimcore.helpers.openElement(selection.id,selection.type, selection.subtype);
             }, null, {moveToTab: true} );
@@ -641,10 +625,18 @@ pimcore.layout.toolbar = Class.create({
         Ext.get("pimcore_menu_logout").on("click", this.logout);
 
         Ext.each(Ext.query(".pimcore_menu_item"), function (el) {
-            Ext.get(el).on("mouseenter", function () {
-                Ext.menu.MenuMgr.hideAll();
-            });
-        });
+            el = Ext.get(el);
+            el.on("mouseenter", function () {
+                if(Ext.menu.MenuMgr.hideAll()) {
+                    var offsets = el.getOffsetsTo(Ext.getBody());
+                    offsets[0] = 70;
+                    var menu = this[el.id.replace(/pimcore_menu_/, "") + "Menu"];
+                    if(menu) {
+                        menu.showAt(offsets);
+                    }
+                }
+            }.bind(this));
+        }.bind(this));
 
         /*this.toolbar.add({
             text: t('file'),
