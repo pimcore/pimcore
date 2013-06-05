@@ -100,7 +100,10 @@ class Pimcore_Tool_Frontend {
     }
 
     public static function isLegacy() {
-        //preg_match("/elements\.pm$/", $_SERVER["HTTP_HOST"])
+        return true;
+        if(preg_match("/elements\.pm$/", $_SERVER["HTTP_HOST"])) {
+            return false;
+        }
         return true;
     }
 }
