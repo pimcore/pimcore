@@ -7,7 +7,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="robots" content="noindex, nofollow" />
 
-    <link rel="stylesheet" href="/pimcore/static/css/login-reloaded.css" type="text/css" />
+    <?php if(Pimcore_Tool_Frontend::isLegacy()) { ?>
+        <link rel="stylesheet" href="/pimcore/static/legacy/css/login-reloaded.css" type="text/css" />
+    <?php } else { ?>
+        <link rel="stylesheet" href="/pimcore/static/css/login-reloaded.css" type="text/css" />
+    <?php } ?>
 
     <?php
         // load plugin scripts

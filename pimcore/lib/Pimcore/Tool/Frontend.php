@@ -98,4 +98,9 @@ class Pimcore_Tool_Frontend {
 
         return;
     }
+
+    public static function isLegacy() {
+        //preg_match("/elements\.pm$/", $_SERVER["HTTP_HOST"])
+        return true;
+    }
 }

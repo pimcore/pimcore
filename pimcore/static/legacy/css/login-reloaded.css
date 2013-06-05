@@ -1,0 +1,355 @@
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+
+
+body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    font-family: Arial, Verdana;
+    font-size: 14px;
+}
+
+
+img.background {
+        /* Set rules to fill background */
+        min-height: 100%;
+        min-width: 1024px;
+
+        /* Set up proportionate scaling */
+        width: 100%;
+        height: auto;
+
+        /* Set up positioning */
+        position: fixed;
+        top: 0;
+        left: 0;
+}
+
+#vcenter {
+    position: absolute;
+    top: 50%;
+    height: 290px;
+    margin-top: -145px;
+    width:100%;
+}
+
+img {
+    border: 0;
+}
+
+#content {
+    background: #ff6600;
+    width: 400px;
+    height: 230px;
+    margin: 0 auto;
+    padding: 30px;
+
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -moz-box-shadow: 0 0 5px rgba(0,0,0,0.6);
+    -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.6);
+    box-shadow: 0 0 5px rgba(0,0,0,0.6);
+
+    background-color: #f6f7f8;
+    background: -moz-linear-gradient(100% 100% 90deg, rgba(230,233,235,1), rgba(255,255,255,0.9));
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,0.9)), to(rgba(230,233,235,1)));
+    background: linear-gradient(rgba(255,255,255,0.9), rgba(230,233,235,1));
+}
+
+.logo {
+    background: url(/pimcore/static/legacy/img/login-reloaded/logo.png) top center no-repeat;
+    width: 100%;
+    height: 75px;
+    border-bottom: 1px solid #bbbbbb;
+    margin-bottom: 25px;
+}
+
+.error {
+    width: 100%;
+    height: 64px;
+    border: 1px solid #c0272b;
+    margin-bottom: 25px;
+    color: #c0272b;
+    font-size: 18px;
+    text-align: center;
+    padding: 10px 0 0 0;
+}
+
+form {
+    padding: 0;
+    margin: 0;
+}
+
+label {
+    float: left;
+    line-height: 33px;
+    font-size: 18px;
+    color: #001428;
+    width: 130px;
+    display: inline-block;
+}
+
+.credential {
+    float: left;
+    font-size: 18px;
+    display: inline-block;
+    border: 1px solid #bbbbbb;
+    color: #001428;
+
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+
+    height: 33px;
+    width: 245px;
+    padding: 0 10px 0 10px;
+    line-height: 33px;
+
+    -moz-box-shadow: inset 0 0 3px #bbbbbb;
+    -webkit-box-shadow: inset 0 0 3px #bbbbbb;
+    box-shadow: inset 0 0 3px #bbbbbb;
+}
+
+p {
+    padding: 0 0 10px 0;
+    margin: 0;
+}
+
+.clear {
+    clear: both;
+    display: block;
+    width:0;
+    height: 0;
+}
+
+p.submit {
+    height: 50px;
+    position: relative;
+}
+
+input.submit {
+    font-size: 24px;
+    color: #001428;
+    padding: 0 50px 0 0;
+    margin: 0;
+    border: 0;
+
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 40px;
+    cursor: pointer;
+    outline: none;
+
+    background: url(/pimcore/static/legacy/img/login-reloaded/submit.png) top right no-repeat;
+}
+
+.lostpassword {
+    position: absolute;
+    color: #001428;
+    text-decoration: underline;
+    font-weight: bold;
+
+    position: absolute;
+    left: 0;
+    top: 15px;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    height: 60px;
+    width: 100%;
+    line-height: 18px;
+    overflow: hidden;
+}
+
+#footer .background {
+    position: absolute;
+    left:0;
+    top:0;
+    background: #000;
+    width:100%;
+    height: 60px;
+    z-index: 1;
+
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+    -moz-opacity: 0.8;
+}
+
+#footer .left {
+    position: absolute;
+    left: 0;
+    top:0;
+    text-align: left;
+    color: #fff;
+    z-index: 10;
+    padding: 12px 0 0 15px;
+}
+
+#footer .right {
+    position: absolute;
+    right: 0;
+    top:0;
+    text-align: right;
+    color: #fff;
+    z-index: 10;
+    padding: 12px 15px 0 0;
+}
+
+#footer a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+#browserinfo {
+    text-align: center;
+}
+
+#browserinfo .message {
+    padding: 0 0 10px 0;
+}
+
+#browserinfo .links {
+    padding: 0 0 10px 0;
+}
+
+.hidden {
+    display:none;
+}
+
+/*
+Animate.css - http://daneden.me/animate
+LICENSED UNDER THE  MIT LICENSE (MIT)
+
+Copyright (c) 2012 Dan Eden
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+.animated {
+    -webkit-animation-fill-mode: both;
+    -moz-animation-fill-mode: both;
+    -ms-animation-fill-mode: both;
+    -o-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation-duration: 1s;
+    -moz-animation-duration: 1s;
+    -ms-animation-duration: 1s;
+    -o-animation-duration: 1s;
+    animation-duration: 1s;
+}
+
+.animated.hinge {
+    -webkit-animation-duration: 2s;
+    -moz-animation-duration: 2s;
+    -ms-animation-duration: 2s;
+    -o-animation-duration: 2s;
+    animation-duration: 2s;
+}
+
+@-webkit-keyframes flipInX {
+    0% {
+        -webkit-transform: perspective(400px) rotateX(90deg);
+        opacity: 0;
+    }
+
+    40% {
+        -webkit-transform: perspective(400px) rotateX(-10deg);
+    }
+
+    70% {
+        -webkit-transform: perspective(400px) rotateX(10deg);
+    }
+
+    100% {
+        -webkit-transform: perspective(400px) rotateX(0deg);
+        opacity: 1;
+    }
+}
+@-moz-keyframes flipInX {
+    0% {
+        -moz-transform: perspective(400px) rotateX(90deg);
+        opacity: 0;
+    }
+
+    40% {
+        -moz-transform: perspective(400px) rotateX(-10deg);
+    }
+
+    70% {
+        -moz-transform: perspective(400px) rotateX(10deg);
+    }
+
+    100% {
+        -moz-transform: perspective(400px) rotateX(0deg);
+        opacity: 1;
+    }
+}
+@-o-keyframes flipInX {
+    0% {
+        -o-transform: perspective(400px) rotateX(90deg);
+        opacity: 0;
+    }
+
+    40% {
+        -o-transform: perspective(400px) rotateX(-10deg);
+    }
+
+    70% {
+        -o-transform: perspective(400px) rotateX(10deg);
+    }
+
+    100% {
+        -o-transform: perspective(400px) rotateX(0deg);
+        opacity: 1;
+    }
+}
+@keyframes flipInX {
+    0% {
+        transform: perspective(400px) rotateX(90deg);
+        opacity: 0;
+    }
+
+    40% {
+        transform: perspective(400px) rotateX(-10deg);
+    }
+
+    70% {
+        transform: perspective(400px) rotateX(10deg);
+    }
+
+    100% {
+        transform: perspective(400px) rotateX(0deg);
+        opacity: 1;
+    }
+}
+
+.flipInX {
+    -webkit-backface-visibility: visible !important;
+    -webkit-animation-name: flipInX;
+    -moz-backface-visibility: visible !important;
+    -moz-animation-name: flipInX;
+    -o-backface-visibility: visible !important;
+    -o-animation-name: flipInX;
+    backface-visibility: visible !important;
+    animation-name: flipInX;
+}
