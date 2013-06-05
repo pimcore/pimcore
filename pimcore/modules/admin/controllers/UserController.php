@@ -19,7 +19,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         parent::init();
 
         // check permissions
-        $notRestrictedActions = array("get-current-user", "update-current-user", "get-all-users", "get-available-permissions", "tree-get-childs-by-id", "get-minimal");
+        $notRestrictedActions = array("get-current-user", "update-current-user", "get-all-users", "get-available-permissions", "tree-get-childs-by-id", "get-minimal", "get-image");
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
             $this->checkPermission("users");
         }
@@ -404,4 +404,55 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         ));
     }
 
+    public function uploadImageAction() {
+        $userImageDir = PIMCORE_WEBSITE_VAR . "/user-image";
+        if(!is_dir($userImageDir)) {
+            @mkdir($userImageDir);
+        }
+
+        $destFile = $userImageDir . "/user-" . $this->getParam("id") . ".png";
+        $thumb = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/user-thumbnail-" . $this->getParam("id") . ".png";
+        @unlink($destFile);
+        @unlink($thumb);
+        copy($_FILES["Filedata"]["tmp_name"], $destFile);
+
+        $this->_helper->json(array(
+            "success" => true
+        ), false);
+
+        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+        // Ext.form.Action.Submit and mark the submission as failed
+        $this->getResponse()->setHeader("Content-Type", "text/html");
+    }
+
+    public function getImageAction() {
+
+        if($this->getParam("id")) {
+            $id = $this->getParam("id");
+        } else {
+            $id = $this->getUser()->getId();
+        }
+
+        $path = PIMCORE_PATH . "/static/img/avatar.png";
+
+        $user = PIMCORE_WEBSITE_VAR . "/user-image/user-" . $id . ".png";
+        if(file_exists($user)) {
+            $thumb = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/user-thumbnail-" . $id . ".png";
+            if(!file_exists($thumb)) {
+                $image = Pimcore_Image::getInstance();
+                $image->load($user);
+                $image->cover(45,45);
+                $image->save($thumb, "png");
+            }
+            $path = $thumb;
+        }
+
+        header("Content-type: image/png", true);
+
+        while(@ob_end_flush());
+        flush();
+
+        readfile($path);
+        exit;
+    }
 }
