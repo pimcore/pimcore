@@ -59,6 +59,7 @@ pimcore.settings.tagmanagement.item = Class.create({
         this.panel = new Ext.form.FormPanel({
             border: false,
 //            layout: "fit",
+            layout: "pimcoreform",
             closable: true,
             autoScroll: true,
             layout: "pimcoreform",
@@ -246,7 +247,7 @@ pimcore.settings.tagmanagement.item = Class.create({
             }],
             items: [{
                 xtype: "textarea",
-                width: 500,
+                width: 440,
                 height: 200,
                 fieldLabel: t("code"),
                 name: "item." + myId + ".code",
