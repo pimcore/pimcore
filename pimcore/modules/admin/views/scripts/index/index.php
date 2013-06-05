@@ -34,7 +34,9 @@
 
     <div id="pimcore_navigation" style="display:none;">
         <ul>
-            <li id="pimcore_menu_avatar" class="pimcore_menu_avatar"></li>
+            <li id="pimcore_menu_avatar" class="pimcore_menu_avatar">
+                <img src="/admin/user/get-image" />
+            </li>
             <li id="pimcore_menu_file" class="pimcore_menu_item icon-th-large"><?php echo $this->translate("file"); ?></li>
             <li id="pimcore_menu_extras" class="pimcore_menu_item icon-rocket"><?php echo $this->translate("extras"); ?></li>
             <li id="pimcore_menu_marketing" class="pimcore_menu_item icon-chart-bar"><?php echo $this->translate("marketing"); ?></li>
