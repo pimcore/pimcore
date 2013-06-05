@@ -42,7 +42,7 @@
                         <h1><?php echo $this->input("cHeadline_".$i, array("width" => "300")); ?></h1>
 
                         <p class="lead"><?php echo $this->textarea("cText_".$i, array("width" => "300")); ?></p>
-                        <?php echo $this->link("cLink_".$i, array("class" => "btn btn-large btn-primary")); ?>
+                        <?php echo $this->link("cLink_".$i, array("class" => "btn btn-large")); ?>
                     </div>
                 </div>
             </div>
