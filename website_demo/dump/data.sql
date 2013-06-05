@@ -286,7 +286,7 @@ CREATE TABLE `edit_lock` (
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
   KEY `cidtype` (`cid`,`ctype`)
-) ENGINE=InnoDB AUTO_INCREMENT=383 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=390 DEFAULT CHARSET=utf8;
 
 
 
@@ -963,7 +963,7 @@ CREATE TABLE `versions` (
   PRIMARY KEY (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 
 
@@ -971,9 +971,9 @@ CREATE TABLE `versions` (
 
 INSERT INTO `assets` VALUES (1,0,'folder','','/','',1368522989,1368522989,1,1,'');
 INSERT INTO `assets` VALUES (3,1,'folder','portal-sujets','/','',1368530371,1368632469,2,2,'a:0:{}');
-INSERT INTO `assets` VALUES (4,3,'image','slide-01.jpg','/portal-sujets/','image/jpeg',1368530684,1368632469,2,2,'a:3:{s:10:\"imageWidth\";i:1500;s:11:\"imageHeight\";i:550;s:25:\"imageDimensionsCalculated\";b:1;}');
-INSERT INTO `assets` VALUES (5,3,'image','slide-02.jpg','/portal-sujets/','image/jpeg',1368530764,1368632469,2,2,'a:3:{s:10:\"imageWidth\";i:1500;s:11:\"imageHeight\";i:550;s:25:\"imageDimensionsCalculated\";b:1;}');
-INSERT INTO `assets` VALUES (6,3,'image','slide-03.jpg','/portal-sujets/','image/jpeg',1368530764,1368632469,2,2,'a:3:{s:10:\"imageWidth\";i:1500;s:11:\"imageHeight\";i:550;s:25:\"imageDimensionsCalculated\";b:1;}');
+INSERT INTO `assets` VALUES (4,3,'image','slide-01.jpg','/portal-sujets/','image/jpeg',1368530684,1370432846,2,2,'a:4:{s:10:\"imageWidth\";i:1500;s:11:\"imageHeight\";i:550;s:25:\"imageDimensionsCalculated\";b:1;s:10:\"thumbnails\";N;}');
+INSERT INTO `assets` VALUES (5,3,'image','slide-02.jpg','/portal-sujets/','image/jpeg',1368530764,1370432868,2,2,'a:4:{s:10:\"imageWidth\";i:1500;s:11:\"imageHeight\";i:550;s:25:\"imageDimensionsCalculated\";b:1;s:10:\"thumbnails\";N;}');
+INSERT INTO `assets` VALUES (6,3,'image','slide-03.jpg','/portal-sujets/','image/jpeg',1368530764,1370432860,2,2,'a:4:{s:10:\"imageWidth\";i:1500;s:11:\"imageHeight\";i:550;s:25:\"imageDimensionsCalculated\";b:1;s:10:\"thumbnails\";N;}');
 INSERT INTO `assets` VALUES (7,1,'folder','examples','/','',1368531816,1368632468,2,2,'a:0:{}');
 INSERT INTO `assets` VALUES (17,7,'folder','panama','/examples/','',1368532826,1368632468,2,2,'a:0:{}');
 INSERT INTO `assets` VALUES (18,17,'image','img_0117.jpg','/examples/panama/','image/jpeg',1368532831,1368632468,2,2,'a:3:{s:10:\"imageWidth\";i:2000;s:11:\"imageHeight\";i:1500;s:25:\"imageDimensionsCalculated\";b:1;}');
@@ -1808,22 +1808,6 @@ INSERT INTO `documents_snippet` VALUES (16,'','default','default','/snippets/sta
 INSERT INTO `documents_snippet` VALUES (17,'','default','default','/snippets/standard-teaser.php',0);
 
 
-
-
-INSERT INTO `edit_lock` VALUES (21,8,'document',2,'8vrcajba9ipjl93ahd1s0c0k7p1t6aa8',1368525882);
-INSERT INTO `edit_lock` VALUES (377,9,'document',2,'onlng149cieptvquqibah6vuti6mkbv0',1369854606);
-INSERT INTO `edit_lock` VALUES (379,1,'document',2,'eeiqrfs2bfl7napjq3d6gvjui6mg0jvd',1370432565);
-INSERT INTO `edit_lock` VALUES (380,15,'document',2,'eeiqrfs2bfl7napjq3d6gvjui6mg0jvd',1370432572);
-INSERT INTO `edit_lock` VALUES (381,16,'document',2,'eeiqrfs2bfl7napjq3d6gvjui6mg0jvd',1370432576);
-INSERT INTO `edit_lock` VALUES (382,17,'document',2,'eeiqrfs2bfl7napjq3d6gvjui6mg0jvd',1370432579);
-
-
-
-
-
-
-
-
 INSERT INTO `glossary` VALUES (1,'en',0,1,'occidental','7','','',0);
 INSERT INTO `glossary` VALUES (2,'en',0,1,'vocabular','20','','',0);
 INSERT INTO `glossary` VALUES (3,'en',0,1,'resultant','5','','',0);
@@ -1831,32 +1815,6 @@ INSERT INTO `glossary` VALUES (4,'en',0,1,'familie','18','','',0);
 INSERT INTO `glossary` VALUES (5,'en',0,1,'omnicos','19','','',0);
 INSERT INTO `glossary` VALUES (6,'en',0,1,'coalesce','','coalesce','',0);
 INSERT INTO `glossary` VALUES (7,'en',0,1,'grammatica','','','grammatica',0);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 INSERT INTO `object_query_2` VALUES (3,2,'news',1374147900,'Lorem ipsum dolor sit amet','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.','Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam <a href=\"/basic-examples/content-page\">ultricies </a>nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget <a href=\"/basic-examples/editable-roundup\">condimentum </a>rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. ',49,43,52);
@@ -2012,9 +1970,9 @@ INSERT INTO `search_backend_data` VALUES (10,'/shared','document','folder','fold
 INSERT INTO `search_backend_data` VALUES (11,'/shared/includes','document','folder','folder',1,1368527961,1368527961,2,2,'ID: 11  \nPath: /shared/includes  \nincludes','en ');
 INSERT INTO `search_backend_data` VALUES (12,'/shared/includes/footer','document','snippet','snippet',1,1368527967,1368529693,2,2,'ID: 12  \nPath: /shared/includes/footer  \n Designed and built with all the love in the world by&nbsp;@mdo&nbsp;and&nbsp;@fat. Code licensed under&nbsp;Apache License v2.0,&nbsp;Glyphicons Free&nbsp;licensed under&nbsp;CC BY 3.0. © Templates pimcore.org licensed under BSD License pimcore.org Documentation Bug Tracker ','');
 INSERT INTO `search_backend_data` VALUES (3,'/portal-sujets','asset','folder','folder',1,1368530371,1368632469,2,2,'ID: 3  \nPath: /portal-sujets  \nportal-sujets','');
-INSERT INTO `search_backend_data` VALUES (4,'/demo-website/portal-sujets/slide-01.jpg','asset','image','image',1,1368530684,1368530684,2,2,'ID: 4  \nPath: /demo-website/portal-sujets/slide-01.jpg  \nslide-01.jpg','');
-INSERT INTO `search_backend_data` VALUES (5,'/demo-website/portal-sujets/slide-02.jpg','asset','image','image',1,1368530764,1368530764,2,2,'ID: 5  \nPath: /demo-website/portal-sujets/slide-02.jpg  \nslide-02.jpg','');
-INSERT INTO `search_backend_data` VALUES (6,'/demo-website/portal-sujets/slide-03.jpg','asset','image','image',1,1368530764,1368530764,2,2,'ID: 6  \nPath: /demo-website/portal-sujets/slide-03.jpg  \nslide-03.jpg','');
+INSERT INTO `search_backend_data` VALUES (4,'/portal-sujets/slide-01.jpg','asset','image','image',1,1368530684,1370432846,2,2,'ID: 4  \nPath: /portal-sujets/slide-01.jpg  \nslide-01.jpg','');
+INSERT INTO `search_backend_data` VALUES (5,'/portal-sujets/slide-02.jpg','asset','image','image',1,1368530764,1370432868,2,2,'ID: 5  \nPath: /portal-sujets/slide-02.jpg  \nslide-02.jpg','');
+INSERT INTO `search_backend_data` VALUES (6,'/portal-sujets/slide-03.jpg','asset','image','image',1,1368530764,1370432860,2,2,'ID: 6  \nPath: /portal-sujets/slide-03.jpg  \nslide-03.jpg','');
 INSERT INTO `search_backend_data` VALUES (13,'/shared/teasers','document','folder','folder',1,1368531657,1368531657,2,2,'ID: 13  \nPath: /shared/teasers  \nteasers','en ');
 INSERT INTO `search_backend_data` VALUES (14,'/shared/teasers/standard','document','folder','folder',1,1368531665,1368531665,2,2,'ID: 14  \nPath: /shared/teasers/standard  \nstandard','en ');
 INSERT INTO `search_backend_data` VALUES (15,'/shared/teasers/standard/basic-examples','document','snippet','snippet',1,1368531692,1370432633,2,2,'ID: 15  \nPath: /shared/teasers/standard/basic-examples  \n Full Responsive Lorem ipsum This demo is based on Bootstrap, the most popular, intuitive, and powerful front-end framework. ','leftNavStartNode:/ language:en ');
@@ -2304,10 +2262,11 @@ INSERT INTO `versions` VALUES (8,39,'document',2,'',1369854325,0,1);
 INSERT INTO `versions` VALUES (9,39,'document',2,'',1369854416,0,1);
 INSERT INTO `versions` VALUES (10,39,'document',2,'',1369854422,0,1);
 INSERT INTO `versions` VALUES (11,9,'document',2,'',1369854600,0,1);
-
-
-
-
+INSERT INTO `versions` VALUES (16,1,'document',2,'',1370432624,0,1);
+INSERT INTO `versions` VALUES (17,15,'document',2,'',1370432633,0,1);
+INSERT INTO `versions` VALUES (18,16,'document',2,'',1370432637,0,1);
+INSERT INTO `versions` VALUES (19,17,'document',2,'',1370432641,0,1);
+INSERT INTO `versions` VALUES (20,1,'document',2,'',1370432677,0,1);
 
 
 DROP VIEW IF EXISTS `object_2`;
