@@ -294,7 +294,7 @@ pimcore.document.pages.settings = Class.create({
                         collapsible: true,
                         autoHeight:true,
                         labelWidth: 320,
-                        hidden: pimcore.globalmanager.get("personas").getCount() < 1,
+                        //hidden: pimcore.globalmanager.get("personas").getCount() < 1, // this kills getValue() method
                         defaultType: 'textfield',
                         items :[
                             {
