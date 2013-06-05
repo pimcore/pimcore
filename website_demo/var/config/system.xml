@@ -105,14 +105,14 @@
   </outputfilters>
   <email>
     <sender>
-      <name></name>
-      <email></email>
+      <name>pimcore Demo</name>
+      <email>demo@demo.pimcore.org</email>
     </sender>
     <return>
-      <name></name>
-      <email></email>
+      <name>pimcore Demo</name>
+      <email>demo@demo.pimcore.org</email>
     </return>
-    <method></method>
+    <method>sendmail</method>
     <smtp>
       <host></host>
       <port></port>
