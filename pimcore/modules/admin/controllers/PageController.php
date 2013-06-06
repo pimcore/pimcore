@@ -204,6 +204,16 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
             $doc = Document::getById($this->getParam("id"));
             $url = Pimcore_Tool::getHostUrl() . $doc->getRealFullPath();
+
+            $config = Pimcore_Config::getSystemConfig();
+            if ($config->general->http_auth) {
+                $username = $config->general->http_auth->username;
+                $password = $config->general->http_auth->password;
+                if($username && $password) {
+                    $url = str_replace("://", "://" . $username .":". $password . "@", $url);
+                }
+            }
+
             $tmpFile = PIMCORE_TEMPORARY_DIRECTORY . "/screenshot_tmp_" . $doc->getId() . ".png";
             $file = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-screenshot-" . $doc->getId() . ".jpg";
 
