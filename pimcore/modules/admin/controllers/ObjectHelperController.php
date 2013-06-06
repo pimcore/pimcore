@@ -541,6 +541,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
 
         // create new object
         $className = "Object_" . ucfirst($this->getParam("className"));
+        $className = Pimcore_Tool::getModelClassMapping($className);
 
         $parent = Object_Abstract::getById($this->getParam("parentId"));
 
