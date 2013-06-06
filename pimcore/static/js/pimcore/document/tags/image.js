@@ -451,7 +451,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                         clearInterval(this.editWindowInterval);
                         this.editWindowInitCount = 0;
                         
-                        this.editWindow.setSize(imageWidth + 14, imageHeight + 32 + 27);
+                        this.editWindow.setSize(imageWidth + 26, imageHeight + 32 + 36);
                         Ext.get("selectorImage").remove();
 
                         this.resizer = new Ext.Resizable('selector', {
@@ -586,7 +586,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                         clearInterval(this.hotspotWindowInterval);
                         this.hotspotWindowInitCount = 0;
 
-                        this.hotspotWindow.setSize(imageWidth + 14, imageHeight + 32 + 27 + 27); // 27px is the toolbar
+                        this.hotspotWindow.setSize(imageWidth + 26, imageHeight + 32 + 27 + 36); // 27px is the toolbar
                         Ext.get("hotspotImage").remove();
 
                         if(this.datax && this.datax["hotspots"]) {
