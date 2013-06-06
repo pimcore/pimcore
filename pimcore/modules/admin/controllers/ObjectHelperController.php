@@ -731,6 +731,10 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
     public function getBatchJobsAction()
     {
 
+        if($this->getParam("language")) {
+            $this->setLanguage($this->getParam("language"), true);
+        }
+
         $folder = Object_Abstract::getById($this->getParam("folderId"));
         $class = Object_Class::getById($this->getParam("classId"));
 

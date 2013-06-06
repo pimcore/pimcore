@@ -130,7 +130,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 condition: condition,
                 classId: this.classId,
                 folderId: this.element.id,
-                objecttype: this.objecttype
+                objecttype: this.objecttype,
+                language: this.gridLanguage
             };
 
 
