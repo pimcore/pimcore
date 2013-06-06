@@ -421,6 +421,11 @@ class Pimcore {
 
         $broker = Pimcore_API_Plugin_Broker::getInstance();
         $broker->registerModule("Search_Backend_Module");
+
+        $conf = Pimcore_Config::getSystemConfig();
+        if($conf->general->uuidsystemid) {
+            $broker->registerModule("Tool_UUID_Module");
+        }
     }
 
     public static function initPlugins() {
