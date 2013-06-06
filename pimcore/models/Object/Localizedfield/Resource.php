@@ -90,10 +90,6 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
 
             foreach ($fieldDefinitions as $fd) {
-                if($fd->isRelationType()) {
-                    // TODO, Hmm ... for relation types there is not even a column, so skip them for now.
-                    continue;
-                }
 
                 $key = $fd->getName();
 
@@ -113,7 +109,25 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                             }
 
                             //get changed fields for inheritance
-                            if($this->model->getClass()->getAllowInherit()) {
+                            if($fd->isRelationType()) {
+                                if (is_array($insertData)) {
+                                    $doInsert = false;
+                                    foreach($insertData as $insertDataKey => $insertDataValue) {
+                                        if($oldData[$insertDataKey] != $insertDataValue) {
+                                            $doInsert = true;
+                                        }
+                                    }
+
+                                    if($doInsert) {
+                                        $this->inheritanceHelper->addRelationToCheck($key, array_keys($insertData));
+                                    }
+                                } else {
+                                    if($oldData[$key] != $insertData) {
+                                        $this->inheritanceHelper->addRelationToCheck($key);
+                                    }
+                                }
+
+                            } else {
                                 if (is_array($insertData)) {
                                     foreach($insertData as $insertDataKey => $insertDataValue) {
                                         if($oldData[$insertDataKey] != $insertDataValue) {

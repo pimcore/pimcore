@@ -189,7 +189,7 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
         $fieldDefinition = $this->getObject()->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($name);
         if($fieldDefinition && method_exists($fieldDefinition, "preGetData")) {
             $data =  $fieldDefinition->preGetData($this, array(
-                "data" => $this->items[$language][$name],
+                "data" => $data,
                 "language" => $language,
                 "name" => $name
             ));
