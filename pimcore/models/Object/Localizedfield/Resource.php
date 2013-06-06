@@ -90,6 +90,11 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
 
             foreach ($fieldDefinitions as $fd) {
+                if($fd->isRelationType()) {
+                    // TODO, Hmm ... for relation types there is not even a column, so skip them for now.
+                    continue;
+                }
+
                 $key = $fd->getName();
 
                 if ($fd) {
