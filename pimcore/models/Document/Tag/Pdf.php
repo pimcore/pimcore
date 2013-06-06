@@ -382,14 +382,14 @@ class Document_Tag_Pdf extends Document_Tag
                         "height" => 200,
                         "contain" => true,
                         "format" => "pjpeg"
-                    ), $i),
+                    ), $i, true),
                     "detail" => $asset->getImageThumbnail(array(
                         "width" => 1500,
                         "height" => 1500,
                         "contain" => true,
                         "quality" => "85",
                         "format" => "pjpeg"
-                    ), $i)
+                    ), $i, true)
                 );
 
                 if(is_array($hotspots) && $hotspots[$i]) {

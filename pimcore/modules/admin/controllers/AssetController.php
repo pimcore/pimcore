@@ -872,8 +872,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $format = strtolower($thumbnail->getFormat());
         if ($format == "source") {
-            $thumbnail->setFormat("PNG");
-            $format = "png";
+            $thumbnail->setFormat("jpeg"); // default format for documents is JPEG not PNG (=too big)
         }
 
         if($this->getParam("treepreview")) {
