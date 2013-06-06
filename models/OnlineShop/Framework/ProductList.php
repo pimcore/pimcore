@@ -154,7 +154,6 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
     public function getInProductList() {
         return $this->inProductList;
     }
-    
 
     private $order;
     /**
@@ -190,6 +189,9 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
     }
 
     public function setLimit($limit) {
+        if($this->limit != $limit) {
+            $this->products = null;
+        }
         $this->limit = $limit;
     }
 
@@ -198,6 +200,9 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
     }
 
     public function setOffset($offset) {
+        if($this->offset != $offset) {
+            $this->products = null;
+        }
         $this->offset = $offset;
     }
 
@@ -205,7 +210,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
         return $this->offset;
     }
 
-    
+
     public function setCategory($category) {
         $this->category = $category;
     }
@@ -246,6 +251,8 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
                 $priceSystemName = key($priceSystemArrays);
                 $priceSystem = OnlineShop_Framework_Factory::getInstance()->getPriceSystem($priceSystemName);
                 $objectRaws = $priceSystem->filterProductIds($priceSystemArrays[$raw['priceSystemName']], null, null, $this->order, $this->getOffset(), $this->getLimit());
+            } else if(count($priceSystemArrays) == 0) {
+                //nothing to do
             } else {
                 throw new Exception("Not implemented yet - multiple pricing systems are not supported yet");
                 foreach($priceSystemArrays as $priceSystemName => $priceSystemArray) {
@@ -322,7 +329,6 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
             throw new Exception("Not supported yet");
         }
     }
-
 
 
     private function buildQueryFromConditions($excludeConditions = false, $excludedFieldname = null, $variantMode = null) {
@@ -426,11 +432,11 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
                 $direction = $keyDirection[1];
 
                 if($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-                     if(strtoupper($this->order) == "DESC") {
-                         $orderByStringArray[] = "max(" . $key . ") " . $direction;
-                     } else {
-                         $orderByStringArray[] = "min(" . $key . ") " . $direction;
-                     }
+                    if(strtoupper($this->order) == "DESC") {
+                        $orderByStringArray[] = "max(" . $key . ") " . $direction;
+                    } else {
+                        $orderByStringArray[] = "min(" . $key . ") " . $direction;
+                    }
                 } else {
                     $orderByStringArray[] = $key . " " . $direction;
                 }
@@ -495,7 +501,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
      */
     public function count() {
         if($this->totalCount === null) {
-            $this->load();
+            $this->totalCount = $this->resource->getCount($this->buildQueryFromConditions());
         }
         return $this->totalCount;
     }
@@ -522,7 +528,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
     public function getItems($offset, $itemCountPerPage) {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
-        return $this->load();
+        return $this->getProducts();
     }
 
     /**
