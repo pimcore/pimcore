@@ -3,7 +3,7 @@
 class OnlineShop_Framework_Impl_CartItem extends Pimcore_Model_Abstract implements OnlineShop_Framework_ICartItem {
 
     /**
-     * @var OnlineShop_Framework_AbstractProduct
+     * @var OnlineShop_Framework_ProductInterfaces_ICheckoutable
      */
     protected $product;
     protected $productId;
@@ -40,18 +40,18 @@ class OnlineShop_Framework_Impl_CartItem extends Pimcore_Model_Abstract implemen
         return $this->count;
     }
 
-    public function setProduct(OnlineShop_Framework_AbstractProduct $product) {
+    public function setProduct(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product) {
         $this->product = $product;
     }
 
     /**
-     * @return OnlineShop_Framework_AbstractProduct
+     * @return OnlineShop_Framework_ProductInterfaces_ICheckoutable
      */
     public function getProduct() {
         if ($this->product) {
             return $this->product;
         }
-        $this->product = OnlineShop_Framework_AbstractProduct::getById($this->productId);
+        $this->product = Object_Abstract::getById($this->productId);
         return $this->product;
     }
 

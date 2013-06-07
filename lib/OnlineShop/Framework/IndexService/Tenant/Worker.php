@@ -128,7 +128,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
     }
 
 
-    public function deleteFromIndex(OnlineShop_Framework_AbstractProduct $object){
+    public function deleteFromIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object){
         $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $object->getId());
         $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($object->getId()));
         if($this->tenantConfig->getTenantRelationTablename()) {
@@ -136,7 +136,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
         }
     }
 
-    public function updateIndex(OnlineShop_Framework_AbstractProduct $object) {
+    public function updateIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
 
         if($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
             $a = Pimcore::inAdmin();

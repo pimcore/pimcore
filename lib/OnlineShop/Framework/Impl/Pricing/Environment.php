@@ -15,7 +15,7 @@ class OnlineShop_Framework_Impl_Pricing_Environment implements OnlineShop_Framew
     protected $cart;
 
     /**
-     * @var OnlineShop_Framework_AbstractProduct
+     * @var OnlineShop_Framework_ProductInterfaces_ICheckoutable
      */
     protected $product;
 
@@ -54,18 +54,18 @@ class OnlineShop_Framework_Impl_Pricing_Environment implements OnlineShop_Framew
     }
 
     /**
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      *
      * @return OnlineShop_Framework_Pricing_IEnvironment
      */
-    public function setProduct(OnlineShop_Framework_AbstractProduct $product = null)
+    public function setProduct(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product = null)
     {
         $this->product = $product;
         return $this;
     }
 
     /**
-     * @return OnlineShop_Framework_AbstractProduct
+     * @return OnlineShop_Framework_ProductInterfaces_ICheckoutable
      */
     public function getProduct()
     {

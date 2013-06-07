@@ -21,13 +21,13 @@ abstract class OnlineShop_Framework_Impl_CachingPriceSystem extends OnlineShop_F
     }
 
     /**
-     * @param OnlineShop_Framework_AbstractProduct $abstractProduct
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct
      * @param int | string $quantityScale
      *    quantityScale - numeric or string (allowed values: OnlineShop_Framework_IPriceInfo::MIN_PRICE
-     * @param OnlineShop_Framework_AbstractProduct[] $products
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable[] $products
      * @return OnlineShop_Framework_AbstractPriceInfo
      */
-    public function getPriceInfo(OnlineShop_Framework_AbstractProduct $abstractProduct, $quantityScale = 1, $products = null) {
+    public function getPriceInfo(OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct, $quantityScale = 1, $products = null) {
         if (!(is_numeric($quantityScale)&&$quantityScale>=0)||!in_array($quantityScale,array(OnlineShop_Framework_IPriceInfo::MIN_PRICE))){
         //    throw new OnlineShop_Framework_Exception_UnsupportedException(__METHOD__  . " not supports quantity =  " . $quantityScale ."!");
 

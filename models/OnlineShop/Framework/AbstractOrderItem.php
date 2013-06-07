@@ -7,14 +7,14 @@ class OnlineShop_Framework_AbstractOrderItem extends Object_Concrete {
 
     /**
      * @throws OnlineShop_Framework_Exception_UnsupportedException
-     * @return OnlineShop_Framework_AbstractProduct
+     * @return OnlineShop_Framework_ProductInterfaces_ICheckoutable
      */
     public function getProduct() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getProduct is not implemented for " . get_class($this));
     }
 
     /**
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      */
     public function setProduct($product) {

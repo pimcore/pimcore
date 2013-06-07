@@ -146,17 +146,17 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     }
 
     /**
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      *
      * @return void
      */
-    public function setProduct(OnlineShop_Framework_AbstractProduct $product)
+    public function setProduct(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product)
     {
         return $this->priceInfo->setProduct($product);
     }
 
     /**
-     * @return OnlineShop_Framework_AbstractProduct
+     * @return OnlineShop_Framework_ProductInterfaces_ICheckoutable
      */
     public function getProduct()
     {

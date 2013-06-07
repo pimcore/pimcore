@@ -73,16 +73,16 @@ abstract class OnlineShop_Framework_IndexService_Tenant_AbstractConfig {
     /**
      * checks, if product should be in index for current tenant
      *
-     * @param OnlineShop_Framework_AbstractProduct $object
+     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
      * @return bool
      */
-    public abstract function inIndex(OnlineShop_Framework_AbstractProduct $object);
+    public abstract function inIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object);
 
     /**
      * populates table for tenant reations in case of subtenants
      *
-     * @param OnlineShop_Framework_AbstractProduct $object
+     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
      */
-    public abstract function updateSubTenantEntries(OnlineShop_Framework_AbstractProduct $object);
+    public abstract function updateSubTenantEntries(OnlineShop_Framework_ProductInterfaces_IIndexable $object);
 
 }

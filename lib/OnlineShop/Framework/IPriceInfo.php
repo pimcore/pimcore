@@ -44,14 +44,14 @@ interface OnlineShop_Framework_IPriceInfo {
     public function setPriceSystem($priceSystem);
 
     /**
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      *
      * @return void
      */
-    public function setProduct(OnlineShop_Framework_AbstractProduct $product);
+    public function setProduct(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product);
 
     /**
-     * @return OnlineShop_Framework_AbstractProduct
+     * @return OnlineShop_Framework_ProductInterfaces_ICheckoutable
      */
     public function getProduct();
 }

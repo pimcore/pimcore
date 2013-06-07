@@ -11,7 +11,7 @@ interface OnlineShop_Framework_ICartManager extends OnlineShop_Framework_ICompon
     
     /**
      * @abstract
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      * @param $count
      * @param $key
      * @param null $itemKey
@@ -20,7 +20,7 @@ interface OnlineShop_Framework_ICartManager extends OnlineShop_Framework_ICompon
      * @param OnlineShop_Framework_AbstractSetProductEntry[] $subProducts
      * @param null $comment
      */
-    public function addToCart(OnlineShop_Framework_AbstractProduct $product, $count,  $key ,$itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function addToCart(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count,  $key ,$itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
     /**
      * @abstract

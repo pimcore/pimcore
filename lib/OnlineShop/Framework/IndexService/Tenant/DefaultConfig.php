@@ -38,17 +38,17 @@ class OnlineShop_Framework_IndexService_Tenant_DefaultConfig extends OnlineShop_
     }
 
     /**
-     * @param OnlineShop_Framework_AbstractProduct $object
+     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
      * @return bool
      */
-    public function inIndex(OnlineShop_Framework_AbstractProduct $object) {
+    public function inIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
         return true;
     }
 
     /**
-     * @param OnlineShop_Framework_AbstractProduct $object
+     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
      */
-    public function updateSubTenantEntries(OnlineShop_Framework_AbstractProduct $object) {
+    public function updateSubTenantEntries(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
         return;
     }
 

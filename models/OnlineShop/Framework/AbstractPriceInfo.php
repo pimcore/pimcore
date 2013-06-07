@@ -80,7 +80,7 @@
          throw new OnlineShop_Framework_Exception_UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
      }
 
-     public function setProduct(OnlineShop_Framework_AbstractProduct $product) {
+     public function setProduct(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product) {
          $this->product = $product;
      }
 

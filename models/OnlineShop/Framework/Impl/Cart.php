@@ -24,7 +24,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
      */
     protected $priceCalcuator;
 
-    public function addItem(OnlineShop_Framework_AbstractProduct $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
+    public function addItem(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
 
         if(empty($itemKey)) {
             $itemKey = $product->getId();
@@ -37,7 +37,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         return $this->updateItem($itemKey, $product, $count, $replace, $params, $subProducts, $comment);
     }
 
-    public function updateItem($itemKey, OnlineShop_Framework_AbstractProduct $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
+    public function updateItem($itemKey, OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
         $this->itemAmount = null;
         $this->subItemAmount = null;
 
@@ -84,7 +84,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
     }
 
     /**
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      * @param int                                  $count
      * @param null                                 $itemKey
      * @param bool                                 $replace
@@ -94,7 +94,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
      *
      * @return string
      */
-    public function addGiftItem(OnlineShop_Framework_AbstractProduct $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null)
+    public function addGiftItem(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null)
     {
         if(empty($itemKey)) {
             $itemKey = $product->getId();
@@ -109,7 +109,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
 
     /**
      * @param string                               $itemKey
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      * @param int                                  $count
      * @param bool                                 $replace
      * @param array                                $params
@@ -118,7 +118,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
      *
      * @return string
      */
-    public function updateGiftItem($itemKey, OnlineShop_Framework_AbstractProduct $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null)
+    public function updateGiftItem($itemKey, OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null)
     {
         // item already exists?
         if(!array_key_exists($itemKey, $this->giftItems))

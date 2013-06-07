@@ -35,12 +35,12 @@ class OnlineShop_Framework_IndexService_Tenant_DefaultSubTenantConfig extends On
         }
     }
 
-    public function inIndex(OnlineShop_Framework_AbstractProduct $object) {
+    public function inIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
         $tenants = $object->getTenants();
         return !empty($tenants);
     }
 
-    public function updateSubTenantEntries(OnlineShop_Framework_AbstractProduct $object) {
+    public function updateSubTenantEntries(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
         $db = Pimcore_Resource::get();
         $db->delete($this->getTenantRelationTablename(), "o_id = " . $db->quote($object->getId()));
 

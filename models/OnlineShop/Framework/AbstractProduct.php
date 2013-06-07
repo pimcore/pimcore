@@ -3,7 +3,86 @@
 /**
  * Abstract base class for pimcore objects who should be used as products in the online shop framework
  */
-class OnlineShop_Framework_AbstractProduct extends Object_Concrete {
+class OnlineShop_Framework_AbstractProduct extends Object_Concrete implements OnlineShop_Framework_ProductInterfaces_IIndexable, OnlineShop_Framework_ProductInterfaces_ICheckoutable {
+
+// =============================================
+//     IIndexable Methods
+//  =============================================
+
+    /**
+     * defines if product is included into the product index. If false, product doesn't appear in product index.
+     *
+     * @return bool
+     */
+    public function getOSDoIndexProduct() {
+        return true;
+    }
+
+
+
+    /**
+     * returns if product is active.
+     * there should either be a attribute in pro product object or
+     * it should be overwritten in mapped sub classes of product classes in case of multiple criteria for product active state
+     *
+     * @param bool $inProductList
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return bool
+     */
+    public function isActive($inProductList = false) {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("isActive is not supported for " . get_class($this));
+    }
+
+
+    /**
+     * defines the name of the price system for this product.
+     * there should either be a attribute in pro product object or
+     * it should be overwritten in mapped sub classes of product classes
+     *
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return string
+     */
+    public function getPriceSystemName() {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("getPriceSystemName is not supported for " . get_class($this));
+    }
+
+
+    /**
+     * returns product type for product index (either object or variant).
+     * by default it returns type of object, but it may be overwritten if necessary.
+     *
+     * @return string
+     */
+    public function getOSIndexType() {
+        return $this->getO_type();
+    }
+
+
+    /**
+     * returns parent id for product index.
+     * by default it returns id of parent object, but it may be overwritten if necessary.
+     *
+     * @return int
+     */
+    public function getOSParentId() {
+        return $this->getO_parentId();
+    }
+
+    /**
+     * returns array of categories.
+     * has to be overwritten either in pimcore object or mapped sub class.
+     *
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return array
+     */
+    public function getCategories() {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("getCategories is not supported for " . get_class($this));
+    }
+
+
+// =============================================
+//     ICheckoutable Methods
+//  =============================================
 
     /**
      * called by default CommitOrderProcessor to get the product name to store it in the order item
@@ -27,26 +106,6 @@ class OnlineShop_Framework_AbstractProduct extends Object_Concrete {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
     }
 
-    /**
-     * defines if product is included into the product index. If false, product doesn't appear in product index.
-     *
-     * @return bool
-     */
-    public function getOSDoIndexProduct() {
-        return true;
-    }
-
-    /**
-     * defines the name of the price system for this product.
-     * there should either be a attribute in pro product object or
-     * it should be overwritten in mapped sub classes of product classes
-     *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
-     * @return string
-     */
-    public function getPriceSystemName() {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("getPriceSystemName is not supported for " . get_class($this));
-    }
 
     /**
      * defines the name of the availability system for this product.
@@ -60,18 +119,6 @@ class OnlineShop_Framework_AbstractProduct extends Object_Concrete {
         return "default";
     }
 
-    /**
-     * returns if product is active.
-     * there should either be a attribute in pro product object or
-     * it should be overwritten in mapped sub classes of product classes in case of multiple criteria for product active state
-     *
-     * @param bool $inProductList
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
-     * @return bool
-     */
-    public function isActive($inProductList = false) {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("isActive is not supported for " . get_class($this));
-    }
 
     /**
      * checks if product is bookable
@@ -85,36 +132,6 @@ class OnlineShop_Framework_AbstractProduct extends Object_Concrete {
         return !empty($price) && $this->isActive();
     }
 
-    /**
-     * returns product type for product index (either object or variant).
-     * by default it returns type of object, but it may be overwritten if necessary.
-     *
-     * @return string
-     */
-    public function getOSIndexType() {
-        return $this->getO_type();
-    }
-
-    /**
-     * returns parent id for product index.
-     * by default it returns id of parent object, but it may be overwritten if necessary.
-     *
-     * @return int
-     */
-    public function getOSParentId() {
-        return $this->getO_parentId();
-    }
-
-    /**
-     * returns array of categories.
-     * has to be overwritten either in pimcore object or mapped sub class.
-     *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
-     * @return array
-     */
-    public function getCategories() {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("getCategories is not supported for " . get_class($this));
-    }
 
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
@@ -166,6 +183,13 @@ class OnlineShop_Framework_AbstractProduct extends Object_Concrete {
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity);
 
     }
+
+
+
+
+
+
+
 
     /**
      * @static

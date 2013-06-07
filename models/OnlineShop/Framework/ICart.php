@@ -38,7 +38,7 @@ interface OnlineShop_Framework_ICart {
 
     /**
      * @abstract
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      * @param int $count
      * @param null $itemKey
      * @param bool $replace replace if item with same key exists
@@ -47,13 +47,13 @@ interface OnlineShop_Framework_ICart {
      * @param string $comment
      * @return string $itemKey
      */
-    public function addItem(OnlineShop_Framework_AbstractProduct $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function addItem(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
 
     /**
      * @abstract
      * @param string $itemKey
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      * @param int $count
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
@@ -61,10 +61,10 @@ interface OnlineShop_Framework_ICart {
      * @param null $comment
      * @return string $itemKey
      */
-    public function updateItem($itemKey, OnlineShop_Framework_AbstractProduct $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function updateItem($itemKey, OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
     /**
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      * @param int $count
      * @param null $itemKey
      * @param bool $replace replace if item with same key exists
@@ -73,12 +73,12 @@ interface OnlineShop_Framework_ICart {
      * @param string $comment
      * @return string $itemKey
      */
-    public function addGiftItem(OnlineShop_Framework_AbstractProduct $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function addGiftItem(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
 
     /**
      * @param string $itemKey
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      * @param int $count
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
@@ -86,7 +86,7 @@ interface OnlineShop_Framework_ICart {
      * @param null $comment
      * @return string $itemKey
      */
-    public function updateGiftItem($itemKey, OnlineShop_Framework_AbstractProduct $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function updateGiftItem($itemKey, OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
     /**
      * @abstract

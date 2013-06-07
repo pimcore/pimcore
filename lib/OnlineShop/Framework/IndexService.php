@@ -58,14 +58,14 @@ class OnlineShop_Framework_IndexService {
     }
 
 
-    public function deleteFromIndex(OnlineShop_Framework_AbstractProduct $object){
+    public function deleteFromIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object){
         $this->defaultWorker->deleteFromIndex($object);
         foreach($this->tenantWorkers as $name => $tenant) {
             $tenant->deleteFromIndex($object);
         }
     }
 
-    public function updateIndex(OnlineShop_Framework_AbstractProduct $object) {
+    public function updateIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
         $this->defaultWorker->updateIndex($object);
         foreach($this->tenantWorkers as $name => $tenant) {
             $tenant->updateIndex($object);
