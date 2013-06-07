@@ -8,6 +8,18 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
 
     initialize: function(){
         pimcore.plugin.broker.registerPlugin(this);
+
+        pimcore.plugin.broker.registerPlugin(this);
+
+        var searchButton = Ext.get("pimcore_menu_settings");
+
+        this.navEl = Ext.get(
+            searchButton.insertHtml(
+                "afterEnd",
+                '<li id="pimcore_menu_onlineshop" class="pimcore_menu_item icon-basket">' + t('plugin_onlineshop_mainmenu') + '</li>'
+            )
+        );
+
     },
 
     uninstall: function(){
@@ -16,8 +28,10 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
 
     pimcoreReady: function (params,broker) {
 
+        var toolbar = pimcore.globalmanager.get("layout_toolbar");
+
         // init
-        var menuItems = [];
+        var menuItems = new Ext.menu.Menu({cls: "pimcore_navigation_flyout"});
         var user = pimcore.globalmanager.get("user");
 
 
@@ -38,27 +52,15 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
                     }
                 }
             }
-
             // add to menu
-            menuItems.push(item);
+            menuItems.add(item);
         }
 
 
         // add onlineshop main menu
-        if(menuItems.length > 0)
+        if(menuItems.items.length > 0)
         {
-            var toolbar = Ext.getCmp("pimcore_panel_toolbar");
-            var insertPoint = pimcore.globalmanager.get("user").isAllowed("seemode") ? toolbar.items.length-6 : toolbar.items.length-5;
-            toolbar.insert(insertPoint, {
-                text: t('plugin_onlineshop_mainmenu'),
-                cls: "pimcore_main_menu",
-                iconCls: "plugin_onlineshop_icon_mainmenu",
-                id: "plugin_onlineshop_mainmenu",
-                menu: new Ext.menu.Menu({
-                    items: menuItems
-                })
-            });
-            pimcore.layout.refresh();
+            this.navEl.on("mousedown", toolbar.showSubMenu.bind(menuItems));
         }
     }
 });
