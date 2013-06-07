@@ -53,12 +53,28 @@ class TestSuite_Inheritance_LocalizedFieldTest extends Test_Base {
         $two->setInput("childtextDE", "de");
         $two->save();
 
+        $three = new Object_Inheritance();
+        $three->setKey("three");
+        $three->setParentId($two->getId());
+        $three->setPublished(1);
+        $three->save();
+
+
         $id2 = $two->getId();
+        $id3 = $three->getId();
+
         $one = Object_Abstract::getById($id1);
         $two = Object_Abstract::getById($id2);
+        $three = Object_Abstract::getById($id3);
+
+
+        $three->delete();
 
         $this->assertEquals("parenttextEN", $one->getInput("en"));
         $this->assertEquals("parenttextEN", $two->getInput("en"));
+        $this->assertEquals("parenttextEN", $three->getInput("en"));
+
+        $three->delete();
 
         $this->assertEquals("parenttextDE", $one->getInput("de"));
         $this->assertEquals("childtextDE", $two->getInput("de"));
