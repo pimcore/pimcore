@@ -601,22 +601,10 @@ pimcore.layout.toolbar = Class.create({
         }
 
 
-        var showSubmenu = function (e, el) {
-            if(this.hidden) {
-                el = Ext.get(el);
-                var offsets = el.getOffsetsTo(Ext.getBody());
-                offsets[0] = 70;
-                this.showAt(offsets);
-                e.stopEvent();
-            } else {
-                this.hide();
-            }
-        };
-
-        Ext.get("pimcore_menu_file").on("mousedown", showSubmenu.bind(this.fileMenu));
-        Ext.get("pimcore_menu_extras").on("mousedown", showSubmenu.bind(this.extrasMenu));
-        Ext.get("pimcore_menu_marketing").on("mousedown", showSubmenu.bind(this.marketingMenu));
-        Ext.get("pimcore_menu_settings").on("mousedown", showSubmenu.bind(this.settingsMenu));
+        Ext.get("pimcore_menu_file").on("mousedown", this.showSubMenu.bind(this.fileMenu));
+        Ext.get("pimcore_menu_extras").on("mousedown", this.showSubMenu.bind(this.extrasMenu));
+        Ext.get("pimcore_menu_marketing").on("mousedown", this.showSubMenu.bind(this.marketingMenu));
+        Ext.get("pimcore_menu_settings").on("mousedown", this.showSubMenu.bind(this.settingsMenu));
         Ext.get("pimcore_menu_search").on("mousedown", function () {
             pimcore.helpers.itemselector(false, function (selection) {
                 pimcore.helpers.openElement(selection.id,selection.type, selection.subtype);
@@ -825,6 +813,17 @@ pimcore.layout.toolbar = Class.create({
         return;
     },
 
+    showSubMenu: function (e, el) {
+        if(this.hidden) {
+            el = Ext.get(el);
+            var offsets = el.getOffsetsTo(Ext.getBody());
+            offsets[0] = 70;
+            this.showAt(offsets);
+            e.stopEvent();
+        } else {
+            this.hide();
+        }
+    },
 
     closeAllTabs: function () {
         pimcore.helpers.closeAllElements();
