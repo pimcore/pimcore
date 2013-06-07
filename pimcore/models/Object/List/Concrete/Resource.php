@@ -55,7 +55,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
     }
 
     /**
-     * Loads a list of object ids for the specicifies parameters, returns an array of ids
+     * Loads a list of object ids for the specified parameters, returns an array of ids
      *
      * @return array
      */
