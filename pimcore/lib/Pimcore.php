@@ -423,7 +423,7 @@ class Pimcore {
         $broker->registerModule("Search_Backend_Module");
 
         $conf = Pimcore_Config::getSystemConfig();
-        if($conf->general->uuidsystemid) {
+        if($conf->general->instanceIdentifier) {
             $broker->registerModule("Tool_UUID_Module");
         }
     }

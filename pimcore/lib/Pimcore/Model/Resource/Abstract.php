@@ -79,7 +79,7 @@ abstract class Pimcore_Model_Resource_Abstract implements Pimcore_Model_Resource
      * @param bool $cache
      * @return array|mixed
      */
-    protected function getValidTableColumns ($table, $cache = true) {
+    public  function getValidTableColumns ($table, $cache = true) {
         
         $cacheKey = self::CACHEKEY . $table;
         

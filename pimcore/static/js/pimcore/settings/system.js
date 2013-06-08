@@ -272,6 +272,20 @@ pimcore.settings.system = Class.create({
                                 width: 600,
                                 value: t('usage_statistics_info'),
                                 cls: "pimcore_extra_label_bottom"
+                            },
+                            {
+                                fieldLabel: t("instance_identifier"),
+                                xtype: "textfield",
+                                name: "general.instanceIdentifier",
+                                value: this.getValue("general.instanceIdentifier"),
+                                width: 300
+                            },
+                            {
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: t('instance_identifier_info'),
+                                cls: "pimcore_extra_label_bottom"
                             }
                         ]
                     },
