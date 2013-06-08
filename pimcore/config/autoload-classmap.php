@@ -155,6 +155,7 @@ return array (
   'Pimcore_View_Helper_Glossary' => $pdr . '/pimcore/lib/Pimcore/View/Helper/Glossary.php',
   'Pimcore_View_Helper_Url' => $pdr . '/pimcore/lib/Pimcore/View/Helper/Url.php',
   'System' => $pdr . '/pimcore/lib/System.php',
+  'UUID' => $pdr . '/pimcore/lib/UUID.php',
   'HTTP_Request2' => $pdr . '/pimcore/lib/HTTP/Request2.php',
   'HTTP_Encoder' => $pdr . '/pimcore/lib/HTTP/Encoder.php',
   'HTTP_Request2_Adapter' => $pdr . '/pimcore/lib/HTTP/Request2/Adapter.php',

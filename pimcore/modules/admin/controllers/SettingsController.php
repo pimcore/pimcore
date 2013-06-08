@@ -252,6 +252,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "devmode" => $values["general.devmode"],
                 "logrecipient" => $values["general.logrecipient"],
                 "viewSuffix" => $values["general.viewSuffix"],
+                "instanceIdentifier" => $values["general.instanceIdentifier"],
             ),
             "database" => $oldValues["database"], // db cannot be changed here
             "documents" => array(
@@ -361,7 +362,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             //currently not activated
             "deployment" => array(
                 "enabled" => 0,
-                "instanceIdentifier" => '',
                 "environment" => "live",
             )
         );
