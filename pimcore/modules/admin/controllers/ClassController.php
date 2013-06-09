@@ -82,9 +82,10 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     }
 
     public function addAction() {
-        $class = Object_Class::create();
-        $class->setName($this->correctClassname($this->getParam("name")));
-        $class->setUserOwner($this->user->getId());
+        $class = Object_Class::create(array('name' => $this->correctClassname($this->getParam("name")),
+                                            'userOwner' => $this->user->getId())
+        );
+
         $class->save();
 
         $this->_helper->json(array("success" => true, "id" => $class->getId()));

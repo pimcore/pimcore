@@ -367,6 +367,22 @@ class Pimcore_API_Abstract
 
     }
 
+    /**
+     * Hook called before an object class was added
+     *
+     * @param Object_Class $class
+     */
+    public function preAddObjectClass(Object_Class $class){
 
+    }
+
+    /**
+     * Hook called before an object class is updated
+     *
+     * @param Object_Class $class
+     */
+    public function preUpdateObjectClass(Object_Class $class){
+
+    }
 
 }

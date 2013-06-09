@@ -175,7 +175,6 @@ class Object_Class extends Pimcore_Model_Abstract {
     public static function create($values = array()) {
         $class = new self();
         $class->setValues($values);
-
         return $class;
     }
 
@@ -197,6 +196,14 @@ class Object_Class extends Pimcore_Model_Abstract {
      * @return void
      */
     public function save() {
+
+        $isUpdate = false;
+        if ($this->getId()) {
+            $isUpdate = true;
+            Pimcore_API_Plugin_Broker::getInstance()->preUpdateObjectClass($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->preAddObjectClass($this);
+        }
 
         $this->setModificationDate(time());
 
