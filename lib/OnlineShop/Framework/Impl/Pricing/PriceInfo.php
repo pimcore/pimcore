@@ -193,4 +193,20 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     {
         return $this->priceInfo->$name($arguments);
     }
+
+    /**
+     * @return OnlineShop_Framework_IPrice
+     */
+    public function getOriginalPrice()
+    {
+        return $this->priceInfo->getPrice();
+    }
+
+    /**
+     * @return OnlineShop_Framework_IPrice
+     */
+    public function getOriginalTotalPrice()
+    {
+        return $this->priceInfo->getTotalPrice();
+    }
 }

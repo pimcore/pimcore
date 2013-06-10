@@ -28,9 +28,14 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct implements Onli
             foreach($this->getProducts() as $product)
             {
                 /* @var OnlineShop_Framework_AbstractProduct $allow */
-                if($environment->getProduct() === $product)
-                {
-                    return true;
+
+                $currentProduct = $environment->getProduct();
+                while($currentProduct instanceof OnlineShop_Framework_ProductInterfaces_ICheckoutable) {
+                    if($currentProduct->getId() === $product->getId())
+                    {
+                        return true;
+                    }
+                    $currentProduct = $currentProduct->getParent();
                 }
             }
         }

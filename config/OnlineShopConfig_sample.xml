@@ -9,12 +9,14 @@
 
         <cartmanager class="OnlineShop_Framework_Impl_MultiCartManager">
             <config>
-                <cart class="OnlineShop_Framework_Impl_Cart"/>
+                <cart class="OnlineShop_Framework_Impl_Cart">
+                    <guest class="OnlineShop_Framework_Impl_SessionCart" />
+                </cart>
 
                 <pricecalcualtor class="OnlineShop_Framework_Impl_CartPriceCalculator">
                     <config>
                         <modificators>
-                            <!--<shipping class="OnlineShop_Framework_Impl_CartPriceModificatorShipping"/>-->
+                            <!--<shipping class="OnlineShop_Framework_Impl_CartPriceModificator_Shipping"/>-->
                         </modificators>
                     </config>
                 </pricecalcualtor>
@@ -23,7 +25,9 @@
 
         <pricesystems>
             <!-- Define one or more price systems. The products getPriceSystemName method need to return a name here defined -->
-            <pricesystem name="default" class="OnlineShop_Framework_Impl_AttributePriceSystem"/>
+            <pricesystem name="default" class="OnlineShop_Framework_Impl_AttributePriceSystem">
+                <config attributename="offerprice" />
+            </pricesystem>
         </pricesystems>
         <availablitysystems>
             <!-- Define one or more availability systems. The products getAvailabilitySystemName method need to return a name here defined -->

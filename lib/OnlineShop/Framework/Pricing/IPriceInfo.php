@@ -40,4 +40,15 @@ interface OnlineShop_Framework_Pricing_IPriceInfo extends OnlineShop_Framework_I
      * @return mixed
      */
     public function getAmount();
+
+    /**
+     * @return OnlineShop_Framework_IPrice
+     */
+    public function getOriginalPrice();
+
+    /**
+     * @return OnlineShop_Framework_IPrice
+     */
+    public function getOriginalTotalPrice();
+
 }

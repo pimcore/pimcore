@@ -14,7 +14,7 @@ interface OnlineShop_Framework_IPriceSystem {
      * @param int | string $quantityScale
      *    quantityScale - numeric or string (allowed values: OnlineShop_Framework_IPriceInfo::MIN_PRICE
      * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable[] $products
-     * @return OnlineShop_Framework_AbstractPriceInfo
+     * @return OnlineShop_Framework_Pricing_IPriceInfo
      */
     public function getPriceInfo(OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct, $quantityScale = null, $products = null);
 

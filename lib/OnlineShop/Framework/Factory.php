@@ -146,7 +146,7 @@ class OnlineShop_Framework_Factory {
                     throw new OnlineShop_Framework_Exception_InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . "  not found.");
                 }*/
                 $class = $priceSystemConfig->class;
-                $priceSystem = new $class();
+                $priceSystem = new $class($priceSystemConfig->config);
                 if (!$priceSystem instanceof OnlineShop_Framework_IPriceSystem){
                     throw new OnlineShop_Framework_Exception_InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . " does not implement OnlineShop_Framework_IPriceSystem.");
                 }
