@@ -66,14 +66,17 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
 
                 if ($conf->excludeCookie) {
                     $cookies = explode(",", strval($conf->excludeCookie));
-                    // add pimcore admin cookie name, output-cache is always disabled when logged in at the admin ui
-                    $cookies[] = "pimcore_admin_sid";
 
                     foreach ($cookies as $cookie) {
                         if (!empty($cookie) && isset($_COOKIE[trim($cookie)])) {
                             return $this->disable();
                         }
                     }
+                }
+
+                // output-cache is always disabled when logged in at the admin ui
+                if(isset($_COOKIE["pimcore_admin_sid"])) {
+                    return $this->disable();
                 }
             }
             else {
