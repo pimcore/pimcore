@@ -461,17 +461,19 @@ class Document_Tag_Areablock extends Document_Tag {
                 $d = (string) $areaConfig->description;
                 $icon = (string) $areaConfig->icon;
 
-                if(empty($icon)) {
-                    $path = Pimcore_ExtensionManager::getPathForExtension($areaName,"brick");
-                    $iconPath = $path . "/icon.png";
-                    if(file_exists($iconPath)) {
-                        $icon = str_replace(PIMCORE_DOCUMENT_ROOT, "", $iconPath);
+                if(Pimcore::inAdmin()) {
+                    if(empty($icon)) {
+                        $path = Pimcore_ExtensionManager::getPathForExtension($areaName,"brick");
+                        $iconPath = $path . "/icon.png";
+                        if(file_exists($iconPath)) {
+                            $icon = str_replace(PIMCORE_DOCUMENT_ROOT, "", $iconPath);
+                        }
                     }
-                }
 
-                if($this->view){
-                    $n = $this->view->translateAdmin((string) $areaConfig->name);
-                    $d = $this->view->translateAdmin((string) $areaConfig->description);
+                    if($this->view){
+                        $n = $this->view->translateAdmin((string) $areaConfig->name);
+                        $d = $this->view->translateAdmin((string) $areaConfig->description);
+                    }
                 }
 
                 $availableAreas[] = array(
