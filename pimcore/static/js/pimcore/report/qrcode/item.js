@@ -51,6 +51,11 @@ pimcore.report.qrcode.item = Class.create({
             handler: this.save.bind(this)
         }); 
 
+
+        var fieldListeners = {
+            "keyup": this.generateCode.bind(this)
+        };
+
         var store;
 
         if(pimcore.settings.google_analytics_enabled) {
@@ -191,7 +196,8 @@ pimcore.report.qrcode.item = Class.create({
                     fieldLabel: t("foreground_color"),
                     width: 70,
                     emptyText: "#000000",
-                    enableKeyEvents: true
+                    enableKeyEvents: true,
+                    listeners: fieldListeners
                 }, {
                     xtype: "textfield",
                     name: "backgroundColor",
@@ -199,14 +205,14 @@ pimcore.report.qrcode.item = Class.create({
                     fieldLabel: t("background_color"),
                     width: 70,
                     emptyText: "#FFFFFF",
-                    enableKeyEvents: true
+                    enableKeyEvents: true,
+                    listeners: fieldListeners
                 }]
             }, this.analytics]
         });
 
-        var codeUrl = "/admin/reports/qrcode/code/name/" + this.data.name;
         this.codePanel = new Ext.Panel({
-            html: '<img src="' + codeUrl + '" style="padding:10px; width:228px;" />',
+            html: '',
             border: true,
             height: 250
         });
@@ -250,6 +256,22 @@ pimcore.report.qrcode.item = Class.create({
         this.parentPanel.getEditPanel().activate(this.panel);
 
         pimcore.layout.refresh();
+
+        this.generateCode();
+    },
+
+
+    generateCode: function () {
+        var params = this.form.getForm().getFieldValues();
+        delete params["description"];
+        delete params["undefined"];
+
+        var d = new Date();
+        params["_dc"] = d.getTime();
+        params["name"] = this.data.name;
+
+        var codeUrl = "/admin/reports/qrcode/code/?" + Ext.urlEncode(params);
+        this.codePanel.update('<img src="' + codeUrl + '" style="padding:10px; width:228px;" />');
     },
 
     save: function () {
@@ -272,8 +294,17 @@ pimcore.report.qrcode.item = Class.create({
     },
 
     download: function (format) {
-        var codeUrl = "/admin/reports/qrcode/code/name/" + this.data.name + "/renderer/" + format + "/download/true" +
-            "/moduleSize/20";
+
+        var params = this.form.getForm().getFieldValues();
+        delete params["description"];
+        delete params["undefined"];
+
+        params["renderer"] = format;
+        params["download"] = "true";
+        params["name"] = this.data.name;
+        params["moduleSize"] = 20;
+
+        var codeUrl = "/admin/reports/qrcode/code/?" + Ext.urlEncode(params);
         pimcore.helpers.download(codeUrl);
     }
 });
