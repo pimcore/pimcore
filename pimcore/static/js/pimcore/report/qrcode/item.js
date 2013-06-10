@@ -181,7 +181,6 @@ pimcore.report.qrcode.item = Class.create({
                 },{
                     xtype: "displayfield",
                     hideLabel: true,
-                    width: 600,
                     value: t("source") + ":Mobile, " + t("medium") + ":QR-Code, " + t("name") + ":" + this.data.name,
                     cls: "pimcore_extra_label_bottom"
                 }]
