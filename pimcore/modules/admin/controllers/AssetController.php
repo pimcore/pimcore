@@ -462,6 +462,20 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $tmpAsset["expanded"] = $asset->hasNoChilds();
             $tmpAsset["iconCls"] = "pimcore_icon_folder";
             $tmpAsset["permissions"]["create"] = $asset->isAllowed("create");
+
+            $folderThumbs = array();
+            foreach($asset->getChilds() as $child) {
+                if($thumbnailUrl = $this->getThumbnailUrl($child)) {
+                    $folderThumbs[] = $thumbnailUrl;
+                }
+            }
+
+            if(!empty($folderThumbs)) {
+                if(count($folderThumbs) > 35) {
+                    $folderThumbs = array_splice($folderThumbs, 0, 35);
+                }
+                $tmpAsset["thumbnails"] = $folderThumbs;
+            }
         }
         else {
             $tmpAsset["leaf"] = true;
@@ -474,7 +488,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         if ($asset->getType() == "image") {
             try {
-                $tmpAsset["thumbnail"] = "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/treepreview/true";
+                $tmpAsset["thumbnail"] = $this->getThumbnailUrl($asset);
 
                 // this is for backward-compatibility, to calculate the dimensions if they are not there
                 if(!$asset->getCustomSetting("imageDimensionsCalculated")) {
@@ -493,7 +507,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         } else if ($asset->getType() == "video") {
             try {
                 if(Pimcore_Video::isAvailable()) {
-                    $tmpAsset["thumbnail"] = "/admin/asset/get-video-thumbnail/id/" . $asset->getId() . "/treepreview/true";
+                    $tmpAsset["thumbnail"] = $this->getThumbnailUrl($asset);
                 }
             } catch (Exception $e) {
                 Logger::debug("Cannot get dimensions of video, seems to be broken.");
@@ -502,7 +516,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             try {
                 // add the PDF check here, otherwise the preview layer in admin is shown without content
                 if(Pimcore_Document::isAvailable() && preg_match("/\.pdf$/", $asset->getFilename())) {
-                    $tmpAsset["thumbnail"] = "/admin/asset/get-document-thumbnail/id/" . $asset->getId() . "/treepreview/true";
+                    $tmpAsset["thumbnail"] = $this->getThumbnailUrl($asset);
                 }
             } catch (Exception $e) {
                 Logger::debug("Cannot get dimensions of video, seems to be broken.");
@@ -518,6 +532,17 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         return $tmpAsset;
+    }
+
+    protected function getThumbnailUrl($asset) {
+        if($asset instanceof Asset_Image) {
+            return "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/treepreview/true";
+        } else if ($asset instanceof Asset_Video && Pimcore_Video::isAvailable()) {
+            return "/admin/asset/get-video-thumbnail/id/" . $asset->getId() . "/treepreview/true";
+        } else if ($asset instanceof Asset_Document && Pimcore_Document::isAvailable()) {
+            return "/admin/asset/get-document-thumbnail/id/" . $asset->getId() . "/treepreview/true";
+        }
+        return null;
     }
 
     public function updateAction() {
