@@ -241,13 +241,12 @@ pimcore.report.sql.reportplugin = Class.create(pimcore.plugin.admin, {
                             // add the report directly into the reports menu in "extras" -> main menu
                             if(report["menuShortcut"]) {
                                 try {
-                                    var reportMenu = Ext.getCmp("pimcore_mainmenu_extras_reports");
-                                    if(reportMenu) {
-                                        reportMenu.menu.add({
+                                    var toolbar = pimcore.globalmanager.get("layout_toolbar");
+                                    if(toolbar["marketingMenu"]) {
+                                        toolbar["marketingMenu"].add({
                                             text: report["niceName"],
                                             iconCls: report["iconClass"],
                                             handler: function (report) {
-                                                var toolbar = pimcore.globalmanager.get("layout_toolbar");
                                                 toolbar.showReports(pimcore.report.sql.report, {
                                                     name: report["name"],
                                                     text: report["niceName"],
