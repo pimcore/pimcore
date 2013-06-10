@@ -53,7 +53,7 @@ $platform = $browser->getPlatform();
 if ($browser->getBrowser() == Pimcore_Browser::BROWSER_FIREFOX && $browserVersion >= 4) {
     $supported = true;
 }
-if ($browser->getBrowser() == Pimcore_Browser::BROWSER_IE && $browserVersion >= 8) {
+if ($browser->getBrowser() == Pimcore_Browser::BROWSER_IE && $browserVersion >= 9) {
     $supported = true;
 }
 if ($browser->getBrowser() == Pimcore_Browser::BROWSER_CHROME && $browserVersion >= 6) {
