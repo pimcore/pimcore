@@ -6,6 +6,9 @@
  * Time: 18:42
  */
 
+
+include_once ("UUID.php");
+
 class Tool_UUID extends Pimcore_Model_Abstract {
 
     public $itemId;
