@@ -249,7 +249,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     handler: function () {
                         Ext.Ajax.request({
                             url: "/admin/asset/clear-thumbnail",
-                            method: "get",
                             params: {
                                 id: this.data.id
                             }

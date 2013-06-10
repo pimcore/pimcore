@@ -27,7 +27,6 @@ pimcore.settings.robotstxt = Class.create({
     load: function () {
         Ext.Ajax.request({
             url: "/admin/settings/robots-txt",
-            method: "get",
             params: {
                 site: this.site
             },
