@@ -307,12 +307,10 @@ pimcore.settings.system = Class.create({
                                 listeners: {
                                     check: function (el, checked) {
                                         // set the current client ip to the debug ip field
-                                        /*
-                                        Deaktivated because of multiple IP Address support
-                                        if(checked) {
-                                            Ext.getCmp("system.settings.general.debug_ip")
-                                                                            .setValue(this.data.config.client_ip);
-                                        }*/
+                                        var ipField = Ext.getCmp("system.settings.general.debug_ip");
+                                        if(checked && empty(ipField.getValue())) {
+                                            ipField.setValue(this.data.config.client_ip);
+                                        }
                                     }.bind(this)
                                 }
                             },
