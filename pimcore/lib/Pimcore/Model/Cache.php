@@ -188,12 +188,9 @@ class Pimcore_Model_Cache {
         );
         $config["customFrontendNaming"] = false;
 
-        $config["backendType"] = "File";
-        $config["backendConfig"] = array(
-            "cache_dir" => PIMCORE_CACHE_DIRECTORY,
-            "cache_file_perm" => 0755
-        );
-        $config["customBackendNaming"] = false;
+        $config["backendType"] = "Pimcore_Cache_Backend_MysqlTable";
+        $config["backendConfig"] = array();
+        $config["customBackendNaming"] = true;
 
         // create cache dir
         if(!is_dir(PIMCORE_CACHE_DIRECTORY)) {

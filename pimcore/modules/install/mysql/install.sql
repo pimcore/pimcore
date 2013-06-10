@@ -18,6 +18,15 @@ CREATE TABLE `assets` (
   KEY `path` (`path`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `cache`;
+CREATE TABLE `cache` (
+  `id` varchar(165) NOT NULL DEFAULT '',
+  `data` longtext NOT NULL DEFAULT '',
+  `mtime` bigint(20) DEFAULT NULL,
+  `expire` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `cache_tags`;
 CREATE TABLE `cache_tags` (
   `id` varchar(165) NOT NULL DEFAULT '',
