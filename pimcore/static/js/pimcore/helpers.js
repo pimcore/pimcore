@@ -389,7 +389,8 @@ pimcore.helpers.activateMaintenance = function () {
         url: "/admin/misc/maintenance/activate/true"
     });
 
-    if(!Ext.getCmp("pimcore_maintenance_disable_button")) {
+    var button = Ext.get("pimcore_menu_maintenance");
+    if(!button.isDisplayed()) {
         pimcore.helpers.showMaintenanceDisableButton();
     }
 };
@@ -400,24 +401,15 @@ pimcore.helpers.deactivateMaintenance = function () {
         url: "/admin/misc/maintenance/deactivate/true"
     });
 
-    var toolbar = pimcore.globalmanager.get("layout_toolbar").toolbar;
-    toolbar.remove(Ext.getCmp("pimcore_maintenance_disable_button"));
-    toolbar.doLayout();
+    var button = Ext.get("pimcore_menu_maintenance");
+    button.setStyle("display", "none");
 };
 
 pimcore.helpers.showMaintenanceDisableButton = function () {
-    var toolbar = pimcore.globalmanager.get("layout_toolbar").toolbar;
-
-    var deactivateButton = new Ext.Button({
-        id: "pimcore_maintenance_disable_button",
-        text: "DEACTIVATE MAINTENANCE",
-        iconCls: "pimcore_icon_maintenance",
-        cls: "pimcore_main_menu",
-        handler: pimcore.helpers.deactivateMaintenance
-    });
-
-    toolbar.insertButton(5, [deactivateButton]);
-    toolbar.doLayout();
+    var button = Ext.get("pimcore_menu_maintenance");
+    button.show();
+    button.removeAllListeners();
+    button.on("click", pimcore.helpers.deactivateMaintenance);
 };
 
 pimcore.helpers.download = function (url) {
