@@ -619,7 +619,7 @@ class Pimcore {
             // check for output-cache settings
             // if a lifetime for the output cache is specified then the cache tag "output" will be ignored on clear
             $cacheLifetime = (int) $conf->cache->lifetime;
-            if (!empty($cacheLifetime)) {
+            if (!empty($cacheLifetime) && $conf->cache->enabled) {
                 Pimcore_Model_Cache::addIgnoredTagOnClear("output");
             }
 
