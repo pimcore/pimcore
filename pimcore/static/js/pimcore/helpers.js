@@ -1037,7 +1037,6 @@ pimcore.helpers.selectElementInTree = function (type, id) {
     try {
         Ext.Ajax.request({
             url: "/admin/element/get-id-path/",
-            method: "get",
             params: {
                 id: id,
                 type: type
@@ -1088,7 +1087,6 @@ pimcore.helpers.openDocumentByPathDialog = function () {
         if (button == "ok") {
             Ext.Ajax.request({
                 url: "/admin/document/open-by-url/",
-                method: "get",
                 params: {
                     url: value
                 },
@@ -1149,7 +1147,6 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
     if(pimcore.settings.htmltoimage) {
         Ext.Ajax.request({
             url: '/admin/page/generate-screenshot',
-            method: "get",
             params: {
                 id: id
             },

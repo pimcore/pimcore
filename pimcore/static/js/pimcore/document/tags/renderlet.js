@@ -117,7 +117,6 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
 
         Ext.Ajax.request({
             url: "/pimcore_document_tag_renderlet",
-            method: "get",
             success: function (response) {
                 this.getBody().dom.innerHTML = response.responseText;
                 this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');

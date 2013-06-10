@@ -305,7 +305,6 @@ pimcore.extensionmanager.admin = Class.create({
                         if(button == "ok") {
                             Ext.Ajax.request({
                                 url: "/admin/extensionmanager/admin/create",
-                                method: "get",
                                 params: {
                                     name: value
                                 },

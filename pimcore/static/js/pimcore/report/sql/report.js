@@ -204,7 +204,6 @@ pimcore.report.sql.reportplugin = Class.create(pimcore.plugin.admin, {
             // get available reports
             Ext.Ajax.request({
                 url: "/admin/reports/sql/get-report-config",
-                method: "get",
                 success: function (response) {
                     var res = Ext.decode(response.responseText);
                     var report;

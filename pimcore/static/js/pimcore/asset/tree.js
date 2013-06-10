@@ -959,7 +959,6 @@ pimcore.asset.tree = Class.create({
 
                 Ext.Ajax.request({
                     url: "/admin/asset/import-url/",
-                    method: "get",
                     params: {
                         id: this.attributes.id,
                         url: value
