@@ -24,6 +24,17 @@ CREATE TABLE `assets` (
 
 
 
+DROP TABLE IF EXISTS `cache`;
+CREATE TABLE `cache` (
+  `id` varchar(165) NOT NULL DEFAULT '',
+  `data` longtext NOT NULL,
+  `mtime` bigint(20) DEFAULT NULL,
+  `expire` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 DROP TABLE IF EXISTS `cache_tags`;
 CREATE TABLE `cache_tags` (
   `id` varchar(165) NOT NULL DEFAULT '',
@@ -963,7 +974,7 @@ CREATE TABLE `versions` (
   PRIMARY KEY (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 
 
 
@@ -985,7 +996,7 @@ INSERT INTO `assets` VALUES (23,17,'image','img_0411.jpg','/examples/panama/','i
 INSERT INTO `assets` VALUES (24,17,'image','img_0410.jpg','/examples/panama/','image/jpeg',1368532838,1368632468,2,2,'a:3:{s:10:\"imageWidth\";i:2000;s:11:\"imageHeight\";i:1500;s:25:\"imageDimensionsCalculated\";b:1;}');
 INSERT INTO `assets` VALUES (25,17,'image','img_0160.jpg','/examples/panama/','image/jpeg',1368532839,1368632468,2,2,'a:3:{s:10:\"imageWidth\";i:2000;s:11:\"imageHeight\";i:1500;s:25:\"imageDimensionsCalculated\";b:1;}');
 INSERT INTO `assets` VALUES (26,1,'folder','videos','/','',1368542684,1368632471,2,2,'a:0:{}');
-INSERT INTO `assets` VALUES (27,26,'video','home-trailer-english.mp4','/videos/','video/mp4',1368542794,1370432000,2,2,'a:1:{s:10:\"thumbnails\";a:2:{s:12:\"featurerette\";a:2:{s:6:\"status\";s:8:\"finished\";s:7:\"formats\";a:2:{s:3:\"mp4\";s:43:\"/website/var/tmp/video_27__featurerette.mp4\";s:4:\"webm\";s:44:\"/website/var/tmp/video_27__featurerette.webm\";}}s:7:\"content\";a:2:{s:6:\"status\";s:8:\"finished\";s:7:\"formats\";a:2:{s:3:\"mp4\";s:38:\"/website/var/tmp/video_27__content.mp4\";s:4:\"webm\";s:39:\"/website/var/tmp/video_27__content.webm\";}}}}');
+INSERT INTO `assets` VALUES (27,26,'video','home-trailer-english.mp4','/videos/','video/mp4',1368542794,1370852591,2,2,'a:1:{s:10:\"thumbnails\";a:2:{s:12:\"featurerette\";a:2:{s:6:\"status\";s:8:\"finished\";s:7:\"formats\";a:2:{s:3:\"mp4\";s:43:\"/website/var/tmp/video_27__featurerette.mp4\";s:4:\"webm\";s:44:\"/website/var/tmp/video_27__featurerette.webm\";}}s:7:\"content\";a:2:{s:6:\"status\";s:8:\"finished\";s:7:\"formats\";a:2:{s:3:\"mp4\";s:38:\"/website/var/tmp/video_27__content.mp4\";s:4:\"webm\";s:39:\"/website/var/tmp/video_27__content.webm\";}}}}');
 INSERT INTO `assets` VALUES (29,1,'folder','documents','/','',1368548619,1368632467,2,2,'a:0:{}');
 INSERT INTO `assets` VALUES (34,1,'folder','screenshots','/','',1368560793,1368632470,2,2,'a:0:{}');
 INSERT INTO `assets` VALUES (35,34,'image','glossary.png','/screenshots/','image/png',1368560809,1368632470,2,2,'a:3:{s:10:\"imageWidth\";i:908;s:11:\"imageHeight\";i:267;s:25:\"imageDimensionsCalculated\";b:1;}');
@@ -1018,6 +1029,10 @@ INSERT INTO `assets` VALUES (62,34,'image','properties-2.png','/screenshots/','i
 INSERT INTO `assets` VALUES (63,34,'image','properties-3.png','/screenshots/','image/png',1368616847,1368632470,2,2,'a:3:{s:10:\"imageWidth\";i:1017;s:11:\"imageHeight\";i:316;s:25:\"imageDimensionsCalculated\";b:1;}');
 INSERT INTO `assets` VALUES (64,34,'image','tag-snippet-management.png','/screenshots/','image/png',1368617634,1368632470,2,2,'a:3:{s:10:\"imageWidth\";i:1063;s:11:\"imageHeight\";i:872;s:25:\"imageDimensionsCalculated\";b:1;}');
 INSERT INTO `assets` VALUES (65,34,'image','objects-forms.png','/screenshots/','image/png',1368623266,1368632470,2,2,'a:3:{s:10:\"imageWidth\";i:308;s:11:\"imageHeight\";i:265;s:25:\"imageDimensionsCalculated\";b:1;}');
+
+
+
+
 
 
 
@@ -1808,6 +1823,16 @@ INSERT INTO `documents_snippet` VALUES (16,'','default','default','/snippets/sta
 INSERT INTO `documents_snippet` VALUES (17,'','default','default','/snippets/standard-teaser.php',0);
 
 
+
+
+
+
+
+
+
+
+
+
 INSERT INTO `glossary` VALUES (1,'en',0,1,'occidental','7','','',0);
 INSERT INTO `glossary` VALUES (2,'en',0,1,'vocabular','20','','',0);
 INSERT INTO `glossary` VALUES (3,'en',0,1,'resultant','5','','',0);
@@ -1815,6 +1840,32 @@ INSERT INTO `glossary` VALUES (4,'en',0,1,'familie','18','','',0);
 INSERT INTO `glossary` VALUES (5,'en',0,1,'omnicos','19','','',0);
 INSERT INTO `glossary` VALUES (6,'en',0,1,'coalesce','','coalesce','',0);
 INSERT INTO `glossary` VALUES (7,'en',0,1,'grammatica','','','grammatica',0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 INSERT INTO `object_query_2` VALUES (3,2,'news',1374147900,'Lorem ipsum dolor sit amet','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.','Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam <a href=\"/basic-examples/content-page\">ultricies </a>nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget <a href=\"/basic-examples/editable-roundup\">condimentum </a>rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. ',49,43,52);
@@ -1989,7 +2040,7 @@ INSERT INTO `search_backend_data` VALUES (25,'/demo-website/examples/panama/img_
 INSERT INTO `search_backend_data` VALUES (16,'/shared/teasers/standard/advanced-examples','document','snippet','snippet',1,1368534298,1370432637,2,2,'ID: 16  \nPath: /shared/teasers/standard/advanced-examples  \n Drag &amp; Drop Interface Etiam rhoncu Content is created by simply dragging &amp; dropping blocks, that can&nbsp;be editited in-place and wysiwyg.&nbsp; ','leftNavStartNode:/ language:en ');
 INSERT INTO `search_backend_data` VALUES (17,'/shared/teasers/standard/experiments','document','snippet','snippet',1,1368534344,1370432641,2,2,'ID: 17  \nPath: /shared/teasers/standard/experiments  \n HTML5 omnipresent Quisque rutrum Drag &amp; drop upload directly&nbsp;into the asset tree, automatic html5 video transcoding, and much more ... ','leftNavStartNode:/ language:en ');
 INSERT INTO `search_backend_data` VALUES (26,'/videos','asset','folder','folder',1,1368542684,1368632471,2,2,'ID: 26  \nPath: /videos  \nvideos','');
-INSERT INTO `search_backend_data` VALUES (27,'/videos/home-trailer-english.mp4','asset','video','video',1,1368542794,1370432000,2,2,'ID: 27  \nPath: /videos/home-trailer-english.mp4  \nhome-trailer-english.mp4','');
+INSERT INTO `search_backend_data` VALUES (27,'/videos/home-trailer-english.mp4','asset','video','video',1,1368542794,1370852591,2,2,'ID: 27  \nPath: /videos/home-trailer-english.mp4  \nhome-trailer-english.mp4','');
 INSERT INTO `search_backend_data` VALUES (20,'/basic-examples/glossary','document','page','page',1,1368559903,1368561466,2,2,'ID: 20  \nPath: /basic-examples/glossary  \n Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. &nbsp; Ma quande lingues coalesce, li grammatica del resultant lingue es plu simplic e regulari quam ti del coalescent lingues. Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es. &nbsp; Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. The Glossary ... ... makes it very simple to automatically link keywords, abbreviation and acronyms. This is not only perfect for SEO but also makes it super easy to navigate in the content.&nbsp; &nbsp; ... this is how it looks in the admin interface. Glossary ','Glossary ');
 INSERT INTO `search_backend_data` VALUES (18,'/basic-examples/pdf-viewer','document','page','page',1,1368548449,1368562801,2,0,'ID: 18  \nPath: /basic-examples/pdf-viewer  \n Isn\'t that amazing? Just drop a PDF, et voilá ...&nbsp; + &#x21e9; x var pimcore_pdf_pdfcontent1 = new pimcore.pdf({ id: \"pimcore-pdf-51929c71c7795\", data: {\"pages\":[{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-1.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-1.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-2.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-2.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-3.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-3.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-4.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-4.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-5.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-5.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-6.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-6.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-7.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-7.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-8.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-8.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-9.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-9.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-10.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-10.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-11.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-11.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-12.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-12.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-13.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-13.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-14.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-14.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-15.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-15.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-16.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-16.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-17.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-17.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-18.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-18.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-19.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-19.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-20.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-20.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-21.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-21.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-22.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-22.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-23.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-23.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-24.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-24.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-25.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-25.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-26.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-26.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-27.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-27.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-28.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-28.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-29.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-29.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-30.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-30.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-31.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-31.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-32.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-32.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-33.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-33.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-34.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-34.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-35.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-35.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-36.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-36.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-37.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-37.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-38.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-38.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-39.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-39.pjpeg\"}],\"pdf\":\"\\/demo-website\\/documents\\/documentation.pdf\"} }); PDF Viewer ','PDF Viewer ');
 INSERT INTO `search_backend_data` VALUES (29,'/documents','asset','folder','folder',1,1368548619,1368632467,2,2,'ID: 29  \nPath: /documents  \ndocuments','');
@@ -2244,29 +2295,6 @@ INSERT INTO `users_permission_definitions` VALUES ('website_settings');
 
 
 
-
-
-
-
-
-
-
-INSERT INTO `versions` VALUES (1,15,'document',2,'',1368687491,0,1);
-INSERT INTO `versions` VALUES (2,16,'document',2,'',1368688782,0,1);
-INSERT INTO `versions` VALUES (3,16,'document',2,'',1368688795,0,1);
-INSERT INTO `versions` VALUES (4,16,'document',2,'',1368688809,0,1);
-INSERT INTO `versions` VALUES (5,17,'document',2,'',1368688977,0,1);
-INSERT INTO `versions` VALUES (6,1,'document',2,'',1368689696,0,1);
-INSERT INTO `versions` VALUES (7,4,'document',2,'',1368689817,0,1);
-INSERT INTO `versions` VALUES (8,39,'document',2,'',1369854325,0,1);
-INSERT INTO `versions` VALUES (9,39,'document',2,'',1369854416,0,1);
-INSERT INTO `versions` VALUES (10,39,'document',2,'',1369854422,0,1);
-INSERT INTO `versions` VALUES (11,9,'document',2,'',1369854600,0,1);
-INSERT INTO `versions` VALUES (16,1,'document',2,'',1370432624,0,1);
-INSERT INTO `versions` VALUES (17,15,'document',2,'',1370432633,0,1);
-INSERT INTO `versions` VALUES (18,16,'document',2,'',1370432637,0,1);
-INSERT INTO `versions` VALUES (19,17,'document',2,'',1370432641,0,1);
-INSERT INTO `versions` VALUES (20,1,'document',2,'',1370432677,0,1);
 
 
 DROP VIEW IF EXISTS `object_2`;
