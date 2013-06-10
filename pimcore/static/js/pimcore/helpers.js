@@ -1195,7 +1195,8 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
 };
 
 pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) {
-    if(typeof node.attributes["thumbnail"] != "undefined") {
+    if(typeof node.attributes["thumbnail"] != "undefined" ||
+        typeof node.attributes["thumbnails"] != "undefined") {
         window.setTimeout(function (node) {
             var el = Ext.get(Ext.get(node.getUI().getEl()).query(".x-tree-node-el")[0]);
             el.on("mouseenter", function (node) {
@@ -1205,9 +1206,23 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                     return;
                 }
 
+                var imageHtml = "";
+
+                var thumbnails = node.attributes.thumbnails;
+                if(thumbnails && thumbnails.length) {
+                    imageHtml += '<div class="thumbnails">';
+                    for(var i=0; i<thumbnails.length; i++) {
+                        imageHtml += '<div class="small" style="background-image:url(' + thumbnails[i] + ')"></div>';
+                    }
+                    imageHtml += '</div>';
+                }
+
                 var thumbnail = node.attributes.thumbnail;
                 if(thumbnail) {
+                    imageHtml = '<img src="' + thumbnail + '" />';
+                }
 
+                if(imageHtml) {
                     var treeEl = Ext.get("pimcore_panel_tree_" + this.position);
                     var position = treeEl.getOffsetsTo(Ext.getBody());
                     position = position[0];
@@ -1219,7 +1234,6 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                     }
 
                     var container = Ext.get("pimcore_tree_preview");
-                    var imageHtml = '<img src="' + thumbnail + '" />';
                     var styles = "left: " + position + "px";
 
                     if(container) {
