@@ -387,12 +387,21 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                     if($responseBody = Pimcore_Model_Cache::load($cacheKey)) {
                         $this->getResponse()->setBody($responseBody);
                         $this->getResponse()->sendResponse();
+
+                        // write to http_error log
+                        $errorLogPlugin = Zend_Controller_Front::getInstance()->getPlugin("Pimcore_Controller_Plugin_HttpErrorLog");
+                        if($errorLogPlugin) {
+                            $errorLogPlugin->writeLog();
+                        }
+
                         exit;
                     } else {
                         $document = Zend_Registry::get("pimcore_error_document");
                         $this->setDocument($document);
                         $this->setParam("document", $document);
                         $this->disableLayout();
+
+                        // http_error log writing is done in Pimcore_Controller_Plugin_HttpErrorLog in this case
                     }
                 }
                 catch (Exception $e) {
