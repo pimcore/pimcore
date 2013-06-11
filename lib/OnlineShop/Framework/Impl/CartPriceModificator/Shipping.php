@@ -7,6 +7,13 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Shipping implements OnlineS
      */
     protected $charge = 5.99; # sample
 
+
+    public function __construct($config) {
+        if($config->charge) {
+            $this->charge = floatval($config->charge);
+        }
+    }
+
     /**
      * @return string
      */
@@ -23,7 +30,7 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Shipping implements OnlineS
      */
     public function modify(OnlineShop_Framework_IPrice $currentSubTotal, OnlineShop_Framework_ICart $cart)
     {
-        return new OnlineShop_Framework_Impl_ModificatedPrice($this->getCharge(), new Zend_Currency(new Zend_Locale("de_AT")));
+        return new OnlineShop_Framework_Impl_ModificatedPrice($this->getCharge(), new Zend_Currency(Zend_Registry::get("Zend_Locale")));
     }
 
     /**

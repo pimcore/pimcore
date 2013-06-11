@@ -76,6 +76,10 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
         }
 
         $this->items[$itemKey] = $item;
+
+        // trigger cart has been modified
+        $this->modified();
+
         return $itemKey;
     }
 
@@ -83,6 +87,10 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
         $this->itemAmount = null;
         $this->subItemAmount = null;
         $this->items = array();
+
+        // trigger cart has been modified
+        $this->modified();
+
     }
 
     protected $itemAmount;
@@ -160,6 +168,10 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
         $this->subItemAmount = null;
 
         $this->items = $items;
+
+        // trigger cart has been modified
+        $this->modified();
+
     }
 
     public function removeItem($itemKey) {
@@ -167,6 +179,9 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
         $this->subItemAmount = null;
 
         unset($this->items[$itemKey]);
+
+        // trigger cart has been modified
+        $this->modified();
     }
 
     public function setName($name) {
@@ -447,5 +462,14 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
     public function getGiftItems()
     {
         return $this->giftItems;
+    }
+
+    /**
+     * cart has been changed
+     */
+    protected function modified()
+    {
+        // apply pricing rules
+        OnlineShop_Framework_Factory::getInstance()->getPricingManager()->applyCartRules($this);
     }
 }

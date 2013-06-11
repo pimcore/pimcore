@@ -37,7 +37,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
         $this->modificators = array();
         if(!empty($config->modificators) && is_object($config->modificators)) {
             foreach($config->modificators as $modificator) {
-                $step = new $modificator->class();
+                $step = new $modificator->class($modificator->config);
                 #$this->modificators[] = $step;
                 $this->addModificator( $step );
             }
