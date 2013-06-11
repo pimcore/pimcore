@@ -840,6 +840,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         header("Content-Length: " . filesize($thumbnailFile), true);
+        $this->sendThumbnailCacheHeaders();
+
         echo $imageContent;
         exit;
     }
@@ -882,6 +884,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         header("Content-type: image/" . $format, true);
+        $this->sendThumbnailCacheHeaders();
 
         while(@ob_end_flush());
         flush();
@@ -912,6 +915,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $format = "png";
         header("Content-type: image/" . $format, true);
+        $this->sendThumbnailCacheHeaders();
 
         while(@ob_end_flush());
         flush();
@@ -920,6 +924,14 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         exit;
     }
 
+    protected function sendThumbnailCacheHeaders() {
+        $this->getResponse()->clearAllHeaders();
+
+        $lifetime = 300;
+        header("Cache-Control: public, max-age=" . $lifetime, true);
+        header("Expires: " . Zend_Date::now()->add($lifetime)->get(Zend_Date::RFC_1123), true);
+        header("Pragma: ");
+    }
 
     public function getPreviewDocumentAction() {
         $asset = Asset::getById($this->getParam("id"));
