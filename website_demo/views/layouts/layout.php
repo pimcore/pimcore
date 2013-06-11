@@ -123,7 +123,7 @@
     ================================================== -->
     <header class="jumbotron subhead" id="overview">
         <div class="container">
-            <h1><?php echo $this->input("headTitle"); ?></h1>
+            <h2><?php echo $this->input("headTitle"); ?></h2>
             <p class="lead"><?php echo $this->input("headDescription"); ?></p>
         </div>
     </header>
