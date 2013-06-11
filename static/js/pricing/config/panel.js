@@ -8,11 +8,36 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
     layoutId: "",
 
     /**
+     * @var array
+     */
+    condition: [],
+
+    /**
+     * @var array
+     */
+    action: [],
+
+
+    /**
      * constructor
      * @param layoutId
      */
     initialize: function(layoutId) {
         this.layoutId = layoutId;
+
+        // load defined conditions & actions
+        var _this = this;
+        Ext.Ajax.request({
+            url: "/plugin/OnlineShop/Pricing/get-config",
+            method: "GET",
+            success: function(result){
+                var config = Ext.decode(result.responseText);
+                _this.condition = config.condition;
+                _this.action = config.action;
+            }
+        });
+
+        // create layout
         this.getLayout();
     },
 

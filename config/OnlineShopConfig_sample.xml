@@ -183,6 +183,7 @@
                     <ProductDiscount class="OnlineShop_Framework_Impl_Pricing_Action_ProductDiscount" />
                     <CartDiscount class="OnlineShop_Framework_Impl_Pricing_Action_CartDiscount" />
                     <Gift class="OnlineShop_Framework_Impl_Pricing_Action_Gift" />
+                    <FreeShipping class="OnlineShop_Framework_Impl_Pricing_Action_FreeShipping" />
                 </action>
 
             </config>

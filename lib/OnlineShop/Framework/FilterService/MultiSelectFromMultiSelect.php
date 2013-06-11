@@ -1,6 +1,6 @@
 <?php
 
-class OnlineShop_Framework_FilterService_SelectMultiSelectFromMultiSelect extends OnlineShop_Framework_FilterService_SelectFromMultiSelect
+class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends OnlineShop_Framework_FilterService_SelectFromMultiSelect
 {
     /**
      * @param OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition

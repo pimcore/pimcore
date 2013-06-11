@@ -172,20 +172,27 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
 
     /**
      * @returns Ext.Panel
-     * @todo prüfen welche condition im backend vorhanden sind
      */
     getConditions: function() {
+
+        // init
+        var _this = this;
         var addMenu = [];
         var itemTypes = Object.keys(pimcore.plugin.OnlineShop.pricing.conditions);
-        for(var i=0; i<itemTypes.length; i++) {
-            if(itemTypes[i].indexOf("condition") == 0) {
+
+        // show only defined conditions
+        Ext.each(this.parent.condition, function (condition) {
+            var method = "condition" + condition;
+            if(itemTypes.indexOf(method) != -1)
+            {
                 addMenu.push({
-                    iconCls: "plugin_onlineshop_pricing_icon_" + itemTypes[i],
-                    handler: this.addCondition.bind(this, itemTypes[i]),
-                    text: pimcore.plugin.OnlineShop.pricing.conditions[itemTypes[i]](null, null,true)
+                    iconCls: "plugin_onlineshop_pricing_icon_" + method,
+                    text: pimcore.plugin.OnlineShop.pricing.conditions[method](null, null,true),
+                    handler: _this.addCondition.bind(_this, method)
                 });
             }
-        }
+        });
+
 
         this.conditionsContainer = new Ext.Panel({
             iconCls: "plugin_onlineshop_pricing_icon_rule_conditions",
@@ -208,17 +215,23 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
      */
     getActions: function () {
 
+        // init
+        var _this = this;
         var addMenu = [];
         var itemTypes = Object.keys(pimcore.plugin.OnlineShop.pricing.actions);
-        for(var i=0; i<itemTypes.length; i++) {
-            if(itemTypes[i].indexOf("action") == 0) {
+
+        // show only defined actions
+        Ext.each(this.parent.action, function (action) {
+            var method = "action" + action;
+            if(itemTypes.indexOf(method) != -1)
+            {
                 addMenu.push({
-                    iconCls: "plugin_onlineshop_pricing_icon_" + itemTypes[i],
-                    text: pimcore.plugin.OnlineShop.pricing.actions[itemTypes[i]](null, null,true),
-                    handler: this.addAction.bind(this, itemTypes[i])
+                    iconCls: "plugin_onlineshop_pricing_icon_" + method,
+                    text: pimcore.plugin.OnlineShop.pricing.actions[method](null, null,true),
+                    handler: _this.addAction.bind(_this, method)
                 });
             }
-        }
+        });
 
 
         this.actionsContainer = new Ext.Panel({

@@ -68,24 +68,31 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
         // configure environment
         $env = $this->getEnvironment();
         $env->setCart( $cart );
-        $env->setProduct(null);
 
-        // execute all valid rules
-        foreach($this->getValidRules($env) as $rule)
+
+        // execute rules on all cart items
+        foreach($cart->getItems() as $item)
         {
-            /* @var OnlineShop_Framework_Pricing_IRule $rule */
-            $env->setRule($rule);
+            // update env
+            $env->setProduct( $item->getProduct() );
 
-            // test rule
-            if($rule->check($env) === false)
-                continue;
+            // execute all valid rules
+            foreach($this->getValidRules($env) as $rule)
+            {
+                /* @var OnlineShop_Framework_Pricing_IRule $rule */
+                $env->setRule($rule);
 
-            // execute rule
-            $rule->executeOnCart( $env );
+                // test rule
+                if($rule->check($env) === false)
+                    continue;
 
-            // is this a stop rule?
-            if($rule->getBehavior() == 'stopExecute')
-                break;
+                // execute rule
+                $rule->executeOnCart( $env );
+
+                // is this a stop rule?
+                if($rule->getBehavior() == 'stopExecute')
+                    break;
+            }
         }
 
         return $this;

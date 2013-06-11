@@ -280,6 +280,39 @@ class OnlineShop_PricingController extends Pimcore_Controller_Action_Admin
     }
 
 
+    /**
+     *
+     */
+    public function getConfigAction()
+    {
+        // init
+        $json = array(
+            'condition' => array(),
+            'action' => array()
+        );
+
+        // get config
+        $pricingConfig = OnlineShop_Framework_Factory::getInstance()->getConfig()->get('onlineshop')->get('pricingmanager');
+        if($pricingConfig)
+        {
+            $list = $pricingConfig->get('config')->get( 'condition' );
+            foreach($list as $name => $config)
+            {
+                $json['condition'][] = $name;
+            }
+
+            $list = $pricingConfig->get('config')->get( 'action' );
+            foreach($list as $name => $config)
+            {
+                $json['action'][] = $name;
+            }
+        }
+
+        // print
+        $this->_helper->json($json);
+    }
+
+
 
     public function testAction()
     {
