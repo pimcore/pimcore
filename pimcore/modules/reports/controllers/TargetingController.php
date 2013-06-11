@@ -17,7 +17,12 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
     public function init() {
         parent::init();
-        $this->checkPermission("targeting");
+
+        // check permissions
+        $notRestrictedActions = array("persona-list");
+        if (!in_array($this->getParam("action"), $notRestrictedActions)) {
+            $this->checkPermission("targeting");
+        }
     }
 
     /* RULES */
