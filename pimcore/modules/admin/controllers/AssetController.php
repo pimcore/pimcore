@@ -1334,7 +1334,13 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                         $tmpFile = $tmpDir . "/" . preg_replace("@^/@", "", $path);
 
                         $filename = Pimcore_File::getValidFilename(basename($path));
-                        $parentPath = $importAsset->getFullPath() . "/" . preg_replace("@^/@", "", dirname($path));
+
+                        $relativePath = "";
+                        if(dirname($path) != ".") {
+                            $relativePath = dirname($path);
+                        }
+
+                        $parentPath = $importAsset->getFullPath() . "/" . preg_replace("@^/@", "", $relativePath);
                         $parent = Asset_Service::createFolderByPath($parentPath);
 
                         // check for duplicate filename
