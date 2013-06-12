@@ -1003,7 +1003,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         $list = Asset::getList(array(
-            "condition" => "path LIKE '" . $folder->getFullPath() . "%' AND type != 'folder'",
+            "condition" => "path LIKE '" . $folder->getFullPath() . "/%' AND type != 'folder'",
             "limit" => $limit,
             "offset" => $start,
             "orderKey" => "filename",
