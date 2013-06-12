@@ -257,12 +257,14 @@ Ext.onReady(function () {
     pimcore.globalmanager.add("sites", sitesStore);
 
     // personas
-    var personaStore = new Ext.data.JsonStore({
-        url: "/admin/reports/targeting/persona-list/",
-        fields: ["id", "text"]
-    });
-    personaStore.load();
-    pimcore.globalmanager.add("personas", personaStore);
+    if(pimcore.globalmanager.get("user").isAllowed('targeting')){
+        var personaStore = new Ext.data.JsonStore({
+            url: "/admin/reports/targeting/persona-list/",
+            fields: ["id", "text"]
+        });
+        personaStore.load();
+        pimcore.globalmanager.add("personas", personaStore);
+    }
 
     // STATUSBAR
     var statusbar = new Ext.ux.StatusBar({
