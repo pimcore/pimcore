@@ -31,7 +31,7 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
 
                     $thumbnailConfig = null;
 
-                    $deferredConfig = PIMCORE_DOCUMENT_ROOT . $request->getPathInfo() . ".deferred.config";
+                    $deferredConfig = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . basename($request->getPathInfo()) . ".deferred.config";
                     if(file_exists($deferredConfig)) {
                         $thumbnailConfig = unserialize(file_get_contents($deferredConfig));
                         @unlink($deferredConfig); // cleanup, this isn't needed anymore
