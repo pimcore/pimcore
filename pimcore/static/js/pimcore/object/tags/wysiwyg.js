@@ -86,15 +86,15 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         var iframe = document.createElement("iframe");
         iframe.setAttribute("frameborder", "0");
         iframe.setAttribute("id", this.previewIframeId);
-        iframe.src = "about:blank";
-
+        iframe.setAttribute("scrolling", "no");
+        iframe.setAttribute("marginheight", "0");
+        iframe.setAttribute("marginwidth", "0");
+        //iframe.src = "about:blank";
 
         iframe.onload = this.initializePreview.bind(this);
 
-        // HACK: unfortunately iframe.onload doesn't work in IE8, so that we have to use setTimeout()
-        window.setTimeout(this.initializePreview.bind(this), 2000);
-
         Ext.get(this.editableDivId).update("");
+        Ext.get(this.editableDivId).clean(true);
         Ext.get(this.editableDivId).dom.appendChild(iframe);
 
 
@@ -117,10 +117,12 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             return;
         }
 
+        var uriPrefix = window.location.protocol + "//" + window.location.host;
+
         var document = Ext.get(this.previewIframeId).dom.contentWindow.document;
         var iframeContent = this.data;
-        iframeContent +=
-                        '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
+        iframeContent += '<link href="' + uriPrefix + '/pimcore/static/js/lib/ckeditor/contents.css" ' +
+            'rel="stylesheet" type="text/css" />';
         iframeContent += "&nbsp;"
 
         document.body.innerHTML = iframeContent;
