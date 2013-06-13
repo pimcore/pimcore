@@ -246,7 +246,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                 mapTypeControlOptions: {
                     style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
                 },
-                mapTypeId: google.maps.MapTypeId.ROADMAP
+                mapTypeId: this.fieldConfig.mapType
             });
 
             this.drawingManager = new google.maps.drawing.DrawingManager({
