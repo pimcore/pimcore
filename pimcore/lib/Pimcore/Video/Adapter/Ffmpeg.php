@@ -32,6 +32,23 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     protected $arguments = array();
 
     /**
+     * @return bool
+     */
+    public function isAvailable() {
+        try {
+            $ffmpeg = self::getFfmpegCli();
+            $phpCli = Pimcore_Tool_Console::getPhpCli();
+            if($ffmpeg && $phpCli) {
+                return true;
+            }
+        } catch (Exception $e) {
+            Logger::warning($e);
+        }
+
+        return false;
+    }
+
+    /**
      * @static
      * @return string
      */

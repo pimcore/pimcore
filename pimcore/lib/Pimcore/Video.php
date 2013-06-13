@@ -29,7 +29,9 @@ class Pimcore_Video {
                     throw new Exception("Video-transcode adapter `" . $adapter . "´ does not exist.");
                 }
             } else {
-                return new Pimcore_Video_Adapter_Ffmpeg();
+                if($adapter = self::getDefaultAdapter()) {
+                    return $adapter;
+                }
             }
         } catch (Exception $e) {
             Logger::crit("Unable to load video adapter: " . $e->getMessage());
@@ -39,19 +41,37 @@ class Pimcore_Video {
         return null;
     }
 
+    /**
+     * @return bool
+     */
     public static function isAvailable () {
-        try {
-            $ffmpeg = Pimcore_Video_Adapter_Ffmpeg::getFfmpegCli();
-            $phpCli = Pimcore_Tool_Console::getPhpCli();
-            if(!$ffmpeg || !$phpCli) {
-                throw new Exception("ffmpeg is not available");
-            }
-
+        if(self::getDefaultAdapter()) {
             return true;
-        } catch (Exception $e) {
-            Logger::warning($e);
+        }
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function getDefaultAdapter () {
+
+        $adapters = array("Ffmpeg");
+
+        foreach ($adapters as $adapter) {
+            $adapterClass = "Pimcore_Video_Adapter_" . $adapter;
+            if(Pimcore_Tool::classExists($adapterClass)) {
+                try {
+                    $adapter = new $adapterClass();
+                    if($adapter->isAvailable()) {
+                        return $adapter;
+                    }
+                } catch (Exception $e) {
+                    Logger::warning($e);
+                }
+            }
         }
 
-        return false;
+        return null;
     }
 }
