@@ -308,7 +308,10 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                 }
                 $fd = $this->getFielddefinition($field->name);
                 if (!$fd instanceof Object_Class_Data) {
-                    throw new Exception("Unknnown field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ] ");
+                    if ($idMapper && $idMapper->ignoreMappingFailures()){
+                        continue;
+                    }
+                    throw new Exception("Unknown field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ] ");
                 } else if ($fd->getFieldtype() != $field->type){
                     throw new Exception("Type mismatch for field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]. Should be [ ".$fd->getFieldtype()." ], but is [ ".$field->type." ] ");
                 }
