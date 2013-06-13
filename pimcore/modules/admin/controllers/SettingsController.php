@@ -286,6 +286,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 ),
                 "ffmpeg" => $values["assets.ffmpeg"],
                 "qtfaststart" => $values["assets.qtfaststart"],
+                "ghostscript" => $values["assets.ghostscript"],
                 "icc_rgb_profile" => $values["assets.icc_rgb_profile"],
                 "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"]
             ),
