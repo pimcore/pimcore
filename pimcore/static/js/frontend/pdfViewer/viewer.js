@@ -112,9 +112,13 @@ pimcore.pdf.prototype.init = function () {
     this.pdfButtonRight.addEventListener("mouseout", this.buttonHoverOut, true);
     this.pdfButtonLeft.addEventListener("mouseout", this.buttonHoverOut, true);
 
-    this.pdfZoom.addEventListener("mouseover", this.buttonHover, true);
-    this.pdfZoom.addEventListener("mouseout", this.buttonHoverOut, true);
-    this.pdfZoom.addEventListener("click", this.zoom.bind(this), true);
+    if(this.data["fullscreen"]) {
+        this.pdfZoom.addEventListener("mouseover", this.buttonHover, true);
+        this.pdfZoom.addEventListener("mouseout", this.buttonHoverOut, true);
+        this.pdfZoom.addEventListener("click", this.zoom.bind(this), true);
+    } else {
+        this.pdfZoom.style.display = "none";
+    }
 
     this.toPage(1);
     this.calculateDimensions();
@@ -176,7 +180,7 @@ pimcore.pdf.prototype.buttonHoverOut = function () {
     this.style.opacity = "0.6";
 };
 
-pimcore.pdf.prototype.addImageToPage = function (page) {
+pimcore.pdf.prototype.addImageToPage = function (page, maxHeight) {
     var imgContainer, img, hotspot, hd, o, l;
 
     if(this.data.pages[page] && !this.data.pages[page]["detailLoaded"]) {
@@ -187,6 +191,7 @@ pimcore.pdf.prototype.addImageToPage = function (page) {
 
             img = document.createElement("img");
             img.setAttribute("src", this.data.pages[page]["detail"]);
+            img.style.maxHeight = maxHeight + "px";
             imgContainer.appendChild(img);
 
             if(this.data.pages[page]["hotspots"] && this.data.pages[page]["hotspots"].length > 0) {
@@ -274,9 +279,14 @@ pimcore.pdf.prototype.download = function () {
 
 pimcore.pdf.prototype.toPage = function (page) {
 
+    // min-height
     if(this.pdfPages.offsetHeight > 20) {
         this.pdfPages.style.minHeight = this.pdfPages.offsetHeight + "px";
     }
+
+    // max-height
+    var maxHeight = this.containerEl.parentNode.offsetHeight;
+    this.pdfPages.style.maxHeight = maxHeight + "px";
 
     // hide all pages
     for(var i=0; i<this.data.pages.length; i++) {
@@ -291,6 +301,10 @@ pimcore.pdf.prototype.toPage = function (page) {
     for(i=page; i<=(page+1); i++) {
         if(this.data.pages[i]) {
             this.data.pages[i]["node"].style.display = "block";
+
+            try {
+                this.data.pages[i]["node"].firstChild.firstChild.style.maxHeight = maxHeight + "px";
+            } catch (e6) {}
         }
     }
 
@@ -310,7 +324,7 @@ pimcore.pdf.prototype.toPage = function (page) {
 
     // pre-load next x pages
     for(i=page; i<=(page+4); i++) {
-        this.addImageToPage(i);
+        this.addImageToPage(i, maxHeight);
     }
 
     this.calculateDimensions();
