@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -45,6 +45,53 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
      */
     public $phpdocType = "array";
 
+    /**
+     * @var float
+     */
+    public $lat = 0.0;
+
+    /**
+     * @var float
+     */
+    public $lng = 0.0;
+
+    /**
+     * @var integer
+     */
+    public $zoom = 1;
+
+    public function getLat()
+    {
+        return $this->lat;
+    }
+
+    public function setLat($lat)
+    {
+        $this->lat = (float) $lat;
+        return $this;
+    }
+
+    public function getLng()
+    {
+        return $this->lng;
+    }
+
+    public function setLng($lng)
+    {
+        $this->lng = (float) $lng;
+        return $this;
+    }
+
+    public function getZoom()
+    {
+        return $this->zoom;
+    }
+
+    public function setZoom($zoom)
+    {
+        $this->zoom = (int) $zoom;
+        return $this;
+    }
 
     /**
      * @see Object_Class_Data::getDataForResource
@@ -74,7 +121,6 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
     public function getDataForQueryResource($data, $object = null) {
         return $this->getDataForResource($data, $object);
     }
-
 
     /**
      * @see Object_Class_Data::getDataForEditmode
@@ -125,8 +171,6 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
         return "";
     }
 
- 
-
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
@@ -170,7 +214,6 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
         }
         return $points;
     }
-
 
     /**
      * converts data to be exposed via webservices

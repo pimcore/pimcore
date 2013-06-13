@@ -53,6 +53,36 @@ pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.dat
 
         $super();
 
+        this.specificPanel.removeAll();
+        this.specificPanel.add([
+            {
+                xtype: 'spinnerfield',
+                fieldLabel: t('latitude'),
+                name: 'lat',
+                value: this.datax.lat || 0,
+                decimalPrecision: 8,
+                minValue: 0,
+                allowDecimals: true,
+                incrementValue: 0.01
+            },{
+                xtype: 'spinnerfield',
+                fieldLabel: t('longitude'),
+                name: 'lng',
+                value: this.datax.lng || 0,
+                decimalPrecision: 8,
+                minValue: 0,
+                allowDecimals: true,
+                incrementValue: 0.01
+            },{
+                xtype: 'spinnerfield',
+                fieldLabel: t('zoom_level'),
+                name: 'zoom',
+                value: this.datax.zoom || 1,
+                decimalPrecision: 0,
+                minValue: 1,
+                incrementValue: 1
+            }
+        ]);
 
         return this.layout;
     }
