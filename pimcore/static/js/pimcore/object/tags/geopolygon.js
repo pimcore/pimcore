@@ -42,15 +42,18 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                 return bounds;
             };
         }
-
-
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+        return {
+            header: ts(field.label),
+            width: 150,
+            sortable: false,
+            dataIndex: field.key,
             renderer: function (key, value, metaData, record) {
-                return t("not_supported");
-            }.bind(this, field.key)};
+                return t('not_supported');
+            }.bind(this, field.key)
+        };
     },
 
     getLayoutEdit: function () {
@@ -114,7 +117,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
     getMapUrl: function (width) {
 
         // static maps api image url
-        var mapZoom = 14;
+        var mapZoom = this.fieldConfig.zoom;
         var mapUrl;
 
         if (!width) {
@@ -140,7 +143,6 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                 pointConfig.push(this.data[0].latitude + "," + this.data[0].longitude);
 
                 var center = bounds.getCenter();
-
                 mapZoom = this.getBoundsZoomLevel(bounds, {width: px, height: py});
 
                 var path = "color:0xff0000ff|weight:2|" + pointConfig.join("|");
@@ -149,8 +151,10 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                                 + "&path=" + path + "&sensor=false";
             }
             else {
-                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=0,0&zoom=1&size="
-                                + px + "x" + py + "&sensor=false";
+                mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
+                    + this.fieldConfig.lat + ',' + this.fieldConfig.lng
+                    + '&zoom=' + mapZoom + '&size='
+                    + px + 'x' + py + '&sensor=false';
             }
         }
         catch (e) {
@@ -242,16 +246,20 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
             plain: true
         });
 
-        this.searchWindow.on("afterrender", function () {
+        this.searchWindow.on('afterrender', function () {
 
-            var center = new google.maps.LatLng(0,0);
-            var mapZoom = 1;
-            this.markers = [];
-            this.polygonPoints = [];
+            var center = new google.maps.LatLng(this.fieldConfig.lat, this.fieldConfig.lng);
+            var mapZoom = this.fieldConfig.zoom;
+            this.polygonPoints = new google.maps.MVCArray();
 
             this.gmap = new google.maps.Map(this.searchWindow.body.dom, {
                 zoom: mapZoom,
                 center: center,
+                streetViewControl: false,
+                mapTypeControl: true,
+                mapTypeControlOptions: {
+                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+                },
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             });
             google.maps.event.addListener(this.gmap, 'click', this.addPoint.bind(this));
@@ -276,7 +284,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
             this.geocoder = new google.maps.Geocoder();
         }.bind(this));
 
-        this.searchWindow.on("beforeclose", function () {
+        this.searchWindow.on('beforeclose', function () {
             delete this.polygon;
             delete this.gmap;
             delete this.geocoder;
