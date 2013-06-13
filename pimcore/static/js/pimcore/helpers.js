@@ -1208,18 +1208,21 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
 
                 var imageHtml = "";
 
+                var uriPrefix = window.location.protocol + "//" + window.location.host;
+
                 var thumbnails = node.attributes.thumbnails;
                 if(thumbnails && thumbnails.length) {
                     imageHtml += '<div class="thumbnails">';
                     for(var i=0; i<thumbnails.length; i++) {
-                        imageHtml += '<div class="small" style="background-image:url(' + thumbnails[i] + ')"></div>';
+                        imageHtml += '<div class="small" ' +
+                            'style="background-image:url(' + uriPrefix + thumbnails[i] + ')"></div>';
                     }
                     imageHtml += '</div>';
                 }
 
                 var thumbnail = node.attributes.thumbnail;
                 if(thumbnail) {
-                    imageHtml = '<img src="' + thumbnail + '" />';
+                    imageHtml = '<img src="' + uriPrefix + thumbnail + '" />';
                 }
 
                 if(imageHtml) {
@@ -1234,16 +1237,45 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                     }
 
                     var container = Ext.get("pimcore_tree_preview");
+                    if(!container) {
+                        container  = Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview"></div>');
+                        container = Ext.get(container);
+                    }
+
+                    // check for an existing iframe
+                    var existingIframe = container.query("iframe")[0];
+                    if(existingIframe) {
+                        // stop loading the existing iframe (images, etc.)
+                        var existingIframeWin = existingIframe.contentWindow;
+                        if(typeof existingIframeWin["stop"] == "function") {
+                            existingIframeWin.stop();
+                        } else if (typeof existingIframeWin.document["execCommand"] == "function") {
+                            existingIframeWin.document.execCommand('Stop');
+                        }
+                    }
+
                     var styles = "left: " + position + "px";
 
-                    if(container) {
-                        container.update(imageHtml);
-                        container.show();
-                        container.applyStyles(styles);
-                    } else {
-                        Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview" style="' + styles + '">'
-                                                                                            + imageHtml + '</div>');
-                    }
+                    // we need to create an iframe so that we can use window.stop();
+                    var iframe = document.createElement("iframe");
+                    iframe.setAttribute("frameborder", "0");
+                    iframe.setAttribute("scrolling", "no");
+                    iframe.setAttribute("marginheight", "0");
+                    iframe.setAttribute("marginwidth", "0");
+                    iframe.setAttribute("style", "width: 100%; height: 2500px;");
+
+                    imageHtml += '<link rel="stylesheet" type="text/css" ' +
+                        'href="' + uriPrefix + '/pimcore/static/css/tree-preview-frame.css" />';
+
+                    iframe.onload = function () {
+                        this.contentWindow.document.body.innerHTML = imageHtml;
+                    };
+
+                    container.update(""); // remove all
+                    container.clean(true);
+                    container.dom.appendChild(iframe);
+                    container.show();
+                    container.applyStyles(styles);
                 }
             }.bind(this, node));
 
