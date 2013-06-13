@@ -13,13 +13,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
-class Pimcore_Document_Adapter_Imagick extends Pimcore_Document_Adapter {
-
-    /**
-     * @var Imagick
-     */
-    protected $resource;
-
+class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
 
     /**
      * @var string
@@ -31,13 +25,46 @@ class Pimcore_Document_Adapter_Imagick extends Pimcore_Document_Adapter {
      */
     public function isAvailable() {
         try {
-            if(extension_loaded("imagick")) {
+            $ghostscript = self::getGhostscriptCli();
+            $phpCli = Pimcore_Tool_Console::getPhpCli();
+            if($ghostscript && $phpCli) {
                 return true;
             }
         } catch (Exception $e) {
-            Logger:debug("PHP extension imagick isn't loaded");
+            Logger::warning($e);
         }
+
         return false;
+    }
+
+    /**
+     * @static
+     * @return string
+     */
+    public static function getGhostscriptCli () {
+
+        $gsPath = Pimcore_Config::getSystemConfig()->assets->ghostscript;
+        if($gsPath) {
+            if(@is_executable($gsPath)) {
+                return $gsPath;
+            } else {
+                Logger::critical("Ghostscript binary: " . $gsPath . " is not executable");
+            }
+        }
+
+        $paths = array(
+            "/usr/local/bin/gs",
+            "/usr/bin/gs",
+            "/bin/gs"
+        );
+
+        foreach ($paths as $path) {
+            if(@is_executable($path)) {
+                return $path;
+            }
+        }
+
+        throw new Exception("No Ghostscript executable found, please configure the correct path in the system settings");
     }
 
     /**
@@ -56,11 +83,6 @@ class Pimcore_Document_Adapter_Imagick extends Pimcore_Document_Adapter {
             throw new \Exception($message);
         }
 
-        if($this->resource) {
-            unset($this->resource);
-            $this->resource = null;
-        }
-
         $this->path = $path;
 
         return $this;
@@ -72,19 +94,15 @@ class Pimcore_Document_Adapter_Imagick extends Pimcore_Document_Adapter {
      * @throws Exception
      */
     public function getPageCount($blob = false) {
-        $this->resource = new Imagick();
 
-        if($blob !== false) {
-            $status = $this->resource->readimageblob($blob);
-        } else {
-            $status = $this->resource->readImage($this->path);
-        }
+        $pages = Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -dNODISPLAY -q -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'");
+        $pages = trim($pages);
 
-        if(!$status) {
+        if(!is_numeric($pages)) {
             throw new \Exception("Unable to get page-count of " . $this->path);
         }
 
-        return $this->resource->getnumberimages();
+        return $pages;
     }
 
     /**
@@ -95,27 +113,7 @@ class Pimcore_Document_Adapter_Imagick extends Pimcore_Document_Adapter {
     public function saveImage($path, $page = 1) {
 
         try {
-            $this->resource = new Imagick();
-
-            $this->resource->setResolution(200, 200);
-            if(!$this->resource->readImage($this->path."[" . ($page-1) . "]")) {
-                return false;
-            }
-
-            //set the background to white
-            $this->resource->setImageBackgroundColor('white');
-
-            //flatten the image
-            $this->resource = $this->resource->flattenImages();
-
-            $this->resource->stripimage();
-            $this->resource->setImageFormat("png");
-
-            $this->resource->setCompressionQuality((int) 100);
-            $this->resource->setImageCompressionQuality((int) 100);
-
-            $this->resource->writeImage($path);
-
+            Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -sDEVICE=pngalpha -dFirstPage=" . $page . " -dLastPage=" . $page . " -r200 -o " . $path . " " . $this->path);
             return $this;
         } catch (Exception $e) {
             Logger::error($e);

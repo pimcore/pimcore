@@ -30,7 +30,9 @@ class Pimcore_Document {
                     throw new Exception("document-transcode adapter `" . $adapter . "´ does not exist.");
                 }
             } else {
-                return new Pimcore_Document_Adapter_Imagick();
+                if($adapter = self::getDefaultAdapter()) {
+                    return $adapter;
+                }
             }
         } catch (Exception $e) {
             Logger::crit("Unable to load document adapter: " . $e->getMessage());
@@ -44,14 +46,33 @@ class Pimcore_Document {
      * @return bool
      */
     public static function isAvailable () {
-        try {
-            if(extension_loaded("imagick")) {
-                return true;
+        if(self::getDefaultAdapter()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function getDefaultAdapter () {
+
+        $adapters = array("Ghostscript", "Imagick");
+
+        foreach ($adapters as $adapter) {
+            $adapterClass = "Pimcore_Document_Adapter_" . $adapter;
+            if(Pimcore_Tool::classExists($adapterClass)) {
+                try {
+                    $adapter = new $adapterClass();
+                    if($adapter->isAvailable()) {
+                        return $adapter;
+                    }
+                } catch (Exception $e) {
+                    Logger::warning($e);
+                }
             }
-        } catch (Exception $e) {
-            Logger::warning($e);
         }
 
-        return false;
+        return null;
     }
 }
