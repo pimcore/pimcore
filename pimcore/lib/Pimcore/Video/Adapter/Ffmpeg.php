@@ -64,8 +64,8 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         }
 
         $paths = array(
-            "/usr/bin/ffmpeg",
             "/usr/local/bin/ffmpeg",
+            "/usr/bin/ffmpeg",
             "/bin/ffmpeg",
             realpath(PIMCORE_DOCUMENT_ROOT . "/../ffmpeg/bin/ffmpeg.exe") // for windows sample package (XAMPP)
         );
