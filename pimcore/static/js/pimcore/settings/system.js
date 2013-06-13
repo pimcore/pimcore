@@ -987,6 +987,11 @@ pimcore.settings.system = Class.create({
                                 name: 'assets.qtfaststart',
                                 value: this.getValue("assets.qtfaststart"),
                                 width: 300
+                            },{
+                                fieldLabel: t('absolute_path_to_ghostscript'),
+                                name: 'assets.ghostscript',
+                                value: this.getValue("assets.ghostscript"),
+                                width: 300
                             },
                             {
                                 fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (imagick)",
