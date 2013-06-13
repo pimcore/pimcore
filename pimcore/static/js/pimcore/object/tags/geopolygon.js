@@ -145,10 +145,10 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                 var center = bounds.getCenter();
                 mapZoom = this.getBoundsZoomLevel(bounds, {width: px, height: py});
 
-                var path = "color:0xff0000ff|weight:2|" + pointConfig.join("|");
-                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + center.lat() + ","
-                                + center.lng() + "&zoom=" + mapZoom + "&size=" + px + "x" + py
-                                + "&path=" + path + "&sensor=false";
+                var path = 'weight:0|fillcolor:0x00000073|' + pointConfig.join('|');
+                mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center=' + center.lat() + ','
+                                + center.lng() + '&zoom=' + mapZoom + '&size=' + px + 'x' + py
+                                + '&path=' + path + '&sensor=false';
             }
             else {
                 mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
@@ -187,55 +187,41 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                 xtype: "button",
                 text: t("empty"),
                 icon: "/pimcore/static/img/icon/bin.png",
-                handler: function () {
-                    this.polygon.setMap(null);
-                    delete this.polygon;
-
-                    this.polygon = new google.maps.Polygon({
-                        paths: [],
-                        strokeColor: "#f33f00",
-                        strokeOpacity: 1,
-                        strokeWeight: 2,
-                        fillColor: "#ff0000",
-                        fillOpacity: 0.2,
-                        map: this.gmap
-                    });
-
-                    this.polygon.runEdit(true);
-
-                }.bind(this)
+                handler: this.removePolygon.bind(this)
             }],
             bbar: [this.searchfield,{
-                xtype: "button",
-                text: t("search"),
-                icon: "/pimcore/static/img/icon/magnifier.png",
+                xtype: 'button',
+                text: t('search'),
+                icon: '/pimcore/static/img/icon/magnifier.png',
                 handler: this.geocode.bind(this)
             },"->",{
-                xtype: "button",
-                text: t("cancel"),
-                icon: "/pimcore/static/img/icon/cancel.png",
+                xtype: 'button',
+                text: t('cancel'),
+                icon: '/pimcore/static/img/icon/cancel.png',
                 handler: function () {
                     this.searchWindow.close();
                 }.bind(this)
             },{
-                xtype: "button",
-                text: "OK",
-                icon: "/pimcore/static/img/icon/tick.png",
+                xtype: 'button',
+                text: 'OK',
+                icon: '/pimcore/static/img/icon/tick.png',
                 handler: function () {
 
                     this.data = null;
 
-                    var points = this.polygon.getPath();
+                    if (this.polygon) {
+                        var points = this.polygon.getPath();
 
-                    if(points.length > 0) {
-                        this.data = [];
-                    }
+                        if(points.length > 0) {
+                            this.data = [];
+                        }
 
-                    for (var i=0; i<points.length; i++) {
-                        this.data.push({
-                            latitude: points.getAt(i).lat(),
-                            longitude: points.getAt(i).lng()
-                        });
+                        for (var i=0; i<points.length; i++) {
+                            this.data.push({
+                                latitude: points.getAt(i).lat(),
+                                longitude: points.getAt(i).lng()
+                            });
+                        }
                     }
 
                     this.updatePreviewImage();
@@ -262,18 +248,36 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                 },
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             });
-            google.maps.event.addListener(this.gmap, 'click', this.addPoint.bind(this));
+
+            this.drawingManager = new google.maps.drawing.DrawingManager({
+                drawingControl: false,
+                polygonOptions: {
+                    strokeWeight: 0,
+                    fillOpacity: 0.45,
+                    editable: true,
+                    draggable: true
+                },
+                map: this.gmap
+            });
+
+            google.maps.event.addListener(this.drawingManager, 'overlaycomplete', function (e) {
+                // Switch back to non-drawing mode after drawing a shape.
+                this.drawingManager.setDrawingMode(null);
+
+                this.polygon = e.overlay;
+                this.bindPolygonEvent();
+            }.bind(this));
 
             if (this.data) {
-                for (var i=0; i<this.data.length; i++) {
+                for (var i = 0; i < this.data.length; i++) {
                     this.polygonPoints.push(new google.maps.LatLng(this.data[i].latitude, this.data[i].longitude));
                 }
             }
 
-            this.polygonPoints = new google.maps.MVCArray(this.polygonPoints);
-
             if(this.polygonPoints.length > 0) {
                 this.renderPolygon();
+            } else {
+                this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
             }
 
             if(this.data) {
@@ -297,14 +301,33 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
 
         this.polygon = new google.maps.Polygon({
             paths: this.polygonPoints,
-            strokeColor: "#f33f00",
-            strokeOpacity: 1,
-            strokeWeight: 2,
-            fillColor: "#ff0000",
-            fillOpacity: 0.2,
-            map: this.gmap,
-            editable: true
+            strokeWeight: 0,
+            fillOpacity: 0.45,
+            editable: true,
+            draggable: true,
+            map: this.gmap
         });
+        this.bindPolygonEvent();
+    },
+
+    removePolygon: function() {
+        if (this.polygon) {
+            this.polygon.setMap(null);
+            delete this.polygon;
+        }
+        this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
+    },
+
+    bindPolygonEvent: function () {
+        google.maps.event.addListener(this.polygon, 'click', function (e) {
+            if (e.vertex !== undefined) {
+                var path = this.polygon.getPaths().getAt(e.path);
+                path.removeAt(e.vertex);
+                if (path.length < 3) {
+                    this.removePolygon();
+                }
+            }
+        }.bind(this));
     },
 
     addPoint : function (event) {
