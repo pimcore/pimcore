@@ -12,35 +12,18 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 /*global google */
-pimcore.registerNS("pimcore.object.tags.geobounds");
-pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
+pimcore.registerNS('pimcore.object.tags.geobounds');
+pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
 
-    type: "geobounds",
+    type: 'geobounds',
 
     dirty: false,
 
-    initialize: function (data, fieldConfig) {
-        this.data = data;
-        this.fieldConfig = fieldConfig;
-
-    },
-
-    getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
-                    renderer: function (key, value, metaData, record) {
-                        return t("not_supported");
-                    }.bind(this, field.key)};
-    },
-
     getLayoutEdit: function () {
-
 
         this.mapImageID = uniqid();
 
-        if (!this.data) {
-            this.data = {};
-        }
-        else {
+        if (this.data) {
             this.data.ne = new google.maps.LatLng(this.data.NElatitude,this.data.NElongitude);
             this.data.sw = new google.maps.LatLng(this.data.SWlatitude,this.data.SWlongitude);
         }
@@ -49,18 +32,17 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
             title: this.fieldConfig.title,
             height: 370,
             width: 490,
-            cls: "object_field",
-            html: '<div id="google_maps_container_' + this.mapImageID
-                    + '" align="center"><img align="center" width="300" height="300" src="' + this.getMapUrl()
-                    + '" /></div>',
+            cls: 'object_field',
+            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center">'
+                        + '<img align="center" width="300" height="300" src="' + this.getMapUrl() + '" /></div>',
             bbar: [{
-                xtype: "button",
-                text: t("empty"),
-                icon: "/pimcore/static/img/icon/bin.png",
+                xtype: 'button',
+                text: t('empty'),
+                icon: '/pimcore/static/img/icon/bin.png',
                 handler: function () {
-                    this.data = {};
-                    this.dirty = true;
+                    this.data = null;
                     this.updatePreviewImage();
+                    this.dirty = true;
                 }.bind(this)
             },"->",{
                 xtype: "button",
@@ -70,76 +52,48 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
             }]
         });
 
-        this.component.on("afterrender", function () {
+        this.component.on('afterrender', function () {
             this.updatePreviewImage();
         }.bind(this));
 
-
-
         return this.component;
-    },
-
-    getLayoutShow: function () {
-
-        this.component = this.getLayoutEdit();
-        this.component.disable();
-
-        return this.component;
-    },
-
-    updatePreviewImage: function () {
-        
-        var width = Ext.get("google_maps_container_" + this.mapImageID).getWidth();
-
-        if (width > 640) {
-            width = 640;
-        }
-        if (width < 10) {
-            window.setTimeout(this.updatePreviewImage.bind(this), 1000);
-        }
-        
-        Ext.get("google_maps_container_" + this.mapImageID).dom.innerHTML = '<img align="center" width="'
-                                        + width + '" height="300" src="' + this.getMapUrl(width) + '" />';
     },
 
     getMapUrl: function (width) {
-        
+
         // static maps api image url
-        var mapZoom = 14;
+        var mapZoom = this.fieldConfig.zoom;
         var mapUrl;
-        
+
         if (!width) {
             width = 300;
         }
-        
+
         var py = 300;
-        var px = width; 
-        
+        var px = width;
+
         try {
-            if (this.data.ne && this.data.sw) {
-                
+            if (this.data) {
+
                 var bounds = new google.maps.LatLngBounds(this.data.sw, this.data.ne);
                 var center = bounds.getCenter();
-                
-                // calculate zoom level without using the gmap2-object       
-                var s = 1.35; 
-                var xZoom = -(Math.log((this.data.ne.lng() - this.data.sw.lng())/(px*s))/Math.log(2));
-                var yZoom = -(Math.log(((this.data.ne.lat()
-                                    - this.data.sw.lat())*Math.sec( center.y*Math.PI/180))/(py*s))/Math.log(2));
-                mapZoom = Math.min(Math.floor(xZoom), Math.floor(yZoom));
-                
-                var path = "color:0xff0000ff|weight:2|" + this.data.ne.lat() + "," + this.data.ne.lng()
-                                        + "|" + this.data.sw.lat() + "," + this.data.ne.lng() + "|"
-                                        + this.data.sw.lat() + "," + this.data.sw.lng() + "|" + this.data.ne.lat()
-                                        + "," + this.data.sw.lng() + "|" + this.data.ne.lat() + ","
-                                        + this.data.ne.lng();
-                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + center.y + ","
-                                        + center.x + "&zoom=" + mapZoom + "&size=" + px + "x" + py
-                                        + "&path=" + path + "&sensor=false";
+
+                mapZoom = this.getBoundsZoomLevel(bounds, {width: px, height: py});
+
+                var path = 'weight:0|fillcolor:0x00000073|' + this.data.ne.lat() + ',' + this.data.ne.lng()
+                    + '|' + this.data.sw.lat() + ',' + this.data.ne.lng() + '|'
+                    + this.data.sw.lat() + ',' + this.data.sw.lng() + '|' + this.data.ne.lat()
+                    + ',' + this.data.sw.lng() + '|' + this.data.ne.lat() + ','
+                    + this.data.ne.lng();
+                mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center=' + center.y + ','
+                    + center.x + '&zoom=' + mapZoom + '&size=' + px + 'x' + py
+                    + '&path=' + path + '&sensor=false&key=' + pimcore.settings.google_maps_api_key;
             }
             else {
-                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=0,0&zoom=1&size=" + px + "x" + py
-                                        + "&sensor=false";
+                mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
+                    + this.fieldConfig.lat + ',' + this.fieldConfig.lng
+                    + '&zoom=' + mapZoom + '&size='
+                    + px + 'x' + py + '&sensor=false&key=' + pimcore.settings.google_maps_api_key;
             }
         }
         catch (e) {
@@ -149,15 +103,12 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
     },
 
     openPicker: function () {
-        
-        this.NWmarker = null;
-        this.SEmarker = null;
-        
+
         this.searchfield = new Ext.form.TextField({
             width: 300,
-            name: "mapSearch",
-            style: "float: left;",
-            fieldLabel: t("search")
+            name: 'mapSearch',
+            style: 'float: left;',
+            fieldLabel: t('search')
         });
 
         this.mapPanel = new Ext.Panel({
@@ -169,179 +120,123 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
             width: 600,
             height: 500,
             resizable: false,
-            bbar: [this.searchfield,{
-                xtype: "button",
-                text: t("search"),
-                icon: "/pimcore/static/img/icon/magnifier.png",
+            tbar: [{
+                xtype: 'button',
+                text: t('empty'),
+                icon: '/pimcore/static/img/icon/bin.png',
+                handler: this.removeOverlay.bind(this)
+            }],
+            bbar: [this.searchfield, {
+                xtype: 'button',
+                text: t('search'),
+                icon: '/pimcore/static/img/icon/magnifier.png',
                 handler: this.geocode.bind(this)
             },"->",{
-                xtype: "button",
-                text: t("cancel"),
-                icon: "/pimcore/static/img/icon/cancel.png",
+                xtype: 'button',
+                text: t('cancel'),
+                icon: '/pimcore/static/img/icon/cancel.png',
                 handler: function () {
                     this.searchWindow.close();
                 }.bind(this)
             },{
-                xtype: "button",
-                text: "OK",
-                icon: "/pimcore/static/img/icon/tick.png",
+                xtype: 'button',
+                text: 'OK',
+                icon: '/pimcore/static/img/icon/tick.png',
                 handler: function () {
-                    
-                    this.data.ne = new google.maps.LatLng(this.NWmarker.getPosition().lat(),
-                                                                            this.SEmarker.getPosition().lng());
-                    this.data.sw = new google.maps.LatLng(this.SEmarker.getPosition().lat(),
-                                                                            this.NWmarker.getPosition().lng());
-                    this.dirty = true;
-                    
+
+                    this.data = null;
+
+                    if (this.overlay) {
+                        this.data = {
+                            ne: this.overlay.getBounds().getNorthEast(),
+                            sw: this.overlay.getBounds().getSouthWest()
+                        }
+                    }
+
                     this.updatePreviewImage();
+                    this.dirty = true;
                     this.searchWindow.close();
+
                 }.bind(this)
             }],
             plain: true
         });
 
-        this.searchWindow.on("afterrender", function () {
+        this.searchWindow.on('afterrender', function () {
 
-            var center = new google.maps.LatLng(0,0);
-            var mapZoom = 1;
-            var bounds;
-            
-            if (this.data.ne && this.data.sw) {
-               bounds = new google.maps.LatLngBounds(this.data.sw, this.data.ne);
-               center = bounds.getCenter();
-            }
+            var center = new google.maps.LatLng(this.fieldConfig.lat, this.fieldConfig.lng);
+            var mapZoom = this.fieldConfig.zoom;
 
             this.gmap = new google.maps.Map(this.searchWindow.body.dom, {
                 zoom: mapZoom,
                 center: center,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
+                streetViewControl: false,
+                mapTypeControl: true,
+                mapTypeControlOptions: {
+                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+                },
+                mapTypeId: this.fieldConfig.mapType
             });
 
-            if(bounds) {
-                this.gmap.fitBounds(bounds);
+            this.drawingManager = new google.maps.drawing.DrawingManager({
+                drawingControl: false,
+                rectangleOptions: {
+                    strokeWeight: 0,
+                    fillOpacity: 0.45,
+                    editable: true,
+                    draggable: true
+                },
+                map: this.gmap
+            });
 
-                this.NWmarker = this.getMarker(new google.maps.LatLng(this.data.ne.lat(),this.data.sw.lng()),"nw");
-                this.SEmarker = this.getMarker(new google.maps.LatLng(this.data.sw.lat(),this.data.ne.lng()),"se");
+            google.maps.event.addListener(this.drawingManager, 'overlaycomplete', function (e) {
+                // Switch back to non-drawing mode after drawing a shape.
+                this.drawingManager.setDrawingMode(null);
+
+                this.overlay = e.overlay;
+            }.bind(this));
+
+            if (this.data) {
+                this.renderOverlay();
+                this.gmap.fitBounds(this.overlay.getBounds());
+            } else {
+                this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE);
             }
 
-
-            this.redrawShape();
-
             this.geocoder = new google.maps.Geocoder();
-            
-            google.maps.event.addListener(this.gmap,"click",this.createOnClickMarker.bind(this));
 
         }.bind(this));
 
-        this.searchWindow.on("beforeclose", function () {
+        this.searchWindow.on('beforeclose', function () {
+            delete this.overlay;
             delete this.gmap;
             delete this.geocoder;
-            delete this.SEmarker;
-            delete this.NWmarker;            
         }.bind(this));
 
         this.searchWindow.show();
     },
 
-    geocode: function () {
-
-        if (this.geocoder) {
-            var address = this.searchfield.getValue();
-            this.geocoder.geocode( { 'address': address}, function(results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    this.gmap.setCenter(results[0].geometry.location, 16);
-                    this.gmap.setZoom(14);
-                }
-            }.bind(this));
-        }
-    },
-    
-    getMarker: function (point, type) {
-        var marker = new google.maps.Marker({
-            position: point,
+    renderOverlay: function () {
+        this.overlay = new google.maps.Rectangle({
+            bounds: new google.maps.LatLngBounds(this.data.sw, this.data.ne),
+            strokeWeight: 0,
+            fillOpacity: 0.45,
+            editable: true,
             draggable: true,
             map: this.gmap
         });
-
-        //GEvent.addListener(marker,"drag",this.redrawShape.bind(this));
-        google.maps.event.addListener(marker, "drag", this.observePosition.bind(this, type));
-        
-        return marker;
     },
 
-    createOnClickMarker: function (e) {
+    removeOverlay: function() {
+        if (this.overlay) {
+            this.overlay.setMap(null);
+            delete this.overlay;
+        }
+        this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE);
+    },
 
-        var point = e.latLng;
-
-        if(typeof this.NWmarker == "undefined" || this.NWmarker == null) {
-            this.NWmarker = this.getMarker(point, "nw");
-        }
-        else if (typeof this.SEmarker == "undefined" || this.SEmarker == null) {
-            this.SEmarker = this.getMarker(point, "se");
-            this.redrawShape();
-        }
-    },
-    
-    getRectanglePoints: function (nw,se) {
-        var points = [];
-        
-        points.push(nw);
-        points.push(new google.maps.LatLng(nw.lat(),se.lng()));
-        points.push(se);
-        points.push(new google.maps.LatLng(se.lat(),nw.lng()));
-        points.push(nw);
-        
-        return points; 
-    },
-    
-    observePosition: function (positionType) {
-        if(positionType == "nw") {
-            if(this.NWmarker.getPosition().lng() >= this.SEmarker.getPosition().lng()) {
-                this.NWmarker.setPosition(new google.maps.LatLng(this.NWmarker.getPosition().lat(),
-                                                                    this.SEmarker.getPosition().lng()));
-            }
-            if(this.NWmarker.getPosition().lat() <= this.SEmarker.getPosition().lat()) {
-                this.NWmarker.setPosition(new google.maps.LatLng(this.SEmarker.getPosition().lat(),
-                                                                    this.NWmarker.getPosition().lng()));
-            }
-        }
-        else {
-            if(this.SEmarker.getPosition().lng() <= this.NWmarker.getPosition().lng()) {
-                this.SEmarker.setPosition(new google.maps.LatLng(this.SEmarker.getPosition().lat(),
-                                                                    this.NWmarker.getPosition().lng()));
-            }
-            if(this.SEmarker.getPosition().y >= this.NWmarker.getPosition().y) {
-                this.SEmarker.setPosition(new google.maps.LatLng(this.NWmarker.getPosition().lat(),
-                                                                    this.SEmarker.getPosition().lng()));
-            }
-        }
-        
-        this.redrawShape();
-    },
-    
-    redrawShape: function () {
-        
-        if(typeof this.polygon != "undefined") {
-            this.polygon.setMap(null);
-        }
-
-        if( typeof this.NWmarker != "undefined" && this.NWmarker != null && typeof this.SEmarker != "undefined"
-                                                                                && this.SEmarker != null ) {
-            this.polygon = new google.maps.Polygon({
-                paths: this.getRectanglePoints(this.NWmarker.getPosition(),this.SEmarker.getPosition()),
-                strokeColor: "#f33f00",
-                strokeOpacity: 1,
-                strokeWeight: 2,
-                fillColor: "#ff0000",
-                fillOpacity: 0.2,
-                map: this.gmap
-            });
-        }
-    },
-    
-    
     getValue: function () {
-        if(this.data.ne) {
+        if (this.data) {
             return {
                 NElatitude: this.data.ne.lat(),
                 NElongitude: this.data.ne.lng(),
@@ -349,7 +244,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
                 SWlongitude: this.data.sw.lng()
             };
         }
-        
+
         return null;
     },
 
@@ -359,12 +254,12 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
 
     isInvalidMandatory: function () {
         var value = this.getValue();
-        
+
         // @TODO
         /*if (value.longitude && value.latitude) {
             return false;
         }*/
-        
+
         return true;
     },
 
@@ -372,7 +267,8 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
         if(!this.isRendered()) {
             return false;
         }
-        
+
         return this.dirty;
     }
+
 });
