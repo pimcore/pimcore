@@ -151,6 +151,10 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
                     }
 
                     if (!$language) {
+                        $language = Pimcore_Tool::getDefaultLanguage();
+                    }
+
+                    if (!$language) {
                         throw new Exception("No valid language/locale set. Use \$list->setLocale() to add a language to the listing, or register a global locale");
                     }
                     $this->tableName = "object_localized_" . $this->model->getClassId() . "_" . $language;

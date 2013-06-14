@@ -78,6 +78,14 @@ class Pimcore_Tool {
         return $languages;
     }
 
+    public static function getDefaultLanguage() {
+        $languages = self::getValidLanguages();
+        if(!empty($languages)) {
+            return $languages[0];
+        }
+        return null;
+    }
+
     /**
      * @static
      */
