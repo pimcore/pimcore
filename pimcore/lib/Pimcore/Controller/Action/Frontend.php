@@ -377,8 +377,8 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                     $this->getResponse()->setHttpResponseCode(503);
                 }
 
-                Logger::emergency("Unable to load URL: " . $_SERVER["REQUEST_URI"]);
-                Logger::emergency($error->exception);
+                Logger::error("Unable to load URL: " . $_SERVER["REQUEST_URI"]);
+                Logger::error($error->exception);
 
                 try {
                     // check if we have the error page already in the cache
