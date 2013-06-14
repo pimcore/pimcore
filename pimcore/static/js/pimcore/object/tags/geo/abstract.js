@@ -18,7 +18,6 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
     initialize: function (data, fieldConfig) {
         this.data = data;
         this.fieldConfig = fieldConfig;
-        this.overlay;
 
         // extend google maps to support the getBounds() method
         if (!google.maps.Polygon.prototype.getBounds) {
@@ -73,6 +72,19 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
         Ext.get('google_maps_container_' + this.mapImageID).dom.innerHTML =
             '<img align="center" width="' + width + '" height="300" src="' +
                 this.getMapUrl(width) + '" />';
+    },
+
+    geocode: function () {
+
+        if (this.geocoder) {
+            var address = this.searchfield.getValue();
+            this.geocoder.geocode( { 'address': address}, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    this.gmap.setCenter(results[0].geometry.location, 16);
+                    this.gmap.setZoom(14);
+                }
+            }.bind(this));
+        }
     },
 
     getBoundsZoomLevel: function (bounds, mapDim) {
