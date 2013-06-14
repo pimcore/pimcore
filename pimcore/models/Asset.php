@@ -199,7 +199,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             }
         }
         catch (Exception $e) {
-            Logger::warning($e);
+            Logger::warning($e->getMessage());
         }
 
         return null;
@@ -249,7 +249,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
                 }
             }
             catch (Exception $e) {
-                Logger::warning($e);
+                Logger::warning($e->getMessage());
                 return null;
             }
         }

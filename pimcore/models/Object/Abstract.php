@@ -245,7 +245,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
                 }
             }
             catch (Exception $e) {
-                Logger::warning($e);
+                Logger::warning($e->getMessage());
                 return null;
             }
         }
@@ -286,7 +286,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             }
         }
         catch (Exception $e) {
-            Logger::warning($e);
+            Logger::warning($e->getMessage());
         }
 
         return null;

@@ -194,7 +194,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             return self::getById($document->getId());
         }
         catch (Exception $e) {
-            Logger::warning($e);
+            Logger::warning($e->getMessage());
         }
 
         return null;
@@ -244,7 +244,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                 }
             }
             catch (Exception $e) {
-                Logger::warning($e);
+                Logger::warning($e->getMessage());
                 return null;
             }
         }
