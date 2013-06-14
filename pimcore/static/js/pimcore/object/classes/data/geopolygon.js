@@ -12,10 +12,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.object.classes.data.geopolygon");
-pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.data.data, {
+pimcore.registerNS('pimcore.object.classes.data.geopolygon');
+pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.data.geoabstract, {
 
-    type: "geopolygon",
+    type: 'geopolygon',
+
     /**
      * define where this datatype is allowed
      */
@@ -27,80 +28,26 @@ pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.dat
     },
 
     initialize: function (treeNode, initData) {
-        this.type = "geopolygon";
+        this.type = 'geopolygon';
 
         this.initData(initData);
 
         // overwrite default settings
-        this.availableSettingsFields = ["name","title","noteditable","invisible","style"];
+        this.availableSettingsFields = ['name','title','noteditable','invisible','style'];
 
         this.treeNode = treeNode;
     },
 
     getTypeName: function () {
-        return t("geopolygon");
+        return t('geopolygon');
     },
 
     getGroup: function () {
-            return "geo";
+            return 'geo';
     },
 
     getIconClass: function () {
-        return "pimcore_icon_geopolygon";
-    },
-
-    getLayout: function ($super) {
-
-        $super();
-
-        this.specificPanel.removeAll();
-        this.specificPanel.add([
-            {
-                xtype: 'spinnerfield',
-                fieldLabel: t('latitude'),
-                name: 'lat',
-                value: this.datax.lat || 0,
-                decimalPrecision: 8,
-                minValue: 0,
-                allowDecimals: true,
-                incrementValue: 0.01
-            },{
-                xtype: 'spinnerfield',
-                fieldLabel: t('longitude'),
-                name: 'lng',
-                value: this.datax.lng || 0,
-                decimalPrecision: 8,
-                minValue: 0,
-                allowDecimals: true,
-                incrementValue: 0.01
-            },{
-                xtype: 'spinnerfield',
-                fieldLabel: t('zoom_level'),
-                name: 'zoom',
-                value: this.datax.zoom || 1,
-                decimalPrecision: 0,
-                minValue: 1,
-                incrementValue: 1
-            },{
-                xtype: 'combo',
-                fieldLabel: t('map_type'),
-                name: 'mapType',
-                mode: 'local',
-                allowBlank: false,
-                editable: false,
-                typeAhead: false,
-                allowblank: false,
-                triggerAction: 'all',
-                store: [
-                    ['roadmap', t('roadmap')],
-                    ['satellite', t('satellite')],
-                    ['hybrid', t('hybrid')]
-                ],
-                value: this.datax.mapType || 'roadmap'
-            }
-        ]);
-
-        return this.layout;
+        return 'pimcore_icon_geopolygon';
     }
 
 });
