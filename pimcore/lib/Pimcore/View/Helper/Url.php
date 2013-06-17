@@ -33,25 +33,26 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
             $siteId = Site::getCurrentSite()->getId();
         }
 
-        if($name && $route = Staticroute::getByName($name, $siteId)) {
-
-            // check for a site in the options, if valid remove it from the options
-            $hostname = null;
+        // check for a site in the options, if valid remove it from the options
+        $hostname = null;
+        if(isset($urlOptions["site"])) {
             $config = Pimcore_Config::getSystemConfig();
-            if(isset($urlOptions["site"])) {
-                $site = $urlOptions["site"];
-                if(!empty($site)) {
-                    try {
-                        $site = Site::getBy($site);
-                        unset($urlOptions["site"]);
-                        $hostname = $site->getMainDomain();
-                    } catch (\Exception $e) {
-                        $site = null;
-                    }
-                } else if ($config->general->domain) {
-                    $hostname = $config->general->domain;
+            $site = $urlOptions["site"];
+            if(!empty($site)) {
+                try {
+                    $site = Site::getBy($site);
+                    unset($urlOptions["site"]);
+                    $hostname = $site->getMainDomain();
+                    $siteId = $site->getId();
+                } catch (\Exception $e) {
+                    $site = null;
                 }
+            } else if ($config->general->domain) {
+                $hostname = $config->general->domain;
             }
+        }
+
+        if($name && $route = Staticroute::getByName($name, $siteId)) {
 
             // assemble the route / url in Staticroute::assemble()
             $url = $route->assemble($urlOptions, $reset, $encode);
