@@ -60,6 +60,11 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
      */
     public $zoom = 1;
 
+    /**
+     * @var string
+     */
+    public $mapType = 'roadmap';
+
     public function getLat()
     {
         return $this->lat;
@@ -90,6 +95,17 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
     public function setZoom($zoom)
     {
         $this->zoom = (int) $zoom;
+        return $this;
+    }
+
+    public function getMapType()
+    {
+        return $this->mapType;
+    }
+
+    public function setMapType($mapType)
+    {
+        $this->mapType = $mapType;
         return $this;
     }
 
