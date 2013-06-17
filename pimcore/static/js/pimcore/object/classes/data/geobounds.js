@@ -12,10 +12,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.object.classes.data.geobounds");
-pimcore.object.classes.data.geobounds = Class.create(pimcore.object.classes.data.data, {
+pimcore.registerNS('pimcore.object.classes.data.geobounds');
+pimcore.object.classes.data.geobounds = Class.create(pimcore.object.classes.data.geoabstract, {
 
     type: "geobounds",
+
     /**
      * define where this datatype is allowed
      */
@@ -27,7 +28,7 @@ pimcore.object.classes.data.geobounds = Class.create(pimcore.object.classes.data
     },
 
     initialize: function (treeNode, initData) {
-        this.type = "geobounds";
+        this.type = 'geobounds';
 
         this.initData(initData);
 
@@ -38,23 +39,15 @@ pimcore.object.classes.data.geobounds = Class.create(pimcore.object.classes.data
     },
 
     getTypeName: function () {
-        return t("geobounds");
+        return t('geobounds');
     },
 
     getGroup: function () {
-            return "geo";
+            return 'geo';
     },
 
     getIconClass: function () {
-        return "pimcore_icon_geobounds";
-    },
-
-    getLayout: function ($super) {
-
-        $super();
-
-
-        return this.layout;
+        return 'pimcore_icon_geobounds';
     }
 
 });
