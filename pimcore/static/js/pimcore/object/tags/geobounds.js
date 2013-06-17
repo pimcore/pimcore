@@ -13,7 +13,7 @@
  */
 /*global google */
 pimcore.registerNS('pimcore.object.tags.geobounds');
-pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
+pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geoabstract, {
 
     type: 'geobounds',
 
