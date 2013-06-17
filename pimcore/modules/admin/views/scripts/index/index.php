@@ -361,7 +361,7 @@
             "pimcore/object/tags/table.js",
             "pimcore/object/tags/structuredTable.js",
             "pimcore/object/tags/country.js",
-            "pimcore/object/tags/geoabstract.js",
+            "pimcore/object/tags/geo/abstract.js",
             "pimcore/object/tags/geobounds.js",
             "pimcore/object/tags/geopoint.js",
             "pimcore/object/tags/geopolygon.js",

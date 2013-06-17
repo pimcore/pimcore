@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.object.classes.data.geoabstract");
-pimcore.object.classes.data.geoabstract = Class.create(pimcore.object.classes.data.data, {
+pimcore.registerNS("pimcore.object.classes.data.geo.abstract");
+pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.data.data, {
 
     /**
      * define where this datatype is allowed

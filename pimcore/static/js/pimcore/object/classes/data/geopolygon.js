@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS('pimcore.object.classes.data.geopolygon');
-pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.data.geoabstract, {
+pimcore.registerNS('pimcore.object.classes.data.geo.polygon');
+pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.data.geo.abstract, {
 
     type: 'geopolygon',
 
