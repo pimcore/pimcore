@@ -73,9 +73,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geoabstract, {
             height: 370,
             width: 490,
             cls: "object_field",
-            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center">'
-                  + '<img align="center" width="300" height="300" src="'
-                  + this.getMapUrl() + '" /></div>',
+            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"></div>',
             bbar: [
                 t('latitude'),
                 this.latitude,

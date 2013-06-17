@@ -305,7 +305,7 @@
             "pimcore/object/classes/data/table.js",
             "pimcore/object/classes/data/structuredTable.js",
             "pimcore/object/classes/data/country.js",
-            "pimcore/object/classes/data/geoabstract.js",
+            "pimcore/object/classes/data/geo/abstract.js",
             "pimcore/object/classes/data/geopoint.js",
             "pimcore/object/classes/data/geobounds.js",
             "pimcore/object/classes/data/geopolygon.js",
