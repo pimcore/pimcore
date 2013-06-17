@@ -93,6 +93,24 @@ class Site extends Pimcore_Model_Abstract {
         return $site;
     }
 
+
+    /**
+     * @param $mixed
+     * @return Site
+     */
+    public static function getBy($mixed) {
+
+        if(is_numeric($mixed)) {
+            $site = self::getById($mixed);
+        } else if (is_string($mixed)) {
+            $site = self::getByDomain($mixed);
+        } else if ($mixed instanceof Site) {
+            $site = $mixed;
+        }
+
+        return $site;
+    }
+
     /**
      * @param array $data
      * @return Site

@@ -34,7 +34,33 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
         }
 
         if($name && $route = Staticroute::getByName($name, $siteId)) {
+
+            // check for a site in the options, if valid remove it from the options
+            $hostname = null;
+            $config = Pimcore_Config::getSystemConfig();
+            if(isset($urlOptions["site"])) {
+                $site = $urlOptions["site"];
+                if(!empty($site)) {
+                    try {
+                        $site = Site::getBy($site);
+                        unset($urlOptions["site"]);
+                        $hostname = $site->getMainDomain();
+                    } catch (\Exception $e) {
+                        $site = null;
+                    }
+                } else if ($config->general->domain) {
+                    $hostname = $config->general->domain;
+                }
+            }
+
+            // assemble the route / url in Staticroute::assemble()
             $url = $route->assemble($urlOptions, $reset, $encode);
+
+            // if there's a site, prepend the host to the generated URL
+            if($hostname && !preg_match("/^http/i", $url)) {
+                $url = "//" . $hostname . $url;
+            }
+
             if(Pimcore_Config::getSystemConfig()->documents->allowcapitals == 'no'){
                 $url = strtolower($url);
             }
