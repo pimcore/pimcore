@@ -35,16 +35,9 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geoabstract, {
                         var width = 140;
                         var mapZoom = 10;
 
-<<<<<<< HEAD
-                            var mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + value.latitude + ","
-                                    + value.longitude + "&zoom=" + mapZoom + "&size=" + width + "x80&markers=color:red|"
-                                    + value.latitude + "," + value.longitude + "&sensor=false";
-=======
-                        var mapUrl = 'https://maps.google.com/staticmap?center=' + value.latitude + ','
-                                + value.longitude + '&zoom=' + mapZoom + '&size=' + width + 'x80&markers='
-                                + value.latitude + ',' + value.longitude
-                                + ',red&sensor=false&key=' + pimcore.settings.google_maps_api_key;
->>>>>>> pimcore / geo point improvements
+                        var mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + value.latitude + ","
+                                + value.longitude + "&zoom=" + mapZoom + "&size=" + width + "x80&markers=color:red|"
+                                + value.latitude + "," + value.longitude + "&sensor=false";
 
                         return '<img src="' + mapUrl + '" />';
                     }
