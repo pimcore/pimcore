@@ -278,19 +278,6 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         }
     },
 
-    geocode: function () {
-
-        if (this.geocoder) {
-            var address = this.searchfield.getValue();
-            this.geocoder.geocode( { 'address': address}, function(results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    this.gmap.setCenter(results[0].geometry.location, 16);
-                    this.gmap.setZoom(14);
-                }
-            }.bind(this));
-        }
-    },
-
     getValue: function () {
         return this.data;
     },
