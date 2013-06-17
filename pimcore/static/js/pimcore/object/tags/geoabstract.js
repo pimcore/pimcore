@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 /*global google */
-pimcore.registerNS('pimcore.object.tags.geo.abstract');
-pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
+pimcore.registerNS('pimcore.object.tags.geoabstract');
+pimcore.object.tags.geoabstract = Class.create(pimcore.object.tags.abstract, {
 
     initialize: function (data, fieldConfig) {
         this.data = data;
@@ -75,16 +75,17 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
     },
 
     geocode: function () {
-
-        if (this.geocoder) {
-            var address = this.searchfield.getValue();
-            this.geocoder.geocode( { 'address': address}, function(results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    this.gmap.setCenter(results[0].geometry.location, 16);
-                    this.gmap.setZoom(14);
-                }
-            }.bind(this));
+        if (!this.geocoder) {
+            return;
         }
+
+        var address = this.searchfield.getValue();
+        this.geocoder.geocode( { 'address': address}, function(results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+                this.gmap.setCenter(results[0].geometry.location, 16);
+                this.gmap.setZoom(14);
+            }
+        }.bind(this));
     },
 
     getBoundsZoomLevel: function (bounds, mapDim) {
