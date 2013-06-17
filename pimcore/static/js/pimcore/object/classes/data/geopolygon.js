@@ -12,11 +12,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS('pimcore.object.classes.data.geo.polygon');
-pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.data.geo.abstract, {
+pimcore.registerNS("pimcore.object.classes.data.geopolygon");
+pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.data.data, {
 
-    type: 'geopolygon',
-
+    type: "geopolygon",
     /**
      * define where this datatype is allowed
      */
@@ -28,26 +27,34 @@ pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.dat
     },
 
     initialize: function (treeNode, initData) {
-        this.type = 'geopolygon';
+        this.type = "geopolygon";
 
         this.initData(initData);
 
         // overwrite default settings
-        this.availableSettingsFields = ['name','title','noteditable','invisible','style'];
+        this.availableSettingsFields = ["name","title","noteditable","invisible","style"];
 
         this.treeNode = treeNode;
     },
 
     getTypeName: function () {
-        return t('geopolygon');
+        return t("geopolygon");
     },
 
     getGroup: function () {
-            return 'geo';
+            return "geo";
     },
 
     getIconClass: function () {
-        return 'pimcore_icon_geopolygon';
+        return "pimcore_icon_geopolygon";
+    },
+
+    getLayout: function ($super) {
+
+        $super();
+
+
+        return this.layout;
     }
 
 });

@@ -12,11 +12,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS('pimcore.object.classes.data.geopoint');
-pimcore.object.classes.data.geopoint = Class.create(pimcore.object.classes.data.geo.abstract, {
+pimcore.registerNS("pimcore.object.classes.data.geopoint");
+pimcore.object.classes.data.geopoint = Class.create(pimcore.object.classes.data.data, {
 
-    type: 'geopoint',
-
+    type: "geopoint",
     /**
      * define where this datatype is allowed
      */
@@ -42,9 +41,17 @@ pimcore.object.classes.data.geopoint = Class.create(pimcore.object.classes.data.
     getGroup: function () {
             return "geo";
     },
-
+    
     getIconClass: function () {
         return "pimcore_icon_geopoint";
+    },
+
+    getLayout: function ($super) {
+
+        $super();
+
+
+        return this.layout;
     }
 
 });
