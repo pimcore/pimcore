@@ -45,7 +45,8 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
                     $hostname = $site->getMainDomain();
                     $siteId = $site->getId();
                 } catch (\Exception $e) {
-                    $site = null;
+                    Logger::warn("passed site doesn't exists");
+                    Logger::warn($e);
                 }
             } else if ($config->general->domain) {
                 $hostname = $config->general->domain;
