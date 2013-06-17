@@ -14,7 +14,7 @@
 
 /*global google */
 pimcore.registerNS('pimcore.object.tags.geopolygon');
-pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, {
+pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geoabstract, {
 
     type: 'geopolygon',
     dirty: false,
