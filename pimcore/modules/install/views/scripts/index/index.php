@@ -75,7 +75,7 @@ $scripts = array(
                     id: "logo",
                     border: false,
                     bodyStyle: "padding: 10px",
-                    html: '<div align="center"><img width="200" src="<?php if(Pimcore_Tool_Frontend::isLegacy()) { ?>/pimcore/static/legacy/img/login-reloaded/logo.png<?php } else { ?>/pimcore/static/img/login-reloaded/logo.png<?php } ?>" align="center" /></div>'
+                    html: '<div align="center"><img width="200" src="/pimcore/static/img/login-reloaded/logo.png" align="center" /></div>'
                 },
                 {
                     xtype: "panel",

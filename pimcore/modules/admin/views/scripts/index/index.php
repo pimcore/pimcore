@@ -19,11 +19,7 @@
     <title><?php echo htmlentities($this->getRequest()->getHttpHost(), ENT_QUOTES, 'UTF-8') ?> :: pimcore</title>
 
     <!-- load in head because of the progress bar at loading -->
-    <?php if(Pimcore_Tool_Frontend::isLegacy()) { ?>
-        <link rel="stylesheet" type="text/css" href="/pimcore/static/legacy/css/admin.css?_dc=<?php echo Pimcore_Version::$revision ?>" />
-    <?php } else { ?>
-        <link rel="stylesheet" type="text/css" href="/pimcore/static/css/admin.css?_dc=<?php echo Pimcore_Version::$revision ?>" />
-    <?php } ?>
+    <link rel="stylesheet" type="text/css" href="/pimcore/static/css/admin.css?_dc=<?php echo Pimcore_Version::$revision ?>" />
 </head>
 
 <body>
@@ -595,11 +591,6 @@
     ?>
 
     <?php // MUST BE THE LAST LINE ?>
-    <?php if(Pimcore_Tool_Frontend::isLegacy()) { ?>
-        <script type="text/javascript" src="/pimcore/static/legacy/js/pimcore/layout/toolbar.js?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
-        <script type="text/javascript" src="/pimcore/static/legacy/js/pimcore/startup.js?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
-    <?php } else { ?>
-        <script type="text/javascript" src="/pimcore/static/js/pimcore/startup.js?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
-    <?php } ?>
+    <script type="text/javascript" src="/pimcore/static/js/pimcore/startup.js?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
 </body>
 </html>
