@@ -52,7 +52,19 @@ pimcore.settings.user.user.settings = Class.create({
             fieldLabel:t("password"),
             name:"password",
             inputType:"password",
-            width:300
+            width:300,
+            enableKeyEvents: true,
+            listeners: {
+                keyup: function (el) {
+                    if(/^(?=.*\d)(?=.*[a-zA-Z]).{6,50}$/.test(el.getValue())) {
+                        el.getEl().addClass("password_valid");
+                        el.getEl().removeClass("password_invalid");
+                    } else {
+                        el.getEl().addClass("password_invalid");
+                        el.getEl().removeClass("password_valid");
+                    }
+                }
+            }
         });
 
         this.apiPasswordHint = new Ext.form.DisplayField({
@@ -279,6 +291,15 @@ pimcore.settings.user.user.settings = Class.create({
     },
 
     getValues:function () {
-        return this.panel.getForm().getFieldValues();
+
+        var values = this.panel.getForm().getFieldValues();
+        if(values["password"]) {
+            if(!/^(?=.*\d)(?=.*[a-zA-Z]).{6,50}$/.test(values["password"])) {
+                delete values["password"];
+                Ext.MessageBox.alert(t('error'), t("password_was_not_changed"));
+            }
+        }
+
+        return values;
     }
 });
