@@ -1274,7 +1274,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                     container.update(""); // remove all
                     container.clean(true);
                     container.dom.appendChild(iframe);
-                    container.show();
+                    container.removeClass("hidden");
                     container.applyStyles(styles);
                 }
             }.bind(this, node));
@@ -1289,7 +1289,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
 pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
     var container = Ext.get("pimcore_tree_preview");
     if(container) {
-        container.hide();
+        container.addClass("hidden");
     }
 }
 
