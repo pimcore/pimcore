@@ -187,10 +187,6 @@ class Object_Concrete extends Object_Abstract {
         $this->saveScheduledTasks();
         $this->saveVersion(false, false);
         $this->saveChilds();
-
-        // this is called already in parent::update() but we have too call it here again, because there are again
-        // modifications after parent::update();, maybe this should be solved better, but for now this works fine
-        $this->clearDependentCache();
     }
 
     /**
