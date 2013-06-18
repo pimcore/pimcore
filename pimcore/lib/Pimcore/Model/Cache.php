@@ -29,7 +29,7 @@ class Pimcore_Model_Cache {
     /**
      * @var null
      */
-    public static $defaultLifetime = null;
+    public static $defaultLifetime = 2419200; // 28 days
 
     /**
      * Contains the items which should be written to the cache on shutdown. They are ordered respecting the priority
@@ -131,7 +131,9 @@ class Pimcore_Model_Cache {
                 }
             }
 
-            self::$defaultLifetime = $config["frontendConfig"]["lifetime"];
+            if(isset($config["frontendConfig"]["lifetime"])) {
+                self::$defaultLifetime = $config["frontendConfig"]["lifetime"];
+            }
 
             // here you can use the cache backend you like
             try {
@@ -183,7 +185,7 @@ class Pimcore_Model_Cache {
     public static function getDefaultConfig () {
         $config["frontendType"] = "Core";
         $config["frontendConfig"] = array(
-            "lifetime" => null, // never expire
+            "lifetime" => self::$defaultLifetime, // never expire
             "automatic_serialization" => true
         );
         $config["customFrontendNaming"] = false;
@@ -315,6 +317,11 @@ class Pimcore_Model_Cache {
             }
 
             $key = self::$cachePrefix . $key;
+
+            if($lifetime === null) {
+                $lifetime = false; // set to false otherwise the lifetime stays at null (Zend_Cache_Backend::getLifetime())
+            }
+
             $success = $cache->save($data, $key, $tags, $lifetime);
             if($success !== true) {
                 Logger::error("Failed to add entry $key to the cache, item-size was " . formatBytes(strlen(serialize($data))));

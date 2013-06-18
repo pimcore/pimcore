@@ -157,12 +157,7 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
 
         $this->checkCacheConsistency();
 
-
         $lifetime = $this->getLifetime($specificLifetime);
-
-        if(!$lifetime) {
-            $lifetime = time() + (30 * 86400); // 30 days is lifetime for "never expire"
-        }
 
         $this->getDb()->insertOrUpdate("cache", array(
             "data" => $data,
