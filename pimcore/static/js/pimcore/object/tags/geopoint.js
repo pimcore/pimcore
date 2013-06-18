@@ -29,19 +29,20 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geoabstract, {
                     metaData.css += ' grid_value_inherited';
                 }
 
-                if (value) {
-                    if (value.latitude && value.longitude) {
+                if (value && value.latitude && value.longitude) {
+                    var width = 140;
+                    var mapZoom = 10;
 
-                        var width = 140;
-                        var mapZoom = 10;
+                    var mapUrl = 'https://maps.google.com/staticmap?center=' + value.latitude + ','
+                            + value.longitude + '&zoom=' + mapZoom + '&size=' + width + 'x80&markers='
+                            + value.latitude + ',' + value.longitude
+                            + ',red&sensor=false';
 
-                        var mapUrl = 'https://maps.google.com/staticmap?center=' + value.latitude + ','
-                                + value.longitude + '&zoom=' + mapZoom + '&size=' + width + 'x80&markers='
-                                + value.latitude + ',' + value.longitude
-                                + ',red&sensor=false&key=' + pimcore.settings.google_maps_api_key;
-
-                        return '<img src="' + mapUrl + '" />';
+                    if (pimcore.settings.google_maps_api_key) {
+                        mapUrl += '&key=' + pimcore.settings.google_maps_api_key;
                     }
+
+                    return '<img src="' + mapUrl + '" />';
                 }
             }.bind(this, field.key)
         };
@@ -143,12 +144,16 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geoabstract, {
                 + lat + "," + lng + "&zoom=" + mapZoom +
                 '&size=' + px + 'x' + py
                 + '&markers=color:red|' + lat + ',' + lng
-                + '&sensor=false&key=' + pimcore.settings.google_maps_api_key;
+                + '&sensor=false';
         } else {
             mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
                 + lat + "," + lng + "&zoom=" + mapZoom +
                 '&size=' + px + 'x' + py
-                + '&sensor=false&key=' + pimcore.settings.google_maps_api_key;
+                + '&sensor=false';
+        }
+
+        if (pimcore.settings.google_maps_api_key) {
+            mapUrl += '&key=' + pimcore.settings.google_maps_api_key;
         }
 
         return mapUrl;

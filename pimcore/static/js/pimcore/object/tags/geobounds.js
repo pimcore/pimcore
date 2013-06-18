@@ -87,13 +87,17 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geoabstract, {
                     + this.data.ne.lng();
                 mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center=' + center.y + ','
                     + center.x + '&zoom=' + mapZoom + '&size=' + px + 'x' + py
-                    + '&path=' + path + '&sensor=false&key=' + pimcore.settings.google_maps_api_key;
+                    + '&path=' + path + '&sensor=false';
             }
             else {
                 mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
                     + this.fieldConfig.lat + ',' + this.fieldConfig.lng
                     + '&zoom=' + mapZoom + '&size='
-                    + px + 'x' + py + '&sensor=false&key=' + pimcore.settings.google_maps_api_key;
+                    + px + 'x' + py + '&sensor=false';
+            }
+
+            if (pimcore.settings.google_maps_api_key) {
+                mapUrl += '&key=' + pimcore.settings.google_maps_api_key;
             }
         }
         catch (e) {
