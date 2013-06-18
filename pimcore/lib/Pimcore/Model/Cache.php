@@ -32,11 +32,6 @@ class Pimcore_Model_Cache {
     public static $defaultLifetime = null;
 
     /**
-     * @var null
-     */
-    public static $defaultBackendLifetime = 2419200;
-    
-    /**
      * Contains the items which should be written to the cache on shutdown. They are ordered respecting the priority
      * @var array
      */
@@ -125,8 +120,6 @@ class Pimcore_Model_Cache {
                     if ($conf->backend) {
                         $config["backendType"] = (string) $conf->backend->type;
                         $config["customBackendNaming"] = (bool) $conf->backend->custom;
-                        if (isset($conf->backend->lifetime))
-                            self::$defaultBackendLifetime = $conf->backend->lifetime;
                         if ($conf->backend->options && method_exists($conf->backend->options,"toArray")) {
                             $config["backendConfig"] = $conf->backend->options->toArray();
                         }
@@ -246,8 +239,6 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function save($data, $key, $tags = array(), $lifetime = null, $priority = 0, $force = false) {
-        if (is_null($lifetime))
-            $lifetime = self::$defaultBackendLifetime;
         if(self::getForceImmediateWrite() || $force) {
             self::storeToCache($data, $key, $tags, $lifetime, $priority, $force);
         } else {
