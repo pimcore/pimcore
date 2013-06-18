@@ -88,13 +88,17 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geoabstract, {
                 var path = 'weight:0|fillcolor:0x00000073|' + pointConfig.join('|');
                 mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center=' + center.lat() + ','
                     + center.lng() + '&zoom=' + mapZoom + '&size=' + px + 'x' + py
-                    + '&path=' + path + '&sensor=false&key=' + pimcore.settings.google_maps_api_key;
+                    + '&path=' + path + '&sensor=false';
             }
             else {
                 mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
                     + this.fieldConfig.lat + ',' + this.fieldConfig.lng
                     + '&zoom=' + mapZoom + '&size='
-                    + px + 'x' + py + '&sensor=false&key=' + pimcore.settings.google_maps_api_key;
+                    + px + 'x' + py + '&sensor=false';
+            }
+
+            if (pimcore.settings.google_maps_api_key) {
+                mapUrl += '&key=' + pimcore.settings.google_maps_api_key;
             }
         }
         catch (e) {
