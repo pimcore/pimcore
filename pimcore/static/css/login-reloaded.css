@@ -19,6 +19,7 @@ body {
     margin: 0;
     font-family: Arial, Verdana;
     font-size: 14px;
+    background: url(/pimcore/static/img/background.png);
 }
 
 
@@ -181,14 +182,10 @@ input.submit {
     position: absolute;
     left:0;
     top:0;
-    background: #000;
     width:100%;
     height: 60px;
     z-index: 1;
-
-    opacity: 0.8;
-    filter: alpha(opacity=80);
-    -moz-opacity: 0.8;
+    background: rgba(0, 0, 0, 0.5);
 }
 
 #footer .left {

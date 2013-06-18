@@ -66,7 +66,7 @@ $config = Pimcore_Config::getSystemConfig();
 <?php if ($config->general->loginscreencustomimage) { ?>
     <img src="<?php echo $config->general->loginscreencustomimage; ?>" class="background" id="backgroundimage" />
 <?php } else { ?>
-    <img src="/pimcore/static/img/login-reloaded/background.jpg" class="background" id="backgroundimage" />
+    <img src="/pimcore/static/img/blank.png" class="background" id="backgroundimage" />
 <?php } ?>
 
 <img src="/pimcore/static/img/loading.gif" width="1" height="1"/>
@@ -172,7 +172,7 @@ $config = Pimcore_Config::getSystemConfig();
 </script>
 
 <?php if ($config->general->loginscreenimageservice) { ?>
-    <script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1"></script>
+    <script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1&build=<?php echo Pimcore_Version::getRevision(); ?>"></script>
 <?php } ?>
 
 </body>
