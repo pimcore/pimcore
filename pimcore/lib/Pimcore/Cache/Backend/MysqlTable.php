@@ -22,39 +22,11 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
     protected $db;
 
     /**
-     * @var bool
-     */
-    protected $checkedCacheConsistency = false;
-
-    /**
-     * @return void
-     */
-    protected function checkCacheConsistency() {
-        // if the cache_tags table is empty, flush the cache
-        // reason: the cache tags are stored in a MEMORY table, that means that a restart of the mysql server causes the loss
-        // of all data in this table but the cache still exists, so there is an inconsistency because then it's possible that
-        // there are outdated or just wrong items in the cache
-        if(!$this->checkedCacheConsistency) {
-            $this->checkedCacheConsistency = true;
-
-            $res = $this->getDb()->fetchOne("SELECT id FROM cache_tags LIMIT 1");
-            if(!$res) {
-                $this->clean(Zend_Cache::CLEANING_MODE_ALL);
-            }
-        }
-    }
-
-    /**
      * @param string $id
      * @param bool $doNotTestCacheValidity
      * @return false|null|string
      */
     public function load($id, $doNotTestCacheValidity = false) {
-
-        if(!$doNotTestCacheValidity) {
-            $this->checkCacheConsistency();
-        }
-
         $data = $this->getDb()->fetchRow("SELECT data,expire FROM cache WHERE id = ?", $id);
         if($data && isset($data["expire"]) && $data["expire"] > time()) {
             return $data["data"];
@@ -123,8 +95,6 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
      * @return array
      */
     protected function getItemsByTag($tag) {
-
-        $this->checkCacheConsistency();
         $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE tag = ?", $tag);
         return $itemIds;
     }
@@ -142,8 +112,6 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
      * @return boolean True if no problem
      */
     public function save($data, $id, $tags = array(), $specificLifetime = false) {
-
-        $this->checkCacheConsistency();
 
         $lifetime = $this->getLifetime($specificLifetime);
 
@@ -165,8 +133,6 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
      * @return bool true if OK
      */
     public function remove($id) {
-
-        $this->checkCacheConsistency();
 
         $this->getDb()->delete("cache", "id = " . $this->getDb()->quote($id));
 
@@ -196,8 +162,6 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
      * @return boolean True if no problem
      */
     public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array()) {
-
-        $this->checkCacheConsistency();
 
         if ($mode == Zend_Cache::CLEANING_MODE_ALL) {
             $this->clearTags();
@@ -229,16 +193,6 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
                 $this->remove($item);
             }
 
-        }
-
-        // insert dummy for the consistency check
-        try {
-            $this->getDb()->insertOrUpdate("cache_tags", array(
-                "id" => "___consistency_check___",
-                "tag" => "___consistency_check___"
-            ));
-        } catch (Exception $e) {
-            // doesn't matter as long as the item exists
         }
 
         return true;
