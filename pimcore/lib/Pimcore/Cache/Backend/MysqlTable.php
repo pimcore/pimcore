@@ -180,6 +180,7 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
 
         $this->checkCacheConsistency();
 
+        $this->getDb()->delete("cache", "id = " . $this->getDb()->quote($id));
 
         // using func_get_arg() to be compatible with the interface
         // when the 2ng argument is true, do not clean the cache tags
@@ -187,7 +188,6 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
             $this->getDb()->delete("cache_tags", "id = '".$id."'");
         }
 
-        $this->getDb()->delete("cache", "id = " . $this->getDb()->quote($id));
 
         return true;
     }
@@ -234,12 +234,12 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
             foreach ($tags as $tag) {
                 $condParts[] = "tag != '" . $tag . "'";
             }
-            
-            $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE ".implode(" AND ",$condParts));
 
+            $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE ".implode(" AND ",$condParts));
             foreach ($itemIds as $item) {
                 $this->remove($item);
             }
+
         }
 
         // insert dummy for the consistency check
