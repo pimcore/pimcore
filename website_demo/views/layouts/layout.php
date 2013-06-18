@@ -40,12 +40,7 @@
         <link href="/website/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <?php } ?>
 
-    <?php if(Pimcore_Tool_Frontend::isLegacy()) { ?>
-        <link href="/website/static/legacy/global.css" rel="stylesheet">
-    <?php } else { ?>
-        <link href="/website/static/css/global.css" rel="stylesheet">
-    <?php } ?>
-
+    <link href="/website/static/css/global.css" rel="stylesheet">
 
     <link rel="stylesheet" href="/website/static/lib/projekktor/theme/style.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="/website/static/lib/magnific/magnific.css" type="text/css" media="screen" />
@@ -91,11 +86,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="brand" href="<?php echo Document::getById(1); ?>">
-                    <?php if(Pimcore_Tool_Frontend::isLegacy()) { ?>
-                        <img src="/website/static/legacy/logo.png">
-                    <?php } else { ?>
-                        <img src="/website/static/img/logo.png">
-                    <?php } ?>
+                    <img src="/website/static/img/logo.png">
                 </a>
                 <!-- Responsive Navbar Part 2: Place all navbar contents you want collapsed withing .navbar-collapse.collapse. -->
                 <div class="nav-collapse collapse">
