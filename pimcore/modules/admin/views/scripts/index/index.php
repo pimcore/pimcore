@@ -23,11 +23,11 @@
 </head>
 
 <body>
-    
+
     <div id="pimcore_logo" style="display: none;">
         <img src="/pimcore/static/img/logo.png"/>
     </div>
-    
+
     <div id="pimcore_loading">
         <img class="loading" src="/pimcore/static/img/loading-white-bg.gif?_dc=<?php echo Pimcore_Version::$revision ?>" />
     </div>
@@ -46,13 +46,13 @@
             <li id="pimcore_menu_logout" class="pimcore_menu_item icon-logout"><?php echo $this->translate("logout"); ?></li>
         </ul>
     </div>
-    
-    
+
+
     <script type="text/javascript">
         var pimcore = {}; // namespace
     </script>
-    
-    
+
+
     <?php // define stylesheets ?>
     <?php
         $styles = array(
@@ -263,7 +263,7 @@
             "pimcore/document/email.js",
             "pimcore/document/page.js",
             "pimcore/document/seopanel.js",
-            
+
             // assets
             "pimcore/asset/asset.js",
             "pimcore/asset/unknown.js",
@@ -274,7 +274,7 @@
             "pimcore/asset/folder.js",
             "pimcore/asset/versions.js",
             "pimcore/asset/tree.js",
-        
+
             // object
             "pimcore/object/helpers/edit.js",
             "pimcore/object/classes/class.js",
@@ -301,7 +301,7 @@
             "pimcore/object/classes/data/table.js",
             "pimcore/object/classes/data/structuredTable.js",
             "pimcore/object/classes/data/country.js",
-            "pimcore/object/classes/data/geoabstract.js",
+            "pimcore/object/classes/data/geo/abstract.js",
             "pimcore/object/classes/data/geopoint.js",
             "pimcore/object/classes/data/geobounds.js",
             "pimcore/object/classes/data/geopolygon.js",
@@ -357,7 +357,7 @@
             "pimcore/object/tags/table.js",
             "pimcore/object/tags/structuredTable.js",
             "pimcore/object/tags/country.js",
-            "pimcore/object/tags/geoabstract.js",
+            "pimcore/object/tags/geo/abstract.js",
             "pimcore/object/tags/geobounds.js",
             "pimcore/object/tags/geopoint.js",
             "pimcore/object/tags/geopolygon.js",
@@ -392,11 +392,11 @@
             "pimcore/object/tree.js",
             "pimcore/object/customviews/settings.js",
             "pimcore/object/customviews/tree.js",
-            
+
             //plugins
             "pimcore/plugin/broker.js",
             "pimcore/plugin/plugin.js",
-        
+
             // reports
             "pimcore/report/panel.js",
             "pimcore/report/broker.js",
@@ -440,7 +440,7 @@
             "pimcore/layout/portlets/modificationStatistic.js",
             "pimcore/layout/portlets/feed.js",
             "pimcore/layout/portlets/analytics.js",
-            
+
             "pimcore/layout/toolbar.js",
             "pimcore/layout/treepanelmanager.js",
             "pimcore/document/seemode.js",
@@ -469,7 +469,7 @@
         }
 
     ?>
-    
+
     <!-- some javascript -->
     <?php // pimcore constants ?>
     <script type="text/javascript">
@@ -498,8 +498,8 @@
             htmltoimage: <?php echo Zend_Json::encode(Pimcore_Image_HtmlToImage::isSupported()) ?>
         };
     </script>
-    
-    
+
+
     <?php // 3rd party libraries ?>
     <script type="text/javascript">
         var gmapInitialize = function () {}; // dummy callback
@@ -515,22 +515,22 @@
     <script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <script type="text/javascript" src="/admin/user/get-current-user/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <script type="text/javascript" src="/admin/misc/available-languages?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
-    
-    
+
+
     <!-- library scripts -->
     <?php foreach ($scriptLibs as $scriptUrl) { ?>
         <script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <?php } ?>
-    
-    
-    
+
+
+
     <!-- internal scripts -->
     <?php if (PIMCORE_DEVMODE) { ?>
         <?php foreach ($scripts as $scriptUrl) { ?>
             <script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
         <?php } ?>
     <?php } else { ?>
-        <?php 
+        <?php
             $scriptContents = "";
             foreach ($scripts as $scriptUrl) {
                 if(is_file(PIMCORE_PATH."/static/js/".$scriptUrl)) {
@@ -569,7 +569,7 @@
                                     ?>
                                     <script type="text/javascript" src="<?php echo $jsPath ?>?_dc=<?php echo $pluginDcValue; ?>"></script>
                                     <?php
-        
+
                                 }
                             }
                         }
@@ -581,14 +581,14 @@
                                     ?>
                                     <link rel="stylesheet" type="text/css" href="<?php echo $cssPath ?>?_dc=<?php echo $pluginDcValue; ?>"/>
                                     <?php
-        
+
                                 }
                             }
                         }
                     }
                 }
             }
-        } 
+        }
         catch (Exception $e) {}
     ?>
 

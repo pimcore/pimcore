@@ -251,7 +251,7 @@ pimcore.object.classes.klass = Class.create({
                 theNode = this.attributes.reference;
             }
 
-            if(dataComp.prototype.allowIn[theNode.allowedInType]) {
+            if('object' !== typeof dataComp && dataComp.prototype.allowIn[theNode.allowedInType]) {
                 allowed = true;
             }
 
@@ -329,7 +329,10 @@ pimcore.object.classes.klass = Class.create({
         var dataComps = Object.keys(pimcore.object.classes.data);
 
         for (var i = 0; i < dataComps.length; i++) {
-            if(pimcore.object.classes.data[dataComps[i]].prototype.allowIn['localizedfield'] == true) {
+            if ('object' === typeof pimcore.object.classes.data[dataComps[i]]) {
+                continue;
+            }
+            if(pimcore.object.classes.data[dataComps[i]].prototype.allowIn['localizedfield']) {
                 lftypes.push(dataComps[i]);
             }
         }

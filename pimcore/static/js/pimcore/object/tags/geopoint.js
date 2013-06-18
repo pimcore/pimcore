@@ -14,7 +14,7 @@
 
 /*global google */
 pimcore.registerNS('pimcore.object.tags.geopoint');
-pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geoabstract, {
+pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     type: 'geopoint',
 
