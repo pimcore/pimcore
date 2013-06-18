@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 /*global google */
-pimcore.registerNS('pimcore.object.tags.geoabstract');
-pimcore.object.tags.geoabstract = Class.create(pimcore.object.tags.abstract, {
+pimcore.registerNS('pimcore.object.tags.geo.abstract');
+pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
 
     initialize: function (data, fieldConfig) {
         this.data = data;
