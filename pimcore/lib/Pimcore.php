@@ -91,6 +91,7 @@ class Pimcore {
             $front->registerPlugin(new Pimcore_Controller_Plugin_ImageDataUri(), 803);
             $front->registerPlugin(new Pimcore_Controller_Plugin_TagManagement(), 804);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Targeting(), 805);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_AdminButton(), 806);
             $front->registerPlugin(new Pimcore_Controller_Plugin_HttpErrorLog(), 850);
             $front->registerPlugin(new Pimcore_Controller_Plugin_ContentLog(), 851);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Cache(), 901); // for caching

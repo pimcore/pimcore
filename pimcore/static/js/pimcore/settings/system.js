@@ -247,6 +247,12 @@ pimcore.settings.system = Class.create({
                                 width: 600,
                                 value: t('valid_languages_frontend_description'),
                                 cls: "pimcore_extra_label_bottom"
+                            },{
+                                fieldLabel: t("contact_email"),
+                                xtype: "textfield",
+                                name: "general.contactemail",
+                                value: this.getValue("general.contactemail"),
+                                width: 300
                             },
                             {
                                 fieldLabel: t('show_random_pictures_on_login_screen'),
