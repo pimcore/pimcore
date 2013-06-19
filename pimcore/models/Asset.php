@@ -965,6 +965,13 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         return $this;
     }
 
+
+    public function setDataChanged ($changed = true) {
+        $this->_dataChanged = $changed;
+        return $this;
+    }
+
+
     /**
      * @return Property[]
      */
