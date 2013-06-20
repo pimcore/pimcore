@@ -151,7 +151,7 @@ class Pimcore_Tool_Newsletter {
         $object->setUserModification(0);
         $object->setUserOwner(0);
         $object->setPublished(true);
-        $object->setKey(str_replace("@", "~", $object->getEmail()));
+        $object->setKey(Pimcore_File::getValidFilename($object->getEmail() . "~" . substr(uniqid(), -3)));
         $object->save();
 
         // generate token
