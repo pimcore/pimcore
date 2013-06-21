@@ -11,9 +11,7 @@ class OnlineShop_Framework_FilterService_SelectRelation extends OnlineShop_Frame
 
         $availableRelations = array();
         if($filterDefinition->getAvailableRelations()) {
-            foreach($filterDefinition->getAvailableRelations() as $rel) {
-                $availableRelations[$rel->getId()] = true;
-            }
+            $availableRelations = $this->loadAllAvailableRelations($filterDefinition->getAvailableRelations());
         }
 
         foreach($values as $v) {
@@ -36,6 +34,18 @@ class OnlineShop_Framework_FilterService_SelectRelation extends OnlineShop_Frame
             "fieldname" => $filterDefinition->getField()
         ));
     }
+
+    private function loadAllAvailableRelations($availableRelations, $availableRelationsArray = array()) {
+        foreach($availableRelations as $rel) {
+            if($rel instanceof Object_Folder) {
+                $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChilds(), $availableRelationsArray);
+            } else {
+                $availableRelationsArray[$rel->getId()] = true;
+            }
+        }
+        return $availableRelationsArray;
+    }
+
 
     public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $value = $params[$filterDefinition->getField()];
