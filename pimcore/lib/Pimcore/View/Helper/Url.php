@@ -14,9 +14,9 @@
  */
 
 class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
-    
-    
-    public function url($urlOptions = array(), $name = null, $reset = false, $encode = true)
+
+
+    public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
     {
         if(!$urlOptions) {
             $urlOptions = array();
