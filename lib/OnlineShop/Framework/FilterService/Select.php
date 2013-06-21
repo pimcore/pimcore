@@ -9,6 +9,7 @@ class OnlineShop_Framework_FilterService_Select extends OnlineShop_Framework_Fil
             $script = $this->script;
         }
         return $this->view->partial($script, array(
+            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$filterDefinition->getField()],
             "values" => $productList->getGroupByValues($filterDefinition->getField(), true),

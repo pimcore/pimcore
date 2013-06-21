@@ -35,6 +35,7 @@ class OnlineShop_Framework_FilterService_SelectCategory extends OnlineShop_Frame
         }
 
         return $this->view->partial($script, array(
+            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$filterDefinition->getField()],
             "values" => array_values($values),

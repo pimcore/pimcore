@@ -48,6 +48,7 @@ class OnlineShop_Framework_FilterService_NumberRangeSelection extends OnlineShop
 
 
         return $this->view->partial($script, array(
+            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentValue,
             "currentNiceValue" => $this->createLabel($currentFilter[$filterDefinition->getField()]),
