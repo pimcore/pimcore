@@ -70,10 +70,10 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
         if(!$currency) {
             $currency = $this->getDefaultCurrency();
         }
-        $this->subTotal = new OnlineShop_Framework_Impl_Price($subTotal, $currency);
+        $this->subTotal = $this->getDefaultPriceObject($subTotal, $currency);
 
 //        $modificationAmount = 0;
-        $currentSubTotal = new OnlineShop_Framework_Impl_Price($subTotal, $currency);
+        $currentSubTotal = $this->getDefaultPriceObject($subTotal, $currency);
 
         $this->modifications = array();
         foreach($this->modificators as $modificator) {
@@ -97,6 +97,15 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
      */
     protected function getDefaultCurrency() {
         return new Zend_Currency(Zend_Registry::get("Zend_Locale"));
+    }
+
+    /**
+     * @param $amount
+     * @param Zend_Currency $currency
+     * @return OnlineShop_Framework_IPrice
+     */
+    protected function getDefaultPriceObject($amount, Zend_Currency $currency) {
+        return new OnlineShop_Framework_Impl_Price($amount, $currency);
     }
 
     /**
