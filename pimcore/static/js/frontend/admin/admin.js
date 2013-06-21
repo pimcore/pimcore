@@ -44,6 +44,14 @@
     window.setTimeout(function () {
 
         try {
+
+            try {
+                // do no display the button in preview frame inside the admin ui
+                if(parent && parent["pimcore"] && parent["pimcore"]["helpers"]) {
+                    return;
+                }
+            } catch (e) {}
+
             var html = '<div id="pimcore_admin_console"></div>';
 
             var container = document.createElement("div");
