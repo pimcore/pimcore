@@ -102,7 +102,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         if ($this->getParam("limit")) {
             $this->_helper->json(array(
-                "total" => $object->getChildAmount(),
+                "total" => $object->getChildAmount(array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_VARIANT)),
                 "nodes" => $objects
             ));
         }
