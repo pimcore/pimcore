@@ -653,8 +653,10 @@ class Object_Concrete extends Object_Abstract {
         $parentVars = parent::__sleep();
 
         $finalVars = array();
+        $lazyLoadedFields = $this->getLazyLoadedFields();
+
         foreach ($parentVars as $key) {
-            if (in_array($key, $this->getLazyLoadedFields())) {
+            if (in_array($key, $lazyLoadedFields)) {
                 // prevent lazyloading properties to go into the cache, only to version and recyclebin, ... (_fulldump)
                 if(isset($this->_fulldump)) {
                     $finalVars[] = $key;
