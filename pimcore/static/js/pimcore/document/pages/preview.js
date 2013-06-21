@@ -409,7 +409,7 @@ pimcore.document.pages.preview = Class.create({
         this.editorUnFrameElement();
         this.editorClearCurrentElement();
 
-            if(!this.getIframeWindow()["pimcore"]) {
+            if(!this.getIframeWindow()["pimcore"] || !this.getIframeWindow()["pimcore"]["editor"]) {
                 this.getIframeWindow().pimcore = {
                     editor: this
                 };
