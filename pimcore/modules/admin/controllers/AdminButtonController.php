@@ -54,11 +54,12 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
             $subject .=  $urlParts["host"];
 
             $mail = Pimcore_Tool::getMail($email, $subject, "UTF-8");
-            $bodyText = "Description: \n\n" . $this->getParam("description");
+            $bodyText = "URL: " . $this->getParam("url") . "\n\n";
+            $bodyText .= "Description: \n\n" . $this->getParam("description");
 
             $markers = Zend_Json::decode($this->getParam("markers"));
             $image = null;
-            if($markers && count($markers) > 0) {
+
                 $screenFile = PIMCORE_DOCUMENT_ROOT . $this->getParam("screenshot");
 
                 list($width, $height) = getimagesize($screenFile);
@@ -66,39 +67,40 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
                 $font = PIMCORE_DOCUMENT_ROOT . "/pimcore/static/font/vera.ttf";
                 $fontSize = 10;
 
-                foreach ($markers as $marker) {
-                    // set up array of points for polygon
+                if($markers && count($markers) > 0) {
+                    foreach ($markers as $marker) {
+                        // set up array of points for polygon
 
-                    $x = $marker["position"]["left"] * $width / 100;
-                    $y = $marker["position"]["top"] * $height / 100;
+                        $x = $marker["position"]["left"] * $width / 100;
+                        $y = $marker["position"]["top"] * $height / 100;
 
-                    $bbox = imagettfbbox($fontSize, 0, $font, $marker["text"]);
+                        $bbox = imagettfbbox($fontSize, 0, $font, $marker["text"]);
 
-                    $textWidth = $bbox[4] + 10;
+                        $textWidth = $bbox[4] + 10;
 
-                    $values = array(
-                        $x, $y,         // 1
-                        $x-10, $y-10,   // 2
-                        $x-10, $y-40,   // 3
-                        $x+$textWidth, $y-40,  // 4
-                        $x+$textWidth, $y-10,  // 5
-                        $x+10, $y-10    // 6
-                    );
+                        $values = array(
+                            $x, $y,         // 1
+                            $x-10, $y-10,   // 2
+                            $x-10, $y-40,   // 3
+                            $x+$textWidth, $y-40,  // 4
+                            $x+$textWidth, $y-10,  // 5
+                            $x+10, $y-10    // 6
+                        );
 
-                    $textcolor = imagecolorallocate($im, 255,255,255);
-                    $bgcolor = imagecolorallocatealpha($im, 0,0,0,30);
+                        $textcolor = imagecolorallocate($im, 255,255,255);
+                        $bgcolor = imagecolorallocatealpha($im, 0,0,0,30);
 
-                    // draw a polygon
-                    imagefilledpolygon($im, $values, 6, $bgcolor);
-                    imagettftext($im, $fontSize, 0, $x, $y-20, $textcolor, $font, $marker["text"]);
+                        // draw a polygon
+                        imagefilledpolygon($im, $values, 6, $bgcolor);
+                        imagettftext($im, $fontSize, 0, $x, $y-20, $textcolor, $font, $marker["text"]);
+                    }
                 }
 
                 imagejpeg($im, $screenFile);
                 imagedestroy($im);
 
-
                 $image = file_get_contents($screenFile);
-            }
+                unlink($screenFile);
 
             if($image) {
                 $bodyText .= "\n\n\nsee attached file: screen.jpg";
@@ -110,10 +112,17 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
                 $at->filename    = 'screen.jpg';
             }
 
+            if($type == "bug") {
+                $bodyText .= "\n\n";
+                $bodyText .= "Details: \n\n";
+
+                foreach ($_SERVER as $key => $value) {
+                    $bodyText .= $key . " => " . $value . "\n";
+                }
+            }
+
             $mail->setBodyText($bodyText);
             $mail->send();
-
-            unlink($screenFile);
         }
 
         $this->renderScript("/admin-button/feature-bug.php");
@@ -121,12 +130,26 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
 
     public function promoteAction () {
         if($this->getParam("submit")) {
+
+            $conf = Pimcore_Config::getSystemConfig();
+            $email = $conf->general->contactemail;
+            $this->view->contactEmail = $email;
+
             $urlParts = parse_url($this->getParam("url"));
             $subject = "Promotion Enquiry for ";
             $subject .=  $urlParts["host"];
 
             $mail = Pimcore_Tool::getMail($email, $subject, "UTF-8");
-            $bodyText = "Ad-Type: " . $this->getParam("description");
+
+            $bodyText = "Host: " . $urlParts["host"] . "\n\n";
+            $bodyText .= "URL: " . $this->getParam("url") . "\n\n";
+            $bodyText .= "Ad-Type: " . $this->getParam("type") . "\n";
+            $bodyText .= "Budget: " . $this->getParam("budget") . "\n";
+            $bodyText .= "Duration: " . $this->getParam("duration") . "\n\n";
+            $bodyText .= "Notes: \n" . $this->getParam("notes") . "\n";
+
+            $mail->setBodyText($bodyText);
+            $mail->send();
         }
     }
 }

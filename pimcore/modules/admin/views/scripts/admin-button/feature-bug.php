@@ -97,6 +97,16 @@
                 <?php } ?>
                 was sent to the manager of this project (<?php echo $this->contactEmail; ?>).
             </strong>
+
+
+            <script type="text/javascript">
+                window.setTimeout(function () {
+                    var existing = top.document.getElementById("pimcore_admin_lightbox");
+                    if(existing) {
+                        existing.parentNode.removeChild(existing);
+                    }
+                }, 5000)
+            </script>
         <?php } ?>
     </div>
 </body>

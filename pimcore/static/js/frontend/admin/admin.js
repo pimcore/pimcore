@@ -72,7 +72,11 @@
                 editButton.innerHTML = 'Edit Page';
 
                 editButton.onclick = function () {
-                    window.open("/admin/login/deeplink/document_" + pimcore["admin"]["documentId"] + "_page");
+                    if(window.opener && window.opener["pimcore"] && window.opener["pimcore"]["helpers"]) {
+                        window.opener.pimcore.helpers.openDocument(pimcore["admin"]["documentId"],"page");
+                    } else {
+                        window.open("/admin/login/deeplink?document_" + pimcore["admin"]["documentId"] + "_page");
+                    }
                 };
 
                 menu.appendChild(editButton);

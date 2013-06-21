@@ -2,7 +2,7 @@
 
 #pimcore_admin_console {
     position: fixed;
-    bottom: 0;
+    bottom: -2px;
     right: 30px;
     width: 100px;
     height: 20px;

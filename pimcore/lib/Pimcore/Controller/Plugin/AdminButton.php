@@ -25,6 +25,10 @@ class Pimcore_Controller_Plugin_AdminButton extends Zend_Controller_Plugin_Abstr
             return;
         }
 
+        if(!Pimcore_Tool::useFrontendOutputFilters($this->getRequest()) && !$this->getRequest()->getParam("pimcore_preview")) {
+            return;
+        }
+
         if(isset($_COOKIE["pimcore_admin_sid"])) {
 
             $user = Pimcore_Tool_Authentication::authenticateSession();
