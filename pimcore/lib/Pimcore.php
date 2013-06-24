@@ -400,6 +400,12 @@ class Pimcore {
         // this is for simple_dom_html
         ini_set('pcre.recursion-limit', 100000);
 
+        // set dummy timezone if no tz is specified / required for example by the logger, ...
+        $defaultTimezone = @date_default_timezone_get();
+        if(!$defaultTimezone) {
+            date_default_timezone_set("UTC"); // UTC -> default timezone
+        }
+
         // check some system variables
         if (version_compare(PHP_VERSION, '5.3.0', "<")) {
             $m = "pimcore requires at least PHP version 5.3.0 your PHP version is: " . PHP_VERSION;
@@ -683,12 +689,6 @@ class Pimcore {
         // set custom view renderer
         $pimcoreViewHelper = new Pimcore_Controller_Action_Helper_ViewRenderer();
         Zend_Controller_Action_HelperBroker::addHelper($pimcoreViewHelper);
-
-        // set dummy timezone if no tz is specified / required for example by the logger, ...
-        $defaultTimezone = @date_default_timezone_get();
-        if(!$defaultTimezone) {
-            date_default_timezone_set("Europe/Berlin");
-        }
     }
 
     /**
