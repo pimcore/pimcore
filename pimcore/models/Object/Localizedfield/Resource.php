@@ -71,8 +71,20 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $this->inheritanceHelper = new Object_Concrete_Resource_InheritanceHelper($object->getClassId(), "ooo_id", $storeTable, $queryTable);
             $this->inheritanceHelper->resetFieldsToCheck();
             $sql = "SELECT * FROM " . $queryTable . " WHERE ooo_id = " . $object->getId() . " AND language = '" . $language . "'";
-            $oldData = $this->db->fetchRow($sql);
 
+            try {
+                $oldData = $this->db->fetchRow($sql);
+            } catch (\Exception $e) {
+                // if the table doesn't exist -> create it!
+                if(strpos($e->getMessage(), "exist")) {
+                    $this->model->commit();
+
+                    $this->createUpdateTable();
+
+                    $this->model->beginTransaction();
+                    $oldData = $this->db->fetchRow($sql);
+                }
+            }
 
             // get fields which shouldn't be updated
             $untouchable = array();

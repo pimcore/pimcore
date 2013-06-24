@@ -209,11 +209,9 @@ class Pimcore_Resource_Wrapper {
      */
     public function callResourceMethod ($method, $args) {
 
-        $isDDLQuery = false;
         $resource = $this->getResource();
         if($method == "query" && Pimcore_Resource::isDDLQuery($args[0])) {
             $resource = $this->getDDLResource();
-            $isDDLQuery = true;
         }
 
         $capture = false;
