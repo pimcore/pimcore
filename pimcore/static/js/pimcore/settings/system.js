@@ -223,24 +223,7 @@ pimcore.settings.system = Class.create({
                                 forceSelection: true,
                                 triggerAction: 'all',
                                 hiddenName: 'general.language'
-                            }/*,{
-                                xtype: 'superboxselect',
-                                allowBlank:false,
-                                queryDelay: 0,
-                                triggerAction: 'all',
-                                resizable: true,
-                                mode: 'local',
-                                anchor:'100%',
-                                minChars: 1,
-                                fieldLabel: t("valid_languages_frontend") + '<span style="color:red;">*</span>',
-                                emptyText: t("valid_languages_frontend_empty_text"),
-                                name: 'general.validLanguages',
-                                value: this.getValue("general.validLanguages"),
-                                store: this.languagesStore,
-                                displayField: 'display',
-                                valueField: 'language',
-                                forceFormValue: true
-                            }*/,{
+                            },{
                                 fieldLabel: t("contact_email"),
                                 xtype: "textfield",
                                 name: "general.contactemail",
