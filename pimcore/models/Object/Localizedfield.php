@@ -126,12 +126,7 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
             }
             throw new Exception("Not supported language");
         } catch (Exception $e) {
-            // try to get default from system settings
-            $conf = Pimcore_Config::getSystemConfig();
-            if($conf->general->validLanguages) {
-                $languages = explode(",",$conf->general->validLanguages);
-                return $languages[0];
-            }
+            return Pimcore_Tool::getDefaultLanguage();
         }
     }
 
@@ -157,6 +152,18 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
             }
         }
 
+        // check for fallback value
+        if(!$data) {
+            foreach (Pimcore_Tool::getFallbackLanguagesFor($language) as $l) {
+                if($this->languageExists($l)) {
+                    if(array_key_exists($name, $this->items[$l])) {
+                        $data = $this->items[$l][$name];
+                    }
+                }
+            }
+        }
+
+        // check for inherited value
         $doGetInheritedValues = Object_Abstract::doGetInheritedValues();
         if(!$data && $doGetInheritedValues) {
             $object = $this->getObject();

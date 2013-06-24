@@ -223,7 +223,7 @@ pimcore.settings.system = Class.create({
                                 forceSelection: true,
                                 triggerAction: 'all',
                                 hiddenName: 'general.language'
-                            },{
+                            }/*,{
                                 xtype: 'superboxselect',
                                 allowBlank:false,
                                 queryDelay: 0,
@@ -240,14 +240,7 @@ pimcore.settings.system = Class.create({
                                 displayField: 'display',
                                 valueField: 'language',
                                 forceFormValue: true
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t('valid_languages_frontend_description'),
-                                cls: "pimcore_extra_label_bottom"
-                            },{
+                            }*/,{
                                 fieldLabel: t("contact_email"),
                                 xtype: "textfield",
                                 name: "general.contactemail",
@@ -294,6 +287,66 @@ pimcore.settings.system = Class.create({
                                 cls: "pimcore_extra_label_bottom"
                             }
                         ]
+                    },
+                    {
+                        xtype:'fieldset',
+                        title: t('localization_and_internationalization') + " (i18n/i10n)",
+                        collapsible: true,
+                        collapsed: true,
+                        autoHeight:true,
+                        labelWidth: 150,
+                        defaultType: 'textfield',
+                        defaults: {width: 150},
+                        items :[{
+                            xtype: "displayfield",
+                            hideLabel: true,
+                            width: 600,
+                            value: t('valid_languages_frontend_description'),
+                            cls: "pimcore_extra_label_bottom"
+                        }, {
+                            xtype: "compositefield",
+                            fieldLabel: t("add_language"),
+                            width: 300,
+                            items: [{
+                                xtype: "combo",
+                                id: "system.settings.general.languageSelection",
+                                triggerAction: 'all',
+                                resizable: true,
+                                mode: 'local',
+                                store: this.languagesStore,
+                                displayField: 'display',
+                                valueField: 'language',
+                                forceSelection: true,
+                                typeAhead: true,
+                                width: 200
+                            }, {
+                                xtype: "button",
+                                iconCls: "pimcore_icon_add",
+                                handler: function () {
+                                    this.addLanguage(Ext.get("system.settings.general.languageSelection").getValue());
+                                }.bind(this)
+                            }]
+                        }, {
+                            xtype: "hidden",
+                            id: "system.settings.general.validLanguages",
+                            name: 'general.validLanguages',
+                            value: this.getValue("general.validLanguages")
+                        }, {
+                            xtype: "container",
+                            width: 450,
+                            style: "margin-top: 20px;",
+                            id: "system.settings.general.languageConainer",
+                            items: [],
+                            listeners: {
+                                beforerender: function () {
+                                    // add existing language entries
+                                    var locales = this.getValue("general.validLanguages").split(",");
+                                    if(locales && locales.length > 0) {
+                                        Ext.each(locales, this.addLanguage.bind(this));
+                                    }
+                                }.bind(this)
+                            }
+                        }]
                     },
                     {
                         xtype:'fieldset',
@@ -1482,6 +1535,73 @@ pimcore.settings.system = Class.create({
         } else {
             Ext.getCmp("system.settings." + elementType + ".versions." + mappingOpposite[type]).enable();
         }
+    },
+
+    addLanguage: function (language) {
+
+        // find the language entry in the store, because "language" can be the display value too
+        var index = this.languagesStore.findExact("language", language);
+        if(index < 0) {
+            index = this.languagesStore.findExact("display", language)
+        }
+
+        if(index >= 0) {
+
+            var rec = this.languagesStore.getAt(index);
+            language = rec.get("language");
+
+            // add the language to the hidden field used to send the languages to the action
+            var languageField = Ext.getCmp("system.settings.general.validLanguages");
+            var addedLanguages = languageField.getValue().split(",");
+            if(!in_array(language, addedLanguages)) {
+                addedLanguages.push(language);
+                languageField.setValue(addedLanguages.join(","));
+            }
+
+            // add the language to the container, so that further settings for the language can be set (eg. fallback, ...)
+            var container = Ext.getCmp("system.settings.general.languageConainer");
+            container.add({
+                xtype: "fieldset",
+                itemId: language,
+                title: rec.get("display"),
+                labelWidth: 250,
+                width: 590,
+                style: "position: relative;",
+                items: [{
+                    xtype: "textfield",
+                    width: 120,
+                    fieldLabel: t("fallback_languages"),
+                    name: "general.fallbackLanguages." + language,
+                    value: this.getValue("general.fallbackLanguages." + language)
+                },{
+                    xtype: "button",
+                    title: t("delete"),
+                    iconCls: "pimcore_icon_delete",
+                    style: "position:absolute; right: 5px; top:12px;",
+                    handler: this.removeLanguage.bind(this, language)
+                }]
+            });
+            container.doLayout();
+        }
+    },
+
+    removeLanguage: function (language) {
+
+        // remove the language out of the hidden field
+        var languageField = Ext.getCmp("system.settings.general.validLanguages");
+        var addedLanguages = languageField.getValue().split(",");
+        if(in_array(language, addedLanguages)) {
+            addedLanguages.splice(array_search(language, addedLanguages),1);
+            languageField.setValue(addedLanguages.join(","));
+        }
+
+        // remove the language from the container
+        var container = Ext.getCmp("system.settings.general.languageConainer");
+        var lang = container.getComponent(language);
+        if(lang) {
+            container.remove(lang);
+        }
+        container.doLayout();
     }
 
 });

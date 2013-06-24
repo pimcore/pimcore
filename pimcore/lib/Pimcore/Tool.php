@@ -78,6 +78,27 @@ class Pimcore_Tool {
         return $languages;
     }
 
+    /**
+     * @param $language
+     * @return array
+     */
+    public static function getFallbackLanguagesFor($language) {
+
+        $languages = array();
+
+        $conf = Pimcore_Config::getSystemConfig();
+        if($conf->general->fallbackLanguages && $conf->general->fallbackLanguages->$language) {
+            $languages = explode(",", $conf->general->fallbackLanguages->$language);
+            foreach ($languages as $l) {
+                if(self::isValidLanguage($l)) {
+                    $languages[] = trim($l);
+                }
+            }
+        }
+
+        return $languages;
+    }
+
     public static function getDefaultLanguage() {
         $languages = self::getValidLanguages();
         if(!empty($languages)) {
