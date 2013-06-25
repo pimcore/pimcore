@@ -157,19 +157,30 @@ pimcore.pdf.prototype.calculateDimensions = function () {
         this.containerEl.classList.remove("pimcore-pdfFullscreen");
     }
 
+
+
+    var im;
+    var maxHeight = document.body.offsetHeight;
+    for(var i=0; i<this.data.pages.length; i++) {
+        im = this.data.pages[i]["node"].getElementsByTagName("img")[0];
+        if(im) {
+            im.style.maxHeight = maxHeight + "px";
+        }
+    }
+
     // this is because of firefox, maybe there's a better solution for that
     // the problem is that the pdfPageContainer DIV is always 100% wide, although he is floating, ... Chrome & IE works
-    if(navigator.userAgent.match(/(Firefox)/)) {
+    /*if(navigator.userAgent.match(/(Firefox)/)) {
         var imgEl;
         for(var i=0; i<this.data.pages.length; i++) {
-            if(this.data.pages[i]["node"].style.display == "block") {
+            if(!this.data.pages[i]["node"].classList.contains("hidden")) {
                 imgEl = this.data.pages[i]["node"].getElementsByTagName("img")[0];
                 if(imgEl && imgEl.offsetWidth > 50) {
                     imgEl.parentNode.style.width = imgEl.offsetWidth + "px";
                 }
             }
         }
-    }
+    }*/
 };
 
 pimcore.pdf.prototype.buttonHover = function () {
@@ -180,7 +191,7 @@ pimcore.pdf.prototype.buttonHoverOut = function () {
     this.style.opacity = "0.6";
 };
 
-pimcore.pdf.prototype.addImageToPage = function (page, maxHeight) {
+pimcore.pdf.prototype.addImageToPage = function (page) {
     var imgContainer, img, hotspot, hd, o, l;
 
     if(this.data.pages[page] && !this.data.pages[page]["detailLoaded"]) {
@@ -191,7 +202,6 @@ pimcore.pdf.prototype.addImageToPage = function (page, maxHeight) {
 
             img = document.createElement("img");
             img.setAttribute("src", this.data.pages[page]["detail"]);
-            img.style.maxHeight = maxHeight + "px";
             imgContainer.appendChild(img);
 
             if(this.data.pages[page]["hotspots"] && this.data.pages[page]["hotspots"].length > 0) {
@@ -279,18 +289,11 @@ pimcore.pdf.prototype.download = function () {
 
 pimcore.pdf.prototype.toPage = function (page) {
 
-    // min-height
-    if(this.pdfPages.offsetHeight > 20) {
-        this.pdfPages.style.minHeight = this.pdfPages.offsetHeight + "px";
-    }
-
-    // max-height
-    var maxHeight = this.containerEl.parentNode.offsetHeight;
-    this.pdfPages.style.maxHeight = maxHeight + "px";
-
     // hide all pages
     for(var i=0; i<this.data.pages.length; i++) {
-        this.data.pages[i]["node"].style.display = "none";
+        if(this.data.pages[i]["node"].className.indexOf("hidden") < 0) {
+            this.data.pages[i]["node"].className += " hidden";
+        }
     }
 
     // get first page to show
@@ -300,11 +303,7 @@ pimcore.pdf.prototype.toPage = function (page) {
 
     for(i=page; i<=(page+1); i++) {
         if(this.data.pages[i]) {
-            this.data.pages[i]["node"].style.display = "block";
-
-            try {
-                this.data.pages[i]["node"].firstChild.firstChild.style.maxHeight = maxHeight + "px";
-            } catch (e6) {}
+            this.data.pages[i]["node"].className  = this.data.pages[i]["node"].className.replace("hidden", "");
         }
     }
 
@@ -324,7 +323,7 @@ pimcore.pdf.prototype.toPage = function (page) {
 
     // pre-load next x pages
     for(i=page; i<=(page+4); i++) {
-        this.addImageToPage(i, maxHeight);
+        this.addImageToPage(i);
     }
 
     this.calculateDimensions();

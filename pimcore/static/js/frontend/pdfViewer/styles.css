@@ -34,6 +34,11 @@
     *width: 49.9%; /* just for IE7 */
 }
 
+.pimcore-pdfPage.hidden {
+    position: absolute;
+    top: 0;
+    left: -10000px;
+}
 
 .pimcore-pdfPage-left img, .pimcore-pdfPage-left .pimcore-pdfPageContainer {
     float: right;
