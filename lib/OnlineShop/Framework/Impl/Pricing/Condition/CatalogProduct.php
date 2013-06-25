@@ -21,15 +21,33 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct implements Onli
      */
     public function check(OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
-        // works only if we have a product
+        // init
+        $productsPool = array();
+
+        // get current product if we have one
         if($environment->getProduct())
+        {
+            $productsPool[] = $environment->getProduct();
+        }
+
+        // products from cart
+        if($environment->getCart())
+        {
+            foreach($environment->getCart()->getItems() as $item)
+            {
+                $productsPool[] = $item->getProduct();
+            }
+        }
+
+
+        // test
+        foreach($productsPool as $currentProduct)
         {
             // check all valid products
             foreach($this->getProducts() as $product)
             {
                 /* @var OnlineShop_Framework_AbstractProduct $allow */
 
-                $currentProduct = $environment->getProduct();
                 while($currentProduct instanceof OnlineShop_Framework_ProductInterfaces_ICheckoutable) {
                     if($currentProduct->getId() === $product->getId())
                     {

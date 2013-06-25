@@ -26,7 +26,6 @@ class OnlineShop_Framework_Impl_Pricing_Action_CartDiscount implements OnlineSho
      */
     public function executeOnProduct(OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
-        // TODO: Implement executeOnCart() method.
         return $this;
     }
 
