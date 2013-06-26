@@ -160,7 +160,7 @@ pimcore.pdf.prototype.calculateDimensions = function () {
 
 
     var im;
-    var maxHeight = document.body.offsetHeight;
+    var maxHeight = window.innerHeight;
     for(var i=0; i<this.data.pages.length; i++) {
         im = this.data.pages[i]["node"].getElementsByTagName("img")[0];
         if(im) {
