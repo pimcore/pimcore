@@ -45,6 +45,10 @@ class Pimcore_Controller_Plugin_AdminButton extends Zend_Controller_Plugin_Abstr
                     $contactEnabled = true;
                 }
 
+                if(!$documentId) {
+                    $documentId = "null";
+                }
+
                 $code = "\n\n\n<!-- pimcore admin console -->\n";
                 $code .= '<script type="text/javascript">
                     var pimcore = pimcore || {};
