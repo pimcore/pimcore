@@ -11,11 +11,9 @@
 class OnlineShop_Framework_Impl_AttributePriceInfo extends OnlineShop_Framework_AbstractPriceInfo implements OnlineShop_Framework_IPriceInfo {
 
 
-    private $product;
-    private $products;
     private $config;
 
-    function __construct($params) {
+    public function __construct($params) {
         if (is_array($params)) {
             $params = current($params);
 

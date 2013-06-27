@@ -20,11 +20,18 @@
     private $priceSystem;
 
 
-     /** @var int | string */
-     private $quantity;
+     /** @var int */
+     protected $quantity;
 
-     private $product;
-     private $products;
+     /**
+      * @var OnlineShop_Framework_ProductInterfaces_ICheckoutable
+      */
+     protected $product;
+
+     /**
+      * @var OnlineShop_Framework_ProductInterfaces_ICheckoutable[]
+      */
+     protected $products;
 
     /**
      * @param int|string $quantity
