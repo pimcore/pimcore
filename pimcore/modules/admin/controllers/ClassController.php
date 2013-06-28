@@ -66,7 +66,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
                 $classItems[] = array(
                     "id" => $classItem->getId(),
                     "text" => $classItem->getName(),
-                    "icon" => $classItem->getIcon(),
+                    "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static/img/icon/database_gear.png',
                     "propertyVisibility" => $classItem->getPropertyVisibility(),
                     "qtipCfg" => array(
                         "title" => "ID: " . $classItem->getId()
@@ -162,14 +162,17 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
                     // no group
                     $class['id'] = $classes[0]->getId();
                     $class['text'] = $classes[0]->getName();
-                    $class['icon'] = $classes[0]->getIcon();
+                    $class['icon'] = $classes[0]->getIcon() ? $classes[0]->getIcon() : '/pimcore/static/img/icon/database_gear.png';
                     $class['propertyVisibility'] = $classes[0]->getPropertyVisibility();
                     $class['qtipCfg']['title'] = "ID: " . $classes[0]->getId();
                 }
                 else
                 {
                     // group classes
+                    $class['id'] = "folder_" . $class['id'];
                     $class['leaf'] = false;
+                    $class['expandable'] = true;
+                    $class['allowChildren'] = true;
                     $class['iconCls'] = 'pimcore_icon_folder';
                     foreach($classes as $classItem)
                     {
@@ -177,7 +180,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
                             "id" => $classItem->getId(),
                             "text" => $classItem->getName(),
                             "leaf" => true,
-                            "icon" => $classItem->getIcon(),
+                            "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static/img/icon/database_gear.png',
                             "propertyVisibility" => $classItem->getPropertyVisibility(),
                             "qtipCfg" => array(
                                 "title" => "ID: " . $classItem->getId()
