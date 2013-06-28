@@ -116,6 +116,7 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
         Ext.apply(params, this.options);
 
         Ext.Ajax.request({
+            method: "get",
             url: "/pimcore_document_tag_renderlet",
             success: function (response) {
                 this.getBody().dom.innerHTML = response.responseText;
