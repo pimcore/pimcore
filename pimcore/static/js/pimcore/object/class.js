@@ -123,6 +123,10 @@ pimcore.object.klass = Class.create({
     },
 
     onTreeNodeClick: function (node) {
+        if(!node.isLeaf()) {
+            return;
+        }
+
         this.openClass(node.id);
     },
 
@@ -156,7 +160,12 @@ pimcore.object.klass = Class.create({
         pimcore.layout.refresh();
     },
 
-    onTreeNodeContextmenu: function () {
+    onTreeNodeContextmenu: function (node) {
+
+        if(!node.isLeaf()) {
+            return;
+        }
+
         this.select();
 
         var menu = new Ext.menu.Menu();
