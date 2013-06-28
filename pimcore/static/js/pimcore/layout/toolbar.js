@@ -197,7 +197,9 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        extrasItems.push("-");
+        if (extrasItems.length > 0) {
+            extrasItems.push("-");
+        }
 
         if (user.isAllowed("backup")) {
             extrasItems.push({
@@ -614,11 +616,19 @@ pimcore.layout.toolbar = Class.create({
 
         Ext.each(Ext.query(".pimcore_menu_item"), function (el) {
             el = Ext.get(el);
+
+            if(el.hasClass("pimcore_menu_needs_children")) {
+                var menuVariable = el.id.replace(/pimcore_menu_/, "") + "Menu";
+                if(!this[menuVariable]) {
+                    el.setStyle("display", "none");
+                }
+            }
+
             el.on("mouseenter", function () {
                 if(Ext.menu.MenuMgr.hideAll()) {
                     var offsets = el.getOffsetsTo(Ext.getBody());
                     offsets[0] = 70;
-                    var menu = this[el.id.replace(/pimcore_menu_/, "") + "Menu"];
+                    var menu = this[menuVariable];
                     if(menu) {
                         menu.showAt(offsets);
                     }
