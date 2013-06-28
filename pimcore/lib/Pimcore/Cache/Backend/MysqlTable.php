@@ -61,7 +61,10 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
         try {
             while ($tag = array_shift($tags)) {
                 try {
-                    $this->getDb()->query("INSERT INTO cache_tags (id,tag) VALUES('" . $id . "', '" . $tag . "') ON DUPLICATE KEY UPDATE id = '" . $id . "'");
+                    $this->getDb()->insertOrUpdate("cache_tags", array(
+                        "id" => $id,
+                        "tag" => $tag
+                    ));
                 }
                 catch (Exception $e) {
                     Logger::warning($e);
