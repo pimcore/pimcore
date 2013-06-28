@@ -59,17 +59,141 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         $classItems = array();
 
-        foreach ($classes as $classItem) {
-            $classItems[] = array(
-                "id" => $classItem->getId(),
-                "text" => $classItem->getName(),
-                "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static/img/icon/database_gear.png',
-                "propertyVisibility" => $classItem->getPropertyVisibility(),
-                "qtipCfg" => array(
-                    "title" => "ID: " . $classItem->getId()
-                )
-            );
+        if($this->getParam('grouped') == 0)
+        {
+            // list output
+            foreach ($classes as $classItem) {
+                $classItems[] = array(
+                    "id" => $classItem->getId(),
+                    "text" => $classItem->getName(),
+                    "icon" => $classItem->getIcon(),
+                    "propertyVisibility" => $classItem->getPropertyVisibility(),
+                    "qtipCfg" => array(
+                        "title" => "ID: " . $classItem->getId()
+                    ),
+                );
+            }
         }
+        else
+        {
+            // group classes
+            $cnf['matchCount'] = 3;     // min chars to group
+
+            /**
+             * @param string $str1
+             * @param string $str2
+             *
+             * @return int
+             */
+            $getEqual
+                = function($str1, $str2) {
+                $count = 0;
+                for($c = 0; $c < strlen($str1); $c++)
+                {
+                    if(strcasecmp($str1[$c], $str2[$c]) !== 0)
+                        break;
+
+                    $count++;
+                }
+
+                return $count;
+            };
+
+
+            // create groups
+            $classGroups = array();
+            $lastGroup = '';
+            for($i = 0; $i < count($classes); $i++)
+            {
+                /* @var Object_Class $classItem */
+                $currentClass = $classes[$i];
+                $nextClass = $classes[$i+1];
+
+                // check last group
+                $count = $getEqual($lastGroup, $currentClass->getName());
+                if($count <= $cnf['matchCount'])
+                {
+                    // check new class to group with
+                    if($nextClass === null)
+                    {
+                        // this is the last class
+                        $count = strlen($currentClass->getName());
+                    }
+                    else
+                    {
+                        // check next class to group with
+                        $count = $getEqual($currentClass->getName(), $nextClass->getName());
+                        if($count <= $cnf['matchCount'])
+                        {
+                            // match is to low, use the complete name
+                            $count = strlen($currentClass->getName());
+                        }
+                    }
+
+                    $group = substr($currentClass->getName(), 0, $count);
+                }
+                else
+                {
+                    // use previous group
+                    $group = $lastGroup;
+                }
+
+
+                // add class to group
+                $classGroups[ $group ][] = $currentClass;
+                $lastGroup = $group;
+            }
+
+            // create json output
+            $classItems = array();
+            foreach ($classGroups as $name => $classes)
+            {
+                // basic setup
+                $class = array(
+                    "id" => $classes[0]->getId(),
+                    "text" => $name,
+                    "leaf" => true,
+                    "children" => array()
+                );
+
+                // add childs?
+                if(count($classes) === 1)
+                {
+                    // no group
+                    $class['id'] = $classes[0]->getId();
+                    $class['text'] = $classes[0]->getName();
+                    $class['icon'] = $classes[0]->getIcon();
+                    $class['propertyVisibility'] = $classes[0]->getPropertyVisibility();
+                    $class['qtipCfg']['title'] = "ID: " . $classes[0]->getId();
+                }
+                else
+                {
+                    // group classes
+                    $class['leaf'] = false;
+                    $class['iconCls'] = 'pimcore_icon_folder';
+                    foreach($classes as $classItem)
+                    {
+                        $child = array(
+                            "id" => $classItem->getId(),
+                            "text" => $classItem->getName(),
+                            "leaf" => true,
+                            "icon" => $classItem->getIcon(),
+                            "propertyVisibility" => $classItem->getPropertyVisibility(),
+                            "qtipCfg" => array(
+                                "title" => "ID: " . $classItem->getId()
+                            ),
+                        );
+
+                        $class['children'][] = $child;
+                    }
+                }
+
+                // add
+                $classItems[] = $class;
+            }
+        }
+
+        // send json
 
         $this->_helper->json($classItems);
     }

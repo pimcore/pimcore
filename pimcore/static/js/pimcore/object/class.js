@@ -78,6 +78,9 @@ pimcore.object.klass = Class.create({
                         allowChildren: false,
                         isTarget: false,
                         leaf: true
+                    },
+                    baseParams: {
+                        grouped: 1
                     }
                 }),
                 rootVisible: false,
