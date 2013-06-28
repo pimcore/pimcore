@@ -127,6 +127,7 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
         params.pimcore_admin = true;
 
         Ext.Ajax.request({
+            method: "get",
             url: path,
             success: function (response) {
                 this.getBody().dom.innerHTML = response.responseText;
