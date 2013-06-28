@@ -144,12 +144,12 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
                 + lat + "," + lng + "&zoom=" + mapZoom +
                 '&size=' + px + 'x' + py
                 + '&markers=color:red|' + lat + ',' + lng
-                + '&sensor=false';
+                + '&sensor=false&maptype=' + this.fieldConfig.mapType;
         } else {
             mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
                 + lat + "," + lng + "&zoom=" + mapZoom +
                 '&size=' + px + 'x' + py
-                + '&sensor=false';
+                + '&sensor=false&maptype=' + this.fieldConfig.mapType;
         }
 
         if (pimcore.settings.google_maps_api_key) {
