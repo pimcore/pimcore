@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -45,7 +45,6 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
      */
     public $phpdocType = "array";
 
-
     /**
      * @see Object_Class_Data::getDataForResource
      * @param string $data
@@ -74,7 +73,6 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
     public function getDataForQueryResource($data, $object = null) {
         return $this->getDataForResource($data, $object);
     }
-
 
     /**
      * @see Object_Class_Data::getDataForEditmode
@@ -125,8 +123,6 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
         return "";
     }
 
- 
-
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
@@ -170,7 +166,6 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
         }
         return $points;
     }
-
 
     /**
      * converts data to be exposed via webservices
