@@ -90,6 +90,7 @@
                     editButton.onclick = function () {
                         if(window.opener && window.opener["pimcore"] && window.opener["pimcore"]["helpers"]) {
                             window.opener.pimcore.helpers.openDocument(pimcore["admin"]["documentId"],"page");
+                            alert("Please switch to the pimcore admin tab. This document is already opened for you!");
                         } else {
                             window.open("/admin/login/deeplink?document_" + pimcore["admin"]["documentId"] + "_page");
                         }
