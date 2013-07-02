@@ -237,8 +237,12 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         $data = $object->{$this->getName()};
         $wsData = array();
 
+        $items = null;
+
         if (!$data instanceof Object_Localizedfield) {
-            return array();
+            $items = array();
+        } else {
+            $items = $data->getItems();
         }
 
         if(Zend_Registry::isRegistered("Zend_Locale")) {
@@ -247,7 +251,10 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
             $localeBak = null;
         }
 
-        foreach ($data->getItems() as $language => $values) {
+        $validLanguages = Pimcore_Tool::getValidLanguages();
+
+        foreach ($validLanguages as $language) {
+
             foreach ($this->getFieldDefinitions() as $fd) {
                 Zend_Registry::set("Zend_Locale", new Zend_Locale($language));
 
@@ -281,13 +288,17 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
             if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
                 foreach($value as $v){
-                        if (!in_array($v->language, $validLanguages)) {
-                            throw new Exception("Invalid language in localized fields");
+                    if (!in_array($v->language, $validLanguages)) {
+                        throw new Exception("Invalid language in localized fields");
                     }
                 }
             }
 
-            $localizedFields = new Object_Localizedfield();
+            $localizedFields = $object->getLocalizedFields();
+            if (!$localizedFields) {
+                $localizedFields = new Object_Localizedfield();
+            }
+
             if($object instanceof Object_Concrete) {
                 $localizedFields->setObject($object);
             }
