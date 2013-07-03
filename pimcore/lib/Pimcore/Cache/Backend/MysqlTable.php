@@ -177,12 +177,16 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
         if ($mode == Zend_Cache::CLEANING_MODE_MATCHING_TAG || $mode == Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG) {
             foreach ($tags as $tag) {
                 $items = $this->getItemsByTag($tag);
+                $quotedIds = array();
+
                 foreach ($items as $item) {
                     // We call delete directly here because the ID in the cache is already specific for this site
                     $this->remove($item, true);
+                    $quotedIds[] = $this->getDb()->quote($item);
                 }
-                $this->getDb()->delete("cache_tags", "tag = '".$tag."'");
-            }            
+                //$this->getDb()->delete("cache_tags", "tag = '".$tag."'");
+                $this->getDb()->delete("cache_tags", "id IN (" . implode(",", $quotedIds) . ")");
+            }
         }
         if ($mode == Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG) {
             
