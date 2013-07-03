@@ -1156,7 +1156,9 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
                 }
             }
         });
-    } else {
+    } /*else {
+        // DISABLED BECAUSE NOT REALLY SATISFIED WITH THE RESULTS
+
         pimcore.helpers.urlToCanvas(path, function (id, canvas) {
 
             // resize canvas
@@ -1191,7 +1193,7 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
                 }
             });
         }.bind(this, id));
-    }
+    }*/
 };
 
 pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) {
