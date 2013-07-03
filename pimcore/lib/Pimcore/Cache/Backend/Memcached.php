@@ -232,7 +232,9 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                     $quotedIds[] = $this->getDb()->quote($item);
                 }
                 //$this->getDb()->delete("cache_tags", "tag = '".$tag."'");
-                $this->getDb()->delete("cache_tags", "id IN (" . implode(",", $quotedIds) . ")");
+                if(count($quotedIds) > 0) {
+                    $this->getDb()->delete("cache_tags", "id IN (" . implode(",", $quotedIds) . ")");
+                }
             }
         }
         if ($mode == Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG) {
