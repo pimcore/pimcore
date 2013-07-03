@@ -192,7 +192,7 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
 
         window.setTimeout(function () {
             pimcore.helpers.generatePagePreview(this.id, path);
-        }.bind(this), 2000);
+        }.bind(this), 5000);
     }
 
 });
