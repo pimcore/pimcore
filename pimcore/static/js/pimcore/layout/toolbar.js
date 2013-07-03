@@ -566,7 +566,7 @@ pimcore.layout.toolbar = Class.create({
                 });
             }
 
-            if(pimcore.settings.document_generatepreviews) {
+            if(pimcore.settings.document_generatepreviews && pimcore.settings.htmltoimage) {
                 cacheMenu.menu.items.push({
                     text: t("generate_page_previews"),
                     iconCls: "pimcore_icon_page",

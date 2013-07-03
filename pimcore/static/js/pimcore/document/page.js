@@ -190,7 +190,9 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
         var date = new Date();
         var path = this.data.path + this.data.key + "?pimcore_preview=true&time=" + date.getTime();
 
-        pimcore.helpers.generatePagePreview(this.id, path);
+        window.setTimeout(function () {
+            pimcore.helpers.generatePagePreview(this.id, path);
+        }.bind(this), 2000);
     }
 
 });
