@@ -78,7 +78,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param string $data
-     * @param null|Object_Abstract $object 
+     * @param null|Object_Abstract $object
      * @return string
      */
     public function getDataForEditmode($data, $object = null)
@@ -118,37 +118,31 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
         if ($inheritanceAllowed) {
             // check if there is a parent with the same type
-            $parent = $object->getParent();
-            $parentType = $parent->getType();
-            if ($parentType == "object" || $parentType == "variant") {
-                $parentClass = $parent->getClass();
+            $parent = Object_Service::hasInheritableParentObject($object);
+            if ($parent) {
+                // same type, iterate over all language and all fields and check if there is something missing
+                $validLanguages = Pimcore_Tool::getValidLanguages();
+                $foundEmptyValue = false;
 
-                if ($parentClass->getId() == $class->getId()) {
-                    // same type, iterate over all language and all fields and check if there is something missing
-                    $validLanguages = Pimcore_Tool::getValidLanguages();
-                    $foundEmptyValue = false;
-
-                    foreach ($validLanguages as $language) {
-                        $fieldDefinitions = $this->getFieldDefinitions();
-                        foreach ($fieldDefinitions as $fd) {
-                            $key = $fd->getName();
-                            if (empty($fieldData[$language][$key])) {
-                                $foundEmptyValue = true;
-                                $inherited = true;
-                                $metaData[$language][$key] = array("inherited" => true, "objectid" => $parent->getId());
-                            }
+                foreach ($validLanguages as $language) {
+                    $fieldDefinitions = $this->getFieldDefinitions();
+                    foreach ($fieldDefinitions as $fd) {
+                        $key = $fd->getName();
+                        if (empty($fieldData[$language][$key])) {
+                            $foundEmptyValue = true;
+                            $inherited = true;
+                            $metaData[$language][$key] = array("inherited" => true, "objectid" => $parent->getId());
                         }
                     }
+                }
 
-                    if ($foundEmptyValue) {
-                        // still some values are passing, ask the parent
-                        $parentData = $parent->getLocalizedFields();
-                        $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
-                        Logger::debug("merge results");
-                    }
-
-                } // classes match
-            } // parent type object or variant
+                if ($foundEmptyValue) {
+                    // still some values are passing, ask the parent
+                    $parentData = $parent->getLocalizedFields();
+                    $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
+                    Logger::debug("merge results");
+                }
+            }
         }
 
         $result = array(
@@ -700,7 +694,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                     $diffdata["data"] = $item;
                     $diffdata["extData"] = array(
                         "fieldname" => $fieldname
-                        );
+                    );
 
                     $diffdata["disabled"] = $item["disabled"];
                     $return[] = $diffdata;
