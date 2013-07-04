@@ -64,7 +64,8 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
             }
 
             if(Pimcore_Config::getSystemConfig()->documents->allowcapitals == 'no'){
-                $url = strtolower($url);
+                $urlParts = parse_url($url);
+                $url = str_replace($urlParts["path"], strtolower($urlParts["path"]), $url);
             }
             return $url;
         }
