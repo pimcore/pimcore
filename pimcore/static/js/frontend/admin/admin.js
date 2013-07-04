@@ -54,8 +54,8 @@
             try {
 
                 try {
-                    // do no display the button in preview frame inside the admin ui
-                    if(parent && parent["pimcore"] && parent["pimcore"]["helpers"]) {
+                    // do no display the button in preview frame inside the admin ui, or in any iframe/frame
+                    if(parent != window) {
                         return;
                     }
                 } catch (e) {}
