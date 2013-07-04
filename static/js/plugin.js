@@ -9,8 +9,6 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
     initialize: function(){
         pimcore.plugin.broker.registerPlugin(this);
 
-        pimcore.plugin.broker.registerPlugin(this);
-
         var searchButton = Ext.get("pimcore_menu_settings");
 
         this.navEl = Ext.get(
