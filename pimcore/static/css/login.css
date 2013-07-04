@@ -1,0 +1,27 @@
+
+body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    font-family: Arial, Verdana;
+    font-size: 14px;
+    background: url(/pimcore/static/img/background.png);
+}
+
+#vcenter {
+    position: absolute;
+    top: 50%;
+    height: 500px;
+    margin-top: -250px;
+    width:100%;
+}
+
+#content {
+    background: #ff6600;
+    width: 500px;
+    height: 500px;
+    margin: 0 auto;
+    padding: 30px;
+    background: url(/pimcore/static/img/login/logo.png) top left no-repeat;
+}
+
