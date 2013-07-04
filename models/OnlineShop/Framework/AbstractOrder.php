@@ -85,4 +85,20 @@ class OnlineShop_Framework_AbstractOrder extends Object_Concrete {
         throw new OnlineShop_Framework_Exception_UnsupportedException("setCustomer is not implemented for " . get_class($this));
     }
 
+    /**
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return Object_Fieldcollection
+     */
+    public function getPriceModifications() {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("getPriceModifications is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param Object_Fieldcollection $priceModifications
+     * @return void
+     */
+    public function setPriceModifications ($priceModifications) {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("setPriceModifications is not implemented for " . get_class($this));
+    }
+
 }

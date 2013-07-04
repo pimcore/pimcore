@@ -58,8 +58,16 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         $order->setOrdernumber($tempOrdernumber);
         $order->setOrderdate(Zend_Date::now());
 
-        //TODO save price modifications somehow
         $order->setTotalPrice($cart->getPriceCalculator()->getGrandTotal()->getAmount());
+
+        $modificationItems = new Object_Fieldcollection();
+        foreach ($cart->getPriceCalculator()->getPriceModifications() as $name => $modification) {
+            $modificationItem = new Object_Fieldcollection_Data_OrderPriceModifications();
+            $modificationItem->setName($modification->getDescription() ? $modification->getDescription() : $name);
+            $modificationItem->setAmount($modification->getAmount());
+            $modificationItems->add($modificationItem);
+        }
+        $order->setPriceModifications($modificationItems);
 
         $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
 
@@ -182,8 +190,8 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         $orderItem->setComment($item->getComment());
 
         $price = 0;
-        if($item->getPrice($item->getCount())) {
-            $price = $item->getPrice($item->getCount())->getAmount() * $item->getCount();
+        if($item->getTotalPrice()) {
+            $price = $item->getTotalPrice()->getAmount();
         }
 
         $orderItem->setTotalPrice($price);
