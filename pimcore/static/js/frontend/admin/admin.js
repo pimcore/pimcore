@@ -58,7 +58,9 @@
                     if(parent != window) {
                         return;
                     }
-                } catch (e) {}
+                } catch (e) {
+                    return;
+                }
 
                 var html = '<div id="pimcore_admin_console"></div>';
 
