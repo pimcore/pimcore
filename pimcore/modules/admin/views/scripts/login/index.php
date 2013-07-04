@@ -5,34 +5,34 @@
     <title>Welcome to pimcore!</title>
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="robots" content="noindex, nofollow" />
+    <meta name="robots" content="noindex, follow" />
 
-    <link rel="stylesheet" href="/pimcore/static/css/login-reloaded.css" type="text/css" />
+    <link rel="stylesheet" href="/pimcore/static/css/login.css" type="text/css" />
 
     <?php
-        // load plugin scripts
-        try {
-            $pluginBroker = Zend_Registry::get("Pimcore_API_Plugin_Broker");
-            if ($pluginBroker instanceof Pimcore_API_Plugin_Broker) {
-                foreach ($pluginBroker->getPlugins() as $plugin) {
-                    if ($plugin->isInstalled()) {
-                        $cssPaths = $plugin->getCssPaths();
-                        if (!empty($cssPaths)) {
-                            foreach ($cssPaths as $cssPath) {
-                                $cssPath = trim($cssPath);
-                                if (!empty($cssPath)) {
-                                    ?>
-                                    <link rel="stylesheet" type="text/css" href="<?php echo $cssPath ?>?_dc=<?php echo time() ?>"/>
-                                    <?php
+    // load plugin scripts
+    try {
+        $pluginBroker = Zend_Registry::get("Pimcore_API_Plugin_Broker");
+        if ($pluginBroker instanceof Pimcore_API_Plugin_Broker) {
+            foreach ($pluginBroker->getPlugins() as $plugin) {
+                if ($plugin->isInstalled()) {
+                    $cssPaths = $plugin->getCssPaths();
+                    if (!empty($cssPaths)) {
+                        foreach ($cssPaths as $cssPath) {
+                            $cssPath = trim($cssPath);
+                            if (!empty($cssPath)) {
+                                ?>
+                                <link rel="stylesheet" type="text/css" href="<?php echo $cssPath ?>?_dc=<?php echo time() ?>"/>
+                            <?php
 
-                                }
                             }
                         }
                     }
                 }
             }
         }
-        catch (Exception $e) {}
+    }
+    catch (Exception $e) {}
     ?>
 
 </head>
@@ -64,116 +64,70 @@ $config = Pimcore_Config::getSystemConfig();
 ?>
 
 <?php if ($config->general->loginscreencustomimage) { ?>
-    <img src="<?php echo $config->general->loginscreencustomimage; ?>" class="background" id="backgroundimage" />
-<?php } else { ?>
-    <img src="/pimcore/static/img/blank.png" class="background" id="backgroundimage" />
+    <style type="text/css">
+        body {
+            background: url(<?php echo $config->general->loginscreencustomimage; ?>);
+        }
+    </style>
 <?php } ?>
-
-<img src="/pimcore/static/img/loading.gif" width="1" height="1"/>
 
 <div id="vcenter">
-    <div id="content" class="hidden">
-
-        <?php if ($this->error) { ?>
-            <div class="error">
-                <?php echo $this->translate($this->error) ?>
-            </div>
-        <?php } else { ?>
-            <div class="logo"></div>
-        <?php } ?>
-
-        <form id="loginform" action="/admin/login/login" method="post" enctype="application/x-www-form-urlencoded">
-            <p>
+    <div id="content">
+        <div id="right">
+            <form id="loginform" method="post" action="/admin/login/login">
                 <label><?php echo $this->translate("Username"); ?></label>
-                <input class="credential" name="username" id="username" type="text" />
-                <span class="clear"></span>
-            </p>
-            <p>
+                <input type="text" name="username" />
+
                 <label><?php echo $this->translate("Password"); ?></label>
-                <input class="credential" name="password" type="password" />
-                <span class="clear"></span>
-            </p>
-            <p class="submit">
-                <input class="submit" type="submit" value="<?php echo $this->translate("Login"); ?>" />
-                <a href="/admin/login/lostpassword" class="lostpassword"><?php echo $this->translate("Forgot your password"); ?>?</a>
-            </p>
-        </form>
+                <input type="password" name="password" />
 
-        <?php if (!$supported) { ?>
-            <div id="browserinfo">
-                <div class="message"><?php echo $this->translate("Your browser is not supported. Please install the latest version of one of the following browsers."); ?></div>
-                <div class="links">
-                    <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login-reloaded/firefox.png"/></a>
-                    <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static/img/login-reloaded/chrome.png"/></a>
-                    <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login-reloaded/safari.png"/></a>
-                    <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login-reloaded/ie.png"/></a>
+                <input type="submit" name="submit" value="<?php echo $this->translate("Login"); ?>" />
+
+                <?php if ($this->error) { ?>
+                    <div class="error">
+                        <?php echo $this->translate($this->error) ?>
+                    </div>
+                <?php } ?>
+            </form>
+
+            <?php if (!$supported) { ?>
+                <div id="browserinfo">
+                    <div class="error">
+                        <?php echo $this->translate("Your browser is not supported. Please install the latest version of one of the following browsers."); ?>
+                    </div>
+                    <div class="links">
+                        <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login-reloaded/firefox.png"/></a>
+                        <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static/img/login-reloaded/chrome.png"/></a>
+                        <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login-reloaded/safari.png"/></a>
+                        <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login-reloaded/ie.png"/></a>
+                    </div>
+                    <a href="#" onclick="showLogin();"><?php echo $this->translate("Click here to proceed"); ?></a>
+
+                    <script type="text/javascript">
+                        function showLogin() {
+                            document.getElementById("loginform").style.display = "block";
+                            document.getElementById("browserinfo").style.display = "none";
+                        }
+                    </script>
+                    <style type="text/css">
+                        #loginform {
+                            display: none;
+                        }
+                    </style>
+
                 </div>
-                <div class="proceed" style="cursor: pointer;" onclick="showLogin();"><?php echo $this->translate("Click here to proceed"); ?></div>
-            </div>
-            <script type="text/javascript">
-                function showLogin() {
-                    document.getElementById("loginform").style.display = "block";
-                    document.getElementById("browserinfo").style.display = "none";
-                }
-            </script>
-            <style type="text/css">
-                #loginform {
-                    display: none;
-                }
-            </style>
-        <?php } ?>
-
+            <?php } ?>
+        </div>
+        <a href="/admin/login/lostpassword" class="lostpassword"><?php echo $this->translate("Forgot your password"); ?></a>
     </div>
 </div>
-
 <div id="footer">
-    <div class="left" id="imageinfo"></div>
-    <div class="right">pimcore. Open Source Framework for Content and Product Information Management<br />&copy; 2009-<?php echo date("Y") ?> elements.at New Media Solutions GmbH</div>
-    <div class="background"></div>
+    <a href="http://www.pimcore.org/">pimcore. Open Source Multichannel Experience and Engagement Platform</a>
+    <br />
+    &copy; 2009-<?php echo date("Y") ?> <a href="http://www.pimcore.org/">pimcore GmbH</a>, a proud member of the <a href="http://www.elements.at/">elements group</a>
 </div>
 
-
-<script type="text/javascript">
-
-    // check for animation support
-    var animation = false,
-            animationstring = 'animation',
-            keyframeprefix = '',
-            elm = document.getElementById( 'content' ),
-            domPrefixes = 'Webkit Moz O ms Khtml'.split(' '),
-            pfx  = '';
-
-    if( elm.style.animationName ) { animation = true; }
-
-    if( animation === false ) {
-        for( var i = 0; i < domPrefixes.length; i++ ) {
-            if( elm.style[ domPrefixes[i] + 'AnimationName' ] !== undefined ) {
-                pfx = domPrefixes[ i ];
-                animationstring = pfx + 'Animation';
-                keyframeprefix = '-' + pfx.toLowerCase() + '-';
-                animation = true;
-                break;
-            }
-        }
-    }
-
-    if(animation) {
-        window.setTimeout(function () {
-            document.getElementById("content").className = "animated flipInX";
-            document.getElementById("username").focus();
-        }, 1000);
-    } else {
-        document.getElementById("content").className = "";
-        document.getElementById("username").focus();
-    }
-
-
-
-</script>
-
-<?php if ($config->general->loginscreenimageservice) { ?>
-    <script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1&build=<?php echo Pimcore_Version::getRevision(); ?>"></script>
-<?php } ?>
+<script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1&build=<?php echo Pimcore_Version::getRevision(); ?>&customimage=<?php echo (bool) $config->general->loginscreenimageservice; ?>"></script>
 
 </body>
 </html>
