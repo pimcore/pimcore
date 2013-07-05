@@ -429,7 +429,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 // make sure that the localized field participates in the inheritance detection process
                 $isInheritedValue = $value["inherited"];
             }
-            if(empty($value) && !empty($parent)) {
+            if(((!$fielddefinition instanceof Object_Class_Data_Numeric && empty($value)) ||
+                ($fielddefinition instanceof Object_Class_Data_Numeric && $value === null))
+                && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
                 $isInheritedValue = $isInheritedValue || ($level != 0);
