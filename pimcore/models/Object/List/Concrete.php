@@ -39,12 +39,6 @@ abstract class Object_List_Concrete extends Object_List {
      */
     public $ignoreLocalizedFields = false;
 
-    /**
-    * ignore the locale and use the concatinated object_localized_ID_default view instead
-    * @var bool
-    */
-    public $ignoreLocale;
-
 
     /**
      * @return void
@@ -122,25 +116,7 @@ abstract class Object_List_Concrete extends Object_List {
     }
 
     /**
-     * @param bool $ignoreLocale
-     * @return void
-     */
-    public function setIgnoreLocale($ignoreLocale)
-    {
-        $this->ignoreLocale = $ignoreLocale;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getIgnoreLocale()
-    {
-        return $this->ignoreLocale;
-    }
-
-    /**
-     * @param bool $ignoreLocale
+     * @param bool $ignoreLocalizedFields
      * @return void
      */
     public function setIgnoreLocalizedFields($ignoreLocalizedFields)

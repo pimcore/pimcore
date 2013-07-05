@@ -21,7 +21,7 @@
  */
 
 /** Zend_Mobile_Push_Message_Abstract **/
-// require_once 'Zend/Mobile/Push/Message/Abstract.php';
+require_once 'Zend/Mobile/Push/Message/Abstract.php';
 
 /**
  * Gcm Message
@@ -32,6 +32,7 @@
  * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
+ * @method     array getToken()
  */
 class Zend_Mobile_Push_Message_Gcm extends Zend_Mobile_Push_Message_Abstract
 {

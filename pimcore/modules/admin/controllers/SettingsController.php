@@ -204,6 +204,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         // convert all special characters to their entities so the xml writer can put it into the file
         $values = array_htmlspecialchars($values);
 
+        // email settings
         $oldConfig = Pimcore_Config::getSystemConfig();
         $oldValues = $oldConfig->toArray();
         $smtpPassword = $values["email.smtp.auth.password"];
@@ -211,11 +212,21 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $smtpPassword = $oldValues['email']['smtp']['auth']['password'];
         }
 
+        // error pages
         $errorPages = array();
         foreach ($values as $key => $value) {
             if(strpos($key, "error_pages")) {
                 $keySteps = explode(".",$key);
                 $errorPages[$keySteps[2]] = $value;
+            }
+        }
+
+        // fallback languages
+        $fallbackLanguages = array();
+        $languages = explode(",", $values["general.validLanguages"]);
+        foreach($languages as $language) {
+            if(isset($values["general.fallbackLanguages." . $language])) {
+                $fallbackLanguages[$language] = str_replace(" ", "", $values["general.fallbackLanguages." . $language]);
             }
         }
 
@@ -227,7 +238,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "redirect_to_maindomain" => $values["general.redirect_to_maindomain"],
                 "language" => $values["general.language"],
                 "validLanguages" => $values["general.validLanguages"],
+                "fallbackLanguages" => $fallbackLanguages,
                 "theme" => $values["general.theme"],
+                "contactemail" => $values["general.contactemail"],
                 "loginscreenimageservice" => $values["general.loginscreenimageservice"],
                 "loginscreencustomimage" => $values["general.loginscreencustomimage"],
                 "disableusagestatistics" => $values["general.disableusagestatistics"],
@@ -252,6 +265,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "devmode" => $values["general.devmode"],
                 "logrecipient" => $values["general.logrecipient"],
                 "viewSuffix" => $values["general.viewSuffix"],
+                "instanceIdentifier" => $values["general.instanceIdentifier"],
             ),
             "database" => $oldValues["database"], // db cannot be changed here
             "documents" => array(
@@ -285,6 +299,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 ),
                 "ffmpeg" => $values["assets.ffmpeg"],
                 "qtfaststart" => $values["assets.qtfaststart"],
+                "ghostscript" => $values["assets.ghostscript"],
                 "icc_rgb_profile" => $values["assets.icc_rgb_profile"],
                 "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"]
             ),
@@ -361,7 +376,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             //currently not activated
             "deployment" => array(
                 "enabled" => 0,
-                "instanceIdentifier" => '',
                 "environment" => "live",
             )
         );

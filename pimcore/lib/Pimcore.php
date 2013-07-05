@@ -77,6 +77,7 @@ class Pimcore {
         // register general pimcore plugins for frontend
         if ($frontend) {
             $front->registerPlugin(new Pimcore_Controller_Plugin_Less(), 799);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_AdminButton(), 806);
         }
 
         if (Pimcore_Tool::useFrontendOutputFilters(new Zend_Controller_Request_Http())) {
@@ -399,6 +400,12 @@ class Pimcore {
         // this is for simple_dom_html
         ini_set('pcre.recursion-limit', 100000);
 
+        // set dummy timezone if no tz is specified / required for example by the logger, ...
+        $defaultTimezone = @date_default_timezone_get();
+        if(!$defaultTimezone) {
+            date_default_timezone_set("UTC"); // UTC -> default timezone
+        }
+
         // check some system variables
         if (version_compare(PHP_VERSION, '5.3.0', "<")) {
             $m = "pimcore requires at least PHP version 5.3.0 your PHP version is: " . PHP_VERSION;
@@ -421,6 +428,11 @@ class Pimcore {
 
         $broker = Pimcore_API_Plugin_Broker::getInstance();
         $broker->registerModule("Search_Backend_Module");
+
+        $conf = Pimcore_Config::getSystemConfig();
+        if($conf->general->instanceIdentifier) {
+            $broker->registerModule("Tool_UUID_Module");
+        }
     }
 
     public static function initPlugins() {
@@ -614,7 +626,7 @@ class Pimcore {
             // check for output-cache settings
             // if a lifetime for the output cache is specified then the cache tag "output" will be ignored on clear
             $cacheLifetime = (int) $conf->cache->lifetime;
-            if (!empty($cacheLifetime)) {
+            if (!empty($cacheLifetime) && $conf->cache->enabled) {
                 Pimcore_Model_Cache::addIgnoredTagOnClear("output");
             }
 
@@ -677,12 +689,6 @@ class Pimcore {
         // set custom view renderer
         $pimcoreViewHelper = new Pimcore_Controller_Action_Helper_ViewRenderer();
         Zend_Controller_Action_HelperBroker::addHelper($pimcoreViewHelper);
-
-        // set dummy timezone if no tz is specified / required for example by the logger, ...
-        $defaultTimezone = @date_default_timezone_get();
-        if(!$defaultTimezone) {
-            date_default_timezone_set("Europe/Berlin");
-        }
     }
 
     /**
@@ -765,7 +771,11 @@ class Pimcore {
 
         Pimcore_Resource::reset();
 
-        Logger::debug("garbage collection finished");
+        // force PHP garbage collector
+        gc_enable();
+        $collectedCycles = gc_collect_cycles();
+
+        Logger::debug("garbage collection finished, collected cycles: " . $collectedCycles);
     }
 
     /**

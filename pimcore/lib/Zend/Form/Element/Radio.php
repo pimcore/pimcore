@@ -20,7 +20,7 @@
  */
 
 /** Zend_Form_Element_Multi */
-// require_once 'Zend/Form/Element/Multi.php';
+require_once 'Zend/Form/Element/Multi.php';
 
 /**
  * Radio form element
@@ -30,7 +30,7 @@
  * @subpackage Element
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Radio.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id: Radio.php 25109 2012-11-07 20:48:04Z rob $
  */
 class Zend_Form_Element_Radio extends Zend_Form_Element_Multi
 {
@@ -53,8 +53,14 @@ class Zend_Form_Element_Radio extends Zend_Form_Element_Multi
             return $this;
         }
         parent::loadDefaultDecorators();
-        $this->addDecorator('Label', array('tag' => 'dt',
-                                           'disableFor' => true));
+
+        // Disable 'for' attribute
+        if (isset($this->_decorators['Label'])
+            && !isset($this->_decorators['Label']['options']['disableFor']))
+        {
+             $this->_decorators['Label']['options']['disableFor'] = true;
+        }
+
         return $this;
     }
 }

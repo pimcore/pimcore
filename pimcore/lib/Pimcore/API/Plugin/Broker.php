@@ -888,5 +888,39 @@ class Pimcore_API_Plugin_Broker {
         }
     }
 
+    /**
+     * Calls preAddObjectClass functions of all registered plugins and system modules
+     *
+     * @param Object_Class $class
+     */
+    public function preAddObjectClass(Object_Class $class) {
+        $this->executeMethod('preAddObjectClass',$class);
+    }
+
+    /**
+     * Calls preUpdateObjectClass functions of all registered plugins and system modules
+     *
+     * @param Object_Class $class
+     */
+    public function preUpdateObjectClass(Object_Class $class) {
+        $this->executeMethod('preUpdateObjectClass',$class);
+    }
+
+
+
+
+
+    protected function executeMethod($method,$item){
+        foreach ($this->_systemModules as $module) {
+            $module->$method($item);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->$method($item);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in $method");
+            }
+        }
+    }
 
 }

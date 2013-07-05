@@ -211,4 +211,20 @@ class Document_Tag_Snippet extends Document_Tag {
             $this->id = $idMapping[(int) $this->id];
         }
     }
+
+    /**
+     * @param \Document_Snippet $snippet
+     */
+    public function setSnippet($snippet)
+    {
+        $this->snippet = $snippet;
+    }
+
+    /**
+     * @return \Document_Snippet
+     */
+    public function getSnippet()
+    {
+        return $this->snippet;
+    }
 }

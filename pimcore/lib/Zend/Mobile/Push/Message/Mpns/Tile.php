@@ -20,7 +20,7 @@
  */
 
 /** Zend_Mobile_Push_Message_Mpns **/
-// require_once 'Zend/Mobile/Push/Message/Mpns.php';
+require_once 'Zend/Mobile/Push/Message/Mpns.php';
 
 /**
  * Mpns Tile Message
@@ -324,7 +324,7 @@ class Zend_Mobile_Push_Message_Mpns_Tile extends Zend_Mobile_Push_Message_Mpns
     {
         $ret = '<?xml version="1.0" encoding="utf-8"?>'
             . '<wp:Notification xmlns:wp="WPNotification">'
-            . '<wp:Tile' . (($this->_tileId) ? 'Id="' . htmlspecialchars($this->_tileId) . '"' : '') . '>'
+            . '<wp:Tile' . (($this->_tileId) ? ' Id="' . htmlspecialchars($this->_tileId) . '"' : '') . '>'
             . '<wp:BackgroundImage>' . htmlspecialchars($this->_backgroundImage) . '</wp:BackgroundImage>'
             . '<wp:Count>' . (int) $this->_count . '</wp:Count>'
             . '<wp:Title>' . htmlspecialchars($this->_title) . '</wp:Title>';

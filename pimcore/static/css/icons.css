@@ -1322,3 +1322,15 @@
     background: url(/pimcore/static/img/icon/overlays.png) left center no-repeat !important;
 }
 
+.pimcore_icon_personas, .pimcore_icon_persona, .pimcore_icon_personamultiselect {
+    background: url(/pimcore/static/img/icon/user_gray_cool.png) left center no-repeat !important;
+}
+
+.pimcore_icon_persona_select {
+    padding-left: 20px !important;
+    background: url(/pimcore/static/img/icon/user_gray_cool.png) 2px center no-repeat #fff !important;
+}
+
+.pimcore_icon_highlight {
+    background: url(/pimcore/static/img/icon/lightning.png) left center no-repeat !important;
+}

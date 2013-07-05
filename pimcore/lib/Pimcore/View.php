@@ -32,10 +32,9 @@ class Pimcore_View extends Zend_View {
         $type = strtolower($type);
 
         try {
-            $name = Document_Tag::buildTagName($type,$name);
-
             $document = $this->document;
-            
+            $name = Document_Tag::buildTagName($type,$name, $document);
+
             if($document instanceof Document) {
                 $tag = $document->getElement($name);
                 if ($tag instanceof Document_Tag && $tag->getType() == $type) {

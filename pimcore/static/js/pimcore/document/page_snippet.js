@@ -262,7 +262,16 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 scale: "medium",
                 handler: function () {
                     var date = new Date();
-                    window.open(this.data.path + this.data.key + "?pimcore_preview=true&time=" + date.getTime());
+                    var link = this.data.path + this.data.key + "?pimcore_preview=true&time=" + date.getTime();
+
+                    // add persona parameter if available
+                    if(this["edit"] && this.edit["persona"]) {
+                        if(this.edit.persona && this.edit.persona.getValue()) {
+                            link += "&_ptp=" + this.edit.persona.getValue();
+                        }
+                    }
+
+                    window.open(link);
                 }.bind(this)
             });
             buttons.push("-");

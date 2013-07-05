@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pimcore
  *
@@ -14,8 +15,70 @@
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
-abstract class Object_Class_Data_Geo_Abstract extends Object_Class_Data {
+abstract class Object_Class_Data_Geo_Abstract extends Object_Class_Data
+{
+    /**
+     * @var float
+     */
+    public $lat = 0.0;
 
+    /**
+     * @var float
+     */
+    public $lng = 0.0;
 
+    /**
+     * @var integer
+     */
+    public $zoom = 1;
+
+    /**
+     * @var string
+     */
+    public $mapType = 'roadmap';
+
+    public function getLat()
+    {
+        return $this->lat;
+    }
+
+    public function setLat($lat)
+    {
+        $this->lat = (float) $lat;
+        return $this;
+    }
+
+    public function getLng()
+    {
+        return $this->lng;
+    }
+
+    public function setLng($lng)
+    {
+        $this->lng = (float) $lng;
+        return $this;
+    }
+
+    public function getZoom()
+    {
+        return $this->zoom;
+    }
+
+    public function setZoom($zoom)
+    {
+        $this->zoom = (int) $zoom;
+        return $this;
+    }
+
+    public function getMapType()
+    {
+        return $this->mapType;
+    }
+
+    public function setMapType($mapType)
+    {
+        $this->mapType = $mapType;
+        return $this;
+    }
 
 }

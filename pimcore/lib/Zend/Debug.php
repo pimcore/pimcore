@@ -16,7 +16,7 @@
  * @package    Zend_Debug
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Debug.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id: Debug.php 25095 2012-11-07 20:11:07Z rob $
  */
 
 /**
@@ -90,7 +90,12 @@ class Zend_Debug
                     . PHP_EOL;
         } else {
             if(!extension_loaded('xdebug')) {
-                $output = htmlspecialchars($output, ENT_QUOTES);
+                $flags = ENT_QUOTES;
+                // PHP 5.4.0+
+                if (defined('ENT_SUBSTITUTE')) {
+                    $flags = ENT_QUOTES | ENT_SUBSTITUTE;
+                }
+                $output = htmlspecialchars($output, $flags);
             }
 
             $output = '<pre>'

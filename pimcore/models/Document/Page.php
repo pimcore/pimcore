@@ -61,6 +61,16 @@ class Document_Page extends Document_PageSnippet {
      */
     public $css = "";
 
+    /**
+     * comma separated IDs of personas
+     * @var string
+     */
+    public $personas = "";
+
+    /**
+     * @var int
+     */
+    public $usePersona;
 
     /**
      * @see Document::delete and Document_PageSnippet::delete
@@ -244,5 +254,118 @@ class Document_Page extends Document_PageSnippet {
         return $this->css;
     }
 
+    /**
+     * @param string $personas
+     */
+    public function setPersonas($personas)
+    {
+        $personas = trim($personas, " ,");
+        if(!empty($personas)) {
+            $personas = "," . $personas . ",";
+        }
+        $this->personas = $personas;
+    }
 
+    /**
+     * @return string
+     */
+    public function getPersonas()
+    {
+        return $this->personas;
+    }
+
+    public function getPersonaElementPrefix($personaId = null) {
+        $prefix = null;
+
+        if(!$personaId) {
+            $personaId = $this->getUsePersona();
+        }
+
+        if($personaId) {
+            $prefix = "persona_-" . $personaId . "-_";
+        }
+
+        return $prefix;
+    }
+
+    public function getPersonaElementName($name) {
+        if($this->getUsePersona() && !preg_match("/^" . preg_quote($this->getPersonaElementPrefix(),"/") . "/", $name)) {
+            $name = $this->getPersonaElementPrefix() . $name;
+        }
+        return $name;
+    }
+
+    public function setElement($name, $data) {
+
+        if($this->getUsePersona()) {
+            $name = $this->getPersonaElementName($name);
+            $data->setName($name);
+        }
+
+        return parent::setElement($name, $data);
+    }
+
+    public function getElement($name) {
+
+        // check if a persona is requested for this page, if yes deliver a different version of the element (prefixed)
+        if($this->getUsePersona()) {
+            $personaName = $this->getPersonaElementName($name);
+
+            if($this->hasElement($personaName)) {
+                $name = $personaName;
+            } else {
+                // if there's no dedicated content for this persona, inherit from the "original" content (unprefixed)
+                // and mark it as inherited so it is clear in the ui that the content is not specific to the selected persona
+                // replace all occurrences of the persona prefix, this is needed because of block-prefixes
+                $inheritedName = str_replace($this->getPersonaElementPrefix(), "", $name);
+                $inheritedElement = parent::getElement($inheritedName);
+                if($inheritedElement) {
+                    $inheritedElement = clone $inheritedElement;
+                    $inheritedElement->setResource(null);
+                    $inheritedElement->setName($personaName);
+                    $inheritedElement->setInherited(true);
+                    $this->setElement($personaName, $inheritedElement);
+                    return $inheritedElement;
+                }
+            }
+        }
+
+        // delegate to default
+        return parent::getElement($name);
+    }
+
+    /**
+     * @param int $usePersona
+     */
+    public function setUsePersona($usePersona)
+    {
+        $this->usePersona = $usePersona;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUsePersona()
+    {
+        return $this->usePersona;
+    }
+
+    /**
+     *
+     */
+    public function __sleep() {
+
+        $finalVars = array();
+        $parentVars = parent::__sleep();
+
+        $blockedVars = array("usePersona");
+
+        foreach ($parentVars as $key) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
+
+        return $finalVars;
+    }
 }

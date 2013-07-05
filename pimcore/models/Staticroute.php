@@ -411,7 +411,8 @@ class Staticroute extends Pimcore_Model_Abstract {
                 $parametersNotNamed[$key] = $param;
             } else {
                 // only append the get parameters if there are defined in $urlOptions
-                if(array_key_exists($key,$urlOptions)) {
+                // or if they are defined in $_GET an $reset is false
+                if(array_key_exists($key,$urlOptions) || (!$reset && array_key_exists($key, $_GET))) {
                     $parametersGet[$key] = $param;
                 }
             }

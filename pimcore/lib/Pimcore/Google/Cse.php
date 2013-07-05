@@ -20,9 +20,10 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
      * @param int $offset
      * @param int $perPage
      * @param array $config
+     * @param string $facet
      * @return Pimcore_Google_Cse
      */
-    public function search ($query, $offset = 0, $perPage = 10, $config = array(), $facet = null) {
+    public static function search ($query, $offset = 0, $perPage = 10, array $config = array(), $facet = null) {
         $list = new self();
         $list->setConfig($config);
         $list->setOffset($offset);

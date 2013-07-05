@@ -159,6 +159,9 @@ class Tool_Tag_Config {
         if(is_file($this->getConfigFile())) {
             unlink($this->getConfigFile());
         }
+
+        // clear cache tags
+        Pimcore_Model_Cache::clearTags(array("tagmanagement","output"));
     }
 
     /**

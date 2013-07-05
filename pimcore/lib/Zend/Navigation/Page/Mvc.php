@@ -17,25 +17,25 @@
  * @subpackage Page
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Mvc.php 24964 2012-06-15 14:37:43Z adamlundrigan $
+ * @version    $Id: Mvc.php 25213 2013-01-11 08:19:09Z frosch $
  */
 
 /**
  * @see Zend_Navigation_Page
  */
-// require_once 'Zend/Navigation/Page.php';
+require_once 'Zend/Navigation/Page.php';
 
 /**
  * @see Zend_Controller_Action_HelperBroker
  */
-// require_once 'Zend/Controller/Action/HelperBroker.php';
+require_once 'Zend/Controller/Action/HelperBroker.php';
 
 /**
  * Used to check if page is active
  *
  * @see Zend_Controller_Front
  */
-// require_once 'Zend/Controller/Front.php';
+require_once 'Zend/Controller/Front.php';
 
 /**
  * Represents a page that is defined using module, controller, action, route
@@ -198,7 +198,7 @@ class Zend_Navigation_Page_Mvc extends Zend_Navigation_Page
             }
 
             foreach($myParams as $key => $value) {
-                if($value == null) {
+                if(null === $value) {
                     unset($myParams[$key]);
                 }
             }
@@ -257,7 +257,7 @@ class Zend_Navigation_Page_Mvc extends Zend_Navigation_Page
         $scheme = $this->getScheme();
         if (null !== $scheme) {
             if (null === self::$_schemeHelper) {
-                // require_once 'Zend/View/Helper/ServerUrl.php';
+                require_once 'Zend/View/Helper/ServerUrl.php';
                 self::$_schemeHelper = new Zend_View_Helper_ServerUrl();
             }
 
@@ -285,7 +285,7 @@ class Zend_Navigation_Page_Mvc extends Zend_Navigation_Page
     public function setAction($action)
     {
         if (null !== $action && !is_string($action)) {
-            // require_once 'Zend/Navigation/Exception.php';
+            require_once 'Zend/Navigation/Exception.php';
             throw new Zend_Navigation_Exception(
                     'Invalid argument: $action must be a string or null');
         }
@@ -319,7 +319,7 @@ class Zend_Navigation_Page_Mvc extends Zend_Navigation_Page
     public function setController($controller)
     {
         if (null !== $controller && !is_string($controller)) {
-            // require_once 'Zend/Navigation/Exception.php';
+            require_once 'Zend/Navigation/Exception.php';
             throw new Zend_Navigation_Exception(
                     'Invalid argument: $controller must be a string or null');
         }
@@ -353,7 +353,7 @@ class Zend_Navigation_Page_Mvc extends Zend_Navigation_Page
     public function setModule($module)
     {
         if (null !== $module && !is_string($module)) {
-            // require_once 'Zend/Navigation/Exception.php';
+            require_once 'Zend/Navigation/Exception.php';
             throw new Zend_Navigation_Exception(
                     'Invalid argument: $module must be a string or null');
         }
@@ -516,7 +516,7 @@ class Zend_Navigation_Page_Mvc extends Zend_Navigation_Page
     public function setRoute($route)
     {
         if (null !== $route && (!is_string($route) || strlen($route) < 1)) {
-            // require_once 'Zend/Navigation/Exception.php';
+            require_once 'Zend/Navigation/Exception.php';
             throw new Zend_Navigation_Exception(
                  'Invalid argument: $route must be a non-empty string or null');
         }
@@ -606,7 +606,7 @@ class Zend_Navigation_Page_Mvc extends Zend_Navigation_Page
     public function setScheme($scheme)
     {
         if (null !== $scheme && !is_string($scheme)) {
-            // require_once 'Zend/Navigation/Exception.php';
+            require_once 'Zend/Navigation/Exception.php';
             throw new Zend_Navigation_Exception(
                 'Invalid argument: $scheme must be a string or null'
             );

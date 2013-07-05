@@ -20,11 +20,46 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     initialize: function (data, fieldConfig) {
 
         this.data = {};
+        this.metaData = {};
+        this.inherited = false;
         this.languageElements = {};
+        this.inheritedFields = {};
+
         if (data) {
-            this.data = data;
+            if (data.data) {
+                this.data = data.data;
+            }
+            if (data.metaData) {
+                this.metaData = data.metaData;
+            }
+            if (data.inherited) {
+                this.inherited = data.inherited;
+            }
         }
         this.fieldConfig = fieldConfig;
+
+        this.keysToWatch = [];
+
+        if (this.inherited) {
+
+            for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
+                currentLanguage = pimcore.settings.websiteLanguages[i];
+
+                var metadataForLanguage = this.metaData[currentLanguage];
+                var dataKeys = Object.keys(metadataForLanguage);
+
+                for (var k = 0; k < dataKeys.length; k++) {
+                    var dataKey = dataKeys[k];
+                    var metadataForKey = metadataForLanguage[dataKey];
+                    if (metadataForKey.inherited) {
+                        this.keysToWatch.push({
+                            lang: currentLanguage,
+                            key: dataKey
+                        })
+                    }
+                }
+            }
+        }
     },
 
     getLayoutEdit: function () {
@@ -165,7 +200,19 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     },
 
     getMetaDataForField: function(name) {
-        return null;
+        try {
+            if (this.metaData[this.currentLanguage]) {
+                if (this.metaData[this.currentLanguage][name]) {
+                    return this.metaData[this.currentLanguage][name];
+                } else if (typeof this.data[this.currentLanguage][name] !== undefined){
+                    return null;
+                }
+            }
+        } catch (e) {
+            console.log(e);
+        }
+        return;
+
     },
 
     addToDataFields: function (field, name) {
@@ -267,7 +314,47 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         }
 
         return isInvalid;
+    },
+
+    dataIsNotInherited: function() {
+        if (!this.inherited) {
+            return true;
+        }
+
+        var foundUnmodifiedInheritedField = false;
+        for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
+
+            currentLanguage = pimcore.settings.websiteLanguages[i];
+
+            for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
+
+                if (this.metaData[currentLanguage]) {
+                    var languageElement = this.languageElements[currentLanguage][s];
+                    var key = languageElement.name;
+                    if (this.metaData[currentLanguage][key]) {
+                        if (this.metaData[currentLanguage][key].inherited) {
+                            if(languageElement.isDirty()) {
+                                this.metaData[currentLanguage][key].inherited = false;
+                                languageElement.unmarkInherited();
+                            } else {
+                                foundUnmodifiedInheritedField = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!foundUnmodifiedInheritedField) {
+            this.inherited = false;
+        }
+        return !this.inherited;
+    },
+
+    markInherited:function (metaData) {
+        // nothing to do, only sub-elements can be marked
     }
+
 });
 
 pimcore.object.tags.localizedfields.addMethods(pimcore.object.helpers.edit);

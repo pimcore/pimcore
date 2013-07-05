@@ -13,8 +13,7 @@ class Website_Controller_Action extends Pimcore_Controller_Action_Frontend {
             Zend_Registry::set("Zend_Locale", $locale);
         }
 
-        $this->view->language = $locale->getLanguage();
-        $this->language = $locale->getLanguage();
-	}
-	
+        $this->view->language = (string) $locale;
+        $this->language = (string) $locale;
+    }
 }

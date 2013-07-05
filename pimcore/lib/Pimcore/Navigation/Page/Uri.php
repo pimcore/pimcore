@@ -59,9 +59,9 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
      * @param  $accesskey
      * @return void
      */
-    public function setAccesskey($accesskey)
+    public function setAccesskey($character = null)
     {
-        $this->_accesskey = $accesskey;
+        $this->_accesskey = $character;
         return $this;
     }
 

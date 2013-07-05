@@ -19,22 +19,7 @@ class Pimcore_Controller_Plugin_HttpErrorLog extends Zend_Controller_Plugin_Abst
 
         $code = (string) $this->getResponse()->getHttpResponseCode();
         if($code && ($code[0] == "4" || $code[0] == "5")) {
-            $db = Pimcore_Resource::get();
-
-            try {
-                $db->insert("http_error_log", array(
-                    "path" => $this->getRequest()->getPathInfo(),
-                    "code" => (int) $code,
-                    "parametersGet" => serialize($_GET),
-                    "parametersPost" => serialize($_POST),
-                    "cookies" => serialize($_COOKIE),
-                    "serverVars" => serialize($_SERVER),
-                    "date" => time()
-                ));
-            } catch (Exception $e) {
-                Logger::error("Unable to log http error");
-                Logger::error($e);
-            }
+            $this->writeLog();
 
             // put the response into the cache, this is read in Pimcore_Controller_Action_Frontend::checkForErrors()
             $responseData = $this->getResponse()->getBody();
@@ -42,6 +27,27 @@ class Pimcore_Controller_Plugin_HttpErrorLog extends Zend_Controller_Plugin_Abst
                 $cacheKey = "error_page_response_" . Pimcore_Tool_Frontend::getSiteKey();
                 Pimcore_Model_Cache::save($responseData, $cacheKey, array("output"), 900, 9992);
             }
+        }
+    }
+
+    public function writeLog () {
+
+        $code = (string) $this->getResponse()->getHttpResponseCode();
+        $db = Pimcore_Resource::get();
+
+        try {
+            $db->insert("http_error_log", array(
+                "path" => $this->getRequest()->getPathInfo(),
+                "code" => (int) $code,
+                "parametersGet" => serialize($_GET),
+                "parametersPost" => serialize($_POST),
+                "cookies" => serialize($_COOKIE),
+                "serverVars" => serialize($_SERVER),
+                "date" => time()
+            ));
+        } catch (Exception $e) {
+            Logger::error("Unable to log http error");
+            Logger::error($e);
         }
     }
 }

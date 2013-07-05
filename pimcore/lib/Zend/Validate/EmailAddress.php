@@ -16,18 +16,18 @@
  * @package    Zend_Validate
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: EmailAddress.php 24828 2012-05-30 12:24:06Z adamlundrigan $
+ * @version    $Id: EmailAddress.php 25057 2012-11-02 20:35:40Z rob $
  */
 
 /**
  * @see Zend_Validate_Abstract
  */
-// require_once 'Zend/Validate/Abstract.php';
+require_once 'Zend/Validate/Abstract.php';
 
 /**
  * @see Zend_Validate_Hostname
  */
-// require_once 'Zend/Validate/Hostname.php';
+require_once 'Zend/Validate/Hostname.php';
 
 /**
  * @category   Zend
@@ -63,17 +63,26 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
     );
 
     /**
+     * As of RFC5753 (JAN 2010), the following blocks are no logner reserved:
+     *   - 128.0.0.0/16
+     *   - 191.255.0.0/16
+     *   - 223.255.255.0/24
+     * @see http://tools.ietf.org/html/rfc5735#page-6
+     *
+     * As of RFC6598 (APR 2012), the following blocks are now reserved:
+     *   - 100.64.0.0/10
+     * @see http://tools.ietf.org/html/rfc6598#section-7
+     *
      * @see http://en.wikipedia.org/wiki/IPv4
      * @var array
      */
     protected $_invalidIp = array(
         '0'   => '0.0.0.0/8',
         '10'  => '10.0.0.0/8',
+        '100' => '100.64.0.0/10',
         '127' => '127.0.0.0/8',
-        '128' => '128.0.0.0/16',
         '169' => '169.254.0.0/16',
         '172' => '172.16.0.0/12',
-        '191' => '191.255.0.0/16',
         '192' => array(
             '192.0.0.0/24',
             '192.0.2.0/24',
@@ -81,7 +90,6 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
             '192.168.0.0/16'
         ),
         '198' => '198.18.0.0/15',
-        '223' => '223.255.255.0/24',
         '224' => '224.0.0.0/4',
         '240' => '240.0.0.0/4'
     );
@@ -280,7 +288,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
     public function setValidateMx($mx)
     {
         if ((bool) $mx && !$this->validateMxSupported()) {
-            // require_once 'Zend/Validate/Exception.php';
+            require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception('MX checking not available on this system');
         }
 

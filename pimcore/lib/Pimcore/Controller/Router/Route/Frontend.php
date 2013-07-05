@@ -227,7 +227,11 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                                 && !Pimcore_Tool::isFrontentRequestByAdmin()
                             ) {
                                 if(rtrim(strtolower($document->getPrettyUrl())," /") != rtrim(strtolower($path),"/")) {
-                                    header("Location: " . $document->getPrettyUrl(), true, 301);
+                                    $redirectUrl = $document->getPrettyUrl();
+                                    if($_SERVER["QUERY_STRING"]) {
+                                        $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
+                                    }
+                                    header("Location: " . $redirectUrl, true, 301);
                                     exit;
                                 }
                             }

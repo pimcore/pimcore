@@ -29,6 +29,7 @@ class Admin_HardlinkController extends Pimcore_Controller_Action_Admin_Document 
         $link->idPath = Element_Service::getIdPath($link);
         $link->userPermissions = $link->getUserPermissions();
         $link->setLocked($link->isLocked());
+        $link->setParent(null);
 
         if($link->getSourceDocument()) {
             $link->sourcePath = $link->getSourceDocument()->getFullpath();

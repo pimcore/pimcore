@@ -199,7 +199,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             }
         }
         catch (Exception $e) {
-            Logger::warning($e);
+            Logger::warning($e->getMessage());
         }
 
         return null;
@@ -249,7 +249,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
                 }
             }
             catch (Exception $e) {
-                Logger::warning($e);
+                Logger::warning($e->getMessage());
                 return null;
             }
         }
@@ -965,6 +965,13 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         return $this;
     }
 
+
+    public function setDataChanged ($changed = true) {
+        $this->_dataChanged = $changed;
+        return $this;
+    }
+
+
     /**
      * @return Property[]
      */
@@ -975,7 +982,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             ;
             if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
                 $properties = $this->getResource()->getProperties();
-                Pimcore_Model_Cache::save($properties, $cacheKey, array("asset_properties", "properties"));
+                Pimcore_Model_Cache::save($properties, $cacheKey, array("properties"));
             }
 
             $this->setProperties($properties);

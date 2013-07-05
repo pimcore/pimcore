@@ -79,7 +79,6 @@ pimcore.element.dependencies = Class.create({
         
         Ext.Ajax.request({
             url: '/admin/' + this.type + '/get-requires-dependencies/',
-            method: "get",
             params: {
                 id: this.element.id
             },
@@ -88,7 +87,6 @@ pimcore.element.dependencies = Class.create({
         
         Ext.Ajax.request({
             url: '/admin/' + this.type + '/get-required-by-dependencies/',
-            method: "get",
             params: {
                 id: this.element.id
             },

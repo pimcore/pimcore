@@ -27,6 +27,20 @@ class Pimcore_Document_Adapter_Imagick extends Pimcore_Document_Adapter {
     protected $path;
 
     /**
+     * @return bool
+     */
+    public function isAvailable() {
+        try {
+            if(extension_loaded("imagick")) {
+                return true;
+            }
+        } catch (Exception $e) {
+            Logger:debug("PHP extension imagick isn't loaded");
+        }
+        return false;
+    }
+
+    /**
      * @param $path
      * @return $this
      * @throws Exception

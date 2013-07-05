@@ -131,6 +131,35 @@ class Document_Service extends Element_Service {
         return $content;
     }
 
+    /**
+     * Save document and all child documents
+     *
+     * @param     $document
+     * @param int $collectGarbageAfterIteration
+     * @param int $saved
+     */
+    public static function saveRecursive($document,$collectGarbageAfterIteration = 25, &$saved = 0){
+        if($document instanceof Document){
+            $document->save();
+            $saved++;
+            if($saved%$collectGarbageAfterIteration === 0){
+                Pimcore::collectGarbage();
+            }
+        }
+
+        foreach($document->getChilds() as $child){
+            if(!$child->hasChilds()){
+                $child->save();
+                $saved++;
+                if($saved%$collectGarbageAfterIteration === 0){
+                    Pimcore::collectGarbage();
+                }
+            }
+            if($child->hasChilds()){
+              self::saveRecursive($child,$collectGarbageAfterIteration,$saved);
+            }
+        }
+    }
 
     /**
      * @param  Document $target

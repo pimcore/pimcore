@@ -17,13 +17,20 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
     public function init() {
         parent::init();
-        $this->checkPermission("targeting");
+
+        // check permissions
+        $notRestrictedActions = array("persona-list");
+        if (!in_array($this->getParam("action"), $notRestrictedActions)) {
+            $this->checkPermission("targeting");
+        }
     }
 
-    public function listAction() {
+    /* RULES */
+
+    public function ruleListAction() {
 
         $targets = array();
-        $list = new Tool_Targeting_List();
+        $list = new Tool_Targeting_Rule_List();
 
         foreach($list->load() as $target) {
             $targets[] = array(
@@ -35,20 +42,20 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json($targets);
     }
 
-    public function addAction() {
+    public function ruleAddAction() {
 
-        $target = new Tool_Targeting();
+        $target = new Tool_Targeting_Rule();
         $target->setName($this->getParam("name"));
         $target->save();
 
         $this->_helper->json(array("success" => true, "id" => $target->getId()));
     }
 
-    public function deleteAction() {
+    public function ruleDeleteAction() {
 
         $success = false;
 
-        $target = Tool_Targeting::getById($this->getParam("id"));
+        $target = Tool_Targeting_Rule::getById($this->getParam("id"));
         if($target) {
             $target->delete();
             $success = true;
@@ -57,9 +64,9 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => $success));
     }
 
-    public function getAction() {
+    public function ruleGetAction() {
 
-        $target = Tool_Targeting::getById($this->getParam("id"));
+        $target = Tool_Targeting_Rule::getById($this->getParam("id"));
         $redirectUrl = $target->getActions()->getRedirectUrl();
         if(is_numeric($redirectUrl)) {
             $doc = Document::getById($redirectUrl);
@@ -71,16 +78,16 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json($target);
     }
 
-    public function saveAction() {
+    public function ruleSaveAction() {
 
         $data = Zend_Json::decode($this->getParam("data"));
 
-        $target = Tool_Targeting::getById($this->getParam("id"));
+        $target = Tool_Targeting_Rule::getById($this->getParam("id"));
         $target->setValues($data["settings"]);
 
         $target->setConditions($data["conditions"]);
 
-        $actions = new Tool_Targeting_Actions();
+        $actions = new Tool_Targeting_Rule_Actions();
         $actions->setRedirectEnabled($data["actions"]["redirect.enabled"]);
         $actions->setRedirectUrl($data["actions"]["redirect.url"]);
         $actions->setRedirectCode($data["actions"]["redirect.code"]);
@@ -92,9 +99,81 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
         $actions->setCodesnippetCode($data["actions"]["codesnippet.code"]);
         $actions->setCodesnippetSelector($data["actions"]["codesnippet.selector"]);
         $actions->setCodesnippetPosition($data["actions"]["codesnippet.position"]);
+        $actions->setPersonaId($data["actions"]["persona.id"]);
+        $actions->setPersonaEnabled($data["actions"]["persona.enabled"]);
         $target->setActions($actions);
 
         $target->save();
+
+        $this->_helper->json(array("success" => true));
+    }
+
+
+
+
+
+    /* PERSONAS */
+
+    public function personaListAction() {
+
+        $personas = array();
+
+        if($this->getParam("add-default")) {
+            $personas[] = array(
+                "id" => "",
+                "text" => Zend_Registry::get("Zend_Translate")->translate("default")
+            );
+        }
+
+        $list = new Tool_Targeting_Persona_List();
+
+        foreach($list->load() as $persona) {
+            $personas[] = array(
+                "id" => $persona->getId(),
+                "text" => $persona->getName()
+            );
+        }
+
+        $this->_helper->json($personas);
+    }
+
+    public function personaAddAction() {
+
+        $persona = new Tool_Targeting_Persona();
+        $persona->setName($this->getParam("name"));
+        $persona->save();
+
+        $this->_helper->json(array("success" => true, "id" => $persona->getId()));
+    }
+
+    public function personaDeleteAction() {
+
+        $success = false;
+
+        $persona = Tool_Targeting_Persona::getById($this->getParam("id"));
+        if($persona) {
+            $persona->delete();
+            $success = true;
+        }
+
+        $this->_helper->json(array("success" => $success));
+    }
+
+    public function personaGetAction() {
+
+        $persona = Tool_Targeting_Persona::getById($this->getParam("id"));
+        $this->_helper->json($persona);
+    }
+
+    public function personaSaveAction() {
+
+        $data = Zend_Json::decode($this->getParam("data"));
+
+        $persona = Tool_Targeting_Persona::getById($this->getParam("id"));
+        $persona->setValues($data["settings"]);
+
+        $persona->setConditions($data["conditions"]);
+        $persona->save();
 
         $this->_helper->json(array("success" => true));
     }

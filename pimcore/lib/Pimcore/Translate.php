@@ -134,6 +134,13 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
         // do not create a new translation if it is only empty, but do not return empty values
         if(!array_key_exists($messageId, $this->_translate[$locale])) {
             $this->createEmptyTranslation($locale, $messageId);
+        } else {
+            // look for a fallback translation
+            foreach(Pimcore_Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
+                if (!empty($this->_translate[$fallbackLanguage][$messageId])) {
+                    return $this->_translate[$fallbackLanguage][$messageId];
+                }
+            }
         }
 
         // no translation found, return original

@@ -29,12 +29,13 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
         $modificationDate = $snippet->getModificationDate();
         
         $snippet = $this->getLatestVersion($snippet);
-        
-        $snippet->getVersions();
+
+        $snippet->setVersions(array_splice($snippet->getVersions(), 0, 1));
         $snippet->getScheduledTasks();
         $snippet->idPath = Element_Service::getIdPath($snippet);
         $snippet->userPermissions = $snippet->getUserPermissions();
         $snippet->setLocked($snippet->isLocked());
+        $snippet->setParent(null);
 
         if($snippet->getContentMasterDocument()) {
             $snippet->contentMasterDocumentPath = $snippet->getContentMasterDocument()->getRealFullPath();

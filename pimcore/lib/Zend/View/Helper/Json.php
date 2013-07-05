@@ -16,18 +16,18 @@
  * @package    Zend_View
  * @subpackage Helper
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Json.php 24829 2012-05-30 12:31:39Z adamlundrigan $
+ * @version    $Id: Json.php 25091 2012-11-07 19:58:48Z rob $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Json */
-// require_once 'Zend/Json.php';
+require_once 'Zend/Json.php';
 
 /** Zend_Controller_Front */
-// require_once 'Zend/Controller/Front.php';
+require_once 'Zend/Controller/Front.php';
 
 /** Zend_View_Helper_Abstract.php */
-// require_once 'Zend/View/Helper/Abstract.php';
+require_once 'Zend/View/Helper/Abstract.php';
 
 /**
  * Helper for simplifying JSON responses
@@ -57,24 +57,26 @@ class Zend_View_Helper_Json extends Zend_View_Helper_Abstract
     public function json($data, $keepLayouts = false, $encodeData = true)
     {
         $options = array();
-        if (is_array($keepLayouts))
-        {
-            $options     = $keepLayouts;
-            $keepLayouts = (array_key_exists('keepLayouts', $keepLayouts))
-                            ? $keepLayouts['keepLayouts']
-                            : false;
-            unset($options['keepLayouts']);
-            $encodeData  = (array_key_exists('encodeData', $keepLayouts))
-                            ? $keepLayouts['encodeData']
-                            : $encodeData;
-            unset($options['encodeData']);
+        if (is_array($keepLayouts)) {
+            $options = $keepLayouts;
+
+            $keepLayouts = false;
+            if (array_key_exists('keepLayouts', $options)) {
+                $keepLayouts = $options['keepLayouts'];
+                unset($options['keepLayouts']);
+            }
+
+            if (array_key_exists('encodeData', $options)) {
+                $encodeData = $options['encodeData'];
+                unset($options['encodeData']);
+            }
         }
 
         if ($encodeData) {
             $data = Zend_Json::encode($data, null, $options);
         }
         if (!$keepLayouts) {
-            // require_once 'Zend/Layout.php';
+            require_once 'Zend/Layout.php';
             $layout = Zend_Layout::getMvcInstance();
             if ($layout instanceof Zend_Layout) {
                 $layout->disableLayout();

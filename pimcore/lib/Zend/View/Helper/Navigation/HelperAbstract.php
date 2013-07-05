@@ -17,18 +17,18 @@
  * @subpackage Helper
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: HelperAbstract.php 24962 2012-06-15 14:28:42Z adamlundrigan $
+ * @version    $Id: HelperAbstract.php 25239 2013-01-22 09:45:01Z frosch $
  */
 
 /**
  * @see Zend_View_Helper_Navigation_Helper
  */
-// require_once 'Zend/View/Helper/Navigation/Helper.php';
+require_once 'Zend/View/Helper/Navigation/Helper.php';
 
 /**
  * @see Zend_View_Helper_HtmlElement
  */
-// require_once 'Zend/View/Helper/HtmlElement.php';
+require_once 'Zend/View/Helper/HtmlElement.php';
 
 /**
  * Base class for navigational helpers
@@ -70,6 +70,13 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
      * @var string
      */
     protected $_indent = '';
+
+    /**
+     * Whether HTML/XML output should be formatted
+     *
+     * @var bool
+     */
+    protected $_formatOutput = true;
 
     /**
      * Prefix for IDs when they are normalized
@@ -183,7 +190,7 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
     {
         if (null === $this->_container) {
             // try to fetch from registry first
-            // require_once 'Zend/Registry.php';
+            require_once 'Zend/Registry.php';
             if (Zend_Registry::isRegistered('Zend_Navigation')) {
                 $nav = Zend_Registry::get('Zend_Navigation');
                 if ($nav instanceof Zend_Navigation_Container) {
@@ -192,7 +199,7 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
             }
 
             // nothing found in registry, create new container
-            // require_once 'Zend/Navigation.php';
+            require_once 'Zend/Navigation.php';
             $this->_container = new Zend_Navigation();
         }
 
@@ -278,13 +285,61 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
     }
 
     /**
-     * Returns indentation
+     * Returns indentation (format output is respected)
      *
-     * @return string
+     * @return string   indentation string or an empty string
      */
     public function getIndent()
     {
+        if (false === $this->getFormatOutput()) {
+            return '';
+        }
+
         return $this->_indent;
+    }
+
+    /**
+     * Returns the EOL character (format output is respected)
+     *
+     * @see self::EOL
+     * @see getFormatOutput()
+     *
+     * @return string       standard EOL charater or an empty string
+     */
+    public function getEOL()
+    {
+        if (false === $this->getFormatOutput()) {
+            return '';
+        }
+
+        return self::EOL;
+    }
+
+    /**
+     * Sets whether HTML/XML output should be formatted
+     *
+     * @param  bool $formatOutput                   [optional] whether output
+     *                                              should be formatted. Default
+     *                                              is true.
+     *
+     * @return Zend_View_Helper_Navigation_Sitemap  fluent interface, returns
+     *                                              self
+     */
+    public function setFormatOutput($formatOutput = true)
+    {
+        $this->_formatOutput = (bool)$formatOutput;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether HTML/XML output should be formatted
+     *
+     * @return bool  whether HTML/XML output should be formatted
+     */
+    public function getFormatOutput()
+    {
+        return $this->_formatOutput;
     }
 
     /**
@@ -369,7 +424,7 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
     public function getTranslator()
     {
         if (null === $this->_translator) {
-            // require_once 'Zend/Registry.php';
+            require_once 'Zend/Registry.php';
             if (Zend_Registry::isRegistered('Zend_Translate')) {
                 $this->setTranslator(Zend_Registry::get('Zend_Translate'));
             }
@@ -433,7 +488,7 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
             $role instanceof Zend_Acl_Role_Interface) {
             $this->_role = $role;
         } else {
-            // require_once 'Zend/View/Exception.php';
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception(sprintf(
                 '$role must be a string, null, or an instance of '
                 .  'Zend_Acl_Role_Interface; %s given',
@@ -912,7 +967,7 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
             $role instanceof Zend_Acl_Role_Interface) {
             self::$_defaultRole = $role;
         } else {
-            // require_once 'Zend/View/Exception.php';
+            require_once 'Zend/View/Exception.php';
             throw new Zend_View_Exception(
                 '$role must be null|string|Zend_Acl_Role_Interface'
             );

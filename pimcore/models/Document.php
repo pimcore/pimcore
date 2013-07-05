@@ -194,7 +194,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             return self::getById($document->getId());
         }
         catch (Exception $e) {
-            Logger::warning($e);
+            Logger::warning($e->getMessage());
         }
 
         return null;
@@ -244,7 +244,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                 }
             }
             catch (Exception $e) {
-                Logger::warning($e);
+                Logger::warning($e->getMessage());
                 return null;
             }
         }
@@ -998,7 +998,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
             if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
                 $properties = $this->getResource()->getProperties();
-                Pimcore_Model_Cache::save($properties, $cacheKey, array("document_properties", "properties"));
+                Pimcore_Model_Cache::save($properties, $cacheKey, array("properties"));
             }
             $this->setProperties($properties);
         }

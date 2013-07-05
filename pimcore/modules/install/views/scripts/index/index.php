@@ -75,7 +75,7 @@ $scripts = array(
                     id: "logo",
                     border: false,
                     bodyStyle: "padding: 10px",
-                    html: '<div align="center"><img src="/pimcore/static/img/logo.png" align="center" /></div>'
+                    html: '<div align="center"><img width="200" src="/pimcore/static/img/logo-gray.png" align="center" /></div>'
                 },
                 {
                     xtype: "panel",

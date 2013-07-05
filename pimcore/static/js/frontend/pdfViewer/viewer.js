@@ -112,9 +112,13 @@ pimcore.pdf.prototype.init = function () {
     this.pdfButtonRight.addEventListener("mouseout", this.buttonHoverOut, true);
     this.pdfButtonLeft.addEventListener("mouseout", this.buttonHoverOut, true);
 
-    this.pdfZoom.addEventListener("mouseover", this.buttonHover, true);
-    this.pdfZoom.addEventListener("mouseout", this.buttonHoverOut, true);
-    this.pdfZoom.addEventListener("click", this.zoom.bind(this), true);
+    if(this.data["fullscreen"]) {
+        this.pdfZoom.addEventListener("mouseover", this.buttonHover, true);
+        this.pdfZoom.addEventListener("mouseout", this.buttonHoverOut, true);
+        this.pdfZoom.addEventListener("click", this.zoom.bind(this), true);
+    } else {
+        this.pdfZoom.style.display = "none";
+    }
 
     this.toPage(1);
     this.calculateDimensions();
@@ -153,19 +157,30 @@ pimcore.pdf.prototype.calculateDimensions = function () {
         this.containerEl.classList.remove("pimcore-pdfFullscreen");
     }
 
+
+
+    var im;
+    var maxHeight = window.innerHeight;
+    for(var i=0; i<this.data.pages.length; i++) {
+        im = this.data.pages[i]["node"].getElementsByTagName("img")[0];
+        if(im) {
+            im.style.maxHeight = maxHeight + "px";
+        }
+    }
+
     // this is because of firefox, maybe there's a better solution for that
     // the problem is that the pdfPageContainer DIV is always 100% wide, although he is floating, ... Chrome & IE works
-    if(navigator.userAgent.match(/(Firefox)/)) {
+    /*if(navigator.userAgent.match(/(Firefox)/)) {
         var imgEl;
         for(var i=0; i<this.data.pages.length; i++) {
-            if(this.data.pages[i]["node"].style.display == "block") {
+            if(!this.data.pages[i]["node"].classList.contains("hidden")) {
                 imgEl = this.data.pages[i]["node"].getElementsByTagName("img")[0];
                 if(imgEl && imgEl.offsetWidth > 50) {
                     imgEl.parentNode.style.width = imgEl.offsetWidth + "px";
                 }
             }
         }
-    }
+    }*/
 };
 
 pimcore.pdf.prototype.buttonHover = function () {
@@ -274,13 +289,11 @@ pimcore.pdf.prototype.download = function () {
 
 pimcore.pdf.prototype.toPage = function (page) {
 
-    if(this.pdfPages.offsetHeight > 20) {
-        this.pdfPages.style.minHeight = this.pdfPages.offsetHeight + "px";
-    }
-
     // hide all pages
     for(var i=0; i<this.data.pages.length; i++) {
-        this.data.pages[i]["node"].style.display = "none";
+        if(this.data.pages[i]["node"].className.indexOf("hidden") < 0) {
+            this.data.pages[i]["node"].className += " hidden";
+        }
     }
 
     // get first page to show
@@ -290,7 +303,7 @@ pimcore.pdf.prototype.toPage = function (page) {
 
     for(i=page; i<=(page+1); i++) {
         if(this.data.pages[i]) {
-            this.data.pages[i]["node"].style.display = "block";
+            this.data.pages[i]["node"].className  = this.data.pages[i]["node"].className.replace("hidden", "");
         }
     }
 

@@ -488,7 +488,7 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
 
     protected function typeMapper($type) {
         $mapper = array(
-            "text" => "varchar(50)",
+            "text" => "varchar(255)",
             "number" => "double",
             "bool" => "tinyint(1)"
         );

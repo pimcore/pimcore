@@ -28,11 +28,12 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         $page = Document_Page::getById($this->getParam("id"));
         $page = $this->getLatestVersion($page);
         
-        $page->getVersions();
+        $page->setVersions(array_splice($page->getVersions(), 0, 1));
         $page->getScheduledTasks();
         $page->idPath = Element_Service::getIdPath($page);
         $page->userPermissions = $page->getUserPermissions();
         $page->setLocked($page->isLocked());
+        $page->setParent(null);
 
         if($page->getContentMasterDocument()) {
             $page->contentMasterDocumentPath = $page->getContentMasterDocument()->getRealFullPath();
@@ -203,6 +204,16 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
             $doc = Document::getById($this->getParam("id"));
             $url = Pimcore_Tool::getHostUrl() . $doc->getRealFullPath();
+
+            $config = Pimcore_Config::getSystemConfig();
+            if ($config->general->http_auth) {
+                $username = $config->general->http_auth->username;
+                $password = $config->general->http_auth->password;
+                if($username && $password) {
+                    $url = str_replace("://", "://" . $username .":". $password . "@", $url);
+                }
+            }
+
             $tmpFile = PIMCORE_TEMPORARY_DIRECTORY . "/screenshot_tmp_" . $doc->getId() . ".png";
             $file = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-screenshot-" . $doc->getId() . ".jpg";
 
@@ -257,6 +268,32 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
         $this->_helper->json(array(
             "success" => $success
+        ));
+    }
+
+    public function clearEditableDataAction() {
+        $personaId = $this->getParam("persona");
+        $docId = $this->getParam("id");
+
+        $doc = Document::getById($docId);
+
+        foreach($doc->getElements() as $element) {
+            if($personaId && $doc instanceof Document_Page) {
+                if(preg_match("/^" . preg_quote($doc->getPersonaElementPrefix($personaId), "/") . "/", $element->getName())) {
+                    $doc->removeElement($element->getName());
+                }
+            } else {
+                // remove all but persona data
+                if(!preg_match("/^persona_\-/", $element->getName())) {
+                    $doc->removeElement($element->getName());
+                }
+            }
+        }
+
+        $doc->save();
+
+        $this->_helper->json(array(
+            "success" => true
         ));
     }
 

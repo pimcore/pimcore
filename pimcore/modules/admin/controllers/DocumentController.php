@@ -1063,11 +1063,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         $nodeConfig = $this->getTreeNodeConfig($childDocument);
 
                         if(method_exists($childDocument, "getTitle") && method_exists($childDocument, "getDescription")) {
-                            $nodeConfig["title"] = $childDocument->getTitle();
-                            $nodeConfig["description"] = $childDocument->getDescription();
-
-                            $nodeConfig["title_length"] = mb_strlen($childDocument->getTitle());
-                            $nodeConfig["description_length"] = mb_strlen($childDocument->getDescription());
 
                             // anaylze content
                             $nodeConfig["links"] = 0;
@@ -1077,6 +1072,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                             $nodeConfig["hx"] = 0;
                             $nodeConfig["imgwithalt"] = 0;
                             $nodeConfig["imgwithoutalt"] = 0;
+
+                            $title = null;
+                            $description = null;
 
                             try {
 
@@ -1104,6 +1102,16 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                                             $nodeConfig["h1_text"] = strip_tags($h1->innertext);
                                         }
 
+                                        $title = $html->find("title",0);
+                                        if($title) {
+                                            $title = html_entity_decode(trim(strip_tags($title->innertext)), null, "UTF-8");
+                                        }
+
+                                        $description = $html->find("meta[name=description]",0);
+                                        if($description) {
+                                            $description = html_entity_decode(trim(strip_tags($description->content)), null, "UTF-8");
+                                        }
+
                                         $nodeConfig["hx"] = count($html->find("h2,h2,h4,h5"));
 
                                         $images = $html->find("img");
@@ -1126,10 +1134,23 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                                 Logger::debug($e);
                             }
 
-                            if(mb_strlen($childDocument->getTitle()) > 80
-                              || mb_strlen($childDocument->getTitle()) < 5
-                              || mb_strlen($childDocument->getDescription()) > 180
-                              || mb_strlen($childDocument->getDescription()) < 20
+                            if(!$title) {
+                                $title = $childDocument->getTitle();
+                            }
+                            if(!$description) {
+                                $description = $childDocument->getDescription();
+                            }
+
+                            $nodeConfig["title"] = $title;
+                            $nodeConfig["description"] = $description;
+
+                            $nodeConfig["title_length"] = mb_strlen($title);
+                            $nodeConfig["description_length"] = mb_strlen($description);
+
+                            if(mb_strlen($title) > 80
+                              || mb_strlen($title) < 5
+                              || mb_strlen($description) > 180
+                              || mb_strlen($description) < 20
                               || $nodeConfig["h1"] != 1
                               || $nodeConfig["hx"] < 1) {
                                 $nodeConfig["cls"] = "pimcore_document_seo_warning";

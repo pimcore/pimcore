@@ -429,11 +429,10 @@ class Document_Tag_Video extends Document_Tag
             }
 
             //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
-            if(!$youtubeId && strpos($this->id,'embed') !== false){
+            if(strpos($this->id,'embed') !== false){
                 $explodedPath = explode('/',$parts['path']);
                 $youtubeId = $explodedPath[array_search('embed',$explodedPath)+1];
             }
-
 
             if(!$youtubeId && $parts["host"] == "youtu.be") {
                 $youtubeId = trim($parts["path"]," /");

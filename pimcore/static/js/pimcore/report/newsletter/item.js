@@ -140,7 +140,6 @@ pimcore.report.newsletter.item = Class.create({
                 handler: function () {
                     Ext.Ajax.request({
                         url: "/admin/reports/newsletter/stop-send",
-                        method: "get",
                         params: {
                             name: this.data.name
                         },
@@ -231,7 +230,6 @@ pimcore.report.newsletter.item = Class.create({
 
                             Ext.Ajax.request({
                                 url: "/admin/reports/newsletter/checksql",
-                                method: "get",
                                 params: this.form.getForm().getFieldValues(),
                                 success: function (response) {
                                     var res = Ext.decode(response.responseText);
@@ -262,6 +260,16 @@ pimcore.report.newsletter.item = Class.create({
                         }.bind(this)
                     }
                 },{
+                    fieldLabel: t('associate_target_group') + " (" + t("personas") + ")",
+                    xtype: "multiselect",
+                    hidden: pimcore.globalmanager.get("personas").getCount() < 1,
+                    store: pimcore.globalmanager.get("personas"),
+                    displayField: "text",
+                    valueField: "id",
+                    name: 'personas',
+                    width: 200,
+                    value: this.data["personas"]
+                }, {
                     xtype: "textfield",
                     name: "testEmailAddress",
                     value: this.data.testEmailAddress,
@@ -321,7 +329,6 @@ pimcore.report.newsletter.item = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/reports/newsletter/get-send-status",
-            method: "get",
             params: {
                 name: this.data.name
             },

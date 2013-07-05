@@ -20,7 +20,7 @@
  */
 
 /** Zend_Form_Decorator_Abstract */
-// require_once 'Zend/Form/Decorator/Abstract.php';
+require_once 'Zend/Form/Decorator/Abstract.php';
 
 /**
  * Zend_Form_Decorator_Label
@@ -42,7 +42,7 @@
  * @subpackage Decorator
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Label.php 24846 2012-05-31 19:12:45Z rob $
+ * @version    $Id: Label.php 25243 2013-01-22 12:07:26Z frosch $
  */
 class Zend_Form_Decorator_Label extends Zend_Form_Decorator_Abstract
 {
@@ -260,14 +260,14 @@ class Zend_Form_Decorator_Label extends Zend_Form_Decorator_Abstract
                     $key = 'optional' . $position;
                     break;
                 default:
-                    // require_once 'Zend/Form/Exception.php';
+                    require_once 'Zend/Form/Exception.php';
                     throw new Zend_Form_Exception(sprintf('Invalid method "%s" called in Label decorator, and detected as type %s', $method, $type));
             }
 
             switch ($head) {
                 case 'set':
                     if (0 === count($args)) {
-                        // require_once 'Zend/Form/Exception.php';
+                        require_once 'Zend/Form/Exception.php';
                         throw new Zend_Form_Exception(sprintf('Method "%s" requires at least one argument; none provided', $method));
                     }
                     $value = array_shift($args);
@@ -286,7 +286,7 @@ class Zend_Form_Decorator_Label extends Zend_Form_Decorator_Abstract
             }
         }
 
-        // require_once 'Zend/Form/Exception.php';
+        require_once 'Zend/Form/Exception.php';
         throw new Zend_Form_Exception(sprintf('Invalid method "%s" called in Label decorator', $method));
     }
 
@@ -306,10 +306,6 @@ class Zend_Form_Decorator_Label extends Zend_Form_Decorator_Abstract
 
         if (empty($label)) {
             return '';
-        }
-
-        if (null !== ($translator = $element->getTranslator())) {
-            $label = $translator->translate($label);
         }
 
         $optPrefix = $this->getOptPrefix();
@@ -436,7 +432,7 @@ class Zend_Form_Decorator_Label extends Zend_Form_Decorator_Abstract
         }
 
         if (null !== $tag) {
-            // require_once 'Zend/Form/Decorator/HtmlTag.php';
+            require_once 'Zend/Form/Decorator/HtmlTag.php';
             $decorator = new Zend_Form_Decorator_HtmlTag();
             if (null !== $this->_tagClass) {
                 $decorator->setOptions(array('tag'   => $tag,

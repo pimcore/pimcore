@@ -79,6 +79,35 @@ class Pimcore_Tool {
     }
 
     /**
+     * @param $language
+     * @return array
+     */
+    public static function getFallbackLanguagesFor($language) {
+
+        $languages = array();
+
+        $conf = Pimcore_Config::getSystemConfig();
+        if($conf->general->fallbackLanguages && $conf->general->fallbackLanguages->$language) {
+            $languages = explode(",", $conf->general->fallbackLanguages->$language);
+            foreach ($languages as $l) {
+                if(self::isValidLanguage($l)) {
+                    $languages[] = trim($l);
+                }
+            }
+        }
+
+        return $languages;
+    }
+
+    public static function getDefaultLanguage() {
+        $languages = self::getValidLanguages();
+        if(!empty($languages)) {
+            return $languages[0];
+        }
+        return null;
+    }
+
+    /**
      * @static
      */
     public static function getSupportedLocales() {
@@ -336,12 +365,12 @@ class Pimcore_Tool {
      * @param string $type
      * @return Zend_Http_Client
      */
-    public static function getHttpClient ($type = "Zend_Http_Client") {
+    public static function getHttpClient ($type = "Zend_Http_Client",$options = array()) {
 
         $config = Pimcore_Config::getSystemConfig();
         $clientConfig = $config->httpclient->toArray();
-        $clientConfig["maxredirects"] = 2;
-        $clientConfig["timeout"] = 3600;
+        $clientConfig["maxredirects"] = $options["maxredirects"] ? $options["maxredirects"] : 2;
+        $clientConfig["timeout"] = $options["timeout"] ? $options["timeout"] : 3600;
         $type = empty($type) ? "Zend_Http_Client" : $type;
 
         if(Pimcore_Tool::classExists($type)) {

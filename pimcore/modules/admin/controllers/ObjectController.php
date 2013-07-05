@@ -102,7 +102,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         if ($this->getParam("limit")) {
             $this->_helper->json(array(
-                "total" => $object->getChildAmount(),
+                "total" => $object->getChildAmount(array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_VARIANT)),
                 "nodes" => $objects
             ));
         }
@@ -330,7 +330,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $objectData["properties"] = Element_Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData["userPermissions"] = $object->getUserPermissions();
-            $objectData["versions"] = $object->getVersions();
+            $objectData["versions"] = array_splice($object->getVersions(), 0, 1);
             $objectData["scheduledTasks"] = $object->getScheduledTasks();
             $objectData["general"]["allowVariants"] = $object->getClass()->getAllowVariants();
             $objectData["general"]["showVariants"] = $object->getClass()->getShowVariants();
@@ -422,11 +422,17 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
 
         } else {
-            $value = $fielddefinition->getDataForEditmode($object->$getter(), $object, $objectFromVersion);
+            $fieldData = $object->$getter();
+            $isInheritedValue = false;
+            $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+            if ($value && ($fieldData instanceof Object_Localizedfield)) {
+                // make sure that the localized field participates in the inheritance detection process
+                $isInheritedValue = $value["inherited"];
+            }
             if(empty($value) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
-                $isInheritedValue = $level != 0;
+                $isInheritedValue = $isInheritedValue || ($level != 0);
                 $this->metaData[$key]['objectid'] = $object->getId();
 
                 $this->objectData[$key] = $value;
@@ -466,8 +472,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     }
 
     private function isInheritableField(Object_Class_Data $fielddefinition) {
-        if($fielddefinition instanceof Object_Class_Data_Fieldcollections ||
-            $fielddefinition instanceof Object_Class_Data_Localizedfields) {
+        if($fielddefinition instanceof Object_Class_Data_Fieldcollections
+//            || $fielddefinition instanceof Object_Class_Data_Localizedfields
+        ) {
             return false;
         }
         return true;
@@ -540,7 +547,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         if ($parent->isAllowed("create")) {
             $intendedPath = $parent->getFullPath() . "/" . $this->getParam("key");
 
-            if (!Object_Service::pathExists($intendedPath)) {
+            if (!Object_Service::pathExists($intendedPath) || true) {
 
                 $object = new $className();
                 if($object instanceof Object_Concrete) {

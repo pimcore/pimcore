@@ -15,10 +15,29 @@
 
 abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Action {
 
+    /**
+     * @var Document
+     */
     public $document;
+
+    /**
+     * @var bool
+     */
     public $editmode;
+
+    /**
+     * @var Zend_Config
+     */
     public $config;
 
+    /**
+     * @var bool
+     */
+    public static $isInitial = true;
+
+    /**
+     * @throws Zend_Controller_Router_Exception
+     */
     public function init() {
 
         parent::init();
@@ -48,6 +67,8 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
             Zend_Registry::set("pimcore_editmode", false);
             $this->editmode = false;
             $this->view->editmode = false;
+
+            self::$isInitial = false;
 
             // no document available, continue, ...
             return;
@@ -95,7 +116,6 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 		    Zend_Registry::set('Zend_Locale', $locale);
             $this->getResponse()->setHeader("Content-Language",strtolower(str_replace("_","-", (string) $locale)), true);
         }
-
 
         // for editmode
         if ($user) {
@@ -183,6 +203,14 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
             }
         }
 
+        // check for persona
+        if($this->getDocument() instanceof Document_Page) {
+            $this->getDocument()->setUsePersona(null); // reset because of preview and editmode (saved in session)
+            if($this->getParam("_ptp") && self::$isInitial) {
+                $this->getDocument()->setUsePersona($this->getParam("_ptp"));
+            }
+        }
+
         // check if document is a wrapped hardlink, if this is the case send a rel=canonical header to the source document
         if($this->getDocument() instanceof Document_Hardlink_Wrapper_Interface) {
             // get the cononical (source) document
@@ -197,6 +225,8 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         // set some parameters
         $this->editmode = Zend_Registry::get("pimcore_editmode");
         $this->view->editmode = Zend_Registry::get("pimcore_editmode");
+
+        self::$isInitial = false;
     }
     
     public function getConfig () {
@@ -347,8 +377,8 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                     $this->getResponse()->setHttpResponseCode(503);
                 }
 
-                Logger::emergency("Unable to load URL: " . $_SERVER["REQUEST_URI"]);
-                Logger::emergency($error->exception);
+                Logger::error("Unable to load URL: " . $_SERVER["REQUEST_URI"]);
+                Logger::error($error->exception);
 
                 try {
                     // check if we have the error page already in the cache
@@ -357,12 +387,21 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                     if($responseBody = Pimcore_Model_Cache::load($cacheKey)) {
                         $this->getResponse()->setBody($responseBody);
                         $this->getResponse()->sendResponse();
+
+                        // write to http_error log
+                        $errorLogPlugin = Zend_Controller_Front::getInstance()->getPlugin("Pimcore_Controller_Plugin_HttpErrorLog");
+                        if($errorLogPlugin) {
+                            $errorLogPlugin->writeLog();
+                        }
+
                         exit;
                     } else {
                         $document = Zend_Registry::get("pimcore_error_document");
                         $this->setDocument($document);
                         $this->setParam("document", $document);
                         $this->disableLayout();
+
+                        // http_error log writing is done in Pimcore_Controller_Plugin_HttpErrorLog in this case
                     }
                 }
                 catch (Exception $e) {

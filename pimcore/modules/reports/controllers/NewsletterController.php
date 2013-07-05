@@ -83,17 +83,14 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
 
             $fieldCount = 0;
             foreach ($class->getFieldDefinitions() as $fd) {
-                if($fd instanceof Object_Class_Data_Firstname ||
-                $fd instanceof Object_Class_Data_Lastname ||
-                $fd instanceof Object_Class_Data_Gender ||
-                $fd instanceof Object_Class_Data_NewsletterActive ||
+                if($fd instanceof Object_Class_Data_NewsletterActive ||
                 $fd instanceof Object_Class_Data_NewsletterConfirmed ||
                 $fd instanceof Object_Class_Data_Email) {
                     $fieldCount++;
                 }
             }
 
-            if($fieldCount >= 5) {
+            if($fieldCount >= 3) {
                 $availableClasses[] = array($class->getName(), $class->getName());
             }
         }

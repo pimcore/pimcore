@@ -19,8 +19,8 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
     allowIndex: false,
     allowIn: {
         object: true,
-        objectbrick: true,
-        fieldcollection: true,
+        objectbrick: false,
+        fieldcollection: false,
         localizedfield: false
     },
 

@@ -226,10 +226,11 @@ function rscandir($base = '', &$data = array()) {
  * @param string $delimiter
  * @param string $string
  * @param string $limit
+ * @param boolean $useArrayFilter
  *
  * @return array
  */
-function explode_and_trim($delimiter,$string = '',$limit = ''){
+function explode_and_trim($delimiter,$string = '',$limit = '',$useArrayFilter = true){
     if($limit === ''){
         $exploded = explode($delimiter,$string);
     }else{
@@ -237,6 +238,9 @@ function explode_and_trim($delimiter,$string = '',$limit = ''){
     }
     foreach($exploded as $key => $value){
         $exploded[$key] = trim($value);
+    }
+    if($useArrayFilter){
+        $exploded = array_filter($exploded);
     }
     return $exploded;
 }

@@ -32,22 +32,40 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     protected $arguments = array();
 
     /**
+     * @return bool
+     */
+    public function isAvailable() {
+        try {
+            $ffmpeg = self::getFfmpegCli();
+            $phpCli = Pimcore_Tool_Console::getPhpCli();
+            if($ffmpeg && $phpCli) {
+                return true;
+            }
+        } catch (Exception $e) {
+            Logger::warning($e);
+        }
+
+        return false;
+    }
+
+    /**
      * @static
      * @return string
      */
     public static function getFfmpegCli () {
 
-        if(Pimcore_Config::getSystemConfig()->assets->ffmpeg) {
-            if(@is_executable(Pimcore_Config::getSystemConfig()->assets->ffmpeg)) {
-                return Pimcore_Config::getSystemConfig()->assets->ffmpeg;
+        $ffmpegPath = Pimcore_Config::getSystemConfig()->assets->ffmpeg;
+        if($ffmpegPath) {
+            if(@is_executable($ffmpegPath)) {
+                return $ffmpegPath;
             } else {
-                Logger::critical("FFMPEG binary: " . Pimcore_Config::getSystemConfig()->assets->ffmpeg . " is not executable");
+                Logger::critical("FFMPEG binary: " . $ffmpegPath . " is not executable");
             }
         }
 
         $paths = array(
-            "/usr/bin/ffmpeg",
             "/usr/local/bin/ffmpeg",
+            "/usr/bin/ffmpeg",
             "/bin/ffmpeg",
             realpath(PIMCORE_DOCUMENT_ROOT . "/../ffmpeg/bin/ffmpeg.exe") // for windows sample package (XAMPP)
         );

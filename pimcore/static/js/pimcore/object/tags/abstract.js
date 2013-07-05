@@ -183,6 +183,13 @@ pimcore.object.tags.abstract = Class.create({
                                 + "- does not implement the isRendered() method and doesn't contain this.component";
     },
 
+
+    dataIsNotInherited: function() {
+        // by default the data cannot be inherited if the field is dirty. Composite fields (object bricks,
+        // localized fields must implement their own logic)
+        return this.isDirty();
+    },
+
     isDirty:function () {
         var dirty = false;
         if (this.component && typeof this.component.isDirty == "function") {

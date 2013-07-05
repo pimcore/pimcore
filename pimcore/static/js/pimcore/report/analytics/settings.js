@@ -93,79 +93,96 @@ pimcore.report.analytics.settings = Class.create({
                     id: "report_settings_analytics_trackid_" + id,
                     value: this.parent.getValue("analytics.sites." + key + ".trackid")
                 },{
-                    xtype: "checkbox",
-                    fieldLabel: t("analytics_retargeting_code"),
-                    name: "retargetingcode_" + id,
-                    id: "report_settings_analytics_retargetingcode_" + id,
-                    checked: this.parent.getValue("analytics.sites." + key + ".retargetingcode")
+                    xtype: "fieldset",
+                    collapsible: true,
+                    collapsed: true,
+                    title: t("code_settings"),
+                    items: [{
+                        xtype: "checkbox",
+                        fieldLabel: t("universal_analytics_code"),
+                        name: "universalcode_" + id,
+                        id: "report_settings_analytics_universalcode_" + id,
+                        checked: this.parent.getValue("analytics.sites." + key + ".universalcode")
+                    },{
+                        xtype: "checkbox",
+                        fieldLabel: t("analytics_retargeting_code"),
+                        name: "retargetingcode_" + id,
+                        id: "report_settings_analytics_retargetingcode_" + id,
+                        checked: this.parent.getValue("analytics.sites." + key + ".retargetingcode")
+                    },{
+                        xtype: "textarea",
+                        fieldLabel: t("analytics_additional_code_before_pageview"),
+                        name: "additionalcodebeforepageview" + id,
+                        height: 100,
+                        width: 350,
+                        id: "report_settings_analytics_additionalcodebeforepageview_" + id,
+                        value: this.parent.getValue("analytics.sites." + key + ".additionalcodebeforepageview")
+                    },{
+                        xtype: "textarea",
+                        fieldLabel: t("analytics_additional_code"),
+                        name: "additionalcode_" + id,
+                        height: 100,
+                        width: 350,
+                        id: "report_settings_analytics_additionalcode_" + id,
+                        value: this.parent.getValue("analytics.sites." + key + ".additionalcode")
+                    }]
                 },{
-                    xtype: "textarea",
-                    fieldLabel: t("analytics_additional_code_before_pageview"),
-                    name: "additionalcodebeforepageview" + id,
-                    height: 100,
-                    width: 350,
-                    id: "report_settings_analytics_additionalcodebeforepageview_" + id,
-                    value: this.parent.getValue("analytics.sites." + key + ".additionalcodebeforepageview")
-                },{
-                    xtype: "textarea",
-                    fieldLabel: t("analytics_additional_code"),
-                    name: "additionalcode_" + id,
-                    height: 100,
-                    width: 350,
-                    id: "report_settings_analytics_additionalcode_" + id,
-                    value: this.parent.getValue("analytics.sites." + key + ".additionalcode")
-                },{
-                    xtype: "displayfield",
-                    hideLabel: true,
-                    width: 500,
-                    style: "margin-top:20px;",
-                    value: t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
-                    cls: "pimcore_extra_label_bottom"
-                },
-                {
-                    xtype:'combo',
-                    fieldLabel: t('profile'),
-                    typeAhead:true,
-                    displayField: 'name',
-                    store: new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        url: "/admin/reports/analytics/get-profiles",
-                        root: "data",
-                        idProperty: "id",
-                        fields: ["name","id","trackid","accountid","internalid"]
-                    }),
-                    listeners: {
-                        "select": function (id, el, record, index) {
-                            Ext.getCmp("report_settings_analytics_trackid_" + id).setValue(record.get("trackid"));
-                            Ext.getCmp("report_settings_analytics_accountid_" + id).setValue(record.get("accountid"));
-                            Ext.getCmp("report_settings_analytics_internalid_" + id).setValue(record.get("internalid"));
-                        }.bind(this, id)
-                    },
-                    valueField: 'id',
-                    width: 250,
-                    forceSelection: true,
-                    triggerAction: 'all',
-                    hiddenName: 'profile_' + id,
-                    id: "report_settings_analytics_profile_" + id,
-                    value: this.parent.getValue("analytics.sites." + key + ".profile")
-                },{
-                    xtype: "textfield",
-                    fieldLabel: t("analytics_accountid"),
-                    name: "accountid_" + id,
-                    id: "report_settings_analytics_accountid_" + id,
-                    value: this.parent.getValue("analytics.sites." + key + ".accountid")
-                },{
-                    xtype: "textfield",
-                    fieldLabel: t("analytics_internalid"),
-                    name: "internalid_" + id,
-                    id: "report_settings_analytics_internalid_" + id,
-                    value: this.parent.getValue("analytics.sites." + key + ".internalid")
-                },{
-                    xtype: "checkbox",
-                    fieldLabel: t("analytics_advanced_mode"),
-                    name: "advanced_" + id,
-                    id: "report_settings_analytics_advanced_" + id,
-                    checked: this.parent.getValue("analytics.sites." + key + ".advanced")
+                    xtype: "fieldset",
+                    collapsible: true,
+                    collapsed: true,
+                    title: t("advanced_integration"),
+                    items: [{
+                        xtype: "displayfield",
+                        hideLabel: true,
+                        width: 500,
+                        style: "margin-top:20px;",
+                        value: t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
+                        cls: "pimcore_extra_label_bottom"
+                    },{
+                        xtype:'combo',
+                        fieldLabel: t('profile'),
+                        typeAhead:true,
+                        displayField: 'name',
+                        store: new Ext.data.JsonStore({
+                            autoDestroy: true,
+                            url: "/admin/reports/analytics/get-profiles",
+                            root: "data",
+                            idProperty: "id",
+                            fields: ["name","id","trackid","accountid","internalid"]
+                        }),
+                        listeners: {
+                            "select": function (id, el, record, index) {
+                                Ext.getCmp("report_settings_analytics_trackid_" + id).setValue(record.get("trackid"));
+                                Ext.getCmp("report_settings_analytics_accountid_" + id).setValue(record.get("accountid"));
+                                Ext.getCmp("report_settings_analytics_internalid_" + id).setValue(record.get("internalid"));
+                            }.bind(this, id)
+                        },
+                        valueField: 'id',
+                        width: 250,
+                        forceSelection: true,
+                        triggerAction: 'all',
+                        hiddenName: 'profile_' + id,
+                        id: "report_settings_analytics_profile_" + id,
+                        value: this.parent.getValue("analytics.sites." + key + ".profile")
+                    },{
+                        xtype: "textfield",
+                        fieldLabel: t("analytics_accountid"),
+                        name: "accountid_" + id,
+                        id: "report_settings_analytics_accountid_" + id,
+                        value: this.parent.getValue("analytics.sites." + key + ".accountid")
+                    },{
+                        xtype: "textfield",
+                        fieldLabel: t("analytics_internalid"),
+                        name: "internalid_" + id,
+                        id: "report_settings_analytics_internalid_" + id,
+                        value: this.parent.getValue("analytics.sites." + key + ".internalid")
+                    },{
+                        xtype: "checkbox",
+                        fieldLabel: t("analytics_advanced_mode"),
+                        name: "advanced_" + id,
+                        id: "report_settings_analytics_advanced_" + id,
+                        checked: this.parent.getValue("analytics.sites." + key + ".advanced")
+                    }]
                 }
             ]
         };
@@ -191,6 +208,7 @@ pimcore.report.analytics.settings = Class.create({
                 profile: Ext.getCmp("report_settings_analytics_profile_" + id).getValue(),
                 trackid: Ext.getCmp("report_settings_analytics_trackid_" + id).getValue(),
                 retargetingcode: Ext.getCmp("report_settings_analytics_retargetingcode_" + id).getValue(),
+                universalcode: Ext.getCmp("report_settings_analytics_universalcode_" + id).getValue(),
                 additionalcode: Ext.getCmp("report_settings_analytics_additionalcode_" + id).getValue(),
                 additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_" + id)
                                                                                         .getValue(),

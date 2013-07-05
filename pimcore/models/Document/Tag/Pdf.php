@@ -401,6 +401,11 @@ class Document_Tag_Pdf extends Document_Tag
 
             $data["pdf"] = $asset->getFullPath();
 
+            $data["fullscreen"] = true;
+            if(isset($options["fullscreen"])) {
+                $data["fullscreen"] = (bool) $options["fullscreen"];
+            }
+
             $jsVarName = "pimcore_pdf_" . $this->getName();
             $divId = "pimcore-pdf-" . uniqid();
             $jsonData = Zend_Json::encode($data);

@@ -71,19 +71,22 @@ class Pimcore_Tool_Console {
      */
     public static function exec ($cmd, $outputFile = null) {
 
-        if(!$outputFile) {
+        /*if(!$outputFile) {
             if(self::getSystemEnvironment() == 'windows') {
                 $outputFile = "NUL";
             } else {
                 $outputFile = "/dev/null";
             }
+        }*/
+
+        if($outputFile) {
+            $cmd = $cmd . " > ". $outputFile ." 2>&1";
         }
 
-        $commandWrapped = $cmd . " > ". $outputFile ." 2>&1";
-        Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell");
-        $pid = shell_exec($commandWrapped);
+        Logger::debug("Executing command `" . $cmd . "´ on the current shell");
+        $return = shell_exec($cmd);
 
-        Logger::debug("Process started with PID " . $pid);
+        return $return;
     }
 
     /**
@@ -166,5 +169,28 @@ class Pimcore_Tool_Console {
         }
 
         return $string;
+    }
+
+    /**
+     * checks the user which executes a cli script
+     *
+     * @param array $allowedUsers
+     *
+     * @throws Exception
+     */
+    public static function checkExecutingUser($allowedUsers = array()){
+        $owner = fileowner(PIMCORE_CONFIGURATION_SYSTEM);
+        if($owner == false){
+            throw new Exception("Couldn't get user from file " . PIMCORE_CONFIGURATION_SYSTEM);
+        }
+        $userData = posix_getpwuid($owner);
+        $allowedUsers[] = $userData['name'];
+
+        $scriptExecutingUserData = posix_getpwuid(posix_geteuid());
+        $scriptExecutingUser = $scriptExecutingUserData['name'];
+
+        if(!in_array($scriptExecutingUser,$allowedUsers)){
+            throw new Exception("The current system user is not allowed to execute this script. Allowed users: '" . implode(',',$allowedUsers) ."' Executing user: '$scriptExecutingUser'.");
+        }
     }
 }

@@ -22,8 +22,14 @@ pimcore.document.edit = Class.create({
 
     getEditLink: function () {
         var date = new Date();
-        return  this.document.data.path + this.document.data.key + '?pimcore_editmode=true&systemLocale='
+        var link =  this.document.data.path + this.document.data.key + '?pimcore_editmode=true&systemLocale='
                                                             + pimcore.settings.language+'&_dc=' + date.getTime();
+
+        if(this.persona && this.persona.getValue()) {
+            link += "&_ptp=" + this.persona.getValue();
+        }
+
+        return link;
     },
 
     getLayout: function (additionalConfig) {
@@ -35,6 +41,92 @@ pimcore.document.edit = Class.create({
             var html = '<iframe id="' + this.iframeName + '" width="100%" name="' + this.iframeName
                                                     + '" src="' + this.getEditLink() + '" frameborder="0"></iframe>';
 
+
+            var cleanupFunction = function () {
+                Ext.Ajax.request({
+                    url: "/admin/page/clear-editable-data",
+                    params: {
+                        persona: this["persona"] ? this.persona.getValue() : "",
+                        id: this.document.id
+                    },
+                    success: function () {
+                        this.document.reload();
+                    }.bind(this)
+                });
+            };
+
+            var tbar = [{
+                text: t("refresh"),
+                iconCls: "pimcore_icon_reload",
+                handler: this.reload.bind(this)
+            },"-",{
+                tooltip: t("highlight_editable_elements"),
+                iconCls: "pimcore_icon_highlight",
+                enableToggle: true,
+                handler: function (el) {
+                    var editables = this.frame.Ext.getBody().query(".pimcore_editable");
+                    var ed;
+                    for(var i=0; i<editables.length; i++) {
+                        ed = Ext.get(editables[i]);
+                        if(!ed.hasClass("pimcore_tag_inc") && !ed.hasClass("pimcore_tag_areablock")
+                            && !ed.hasClass("pimcore_tag_block") && !ed.hasClass("pimcore_tag_area")) {
+                            if(el.pressed) {
+                                var mask = ed.mask();
+                                mask.setStyle("background-color","#f5d833");
+                            } else {
+                                ed.unmask();
+                            }
+                        }
+                    }
+                }.bind(this)
+            }, "-", {
+                tooltip: t("clear_content_of_current_view"),
+                iconCls: "pimcore_icon_cleanup",
+                handler: cleanupFunction.bind(this)
+            }];
+
+            // add persona selection to toolbar
+            if(this.document.getType() == "page" && pimcore.globalmanager.get("personas").getCount() > 0) {
+
+                this.persona = new Ext.form.ComboBox({
+                    displayField:'text',
+                    valueField: "id",
+                    store: {
+                        xtype: "jsonstore",
+                        url: "/admin/reports/targeting/persona-list/?add-default=true",
+                        fields: ["id", "text"]
+                    },
+                    editable: false,
+                    triggerAction: 'all',
+                    width: 240,
+                    cls: "pimcore_icon_persona_select",
+                    emptyText: t("edit_content_for_persona"),
+                    listeners: {
+                        select: function (el) {
+                            if(this.document.isDirty()) {
+                                Ext.Msg.confirm(t('warning'), t('you_have_unsaved_changes')
+                                    + "<br />" + t("continue") + "?",
+                                    function(btn){
+                                        if (btn == 'yes'){
+                                            this.reload(true);
+                                        }
+                                    }.bind(this)
+                                );
+                            } else {
+                                this.reload(true);
+                            }
+                        }.bind(this)
+                    }
+                });
+
+                tbar.push("->", this.persona, {
+                    tooltip: t("clear_content_of_selected_persona"),
+                    iconCls: "pimcore_icon_cleanup",
+                    handler: cleanupFunction.bind(this)
+                });
+            }
+
+            // edit panel configuration
             var config = {
                 id: "document_content_" + this.document.id,
                 html: html,
@@ -43,7 +135,8 @@ pimcore.document.edit = Class.create({
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
                 forceLayout: true,
                 hideMode: "offsets",
-                iconCls: "pimcore_icon_tab_edit"
+                iconCls: "pimcore_icon_tab_edit",
+                tbar: tbar
             };
 
             if(typeof additionalConfig == "object") {
@@ -70,7 +163,7 @@ pimcore.document.edit = Class.create({
 
     setLayoutFrameDimensions: function (width, height) {
         Ext.get(this.iframeName).setStyle({
-            height: (height-5) + "px"
+            height: (height-32) + "px"
         });
     },
 

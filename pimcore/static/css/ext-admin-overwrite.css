@@ -75,3 +75,7 @@ background-image:url("/pimcore/static/img/icon/arrow_refresh.png") !important;
     position: relative !important;
 }
 
+/* webkit has 12px here, ... gecko not */
+.x-toolbar .x-form-field {
+    font-size: 11px !important;
+}

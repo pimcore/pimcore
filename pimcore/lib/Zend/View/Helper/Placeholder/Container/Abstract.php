@@ -16,7 +16,7 @@
  * @package    Zend_View
  * @subpackage Helper
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Abstract.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id: Abstract.php 25255 2013-02-13 15:25:39Z frosch $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -93,7 +93,7 @@ abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObje
     /**
      * Constructor - This is needed so that we can attach a class member as the ArrayObject container
      *
-     * @return void
+     * @return \Zend_View_Helper_Placeholder_Container_Abstract
      */
     public function __construct()
     {
@@ -252,14 +252,15 @@ abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObje
     /**
      * Start capturing content to push into placeholder
      *
-     * @param  int $type How to capture content into placeholder; append, prepend, or set
+     * @param int|string $type How to capture content into placeholder; append, prepend, or set
+     * @param null       $key
+     * @throws Zend_View_Helper_Placeholder_Container_Exception
      * @return void
-     * @throws Zend_View_Helper_Placeholder_Exception if nested captures detected
      */
     public function captureStart($type = Zend_View_Helper_Placeholder_Container_Abstract::APPEND, $key = null)
     {
         if ($this->_captureLock) {
-            // require_once 'Zend/View/Helper/Placeholder/Container/Exception.php';
+            require_once 'Zend/View/Helper/Placeholder/Container/Exception.php';
             $e = new Zend_View_Helper_Placeholder_Container_Exception('Cannot nest placeholder captures for the same placeholder');
             $e->setView($this->view);
             throw $e;
@@ -349,10 +350,16 @@ abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObje
     /**
      * Render the placeholder
      *
+     * @param null $indent
      * @return string
      */
     public function toString($indent = null)
     {
+        // Check items
+        if (0 === $this->count()) {
+            return '';
+        }
+
         $indent = ($indent !== null)
                 ? $this->getWhitespace($indent)
                 : $this->getIndent();

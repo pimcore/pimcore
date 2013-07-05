@@ -257,6 +257,7 @@ pimcore.asset.tree = Class.create({
 
     onDragStart : function () {
         pimcore.helpers.dndMaskFrames();
+        pimcore.helpers.treeNodeThumbnailPreviewHide();
     },
 
     onDragEnd : function () {
@@ -958,7 +959,6 @@ pimcore.asset.tree = Class.create({
 
                 Ext.Ajax.request({
                     url: "/admin/asset/import-url/",
-                    method: "get",
                     params: {
                         id: this.attributes.id,
                         url: value

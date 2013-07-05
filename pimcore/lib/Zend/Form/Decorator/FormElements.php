@@ -20,7 +20,7 @@
  */
 
 /** Zend_Form_Decorator_Abstract */
-// require_once 'Zend/Form/Decorator/Abstract.php';
+require_once 'Zend/Form/Decorator/Abstract.php';
 
 /**
  * Zend_Form_Decorator_FormElements
@@ -37,7 +37,7 @@
  * @subpackage Decorator
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FormElements.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id: FormElements.php 25093 2012-11-07 20:08:05Z rob $
  */
 class Zend_Form_Decorator_FormElements extends Zend_Form_Decorator_Abstract
 {
@@ -82,8 +82,13 @@ class Zend_Form_Decorator_FormElements extends Zend_Form_Decorator_Abstract
         $items          = array();
         $view           = $form->getView();
         foreach ($form as $item) {
-            $item->setView($view)
-                 ->setTranslator($translator);
+            $item->setView($view);
+
+            // Set translator
+            if (!$item->hasTranslator()) {
+                $item->setTranslator($translator);
+            }
+
             if ($item instanceof Zend_Form_Element) {
                 foreach ($displayGroups as $group) {
                     $elementName = $item->getName();

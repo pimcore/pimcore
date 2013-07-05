@@ -462,6 +462,20 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $tmpAsset["expanded"] = $asset->hasNoChilds();
             $tmpAsset["iconCls"] = "pimcore_icon_folder";
             $tmpAsset["permissions"]["create"] = $asset->isAllowed("create");
+
+            $folderThumbs = array();
+            foreach($asset->getChilds() as $child) {
+                if($thumbnailUrl = $this->getThumbnailUrl($child)) {
+                    $folderThumbs[] = $thumbnailUrl;
+                }
+            }
+
+            if(!empty($folderThumbs)) {
+                if(count($folderThumbs) > 35) {
+                    $folderThumbs = array_splice($folderThumbs, 0, 35);
+                }
+                $tmpAsset["thumbnails"] = $folderThumbs;
+            }
         }
         else {
             $tmpAsset["leaf"] = true;
@@ -474,7 +488,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         if ($asset->getType() == "image") {
             try {
-                $tmpAsset["thumbnail"] = "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/treepreview/true";
+                $tmpAsset["thumbnail"] = $this->getThumbnailUrl($asset);
 
                 // this is for backward-compatibility, to calculate the dimensions if they are not there
                 if(!$asset->getCustomSetting("imageDimensionsCalculated")) {
@@ -493,7 +507,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         } else if ($asset->getType() == "video") {
             try {
                 if(Pimcore_Video::isAvailable()) {
-                    $tmpAsset["thumbnail"] = "/admin/asset/get-video-thumbnail/id/" . $asset->getId() . "/treepreview/true";
+                    $tmpAsset["thumbnail"] = $this->getThumbnailUrl($asset);
                 }
             } catch (Exception $e) {
                 Logger::debug("Cannot get dimensions of video, seems to be broken.");
@@ -502,7 +516,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             try {
                 // add the PDF check here, otherwise the preview layer in admin is shown without content
                 if(Pimcore_Document::isAvailable() && preg_match("/\.pdf$/", $asset->getFilename())) {
-                    $tmpAsset["thumbnail"] = "/admin/asset/get-document-thumbnail/id/" . $asset->getId() . "/treepreview/true";
+                    $tmpAsset["thumbnail"] = $this->getThumbnailUrl($asset);
                 }
             } catch (Exception $e) {
                 Logger::debug("Cannot get dimensions of video, seems to be broken.");
@@ -518,6 +532,17 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         return $tmpAsset;
+    }
+
+    protected function getThumbnailUrl($asset) {
+        if($asset instanceof Asset_Image) {
+            return "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/treepreview/true";
+        } else if ($asset instanceof Asset_Video && Pimcore_Video::isAvailable()) {
+            return "/admin/asset/get-video-thumbnail/id/" . $asset->getId() . "/treepreview/true";
+        } else if ($asset instanceof Asset_Document && Pimcore_Document::isAvailable()) {
+            return "/admin/asset/get-document-thumbnail/id/" . $asset->getId() . "/treepreview/true";
+        }
+        return null;
     }
 
     public function updateAction() {
@@ -815,6 +840,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         header("Content-Length: " . filesize($thumbnailFile), true);
+        $this->sendThumbnailCacheHeaders();
+
         echo $imageContent;
         exit;
     }
@@ -857,6 +884,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         header("Content-type: image/" . $format, true);
+        $this->sendThumbnailCacheHeaders();
 
         while(@ob_end_flush());
         flush();
@@ -872,8 +900,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $format = strtolower($thumbnail->getFormat());
         if ($format == "source") {
-            $thumbnail->setFormat("PNG");
-            $format = "png";
+            $thumbnail->setFormat("jpeg"); // default format for documents is JPEG not PNG (=too big)
         }
 
         if($this->getParam("treepreview")) {
@@ -888,6 +915,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $format = "png";
         header("Content-type: image/" . $format, true);
+        $this->sendThumbnailCacheHeaders();
 
         while(@ob_end_flush());
         flush();
@@ -896,6 +924,14 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         exit;
     }
 
+    protected function sendThumbnailCacheHeaders() {
+        $this->getResponse()->clearAllHeaders();
+
+        $lifetime = 300;
+        header("Cache-Control: public, max-age=" . $lifetime, true);
+        header("Expires: " . Zend_Date::now()->add($lifetime)->get(Zend_Date::RFC_1123), true);
+        header("Pragma: ");
+    }
 
     public function getPreviewDocumentAction() {
         $asset = Asset::getById($this->getParam("id"));
@@ -967,7 +1003,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         $list = Asset::getList(array(
-            "condition" => "path LIKE '" . $folder->getFullPath() . "%' AND type != 'folder'",
+            "condition" => "path LIKE '" . $folder->getFullPath() . "/%' AND type != 'folder'",
             "limit" => $limit,
             "offset" => $start,
             "orderKey" => "filename",
@@ -1298,7 +1334,13 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                         $tmpFile = $tmpDir . "/" . preg_replace("@^/@", "", $path);
 
                         $filename = Pimcore_File::getValidFilename(basename($path));
-                        $parentPath = $importAsset->getFullPath() . "/" . preg_replace("@^/@", "", dirname($path));
+
+                        $relativePath = "";
+                        if(dirname($path) != ".") {
+                            $relativePath = dirname($path);
+                        }
+
+                        $parentPath = $importAsset->getFullPath() . "/" . preg_replace("@^/@", "", $relativePath);
                         $parent = Asset_Service::createFolderByPath($parentPath);
 
                         // check for duplicate filename

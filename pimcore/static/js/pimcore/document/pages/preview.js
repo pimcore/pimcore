@@ -331,6 +331,13 @@ pimcore.document.pages.preview = Class.create({
 
         path = this.page.data.path + this.page.data.key + "?pimcore_preview=true&time=" + date.getTime();
 
+        // add persona parameter if available
+        if(this.page["edit"] && this.page.edit["persona"]) {
+            if(this.page.edit.persona && this.page.edit.persona.getValue()) {
+                path += "&_ptp=" + this.page.edit.persona.getValue();
+            }
+        }
+
         try {
             this.getIframe().dom.src = path;
         }
@@ -402,7 +409,7 @@ pimcore.document.pages.preview = Class.create({
         this.editorUnFrameElement();
         this.editorClearCurrentElement();
 
-            if(!this.getIframeWindow()["pimcore"]) {
+            if(!this.getIframeWindow()["pimcore"] || !this.getIframeWindow()["pimcore"]["editor"]) {
                 this.getIframeWindow().pimcore = {
                     editor: this
                 };

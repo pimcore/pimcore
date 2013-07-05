@@ -60,7 +60,7 @@ class Object_Class_Data_Multiselect extends Object_Class_Data {
      *
      * @var string
      */
-    public $phpdocType = "string";
+    public $phpdocType = "array";
 
     /**
      * @return array

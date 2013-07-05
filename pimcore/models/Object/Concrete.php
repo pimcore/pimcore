@@ -187,10 +187,6 @@ class Object_Concrete extends Object_Abstract {
         $this->saveScheduledTasks();
         $this->saveVersion(false, false);
         $this->saveChilds();
-
-        // this is called already in parent::update() but we have too call it here again, because there are again
-        // modifications after parent::update();, maybe this should be solved better, but for now this works fine
-        $this->clearDependentCache();
     }
 
     /**
@@ -657,8 +653,10 @@ class Object_Concrete extends Object_Abstract {
         $parentVars = parent::__sleep();
 
         $finalVars = array();
+        $lazyLoadedFields = $this->getLazyLoadedFields();
+
         foreach ($parentVars as $key) {
-            if (in_array($key, $this->getLazyLoadedFields())) {
+            if (in_array($key, $lazyLoadedFields)) {
                 // prevent lazyloading properties to go into the cache, only to version and recyclebin, ... (_fulldump)
                 if(isset($this->_fulldump)) {
                     $finalVars[] = $key;

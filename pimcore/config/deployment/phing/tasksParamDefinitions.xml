@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+    <pimcore.task.package.translations>
+        <type>
+            <required>1</required>
+            <multipleDefinitions>0</multipleDefinitions>
+        </type>
+        <creationDate>
+            <required>0</required>
+            <multipleDefinitions>0</multipleDefinitions>
+        </creationDate>
+        <modificationDate>
+            <required>0</required>
+            <multipleDefinitions>0</multipleDefinitions>
+        </modificationDate>
+    </pimcore.task.package.translations>
+</zend-config>

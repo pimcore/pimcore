@@ -14,9 +14,9 @@
  */
 
 class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
-    
-    
-    public function url($urlOptions = array(), $name = null, $reset = false, $encode = true)
+
+
+    public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
     {
         if(!$urlOptions) {
             $urlOptions = array();
@@ -33,10 +33,39 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
             $siteId = Site::getCurrentSite()->getId();
         }
 
+        // check for a site in the options, if valid remove it from the options
+        $hostname = null;
+        if(isset($urlOptions["site"])) {
+            $config = Pimcore_Config::getSystemConfig();
+            $site = $urlOptions["site"];
+            if(!empty($site)) {
+                try {
+                    $site = Site::getBy($site);
+                    unset($urlOptions["site"]);
+                    $hostname = $site->getMainDomain();
+                    $siteId = $site->getId();
+                } catch (\Exception $e) {
+                    Logger::warn("passed site doesn't exists");
+                    Logger::warn($e);
+                }
+            } else if ($config->general->domain) {
+                $hostname = $config->general->domain;
+            }
+        }
+
         if($name && $route = Staticroute::getByName($name, $siteId)) {
+
+            // assemble the route / url in Staticroute::assemble()
             $url = $route->assemble($urlOptions, $reset, $encode);
+
+            // if there's a site, prepend the host to the generated URL
+            if($hostname && !preg_match("/^http/i", $url)) {
+                $url = "//" . $hostname . $url;
+            }
+
             if(Pimcore_Config::getSystemConfig()->documents->allowcapitals == 'no'){
-                $url = strtolower($url);
+                $urlParts = parse_url($url);
+                $url = str_replace($urlParts["path"], strtolower($urlParts["path"]), $url);
             }
             return $url;
         }

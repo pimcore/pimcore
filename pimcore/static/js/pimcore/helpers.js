@@ -389,7 +389,8 @@ pimcore.helpers.activateMaintenance = function () {
         url: "/admin/misc/maintenance/activate/true"
     });
 
-    if(!Ext.getCmp("pimcore_maintenance_disable_button")) {
+    var button = Ext.get("pimcore_menu_maintenance");
+    if(!button.isDisplayed()) {
         pimcore.helpers.showMaintenanceDisableButton();
     }
 };
@@ -400,24 +401,15 @@ pimcore.helpers.deactivateMaintenance = function () {
         url: "/admin/misc/maintenance/deactivate/true"
     });
 
-    var toolbar = pimcore.globalmanager.get("layout_toolbar").toolbar;
-    toolbar.remove(Ext.getCmp("pimcore_maintenance_disable_button"));
-    toolbar.doLayout();
+    var button = Ext.get("pimcore_menu_maintenance");
+    button.setStyle("display", "none");
 };
 
 pimcore.helpers.showMaintenanceDisableButton = function () {
-    var toolbar = pimcore.globalmanager.get("layout_toolbar").toolbar;
-
-    var deactivateButton = new Ext.Button({
-        id: "pimcore_maintenance_disable_button",
-        text: "DEACTIVATE MAINTENANCE",
-        iconCls: "pimcore_icon_maintenance",
-        cls: "pimcore_main_menu",
-        handler: pimcore.helpers.deactivateMaintenance
-    });
-
-    toolbar.insertButton(5, [deactivateButton]);
-    toolbar.doLayout();
+    var button = Ext.get("pimcore_menu_maintenance");
+    button.show();
+    button.removeAllListeners();
+    button.on("click", pimcore.helpers.deactivateMaintenance);
 };
 
 pimcore.helpers.download = function (url) {
@@ -1045,7 +1037,6 @@ pimcore.helpers.selectElementInTree = function (type, id) {
     try {
         Ext.Ajax.request({
             url: "/admin/element/get-id-path/",
-            method: "get",
             params: {
                 id: id,
                 type: type
@@ -1096,7 +1087,6 @@ pimcore.helpers.openDocumentByPathDialog = function () {
         if (button == "ok") {
             Ext.Ajax.request({
                 url: "/admin/document/open-by-url/",
-                method: "get",
                 params: {
                     url: value
                 },
@@ -1157,7 +1147,6 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
     if(pimcore.settings.htmltoimage) {
         Ext.Ajax.request({
             url: '/admin/page/generate-screenshot',
-            method: "get",
             params: {
                 id: id
             },
@@ -1167,7 +1156,9 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
                 }
             }
         });
-    } else {
+    } /*else {
+        // DISABLED BECAUSE NOT REALLY SATISFIED WITH THE RESULTS
+
         pimcore.helpers.urlToCanvas(path, function (id, canvas) {
 
             // resize canvas
@@ -1202,11 +1193,12 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
                 }
             });
         }.bind(this, id));
-    }
+    }*/
 };
 
 pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) {
-    if(typeof node.attributes["thumbnail"] != "undefined") {
+    if(typeof node.attributes["thumbnail"] != "undefined" ||
+        typeof node.attributes["thumbnails"] != "undefined") {
         window.setTimeout(function (node) {
             var el = Ext.get(Ext.get(node.getUI().getEl()).query(".x-tree-node-el")[0]);
             el.on("mouseenter", function (node) {
@@ -1216,38 +1208,92 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                     return;
                 }
 
+                var imageHtml = "";
+
+                var uriPrefix = window.location.protocol + "//" + window.location.host;
+
+                var thumbnails = node.attributes.thumbnails;
+                if(thumbnails && thumbnails.length) {
+                    imageHtml += '<div class="thumbnails">';
+                    for(var i=0; i<thumbnails.length; i++) {
+                        imageHtml += '<div class="small" ' +
+                            'style="background-image:url(' + uriPrefix + thumbnails[i] + ')"></div>';
+                    }
+                    imageHtml += '</div>';
+                }
+
                 var thumbnail = node.attributes.thumbnail;
-                var position = (this.position == "right") ? "left" : "right";
                 if(thumbnail) {
-                    var container = Ext.get("pimcore_tree_preview");
-                    var imageHtml = '<img src="' + thumbnail + '" />';
-                    var styles = "";
-                    if(position == "left") {
-                        styles += "left:5px; right:auto; padding:10px 10px 10px 0";
+                    imageHtml = '<img src="' + uriPrefix + thumbnail + '" />';
+                }
+
+                if(imageHtml) {
+                    var treeEl = Ext.get("pimcore_panel_tree_" + this.position);
+                    var position = treeEl.getOffsetsTo(Ext.getBody());
+                    position = position[0];
+
+                    if(this.position == "right") {
+                        position = position - 420;
                     } else {
-                        styles += "right:5px; left:auto; padding:10px 0 10px 10px";
+                        position = treeEl.getWidth() + position;
                     }
 
-                    if(container) {
-                        container.update(imageHtml);
-                        container.show();
-                        container.applyStyles(styles);
-                    } else {
-                        Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview" style="' + styles + '">'
-                                                                                            + imageHtml + '</div>');
+                    var container = Ext.get("pimcore_tree_preview");
+                    if(!container) {
+                        container  = Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview"></div>');
+                        container = Ext.get(container);
                     }
+
+                    // check for an existing iframe
+                    var existingIframe = container.query("iframe")[0];
+                    if(existingIframe) {
+                        // stop loading the existing iframe (images, etc.)
+                        var existingIframeWin = existingIframe.contentWindow;
+                        if(typeof existingIframeWin["stop"] == "function") {
+                            existingIframeWin.stop();
+                        } else if (typeof existingIframeWin.document["execCommand"] == "function") {
+                            existingIframeWin.document.execCommand('Stop');
+                        }
+                    }
+
+                    var styles = "left: " + position + "px";
+
+                    // we need to create an iframe so that we can use window.stop();
+                    var iframe = document.createElement("iframe");
+                    iframe.setAttribute("frameborder", "0");
+                    iframe.setAttribute("scrolling", "no");
+                    iframe.setAttribute("marginheight", "0");
+                    iframe.setAttribute("marginwidth", "0");
+                    iframe.setAttribute("style", "width: 100%; height: 2500px;");
+
+                    imageHtml += '<link rel="stylesheet" type="text/css" ' +
+                        'href="' + uriPrefix + '/pimcore/static/css/tree-preview-frame.css" />';
+
+                    iframe.onload = function () {
+                        this.contentWindow.document.body.innerHTML = imageHtml;
+                    };
+
+                    container.update(""); // remove all
+                    container.clean(true);
+                    container.dom.appendChild(iframe);
+                    container.removeClass("hidden");
+                    container.applyStyles(styles);
                 }
             }.bind(this, node));
 
             el.on("mouseleave", function () {
-                var container = Ext.get("pimcore_tree_preview");
-                if(container) {
-                    container.hide();
-                }
+                pimcore.helpers.treeNodeThumbnailPreviewHide();
             }.bind(this));
         }.bind(this, node), 200);
     }
 };
+
+pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
+    var container = Ext.get("pimcore_tree_preview");
+    if(container) {
+        container.addClass("hidden");
+    }
+}
 
 pimcore.helpers.insertTextAtCursorPosition = function (text) {
 

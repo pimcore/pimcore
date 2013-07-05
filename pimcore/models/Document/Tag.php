@@ -364,7 +364,13 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      *
      * @return string
      */
-    public static function buildTagName($type,$name){
+    public static function buildTagName($type,$name, $document = null){
+
+        // check for persona content
+        if($document && $document instanceof Document_Page && $document->getUsePersona()) {
+            $name = $document->getPersonaElementName($name);
+        }
+
         // @todo add document-id to registry key | for example for embeded snippets
         // set suffixes if the tag is inside a block
         if(Zend_Registry::isRegistered("pimcore_tag_block_current")) {
@@ -393,6 +399,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
                 $name = $name . implode("_", $blocks) . implode("_", $numeration);
             }
         }
+
         return $name;
     }
 

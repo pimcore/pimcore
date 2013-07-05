@@ -73,7 +73,8 @@ Ext.onReady(function () {
     // define some globals
     Ext.chart.Chart.CHART_URL = '/pimcore/static/js/lib/ext/resources/charts.swf';
     Ext.QuickTips.init();
-    Ext.Ajax.method = "get";
+    Ext.Ajax.method = "GET";
+    Ext.Ajax.disableCaching = true;
     Ext.Ajax.timeout = 900000;
     Ext.Ajax.on('requestexception', function (conn, response, options) {
         console.log("xhr request failed");
@@ -255,6 +256,13 @@ Ext.onReady(function () {
     sitesStore.load();
     pimcore.globalmanager.add("sites", sitesStore);
 
+    // personas
+    var personaStore = new Ext.data.JsonStore({
+        url: "/admin/reports/targeting/persona-list/",
+        fields: ["id", "text"]
+    });
+    personaStore.load();
+    pimcore.globalmanager.add("personas", personaStore);
 
     // STATUSBAR
     var statusbar = new Ext.ux.StatusBar({
@@ -312,6 +320,8 @@ Ext.onReady(function () {
 
     // init general layout
     try {
+        var user = pimcore.globalmanager.get("user");
+
         pimcore.viewport = new Ext.Viewport({
             id:"pimcore_viewport",
             layout:'fit',
@@ -321,18 +331,14 @@ Ext.onReady(function () {
                     id:"pimcore_body",
                     cls:"pimcore_body",
                     layout:"border",
-                    border:true,
-                    tbar:{
-                        ctCls:"pimcore_panel_toolbar_container",
-                        id:"pimcore_panel_toolbar",
-                        xtype:"toolbar",
-                        border:false
-                    },
+                    border:false,
                     items:[
                         {
                             region:'west',
                             ctCls:"pimcore_body_inner",
                             id:'pimcore_panel_tree_left',
+                            cls: "pimcore_panel_tree",
+                            title: t("user") + ": " + user["name"],
                             split:true,
                             width:250,
                             minSize:175,
@@ -358,6 +364,7 @@ Ext.onReady(function () {
                         {
                             region:'east',
                             id:'pimcore_panel_tree_right',
+                            cls: "pimcore_panel_tree",
                             split:true,
                             width:250,
                             minSize:175,
@@ -381,6 +388,7 @@ Ext.onReady(function () {
             listeners:{
                 "afterrender":function () {
                     Ext.get("pimcore_logo").show();
+                    Ext.get("pimcore_navigation").show();
 
                     var loadMask = new Ext.LoadMask(Ext.getCmp("pimcore_viewport").getEl(), {msg:t("please_wait")});
                     loadMask.enable();
@@ -391,7 +399,6 @@ Ext.onReady(function () {
 
 
         // add sidebar panels
-        var user = pimcore.globalmanager.get("user");
 
         if (user.memorizeTabs) {
             // open previous opened tabs after the trees are ready

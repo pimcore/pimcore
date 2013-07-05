@@ -134,6 +134,7 @@ pimcore.document.tree = Class.create({
 
     onDragStart : function (tree, node, id) {
         pimcore.helpers.dndMaskFrames();
+        pimcore.helpers.treeNodeThumbnailPreviewHide();
     },
 
     onDragEnd : function () {
@@ -1016,23 +1017,25 @@ pimcore.document.tree = Class.create({
             buttons: Ext.Msg.OKCANCEL ,
             icon: Ext.MessageBox.INFO ,
             fn: function (type, button) {
+                if (button == "ok") {
 
-                if (pimcore.globalmanager.exists("document_" + this.id)) {
-                    var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-                    tabPanel.remove("document_" + this.id);
+                    if (pimcore.globalmanager.exists("document_" + this.id)) {
+                        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+                        tabPanel.remove("document_" + this.id);
+                    }
+
+                    Ext.Ajax.request({
+                        url: "/admin/document/convert/",
+                        method: "post",
+                        params: {
+                            id: this.id,
+                            type: type
+                        },
+                        success: function () {
+                            this.parentNode.reload();
+                        }.bind(this)
+                    });
                 }
-
-                Ext.Ajax.request({
-                    url: "/admin/document/convert/",
-                    method: "post",
-                    params: {
-                        id: this.id,
-                        type: type
-                    },
-                    success: function () {
-                        this.parentNode.reload();
-                    }.bind(this)
-                });
             }.bind(this, type)
         });
     },

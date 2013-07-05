@@ -78,25 +78,83 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param string $data
-     * @param null|Object_Abstract $object 
+     * @param null|Object_Abstract $object
      * @return string
      */
     public function getDataForEditmode($data, $object = null)
     {
-        $return = array();
+        $fieldData = array();
+        $metaData = array();
 
         if (!$data instanceof Object_Localizedfield) {
             return array();
         }
 
+        $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1);
+
+        return $result;
+    }
+
+    private function doGetDataForEditMode($data, $object, &$fieldData, &$metaData, $level = 1) {
+        $class = $object->getClass();
+        $inheritanceAllowed = $class->getAllowInherit();
+        $inherited = false;
+
         foreach ($data->getItems() as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                $return[$language][$fd->getName()] = $fd->getDataForEditmode($values[$fd->getName()], $object);
+                $key = $fd->getName();
+                $fdata = $fd->getDataForEditmode($values[$fd->getName()], $object);
+
+                if (empty($fieldData[$language][$key])) {
+                    // never override existing data
+                    $fieldData[$language][$key] = $fdata;
+                    if (!empty($fdata)) {
+                        $metaData[$language][$key] = array("inherited" => $level > 1, "objectid" => $object->getId());
+                    }
+                }
             }
         }
 
-        return $return;
+
+        if ($inheritanceAllowed) {
+            // check if there is a parent with the same type
+            $parent = Object_Service::hasInheritableParentObject($object);
+            if ($parent) {
+                // same type, iterate over all language and all fields and check if there is something missing
+                $validLanguages = Pimcore_Tool::getValidLanguages();
+                $foundEmptyValue = false;
+
+                foreach ($validLanguages as $language) {
+                    $fieldDefinitions = $this->getFieldDefinitions();
+                    foreach ($fieldDefinitions as $fd) {
+                        $key = $fd->getName();
+                        if (empty($fieldData[$language][$key])) {
+                            $foundEmptyValue = true;
+                            $inherited = true;
+                            $metaData[$language][$key] = array("inherited" => true, "objectid" => $parent->getId());
+                        }
+                    }
+                }
+
+                if ($foundEmptyValue) {
+                    // still some values are passing, ask the parent
+                    $parentData = $parent->getLocalizedFields();
+                    $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
+                    Logger::debug("merge results");
+                }
+            }
+        }
+
+        $result = array(
+            "data" => $fieldData,
+            "metaData" => $metaData,
+            "inherited" => $inherited
+        );
+
+        return $result;
     }
+
+
 
     /**
      * @see Object_Class_Data::getDataFromEditmode
@@ -173,8 +231,12 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         $data = $object->{$this->getName()};
         $wsData = array();
 
+        $items = null;
+
         if (!$data instanceof Object_Localizedfield) {
-            return array();
+            $items = array();
+        } else {
+            $items = $data->getItems();
         }
 
         if(Zend_Registry::isRegistered("Zend_Locale")) {
@@ -183,7 +245,10 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
             $localeBak = null;
         }
 
-        foreach ($data->getItems() as $language => $values) {
+        $validLanguages = Pimcore_Tool::getValidLanguages();
+
+        foreach ($validLanguages as $language) {
+
             foreach ($this->getFieldDefinitions() as $fd) {
                 Zend_Registry::set("Zend_Locale", new Zend_Locale($language));
 
@@ -217,13 +282,17 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
             if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
                 foreach($value as $v){
-                        if (!in_array($v->language, $validLanguages)) {
-                            throw new Exception("Invalid language in localized fields");
+                    if (!in_array($v->language, $validLanguages)) {
+                        throw new Exception("Invalid language in localized fields");
                     }
                 }
             }
 
-            $localizedFields = new Object_Localizedfield();
+            $localizedFields = $object->getLocalizedFields();
+            if (!$localizedFields) {
+                $localizedFields = new Object_Localizedfield();
+            }
+
             if($object instanceof Object_Concrete) {
                 $localizedFields->setObject($object);
             }
@@ -244,7 +313,10 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                 }
                 $fd = $this->getFielddefinition($field->name);
                 if (!$fd instanceof Object_Class_Data) {
-                    throw new Exception("Unknnown field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ] ");
+                    if ($idMapper && $idMapper->ignoreMappingFailures()){
+                        continue;
+                    }
+                    throw new Exception("Unknown field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ] ");
                 } else if ($fd->getFieldtype() != $field->type){
                     throw new Exception("Type mismatch for field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]. Should be [ ".$fd->getFieldtype()." ], but is [ ".$field->type." ] ");
                 }
@@ -622,7 +694,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                     $diffdata["data"] = $item;
                     $diffdata["extData"] = array(
                         "fieldname" => $fieldname
-                        );
+                    );
 
                     $diffdata["disabled"] = $item["disabled"];
                     $return[] = $diffdata;

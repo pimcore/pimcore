@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_WindowsAzure_Exception
  */
-// require_once 'Zend/Service/WindowsAzure/Exception.php';
+require_once 'Zend/Service/WindowsAzure/Exception.php';
 
 /**
  * @category   Zend
@@ -33,6 +33,6 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_WindowsAzure_Management_Exception
-	extends Zend_Service_WindowsAzure_Exception
+    extends Zend_Service_WindowsAzure_Exception
 {
 }

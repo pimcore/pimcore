@@ -133,7 +133,7 @@ class Asset_Image_Thumbnail_Processor {
         // the configuration is saved for later use in Pimcore_Controller_Plugin_Thumbnail::routeStartup()
         // so that it can be used also with dynamic configurations
         if($deferred) {
-            $configPath = $fsPath . ".deferred.config";
+            $configPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $filename . ".deferred.config";
             file_put_contents($configPath, serialize($config));
 
             return $path;

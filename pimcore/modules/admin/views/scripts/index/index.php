@@ -8,6 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
+    <style type="text/css">
+        body {
+            /* this stops the loading indicator from hopping around */
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
     <title><?php echo htmlentities($this->getRequest()->getHttpHost(), ENT_QUOTES, 'UTF-8') ?> :: pimcore</title>
 
     <!-- load in head because of the progress bar at loading -->
@@ -15,22 +23,36 @@
 </head>
 
 <body>
-    
+
     <div id="pimcore_logo" style="display: none;">
         <img src="/pimcore/static/img/logo.png"/>
     </div>
-    
+
     <div id="pimcore_loading">
-        <img class="logo" src="/pimcore/static/img/loading-logo.png?_dc=<?php echo Pimcore_Version::$revision ?>" />
-        <img class="loading" src="/pimcore/static/img/loading.gif?_dc=<?php echo Pimcore_Version::$revision ?>" />
+        <img class="loading" src="/pimcore/static/img/loading-white-bg.gif?_dc=<?php echo Pimcore_Version::$revision ?>" />
     </div>
-    
-    
+
+    <div id="pimcore_navigation" style="display:none;">
+        <ul>
+            <li id="pimcore_menu_avatar" class="pimcore_menu_avatar">
+                <img src="/admin/user/get-image" />
+            </li>
+            <li id="pimcore_menu_file" class="pimcore_menu_item icon-th-large"><?php echo $this->translate("file"); ?></li>
+            <li id="pimcore_menu_extras" class="pimcore_menu_item icon-rocket pimcore_menu_needs_children"><?php echo $this->translate("extras"); ?></li>
+            <li id="pimcore_menu_marketing" class="pimcore_menu_item icon-chart-bar pimcore_menu_needs_children"><?php echo $this->translate("marketing"); ?></li>
+            <li id="pimcore_menu_settings" class="pimcore_menu_item icon-cog-alt pimcore_menu_needs_children"><?php echo $this->translate("settings"); ?></li>
+            <li id="pimcore_menu_maintenance" class="pimcore_menu_item icon-hammer" style="display:none;"><?php echo $this->translate("deactivate_maintenance"); ?></li>
+            <li id="pimcore_menu_search" class="pimcore_menu_item icon-search"><?php echo $this->translate("search"); ?></li>
+            <li id="pimcore_menu_logout" class="pimcore_menu_item icon-logout"><?php echo $this->translate("logout"); ?></li>
+        </ul>
+    </div>
+
+
     <script type="text/javascript">
         var pimcore = {}; // namespace
     </script>
-    
-    
+
+
     <?php // define stylesheets ?>
     <?php
         $styles = array(
@@ -51,7 +73,8 @@
             "/pimcore/static/js/lib/ext-plugins/ux/gridfilters/css/GridFilters.css",
             "/pimcore/static/js/lib/ext-plugins/ux/gridfilters/css/RangeMenu.css",
             "/pimcore/static/js/lib/ext-plugins/ux/fileuploadfield/css/fileuploadfield.css",
-            "/pimcore/static/css/ext-admin-overwrite.css"
+            "/pimcore/static/css/ext-admin-overwrite.css",
+            "/pimcore/static/css/fontello.css"
         );
     ?>
 
@@ -199,8 +222,11 @@
             "pimcore/settings/robotstxt.js",
             "pimcore/settings/httpErrorLog.js",
             "pimcore/settings/bouncemailinbox.js",
-            "pimcore/settings/targeting/panel.js",
-            "pimcore/settings/targeting/item.js",
+            "pimcore/settings/targeting/conditions.js",
+            "pimcore/settings/targeting/rules/panel.js",
+            "pimcore/settings/targeting/rules/item.js",
+            "pimcore/settings/targeting/personas/panel.js",
+            "pimcore/settings/targeting/personas/item.js",
 
             // element
             "pimcore/element/abstract.js",
@@ -237,7 +263,7 @@
             "pimcore/document/email.js",
             "pimcore/document/page.js",
             "pimcore/document/seopanel.js",
-            
+
             // assets
             "pimcore/asset/asset.js",
             "pimcore/asset/unknown.js",
@@ -248,7 +274,7 @@
             "pimcore/asset/folder.js",
             "pimcore/asset/versions.js",
             "pimcore/asset/tree.js",
-        
+
             // object
             "pimcore/object/helpers/edit.js",
             "pimcore/object/classes/class.js",
@@ -275,13 +301,14 @@
             "pimcore/object/classes/data/table.js",
             "pimcore/object/classes/data/structuredTable.js",
             "pimcore/object/classes/data/country.js",
+            "pimcore/object/classes/data/geo/abstract.js",
             "pimcore/object/classes/data/geopoint.js",
+            "pimcore/object/classes/data/geobounds.js",
+            "pimcore/object/classes/data/geopolygon.js",
             "pimcore/object/classes/data/language.js",
             "pimcore/object/classes/data/password.js",
             "pimcore/object/classes/data/multiselect.js",
             "pimcore/object/classes/data/link.js",
-            "pimcore/object/classes/data/geobounds.js",
-            "pimcore/object/classes/data/geopolygon.js",
             "pimcore/object/classes/data/fieldcollections.js",
             "pimcore/object/classes/data/objectbricks.js",
             "pimcore/object/classes/data/localizedfields.js",
@@ -294,6 +321,8 @@
             "pimcore/object/classes/data/gender.js",
             "pimcore/object/classes/data/newsletterActive.js",
             "pimcore/object/classes/data/newsletterConfirmed.js",
+            "pimcore/object/classes/data/persona.js",
+            "pimcore/object/classes/data/personamultiselect.js",
             "pimcore/object/classes/layout/layout.js",
             "pimcore/object/classes/layout/accordion.js",
             "pimcore/object/classes/layout/fieldset.js",
@@ -328,13 +357,14 @@
             "pimcore/object/tags/table.js",
             "pimcore/object/tags/structuredTable.js",
             "pimcore/object/tags/country.js",
+            "pimcore/object/tags/geo/abstract.js",
+            "pimcore/object/tags/geobounds.js",
             "pimcore/object/tags/geopoint.js",
+            "pimcore/object/tags/geopolygon.js",
             "pimcore/object/tags/language.js",
             "pimcore/object/tags/password.js",
             "pimcore/object/tags/multiselect.js",
             "pimcore/object/tags/link.js",
-            "pimcore/object/tags/geobounds.js",
-            "pimcore/object/tags/geopolygon.js",
             "pimcore/object/tags/fieldcollections.js",
             "pimcore/object/tags/localizedfields.js",
             "pimcore/object/tags/countrymultiselect.js",
@@ -347,6 +377,8 @@
             "pimcore/object/tags/gender.js",
             "pimcore/object/tags/newsletterActive.js",
             "pimcore/object/tags/newsletterConfirmed.js",
+            "pimcore/object/tags/persona.js",
+            "pimcore/object/tags/personamultiselect.js",
             "pimcore/object/preview.js",
             "pimcore/object/versions.js",
             "pimcore/object/variantsTab.js",
@@ -360,11 +392,11 @@
             "pimcore/object/tree.js",
             "pimcore/object/customviews/settings.js",
             "pimcore/object/customviews/tree.js",
-            
+
             //plugins
             "pimcore/plugin/broker.js",
             "pimcore/plugin/plugin.js",
-        
+
             // reports
             "pimcore/report/panel.js",
             "pimcore/report/broker.js",
@@ -408,7 +440,7 @@
             "pimcore/layout/portlets/modificationStatistic.js",
             "pimcore/layout/portlets/feed.js",
             "pimcore/layout/portlets/analytics.js",
-            
+
             "pimcore/layout/toolbar.js",
             "pimcore/layout/treepanelmanager.js",
             "pimcore/document/seemode.js",
@@ -437,7 +469,7 @@
         }
 
     ?>
-    
+
     <!-- some javascript -->
     <?php // pimcore constants ?>
     <script type="text/javascript">
@@ -462,20 +494,19 @@
             liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
             showCloseConfirmation: true,
             debug_admin_translations: <?php echo Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
-            targeting_enabled: <?php echo Zend_Json::encode((bool) PIMCORE_DEVMODE) ?>,
             document_generatepreviews: <?php echo Zend_Json::encode((bool) $this->config->documents->generatepreview) ?>,
             htmltoimage: <?php echo Zend_Json::encode(Pimcore_Image_HtmlToImage::isSupported()) ?>
         };
     </script>
-    
-    
+
+
     <?php // 3rd party libraries ?>
     <script type="text/javascript">
         var gmapInitialize = function () {}; // dummy callback
         (function() {
             var script = document.createElement("script");
             script.type = "text/javascript";
-            script.src = 'https://maps.googleapis.com/maps/api/js?sensor=false&callback=gmapInitialize&key=<?php echo $googleMapsApiKey ?>';
+            script.src = 'https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing&callback=gmapInitialize&key=<?php echo $googleMapsApiKey ?>';
             document.body.appendChild(script);
         })();
     </script>
@@ -484,22 +515,22 @@
     <script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <script type="text/javascript" src="/admin/user/get-current-user/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <script type="text/javascript" src="/admin/misc/available-languages?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
-    
-    
+
+
     <!-- library scripts -->
     <?php foreach ($scriptLibs as $scriptUrl) { ?>
         <script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <?php } ?>
-    
-    
-    
+
+
+
     <!-- internal scripts -->
     <?php if (PIMCORE_DEVMODE) { ?>
         <?php foreach ($scripts as $scriptUrl) { ?>
             <script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
         <?php } ?>
     <?php } else { ?>
-        <?php 
+        <?php
             $scriptContents = "";
             foreach ($scripts as $scriptUrl) {
                 if(is_file(PIMCORE_PATH."/static/js/".$scriptUrl)) {
@@ -538,7 +569,7 @@
                                     ?>
                                     <script type="text/javascript" src="<?php echo $jsPath ?>?_dc=<?php echo $pluginDcValue; ?>"></script>
                                     <?php
-        
+
                                 }
                             }
                         }
@@ -550,19 +581,18 @@
                                     ?>
                                     <link rel="stylesheet" type="text/css" href="<?php echo $cssPath ?>?_dc=<?php echo $pluginDcValue; ?>"/>
                                     <?php
-        
+
                                 }
                             }
                         }
                     }
                 }
             }
-        } 
+        }
         catch (Exception $e) {}
     ?>
 
     <?php // MUST BE THE LAST LINE ?>
     <script type="text/javascript" src="/pimcore/static/js/pimcore/startup.js?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
-
 </body>
 </html>

@@ -18,6 +18,15 @@ CREATE TABLE `assets` (
   KEY `path` (`path`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `cache`;
+CREATE TABLE `cache` (
+  `id` varchar(165) NOT NULL DEFAULT '',
+  `data` longtext NOT NULL DEFAULT '',
+  `mtime` bigint(20) DEFAULT NULL,
+  `expire` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `cache_tags`;
 CREATE TABLE `cache_tags` (
   `id` varchar(165) NOT NULL DEFAULT '',
@@ -110,6 +119,26 @@ CREATE TABLE `dependencies` (
   KEY `targettype` (`targettype`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `deployment_packages`;
+CREATE TABLE `deployment_packages` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `type` VARCHAR(50) NOT NULL,
+  `subType` VARCHAR(50) NOT NULL,
+  `creationDate` BIGINT(20) NOT NULL,
+  `version` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `deployment_target`;
+CREATE TABLE `deployment_target` (
+  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `parentId` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+  `name` VARCHAR(255) NOT NULL,
+  `creationDate` BIGINT(20) UNSIGNED NOT NULL,
+  `status` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents` ;
 CREATE TABLE `documents` (
@@ -203,6 +232,7 @@ CREATE TABLE `documents_page` (
   `prettyUrl` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `css` longtext,
+  `personas` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8;
@@ -494,13 +524,22 @@ CREATE TABLE `staticroutes` (
   KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `targeting`;
-CREATE TABLE `targeting` (
+DROP TABLE IF EXISTS `targeting_rules`;
+CREATE TABLE `targeting_rules` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `description` text,
   `conditions` longtext,
   `actions` longtext,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `targeting_personas`;
+CREATE TABLE `targeting_personas` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `description` text,
+  `conditions` longtext,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 

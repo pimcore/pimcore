@@ -17,13 +17,13 @@
  * @subpackage Helper
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Links.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id: Links.php 25239 2013-01-22 09:45:01Z frosch $
  */
 
 /**
  * @see Zend_View_Helper_Navigation_HelperAbstract
  */
-// require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
+require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
 
 /**
  * Helper for printing <link> elements
@@ -270,7 +270,7 @@ class Zend_View_Helper_Navigation_Links
     public function findRelation(Zend_Navigation_Page $page, $rel, $type)
     {
         if (!in_array($rel, array('rel', 'rev'))) {
-            // require_once 'Zend/View/Exception.php';
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception(sprintf(
                 'Invalid argument: $rel must be "rel" or "rev"; "%s" given',
                 $rel));
@@ -709,7 +709,7 @@ class Zend_View_Helper_Navigation_Links
     public function renderLink(Zend_Navigation_Page $page, $attrib, $relation)
     {
         if (!in_array($attrib, array('rel', 'rev'))) {
-            // require_once 'Zend/View/Exception.php';
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception(sprintf(
                     'Invalid relation attribute "%s", must be "rel" or "rev"',
                     $attrib));
@@ -769,7 +769,7 @@ class Zend_View_Helper_Navigation_Links
             foreach ($types as $relation => $pages) {
                 foreach ($pages as $page) {
                     if ($r = $this->renderLink($page, $attrib, $relation)) {
-                        $output .= $indent . $r . self::EOL;
+                        $output .= $indent . $r . $this->getEOL();
                     }
                 }
             }

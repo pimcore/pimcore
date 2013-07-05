@@ -39,7 +39,9 @@
     <?php if(!$this->editmode) { // do not provide responsive in editmode, ... it works but it's annoying ;-) ?>
         <link href="/website/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <?php } ?>
+
     <link href="/website/static/css/global.css" rel="stylesheet">
+
     <link rel="stylesheet" href="/website/static/lib/projekktor/theme/style.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="/website/static/lib/magnific/magnific.css" type="text/css" media="screen" />
 
@@ -112,7 +114,7 @@
     ================================================== -->
     <header class="jumbotron subhead" id="overview">
         <div class="container">
-            <h1><?php echo $this->input("headTitle"); ?></h1>
+            <h2><?php echo $this->input("headTitle"); ?></h2>
             <p class="lead"><?php echo $this->input("headDescription"); ?></p>
         </div>
     </header>

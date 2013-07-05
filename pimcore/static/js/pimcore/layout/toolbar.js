@@ -66,6 +66,46 @@ pimcore.layout.toolbar = Class.create({
         }
 
 
+        if (user.isAllowed("seemode")) {
+            fileItems.push({
+                text: t("seemode"),
+                iconCls: "pimcore_icon_menu_seemode",
+                cls: "pimcore_main_menu",
+                handler: pimcore.helpers.openSeemode
+            });
+        }
+
+        fileItems.push({
+            text: t('help'),
+            iconCls: "pimcore_icon_menu_help",
+            cls: "pimcore_main_menu",
+            hideOnClick: false,
+            menu: {
+                cls: "pimcore_navigation_flyout",
+                items: [{
+                    text: t("documentation"),
+                    iconCls: "pimcore_icon_menu_documentation",
+                    handler: function () {
+                        window.open("http://www.pimcore.org/wiki/");
+                    }
+                },
+                {
+                    text: t("report_bugs"),
+                    iconCls: "pimcore_icon_menu_bugs",
+                    handler: function () {
+                        window.open("http://www.pimcore.org/issues");
+                    }
+                },
+                {
+                    text: t("about"),
+                    iconCls: "pimcore_icon_menu_about",
+                    handler: function () {
+                        window.open("http://www.pimcore.org/");
+                    }
+                }]
+            }
+        });
+
         fileItems.push({
             text: t("close_all_tabs"),
             iconCls: "pimcore_icon_menu_close_tabs",
@@ -74,12 +114,12 @@ pimcore.layout.toolbar = Class.create({
 
 
         this.fileMenu = new Ext.menu.Menu({
-            items: fileItems
+            items: fileItems,
+            cls: "pimcore_navigation_flyout"
         });
 
 
         var extrasItems = [];
-
 
         if (user.isAllowed("glossary")) {
             extrasItems.push({
@@ -102,15 +142,18 @@ pimcore.layout.toolbar = Class.create({
                 text: t("translation"),
                 iconCls: "pimcore_icon_translations",
                 hideOnClick: false,
-                menu: [{
-                    text: t("shared_translations"),
-                    iconCls: "pimcore_icon_translations",
-                    handler: this.editTranslations
-                }, {
-                    text: "XLIFF " + t("export") + "/" + t("import"),
-                    iconCls: "pimcore_icon_translations",
-                    handler: this.xliffImportExport
-                }]
+                menu: {
+                    cls: "pimcore_navigation_flyout",
+                    items: [{
+                        text: t("shared_translations"),
+                        iconCls: "pimcore_icon_translations",
+                        handler: this.editTranslations
+                    }, {
+                        text: "XLIFF " + t("export") + "/" + t("import"),
+                        iconCls: "pimcore_icon_translations",
+                        handler: this.xliffImportExport
+                    }]
+                }
             });
         }
 
@@ -122,121 +165,27 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-
-        var seoMenu = [];
-
-        if(user.isAllowed("documents") && user.isAllowed("seo_document_editor")) {
-            seoMenu.push({
-                text: t("seo_document_editor"),
-                iconCls: "pimcore_icon_seo_document",
-                handler: this.showDocumentSeo
-            });
-        }
-
-        if(user.isAllowed("robots.txt")) {
-            seoMenu.push({
-                text: "robots.txt",
-                iconCls: "pimcore_icon_robots",
-                handler: this.showRobotsTxt
-            });
-        }
-
-        if(user.isAllowed("http_errors")) {
-            seoMenu.push({
-                text: t("http_errors"),
-                iconCls: "pimcore_icon_httperrorlog",
-                handler: this.showHttpErrorLog
-            });
-        }
-
-        if(user.isAllowed("reports")) {
-            seoMenu.push({
-                text: t("reports"),
-                iconCls: "pimcore_icon_reports",
-                handler: this.showReports.bind(this, null)
-            });
-        }
-
-        if (seoMenu.length > 0) {
-            extrasItems.push({
-                text: t("search_engine_optimization"),
-                iconCls: "pimcore_icon_seo",
-                hideOnClick: false,
-                menu: seoMenu
-            });
-        }
-
         if (user.isAllowed("plugins")) {
             extrasItems.push({
                 text: t("extensions"),
                 iconCls: "pimcore_icon_extensionmanager",
                 hideOnClick: false,
-                menu: [{
-                    text: t("manage_extensions"),
-                    iconCls: "pimcore_icon_extensionmanager_admin",
-                    handler: this.extensionAdmin
-                },{
-                    text: t("download_extension"),
-                    iconCls: "pimcore_icon_extensionmanager_download",
-                    handler: this.extensionDownload
-                },{
-                    text: t("share_extension"),
-                    iconCls: "pimcore_icon_extensionmanager_share",
-                    handler: this.extensionShare
-                }]
-            });
-        }
-
-        var reportsMenu = [];
-
-        if (user.isAllowed("reports")) {
-            reportsMenu.push({
-                text: t("reports"),
-                iconCls: "pimcore_icon_reports",
-                handler: this.showReports
-            });
-        }
-
-        if (user.isAllowed("tag_snippet_management")) {
-            reportsMenu.push({
-                text: t("tag_snippet_management"),
-                iconCls: "pimcore_icon_tag",
-                handler: this.showTagManagement
-            });
-        }
-
-        if (user.isAllowed("qr_codes")) {
-            reportsMenu.push({
-                text: t("qr_codes"),
-                iconCls: "pimcore_icon_qrcode",
-                handler: this.showQRCode
-            });
-        }
-
-        if (user.isAllowed("targeting")) {
-            reportsMenu.push({
-                text: t("targeting"),
-                iconCls: "pimcore_icon_tab_targeting",
-                handler: this.showTargeting,
-                hidden: !pimcore.settings.targeting_enabled
-            });
-        }
-
-        if (user.isAllowed("newsletter")) {
-            reportsMenu.push({
-                text: t("newsletter"),
-                iconCls: "pimcore_icon_newsletter",
-                handler: this.showNewsletter
-            });
-        }
-
-        if (reportsMenu.length > 0) {
-            extrasItems.push({
-                text: t("reports_and_marketing"),
-                iconCls: "pimcore_icon_reports",
-                id: "pimcore_mainmenu_extras_reports",
-                hideOnClick: false,
-                menu: reportsMenu
+                menu: {
+                    cls: "pimcore_navigation_flyout",
+                    items: [{
+                        text: t("manage_extensions"),
+                        iconCls: "pimcore_icon_extensionmanager_admin",
+                        handler: this.extensionAdmin
+                    },{
+                        text: t("download_extension"),
+                        iconCls: "pimcore_icon_extensionmanager_download",
+                        handler: this.extensionDownload
+                    },{
+                        text: t("share_extension"),
+                        iconCls: "pimcore_icon_extensionmanager_share",
+                        handler: this.extensionShare
+                    }]
+                }
             });
         }
 
@@ -248,7 +197,9 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        extrasItems.push("-");
+        if (extrasItems.length > 0) {
+            extrasItems.push("-");
+        }
 
         if (user.isAllowed("backup")) {
             extrasItems.push({
@@ -299,36 +250,150 @@ pimcore.layout.toolbar = Class.create({
                 text: t("system_infos_and_tools"),
                 iconCls: "pimcore_icon_info",
                 hideOnClick: false,
-                menu: [{
-                    text: "PHP Info",
-                    iconCls: "pimcore_icon_php",
-                    handler: this.showPhpInfo
-                },{
-                    text: "System-Requirements Check",
-                    iconCls: "pimcore_icon_systemrequirements",
-                    handler: this.showSystemRequirementsCheck
-                },{
-                    text: "Server Info",
-                    iconCls: "pimcore_icon_server_info",
-                    handler: this.showServerInfo
-                },{
-                    text: "Database Administration",
-                    iconCls: "pimcore_icon_mysql",
-                    handler: this.showAdminer
-                },{
-                    text: t("server_fileexplorer"),
-                    iconCls: "pimcore_icon_fileexplorer",
-                    handler: this.showFilexplorer
-                }]
+                menu: {
+                    cls: "pimcore_navigation_flyout",
+                    items: [{
+                        text: "PHP Info",
+                        iconCls: "pimcore_icon_php",
+                        handler: this.showPhpInfo
+                    },{
+                        text: "System-Requirements Check",
+                        iconCls: "pimcore_icon_systemrequirements",
+                        handler: this.showSystemRequirementsCheck
+                    },{
+                        text: "Server Info",
+                        iconCls: "pimcore_icon_server_info",
+                        handler: this.showServerInfo
+                    },{
+                        text: "Database Administration",
+                        iconCls: "pimcore_icon_mysql",
+                        handler: this.showAdminer
+                    },{
+                        text: t("server_fileexplorer"),
+                        iconCls: "pimcore_icon_fileexplorer",
+                        handler: this.showFilexplorer
+                    }]
+                }
             });
         }
 
 
         if (extrasItems.length > 0) {
             this.extrasMenu = new Ext.menu.Menu({
-                items: extrasItems
+                items: extrasItems,
+                cls: "pimcore_navigation_flyout"
             });
         }
+
+        // marketing menu
+        var marketingItems = [];
+
+        if (user.isAllowed("reports")) {
+            marketingItems.push({
+                text: t("reports"),
+                iconCls: "pimcore_icon_reports",
+                handler: this.showReports
+            });
+        }
+
+        if (user.isAllowed("tag_snippet_management")) {
+            marketingItems.push({
+                text: t("tag_snippet_management"),
+                iconCls: "pimcore_icon_tag",
+                handler: this.showTagManagement
+            });
+        }
+
+        if (user.isAllowed("qr_codes")) {
+            marketingItems.push({
+                text: t("qr_codes"),
+                iconCls: "pimcore_icon_qrcode",
+                handler: this.showQRCode
+            });
+        }
+
+        if (user.isAllowed("targeting")) {
+            marketingItems.push({
+                text: t("personalization") + " / " + t("targeting"),
+                iconCls: "pimcore_icon_usergroup",
+                hideOnClick: false,
+                menu: {
+                    cls: "pimcore_navigation_flyout",
+                    items: [{
+                        text: t("global_targeting_rules"),
+                        iconCls: "pimcore_icon_tab_targeting",
+                        handler: this.showTargeting
+                    },{
+                        text: t('target_group') + " (" + t("personas") + ")",
+                        iconCls: "pimcore_icon_personas",
+                        handler: this.showPersonas
+                    }]
+                }
+            });
+        }
+
+        if (user.isAllowed("newsletter")) {
+            marketingItems.push({
+                text: t("newsletter"),
+                iconCls: "pimcore_icon_newsletter",
+                handler: this.showNewsletter
+            });
+        }
+
+        var seoMenu = [];
+
+        if(user.isAllowed("documents") && user.isAllowed("seo_document_editor")) {
+            seoMenu.push({
+                text: t("seo_document_editor"),
+                iconCls: "pimcore_icon_seo_document",
+                handler: this.showDocumentSeo
+            });
+        }
+
+        if(user.isAllowed("robots.txt")) {
+            seoMenu.push({
+                text: "robots.txt",
+                iconCls: "pimcore_icon_robots",
+                handler: this.showRobotsTxt
+            });
+        }
+
+        if(user.isAllowed("http_errors")) {
+            seoMenu.push({
+                text: t("http_errors"),
+                iconCls: "pimcore_icon_httperrorlog",
+                handler: this.showHttpErrorLog
+            });
+        }
+
+        if(user.isAllowed("reports")) {
+            seoMenu.push({
+                text: t("reports"),
+                iconCls: "pimcore_icon_reports",
+                handler: this.showReports.bind(this, null)
+            });
+        }
+
+        if (seoMenu.length > 0) {
+            marketingItems.push({
+                text: t("search_engine_optimization"),
+                iconCls: "pimcore_icon_seo",
+                hideOnClick: false,
+                menu: {
+                    cls: "pimcore_navigation_flyout",
+                    items: seoMenu
+                }
+            });
+        }
+
+        if (marketingItems.length > 0) {
+            this.marketingMenu = new Ext.menu.Menu({
+                items: marketingItems,
+                cls: "pimcore_navigation_flyout"
+            });
+        }
+
+
 
         // settings menu
         var settingsItems = [];
@@ -369,15 +434,18 @@ pimcore.layout.toolbar = Class.create({
                 text: t("users") + " / " + t("roles"),
                 iconCls: "pimcore_icon_users",
                 hideOnClick: false,
-                menu: [{
-                    text: t("users"),
-                    handler: this.editUsers,
-                    iconCls: "pimcore_icon_users"
-                }, {
-                    text: t("roles"),
-                    handler: this.editRoles,
-                    iconCls: "pimcore_icon_roles"
-                }]
+                menu: {
+                    cls: "pimcore_navigation_flyout",
+                    items: [{
+                        text: t("users"),
+                        handler: this.editUsers,
+                        iconCls: "pimcore_icon_users"
+                    }, {
+                        text: t("roles"),
+                        handler: this.editRoles,
+                        iconCls: "pimcore_icon_roles"
+                    }]
+                }
             });
         } else {
             settingsItems.push({
@@ -392,15 +460,18 @@ pimcore.layout.toolbar = Class.create({
                 text: t("thumbnails"),
                 iconCls: "pimcore_icon_thumbnails",
                 hideOnClick: false,
-                menu : [{
-                    text: t("image_thumbnails"),
-                    iconCls: "pimcore_icon_thumbnails",
-                    handler: this.editThumbnails
-                },{
-                    text: t("video_thumbnails"),
-                    iconCls: "pimcore_icon_videothumbnails",
-                    handler: this.editVideoThumbnails
-                }]
+                menu: {
+                    cls: "pimcore_navigation_flyout",
+                    items: [{
+                        text: t("image_thumbnails"),
+                        iconCls: "pimcore_icon_thumbnails",
+                        handler: this.editThumbnails
+                    },{
+                        text: t("video_thumbnails"),
+                        iconCls: "pimcore_icon_videothumbnails",
+                        handler: this.editVideoThumbnails
+                    }]
+                }
             });
         }
 
@@ -410,35 +481,38 @@ pimcore.layout.toolbar = Class.create({
                 text: t("object"),
                 iconCls: "pimcore_icon_object",
                 hideOnClick: false,
-                menu: []
+                menu: {
+                    cls: "pimcore_navigation_flyout",
+                    items: []
+                }
             };
 
             if (user.isAllowed("classes")) {
-                objectMenu.menu.push({
+                objectMenu.menu.items.push({
                     text: t("classes"),
                     iconCls: "pimcore_icon_classes",
                     handler: this.editClasses
                 });
                 
-                objectMenu.menu.push({
+                objectMenu.menu.items.push({
                     text: t("field_collections"),
                     iconCls: "pimcore_icon_fieldcollections",
                     handler: this.editFieldcollections
                 });
 
-                objectMenu.menu.push({
+                objectMenu.menu.items.push({
                     text: t("objectbricks"),
                     iconCls: "pimcore_icon_objectbricks",
                     handler: this.editObjectBricks
                 });
 
-                objectMenu.menu.push({
+                objectMenu.menu.items.push({
                     text: t("keyvalue_menu_config"),
                     iconCls: "pimcore_icon_key",
                     handler: this.keyValueSettings
                 });
 
-                objectMenu.menu.push({
+                objectMenu.menu.items.push({
                     text: t("custom_views"),
                     iconCls: "pimcore_icon_custom_views",
                     handler: this.editCustomViews
@@ -462,11 +536,14 @@ pimcore.layout.toolbar = Class.create({
                 text: t("cache"),
                 iconCls: "pimcore_icon_menu_clear_cache",
                 hideOnClick: false,
-                menu: []
+                menu: {
+                    cls: "pimcore_navigation_flyout",
+                    items: []
+                }
             };
 
             if (user.isAllowed("clear_cache")) {
-                cacheMenu.menu.push({
+                cacheMenu.menu.items.push({
                     text: t("clear_only_output_cache"),
                     iconCls: "pimcore_icon_menu_clear_cache",
                     handler: this.clearOutputCache
@@ -474,7 +551,7 @@ pimcore.layout.toolbar = Class.create({
             }
 
             if (user.isAllowed("clear_cache")) {
-                cacheMenu.menu.push({
+                cacheMenu.menu.items.push({
                     text: t("clear_cache"),
                     iconCls: "pimcore_icon_menu_clear_cache",
                     handler: this.clearCache
@@ -482,15 +559,15 @@ pimcore.layout.toolbar = Class.create({
             }
 
             if (user.isAllowed("clear_temp_files")) {
-                cacheMenu.menu.push({
+                cacheMenu.menu.items.push({
                     text: t("clear_temporary_files"),
                     iconCls: "pimcore_icon_menu_clear_cache",
                     handler: this.clearTemporaryFiles
                 });
             }
 
-            if(pimcore.settings.document_generatepreviews) {
-                cacheMenu.menu.push({
+            if(pimcore.settings.document_generatepreviews && pimcore.settings.htmltoimage) {
+                cacheMenu.menu.items.push({
                     text: t("generate_page_previews"),
                     iconCls: "pimcore_icon_page",
                     handler: this.generatePagePreviews
@@ -520,38 +597,46 @@ pimcore.layout.toolbar = Class.create({
         // help menu
         if (settingsItems.length > 0) {
             this.settingsMenu = new Ext.menu.Menu({
-                items: settingsItems
+                items: settingsItems,
+                cls: "pimcore_navigation_flyout"
             });
         }
 
-        this.helpMenu = new Ext.menu.Menu({
-            items: [
-                {
-                    text: t("documentation"),
-                    iconCls: "pimcore_icon_menu_documentation",
-                    handler: function () {
-                        window.open("http://www.pimcore.org/wiki/");
-                    }
-                },
-                {
-                    text: t("report_bugs"),
-                    iconCls: "pimcore_icon_menu_bugs",
-                    handler: function () {
-                        window.open("http://www.pimcore.org/issues");
-                    }
-                },
-                {
-                    text: t("about"),
-                    iconCls: "pimcore_icon_menu_about",
-                    handler: function () {
-                        window.open("http://www.pimcore.org/");
+
+        Ext.get("pimcore_menu_file").on("mousedown", this.showSubMenu.bind(this.fileMenu));
+        Ext.get("pimcore_menu_extras").on("mousedown", this.showSubMenu.bind(this.extrasMenu));
+        Ext.get("pimcore_menu_marketing").on("mousedown", this.showSubMenu.bind(this.marketingMenu));
+        Ext.get("pimcore_menu_settings").on("mousedown", this.showSubMenu.bind(this.settingsMenu));
+        Ext.get("pimcore_menu_search").on("mousedown", function () {
+            pimcore.helpers.itemselector(false, function (selection) {
+                pimcore.helpers.openElement(selection.id,selection.type, selection.subtype);
+            }, null, {moveToTab: true} );
+        });
+        Ext.get("pimcore_menu_logout").on("click", this.logout);
+
+        Ext.each(Ext.query(".pimcore_menu_item"), function (el) {
+            el = Ext.get(el);
+
+            if(el.hasClass("pimcore_menu_needs_children")) {
+                var menuVariable = el.id.replace(/pimcore_menu_/, "") + "Menu";
+                if(!this[menuVariable]) {
+                    el.setStyle("display", "none");
+                }
+            }
+
+            el.on("mouseenter", function () {
+                if(Ext.menu.MenuMgr.hideAll()) {
+                    var offsets = el.getOffsetsTo(Ext.getBody());
+                    offsets[0] = 70;
+                    var menu = this[menuVariable];
+                    if(menu) {
+                        menu.showAt(offsets);
                     }
                 }
-            ]
-        });
+            }.bind(this));
+        }.bind(this));
 
-
-        this.toolbar.add({
+        /*this.toolbar.add({
             text: t('file'),
             iconCls: "pimcore_icon_menu_file",
             cls: "pimcore_main_menu",
@@ -590,9 +675,9 @@ pimcore.layout.toolbar = Class.create({
         });
         
         this.toolbar.add("->");
-        
+        */
 
-        if (('webkitSpeechRecognition' in window)) {
+        /*if (('webkitSpeechRecognition' in window)) {
             this.toolbar.add({
                 iconCls: "",
                 cls: "pimcore_main_menu",
@@ -730,38 +815,25 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        if (user.isAllowed("seemode")) {
-            this.toolbar.add({
-                text: t("seemode"),
-                iconCls: "pimcore_icon_menu_seemode",
-                cls: "pimcore_main_menu",
-                handler: pimcore.helpers.openSeemode
-            });
-        }
-
-        this.toolbar.add({
-            text: t('help'),
-            iconCls: "pimcore_icon_menu_help",
-            cls: "pimcore_main_menu",
-            menu: this.helpMenu
-        });
-
-        this.toolbar.add({
-            text: t('logout'),
-            iconCls: "pimcore_icon_menu_logout",
-            cls: "pimcore_main_menu",
-            handler: this.logout
-        });
-        
-
         this.toolbar.add(new Ext.Toolbar.Spacer({
             width: "150"
         }));
-
+        */
 
         return;
     },
 
+    showSubMenu: function (e, el) {
+        if(this.hidden) {
+            el = Ext.get(el);
+            var offsets = el.getOffsetsTo(Ext.getBody());
+            offsets[0] = 70;
+            this.showAt(offsets);
+            e.stopEvent();
+        } else {
+            this.hide();
+        }
+    },
 
     closeAllTabs: function () {
         pimcore.helpers.closeAllElements();
@@ -1011,7 +1083,7 @@ pimcore.layout.toolbar = Class.create({
             tabPanel.activate(pimcore.globalmanager.get("targeting").getLayout());
         }
         catch (e) {
-            var targeting = new pimcore.settings.targeting.panel();
+            var targeting = new pimcore.settings.targeting.rules.panel();
             pimcore.globalmanager.add("targeting", targeting);
 
             tabPanel.add(targeting.getLayout());
@@ -1019,6 +1091,26 @@ pimcore.layout.toolbar = Class.create({
 
             targeting.getLayout().on("destroy", function () {
                 pimcore.globalmanager.remove("targeting");
+            }.bind(this));
+
+            pimcore.layout.refresh();
+        }
+    },
+
+    showPersonas: function () {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        try {
+            tabPanel.activate(pimcore.globalmanager.get("personasPanel").getLayout());
+        }
+        catch (e) {
+            var personas = new pimcore.settings.targeting.personas.panel();
+            pimcore.globalmanager.add("personasPanel", personas);
+
+            tabPanel.add(personas.getLayout());
+            tabPanel.activate(personas.getLayout());
+
+            personas.getLayout().on("destroy", function () {
+                pimcore.globalmanager.remove("personasPanel");
             }.bind(this));
 
             pimcore.layout.refresh();

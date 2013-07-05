@@ -245,7 +245,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
                 }
             }
             catch (Exception $e) {
-                Logger::warning($e);
+                Logger::warning($e->getMessage());
                 return null;
             }
         }
@@ -286,7 +286,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             }
         }
         catch (Exception $e) {
-            Logger::warning($e);
+            Logger::warning($e->getMessage());
         }
 
         return null;
@@ -1179,7 +1179,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             ;
             if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
                 $properties = $this->getResource()->getProperties();
-                Pimcore_Model_Cache::save($properties, $cacheKey, array("object_properties", "properties"));
+                Pimcore_Model_Cache::save($properties, $cacheKey, array("properties"));
             }
 
             $this->setO_Properties($properties);

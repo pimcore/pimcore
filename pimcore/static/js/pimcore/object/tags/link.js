@@ -115,7 +115,15 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             value: this.data.path,
             name: "path",
             width: 320,
-            cls: "pimcore_droptarget_input"
+            cls: "pimcore_droptarget_input",
+            enableKeyEvents: true,
+            listeners: {
+                keyup: function (el) {
+                    if(el.getValue().match(/^www\./)) {
+                        el.setValue("http://" + el.getValue());
+                    }
+                }
+            }
         });
 
 

@@ -88,11 +88,10 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
         try {
             while ($tag = array_shift($tags)) {
                 try {
-                    /*$this->getDb()->insert("cache_tags", array(
+                    $this->getDb()->insertOrUpdate("cache_tags", array(
                         "id" => $id,
                         "tag" => $tag
-                    ));*/
-                    $this->getDb()->query("INSERT INTO cache_tags (id,tag) VALUES('" . $id . "', '" . $tag . "') ON DUPLICATE KEY UPDATE id = '" . $id . "'");
+                    ));
                 }
                 catch (Exception $e) {
                     if(strpos(strtolower($e->getMessage()), "is full") !== false) {
@@ -107,7 +106,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                         $tags[] = $tag;
                     } else {
                         // it seems that the item does already exist
-                        continue;
+                        throw $e;
                     }
                 }
             }
@@ -225,12 +224,18 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
         if ($mode == Zend_Cache::CLEANING_MODE_MATCHING_TAG || $mode == Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG) {
             foreach ($tags as $tag) {
                 $items = $this->getItemsByTag($tag);
+                $quotedIds = array();
+
                 foreach ($items as $item) {
                     // We call delete directly here because the ID in the cache is already specific for this site
                     $this->remove($item, true);
+                    $quotedIds[] = $this->getDb()->quote($item);
                 }
-                $this->getDb()->delete("cache_tags", "tag = '".$tag."'");
-            }            
+                //$this->getDb()->delete("cache_tags", "tag = '".$tag."'");
+                if(count($quotedIds) > 0) {
+                    $this->getDb()->delete("cache_tags", "id IN (" . implode(",", $quotedIds) . ")");
+                }
+            }
         }
         if ($mode == Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG) {
             
@@ -248,11 +253,10 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
         // insert dummy for the consistency check
         try {
-            /*$this->getDb()->insert("cache_tags", array(
+            $this->getDb()->insertOrUpdate("cache_tags", array(
                 "id" => "___consistency_check___",
                 "tag" => "___consistency_check___"
-            ));*/
-            $this->getDb()->query("INSERT INTO cache_tags (id,tag) VALUES('___consistency_check___', '___consistency_check___') ON DUPLICATE KEY UPDATE id = '___consistency_check___'");
+            ));
         } catch (Exception $e) {
             // doesn't matter as long as the item exists
         }
