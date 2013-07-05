@@ -14,27 +14,12 @@ pimcore.element.metainfo = Class.create({
 
 
     getInputWindow: function () {
-        var iconCls;
-        if (this.elementType == "object") {
-            iconCls = this.data.general.iconCls;
-        } else {
-            iconCls = "pimcore_icon_info_large";
-
-        }
-
-        var height;
-
-        if (this.elementType == "object") {
-            height = 500;
-        } else {
-            height = 450;
-        }
 
         if(!this.detailWindow) {
             this.detailWindow = new Ext.Window({
                 width: 600,
-                height: height,
-                iconCls: iconCls,
+                height: 300,
+                iconCls: "pimcore_icon_info",
                 title: t('element_metainfo'),
                 layout: "fit",
                 closeAction:'close',
@@ -45,6 +30,7 @@ pimcore.element.metainfo = Class.create({
                 buttons: [
                     {
                         text: t('close'),
+                        iconCls: "pimcore_icon_empty",
                         handler: function(){
                             this.detailWindow.hide();
                             this.detailWindow.destroy();
@@ -62,49 +48,26 @@ pimcore.element.metainfo = Class.create({
     createPanel: function() {
         var items = [];
 
-        var info;
-        if (this.elementType == "object") {
-            info = this.data.general;
-        } else {
-            info = this.data;
-        }
+        for (var i=0; i<this.data.length; i++) {
 
-        for (var key in info) {
-            if (info.hasOwnProperty(key)) {
-                if (typeof info[key] === "object") {
-                    continue;
-                }
-
-                if (typeof info[key] === "string") {
-                    if(key.substring(0,2) == "__") {
-                        continue;
-                    }
-                }
-
+            if(this.data[i]["type"] == "date") {
                 items.push({
                     xtype: "textfield",
-                    fieldLabel: key,
+                    fieldLabel: t(this.data[i]["name"]),
                     readOnly: true,
-                    value: info[key],
+                    value: new Date(this.data[i]["value"] * 1000) + " (" + this.data[i]["value"] + ")",
                     width: 400
                 });
-
-                if (key.indexOf("Date") !== -1) {
-                    items.push({
-                        xtype: "textfield",
-                        fieldLabel: "",
-                        readOnly: true,
-                        value: new Date(info[key] * 1000),
-                        width: 400
-                    });
-                }
+            } else {
+                items.push({
+                    xtype: "textfield",
+                    fieldLabel: t(this.data[i]["name"]),
+                    readOnly: true,
+                    value: this.data[i]["value"],
+                    width: 400
+                });
             }
-
-
         }
-
-
-
 
         var panel = new Ext.form.FormPanel({
             border: false,

@@ -230,7 +230,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             });
 
             var user = pimcore.globalmanager.get("user");
-
             if (user.admin) {
                 buttons.push({
                     text: t("show_metainfo"),
@@ -403,7 +402,33 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
     },
 
     showMetaInfo: function() {
-        new pimcore.element.metainfo(this.data, "asset");
+
+        new pimcore.element.metainfo([{
+            name: "path",
+            value: this.data.path + this.data.filename
+        }, {
+            name: "type",
+            value: this.data.type
+        }, {
+            name: "mimetype",
+            value: this.data.mimetype
+        }, {
+            name: "modificationdate",
+            type: "date",
+            value: this.data.modificationDate
+        }, {
+            name: "creationdate",
+            type: "date",
+            value: this.data.creationDate
+        }, {
+            name: "usermodification",
+            type: "user",
+            value: this.data.userModification
+        }, {
+            name: "userowner",
+            type: "user",
+            value: this.data.userOwner
+        }], "asset");
     }
 
 });
