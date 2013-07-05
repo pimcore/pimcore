@@ -234,6 +234,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             if (user.admin) {
                 buttons.push({
                     text: t("show_metainfo"),
+                    scale: "medium",
                     iconCls: "pimcore_icon_info_large",
                     handler: this.showMetaInfo.bind(this)
                 });
