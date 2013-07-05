@@ -200,7 +200,7 @@ pimcore.document.pages.preview = Class.create({
             if(!pimcore.globalmanager.get("user").isAllowed("document_style_editor")) {
                 cssPanelEnabled = false;
             }
-            if(!(this.page.isAllowed("save") || this.isAllowed("publish"))) {
+            if(!(this.page.isAllowed("save") || this.page.isAllowed("publish"))) {
                 cssPanelEnabled = false;
             }
             if(Ext.isIE8) {
