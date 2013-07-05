@@ -206,6 +206,7 @@ pimcore.document.pages.preview = Class.create({
             if(Ext.isIE8) {
                 cssPanelEnabled = false;
             }
+            this.cssPanelEnabled = cssPanelEnabled;
 
 
             this.cssPanel = new Ext.Panel({
@@ -1145,6 +1146,10 @@ pimcore.document.pages.preview = Class.create({
     },
 
     editorClearCurrentElement: function () {
+        if(!this.cssPanelEnabled) {
+            return;
+        }
+
         this.editorElement = null;
         if(this.editorUpdateInterval) {
             clearInterval(this.editorUpdateInterval);
