@@ -229,6 +229,16 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 handler: this.selectInTree.bind(this)
             });
 
+            var user = pimcore.globalmanager.get("user");
+
+            if (user.admin) {
+                buttons.push({
+                    text: t("show_metainfo"),
+                    iconCls: "pimcore_icon_info_large",
+                    handler: this.showMetaInfo.bind(this)
+                });
+            }
+
             buttons.push("-");
 
             buttons.push({
@@ -389,5 +399,10 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         }.bind(window, this.id, this.getType()), 500);
 
         pimcore.helpers.closeAsset(this.id);
+    },
+
+    showMetaInfo: function() {
+        new pimcore.element.metainfo(this.data, "asset");
     }
+
 });

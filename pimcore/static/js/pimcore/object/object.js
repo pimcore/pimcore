@@ -326,6 +326,17 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 handler: this.selectInTree.bind(this, this.data.general.o_type)
             });
 
+            var user = pimcore.globalmanager.get("user");
+
+            if (user.admin) {
+                buttons.push({
+                    text: t("show_metainfo"),
+                    iconCls: "pimcore_icon_info_large",
+                    handler: this.showMetaInfo.bind(this)
+                 });
+            }
+
+
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
@@ -594,5 +605,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }.bind(window, this.id), 500);
 
         pimcore.helpers.closeObject(this.id);
+    },
+
+
+    showMetaInfo: function() {
+        new pimcore.element.metainfo(this.data, "object");
     }
 });
