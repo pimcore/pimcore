@@ -327,7 +327,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             });
 
             var user = pimcore.globalmanager.get("user");
-
             if (user.admin) {
                 buttons.push({
                     text: t("show_metainfo"),
@@ -608,8 +607,30 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         pimcore.helpers.closeObject(this.id);
     },
 
-
     showMetaInfo: function() {
-        new pimcore.element.metainfo(this.data, "object");
+
+        new pimcore.element.metainfo([{
+            name: "path",
+            value: this.data.general.fullpath
+        }, {
+            name: "classid",
+            value: this.data.general.o_classId
+        }, {
+            name: "modificationdate",
+            type: "date",
+            value: this.data.general.o_modificationDate
+        }, {
+            name: "creationdate",
+            type: "date",
+            value: this.data.general.o_creationDate
+        }, {
+            name: "usermodification",
+            type: "user",
+            value: this.data.general.o_userModification
+        }, {
+            name: "userowner",
+            type: "user",
+            value: this.data.general.o_userOwner
+        }], "object");
     }
 });
