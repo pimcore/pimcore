@@ -1027,7 +1027,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 throw new Exception("No target specified.");
             }
             $cmd .= ' ' . Pimcore_Tool_Console::getOptionString($queryParams);
-            Pimcore_Tool_Console::execInBackground($cmd,Pimcore_Tool_Deployment::getDefaultLogFile());
+            Pimcore_Tool_Console::execInBackground($cmd,Deployment_Helper_General::getDefaultLogFile());
             $this->encoder->encode(array("success" => true, "data" => 'Command "' . $cmd .'" executed in background.'));
         }catch (Exception $e){
             Logger::error($e);

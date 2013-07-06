@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Pimcore core-tasks" default="pimcore.target.testTaskExecution">
     <php expression="PIMCORE_DOCUMENT_ROOT" returnProperty="pimcore.documentRoot" />
-    <taskdef file="${pimcore.documentRoot}/pimcore/config/deployment/phing/taskDefinitions.properties" />
+    <taskdef file="${pimcore.documentRoot}/pimcore/modules/deployment/config/phing/taskDefinitions.properties" />
 
     <target name="pimcore.target.all" depends="
     pimcore.target.testTaskExecution,

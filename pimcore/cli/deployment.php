@@ -30,6 +30,16 @@
 include_once("startup.php");
 Pimcore_Tool_Console::checkExecutingUser();
 
+$deploymentEnabled = false;
+if(is_readable(PIMCORE_DEPLOYMENT_CONFIG_FILE)){
+    $deploymentConfig = new Zend_Config_Xml(PIMCORE_DEPLOYMENT_CONFIG_FILE);
+    if($deploymentConfig->enabled){
+        $deploymentEnabled = true;
+    }
+}
+if(!$deploymentEnabled){
+    die("\nDeployment is not enabled - Please enable it in the config file: " . PIMCORE_DEPLOYMENT_CONFIG_FILE . "\n");
+}
 
 $lockKey = 'pimcore_deployment';
 Tool_Lock::acquire($lockKey);

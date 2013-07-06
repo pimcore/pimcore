@@ -101,20 +101,19 @@ Class Deployment_Instance_Wrapper {
 
     public function checkWebserviceRest(){
         if($this->instanceIsCurrentSystem()){
-            return false;
+            return array('success' => true,'message' => 'Instance is current system.');
         }
         try{
             $restClient = $this->getRestClient();
             $serverInfo = $restClient->getServerInfo();
-            $success = true;
+            return array('success' => true,'message' => 'Rest request successfully.');
         }catch(Exception $e){
-            $success = false;
+            return array('success' => false,'message' => 'Rest request failed -> ' .$e->getMessage());
         }
-        return $success;
     }
 
     public function instanceIsCurrentSystem(){
-        return ($this->getInstanceIdentifier() == Pimcore_Tool_Deployment::getInstanceIdentifier());
+        return ($this->getInstanceIdentifier() == Deployment_Helper_General::getInstanceIdentifier());
     }
 
     public function setInstanceIdentifier($instanceIdentifier)

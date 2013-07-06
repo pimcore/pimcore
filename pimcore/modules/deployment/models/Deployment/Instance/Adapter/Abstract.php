@@ -52,7 +52,7 @@ Abstract class Deployment_Instance_Adapter_Abstract {
     }
 
     public function getCurrentInstance(){
-        $instanceIdentifier = Pimcore_Tool_Deployment::getInstanceIdentifier();
+        $instanceIdentifier = Deployment_Helper_General::getInstanceIdentifier();
         if(!$instanceIdentifier){
             throw new BuildException("No instance identifier set for this system!");
         }

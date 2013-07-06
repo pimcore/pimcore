@@ -42,11 +42,12 @@ class Deployment_Task_Pimcore_Phing_CheckDeploymentInstancesTask extends Deploym
                 if($instance->instanceIsCurrentSystem()){
                     $this->log("Skipping check because the instance with the identifier '". $instance->getInstanceIdentifier() ."' is the current system.",Project::MSG_INFO);
                 }else{
-                    if($instance->checkWebserviceRest()){
+                    $restCheck = $instance->checkWebserviceRest();
+                    if($restCheck['success']){
                         $this->log("Instance with identifier '".$instance->getInstanceIdentifier()."' is valid." );
                     }else{
                         $invalidInstances[] = $instance->getInstanceIdentifier();
-                        $this->log("Invalid deployment deployment instance with Identifier '".$instance->getInstanceIdentifier()."'.",Project::MSG_ERR);
+                        $this->log("Invalid deployment deployment instance with Identifier '".$instance->getInstanceIdentifier()."'. ErrorMessage:" . $restCheck['message'], Project::MSG_ERR);
                     }
                 }
             }

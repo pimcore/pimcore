@@ -2,11 +2,11 @@
 /**
  * Created by JetBrains PhpStorm.
  * User: Christian Kogler
- * Date: 10.05.13
- * Time: 08:30
+ * Date: 06.07.13
+ * Time: 13:27
  */
 
-class Pimcore_Tool_Deployment {
+class Deployment_Helper_General {
 
     public static $tasksParamDefinitionFiles = array();//to add custom definition files if required
     protected static $taskParamDefinitions;
@@ -77,8 +77,8 @@ class Pimcore_Tool_Deployment {
         if(!self::$taskParamDefinitions){
             $configArray = array();
             $files = array_merge((array)self::$tasksParamDefinitionFiles,
-                                array(PIMCORE_DOCUMENT_ROOT . '/pimcore/config/deployment/phing/tasksParamDefinitions.xml',
-                                      PIMCORE_CONFIGURATION_DIRECTORY.'/deployment/phing/tasksParamDefinitions.xml')
+                array(PIMCORE_DOCUMENT_ROOT . '/pimcore/config/deployment/phing/tasksParamDefinitions.xml',
+                    PIMCORE_CONFIGURATION_DIRECTORY.'/deployment/phing/tasksParamDefinitions.xml')
             );
             foreach($files as $file){
                 if(is_readable($file)){
