@@ -25,7 +25,7 @@ class Deployment_Factory
     {
         if (!static::$instance) {
             static::$instance = new static;
-            static::$config = Pimcore_Tool_Deployment::getConfig();
+            static::$config = Deployment_Helper_General::getConfig();
             static::$adapter = Deployment_Adapter_Abstract::getInstance();
             static::$instanceAdapter = Deployment_Instance_Adapter_Abstract::getInstance();
         }

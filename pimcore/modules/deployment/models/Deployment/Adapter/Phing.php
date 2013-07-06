@@ -107,7 +107,7 @@ class Deployment_Adapter_Phing extends Deployment_Adapter_Abstract{
                 $cmd .= ' ';
             }
         }
-        #$logFile = Pimcore_Tool_Deployment::getDefaultLogFile();
+        #$logFile = Deployment_Helper_General::getDefaultLogFile();
 
         system($cmd);
     }

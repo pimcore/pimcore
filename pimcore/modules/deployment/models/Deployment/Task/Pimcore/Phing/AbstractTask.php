@@ -8,7 +8,7 @@
 
 //set include path because otherwise we will get an error when we try to access data from e.g. Webservice
 set_include_path(get_include_path() . PATH_SEPARATOR . PIMCORE_PATH . '/lib/Deployment/Phing/classes');
-require_once PIMCORE_PATH.'/lib/Deployment/Phing/classes/phing/Task.php';
+require_once PIMCORE_PATH . '/lib/Deployment/Phing/classes/phing/Task.php';
 
 abstract class Deployment_Task_Pimcore_Phing_AbstractTask extends Task {
     protected $paramDefinitions = array();
@@ -37,22 +37,29 @@ abstract class Deployment_Task_Pimcore_Phing_AbstractTask extends Task {
     }
 
     protected function initDeploymentExecutionTarget(){
+
         if(!self::$mainDeploymentExecutionTarget instanceof Deployment_Target_Execution){
+
             $target = new Deployment_Target_Execution();
+
             $target->setName($this->getParam('target'));
             $target->setStatus(Deployment_Target_Execution::STATUS_START);
             $target->setCreationDate(time());
+
             self::$mainDeploymentExecutionTarget = $target->save();
         }else{
             if(!$this->currentDeploymentExecutionTarget){
+
                 $target = new Deployment_Target_Execution();
                 $target->setName($this->getOwningTarget()->getName());
                 $target->setStatus(Deployment_Target_Execution::STATUS_START);
                 $target->setCreationDate(time());
                 $target->setParent(self::$mainDeploymentExecutionTarget);
+
                 $this->currentDeploymentExecutionTarget = $target->save();
             }
         }
+
     }
 
     protected function getCurrentDeploymentExecutionTarget(){
@@ -68,7 +75,7 @@ abstract class Deployment_Task_Pimcore_Phing_AbstractTask extends Task {
     }
 
     protected function getWebserviceEncoder(){
-        $config = Pimcore_Tool_Deployment::getConfig()->toArray();
+        $config = Deployment_Helper_General::getConfig()->toArray();
         $encoderClass = $config['webserviceEncoder'];
         return new $encoderClass();
     }
@@ -81,7 +88,7 @@ abstract class Deployment_Task_Pimcore_Phing_AbstractTask extends Task {
     }
 
     protected function setTaskParamDefinitions(){
-        $allParamDefinitions = Pimcore_Tool_Deployment::getTaskParamDefinitions();
+        $allParamDefinitions = Deployment_Helper_General::getTaskParamDefinitions();
         if(isset($allParamDefinitions[$this->getTaskName()])){
             $this->paramDefinitions = $allParamDefinitions[$this->getTaskName()];
         }

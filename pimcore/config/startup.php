@@ -54,8 +54,7 @@ if (!defined("PIMCORE_BACKUP_DIRECTORY"))  define("PIMCORE_BACKUP_DIRECTORY", PI
 if (!defined("PIMCORE_RECYCLEBIN_DIRECTORY"))  define("PIMCORE_RECYCLEBIN_DIRECTORY", PIMCORE_WEBSITE_VAR . "/recyclebin");
 if (!defined("PIMCORE_SYSTEM_TEMP_DIRECTORY"))  define("PIMCORE_SYSTEM_TEMP_DIRECTORY", PIMCORE_WEBSITE_VAR . "/system");
 if (!defined("PIMCORE_LOG_MAIL_PERMANENT"))  define("PIMCORE_LOG_MAIL_PERMANENT", PIMCORE_WEBSITE_VAR . "/email");
-if (!defined("PIMCORE_DEPLOYMENT_DIRECTORY"))  define("PIMCORE_DEPLOYMENT_DIRECTORY", PIMCORE_WEBSITE_VAR . "/deployment");
-if (!defined("PIMCORE_DEPLOYMENT_PACKAGES_DIRECTORY"))  define("PIMCORE_DEPLOYMENT_PACKAGES_DIRECTORY", PIMCORE_DEPLOYMENT_DIRECTORY . "/packages");
+
 
 // setup include paths
 // include paths defined in php.ini are ignored because they're causing problems with open_basedir, see PIMCORE-1233
@@ -67,10 +66,11 @@ $includePaths = array(
     PIMCORE_WEBSITE_PATH . "/models",
     PIMCORE_PATH . "/modules/searchadmin/models",
     PIMCORE_CLASS_DIRECTORY,
+    PIMCORE_PATH . "/modules/deployment/models", //needs to be defined here - otherwise resourceclasses won't be loaded
     PIMCORE_PATH . "/lib/_deprecated",  // deprecated libraries and classes
 );
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
-
+require_once PIMCORE_PATH . '/modules/deployment/config/startup.php';
 // helper functions
 include(dirname(__FILE__) . "/helper.php");
 
