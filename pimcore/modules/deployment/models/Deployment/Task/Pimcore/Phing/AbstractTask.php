@@ -7,8 +7,8 @@
  */
 
 //set include path because otherwise we will get an error when we try to access data from e.g. Webservice
-set_include_path(get_include_path() . PATH_SEPARATOR . PIMCORE_PATH . '/lib/Deployment/Phing/classes');
-require_once PIMCORE_PATH . '/lib/Deployment/Phing/classes/phing/Task.php';
+set_include_path(get_include_path() . PATH_SEPARATOR . PIMCORE_PATH . '/modules/deployment/lib/Deployment/Phing/classes');
+require_once PIMCORE_PATH . '/modules/deployment/lib/Deployment/Phing/classes/phing/Task.php';
 
 abstract class Deployment_Task_Pimcore_Phing_AbstractTask extends Task {
     protected $paramDefinitions = array();

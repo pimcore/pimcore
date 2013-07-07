@@ -70,7 +70,7 @@ class Deployment_Adapter_Phing extends Deployment_Adapter_Abstract{
     }
 
     public static function getBinary(){
-        $binary = PIMCORE_PATH . '/lib/Deployment/Phing/bin/phing';
+        $binary = PIMCORE_PATH . '/modules/deployment/lib/Deployment/Phing/bin/phing';
         if(Pimcore_Tool_Console::getSystemEnvironment() == 'windows'){
             $binary .= '.bat';
         }

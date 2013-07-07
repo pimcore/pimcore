@@ -20,8 +20,8 @@
 require_once dirname(__FILE__) . '/../../../../cli/startup.php';
 
 //add system and ext path to inlude path to prevent autoloading warning, that PropertyPromptTask.php and VersionTask.php could not be loaded
-set_include_path(get_include_path() . PATH_SEPARATOR . PIMCORE_DOCUMENT_ROOT . '/pimcore/lib/Deployment/Phing/classes/phing/tasks/system/');
-set_include_path(get_include_path() . PATH_SEPARATOR . PIMCORE_DOCUMENT_ROOT . '/pimcore/lib/Deployment/Phing/classes/phing/tasks/ext/');
+set_include_path(get_include_path() . PATH_SEPARATOR . PIMCORE_PATH . '/modules/deployment/lib/Deployment/Phing/classes/phing/tasks/system/');
+set_include_path(get_include_path() . PATH_SEPARATOR . PIMCORE_PATH . '/modules/deployment/lib/Deployment/Phing/classes/phing/tasks/ext/');
 
 $autoloader = Zend_Loader_Autoloader::getInstance();
 #$autoloader->suppressNotFoundWarnings(true); //disable warning because Zend_Loader tries to load Phing classes...
