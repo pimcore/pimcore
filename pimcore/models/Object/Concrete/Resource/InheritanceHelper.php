@@ -128,7 +128,7 @@ class Object_Concrete_Resource_InheritanceHelper {
 
 
     private function buildTree($currentParentId, $fields) {
-        $result = $this->db->fetchAll("SELECT a." . $this->idField . " AS id $fields FROM " . $this->storetable . " a INNER JOIN objects b ON a." . $this->idField . " = b.o_id WHERE o_parentId = ?", $currentParentId);
+        $result = $this->db->fetchAll("SELECT a." . $this->idField . " AS id $fields FROM " . $this->storetable . " a INNER JOIN objects b ON a." . $this->idField . " = b.o_id WHERE o_parentId = ? GROUP BY a." . $this->idField, $currentParentId);
 
         $objects = array();
 
