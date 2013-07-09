@@ -77,6 +77,7 @@ class Pimcore {
         // register general pimcore plugins for frontend
         if ($frontend) {
             $front->registerPlugin(new Pimcore_Controller_Plugin_Less(), 799);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_CssEditmode(), 860);
             $front->registerPlugin(new Pimcore_Controller_Plugin_AdminButton(), 806);
         }
 
