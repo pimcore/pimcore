@@ -18,7 +18,6 @@ class Deployment_Task_Pimcore_Phing_PackageTranslationsTask extends Deployment_T
     public function createPackage(){
         $type = $this->checkType($this->getParam('type'));
         $data = $this->getWebserviceService()->getTranslations($type,$this->getParams());
-
         if(empty($data)){
             throw new BuildException("No Translations found.");
         }else{
@@ -26,6 +25,7 @@ class Deployment_Task_Pimcore_Phing_PackageTranslationsTask extends Deployment_T
         }
 
         $dataString = $this->getWebserviceEncoder()->encode(array('success' => true,'data' => $data),true);
+
         $temporaryTaskDirectory = $this->getTemporaryTaskDirectory();
         $dataFile = $temporaryTaskDirectory . self::PACKAGE_DATA_FILE_NAME;
 

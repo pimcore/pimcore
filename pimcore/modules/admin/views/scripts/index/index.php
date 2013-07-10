@@ -560,7 +560,7 @@
         try {
             $pluginBroker = Zend_Registry::get("Pimcore_API_Plugin_Broker");
             if ($pluginBroker instanceof Pimcore_API_Plugin_Broker) {
-                foreach ($pluginBroker->getPlugins() as $plugin) {
+                foreach ($pluginBroker->getSystemComponents() as $plugin) {
                     if ($plugin->isInstalled()) {
                         $jsPaths = $plugin->getJsPaths();
                         if (!empty($jsPaths)) {

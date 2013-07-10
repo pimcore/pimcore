@@ -21,6 +21,7 @@ RewriteRule ^(.*)$ /website/var/assets%{REQUEST_URI} [PT,L]
 
 # allow access to plugin-data and core assets
 RewriteRule ^plugins/.*/static.* - [PT,L]
+RewriteRule ^.*modules/.*/static.* - [PT,L]
 RewriteRule ^pimcore/static.* - [PT,L]
 
 # forbid the direct access to pimcore-internal data (eg. config-files, ...)

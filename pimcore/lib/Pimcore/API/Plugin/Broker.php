@@ -178,7 +178,24 @@ class Pimcore_API_Plugin_Broker {
         return $this->_plugins;
     }
 
+    /**
+     * Retrieve all modules
+     *
+     * @return array
+     */
+    public function getModules() {
+        return $this->_systemModules;
+    }
 
+    /**
+     * Returns Plugins and Modules
+     * @return array
+     */
+    public function getSystemComponents(){
+        $modules = (array)$this->getModules();
+        $plugins = (array)$this->getPlugins();
+        return array_merge($modules,$plugins);
+    }
     /**
      *
      * Calls preAddAsset functions of all registered plugins and system modules
