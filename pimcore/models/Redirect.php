@@ -208,7 +208,7 @@ class Redirect extends Pimcore_Model_Abstract {
             Pimcore_Model_Cache::clearTag("redirect");
         }
         catch (Exception $e) {
-            Logger::info($e);
+            Logger::crit($e);
         }
     }
 
