@@ -970,10 +970,11 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         if ($this->properties === null) {
             // try to get from cache
             $cacheKey = "asset_properties_" . $this->getId();
-            ;
+            $cacheTags = $this->getCacheTags(array("properties"));
+
             if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
                 $properties = $this->getResource()->getProperties();
-                Pimcore_Model_Cache::save($properties, $cacheKey, array("properties"));
+                Pimcore_Model_Cache::save($properties, $cacheKey, $cacheTags);
             }
 
             $this->setProperties($properties);
