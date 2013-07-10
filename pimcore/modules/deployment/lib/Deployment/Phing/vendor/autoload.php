@@ -17,7 +17,7 @@
  * initializes Pimcore before Phing is executed
  * required to get the autoloader...
  */
-require_once dirname(__FILE__) . '/../../../../cli/startup.php';
+require_once dirname(__FILE__) . '/../../../../../../cli/startup.php';
 
 //add system and ext path to inlude path to prevent autoloading warning, that PropertyPromptTask.php and VersionTask.php could not be loaded
 set_include_path(get_include_path() . PATH_SEPARATOR . PIMCORE_PATH . '/modules/deployment/lib/Deployment/Phing/classes/phing/tasks/system/');

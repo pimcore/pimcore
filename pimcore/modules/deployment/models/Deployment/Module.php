@@ -8,7 +8,4 @@
 
 class Deployment_Module extends Pimcore_API_Module_Abstract {
 
-
-
-
 }
