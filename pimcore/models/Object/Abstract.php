@@ -1166,10 +1166,11 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         if ($this->o_properties === null) {
             // try to get from cache
             $cacheKey = "object_properties_" . $this->getId();
-            ;
+            $cacheTags = $this->getCacheTags(array("properties"));
+
             if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
                 $properties = $this->getResource()->getProperties();
-                Pimcore_Model_Cache::save($properties, $cacheKey, array("properties"));
+                Pimcore_Model_Cache::save($properties, $cacheKey, $cacheTags);
             }
 
             $this->setO_Properties($properties);
