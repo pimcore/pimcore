@@ -259,7 +259,7 @@ class Site extends Pimcore_Model_Abstract {
             Pimcore_Model_Cache::clearTag("site");
         }
         catch (Exception $e) {
-            Logger::info($e);
+            Logger::crit($e);
         }
     }
 }

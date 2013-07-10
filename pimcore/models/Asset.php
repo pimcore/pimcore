@@ -779,19 +779,10 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
     public function clearDependentCache() {
         try {
-            Pimcore_Model_Cache::clearTag("asset_" . $this->getId());
+            Pimcore_Model_Cache::clearTags(array("asset_" . $this->getId(), "properties", "output"));
         }
         catch (Exception $e) {
-        }
-        try {
-            Pimcore_Model_Cache::clearTag("properties");
-        }
-        catch (Exception $e) {
-        }
-        try {
-            Pimcore_Model_Cache::clearTag("output");
-        }
-        catch (Exception $e) {
+            Logger::crit($e);
         }
     }
 

@@ -707,22 +707,12 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         Zend_Registry::set("object_" . $this->getId(), $this);
     }
 
-
     public function clearDependentCache() {
         try {
-            Pimcore_Model_Cache::clearTag("object_" . $this->getO_Id());
+            Pimcore_Model_Cache::clearTags(array("object_" . $this->getId(), "properties", "output"));
         }
         catch (Exception $e) {
-        }
-        try {
-            Pimcore_Model_Cache::clearTag("properties");
-        }
-        catch (Exception $e) {
-        }
-        try {
-            Pimcore_Model_Cache::clearTag("output");
-        }
-        catch (Exception $e) {
+            Logger::crit($e);
         }
     }
 

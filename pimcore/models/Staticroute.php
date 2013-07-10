@@ -534,7 +534,7 @@ class Staticroute extends Pimcore_Model_Abstract {
             Pimcore_Model_Cache::clearTag("staticroute");
         }
         catch (Exception $e) {
-            Logger::info($e);
+            Logger::crit($e);
         }
     }
 }
