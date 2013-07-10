@@ -533,17 +533,17 @@ class Pimcore_Model_Cache {
              self::addClearTagOnShutdown("output");
         }
 
+        // add tag to clear stack
+        foreach ($tags as $tag) {
+            self::$clearedTagsStack[] = $tag;
+        }
+
         // clean tags, except output
         if($cache = self::getInstance()) {
             $cache->clean(
                 Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG,
                 $tags
             );
-        }
-        
-        // add tag to clear stack
-        foreach ($tags as $tag) {
-            self::$clearedTagsStack[] = $tag;
         }
     }
 
