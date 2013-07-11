@@ -258,15 +258,6 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
     protected function logUsageStatistics() {
 
         $params = array();
-        /*$allowedParameters = array("xaction","id","start","limit","type","subtype","parentId","node","amount","sourceId","targetId","offset","step","sort","dir","task");
-        foreach($allowedParameters as $param) {
-            if($value = $this->getParam($param)) {
-                if(is_string($value)) {
-                    $params[$param] = $value;
-                }
-            }
-        }*/
-
         $disallowedKeys = array("_dc");
         foreach($this->getAllParams() as $key => $value) {
             if(!in_array($key, $disallowedKeys)) {
@@ -276,8 +267,8 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
 
         Pimcore_Log_Simple::log("usagelog",
             $this->getUser()->getId() . "|" .
+            $this->getParam("module") . "|" .
             $this->getParam("controller") . "|" .
             $this->getParam("action")."|".Zend_Json::encode($params));
     }
-
 }
