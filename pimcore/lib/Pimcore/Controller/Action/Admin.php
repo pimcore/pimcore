@@ -266,7 +266,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         }
 
         Pimcore_Log_Simple::log("usagelog",
-            $this->getUser() ? $this->getUser()->getId() : "0" . "|" .
+            ($this->getUser() ? $this->getUser()->getId() : "0") . "|" .
             $this->getParam("module") . "|" .
             $this->getParam("controller") . "|" .
             $this->getParam("action")."|".Zend_Json::encode($params));
