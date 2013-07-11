@@ -43,14 +43,6 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
         }
         return $this->db;
     }
-    
-    /**
-     * @param string $tag
-     * @return void
-     */
-    protected function removeTag($tag) {
-        $this->getDb()->delete("cache_tags", "tag = '".$tag."'");
-    }
 
     /**
      * @param string $id
