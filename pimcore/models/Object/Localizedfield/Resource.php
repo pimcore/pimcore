@@ -49,10 +49,10 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
                 } else {
                     if (is_array($fd->getColumnType())) {
-                        $insertDataArray = $fd->getDataForResource($this->model->getLocalizedValue($fd->getName(), $language), $object);
+                        $insertDataArray = $fd->getDataForResource($this->model->getLocalizedValue($fd->getName(), $language, true), $object);
                         $insertData = array_merge($insertData, $insertDataArray);
                     } else {
-                        $insertData[$fd->getName()] = $fd->getDataForResource($this->model->getLocalizedValue($fd->getName(), $language), $object);
+                        $insertData[$fd->getName()] = $fd->getDataForResource($this->model->getLocalizedValue($fd->getName(), $language, true), $object);
                     }
                 }
             }
