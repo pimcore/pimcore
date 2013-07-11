@@ -47,7 +47,6 @@ class Tool_Setup extends Pimcore_Model_Abstract {
 					"language" => "en",
 					"validLanguages" => "en",
 					"debug" => "1",
-					"loginscreenimageservice" => "1",
 					"loglevel" => array(
 						"debug" => "1",
 						"info" => "1",

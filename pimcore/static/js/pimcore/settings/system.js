@@ -231,12 +231,6 @@ pimcore.settings.system = Class.create({
                                 width: 300
                             },
                             {
-                                fieldLabel: t('show_random_pictures_on_login_screen'),
-                                xtype: "checkbox",
-                                name: "general.loginscreenimageservice",
-                                checked: this.getValue("general.loginscreenimageservice")
-                            },
-                            {
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
                                 xtype: "textfield",
                                 name: "general.loginscreencustomimage",

@@ -146,7 +146,7 @@ $config = Pimcore_Config::getSystemConfig();
     }
 </script>
 
-<script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1&build=<?php echo Pimcore_Version::getRevision(); ?>&customimage=<?php echo (bool) $config->general->loginscreenimageservice; ?>"></script>
+<script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1&build=<?php echo Pimcore_Version::getRevision(); ?>"></script>
 
 </body>
 </html>
