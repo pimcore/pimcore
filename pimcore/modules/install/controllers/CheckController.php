@@ -294,7 +294,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
                   CHANGE COLUMN id id int(11) NOT NULL,
                   CHANGE COLUMN field field varchar(255) NULL DEFAULT NULL,
                   CHANGE COLUMN alter_field alter_field varchar(255) NULL DEFAULT NULL,
-                  ADD INDEX field (field(255)),
+                  ADD KEY field (field),
                   DROP PRIMARY KEY ,
                  DEFAULT CHARSET=utf8");
 
