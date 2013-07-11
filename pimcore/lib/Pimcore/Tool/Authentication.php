@@ -131,7 +131,7 @@ class Pimcore_Tool_Authentication {
         return $ret;
     }
 
-    protected static function getSession () {
+    public static function getSession () {
         if(!Zend_Session::isStarted()) {
             self::initSession();
             Zend_Session::start();
