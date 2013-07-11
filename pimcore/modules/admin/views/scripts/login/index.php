@@ -67,12 +67,16 @@ $config = Pimcore_Config::getSystemConfig();
 <?php if ($config->general->loginscreencustomimage) { ?>
     <style type="text/css">
         body {
-            background: url(<?php echo $config->general->loginscreencustomimage; ?>);
+            background: url(<?php echo $config->general->loginscreencustomimage; ?>) no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
         }
     </style>
 <?php } ?>
 
-<div id="vcenter">
+<div id="vcenter" class="<?php echo ($config->general->loginscreencustomimage ? "customimage" : ""); ?>">
     <div id="content">
         <div id="right">
             <form id="loginform" method="post" action="/admin/login/login">

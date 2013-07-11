@@ -16,6 +16,10 @@ body {
     width:100%;
 }
 
+#vcenter.customimage {
+    background: url(/pimcore/static/img/background.png);
+}
+
 #content {
     background: #ff6600;
     width: 500px;
@@ -118,6 +122,7 @@ input[type=submit] {
     text-align: center;
     font-size: 13px;
     line-height: 18px;
+    text-shadow: 0 0 3px #000;
 }
 
 #footer a {
