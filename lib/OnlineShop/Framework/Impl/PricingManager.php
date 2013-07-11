@@ -36,6 +36,10 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
      */
     public function applyProductRules(OnlineShop_Framework_IPriceInfo $priceInfo)
     {
+        if((string)$this->config->disabled == "true") {
+            return $priceInfo;
+        }
+
         // configure environment
         $env = $this->getEnvironment();
         $env->setProduct( $priceInfo->getProduct() )
@@ -65,6 +69,10 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
      */
     public function applyCartRules(OnlineShop_Framework_ICart $cart)
     {
+        if((string)$this->config->disabled == "true") {
+            return $this;
+        }
+
         // configure environment
         $env = $this->getEnvironment();
         $env->setCart( $cart );
@@ -183,6 +191,10 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
      */
     public function getPriceInfo(OnlineShop_Framework_IPriceInfo $priceInfo)
     {
+        if((string)$this->config->disabled == "true") {
+            return $priceInfo;
+        }
+
         $class = $this->config->priceInfo->class;
         if($class == '')
             throw new OnlineShop_Framework_Exception_InvalidConfigException(sprintf('getPriceInfo class "%s" not found.', $class));

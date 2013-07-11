@@ -168,6 +168,7 @@
                 <!-- rule and priceinfo -->
                 <rule class="OnlineShop_Framework_Impl_Pricing_Rule" />
                 <priceInfo class="OnlineShop_Framework_Impl_Pricing_PriceInfo" />
+                <disabled>false</disabled>
 
                 <!-- rule conditions -->
                 <condition>

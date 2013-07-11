@@ -340,6 +340,26 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         return $this->creationDateTimestamp;
     }
 
+    public function getModificationDate() {
+        if(empty($this->modificationDate) && $this->modificationDateTimestamp) {
+            $this->modificationDate = new Zend_Date($this->modificationDateTimestamp);
+        }
+
+        return $this->modificationDate;
+    }
+
+    public function setModificationDate($date) {
+        $this->modificationDate = $date;
+    }
+
+    public function setModificationDateTimestamp($modificationDateTimestamp) {
+        $this->modificationDateTimestamp = $modificationDateTimestamp;
+    }
+
+    public function getModificationDateTimestamp() {
+        return $this->modificationDateTimestamp;
+    }
+
 
     public function getUserId() {
         return OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentUserId();

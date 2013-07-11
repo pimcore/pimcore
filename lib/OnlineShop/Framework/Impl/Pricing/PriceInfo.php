@@ -36,7 +36,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     public function __construct(OnlineShop_Framework_IPriceInfo $priceInfo)
     {
         $this->priceInfo = $priceInfo;
-        $this->setAmount( $priceInfo->getPrice()->getAmount() );
+        $this->setAmount(  $priceInfo->getPrice() ? $priceInfo->getPrice()->getAmount() : 0  );
     }
 
 
@@ -82,6 +82,10 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
      */
     public function getPrice()
     {
+        if($this->priceInfo->getPrice() == null) {
+            return null;
+        }
+
         $env = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getEnvironment();
         $env->setProduct( $this->getProduct() )
             ->setPriceInfo( $this );
@@ -99,7 +103,11 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
             $rule->executeOnProduct( $env );
         }
 
-        return new OnlineShop_Framework_Impl_Price($this->getAmount(), $this->priceInfo->getPrice()->getCurrency() , true);
+        $price = $this->priceInfo->getPrice();
+        $price->setAmount($this->getAmount());
+        return $price;
+
+//        return new OnlineShop_Framework_Impl_Price($this->getAmount(), $this->priceInfo->getPrice()->getCurrency() , true);
     }
 
     /**
@@ -107,7 +115,15 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
      */
     public function getTotalPrice()
     {
-        return new OnlineShop_Framework_Impl_Price($this->getPrice()->getAmount() * $this->getQuantity(), ($this->getPrice()->getCurrency()), false);
+        if($this->priceInfo->getPrice() == null) {
+            return null;
+        }
+
+        $price = $this->priceInfo->getPrice();
+        $price->setAmount($this->getPrice()->getAmount() * $this->getQuantity());
+        return $price;
+
+//        return new OnlineShop_Framework_Impl_Price($this->getPrice()->getAmount() * $this->getQuantity(), ($this->getPrice()->getCurrency()), false);
     }
 
     /**
