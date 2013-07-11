@@ -81,7 +81,7 @@ $config = Pimcore_Config::getSystemConfig();
         <div id="right">
             <form id="loginform" method="post" action="/admin/login/login">
                 <label><?php echo $this->translate("Username"); ?></label>
-                <input type="text" name="username" />
+                <input id="username" type="text" name="username" />
 
                 <label><?php echo $this->translate("Password"); ?></label>
                 <input type="password" name="password" />
@@ -145,9 +145,12 @@ $config = Pimcore_Config::getSystemConfig();
                     $('input[name=' + name + ']').val(text);
                 });
                 window.clearInterval(autofillFixInterval);
+                $("#username").select();
             }
         }, 20);
     }
+
+    $("#username").select();
 </script>
 
 <script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1&build=<?php echo Pimcore_Version::getRevision(); ?>"></script>
