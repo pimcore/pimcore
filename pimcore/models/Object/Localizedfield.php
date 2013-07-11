@@ -143,7 +143,7 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
      * @param null $language
      * @return 
      */
-    public function getLocalizedValue ($name, $language = null) {
+    public function getLocalizedValue ($name, $language = null, $ignoreFallbackLanguage = false) {
         $language = $this->getLanguage($language);
         $data = null;
         if($this->languageExists($language)) {
@@ -152,16 +152,6 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
             }
         }
 
-        // check for fallback value
-        if(!$data) {
-            foreach (Pimcore_Tool::getFallbackLanguagesFor($language) as $l) {
-                if($this->languageExists($l)) {
-                    if(array_key_exists($name, $this->items[$l])) {
-                        $data = $this->items[$l][$name];
-                    }
-                }
-            }
-        }
 
         // check for inherited value
         $doGetInheritedValues = Object_Abstract::doGetInheritedValues();
@@ -184,10 +174,21 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
                             if (method_exists($parent, $method)) {
                                 $localizedFields = $parent->getLocalizedFields();
                                 if ($localizedFields instanceof Object_Localizedfield) {
-                                    $data = $localizedFields->getLocalizedValue($name, $language);
+                                    $data = $localizedFields->getLocalizedValue($name, $language, true);
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        // check for fallback value
+        if(!$data && !$ignoreFallbackLanguage) {
+            foreach (Pimcore_Tool::getFallbackLanguagesFor($language) as $l) {
+                if($this->languageExists($l)) {
+                    if(array_key_exists($name, $this->items[$l])) {
+                        $data = $this->items[$l][$name];
                     }
                 }
             }
