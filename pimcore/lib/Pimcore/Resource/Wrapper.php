@@ -152,7 +152,6 @@ class Pimcore_Resource_Wrapper {
                         $i++;
                     } else {
                         /** @see Zend_Db_Adapter_Exception */
-                        require_once 'Zend/Db/Adapter/Exception.php';
                         throw new Zend_Db_Adapter_Exception(get_class($this->getResource()) . " doesn't support positional or named binding");
                     }
                 }
