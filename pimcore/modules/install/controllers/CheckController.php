@@ -158,9 +158,9 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         // APC
         $checksPHP[] = array(
-            "name" => "APC",
-            "link" => "http://www.php.net/apc",
-            "state" => function_exists("apc_add") ? "ok" : "warning"
+            "name" => "APC / opcache",
+            "link" => "http://www.php.net/opcache",
+            "state" => (function_exists("apc_add") || function_exists("opcache_reset")) ? "ok" : "warning"
         );
 
         // memcache
