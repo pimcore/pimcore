@@ -15,23 +15,26 @@
  
 class Pimcore_Liveconnect {
 
+    public static function getSession () {
+        return Pimcore_Tool_Authentication::getSession();
+    }
+
     public static function setToken ($token) {
-        Pimcore_Tool_Authentication::useSession(function($session)use ($token) {
-            $session->liveconnectToken = $token;
-            $session->liveconnectLastUpdate = time();
-        });
+        $session = self::getSession();
+        $session->liveconnectToken = $token;
+        $session->liveconnectLastUpdate = time();
     }
 
     public static function getToken () {
-        return Pimcore_Tool_Authentication::useSession(function($session) {
-            $timeout = 300;
-            if($session->liveconnectLastUpdate < (time()-$timeout)) {
-                $session->liveconnectToken = null;
-            } else {
-                $session->liveconnectLastUpdate = time();
-            }
+        $session = self::getSession();
 
-            return $session->liveconnectToken;
-        });
+        $timeout = 300;
+        if($session->liveconnectLastUpdate < (time()-$timeout)) {
+            $session->liveconnectToken = null;
+        } else {
+            $session->liveconnectLastUpdate = time();
+        }
+
+        return $session->liveconnectToken;
     }
 }

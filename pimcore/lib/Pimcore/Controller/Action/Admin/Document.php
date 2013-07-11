@@ -133,7 +133,6 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
             $this->setValuesToDocument($document);
 
             $session->$key = $document;
-            Zend_Session::writeClose(false);
         }
 
         $this->removeViewRenderer();
@@ -172,7 +171,6 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
         $session = new Zend_Session_Namespace("pimcore_documents");
 
         $session->$key = null;
-        Zend_Session::writeClose(false);
 
         $this->removeViewRenderer();
     }

@@ -27,18 +27,23 @@ class Pimcore_Tool_Authentication {
      * @return User
      */
     public static function authenticateSession () {
-        return self::useSession(function($adminSession) {
-            $user = $adminSession->user;
-            if ($user instanceof User) {
-                // renew user
-                $user = User::getById($user->getId());
-                if($user && $user->isActive()) {
-                    return $user;
-                }
-            }
 
-            return null;
-        });
+        // start session if necessary
+        self::initSession();
+
+        // get session namespace
+        $adminSession = self::getSession();
+
+        $user = $adminSession->user;
+        if ($user instanceof User) {
+            // renew user
+            $user = User::getById($user->getId());
+            if($user && $user->isActive()) {
+                return $user;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -104,6 +109,9 @@ class Pimcore_Tool_Authentication {
                         // get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
                         Zend_Session::setId($_REQUEST[$sName]);
                     }
+
+                    // register session
+                    Zend_Session::start();
                 }
             }
             catch (Exception $e) {
@@ -117,24 +125,9 @@ class Pimcore_Tool_Authentication {
         }
     }
 
-    public static function useSession($func) {
-        if(!Zend_Session::isStarted()) {
-            Zend_Session::start();
-        }
-
-        @session_start();
-
-        $ret = $func(self::getSession());
-
-        session_write_close();
-
-        return $ret;
-    }
-
     public static function getSession () {
         if(!Zend_Session::isStarted()) {
             self::initSession();
-            Zend_Session::start();
         }
 
         if(!self::$session) {
