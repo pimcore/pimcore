@@ -45,39 +45,6 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
     }
 
     /**
-     * @param string $id
-     * @param array $tags
-     * @return void
-     */
-    protected function saveTags($id, $tags) {
-        try {
-            while ($tag = array_shift($tags)) {
-                try {
-                    $this->getDb()->insertOrUpdate("cache_tags", array(
-                        "id" => $id,
-                        "tag" => $tag
-                    ));
-                }
-                catch (Exception $e) {
-                    Logger::warning($e);
-                    if(strpos(strtolower($e->getMessage()), "is full") !== false) {
-                        // it seems that the MEMORY table is on the limit an full
-                        // change the storage engine of the cache tags table to InnoDB
-                        $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
-
-                        // try it again
-                        $tags[] = $tag;
-                    } else {
-                        throw $e;
-                    }
-                }
-            }
-        } catch (Exception $e) {
-            Logger::error($e);
-        }
-    }
-
-    /**
      * @return void
      */
     protected function clearTags () {
@@ -110,16 +77,38 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
 
         $lifetime = $this->getLifetime($specificLifetime);
 
-        $this->getDb()->insertOrUpdate("cache", array(
-            "data" => $data,
-            "id" => $id,
-            "expire" => time() + $lifetime,
-            "mtime" => time()
-        ));
-        
-        if (count($tags) > 0) {
-            $this->saveTags($id, $tags);
+        $this->getDb()->beginTransaction();
+
+        try {
+            $this->getDb()->insertOrUpdate("cache", array(
+                "data" => $data,
+                "id" => $id,
+                "expire" => time() + $lifetime,
+                "mtime" => time()
+            ));
+
+            if (count($tags) > 0) {
+                while ($tag = array_shift($tags)) {
+                    $this->getDb()->insertOrUpdate("cache_tags", array(
+                        "id" => $id,
+                        "tag" => $tag
+                    ));
+                }
+            }
+            $this->getDb()->commit();
+        } catch (Exception $e) {
+            Logger::error($e);
+            $this->getDb()->rollBack();
+
+            if(strpos(strtolower($e->getMessage()), "is full") !== false) {
+                // it seems that the MEMORY table is on the limit an full
+                // change the storage engine of the cache tags table to InnoDB
+                $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
+            } else {
+                throw $e;
+            }
         }
+
         return true;
     }
 
@@ -129,14 +118,16 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
      */
     public function remove($id) {
 
-        $this->getDb()->delete("cache", "id = " . $this->getDb()->quote($id));
+        $this->getDb()->beginTransaction();
 
-        // using func_get_arg() to be compatible with the interface
-        // when the 2ng argument is true, do not clean the cache tags
-        if(func_num_args() > 1 && func_get_arg(1) !== true) {
+        try {
+            $this->getDb()->delete("cache", "id = " . $this->getDb()->quote($id));
             $this->getDb()->delete("cache_tags", "id = '".$id."'");
-        }
 
+            $this->getDb()->commit();
+        } catch (\Exception $e) {
+            $this->getDb()->rollBack();
+        }
 
         return true;
     }
@@ -171,14 +162,24 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
                 $items = $this->getItemsByTag($tag);
                 $quotedIds = array();
 
-                foreach ($items as $item) {
-                    // We call delete directly here because the ID in the cache is already specific for this site
-                    $this->remove($item, true);
-                    $quotedIds[] = $this->getDb()->quote($item);
-                }
-                //$this->getDb()->delete("cache_tags", "tag = '".$tag."'");
-                if(count($quotedIds) > 0) {
-                    $this->getDb()->delete("cache_tags", "id IN (" . implode(",", $quotedIds) . ")");
+                $this->getDb()->beginTransaction();
+
+                try {
+                    foreach ($items as $item) {
+                        // We call delete directly here because the ID in the cache is already specific for this site
+                        $quotedId = $this->getDb()->quote($item);
+                        $this->getDb()->delete("cache", "id = " . $quotedId);
+                        $quotedIds[] = $quotedId;
+                    }
+                    //$this->getDb()->delete("cache_tags", "tag = '".$tag."'");
+                    if(count($quotedIds) > 0) {
+                        $this->getDb()->delete("cache_tags", "id IN (" . implode(",", $quotedIds) . ")");
+                    }
+
+                    $this->getDb()->commit();
+                } catch (\Exception $e) {
+                    $this->getDb()->rollBack();
+                    Logger::error($e);
                 }
             }
         }
