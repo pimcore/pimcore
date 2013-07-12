@@ -65,6 +65,7 @@ class Webservice_SoapController extends Pimcore_Controller_Action_Webservice {
             Document::setHideUnpublished(false);
             Object_Abstract::setHideUnpublished(false);
             Object_Abstract::setGetInheritedValues(false);
+            Object_Localizedfield::setGetFallbackValues(false);
 
             try {
                 $server = new Zend_Soap_Server($wsdlFile, array(
