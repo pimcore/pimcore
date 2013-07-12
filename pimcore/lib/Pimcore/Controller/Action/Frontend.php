@@ -50,6 +50,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         Document::setHideUnpublished(true);
         Object_Abstract::setHideUnpublished(true);
         Object_Abstract::setGetInheritedValues(true);
+        Object_Localizedfield::setGetFallbackValues(true);
 
         // contains the logged in user if necessary
         $user = null;

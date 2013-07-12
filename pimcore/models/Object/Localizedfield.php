@@ -17,6 +17,8 @@
 
 class Object_Localizedfield extends Pimcore_Model_Abstract {
 
+    private static $getFallbackValues = false;
+
     /**
      * @var array
      */
@@ -31,6 +33,30 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
      * @var Object_Class
      */
     public $class;
+
+    /**
+     * @param boolean $getFallbackValues
+     */
+    public static function setGetFallbackValues($getFallbackValues)
+    {
+        self::$getFallbackValues = $getFallbackValues;
+    }
+
+    /**
+     * @return boolean
+     */
+    public static function getGetFallbackValues()
+    {
+        return self::$getFallbackValues;
+    }
+
+    /**
+     * @return boolean
+     */
+    public static function doGetFallbackValues()
+    {
+        return self::$getFallbackValues;
+    }
 
     /**
      * @param array $items
@@ -184,7 +210,7 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
         }
 
         // check for fallback value
-        if(!$data && !$ignoreFallbackLanguage) {
+        if(!$data && !$ignoreFallbackLanguage && self::doGetFallbackValues()) {
             foreach (Pimcore_Tool::getFallbackLanguagesFor($language) as $l) {
                 if($this->languageExists($l)) {
                     if(array_key_exists($name, $this->items[$l])) {

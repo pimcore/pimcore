@@ -69,6 +69,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             Document::setHideUnpublished(false);
             Object_Abstract::setHideUnpublished(false);
             Object_Abstract::setGetInheritedValues(false);
+            Object_Localizedfield::setGetFallbackValues(false);
             Pimcore::setAdminMode();
 
             // init translations
