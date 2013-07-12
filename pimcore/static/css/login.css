@@ -46,7 +46,8 @@ label {
 input[type=text], input[type=password] {
     border: 1px solid #474e56;
     border-radius: 3px;
-    font-size: 14px;
+    font-size: 20px;
+    letter-spacing: 1px;
     color: #fff;
     line-height: 38px;
     height: 38px;
@@ -70,7 +71,8 @@ input[type=text]:focus, input[type=password]:focus {
 }
 
 input[type=submit] {
-
+    font-size: 18px;
+    letter-spacing: 1px;
     width: 200px;
     padding: 0 15px 0 15px;
     text-align: center;
