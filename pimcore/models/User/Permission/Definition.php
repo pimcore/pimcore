@@ -42,4 +42,43 @@ class User_Permission_Definition extends Pimcore_Model_Abstract {
         $this->key = $key;
         return $this;
     }
+
+    /**
+     * @param $permisson permission key
+     * @return mixed
+     * @throws Exception
+     */
+    public static function getByKey($permission){
+        if(!$permission){
+            throw new Exception("No permisson defined.");
+        }
+        $list = new User_Permission_Definition_List();
+        $list->setCondition("`key`=?",array($permission));
+        $list->setLimit(1);
+        $permissionDefinition = $list->load();
+        if($permissionDefinition[0]){
+            return $permissionDefinition[0];
+        }
+    }
+
+    /**
+     * @param $permission permission key
+     * @return mixed
+     * @throws Exception
+     */
+    public static function create($permission){
+        if(!$permission){
+            throw new Exception("No permisson defined.");
+        }
+        $permissionDefinition = static::getByKey($permission);
+        if($permissionDefinition instanceof User_Permission_Definition){
+            Logger::info("Permission $permission allready exists. Skipping creation.");
+            return $permissionDefinition;
+        }else{
+            $permissionDefinition = new static();
+            $permissionDefinition->setKey($permission);
+            $permissionDefinition->save();
+            return $permissionDefinition;
+        }
+    }
 }
