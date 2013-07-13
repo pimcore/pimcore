@@ -443,6 +443,8 @@ class Pimcore {
                 );
                 set_include_path(get_include_path() . implode(PATH_SEPARATOR, $includePaths));
                 $broker->registerModule("Deployment_Module");
+                $setup = new Deployment_Setup();
+                $setup->run();
             }
         }
     }
