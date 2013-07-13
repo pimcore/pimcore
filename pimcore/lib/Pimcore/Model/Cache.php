@@ -196,9 +196,19 @@ class Pimcore_Model_Cache {
         );
         $config["customFrontendNaming"] = false;
 
-        $config["backendType"] = "Pimcore_Cache_Backend_MysqlTable";
-        $config["backendConfig"] = array();
-        $config["customBackendNaming"] = true;
+        if(Pimcore_Config::getSystemConfig()) {
+            $config["backendType"] = "Pimcore_Cache_Backend_MysqlTable";
+            $config["backendConfig"] = array();
+            $config["customBackendNaming"] = true;
+        } else {
+            // file fallback if mysql isn't available (at install, ...)
+            $config["backendType"] = "File";
+            $config["backendConfig"] = array(
+                "cache_dir" => PIMCORE_CACHE_DIRECTORY,
+                "cache_file_perm" => 0755
+            );
+            $config["customBackendNaming"] = false;
+        }
 
         // create cache dir
         if(!is_dir(PIMCORE_CACHE_DIRECTORY)) {
