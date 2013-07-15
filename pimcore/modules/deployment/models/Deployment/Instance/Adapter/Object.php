@@ -82,7 +82,9 @@ class Deployment_Instance_Adapter_Object  extends Deployment_Instance_Adapter_Ab
 
     public function getInstancesByIdentifiers(array $identifiers){
         $list = $this->getInstanceObjectList();
-        $list->setCondition(' o_id IN(' . implode(',',$identifiers) .') ');
+        $fieldMapping = $this->getFieldMapping('identifier');
+        $identifiers = wrapArrayElements($identifiers);
+        $list->setCondition($fieldMapping["instanceIdentifier"].' IN(' . implode(',',$identifiers) .') ');
         $instances = array();
         foreach($list as $instanceObject){
             $instances[] = $this->getWrapperObject($instanceObject);

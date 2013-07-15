@@ -1041,17 +1041,25 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     public function serverInfoAction() {
         $this->checkUserPermission("system_settings");
         $systemSettings = Pimcore_Config::getSystemConfig()->toArray();
-
         $system = array("currentTime" => time(),
                         "phpCli" => Pimcore_Tool_Console::getPhpCli(),
         );
 
+        $pimcoreConstants = array(); //only Pimcore_ constants -> others might break the Zend_Encode functionality
+        foreach((array)get_defined_constants() as $constant => $value){
+            if(strpos($constant,'PIMCORE_') === 0){
+                $pimcoreConstants[$constant] = $value;
+            }
+        }
+
         $pimcore = array("version" => Pimcore_Version::getVersion(),
                          "revision" => Pimcore_Version::getRevision(),
-                         "PIMCORE_DOCUMENT_ROOT" => PIMCORE_DOCUMENT_ROOT,
                          "instanceIdentifier" => $systemSettings["general"]["instanceIdentifier"],
                          "modules" => array(),
+                         "constants" => $pimcoreConstants,
         );
+
+
 
         foreach((array)Pimcore_API_Plugin_Broker::getInstance()->getModules() as $module){
             $pimcore["modules"][] = get_class($module);
