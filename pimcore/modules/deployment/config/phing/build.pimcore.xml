@@ -19,9 +19,9 @@
 
     <target name="pimcore.target.copyPackages">
         <pimcore.task.copyPackages>
-            <pimcoreParam name="packageIds">23,24</pimcoreParam>
-            <!--<pimcoreParam name="deploymentInstanceIds">4,5</pimcoreParam>-->
-            <pimcoreParam name="deploymentGroups">test,kisi,hallo</pimcoreParam>
+            <pimcoreParam name="packageIds"></pimcoreParam>
+            <pimcoreParam name="instanceIdentifiers">staging</pimcoreParam>
+            <!--<pimcoreParam name="deploymentGroups">test,kisi,hallo</pimcoreParam>-->
         </pimcore.task.copyPackages>
     </target>
 

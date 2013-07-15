@@ -17,10 +17,10 @@ class Deployment_Task_Pimcore_Phing_CopyPackagesTask extends Deployment_Task_Pim
             throw new BuildException("You have to use deploymentInstanceIds OR deploymentGroups.");
         }
 
-        $deploymentInstanceIds = explode_and_trim(',',$this->getParam('deploymentInstanceIds'));
-        if(!empty($deploymentInstanceIds)){
-            $instances = $instanceAdapter->getInstancesByIdentifiers($deploymentInstanceIds);
-            $this->log("Getting deploymentInstances by deploymentInstanceIds '" . implode(',', $deploymentInstanceIds)."'.",Project::MSG_DEBUG);
+        $instanceIdentifiers = explode_and_trim(',',$this->getParam('instanceIdentifiers'));
+        if(!empty($instanceIdentifiers)){
+            $instances = $instanceAdapter->getInstancesByIdentifiers($instanceIdentifiers);
+            $this->log("Getting deploymentInstances by instanceIdentifiers'" . implode(',', $instanceIdentifiers)."'.",Project::MSG_DEBUG);
         }
 
         $deploymentGroups = explode_and_trim(',',$this->getParam('deploymentGroups'));
@@ -42,7 +42,6 @@ class Deployment_Task_Pimcore_Phing_CopyPackagesTask extends Deployment_Task_Pim
             }
             $this->$deploymentAction();
         }else{
-
             $packageIds = explode_and_trim(',',$this->getParam('packageIds'));
             if(empty($packageIds)){
                 throw new BuildException("No packageIds given.");
@@ -52,15 +51,20 @@ class Deployment_Task_Pimcore_Phing_CopyPackagesTask extends Deployment_Task_Pim
             if(count($instances) == 0){
                 throw new BuildException("No deployment instances found!");
             }
-            die('Test');
-            $client = $instances[0]->getRestClient();
+            foreach($instances as $instance){
+                $client = $instances[0]->getRestClient();
+                $serverInfo = $client->getServerInfo();
+                $cmd = $serverInfo->system->phpCli .' ' . $serverInfo->pimcore->constants->PIMCORE_PATH .'/cli/deployment.php ';
+                $cliParams = array('target' => 'pimcore.target.copyPackages',
+                                   'deploymentAction' => 'downloadPackages',
+                                   'sourceInstanceIdentifier' => Deployment_Helper_General::getInstanceIdentifier(),
+                                   'packageIds' => $packageIds);
 
-
-            var_dump($packageIds); exit;
-            echo 'hallo';
-            var_dump($client); exit;
-            var_dump(count($instances));
-            exit;
+                $cliOptions = Pimcore_Tool_Console::getOptionString($cliParams);
+                $cmd .= $cliOptions;
+                $cmd = trim($cmd);
+                $this->log("Executing remote command for instance with identifier '" . $instance->getInstanceIdentifier() ."'. \nCommand:\n" . $cmd);
+            }
         }
     }
 
@@ -96,6 +100,7 @@ class Deployment_Task_Pimcore_Phing_CopyPackagesTask extends Deployment_Task_Pim
 
         $currentInstance = $this->getDeploymentFactory()->getInstanceAdapter()->getCurrentInstance();
         $fileTransfer = new Pimcore_File_Transfer($currentInstance->getTransportAdapter());
+
         foreach($packageData as $package){
             try{
                 $sourceFile = $client->buildEndpointUrl('deployment-package-phar-data') . '&id=' . $package->id;
@@ -103,6 +108,7 @@ class Deployment_Task_Pimcore_Phing_CopyPackagesTask extends Deployment_Task_Pim
                 $fileTransfer->setSourceFile($sourceFile);
                 $fileTransfer->setDestinationFile($destinationFile);
                 $fileTransfer->send();
+                $this->log("Downloaded Package with ID '{$package->id}' to path:\n $destinationFile");
             }catch(Exception $e){
                 throw new BuildException("Couldn't download Package with id:" . $package->id .' Error: ' . $e->getMessage());
             }

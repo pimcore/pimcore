@@ -13,11 +13,7 @@ class Deployment_Helper_General {
 
     public static function getInstanceIdentifier(){
         $systemConfig = Pimcore_Config::getSystemConfig()->toArray();
-
-        if($deploymentSettings = $systemConfig['deployment']){ //@Todo: remove if().. when deployment activated
-            return $deploymentSettings['instanceIdentifier'];
-        }
-        return false;
+        return $systemConfig['general']['instanceIdentifier'];
     }
 
     public static function getDefaultLogFile(){
@@ -30,12 +26,8 @@ class Deployment_Helper_General {
      * @return bool
      */
     public static function isEnabled(){
-        $systemConfig = Pimcore_Config::getSystemConfig()->toArray();
-
-        if($deploymentSettings = $systemConfig['deployment']){ //@Todo: remove if().. when deployment activated
-            return (bool)$deploymentSettings['enabled'];
-        }
-        return false;
+        $config = self::getConfig();
+        return $config->enabled;
     }
 
     /**
@@ -55,7 +47,7 @@ class Deployment_Helper_General {
     }
 
     public static function getConfig(){
-        $deploymentConfigFile = PIMCORE_CONFIGURATION_DIRECTORY . "/deployment/config.xml";
+        $deploymentConfigFile = PIMCORE_DEPLOYMENT_CONFIG_FILE;
 
         if (is_readable($deploymentConfigFile)) {
             try {

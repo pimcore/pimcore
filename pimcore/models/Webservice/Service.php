@@ -1081,4 +1081,13 @@ class Webservice_Service
             throw new Exception("Parameter 'type' has to be 'website' or 'admin'");
         }
     }
+
+    public function getDeploymentPackage($id){
+        $package = Deployment_Package::getById($id);
+        if($package instanceof Deployment_Package){
+            return $package->getForWebserviceExport();
+        }else{
+            throw new Exception("Package with id $id not found.");
+        }
+    }
 }

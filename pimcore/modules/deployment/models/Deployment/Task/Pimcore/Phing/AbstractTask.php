@@ -26,7 +26,6 @@ abstract class Deployment_Task_Pimcore_Phing_AbstractTask extends Task {
 
     public function init(){
         parent::init();
-        #var_dump($this->getOwningTarget()->getName());
         set_error_handler(array($this, 'errorHandler'));
 
         $this->setTaskParamDefinitions();
