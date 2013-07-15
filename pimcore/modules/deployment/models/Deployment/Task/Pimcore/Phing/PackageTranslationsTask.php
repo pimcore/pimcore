@@ -17,7 +17,8 @@ class Deployment_Task_Pimcore_Phing_PackageTranslationsTask extends Deployment_T
 
     public function createPackage(){
         $type = $this->checkType($this->getParam('type'));
-        $data = $this->getWebserviceService()->getTranslations($type,$this->getParams());
+        $params = array_filter($this->getParams()); //remove empty keys -> could cause problems
+        $data = $this->getWebserviceService()->getTranslations($type,$params);
         if(empty($data)){
             throw new BuildException("No Translations found.");
         }else{
