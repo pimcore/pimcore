@@ -49,7 +49,9 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
 
         $item->setProduct($product);
         $item->setItemKey($itemKey);
-        $item->setComment($comment);
+        if($comment !== null) {
+            $item->setComment($comment);
+        }
         if($replace) {
             $item->setCount($count);
         } else {
