@@ -17,6 +17,7 @@ Class Deployment_Instance_Wrapper {
     protected $deployable;
     protected $webserviceApiKey;
     protected $webserviceEndpointRest;
+    protected $requiredModules = array('Tool_UUID_Module','Deployment_Module');
 
     protected $concreteDeploymentInstance;
 
@@ -106,7 +107,25 @@ Class Deployment_Instance_Wrapper {
         try{
             $restClient = $this->getRestClient();
             $serverInfo = $restClient->getServerInfo();
-            return array('success' => true,'message' => 'Rest request successfully.');
+            $missingModules = array();
+            if(empty($serverInfo->pimcore->modules)){
+                $missingModules = $this->requiredModules;
+            }else{
+                foreach($this->requiredModules as $module){
+                    if(!in_array($module,$serverInfo->pimcore->modules)){
+                        $missingModules[] = $module;
+                    }
+                }
+            }
+            if(empty($missingModules)){
+                return array('success' => true,'message' => 'Rest request successfully.');
+            }else{
+                $message = ' Missing Modules: ' . implode(', ',$missingModules) . ' | Rest request successfully.';
+                if(in_array('Tool_UUID_Module',$missingModules)){
+                    $message .= ' You have to set an instance identifier in "System Settings" -> "General" -> "Instance identifier" ';
+                }
+                return array('success' => false,'message' => $message);
+            }
         }catch(Exception $e){
             return array('success' => false,'message' => 'Rest request failed -> ' .$e->getMessage());
         }
