@@ -1040,25 +1040,29 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      */
     public function serverInfoAction() {
         $this->checkUserPermission("system_settings");
+        $systemSettings = Pimcore_Config::getSystemConfig()->toArray();
 
         $system = array("currentTime" => time(),
                         "phpCli" => Pimcore_Tool_Console::getPhpCli(),
-                        "PIMCORE_DOCUMENT_ROOT" => PIMCORE_DOCUMENT_ROOT);
-        $result = array();
-        $pimcore = array();
-        $pimcore["version"] = Pimcore_Version::getVersion();
+        );
 
-//        $pimcore["svnInfo"] = Pimcore_Version::getSvnInfo();
-        $pimcore["revision"] = Pimcore_Version::getRevision();
+        $pimcore = array("version" => Pimcore_Version::getVersion(),
+                         "revision" => Pimcore_Version::getRevision(),
+                         "PIMCORE_DOCUMENT_ROOT" => PIMCORE_DOCUMENT_ROOT,
+                         "instanceIdentifier" => $systemSettings["general"]["instanceIdentifier"],
+                         "modules" => array(),
+        );
+
+        foreach((array)Pimcore_API_Plugin_Broker::getInstance()->getModules() as $module){
+            $pimcore["modules"][] = get_class($module);
+        }
 
         $plugins = Pimcore_ExtensionManager::getPluginConfigs();
 
-//        $phpInfo = $this->phpinfo_array();
 
         $this->encoder->encode(array("success" => true, "system" => $system,
             "pimcore" => $pimcore,
-//            "phpinfo" => $phpInfo,
-            "plugins" => $plugins
+            "plugins" => $plugins,
         ));
     }
 
