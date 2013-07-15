@@ -909,6 +909,7 @@ class Pimcore_Tool_RestClient
     public function getServerInfo()
     {
         $url = $this->buildEndpointUrl("server-info");
+        var_dump($url);
         $response = $this->doRequest($this->buildEndpointUrl("server-info"), "GET");
         return $response;
     }
