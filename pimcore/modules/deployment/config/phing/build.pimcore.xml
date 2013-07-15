@@ -29,7 +29,7 @@
         <pimcore.task.package.translations>
             <pimcoreParam name="deploymentAction">createPackage</pimcoreParam>
             <pimcoreParam name="type">website</pimcoreParam>
-            <pimcoreParam name="creationDateFrom">6564</pimcoreParam>
+            <pimcoreParam name="creationDateFrom"></pimcoreParam>
         </pimcore.task.package.translations>
     </target>
 
