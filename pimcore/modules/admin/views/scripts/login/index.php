@@ -145,12 +145,12 @@ $config = Pimcore_Config::getSystemConfig();
                     $('input[name=' + name + ']').val(text);
                 });
                 window.clearInterval(autofillFixInterval);
-                $("#username").select();
+                //$("#username").select();
             }
         }, 20);
     }
 
-    $("#username").select();
+    //$("#username").select();
 </script>
 
 <script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1&build=<?php echo Pimcore_Version::getRevision(); ?>"></script>
