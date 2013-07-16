@@ -1396,3 +1396,4 @@
 "instance_identifier_info","The instance identifier has to be unique throughout multiple Pimcore instances. UUID generation will be automatically enabled if a Instance identifier is provided (do not change the instance identifier afterwards - this will cause invalid UUIDs)"
 "show_metainfo","Info"
 "element_metainfo","Meta Information"
+"deployment","Deployment"
