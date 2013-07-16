@@ -359,13 +359,39 @@ pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
 };
 
 
-pimcore.helpers.closeAllElements = function () {
+pimcore.helpers.closeAllUnmodified = function () {
+    var unmodifiedElements = [];
+
     var tabs = Ext.getCmp("pimcore_panel_tabs").items;
     if (tabs.getCount() > 0) {
-        if (tabs.getCount() > 1) {
-            window.setTimeout(pimcore.helpers.closeAllElements, 200);
-        }
-        Ext.getCmp("pimcore_panel_tabs").remove(tabs.first());
+        tabs.each(function (item, index, length) {
+            if(item.title.indexOf("*") > -1) {
+                unmodifiedElements.push(item);
+            }
+        });
+    };
+
+    pimcore.helpers.closeAllElements(unmodifiedElements);
+}
+
+pimcore.helpers.closeAllElements = function (except) {
+
+    var exceptions = [];
+    if(except instanceof Ext.Panel) {
+        exceptions.push(except);
+    } else if (except instanceof Array) {
+        exceptions = except;
+    }
+
+    var tabs = Ext.getCmp("pimcore_panel_tabs").items;
+    if (tabs.getCount() > 0) {
+        tabs.each(function (item, index, length) {
+            window.setTimeout(function () {
+                if(!in_array(item, exceptions)) {
+                    Ext.getCmp("pimcore_panel_tabs").remove(item);
+                }
+            }, 100*index);
+        });
     }
 };
 
@@ -1322,4 +1348,52 @@ pimcore.helpers.insertTextAtCursorPosition = function (text) {
     }
 
 };
+
+
+pimcore.helpers.handleTabRightClick = function (tabPanel, el, index) {
+    Ext.get(el.tabEl).on("contextmenu", function (e) {
+        var menu = new Ext.menu.Menu({
+            items: [{
+                text: t('close_others'),
+                iconCls: "",
+                handler: function (item) {
+                    pimcore.helpers.closeAllElements(el);
+                    // clear the opentab store, so that also non existing elements are flushed
+                    pimcore.helpers.clearOpenTab();
+                }.bind(this)
+            }, {
+                text: t('close_all'),
+                iconCls: "",
+                handler: function (item) {
+                    pimcore.helpers.closeAllElements();
+                    // clear the opentab store, so that also non existing elements are flushed
+                    pimcore.helpers.clearOpenTab();
+                }.bind(this)
+            }, {
+                text: t('close_unmodified'),
+                iconCls: "",
+                handler: function (item) {
+                    pimcore.helpers.closeAllUnmodified();
+                    // clear the opentab store, so that also non existing elements are flushed
+                    pimcore.helpers.clearOpenTab();
+                }.bind(this)
+            }]
+        });
+
+
+
+        /*menu.add(new Ext.menu.Item({
+            text: t('close_all'),
+            iconCls: "",
+            handler: function (item) {
+                pimcore.helpers.closeAllElements();
+                // clear the opentab store, so that also non existing elements are flushed
+                pimcore.helpers.clearOpenTab();
+            }.bind(this)
+        }));*/
+
+        menu.showAt(e.getXY());
+        e.stopEvent();
+    });
+}
 
