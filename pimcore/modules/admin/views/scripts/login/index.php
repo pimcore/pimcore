@@ -150,6 +150,8 @@ $config = Pimcore_Config::getSystemConfig();
         }, 20);
     }
 
+    // clear opened tabs store
+    localStorage.removeItem("pimcore_opentabs");
     //$("#username").select();
 </script>
 
