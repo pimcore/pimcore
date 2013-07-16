@@ -60,7 +60,6 @@ class Deployment_Task_Pimcore_Phing_PackageTranslationsTask extends Deployment_T
     }
 
     public function installPackage(){
-
         $phar = $this->getPharArchive();
         $metaData = $this->getPharMetaData();
 

@@ -201,5 +201,29 @@ abstract class Deployment_Task_Pimcore_Phing_AbstractTask extends Task {
             Phing::handlePhpError($level, $message, $file, $line);
         }
     }
+
+    protected function getDeploymentInstances(){
+        $deploymentFactory = $this->getDeploymentFactory();
+        $instanceAdapter = $deploymentFactory->getInstanceAdapter();
+
+        if($this->getParam('deploymentInstanceIds') && $this->getParam('deploymentGroups')){
+            throw new BuildException("You have to use deploymentInstanceIds OR deploymentGroups.");
+        }
+
+        $instanceIdentifiers = explode_and_trim(',',$this->getParam('instanceIdentifiers'));
+        if(!empty($instanceIdentifiers)){
+            $instances = $instanceAdapter->getInstancesByIdentifiers($instanceIdentifiers);
+            $this->log("Getting deploymentInstances by instanceIdentifiers'" . implode(',', $instanceIdentifiers)."'.",Project::MSG_DEBUG);
+        }
+
+        $deploymentGroups = explode_and_trim(',',$this->getParam('deploymentGroups'));
+        if(!empty($deploymentGroups)){
+            $instances = $instanceAdapter->getInstancesByGroups($deploymentGroups);
+            $this->log("Getting deploymentInstances by deploymentGroups '" . implode(',', $deploymentGroups)."'.",Project::MSG_DEBUG);
+        }
+
+        return $instances;
+    }
+
 }
 
