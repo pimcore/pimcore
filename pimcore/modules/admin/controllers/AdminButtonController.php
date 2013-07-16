@@ -54,6 +54,8 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
             $subject .=  $urlParts["host"];
 
             $mail = Pimcore_Tool::getMail($email, $subject, "UTF-8");
+            $mail->setIgnoreDebugMode(true);
+
             $bodyText = "URL: " . $this->getParam("url") . "\n\n";
             $bodyText .= "Description: \n\n" . $this->getParam("description");
 
@@ -140,6 +142,7 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
             $subject .=  $urlParts["host"];
 
             $mail = Pimcore_Tool::getMail($email, $subject, "UTF-8");
+            $mail->setIgnoreDebugMode(true);
 
             $bodyText = "Host: " . $urlParts["host"] . "\n\n";
             $bodyText .= "URL: " . $this->getParam("url") . "\n\n";
