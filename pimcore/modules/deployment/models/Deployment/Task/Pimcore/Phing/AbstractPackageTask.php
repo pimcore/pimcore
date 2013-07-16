@@ -32,14 +32,16 @@ abstract class Deployment_Task_Pimcore_Phing_AbstractPackageTask extends Deploym
 
     protected function getPackageId(){
         if($this->getParam('packageId')){
-            return $this->getParam('packageId');
+            $packageId = $this->getParam('packageId');
         }else{
             $dbEntry = $this->getPackageDatabaseEntry();
             if(!$dbEntry->getId()){
                 throw new BuildException("No packageId given!");
             }
-            return $dbEntry->getId();
+            $packageId = $dbEntry->getId();
         }
+        $this->project->setProperty('packageId',$packageId);
+        return $packageId;
     }
 
     protected function getTemporaryTaskDirectory(){
@@ -91,22 +93,41 @@ abstract class Deployment_Task_Pimcore_Phing_AbstractPackageTask extends Deploym
         $deploymentAction = $this->getParam('deploymentAction');
         if($deploymentAction){
             if($deploymentAction == 'installPackage'){
-                $this->log("deploymentAction is '$deploymentAction' -> executing 'createBackup' before installing.",Project::MSG_INFO);
-                $this->createBackup();
-                try{
-                    $this->log("Installing Package");
-                    $this->$deploymentAction();
-                    $this->log("Package successfully installed");
-                }catch(Exception $e){
-                    $this->log("Package installation failed with error: \n\n" . $e ,"\n\n permforming 'rollback'",Project::MSG_INFO);
+                if($this->getPimcoreParam('remote')){
+                    $params = $this->getPimcoreParams();
+                    $params['packageId'] = $this->project->getProperty('packageId');
+                    $params['target'] = $this->getCurrentDeploymentExecutionTarget()->getName();
+                    unset($params['remote']);
+                    foreach($this->getDeploymentInstances() as $instance){
+                        $client = $instance->getRestClient();
+                        $result = $client->deploymentExecuteTargetAction($params);
+                        if($result->success){
+                            $this->log("Remote command successfully (instance: " . $instance->getInstanceIdentifier().")",Project::MSG_INFO);
+                            $this->log("Remote command: " . $result->data ,Project::MSG_DEBUG);
+                        }else{
+                            $this->log("Remote command: " . $result->data ,Project::MSG_DEBUG);
+                            throw new BuildException("Remote command failed (instance: " . $instance->getInstanceIdentifier().")");
+                        }
+                    }
+                }else{
+                    $this->log("deploymentAction is '$deploymentAction' -> executing 'createBackup' before installing.",Project::MSG_INFO);
+                    $this->createBackup();
                     try{
-                        $this->log("Starting rollback.");
-                        $this->rollback();
-                        $this->log("Rollback finished successfully :-)");
-                    }catch (Exception $e){
-                        throw new BuildException("\n\n--------------------\nEMERGENCY - ROLLBACK FAILED WITH ERRROR\n--------------------\n\n");
+                        $this->log("Installing Package");
+                        $this->$deploymentAction();
+                        $this->log("Package successfully installed");
+                    }catch(Exception $e){
+                        $this->log("Package installation failed with error: \n\n" . $e ,"\n\n permforming 'rollback'",Project::MSG_INFO);
+                        try{
+                            $this->log("Starting rollback.");
+                            $this->rollback();
+                            $this->log("Rollback finished successfully :-)");
+                        }catch (Exception $e){
+                            throw new BuildException("\n\n--------------------\nEMERGENCY - ROLLBACK FAILED WITH ERRROR\n--------------------\n\n");
+                        }
                     }
                 }
+
             }else{
                 $this->log("Executing deploymentAction '$deploymentAction'.",Project::MSG_INFO);
                 if(!method_exists($this,$deploymentAction)){
