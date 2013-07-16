@@ -9,7 +9,11 @@
 class Deployment_Setup {
 
     public function run(){
-        $revisionFileCheck = Deployment_Module::getModulePath().'/.lastPimcoreRevisionCheck';
+        if(!is_dir(PIMCORE_DEPLOYMENT_DIRECTORY)){
+            mkdir(PIMCORE_DEPLOYMENT_DIRECTORY,0755,true);
+        }
+
+        $revisionFileCheck = PIMCORE_DEPLOYMENT_DIRECTORY .'/.lastPimcoreRevisionCheck';
         if(!is_readable($revisionFileCheck)){
             $lastRevisionUpdate = 0;
         }else{

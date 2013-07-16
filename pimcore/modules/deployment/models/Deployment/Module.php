@@ -11,5 +11,4 @@ class Deployment_Module extends Pimcore_API_Module_Abstract {
     public static function getModulePath(){
         return dirname(dirname(__DIR__));
     }
-
 }
