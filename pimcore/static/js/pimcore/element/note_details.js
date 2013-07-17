@@ -40,6 +40,7 @@ pimcore.element.note_details = Class.create({
                 buttons: [
                     {
                         text: t('close'),
+                        iconCls: "pimcore_icon_empty",
                         handler: function(){
                             this.detailWindow.hide();
                             this.detailWindow.destroy();
