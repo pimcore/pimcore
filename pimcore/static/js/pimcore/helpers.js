@@ -1351,17 +1351,39 @@ pimcore.helpers.insertTextAtCursorPosition = function (text) {
 
 
 pimcore.helpers.handleTabRightClick = function (tabPanel, el, index) {
-    Ext.get(el.tabEl).on("contextmenu", function (e) {
-        var menu = new Ext.menu.Menu({
-            items: [{
-                text: t('close_others'),
-                iconCls: "",
-                handler: function (item) {
-                    pimcore.helpers.closeAllElements(el);
-                    // clear the opentab store, so that also non existing elements are flushed
-                    pimcore.helpers.clearOpenTab();
-                }.bind(this)
-            }, {
+    if(Ext.get(el.tabEl)) {
+        Ext.get(el.tabEl).on("contextmenu", function (e) {
+            var menu = new Ext.menu.Menu({
+                items: [{
+                    text: t('close_others'),
+                    iconCls: "",
+                    handler: function (item) {
+                        pimcore.helpers.closeAllElements(el);
+                        // clear the opentab store, so that also non existing elements are flushed
+                        pimcore.helpers.clearOpenTab();
+                    }.bind(this)
+                }, {
+                    text: t('close_all'),
+                    iconCls: "",
+                    handler: function (item) {
+                        pimcore.helpers.closeAllElements();
+                        // clear the opentab store, so that also non existing elements are flushed
+                        pimcore.helpers.clearOpenTab();
+                    }.bind(this)
+                }, {
+                    text: t('close_unmodified'),
+                    iconCls: "",
+                    handler: function (item) {
+                        pimcore.helpers.closeAllUnmodified();
+                        // clear the opentab store, so that also non existing elements are flushed
+                        pimcore.helpers.clearOpenTab();
+                    }.bind(this)
+                }]
+            });
+
+
+
+            /*menu.add(new Ext.menu.Item({
                 text: t('close_all'),
                 iconCls: "",
                 handler: function (item) {
@@ -1369,31 +1391,12 @@ pimcore.helpers.handleTabRightClick = function (tabPanel, el, index) {
                     // clear the opentab store, so that also non existing elements are flushed
                     pimcore.helpers.clearOpenTab();
                 }.bind(this)
-            }, {
-                text: t('close_unmodified'),
-                iconCls: "",
-                handler: function (item) {
-                    pimcore.helpers.closeAllUnmodified();
-                    // clear the opentab store, so that also non existing elements are flushed
-                    pimcore.helpers.clearOpenTab();
-                }.bind(this)
-            }]
+            }));*/
+
+            menu.showAt(e.getXY());
+            e.stopEvent();
         });
+    }
+};
 
-
-
-        /*menu.add(new Ext.menu.Item({
-            text: t('close_all'),
-            iconCls: "",
-            handler: function (item) {
-                pimcore.helpers.closeAllElements();
-                // clear the opentab store, so that also non existing elements are flushed
-                pimcore.helpers.clearOpenTab();
-            }.bind(this)
-        }));*/
-
-        menu.showAt(e.getXY());
-        e.stopEvent();
-    });
-}
 
