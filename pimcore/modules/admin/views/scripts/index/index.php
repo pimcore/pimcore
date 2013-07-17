@@ -239,6 +239,7 @@
             "pimcore/element/dependencies.js",
             "pimcore/element/metainfo.js",
             "pimcore/element/notes.js",
+            "pimcore/element/note_details.js",
             "pimcore/object/helpers/grid.js",
             "pimcore/object/helpers/gridConfigDialog.js",
             "pimcore/object/helpers/classTree.js",
