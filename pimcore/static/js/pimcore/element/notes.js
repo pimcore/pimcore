@@ -175,6 +175,12 @@ pimcore.element.notes = Class.create({
                 autoScroll: true,
                 viewConfig: {
                     forceFit: true
+                },
+                listeners: {
+                    rowdblclick : function(grid, rowIndex, event ) {
+                        this.showDetailedData(grid, rowIndex, event);
+                    }.bind(this)
+
                 }
             });
             this.grid.on("rowclick", this.showDetail.bind(this));
@@ -337,6 +343,11 @@ pimcore.element.notes = Class.create({
         });
 
         addWin.show();
+    },
+
+    showDetailedData: function(grid, rowIndex, event) {
+        var data = this.store.getAt(rowIndex);
+        new pimcore.element.note_details(data.data);
     }
 
 });
