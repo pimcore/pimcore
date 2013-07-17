@@ -165,7 +165,18 @@ pimcore.element.notes = Class.create({
                     {header: t("date"), sortable: true, dataIndex: 'date', width: 100, renderer: function(d) {
                         var date = new Date(d * 1000);
                         return date.format("Y-m-d H:i:s");
-                    }}
+                    }},
+                    {
+                        xtype: 'actioncolumn',
+                        width: 30,
+                        items: [{
+                            tooltip: t('details'),
+                            icon: "/pimcore/static/img/icon/info.png",
+                            handler: function (grid, rowIndex, event) {
+                                this.showDetailedData(grid, rowIndex, event);
+                            }.bind(this)
+                        }]
+                    },
                 ],
                 columnLines: true,
                 bbar: this.pagingtoolbar,
