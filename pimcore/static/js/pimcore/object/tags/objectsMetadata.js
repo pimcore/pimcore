@@ -230,6 +230,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         this.component = new Ext.grid.EditorGridPanel({
             store: this.store,
+            enableDragDrop: true,
+            ddGroup: 'element',
             trackMouseOver: true,
             sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             columnLines: true,
@@ -293,35 +295,33 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                         //return e.getTarget(this.grid.getView().rowSelector);
                     }.bind(this),
                     onNodeOver: function (overHtmlNode, ddSource, e, data) {
-
-                        if (data.node.attributes.elementType == "object" && this.dndAllowed(data)) {
+                        if (this.dndAllowed(data)) {
                             return Ext.dd.DropZone.prototype.dropAllowed;
                         } else {
                             return Ext.dd.DropZone.prototype.dropNotAllowed;
                         }
-
                     }.bind(this),
                     onNodeDrop : function(target, dd, e, data) {
 
-                        // check if data is a treenode, if not allow drop because of the reordering
-                        if (!this.sourceIsTreeNode(data)) {
-                            return true;
-                        }
-
-                        if (data.node.attributes.elementType != "object") {
-                            return false;
-                        }
-
                         if (this.dndAllowed(data)) {
-                            var initData = {
-                                id: data.node.attributes.id,
-                                path: data.node.attributes.path,
-                                type: data.node.attributes.className
-                            };
+                            if(data["grid"] && data["grid"] == this.component) {
+                                var rowIndex = this.component.getView().findRowIndex(e.target);
+                                if(rowIndex !== false) {
+                                    var rec = this.store.getAt(data.rowIndex);
+                                    this.store.removeAt(data.rowIndex);
+                                    this.store.insert(rowIndex, [rec]);
+                                }
+                            } else {
+                                var initData = {
+                                    id: data.node.attributes.id,
+                                    path: data.node.attributes.path,
+                                    type: data.node.attributes.className
+                                };
 
-                            if (!this.objectAlreadyExists(initData.id)) {
-                                this.loadObjectData(initData.id, this.fieldConfig.visibleFields.split(","));
-                                return true;
+                                if (!this.objectAlreadyExists(initData.id)) {
+                                    this.loadObjectData(initData.id, this.fieldConfig.visibleFields.split(","));
+                                    return true;
+                                }
                             }
                         }
                         return false;
@@ -346,11 +346,14 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         // check if data is a treenode, if not allow drop because of the reordering
         if (!this.sourceIsTreeNode(data)) {
-            return true;
+            if(data["grid"] && data["grid"] == this.component) {
+                return true;
+            }
+            return false;
         }
 
         // only allow objects not folders
-        if (data.node.attributes.type == "folder") {
+        if (data.node.attributes.type == "folder" || data.node.attributes.elementType != "object") {
             return false;
         }
 
