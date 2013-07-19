@@ -27,7 +27,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-include_once("startup.php");
+include_once("../../../cli/startup.php");
 Pimcore_Tool_Console::checkExecutingUser();
 
 $deploymentEnabled = false;
