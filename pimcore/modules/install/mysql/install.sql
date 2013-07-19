@@ -704,6 +704,14 @@ CREATE TABLE `users_workspaces_object` (
   KEY `userId` (`userId`)
 ) DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `uuids` (
+  `uuid` CHAR(36) NOT NULL,
+  `itemId` BIGINT(20) UNSIGNED NOT NULL,
+  `type` VARCHAR(25) NOT NULL,
+  `subType` VARCHAR(20) NULL DEFAULT NULL,
+  `instanceIdentifier` VARCHAR(50) NOT NULL,
+  UNIQUE INDEX `itemId_type_uuid` (`itemId`, `type`, `uuid`)
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `versions`;
 CREATE TABLE `versions` (
@@ -719,13 +727,3 @@ CREATE TABLE `versions` (
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`)
 ) DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `uuids` (
-	`uuid` CHAR(36) NOT NULL,
-	`itemId` BIGINT(20) UNSIGNED NOT NULL,
-	`type` VARCHAR(25) NOT NULL,
-	`subType` VARCHAR(20) NULL DEFAULT NULL,
-	`instanceIdentifier` VARCHAR(50) NOT NULL,
-	UNIQUE INDEX `itemId_type_uuid` (`itemId`, `type`, `uuid`)
-)
-ENGINE=InnoDB DEFAULT CHARSET=utf8;
