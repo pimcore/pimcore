@@ -117,14 +117,6 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
     public function personaListAction() {
 
         $personas = array();
-
-        if($this->getParam("add-default")) {
-            $personas[] = array(
-                "id" => "",
-                "text" => Zend_Registry::get("Zend_Translate")->translate("default")
-            );
-        }
-
         $list = new Tool_Targeting_Persona_List();
 
         foreach($list->load() as $persona) {
