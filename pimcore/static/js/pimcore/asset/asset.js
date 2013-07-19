@@ -15,12 +15,12 @@
 pimcore.registerNS("pimcore.asset.asset");
 pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
-    getData: function () {        
+    getData: function () {
         Ext.Ajax.request({
             url: "/admin/asset/get-data-by-id/",
             success: this.getDataComplete.bind(this),
             params: {
-                id: this.id, 
+                id: this.id,
                 type: this.type
             }
         });
@@ -155,6 +155,10 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         this.tabPanel.add(this.tab);
 
+        if (this.getAddToHistory()) {
+            pimcore.helpers.recordElement(this.id, "asset", this.data.path + this.data.filename);
+        }
+
         // recalculate the layout
         pimcore.layout.refresh();
     },
@@ -179,11 +183,11 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                         text: t('save_pubish_close'),
                         iconCls: "pimcore_icon_save",
                         handler: this.saveClose.bind(this)
-                       },{
-                            text: t('save_only_scheduled_tasks'),
-                            iconCls: "pimcore_icon_save",
-                            handler: this.save.bind(this, "scheduler")
-                        }
+                    },{
+                        text: t('save_only_scheduled_tasks'),
+                        iconCls: "pimcore_icon_save",
+                        handler: this.save.bind(this, "scheduler")
+                    }
                     ]
                 });
 
@@ -193,10 +197,10 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
             if (this.isAllowed("delete") && !this.data.locked) {
                 this.toolbarButtons.remove = new Ext.Button({
-                     text: t('delete'),
-                     iconCls: "pimcore_icon_delete_medium",
-                     scale: "medium",
-                     handler: this.remove.bind(this)
+                    text: t('delete'),
+                    iconCls: "pimcore_icon_delete_medium",
+                    scale: "medium",
+                    handler: this.remove.bind(this)
                 });
                 buttons.push(this.toolbarButtons.remove);
             }
@@ -361,7 +365,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         });
     },
 
-     saveClose: function(){
+    saveClose: function(){
         this.save();
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         tabPanel.remove(this.tab);
@@ -374,7 +378,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
     upload: function () {
 
         pimcore.helpers.uploadDialog('/admin/asset/replace-asset/?pimcore_admin_sid='
-                                    + pimcore.settings.sessionId + "&id=" + this.data.id, "Filedata", function() {
+            + pimcore.settings.sessionId + "&id=" + this.data.id, "Filedata", function() {
             this.reload();
         }.bind(this), function () {
             Ext.MessageBox.alert(t("error"), t("error"));
