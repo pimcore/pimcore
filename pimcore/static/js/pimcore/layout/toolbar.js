@@ -65,6 +65,12 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        fileItems.push({
+            text: t('element_history'),
+            iconCls: "pimcore_icon_tab_schedule",
+            cls: "pimcore_main_menu",
+            handler: this.showElementHistory.bind(this)
+        });
 
         if (user.isAllowed("seemode")) {
             fileItems.push({
@@ -1371,7 +1377,15 @@ pimcore.layout.toolbar = Class.create({
                             "/pimcore/modules/3rdparty/adminer/index.php", "pimcore_icon_mysql", "Database Admin"));
         }
 
-    }
+    },
 
+    showElementHistory: function() {
+        try {
+            pimcore.globalmanager.get("element_history").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("element_history", new pimcore.element.history());
+        }
+    }
 
 });
