@@ -152,29 +152,28 @@ pimcore.helpers.recordElement = function(id, type, name) {
 
     try {
         var historyPanel = pimcore.globalmanager.get("element_history");
+        if(historyPanel) {
+            var thePair = {"id" : id,
+                "type": type,
+                "name": name,
+                "time": newDate };
 
-        var thePair = {"id" : id,
-            "type": type,
-            "name": name,
-            "time": newDate };
+            var storeCount = historyPanel.store.getCount();
+            for(var i = storeCount - 1; i >= 0; i--) {
 
-        var storeCount = historyPanel.store.getCount();
-        for(var i = storeCount - 1; i >= 0; i--) {
-
-            var record = historyPanel.store.getAt(i);
-            var data = record.data;
-            if (i > 100 || (data.id == id && data.type == type)) {
-                historyPanel.store.remove(record);
+                var record = historyPanel.store.getAt(i);
+                var data = record.data;
+                if (i > 100 || (data.id == id && data.type == type)) {
+                    historyPanel.store.remove(record);
+                }
             }
-        }
 
-        historyPanel.store.insert(0, new historyPanel.store.recordType(thePair));
-        historyPanel.resultpanel.getView().refresh();
-        console.log(historyPanel);
+            historyPanel.store.insert(0, new historyPanel.store.recordType(thePair));
+            historyPanel.resultpanel.getView().refresh();
+        }
     }
     catch (e) {
         console.log(e);
-
     }
 
 };
