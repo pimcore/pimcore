@@ -123,7 +123,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         this.tabPanel.add(this.tab);
 
         if (this.getAddToHistory()) {
-            pimcore.helpers.recordElement(this.id, "object", this.data.general.fullpath);
+            pimcore.helpers.recordElement(this.id, "object", this.data.general.o_path + this.data.general.o_key);
         }
 
         // recalculate the layout
