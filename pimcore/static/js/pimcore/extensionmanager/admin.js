@@ -61,7 +61,7 @@ pimcore.extensionmanager.admin = Class.create({
             restful: false,
             root: "extensions",
             fields: ["id","type", "name", "description", "installed", "active", "configuration","updateable",
-                                                                        "xmlEditorFile"]
+                                                                        "xmlEditorFile","version"]
         });
         this.store.load();
 
@@ -80,6 +80,7 @@ pimcore.extensionmanager.admin = Class.create({
             }},
             {header: "ID", width: 100, sortable: true, dataIndex: 'id'},
             {header: t("name"), width: 200, sortable: true, dataIndex: 'name'},
+            {header: t("version"), width: 40, sortable: false, dataIndex: 'version'},
             {header: t("description"), id: "extension_description", width: 200, sortable: true,
                                                                 dataIndex: 'description'},
             {
