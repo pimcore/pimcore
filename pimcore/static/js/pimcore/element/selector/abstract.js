@@ -57,7 +57,7 @@ pimcore.element.selector.abstract = Class.create({
         
         if(existingItem < 0) {
             var r = new this.selectionStore.recordType(data); 
-            this.selectionStore.insert(0, r);
+            this.selectionStore.add(r);
         }
     },
     
