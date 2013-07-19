@@ -38,6 +38,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 this.init();
                 this.addTab();
 
+                if (this.getAddToHistory()) {
+                    pimcore.helpers.recordElement(this.id, "document", this.data.path + this.data.key);
+                }
+
                 this.startChangeDetector();
             }
             else {
