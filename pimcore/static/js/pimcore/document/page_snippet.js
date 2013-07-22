@@ -303,7 +303,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             buttons.push(this.newerVersionNotification);
 
             // check for newer version than the published
-            if (this.data.versions.length > 1) {
+            if (this.data.versions.length > 0) {
                 if (this.data.modificationDate != this.data.versions[0].date) {
                     this.newerVersionNotification.show();
                 }
