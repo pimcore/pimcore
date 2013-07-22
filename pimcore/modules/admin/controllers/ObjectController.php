@@ -762,6 +762,14 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $object->setOmitMandatoryCheck(true);
         }
 
+        // this prevents the user from renaming, relocating (actions in the tree) if the newest version isn't the published one
+        // the reason is that otherwise the content of the newer not published version will be overwritten
+        $latestVersion = $object->getLatestVersion();
+        if($latestVersion && $latestVersion->getData()->getModificationDate() != $object->getModificationDate()) {
+            $this->_helper->json(array("success" => false, "message" => "You can't relocate if there's a newer not published version"));
+        }
+
+
         $values = Zend_Json::decode($this->getParam("values"));
 
         if ($object->isAllowed("settings")) {
