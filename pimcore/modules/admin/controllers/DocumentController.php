@@ -350,6 +350,14 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $allowUpdate = true;
 
         $document = Document::getById($this->getParam("id"));
+
+        // this prevents the user from renaming, relocating (actions in the tree) if the newest version isn't the published one
+        // the reason is that otherwise the content of the newer not published version will be overwritten
+        $latestVersion = $document->getLatestVersion();
+        if($latestVersion && $latestVersion->getData()->getModificationDate() != $document->getModificationDate()) {
+            $this->_helper->json(array("success" => false, "message" => "You can't relocate if there's a newer not published version"));
+        }
+
         if ($document->isAllowed("settings")) {
 
             // if the position is changed the path must be changed || also from the childs
@@ -378,10 +386,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             }
 
             if ($allowUpdate) {
-                if ($this->getParam("key") || $this->getParam("parentId")) {
-                    $oldPath = $document->getPath() . $document->getKey();
-                }
-
                 $blockedVars = array("controller", "action", "module");
 
                 if(!$document->isAllowed("rename") && $this->getParam("key")){
