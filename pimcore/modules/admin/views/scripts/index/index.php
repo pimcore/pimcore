@@ -42,7 +42,7 @@
         <li id="pimcore_menu_marketing" class="pimcore_menu_item icon-chart-bar pimcore_menu_needs_children"><?php echo $this->translate("marketing"); ?></li>
         <li id="pimcore_menu_settings" class="pimcore_menu_item icon-cog-alt pimcore_menu_needs_children"><?php echo $this->translate("settings"); ?></li>
         <li id="pimcore_menu_maintenance" class="pimcore_menu_item icon-hammer" style="display:none;"><?php echo $this->translate("deactivate_maintenance"); ?></li>
-        <li id="pimcore_menu_search" class="pimcore_menu_item icon-search"><?php echo $this->translate("search"); ?></li>
+        <li id="pimcore_menu_search" class="pimcore_menu_item icon-search pimcore_menu_needs_children"><?php echo $this->translate("search"); ?></li>
         <li id="pimcore_menu_logout" class="pimcore_menu_item icon-logout"><?php echo $this->translate("logout"); ?></li>
     </ul>
 </div>
