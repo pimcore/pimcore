@@ -609,15 +609,50 @@ pimcore.layout.toolbar = Class.create({
         }
 
 
+        // search menu
+
+        var searchItems = [];
+        var searchAction = function (type) {
+            pimcore.helpers.itemselector(false, function (selection) {
+                pimcore.helpers.openElement(selection.id,selection.type, selection.subtype);
+            }, {type: [type]}, {moveToTab: true} );
+        };
+
+        if (user.isAllowed("documents")) {
+            searchItems.push({
+                text: t("document"),
+                iconCls: "pimcore_icon_document",
+                handler: searchAction.bind(this, "document")
+            });
+        }
+
+        if (user.isAllowed("assets")) {
+            searchItems.push({
+                text: t("assets"),
+                iconCls: "pimcore_icon_asset",
+                handler: searchAction.bind(this, "asset")
+            });
+        }
+
+        if (user.isAllowed("objects")) {
+            searchItems.push({
+                text: t("objects"),
+                iconCls: "pimcore_icon_object",
+                handler: searchAction.bind(this, "object")
+            });
+        }
+
+        this.searchMenu = new Ext.menu.Menu({
+            items: searchItems,
+            cls: "pimcore_navigation_flyout"
+        });
+
+
         Ext.get("pimcore_menu_file").on("mousedown", this.showSubMenu.bind(this.fileMenu));
         Ext.get("pimcore_menu_extras").on("mousedown", this.showSubMenu.bind(this.extrasMenu));
         Ext.get("pimcore_menu_marketing").on("mousedown", this.showSubMenu.bind(this.marketingMenu));
         Ext.get("pimcore_menu_settings").on("mousedown", this.showSubMenu.bind(this.settingsMenu));
-        Ext.get("pimcore_menu_search").on("mousedown", function () {
-            pimcore.helpers.itemselector(false, function (selection) {
-                pimcore.helpers.openElement(selection.id,selection.type, selection.subtype);
-            }, null, {moveToTab: true} );
-        });
+        Ext.get("pimcore_menu_search").on("mousedown", this.showSubMenu.bind(this.searchMenu));
         Ext.get("pimcore_menu_logout").on("click", this.logout);
 
         Ext.each(Ext.query(".pimcore_menu_item"), function (el) {
