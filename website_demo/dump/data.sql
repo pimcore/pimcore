@@ -27,7 +27,7 @@ CREATE TABLE `assets` (
 DROP TABLE IF EXISTS `cache`;
 CREATE TABLE `cache` (
   `id` varchar(165) NOT NULL DEFAULT '',
-  `data` longtext NOT NULL,
+  `data` longtext,
   `mtime` bigint(20) DEFAULT NULL,
   `expire` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -727,6 +727,15 @@ CREATE TABLE `search_backend_data` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS `session`;
+CREATE TABLE `session` (
+  `id` char(32) NOT NULL DEFAULT '',
+  `modified` int(11) DEFAULT NULL,
+  `lifetime` int(11) DEFAULT NULL,
+  `data` text,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `sites`;
 CREATE TABLE `sites` (
@@ -959,6 +968,15 @@ CREATE TABLE `users_workspaces_object` (
   KEY `userId` (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+DROP TABLE IF EXISTS `uuids`;
+CREATE TABLE IF NOT EXISTS `uuids` (
+  `uuid` CHAR(36) NOT NULL,
+  `itemId` BIGINT(20) UNSIGNED NOT NULL,
+  `type` VARCHAR(25) NOT NULL,
+  `instanceIdentifier` VARCHAR(50) NOT NULL,
+  UNIQUE INDEX `itemId_type_uuid` (`itemId`, `type`, `uuid`)
+) DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS `versions`;
