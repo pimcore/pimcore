@@ -915,6 +915,9 @@ class Pimcore {
 
         // release all open locks from this process
         Tool_Lock::releaseAll();
+
+        // disable logging - otherwise this will cause problems in the ongoing shutdown process (session write, __destruct(), ...)
+        Logger::resetLoggers();
     }
 
     /**

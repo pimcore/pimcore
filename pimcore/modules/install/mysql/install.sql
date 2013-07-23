@@ -497,6 +497,15 @@ CREATE TABLE `search_backend_data` (
   FULLTEXT KEY `fulltext` (`data`,`properties`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `session`;
+CREATE TABLE `session` (
+  `id` char(32) NOT NULL DEFAULT '',
+  `modified` int(11) DEFAULT NULL,
+  `lifetime` int(11) DEFAULT NULL,
+  `data` text,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `sites`;
 CREATE TABLE `sites` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
