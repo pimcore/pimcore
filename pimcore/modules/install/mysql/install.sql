@@ -713,6 +713,7 @@ CREATE TABLE `users_workspaces_object` (
   KEY `userId` (`userId`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `uuids`;
 CREATE TABLE IF NOT EXISTS `uuids` (
   `uuid` CHAR(36) NOT NULL,
   `itemId` BIGINT(20) UNSIGNED NOT NULL,
