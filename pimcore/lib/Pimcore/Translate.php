@@ -133,7 +133,7 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
 
         // do not create a new translation if it is only empty, but do not return empty values
         if(!array_key_exists($messageId, $this->_translate[$locale])) {
-            $this->createEmptyTranslation($locale, $messageId);
+            $this->createEmptyTranslation($locale, $messageIdOriginal);
         } else {
             // look for a fallback translation
             foreach(Pimcore_Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
@@ -152,7 +152,10 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
      * @param $messageId
      * @return mixed
      */
-    private function createEmptyTranslation($locale, $messageId) {
+    protected function createEmptyTranslation($locale, $messageId) {
+
+        $messageIdOriginal = $messageId;
+        $messageId = mb_strtolower($messageId);
 
         // don't create translation if it's just empty
         if(array_key_exists($messageId, $this->_translate[$locale])) {
@@ -183,7 +186,7 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
 
         // put it into the store, otherwise when there are more calls to the same key during one process
         // the key would be inserted/updated several times, what would be redundant
-        $this->_translate[$locale][$messageId] = $messageId;
+        $this->_translate[$locale][$messageId] = $messageIdOriginal;
     }
 
     /**
