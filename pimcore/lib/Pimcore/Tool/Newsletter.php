@@ -126,13 +126,18 @@ class Pimcore_Tool_Newsletter {
      */
     public function subscribe ($params) {
 
+        $onlyCreateVersion = false;
         $className = $this->getClassName();
         $object = new $className;
 
         // check for existing e-mail
         $existingObject = $className::getByEmail($params["email"], 1);
         if($existingObject) {
-            throw new \Exception("email address '" . $params["email"] . "' already exists");
+            // if there's an existing user with this email address, do not overwrite the contents, but create a new
+            // version which will be published as soon as the contact gets verified (token/email)
+            $object = $existingObject;
+            $onlyCreateVersion = true;
+            //throw new \Exception("email address '" . $params["email"] . "' already exists");
         }
 
         if(!array_key_exists("email", $params)) {
@@ -152,7 +157,10 @@ class Pimcore_Tool_Newsletter {
         $object->setUserOwner(0);
         $object->setPublished(true);
         $object->setKey(Pimcore_File::getValidFilename($object->getEmail() . "~" . substr(uniqid(), -3)));
-        $object->save();
+
+        if(!$onlyCreateVersion) {
+            $object->save();
+        }
 
         // generate token
         $token = base64_encode(serialize(array(
@@ -161,7 +169,12 @@ class Pimcore_Tool_Newsletter {
             "id" => $object->getId()
         )));
         $object->setProperty("token", "text", $token);
-        $object->save();
+
+        if(!$onlyCreateVersion) {
+            $object->save();
+        } else {
+            $object->saveVersion();
+        }
 
         $this->addNoteOnObject($object, "subscribe");
 
@@ -216,6 +229,12 @@ class Pimcore_Tool_Newsletter {
 
         $object = $this->getObjectByToken($token);
         if($object) {
+
+            if($version = $object->getLatestVersion()) {
+                $object = $version->getData();
+                $object->setPublished(true);
+            }
+
             $object->setNewsletterConfirmed(true);
             $object->save();
 

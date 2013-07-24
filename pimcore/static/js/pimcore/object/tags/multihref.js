@@ -112,6 +112,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
         this.component = new Ext.grid.GridPanel({
             store: this.store,
+            enableDragDrop: true,
+            ddGroup: 'element',
             sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
@@ -211,48 +213,48 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     //return e.getTarget(this.grid.getView().rowSelector);
                 }.bind(this),
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
-
-
                     if (this.dndAllowed(data)) {
                         return Ext.dd.DropZone.prototype.dropAllowed;
                     }
                     else {
                         return Ext.dd.DropZone.prototype.dropNotAllowed;
                     }
-
-
                 }.bind(this),
                 onNodeDrop : function(target, dd, e, data) {
 
-                    // check if data is a treenode, if not allow drop because of the reordering
-                    if (!this.sourceIsTreeNode(data)) {
-                        return true;
-                    }
-
                     if (this.dndAllowed(data)) {
-                        var initData = {
-                            id: data.node.attributes.id,
-                            path: data.node.attributes.path,
-                            type: data.node.attributes.elementType
-                        };
-
-                        if (initData.type == "object") {
-                            if (data.node.attributes.className) {
-                                initData.subtype = data.node.attributes.className;
+                        if(data["grid"] && data["grid"] == this.component) {
+                            var rowIndex = this.component.getView().findRowIndex(e.target);
+                            if(rowIndex !== false) {
+                                var rec = this.store.getAt(data.rowIndex);
+                                this.store.removeAt(data.rowIndex);
+                                this.store.insert(rowIndex, [rec]);
                             }
-                            else {
-                                initData.subtype = "folder";
+                        } else {
+                            var initData = {
+                                id: data.node.attributes.id,
+                                path: data.node.attributes.path,
+                                type: data.node.attributes.elementType
+                            };
+
+                            if (initData.type == "object") {
+                                if (data.node.attributes.className) {
+                                    initData.subtype = data.node.attributes.className;
+                                }
+                                else {
+                                    initData.subtype = "folder";
+                                }
                             }
-                        }
 
-                        if (initData.type == "document" || initData.type == "asset") {
-                            initData.subtype = data.node.attributes.type;
-                        }
+                            if (initData.type == "document" || initData.type == "asset") {
+                                initData.subtype = data.node.attributes.type;
+                            }
 
-                        // check for existing element
-                        if (!this.elementAlreadyExists(initData.id, initData.type)) {
-                            this.store.add(new this.store.recordType(initData, this.store.getCount() + 1));
-                            return true;
+                            // check for existing element
+                            if (!this.elementAlreadyExists(initData.id, initData.type)) {
+                                this.store.add(new this.store.recordType(initData, this.store.getCount() + 1));
+                                return true;
+                            }
                         }
                         return false;
                     } else {
@@ -517,9 +519,12 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
         var i;
 
-        // check if data is a treenode, if not allow drop because of the reordering
+        // check if data is a treenode, if not check if the source is the same grid because of the reordering
         if (!this.sourceIsTreeNode(data)) {
-            return true;
+            if(data["grid"] && data["grid"] == this.component) {
+                return true;
+            }
+            return false;
         }
 
         var type = data.node.attributes.elementType;

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Pimcore core-tasks" default="pimcore.target.testTaskExecution">
+    <php expression="PIMCORE_DOCUMENT_ROOT" returnProperty="pimcore.documentRoot" />
+    <taskdef file="${pimcore.documentRoot}/pimcore/modules/deployment/config/phing/taskDefinitions.properties" />
+
+    <target name="pimcore.target.all" depends="
+    pimcore.target.testTaskExecution,
+    pimcore.target.checkDeploymentInstances,
+    pimcore.target.package.translations">
+
+    </target>
+
+    <!-- test task execution -->
+    <target name="pimcore.target.testTaskExecution">
+        <pimcore.task.testTaskExecution>
+            <pimcoreParam name="message">Hello World! This is just a test-task to ensure that the deployment is ready to run!</pimcoreParam>
+        </pimcore.task.testTaskExecution>
+    </target>
+
+    <target name="pimcore.target.deployWebsiteTranslations">
+        <pimcore.task.package.translations>
+            <pimcoreParam name="deploymentAction">createPackage</pimcoreParam>
+            <pimcoreParam name="type">website</pimcoreParam>
+        </pimcore.task.package.translations>
+        <pimcore.task.copyPackages>
+            <pimcoreParam name="instanceIdentifiers">staging</pimcoreParam>
+        </pimcore.task.copyPackages>
+        <pimcore.task.package.translations>
+            <pimcoreParam name="deploymentAction">installPackage</pimcoreParam>
+            <pimcoreParam name="type">website</pimcoreParam>
+            <pimcoreParam name="remote">1</pimcoreParam>
+            <pimcoreParam name="instanceIdentifiers">staging</pimcoreParam>
+        </pimcore.task.package.translations>
+    </target>
+
+
+    <target name="pimcore.target.copyPackages">
+        <pimcore.task.copyPackages>
+            <pimcoreParam name="packageIds"></pimcoreParam>
+            <pimcoreParam name="instanceIdentifiers">staging</pimcoreParam>
+            <!--<pimcoreParam name="deploymentGroups">test,kisi,hallo</pimcoreParam>-->
+        </pimcore.task.copyPackages>
+    </target>
+
+    <target name="pimcore.target.package.translations">
+        <pimcore.task.package.translations>
+            <pimcoreParam name="deploymentAction">createPackage</pimcoreParam>
+            <pimcoreParam name="type">website</pimcoreParam>
+            <pimcoreParam name="creationDateFrom"></pimcoreParam>
+        </pimcore.task.package.translations>
+    </target>
+
+    <!-- checks all deployment instances if rest api is callable -->
+    <target name="pimcore.target.checkDeploymentInstances" depends="pimcore.target.testTaskExecution">
+        <pimcore.task.checkDeploymentInstances ></pimcore.task.checkDeploymentInstances>
+    </target>
+</project>

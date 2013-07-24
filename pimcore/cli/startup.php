@@ -46,6 +46,7 @@ Pimcore::unsetAdminMode();
 Document::setHideUnpublished(true);
 Object_Abstract::setHideUnpublished(true);
 Object_Abstract::setGetInheritedValues(true);
+Object_Localizedfield::setGetFallbackValues(true);
 
 // Error reporting is enabled in CLI
 @ini_set("display_errors", "On");

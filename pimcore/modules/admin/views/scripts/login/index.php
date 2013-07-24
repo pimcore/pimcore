@@ -67,17 +67,21 @@ $config = Pimcore_Config::getSystemConfig();
 <?php if ($config->general->loginscreencustomimage) { ?>
     <style type="text/css">
         body {
-            background: url(<?php echo $config->general->loginscreencustomimage; ?>);
+            background: url(<?php echo $config->general->loginscreencustomimage; ?>) no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
         }
     </style>
 <?php } ?>
 
-<div id="vcenter">
+<div id="vcenter" class="<?php echo ($config->general->loginscreencustomimage ? "customimage" : ""); ?>">
     <div id="content">
         <div id="right">
             <form id="loginform" method="post" action="/admin/login/login">
                 <label><?php echo $this->translate("Username"); ?></label>
-                <input type="text" name="username" />
+                <input id="username" type="text" name="username" />
 
                 <label><?php echo $this->translate("Password"); ?></label>
                 <input type="password" name="password" />
@@ -97,10 +101,10 @@ $config = Pimcore_Config::getSystemConfig();
                         <?php echo $this->translate("Your browser is not supported. Please install the latest version of one of the following browsers."); ?>
                     </div>
                     <div class="links">
-                        <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login-reloaded/firefox.png"/></a>
-                        <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static/img/login-reloaded/chrome.png"/></a>
-                        <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login-reloaded/safari.png"/></a>
-                        <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login-reloaded/ie.png"/></a>
+                        <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login/firefox.png"/></a>
+                        <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static/img/login/chrome.png"/></a>
+                        <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login/safari.png"/></a>
+                        <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login/ie.png"/></a>
                     </div>
                     <a href="#" onclick="showLogin();"><?php echo $this->translate("Click here to proceed"); ?></a>
 
@@ -141,12 +145,17 @@ $config = Pimcore_Config::getSystemConfig();
                     $('input[name=' + name + ']').val(text);
                 });
                 window.clearInterval(autofillFixInterval);
+                //$("#username").select();
             }
         }, 20);
     }
+
+    // clear opened tabs store
+    localStorage.removeItem("pimcore_opentabs");
+    //$("#username").select();
 </script>
 
-<script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1&build=<?php echo Pimcore_Version::getRevision(); ?>&customimage=<?php echo (bool) $config->general->loginscreenimageservice; ?>"></script>
+<script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1&build=<?php echo Pimcore_Version::getRevision(); ?>"></script>
 
 </body>
 </html>

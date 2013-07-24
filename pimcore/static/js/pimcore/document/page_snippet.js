@@ -248,6 +248,16 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 handler: this.selectInTree.bind(this)
             });
 
+            var user = pimcore.globalmanager.get("user");
+            if (user.admin) {
+                buttons.push({
+                    text: t("show_metainfo"),
+                    scale: "medium",
+                    iconCls: "pimcore_icon_info_large",
+                    handler: this.showMetaInfo.bind(this)
+                });
+            }
+
 
             if(typeof this.toolbarButtons.extras != "undefined") {
                 buttons.push("-");
@@ -293,7 +303,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             buttons.push(this.newerVersionNotification);
 
             // check for newer version than the published
-            if (this.data.versions.length > 1) {
+            if (this.data.versions.length > 0) {
                 if (this.data.modificationDate != this.data.versions[0].date) {
                     this.newerVersionNotification.show();
                 }
@@ -356,5 +366,35 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             }
         
         }.bind(this));
+    },
+
+    showMetaInfo: function() {
+
+        new pimcore.element.metainfo([{
+            name: "path",
+            value: this.data.path + this.data.key
+        }, {
+            name: "parentid",
+            value: this.data.parentId
+        }, {
+            name: "type",
+            value: this.data.type
+        }, {
+            name: "modificationdate",
+            type: "date",
+            value: this.data.modificationDate
+        }, {
+            name: "creationdate",
+            type: "date",
+            value: this.data.creationDate
+        }, {
+            name: "usermodification",
+            type: "user",
+            value: this.data.userModification
+        }, {
+            name: "userowner",
+            type: "user",
+            value: this.data.userOwner
+        }], "document");
     }
 });

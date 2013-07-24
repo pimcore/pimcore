@@ -241,7 +241,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "fallbackLanguages" => $fallbackLanguages,
                 "theme" => $values["general.theme"],
                 "contactemail" => $values["general.contactemail"],
-                "loginscreenimageservice" => $values["general.loginscreenimageservice"],
                 "loginscreencustomimage" => $values["general.loginscreencustomimage"],
                 "disableusagestatistics" => $values["general.disableusagestatistics"],
                 "debug" => $values["general.debug"],

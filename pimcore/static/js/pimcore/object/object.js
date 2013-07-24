@@ -175,6 +175,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         this.tabPanel.add(this.tab);
 
+        if (this.getAddToHistory()) {
+            pimcore.helpers.recordElement(this.id, "object", this.data.general.fullpath);
+        }
+
         // recalculate the layout
         pimcore.layout.refresh();
     },
@@ -200,7 +204,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }
 
         items.push(this.dependencies.getLayout());
-        
+
         var reportLayout = this.reports.getLayout();
         if(reportLayout) {
             items.push(reportLayout);
@@ -249,10 +253,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 scale: "medium",
                 handler: this.unpublish.bind(this),
                 menu:[{
-                        text: t('save_close'),
-                        iconCls: "pimcore_icon_save",
-                        handler: this.unpublishClose.bind(this)
-                    }]
+                    text: t('save_close'),
+                    iconCls: "pimcore_icon_save",
+                    handler: this.unpublishClose.bind(this)
+                }]
             });
 
 
@@ -262,10 +266,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 scale: "medium",
                 handler: this.publish.bind(this),
                 menu: [{
-                        text: t('save_pubish_close'),
-                        iconCls: "pimcore_icon_save",
-                        handler: this.publishClose.bind(this)
-                    },
+                    text: t('save_pubish_close'),
+                    iconCls: "pimcore_icon_save",
+                    handler: this.publishClose.bind(this)
+                },
                     {
                         text: t('save_only_new_version'),
                         iconCls: "pimcore_icon_save",
@@ -326,6 +330,17 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 handler: this.selectInTree.bind(this, this.data.general.o_type)
             });
 
+            var user = pimcore.globalmanager.get("user");
+            if (user.admin) {
+                buttons.push({
+                    text: t("show_metainfo"),
+                    scale: "medium",
+                    iconCls: "pimcore_icon_info_large",
+                    handler: this.showMetaInfo.bind(this)
+                });
+            }
+
+
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
@@ -351,7 +366,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.newerVersionNotification = new Ext.Toolbar.TextItem({
                 xtype: 'tbtext',
                 text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;'
-                                                            + t("this_is_a_newer_not_published_version"),
+                    + t("this_is_a_newer_not_published_version"),
                 scale: "medium",
                 hidden: true
             });
@@ -359,7 +374,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             buttons.push(this.newerVersionNotification);
 
             // check for newer version than the published
-            if (this.data.versions.length > 1) {
+            if (this.data.versions.length > 0) {
                 if (this.data.general.o_modificationDate != this.data.versions[0].date) {
                     this.newerVersionNotification.show();
                 }
@@ -483,7 +498,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             // remove class in tree panel
             try {
                 pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI()
-                                                            .removeClass("pimcore_unpublished");
+                    .removeClass("pimcore_unpublished");
             } catch (e) { }
         }
 
@@ -492,16 +507,16 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     unpublish: function () {
         this.data.general.o_published = false;
-        
+
         if(this.save("unpublish")) {
             // toogle buttons
             this.toolbarButtons.unpublish.hide();
             this.toolbarButtons.save.show();
-    
+
             // set class in tree panel
             try {
                 pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI()
-                                                        .addClass("pimcore_unpublished");
+                    .addClass("pimcore_unpublished");
             } catch (e) {}
         }
     },
@@ -550,12 +565,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                             var rdata = Ext.decode(response.responseText);
                             if (rdata && rdata.success) {
                                 pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
-                                                            "success");
+                                    "success");
                                 this.resetChanges();
                             }
                             else {
                                 pimcore.helpers.showNotification(t("error"), t("error_saving_object"),
-                                                            "error",t(rdata.message));
+                                    "error",t(rdata.message));
                             }
                         } catch(e){
                             pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
@@ -573,7 +588,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     }
                 }.bind(this)
             });
-            
+
             return true;
         }
         return false;
@@ -594,5 +609,32 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }.bind(window, this.id), 500);
 
         pimcore.helpers.closeObject(this.id);
+    },
+
+    showMetaInfo: function() {
+
+        new pimcore.element.metainfo([{
+            name: "path",
+            value: this.data.general.fullpath
+        }, {
+            name: "classid",
+            value: this.data.general.o_classId
+        }, {
+            name: "modificationdate",
+            type: "date",
+            value: this.data.general.o_modificationDate
+        }, {
+            name: "creationdate",
+            type: "date",
+            value: this.data.general.o_creationDate
+        }, {
+            name: "usermodification",
+            type: "user",
+            value: this.data.general.o_userModification
+        }, {
+            name: "userowner",
+            type: "user",
+            value: this.data.general.o_userOwner
+        }], "object");
     }
 });

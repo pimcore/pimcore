@@ -13,19 +13,9 @@ class Tool_UUID extends Pimcore_Model_Abstract {
 
     public $itemId;
     public $type;
-    public $subType;
     public $uuid;
     public $instanceIdentifier;
     protected $item;
-
-    public function setSubType($subType){
-        $this->subType = $subType;
-        return $this;
-    }
-
-    public function getSubType(){
-        return $this->subType;
-    }
 
     public function setInstanceIdentifier($instanceIdentifier){
         $this->instanceIdentifier = $instanceIdentifier;
@@ -88,7 +78,7 @@ class Tool_UUID extends Pimcore_Model_Abstract {
             throw new Exception("Couldn't create UUID - no 'itemId' specified.");
         }
 
-        $resourceName =  implode('_',array_filter(array($this->getType(),$this->getSubType(),$this->getItemId())));
+        $resourceName =  implode('_',array_filter(array($this->getType(),$this->getItemId())));
         return $resourceName;
     }
 
@@ -116,10 +106,6 @@ class Tool_UUID extends Pimcore_Model_Abstract {
     public function setItem($item){
         $this->setItemId($item->getId());
         $this->setType(Element_Service::getElementType($item));
-
-        if(method_exists($item,'getSubType')){
-            $this->setSubType($item->getSubType());
-        }
 
         $this->item = $item;
         return $this;

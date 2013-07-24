@@ -496,24 +496,10 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
     public function clearDependentCache() {
         try {
-            Pimcore_Model_Cache::clearTag("document_" . $this->getId());
+            Pimcore_Model_Cache::clearTags(array("document_" . $this->getId(), "properties", "output"));
         }
         catch (Exception $e) {
-            Logger::info($e);
-        }
-
-        try {
-            Pimcore_Model_Cache::clearTag("properties");
-        }
-        catch (Exception $e) {
-            Logger::info($e);
-        }
-
-        try {
-            Pimcore_Model_Cache::clearTag("output");
-        }
-        catch (Exception $e) {
-            Logger::info($e);
+            Logger::crit($e);
         }
     }
 
@@ -995,10 +981,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
             // try to get from cache
             $cacheKey = "document_properties_" . $this->getId();
+            $cacheTags = $this->getCacheTags(array("properties"));
 
             if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
                 $properties = $this->getResource()->getProperties();
-                Pimcore_Model_Cache::save($properties, $cacheKey, array("properties"));
+                Pimcore_Model_Cache::save($properties, $cacheKey, $cacheTags);
             }
             $this->setProperties($properties);
         }

@@ -1027,7 +1027,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 throw new Exception("No target specified.");
             }
             $cmd .= ' ' . Pimcore_Tool_Console::getOptionString($queryParams);
-            Pimcore_Tool_Console::execInBackground($cmd,Pimcore_Tool_Deployment::getDefaultLogFile());
+            Pimcore_Tool_Console::execInBackground($cmd,Deployment_Helper_General::getDefaultLogFile());
             $this->encoder->encode(array("success" => true, "data" => 'Command "' . $cmd .'" executed in background.'));
         }catch (Exception $e){
             Logger::error($e);
@@ -1040,25 +1040,37 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      */
     public function serverInfoAction() {
         $this->checkUserPermission("system_settings");
-
+        $systemSettings = Pimcore_Config::getSystemConfig()->toArray();
         $system = array("currentTime" => time(),
                         "phpCli" => Pimcore_Tool_Console::getPhpCli(),
-                        "PIMCORE_DOCUMENT_ROOT" => PIMCORE_DOCUMENT_ROOT);
-        $result = array();
-        $pimcore = array();
-        $pimcore["version"] = Pimcore_Version::getVersion();
+        );
 
-//        $pimcore["svnInfo"] = Pimcore_Version::getSvnInfo();
-        $pimcore["revision"] = Pimcore_Version::getRevision();
+        $pimcoreConstants = array(); //only Pimcore_ constants -> others might break the Zend_Encode functionality
+        foreach((array)get_defined_constants() as $constant => $value){
+            if(strpos($constant,'PIMCORE_') === 0){
+                $pimcoreConstants[$constant] = $value;
+            }
+        }
+
+        $pimcore = array("version" => Pimcore_Version::getVersion(),
+                         "revision" => Pimcore_Version::getRevision(),
+                         "instanceIdentifier" => $systemSettings["general"]["instanceIdentifier"],
+                         "modules" => array(),
+                         "constants" => $pimcoreConstants,
+        );
+
+
+
+        foreach((array)Pimcore_API_Plugin_Broker::getInstance()->getModules() as $module){
+            $pimcore["modules"][] = get_class($module);
+        }
 
         $plugins = Pimcore_ExtensionManager::getPluginConfigs();
 
-//        $phpInfo = $this->phpinfo_array();
 
         $this->encoder->encode(array("success" => true, "system" => $system,
             "pimcore" => $pimcore,
-//            "phpinfo" => $phpInfo,
-            "plugins" => $plugins
+            "plugins" => $plugins,
         ));
     }
 

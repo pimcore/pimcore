@@ -50,6 +50,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         Document::setHideUnpublished(true);
         Object_Abstract::setHideUnpublished(true);
         Object_Abstract::setGetInheritedValues(true);
+        Object_Localizedfield::setGetFallbackValues(true);
 
         // contains the logged in user if necessary
         $user = null;
@@ -139,8 +140,6 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                         }
                     }
                 }
-
-                Zend_Session::writeClose(false);
                 
                 // register editmode plugin
                 $front = Zend_Controller_Front::getInstance();
@@ -165,8 +164,6 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                 if ($docSession->$docKey) {
                     $this->setDocument($docSession->$docKey);
                 }
-
-                Zend_Session::writeClose(false);
             }
 
             // object preview
@@ -178,7 +175,6 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                     // add the object to the registry so every call to Object_Abstract::getById() will return this object instead of the real one
                     Zend_Registry::set("object_" . $object->getId(), $object);
                 }
-                Zend_Session::writeClose(false);
             }
         }
 

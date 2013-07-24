@@ -82,7 +82,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
             itemCls:"object_field"
         };
 
-        if (this.data) {
+        if (!isNaN(this.data)) {
             input.value = this.data;
         }
 

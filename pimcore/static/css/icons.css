@@ -1334,3 +1334,11 @@
 .pimcore_icon_highlight {
     background: url(/pimcore/static/img/icon/lightning.png) left center no-repeat !important;
 }
+
+.pimcore_icon_info_large {
+    background: url(/pimcore/static/img/icon/info_medium.png) left center no-repeat !important;
+}
+
+.pimcore_icon_info {
+    background: url(/pimcore/static/img/icon/info.png) left center no-repeat !important;
+}

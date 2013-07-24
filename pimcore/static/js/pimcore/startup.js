@@ -359,7 +359,10 @@ Ext.onReady(function () {
                             id:"pimcore_panel_tabs",
                             enableTabScroll:true,
                             hideMode:"offsets",
-                            cls:"tab_panel"
+                            cls:"tab_panel",
+                            listeners: {
+                                add: pimcore.helpers.handleTabRightClick
+                            }
                         }),
                         {
                             region:'east',

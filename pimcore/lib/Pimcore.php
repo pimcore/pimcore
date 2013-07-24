@@ -433,6 +433,20 @@ class Pimcore {
         if($conf->general->instanceIdentifier) {
             $broker->registerModule("Tool_UUID_Module");
         }
+
+        if(is_readable(PIMCORE_DEPLOYMENT_CONFIG_FILE)){
+            $deploymentConfig = new Zend_Config_Xml(PIMCORE_DEPLOYMENT_CONFIG_FILE);
+            if($deploymentConfig->enabled){
+                $includePaths = array(
+                    PIMCORE_PATH . "/modules/deployment/models", //needs to be defined  - otherwise resourceclasses won't be loaded
+                    PIMCORE_PATH . "/modules/deployment/lib",
+                );
+                set_include_path(get_include_path() . implode(PATH_SEPARATOR, $includePaths));
+                $broker->registerModule("Deployment_Module");
+                $setup = new Deployment_Setup();
+                $setup->run();
+            }
+        }
     }
 
     public static function initPlugins() {
@@ -853,7 +867,7 @@ class Pimcore {
                 }
             }
 
-            // gzip the contents and send connection close to that the process can run in the background to finish
+            // gzip the contents and send connection close tthat the process can run in the background to finish
             // some tasks like writing the cache ...
             // using mb_strlen() because of PIMCORE-1509
             if($gzipIt) {
@@ -901,6 +915,9 @@ class Pimcore {
 
         // release all open locks from this process
         Tool_Lock::releaseAll();
+
+        // disable logging - otherwise this will cause problems in the ongoing shutdown process (session write, __destruct(), ...)
+        Logger::resetLoggers();
     }
 
     /**
