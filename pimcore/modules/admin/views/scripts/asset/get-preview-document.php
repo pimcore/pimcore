@@ -28,7 +28,7 @@
 
 <?php
     // add the PDF check here, otherwise the preview layer in admin is shown without content
-    if(Pimcore_Document::isAvailable() && preg_match("/\.pdf$/", $this->asset->getFilename())) { ?>
+    if(Pimcore_Document::isAvailable() && Pimcore_Document::isFileTypeSupported($this->asset->getFilename())) { ?>
     <?php
         $pdf = new Document_Tag_Pdf();
         $pdf->setId($this->asset->getId());

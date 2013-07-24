@@ -53,11 +53,24 @@ class Pimcore_Document {
     }
 
     /**
+     * @param $filetype
+     * @return bool
+     */
+    public static function isFileTypeSupported($filetype) {
+        if(self::getDefaultAdapter()) {
+            if($adapter = self::getDefaultAdapter()) {
+                return $adapter->isFileTypeSupported($filetype);
+            }
+        }
+        return false;
+    }
+
+    /**
      * @return bool
      */
     public static function getDefaultAdapter () {
 
-        $adapters = array("Ghostscript", "Imagick");
+        $adapters = array("LibreOffice", "Ghostscript", "Imagick");
 
         foreach ($adapters as $adapter) {
             $adapterClass = "Pimcore_Document_Adapter_" . $adapter;
