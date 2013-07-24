@@ -118,6 +118,9 @@ class Pimcore_Tool_Authentication {
     }
 
     public static function useSession($func) {
+
+        self::initSession();
+
         if(!Zend_Session::isStarted()) {
             Zend_Session::start();
         }
@@ -132,8 +135,10 @@ class Pimcore_Tool_Authentication {
     }
 
     protected static function getSession () {
+
+        self::initSession();
+
         if(!Zend_Session::isStarted()) {
-            self::initSession();
             Zend_Session::start();
         }
 
