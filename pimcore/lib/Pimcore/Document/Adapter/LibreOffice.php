@@ -98,21 +98,25 @@ class Pimcore_Document_Adapter_LibreOffice extends Pimcore_Document_Adapter_Ghos
 
         // first we have to create a pdf out of the document (if it isn't already one), so that we can pass it to ghostscript
         // unfortunately there isn't an other way at the moment
-        if(!parent::isFileTypeSupported($this->path)) {
-            $pdfFile = PIMCORE_TEMPORARY_DIRECTORY . "/document_" . md5($path . filemtime($path)) . "__libreoffice.pdf";
-            if(!file_exists($pdfFile)) {
-                $out = Pimcore_Tool_Console::exec(self::getLibreOfficeCli() . " --headless --convert-to pdf:writer_web_pdf_Export --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path);
+        if(!preg_match("/\.?pdf$/", $path)) {
+            if(!parent::isFileTypeSupported($this->path)) {
+                $pdfFile = PIMCORE_TEMPORARY_DIRECTORY . "/document_" . md5($path . filemtime($path)) . "__libreoffice.pdf";
+                if(!file_exists($pdfFile)) {
+                    $out = Pimcore_Tool_Console::exec(self::getLibreOfficeCli() . " --headless --convert-to pdf:writer_web_pdf_Export --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path);
 
-                Logger::debug("LibreOffice Output was: " . $out);
+                    Logger::debug("LibreOffice Output was: " . $out);
 
-                $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/" . preg_replace("/\." . Pimcore_File::getFileExtension($path) . "$/", ".pdf",basename($path));
-                if(file_exists($tmpName)) {
-                    rename($tmpName, $pdfFile);
+                    $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/" . preg_replace("/\." . Pimcore_File::getFileExtension($path) . "$/", ".pdf",basename($path));
+                    if(file_exists($tmpName)) {
+                        rename($tmpName, $pdfFile);
+                        $this->path = $pdfFile;
+                    }
+                } else {
                     $this->path = $pdfFile;
                 }
-            } else {
-                $this->path = $pdfFile;
             }
+        } else {
+            $this->path = $path;
         }
 
         if(!file_exists($this->path)) {
