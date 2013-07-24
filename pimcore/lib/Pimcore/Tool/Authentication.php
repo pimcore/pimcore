@@ -91,17 +91,6 @@ class Pimcore_Tool_Authentication {
      */
     public static function initSession() {
 
-        // use db save handler to prevent locking (only one request at once)
-        Pimcore_Resource::get(); // just call it to ensure the DB connection is established
-        Zend_Session::setSaveHandler(new Zend_Session_SaveHandler_DbTable(array(
-            'name'           => 'session',
-            'primary'        => 'id',
-            'modifiedColumn' => 'modified',
-            'dataColumn'     => 'data',
-            'lifetimeColumn' => 'lifetime'
-        )));
-
-
         Zend_Session::setOptions(array(
             "throw_startup_exceptions" => false,
             "gc_maxlifetime" => 7200,
