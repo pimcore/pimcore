@@ -109,8 +109,9 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                         // save the information to session when the user want's to reset the password
                         // this is because otherwise the old password is required => see also PIMCORE-1468
                         if($this->getParam("reset")) {
-                            $adminSession = Pimcore_Tool_Authentication::getSession();
-                            $adminSession->password_reset = true;
+                            Pimcore_Tool_Authentication::useSession(function($adminSession) {
+                                $adminSession->password_reset = true;
+                            });
                         }
                     }
                     else {
@@ -118,10 +119,9 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                     }
 
                     if ($authenticated) {
-                        $adminSession = Pimcore_Tool_Authentication::getSession();
-                        $adminSession->user = $user;
-
-                        Zend_Session::regenerateId();
+                        Pimcore_Tool_Authentication::useSession(function($adminSession) use ($user) {
+                            $adminSession->user = $user;
+                        });
                     }
 
                 } else {
@@ -139,8 +139,9 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
             //see if module or plugin authenticates user
             $user = Pimcore_API_Plugin_Broker::getInstance()->authenticateUser($this->getParam("username"),$this->getParam("password"));
             if($user instanceof User){
-                $adminSession = Pimcore_Tool_Authentication::getSession();
-                $adminSession->user = $user;
+                Pimcore_Tool_Authentication::useSession(function($adminSession) use ($user) {
+                    $adminSession->user = $user;
+                });
                 $this->redirect("/admin/?_dc=" . time());
             } else {
                 $this->writeLogFile($this->getParam("username"), $e->getMessage());
@@ -155,16 +156,20 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
     }
 
     public function logoutAction() {
-        $adminSession = Pimcore_Tool_Authentication::getSession();
 
-        if ($adminSession->user instanceof User) {
-            Pimcore_API_Plugin_Broker::getInstance()->preLogoutUser($adminSession->user);
-            $adminSession->user = null;
-        }
+        Pimcore_Tool_Authentication::useSession(function($adminSession) {
+            if ($adminSession->user instanceof User) {
+                Pimcore_API_Plugin_Broker::getInstance()->preLogoutUser($adminSession->user);
+                $adminSession->user = null;
+            }
 
-        Zend_Session::destroy();
+            Zend_Session::destroy();
+       });
 
-       $this->redirect("/admin/login/");
+        // cleanup pimcore-cookies => 315554400 => strtotime('1980-01-01')
+        setcookie("pimcore_opentabs", false, 315554400, "/");
+
+        $this->redirect("/admin/login/");
     }
 
 
