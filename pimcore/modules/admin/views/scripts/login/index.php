@@ -101,10 +101,10 @@ $config = Pimcore_Config::getSystemConfig();
                         <?php echo $this->translate("Your browser is not supported. Please install the latest version of one of the following browsers."); ?>
                     </div>
                     <div class="links">
-                        <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login-reloaded/firefox.png"/></a>
-                        <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static/img/login-reloaded/chrome.png"/></a>
-                        <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login-reloaded/safari.png"/></a>
-                        <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login-reloaded/ie.png"/></a>
+                        <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login/firefox.png"/></a>
+                        <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static/img/login/chrome.png"/></a>
+                        <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login/safari.png"/></a>
+                        <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login/ie.png"/></a>
                     </div>
                     <a href="#" onclick="showLogin();"><?php echo $this->translate("Click here to proceed"); ?></a>
 
