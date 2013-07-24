@@ -22,9 +22,6 @@ pimcore.element.history = Class.create({
                 closable:true
             });
 
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.add(this.panel);
-            tabPanel.activate("element_history");
 
             this.panel.on("destroy", function () {
                 pimcore.globalmanager.remove("element_history");
@@ -50,92 +47,87 @@ pimcore.element.history = Class.create({
 
 
             this.resultpanel = new Ext.grid.GridPanel({
-                autoHeight: true,
                 store:this.store,
-//                title: storeValues.length +  " items",
                 trackMouseOver:false,
                 disableSelection:true,
                 autoScroll:true,
-                region:"center",
-                // grid columns
                 colModel: new Ext.grid.ColumnModel({
                     defaults: {
                         sortable: false
                     },
                     columns:[
-                    {
-                        hideable: false,
-                        xtype: 'actioncolumn',
-                        width: 30,
-                        items: [
-                            {
-                                tooltip: t('open'),
-                                icon: "/pimcore/static/img/icon/pencil_go.png",
-                                handler: function (grid, rowIndex) {
-                                    var data = grid.getStore().getAt(rowIndex).data;
-                                    pimcore.helpers.openElement(data.id, data.type);
+                        {
+                            hideable: false,
+                            xtype: 'actioncolumn',
+                            width: 30,
+                            items: [
+                                {
+                                    tooltip: t('open'),
+                                    icon: "/pimcore/static/img/icon/pencil_go.png",
+                                    handler: function (grid, rowIndex) {
+                                        var data = grid.getStore().getAt(rowIndex).data;
+                                        pimcore.helpers.openElement(data.id, data.type);
 
-                                }.bind(this)
-                                ,
-                                getClass: function(value,metadata,record) {
+                                    }.bind(this)
+                                    ,
+                                    getClass: function(value,metadata,record) {
 
                                         return 'x-grid-center-icon';
 
+                                    }
                                 }
-                            }
-                        ]
-                    },
-                    {
-                        header:t("name"),
-                        dataIndex:'name',
-                        width:500,
-                        align:'left',
-                        sortable:true
-                    }
+                            ]
+                        },
+                        {
+                            header:t("name"),
+                            dataIndex:'name',
+                            width:500,
+                            align:'left',
+                            sortable:true
+                        }
 
-                    ,
-                    {
-                        header:t("type"),
-                        dataIndex:'type',
-                        width:80,
-                        align:'left',
-                        sortable:true
-                    }
-                    ,
-                    {
-                        header:t("id"),
-                        dataIndex:'id',
-                        width:80,
-                        align:'left',
-                        sortable:true
-                    }
-                    ,
-                    {
-                        header:t("time"),
-                        dataIndex:'time',
-                        width:220,
-                        align:'left',
-                        sortable:true
-                    }
-                ]}),
+                        ,
+                        {
+                            header:t("type"),
+                            dataIndex:'type',
+                            width:80,
+                            align:'left',
+                            sortable:true
+                        }
+                        ,
+                        {
+                            header:t("id"),
+                            dataIndex:'id',
+                            width:80,
+                            align:'left',
+                            sortable:true
+                        }
+                        ,
+                        {
+                            header:t("time"),
+                            dataIndex:'time',
+                            width:220,
+                            align:'left',
+                            sortable:true
+                        }
+                    ]}),
 
                 listeners: {
                     rowdblclick : function(grid, rowIndex, event ) {
                         var data = grid.getStore().getAt(rowIndex);
                         pimcore.helpers.openElement(data.data.id, data.data.type);
                     }.bind(this)
+                },
+                viewConfig: {
+                    forceFit: true
                 }
             });
 
 
-            this.layout = new Ext.Panel({
-                border:false,
-                layout:"border",
-                items:[this.resultpanel]
-            });
-
-
-            this.panel.add(this.layout);
+            this.panel.add(this.resultpanel);
+            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            tabPanel.add(this.panel);
+            tabPanel.activate("element_history");
 
             pimcore.layout.refresh();
         }
