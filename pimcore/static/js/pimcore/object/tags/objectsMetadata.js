@@ -383,6 +383,9 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
     },
 
     loadObjectData: function(id, fields) {
+
+        this.store.add(new this.store.recordType({id: id}, id));
+
         Ext.Ajax.request({
             url: "/admin/object-helper/load-object-data",
             params: {
@@ -391,11 +394,14 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             },
             success: function (response) {
                 var rdata = Ext.decode(response.responseText);
+                var key;
 
                 if(rdata.success) {
-                    this.store.add(new this.store.recordType(rdata.fields, this.store.getCount() + 1));
+                    var rec = this.store.getById(id);
+                    for(key in rdata.fields) {
+                        rec.set(key, rdata.fields[key]);
+                    }
                 }
-
             }.bind(this)
         });
     }
