@@ -101,6 +101,10 @@ class Pimcore_Document_Adapter_LibreOffice extends Pimcore_Document_Adapter_Ghos
         if(!preg_match("/\.?pdf$/", $path)) {
             if(!parent::isFileTypeSupported($this->path)) {
                 $pdfFile = PIMCORE_TEMPORARY_DIRECTORY . "/document_" . md5($path . filemtime($path)) . "__libreoffice.pdf";
+                $lockKey = "soffice";
+
+                Tool_Lock::acquire($lockKey); // avoid parallel conversions of the same document
+
                 if(!file_exists($pdfFile)) {
                     $out = Pimcore_Tool_Console::exec(self::getLibreOfficeCli() . " --headless --convert-to pdf:writer_web_pdf_Export --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path);
 
@@ -111,6 +115,8 @@ class Pimcore_Document_Adapter_LibreOffice extends Pimcore_Document_Adapter_Ghos
                         rename($tmpName, $pdfFile);
                         $this->path = $pdfFile;
                     }
+
+                    Tool_Lock::release($lockKey);
                 } else {
                     $this->path = $pdfFile;
                 }
