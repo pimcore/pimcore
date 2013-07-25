@@ -109,7 +109,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                         // save the information to session when the user want's to reset the password
                         // this is because otherwise the old password is required => see also PIMCORE-1468
                         if($this->getParam("reset")) {
-                            Pimcore_Tool_Authentication::useSession(function($adminSession) {
+                            Pimcore_Tool_Session::useSession(function($adminSession) {
                                 $adminSession->password_reset = true;
                             });
                         }
@@ -119,7 +119,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                     }
 
                     if ($authenticated) {
-                        Pimcore_Tool_Authentication::useSession(function($adminSession) use ($user) {
+                        Pimcore_Tool_Session::useSession(function($adminSession) use ($user) {
                             $adminSession->user = $user;
                         });
                     }
@@ -139,7 +139,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
             //see if module or plugin authenticates user
             $user = Pimcore_API_Plugin_Broker::getInstance()->authenticateUser($this->getParam("username"),$this->getParam("password"));
             if($user instanceof User){
-                Pimcore_Tool_Authentication::useSession(function($adminSession) use ($user) {
+                Pimcore_Tool_Session::useSession(function($adminSession) use ($user) {
                     $adminSession->user = $user;
                 });
                 $this->redirect("/admin/?_dc=" . time());
@@ -157,7 +157,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
     public function logoutAction() {
 
-        Pimcore_Tool_Authentication::useSession(function($adminSession) {
+        Pimcore_Tool_Session::useSession(function($adminSession) {
             if ($adminSession->user instanceof User) {
                 Pimcore_API_Plugin_Broker::getInstance()->preLogoutUser($adminSession->user);
                 $adminSession->user = null;

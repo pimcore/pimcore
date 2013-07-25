@@ -16,14 +16,14 @@
 class Pimcore_Liveconnect {
 
     public static function setToken ($token) {
-        Pimcore_Tool_Authentication::useSession(function($session)use ($token) {
+        Pimcore_Tool_Session::useSession(function($session)use ($token) {
             $session->liveconnectToken = $token;
             $session->liveconnectLastUpdate = time();
         });
     }
 
     public static function getToken () {
-        return Pimcore_Tool_Authentication::useSession(function($session) {
+        return Pimcore_Tool_Session::useSession(function($session) {
             $timeout = 300;
             if($session->liveconnectLastUpdate < (time()-$timeout)) {
                 $session->liveconnectToken = null;

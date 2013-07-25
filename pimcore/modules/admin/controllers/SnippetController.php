@@ -61,9 +61,10 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
             $snippet->setUserModification($this->getUser()->getId());
 
             // save to session
-            $key = "document_" . $this->getParam("id");
-            $session = new Zend_Session_Namespace("pimcore_documents");
-            $session->$key = $snippet;
+            Pimcore_Tool_Session::useSession(function ($session) use ($snippet) {
+                $key = "document_" . $snippet->getId();
+                $session->$key = $snippet;
+            }, "pimcore_documents");
 
 
             if ($this->getParam("task") == "unpublish") {

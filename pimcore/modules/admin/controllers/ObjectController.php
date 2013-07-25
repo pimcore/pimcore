@@ -935,10 +935,13 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         }
         else if ($this->getParam("task") == "session") {
-            $key = "object_" . $object->getId();
-            $session = new Zend_Session_Namespace("pimcore_objects");
+
             //$object->_fulldump = true; // not working yet, donno why
-            $session->$key = $object;
+
+            Pimcore_Tool_Session::useSession(function ($session) use ($object) {
+                $key = "object_" . $object->getId();
+                $session->$key = $object;
+            }, "pimcore_objects");
 
             $this->_helper->json(array("success" => true));
         }
@@ -1298,8 +1301,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         $transactionId = time();
         $pasteJobs = array();
-        $session = new Zend_Session_Namespace("pimcore_copy");
-        $session->$transactionId = array();
+
+        Pimcore_Tool_Session::useSession(function ($session) use ($transactionId) {
+            $session->$transactionId = array();
+        }, "pimcore_copy");
 
         if ($this->getParam("type") == "recursive") {
 
@@ -1368,7 +1373,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $message = "";
         $sourceId = intval($this->getParam("sourceId"));
         $source = Object_Abstract::getById($sourceId);
-        $session = new Zend_Session_Namespace("pimcore_copy");
+        $session = Pimcore_Tool_Session::get("pimcore_copy");
 
         $targetId = intval($this->getParam("targetId"));
         if($this->getParam("targetParentId")) {
@@ -1397,6 +1402,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                         // this is because the key can get the prefix "_copy" if the target does already exists
                         if($this->getParam("saveParentId")) {
                             $session->{$this->getParam("transactionId")}["parentId"] = $newObject->getId();
+                            Pimcore_Tool_Session::writeClose();
                         }
                     }
                     else if ($this->getParam("type") == "replace") {
@@ -1428,7 +1434,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         $id = $this->getParam("id");
         $key = "object_" . $id;
-        $session = new Zend_Session_Namespace("pimcore_objects");
+
+        $session = Pimcore_Tool_Session::getReadOnly("pimcore_objects");
         if($session->$key) {
             $object = $session->$key;
         } else {
