@@ -121,7 +121,8 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
         if ($this->getParam("id")) {
 
             $key = "document_" . $this->getParam("id");
-            $session = new Zend_Session_Namespace("pimcore_documents");
+
+            $session = Pimcore_Tool_Session::get("pimcore_documents");
 
             if (!$document = $session->$key) {
                 $document = Document::getById($this->getParam("id"));
@@ -133,10 +134,11 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
             $this->setValuesToDocument($document);
 
             $session->$key = $document;
-            Zend_Session::writeClose(false);
+
+            Pimcore_Tool_Session::writeClose();
         }
 
-        $this->removeViewRenderer();
+        $this->_helper->json(array("success" => true));
     }
 
     public function translateAction () {
@@ -169,12 +171,12 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
 
     public function removeFromSessionAction() {
         $key = "document_" . $this->getParam("id");
-        $session = new Zend_Session_Namespace("pimcore_documents");
 
-        $session->$key = null;
-        Zend_Session::writeClose(false);
+        Pimcore_Tool_Session::useSession(function ($session) use ($key) {
+            $session->$key = null;
+        }, "pimcore_documents");
 
-        $this->removeViewRenderer();
+        $this->_helper->json(array("success" => true));
     }
 
     protected function minimizeProperties($document) {

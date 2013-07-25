@@ -59,9 +59,10 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
             $page->setUserModification($this->getUser()->getId());
 
             // save to session
-            $key = "document_" . $this->getParam("id");
-            $session = new Zend_Session_Namespace("pimcore_documents");
-            $session->$key = $page;
+            Pimcore_Tool_Session::useSession(function ($session) use ($page) {
+                $key = "document_" . $page->getId();
+                $session->$key = $page;
+            }, "pimcore_documents");
 
             if ($this->getParam("task") == "unpublish") {
                 $page->setPublished(false);
