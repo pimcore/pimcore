@@ -443,7 +443,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             if(!file_exists($thumb)) {
                 $image = Pimcore_Image::getInstance();
                 $image->load($user);
-                $image->cover(45,45);
+                $image->cover(46,46);
                 $image->save($thumb, "png");
             }
             $path = $thumb;
