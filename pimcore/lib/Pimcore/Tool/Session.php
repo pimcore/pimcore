@@ -70,7 +70,6 @@ class Pimcore_Tool_Session {
     }
 
     public static function get ($namespace = "pimcore_admin", $readOnly = false) {
-
         self::initSession();
 
         if(!Zend_Session::isStarted()) {
@@ -96,7 +95,7 @@ class Pimcore_Tool_Session {
 
     public static function writeClose() {
         // TEMP DISABLED
-        //session_write_close();
+        session_write_close();
     }
 
 }

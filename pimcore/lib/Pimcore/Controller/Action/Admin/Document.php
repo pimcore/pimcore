@@ -141,6 +141,14 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
         $this->_helper->json(array("success" => true));
     }
 
+    protected function saveToSession($doc) {
+        // save to session
+        Pimcore_Tool_Session::useSession(function ($session) use ($doc) {
+            $key = "document_" . $doc->getId();
+            $session->$key = $doc;
+        }, "pimcore_documents");
+    }
+
     public function translateAction () {
 
         $conf = Pimcore_Config::getSystemConfig();
