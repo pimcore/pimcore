@@ -134,7 +134,7 @@ class Pimcore_Tool_Authentication {
         return $ret;
     }
 
-    protected static function getSession () {
+    public static function getSession () {
 
         self::initSession();
 
