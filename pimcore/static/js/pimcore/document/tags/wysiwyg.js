@@ -200,7 +200,13 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 }
                 this.ckeditor = CKEDITOR.replace(this.textarea, eConfig);
             } else {
-                eConfig.extraPlugins = "sourcedialog";
+                if(!this.options['extraPlugins'] || this.options['extraPlugins']== ''){
+                    eConfig.extraPlugins = "sourcedialog";
+                }else{
+                    if(this.options['extraPlugins'].indexOf("sourcedialog") == -1){
+                        eConfig.extraPlugins += ",sourcedialog";
+                    }
+                }
                 this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
                 this.ckeditor.on('focus', function () {
