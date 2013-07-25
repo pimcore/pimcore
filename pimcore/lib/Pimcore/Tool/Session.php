@@ -96,8 +96,7 @@ class Pimcore_Tool_Session {
 
     public static function writeClose() {
         // TEMP DISABLED
-        /*Zend_Session::writeClose();
-        session_write_close();*/
+        //session_write_close();
     }
 
 }
