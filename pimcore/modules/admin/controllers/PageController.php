@@ -66,12 +66,6 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
             $page = $this->getLatestVersion($page);
             $page->setUserModification($this->getUser()->getId());
 
-            // save to session
-            Pimcore_Tool_Session::useSession(function ($session) use ($page) {
-                $key = "document_" . $page->getId();
-                $session->$key = $page;
-            }, "pimcore_documents");
-
             if ($this->getParam("task") == "unpublish") {
                 $page->setPublished(false);
             }
@@ -142,6 +136,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
                 try{
                     $page->save();
+                    $this->saveToSession($page);
                     $this->_helper->json(array("success" => true));
                 } catch (Exception $e) {
                     Logger::err($e);
@@ -152,10 +147,10 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
             else {
                 if ($page->isAllowed("save")) {
                     $this->setValuesToDocument($page);
-                    
 
                     try{
-                    $page->saveVersion();
+                        $page->saveVersion();
+                        $this->saveToSession($page);
                         $this->_helper->json(array("success" => true));
                     } catch (Exception $e) {
                         Logger::err($e);
