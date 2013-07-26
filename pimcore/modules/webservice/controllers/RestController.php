@@ -223,7 +223,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             }
         } catch (Exception $e) {
             Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => $e));
+            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
 
         throw new Exception("not implemented");
@@ -247,7 +247,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 return;
             }
         } catch (Exception $e) {
-            $this->encoder->encode(array("success" => false, "message" => $e));
+            $this->encoder->encode(array("success" => false, "message" => (string) $e));
             Logger::error($e);
         }
 
@@ -273,7 +273,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             }
         } catch (Exception $e) {
             Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => $e));
+            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
     }
@@ -292,7 +292,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             }
         } catch (Exception $e) {
             Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => $e));
+            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
     }
@@ -332,7 +332,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             $this->_helper->json(array("success" => true, "data" => $fc));
         } catch (Exception $e) {
             Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => $e));
+            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
     }
@@ -349,7 +349,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             $this->_helper->json(array("success" => true, "data" => $fc));
         } catch (Exception $e) {
             Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => $e));
+            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
     }
@@ -474,7 +474,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             }
         } catch (Exception $e) {
             Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => $e));
+            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
     }
@@ -536,7 +536,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 $this->encoder->encode(array("success" => true, "data" => $definition));
             }
         } catch (Exception $e) {
-            $this->encoder->encode(array("success" => false, "msg" => $e));
+            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
     }
@@ -652,7 +652,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             }
 
         } catch (Exception $e) {
-            $this->encoder->encode(array("success" => false, "msg" => $e));
+            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
     }
@@ -980,7 +980,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             $this->encoder->encode(array("success" => true, "data" => $result));
         } catch (Exception $e) {
             Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => $e));
+            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
     }
 
@@ -994,7 +994,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             $this->encoder->encode(array("success" => true, "data" => $result));
         }catch (Exception $e) {
             Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => $e));
+            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
     }
 
@@ -1011,7 +1011,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             readfile($result['pharFile']);
         }catch (Exception $e) {
             Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => $e));
+            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
 
     }
@@ -1031,7 +1031,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             $this->encoder->encode(array("success" => true, "data" => 'Command "' . $cmd .'" executed in background.'));
         }catch (Exception $e){
             Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => $e));
+            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
     }
 
