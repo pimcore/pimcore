@@ -20,11 +20,13 @@ class Deployment_Task_Pimcore_Phing_CheckDeploymentInstancesTask extends Deploym
     protected function getDeploymentInstances(){
         $deploymentFactory = $this->getDeploymentFactory();
         $instanceAdapter = $deploymentFactory->getInstanceAdapter();
+
         $instances = $instanceAdapter->getAllInstances();
         return $instances;
     }
 
     public function main(){
+
         if($identifier = $this->getInstanceIdentifier()){
             $instance = $this->getDeploymentFactory()->getInstanceAdapter()->getInstanceByIdentifier($this->getInstanceIdentifier());
             if(!$instance instanceof Deployment_Instance_Wrapper){

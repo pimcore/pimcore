@@ -145,6 +145,22 @@ class Pimcore_API_Plugin_Broker {
     }
 
     /**
+     * Is a module of a particular class registered?
+     *
+     * @param  string $class
+     * @return bool
+     */
+    public function hasModule($class) {
+        foreach ($this->_systemModules as $module) {
+            $type = get_class($module);
+            if ($class == $type) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Retrieve a plugin or plugins by class
      *
      * @param  string $class Class name of plugin(s) desired

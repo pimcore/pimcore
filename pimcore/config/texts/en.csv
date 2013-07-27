@@ -1397,5 +1397,6 @@
 "show_metainfo","Info"
 "element_metainfo","Meta Information"
 "deployment","Deployment"
+"deployment_packages","Packages"
 "note_details","Note Details"
 "element_history","Recently opened elements"

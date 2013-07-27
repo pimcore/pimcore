@@ -65,32 +65,29 @@ Class Deployment_Instance_Wrapper {
     }
 
     protected function setSystemData(){
-        $apiUserId = (int)$this->getApiUser();
-        $apiUser = User::getById($apiUserId);
+        $concreteDeploymentInstance = $this->getConcreteDeploymentInstance();
 
-        if($apiUser){
-            $apiKey = $apiUser->getApiKey();
-            if($apiKey && $apiUser->isAdmin()){
-                try{
+        if(method_exists($concreteDeploymentInstance,'getApiKey')){
+            $apiKey = $concreteDeploymentInstance->getApiKey();
+        }else{
+            $apiKey = $concreteDeploymentInstance->apiKey;
+        }
+        if($apiKey){
+            try{
+                $this->setWebserviceEndpointRest('http://' . $concreteDeploymentInstance->domain . '/webservice/rest/');
+                $this->setWebserviceApiKey($apiKey);
 
-                    $this->setWebserviceEndpointRest('http://' . $this->getDomain() . '/webservice/rest/');
-                    $this->setWebserviceApiKey($apiKey);
-
-                    if($this->checkWebserviceRest()){
-                        $this->setDeployable(1);
-                    }else{
-                        $this->setDeployable(0);
-                    }
-                }catch (Exception $e){
+                if($this->checkWebserviceRest()){
+                    $this->setDeployable(1);
+                }else{
                     $this->setDeployable(0);
                 }
-
-            }else{
-                Logger::warn("REST API user has no API key or is not an admin." . $this->getInstanceIdentifier());
+            }catch (Exception $e){
                 $this->setDeployable(0);
             }
+
         }else{
-            Logger::warn("No REST API user set for deployment Instance." . $this->getInstanceIdentifier());
+            Logger::warn("REST API user has no API key or is not an admin." . $this->getInstanceIdentifier());
             $this->setDeployable(0);
         }
 
@@ -101,12 +98,14 @@ Class Deployment_Instance_Wrapper {
     }
 
     public function checkWebserviceRest(){
+
         if($this->instanceIsCurrentSystem()){
             return array('success' => true,'message' => 'Instance is current system.');
         }
         try{
             $restClient = $this->getRestClient();
             $serverInfo = $restClient->getServerInfo();
+
             $missingModules = array();
             if(empty($serverInfo->pimcore->modules)){
                 $missingModules = $this->requiredModules;
