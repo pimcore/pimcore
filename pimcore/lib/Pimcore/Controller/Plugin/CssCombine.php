@@ -13,22 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_CssMinify extends Zend_Controller_Plugin_Abstract {
+class Pimcore_Controller_Plugin_CssCombine extends Zend_Controller_Plugin_Abstract {
 
     protected $enabled = true;
-
-    public function routeStartup(Zend_Controller_Request_Abstract $request) {
-
-        $conf = Pimcore_Config::getSystemConfig();
-        if (!$conf->outputfilters) {
-            return $this->disable();
-        }
-
-        if (!$conf->outputfilters->cssminify) {
-            return $this->disable();
-        }
-
-    }
 
     public function disable() {
         $this->enabled = false;
@@ -87,8 +74,6 @@ class Pimcore_Controller_Plugin_CssMinify extends Zend_Controller_Plugin_Abstrac
                     $stylesheetPath = PIMCORE_TEMPORARY_DIRECTORY."/minified_css_".md5($stylesheetContent).".css";
 
                     if(!is_file($stylesheetPath)) {
-                        $stylesheetContent = Minify_CSS::minify($stylesheetContent);
-
                         // put minified contents into one single file
                         file_put_contents($stylesheetPath, $stylesheetContent);
                         chmod($stylesheetPath, 0766);

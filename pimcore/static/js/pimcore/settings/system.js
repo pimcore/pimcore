@@ -1219,13 +1219,6 @@ pimcore.settings.system = Class.create({
                         defaults: {width: 300},
                         items :[
                             {
-                                fieldLabel: t("image_datauri_filter"),
-                                xtype: "checkbox",
-                                name: "outputfilters.imagedatauri",
-                                checked: this.getValue("outputfilters.imagedatauri"),
-                                style: "margin-bottom: 15px;"
-                            },
-                            {
                                 fieldLabel: "LESS",
                                 xtype: "checkbox",
                                 name: "outputfilters.less",
@@ -1236,35 +1229,6 @@ pimcore.settings.system = Class.create({
                                 xtype: "textfield",
                                 name: "outputfilters.lesscpath",
                                 value: this.getValue("outputfilters.lesscpath"),
-                                style: "margin-bottom: 15px;"
-                            },
-                            {
-                                fieldLabel: t("minify_css"),
-                                xtype: "checkbox",
-                                name: "outputfilters.cssminify",
-                                checked: this.getValue("outputfilters.cssminify"),
-                                style: "margin-bottom: 15px;"
-                            },
-                            {
-                                fieldLabel: t("minify_javascript"),
-                                xtype: "checkbox",
-                                name: "outputfilters.javascriptminify",
-                                checked: this.getValue("outputfilters.javascriptminify")
-                            },
-                            {
-                                fieldLabel: t("minify_javascript_algorithm"),
-                                xtype: "combo",
-                                name: "outputfilters.javascriptminifyalgorithm",
-                                value: this.getValue("outputfilters.javascriptminifyalgorithm"),
-                                store: [
-                                    [" ", "default"],
-                                    ["jsmin","JSMin"],
-                                    ["jsminplus","JSMinPlus"],
-                                    ["yuicompressor", "YUI Compressor (Java required)"]
-                                ],
-                                mode: "local",
-                                triggerAction: "all",
-                                editable: false,
                                 style: "margin-bottom: 15px;"
                             }
                         ]

@@ -87,9 +87,6 @@ class Pimcore {
             $front->registerPlugin(new Pimcore_Controller_Plugin_WysiwygAttributes(), 796);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Webmastertools(), 797);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Analytics(), 798);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_CssMinify(), 800);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_JavascriptMinify(), 801);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_ImageDataUri(), 803);
             $front->registerPlugin(new Pimcore_Controller_Plugin_TagManagement(), 804);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Targeting(), 805);
             $front->registerPlugin(new Pimcore_Controller_Plugin_HttpErrorLog(), 850);
@@ -601,10 +598,7 @@ class Pimcore {
         $autoloader->registerNamespace('Website');
         $autoloader->registerNamespace('Element');
         $autoloader->registerNamespace('API');
-        $autoloader->registerNamespace('Minify');
         $autoloader->registerNamespace('Archive');
-        $autoloader->registerNamespace('JSMin');
-        $autoloader->registerNamespace('JSMinPlus');
         $autoloader->registerNamespace('Csv');
         $autoloader->registerNamespace('Webservice');
         $autoloader->registerNamespace('Search');

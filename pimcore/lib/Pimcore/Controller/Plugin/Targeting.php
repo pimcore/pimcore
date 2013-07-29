@@ -166,14 +166,9 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                 }
             }
 
-            if(!($controlCode = Pimcore_Model_Cache::load("targeting_control_code")) || PIMCORE_DEVMODE) {
-                $controlCode = file_get_contents(PIMCORE_PATH . "/static/js/frontend/targeting.js");
-                $controlCode = JSMinPlus::minify($controlCode);
 
-                Pimcore_Model_Cache::save($controlCode, "targeting_control_code", array("output"), null, 999);
-            }
-
-            $code = '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
+            $code = '<script type="text/javascript" src="/pimcore/static/js/frontend/targeting.js"></script>';
+            $code .= '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
             $code .= '<script type="text/javascript">';
                 $code .= 'var pimcore = pimcore || {};';
                 $code .= 'pimcore["targeting"] = {};';
