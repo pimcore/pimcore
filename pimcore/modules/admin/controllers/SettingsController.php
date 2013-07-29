@@ -320,12 +320,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "excludeCookie" => $values["cache.excludeCookie"]
             ),
             "outputfilters" => array(
-                "imagedatauri" => $values["outputfilters.imagedatauri"],
                 "less" => $values["outputfilters.less"],
-                "lesscpath" => $values["outputfilters.lesscpath"],
-                "cssminify" => $values["outputfilters.cssminify"],
-                "javascriptminify" => $values["outputfilters.javascriptminify"],
-                "javascriptminifyalgorithm" => $values["outputfilters.javascriptminifyalgorithm"]
+                "lesscpath" => $values["outputfilters.lesscpath"]
             ),
             "email" => array(
                 "sender" => array(

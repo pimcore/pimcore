@@ -66,10 +66,9 @@ $includePaths = array(
     PIMCORE_WEBSITE_PATH . "/models",
     PIMCORE_PATH . "/modules/searchadmin/models",
     PIMCORE_CLASS_DIRECTORY,
-    PIMCORE_PATH . "/modules/deployment/models", //needs to be defined here - otherwise resourceclasses won't be loaded
-    PIMCORE_PATH . "/lib/_deprecated",  // deprecated libraries and classes
+    PIMCORE_PATH . "/modules/deployment/models"
 );
-set_include_path(implode(PATH_SEPARATOR, $includePaths));
+set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 require_once PIMCORE_PATH . '/modules/deployment/config/startup.php';
 // helper functions
 include(dirname(__FILE__) . "/helper.php");

@@ -47,8 +47,7 @@ if($opts->getOption("core")) {
         PIMCORE_PATH . "/models",
         PIMCORE_PATH . "/modules/searchadmin/models",
         PIMCORE_PATH . "/modules/deployment/models",
-        PIMCORE_PATH . "/modules/deployment/lib",
-        PIMCORE_PATH . "/lib/_deprecated"
+        PIMCORE_PATH . "/modules/deployment/lib"
     );
     $output = PIMCORE_PATH . "/config/autoload-classmap.php";
 } else {
