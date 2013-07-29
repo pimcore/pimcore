@@ -167,8 +167,8 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
             }
 
 
-            $code = '<script type="text/javascript" src="/pimcore/static/js/frontend/targeting.js"></script>';
-            $code .= '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
+
+            $code = '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
             $code .= '<script type="text/javascript">';
                 $code .= 'var pimcore = pimcore || {};';
                 $code .= 'pimcore["targeting"] = {};';
@@ -176,7 +176,8 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                 $code .= 'pimcore["targeting"]["targets"] = ' . Zend_Json::encode($targets) . ';';
                 $code .= 'pimcore["targeting"]["personas"] = ' . Zend_Json::encode($personas) . ';';
             $code .= '</script>';
-            $code .= '<script type="text/javascript">' . $controlCode . '</script>' . "\n";
+            $code .= '<script type="text/javascript" src="/pimcore/static/js/frontend/targeting.js"></script>';
+            $code .= "\n";
             // analytics
             $body = $this->getResponse()->getBody();
 
