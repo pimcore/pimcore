@@ -434,11 +434,6 @@ class Pimcore {
         if(is_readable(PIMCORE_DEPLOYMENT_CONFIG_FILE)){
             $deploymentConfig = new Zend_Config_Xml(PIMCORE_DEPLOYMENT_CONFIG_FILE);
             if($deploymentConfig->enabled){
-                $includePaths = array(
-                    PIMCORE_PATH . "/modules/deployment/models", //needs to be defined  - otherwise resourceclasses won't be loaded
-                    PIMCORE_PATH . "/modules/deployment/lib",
-                );
-                set_include_path(get_include_path() . implode(PATH_SEPARATOR, $includePaths));
                 $broker->registerModule("Deployment_Module");
                 $setup = new Deployment_Setup();
                 $setup->run();
