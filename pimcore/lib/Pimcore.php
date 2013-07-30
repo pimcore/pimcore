@@ -308,7 +308,8 @@ class Pimcore {
             
             // check for big logfile, empty it if it's bigger than about 200M
             if (filesize(PIMCORE_LOG_DEBUG) > 200000000) {
-                file_put_contents(PIMCORE_LOG_DEBUG, "");
+                rename(PIMCORE_LOG_DEBUG, PIMCORE_LOG_DEBUG . "-archive-" . date("m-d-Y-H-i")); // archive log (will be cleaned up by maintenance)
+                file_put_contents(PIMCORE_LOG_DEBUG, ""); // create empty log
             }
 
             $prioMapping = array(
