@@ -24,7 +24,7 @@ pimcore.plugin.deployment = Class.create(pimcore.plugin.admin, {
     pimcoreReady: function (params,broker) {
 
         var toolbar = pimcore.globalmanager.get("layout_toolbar");
-
+        var globalManagerKey = 'pimcore.plugin.deployment.packages';
         toolbar.extrasMenu.add({
             text: t("deployment"),
             hideOnClick: false,
@@ -34,7 +34,14 @@ pimcore.plugin.deployment = Class.create(pimcore.plugin.admin, {
                 items: [{
                     text: t("deployment_packages"),
                     iconCls: "pimcore_icon_menu_extension",
-                    handler: function () {alert("pressed 1")}
+                    handler: function () {
+                        try {
+                            pimcore.globalmanager.get(globalManagerKey).activate();
+                        }
+                        catch (e) {
+                            pimcore.globalmanager.add(globalManagerKey, new pimcore.plugin.deployment.packages());
+                        }
+                    }
                 }]
             }
         });

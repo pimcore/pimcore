@@ -107,9 +107,13 @@ class Deployment_Package extends Pimcore_Model_Abstract {
             return null;
         }
 
-        $object = new Deployment_Package();
-        $object->getResource()->getById($id);
-        return $object;
+        try{
+            $object = new Deployment_Package();
+            $object->getResource()->getById($id);
+            return $object;
+        }catch (Exception $e){
+            Logger::warn($e->getMessage());
+        }
     }
 
     public function getForWebserviceExport(){
@@ -135,4 +139,5 @@ class Deployment_Package extends Pimcore_Model_Abstract {
             throw new Exception("Package has no ID.");
         }
     }
+
 }
