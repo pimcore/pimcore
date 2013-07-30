@@ -89,4 +89,16 @@ class Deployment_Helper_General {
 
         return self::$taskParamDefinitions;
     }
+
+    public static function getValueByItemType($getter,$item){
+        $propertyKey = lcfirst(str_replace('get','',$getter));
+        if(method_exists($item,$getter)){
+            $value = $item->$getter();
+        }elseif(is_object($item)){
+            $value = $item->$propertyKey;
+        }elseif(is_array($item)){
+            $value = $item[$propertyKey];
+        }
+        return $value;
+    }
 }

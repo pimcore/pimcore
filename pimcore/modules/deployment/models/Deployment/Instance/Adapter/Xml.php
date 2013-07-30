@@ -8,92 +8,87 @@
 
 class Deployment_Instance_Adapter_Xml  extends Deployment_Instance_Adapter_Abstract{
 
+    /**
+     * @var string Adapter type
+     */
     protected $type = 'xml';
+
+
     protected $config = null;
 
     protected $instanceSettings;
-
-    protected $deploymentInstanceWrapperClassName; //default Deployment_Instance
+    protected $instances = array();
 
     protected function init(){
-
+        parent::init();
         $configFile = PIMCORE_CONFIGURATION_DIRECTORY.'/deployment/deploymentInstances.xml';
         if(!is_readable($configFile)){
             throw new Exception("Config file $configFile not readable or doesn't exist.");
         }else{
             $this->config = new Zend_Config_Xml($configFile);
         }
-    }
-
-    public function getInstanceSettings(){
-        return $this->instanceSettings;
-    }
-
-    public function getInstanceObjectClassName(){
-        return $this->instanceObjectClassName;
-    }
-
-    public function getInstanceObjectList(){
-        return new $this->instanceObjectListClassName();
-    }
-
-    protected function getWrapperObject($concreteInstanceObject){
-        if($concreteInstanceObject instanceof Object_Concrete){
-            $concreteInstance = new $this->deploymentInstanceWrapperClassName();
-            $wrappedObject = $concreteInstance->setConcreteDeploymentInstance($concreteInstanceObject);
-            return $wrappedObject;
+        $configArray = $this->config->toArray();
+        if(isAssocArray($configArray['instances']['instance'])){
+            $instances = array($configArray['instances']['instance']);
+        }else{
+            $instances = $configArray['instances']['instance'];
         }
+        foreach($instances as $key => $instance){
+            if($instance['groups']){
+                $instances[$key]['groups'] = explode_and_trim(',',$instance['groups']);
+            }
+        }
+        $this->instances = $instances;
+    }
+
+    protected function getWrapperObject($concreteInstanceXml){
+        $concreteInstance = new $this->deploymentInstanceWrapperClassName();
+        $wrappedObject = $concreteInstance->setConcreteDeploymentInstance($concreteInstanceXml);
+        return $wrappedObject;
     }
 
     public function getAllInstances(){
-        $list = $this->getInstanceObjectList();
         $instances = array();
-        foreach($list as $instanceObject){
-            $instances[] = $this->getWrapperObject($instanceObject);
+        foreach($this->instances as $instance){
+            $instances[] = $this->getWrapperObject($instance);
         }
-
         return $instances;
     }
 
     public function getInstancesByIdentifiers(array $identifiers){
-        $list = $this->getInstanceObjectList();
-        $fieldMapping = $this->getFieldMapping('identifier');
-        $identifiers = wrapArrayElements($identifiers);
-        $list->setCondition($fieldMapping["instanceIdentifier"].' IN(' . implode(',',$identifiers) .') ');
         $instances = array();
-        foreach($list as $instanceObject){
-            $instances[] = $this->getWrapperObject($instanceObject);
+        foreach($this->instances as $instance){
+            if(in_array($instance['identifier'],$identifiers)){
+                $instances[] = $this->getWrapperObject($instance);
+            }
         }
         return $instances;
     }
 
     public function getInstancesByGroups(array $groups){
-        $fieldMapping = $this->getFieldMapping('identifier');
-        $dbField = $fieldMapping['instanceGroup'];
-        $groups = wrapArrayElements($groups," $dbField LIKE '%,",",%' ");
-
-        $list = $this->getInstanceObjectList();
-        $list->setCondition(implode(' OR ', $groups));
-
         $instances = array();
-        foreach($list as $instanceObject){
-            $instances[] = $this->getWrapperObject($instanceObject);
+        foreach($this->instances as $instance){
+            if(is_array($instance['groups']) && array_intersect($groups,$instance['groups'])){
+                $instances[] = $this->getWrapperObject($instance);
+            }
         }
         return $instances;
     }
 
+    public function getConcreteInstances(){
+        return $this->instances;
+    }
+
     public function getInstanceByIdentifier($identifier){
-        $fieldMapping = $this->getFieldMapping('identifier');
-        if($fieldMapping['instanceIdentifier'] == 'id'){
-            $dbColumn = 'o_id';
-        }else{
-            $dbColumn = $fieldMapping['instanceIdentifier'];
+        $instanceWithIdentifier = null;
+        foreach($this->instances as $instance){
+            if($identifier == $instance['identifier']){
+                $instanceWithIdentifier = $instance;
+                break;
+            }
         }
-        $list = $this->getInstanceObjectList();
-        $list->setCondition($dbColumn. ' = ?',array($identifier))->setLimit(1);
-        $res = $list->load();
-        if($res[0] instanceof Object_Concrete){
-            return $this->getWrapperObject($res[0]);
+        if($instanceWithIdentifier){
+            return $this->getWrapperObject($instanceWithIdentifier);
         }
     }
 }
