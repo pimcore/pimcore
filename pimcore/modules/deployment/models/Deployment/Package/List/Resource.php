@@ -26,4 +26,19 @@ class Deployment_Package_List_Resource extends Pimcore_Model_List_Resource_Abstr
         }
         return $data;
     }
+
+    /**
+     * Returns the total amount of Email_Log entries
+     *
+     * @return integer
+     */
+    public function getTotalCount() {
+
+        try {
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . Deployment_Package_Resource::TABLE_NAME ." " . $this->getCondition(), $this->model->getConditionVariables());
+        } catch (Exception $e) {
+            Logger::log($e->getMessage());
+        }
+        return $amount;
+    }
 }

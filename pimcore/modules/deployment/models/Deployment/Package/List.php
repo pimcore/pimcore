@@ -12,4 +12,5 @@ class Deployment_Package_List extends Pimcore_Model_List_Abstract{
         return true;
     }
 
+
 }
