@@ -321,3 +321,14 @@ function wrapArrayElements($array,$prefix = "'",$suffix = "'"){
     }
     return $array;
 }
+
+/**
+ * Checks if an array is associative
+ *
+ * @param array $arr
+ * @return bool
+ */
+function isAssocArray(array $arr)
+{
+    return array_keys($arr) !== range(0, count($arr) - 1);
+}

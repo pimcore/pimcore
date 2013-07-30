@@ -9,6 +9,23 @@
 Abstract class Deployment_Instance_Adapter_Abstract {
 
     protected static $instance;
+    protected $deploymentInstanceWrapperClassName; //default Deployment_Instance
+
+    protected function __construct(){
+        static::init();
+    }
+
+    protected function init(){
+        $this->deploymentInstanceWrapperClassName = Pimcore_Tool::getModelClassMapping('Deployment_Instance_Wrapper');
+        $key = 'instanceSettingsAdapter' . ucfirst($this->getType());
+
+        $instanceSettings = Deployment_Factory::getInstance()->getConfig()->$key;
+        if(is_null($instanceSettings)){
+            throw new Exception("Couldn't find instanceSettings: '$key'!");
+        }else{
+            $this->instanceSettings = $instanceSettings;
+        }
+    }
 
     public static function getInstance(){
         if(!static::$instance){
@@ -32,14 +49,9 @@ Abstract class Deployment_Instance_Adapter_Abstract {
         return $this->type;
     }
 
-    protected function __construct(){
-        static::init();
+    public function getInstanceSettings(){
+        return $this->instanceSettings;
     }
-
-    protected function init(){
-    }
-
-    public function getInstanceSettings(){}
 
     public function getFieldMapping(){
         $instanceSettings = $this->getInstanceSettings();
@@ -59,8 +71,9 @@ Abstract class Deployment_Instance_Adapter_Abstract {
         return $this->getInstanceByIdentifier($instanceIdentifier);
     }
 
-
-
-    abstract function getAllInstances();
-    abstract function getInstanceByIdentifier($identifier);
+    public abstract function getAllInstances();
+    public abstract function getInstanceByIdentifier($identifier);
+    public abstract function getInstancesByIdentifiers(array $identifier);
+    public abstract function getInstancesByGroups(array $groups);
+    public abstract function getConcreteInstances();
 }

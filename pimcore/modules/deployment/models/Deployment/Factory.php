@@ -21,6 +21,9 @@ class Deployment_Factory
     {
     }
 
+    /**
+     * @return Deployment_Factory
+     */
     public static function getInstance()
     {
         if (!static::$instance) {
@@ -37,6 +40,9 @@ class Deployment_Factory
         return static::$adapter;
     }
 
+    /**
+     * @return Deployment_Instance_Adapter_Abstract
+     */
     public function getInstanceAdapter()
     {
         return static::$instanceAdapter;

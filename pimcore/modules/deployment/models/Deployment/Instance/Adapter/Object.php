@@ -14,23 +14,14 @@ class Deployment_Instance_Adapter_Object  extends Deployment_Instance_Adapter_Ab
     protected $instanceObjectClassName;
     protected $instanceObjectListClassName;
 
-    protected $deploymentInstanceWrapperClassName; //default Deployment_Instance
-
     protected function init(){
-        $key = 'instanceSettings' . ucfirst($this->getType());
+        parent::init();
 
-        $instanceSettings = Deployment_Factory::getInstance()->getConfig()->$key;
-        if(!$instanceSettings instanceof Zend_Config){
-            throw new Exception("Couldn't find instanceSettings: '$key'!");
-        }else{
-            $this->instanceSettings = $instanceSettings;
-        }
-
-        if(!$instanceSettings->className){
+        if(!$this->instanceSettings->className){
             throw new Exception("No className provided.");
         }
 
-        $className = "Object_" . ucfirst($instanceSettings->className);
+        $className = "Object_" . ucfirst($this->instanceSettings->className);
         $className = Pimcore_Tool::getModelClassMapping($className);
         if(Pimcore_Tool::classExists($className)){
             $this->instanceObjectClassName = $className;
@@ -38,7 +29,7 @@ class Deployment_Instance_Adapter_Object  extends Deployment_Instance_Adapter_Ab
             throw new Exception("Object class '$className' doesn't exists.");
         }
 
-        $listClassName = "Object_" . ucfirst($instanceSettings->className).'_List';
+        $listClassName = "Object_" . ucfirst($this->instanceSettings->className).'_List';
         $listClassName = Pimcore_Tool::getModelClassMapping($listClassName);
 
         if(Pimcore_Tool::classExists($listClassName)){
@@ -46,12 +37,6 @@ class Deployment_Instance_Adapter_Object  extends Deployment_Instance_Adapter_Ab
         }else{
             throw new Exception("Object list class $listClassName doesn't exists.");
         }
-
-        $this->deploymentInstanceWrapperClassName = Pimcore_Tool::getModelClassMapping('Deployment_Instance_Wrapper');
-    }
-
-    public function getInstanceSettings(){
-        return $this->instanceSettings;
     }
 
     public function getInstanceObjectClassName(){
@@ -107,13 +92,22 @@ class Deployment_Instance_Adapter_Object  extends Deployment_Instance_Adapter_Ab
         return $instances;
     }
 
+    public function getConcreteInstances(){
+        $list = $this->getInstanceObjectList();
+        return $list->load();
+    }
+
     public function getInstanceByIdentifier($identifier){
-        $fieldMapping = $this->getFieldMapping('identifier');
-        if($fieldMapping['instanceIdentifier'] == 'id'){
-            $dbColumn = 'o_id';
-        }else{
-            $dbColumn = $fieldMapping['instanceIdentifier'];
+        if(!is_string($identifier)){
+            throw new Exception('$identifier is not a string.');
         }
+        $fieldMapping = $this->getFieldMapping();
+        if($fieldMapping['identifier']){
+            $dbColumn = $fieldMapping['identifier'];
+        }else{
+            $dbColumn = 'identifier';
+        }
+
         $list = $this->getInstanceObjectList();
         $list->setCondition($dbColumn. ' = ?',array($identifier))->setLimit(1);
         $res = $list->load();

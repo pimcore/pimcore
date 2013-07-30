@@ -12,8 +12,9 @@ Class Deployment_Instance_Wrapper {
     const ENV_LIVE = 'live';
 
 
-    protected $instanceIdentifier;
+    protected $identifier;
     protected $domain;
+    protected $groups;
     protected $deployable;
     protected $webserviceApiKey;
     protected $webserviceEndpointRest;
@@ -42,22 +43,41 @@ Class Deployment_Instance_Wrapper {
     protected function applyFieldMapping(){
         $fieldMapping = Deployment_Factory::getInstance()->getInstanceAdapter()->getFieldMapping();
         $concreteDeploymentInstance = $this->getConcreteDeploymentInstance();
-        foreach((array)$fieldMapping as $wrapperField => $sourceField){
-            $wrapperGetter = "get" . ucfirst($wrapperField);
-            $wrapperSetter = "set" . ucfirst($wrapperField);
 
-            if(method_exists($this,$wrapperSetter) && method_exists($this,$wrapperGetter)){
-                $sourceGetter = "get" . ucfirst($sourceField);
-                //if getter exists use the getter
-                if(is_object($concreteDeploymentInstance) && method_exists($concreteDeploymentInstance,$sourceGetter)){
-                    $this->$wrapperSetter($concreteDeploymentInstance->$sourceGetter());
-                }
-                //if no getter exists use the public property
-                elseif(is_object($concreteDeploymentInstance) && !method_exists($concreteDeploymentInstance,$sourceGetter)){
-                    $this->$wrapperSetter($concreteDeploymentInstance->$sourceField);
-                //use array key
-                }elseif(is_array($concreteDeploymentInstance)){
-                    $this->$wrapperSetter($concreteDeploymentInstance[$sourceField]);
+        foreach($concreteDeploymentInstance as $key => $value){
+            $setter = "set" . ucfirst($key);
+            $getter = "get" . ucfirst($key);
+
+            if(is_object($concreteDeploymentInstance) && method_exists($concreteDeploymentInstance,$getter)){ //to get inherited values
+                $value = $concreteDeploymentInstance->$getter();
+            }
+            if($fieldMapping[$key]){ //apply field mapping
+                $value = $concreteDeploymentInstance[$fieldMapping[$key]];
+            }
+            if(method_exists($this,$setter)){
+                $this->$setter($value);
+            }
+        }
+
+        if(is_object($concreteDeploymentInstance)){ //e.g for object adapter
+
+            foreach((array)$fieldMapping as $wrapperField => $sourceField){
+                $wrapperGetter = "get" . ucfirst($wrapperField);
+                $wrapperSetter = "set" . ucfirst($wrapperField);
+
+                if(method_exists($this,$wrapperSetter) && method_exists($this,$wrapperGetter)){
+                    $sourceGetter = "get" . ucfirst($sourceField);
+                    //if getter exists use the getter
+                    if(is_object($concreteDeploymentInstance) && method_exists($concreteDeploymentInstance,$sourceGetter)){
+                        $this->$wrapperSetter($concreteDeploymentInstance->$sourceGetter());
+                    }
+                    //if no getter exists use the public property
+                    elseif(is_object($concreteDeploymentInstance) && !method_exists($concreteDeploymentInstance,$sourceGetter)){
+                        $this->$wrapperSetter($concreteDeploymentInstance->$sourceField);
+                        //use array key
+                    }elseif(is_array($concreteDeploymentInstance)){
+                        $this->$wrapperSetter($concreteDeploymentInstance[$sourceField]);
+                    }
                 }
             }
         }
@@ -66,28 +86,23 @@ Class Deployment_Instance_Wrapper {
 
     protected function setSystemData(){
         $concreteDeploymentInstance = $this->getConcreteDeploymentInstance();
+        $apiKey = Deployment_Helper_General::getValueByItemType('getWebserviceApiKey',$concreteDeploymentInstance);
 
-        if(method_exists($concreteDeploymentInstance,'getApiKey')){
-            $apiKey = $concreteDeploymentInstance->getApiKey();
-        }else{
-            $apiKey = $concreteDeploymentInstance->apiKey;
-        }
         if($apiKey){
             try{
-                $this->setWebserviceEndpointRest('http://' . $concreteDeploymentInstance->domain . '/webservice/rest/');
+                $this->setWebserviceEndpointRest('http://' . Deployment_Helper_General::getValueByItemType('getDomain',$concreteDeploymentInstance) . '/webservice/rest/');
                 $this->setWebserviceApiKey($apiKey);
-
                 if($this->checkWebserviceRest()){
                     $this->setDeployable(1);
                 }else{
                     $this->setDeployable(0);
                 }
             }catch (Exception $e){
+                Logger::warn("REST request failed. " . $this->getIdentifier() . ' Error:' . $e->getMessage());
                 $this->setDeployable(0);
             }
-
         }else{
-            Logger::warn("REST API user has no API key or is not an admin." . $this->getInstanceIdentifier());
+            Logger::warn("REST API key not available. " . $this->getIdentifier());
             $this->setDeployable(0);
         }
 
@@ -131,18 +146,18 @@ Class Deployment_Instance_Wrapper {
     }
 
     public function instanceIsCurrentSystem(){
-        return ($this->getInstanceIdentifier() == Deployment_Helper_General::getInstanceIdentifier());
+        return ($this->getIdentifier() == Deployment_Helper_General::getInstanceIdentifier());
     }
 
-    public function setInstanceIdentifier($instanceIdentifier)
+    public function setIdentifier($identifier)
     {
-        $this->instanceIdentifier= $instanceIdentifier;
+        $this->identifier = $identifier;
         return $this;
     }
 
-    public function getInstanceIdentifier()
+    public function getIdentifier()
     {
-        return $this->instanceIdentifier;
+        return $this->identifier;
     }
 
     public function setConcreteDeploymentInstance($concreteDeploymentInstance)
@@ -226,7 +241,16 @@ Class Deployment_Instance_Wrapper {
      */
     public function __call($method,$args){
         $concreteDeploymentInstance = $this->getConcreteDeploymentInstance();
-        return $concreteDeploymentInstance->$method($args);
+        return Deployment_Helper_General::getValueByItemType($method,$concreteDeploymentInstance);
+    }
+
+    public function setGroups($groups){
+        $this->groups = $groups;
+        return $this;
+    }
+
+    public function getGroups(){
+        return $this->groups;
     }
 
 }

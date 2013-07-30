@@ -43,11 +43,11 @@ class Deployment_Task_Pimcore_Phing_CopyPackagesTask extends Deployment_Task_Pim
 
                 $result = $client->deploymentExecuteTargetAction($cliParams);
                 if($result->success){
-                    $this->log("Remote command successfully (instance: " . $instance->getInstanceIdentifier().")",Project::MSG_INFO);
+                    $this->log("Remote command successfully (instance: " . $instance->getIdentifier().")",Project::MSG_INFO);
                     $this->log("Remote command: " . $result->data ,Project::MSG_DEBUG);
                 }else{
                     $this->log("Remote command: " . $result->data ,Project::MSG_DEBUG);
-                    throw new BuildException("Remote command failed (instance: " . $instance->getInstanceIdentifier().")");
+                    throw new BuildException("Remote command failed (instance: " . $instance->getIdentifier().")");
                 }
             }
         }
