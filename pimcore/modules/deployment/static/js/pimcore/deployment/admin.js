@@ -16,21 +16,28 @@ pimcore.plugin.deployment = Class.create(pimcore.plugin.admin, {
     getClassName: function() {
         return "pimcore.plugin.deployment";
     },
+
     initialize: function() {
         pimcore.plugin.broker.registerPlugin(this);
-        this.navEl = Ext.get('pimcore_menu_logout').insertSibling('<li id="pimcore_menu_custom" class="pimcore_menu_item icon-exchange">' + t('deployment') + '</li>');
-     },
+    },
 
-    pimcoreReady: function (params,broker){
-        var menu = new Ext.menu.Menu({
-            items: [{
-                text: t("deployment_packages"),
-                iconCls: "pimcore_icon_menu_extension",
-                handler: function () {alert("pressed 1")}
-            }],
-            cls: "pimcore_navigation_flyout"
+    pimcoreReady: function (params,broker) {
+
+        var toolbar = pimcore.globalmanager.get("layout_toolbar");
+
+        toolbar.extrasMenu.add({
+            text: t("deployment"),
+            hideOnClick: false,
+            iconCls: "pimcore_icon_deployment",
+            menu: {
+                cls: "pimcore_navigation_flyout",
+                items: [{
+                    text: t("deployment_packages"),
+                    iconCls: "pimcore_icon_menu_extension",
+                    handler: function () {alert("pressed 1")}
+                }]
+            }
         });
-        this.navEl.on("mousedown", pimcore.globalmanager.get("layout_toolbar").showSubMenu.bind(menu));
     }
 });
 var deployment = new pimcore.plugin.deployment();
