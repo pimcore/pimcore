@@ -150,7 +150,7 @@ pimcore.pdf.prototype.calculateDimensions = function () {
     if(document.mozFullScreenElement || document.webkitFullScreenElement || document.msFullScreenElement
         || document.fullScreenElement || document.webkitCurrentFullScreenElement || document.currentFullScreenElement
         || document.mozCurrentFullScreenElement || document.msCurrentFullScreenElement) {
-        this.containerEl.classList.add("pimcore-pdfFullscreen");
+
     } else if(this.containerEl.classList && (this.containerEl.requestFullscreen
         || this.containerEl.mozRequestFullScreen || this.containerEl.webkitRequestFullscreen
         || this.containerEl.msRequestFullscreen)) {
@@ -249,6 +249,7 @@ pimcore.pdf.prototype.zoom = function () {
         this.download();
     } else {
         var elem = this.containerEl;
+        elem.classList.add("pimcore-pdfFullscreen");
         if (elem.requestFullscreen) {
           elem.requestFullscreen();
         } else if (elem.mozRequestFullScreen) {
@@ -260,7 +261,6 @@ pimcore.pdf.prototype.zoom = function () {
         } else {
             // fallback
             this.containerEl.originalParent = this.containerEl.parentNode;
-            this.containerEl.className = this.containerEl.className + " pimcore-pdfFullscreen";
             document.body.appendChild(this.containerEl);
         }
     }
