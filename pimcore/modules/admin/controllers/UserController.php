@@ -77,7 +77,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             $className = User_Service::getClassNameForType($this->getParam("type"));
             $user = $className::create(array(
                 "parentId" => intval($this->getParam("parentId")),
-                "name" => $this->getParam("name"),
+                "name" => trim($this->getParam("name")),
                 "password" => md5(microtime()),
                 "active" => $this->getParam("active")
             ));
