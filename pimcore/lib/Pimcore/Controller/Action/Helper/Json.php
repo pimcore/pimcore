@@ -61,6 +61,8 @@ class Pimcore_Controller_Action_Helper_Json extends Zend_Controller_Action_Helpe
             foreach ($propCollection as $name => $propValue) {
                 $element->$name = $this->filterCycles($propValue);
             }
+
+            array_splice($this->processedObjects, array_search($element, $this->processedObjects, true), 1);
         }
 
         return $element;
