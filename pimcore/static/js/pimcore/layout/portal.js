@@ -42,7 +42,6 @@ pimcore.layout.portal = Class.create({
 
             for (var i = 0; i < 2; i++) {
                 for (var c = 0; c <= userConf.positions[i].length; c++) {
-                    try {
                         dynClass = eval(userConf.positions[i][c]);
                         if (dynClass) {
                             portletInstance = new dynClass();
@@ -50,10 +49,6 @@ pimcore.layout.portal = Class.create({
                             config[i].push(portletInstance.getLayout());
                             this.activePortlets.push(userConf.positions[i][c]);
                         }
-                    }
-                    catch (e) {
-                        console.log(e);
-                    }
                 }
             }
             this.getTabPanel(config);
