@@ -423,7 +423,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
             $opts
         );
 
-        $totalViews = (int) $result0["totalsForAllResults"]["ga:pageviews"];
+        $totalViews = (int) $result0["totalsForAllResults"]["ga:pageViews"];
        
        
         // ENTRANCES
