@@ -226,26 +226,41 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     onContextMenu: function (e) {
 
         var menu = new Ext.menu.Menu();
-        menu.add(new Ext.menu.Item({
-            text: t('empty'),
-            iconCls: "pimcore_icon_delete",
-            handler: function (item) {
-                item.parentMenu.destroy();
 
-                this.empty();
-            }.bind(this)
-        }));
+        if(this.data) {
+            menu.add(new Ext.menu.Item({
+                text: t('empty'),
+                iconCls: "pimcore_icon_delete",
+                handler: function (item) {
+                    item.parentMenu.destroy();
 
-        menu.add(new Ext.menu.Item({
-            text: t('open'),
-            iconCls: "pimcore_icon_open",
-            handler: function (item) {
-                item.parentMenu.destroy();
+                    this.empty();
+                }.bind(this)
+            }));
 
-                this.openImage();
-            }.bind(this)
-        }));
-        
+            menu.add(new Ext.menu.Item({
+                text: t('open'),
+                iconCls: "pimcore_icon_open",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+
+                    this.openImage();
+                }.bind(this)
+            }));
+
+            if(this instanceof pimcore.object.tags.hotspotimage) {
+                menu.add(new Ext.menu.Item({
+                    text: t('add_marker_or_hotspots'),
+                    iconCls: "pimcore_icon_image_add_hotspot",
+                    handler: function (item) {
+                        item.parentMenu.destroy();
+
+                        this.openHotspotWindow();
+                    }.bind(this)
+                }));
+            }
+        }
+
         menu.add(new Ext.menu.Item({
             text: t('search'),
             iconCls: "pimcore_icon_search",
