@@ -28,8 +28,13 @@ class Object_Data_Hotspotimage {
      */
     public $hotspots;
 
+    /**
+     * @var array[]
+     */
+    public $marker;
 
-    public function __construct($image, $hotspots) {
+
+    public function __construct($image, $hotspots, $marker = array()) {
         if($image instanceof Asset_Image) {
             $this->image = $image;
         } else {
@@ -42,6 +47,13 @@ class Object_Data_Hotspotimage {
                 $this->hotspots[] = $h;
             }
         }
+
+        if(is_array($marker)) {
+            $this->marker = array();
+            foreach($marker as $m) {
+                $this->marker[] = $m;
+            }
+        }
     }
 
     public function setHotspots($hotspots) {
@@ -51,6 +63,15 @@ class Object_Data_Hotspotimage {
 
     public function getHotspots() {
         return $this->hotspots;
+    }
+
+    public function setMarker($marker) {
+        $this->marker = $marker;
+        return $this;
+    }
+
+    public function getMarker() {
+        return $this->marker;
     }
 
     public function setImage($image) {
@@ -68,6 +89,4 @@ class Object_Data_Hotspotimage {
         }
         return ""; 
     }
-
-
 }
