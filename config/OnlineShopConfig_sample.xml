@@ -39,6 +39,25 @@
                     <deliveryaddress class="OnlineShop_Framework_Impl_Checkout_DeliveryAddress"/>
                     <deliverydate class="OnlineShop_Framework_Impl_Checkout_DeliveryDate"/>
                 </steps>
+
+                <!-- provider: wirecard -->
+                <payment class="OnlineShop_Framework_Impl_Checkout_Payment_QPay" mode="demo">
+                    <demo>
+                        <secret></secret>
+                        <customer></customer>
+                    </demo>
+                </payment>
+                <!-- provider: paypal -->
+                <!--
+                <payment class="OnlineShop_Framework_Impl_Checkout_Payment_PayPal" mode="sandbox">
+                    <sandbox>
+                        <api_username></api_username>
+                        <api_password></api_password>
+                        <api_signature></api_signature>
+                    </sandbox>
+                </payment>
+                -->
+
                 <commitorderprocessor class="OnlineShop_Framework_Impl_CommitOrderProcessor"/>
                 <orderstorage orderClass="Object_OnlineShopOrder" orderItemClass="Object_OnlineShopOrderItem"/>
                 <mails confirmation="/emails/order-confirmation" inquiry="/emails/inquiry-confirmation" activation="/emails/order-activation" dealer="/emails/order-dealer" printer="/emails/order-print"/>

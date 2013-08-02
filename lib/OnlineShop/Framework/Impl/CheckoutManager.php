@@ -6,6 +6,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     const FINISHED = "checkout_finished";
     const COMMITTED = "checkout_committed";
     const TRACK_ECOMMERCE = "checkout_trackecommerce";
+    const TRACK_ECOMMERCE_UNIVERSAL = "checkout_trackecommerce_universal";
 
     protected $checkoutSteps;
     protected $checkoutStepOrder;
@@ -29,6 +30,17 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      */
     protected $cart;
 
+    /**
+     * Payment Provider
+     * @var OnlineShop_Framework_ICheckoutPayment
+     */
+    protected $payment;
+
+
+    /**
+     * @param OnlineShop_Framework_ICart $cart
+     * @param                            $config
+     */
     public function __construct(OnlineShop_Framework_ICart $cart, $config) {
         $this->cart = $cart;
 
@@ -52,6 +64,13 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
             $this->currentStep = $this->checkoutStepOrder[0];  
         }
 
+
+        // init payment provider
+        if($config->payment)
+        {
+            $this->payment = new $config->payment->class( $config->payment, $cart );
+        }
+
     }
 
     protected function getCommitOrderProcessor() {
@@ -67,6 +86,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
     /**
      * @return OnlineShop_Framework_AbstractOrder
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
      */
     public function commitOrder() {
         if($this->committed) {
@@ -86,6 +106,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         $env->removeCustomItem(self::COMMITTED . "_" . $this->cart->getId());
 
         $env->setCustomItem(self::TRACK_ECOMMERCE . "_" . $result->getOrdernumber(), $this->generateGaEcommerceCode($result));
+        $env->setCustomItem(self::TRACK_ECOMMERCE_UNIVERSAL . "_" . $result->getOrdernumber(), $this->generateUniversalEcommerceCode($result));
 
         $env->save();
 
@@ -112,12 +133,25 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         $items = $order->getItems();
         if(!empty($items)) {
             foreach($items as $item) {
+
+                $category = "";
+                $p = $item->getProduct();
+                if($p && method_exists($p, "getCategories")) {
+                    $categories = $p->getCategories();
+                    if($categories) {
+                        $category = $categories[0];
+                        if(method_exists($category, "getName")) {
+                            $category = $category->getName();
+                        }
+                    }
+                }
+
                 $code .= "
                     _gaq.push(['_addItem',
                         '" . $order->getOrdernumber() . "', // order ID - required
                         '" . $item->getProductNumber() . "', // SKU/code - required
                         '" . $item->getProductName() . "', // product name
-                        '',   // category or variation
+                        '" . $category . "',   // category or variation
                         '" . $item->getTotalPrice() / $item->getAmount() . "', // unit price - required
                         '" . $item->getAmount() . "'      // quantity - required
                     ]);
@@ -130,10 +164,59 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         return $code;
     }
 
+
+    protected function generateUniversalEcommerceCode(OnlineShop_Framework_AbstractOrder $order) {
+        $code = "ga('require', 'ecommerce', 'ecommerce.js');\n";
+
+        $code .= "
+            ga('ecommerce:addTransaction', {
+              'id': '" . $order->getOrdernumber() . "',                     // Transaction ID. Required.
+              'affiliation': '',   // Affiliation or store name.
+              'revenue': '" . $order->getTotalPrice() . "',               // Grand Total.
+              'shipping': '',                  // Shipping.
+              'tax': ''                     // Tax.
+            });
+        \n";
+
+        $items = $order->getItems();
+        if(!empty($items)) {
+            foreach($items as $item) {
+
+                $category = "";
+                $p = $item->getProduct();
+                if($p && method_exists($p, "getCategories")) {
+                    $categories = $p->getCategories();
+                    if($categories) {
+                        $category = $categories[0];
+                        if(method_exists($category, "getName")) {
+                            $category = $category->getName();
+                        }
+                    }
+                }
+
+                $code .= "
+                    ga('ecommerce:addItem', {
+                      'id': '" . $order->getOrdernumber() . "',                      // Transaction ID. Required.
+                      'name': '" . $item->getProductName() . "',                      // Product name. Required.
+                      'sku': '" . $item->getProductNumber() . "',                     // SKU/code.
+                      'category': '" . $category . "',                                // Category or variation.
+                      'price': '" . $item->getTotalPrice() / $item->getAmount() . "', // Unit price.
+                      'quantity': '" . $item->getAmount() . "'                        // Quantity.
+                    });
+                \n";
+            }
+        }
+
+        $code .= "ga('ecommerce:send');\n";
+
+        return $code;
+    }
+
     /**
      * @param OnlineShop_Framework_ICheckoutStep $step
      * @param  $data
      * @return bool
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
      */
     public function commitStep(OnlineShop_Framework_ICheckoutStep $step, $data) {
         $indexCurrentStep = array_search($this->currentStep, $this->checkoutStepOrder);
@@ -204,7 +287,19 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         return $this->finished;
     }
 
+    /**
+     * @return bool
+     */
     public function isCommitted() {
         return $this->committed;
+    }
+
+
+    /**
+     * @return OnlineShop_Framework_ICheckoutPayment
+     */
+    public function getPayment()
+    {
+        return $this->payment;
     }
 }

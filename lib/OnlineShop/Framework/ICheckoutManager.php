@@ -53,4 +53,8 @@ interface OnlineShop_Framework_ICheckoutManager {
      */
     public function isCommitted();
 
+    /**
+     * @return OnlineShop_Framework_ICheckoutPayment|null
+     */
+    public function getPayment();
 }

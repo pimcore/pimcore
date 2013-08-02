@@ -40,9 +40,11 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         }
     }
 
-     /**
+    /**
      * @param OnlineShop_Framework_ICart $cart
+     *
      * @return OnlineShop_Framework_AbstractOrder
+     * @throws Exception
      */
     public function commitOrder(OnlineShop_Framework_ICart $cart) {
 
@@ -106,6 +108,19 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         }
 
         $order->setItems($orderItems);
+
+
+        // add payment information
+        $checkout = OnlineShop_Framework_Factory::getInstance()->getCheckoutManager($cart);
+        $payment = $checkout->getPayment();
+        if($payment)
+        {
+            if(method_exists($order, 'setPaymentReference'))
+            {
+                $order->setPaymentReference( $payment->getPayReference() );
+            }
+        }
+
 
         try {
             $this->processOrder($cart, $order);
