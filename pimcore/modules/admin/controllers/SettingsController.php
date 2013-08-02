@@ -560,6 +560,12 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $list->setOrder("asc");
         $list->setOrderKey("key");
+
+        if ($this->getParam("filter")) {
+            $filterTerm = $list->quote("%".mb_strtolower($this->getParam("filter"))."%");
+            $list->setCondition("lower(`key`) LIKE " . $filterTerm . " OR lower(`text`) LIKE " . $filterTerm);
+        }
+
         $list->load();
 
         $translations = array();

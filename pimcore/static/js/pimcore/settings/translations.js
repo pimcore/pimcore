@@ -216,7 +216,18 @@ pimcore.settings.translations = Class.create({
     },
 
     doExport:function(){
-        window.open(this.exportUrl);
+
+        if(this.filterField.getValue()) {
+            Ext.MessageBox.confirm("", t("filter_active_message"), function (buttonValue) {
+                if (buttonValue == "yes") {
+                    window.open(Ext.urlAppend(this.exportUrl, "filter=" + this.filterField.getValue()));
+                } else {
+                    window.open(this.exportUrl);
+                }
+            }.bind(this));
+        } else {
+            window.open(this.exportUrl);
+        }
     },
 
     onAdd: function (btn, ev) {
