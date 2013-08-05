@@ -1150,10 +1150,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     }
     
     public function __wakeup() {
-        if(isset($this->_fulldump) && $this->properties !== null) {
-            $this->renewInheritedProperties();
-        }
-
         if(isset($this->_fulldump)) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
             $originalElement = Document::getById($this->getId());
@@ -1163,6 +1159,10 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             }
 
             unset($this->_fulldump);
+        }
+
+        if(isset($this->_fulldump) && $this->properties !== null) {
+            $this->renewInheritedProperties();
         }
     }
 
@@ -1181,10 +1181,15 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     
     public function renewInheritedProperties () {
         $this->removeInheritedProperties();
-        
+
+        // add to registry to avoid infinite regresses in the following $this->getResource()->getProperties()
+        $cacheKey = "document_" . $this->getId();
+        if(!Zend_Registry::isRegistered($cacheKey)) {
+            Zend_Registry::set($cacheKey, $this);
+        }
+
         $myProperties = $this->getProperties();
         $inheritedProperties = $this->getResource()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
-
 }
