@@ -135,7 +135,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                 }
 
                 if(!empty($personaVariants)) {
-                    $personaVariants = array_unique($personaVariants);
+                    $personaVariants = array_values(array_unique($personaVariants));
                     $dataPush["personaPageVariants"] = $personaVariants;
                 }
             }
