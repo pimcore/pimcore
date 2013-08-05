@@ -810,7 +810,12 @@ class Pimcore {
      */
     public static function outputBufferEnd ($data) {
 
+        $output = null;
         $contentEncoding = null;
+
+        header("Connection: close\r\n");
+
+        // check for supported content-encodings
         if( preg_match('@(?:^|,)\\s*((?:x-)?gzip)\\s*(?:$|,|;\\s*q=(?:0\\.|1))@' ,$_SERVER["HTTP_ACCEPT_ENCODING"] ,$m) ) {
             $contentEncoding = $m[1];
         }
@@ -866,18 +871,20 @@ class Pimcore {
                     pack('V', crc32($data)). // packing the CRC and the strlen is still required
                     pack('V', mb_strlen($data, "latin1")); // (although all modern browsers don't need it anymore) to work properly with google adwords check & co.
 
-                // send headers & contents
-                header("Connection: close\r\n");
                 header("Content-Encoding: $contentEncoding\r\n");
-                header("Content-Length: " . mb_strlen($output, "latin1"));
-                header("X-Powered-By: pimcore");
-
-                return $output;
             }
         }
 
+        // no gzip/deflate encoding
+        if(!$output) {
+            $output = $data;
+        }
+
+        header("Content-Length: " . mb_strlen($output, "latin1"));
+        header("X-Powered-By: pimcore");
+
         // return the data unchanged
-        return $data;
+        return $output;
     }
 
     /**
