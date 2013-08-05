@@ -1310,10 +1310,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     
     
     public function __wakeup() {
-        if(isset($this->_fulldump) && $this->o_properties !== null) {
-            $this->renewInheritedProperties();
-        }
-
         if(isset($this->_fulldump)) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
             $originalElement = Object_Abstract::getById($this->getId());
@@ -1323,6 +1319,10 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             }
 
             unset($this->_fulldump);
+        }
+
+        if(isset($this->_fulldump) && $this->o_properties !== null) {
+            $this->renewInheritedProperties();
         }
     }
     
@@ -1343,7 +1343,13 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     
     public function renewInheritedProperties () {
         $this->removeInheritedProperties();
-        
+
+        // add to registry to avoid infinite regresses in the following $this->getResource()->getProperties()
+        $cacheKey = "object_" . $this->getId();
+        if(!Zend_Registry::isRegistered($cacheKey)) {
+            Zend_Registry::set($cacheKey, $this);
+        }
+
         $myProperties = $this->getO_Properties();
         $inheritedProperties = $this->getResource()->getProperties(true);
         $this->setO_Properties(array_merge($inheritedProperties, $myProperties));
