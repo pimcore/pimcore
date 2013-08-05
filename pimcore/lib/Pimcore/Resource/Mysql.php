@@ -66,14 +66,17 @@ class Pimcore_Resource_Mysql {
             Logger::warn($e);
         }
 
+        $connectionId = $db->fetchOne("SELECT CONNECTION_ID()");
+
         // enable the db-profiler if the devmode is on and there is no custom profiler set (eg. in system.xml)
         if(PIMCORE_DEVMODE && !$db->getProfiler()->getEnabled()) {
             $profiler = new Pimcore_Db_Profiler('All DB Queries');
             $profiler->setEnabled(true);
+            $profiler->setConnectionId($connectionId);
             $db->setProfiler($profiler);
         }
 
-        Logger::debug(get_class($db) . ": Successfully established connection to MySQL-Server: " . $db->fetchOne("SELECT CONNECTION_ID()"));
+        Logger::debug(get_class($db) . ": Successfully established connection to MySQL-Server, Process-ID: " . $connectionId);
 
         return $db;
     }
