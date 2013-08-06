@@ -11,6 +11,7 @@
     background: url(/pimcore/static/img/background.png);
     overflow: hidden;
     color: #fff;
+    z-index: 10000;
 }
 
 #pimcore_admin_console.open {

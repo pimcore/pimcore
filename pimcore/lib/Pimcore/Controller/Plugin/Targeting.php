@@ -168,7 +168,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
 
 
 
-            $code = '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
+            $code = '<script type="text/javascript" src="/pimcore/static/js/frontend/geoip.js/"></script>';
             $code .= '<script type="text/javascript">';
                 $code .= 'var pimcore = pimcore || {};';
                 $code .= 'pimcore["targeting"] = {};';

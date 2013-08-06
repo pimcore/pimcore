@@ -539,11 +539,11 @@
 
 
     try {
-        if(!user["location"] && google && google.loader && google.loader.ClientLocation) {
+        if(!user["location"] && window["pimcore"] && pimcore["location"] && pimcore["location"]["latitude"]) {
             user["location"] = {
-                latitude: google.loader.ClientLocation.latitude,
-                longitude: google.loader.ClientLocation.longitude,
-                country: google.loader.ClientLocation.address.country_code
+                latitude: pimcore["location"]["latitude"],
+                longitude: pimcore["location"]["longitude"],
+                country: pimcore["location"]["country"]["code"]
             };
         }
     } catch (e5) {
