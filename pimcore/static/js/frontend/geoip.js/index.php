@@ -53,6 +53,10 @@ if(file_exists($geoDbFile)) {
 
 header("Content-Type: text/javascript");
 
+$lifetime = 86400 * 365 * 2; // 2 years lifetime
+header("Cache-Control: public, max-age=" . $lifetime);
+header("Expires: ". date("D, d M Y H:i:s T", time()+$lifetime));
+
 ?>
 
 var pimcore = pimcore || {};
