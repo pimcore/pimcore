@@ -127,10 +127,16 @@
                     menu.appendChild(promoteButton);
                 }
 
-                if(window.pimcore && window.pimcore["targeting"] && window.pimcore["targeting"]["user"] && window.pimcore["targeting"]["user"]["persona"]) {
+                if(window.pimcore && window.pimcore["personas"]) {
                     var personaButton = document.createElement("li");
                     personaButton.className = "button persona";
-                    personaButton.innerHTML = '<small style="font-size: 10px">Persona: ' + window.pimcore["personas"][window.pimcore["targeting"]["user"]["persona"]] + '</small>';
+
+                    if(window.pimcore["targeting"] && window.pimcore["targeting"]["user"] && window.pimcore["targeting"]["user"]["persona"]) {
+                        personaButton.innerHTML = '<small style="font-size: 10px">Persona: ' + window.pimcore["personas"][window.pimcore["targeting"]["user"]["persona"]] + '</small>';
+                    } else {
+                        personaButton.innerHTML = 'Persona';
+                    }
+
                     personaButton.onclick = function () {
                         openWindow(800,500, "/admin/admin-button/persona");
                     };
