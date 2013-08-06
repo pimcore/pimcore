@@ -880,7 +880,10 @@ class Pimcore {
             $output = $data;
         }
 
-        header("Content-Length: " . mb_strlen($output, "latin1"));
+        if(strlen($output) > 0) {
+            // check here for existing content, otherwise readfile() and similar functions are not working anymore
+            header("Content-Length: " . mb_strlen($output, "latin1"));
+        }
         header("X-Powered-By: pimcore");
 
         // return the data unchanged
