@@ -155,4 +155,10 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
             $mail->send();
         }
     }
+
+    public function personaAction() {
+
+        $list = new Tool_Targeting_Persona_List();
+        $this->view->personas = $list->load();
+    }
 }
