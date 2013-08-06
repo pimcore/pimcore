@@ -60,7 +60,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $storeTable = $this->getTableName();
             $queryTable = $this->getQueryTableName() . "_" . $language;
 
-            $this->db->insert($this->getTableName(), $insertData);
+            $this->db->insertOrUpdate($this->getTableName(), $insertData);
 
             Object_Abstract::setGetInheritedValues(true);
 
@@ -173,10 +173,11 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
     public function delete ($deleteQuery = true) {
 
         try {
-            $id = $this->model->getObject()->getId();
-            $tablename = $this->getTableName();
-            $this->db->delete($tablename, $this->db->quoteInto("ooo_id = ?", $id));
             if ($deleteQuery) {
+                $id = $this->model->getObject()->getId();
+                $tablename = $this->getTableName();
+                $this->db->delete($tablename, $this->db->quoteInto("ooo_id = ?", $id));
+
                 $validLanguages = Pimcore_Tool::getValidLanguages();
                 foreach ($validLanguages as $language) {
                     $queryTable = $this->getQueryTableName() . "_" . $language;
@@ -184,6 +185,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                 }
             }
         } catch (Exception $e) {
+            Logger::error($e);
             $this->createUpdateTable();
         }
 
