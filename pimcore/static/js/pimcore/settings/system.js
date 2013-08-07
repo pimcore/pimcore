@@ -1480,6 +1480,10 @@ pimcore.settings.system = Class.create({
 
     addLanguage: function (language) {
 
+        if(empty(language)) {
+            return;
+        }
+
         // find the language entry in the store, because "language" can be the display value too
         var index = this.languagesStore.findExact("language", language);
         if(index < 0) {
