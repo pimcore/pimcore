@@ -156,7 +156,7 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
         $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
         $data = null;
         if(file_exists($letter->getPidFile())) {
-            $data = unserialize(file_get_contents($letter->getPidFile()));
+            $data = Pimcore_Tool_Serialize::unserialize(file_get_contents($letter->getPidFile()));
         }
 
         $this->_helper->json(array(

@@ -85,7 +85,7 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
             $metaData["hotspots"] = $rewritePath($metaData["hotspots"]);
             $metaData["marker"] = $rewritePath($metaData["marker"]);
 
-            $metaData = serialize($metaData);
+            $metaData = Pimcore_Tool_Serialize::serialize($metaData);
 
             return array(
                 $this->getName() . "__image" => $imageId,
@@ -111,7 +111,7 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
             // check if the data is JSON (backward compatibility)
             $md = json_decode($metaData);
             if(!$md) {
-                $md = unserialize($metaData);
+                $md = Pimcore_Tool_Serialize::unserialize($metaData);
             }
 
             $hotspots = empty($md["hotspots"]) ? null : $md["hotspots"];

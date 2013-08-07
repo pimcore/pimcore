@@ -120,7 +120,9 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
      * @return void
      */
     public function save ($user=null) {
-        
+
+
+
         if($this->getElement() instanceof Element_Interface) {
             $this->setType(Element_Service::getElementType($this->getElement()));
         }

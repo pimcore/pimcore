@@ -747,7 +747,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                             $element = clone $contentMasterElement;
                             $element->rewriteIds($idStore["idMapping"]);
 
-                            if(serialize($element) != serialize($contentMasterElement)) {
+                            if(Pimcore_Tool_Serialize::serialize($element) != Pimcore_Tool_Serialize::serialize($contentMasterElement)) {
                                 $changedElements[] = $element;
                             }
                         }
