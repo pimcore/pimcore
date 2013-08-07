@@ -597,8 +597,9 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             $this->update();
 
             // if the old path is different from the new path, update all children
+            $updatedChildren = array();
             if($oldPath && $oldPath != $this->getFullPath()) {
-                $this->getResource()->updateChildsPaths($oldPath);
+                $updatedChildren = $this->getResource()->updateChildsPaths($oldPath);
             }
 
             self::setHideUnpublished($hideUnpublishedBackup);
@@ -616,8 +617,12 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             Pimcore_API_Plugin_Broker::getInstance()->postAddObject($this);
         }
 
-        // empty object cache
-        $this->clearDependentCache();
+        $additionalTags = array();
+        foreach ($updatedChildren as $objectId) {
+            $additionalTags[] = "object_" . $objectId;
+        }
+        $this->clearDependentCache($additionalTags);
+
         return $this;
     }
     
@@ -707,9 +712,12 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         Zend_Registry::set("object_" . $this->getId(), $this);
     }
 
-    public function clearDependentCache() {
+    public function clearDependentCache($additionalTags = array()) {
         try {
-            Pimcore_Model_Cache::clearTags(array("object_" . $this->getId(), "properties", "output"));
+            $tags = array("object_" . $this->getId(), "properties", "output");
+            $tags = array_merge($tags, $additionalTags);
+
+            Pimcore_Model_Cache::clearTags($tags);
         }
         catch (Exception $e) {
             Logger::crit($e);
