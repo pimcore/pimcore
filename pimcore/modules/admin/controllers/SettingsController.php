@@ -119,11 +119,13 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $locales = Pimcore_Tool::getSupportedLocales();
         $languageOptions = array();
         foreach ($locales as $short => $translation) {
-            $languageOptions[] = array(
-                "language" => $short,
-                "display" => $translation . " ($short)"
-            );
-            $validLanguages[] = $short;
+            if(!empty($short)) {
+                $languageOptions[] = array(
+                    "language" => $short,
+                    "display" => $translation . " ($short)"
+                );
+                $validLanguages[] = $short;
+            }
         }
 
         $valueArray = $values->toArray();
