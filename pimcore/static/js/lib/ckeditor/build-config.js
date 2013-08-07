@@ -53,7 +53,8 @@ var CKBUILDER_CONFIG = {
 		'iframe' : 1,
 		'wysiwygarea' : 1,
 		'image' : 1,
-		'indent' : 1,
+		'indentblock' : 1,
+		'indentlist' : 1,
 		'smiley' : 1,
 		'justify' : 1,
 		'link' : 1,
@@ -92,6 +93,7 @@ var CKBUILDER_CONFIG = {
 		'fakeobjects' : 1,
 		'richcombo' : 1,
 		'listblock' : 1,
+		'indent' : 1,
 		'menubutton' : 1
 	},
 	languages : {
@@ -128,6 +130,7 @@ var CKBUILDER_CONFIG = {
 		'hi' : 1,
 		'hu' : 1,
 		'is' : 1,
+		'id' : 1,
 		'it' : 1,
 		'ja' : 1,
 		'km' : 1,
@@ -148,6 +151,7 @@ var CKBUILDER_CONFIG = {
 		'ru' : 1,
 		'sr' : 1,
 		'sr-latn' : 1,
+		'si' : 1,
 		'sk' : 1,
 		'sl' : 1,
 		'es' : 1,
