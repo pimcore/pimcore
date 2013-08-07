@@ -461,9 +461,10 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             $this->update();
 
             // if the old path is different from the new path, update all children
+            $updatedChildren = array();
             if($oldPath && $oldPath != $this->getFullPath()) {
                 @rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath());
-                $this->getResource()->updateChildsPaths($oldPath);
+                $updatedChildren = $this->getResource()->updateChildsPaths($oldPath);
             }
 
             $this->commit();
@@ -479,7 +480,14 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             Pimcore_API_Plugin_Broker::getInstance()->postAddAsset($this);
         }
 
-        $this->clearDependentCache();
+
+        $additionalTags = array();
+        foreach ($updatedChildren as $assetId) {
+            $additionalTags[] = "asset_" . $assetId;
+        }
+        $this->clearDependentCache($additionalTags);
+
+        return $this;
     }
 
     public function correctPath() {
@@ -777,9 +785,12 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         Pimcore_API_Plugin_Broker::getInstance()->postDeleteAsset($this);
     }
 
-    public function clearDependentCache() {
+    public function clearDependentCache($additionalTags = array()) {
         try {
-            Pimcore_Model_Cache::clearTags(array("asset_" . $this->getId(), "properties", "output"));
+            $tags = array("asset_" . $this->getId(), "properties", "output");
+            $tags = array_merge($tags, $additionalTags);
+
+            Pimcore_Model_Cache::clearTags($tags);
         }
         catch (Exception $e) {
             Logger::crit($e);

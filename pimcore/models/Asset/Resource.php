@@ -154,7 +154,7 @@ class Asset_Resource extends Element_Resource {
 
     public function updateChildsPaths($oldPath) {
         //get assets to empty their cache
-        $assets = $this->db->fetchAll("SELECT id,path FROM assets WHERE path LIKE " . $this->db->quote($oldPath . "%"));
+        $assets = $this->db->fetchCol("SELECT id FROM assets WHERE path LIKE " . $this->db->quote($oldPath . "%"));
 
         $userId = "0";
         if($user = Pimcore_Tool_Admin::getCurrentUser()) {
@@ -171,15 +171,7 @@ class Asset_Resource extends Element_Resource {
         $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
 
-        foreach ($assets as $asset) {
-            // empty assets cache
-            try {
-                Pimcore_Model_Cache::clearTag("asset_" . $asset["id"]);
-            }
-            catch (Exception $e) {
-            }
-        }
-
+        return $assets;
     }
 
     /**
