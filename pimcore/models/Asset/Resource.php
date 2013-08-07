@@ -154,7 +154,7 @@ class Asset_Resource extends Element_Resource {
 
     public function updateChildsPaths($oldPath) {
         //get assets to empty their cache
-        $assets = $this->db->fetchCol("SELECT id FROM assets WHERE path LIKE " . $this->db->quote($oldPath . "%"));
+        $assets = (array) $this->db->fetchCol("SELECT id FROM assets WHERE path LIKE " . $this->db->quote($oldPath . "%"));
 
         $userId = "0";
         if($user = Pimcore_Tool_Admin::getCurrentUser()) {
