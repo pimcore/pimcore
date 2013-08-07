@@ -66,13 +66,13 @@ class Pimcore_Google_Api {
         $config = self::getConfig();
         self::loadClientLibrary();
 
-        $client = new apiClient(array(
+        $client = new Google_Client(array(
             "ioFileCache_directory" => PIMCORE_CACHE_DIRECTORY
         ));
         $client->setApplicationName("pimcore CMF");
 
         $key = file_get_contents(self::getPrivateKeyPath());
-        $client->setAssertionCredentials(new apiAssertionCredentials(
+        $client->setAssertionCredentials(new Google_AssertionCredentials(
             $config->email,
             array('https://www.googleapis.com/auth/analytics.readonly',"https://www.google.com/webmasters/tools/feeds/"),
             $key)
@@ -108,7 +108,7 @@ class Pimcore_Google_Api {
 
         self::loadClientLibrary();
 
-        $client = new apiClient(array(
+        $client = new Google_Client(array(
             "ioFileCache_directory" => PIMCORE_CACHE_DIRECTORY
         ));
         $client->setApplicationName("pimcore CMF");
@@ -123,9 +123,9 @@ class Pimcore_Google_Api {
      * @static
      */
     private static function loadClientLibrary() {
-        include_once("googleApiClient/apiClient.php");
-        include_once("googleApiClient/contrib/apiAnalyticsService.php");
-        include_once("googleApiClient/contrib/apiSiteVerificationService.php");
-        include_once("googleApiClient/contrib/apiCustomsearchService.php");
+        include_once("googleApiClient/Google_Client.php");
+        include_once("googleApiClient/contrib/Google_AnalyticsService.php");
+        include_once("googleApiClient/contrib/Google_SiteVerificationService.php");
+        include_once("googleApiClient/contrib/Google_CustomsearchService.php");
     }
 }

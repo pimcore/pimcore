@@ -49,7 +49,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
 
 
         if($client) {
-            $search = new apiCustomsearchService($client);
+            $search = new Google_CustomsearchService($client);
 
             // determine language
             $language = "";
