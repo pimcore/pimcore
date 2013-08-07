@@ -121,7 +121,15 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
      */
     public function save ($user=null) {
 
+        $loadChildren = true;
 
+        if($this->getElement() instanceof Asset_Folder) {
+            $size = foldersize($this->getElement()->getFileSystemPath());
+            $limit = filesize2bytes(ini_get("memory_limit") . "B") / 2;
+            if($size > $limit) {
+                $loadChildren = false; // do not load children, it's simply too big
+            }
+        }
 
         if($this->getElement() instanceof Element_Interface) {
             $this->setType(Element_Service::getElementType($this->getElement()));
@@ -130,7 +138,11 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         $this->setSubtype($this->getElement()->getType());
         $this->setPath($this->getElement()->getFullPath());
         $this->setDate(time());
-        $this->loadChilds($this->getElement());
+
+        if($loadChildren) {
+            $this->loadChilds($this->getElement());
+        }
+
         if($user instanceof User){
             $this->setDeletedby($user->getName());
         }
