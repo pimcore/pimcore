@@ -148,7 +148,7 @@ class Object_Abstract_Resource extends Element_Resource {
 
         if($this->hasChilds()) {
             //get objects to empty their cache
-            $objects = (array) $this->db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", $oldPath . "%");
+            $objects = $this->db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", $oldPath . "%");
 
             $userId = "0";
             if($user = Pimcore_Tool_Admin::getCurrentUser()) {

@@ -398,8 +398,10 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         }
 
         $additionalTags = array();
-        foreach ($updatedChildren as $documentId) {
-            $additionalTags[] = "document_" . $documentId;
+        if(isset($updatedChildren) && is_array($updatedChildren)) {
+            foreach ($updatedChildren as $documentId) {
+                $additionalTags[] = "document_" . $documentId;
+            }
         }
         $this->clearDependentCache($additionalTags);
 

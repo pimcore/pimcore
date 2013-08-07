@@ -618,8 +618,10 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         }
 
         $additionalTags = array();
-        foreach ($updatedChildren as $objectId) {
-            $additionalTags[] = "object_" . $objectId;
+        if(isset($updatedChildren) && is_array($updatedChildren)) {
+            foreach ($updatedChildren as $objectId) {
+                $additionalTags[] = "object_" . $objectId;
+            }
         }
         $this->clearDependentCache($additionalTags);
 
