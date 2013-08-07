@@ -482,8 +482,10 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
 
         $additionalTags = array();
-        foreach ($updatedChildren as $assetId) {
-            $additionalTags[] = "asset_" . $assetId;
+        if(isset($updatedChildren) && is_array($updatedChildren)) {
+            foreach ($updatedChildren as $assetId) {
+                $additionalTags[] = "asset_" . $assetId;
+            }
         }
         $this->clearDependentCache($additionalTags);
 
