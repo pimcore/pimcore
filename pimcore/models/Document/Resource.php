@@ -170,7 +170,7 @@ class Document_Resource extends Element_Resource {
 
     public function updateChildsPaths($oldPath) {
         //get documents to empty their cache
-        $documents = $this->db->fetchCol("SELECT id FROM documents WHERE path LIKE ?", $oldPath . "%");
+        $documents = (array) $this->db->fetchCol("SELECT id FROM documents WHERE path LIKE ?", $oldPath . "%");
 
         $userId = "0";
         if($user = Pimcore_Tool_Admin::getCurrentUser()) {
