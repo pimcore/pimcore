@@ -112,7 +112,7 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
                         $value = (int) $value;
                     }
                     if(is_array($value) || is_object($value)) {
-                        $value = serialize($value);
+                        $value = Pimcore_Tool_Serialize::serialize($value);
                     }
 
                     $data[$key] = $value;
