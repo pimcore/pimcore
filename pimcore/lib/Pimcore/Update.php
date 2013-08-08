@@ -167,12 +167,12 @@ class Pimcore_Update {
         
         $downloadDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision;
         if(!is_dir($downloadDir)) {
-            mkdir($downloadDir,0755,true);
+            @mkdir($downloadDir,0755,true);
         }
         
         $filesDir = $downloadDir . "/files";
         if(!is_dir($filesDir)) {
-            mkdir($filesDir,0755,true);
+            @mkdir($filesDir,0755,true);
         }
         
         $scriptsDir = $downloadDir . "/scripts";
