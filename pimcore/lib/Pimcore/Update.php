@@ -177,7 +177,7 @@ class Pimcore_Update {
         
         $scriptsDir = $downloadDir . "/scripts";
         if(!is_dir($scriptsDir)) {
-            mkdir($scriptsDir,0755,true);
+            @mkdir($scriptsDir,0755,true);
         }
         
         
