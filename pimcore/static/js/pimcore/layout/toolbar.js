@@ -158,6 +158,10 @@ pimcore.layout.toolbar = Class.create({
                         text: "XLIFF " + t("export") + "/" + t("import"),
                         iconCls: "pimcore_icon_translations",
                         handler: this.xliffImportExport
+                    }, {
+                        text: "MS Word " + t("export"),
+                        iconCls: "pimcore_icon_translations",
+                        handler: this.wordExport
                     }]
                 }
             });
@@ -1355,6 +1359,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("xliff", new pimcore.settings.translation.xliff());
+        }
+    },
+
+    wordExport: function () {
+        try {
+            pimcore.globalmanager.get("word").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("word", new pimcore.settings.translation.word());
         }
     },
 

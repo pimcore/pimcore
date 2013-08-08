@@ -12,41 +12,39 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.settings.translation.xliff");
-pimcore.settings.translation.xliff = Class.create({
+pimcore.registerNS("pimcore.settings.translation.word");
+pimcore.settings.translation.word = Class.create({
 
     initialize: function () {
-
         this.getTabPanel();
-
     },
 
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_xliff");
+        tabPanel.activate("pimcore_word");
     },
 
     getTabPanel: function () {
 
         if (!this.panel) {
             this.panel = new Ext.Panel({
-                id: "pimcore_xliff",
-                title: "XLIFF " + t("export") + "/" + t("import"),
+                id: "pimcore_word",
+                title: "MS Word " + t("export"),
                 iconCls: "pimcore_icon_translations",
                 border: false,
-                layout: "border",
+                layout: "fit",
                 closable:true,
-                items: [this.getExportPanel(), this.getImportPanel()]
+                items: [this.getExportPanel()]
             });
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
-            tabPanel.activate("pimcore_xliff");
+            tabPanel.activate("pimcore_word");
 
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("xliff");
+                pimcore.globalmanager.remove("word");
             }.bind(this));
 
             pimcore.layout.refresh();
@@ -193,39 +191,21 @@ pimcore.settings.translation.xliff = Class.create({
             listWidth: 200
         });
 
-        this.exportTargetLanguageSelector = new Ext.form.ComboBox({
-            fieldLabel: t("target"),
-            name: "target",
-            store: languagestore,
-            editable: false,
-            triggerAction: 'all',
-            mode: "local",
-            listWidth: 200
-        });
-
         this.exportPanel = new Ext.Panel({
             title: t("export"),
             autoScroll: true,
             region: "center",
             bodyStyle: "padding: 10px",
             items: [{
-                html: '<div style="font: 12px tahoma,arial,helvetica; padding: 10px;">' + t("xliff_export_notice") + '</div>',
-                style: "margin-bottom: 10px"
-            }, {
-                title: t("important_notice") + " (" + t("documents") + ")",
-                html: '<div style="font: 12px tahoma,arial,helvetica; padding: 10px;">' + t("xliff_export_documents") + '</div>',
+                title: t("important_notice"),
+                html: '<div style="font: 12px tahoma,arial,helvetica; padding: 10px;">' + t("word_export_notice") + '</div>',
                 style: "margin-bottom: 10px",
                 iconCls: "pimcore_icon_document"
-            }, {
-                title: t("important_notice") + " (" + t("objects") + ")",
-                html: '<div style="font: 12px tahoma,arial,helvetica; padding: 10px;">' + t("xliff_export_objects") + '</div>',
-                style: "margin-bottom: 10px",
-                iconCls: "pimcore_icon_object"
             }, this.component, {
                 xtype: "form",
                 title: t("language"),
                 bodyStyle: "padding: 10px",
-                items: [this.exportSourceLanguageSelector, this.exportTargetLanguageSelector],
+                items: [this.exportSourceLanguageSelector],
                 style: "margin-bottom: 10px"
             }],
             buttons: [{
@@ -254,9 +234,8 @@ pimcore.settings.translation.xliff = Class.create({
             url: "/admin/misc/translate-export-jobs",
             params: {
                 source: this.exportSourceLanguageSelector.getValue(),
-                target: this.exportTargetLanguageSelector.getValue(),
                 data: Ext.encode(tmData),
-                type: "xliff"
+                type: "word"
             },
             success: function(response) {
                 var res = Ext.decode(response.responseText);
@@ -288,7 +267,7 @@ pimcore.settings.translation.xliff = Class.create({
                         this.exportProgressbar = null;
                         this.exportProgressWin = null;
 
-                        pimcore.helpers.download('/admin/misc/xliff-export-download/?id='+ id);
+                        pimcore.helpers.download('/admin/misc/word-export-download/?id='+ id);
                     }.bind(this, res.id),
                     update: function (currentStep, steps, percent) {
                         if(this.exportProgressbar) {
@@ -305,70 +284,5 @@ pimcore.settings.translation.xliff = Class.create({
                 });
             }.bind(this)
         });
-    },
-
-    getImportPanel: function () {
-        this.importPanel = new Ext.Panel({
-            title: t("import"),
-            region: "east",
-            width: 300,
-            html: '<div style="font: 12px tahoma,arial,helvetica; padding: 10px;">' + t("xliff_import_notice") + '</div>',
-            buttons: [{
-                text: t("select_a_file") + " (.xlf / .xliff)",
-                iconCls: "pimcore_icon_newfile",
-                handler: function () {
-                    pimcore.helpers.uploadDialog('/admin/misc/xliff-import-upload', "file", function(res) {
-
-                        var res = Ext.decode(res["response"]["responseText"]);
-
-                        this.importProgressbar = new Ext.ProgressBar({
-                            text: t('initializing')
-                        });
-
-                        this.importProgressWin = new Ext.Window({
-                            title: t("import"),
-                            layout:'fit',
-                            width:500,
-                            bodyStyle: "padding: 10px;",
-                            closable:false,
-                            plain: true,
-                            modal: true,
-                            items: [this.importProgressbar]
-                        });
-
-                        this.importProgressWin.show();
-
-
-                        var pj = new pimcore.tool.paralleljobs({
-                            success: function (id) {
-                                if(this.importProgressWin) {
-                                    this.importProgressWin.close();
-                                }
-
-                                this.importProgressbar = null;
-                                this.importProgressWin = null;
-                            }.bind(this, res.id),
-                            update: function (currentStep, steps, percent) {
-                                if(this.importProgressbar) {
-                                    var status = currentStep / steps;
-                                    this.importProgressbar.updateProgress(status, percent + "%");
-                                }
-                            }.bind(this),
-                            failure: function (message) {
-                                this.importProgressWin.close();
-                                pimcore.helpers.showNotification(t("error"), t("error"),
-                                    "error", t(message));
-                            }.bind(this),
-                            jobs: res.jobs
-                        });
-
-                    }.bind(this), function () {
-                        Ext.MessageBox.alert(t("error"), t("error"));
-                    });
-                }.bind(this)
-            }]
-        });
-
-        return this.importPanel;
     }
 });
