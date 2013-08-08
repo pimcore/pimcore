@@ -539,11 +539,11 @@
 
 
     try {
-        if(!user["location"] && google && google.loader && google.loader.ClientLocation) {
+        if(!user["location"] && window["pimcore"] && pimcore["location"] && pimcore["location"]["latitude"]) {
             user["location"] = {
-                latitude: google.loader.ClientLocation.latitude,
-                longitude: google.loader.ClientLocation.longitude,
-                country: google.loader.ClientLocation.address.country_code
+                latitude: pimcore["location"]["latitude"],
+                longitude: pimcore["location"]["longitude"],
+                country: pimcore["location"]["country"]["code"]
             };
         }
     } catch (e5) {
@@ -684,6 +684,34 @@
     }
 
     try {
+        if(!user["persona"] && user["personas"] && user["personas"].length > 0) {
+            var personaMatches = {};
+            for(var pc=0; pc<user["personas"].length; pc++) {
+                if(!personaMatches[user["personas"][pc]]) {
+                    personaMatches[user["personas"][pc]] = 0;
+                }
+
+                personaMatches[user["personas"][pc]]++;
+            }
+
+            var personaMatchesKeys = util.array_keys(personaMatches);
+            var personaMatchesLastAmount = 0;
+            for(pc=0; pc<personaMatchesKeys.length; pc++) {
+                if(personaMatches[personaMatchesKeys[pc]] > personaMatchesLastAmount) {
+                    pageVariantMatch = personaMatchesKeys[pc];
+                    personaMatchesLastAmount = personaMatches[personaMatchesKeys[pc]];
+                }
+            }
+
+            if(pageVariantMatch) {
+                user["persona"] = pageVariantMatch;
+            }
+        }
+    } catch (e16) {
+
+    }
+
+    try {
         if(!user["persona"]) {
             var personas = pimcore.targeting["personas"];
             var prevConditionCount = 0;
@@ -776,5 +804,6 @@
         }
     }
 
-})();
+    window.pimcore["targeting"]["user"] = user;
 
+})();

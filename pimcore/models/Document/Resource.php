@@ -170,7 +170,7 @@ class Document_Resource extends Element_Resource {
 
     public function updateChildsPaths($oldPath) {
         //get documents to empty their cache
-        $documents = $this->db->fetchAll("SELECT id,path FROM documents WHERE path LIKE ?", $oldPath . "%");
+        $documents = $this->db->fetchCol("SELECT id FROM documents WHERE path LIKE ?", $oldPath . "%");
 
         $userId = "0";
         if($user = Pimcore_Tool_Admin::getCurrentUser()) {
@@ -187,15 +187,7 @@ class Document_Resource extends Element_Resource {
         $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getRealFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%" ) . ";");
 
 
-        foreach ($documents as $document) {
-            // empty documents cache
-            try {
-                Pimcore_Model_Cache::clearTag("document_" . $document["id"]);
-            }
-            catch (Exception $e) {
-            }
-        }
-
+        return $documents;
     }
 
     /**

@@ -14,6 +14,27 @@
  */
 
 
+function foldersize($path) {
+    $total_size = 0;
+    $files = scandir($path);
+    $cleanPath = rtrim($path, '/'). '/';
+
+    foreach($files as $t) {
+        if ($t<>"." && $t<>"..") {
+            $currentFile = $cleanPath . $t;
+            if (is_dir($currentFile)) {
+                $size = foldersize($currentFile);
+                $total_size += $size;
+            }
+            else {
+                $size = filesize($currentFile);
+                $total_size += $size;
+            }
+        }
+    }
+
+    return $total_size;
+}
 
 function replace_pcre_backreferences($string, $values) {
 
@@ -320,4 +341,15 @@ function wrapArrayElements($array,$prefix = "'",$suffix = "'"){
         $array[$key] = $prefix . trim($value). $suffix;
     }
     return $array;
+}
+
+/**
+ * Checks if an array is associative
+ *
+ * @param array $arr
+ * @return bool
+ */
+function isAssocArray(array $arr)
+{
+    return array_keys($arr) !== range(0, count($arr) - 1);
 }

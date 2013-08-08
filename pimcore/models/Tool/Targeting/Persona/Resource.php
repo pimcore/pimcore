@@ -48,8 +48,8 @@ class Tool_Targeting_Persona_Resource extends Pimcore_Model_Resource_Abstract {
         $data = $this->db->fetchRow("SELECT * FROM targeting_personas WHERE id = ?", $this->model->getId());
 
         if($data["id"]) {
-            $data["conditions"] = unserialize($data["conditions"]);
-            $data["actions"] = unserialize($data["actions"]);
+            $data["conditions"] = Pimcore_Tool_Serialize::unserialize($data["conditions"]);
+            $data["actions"] = Pimcore_Tool_Serialize::unserialize($data["actions"]);
             $this->assignVariablesToModel($data);
         } else {
             throw new Exception("persona with id " . $this->model->getId() . " doesn't exist");
@@ -90,7 +90,7 @@ class Tool_Targeting_Persona_Resource extends Pimcore_Model_Resource_Abstract {
             foreach ($type as $key => $value) {
                 if (in_array($key, $this->validColumns)) {
                     if(is_array($value) || is_object($value)) {
-                        $value = serialize($value);
+                        $value = Pimcore_Tool_Serialize::serialize($value);
                     }
                     $data[$key] = $value;
                 }

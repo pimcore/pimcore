@@ -515,7 +515,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         } else if ($asset->getType() == "document") {
             try {
                 // add the PDF check here, otherwise the preview layer in admin is shown without content
-                if(Pimcore_Document::isAvailable() && preg_match("/\.pdf$/", $asset->getFilename())) {
+                if(Pimcore_Document::isAvailable() && Pimcore_Document::isFileTypeSupported($asset->getFilename())) {
                     $tmpAsset["thumbnail"] = $this->getThumbnailUrl($asset);
                 }
             } catch (Exception $e) {
@@ -1043,8 +1043,11 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $transactionId = time();
         $pasteJobs = array();
-        $session = new Zend_Session_Namespace("pimcore_copy");
-        $session->$transactionId = array();
+
+        Pimcore_Tool_Session::useSession(function ($session) use ($transactionId) {
+            $session->$transactionId = array();
+        }, "pimcore_copy");
+
 
         if ($this->getParam("type") == "recursive") {
 
@@ -1110,7 +1113,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $success = false;
         $sourceId = intval($this->getParam("sourceId"));
         $source = Asset::getById($sourceId);
-        $session = new Zend_Session_Namespace("pimcore_copy");
+        $session = Pimcore_Tool_Session::get("pimcore_copy");
 
         $targetId = intval($this->getParam("targetId"));
         if($this->getParam("targetParentId")) {
@@ -1153,6 +1156,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             Logger::error("could not execute copy/paste because of missing permissions on target [ ".$targetId." ]");
             $this->_helper->json(array("error" => false, "message" => "missing_permission"));
         }
+
+        Pimcore_Tool_Session::writeClose();
 
         $this->_helper->json(array("success" => $success));
     }

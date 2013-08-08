@@ -60,12 +60,6 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
 
             $snippet->setUserModification($this->getUser()->getId());
 
-            // save to session
-            $key = "document_" . $this->getParam("id");
-            $session = new Zend_Session_Namespace("pimcore_documents");
-            $session->$key = $snippet;
-
-
             if ($this->getParam("task") == "unpublish") {
                 $snippet->setPublished(false);
             }
@@ -79,6 +73,7 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
 
                 try {
                     $snippet->save();
+                    $this->saveToSession($snippet);
                     $this->_helper->json(array("success" => true));
                 } catch (Exception $e) {
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
@@ -92,6 +87,7 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
 
                     try {
                         $snippet->saveVersion();
+                        $this->saveToSession($snippet);
                         $this->_helper->json(array("success" => true));
                     } catch (Exception $e) {
                         $this->_helper->json(array("success" => false, "message" => $e->getMessage()));

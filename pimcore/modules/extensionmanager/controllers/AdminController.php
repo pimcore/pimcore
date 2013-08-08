@@ -47,7 +47,8 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
                     "installed" => $isEnabled ? $className::isInstalled() : null,
                     "active" => $isEnabled,
                     "configuration" => $config["plugin"]["pluginIframeSrc"],
-                    "updateable" => $updateable
+                    "updateable" => $updateable,
+                    "version" => $config["plugin"]["pluginVersion"]  // NEU http://www.pimcore.org/issues/browse/PIMCORE-1947
                 );
 
                 if($config["plugin"]["pluginXmlEditorFile"] && is_readable(PIMCORE_DOCUMENT_ROOT . $config["plugin"]["pluginXmlEditorFile"])){

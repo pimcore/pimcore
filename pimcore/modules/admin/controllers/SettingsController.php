@@ -119,11 +119,13 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $locales = Pimcore_Tool::getSupportedLocales();
         $languageOptions = array();
         foreach ($locales as $short => $translation) {
-            $languageOptions[] = array(
-                "language" => $short,
-                "display" => $translation . " ($short)"
-            );
-            $validLanguages[] = $short;
+            if(!empty($short)) {
+                $languageOptions[] = array(
+                    "language" => $short,
+                    "display" => $translation . " ($short)"
+                );
+                $validLanguages[] = $short;
+            }
         }
 
         $valueArray = $values->toArray();
@@ -241,7 +243,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "fallbackLanguages" => $fallbackLanguages,
                 "theme" => $values["general.theme"],
                 "contactemail" => $values["general.contactemail"],
-                "loginscreenimageservice" => $values["general.loginscreenimageservice"],
                 "loginscreencustomimage" => $values["general.loginscreencustomimage"],
                 "disableusagestatistics" => $values["general.disableusagestatistics"],
                 "debug" => $values["general.debug"],
@@ -321,12 +322,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "excludeCookie" => $values["cache.excludeCookie"]
             ),
             "outputfilters" => array(
-                "imagedatauri" => $values["outputfilters.imagedatauri"],
                 "less" => $values["outputfilters.less"],
-                "lesscpath" => $values["outputfilters.lesscpath"],
-                "cssminify" => $values["outputfilters.cssminify"],
-                "javascriptminify" => $values["outputfilters.javascriptminify"],
-                "javascriptminifyalgorithm" => $values["outputfilters.javascriptminifyalgorithm"]
+                "lesscpath" => $values["outputfilters.lesscpath"]
             ),
             "email" => array(
                 "sender" => array(
@@ -565,6 +562,12 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $list->setOrder("asc");
         $list->setOrderKey("key");
+
+        if ($this->getParam("filter")) {
+            $filterTerm = $list->quote("%".mb_strtolower($this->getParam("filter"))."%");
+            $list->setCondition("lower(`key`) LIKE " . $filterTerm . " OR lower(`text`) LIKE " . $filterTerm);
+        }
+
         $list->load();
 
         $translations = array();

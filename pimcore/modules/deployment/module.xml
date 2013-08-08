@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+    <module>
+        <moduleName>Deployment</moduleName>
+        <moduleDescription>Deployment Module</moduleDescription>
+
+        <!-- js files with path relative to root-directory -->
+        <moduleJsPaths>
+            <path>/pimcore/modules/deployment/static/js/pimcore/deployment/admin.js</path>
+            <path>/pimcore/modules/deployment/static/js/pimcore/deployment/packages.js</path>
+        </moduleJsPaths>
+
+        <!-- css files with path relative to root-directory -->
+        <moduleCssPaths>
+            <path>/plugins/Example/static/css/example.css</path>
+        </moduleCssPaths>
+    </module>
+</zend-config>

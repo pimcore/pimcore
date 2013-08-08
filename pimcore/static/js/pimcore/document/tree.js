@@ -803,7 +803,17 @@ pimcore.document.tree = Class.create({
     },
 
     addDocument : function (type, docTypeId) {
-        Ext.MessageBox.prompt(t('add_document'), t('please_enter_the_name_of_the_new_document'),
+        var textKeyTitle;
+        var textKeyMessage;
+        if (type == "folder") {
+            textKeyTitle = "add_folder"
+            textKeyMessage = "please_enter_the_name_of_the_new_folder";
+        } else {
+            textKeyTitle = "add_document";
+            textKeyMessage = "please_enter_the_name_of_the_new_document";
+        }
+
+        Ext.MessageBox.prompt(t(textKeyTitle), t(textKeyMessage),
                             this.attributes.reference.addDocumentCreate.bind(this, type, docTypeId));
     },
 

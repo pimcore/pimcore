@@ -65,6 +65,12 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        fileItems.push({
+            text: t('element_history'),
+            iconCls: "pimcore_icon_tab_schedule",
+            cls: "pimcore_main_menu",
+            handler: this.showElementHistory.bind(this)
+        });
 
         if (user.isAllowed("seemode")) {
             fileItems.push({
@@ -152,6 +158,10 @@ pimcore.layout.toolbar = Class.create({
                         text: "XLIFF " + t("export") + "/" + t("import"),
                         iconCls: "pimcore_icon_translations",
                         handler: this.xliffImportExport
+                    }, {
+                        text: "MS Word " + t("export"),
+                        iconCls: "pimcore_icon_translations",
+                        handler: this.wordExport
                     }]
                 }
             });
@@ -603,15 +613,50 @@ pimcore.layout.toolbar = Class.create({
         }
 
 
+        // search menu
+
+        var searchItems = [];
+        var searchAction = function (type) {
+            pimcore.helpers.itemselector(false, function (selection) {
+                pimcore.helpers.openElement(selection.id,selection.type, selection.subtype);
+            }, {type: [type]}, {moveToTab: true} );
+        };
+
+        if (user.isAllowed("documents")) {
+            searchItems.push({
+                text: t("document"),
+                iconCls: "pimcore_icon_document",
+                handler: searchAction.bind(this, "document")
+            });
+        }
+
+        if (user.isAllowed("assets")) {
+            searchItems.push({
+                text: t("assets"),
+                iconCls: "pimcore_icon_asset",
+                handler: searchAction.bind(this, "asset")
+            });
+        }
+
+        if (user.isAllowed("objects")) {
+            searchItems.push({
+                text: t("objects"),
+                iconCls: "pimcore_icon_object",
+                handler: searchAction.bind(this, "object")
+            });
+        }
+
+        this.searchMenu = new Ext.menu.Menu({
+            items: searchItems,
+            cls: "pimcore_navigation_flyout"
+        });
+
+
         Ext.get("pimcore_menu_file").on("mousedown", this.showSubMenu.bind(this.fileMenu));
         Ext.get("pimcore_menu_extras").on("mousedown", this.showSubMenu.bind(this.extrasMenu));
         Ext.get("pimcore_menu_marketing").on("mousedown", this.showSubMenu.bind(this.marketingMenu));
         Ext.get("pimcore_menu_settings").on("mousedown", this.showSubMenu.bind(this.settingsMenu));
-        Ext.get("pimcore_menu_search").on("mousedown", function () {
-            pimcore.helpers.itemselector(false, function (selection) {
-                pimcore.helpers.openElement(selection.id,selection.type, selection.subtype);
-            }, null, {moveToTab: true} );
-        });
+        Ext.get("pimcore_menu_search").on("mousedown", this.showSubMenu.bind(this.searchMenu));
         Ext.get("pimcore_menu_logout").on("click", this.logout);
 
         Ext.each(Ext.query(".pimcore_menu_item"), function (el) {
@@ -1317,6 +1362,15 @@ pimcore.layout.toolbar = Class.create({
         }
     },
 
+    wordExport: function () {
+        try {
+            pimcore.globalmanager.get("word").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("word", new pimcore.settings.translation.word());
+        }
+    },
+
     showPhpInfo: function () {
 
         var id = "phpinfo";
@@ -1371,7 +1425,15 @@ pimcore.layout.toolbar = Class.create({
                             "/pimcore/modules/3rdparty/adminer/index.php", "pimcore_icon_mysql", "Database Admin"));
         }
 
-    }
+    },
 
+    showElementHistory: function() {
+        try {
+            pimcore.globalmanager.get("element_history").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("element_history", new pimcore.element.history());
+        }
+    }
 
 });

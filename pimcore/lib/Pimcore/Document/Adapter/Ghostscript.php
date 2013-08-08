@@ -38,6 +38,20 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
     }
 
     /**
+     * @param string $fileType
+     * @return bool
+     */
+    public function isFileTypeSupported($fileType) {
+
+        // it's also possible to pass a path or filename
+        if(preg_match("/\.?pdf$/", $fileType)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @static
      * @return string
      */
@@ -77,7 +91,7 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
         // avoid timeouts
         set_time_limit(250);
 
-        if(!preg_match("/\.pdf$/", $path)) {
+        if(!$this->isFileTypeSupported($path)) {
             $message = "Couldn't load document " . $path . " only PDF documents are currently supported";
             Logger::error($message);
             throw new \Exception($message);

@@ -107,7 +107,7 @@ class Object_KeyValue_TranslatorConfig_Resource extends Pimcore_Model_Resource_A
                         $value = (int) $value;
                     }
                     if(is_array($value) || is_object($value)) {
-                        $value = serialize($value);
+                        $value = Pimcore_Tool_Serialize::serialize($value);
                     }
 
                     $data[$key] = $value;

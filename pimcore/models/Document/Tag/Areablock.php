@@ -461,7 +461,7 @@ class Document_Tag_Areablock extends Document_Tag {
                 $d = (string) $areaConfig->description;
                 $icon = (string) $areaConfig->icon;
 
-                if(Pimcore::inAdmin()) {
+                if($this->view->editmode) {
                     if(empty($icon)) {
                         $path = Pimcore_ExtensionManager::getPathForExtension($areaName,"brick");
                         $iconPath = $path . "/icon.png";

@@ -15,6 +15,51 @@
 
 class Pimcore_API_Module_Abstract extends Pimcore_API_Abstract {
 
+    protected $config;
+
+    public function __construct(){
+        $this->setConfig();
+    }
+
+    public function setConfig(){
+        if(is_null($this->config)){
+            $reflector = new ReflectionClass(get_class($this));
+            $fn = $reflector->getFileName();
+            $path = dirname(dirname(dirname($fn))) . '/module.xml';
+            if(is_readable($path)){
+                $config = new Zend_Config_Xml($path);
+                $this->config = $config;
+            }
+        }else{
+            $this->config = false;
+        }
+    }
+
+    public function getConfig(){
+        return $this->config;
+    }
+
+    public function getJsPaths(){
+        if($config = $this->getConfig()){
+            $config = $config->toArray();
+            if($config['module']['moduleJsPaths']){
+                return (array)$config['module']['moduleJsPaths']['path'];
+            }
+        }
+        return array();
+    }
+
+    public function getCssPaths(){
+        if($config = $this->getConfig()){
+            $config = $config->toArray();
+            if($config['module']['moduleCssPaths']){
+                return (array)$config['module']['moduleJsPaths']['path'];
+            }
+        }
+        return array();
+    }
+
+
     /**
      *
      * Hook called before a key/value key config was added
@@ -138,6 +183,14 @@ class Pimcore_API_Module_Abstract extends Pimcore_API_Abstract {
     public function postUpdateKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
     {
 
+    }
+
+    /**
+     * Check if module is installed
+     */
+
+    public function isInstalled(){
+        return true;
     }
 
 }

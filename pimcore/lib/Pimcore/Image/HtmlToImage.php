@@ -76,6 +76,10 @@ class Pimcore_Image_HtmlToImage {
      */
     public static function convert($url, $outputFile, $screenWidth = 1200, $format = "png") {
 
+        // add parameter pimcore_preview to prevent inclusion of google analytics code
+        $url .= (strpos($url, "?") ? "&" : "?") . "pimcore_preview=true";
+
+
         // use xvfb if possible
         if($xvfb = self::getXvfbBinary()) {
             Pimcore_Tool_Console::exec($xvfb . " --auto-servernum --server-args=\"-screen 0, 1280x1024x24\" " .

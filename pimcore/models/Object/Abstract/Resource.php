@@ -148,7 +148,7 @@ class Object_Abstract_Resource extends Element_Resource {
 
         if($this->hasChilds()) {
             //get objects to empty their cache
-            $objects = $this->db->fetchAll("SELECT o_id,o_path FROM objects WHERE o_path LIKE ?", $oldPath . "%");
+            $objects = $this->db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", $oldPath . "%");
 
             $userId = "0";
             if($user = Pimcore_Tool_Admin::getCurrentUser()) {
@@ -165,14 +165,7 @@ class Object_Abstract_Resource extends Element_Resource {
             $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
 
-            foreach ($objects as $object) {
-                // empty object cache
-                try {
-                    Pimcore_Model_Cache::clearTag("object_" . $object["o_id"]);
-                }
-                catch (Exception $e) {
-                }
-            }
+            return $objects;
         }
     }
 

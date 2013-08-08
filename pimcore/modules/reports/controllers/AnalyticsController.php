@@ -28,7 +28,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
             die("Google Analytics is not configured");
         }
 
-        $this->service = new apiAnalyticsService($client);
+        $this->service = new Google_AnalyticsService($client);
     }
 
     public function deeplinkAction () {
@@ -297,7 +297,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
 
         $data = array();
         
-		foreach($result["rows"] as $row){
+		foreach((array) $result["rows"] as $row){
             $data[] = array(
                 "pageviews" => $row[1],
                 "source" => $row[0]
@@ -423,7 +423,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
             $opts
         );
 
-        $totalViews = (int) $result0["totalsForAllResults"]["ga:pageviews"];
+        $totalViews = (int) $result0["totalsForAllResults"]["ga:pageViews"];
        
        
         // ENTRANCES

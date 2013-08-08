@@ -1,6 +1,6 @@
 ﻿/**
  * @license Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
- * For licensing, see LICENSE.html or http://ckeditor.com/license
+ * For licensing, see LICENSE.md or http://ckeditor.com/license
  */
 
 /**
@@ -38,12 +38,12 @@
 	// @returns {Number} New height if has been changed, or the passed `lastHeight`.
 	var resizeEditor = function( editor, lastHeight ) {
 		if ( !editor.window )
-			return;
+			return null;
 
 		var maximize = editor.getCommand( 'maximize' );
 			// Disable autogrow when the editor is maximized .(#6339)
 		if( maximize && maximize.state == CKEDITOR.TRISTATE_ON )
-			return;
+			return null;
 
 		var scrollable = getScrollable( editor ),
 			currentHeight = editor.window.getViewPaneSize().height,

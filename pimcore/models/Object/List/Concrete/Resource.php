@@ -182,7 +182,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
 
 
                 $join .= " `" . $name . "`";
-                $join .= " ON `" . $name . "`.o_id = `" . $this->getTableName() . "`.o_id";
+                $join .= " ON (`" . $name . "`.o_id = `" . $this->getTableName() . "`.o_id AND `" . $name . "`.fieldname = '" . $fc['fieldname'] . "')";
             }
         }
 
@@ -208,31 +208,5 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
             $selectPart = "DISTINCT " . $column;
         }
         return $selectPart;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getCondition() {
-        $condition = parent::getCondition();
-
-        $fieldCollections = $this->model->getFieldCollections();
-        if(!empty($fieldCollections)) {
-            foreach($fieldCollections as $fc) {
-                if(!empty($fc['fieldname'])) {
-                    $name = $fc['type'];
-                    if(!empty($fc['fieldname'])) {
-                        $name .= "~" . $fc['fieldname'];
-                    }
-
-                    if(!empty($condition)) {
-                        $condition .= " AND ";
-                    }
-                    $condition .= "`" . $name . "`.fieldname = '" . $fc['fieldname'] . "'";
-                }
-            }
-
-        }
-        return $condition;
     }
 }

@@ -231,12 +231,6 @@ pimcore.settings.system = Class.create({
                                 width: 300
                             },
                             {
-                                fieldLabel: t('show_random_pictures_on_login_screen'),
-                                xtype: "checkbox",
-                                name: "general.loginscreenimageservice",
-                                checked: this.getValue("general.loginscreenimageservice")
-                            },
-                            {
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
                                 xtype: "textfield",
                                 name: "general.loginscreencustomimage",
@@ -1225,13 +1219,6 @@ pimcore.settings.system = Class.create({
                         defaults: {width: 300},
                         items :[
                             {
-                                fieldLabel: t("image_datauri_filter"),
-                                xtype: "checkbox",
-                                name: "outputfilters.imagedatauri",
-                                checked: this.getValue("outputfilters.imagedatauri"),
-                                style: "margin-bottom: 15px;"
-                            },
-                            {
                                 fieldLabel: "LESS",
                                 xtype: "checkbox",
                                 name: "outputfilters.less",
@@ -1242,35 +1229,6 @@ pimcore.settings.system = Class.create({
                                 xtype: "textfield",
                                 name: "outputfilters.lesscpath",
                                 value: this.getValue("outputfilters.lesscpath"),
-                                style: "margin-bottom: 15px;"
-                            },
-                            {
-                                fieldLabel: t("minify_css"),
-                                xtype: "checkbox",
-                                name: "outputfilters.cssminify",
-                                checked: this.getValue("outputfilters.cssminify"),
-                                style: "margin-bottom: 15px;"
-                            },
-                            {
-                                fieldLabel: t("minify_javascript"),
-                                xtype: "checkbox",
-                                name: "outputfilters.javascriptminify",
-                                checked: this.getValue("outputfilters.javascriptminify")
-                            },
-                            {
-                                fieldLabel: t("minify_javascript_algorithm"),
-                                xtype: "combo",
-                                name: "outputfilters.javascriptminifyalgorithm",
-                                value: this.getValue("outputfilters.javascriptminifyalgorithm"),
-                                store: [
-                                    [" ", "default"],
-                                    ["jsmin","JSMin"],
-                                    ["jsminplus","JSMinPlus"],
-                                    ["yuicompressor", "YUI Compressor (Java required)"]
-                                ],
-                                mode: "local",
-                                triggerAction: "all",
-                                editable: false,
                                 style: "margin-bottom: 15px;"
                             }
                         ]
@@ -1521,6 +1479,10 @@ pimcore.settings.system = Class.create({
     },
 
     addLanguage: function (language) {
+
+        if(empty(language)) {
+            return;
+        }
 
         // find the language entry in the store, because "language" can be the display value too
         var index = this.languagesStore.findExact("language", language);

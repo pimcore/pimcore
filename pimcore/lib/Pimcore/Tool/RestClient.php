@@ -913,9 +913,18 @@ class Pimcore_Tool_RestClient
         return $response;
     }
 
-    public function buildEndpointUrl($customUrlPath)
+    public function deploymentExecuteTargetAction(array $params){
+        $url = $this->buildEndpointUrl("deployment-execute-target",$params);
+        $response = $this->doRequest($url);
+        return $response;
+    }
+
+    public function buildEndpointUrl($customUrlPath,$params = array())
     {
         $url = $this->getBaseUrl() . $customUrlPath . "?apikey=" . $this->getApiKey();
+        if(!empty($params)){
+            $url .= '&' . http_build_query($params);
+        }
         return $url;
     }
 }

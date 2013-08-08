@@ -31,35 +31,24 @@ $apiConfig = array(
 
     // The developer key, you get this at https://code.google.com/apis/console
     'developer_key' => '',
-
-    // OAuth1 Settings.
-    // If you're using the apiOAuth auth class, it will use these values for the oauth consumer key and secret.
-    // See http://code.google.com/apis/accounts/docs/RegistrationForWebAppsAuto.html for info on how to obtain those
-    'oauth_consumer_key'    => 'anonymous',
-    'oauth_consumer_secret' => 'anonymous',
   
     // Site name to show in the Google's OAuth 1 authentication screen.
     'site_name' => 'www.example.org',
 
     // Which Authentication, Storage and HTTP IO classes to use.
-    'authClass'    => 'apiOAuth2',
-    'ioClass'      => 'apiCurlIO',
-    'cacheClass'   => 'apiFileCache',
-
-    // If you want to run the test suite (by running # phpunit AllTests.php in the tests/ directory), fill in the settings below
-    'oauth_test_token' => '', // the oauth access token to use (which you can get by runing authenticate() as the test user and copying the token value), ie '{"key":"foo","secret":"bar","callback_url":null}'
-    'oauth_test_user' => '', // and the user ID to use, this can either be a vanity name 'testuser' or a numberic ID '123456'
+    'authClass'    => 'Google_OAuth2',
+    'ioClass'      => 'Google_CurlIO',
+    'cacheClass'   => 'Google_FileCache',
 
     // Don't change these unless you're working against a special development or testing environment.
     'basePath' => 'https://www.googleapis.com',
 
-    // IO Class dependent configuration, you only have to configure the values for the class that was configured as the ioClass above
+    // IO Class dependent configuration, you only have to configure the values
+    // for the class that was configured as the ioClass above
     'ioFileCache_directory'  =>
         (function_exists('sys_get_temp_dir') ?
-            sys_get_temp_dir() . '/apiClient' :
-        '/tmp/apiClient'),
-    'ioMemCacheStorage_host' => '127.0.0.1',
-    'ioMemcacheStorage_port' => '11211',
+            sys_get_temp_dir() . '/Google_Client' :
+        '/tmp/Google_Client'),
 
     // Definition of service specific values like scopes, oauth token URLs, etc
     'services' => array(
@@ -84,7 +73,7 @@ $apiConfig = array(
               'https://www.googleapis.com/auth/userinfo.email',
           )
       ),
-      'plus' => array('scope' => 'https://www.googleapis.com/auth/plus.me'),
+      'plus' => array('scope' => 'https://www.googleapis.com/auth/plus.login'),
       'siteVerification' => array('scope' => 'https://www.googleapis.com/auth/siteverification'),
       'tasks' => array('scope' => 'https://www.googleapis.com/auth/tasks'),
       'urlshortener' => array('scope' => 'https://www.googleapis.com/auth/urlshortener')

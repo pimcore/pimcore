@@ -251,11 +251,12 @@ pimcore.settings.translation.xliff = Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/misc/xliff-export-jobs",
+            url: "/admin/misc/translate-export-jobs",
             params: {
                 source: this.exportSourceLanguageSelector.getValue(),
                 target: this.exportTargetLanguageSelector.getValue(),
-                data: Ext.encode(tmData)
+                data: Ext.encode(tmData),
+                type: "xliff"
             },
             success: function(response) {
                 var res = Ext.decode(response.responseText);

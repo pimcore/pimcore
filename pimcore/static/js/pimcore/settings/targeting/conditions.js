@@ -502,6 +502,10 @@ pimcore.settings.targeting.conditions = {
                 xtype: "hidden",
                 name: "type",
                 value: "geopoint"
+            }, {
+                xtype: "displayfield",
+                style: "margin-top:10px;",
+                html: 'This product includes GeoLite2 data created by MaxMind, available from <a href="http://www.maxmind.com" target="_blank">http://www.maxmind.com</a>.'
             }]
         });
 

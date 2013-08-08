@@ -16,34 +16,23 @@
 class Pimcore_Tool_Authentication {
 
     /**
-     * contains the session namespace object
-     * @var Zend_Session_Namespace
-     */
-    private static $session;
-
-    /**
      * @static
      * @throws Exception
      * @return User
      */
     public static function authenticateSession () {
-
-        // start session if necessary
-        self::initSession();
-
-        // get session namespace
-        $adminSession = self::getSession();
-
-        $user = $adminSession->user;
-        if ($user instanceof User) {
-            // renew user
-            $user = User::getById($user->getId());
-            if($user && $user->isActive()) {
-                return $user;
+        return Pimcore_Tool_Session::useSession(function($adminSession) {
+            $user = $adminSession->user;
+            if ($user instanceof User) {
+                // renew user
+                $user = User::getById($user->getId());
+                if($user && $user->isActive()) {
+                    return $user;
+                }
             }
-        }
 
-        return null;
+            return null;
+        });
     }
 
     /**
@@ -85,57 +74,7 @@ class Pimcore_Tool_Authentication {
         }
     }
 
-    /**
-     * @static
-     * @return void
-     */
-    public static function initSession() {
 
-        Zend_Session::setOptions(array(
-            "throw_startup_exceptions" => false,
-            "gc_maxlifetime" => 7200,
-            "name" => "pimcore_admin_sid",
-            "strict" => false,
-            "use_only_cookies" => false
-        ));
-
-        try {
-            try {
-                if(!Zend_Session::isStarted()) {
-                    $sName = Zend_Session::getOptions("name");
-
-                    // only set the session id if the cookie isn't present, otherwise Set-Cookie is always in the headers
-                    if (array_key_exists($sName, $_REQUEST) && !empty($_REQUEST[$sName]) && (!array_key_exists($sName, $_COOKIE) || empty($_COOKIE[$sName]))) {
-                        // get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
-                        Zend_Session::setId($_REQUEST[$sName]);
-                    }
-
-                    // register session
-                    Zend_Session::start();
-                }
-            }
-            catch (Exception $e) {
-                Logger::error("Problem while starting session");
-                Logger::error($e);
-            }
-        }
-        catch (Exception $e) {
-            Logger::emergency("there is a problem with admin session");
-            die();
-        }
-    }
-
-    public static function getSession () {
-        if(!Zend_Session::isStarted()) {
-            self::initSession();
-        }
-
-        if(!self::$session) {
-            self::$session = new Zend_Session_Namespace("pimcore_admin");
-        }
-
-        return self::$session;
-    }
 
 
     /**

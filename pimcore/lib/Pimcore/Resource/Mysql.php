@@ -66,14 +66,17 @@ class Pimcore_Resource_Mysql {
             Logger::warn($e);
         }
 
+        $connectionId = $db->fetchOne("SELECT CONNECTION_ID()");
+
         // enable the db-profiler if the devmode is on and there is no custom profiler set (eg. in system.xml)
         if(PIMCORE_DEVMODE && !$db->getProfiler()->getEnabled()) {
             $profiler = new Pimcore_Db_Profiler('All DB Queries');
             $profiler->setEnabled(true);
+            $profiler->setConnectionId($connectionId);
             $db->setProfiler($profiler);
         }
 
-        Logger::debug(get_class($db) . ": Successfully established connection to MySQL-Server: " . $db->fetchOne("SELECT CONNECTION_ID()"));
+        Logger::debug(get_class($db) . ": Successfully established connection to MySQL-Server, Process-ID: " . $connectionId);
 
         return $db;
     }
@@ -154,7 +157,7 @@ class Pimcore_Resource_Mysql {
                     // the following select causes an infinite loop (eg. when the connection is lost -> error handler)
                     //Logger::debug("closing mysql connection with ID: " . $db->fetchOne("SELECT CONNECTION_ID()"));
                     $db->closeResource();
-                    $db->closeDDLResource();
+                    //$db->closeDDLResource();
                 }
             }
         } catch (Exception $e) {
@@ -308,7 +311,7 @@ class Pimcore_Resource_Mysql {
             if ($type == "VIEW") {
                 try {
                     Logger::debug("SHOW CREATE VIEW " . $name);
-                    $createStatement = $db->fetchRow("SHOW CREATE VIEW " . $name);
+                    $createStatement = $db->fetchRow("SHOW FIELDS FROM " . $name);
                 } catch (Exception $e) {
                     if(strpos($e->getMessage(), "references invalid table") !== false) {
                         Logger::err("view " . $name . " seems to be a broken one, it will be removed");

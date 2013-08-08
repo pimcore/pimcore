@@ -103,4 +103,15 @@ class Pimcore_Log_Maintenance {
             }
         }
     }
+
+    public function cleanupLogFiles () {
+        $files = glob(PIMCORE_LOG_DIRECTORY . "/*.log-archive-*");
+        if(is_array($files)) {
+            foreach ($files as $file) {
+                if(filemtime($file) < (time()-(86400*30))) { // we keep the logs for 30 days
+                    unlink($file);
+                }
+            }
+        }
+    }
 }

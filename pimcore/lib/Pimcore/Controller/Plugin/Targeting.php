@@ -135,7 +135,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                 }
 
                 if(!empty($personaVariants)) {
-                    $personaVariants = array_unique($personaVariants);
+                    $personaVariants = array_values(array_unique($personaVariants));
                     $dataPush["personaPageVariants"] = $personaVariants;
                 }
             }
@@ -166,14 +166,9 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                 }
             }
 
-            if(!($controlCode = Pimcore_Model_Cache::load("targeting_control_code")) || PIMCORE_DEVMODE) {
-                $controlCode = file_get_contents(PIMCORE_PATH . "/static/js/frontend/targeting.js");
-                $controlCode = JSMinPlus::minify($controlCode);
 
-                Pimcore_Model_Cache::save($controlCode, "targeting_control_code", array("output"), null, 999);
-            }
 
-            $code = '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
+            $code = '<script type="text/javascript" src="/pimcore/static/js/frontend/geoip.js/"></script>';
             $code .= '<script type="text/javascript">';
                 $code .= 'var pimcore = pimcore || {};';
                 $code .= 'pimcore["targeting"] = {};';
@@ -181,7 +176,8 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                 $code .= 'pimcore["targeting"]["targets"] = ' . Zend_Json::encode($targets) . ';';
                 $code .= 'pimcore["targeting"]["personas"] = ' . Zend_Json::encode($personas) . ';';
             $code .= '</script>';
-            $code .= '<script type="text/javascript">' . $controlCode . '</script>' . "\n";
+            $code .= '<script type="text/javascript" src="/pimcore/static/js/frontend/targeting.js"></script>';
+            $code .= "\n";
             // analytics
             $body = $this->getResponse()->getBody();
 

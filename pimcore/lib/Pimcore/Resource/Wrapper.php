@@ -24,36 +24,36 @@ class Pimcore_Resource_Wrapper {
      * use a seperate connection for DDL queries to avoid implicit commits
      * @var Zend_Db_Adapter_Abstract
      */
-    protected $DDLResource;
+    //protected $DDLResource;
 
     /**
      * @param \Zend_Db_Adapter_Abstract $DDLResource
      */
-    public function setDDLResource($DDLResource)
+    /*public function setDDLResource($DDLResource)
     {
         $this->DDLResource = $DDLResource;
         return $this;
-    }
+    }*/
 
     /**
      * @return \Zend_Db_Adapter_Abstract
      */
-    public function getDDLResource()
+    /*public function getDDLResource()
     {
         if(!$this->DDLResource) {
             // get the Zend_Db_Adapter_Abstract not the wrapper
             $this->DDLResource = Pimcore_Resource::getConnection(true);
         }
         return $this->DDLResource;
-    }
+    }*/
 
     /**
      *
      */
-    public function closeDDLResource() {
+    /*public function closeDDLResource() {
         $this->closeConnectionResource($this->DDLResource);
         $this->DDLResource = null;
-    }
+    }*/
 
     /**
      * @param $resource
@@ -152,7 +152,6 @@ class Pimcore_Resource_Wrapper {
                         $i++;
                     } else {
                         /** @see Zend_Db_Adapter_Exception */
-                        require_once 'Zend/Db/Adapter/Exception.php';
                         throw new Zend_Db_Adapter_Exception(get_class($this->getResource()) . " doesn't support positional or named binding");
                     }
                 }
@@ -210,9 +209,9 @@ class Pimcore_Resource_Wrapper {
     public function callResourceMethod ($method, $args) {
 
         $resource = $this->getResource();
-        if($method == "query" && Pimcore_Resource::isDDLQuery($args[0])) {
+        /*if($method == "query" && Pimcore_Resource::isDDLQuery($args[0])) {
             $resource = $this->getDDLResource();
-        }
+        }*/
 
         $capture = false;
 

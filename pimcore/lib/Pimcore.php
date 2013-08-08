@@ -87,9 +87,6 @@ class Pimcore {
             $front->registerPlugin(new Pimcore_Controller_Plugin_WysiwygAttributes(), 796);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Webmastertools(), 797);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Analytics(), 798);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_CssMinify(), 800);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_JavascriptMinify(), 801);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_ImageDataUri(), 803);
             $front->registerPlugin(new Pimcore_Controller_Plugin_TagManagement(), 804);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Targeting(), 805);
             $front->registerPlugin(new Pimcore_Controller_Plugin_HttpErrorLog(), 850);
@@ -311,7 +308,8 @@ class Pimcore {
             
             // check for big logfile, empty it if it's bigger than about 200M
             if (filesize(PIMCORE_LOG_DEBUG) > 200000000) {
-                file_put_contents(PIMCORE_LOG_DEBUG, "");
+                rename(PIMCORE_LOG_DEBUG, PIMCORE_LOG_DEBUG . "-archive-" . date("m-d-Y-H-i")); // archive log (will be cleaned up by maintenance)
+                file_put_contents(PIMCORE_LOG_DEBUG, ""); // create empty log
             }
 
             $prioMapping = array(
@@ -432,6 +430,15 @@ class Pimcore {
         $conf = Pimcore_Config::getSystemConfig();
         if($conf->general->instanceIdentifier) {
             $broker->registerModule("Tool_UUID_Module");
+        }
+
+        if(is_readable(PIMCORE_DEPLOYMENT_CONFIG_FILE)){
+            $deploymentConfig = new Zend_Config_Xml(PIMCORE_DEPLOYMENT_CONFIG_FILE);
+            if($deploymentConfig->enabled){
+                $broker->registerModule("Deployment_Module");
+                $setup = new Deployment_Setup();
+                $setup->run();
+            }
         }
     }
 
@@ -587,10 +594,7 @@ class Pimcore {
         $autoloader->registerNamespace('Website');
         $autoloader->registerNamespace('Element');
         $autoloader->registerNamespace('API');
-        $autoloader->registerNamespace('Minify');
         $autoloader->registerNamespace('Archive');
-        $autoloader->registerNamespace('JSMin');
-        $autoloader->registerNamespace('JSMinPlus');
         $autoloader->registerNamespace('Csv');
         $autoloader->registerNamespace('Webservice');
         $autoloader->registerNamespace('Search');
@@ -806,7 +810,12 @@ class Pimcore {
      */
     public static function outputBufferEnd ($data) {
 
+        $output = null;
         $contentEncoding = null;
+
+        header("Connection: close\r\n");
+
+        // check for supported content-encodings
         if( preg_match('@(?:^|,)\\s*((?:x-)?gzip)\\s*(?:$|,|;\\s*q=(?:0\\.|1))@' ,$_SERVER["HTTP_ACCEPT_ENCODING"] ,$m) ) {
             $contentEncoding = $m[1];
         }
@@ -853,7 +862,7 @@ class Pimcore {
                 }
             }
 
-            // gzip the contents and send connection close to that the process can run in the background to finish
+            // gzip the contents and send connection close tthat the process can run in the background to finish
             // some tasks like writing the cache ...
             // using mb_strlen() because of PIMCORE-1509
             if($gzipIt) {
@@ -862,18 +871,23 @@ class Pimcore {
                     pack('V', crc32($data)). // packing the CRC and the strlen is still required
                     pack('V', mb_strlen($data, "latin1")); // (although all modern browsers don't need it anymore) to work properly with google adwords check & co.
 
-                // send headers & contents
-                header("Connection: close\r\n");
                 header("Content-Encoding: $contentEncoding\r\n");
-                header("Content-Length: " . mb_strlen($output, "latin1"));
-                header("X-Powered-By: pimcore");
-
-                return $output;
             }
         }
 
+        // no gzip/deflate encoding
+        if(!$output) {
+            $output = $data;
+        }
+
+        if(strlen($output) > 0) {
+            // check here for existing content, otherwise readfile() and similar functions are not working anymore
+            header("Content-Length: " . mb_strlen($output, "latin1"));
+        }
+        header("X-Powered-By: pimcore");
+
         // return the data unchanged
-        return $data;
+        return $output;
     }
 
     /**
@@ -901,6 +915,9 @@ class Pimcore {
 
         // release all open locks from this process
         Tool_Lock::releaseAll();
+
+        // disable logging - otherwise this will cause problems in the ongoing shutdown process (session write, __destruct(), ...)
+        Logger::resetLoggers();
     }
 
     /**

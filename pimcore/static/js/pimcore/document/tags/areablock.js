@@ -218,7 +218,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     copyToClipboard: function (element) {
         var ea;
-        var areaIdentifier = this.getName() + element.getAttribute("key");
+        var areaIdentifier = {name: this.getName(), key: element.getAttribute("key")};
         var item = {
             identifier: areaIdentifier,
             type: element.getAttribute("type"),
@@ -229,7 +229,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         for (var i = 0; i < editables.length; i++) {
             try {
                 ea = editables[i];
-                if (ea.getName().indexOf(areaIdentifier) > 0 && ea.getName() && !ea.getInherited()) {
+                if (ea.getName().indexOf(areaIdentifier["name"] + areaIdentifier["key"]) > 0 && ea.getName() && !ea.getInherited()) {
                     item.values[ea.getName()] = {};
                     item.values[ea.getName()].data = ea.getValue();
                     item.values[ea.getName()].type = ea.getType();
@@ -271,14 +271,22 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 handler: function (item) {
                     item.parentMenu.destroy();
                     var item = pimcore.globalmanager.get("areablock_clipboard");
-                    var areaIdentifier = this.getName() + (this.getNextKey()+1);
+                    var areaIdentifier = {name: this.getName(), key: (this.getNextKey()+1)};
 
                     // push the data as an object compatible to the pimcore.document.tag interface to the rest of
                     // available editables so that they get read by pimcore.document.edit.getValues()
                     Ext.iterate(item.values, function (key, value, object) {
                         editables.push({
                             getName: function () {
-                                return key.replace(new RegExp(item["identifier"]), areaIdentifier);
+                                var newKey = key.replace(new RegExp(item["identifier"]["name"] + item["identifier"]["key"], "g"), areaIdentifier["name"] + areaIdentifier["key"]);
+                                var tmpKey;
+
+                                while(tmpKey != newKey) {
+                                    tmpKey = newKey;
+                                    newKey = newKey.replace(new RegExp(item["identifier"]["name"] + "_(.*)" + item["identifier"]["key"] + "_", "g"), areaIdentifier["name"] + "_$1" + areaIdentifier["key"] + "_");
+                                }
+
+                                return newKey;
                             },
                             getValue: function () {
                                 return value["data"];

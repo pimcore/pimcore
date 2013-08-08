@@ -45,6 +45,11 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
     protected $logFile;
 
     /**
+     * @var int
+     */
+    protected $connectionId;
+
+    /**
      * Constructor
      *
      * @param string $label OPTIONAL Label for the profiling info.
@@ -89,7 +94,7 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
         $profile = $this->getQueryProfile($queryId);
         $this->_totalElapsedTime += $profile->getElapsedSecs();
 
-        $logEntry = "DB Query: " . (string)round($profile->getElapsedSecs(),5) . " | " . $profile->getQuery() . " | " . implode(",",$profile->getQueryParams());
+        $logEntry = "Process: " . $this->getConnectionId() . " | DB Query: " . (string)round($profile->getElapsedSecs(),5) . " | " . $profile->getQuery() . " | " . implode(",",$profile->getQueryParams());
         Logger::debug($logEntry);
 
         if(!empty($_REQUEST["pimcore_dbprofile"])) {
@@ -129,5 +134,21 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
                                                     $this->getTotalNumQueries(),
                                                     (string)round($this->_totalElapsedTime,5)),
                                               $this->_label_template));
+    }
+
+    /**
+     * @param int $connectionId
+     */
+    public function setConnectionId($connectionId)
+    {
+        $this->connectionId = $connectionId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getConnectionId()
+    {
+        return $this->connectionId;
     }
 }

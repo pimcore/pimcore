@@ -69,6 +69,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             Document::setHideUnpublished(false);
             Object_Abstract::setHideUnpublished(false);
             Object_Abstract::setGetInheritedValues(false);
+            Object_Localizedfield::setGetFallbackValues(false);
             Pimcore::setAdminMode();
 
             // init translations
@@ -257,23 +258,18 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
 
     protected function logUsageStatistics() {
 
-        if(Pimcore_Config::getSystemConfig()->general->disableusagestatistics) {
-            return;
-        }
-
         $params = array();
-        $allowedParameters = array("xaction","id","start","limit","type","subtype","parentId","node","amount","sourceId","targetId","offset","step","sort","dir","task");
-        foreach($allowedParameters as $param) {
-            if($value = $this->getParam($param)) {
-                if(is_string($value)) {
-                    $params[$param] = $value;
-                }
+        $disallowedKeys = array("_dc", "module", "controller", "action");
+        foreach($this->getAllParams() as $key => $value) {
+            if(!in_array($key, $disallowedKeys) && is_string($value)) {
+                $params[$key] = (strlen($value) > 40) ? substr($value, 0, 40) . "..." : $value;
             }
         }
 
         Pimcore_Log_Simple::log("usagelog",
+            ($this->getUser() ? $this->getUser()->getId() : "0") . "|" .
+            $this->getParam("module") . "|" .
             $this->getParam("controller") . "|" .
             $this->getParam("action")."|".Zend_Json::encode($params));
     }
-
 }

@@ -379,8 +379,9 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             $this->update();
 
             // if the old path is different from the new path, update all children
+            $updatedChildren = array();
             if($oldPath && $oldPath != $this->getFullPath()) {
-                $this->getResource()->updateChildsPaths($oldPath);
+                $updatedChildren = $this->getResource()->updateChildsPaths($oldPath);
             }
 
             $this->commit();
@@ -396,8 +397,15 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
         }
 
-        // empty object cache
-        $this->clearDependentCache();
+        $additionalTags = array();
+        if(isset($updatedChildren) && is_array($updatedChildren)) {
+            foreach ($updatedChildren as $documentId) {
+                $additionalTags[] = "document_" . $documentId;
+            }
+        }
+        $this->clearDependentCache($additionalTags);
+
+        return $this;
     }
 
     public function correctPath() {
@@ -494,26 +502,15 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $this->clearDependentCache();
     }
 
-    public function clearDependentCache() {
+    public function clearDependentCache($additionalTags = array()) {
         try {
-            Pimcore_Model_Cache::clearTag("document_" . $this->getId());
-        }
-        catch (Exception $e) {
-            Logger::info($e);
-        }
+            $tags = array("document_" . $this->getId(), "properties", "output");
+            $tags = array_merge($tags, $additionalTags);
 
-        try {
-            Pimcore_Model_Cache::clearTag("properties");
+            Pimcore_Model_Cache::clearTags($tags);
         }
         catch (Exception $e) {
-            Logger::info($e);
-        }
-
-        try {
-            Pimcore_Model_Cache::clearTag("output");
-        }
-        catch (Exception $e) {
-            Logger::info($e);
+            Logger::crit($e);
         }
     }
 
@@ -995,10 +992,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
             // try to get from cache
             $cacheKey = "document_properties_" . $this->getId();
+            $cacheTags = $this->getCacheTags(array("properties"));
 
             if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
                 $properties = $this->getResource()->getProperties();
-                Pimcore_Model_Cache::save($properties, $cacheKey, array("properties"));
+                Pimcore_Model_Cache::save($properties, $cacheKey, $cacheTags);
             }
             $this->setProperties($properties);
         }
@@ -1163,10 +1161,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     }
     
     public function __wakeup() {
-        if(isset($this->_fulldump) && $this->properties !== null) {
-            $this->renewInheritedProperties();
-        }
-
         if(isset($this->_fulldump)) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
             $originalElement = Document::getById($this->getId());
@@ -1176,6 +1170,10 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             }
 
             unset($this->_fulldump);
+        }
+
+        if(isset($this->_fulldump) && $this->properties !== null) {
+            $this->renewInheritedProperties();
         }
     }
 
@@ -1194,10 +1192,15 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     
     public function renewInheritedProperties () {
         $this->removeInheritedProperties();
-        
+
+        // add to registry to avoid infinite regresses in the following $this->getResource()->getProperties()
+        $cacheKey = "document_" . $this->getId();
+        if(!Zend_Registry::isRegistered($cacheKey)) {
+            Zend_Registry::set($cacheKey, $this);
+        }
+
         $myProperties = $this->getProperties();
         $inheritedProperties = $this->getResource()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
-
 }

@@ -50,6 +50,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         Document::setHideUnpublished(true);
         Object_Abstract::setHideUnpublished(true);
         Object_Abstract::setGetInheritedValues(true);
+        Object_Localizedfield::setGetFallbackValues(true);
 
         // contains the logged in user if necessary
         $user = null;
@@ -124,7 +125,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                 
                 // check if there is the document in the session
                 $docKey = "document_" . $this->getDocument()->getId();
-                $docSession = new Zend_Session_Namespace("pimcore_documents");
+                $docSession = Pimcore_Tool_Session::getReadOnly("pimcore_documents");
 
                 if ($docSession->$docKey) {
                     // if there is a document in the session use it
@@ -139,7 +140,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                         }
                     }
                 }
-                
+
                 // register editmode plugin
                 $front = Zend_Controller_Front::getInstance();
                 $front->registerPlugin(new Pimcore_Controller_Plugin_Frontend_Editmode($this), 1000);
@@ -158,7 +159,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
             if ($this->getParam("pimcore_preview")) {
                 // get document from session
                 $docKey = "document_" . $this->getParam("document")->getId();
-                $docSession = new Zend_Session_Namespace("pimcore_documents");
+                $docSession = Pimcore_Tool_Session::getReadOnly("pimcore_documents");
 
                 if ($docSession->$docKey) {
                     $this->setDocument($docSession->$docKey);
@@ -168,7 +169,8 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
             // object preview
             if ($this->getParam("pimcore_object_preview")) {
                 $key = "object_" . $this->getParam("pimcore_object_preview");
-                $session = new Zend_Session_Namespace("pimcore_objects");
+
+                $session = Pimcore_Tool_Session::getReadOnly("pimcore_objects");
                 if($session->$key) {
                     $object = $session->$key;
                     // add the object to the registry so every call to Object_Abstract::getById() will return this object instead of the real one

@@ -350,6 +350,16 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $allowUpdate = true;
 
         $document = Document::getById($this->getParam("id"));
+
+        // this prevents the user from renaming, relocating (actions in the tree) if the newest version isn't the published one
+        // the reason is that otherwise the content of the newer not published version will be overwritten
+        if($document instanceof Document_PageSnippet) {
+            $latestVersion = $document->getLatestVersion();
+            if($latestVersion && $latestVersion->getData()->getModificationDate() != $document->getModificationDate()) {
+                $this->_helper->json(array("success" => false, "message" => "You can't relocate if there's a newer not published version"));
+            }
+        }
+
         if ($document->isAllowed("settings")) {
 
             // if the position is changed the path must be changed || also from the childs
@@ -378,10 +388,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             }
 
             if ($allowUpdate) {
-                if ($this->getParam("key") || $this->getParam("parentId")) {
-                    $oldPath = $document->getPath() . $document->getKey();
-                }
-
                 $blockedVars = array("controller", "action", "module");
 
                 if(!$document->isAllowed("rename") && $this->getParam("key")){
@@ -556,9 +562,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $version = Version::getById($this->getParam("id"));
         $document = $version->loadData();
 
-        $key = "document_" . $document->getId();
-        $session = new Zend_Session_Namespace("pimcore_documents");
-        $session->$key = $document;
+        Pimcore_Tool_Session::useSession(function ($session) use ($document) {
+            $key = "document_" . $document->getId();
+            $session->$key = $document;
+        }, "pimcore_documents");
 
         $this->removeViewRenderer();
     }
@@ -628,8 +635,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
         $transactionId = time();
         $pasteJobs = array();
-        $session = new Zend_Session_Namespace("pimcore_copy");
-        $session->$transactionId = array("idMapping" => array());
+
+        Pimcore_Tool_Session::useSession(function ($session) use ($transactionId) {
+            $session->$transactionId = array("idMapping" => array());
+        }, "pimcore_copy");
 
         if ($this->getParam("type") == "recursive" || $this->getParam("type") == "recursive-update-references") {
 
@@ -712,8 +721,11 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function copyRewriteIdsAction () {
 
-        $session = new Zend_Session_Namespace("pimcore_copy");
-        $idStore = $session->{$this->getParam("transactionId")};
+        $transactionId = $this->getParam("transactionId");
+
+        $idStore = Pimcore_Tool_Session::useSession(function ($session) use ($transactionId) {
+            return $session->$transactionId;
+        }, "pimcore_copy");
 
         if(!array_key_exists("rewrite-stack",$idStore)) {
             $idStore["rewrite-stack"] = array_values($idStore["idMapping"]);
@@ -735,7 +747,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                             $element = clone $contentMasterElement;
                             $element->rewriteIds($idStore["idMapping"]);
 
-                            if(serialize($element) != serialize($contentMasterElement)) {
+                            if(Pimcore_Tool_Serialize::serialize($element) != Pimcore_Tool_Serialize::serialize($contentMasterElement)) {
                                 $changedElements[] = $element;
                             }
                         }
@@ -785,7 +797,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         
 
         // write the store back to the session
-        $session->{$this->getParam("transactionId")} = $idStore;
+        Pimcore_Tool_Session::useSession(function ($session) use ($transactionId, $idStore) {
+            $session->$transactionId = $idStore;
+        }, "pimcore_copy");
 
         $this->_helper->json(array(
             "success" => true,
@@ -797,7 +811,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $success = false;
         $sourceId = intval($this->getParam("sourceId"));
         $source = Document::getById($sourceId);
-        $session = new Zend_Session_Namespace("pimcore_copy");
+        $session = Pimcore_Tool_Session::get("pimcore_copy");
         
         $targetId = intval($this->getParam("targetId"));
         if($this->getParam("targetParentId")) {
@@ -829,6 +843,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         if($this->getParam("saveParentId")) {
                             $session->{$this->getParam("transactionId")}["parentId"] = $newDocument->getId();
                         }
+
+                        Pimcore_Tool_Session::writeClose();
                     }
                     else if ($this->getParam("type") == "replace") {
                         $this->_documentService->copyContents($target, $source);
