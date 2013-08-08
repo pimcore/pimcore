@@ -535,7 +535,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $this->view->message = $message;
     }
 
-    public function xliffExportJobsAction() {
+    public function translateExportJobsAction() {
 
         $data = Zend_Json::decode($this->getParam("data"));
         $elements = array();
@@ -543,6 +543,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $exportId = uniqid();
         $source = $this->getParam("source");
         $target = $this->getParam("target");
+        $type = $this->getParam("type");
 
         // XLIFF requires region in language code
         /*$languages = Zend_Locale::getLocaleList();
@@ -569,7 +570,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         if($data && is_array($data)) {
             foreach ($data as $element) {
-                $elements[] = array(
+                $elements[$element["type"] . "_" . $element["id"]] = array(
                     "id" => $element["id"],
                     "type" => $element["type"]
                 );
@@ -582,7 +583,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
                     $idList = $list->loadIdList();
 
                     foreach($idList as $id) {
-                        $elements[] = array(
+                        $elements[$element["type"] . "_" . $id] = array(
                             "id" => $id,
                             "type" => $element["type"]
                         );
@@ -591,11 +592,13 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
             }
         }
 
+        $elements = array_values($elements);
+
         // one job = 10 elements
         $elements = array_chunk($elements, 10);
         foreach($elements as $chunk) {
             $jobs[] = array(array(
-                "url" => "/admin/misc/xliff-export",
+                "url" => "/admin/misc/" . $type . "-export",
                 "params" => array(
                     "id" => $exportId,
                     "source" => $source,
@@ -943,6 +946,275 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $content = implode("", $final);
         return $content;
+    }
+
+
+    public function wordExportAction() {
+
+        error_reporting(E_ERROR);
+        ini_set("display_errors", "off");
+
+        $id = $this->getParam("id");
+        $data = Zend_Json::decode($this->getParam("data"));
+        $source = $this->getParam("source");
+
+        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $id . ".html";
+        if(!is_file($exportFile)) {
+            /*file_put_contents($exportFile, '<!DOCTYPE html>' . "\n" . '<html>
+                <head>
+                    <style type="text/css">' . file_get_contents(PIMCORE_PATH . "/static/css/word-export.css") . '</style>
+                </head>
+                <body>
+            ');*/
+            file_put_contents($exportFile, '<style type="text/css">' . file_get_contents(PIMCORE_PATH . "/static/css/word-export.css") . '</style>');
+        }
+
+        foreach ($data as $el) {
+            try {
+                $element = Element_Service::getElementById($el["type"], $el["id"]);
+                $output = "";
+
+                // check supported types (subtypes)
+                if(!in_array($element->getType(), array("page","snippet", "email", "object"))) {
+                    continue;
+                }
+
+                if($element instanceof Element_Interface) {
+                    $output .= '<h1 class="element-headline">' . ucfirst($element->getType()) . " - " . $element->getFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
+                }
+
+                if($element instanceof Document_PageSnippet) {
+                    if($element instanceof Document_Page) {
+                        $structuredDataEmpty = true;
+                        $structuredData = '
+                            <table border="1" cellspacing="0" cellpadding="5">
+                                <tr>
+                                    <td colspan="2"><span style="color:#cc2929;font-weight: bold;">Structured Data</span></td>
+                                </tr>
+                        ';
+
+                        if($element->getTitle()) {
+                            $structuredData .= '<tr>
+                                    <td><span style="color:#cc2929;">Title</span></td>
+                                    <td>' . $element->getTitle() . '&nbsp;</td>
+                                </tr>';
+                            $structuredDataEmpty = false;
+                        }
+
+                        if($element->getDescription()) {
+                            $structuredData .= '<tr>
+                                    <td><span style="color:#cc2929;">Description</span></td>
+                                    <td>' . $element->getDescription() . '&nbsp;</td>
+                                </tr>';
+                            $structuredDataEmpty = false;
+                        }
+
+                        if($element->getKeywords()) {
+                            $structuredData .= '<tr>
+                                    <td><span style="color:#cc2929;">Keywords</span></td>
+                                    <td>' . $element->getKeywords() . '&nbsp;</td>
+                                </tr>';
+                            $structuredDataEmpty = false;
+                        }
+
+                        if($element->getProperty("navigation_name")) {
+                            $structuredData .= '<tr>
+                                    <td><span style="color:#cc2929;">Navigation</span></td>
+                                    <td>' . $element->getProperty("navigation_name") . '&nbsp;</td>
+                                </tr>';
+                            $structuredDataEmpty = false;
+                        }
+
+                        $structuredData .= '</table>';
+
+                        if(!$structuredDataEmpty) {
+                            $output .= $structuredData;
+                        }
+                    }
+
+
+                    $html = Document_Service::render($element, array(), false);
+                    $html = preg_replace("@</?(img|meta|div|section|aside|article|body|bdi|bdo|canvas|embed|footer|head|header|html)([^>]+)?>@", "", $html);
+                    $html = preg_replace('/<!--(.*)-->/Uis', '', $html);
+
+                    $dom = str_get_html($html);
+                    if($dom) {
+
+                        // remove containers including their contents
+                        $elements = $dom->find("form,script,style,noframes,noscript,object,area,mapm,video,audio,iframe,textarea,input,select,button,");
+                        if($elements) {
+                            foreach($elements as $el) {
+                                $el->outertext = "";
+                            }
+                        }
+
+                        $clearText = function ($string) {
+                            $string = str_replace("\r\n", "", $string);
+                            $string = str_replace("\n", "", $string);
+                            $string = str_replace("\r", "", $string);
+                            $string = str_replace("\t", "", $string);
+                            $string = preg_replace ('/&[a-zA-Z0-9]+;/', '', $string); // remove html entities
+                            $string = preg_replace ('#[ ]+#', '', $string);
+
+                            return $string;
+                        };
+
+                        // remove empty tags (where it matters)
+                        $elements = $dom->find("a, li");
+                        if($elements) {
+                            foreach($elements as $el) {
+
+                                $string = $clearText($el->plaintext);
+                                if(empty($string)) {
+                                    $el->outertext = "";
+                                }
+                            }
+                        }
+
+
+                        // replace links => links get [Linktext]
+                        $elements = $dom->find("a");
+                        if($elements) {
+                            foreach($elements as $el) {
+                                $string = $clearText($el->plaintext);
+                                if(!empty($string)) {
+                                    $el->outertext = "[" . $el->plaintext . "]";
+                                } else {
+                                    $el->outertext = "";
+                                }
+                            }
+                        }
+
+                        $html = $dom->save();
+                        $dom->clear();
+                        unset($dom);
+
+                        // force closing tags (simple_html_dom doesn't seem to support this anymore)
+                        $doc = new DOMDocument();
+                        libxml_use_internal_errors(true);
+                        $doc->loadHTML('<?xml encoding="UTF-8"><article>' . $html . "</article>");
+                        libxml_clear_errors();
+                        $html = $doc->saveHTML();
+
+                        $bodyStart = strpos($html, "<body>")+6;
+                        $bodyEnd = strpos($html, "</body>");
+                        if($bodyStart && $bodyEnd) {
+                            $html = substr($html, $bodyStart, $bodyEnd - $bodyStart);
+                        }
+
+                        $output .= $html;
+                    }
+
+
+                } else if ($element instanceof Object_Concrete) {
+
+                    $hasContent = false;
+
+                    if($fd = $element->getClass()->getFieldDefinition("localizedfields")) {
+                        $definitions = $fd->getFielddefinitions();
+
+                        $locale = new Zend_Locale(str_replace("-","_", $source));
+                        if(Pimcore_Tool::isValidLanguage((string) $locale)) {
+                            $locale = (string) $locale;
+                        } else {
+                            $locale = $locale->getLanguage();
+                        }
+
+                        $output .= '
+                            <table border="1" cellspacing="0" cellpadding="2">
+                                <tr>
+                                    <td colspan="2"><span style="color:#cc2929;font-weight: bold;">Localized Data</span></td>
+                                </tr>
+                        ';
+
+                        foreach($definitions as $definition) {
+
+                            // check allowed datatypes
+                            if(!in_array($definition->getFieldtype(), array("input", "textarea", "wysiwyg"))) {
+                                continue;
+                            }
+
+                            $content = $element->{"get" . ucfirst($definition->getName())}($locale);
+
+                            if(!empty($content)) {
+                                $output .= '
+                                <tr>
+                                    <td><span style="color:#cc2929;">' . $definition->getTitle() . ' (' . $definition->getName() . ')<span></td>
+                                    <td>' . $content . '&nbsp;</td>
+                                </tr>
+                                ';
+
+                                $hasContent = true;
+                            }
+                        }
+
+                        $output .= '</table>';
+                    }
+
+                    if(!$hasContent) {
+                        $output = ""; // there's no content in the object, so reset all contents and do not inclide it in the export
+                    }
+                }
+
+
+                // append contents
+                if(!empty($output)) {
+                    $f = fopen($exportFile, "a+");
+                    fwrite($f, $output);
+                    fclose($f);
+                }
+            } catch (\Exception $e) {
+                Logger::error("Word Export: " . $e->getMessage());
+                Logger::error($e);
+            }
+        }
+
+
+        $this->_helper->json(array(
+            "success" => true
+        ));
+    }
+
+    public function wordExportDownloadAction() {
+        $id = $this->getParam("id");
+        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $id . ".html";
+
+        // add closing body/html
+        //$f = fopen($exportFile, "a+");
+        //fwrite($f, "</body></html>");
+        //fclose($f);
+
+        // should be done via Pimcore_Document(_Adapter_LibreOffice) in the future
+        if(Pimcore_Document::isFileTypeSupported("docx")) {
+            $lockKey = "soffice";
+            Tool_Lock::acquire($lockKey); // avoid parallel conversions of the same document
+
+            $out = Pimcore_Tool_Console::exec(Pimcore_Document_Adapter_LibreOffice::getLibreOfficeCli() . ' --headless --convert-to docx:"Office Open XML Text" --outdir ' . PIMCORE_TEMPORARY_DIRECTORY . " " . $exportFile);
+
+            Logger::debug("LibreOffice Output was: " . $out);
+
+            $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/" . preg_replace("/\." . Pimcore_File::getFileExtension($exportFile) . "$/", ".docx",basename($exportFile));
+
+            Tool_Lock::release($lockKey);
+            // end what should be done in Pimcore_Document
+
+            header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+            header('Content-Disposition: attachment; filename="' . basename($tmpName) . '"');
+        } else {
+            // no conversion, output html file
+            $tmpName = $exportFile;
+            header("Content-Type: text/html");
+            header('Content-Disposition: attachment; filename="' . basename($tmpName) . '"');
+        }
+
+        while(@ob_end_flush());
+        flush();
+
+        readfile($tmpName);
+
+        @unlink($exportFile);
+        @unlink($tmpName);
+        exit;
     }
 
     public function testAction()
