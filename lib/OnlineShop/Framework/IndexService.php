@@ -22,8 +22,11 @@ class OnlineShop_Framework_IndexService {
 
                 $tenantConfig = $tenant;
                 if($tenant->file) {
-                    $tenantConfig = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file));
-                    $tenantConfig = $tenantConfig->tenant;
+                    if(!$tenantConfig = Pimcore_Model_Cache::load("onlineshop_config_tenant_" . $tenantConfigClass)) {
+                        $tenantConfig = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file), null, true);
+                        $tenantConfig = $tenantConfig->tenant;
+                        Pimcore_Model_Cache::save($tenantConfig, "onlineshop_config_tenant_" . $tenantConfigClass, array("output"), 9999);
+                    }
                 }
 
                 $worker = new OnlineShop_Framework_IndexService_Tenant_Worker(new $tenantConfigClass($tenantConfig, $config));

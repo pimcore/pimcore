@@ -70,8 +70,11 @@ class OnlineShop_Framework_Factory {
     }
 
     private function initEnvironment() {
-        $configPath = OnlineShop_Plugin::getConfig(true)->onlineshop_config_file;
-        $config = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . $configPath);
+        if(!$config = Pimcore_Model_Cache::load("onlineshop_config")) {
+            $configPath = OnlineShop_Plugin::getConfig(true)->onlineshop_config_file;
+            $config = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . $configPath, null, true);
+            Pimcore_Model_Cache::save($config, "onlineshop_config", array("output"), 9999);
+        }
 
         //Environment
         if (empty($config->onlineshop->environment->class)) {

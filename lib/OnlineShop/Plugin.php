@@ -271,8 +271,47 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
      */
     public static function getSQLLogger() {
         if(!self::$sqlLogger) {
+
+
+            // check for big logfile, empty it if it's bigger than about 200M
+            $logfilename = PIMCORE_WEBSITE_PATH . '/var/log/online-shop-sql.log';
+            if (filesize($logfilename) > 200000000) {
+                file_put_contents($logfilename, "");
+            }
+
+            $prioMapping = array(
+                "debug" => Zend_Log::DEBUG,
+                "info" => Zend_Log::INFO,
+                "notice" => Zend_Log::NOTICE,
+                "warning" => Zend_Log::WARN,
+                "error" => Zend_Log::ERR,
+                "critical" => Zend_Log::CRIT,
+                "alert" => Zend_Log::ALERT,
+                "emergency" => Zend_Log::EMERG
+            );
+
+            $prios = array();
+            $conf = Pimcore_Config::getSystemConfig();
+            if($conf->general->loglevel) {
+                $prioConf = $conf->general->loglevel->toArray();
+                if(is_array($prioConf)) {
+                    foreach ($prioConf as $level => $state) {
+                        if($state) {
+                            $prios[$level] = $prioMapping[$level];
+                        }
+                    }
+                }
+            }
+
             $logger = new Zend_Log();
-            $logger->addWriter(new Zend_Log_Writer_Stream(PIMCORE_WEBSITE_PATH . '/var/log/online-shop-sql.log'));
+            $logger->addWriter(new Zend_Log_Writer_Stream($logfilename));
+
+            foreach($prioMapping as $key => $mapping) {
+                if(!array_key_exists($key, $prios)) {
+                    $logger->addFilter(new Zend_Log_Filter_Priority($mapping, "!="));
+                }
+            }
+
             self::$sqlLogger = $logger;
         }
         return self::$sqlLogger;
