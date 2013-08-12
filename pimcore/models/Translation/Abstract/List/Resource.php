@@ -63,6 +63,11 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
         return $translations;
     }
 
+    public function loadRaw() {
+        $translationsData = $this->db->fetchAll("SELECT * FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        return $translationsData;
+    }
+
     public function load () {
 
         $allTranslations = $this->getAllTranslations();
