@@ -83,6 +83,14 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
         return $translations;
     }
 
+    public function isCacheable() {
+        $count = $this->db->fetchOne("SELECT COUNT(*) FROM " . static::getTableName());
+        if($count > 5000) {
+            return false;
+        }
+        return true;
+    }
+
     public function cleanup() {
         $keysToDelete = $this->db->fetchCol("SELECT `key` FROM " . static::getTableName() . " as tbl1 WHERE
                (SELECT count(*) FROM " . static::getTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))
