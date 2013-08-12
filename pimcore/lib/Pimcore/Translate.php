@@ -56,21 +56,21 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
 
         $listClass = self::getBackend() . "_List";
         $list = new $listClass();
-        $list->load();
+        $validLanguages = Pimcore_Tool::getValidLanguages();
+        $qoutedLanguages = array();
 
-        foreach ($list->getTranslations() as $translation) {
-            if($translation instanceof Translation_Abstract) {
-                foreach ($translation->getTranslations() as $language => $text) {
-                    $this->_translate[$language][mb_strtolower($translation->getKey())] = Pimcore_Tool_Text::removeLineBreaks($text);
-                }
-            }
+        // prefill with dummy data
+        foreach ($validLanguages as $language) {
+            $this->_translate[$language] = array("__pimcore_dummy" => "only_a_dummy");
+            $qoutedLanguages[] = $list->quote($language);
         }
 
-        $availableLanguages = (array) Pimcore_Tool::getValidLanguages();
-        foreach ($availableLanguages as $language) {
-            if(!array_key_exists($language,$this->_translate) || empty($this->_translate[$language])) {
-                $this->_translate[$language] = array("__pimcore_dummy" => "only_a_dummy");
-            }
+
+        $list->setCondition("language IN (" . implode(",", $qoutedLanguages) . ")");
+        $translations = $list->loadRaw();
+
+        foreach ($translations as $translation) {
+            $this->_translate[$translation["language"]][mb_strtolower($translation["key"])] = Pimcore_Tool_Text::removeLineBreaks($translation["text"]);
         }
 
         return $this->_translate;
