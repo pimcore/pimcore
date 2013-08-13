@@ -267,7 +267,7 @@ pimcore.report.custom.item = Class.create({
 
         if(this.currentElementCount < 1) {
             classMenu.push({
-                text: ts("datasource_sql"),
+                text: ts("custom_report_adapter_sql"),
                 handler: this.addSourceDefinition.bind(this, null),
                 iconCls: "pimcore_icon_objectbricks"
             });
