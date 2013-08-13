@@ -61,7 +61,8 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
 
             $metaData = array(
                 "hotspots" => $data->getHotspots(),
-                "marker" => $data->getMarker()
+                "marker" => $data->getMarker(),
+                "crop" => $data->getCrop()
             );
 
             $rewritePath = function ($data) {
@@ -116,6 +117,7 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
 
             $hotspots = empty($md["hotspots"]) ? null : $md["hotspots"];
             $marker = empty($md["marker"]) ? null : $md["marker"];
+            $crop = empty($md["crop"]) ? null : $md["crop"];
 
             $rewritePath = function ($data) {
 
@@ -139,7 +141,7 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
             $hotspots = $rewritePath($hotspots);
             $marker = $rewritePath($marker);
 
-            return new Object_Data_Hotspotimage($data[$this->getName() . "__image"], $hotspots, $marker);
+            return new Object_Data_Hotspotimage($data[$this->getName() . "__image"], $hotspots, $marker, $crop);
         }
         return null;
 
@@ -192,7 +194,8 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
             return array(
                 "image" => $imageId,
                 "hotspots" => $hotspots,
-                "marker" => $marker
+                "marker" => $marker,
+                "crop" => $data->getCrop()
             );
         }
         return null;
@@ -234,7 +237,7 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
         }
 
 
-        return new Object_Data_Hotspotimage($data["image"], $data["hotspots"], $data["marker"]);
+        return new Object_Data_Hotspotimage($data["image"], $data["hotspots"], $data["marker"], $data["crop"]);
     }
 
     /**
