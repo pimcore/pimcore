@@ -12,20 +12,20 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.report.sql.settings");
-pimcore.report.sql.settings = Class.create({
+pimcore.registerNS("pimcore.report.custom.settings");
+pimcore.report.custom.settings = Class.create({
 
     initialize: function (parent) {
         this.parent = parent;
     },
 
     getKey: function () {
-        return "sql";
+        return "custom";
     },
 
     getLayout: function () {
 
-        var editor = new pimcore.report.sql.panel();
+        var editor = new pimcore.report.custom.panel();
 
         this.panel = new Ext.Panel({
             title: t("sql_reports"),
@@ -46,4 +46,4 @@ pimcore.report.sql.settings = Class.create({
 });
 
 
-pimcore.report.settings.broker.push("pimcore.report.sql.settings");
+pimcore.report.settings.broker.push("pimcore.report.custom.settings");

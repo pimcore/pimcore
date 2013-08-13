@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.report.sql.report");
-pimcore.report.sql.report = Class.create(pimcore.report.abstract, {
+pimcore.registerNS("pimcore.report.custom.report");
+pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
     matchType: function (type) {
         var types = ["global"];
@@ -185,11 +185,11 @@ pimcore.report.sql.report = Class.create(pimcore.report.abstract, {
 
 
 
-pimcore.registerNS("pimcore.report.sql.reportplugin");
-pimcore.report.sql.reportplugin = Class.create(pimcore.plugin.admin, {
+pimcore.registerNS("pimcore.report.custom.reportplugin");
+pimcore.report.custom.reportplugin = Class.create(pimcore.plugin.admin, {
 
     getClassName: function() {
-        return "pimcore.report.sql.reportplugin";
+        return "pimcore.report.custom.reportplugin";
     },
 
     initialize: function() {
@@ -230,7 +230,7 @@ pimcore.report.sql.reportplugin = Class.create(pimcore.plugin.admin, {
                             }
 
                             pimcore.report.broker.addGroup(report["group"], report["group"], report["groupIconClass"]);
-                            pimcore.report.broker.addReport(pimcore.report.sql.report, report["group"], {
+                            pimcore.report.broker.addReport(pimcore.report.custom.report, report["group"], {
                                 name: report["name"],
                                 text: report["niceName"],
                                 niceName: report["niceName"],
@@ -246,7 +246,7 @@ pimcore.report.sql.reportplugin = Class.create(pimcore.plugin.admin, {
                                             text: report["niceName"],
                                             iconCls: report["iconClass"],
                                             handler: function (report) {
-                                                toolbar.showReports(pimcore.report.sql.report, {
+                                                toolbar.showReports(pimcore.report.custom.report, {
                                                     name: report["name"],
                                                     text: report["niceName"],
                                                     niceName: report["niceName"],
@@ -268,6 +268,6 @@ pimcore.report.sql.reportplugin = Class.create(pimcore.plugin.admin, {
 });
 
 (function() {
-    new pimcore.report.sql.reportplugin();
+    new pimcore.report.custom.reportplugin();
 })();
 

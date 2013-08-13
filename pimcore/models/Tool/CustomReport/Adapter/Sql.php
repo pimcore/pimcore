@@ -1,0 +1,88 @@
+<?php
+/**
+ * Created by JetBrains PhpStorm.
+ * User: cfasching
+ * Date: 13.08.13
+ * Time: 13:14
+ * To change this template use File | Settings | File Templates.
+ */
+
+class Tool_CustomReport_Adapter_Sql {
+
+
+    public function __construct($config) {
+        $this->config = $config;
+    }
+
+    /**
+     *
+     */
+    public function getData($filters, $sort, $dir, $offset, $limit) {
+        $db = Pimcore_Resource::get();
+
+        $baseQuery = $this->getBaseQuery($filters);
+
+        if($baseQuery) {
+            $total = $db->fetchOne($baseQuery["count"]);
+
+            $order = "";
+            if($sort && $dir) {
+                $order = " ORDER BY " . $db->quoteIdentifier($sort) . " " . $dir;
+            }
+
+            $sql = $baseQuery["data"] . $order . " LIMIT $offset,$limit";
+            $data = $db->fetchAll($sql);
+        }
+
+        return array("data" => $data, "total" => $total);
+    }
+
+
+    protected function getBaseQuery($filters) {
+        $db = Pimcore_Resource::get();
+        $condition = array("1 = 1");
+
+        $sql = $this->config->sql;
+        $data = "";
+
+        if($filters) {
+            if(is_array($filters)) {
+                foreach ($filters as $filter) {
+                    if($filter["type"] == "string") {
+                        $condition[] = $db->quoteIdentifier($filter["field"]) . " LIKE " . $db->quote("%" . $filter["value"] . "%");
+                    } else if($filter["type"] == "numeric") {
+                        $compMapping = array(
+                            "lt" => "<",
+                            "gt" => ">",
+                            "eq" => "="
+                        );
+                        if($compMapping[$filter["comparison"]]) {
+                            $condition[] = $db->quoteIdentifier($filter["field"]) . " " . $compMapping[$filter["comparison"]] . " " . $db->quote($filter["value"]);
+                        }
+                    } else if ($filter["type"] == "boolean") {
+                        $condition[] = $db->quoteIdentifier($filter["field"]) . " = " . $db->quote((int)$filter["value"]);
+                    } else if ($filter["type"] == "date") {
+
+                    }
+                }
+            }
+        }
+
+        if(!preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i", $sql, $matches)) {
+
+            $condition = implode(" AND ", $condition);
+
+            $total = "SELECT COUNT(*) FROM (" . $sql . ") AS somerandxyz WHERE " . $condition;
+            $data = "SELECT * FROM (" . $sql . ") AS somerandxyz WHERE " . $condition;
+        } else {
+            return;
+        }
+
+        return array(
+            "data" => $data,
+            "count" => $total
+        );
+    }
+
+
+}
