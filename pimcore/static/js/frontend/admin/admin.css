@@ -14,6 +14,13 @@
     z-index: 10000;
 }
 
+/* bootstrap 3 fixes */
+#pimcore_admin_console * {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
 #pimcore_admin_console.open {
     width: 200px;
 }
