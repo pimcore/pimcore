@@ -151,6 +151,9 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
+
+        this.empty();
+
         if (data.node.attributes.type == "image") {
             if(this.data != data.node.attributes.id) {
                 this.dirty = true;
@@ -174,6 +177,8 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     uploadDialog: function () {
         pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.uploadPath, "path", function (res) {
             try {
+                this.empty();
+
                 var data = Ext.decode(res.response.responseText);
                 if(data["id"] && data["type"] == "image") {
                     this.data = data["id"];
@@ -187,6 +192,9 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
     
     addDataFromSelector: function (item) {
+
+        this.empty();
+
         if (item) {
             if(this.data != item.id) {
                 this.dirty = true;
