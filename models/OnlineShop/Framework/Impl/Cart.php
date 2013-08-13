@@ -7,6 +7,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
     protected $name;
     protected $creationDate;
     protected $creationDateTimestamp;
+    protected $modificationDateTimestamp;
     protected $id;
 
     /**
@@ -17,6 +18,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
 
     public function __construct() {
         $this->setCreationDate(Zend_Date::now());
+        $this->setModificationDate(Zend_Date::now());
     }
 
     /**
