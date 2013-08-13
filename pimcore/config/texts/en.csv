@@ -76,6 +76,8 @@
 "enter_the_name_of_the_new_report","Enter the name of the new report"
 "add_sql_report","Add SQL Report"
 "sql_reports","SQL Reports"
+"custom_report_adapter_sql","SQL"
+"source_definition","Source Definition"
 "content_social_analysis","Content & Social Analysis"
 "up","Up"
 "down","Down"
