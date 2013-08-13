@@ -103,9 +103,10 @@ class Pimcore_Document_Adapter_LibreOffice extends Pimcore_Document_Adapter_Ghos
                 $pdfFile = PIMCORE_TEMPORARY_DIRECTORY . "/document_" . md5($path . filemtime($path)) . "__libreoffice.pdf";
                 $lockKey = "soffice";
 
-                Tool_Lock::acquire($lockKey); // avoid parallel conversions of the same document
-
                 if(!file_exists($pdfFile)) {
+
+                    Tool_Lock::acquire($lockKey); // avoid parallel conversions of the same document
+
                     // a list of all available filters is here:
                     // http://cgit.freedesktop.org/libreoffice/core/tree/filter/source/config/fragments/filters
                     $out = Pimcore_Tool_Console::exec(self::getLibreOfficeCli() . " --headless --convert-to pdf:writer_web_pdf_Export --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path);
