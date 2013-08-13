@@ -249,6 +249,17 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             }));
 
             if(this instanceof pimcore.object.tags.hotspotimage) {
+
+                menu.add(new Ext.menu.Item({
+                    text: t('select_specific_area_of_image'),
+                    iconCls: "pimcore_icon_image_region",
+                    handler: function (item) {
+                        item.parentMenu.destroy();
+
+                        this.openCropWindow();
+                    }.bind(this)
+                }));
+
                 menu.add(new Ext.menu.Item({
                     text: t('add_marker_or_hotspots'),
                     iconCls: "pimcore_icon_image_add_hotspot",

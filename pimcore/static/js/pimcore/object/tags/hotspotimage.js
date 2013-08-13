@@ -24,12 +24,14 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     initialize: function (data, fieldConfig) {
         this.hotspots = [];
         this.marker = [];
+        this.crop = [];
 
         this.data = null;
         if (data) {
             this.data = data.image;
             this.hotspots = data.hotspots;
             this.marker = data.marker;
+            this.crop = data.crop;
         }
         this.fieldConfig = fieldConfig;
     },
@@ -72,6 +74,10 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 xtype: "tbtext",
                 text: "<b>" + this.fieldConfig.title + "</b>"
             },"->",{
+                xtype: "button",
+                iconCls: "pimcore_icon_image_region",
+                handler: this.openCropWindow.bind(this)
+            },{
                 xtype: "button",
                 iconCls: "pimcore_icon_image_add_hotspot",
                 handler: this.openHotspotWindow.bind(this)
@@ -148,10 +154,29 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     updateImage: function () {
         var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.fieldConfig.width - 2)
-                                        + "/height/" + (this.fieldConfig.height - 30) + "/aspectratio/true";
+                                        + "/height/" + (this.fieldConfig.height - 30) + "/aspectratio/true"
+                                        + "?" + Ext.urlEncode(this.crop);
+
+
         this.panel.update('<img align="center" class="pimcore_droptarget_image" src="' + path + '" />');
     },
 
+
+    openCropWindow: function () {
+        var editor = new pimcore.element.tag.imagecropper(this.data, this.crop, function (data) {
+            this.crop = {};
+            this.crop["cropWidth"] = data.cropWidth;
+            this.crop["cropHeight"] = data.cropHeight;
+            this.crop["cropTop"] = data.cropTop;
+            this.crop["cropLeft"] = data.cropLeft;
+            this.crop["cropPercent"] = true;
+
+            this.dirty = true;
+
+            this.updateImage();
+        }.bind(this));
+        editor.open(true);
+    },
 
     openHotspotWindow: function() {
         if(this.data) {
@@ -170,12 +195,13 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
         this.hotspots = [];
         this.marker = [];
+        this.crop = [];
         this.dirty = true;
         this.component.removeAll();
         this.createImagePanel();
     },
 
     getValue: function () {
-        return {image: this.data, hotspots: this.hotspots, marker: this.marker};
+        return {image: this.data, hotspots: this.hotspots, marker: this.marker, crop: this.crop};
     }
 });

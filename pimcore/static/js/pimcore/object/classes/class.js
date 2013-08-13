@@ -683,7 +683,15 @@ pimcore.object.classes.klass = Class.create({
 
     addDataChild: function (type, initData) {
 
-        var nodeLabel = t(type);
+        var nodeLabel = null;
+
+        try {
+            nodeLabel = pimcore.object.classes.data[type].prototype.getTypeName();
+        } catch (e1) {}
+
+        if(empty(nodeLabel)) {
+            nodeLabel = t(type);
+        }
 
         if (initData) {
             if (initData.name) {

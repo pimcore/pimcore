@@ -39,7 +39,7 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
     },
 
     getTypeName: function () {
-        return t("hotspotimage");
+        return t("imageadvanced");
     },
 
     getIconClass: function () {
