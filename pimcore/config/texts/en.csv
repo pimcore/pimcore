@@ -1,3 +1,4 @@
+"absolute_path_to_libreoffice","Absolute path to LibreOffice"
 "word_export_notice","Please note that this export doesn't include any layout information (or just basic ones) and that it isn't possible to import the content again.<br />The language selection is used to set the language for object's localized fields (only localized fields are exported!). "
 "filter_active_message","Do you want to export only the filtered values?"
 "close_others","Close Others"
