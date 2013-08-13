@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
-class Tool_SqlReport_Config {
+class Tool_CustomReport_Config {
 
     /**
      * @var string
@@ -26,6 +26,11 @@ class Tool_SqlReport_Config {
      * @var string
      */
     public $sql = "";
+
+    /**
+     * @var string[]
+     */
+    public $dataSourceConfig = array();
 
     /**
      * @var array
@@ -59,7 +64,7 @@ class Tool_SqlReport_Config {
 
     /**
      * @param $name
-     * @return Tool_SqlReport_Config
+     * @return Tool_CustomReport_Config
      * @throws Exception
      */
     public static function getByName ($name) {
@@ -95,6 +100,16 @@ class Tool_SqlReport_Config {
         $items = $arrayConfig["columnConfiguration"];
         $arrayConfig["columnConfiguration"] = array("columnConfiguration" => $items);
 
+        if($arrayConfig["dataSourceConfig"]) {
+            $configArray = array();
+            foreach($arrayConfig["dataSourceConfig"] as $config) {
+                $configArray[] = json_encode($config);
+            }
+            $arrayConfig["dataSourceConfig"] = array("dataSourceConfig" => $configArray);
+        } else {
+            $arrayConfig["dataSourceConfig"] = array("dataSourceConfig" => array());
+        }
+
         $config = new Zend_Config($arrayConfig);
         $writer = new Zend_Config_Writer_Xml(array(
             "config" => $config,
@@ -121,6 +136,28 @@ class Tool_SqlReport_Config {
             }
         } else {
             $configArray["columnConfiguration"] = array("columnConfiguration" => array());
+        }
+
+        if(array_key_exists("dataSourceConfig",$configArray) && is_array($configArray["dataSourceConfig"])) {
+            $dataSourceConfig = array();
+            foreach($configArray["dataSourceConfig"] as $c) {
+                if($c) {
+                    $dataSourceConfig[] = json_decode($c);
+                }
+            }
+
+            $configArray["dataSourceConfig"] = $dataSourceConfig;
+        } else {
+            $configArray["dataSourceConfig"] = array();
+        }
+
+
+        // to preserve compatibility to older sql reports
+        if($configArray["sql"] && empty($configArray["dataSourceConfig"])) {
+            $legacy = new stdClass();
+            $legacy->type = "sql";
+            $legacy->sql = $configArray["sql"];
+            $configArray["dataSourceConfig"][] = $legacy;
         }
 
         foreach ($configArray as $key => $value) {
@@ -276,6 +313,24 @@ class Tool_SqlReport_Config {
     {
         return $this->menuShortcut;
     }
+
+
+    /**
+     * @param \string[] $dataSourceConfig
+     */
+    public function setDataSourceConfig($dataSourceConfig)
+    {
+        $this->dataSourceConfig = $dataSourceConfig;
+    }
+
+    /**
+     * @return \string[]
+     */
+    public function getDataSourceConfig()
+    {
+        return $this->dataSourceConfig;
+    }
+
 
 
 }

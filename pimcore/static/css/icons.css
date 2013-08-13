@@ -967,6 +967,9 @@
 .pimcore_icon_plus {
 	background: url(/pimcore/static/img/icon/add.png) !important;
 }
+.pimcore_icon_plus_no_repeat {
+    background: url(/pimcore/static/img/icon/add.png) left center no-repeat !important;
+}
 
 .pimcore_icon_minus {
 	background: url(/pimcore/static/img/icon/delete.png) left center no-repeat !important;
