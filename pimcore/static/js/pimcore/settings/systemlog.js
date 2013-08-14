@@ -63,10 +63,14 @@ pimcore.settings.systemlog = Class.create({
 
             this.panel.on("resize", this.onLayoutResize.bind(this));
 
+            this.panel.on("afterrender", function () {
+                this.load();
+            }.bind(this));
+
+
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
             tabPanel.activate("pimcore_systemlog");
-
 
             this.panel.on("destroy", function () {
                 clearInterval(this.interval);
@@ -135,13 +139,17 @@ pimcore.settings.systemlog = Class.create({
 
         try {
             this.isLoaded = false;
-            var d = new Date();
-            Ext.get("pimcore_systemlog_frame").dom.src = "/admin/settings/systemlog?_dc=" + d.getTime();
+            this.load();
         }
         catch (e2) {
             clearInterval(this.interval);
             console.log(e2);
         }
+    },
+
+    load: function () {
+        var d = new Date();
+        Ext.get("pimcore_systemlog_frame").dom.src = "/admin/settings/systemlog?_dc=" + d.getTime();
     },
 
     start: function () {
