@@ -35,7 +35,7 @@ pimcore.report.custom.item = Class.create({
         }); 
 
         this.columnStore = new Ext.data.JsonStore({
-            autoDestroy: true,
+            autoDestroy: false,
             data: [],
             fields: ["name", "filter", "display", "export", "order", "width", "label"]
         });
@@ -179,7 +179,8 @@ pimcore.report.custom.item = Class.create({
                 }]
             },
                 this.getSourceDefinitionPanel(),
-                this.columnGrid
+                this.columnGrid,
+                this.getChartDefinitionPanel()
             ],
             buttons: panelButtons,
             title: this.data.name,
@@ -194,6 +195,172 @@ pimcore.report.custom.item = Class.create({
         this.parentPanel.getEditPanel().activate(this.panel);
 
         pimcore.layout.refresh();
+    },
+
+    getChartDefinitionPanel: function() {
+
+        var chartTypeSelector = new Ext.form.ComboBox({
+            triggerAction: 'all',
+            lazyRender:true,
+            mode: 'local',
+            name: 'chartType',
+            fieldLabel: t('custom_report_charttype'),
+            value: this.data.chartType,
+            store: new Ext.data.ArrayStore({
+                fields: [
+                    'chartType',
+                    'text'
+                ],
+                data: [['', t('custom_report_charttype_none')],['pie', t('custom_report_charttype_pie')], ['line', t('custom_report_charttype_line')], ['block', t('custom_report_charttype_block')]]
+            }),
+            valueField: 'chartType',
+            displayField: 'text',
+            listeners: {
+                afterrender: function() {
+                    this.updateTypeSpecificCartDefinitionPanel(this.data.chartType);
+                }.bind(this),
+                select: function(combo, record, index) {
+                    var chartType = combo.getValue();
+                    this.updateTypeSpecificCartDefinitionPanel(chartType);
+                }.bind(this)
+            }
+        });
+
+        this.pieChartDefinitionPanel = this.getPieChartDefinitionPanel();
+        this.lineChartDefinitionPanel = this.getLineChartDefinitionPanel();
+
+        this.chartDefinitionFieldset = new Ext.form.FieldSet({
+            itemId: "chartdefinitionFieldset",
+            title: t("custom_report_chart_settings"),
+            style: "margin-top: 20px;margin-bottom: 20px",
+            collapsible: false,
+            items: [
+                chartTypeSelector,
+                this.pieChartDefinitionPanel,
+                this.lineChartDefinitionPanel
+            ]
+        });
+
+
+        return this.chartDefinitionFieldset;
+    },
+
+    updateTypeSpecificCartDefinitionPanel: function(chartType) {
+        this.pieChartDefinitionPanel.setVisible(false);
+        this.lineChartDefinitionPanel.setVisible(false);
+
+        if(chartType == "pie") {
+            this.pieChartDefinitionPanel.setVisible(true);
+        }
+        if(chartType == "line" || chartType == "block") {
+            this.lineChartDefinitionPanel.setVisible(true);
+        }
+
+        this.chartDefinitionFieldset.doLayout();
+    },
+
+    getPieChartDefinitionPanel: function() {
+        return new Ext.form.FieldSet({
+            title: t("custom_report_chart_options"),
+            hidden: true,
+            style: "margin-top: 20px;margin-bottom: 20px",
+            collapsible: false,
+            items: [new Ext.form.ComboBox({
+                triggerAction: 'all',
+                lazyRender:true,
+                name: 'pieColumn',
+                value: this.data.pieColumn,
+                mode: 'local',
+                width: 300,
+                fieldLabel: t('custom_report_datacolumn'),
+                store: this.columnStore,
+                valueField: 'name',
+                displayField: 'name'
+            })
+            ]
+        });
+    },
+
+    getLineChartDefinitionPanel: function() {
+        return new Ext.form.FieldSet({
+            title: t("custom_report_chart_options"),
+            hidden: true,
+            style: "margin-top: 20px;margin-bottom: 20px",
+            collapsible: false,
+            listeners: {
+                afterrender: function() {
+                    if(this.data.yAxis && this.data.yAxis.length > 1) {
+                        for(var i = 1; i < this.data.yAxis.length; i++) {
+                            this.addAdditionalYAxis(this.data.yAxis[i]);
+                        }
+                    }
+                }.bind(this)
+            },
+            items: [
+                new Ext.form.ComboBox({
+                    triggerAction: 'all',
+                    lazyRender:true,
+                    name: 'xAxis',
+                    mode: 'local',
+                    width: 300,
+                    value: this.data.xAxis,
+                    fieldLabel: t('custom_report_x_axis'),
+                    store: this.columnStore,
+                    valueField: 'name',
+                    displayField: 'name'
+                }),{
+                    xtype: "compositefield",
+                    fieldLabel: t("custom_report_y_axis"),
+                    width: 360,
+                    items: [{
+                        xtype: "combo",
+                        triggerAction: 'all',
+                        lazyRender:true,
+                        name: 'yAxis',
+                        mode: 'local',
+                        width: 300,
+                        store: this.columnStore,
+                        value: this.data.yAxis ? this.data.yAxis[0] : null,
+                        valueField: 'name',
+                        displayField: 'name'
+                    },{
+                        xtype: "button",
+                        iconCls: "pimcore_icon_add",
+                        handler: function () {
+                            this.addAdditionalYAxis();
+                        }.bind(this)
+                    }]
+                }
+            ]
+        });
+    },
+
+    addAdditionalYAxis: function(value) {
+        this.lineChartDefinitionPanel.add({
+            xtype: "compositefield",
+            fieldLabel: t("custom_report_y_axis"),
+            width: 360,
+            items: [{
+                xtype: "combo",
+                triggerAction: 'all',
+                lazyRender:true,
+                name: 'yAxis',
+                mode: 'local',
+                width: 300,
+                store: this.columnStore,
+                value: value ? value : null,
+                valueField: 'name',
+                displayField: 'name'
+            },{
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                handler: function (button) {
+                    this.lineChartDefinitionPanel.remove(button.findParentByType('compositefield'));
+                    this.lineChartDefinitionPanel.doLayout();
+                }.bind(this)
+            }]
+        });
+        this.lineChartDefinitionPanel.doLayout();
     },
 
     getSourceDefinitionPanel: function() {
@@ -407,13 +574,12 @@ pimcore.report.custom.item = Class.create({
         var dataSourceConfig = [];
         for(var i = 0; i < this.currentElements.length; i++) {
             if(!this.currentElements[i].deleted) {
-//                var values = this.currentElements[i].element.getForm().getFieldValues();
-//                values.type = "sql";
                 dataSourceConfig.push(this.currentElements[i].adapter.getValues());
             }
         }
         m["dataSourceConfig"] = dataSourceConfig;
         m["sql"] = "";
+
         return m;
     },
 

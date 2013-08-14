@@ -79,7 +79,6 @@ class Reports_SqlController extends Pimcore_Controller_Action_Admin_Reports {
         $report = Tool_CustomReport_Config::getByName($this->getParam("name"));
         $data = Zend_Json::decode($this->getParam("configuration"));
         $data = array_htmlspecialchars($data);
-
         foreach ($data as $key => $value) {
             $setter = "set" . ucfirst($key);
             if(method_exists($report, $setter)) {
