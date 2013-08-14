@@ -327,7 +327,7 @@ CREATE TABLE `keyvalue_keys` (
   `group` INT,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`group`) REFERENCES keyvalue_groups(`id`) ON DELETE SET NULL
-) DEFAULT CHARSET=utf8;;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `locks`;
 CREATE TABLE `locks` (
