@@ -17,7 +17,7 @@ class Pimcore_Document {
 
     /**
      * @param null $adapter
-     * @return null|Pimcore_Document_Adapter_Imagick
+     * @return null|Pimcore_Document_Adapter
      * @throws Exception
      */
     public static function getInstance ($adapter = null) {
@@ -70,7 +70,7 @@ class Pimcore_Document {
      */
     public static function getDefaultAdapter () {
 
-        $adapters = array("LibreOffice", "Ghostscript", "Imagick");
+        $adapters = array("LibreOffice", "Ghostscript");
 
         foreach ($adapters as $adapter) {
             $adapterClass = "Pimcore_Document_Adapter_" . $adapter;
