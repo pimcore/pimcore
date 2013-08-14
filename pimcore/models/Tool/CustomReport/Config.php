@@ -63,6 +63,26 @@ class Tool_CustomReport_Config {
     public $menuShortcut;
 
     /**
+     * @var string
+     */
+    public $chartType;
+
+    /**
+     * @var string
+     */
+    public $pieColumn;
+
+    /**
+     * @var string
+     */
+    public $xAxis;
+
+    /**
+     * @var string|array
+     */
+    public $yAxis;
+
+    /**
      * @param $name
      * @return Tool_CustomReport_Config
      * @throws Exception
@@ -110,6 +130,9 @@ class Tool_CustomReport_Config {
             $arrayConfig["dataSourceConfig"] = array("dataSourceConfig" => array());
         }
 
+        $items = $arrayConfig["yAxis"];
+        $arrayConfig["yAxis"] = array("yAxis" => $items);
+
         $config = new Zend_Config($arrayConfig);
         $writer = new Zend_Config_Writer_Xml(array(
             "config" => $config,
@@ -151,6 +174,13 @@ class Tool_CustomReport_Config {
             $configArray["dataSourceConfig"] = array();
         }
 
+        if(array_key_exists("yAxis",$configArray) && is_array($configArray["yAxis"])) {
+            if(!is_array($configArray["yAxis"]["yAxis"])) {
+                $configArray["yAxis"] = array($configArray["yAxis"]["yAxis"]);
+            } else {
+                $configArray["yAxis"] = $configArray["yAxis"]["yAxis"];
+            }
+        }
 
         // to preserve compatibility to older sql reports
         if($configArray["sql"] && empty($configArray["dataSourceConfig"])) {
@@ -330,6 +360,72 @@ class Tool_CustomReport_Config {
     {
         return $this->dataSourceConfig;
     }
+
+    /**
+     * @param string $chartType
+     */
+    public function setChartType($chartType)
+    {
+        $this->chartType = $chartType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChartType()
+    {
+        return $this->chartType;
+    }
+
+    /**
+     * @param string $pieColumn
+     */
+    public function setPieColumn($pieColumn)
+    {
+        $this->pieColumn = $pieColumn;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPieColumn()
+    {
+        return $this->pieColumn;
+    }
+
+    /**
+     * @param string $xAxis
+     */
+    public function setXAxis($xAxis)
+    {
+        $this->xAxis = $xAxis;
+    }
+
+    /**
+     * @return string
+     */
+    public function getXAxis()
+    {
+        return $this->xAxis;
+    }
+
+    /**
+     * @param array|string $yAxis
+     */
+    public function setYAxis($yAxis)
+    {
+        $this->yAxis = $yAxis;
+    }
+
+    /**
+     * @return array|string
+     */
+    public function getYAxis()
+    {
+        return $this->yAxis;
+    }
+
+
 
 
 
