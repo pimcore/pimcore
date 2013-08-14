@@ -131,7 +131,10 @@
                     var personaButton = document.createElement("li");
                     personaButton.className = "button persona";
 
-                    if(window.pimcore["targeting"] && window.pimcore["targeting"]["user"] && window.pimcore["targeting"]["user"]["persona"]) {
+                    if(window.pimcore["targeting"]
+                        && window.pimcore["targeting"]["user"]
+                        && window.pimcore["targeting"]["user"]["persona"]
+                        && window.pimcore["personas"][window.pimcore["targeting"]["user"]["persona"]]) {
                         personaButton.innerHTML = '<small style="font-size: 10px">Persona: ' + window.pimcore["personas"][window.pimcore["targeting"]["user"]["persona"]] + '</small>';
                     } else {
                         personaButton.innerHTML = 'Persona';
