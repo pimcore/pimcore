@@ -104,6 +104,11 @@ if(@is_file($websiteStartup)) {
     include_once($websiteStartup);
 }
 
+$composerStartup = PIMCORE_DOCUMENT_ROOT . "/vendor/autoload.php";
+if(@is_file($composerStartup)) {
+    include_once($composerStartup);
+}
+
 // on pimcore shutdown
 register_shutdown_function("Pimcore::shutdownHandler");
 
