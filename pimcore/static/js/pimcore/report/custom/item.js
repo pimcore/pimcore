@@ -211,7 +211,7 @@ pimcore.report.custom.item = Class.create({
                     'chartType',
                     'text'
                 ],
-                data: [['', t('custom_report_charttype_none')],['pie', t('custom_report_charttype_pie')], ['line', t('custom_report_charttype_line')], ['block', t('custom_report_charttype_block')]]
+                data: [['', t('custom_report_charttype_none')],['pie', t('custom_report_charttype_pie')], ['line', t('custom_report_charttype_line')], ['bar', t('custom_report_charttype_bar')]]
             }),
             valueField: 'chartType',
             displayField: 'text',
@@ -252,7 +252,7 @@ pimcore.report.custom.item = Class.create({
         if(chartType == "pie") {
             this.pieChartDefinitionPanel.setVisible(true);
         }
-        if(chartType == "line" || chartType == "block") {
+        if(chartType == "line" || chartType == "bar") {
             this.lineChartDefinitionPanel.setVisible(true);
         }
 
@@ -268,15 +268,27 @@ pimcore.report.custom.item = Class.create({
             items: [new Ext.form.ComboBox({
                 triggerAction: 'all',
                 lazyRender:true,
-                name: 'pieColumn',
-                value: this.data.pieColumn,
+                name: 'pieLabelColumn',
+                value: this.data.pieLabelColumn,
                 mode: 'local',
                 width: 300,
-                fieldLabel: t('custom_report_datacolumn'),
+                fieldLabel: t('custom_report_labelcolumn'),
                 store: this.columnStore,
                 valueField: 'name',
                 displayField: 'name'
-            })
+            }),
+                new Ext.form.ComboBox({
+                    triggerAction: 'all',
+                    lazyRender:true,
+                    name: 'pieColumn',
+                    value: this.data.pieColumn,
+                    mode: 'local',
+                    width: 300,
+                    fieldLabel: t('custom_report_datacolumn'),
+                    store: this.columnStore,
+                    valueField: 'name',
+                    displayField: 'name'
+                })
             ]
         });
     },

@@ -75,6 +75,11 @@ class Tool_CustomReport_Config {
     /**
      * @var string
      */
+    public $pieLabelColumn;
+
+    /**
+     * @var string
+     */
     public $xAxis;
 
     /**
@@ -425,8 +430,20 @@ class Tool_CustomReport_Config {
         return $this->yAxis;
     }
 
+    /**
+     * @param string $pieLabelColumn
+     */
+    public function setPieLabelColumn($pieLabelColumn)
+    {
+        $this->pieLabelColumn = $pieLabelColumn;
+    }
 
-
-
+    /**
+     * @return string
+     */
+    public function getPieLabelColumn()
+    {
+        return $this->pieLabelColumn;
+    }
 
 }
