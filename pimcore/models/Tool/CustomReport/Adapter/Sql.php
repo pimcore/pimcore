@@ -17,10 +17,10 @@ class Tool_CustomReport_Adapter_Sql {
     /**
      *
      */
-    public function getData($filters, $sort, $dir, $offset, $limit) {
+    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null) {
         $db = Pimcore_Resource::get();
 
-        $baseQuery = $this->getBaseQuery($filters);
+        $baseQuery = $this->getBaseQuery($filters, $fields);
 
         if($baseQuery) {
             $total = $db->fetchOne($baseQuery["count"]);
@@ -30,7 +30,10 @@ class Tool_CustomReport_Adapter_Sql {
                 $order = " ORDER BY " . $db->quoteIdentifier($sort) . " " . $dir;
             }
 
-            $sql = $baseQuery["data"] . $order . " LIMIT $offset,$limit";
+            $sql = $baseQuery["data"] . $order;
+            if($offset && $limit) {
+                $sql .= " LIMIT $offset,$limit";
+            }
             $data = $db->fetchAll($sql);
         }
 
@@ -38,7 +41,7 @@ class Tool_CustomReport_Adapter_Sql {
     }
 
 
-    protected function getBaseQuery($filters) {
+    protected function getBaseQuery($filters, $fields) {
         $db = Pimcore_Resource::get();
         $condition = array("1 = 1");
 
@@ -73,7 +76,13 @@ class Tool_CustomReport_Adapter_Sql {
             $condition = implode(" AND ", $condition);
 
             $total = "SELECT COUNT(*) FROM (" . $sql . ") AS somerandxyz WHERE " . $condition;
-            $data = "SELECT * FROM (" . $sql . ") AS somerandxyz WHERE " . $condition;
+
+            if($fields) {
+                $data = "SELECT `" . implode("`, `", $fields) . "` FROM (" . $sql . ") AS somerandxyz WHERE " . $condition;
+            } else {
+                $data = "SELECT * FROM (" . $sql . ") AS somerandxyz WHERE " . $condition;
+            }
+
         } else {
             return;
         }

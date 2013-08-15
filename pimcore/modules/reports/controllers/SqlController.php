@@ -162,7 +162,7 @@ class Reports_SqlController extends Pimcore_Controller_Action_Admin_Reports {
         $limit = $this->getParam("limit", 40);
         $sort = $this->getParam("sort");
         $dir = $this->getParam("dir");
-        $filters = ($this->_getParam("filters") ? json_decode($this->getParam("filters")) : null);
+        $filters = ($this->_getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
 
         $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
         $configuration = $config->getDataSourceConfig();
@@ -170,6 +170,25 @@ class Reports_SqlController extends Pimcore_Controller_Action_Admin_Reports {
         $adapter = new Tool_CustomReport_Adapter_Sql($configuration);
 
         $result = $adapter->getData($filters, $sort, $dir, $offset, $limit);
+
+        $this->_helper->json(array(
+            "success" => true,
+            "data" => $result['data'],
+            "total" => $result['total']
+        ));
+    }
+
+    public function chartAction() {
+        $sort = $this->getParam("sort");
+        $dir = $this->getParam("dir");
+        $filters = ($this->_getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
+
+        $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
+        $configuration = $config->getDataSourceConfig();
+        $configuration = $configuration[0];
+        $adapter = new Tool_CustomReport_Adapter_Sql($configuration);
+
+        $result = $adapter->getData($filters, $sort, $dir, null, null);
 
         $this->_helper->json(array(
             "success" => true,

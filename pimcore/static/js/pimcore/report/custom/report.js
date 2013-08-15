@@ -81,6 +81,20 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             baseParams: {
                 name: this.config["name"]
             },
+            listeners: {
+                load: function() {
+                    if(this.chartStore) {
+                        var filterData = this.gridFilters.getFilterData();
+                        this.chartStore.load({
+                            params: {
+                                name: this.config["name"],
+                                filter: this.gridFilters.buildQuery(filterData).filter
+                            }
+                        });
+                    }
+
+                }.bind(this)
+            },
             fields: storeFields
         });
         this.store.load();
@@ -121,6 +135,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         }));
 
         this.grid = new Ext.grid.GridPanel({
+            region: "center",
             store: this.store,
             bbar: this.pagingtoolbar,
             columns: gridColums,
@@ -152,19 +167,114 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             }]
         });
 
-        this.panel.add(this.grid);
-        this.panel.doLayout();
+        return this.grid;
+    },
+
+    chartColors: [
+        0x01841c,
+        0x3D32FF,
+        0xFF1000,
+        0xFFEE00,
+        0x00FF21,
+        0x7F92FF,
+        0xFFD800
+    ],
+
+    getChart: function(data) {
+        var chartPanel = null;
+
+        if(data.chartType == 'line' || data.chartType == 'bar') {
+            var storeFields = [];
+            storeFields.push(data.xAxis);
+            for(var i = 0; i < data.yAxis.length; i++) {
+                storeFields.push(data.yAxis[i]);
+            }
+
+            this.chartStore = new Ext.data.JsonStore({
+                autoDestroy: true,
+                url: "/admin/reports/sql/chart",
+                root: 'data',
+                baseParams: {
+                    name: this.config["name"]
+                },
+                fields: storeFields
+            });
+
+            var series = [];
+            for(var i = 0; i < data.yAxis.length; i++) {
+                series.push({
+                    displayName: data.yAxis[i],
+                    type: (data.chartType == 'line' ? 'line' : 'column'),
+                    yField: data.yAxis[i],
+                    style: {
+                        color: this.chartColors[i]
+                    }
+                });
+            }
+
+            chartPanel = new Ext.Panel({
+                id:"cartID",
+                region: "north",
+                height: 350,
+                border: false,
+                items: [{
+                    xtype: (data.chartType == 'line' ? 'linechart' : 'columnchart'),
+                    store: this.chartStore,
+                    xField: data.xAxis,
+                    chartStyle: {
+                        padding: 10,
+                        legend: {
+                            display: 'bottom'
+                        }
+                    },
+                    series: series
+                }]
+            });
+        } else if(data.chartType == 'pie') {
+            this.chartStore = new Ext.data.JsonStore({
+                autoDestroy: true,
+                url: "/admin/reports/sql/chart",
+                root: 'data',
+                baseParams: {
+                    name: this.config["name"]
+                },
+                fields: [data.pieLabelColumn, data.pieColumn]
+            });
+            this.chartStore.load();
+
+            chartPanel = new Ext.Panel({
+                region: "north",
+                height: 350,
+                border: false,
+                items: [{
+                    store: this.chartStore,
+                    xtype: 'piechart',
+                    dataField: data.pieColumn,
+                    categoryField: data.pieLabelColumn,
+                    chartStyle: {
+                        padding: 10,
+                        legend: {
+                            display: 'right'
+                        }
+                    }
+                }]
+            });
+        }
+
+        return chartPanel;
     },
 
     getPanel: function () {
 
         if(!this.panel) {
             this.panel = new Ext.Panel({
+                id: "panel",
                 title: this.config["niceName"],
                 layout: "fit",
                 border: false,
                 items: []
             });
+
 
             Ext.Ajax.request({
                 url: "/admin/reports/sql/get",
@@ -173,13 +283,34 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 },
                 success: function (response) {
                     var data = Ext.decode(response.responseText);
-                    this.initGrid(data);
+                    var grid = this.initGrid(data);
+
+                    var items = [];
+                    if(data.chartType) {
+                        var chartPanel = this.getChart(data);
+                        if(chartPanel) {
+                            items.push(chartPanel);
+                        }
+                    }
+
+                    items.push(grid);
+
+                    var subPanel = new Ext.Panel({
+                        layout: "border",
+                        border: false,
+                        items: items
+                    });
+
+                    this.panel.add(subPanel);
+                    this.panel.doLayout();
                 }.bind(this)
             });
         }
 
         return this.panel;
     }
+
+
 });
 
 
