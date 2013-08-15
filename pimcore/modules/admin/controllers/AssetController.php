@@ -1419,8 +1419,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     }
 
     public function importServerFilesAction() {
-
-
         $assetFolder = Asset::getById($this->getParam("parentId"));
         $serverPath = $this->getParam("serverPath");
         $files = explode("::", $this->getParam("files"));
@@ -1428,7 +1426,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         foreach ($files as $file) {
             $absolutePath = $serverPath . $file;
             if(is_file($absolutePath)) {
-                $folder = Asset_Service::createFolderByPath($assetFolder->getFullPath() . dirname($file));
+                $relFolderPath = str_replace('\\', '/', dirname($file));
+                $folder = Asset_Service::createFolderByPath($assetFolder->getFullPath() . $relFolderPath);
                 $filename = basename($file);
 
                 // check for duplicate filename

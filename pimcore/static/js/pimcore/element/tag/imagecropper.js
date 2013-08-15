@@ -106,7 +106,7 @@ pimcore.element.tag.imagecropper = Class.create({
                             height: 100
                         });
 
-                        if(this.data.cropPercent) {
+                        if(this.data && this.data["cropPercent"]) {
                             Ext.get("selector").applyStyles({
                                 width: (imageWidth * (this.data.cropWidth / 100)) + "px",
                                 height: (imageHeight * (this.data.cropHeight / 100)) + "px",

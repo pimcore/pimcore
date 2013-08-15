@@ -17,6 +17,8 @@ pimcore.settings.systemlog = Class.create({
 
     initialize: function () {
 
+        this.isLoaded = false;
+
         this.getTabPanel();
     },
 

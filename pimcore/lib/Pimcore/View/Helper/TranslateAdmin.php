@@ -15,6 +15,7 @@
 
 class Pimcore_View_Helper_TranslateAdmin extends Zend_View_Helper_Translate {
 
+    protected $translator;
 
     public function translateAdmin($key = "") {
         if ($key) {
@@ -29,14 +30,10 @@ class Pimcore_View_Helper_TranslateAdmin extends Zend_View_Helper_Translate {
             }
 
             if ($locale) {
-
-                $cacheKey = "translator_admin";
-                if (!$translate = Pimcore_Model_Cache::load($cacheKey)) {
+                if(!$this->getTranslator()) {
                     $translate = new Pimcore_Translate_Admin($locale);
-                    Pimcore_Model_Cache::save($translate, $cacheKey, array("translator","translator_admin","translate"), null, 804);
+                    $this->setTranslator($translate);
                 }
-
-                $this->setTranslator($translate);
                 $this->setLocale($locale);
 
                 return call_user_func_array(array($this, "translate"), func_get_args());
@@ -47,5 +44,20 @@ class Pimcore_View_Helper_TranslateAdmin extends Zend_View_Helper_Translate {
         return $key;
     }
 
+    /**
+     * @param mixed $translator
+     */
+    public function setTranslator($translator)
+    {
+        $this->translator = $translator;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTranslator()
+    {
+        return $this->translator;
+    }
 }
 

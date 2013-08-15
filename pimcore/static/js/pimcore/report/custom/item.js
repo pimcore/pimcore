@@ -12,14 +12,15 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.report.sql.item");
-pimcore.report.sql.item = Class.create({
+pimcore.registerNS("pimcore.report.custom.item");
+pimcore.report.custom.item = Class.create({
 
 
     initialize: function (data, parentPanel) {
         this.parentPanel = parentPanel;
         this.data = data;
-
+        this.currentElements = [];
+        this.currentElementCount = 0;
         this.addLayout();
     },
 
@@ -175,24 +176,11 @@ pimcore.report.sql.item = Class.create({
                     checked: this.data.menuShortcut,
                     fieldLabel: t("create_menu_shortcut"),
                     width: 300
-                }, {
-                    xtype: "textarea",
-                    name: "sql",
-                    fieldLabel: "SQL <br /><small>(eg. SELECT a,b,c FROM d)</small>",
-                    value: this.data.sql,
-                    width: 500,
-                    height: 150,
-                    enableKeyEvents: true,
-                    listeners: {
-                        keyup: this.getColumnSettings.bind(this)
-                    }
-                }, {
-                    xtype: "displayfield",
-                    name: "errorMessage",
-                    itemId: "errorMessage",
-                    style: "color: red;"
                 }]
-            }, this.columnGrid],
+            },
+                this.getSourceDefinitionPanel(),
+                this.columnGrid
+            ],
             buttons: panelButtons,
             title: this.data.name,
             bodyStyle: "padding: 20px;",
@@ -208,11 +196,139 @@ pimcore.report.sql.item = Class.create({
         pimcore.layout.refresh();
     },
 
+    getSourceDefinitionPanel: function() {
+
+        this.sourceDefinitionsItems = new Ext.Panel({
+            style: "margin-bottom: 20px",
+            layout: "pimcoreform",
+            items: [
+                this.getAddControl()
+            ]
+        });
+
+        var sourceDefinitionFieldset = new Ext.form.FieldSet({
+            itemId: "sourcedefinitionFieldset",
+            title: t("source_definition"),
+            style: "margin-top: 20px;margin-bottom: 20px",
+            collapsible: false,
+            items: [
+                this.sourceDefinitionsItems,
+                {
+                    xtype: "displayfield",
+                    name: "errorMessage",
+                    itemId: "errorMessage",
+                    style: "color: red;"
+                }
+            ]
+        });
+
+        for(var i = 0; i < this.data.dataSourceConfig.length; i++) {
+            if(this.data.dataSourceConfig[i]) {
+                this.addSourceDefinition(this.data.dataSourceConfig[i]);
+            }
+        }
+        return sourceDefinitionFieldset;
+    },
+
+    getDeleteControl: function (title, index) {
+
+        var items = [{xtype: 'tbtext', text: title}];
+
+        items.push({
+            cls: "pimcore_block_button_minus",
+            iconCls: "pimcore_icon_minus",
+            listeners: {
+                "click": this.removeSourceDefinition.bind(this, index)
+            }
+        });
+
+        var toolbar = new Ext.Toolbar({
+            items: items
+        });
+
+        return toolbar;
+    },
+
+    removeSourceDefinition: function(key) {
+        for(var i = 0; i < this.currentElements.length; i++) {
+            if(this.currentElements[i].key == key) {
+                this.currentElements[i].deleted = true;
+                this.sourceDefinitionsItems.remove(this.currentElements[i].adapter.getElement());
+            }
+        }
+        this.currentElementCount--;
+        this.sourceDefinitionsItems.remove(this.sourceDefinitionsItems.get(0));
+        this.sourceDefinitionsItems.insert(0, this.getAddControl());
+        this.sourceDefinitionsItems.doLayout();
+    },
+
+    getAddControl: function() {
+        var classMenu = [];
+
+        if(this.currentElementCount < 1) {
+            classMenu.push({
+                text: t("custom_report_adapter_sql"),
+                handler: this.addSourceDefinition.bind(this, null),
+                iconCls: "pimcore_icon_objectbricks"
+            });
+        }
+
+        var items = [];
+
+        if(classMenu.length == 1) {
+            items.push({
+                cls: "pimcore_block_button_plus",
+                text: ts(classMenu[0].text),
+                iconCls: "pimcore_icon_plus_no_repeat",
+                handler: classMenu[0].handler
+            });
+        } else if (classMenu.length > 1) {
+            items.push({
+                cls: "pimcore_block_button_plus",
+                iconCls: "pimcore_icon_plus",
+                menu: classMenu
+            });
+        } else {
+            items.push({
+                xtype: "tbtext",
+                text: t("no_further_sources_allowed")
+            });
+        }
+
+        var toolbar = new Ext.Toolbar({
+            items: items
+        });
+
+        return toolbar;
+    },
+
+    addSourceDefinition: function (sourceDefinitionData) {
+        this.sourceDefinitionsItems.remove(this.sourceDefinitionsItems.get(0));
+
+        var currentData = {};
+
+        if(!this.currentElements) {
+            this.currentElements = [];
+        }
+
+        var key = this.currentElements.length;
+
+        var adapter = new pimcore.report.custom.definition.sql(sourceDefinitionData, key, this.getDeleteControl(t("custom_report_adapter_sql"), key), this.getColumnSettings.bind(this));
+
+        this.currentElements.push({key: key, adapter: adapter});
+        this.currentElementCount++;
+
+        this.sourceDefinitionsItems.add(adapter.getElement());
+        this.sourceDefinitionsItems.insert(0, this.getAddControl());
+        this.sourceDefinitionsItems.doLayout();
+    },
+
     getColumnSettings: function () {
+        var m = this.getValues();
         Ext.Ajax.request({
             url: "/admin/reports/sql/sql-config",
             method: "post",
-            params: this.panel.getForm().getFieldValues(),
+            params: {configuration: Ext.encode(m.dataSourceConfig)},
             success: function (response) {
                 var res = Ext.decode(response.responseText);
 
@@ -220,7 +336,7 @@ pimcore.report.sql.item = Class.create({
                     this.updateColumnSettings(res.columns);
                 }
 
-                var errorField = this.panel.getComponent("generalFieldset").getComponent("errorMessage");
+                var errorField = this.panel.getComponent("sourcedefinitionFieldset").getComponent("errorMessage");
 
                 errorField.setValue("");
                 if(!res.success && res.errorMessage) {
@@ -278,8 +394,7 @@ pimcore.report.sql.item = Class.create({
         }
     },
 
-    save: function () {
-
+    getValues: function() {
         var m = this.panel.getForm().getFieldValues();
 
         var columnData = [];
@@ -288,6 +403,23 @@ pimcore.report.sql.item = Class.create({
         }.bind(this));
 
         m["columnConfiguration"] = columnData;
+
+        var dataSourceConfig = [];
+        for(var i = 0; i < this.currentElements.length; i++) {
+            if(!this.currentElements[i].deleted) {
+//                var values = this.currentElements[i].element.getForm().getFieldValues();
+//                values.type = "sql";
+                dataSourceConfig.push(this.currentElements[i].adapter.getValues());
+            }
+        }
+        m["dataSourceConfig"] = dataSourceConfig;
+        m["sql"] = "";
+        return m;
+    },
+
+    save: function () {
+
+        var m = this.getValues();
 
         Ext.Ajax.request({
             url: "/admin/reports/sql/update",

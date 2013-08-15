@@ -255,12 +255,8 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
             // setup Zend_Translate
             try {
                 $locale = Zend_Registry::get("Zend_Locale");
-                $cacheKey = "translator_website";
 
-                if (!$translate = Pimcore_Model_Cache::load($cacheKey)) {
-                    $translate = new Pimcore_Translate_Website($locale);
-                    Pimcore_Model_Cache::save($translate, $cacheKey, array("translator","translator_website","translate"), null, 999);
-                }
+                $translate = new Pimcore_Translate_Website($locale);
 
                 if(Pimcore_Tool::isValidLanguage($locale)) {
                     $translate->setLocale($locale);    

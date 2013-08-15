@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.report.sql.panel");
-pimcore.report.sql.panel = Class.create({
+pimcore.registerNS("pimcore.report.custom.panel");
+pimcore.report.custom.panel = Class.create({
 
     initialize: function () {
 
@@ -124,7 +124,7 @@ pimcore.report.sql.panel = Class.create({
             success: function (response) {
                 var data = Ext.decode(response.responseText);
 
-                var fieldPanel = new pimcore.report.sql.item(data, this);
+                var fieldPanel = new pimcore.report.custom.item(data, this);
                 pimcore.layout.refresh();
             }.bind(this)
         });

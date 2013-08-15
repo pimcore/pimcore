@@ -152,6 +152,9 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
      {
          $translation = new static();
 
+         $idOriginal = $id;
+         $id = mb_strtolower($id);
+
          try {
              $translation->getResource()->getByKey(self::getValidTranslationKey($id));
          } catch (Exception $e) {
@@ -175,7 +178,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
          if ($returnIdIfEmpty) {
              $translations = $translation->getTranslations();
              foreach ($translations as $key => $value) {
-                 $translations[$key] = $value ? : $id;
+                 $translations[$key] = $value ? : $idOriginal;
              }
              $translation->setTranslations($translations);
          }
@@ -193,12 +196,14 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
       * @return string
       * @throws Exception
       */
-     public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false)
+     public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
      {
-         try {
-             $language = (string) Zend_Registry::get('Zend_Locale');
-         } catch (Exception $e) {
-             throw new Exception("Couldn't determine current language.");
+         if(!$language) {
+             try {
+                 $language = (string) Zend_Registry::get('Zend_Locale');
+             } catch (Exception $e) {
+                 throw new Exception("Couldn't determine current language.");
+             }
          }
 
          return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);

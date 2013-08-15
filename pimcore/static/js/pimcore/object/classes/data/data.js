@@ -165,7 +165,7 @@ pimcore.object.classes.data.data = Class.create({
             items: [
                 {
                     xtype: "form",
-                    title: t("general_settings") + " (" + t(this.getType()) + ")",
+                    title: t("general_settings") + " (" + (this.getTypeName() ? this.getTypeName() : t(this.getType())) + ")",
                     bodyStyle: "padding: 10px;",
                     style: "margin: 10px 0 10px 0",
                     labelWidth: 140,
