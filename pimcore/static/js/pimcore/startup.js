@@ -545,7 +545,7 @@ window.setInterval(function () {
         pimcore.globalmanager.add("translations_admin_missing", new Array());
         Ext.Ajax.request({
             method:"post",
-            url:"/admin/settings/add-admin-translation-keys",
+            url:"/admin/translation/add-admin-translation-keys",
             params:{keys:params}
         });
     }

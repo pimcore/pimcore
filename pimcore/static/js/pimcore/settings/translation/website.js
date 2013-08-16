@@ -15,10 +15,10 @@
 pimcore.registerNS("pimcore.settings.translation.website");
 pimcore.settings.translation.website = Class.create(pimcore.settings.translations,{
 
-    dataUrl: '/admin/settings/translations',
-    exportUrl: '/admin/settings/translations-export',
-    importUrl:'/admin/settings/translations-import/?pimcore_admin_sid=' + pimcore.settings.sessionId,
-    cleanupUrl: "/admin/settings/translations-cleanup/type/website",
+    dataUrl: '/admin/translation/translations',
+    exportUrl: '/admin/translation/export',
+    importUrl:'/admin/translation/import/?pimcore_admin_sid=' + pimcore.settings.sessionId,
+    cleanupUrl: "/admin/translation/cleanup/type/website",
 
 
    activate: function (filter) {
