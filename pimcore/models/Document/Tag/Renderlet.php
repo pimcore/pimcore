@@ -362,13 +362,21 @@ class Document_Tag_Renderlet extends Document_Tag {
 
 
     /**
-     * Rewrites id from source to target, $idMapping contains sourceId => targetId mapping
+     * Rewrites id from source to target, $idMapping contains
+     * array(
+     *  "document" => array(
+     *      SOURCE_ID => TARGET_ID,
+     *      SOURCE_ID => TARGET_ID
+     *  ),
+     *  "object" => array(...),
+     *  "asset" => array(...)
+     * )
      * @param array $idMapping
      * @return void
      */
     public function rewriteIds($idMapping) {
-        if($this->type == "document" and array_key_exists((int) $this->id, $idMapping)) {
-            $this->id = $idMapping[(int) $this->id];
+        if(array_key_exists($this->type, $idMapping) and array_key_exists((int) $this->id, $idMapping[$this->type])) {
+            $this->id = $idMapping[$this->type][(int) $this->id];
         }
     }
 }

@@ -734,6 +734,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $id = array_shift($idStore["rewrite-stack"]);
         $document = Document::getById($id);
 
+        // create rewriteIds() config parameter
+        $rewriteConfig = array("document" => $idStore["idMapping"]);
+
         // rewriting elements only for snippets and pages
         if($document instanceof Document_PageSnippet) {
             if($this->getParam("enableInheritance") == "true") {
@@ -745,7 +748,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                     foreach ($contentMasterElements as $contentMasterElement) {
                         if(method_exists($contentMasterElement, "rewriteIds")) {
                             $element = clone $contentMasterElement;
-                            $element->rewriteIds($idStore["idMapping"]);
+                            $element->rewriteIds($rewriteConfig);
 
                             if(Pimcore_Tool_Serialize::serialize($element) != Pimcore_Tool_Serialize::serialize($contentMasterElement)) {
                                 $changedElements[] = $element;
@@ -761,7 +764,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 $elements = $document->getElements();
                 foreach ($elements as &$element) {
                     if(method_exists($element, "rewriteIds")) {
-                        $element->rewriteIds($idStore["idMapping"]);
+                        $element->rewriteIds($rewriteConfig);
                     }
                 }
             }

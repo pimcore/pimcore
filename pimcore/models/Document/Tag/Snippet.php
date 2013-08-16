@@ -202,13 +202,22 @@ class Document_Tag_Snippet extends Document_Tag {
 
 
     /**
-     * Rewrites id from source to target, $idMapping contains sourceId => targetId mapping
+     * Rewrites id from source to target, $idMapping contains
+     * array(
+     *  "document" => array(
+     *      SOURCE_ID => TARGET_ID,
+     *      SOURCE_ID => TARGET_ID
+     *  ),
+     *  "object" => array(...),
+     *  "asset" => array(...)
+     * )
      * @param array $idMapping
      * @return void
      */
     public function rewriteIds($idMapping) {
-        if(array_key_exists((int) $this->id, $idMapping)) {
-            $this->id = $idMapping[(int) $this->id];
+        $id = (int) $this->id;
+        if(array_key_exists("document",$idMapping) && array_key_exists($id, $idMapping["document"])) {
+            $this->id = $idMapping["document"][$id];
         }
     }
 
