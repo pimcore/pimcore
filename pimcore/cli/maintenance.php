@@ -24,7 +24,7 @@ try {
         'help|h' => 'display this help'
     );
 
-    // dynamically add non recognized options to avoid error messages
+    // parse existing valid arguments => needed to do not add them twice => see below (dynamic add)
     $existingParams = array();
     foreach ($optsConfig as $key => $value) {
         foreach(explode("|",$key) as $v) {
@@ -32,6 +32,7 @@ try {
         }
     }
 
+    // dynamically add non recognized options to avoid error messages
     $arguments = $_SERVER['argv'];
     array_shift($arguments);
     foreach ($arguments as $arg) {
