@@ -123,7 +123,15 @@ class Document_Tag_Wysiwyg extends Document_Tag {
 
 
     /**
-     * Rewrites id from source to target, $idMapping contains sourceId => targetId mapping
+     * Rewrites id from source to target, $idMapping contains
+     * array(
+     *  "document" => array(
+     *      SOURCE_ID => TARGET_ID,
+     *      SOURCE_ID => TARGET_ID
+     *  ),
+     *  "object" => array(...),
+     *  "asset" => array(...)
+     * )
      * @param array $idMapping
      * @return void
      */
@@ -139,9 +147,12 @@ class Document_Tag_Wysiwyg extends Document_Tag {
         if($s) {
             foreach ($s as $el) {
                 if ($el->href) {
-                    if ($el->pimcore_type == "document") {
-                        if(array_key_exists( (int) $el->pimcore_id, $idMapping)) {
-                            $el->outertext = str_replace('="' . $el->pimcore_id . '"', '="' . $idMapping[$el->pimcore_id] . '"', $el->outertext);
+                    $type = $el->pimcore_type;
+                    $id = (int) $el->pimcore_id;
+
+                    if(array_key_exists($type, $idMapping)) {
+                        if(array_key_exists($id, $idMapping[$type])) {
+                            $el->outertext = str_replace('="' . $el->pimcore_id . '"', '="' . $idMapping[$type][$id] . '"', $el->outertext);
                         }
                     }
                 }
