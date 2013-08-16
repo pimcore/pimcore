@@ -244,12 +244,13 @@ pimcore.settings.targeting.rules.item = Class.create({
         var item = pimcore.settings.targeting.conditions[type](this, data);
 
         // add logic for brackets
+        var tab = this;
         item.on("afterrender", function (el) {
             el.getEl().applyStyles({position: "relative", "min-height": "40px"});
             var leftBracket = el.getEl().insertHtml("beforeEnd",
-                                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_left">(</div>', true);
+                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_left">(</div>', true);
             var rightBracket = el.getEl().insertHtml("beforeEnd",
-                                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
+                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
 
             if(data["bracketLeft"]){
                 leftBracket.addClass("pimcore_targeting_bracket_active");
@@ -258,13 +259,24 @@ pimcore.settings.targeting.rules.item = Class.create({
                 rightBracket.addClass("pimcore_targeting_bracket_active");
             }
 
+            // open
             leftBracket.on("click", function (ev, el) {
-                Ext.get(el).toggleClass("pimcore_targeting_bracket_active");
+                var bracket = Ext.get(el);
+                bracket.toggleClass("pimcore_targeting_bracket_active");
+
+                tab.recalculateBracketIdent(tab.conditionsContainer.items);
             });
 
+            // close
             rightBracket.on("click", function (ev, el) {
-                Ext.get(el).toggleClass("pimcore_targeting_bracket_active");
+                var bracket = Ext.get(el);
+                bracket.toggleClass("pimcore_targeting_bracket_active");
+
+                tab.recalculateBracketIdent(tab.conditionsContainer.items);
             });
+
+            // make ident
+            tab.recalculateBracketIdent(tab.conditionsContainer.items);
         });
 
         this.conditionsContainer.add(item);
@@ -343,7 +355,81 @@ pimcore.settings.targeting.rules.item = Class.create({
                 tb.getComponent("toggle_and_not").show();
             }
         }
-    }
+    },
 
+
+    /**
+     * make ident for bracket
+     * @param list
+     */
+    recalculateBracketIdent: function(list) {
+        var ident = 0, lastIdent = 0, margin = 20;
+        var colors = ["transparent","#007bff", "#00ff99", "#e1a6ff", "#ff3c00", "#000000"];
+
+        list.each(function (condition) {
+
+            // only rendered conditions
+            if(condition.rendered == false)
+                return;
+
+            // html from this condition
+            var item = condition.getEl();
+
+
+            // apply ident margin
+            item.applyStyles({
+                "margin-left": margin * ident + "px",
+                "margin-right": margin * ident + "px"
+            });
+
+
+            // apply colors
+            if(ident > 0)
+                item.applyStyles({
+                    "border-left": "1px solid " + colors[ident],
+                    "border-right": "1px solid " + colors[ident],
+                    "padding": "0px 1px"
+                });
+            else
+                item.applyStyles({
+                    "border-left": "0px",
+                    "border-right": "0px"
+                });
+
+
+            // apply specials :-)
+            if(ident == 0)
+                item.applyStyles({
+                    "margin-top": "10px"
+                });
+            else if(ident == lastIdent)
+                item.applyStyles({
+                    "margin-top": "0px",
+                    "margin-bottom": "0px",
+                    "padding": "1px"
+                });
+            else
+                item.applyStyles({
+                    "margin-top": "5px"
+                });
+
+
+            // remeber current ident
+            lastIdent = ident;
+
+
+            // check if a bracket is open
+            if(item.select('.pimcore_targeting_bracket_left.pimcore_targeting_bracket_active').getCount() == 1)
+            {
+                ident++;
+            }
+            // check if a bracket is close
+            else if(item.select('.pimcore_targeting_bracket_right.pimcore_targeting_bracket_active').getCount() == 1)
+            {
+                if(ident > 0)
+                    ident--;
+            }
+        });
+    }
 });
 
