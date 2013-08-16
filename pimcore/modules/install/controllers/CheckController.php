@@ -545,6 +545,29 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => $html2textBin ? "ok" : "warning"
         );
 
+        // ghostscript BIN
+        try {
+            $ghostscriptBin = (bool) Pimcore_Document_Adapter_Ghostscript::getGhostscriptCli();
+        } catch (Exception $e) {
+            $ghostscriptBin = false;
+        }
+
+        $checksApps[] = array(
+            "name" => "Ghostscript (CLI)",
+            "state" => $ghostscriptBin ? "ok" : "warning"
+        );
+
+        // LibreOffice BIN
+        try {
+            $libreofficeBin = (bool) Pimcore_Document_Adapter_LibreOffice::getLibreOfficeCli();
+        } catch (Exception $e) {
+            $libreofficeBin = false;
+        }
+
+        $checksApps[] = array(
+            "name" => "LibreOffice (CLI)",
+            "state" => $libreofficeBin ? "ok" : "warning"
+        );
 
 
         $this->view->checksApps = $checksApps;
