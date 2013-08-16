@@ -54,6 +54,7 @@ pimcore.settings.targeting.conditions = {
                 tmpContainer.doLayout();
 
                 parent.recalculateButtonStatus();
+                parent.recalculateBracketIdent(parent.conditionsContainer.items);
 
                 pimcore.layout.refresh();
             }.bind(window, index, parent)
@@ -79,6 +80,7 @@ pimcore.settings.targeting.conditions = {
                 tmpContainer.doLayout();
 
                 parent.recalculateButtonStatus();
+                parent.recalculateBracketIdent(parent.conditionsContainer.items);
 
                 pimcore.layout.refresh();
             }.bind(window, index, parent)
@@ -105,6 +107,7 @@ pimcore.settings.targeting.conditions = {
             handler: function (index, parent) {
                 parent.conditionsContainer.remove(Ext.getCmp(index));
                 parent.recalculateButtonStatus();
+                parent.recalculateBracketIdent(parent.conditionsContainer.items);
             }.bind(window, index, parent)
         }];
     },
