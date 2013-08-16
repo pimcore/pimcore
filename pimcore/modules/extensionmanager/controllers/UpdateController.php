@@ -23,7 +23,7 @@ class Extensionmanager_UpdateController extends Pimcore_Controller_Action_Admin 
 
         if($type == "plugin") {
             $extensionPath = PIMCORE_PLUGINS_PATH . "/" . $id;
-        } else if ($type = "brick") {
+        } else if ($type == "brick") {
             $extensionPath = PIMCORE_WEBSITE_VAR . "/areas/" . $id;
         }
 
@@ -86,7 +86,7 @@ class Extensionmanager_UpdateController extends Pimcore_Controller_Action_Admin 
 
         if($type == "plugin") {
             $extensionPath = PIMCORE_PLUGINS_PATH . "/" . $id;
-        } else if ($type = "brick") {
+        } else if ($type == "brick") {
             $extensionPath = PIMCORE_WEBSITE_VAR . "/areas/" . $id;
         }
 
