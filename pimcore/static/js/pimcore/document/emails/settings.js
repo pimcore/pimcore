@@ -125,7 +125,7 @@ pimcore.document.emails.settings = Class.create({
                                 disableKeyFilter: true,
                                 store: new Ext.data.JsonStore({
                                     autoDestroy: true,
-                                    url: "/admin/document/get-available-controllers",
+                                    url: "/admin/misc/get-available-controllers",
                                     root: "data",
                                     fields: ["name"]
                                 }),
@@ -149,7 +149,7 @@ pimcore.document.emails.settings = Class.create({
                                 disableKeyFilter: true,
                                 store: new Ext.data.JsonStore({
                                     autoDestroy: true,
-                                    url: "/admin/document/get-available-actions",
+                                    url: "/admin/misc/get-available-actions",
                                     root: "data",
                                     fields: ["name"]
                                 }),
@@ -177,7 +177,7 @@ pimcore.document.emails.settings = Class.create({
                                 disableKeyFilter: true,
                                 store: new Ext.data.JsonStore({
                                     autoDestroy: true,
-                                    url: "/admin/document/get-available-templates",
+                                    url: "/admin/misc/get-available-templates",
                                     root: "data",
                                     fields: ["path"]
                                 }),
