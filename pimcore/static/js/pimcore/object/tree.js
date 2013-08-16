@@ -480,6 +480,11 @@ pimcore.object.tree = Class.create({
                         handler: this.attributes.reference.pasteInfo.bind(this, "recursive")
                     });
                     pasteMenu.push({
+                        text: t("paste_recursive_updating_references"),
+                        iconCls: "pimcore_icon_paste",
+                        handler: this.attributes.reference.pasteInfo.bind(this, "recursive-update-references")
+                    });
+                    pasteMenu.push({
                         text: t("paste_as_child"),
                         iconCls: "pimcore_icon_paste",
                         handler: this.attributes.reference.pasteInfo.bind(this, "child")

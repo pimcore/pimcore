@@ -928,5 +928,23 @@ abstract class Object_Class_Data
     }
 
 
+    /**
+     * @param $object
+     * @param array $params
+     * @return mixed
+     */
+    protected function getDataFromObjectParam($object, $params = array()) {
+
+        $data = null;
+
+        $getter = "get".ucfirst($this->getName());
+        if(method_exists($object, $getter)) { // for Object_Concrete, Object_Fieldcollection_Data_Abstract, Object_Objectbrick_Data_Abstract
+            $data = $object->$getter();
+        } else if ($object instanceof Object_Localizedfield) {
+            $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
+        }
+
+        return $data;
+    }
 
 }

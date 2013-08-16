@@ -741,4 +741,45 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         return true;
     }
 
+    /**
+     * Rewrites id from source to target, $idMapping contains
+     * array(
+     *  "document" => array(
+     *      SOURCE_ID => TARGET_ID,
+     *      SOURCE_ID => TARGET_ID
+     *  ),
+     *  "object" => array(...),
+     *  "asset" => array(...)
+     * )
+     * @param mixed $object
+     * @param array $idMapping
+     * @param array $params
+     * @return Element_Interface
+     */
+    public function rewriteIds($object, $idMapping, $params = array()) {
+        $data = $this->getDataFromObjectParam($object, $params);
+
+        if ($data instanceof Object_Objectbrick) {
+            $items = $data->getItems();
+            foreach ($items as $item) {
+                if (!$item instanceof Object_Objectbrick_Data_Abstract) {
+                    continue;
+                }
+
+                try {
+                    $collectionDef = Object_Objectbrick_Definition::getByKey($item->getType());
+                } catch (Exception $e) {
+                    continue;
+                }
+
+                foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                    $d = $fd->rewriteIds($item, $idMapping, $params);
+                    $setter = "set" . ucfirst($fd->getName());
+                    $item->$setter($d);
+                }
+            }
+        }
+
+        return $data;
+    }
 }

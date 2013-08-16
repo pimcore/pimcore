@@ -87,6 +87,19 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
 
         var classStore = pimcore.globalmanager.get("object_types_store");
         var record = classStore.getAt(classStore.find('text', this.fieldConfig.ownerClassName));
+
+        // no class for nonowner is specified
+        if(!record) {
+            this.component = new Ext.Panel({
+                title: ts(this.fieldConfig.title),
+                cls: cls,
+                html: "There's no class specified in the field-configuration"
+            });
+
+            return this.component;
+        }
+
+
         var className = record.data.text;
 
 
