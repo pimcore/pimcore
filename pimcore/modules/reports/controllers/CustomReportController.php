@@ -181,19 +181,25 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
     }
 
     public function downloadCsvAction() {
-
         set_time_limit(300);
 
-        $db = Pimcore_Resource::get();
+        $sort = $this->getParam("sort");
+        $dir = $this->getParam("dir");
+        $filters = ($this->_getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
+
+        $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
+        $configuration = $config->getDataSourceConfig();
+        $configuration = $configuration[0];
+        $adapter = new Tool_CustomReport_Adapter_Sql($configuration);
+
+        $result = $adapter->getData($filters, $sort, $dir, null, null);
+
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/report-export-" . uniqid() . ".csv";
         @unlink($exportFile);
 
-        $baseQuery = $this->getBaseQuery();
-        $result = $db->fetchAll($baseQuery["data"]);
-
         $fp = fopen($exportFile, 'w');
 
-        foreach ($result as $row) {
+        foreach ($result['data'] as $row) {
             fputcsv($fp, array_values($row));
         }
 

@@ -126,14 +126,38 @@ pimcore.report.custom.item = Class.create({
             title: t('column_configuration')
         });
 
-        this.panel = new Ext.form.FormPanel({
-            layout: "pimcoreform",
+        this.panel = new Ext.Panel({
             region: "center",
             id: "pimcore_sql_panel_" + this.data.name,
             bodyStyle: "padding:10px",
             labelWidth: 150,
             autoScroll: true,
             border:false,
+            items: [
+                this.getGeneralDefinitionPanel(),
+                this.getSourceDefinitionPanel(),
+                this.columnGrid,
+                this.getChartDefinitionPanel()
+            ],
+            buttons: panelButtons,
+            title: this.data.name,
+            bodyStyle: "padding: 20px;",
+            closable: true,
+            listeners: {
+                afterrender: this.getColumnSettings.bind(this)
+            }
+        });
+
+        this.parentPanel.getEditPanel().add(this.panel);
+        this.parentPanel.getEditPanel().activate(this.panel);
+
+        pimcore.layout.refresh();
+    },
+
+    getGeneralDefinitionPanel: function() {
+        this.generalDefinitionForm = new Ext.form.FormPanel({
+            border:false,
+            layout: "pimcoreform",
             items: [{
                 xtype: "fieldset",
                 itemId: "generalFieldset",
@@ -177,24 +201,10 @@ pimcore.report.custom.item = Class.create({
                     fieldLabel: t("create_menu_shortcut"),
                     width: 300
                 }]
-            },
-                this.getSourceDefinitionPanel(),
-                this.columnGrid,
-                this.getChartDefinitionPanel()
-            ],
-            buttons: panelButtons,
-            title: this.data.name,
-            bodyStyle: "padding: 20px;",
-            closable: true,
-            listeners: {
-                afterrender: this.getColumnSettings.bind(this)
-            }
+            }]
         });
 
-        this.parentPanel.getEditPanel().add(this.panel);
-        this.parentPanel.getEditPanel().activate(this.panel);
-
-        pimcore.layout.refresh();
+        return this.generalDefinitionForm;
     },
 
     getChartDefinitionPanel: function() {
@@ -229,20 +239,25 @@ pimcore.report.custom.item = Class.create({
         this.pieChartDefinitionPanel = this.getPieChartDefinitionPanel();
         this.lineChartDefinitionPanel = this.getLineChartDefinitionPanel();
 
-        this.chartDefinitionFieldset = new Ext.form.FieldSet({
-            itemId: "chartdefinitionFieldset",
-            title: t("custom_report_chart_settings"),
-            style: "margin-top: 20px;margin-bottom: 20px",
-            collapsible: false,
-            items: [
-                chartTypeSelector,
-                this.pieChartDefinitionPanel,
-                this.lineChartDefinitionPanel
-            ]
+        this.chartDefinitionForm = new Ext.form.FormPanel({
+            border:false,
+            layout: "pimcoreform",
+            items: [{
+                xtype: 'fieldset',
+                itemId: "chartdefinitionFieldset",
+                title: t("custom_report_chart_settings"),
+                style: "margin-top: 20px;margin-bottom: 20px",
+                collapsible: false,
+                items: [
+                    chartTypeSelector,
+                    this.pieChartDefinitionPanel,
+                    this.lineChartDefinitionPanel
+                ]
+            }]
         });
 
 
-        return this.chartDefinitionFieldset;
+        return this.chartDefinitionForm;
     },
 
     updateTypeSpecificCartDefinitionPanel: function(chartType) {
@@ -256,7 +271,7 @@ pimcore.report.custom.item = Class.create({
             this.lineChartDefinitionPanel.setVisible(true);
         }
 
-        this.chartDefinitionFieldset.doLayout();
+        this.chartDefinitionForm.doLayout();
     },
 
     getPieChartDefinitionPanel: function() {
@@ -574,14 +589,19 @@ pimcore.report.custom.item = Class.create({
     },
 
     getValues: function() {
-        var m = this.panel.getForm().getFieldValues();
+        var allValues = this.generalDefinitionForm.getForm().getFieldValues();
+
+        var chartValues = this.chartDefinitionForm.getForm().getFieldValues();
+        for (var key in chartValues) {
+            allValues[key] = chartValues[key];
+        }
 
         var columnData = [];
         this.columnStore.each(function (rec) {
             columnData.push(rec.data);
         }.bind(this));
 
-        m["columnConfiguration"] = columnData;
+        allValues["columnConfiguration"] = columnData;
 
         var dataSourceConfig = [];
         for(var i = 0; i < this.currentElements.length; i++) {
@@ -589,10 +609,10 @@ pimcore.report.custom.item = Class.create({
                 dataSourceConfig.push(this.currentElements[i].adapter.getValues());
             }
         }
-        m["dataSourceConfig"] = dataSourceConfig;
-        m["sql"] = "";
+        allValues["dataSourceConfig"] = dataSourceConfig;
+        allValues["sql"] = "";
 
-        return m;
+        return allValues;
     },
 
     save: function () {
