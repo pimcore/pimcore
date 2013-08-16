@@ -118,6 +118,11 @@ class Pimcore_Tool_Admin {
             $dialect = new Csv_Dialect();
         }
 
+        // validity check
+        if(!in_array($dialect->delimiter, array(";",",","\t","|",":"))) {
+            $dialect->delimiter = ";";
+        }
+
         return $dialect;
     }
 
