@@ -101,6 +101,8 @@ class Object_Fieldcollection extends Pimcore_Model_Abstract implements Iterator 
                     if(in_array($collection->getType(),$allowedTypes)) {
                         $collection->setFieldname($this->getFieldname());
                         $collection->setIndex($index++);
+
+                        // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
                         $collection->setObject($object);
                         $collection->save($object);
                     } else {

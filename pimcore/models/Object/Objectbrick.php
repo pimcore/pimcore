@@ -129,6 +129,9 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
      */
     public function save ($object) {
 
+        // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
+        $this->setObject($object);
+
         $getters = $this->getBrickGetters();
 
         foreach($getters as $getter) {
@@ -204,6 +207,16 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
      */
     public function setObject($object) {
         $this->object = $object;
+
+        // update all items with the new $object
+        if(is_array($this->getItems())) {
+            foreach ($this->getItems() as $brick) {
+                if($brick instanceof Object_Objectbrick_Data_Abstract) {
+                    $brick->setObject($object);
+                }
+            }
+        }
+
         return $this;
     }
 
