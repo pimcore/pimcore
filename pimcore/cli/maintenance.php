@@ -29,7 +29,7 @@ try {
     /*$arguments = $_SERVER['argv'];
     array_shift($arguments);
     foreach ($arguments as $arg) {
-        $arg = preg_match("/\-\-?([a-zA-Z0-9]+)(=| )?/", $arg, $matches);
+        $arg = preg_match("/\-\-([a-zA-Z0-9]+)?(=| )?/", $arg, $matches);
         if(array_key_exists(1, $matches)) {
             $optsConfig[$matches[1]] = "custom parameter";
         }
