@@ -40,6 +40,29 @@ class Tool_CustomReport_Adapter_Sql {
         return array("data" => $data, "total" => $total);
     }
 
+    public function getColumns($configuration) {
+        $sql = "";
+        if($configuration) {
+            $sql = $configuration->sql;
+
+        }
+
+        $res = null;
+        $errorMessage = null;
+        $columns = null;
+
+        if(!preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i", $sql, $matches)) {
+            $sql .= " LIMIT 0,1";
+            $db = Pimcore_Resource::get();
+            $res = $db->fetchRow($sql);
+            $columns = array_keys($res);
+        } else {
+            throw new Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
+        }
+
+        return $columns;
+    }
+
 
     protected function getBaseQuery($filters, $fields) {
         $db = Pimcore_Resource::get();

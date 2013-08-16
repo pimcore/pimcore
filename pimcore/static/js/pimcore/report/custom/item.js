@@ -505,7 +505,7 @@ pimcore.report.custom.item = Class.create({
     getColumnSettings: function () {
         var m = this.getValues();
         Ext.Ajax.request({
-            url: "/admin/reports/sql/sql-config",
+            url: "/admin/reports/custom-report/column-config",
             method: "post",
             params: {configuration: Ext.encode(m.dataSourceConfig)},
             success: function (response) {
@@ -600,7 +600,7 @@ pimcore.report.custom.item = Class.create({
         var m = this.getValues();
 
         Ext.Ajax.request({
-            url: "/admin/reports/sql/update",
+            url: "/admin/reports/custom-report/update",
             method: "post",
             params: {
                 configuration: Ext.encode(m),
