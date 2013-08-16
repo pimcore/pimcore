@@ -160,7 +160,7 @@ pimcore.object.classes.klass = Class.create({
             if (this.data.layoutDefinitions.childs) {
                 for (var i = 0; i < this.data.layoutDefinitions.childs.length; i++) {
                     this.tree.getRootNode().appendChild(this.recursiveAddNode(this.data.layoutDefinitions.childs[i],
-                                                                                this.tree.getRootNode()));
+                        this.tree.getRootNode()));
                 }
                 this.tree.getRootNode().expand();
             }
@@ -286,7 +286,7 @@ pimcore.object.classes.klass = Class.create({
                     }
                     var handler;
                     if (editMode) {
-                        handler = this.attributes.reference.changeDataType.bind(this, dataComps[i]);
+                        handler = this.attributes.reference.changeDataType.bind(this, dataComps[i], true);
                     } else {
                         handler = this.attributes.reference.addDataChild.bind(this, dataComps[i]);
                     }
@@ -417,6 +417,16 @@ pimcore.object.classes.klass = Class.create({
                 }));
             }
 
+//            var changeDataMenu = getDataMenu(allowedTypes, this.parentNode.attributes.object.type, true);
+            if (this.attributes.type == "data") {
+                var dataComps = Object.keys(pimcore.object.classes.data);
+                menu.add(new Ext.menu.Item({
+                    text: t('copy'),
+                    iconCls: "pimcore_icon_clone",
+                    hideOnClick: true,
+                    handler: this.attributes.reference.changeDataType.bind(this, this.attributes.object.type, dataComps, false)
+                }));
+            }
         }
 
         var deleteAllowed = true;
@@ -683,15 +693,7 @@ pimcore.object.classes.klass = Class.create({
 
     addDataChild: function (type, initData) {
 
-        var nodeLabel = null;
-
-        try {
-            nodeLabel = pimcore.object.classes.data[type].prototype.getTypeName();
-        } catch (e1) {}
-
-        if(empty(nodeLabel)) {
-            nodeLabel = t(type);
-        }
+        var nodeLabel = t(type);
 
         if (initData) {
             if (initData.name) {
@@ -725,7 +727,7 @@ pimcore.object.classes.klass = Class.create({
         return newNode;
     },
 
-    changeDataType: function (type, initData) {
+    changeDataType: function (type, initData, removeExisting) {
         try {
             this.attributes.object.applyData();
         } catch (e) {
@@ -741,6 +743,27 @@ pimcore.object.classes.klass = Class.create({
 
         var isLeaf = this.leaf;
 
+        if (!removeExisting) {
+            var matches = nodeLabel.match(/\d+$/);
+
+            if (matches) {
+                var number = matches[0];
+
+                var numberLength = number.length;
+                number = parseInt(number);
+                number = number + 1;
+
+                var l = nodeLabel.length;
+
+                nodeLabel = nodeLabel.substring(0, l - numberLength);
+            } else {
+                number = 1;
+            }
+            nodeLabel = nodeLabel + number;
+        }
+
+
+
         var newNode = new Ext.tree.TreeNode({
             text: nodeLabel,
             type: "data",
@@ -750,25 +773,39 @@ pimcore.object.classes.klass = Class.create({
             listeners: this.parentNode.attributes.reference.getTreeNodeListeners()
         });
 
+        if (!removeExisting) {
+            theData.name = nodeLabel;
+        }
+
+
         newNode.attributes.object = new pimcore.object.classes.data[type](newNode, theData);
 
         var availableFields = newNode.attributes.object.availableSettingsFields;
         for (var i = 0;  i < availableFields.length; i++) {
             var field = availableFields[i];
             if (this.attributes.object.datax[field]) {
-                newNode.attributes.object.datax[field] = this.attributes.object.datax[field];
+                if (field != "name") {
+                    newNode.attributes.object.datax[field] = this.attributes.object.datax[field];
+                }
             }
         }
 
         this.parentNode.insertBefore(newNode, this);
+        var parentNode = this.parentNode;
+        if (removeExisting) {
+            parentNode.removeChild(this);
 
-        this.remove();
+        } else {
+            parentNode.insertBefore(this, newNode);
+        }
 
+        newNode.select();
         var f = this.attributes.reference.onTreeNodeClick.bind(newNode);
         f();
 
         return newNode;
     },
+
 
 
 
@@ -815,10 +852,10 @@ pimcore.object.classes.klass = Class.create({
 
                     if(node.attributes.object.invalidFieldNames){
                         invalidFieldsText = t("reserved_field_names_error")
-                                +(implode(',',node.attributes.object.forbiddenNames));
+                            +(implode(',',node.attributes.object.forbiddenNames));
                     }
                     pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error",
-                                                                        invalidFieldsText);
+                        invalidFieldsText);
 
 
 
@@ -859,7 +896,7 @@ pimcore.object.classes.klass = Class.create({
         var regresult = this.data["name"].match(/[a-zA-Z]+/);
 
         if (this.data["name"].length > 2 && regresult == this.data["name"] && !in_array(this.data["name"].toLowerCase(),
-                                                        this.parentPanel.forbiddennames)) {
+            this.parentPanel.forbiddennames)) {
             delete this.data.layoutDefinitions;
 
             var m = Ext.encode(this.getData());

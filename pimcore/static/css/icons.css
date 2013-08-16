@@ -11,7 +11,11 @@
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
+
+.pimcore_icon_clone  {
+    background: url(/pimcore/static/img/icon/application_double.png) left center no-repeat !important;
+}
+
 .pimcore_icon_droptarget  {
 	background: url(/pimcore/static/img/icon/drop-16.png) left center no-repeat !important;
 }
