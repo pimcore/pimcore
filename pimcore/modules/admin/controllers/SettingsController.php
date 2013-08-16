@@ -226,9 +226,14 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         // fallback languages
         $fallbackLanguages = array();
         $languages = explode(",", $values["general.validLanguages"]);
+        $filteredLanguages = array();
         foreach($languages as $language) {
             if(isset($values["general.fallbackLanguages." . $language])) {
                 $fallbackLanguages[$language] = str_replace(" ", "", $values["general.fallbackLanguages." . $language]);
+            }
+
+            if(Zend_Locale::isLocale($language)) {
+                $filteredLanguages[] = $language;
             }
         }
 
@@ -239,7 +244,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "domain" => $values["general.domain"],
                 "redirect_to_maindomain" => $values["general.redirect_to_maindomain"],
                 "language" => $values["general.language"],
-                "validLanguages" => $values["general.validLanguages"],
+                "validLanguages" => implode(",", $filteredLanguages),
                 "fallbackLanguages" => $fallbackLanguages,
                 "theme" => $values["general.theme"],
                 "contactemail" => $values["general.contactemail"],
