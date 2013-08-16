@@ -210,16 +210,9 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
     public function save ($object, $params = array()) {
 
         $db = Pimcore_Resource::get();
-        $getter = "get" . ucfirst($this->getName());
 
-
-        if (method_exists($object, $getter)) {
-            // for fieldcollections and objects
-            $relations = $this->getDataForResource($object->$getter(), $object);
-        } else if ($object instanceof Object_Localizedfield) {
-            // since Object_Localizedfield doesn't have their own getters, because they are located in the wrapping-object
-            $relations = $this->getDataForResource($object->getLocalizedValue($this->getName(), $params["language"]), $object);
-        }
+        $data = $this->getDataFromObjectParam($object, $params);
+        $relations = $this->getDataForResource($data, $object);
 
         if (is_array($relations) && !empty($relations)) {
             foreach ($relations as $relation) {
@@ -320,6 +313,35 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
         });
 
         $data = $this->getDataFromResource($relations);
+
+        return $data;
+    }
+
+    /**
+     * Rewrites id from source to target, $idMapping contains
+     * array(
+     *  "document" => array(
+     *      SOURCE_ID => TARGET_ID,
+     *      SOURCE_ID => TARGET_ID
+     *  ),
+     *  "object" => array(...),
+     *  "asset" => array(...)
+     * )
+     * @param mixed $data
+     * @param array $idMapping
+     * @return array
+     */
+    public function rewriteIdsService($data, $idMapping) {
+        if(is_array($data)) {
+            foreach($data as &$element) {
+                $id = $element->getId();
+                $type = Element_Service::getElementType($element);
+
+                if(array_key_exists($type, $idMapping) && array_key_exists($id, $idMapping[$type])) {
+                    $element = Element_Service::getElementById($type, $idMapping[$type][$id]);
+                }
+            }
+        }
 
         return $data;
     }
