@@ -24,6 +24,11 @@
         a {
             color: #0066cc;
         }
+
+        .legend {
+            display: inline-block;
+            padding-right: 10px;
+        }
     </style>
 
 </head>
@@ -111,6 +116,18 @@
             </td>
         </tr>
     </table>
+
+
+    <div class="legend">
+        <p>
+            <b>Explanation:</b>
+        </p>
+        <p>
+            <span class="legend"><img src="/pimcore/static/img/icon/accept.png" /> Everything ok.</span>
+            <span class="legend"><img src="/pimcore/static/img/icon/error.png" /> Recommended but not required.</span>
+            <span class="legend"><img src="/pimcore/static/img/icon/delete.png" /> Required.</span>
+        </p>
+    </div>
 
 </body>
 </html>
