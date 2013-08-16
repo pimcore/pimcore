@@ -38,10 +38,13 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         var colConfig;
         var grodColConfig = {};
         var filters = [];
+        this.columnLabels = {};
 
         for(var f=0; f<data.columnConfiguration.length; f++) {
             colConfig = data.columnConfiguration[f];
             storeFields.push(colConfig["name"]);
+
+            this.columnLabels[colConfig["name"]] = colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]);
 
             grodColConfig = {
                 header: colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]),
@@ -75,7 +78,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
-            url: "/admin/reports/sql/data",
+            url: "/admin/reports/custom-report/data",
             root: 'data',
             remoteSort: true,
             baseParams: {
@@ -161,7 +164,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
                     query += "&name=" + this.config.name;
 
-                    var downloadUrl = "/admin/reports/sql/download-csv?" + query;
+                    var downloadUrl = "/admin/reports/custom-report/download-csv?" + query;
                     pimcore.helpers.download(downloadUrl);
                 }.bind(this)
             }]
@@ -192,7 +195,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
             this.chartStore = new Ext.data.JsonStore({
                 autoDestroy: true,
-                url: "/admin/reports/sql/chart",
+                url: "/admin/reports/custom-report/chart",
                 root: 'data',
                 baseParams: {
                     name: this.config["name"]
@@ -203,7 +206,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             var series = [];
             for(var i = 0; i < data.yAxis.length; i++) {
                 series.push({
-                    displayName: data.yAxis[i],
+                    displayName: this.columnLabels[data.yAxis[i]],
                     type: (data.chartType == 'line' ? 'line' : 'column'),
                     yField: data.yAxis[i],
                     style: {
@@ -233,7 +236,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         } else if(data.chartType == 'pie') {
             this.chartStore = new Ext.data.JsonStore({
                 autoDestroy: true,
-                url: "/admin/reports/sql/chart",
+                url: "/admin/reports/custom-report/chart",
                 root: 'data',
                 baseParams: {
                     name: this.config["name"]
@@ -277,7 +280,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
 
             Ext.Ajax.request({
-                url: "/admin/reports/sql/get",
+                url: "/admin/reports/custom-report/get",
                 params: {
                     name: this.config.name
                 },
@@ -334,7 +337,7 @@ pimcore.report.custom.reportplugin = Class.create(pimcore.plugin.admin, {
 
             // get available reports
             Ext.Ajax.request({
-                url: "/admin/reports/sql/get-report-config",
+                url: "/admin/reports/custom-report/get-report-config",
                 success: function (response) {
                     var res = Ext.decode(response.responseText);
                     var report;
@@ -345,7 +348,7 @@ pimcore.report.custom.reportplugin = Class.create(pimcore.plugin.admin, {
 
                             // set some defaults
                             if(!report["group"]) {
-                                report["group"] = "sql_reports"
+                                report["group"] = "custom_reports"
                             }
 
                             if(!report["niceName"]) {

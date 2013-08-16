@@ -13,7 +13,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Reports_SqlController extends Pimcore_Controller_Action_Admin_Reports {
+class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Reports {
 
     public function init() {
         parent::init();
@@ -91,35 +91,18 @@ class Reports_SqlController extends Pimcore_Controller_Action_Admin_Reports {
         $this->_helper->json(array("success" => true));
     }
 
-    public function sqlConfigAction() {
+    public function columnConfigAction() {
 
         $configuration = json_decode($this->getParam("configuration"));
-
         $configuration = $configuration[0];
-
-        $sql = "";
-        if($configuration) {
-            $sql = $configuration->sql;
-
-        }
+        $adapter = new Tool_CustomReport_Adapter_Sql($configuration);
 
         $success = false;
-        $res = null;
-        $errorMessage = null;
         $columns = null;
-
+        $errorMessage = null;
         try {
-            if(!preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i", $sql, $matches)) {
-
-                $sql .= " LIMIT 0,1";
-
-                $db = Pimcore_Resource::get();
-                $res = $db->fetchRow($sql);
-                $columns = array_keys($res);
-                $success = true;
-            } else {
-                $errorMessage = "Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'";
-            }
+            $columns = $adapter->getColumns($configuration);
+            $success = true;
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
         }

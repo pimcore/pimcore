@@ -53,7 +53,7 @@ pimcore.report.custom.panel = Class.create({
                     id: '0'
                 },
                 loader: new Ext.tree.TreeLoader({
-                    dataUrl: '/admin/reports/sql/tree',
+                    dataUrl: '/admin/reports/custom-report/tree',
                     requestMethod: "GET",
                     baseAttrs: {
                         listeners: this.getTreeNodeListeners(),
@@ -69,7 +69,7 @@ pimcore.report.custom.panel = Class.create({
                 tbar: {
                     items: [
                         {
-                            text: t("add_sql_report"),
+                            text: t("add_custom_report"),
                             iconCls: "pimcore_icon_add",
                             handler: this.addField.bind(this)
                         }
@@ -117,7 +117,7 @@ pimcore.report.custom.panel = Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/reports/sql/get",
+            url: "/admin/reports/custom-report/get",
             params: {
                 name: id
             },
@@ -144,7 +144,7 @@ pimcore.report.custom.panel = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_sql_report'), t('enter_the_name_of_the_new_report') + "(a-zA-Z-_)",
+        Ext.MessageBox.prompt(t('add_custom_report'), t('enter_the_name_of_the_new_report') + "(a-zA-Z-_)",
                                                 this.addFieldComplete.bind(this), null, null, "");
     },
 
@@ -156,14 +156,14 @@ pimcore.report.custom.panel = Class.create({
             var codes = this.tree.getRootNode().childNodes;
             for (var i = 0; i < codes.length; i++) {
                 if (codes[i].text == value) {
-                    Ext.MessageBox.alert(t('add_sql_report'),
+                    Ext.MessageBox.alert(t('add_custom_report'),
                                          t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
                     return;
                 }
             }
 
             Ext.Ajax.request({
-                url: "/admin/reports/sql/add",
+                url: "/admin/reports/custom-report/add",
                 params: {
                     name: value
                 },
@@ -173,7 +173,7 @@ pimcore.report.custom.panel = Class.create({
                     this.tree.getRootNode().reload();
 
                     if(!data || !data.success) {
-                        Ext.Msg.alert(t('add_sql_report'), t('problem_creating_new_sql_report'));
+                        Ext.Msg.alert(t('add_custom_report'), t('problem_creating_new_custom_report'));
                     } else {
                         this.openConfig(data.id);
                     }
@@ -184,13 +184,13 @@ pimcore.report.custom.panel = Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_sql_report'), t('problem_creating_new_sql_report'));
+            Ext.Msg.alert(t('add_custom_report'), t('problem_creating_new_custom_report'));
         }
     },
 
     deleteField: function () {
         Ext.Ajax.request({
-            url: "/admin/reports/sql/delete",
+            url: "/admin/reports/custom-report/delete",
             params: {
                 name: this.id
             }

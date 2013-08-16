@@ -28,7 +28,7 @@ pimcore.report.custom.settings = Class.create({
         var editor = new pimcore.report.custom.panel();
 
         this.panel = new Ext.Panel({
-            title: t("sql_reports"),
+            title: t("custom_reports"),
             bodyStyle: "padding: 10px;",
             autoScroll: true,
             layout: "fit",
