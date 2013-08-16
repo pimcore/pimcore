@@ -50,13 +50,7 @@ class Pimcore_Controller_Action_Helper_Json extends Zend_Controller_Action_Helpe
 
             $this->processedObjects[] = $element;
 
-            if ($element instanceof IteratorAggregate) {
-                $propCollection = $element->getIterator();
-            } elseif ($element instanceof Iterator) {
-                $propCollection = $element;
-            } else {
-                $propCollection = get_object_vars($element);
-            }
+            $propCollection = get_object_vars($element);
 
             foreach ($propCollection as $name => $propValue) {
                 $element->$name = $this->filterCycles($propValue);
