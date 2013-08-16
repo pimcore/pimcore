@@ -535,6 +535,75 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $this->view->message = $message;
     }
 
+
+    /**
+     * page & snippet controller/action/template selector store providers
+     */
+
+    public function getAvailableControllersAction() {
+
+        $controllers = array();
+        $controllerDir = PIMCORE_WEBSITE_PATH . "/controllers/";
+        $controllerFiles = rscandir($controllerDir);
+        foreach ($controllerFiles as $file) {
+            $file = str_replace($controllerDir, "", $file);
+            $dat = array();
+            if(strpos($file, ".php") !== false) {
+                $file = lcfirst(str_replace("Controller.php","",$file));
+                $file = strtolower(preg_replace("/[A-Z]/","-\\0", $file));
+                $dat["name"] = str_replace("/-", "_", $file);
+                $controllers[] = $dat;
+            }
+        }
+
+        $this->_helper->json(array(
+            "data" => $controllers
+        ));
+    }
+
+    public function getAvailableActionsAction () {
+
+        $actions = array();
+        $controller = $this->getParam("controllerName");
+        $controllerClass = str_replace("-", " ", $controller);
+        $controllerClass = str_replace(" ", "", ucwords($controllerClass));
+        $controllerClass = preg_replace_callback("/([_])([a-z])/i", function ($matches) {
+            return "/" . strtoupper($matches[2]);
+        }, $controllerClass);
+
+        $controllerFile = PIMCORE_WEBSITE_PATH . "/controllers/" . $controllerClass . "Controller.php";
+        if(is_file($controllerFile)) {
+            preg_match_all("/function[ ]+([a-zA-Z0-9]+)Action/i", file_get_contents($controllerFile), $matches);
+            foreach ($matches[1] as $match) {
+                $dat = array();
+                $dat["name"] = strtolower(preg_replace("/[A-Z]/","-\\0", $match));
+                $actions[] = $dat;
+            }
+        }
+
+        $this->_helper->json(array(
+            "data" => $actions
+        ));
+    }
+
+    public function getAvailableTemplatesAction () {
+
+        $templates = array();
+        $viewPath = PIMCORE_WEBSITE_PATH . "/views/scripts";
+        $files = rscandir($viewPath . "/");
+        foreach ($files as $file) {
+            $dat = array();
+            if(strpos($file, Pimcore_View::getViewScriptSuffix()) !== false) {
+                $dat["path"] = str_replace($viewPath, "", $file);
+                $templates[] = $dat;
+            }
+        }
+
+        $this->_helper->json(array(
+            "data" => $templates
+        ));
+    }
+
     public function testAction()
     {
 

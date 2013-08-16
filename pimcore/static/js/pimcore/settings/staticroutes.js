@@ -163,7 +163,7 @@ pimcore.settings.staticroutes = Class.create({
                 editor:new Ext.form.ComboBox({
                     store:new Ext.data.JsonStore({
                         autoDestroy:true,
-                        url:"/admin/document/get-available-controllers",
+                        url:"/admin/misc/get-available-controllers",
                         root:"data",
                         fields:["name"]
                     }),
@@ -175,7 +175,7 @@ pimcore.settings.staticroutes = Class.create({
                 editor:new Ext.form.ComboBox({
                     store:new Ext.data.JsonStore({
                         autoDestroy:true,
-                        url:"/admin/document/get-available-actions",
+                        url:"/admin/misc/get-available-actions",
                         root:"data",
                         fields:["name"]
                     }),
