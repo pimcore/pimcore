@@ -310,7 +310,6 @@ class Pimcore_Resource_Mysql {
 
             if ($type == "VIEW") {
                 try {
-                    Logger::debug("SHOW CREATE VIEW " . $name);
                     $createStatement = $db->fetchRow("SHOW FIELDS FROM " . $name);
                 } catch (Exception $e) {
                     if(strpos($e->getMessage(), "references invalid table") !== false) {

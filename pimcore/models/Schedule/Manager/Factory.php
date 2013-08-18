@@ -32,12 +32,11 @@ class Schedule_Manager_Factory {
         }
 
         // force a specific type
-        if(in_array($type, $availableManagers)) {
-            Logger::info("Try to force type: " . $type);
-            $availableManagers = array($type);
+        if(!in_array($type, $availableManagers)) {
+            $type = "procedural";
         }
 
-        if(in_array("daemon", $availableManagers)) {
+        if($type == "daemon") {
             Logger::info("Using Schedule_Manager_Daemon as maintenance manager");
             $manager = new Schedule_Manager_Daemon($pidFile);
         } else {
