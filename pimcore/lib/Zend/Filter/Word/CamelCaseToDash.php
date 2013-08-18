@@ -22,7 +22,7 @@
 /**
  * @see Zend_Filter_Interface
  */
-require_once 'Zend/Filter/Word/CamelCaseToSeparator.php';
+// require_once 'Zend/Filter/Word/CamelCaseToSeparator.php';
 
 /**
  * @category   Zend

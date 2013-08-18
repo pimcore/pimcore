@@ -21,7 +21,7 @@
  */
 
 /** Zend_Dojo_View_Helper_Dijit */
-require_once 'Zend/Dojo/View/Helper/Dijit.php';
+// require_once 'Zend/Dojo/View/Helper/Dijit.php';
 
 /**
  * Dojo CheckBox dijit
@@ -65,7 +65,7 @@ class Zend_Dojo_View_Helper_CheckBox extends Zend_Dojo_View_Helper_Dijit
     public function checkBox($id, $value = null, array $params = array(), array $attribs = array(), array $checkedOptions = null)
     {
         // Prepare the checkbox options
-        require_once 'Zend/View/Helper/FormCheckbox.php';
+        // require_once 'Zend/View/Helper/FormCheckbox.php';
         $checked = false;
         if (isset($attribs['checked']) && $attribs['checked']) {
             $checked = true;

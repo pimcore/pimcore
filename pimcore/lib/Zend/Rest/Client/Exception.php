@@ -23,7 +23,7 @@
 /**
  * Zend_Rest_Exception
  */
-require_once 'Zend/Rest/Exception.php';
+// require_once 'Zend/Rest/Exception.php';
 
 
 /**

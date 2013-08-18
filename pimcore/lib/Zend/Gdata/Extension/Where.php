@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
+// require_once 'Zend/Gdata/Extension.php';
 
 /**
  * @see Zend_Gdata_Extension_EntryLink
  */
-require_once 'Zend/Gdata/Extension/EntryLink.php';
+// require_once 'Zend/Gdata/Extension/EntryLink.php';
 
 /**
  * Data model class to represent a location (gd:where element)

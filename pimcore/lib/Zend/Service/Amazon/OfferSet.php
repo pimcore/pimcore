@@ -109,7 +109,7 @@ class Zend_Service_Amazon_OfferSet
             /**
              * @see Zend_Service_Amazon_Offer
              */
-            require_once 'Zend/Service/Amazon/Offer.php';
+            // require_once 'Zend/Service/Amazon/Offer.php';
             foreach ($offers as $offer) {
                 $this->Offers[] = new Zend_Service_Amazon_Offer($offer);
             }

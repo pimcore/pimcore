@@ -20,7 +20,7 @@
  */
 
 /** Zend_Dojo_Form_Element_Dijit */
-require_once 'Zend/Dojo/Form/Element/Dijit.php';
+// require_once 'Zend/Dojo/Form/Element/Dijit.php';
 
 /**
  * Button dijit

@@ -115,7 +115,7 @@ class Zend_Service_Nirvanix_Response
         /**
          * @see Zend_Service_Nirvanix_Exception
          */
-        require_once 'Zend/Service/Nirvanix/Exception.php';
+        // require_once 'Zend/Service/Nirvanix/Exception.php';
 
         throw new Zend_Service_Nirvanix_Exception($message, $code);
     }

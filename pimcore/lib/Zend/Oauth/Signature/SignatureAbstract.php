@@ -20,10 +20,10 @@
  */
 
 /** Zend_Oauth_Http_Utility */
-require_once 'Zend/Oauth/Http/Utility.php';
+// require_once 'Zend/Oauth/Http/Utility.php';
 
 /** Zend_Uri_Http */
-require_once 'Zend/Uri/Http.php';
+// require_once 'Zend/Uri/Http.php';
 
 /**
  * @category   Zend

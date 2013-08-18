@@ -44,7 +44,7 @@ class Zend_CodeGenerator_Php_Parameter_DefaultValue
     public function __construct($defaultValue)
     {
         if(!is_string($defaultValue)) {
-            require_once "Zend/CodeGenerator/Php/Exception.php";
+            // require_once "Zend/CodeGenerator/Php/Exception.php";
             throw new Zend_CodeGenerator_Php_Exception(
                 "Can only set a string as default value representation, ".
                 "but ".gettype($defaultValue)." was given."

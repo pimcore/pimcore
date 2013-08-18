@@ -17,10 +17,10 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/DocumentService/Adapter.php';
-require_once 'Zend/Cloud/DocumentService/Document.php';
-require_once 'Zend/Cloud/DocumentService/DocumentSet.php';
-require_once 'Zend/Cloud/DocumentService/Query.php';
+// require_once 'Zend/Cloud/DocumentService/Adapter.php';
+// require_once 'Zend/Cloud/DocumentService/Document.php';
+// require_once 'Zend/Cloud/DocumentService/DocumentSet.php';
+// require_once 'Zend/Cloud/DocumentService/Query.php';
 
 /**
  * Abstract document service adapter

@@ -23,7 +23,7 @@
 /**
  * Zend_InfoCard_Xml_Security_Transform_Interface
  */
-require_once 'Zend/InfoCard/Xml/Security/Transform/Interface.php';
+// require_once 'Zend/InfoCard/Xml/Security/Transform/Interface.php';
 
 /**
  * A Transform to perform C14n XML Exclusive Canonicalization
@@ -53,7 +53,7 @@ class Zend_InfoCard_Xml_Security_Transform_XmlExcC14N
             return $dom->C14N(true, false);
         }
 
-        require_once 'Zend/InfoCard/Xml/Security/Transform/Exception.php';
+        // require_once 'Zend/InfoCard/Xml/Security/Transform/Exception.php';
         throw new Zend_InfoCard_Xml_Security_Transform_Exception("This transform requires the C14N() method to exist in the DOM extension");
     }
 }

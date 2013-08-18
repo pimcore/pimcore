@@ -23,7 +23,7 @@
 /**
  * @see Zend_Markup_Exception
  */
-require_once 'Zend/Markup/Exception.php';
+// require_once 'Zend/Markup/Exception.php';
 
 /**
  * Exception class for Zend_Markup_Renderer

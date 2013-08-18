@@ -92,7 +92,7 @@ class Zend_InfoCard_Cipher
                 break;
 
             default:
-                require_once 'Zend/InfoCard/Cipher/Exception.php';
+                // require_once 'Zend/InfoCard/Cipher/Exception.php';
                 throw new Zend_InfoCard_Cipher_Exception("Unknown Cipher URI");
         }
     }

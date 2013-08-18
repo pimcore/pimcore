@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_DeveloperGarden_Response_Exception
  */
-require_once 'Zend/Service/DeveloperGarden/Response/Exception.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/Exception.php';
 
 /**
  * @category   Zend

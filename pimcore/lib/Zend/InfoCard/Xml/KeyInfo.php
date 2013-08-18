@@ -23,7 +23,7 @@
 /**
  * Zend_InfoCard_Xml_Element
  */
-require_once 'Zend/InfoCard/Xml/Element.php';
+// require_once 'Zend/InfoCard/Xml/Element.php';
 
 /**
  * Factory class to return a XML KeyInfo block based on input XML

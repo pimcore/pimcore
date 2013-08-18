@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_App_Entry
  */
-require_once 'Zend/Gdata/App/Entry.php';
+// require_once 'Zend/Gdata/App/Entry.php';
 
 /**
  * @see Zend_Gdata_App_FeedSourceParent
  */
-require_once 'Zend/Gdata/App/FeedSourceParent.php';
+// require_once 'Zend/Gdata/App/FeedSourceParent.php';
 
 /**
  * @category   Zend

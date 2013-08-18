@@ -24,7 +24,7 @@
 /**
  * @see Zend_Gdata_Media_Extension_MediaContent
  */
-require_once 'Zend/Gdata/Media/Extension/MediaContent.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaContent.php';
 
 /**
  * Represents the media:content element of Media RSS.

@@ -306,7 +306,7 @@ class Zend_Date_Cities
                 return $return;
             }
         }
-        require_once 'Zend/Date/Exception.php';
+        // require_once 'Zend/Date/Exception.php';
         throw new Zend_Date_Exception('unknown city');
     }
 

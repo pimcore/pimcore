@@ -22,7 +22,7 @@
 /**
  * @see Zend_Service_Amazon_Exception
  */
-require_once 'Zend/Service/Amazon/Exception.php';
+// require_once 'Zend/Service/Amazon/Exception.php';
 
 /**
  * @category   Zend

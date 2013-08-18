@@ -18,9 +18,9 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/EventManager/EventManager.php';
-require_once 'Zend/EventManager/SharedEventManager.php';
-require_once 'Zend/Stdlib/CallbackHandler.php';
+// require_once 'Zend/EventManager/EventManager.php';
+// require_once 'Zend/EventManager/SharedEventManager.php';
+// require_once 'Zend/Stdlib/CallbackHandler.php';
 
 /**
  * Static version of EventManager

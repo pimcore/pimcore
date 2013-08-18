@@ -71,13 +71,13 @@ class Zend_Cloud_Infrastructure_Image
         }
         
         if (empty($data) || !is_array($data)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('You must pass an array of parameters');
         }
 
         foreach ($this->attributeRequired as $key) {
             if (empty($data[$key])) {
-                require_once 'Zend/Cloud/Infrastructure/Exception.php';
+                // require_once 'Zend/Cloud/Infrastructure/Exception.php';
                 throw new Zend_Cloud_Infrastructure_Exception(sprintf(
                     'The param "%s" is a required parameter for class %s',
                     $key,

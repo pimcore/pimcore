@@ -21,7 +21,7 @@
  */
 
 /** Zend_Amf_Response */
-require_once 'Zend/Amf/Response.php';
+// require_once 'Zend/Amf/Response.php';
 
 /**
  * Creates the proper http headers and send the serialized AMF stream to standard out.
