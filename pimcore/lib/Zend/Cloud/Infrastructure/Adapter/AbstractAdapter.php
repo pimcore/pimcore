@@ -17,8 +17,8 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/Infrastructure/Adapter.php';
-require_once 'Zend/Cloud/Infrastructure/Instance.php';
+// require_once 'Zend/Cloud/Infrastructure/Adapter.php';
+// require_once 'Zend/Cloud/Infrastructure/Instance.php';
 
 /**
  * Abstract infrastructure service adapter
@@ -96,17 +96,17 @@ abstract class Zend_Cloud_Infrastructure_Adapter_AbstractAdapter implements Zend
     public function deployInstance($id, $params, $cmd)
     {
         if (!function_exists("ssh2_connect")) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('Deployment requires the PHP "SSH" extension (ext/ssh2)');
         }
 
         if (empty($id)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('You must specify the instance where to deploy');
         }
 
         if (empty($cmd)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('You must specify the shell commands to run on the instance');
         }
 
@@ -115,13 +115,13 @@ abstract class Zend_Cloud_Infrastructure_Adapter_AbstractAdapter implements Zend
             || (empty($params[Zend_Cloud_Infrastructure_Instance::SSH_PASSWORD]) 
                 && empty($params[Zend_Cloud_Infrastructure_Instance::SSH_KEY]))
         ) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('You must specify the params for the SSH connection');
         }
 
         $host = $this->publicDnsInstance($id);
         if (empty($host)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception(sprintf(
                 'The instance identified by "%s" does not exist', 
                 $id
@@ -131,7 +131,7 @@ abstract class Zend_Cloud_Infrastructure_Adapter_AbstractAdapter implements Zend
         $conn = ssh2_connect($host);
         if (!ssh2_auth_password($conn, $params[Zend_Cloud_Infrastructure_Instance::SSH_USERNAME], 
                 $params[Zend_Cloud_Infrastructure_Instance::SSH_PASSWORD])) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('SSH authentication failed');
         }
 

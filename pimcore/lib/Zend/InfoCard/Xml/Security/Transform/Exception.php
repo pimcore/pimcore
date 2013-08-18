@@ -23,7 +23,7 @@
 /**
  * Zend_InfoCard_Xml_Security_Exception
  */
-require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+// require_once 'Zend/InfoCard/Xml/Security/Exception.php';
 
 /**
  * @category   Zend

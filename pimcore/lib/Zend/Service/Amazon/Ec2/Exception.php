@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_Amazon_Exception
  */
-require_once 'Zend/Service/Amazon/Exception.php';
+// require_once 'Zend/Service/Amazon/Exception.php';
 
 /**
  * The Custom Exception class that allows you to have access to the AWS Error Code.

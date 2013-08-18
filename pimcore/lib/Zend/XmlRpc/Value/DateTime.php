@@ -24,7 +24,7 @@
 /**
  * Zend_XmlRpc_Value_Scalar
  */
-require_once 'Zend/XmlRpc/Value/Scalar.php';
+// require_once 'Zend/XmlRpc/Value/Scalar.php';
 
 
 /**
@@ -71,7 +71,7 @@ class Zend_XmlRpc_Value_DateTime extends Zend_XmlRpc_Value_Scalar
         } else {
             $timestamp = new DateTime($value);
             if ($timestamp === false) { // cannot convert the value to a timestamp
-                require_once 'Zend/XmlRpc/Value/Exception.php';
+                // require_once 'Zend/XmlRpc/Value/Exception.php';
                 throw new Zend_XmlRpc_Value_Exception('Cannot convert given value \''. $value .'\' to a timestamp');
             }
 

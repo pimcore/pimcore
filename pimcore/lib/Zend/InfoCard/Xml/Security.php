@@ -23,7 +23,7 @@
 /**
  * Zend_InfoCard_Xml_Security_Transform
  */
-require_once 'Zend/InfoCard/Xml/Security/Transform.php';
+// require_once 'Zend/InfoCard/Xml/Security/Transform.php';
 
 /**
  *
@@ -89,34 +89,34 @@ class Zend_InfoCard_Xml_Security
     static public function validateXMLSignature($strXMLInput)
     {
         if(!extension_loaded('openssl')) {
-            require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+            // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
             throw new Zend_InfoCard_Xml_Security_Exception("You must have the openssl extension installed to use this class");
         }
 
         $sxe = simplexml_load_string($strXMLInput);
 
         if(!isset($sxe->Signature)) {
-            require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+            // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
             throw new Zend_InfoCard_Xml_Security_Exception("Could not identify XML Signature element");
         }
 
         if(!isset($sxe->Signature->SignedInfo)) {
-            require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+            // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
             throw new Zend_InfoCard_Xml_Security_Exception("Signature is missing a SignedInfo block");
         }
 
         if(!isset($sxe->Signature->SignatureValue)) {
-            require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+            // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
             throw new Zend_InfoCard_Xml_Security_Exception("Signature is missing a SignatureValue block");
         }
 
         if(!isset($sxe->Signature->KeyInfo)) {
-            require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+            // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
             throw new Zend_InfoCard_Xml_Security_Exception("Signature is missing a KeyInfo block");
         }
 
         if(!isset($sxe->Signature->KeyInfo->KeyValue)) {
-            require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+            // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
             throw new Zend_InfoCard_Xml_Security_Exception("Signature is missing a KeyValue block");
         }
 
@@ -125,7 +125,7 @@ class Zend_InfoCard_Xml_Security
                 $cMethod = (string)$sxe->Signature->SignedInfo->CanonicalizationMethod['Algorithm'];
                 break;
             default:
-                require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+                // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
                 throw new Zend_InfoCard_Xml_Security_Exception("Unknown or unsupported CanonicalizationMethod Requested");
                 break;
         }
@@ -135,7 +135,7 @@ class Zend_InfoCard_Xml_Security
                 $sMethod = (string)$sxe->Signature->SignedInfo->SignatureMethod['Algorithm'];
                 break;
             default:
-                require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+                // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
                 throw new Zend_InfoCard_Xml_Security_Exception("Unknown or unsupported SignatureMethod Requested");
                 break;
         }
@@ -145,7 +145,7 @@ class Zend_InfoCard_Xml_Security
                 $dMethod = (string)$sxe->Signature->SignedInfo->Reference->DigestMethod['Algorithm'];
                 break;
             default:
-                require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+                // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
                 throw new Zend_InfoCard_Xml_Security_Exception("Unknown or unsupported DigestMethod Requested");
                 break;
         }
@@ -175,7 +175,7 @@ class Zend_InfoCard_Xml_Security
         $transformed_xml_binhash = pack("H*", sha1($transformed_xml));
 
         if(!self::_secureStringCompare($transformed_xml_binhash, $dValue)) {
-            require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+            // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
             throw new Zend_InfoCard_Xml_Security_Exception("Locally Transformed XML does not match XML Document. Cannot Verify Signature");
         }
 
@@ -194,7 +194,7 @@ class Zend_InfoCard_Xml_Security
                 $public_key = openssl_pkey_get_public($pem);
 
                 if(!$public_key) {
-                    require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+                    // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
                     throw new Zend_InfoCard_Xml_Security_Exception("Unable to extract and prcoess X509 Certificate from KeyValue");
                 }
 
@@ -203,7 +203,7 @@ class Zend_InfoCard_Xml_Security
 
                 if(!isset($sxe->Signature->KeyInfo->KeyValue->RSAKeyValue->Modulus) ||
                    !isset($sxe->Signature->KeyInfo->KeyValue->RSAKeyValue->Exponent)) {
-                       require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+                       // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
                        throw new Zend_InfoCard_Xml_Security_Exception("RSA Key Value not in Modulus/Exponent form");
                 }
 
@@ -216,7 +216,7 @@ class Zend_InfoCard_Xml_Security
 
                 break;
             default:
-                require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+                // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
                 throw new Zend_InfoCard_Xml_Security_Exception("Unable to determine or unsupported representation of the KeyValue block");
         }
 
@@ -295,11 +295,11 @@ class Zend_InfoCard_Xml_Security
             case ($len < 0x010000):
                 return sprintf("%c%c%c%c%s", $type, 0x82, $len / 0x0100, $len % 0x0100, $data);
             default:
-                require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+                // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
                 throw new Zend_InfoCard_Xml_Security_Exception("Could not encode value");
         }
 
-        require_once 'Zend/InfoCard/Xml/Security/Exception.php';
+        // require_once 'Zend/InfoCard/Xml/Security/Exception.php';
         throw new Zend_InfoCard_Xml_Security_Exception("Invalid code path");
     }
 

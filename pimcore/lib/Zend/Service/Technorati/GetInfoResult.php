@@ -61,7 +61,7 @@ class Zend_Service_Technorati_GetInfoResult
         /**
          * @see Zend_Service_Technorati_Author
          */
-        require_once 'Zend/Service/Technorati/Author.php';
+        // require_once 'Zend/Service/Technorati/Author.php';
 
         $result = $xpath->query('//result');
         if ($result->length == 1) {
@@ -71,7 +71,7 @@ class Zend_Service_Technorati_GetInfoResult
         /**
          * @see Zend_Service_Technorati_Weblog
          */
-        require_once 'Zend/Service/Technorati/Weblog.php';
+        // require_once 'Zend/Service/Technorati/Weblog.php';
 
         $result = $xpath->query('//item/weblog');
         if ($result->length >= 1) {

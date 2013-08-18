@@ -24,17 +24,17 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Spreadsheets_Extension_RowCount
  */
-require_once 'Zend/Gdata/Spreadsheets/Extension/RowCount.php';
+// require_once 'Zend/Gdata/Spreadsheets/Extension/RowCount.php';
 
 /**
  * @see Zend_Gdata_Spreadsheets_Extension_ColCount
  */
-require_once 'Zend/Gdata/Spreadsheets/Extension/ColCount.php';
+// require_once 'Zend/Gdata/Spreadsheets/Extension/ColCount.php';
 
 /**
  * Concrete class for working with Worksheet entries.

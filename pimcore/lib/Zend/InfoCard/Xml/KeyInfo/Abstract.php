@@ -23,7 +23,7 @@
 /**
  * Zend_InfoCard_Xml_Element
  */
-require_once 'Zend/InfoCard/Xml/Element.php';
+// require_once 'Zend/InfoCard/Xml/Element.php';
 
 /**
  * @category   Zend

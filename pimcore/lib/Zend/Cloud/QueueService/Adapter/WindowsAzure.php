@@ -17,9 +17,9 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/QueueService/Adapter/AbstractAdapter.php';
-require_once 'Zend/Cloud/QueueService/Exception.php';
-require_once 'Zend/Service/WindowsAzure/Storage/Queue.php';
+// require_once 'Zend/Cloud/QueueService/Adapter/AbstractAdapter.php';
+// require_once 'Zend/Cloud/QueueService/Exception.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/Queue.php';
 
 /**
  * WindowsAzure adapter for simple queue service.

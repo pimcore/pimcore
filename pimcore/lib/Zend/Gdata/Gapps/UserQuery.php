@@ -24,7 +24,7 @@
 /**
  * @see Zend_Gdata_Gapps_Query
  */
-require_once('Zend/Gdata/Gapps/Query.php');
+// require_once('Zend/Gdata/Gapps/Query.php');
 
 /**
  * Assists in constructing queries for Google Apps user entries.

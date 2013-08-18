@@ -24,77 +24,77 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Extension_Comments
  */
-require_once 'Zend/Gdata/Extension/Comments.php';
+// require_once 'Zend/Gdata/Extension/Comments.php';
 
 /**
  * @see Zend_Gdata_DublinCore_Extension_Creator
  */
-require_once 'Zend/Gdata/DublinCore/Extension/Creator.php';
+// require_once 'Zend/Gdata/DublinCore/Extension/Creator.php';
 
 /**
  * @see Zend_Gdata_DublinCore_Extension_Date
  */
-require_once 'Zend/Gdata/DublinCore/Extension/Date.php';
+// require_once 'Zend/Gdata/DublinCore/Extension/Date.php';
 
 /**
  * @see Zend_Gdata_DublinCore_Extension_Description
  */
-require_once 'Zend/Gdata/DublinCore/Extension/Description.php';
+// require_once 'Zend/Gdata/DublinCore/Extension/Description.php';
 
 /**
  * @see Zend_Gdata_Books_Extension_Embeddability
  */
-require_once 'Zend/Gdata/Books/Extension/Embeddability.php';
+// require_once 'Zend/Gdata/Books/Extension/Embeddability.php';
 
 /**
  * @see Zend_Gdata_DublinCore_Extension_Format
  */
-require_once 'Zend/Gdata/DublinCore/Extension/Format.php';
+// require_once 'Zend/Gdata/DublinCore/Extension/Format.php';
 
 /**
  * @see Zend_Gdata_DublinCore_Extension_Identifier
  */
-require_once 'Zend/Gdata/DublinCore/Extension/Identifier.php';
+// require_once 'Zend/Gdata/DublinCore/Extension/Identifier.php';
 
 /**
  * @see Zend_Gdata_DublinCore_Extension_Language
  */
-require_once 'Zend/Gdata/DublinCore/Extension/Language.php';
+// require_once 'Zend/Gdata/DublinCore/Extension/Language.php';
 
 /**
  * @see Zend_Gdata_DublinCore_Extension_Publisher
  */
-require_once 'Zend/Gdata/DublinCore/Extension/Publisher.php';
+// require_once 'Zend/Gdata/DublinCore/Extension/Publisher.php';
 
 /**
  * @see Zend_Gdata_Extension_Rating
  */
-require_once 'Zend/Gdata/Extension/Rating.php';
+// require_once 'Zend/Gdata/Extension/Rating.php';
 
 /**
  * @see Zend_Gdata_Books_Extension_Review
  */
-require_once 'Zend/Gdata/Books/Extension/Review.php';
+// require_once 'Zend/Gdata/Books/Extension/Review.php';
 
 /**
  * @see Zend_Gdata_DublinCore_Extension_Subject
  */
-require_once 'Zend/Gdata/DublinCore/Extension/Subject.php';
+// require_once 'Zend/Gdata/DublinCore/Extension/Subject.php';
 
 /**
  * @see Zend_Gdata_DublinCore_Extension_Title
  */
-require_once 'Zend/Gdata/DublinCore/Extension/Title.php';
+// require_once 'Zend/Gdata/DublinCore/Extension/Title.php';
 
 /**
  * @see Zend_Gdata_Books_Extension_Viewability
  */
-require_once 'Zend/Gdata/Books/Extension/Viewability.php';
+// require_once 'Zend/Gdata/Books/Extension/Viewability.php';
 
 /**
  * Describes an entry in a feed of Book Search volumes
@@ -637,7 +637,7 @@ class Zend_Gdata_Books_VolumeEntry extends Zend_Gdata_Entry
         $fullId = $this->getId()->getText();
         $position = strrpos($fullId, '/');
         if ($position === false) {
-            require_once 'Zend/Gdata/App/Exception.php';
+            // require_once 'Zend/Gdata/App/Exception.php';
             throw new Zend_Gdata_App_Exception('Slash not found in atom:id');
         } else {
             return substr($fullId, strrpos($fullId,'/') + 1);

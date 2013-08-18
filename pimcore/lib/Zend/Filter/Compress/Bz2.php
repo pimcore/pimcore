@@ -22,7 +22,7 @@
 /**
  * @see Zend_Filter_Compress_CompressAbstract
  */
-require_once 'Zend/Filter/Compress/CompressAbstract.php';
+// require_once 'Zend/Filter/Compress/CompressAbstract.php';
 
 /**
  * Compression adapter for Bz2
@@ -56,7 +56,7 @@ class Zend_Filter_Compress_Bz2 extends Zend_Filter_Compress_CompressAbstract
     public function __construct($options = null)
     {
         if (!extension_loaded('bz2')) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('This filter needs the bz2 extension');
         }
         parent::__construct($options);
@@ -81,7 +81,7 @@ class Zend_Filter_Compress_Bz2 extends Zend_Filter_Compress_CompressAbstract
     public function setBlocksize($blocksize)
     {
         if (($blocksize < 0) || ($blocksize > 9)) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Blocksize must be between 0 and 9');
         }
 
@@ -123,7 +123,7 @@ class Zend_Filter_Compress_Bz2 extends Zend_Filter_Compress_CompressAbstract
         if (!empty($archive)) {
             $file = bzopen($archive, 'w');
             if (!$file) {
-                require_once 'Zend/Filter/Exception.php';
+                // require_once 'Zend/Filter/Exception.php';
                 throw new Zend_Filter_Exception("Error opening the archive '" . $archive . "'");
             }
 
@@ -135,7 +135,7 @@ class Zend_Filter_Compress_Bz2 extends Zend_Filter_Compress_CompressAbstract
         }
 
         if (is_int($compressed)) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Error during compression');
         }
 
@@ -158,7 +158,7 @@ class Zend_Filter_Compress_Bz2 extends Zend_Filter_Compress_CompressAbstract
         if (file_exists($archive)) {
             $file = bzopen($archive, 'r');
             if (!$file) {
-                require_once 'Zend/Filter/Exception.php';
+                // require_once 'Zend/Filter/Exception.php';
                 throw new Zend_Filter_Exception("Error opening the archive '" . $content . "'");
             }
 
@@ -169,7 +169,7 @@ class Zend_Filter_Compress_Bz2 extends Zend_Filter_Compress_CompressAbstract
         }
 
         if (is_int($compressed)) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Error during decompression');
         }
 

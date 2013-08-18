@@ -23,7 +23,7 @@
 /**
  * Zend_InfoCard_Adapter_Interface
  */
-require_once 'Zend/InfoCard/Adapter/Interface.php';
+// require_once 'Zend/InfoCard/Adapter/Interface.php';
 
 /**
  * The default InfoCard component Adapter which serves as a pass-thru placeholder

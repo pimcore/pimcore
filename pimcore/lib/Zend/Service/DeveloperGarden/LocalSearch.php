@@ -23,27 +23,27 @@
 /**
  * @see Zend_Service_DeveloperGarden_Client_ClientAbstract
  */
-require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
+// require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_LocalSearch_LocalSearchResponseType
  */
-require_once 'Zend/Service/DeveloperGarden/Response/LocalSearch/LocalSearchResponseType.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/LocalSearch/LocalSearchResponseType.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_LocalSearch_LocalSearchRequest
  */
-require_once 'Zend/Service/DeveloperGarden/Request/LocalSearch/LocalSearchRequest.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/LocalSearch/LocalSearchRequest.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_LocalSearch_LocalSearchResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/LocalSearch/LocalSearchResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/LocalSearch/LocalSearchResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_LocalSearch_SearchParameters
  */
-require_once 'Zend/Service/DeveloperGarden/LocalSearch/SearchParameters.php';
+// require_once 'Zend/Service/DeveloperGarden/LocalSearch/SearchParameters.php';
 
 /**
  * @category   Zend

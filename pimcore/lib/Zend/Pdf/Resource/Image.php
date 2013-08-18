@@ -23,11 +23,11 @@
 /** Internally used classes */
 
 /** Zend_Pdf_Element_Name */
-require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/Name.php';
 
 
 /** Zend_Pdf_Resource */
-require_once 'Zend/Pdf/Resource.php';
+// require_once 'Zend/Pdf/Resource.php';
 
 
 /**

@@ -23,7 +23,7 @@
 /**
  * @see Zend_Application_Resource_Resource
  */
-require_once 'Zend/Application/Resource/Resource.php';
+// require_once 'Zend/Application/Resource/Resource.php';
 
 /**
  * Abstract class for bootstrap resources

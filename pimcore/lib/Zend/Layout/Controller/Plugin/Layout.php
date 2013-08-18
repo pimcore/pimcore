@@ -20,7 +20,7 @@
  */
 
 /** Zend_Controller_Plugin_Abstract */
-require_once 'Zend/Controller/Plugin/Abstract.php';
+// require_once 'Zend/Controller/Plugin/Abstract.php';
 
 /**
  * Render layouts

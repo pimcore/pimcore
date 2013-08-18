@@ -22,17 +22,17 @@
 /**
  * Zend_InfoCard_Xml_KeyInfo_Abstract
  */
-require_once 'Zend/InfoCard/Xml/KeyInfo/Abstract.php';
+// require_once 'Zend/InfoCard/Xml/KeyInfo/Abstract.php';
 
 /**
  * Zend_InfoCard_Xml_EncryptedKey
  */
-require_once 'Zend/InfoCard/Xml/EncryptedKey.php';
+// require_once 'Zend/InfoCard/Xml/EncryptedKey.php';
 
 /**
  * Zend_InfoCard_Xml_KeyInfo_Interface
  */
-require_once 'Zend/InfoCard/Xml/KeyInfo/Interface.php';
+// require_once 'Zend/InfoCard/Xml/KeyInfo/Interface.php';
 
 /**
  * Represents a Xml Digital Signature XML Data Block

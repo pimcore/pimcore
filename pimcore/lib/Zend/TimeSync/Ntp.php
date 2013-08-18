@@ -22,7 +22,7 @@
 /**
  * Zend_TimeSync_Protocol
  */
-require_once 'Zend/TimeSync/Protocol.php';
+// require_once 'Zend/TimeSync/Protocol.php';
 
 /**
  * NTP Protocol handling class

@@ -82,12 +82,12 @@ class Zend_Service_DeveloperGarden_Credential
     public function setPassword($password = null)
     {
         if (empty($password)) {
-            require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
             throw new Zend_Service_DeveloperGarden_Client_Exception('Empty password not permitted.');
         }
 
         if (!is_string($password)) {
-            require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
             throw new Zend_Service_DeveloperGarden_Client_Exception('Password must be a string.');
         }
 
@@ -115,12 +115,12 @@ class Zend_Service_DeveloperGarden_Credential
     public function setUsername($username = null)
     {
         if (empty($username)) {
-            require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
             throw new Zend_Service_DeveloperGarden_Client_Exception('Empty username not permitted.');
         }
 
         if (!is_string($username)) {
-            require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
             throw new Zend_Service_DeveloperGarden_Client_Exception('Username must be a string.');
         }
 
@@ -160,12 +160,12 @@ class Zend_Service_DeveloperGarden_Credential
     public function setRealm($realm = null)
     {
         if (empty($realm)) {
-            require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
             throw new Zend_Service_DeveloperGarden_Client_Exception('Empty realm not permitted.');
         }
 
         if (!is_string($realm)) {
-            require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
             throw new Zend_Service_DeveloperGarden_Client_Exception('Realm must be a string.');
         }
 

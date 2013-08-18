@@ -22,7 +22,7 @@
 /**
  * @see Zend_Service_ShortUrl_AbstractShortener
  */
-require_once 'Zend/Service/ShortUrl/AbstractShortener.php';
+// require_once 'Zend/Service/ShortUrl/AbstractShortener.php';
 
 /**
  * Is.gd API implementation
@@ -82,7 +82,7 @@ class Zend_Service_ShortUrl_IsGd extends Zend_Service_ShortUrl_AbstractShortener
 
         $response = $this->getHttpClient()->request();
         if ($response->isError()) {
-            require_once 'Zend/Service/ShortUrl/Exception.php';
+            // require_once 'Zend/Service/ShortUrl/Exception.php';
             throw new Zend_Service_ShortUrl_Exception($response->getMessage());
         }
 
@@ -90,7 +90,7 @@ class Zend_Service_ShortUrl_IsGd extends Zend_Service_ShortUrl_AbstractShortener
             return $response->getHeader('Location');
         }
 
-        require_once 'Zend/Service/ShortUrl/Exception.php';
+        // require_once 'Zend/Service/ShortUrl/Exception.php';
         throw new Zend_Service_ShortUrl_Exception('Url unshortening was not successful');
     }
 }

@@ -24,7 +24,7 @@
 /**
  * @see Zend_Gdata_Gapps_Query
  */
-require_once('Zend/Gdata/Gapps/Query.php');
+// require_once('Zend/Gdata/Gapps/Query.php');
 
 /**
  * Assists in constructing queries for Google Apps owner entries.
@@ -129,7 +129,7 @@ class Zend_Gdata_Gapps_OwnerQuery extends Zend_Gdata_Gapps_Query
         if ($this->_groupId !== null) {
             $uri .= '/' . $this->_groupId;
         } else {
-            require_once 'Zend/Gdata/App/InvalidArgumentException.php';
+            // require_once 'Zend/Gdata/App/InvalidArgumentException.php';
             throw new Zend_Gdata_App_InvalidArgumentException(
                     'groupId must not be null');
         }

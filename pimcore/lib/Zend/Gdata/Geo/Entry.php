@@ -24,17 +24,17 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Geo
  */
-require_once 'Zend/Gdata/Geo.php';
+// require_once 'Zend/Gdata/Geo.php';
 
 /**
  * @see Zend_Gdata_Geo_Extension_GeoRssWhere
  */
-require_once 'Zend/Gdata/Geo/Extension/GeoRssWhere.php';
+// require_once 'Zend/Gdata/Geo/Extension/GeoRssWhere.php';
 
 /**
  * An Atom entry containing Geograpic data.

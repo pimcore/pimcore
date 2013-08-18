@@ -21,7 +21,7 @@
  */
 
 /** Zend_Log_Filter_Priority */
-require_once 'Zend/Log/Filter/Priority.php';
+// require_once 'Zend/Log/Filter/Priority.php';
 
 /**
  * @category   Zend
@@ -59,7 +59,7 @@ abstract class Zend_Log_Writer_Abstract implements Zend_Log_FactoryInterface
 
         if (!$filter instanceof Zend_Log_Filter_Interface) {
             /** @see Zend_Log_Exception */
-            require_once 'Zend/Log/Exception.php';
+            // require_once 'Zend/Log/Exception.php';
             throw new Zend_Log_Exception('Invalid filter provided');
         }
 
@@ -127,7 +127,7 @@ abstract class Zend_Log_Writer_Abstract implements Zend_Log_FactoryInterface
         }
 
         if (!is_array($config)) {
-            require_once 'Zend/Log/Exception.php';
+            // require_once 'Zend/Log/Exception.php';
             throw new Zend_Log_Exception(
                 'Configuration must be an array or instance of Zend_Config'
             );

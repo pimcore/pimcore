@@ -20,7 +20,7 @@
  */
 
 /** Zend_Dojo_Form_Element_DijitMulti */
-require_once 'Zend/Dojo/Form/Element/DijitMulti.php';
+// require_once 'Zend/Dojo/Form/Element/DijitMulti.php';
 
 /**
  * RadioButton dijit

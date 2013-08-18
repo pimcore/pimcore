@@ -51,7 +51,7 @@ class Zend_Service_Technorati_Utils
         /**
          * @see Zend_Uri
          */
-        require_once 'Zend/Uri.php';
+        // require_once 'Zend/Uri.php';
         if ($input instanceof Zend_Uri_Http) {
             $uri = $input;
         } else {
@@ -63,7 +63,7 @@ class Zend_Service_Technorati_Utils
                 /**
                  * @see Zend_Service_Technorati_Exception
                  */
-                require_once 'Zend/Service/Technorati/Exception.php';
+                // require_once 'Zend/Service/Technorati/Exception.php';
                 throw new Zend_Service_Technorati_Exception($e->getMessage(), 0, $e);
             }
         }
@@ -73,7 +73,7 @@ class Zend_Service_Technorati_Utils
             /**
              * @see Zend_Service_Technorati_Exception
              */
-            require_once 'Zend/Service/Technorati/Exception.php';
+            // require_once 'Zend/Service/Technorati/Exception.php';
             throw new Zend_Service_Technorati_Exception(
                 "Invalid URL $uri, only HTTP(S) protocols can be used");
         }
@@ -98,11 +98,11 @@ class Zend_Service_Technorati_Utils
         /**
          * @see Zend_Date
          */
-        require_once 'Zend/Date.php';
+        // require_once 'Zend/Date.php';
         /**
          * @see Zend_Locale
          */
-        require_once 'Zend/Locale.php';
+        // require_once 'Zend/Locale.php';
 
         // allow null as value and return valid Zend_Date objects
         if (($input === null) || ($input instanceof Zend_Date)) {
@@ -117,7 +117,7 @@ class Zend_Service_Technorati_Utils
             /**
              * @see Zend_Service_Technorati_Exception
              */
-            require_once 'Zend/Service/Technorati/Exception.php';
+            // require_once 'Zend/Service/Technorati/Exception.php';
             throw new Zend_Service_Technorati_Exception("'$input' is not a valid Date/Time");
         }
     }

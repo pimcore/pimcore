@@ -19,7 +19,7 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Http/UserAgent/AbstractDevice.php';
+// require_once 'Zend/Http/UserAgent/AbstractDevice.php';
 
 /**
  * Mobile browser type matcher

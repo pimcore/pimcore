@@ -229,7 +229,7 @@ class Zend_Service_DeveloperGarden_ConferenceCall_ConferenceSchedule
     public function setRecurring($recurring)
     {
         if (!array_key_exists($recurring, $this->_recurringValues)) {
-            require_once 'Zend/Service/DeveloperGarden/ConferenceCall/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/ConferenceCall/Exception.php';
             throw new Zend_Service_DeveloperGarden_ConferenceCall_Exception(
                 'Unknown ConferenceCall recurring mode.'
             );

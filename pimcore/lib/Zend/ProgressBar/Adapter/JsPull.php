@@ -20,12 +20,12 @@
 /**
  * @see Zend_Json
  */
-require_once 'Zend/Json.php';
+// require_once 'Zend/Json.php';
 
 /**
  * @see Zend_ProgressBar_Adapter
  */
-require_once 'Zend/ProgressBar/Adapter.php';
+// require_once 'Zend/ProgressBar/Adapter.php';
 
 /**
  * Zend_ProgressBar_Adapter_JsPull offers a simple method for updating a

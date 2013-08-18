@@ -22,12 +22,12 @@
 /**
  * @see Zend_Text_Table
  */
-require_once 'Zend/Text/Table.php';
+// require_once 'Zend/Text/Table.php';
 
 /**
  * @see Zend_Text_MultiByte
  */
-require_once 'Zend/Text/MultiByte.php';
+// require_once 'Zend/Text/MultiByte.php';
 
 /**
  * Column class for Zend_Text_Table_Row
@@ -112,7 +112,7 @@ class Zend_Text_Table_Column
     public function setContent($content, $charset = null)
     {
         if (is_string($content) === false) {
-            require_once 'Zend/Text/Table/Exception.php';
+            // require_once 'Zend/Text/Table/Exception.php';
             throw new Zend_Text_Table_Exception('$content must be a string');
         }
 
@@ -147,7 +147,7 @@ class Zend_Text_Table_Column
     public function setAlign($align)
     {
         if (in_array($align, $this->_allowedAligns) === false) {
-            require_once 'Zend/Text/Table/Exception.php';
+            // require_once 'Zend/Text/Table/Exception.php';
             throw new Zend_Text_Table_Exception('Invalid align supplied');
         }
 
@@ -166,7 +166,7 @@ class Zend_Text_Table_Column
     public function setColSpan($colSpan)
     {
         if (is_int($colSpan) === false or $colSpan < 1) {
-            require_once 'Zend/Text/Table/Exception.php';
+            // require_once 'Zend/Text/Table/Exception.php';
             throw new Zend_Text_Table_Exception('$colSpan must be an integer and greater than 0');
         }
 
@@ -197,14 +197,14 @@ class Zend_Text_Table_Column
     public function render($columnWidth, $padding = 0)
     {
         if (is_int($columnWidth) === false or $columnWidth < 1) {
-            require_once 'Zend/Text/Table/Exception.php';
+            // require_once 'Zend/Text/Table/Exception.php';
             throw new Zend_Text_Table_Exception('$columnWidth must be an integer and greater than 0');
         }
 
         $columnWidth -= ($padding * 2);
 
         if ($columnWidth < 1) {
-            require_once 'Zend/Text/Table/Exception.php';
+            // require_once 'Zend/Text/Table/Exception.php';
             throw new Zend_Text_Table_Exception('Padding (' . $padding . ') is greater than column width');
         }
 

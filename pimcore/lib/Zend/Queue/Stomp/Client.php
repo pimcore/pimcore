@@ -88,7 +88,7 @@ class Zend_Queue_Stomp_Client
     public function addConnection($scheme, $host, $port, $class = 'Zend_Queue_Stomp_Client_Connection')
     {
         if (!class_exists($class)) {
-            require_once 'Zend/Loader.php';
+            // require_once 'Zend/Loader.php';
             Zend_Loader::loadClass($class);
         }
 
