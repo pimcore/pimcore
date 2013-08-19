@@ -59,11 +59,11 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     }
 
     private function doGetDataForEditmode($data, $getter, $objectFromVersion, $level = 0) {
-//        p_r($data); die();
+
         $parent = Object_Service::hasInheritableParentObject($data->getObject());
         $item = $data->$getter();
         if(!$item && !empty($parent)) {
-            $data = $this->getDataFromObjectParam($parent);
+            $data = $parent->{"get" . ucfirst($this->getName())}();
             return $this->doGetDataForEditmode($data, $getter, $objectFromVersion, $level + 1);
         }
 
@@ -126,7 +126,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
             $relations = $item->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
             if(empty($relations) && !empty($parent)) {
-                $parentItem = $this->getDataFromObjectParam($parent);
+                $parentItem = $parent->{"get" . ucfirst($this->getName())}();
                 if(!empty($parentItem)) {
                     $parentItem = $parentItem->$getter();
                     if($parentItem) {
@@ -157,7 +157,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                 $value = $fielddefinition->getDataForEditmode($item->$valueGetter(), $baseObject);
             }
             if(empty($value) && !empty($parent)) {
-                $parentItem = $this->getDataFromObjectParam($parent);
+                $parentItem = $parent->{"get" . ucfirst($this->getName())}()->$getter();
                 if(!empty($parentItem)) {
                     return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion);
                 }
@@ -589,7 +589,6 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
 
     private function getDiffDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $objectFromVersion) {
-        $parent = Object_Service::hasInheritableParentObject($baseObject);
         $valueGetter = "get" . ucfirst($key);
 
         $value = $fielddefinition->getDiffDataForEditmode($item->$valueGetter(), $baseObject);
@@ -602,7 +601,6 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      * @return array|null
      */
     private function doGetDiffDataForEditmode($data, $getter, $objectFromVersion, $level = 0) {
-//        p_r($data); die();
         $parent = Object_Service::hasInheritableParentObject($data->getObject());
         $item = $data->$getter();
 
@@ -620,9 +618,6 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         } catch (Exception $e) {
             return null;
         }
-
-        $brickData = array();
-        $brickMetaData = array();
 
         $result = array();
 
