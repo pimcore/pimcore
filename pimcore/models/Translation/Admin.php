@@ -29,13 +29,17 @@ class Translation_Admin extends Translation_Abstract {
      */
     public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false)
     {
-        try {
-            $language = Pimcore_Tool_Authentication::authenticateSession()->getLanguage();
-        } catch (Exception $e) {
-            throw new Exception("Couldn't determine current language.");
+        if(Zend_Registry::isRegistered("Zend_Locale")) {
+            $language = (string) Zend_Registry::get("Zend_Locale");
+        } else if($user = Pimcore_Tool_Admin::getCurrentUser()) {
+            $language = $user->getLanguage();
+        } else if ($user = Pimcore_Tool_Authentication::authenticateSession()) {
+            $language = $user->getLanguage();
+        } else {
+            $config = Pimcore_Config::getSystemConfig();
+            $language = $config->language;
         }
 
         return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
     }
-
 }
