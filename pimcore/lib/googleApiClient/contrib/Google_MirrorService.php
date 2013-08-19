@@ -87,7 +87,8 @@
       }
     }
     /**
-     * Updates a contact in place. This method supports patch semantics. (contacts.patch)
+     * Updates a contact in place. This method supports patch semantics.
+     * (contacts.patch)
      *
      * @param string $id The ID of the contact.
      * @param Google_Contact $postBody
@@ -209,7 +210,8 @@
       }
     }
     /**
-     * Retrieves a list of subscriptions for the authenticated user and service. (subscriptions.list)
+     * Retrieves a list of subscriptions for the authenticated user and service.
+     * (subscriptions.list)
      *
      * @param array $optParams Optional parameters.
      * @return Google_SubscriptionsListResponse
@@ -301,7 +303,8 @@
       }
     }
     /**
-     * Retrieves a list of timeline items for the authenticated user. (timeline.list)
+     * Retrieves a list of timeline items for the authenticated user.
+     * (timeline.list)
      *
      * @param array $optParams Optional parameters.
      *
@@ -325,7 +328,8 @@
       }
     }
     /**
-     * Updates a timeline item in place. This method supports patch semantics. (timeline.patch)
+     * Updates a timeline item in place. This method supports patch semantics.
+     * (timeline.patch)
      *
      * @param string $id The ID of the timeline item.
      * @param Google_TimelineItem $postBody
@@ -386,7 +390,8 @@
       return $data;
     }
     /**
-     * Retrieves an attachment on a timeline item by item ID and attachment ID. (attachments.get)
+     * Retrieves an attachment on a timeline item by item ID and attachment ID.
+     * (attachments.get)
      *
      * @param string $itemId The ID of the timeline item the attachment belongs to.
      * @param string $attachmentId The ID of the attachment.
@@ -532,7 +537,20 @@ class Google_AttachmentsListResponse extends Google_Model {
   }
 }
 
+class Google_Command extends Google_Model {
+  public $type;
+  public function setType( $type) {
+    $this->type = $type;
+  }
+  public function getType() {
+    return $this->type;
+  }
+}
+
 class Google_Contact extends Google_Model {
+  protected $__acceptCommandsType = 'Google_Command';
+  protected $__acceptCommandsDataType = 'array';
+  public $acceptCommands;
   public $acceptTypes;
   public $displayName;
   public $id;
@@ -541,7 +559,15 @@ class Google_Contact extends Google_Model {
   public $phoneNumber;
   public $priority;
   public $source;
+  public $speakableName;
   public $type;
+  public function setAcceptCommands(/* array(Google_Command) */ $acceptCommands) {
+    $this->assertIsArray($acceptCommands, 'Google_Command', __METHOD__);
+    $this->acceptCommands = $acceptCommands;
+  }
+  public function getAcceptCommands() {
+    return $this->acceptCommands;
+  }
   public function setAcceptTypes(/* array(Google_string) */ $acceptTypes) {
     $this->assertIsArray($acceptTypes, 'Google_string', __METHOD__);
     $this->acceptTypes = $acceptTypes;
@@ -591,6 +617,12 @@ class Google_Contact extends Google_Model {
   }
   public function getSource() {
     return $this->source;
+  }
+  public function setSpeakableName( $speakableName) {
+    $this->speakableName = $speakableName;
+  }
+  public function getSpeakableName() {
+    return $this->speakableName;
   }
   public function setType( $type) {
     $this->type = $type;
@@ -702,6 +734,7 @@ class Google_LocationsListResponse extends Google_Model {
 class Google_MenuItem extends Google_Model {
   public $action;
   public $id;
+  public $payload;
   public $removeWhenSelected;
   protected $__valuesType = 'Google_MenuValue';
   protected $__valuesDataType = 'array';
@@ -717,6 +750,12 @@ class Google_MenuItem extends Google_Model {
   }
   public function getId() {
     return $this->id;
+  }
+  public function setPayload( $payload) {
+    $this->payload = $payload;
+  }
+  public function getPayload() {
+    return $this->payload;
   }
   public function setRemoveWhenSelected( $removeWhenSelected) {
     $this->removeWhenSelected = $removeWhenSelected;
