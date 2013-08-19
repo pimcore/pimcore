@@ -212,11 +212,6 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      * @return void
      */
     public function rewriteIds($idMapping) {
-        if(array_key_exists($this->type, $idMapping) and array_key_exists((int) $this->id, $idMapping[$this->type])) {
-            $this->id = $idMapping[$this->type][(int) $this->id];
-        }
-
-
         // reset existing elements store
         $this->elements = array();
 

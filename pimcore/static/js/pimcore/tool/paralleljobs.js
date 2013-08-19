@@ -89,6 +89,7 @@ pimcore.tool.paralleljobs = Class.create({
                     } catch (e) {
                         clearInterval(this.jobsInterval);
                         this.error(response.message);
+                        return;
                     }
 
                     this.jobsFinished++;

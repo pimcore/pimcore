@@ -417,6 +417,35 @@ class Document_Tag_Image extends Document_Tag {
         return $this->image;
     }
 
+    /**
+     * @param \Asset_Image $image
+     * @return Document_Tag_Image
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
+        return $this;
+    }
+
+    /**
+     * @param int $id
+     * @return Document_Tag_Image
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return (int) $this->id;
+    }
+
+
     /*
       * @return string
       */
@@ -684,5 +713,30 @@ class Document_Tag_Image extends Document_Tag {
     public function getMarker()
     {
         return $this->marker;
+    }
+
+    /**
+     * Rewrites id from source to target, $idMapping contains
+     * array(
+     *  "document" => array(
+     *      SOURCE_ID => TARGET_ID,
+     *      SOURCE_ID => TARGET_ID
+     *  ),
+     *  "object" => array(...),
+     *  "asset" => array(...)
+     * )
+     * @param array $idMapping
+     * @return void
+     */
+    public function rewriteIds($idMapping) {
+        if(array_key_exists("asset", $idMapping) and array_key_exists($this->getId(), $idMapping["asset"])) {
+            $this->setId($idMapping["asset"][$this->getId()]);
+
+            // reset marker & hotspot information
+            $this->setHotspots(array());
+            $this->setMarker(array());
+            $this->setCropPercent(false);
+            $this->setImage(null);
+        }
     }
 }

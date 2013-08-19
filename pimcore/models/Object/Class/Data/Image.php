@@ -326,4 +326,29 @@ class Object_Class_Data_Image extends Object_Class_Data {
             return "";
         }
     }
+
+    /**
+     * Rewrites id from source to target, $idMapping contains
+     * array(
+     *  "document" => array(
+     *      SOURCE_ID => TARGET_ID,
+     *      SOURCE_ID => TARGET_ID
+     *  ),
+     *  "object" => array(...),
+     *  "asset" => array(...)
+     * )
+     * @param mixed $object
+     * @param array $idMapping
+     * @param array $params
+     * @return Element_Interface
+     */
+    public function rewriteIds($object, $idMapping, $params = array()) {
+        $data = $this->getDataFromObjectParam($object, $params);
+        if($data instanceof Asset_Image) {
+            if(array_key_exists("asset", $idMapping) and array_key_exists($data->getId(), $idMapping["asset"])) {
+                return Asset::getById($idMapping["asset"][$data->getId()]);
+            }
+        }
+        return $data;
+    }
 }

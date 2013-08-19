@@ -244,6 +244,7 @@ $scripts = array(
     "pimcore/element/note_details.js",
     "pimcore/element/tag/imagecropper.js",
     "pimcore/element/tag/imagehotspotmarkereditor.js",
+    "pimcore/element/replace_assignments.js",
     "pimcore/object/helpers/grid.js",
     "pimcore/object/helpers/gridConfigDialog.js",
     "pimcore/object/helpers/classTree.js",

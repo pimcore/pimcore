@@ -241,4 +241,50 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
         }
     }
 
+
+    /**
+     * Rewrites id from source to target, $idMapping contains
+     * array(
+     *  "document" => array(
+     *      SOURCE_ID => TARGET_ID,
+     *      SOURCE_ID => TARGET_ID
+     *  ),
+     *  "object" => array(...),
+     *  "asset" => array(...)
+     * )
+     * @param mixed $object
+     * @param array $idMapping
+     * @param array $params
+     * @return Element_Interface
+     */
+    public function rewriteIds($object, $idMapping, $params = array()) {
+
+        $data = $this->getDataFromObjectParam($object, $params);
+        $html = str_get_html($data);
+        if($html) {
+            $s = $html->find("a[pimcore_id],img[pimcore_id]");
+
+            if($s) {
+                foreach ($s as $el) {
+                    if ($el->href || $el->src) {
+                        $type = $el->pimcore_type;
+                        $id = (int) $el->pimcore_id;
+
+                        if(array_key_exists($type, $idMapping)) {
+                            if(array_key_exists($id, $idMapping[$type])) {
+                                $el->outertext = str_replace('="' . $el->pimcore_id . '"', '="' . $idMapping[$type][$id] . '"', $el->outertext);
+                            }
+                        }
+                    }
+                }
+            }
+
+            $data = $html->save();
+
+            $html->clear();
+            unset($html);
+        }
+
+        return $data;
+    }
 }
