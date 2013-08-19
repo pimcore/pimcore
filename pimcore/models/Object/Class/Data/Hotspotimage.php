@@ -258,10 +258,9 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
      * @return string
      */
     public function getForCsvExport($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        if ($object->$getter() instanceof Object_Data_Hotspotimage) {
-            return base64_encode(Pimcore_Tool_Serialize::serialize($object->$getter()));
+        $data = $this->getDataFromObjectParam($object);
+        if ($data instanceof Object_Data_Hotspotimage) {
+            return base64_encode(Pimcore_Tool_Serialize::serialize($data));
         } else return null;
     }
 

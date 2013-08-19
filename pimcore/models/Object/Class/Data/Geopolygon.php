@@ -130,9 +130,8 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
      * @return string
      */
     public function getForCsvExport($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        $data = $object->$getter();
+
+        $data = $this->getDataFromObjectParam($object);
         if (!empty($data)) {
             $dataArray = $this->getDataForEditmode($data);
             $rows = array();
@@ -173,9 +172,7 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
      * @return mixed
      */
     public function getForWebserviceExport($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        $data = $object->$getter();
+        $data = $this->getDataFromObjectParam($object);
         if (!empty($data)) {
             return $this->getDataForEditmode($data, $object);
         } else return null;

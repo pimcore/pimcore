@@ -181,9 +181,8 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      * @return string
      */
     public function getForCsvExport($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        return strval($object->$getter());
+        $data = $this->getDataFromObjectParam($object);
+        return strval($data);
     }
 
 
