@@ -110,9 +110,13 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
             $metaData = $data[$this->getName() . "__hotspots"];
 
             // check if the data is JSON (backward compatibility)
-            $md = json_decode($metaData);
+            $md = json_decode($metaData, true);
             if(!$md) {
                 $md = Pimcore_Tool_Serialize::unserialize($metaData);
+            } else {
+                if(is_array($md) && count($md)) {
+                    $md["hotspots"] = $md;
+                }
             }
 
             $hotspots = empty($md["hotspots"]) ? null : $md["hotspots"];
