@@ -124,10 +124,10 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
      * @param int $page
      * @return $this|bool
      */
-    public function saveImage($path, $page = 1) {
+    public function saveImage($path, $page = 1, $resolution = 200) {
 
         try {
-            Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -sDEVICE=png16m -dFirstPage=" . $page . " -dLastPage=" . $page . " -r200 -o " . $path . " " . $this->path);
+            Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -sDEVICE=png16m -dFirstPage=" . $page . " -dLastPage=" . $page . " -r" . $resolution . " -o " . $path . " " . $this->path);
             return $this;
         } catch (Exception $e) {
             Logger::error($e);
