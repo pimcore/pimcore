@@ -523,6 +523,15 @@ CREATE TABLE `staticroutes` (
   KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `targeting_personas`;
+CREATE TABLE `targeting_personas` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `description` text,
+  `conditions` longtext,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `targeting_rules`;
 CREATE TABLE `targeting_rules` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -530,15 +539,6 @@ CREATE TABLE `targeting_rules` (
   `description` text,
   `conditions` longtext,
   `actions` longtext,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `targeting_personas`;
-CREATE TABLE `targeting_personas` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `description` text,
-  `conditions` longtext,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
