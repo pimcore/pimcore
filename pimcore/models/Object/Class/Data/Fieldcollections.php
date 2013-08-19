@@ -369,8 +369,8 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $data = $this->getDataFromObjectParam($item);
-                    $dependencies = array_merge($dependencies, $fd->resolveDependencies($data));
+                    $getter = "get" . ucfirst($fd->getName());
+                    $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
                 }
             }
         }
@@ -401,8 +401,8 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $data = $this->getDataFromObjectParam($item);
-                    $tags = $fd->getCacheTags($data, $item, $tags);
+                    $getter = "get" . ucfirst($fd->getName());
+                    $tags = $fd->getCacheTags($item->$getter(), $item, $tags);
                 }
             }
         }
@@ -435,8 +435,8 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                     }
 
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        $data = $this->getDataFromObjectParam($item);
-                        $fd->checkValidity($data);
+                        $getter = "get" . ucfirst($fd->getName());
+                        $fd->checkValidity($item->$getter());
                     }
                 }
             }
