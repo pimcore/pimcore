@@ -198,5 +198,73 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
         ));
     }
 
+    public function findUsagesAction() {
 
+        if($this->getParam("id")) {
+            $element = Element_Service::getElementById($this->getParam("type"), $this->getParam("id"));
+        } else if ($this->getParam("path")) {
+            $element = Element_Service::getElementByPath($this->getParam("type"), $this->getParam("path"));
+        }
+
+        $results = array();
+        $success = false;
+
+        if($element) {
+            $elements = $element->getDependencies()->getRequiredBy();
+            foreach ($elements as $el) {
+                $item = Element_Service::getElementById($el["type"], $el["id"]);
+                if($item instanceof Element_Interface) {
+                    $el["path"] = $item->getFullpath();
+                    $results[] = $el;
+                }
+            }
+            $success = true;
+        }
+
+        $this->_helper->json(array(
+            "data" => $results,
+            "success" => $success
+        ));
+    }
+
+    public function replaceAssignmentsAction() {
+
+        $success = false;
+        $message = "";
+        $element = Element_Service::getElementById($this->getParam("type"), $this->getParam("id"));
+        $sourceEl = Element_Service::getElementById($this->getParam("sourceType"), $this->getParam("sourceId"));
+        $targetEl = Element_Service::getElementById($this->getParam("targetType"), $this->getParam("targetId"));
+
+        if($element && $sourceEl && $targetEl
+            && $this->getParam("sourceType") == $this->getParam("targetType")
+            && $sourceEl->getType() == $targetEl->getType()
+        ) {
+
+            $rewriteConfig = array(
+                $this->getParam("sourceType") => array(
+                    $sourceEl->getId() => $targetEl->getId()
+                )
+            );
+
+            if($element instanceof Document) {
+                $element = Document_Service::rewriteIds($element, $rewriteConfig);
+            } else if ($element instanceof Object_Abstract) {
+                $element = Object_Service::rewriteIds($element, $rewriteConfig);
+            } else if ($element instanceof Asset) {
+                $element = Asset_Service::rewriteIds($element, $rewriteConfig);
+            }
+
+            $element->setUserModification($this->getUser()->getId());
+            $element->save();
+
+            $success = true;
+        } else {
+            $message = "source-type and target-type do not match";
+        }
+
+        $this->_helper->json(array(
+            "success" => $success,
+            "message" => $message
+        ));
+    }
 }

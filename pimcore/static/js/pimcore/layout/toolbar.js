@@ -65,12 +65,24 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        fileItems.push({
-            text: t('element_history'),
-            iconCls: "pimcore_icon_tab_schedule",
-            cls: "pimcore_main_menu",
-            handler: this.showElementHistory.bind(this)
-        });
+        if (user.isAllowed("objects") || user.isAllowed("documents") || user.isAllowed("assets")) {
+            fileItems.push({
+                text: t("search_replace_assignments"),
+                iconCls: "pimcore_icon_menu_search",
+                handler: function () {
+                    new pimcore.element.replace_assignments();
+                }
+            });
+        }
+
+        if (user.isAllowed("objects") || user.isAllowed("documents") || user.isAllowed("assets")) {
+            fileItems.push({
+                text: t('element_history'),
+                iconCls: "pimcore_icon_tab_schedule",
+                cls: "pimcore_main_menu",
+                handler: this.showElementHistory.bind(this)
+            });
+        }
 
         if (user.isAllowed("seemode")) {
             fileItems.push({

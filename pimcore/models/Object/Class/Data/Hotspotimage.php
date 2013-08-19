@@ -400,5 +400,34 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
         }
     }
 
+    /**
+     * Rewrites id from source to target, $idMapping contains
+     * array(
+     *  "document" => array(
+     *      SOURCE_ID => TARGET_ID,
+     *      SOURCE_ID => TARGET_ID
+     *  ),
+     *  "object" => array(...),
+     *  "asset" => array(...)
+     * )
+     * @param mixed $object
+     * @param array $idMapping
+     * @param array $params
+     * @return Element_Interface
+     */
+    public function rewriteIds($object, $idMapping, $params = array()) {
+        $data = $this->getDataFromObjectParam($object, $params);
+        if($data instanceof Object_Data_Hotspotimage && $data->getImage()) {
+            $id = $data->getImage()->getId();
+            if(array_key_exists("asset", $idMapping) and array_key_exists($id, $idMapping["asset"])) {
+                $data->setImage(Asset::getById($idMapping["asset"][$id]));
 
+                // reset hotspot, marker & crop
+                $data->setHotspots(null);
+                $data->setMarker(null);
+                $data->setCrop(null);
+            }
+        }
+        return $data;
+    }
 }

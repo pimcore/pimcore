@@ -49,6 +49,22 @@ class Document_Tag_Snippet extends Document_Tag {
     }
 
     /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return (int) $this->id;
+    }
+
+    /**
      * Converts the data so it's suitable for the editmode
      *
      * @return mixed
@@ -215,7 +231,7 @@ class Document_Tag_Snippet extends Document_Tag {
      * @return void
      */
     public function rewriteIds($idMapping) {
-        $id = (int) $this->id;
+        $id = $this->getId();
         if(array_key_exists("document",$idMapping) && array_key_exists($id, $idMapping["document"])) {
             $this->id = $idMapping["document"][$id];
         }

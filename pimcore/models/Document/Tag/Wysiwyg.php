@@ -146,7 +146,7 @@ class Document_Tag_Wysiwyg extends Document_Tag {
 
         if($s) {
             foreach ($s as $el) {
-                if ($el->href) {
+                if ($el->href || $el->src) {
                     $type = $el->pimcore_type;
                     $id = (int) $el->pimcore_id;
 

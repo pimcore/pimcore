@@ -368,4 +368,32 @@ class Object_Class_Data_Link extends Object_Class_Data {
            }
         }
     }
+
+    /**
+     * Rewrites id from source to target, $idMapping contains
+     * array(
+     *  "document" => array(
+     *      SOURCE_ID => TARGET_ID,
+     *      SOURCE_ID => TARGET_ID
+     *  ),
+     *  "object" => array(...),
+     *  "asset" => array(...)
+     * )
+     * @param mixed $object
+     * @param array $idMapping
+     * @param array $params
+     * @return Element_Interface
+     */
+    public function rewriteIds($object, $idMapping, $params = array()) {
+        $data = $this->getDataFromObjectParam($object, $params);
+        if($data instanceof Object_Data_Link && $data->getLinktype() == "internal") {
+            $id = $data->getInternal();
+            $type = $data->getInternalType();
+
+            if(array_key_exists($type, $idMapping) and array_key_exists($id, $idMapping[$type])) {
+                $data->setInternal($idMapping[$type][$id]);
+            }
+        }
+        return $data;
+    }
 }
