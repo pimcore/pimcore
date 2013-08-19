@@ -1399,36 +1399,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         // create rewriteIds() config parameter
         $rewriteConfig = array("object" => $idStore["idMapping"]);
 
-        // rewriting elements only for snippets and pages
-        if($object instanceof Object_Concrete) {
-            $fields = $object->getClass()->getFieldDefinitions();
+        $object = Object_Service::rewriteIds($object, $rewriteConfig);
 
-            foreach($fields as $field) {
-                if(method_exists($field, "rewriteIds")) {
-                    $setter = "set" . ucfirst($field->getName());
-                    if(method_exists($object, $setter)) { // check for non-owner-objects
-                        $object->$setter($field->rewriteIds($object, $rewriteConfig));
-                    }
-                }
-            }
-        }
-
-        // rewriting properties
-        $properties = $object->getProperties();
-        foreach ($properties as &$property) {
-            if(!$property->isInherited()) {
-                if($property->getType() == "object") {
-                    if($property->getData() instanceof Object_Abstract) {
-                        if(array_key_exists((int) $property->getData()->getId(), $idStore["idMapping"])) {
-                            $property->setData(Object_Abstract::getById($idStore["idMapping"][(int) $property->getData()->getId()]));
-                        }
-                    }
-                }
-            }
-        }
-        $object->setProperties($properties);
         $object->setUserModification($this->getUser()->getId());
-
         $object->save();
 
 

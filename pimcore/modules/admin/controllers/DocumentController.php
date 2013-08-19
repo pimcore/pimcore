@@ -737,65 +737,11 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         // create rewriteIds() config parameter
         $rewriteConfig = array("document" => $idStore["idMapping"]);
 
-        // rewriting elements only for snippets and pages
-        if($document instanceof Document_PageSnippet) {
-            if($this->getParam("enableInheritance") == "true") {
-                $elements = $document->getElements();
-                $changedElements = array();
-                $contentMaster = $document->getContentMasterDocument();
-                if($contentMaster instanceof Document_PageSnippet) {
-                    $contentMasterElements = $contentMaster->getElements();
-                    foreach ($contentMasterElements as $contentMasterElement) {
-                        if(method_exists($contentMasterElement, "rewriteIds")) {
-                            $element = clone $contentMasterElement;
-                            $element->rewriteIds($rewriteConfig);
+        $document = Document_Service::rewriteIds($document, $rewriteConfig, array(
+            "enableInheritance" => ($this->getParam("enableInheritance") == "true") ? true : false
+        ));
 
-                            if(Pimcore_Tool_Serialize::serialize($element) != Pimcore_Tool_Serialize::serialize($contentMasterElement)) {
-                                $changedElements[] = $element;
-                            }
-                        }
-                    }
-                }
-
-                if(count($changedElements) > 0) {
-                    $elements = $changedElements;
-                }
-            } else {
-                $elements = $document->getElements();
-                foreach ($elements as &$element) {
-                    if(method_exists($element, "rewriteIds")) {
-                        $element->rewriteIds($rewriteConfig);
-                    }
-                }
-            }
-
-            $document->setElements($elements);
-        } else if ($document instanceof Document_Hardlink) {
-            if($document->getSourceId() && array_key_exists((int) $document->getSourceId(), $idStore["idMapping"])) {
-                $document->setSourceId($idStore["idMapping"][(int) $document->getSourceId()]);
-            }
-        } else if ($document instanceof Document_Link) {
-            if($document->getLinktype() == "internal" && $document->getInternalType() == "document" && array_key_exists((int) $document->getInternal(), $idStore["idMapping"])) {
-                $document->setInternal($idStore["idMapping"][(int) $document->getInternal()]);
-            }
-        }
-
-        // rewriting properties
-        $properties = $document->getProperties();
-        foreach ($properties as &$property) {
-            if(!$property->isInherited()) {
-                if($property->getType() == "document") {
-                    if($property->getData() instanceof Document) {
-                        if(array_key_exists((int) $property->getData()->getId(), $idStore["idMapping"])) {
-                            $property->setData(Document::getById($idStore["idMapping"][(int) $property->getData()->getId()]));
-                        }
-                    }
-                }
-            }
-        }
-        $document->setProperties($properties);
         $document->setUserModification($this->getUser()->getId());
-        
         $document->save();
         
 

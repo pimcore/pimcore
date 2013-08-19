@@ -579,4 +579,44 @@ class Object_Service extends Element_Service {
 
         return false;
     }
+
+
+    /**
+     * Rewrites id from source to target, $rewriteConfig contains
+     * array(
+     *  "document" => array(
+     *      SOURCE_ID => TARGET_ID,
+     *      SOURCE_ID => TARGET_ID
+     *  ),
+     *  "object" => array(...),
+     *  "asset" => array(...)
+     * )
+     * @param $object
+     * @param $rewriteConfig
+     * @return Object_Abstract
+     */
+    public static function rewriteIds($object, $rewriteConfig) {
+        // rewriting elements only for snippets and pages
+        if($object instanceof Object_Concrete) {
+            $fields = $object->getClass()->getFieldDefinitions();
+
+            foreach($fields as $field) {
+                if(method_exists($field, "rewriteIds")) {
+                    $setter = "set" . ucfirst($field->getName());
+                    if(method_exists($object, $setter)) { // check for non-owner-objects
+                        $object->$setter($field->rewriteIds($object, $rewriteConfig));
+                    }
+                }
+            }
+        }
+
+        // rewriting properties
+        $properties = $object->getProperties();
+        foreach ($properties as &$property) {
+            $property->rewriteIds($rewriteConfig);
+        }
+        $object->setProperties($properties);
+
+        return $object;
+    }
 }
