@@ -48,7 +48,7 @@ pimcore.element.history = Class.create({
 
             this.resultpanel = new Ext.grid.GridPanel({
                 store:this.store,
-                trackMouseOver:false,
+                trackMouseOver:true,
                 disableSelection:true,
                 autoScroll:true,
                 colModel: new Ext.grid.ColumnModel({
@@ -113,7 +113,7 @@ pimcore.element.history = Class.create({
                     ]}),
 
                 listeners: {
-                    rowdblclick : function(grid, rowIndex, event ) {
+                    rowclick : function(grid, rowIndex, event ) {
                         var data = grid.getStore().getAt(rowIndex);
                         pimcore.helpers.openElement(data.data.id, data.data.type);
                     }.bind(this)
