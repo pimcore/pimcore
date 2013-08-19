@@ -118,6 +118,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
     public function update() {
 
         $class = get_object_vars($this->model);
+        $data = array();
 
         foreach ($class as $key => $value) {
             if (in_array($key, $this->validColumns)) {
