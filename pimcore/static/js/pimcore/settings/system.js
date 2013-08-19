@@ -1510,6 +1510,11 @@ pimcore.settings.system = Class.create({
 
             // add the language to the container, so that further settings for the language can be set (eg. fallback, ...)
             var container = Ext.getCmp("system.settings.general.languageConainer");
+            var lang = container.getComponent(language);
+            if(lang) {
+                return;
+            }
+
             container.add({
                 xtype: "fieldset",
                 itemId: language,
