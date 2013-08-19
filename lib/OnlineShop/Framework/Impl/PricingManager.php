@@ -42,8 +42,10 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
 
         // configure environment
         $env = $this->getEnvironment();
-        $env->setProduct( $priceInfo->getProduct() )
-            ->setCategories( (array)$priceInfo->getProduct()->getCategories() );
+        $env->setProduct( $priceInfo->getProduct() );
+        if(method_exists($priceInfo->getProduct(), "getCategories")) {
+            $env->setCategories( (array)$priceInfo->getProduct()->getCategories() );
+        }
 
         // create new price info with pricing rules
         $priceInfoWithRules = $this->getPriceInfo( $priceInfo );

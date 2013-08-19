@@ -209,5 +209,10 @@
             </config>
         </pricingmanager>
 
+
+        <!-- Offertool -->
+        <offertool class="OnlineShop_OfferTool_Impl_DefaultService">
+            <orderstorage offerClass="Object_OfferToolOffer" orderItemClass="Object_OfferToolOfferItem" parentFolderPath="/offertool/offers"/>
+        </offertool>
     </onlineshop>
 </zend-config>

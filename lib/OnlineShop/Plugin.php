@@ -107,6 +107,9 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         self::createClass("FilterDefinition", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_FilterDefinition_export.json');
         self::createClass("OnlineShopOrderItem", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopOrderItem_export.json');
         self::createClass("OnlineShopOrder", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopOrder_export.json');
+        self::createClass("OfferToolOfferItem", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolOfferItem_export.json');
+        self::createClass("OfferToolOffer", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolOffer_export.json');
+        self::createClass("OfferToolCustomProduct", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolCustomProduct_export.json');
 
         //copy config file
         if(!is_file(PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShopConfig.xml")) {
