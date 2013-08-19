@@ -354,9 +354,8 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
       * @return string
       */
     public function getForCsvExport($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        $value = $object->$getter();
+        $value = $this->getDataFromObjectParam($object);
+
         if ($value instanceof Object_Data_StructuredTable) {
             $string = "";
             $dataArray = $value->getData();
@@ -400,12 +399,10 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      * @return mixed
      */
     public function getForWebserviceExport ($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
 
         $webserviceArray = array();
+        $table = $this->getDataFromObjectParam($object);
 
-        $table = $object->$getter();
         if ($table instanceof Object_Data_StructuredTable) {
 
             $dataArray = $table->getData();

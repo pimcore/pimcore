@@ -172,9 +172,8 @@ class Object_Class_Data_Checkbox extends Object_Class_Data
      */
     public function getForCsvExport($object)
     {
-        $key = $this->getName();
-        $getter = "get" . ucfirst($key);
-        return strval($object->$getter());
+        $data = $this->getDataFromObjectParam($object);
+        return strval($data);
     }
 
     /**
@@ -191,9 +190,8 @@ class Object_Class_Data_Checkbox extends Object_Class_Data
 
     public function getForWebserviceExport($object)
     {
-        $key = $this->getName();
-        $getter = "get" . ucfirst($key);
-        return (bool)$object->$getter();
+        $data = $this->getDataFromObjectParam($object);
+        return (bool) $data;
     }
 
     /**

@@ -181,10 +181,9 @@ class Object_Class_Data_Date extends Object_Class_Data
      */
     public function getForCsvExport($object)
     {
-        $key = $this->getName();
-        $getter = "get" . ucfirst($key);
-        if ($object->$getter() instanceof Zend_Date) {
-            return $object->$getter()->toString();
+        $data = $this->getDataFromObjectParam($object);
+        if ($data instanceof Zend_Date) {
+            return $data->toString();
         } else return null;
     }
 
@@ -212,10 +211,9 @@ class Object_Class_Data_Date extends Object_Class_Data
      */
     public function getForWebserviceExport($object)
     {
-        $key = $this->getName();
-        $getter = "get" . ucfirst($key);
-        if ($object->$getter() instanceof Zend_Date) {
-            return $object->$getter()->toString();
+        $data = $this->getDataFromObjectParam($object);
+        if ($data instanceof Zend_Date) {
+            return $data->toString();
         } else return null;
     }
 

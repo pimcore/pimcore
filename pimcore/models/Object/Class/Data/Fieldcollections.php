@@ -174,9 +174,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
 
     public function save($object, $params = array())
     {
-
-        $getter = "get" . ucfirst($this->getName());
-        $container = $object->$getter();
+        $container = $this->getDataFromObjectParam($object);
 
         if ($container instanceof Object_Fieldcollection) {
             $container->save($object);
@@ -238,8 +236,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      */
     public function getForWebserviceExport($object)
     {
-        $getter = "get" . ucfirst($this->getName());
-        $data = $object->$getter();
+        $data = $this->getDataFromObjectParam($object);
         $wsData = array();
 
         if ($data instanceof Object_Fieldcollection) {
@@ -372,9 +369,8 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $key = $fd->getName();
-                    $getter = "get" . ucfirst($key);
-                    $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
+                    $data = $this->getDataFromObjectParam($item);
+                    $dependencies = array_merge($dependencies, $fd->resolveDependencies($data));
                 }
             }
         }
@@ -405,9 +401,8 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $key = $fd->getName();
-                    $getter = "get" . ucfirst($key);
-                    $tags = $fd->getCacheTags($item->$getter(), $item, $tags);
+                    $data = $this->getDataFromObjectParam($item);
+                    $tags = $fd->getCacheTags($data, $item, $tags);
                 }
             }
         }
@@ -440,9 +435,8 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                     }
 
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        $key = $fd->getName();
-                        $getter = "get" . ucfirst($key);
-                        $fd->checkValidity($item->$getter());
+                        $data = $this->getDataFromObjectParam($item);
+                        $fd->checkValidity($data);
                     }
                 }
             }

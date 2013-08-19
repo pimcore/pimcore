@@ -276,9 +276,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
      * @return string
      */
     public function getForCsvExport($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        $data = $object->$getter();
+        $data = $this->getDataFromObjectParam($object);
         if (is_array($data)) {
             $paths = array();
             foreach ($data as $metaObject) {
@@ -361,9 +359,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
     public function getForWebserviceExport ($object) {
 
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        $data = $object->$getter();
+        $data = $this->getDataFromObjectParam($object);
         if (is_array($data)) {
             $items = array();
             foreach ($data as $metaObject) {
@@ -441,8 +437,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
      */
     public function save($object, $params = array()) {
 
-        $getter = "get" . ucfirst($this->getName());
-        $objectsMetadata = $object->$getter();
+        $objectsMetadata = $this->getDataFromObjectParam($object);
 
         $classId = null;
         $objectId = null;

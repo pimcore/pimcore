@@ -177,10 +177,9 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @return string
      */
     public function getForCsvExport($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        if ($object->$getter() instanceof Element_Interface) {
-            return $object->$getter()->getFullPath();
+        $data = $this->getDataFromObjectParam($object);
+        if ($data instanceof Element_Interface) {
+            return $data->getFullPath();
         } else return null;
     }
 
@@ -243,10 +242,9 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @return mixed
      */
     public function getForWebserviceExport ($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        if($object->$getter() instanceof Asset){
-            return  $object->$getter()->getId();
+        $data = $this->getDataFromObjectParam($object);
+        if($data instanceof Asset){
+            return  $data->getId();
         }
     }
 

@@ -265,10 +265,9 @@ class Object_Class_Data_Table extends Object_Class_Data {
       * @return string
       */
     public function getForCsvExport($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        if (is_array($object->$getter())) {
-            return base64_encode(Pimcore_Tool_Serialize::serialize($object->$getter()));
+        $data = $this->getDataFromObjectParam($object);
+        if (is_array($data)) {
+            return base64_encode(Pimcore_Tool_Serialize::serialize($data));
         } else return null;
 
     }

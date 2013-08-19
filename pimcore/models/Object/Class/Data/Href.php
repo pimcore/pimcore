@@ -373,9 +373,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      * @return string
      */
     public function getForCsvExport($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        $data = $object->$getter();
+        $data = $this->getDataFromObjectParam($object);
         if ($data instanceof Element_Interface) {
             return Element_Service::getType($data).":".$data->getFullPath();
         } else return null;
@@ -467,9 +465,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      * @return mixed
      */
     public function getForWebserviceExport ($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        $data = $object->$getter();
+        $data = $this->getDataFromObjectParam($object);
         if ($data instanceof Element_Interface) {
             return array(
                 "type" => Element_Service::getType($data),

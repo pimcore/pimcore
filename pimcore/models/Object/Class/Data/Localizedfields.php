@@ -164,7 +164,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
      */
     public function getDataFromEditmode($data, $object = null)
     {
-        $localizedFields = $object->{"get" . ucfirst($this->getName())}();
+        $localizedFields = $this->getDataFromObjectParam($object);
 
         if(!$localizedFields instanceof Object_Localizedfield) {
             $localizedFields = new Object_Localizedfield();
@@ -390,7 +390,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
     public function save($object, $params = array())
     {
-        $localizedFields = $object->{  "get" . ucfirst($this->getName()) }();
+        $localizedFields = $this->getDataFromObjectParam($object);
         if ($localizedFields instanceof Object_Localizedfield) {
             $localizedFields->setObject($object);
             $localizedFields->save();
@@ -408,7 +408,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
     public function delete($object)
     {
-        $localizedFields = $object->{ "get" . ucfirst($this->getName()) }();
+        $localizedFields = $this->getDataFromObjectParam($object);
 
         if ($localizedFields instanceof Object_Localizedfield) {
             $localizedFields->setObject($object);
@@ -713,7 +713,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
     public function getDiffDataFromEditmode($data, $object = null)
     {
-        $localFields = $object->{"get" . ucfirst($this->getName())}();
+        $localFields = $this->getDataFromObjectParam($object);
         $localData = array();
 
         // get existing data

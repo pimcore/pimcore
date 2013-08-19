@@ -145,11 +145,10 @@ class Object_Class_Data_Geopoint extends Object_Class_Data_Geo_Abstract {
       * @return string
       */
     public function getForCsvExport($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        if($object->$getter() instanceof Object_Data_Geopoint){
+        $data = $this->getDataFromObjectParam($object);
+        if($data instanceof Object_Data_Geopoint){
             //TODO latitude and longitude should be switched - but doing this we will loose compatitbilty to old export files
-            return $object->$getter()->getLatitude() . "," . $object->$getter()->getLongitude();
+            return $data->getLatitude() . "," . $data->getLongitude();
         } else return null;
     }
 
@@ -179,13 +178,12 @@ class Object_Class_Data_Geopoint extends Object_Class_Data_Geo_Abstract {
      */
     public function getForWebserviceExport ($object) {
 
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
+        $data = $this->getDataFromObjectParam($object);
         
-        if ($object->$getter() instanceof Object_Data_Geopoint) {
+        if ($data instanceof Object_Data_Geopoint) {
             return array(
-                "longitude" => $object->$getter()->getLongitude(),
-                "latitude" => $object->$getter()->getLatitude()
+                "longitude" => $data->getLongitude(),
+                "latitude" => $data->getLatitude()
             );
         } else return null;
     }

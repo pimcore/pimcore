@@ -301,9 +301,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      * @return string
      */
     public function getForCsvExport($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        $data = $object->$getter();
+        $data = $this->getDataFromObjectParam($object);
         if (is_array($data)) {
             $paths = array();
             foreach ($data as $eo) {
@@ -379,10 +377,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     
     
     public function getForWebserviceExport ($object) {
-        
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        $data = $object->$getter();
+        $data = $this->getDataFromObjectParam($object);
         if (is_array($data)) {
             $items = array();
             foreach ($data as $eo) {

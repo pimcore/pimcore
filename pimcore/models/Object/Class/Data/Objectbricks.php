@@ -63,7 +63,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         $parent = Object_Service::hasInheritableParentObject($data->getObject());
         $item = $data->$getter();
         if(!$item && !empty($parent)) {
-            $data = $parent->{"get" . ucfirst($this->getName())}();
+            $data = $this->getDataFromObjectParam($parent);
             return $this->doGetDataForEditmode($data, $getter, $objectFromVersion, $level + 1);
         }
 
@@ -126,7 +126,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
             $relations = $item->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
             if(empty($relations) && !empty($parent)) {
-                $parentItem = $parent->{"get" . ucfirst($this->getName())}();
+                $parentItem = $this->getDataFromObjectParam($parent);
                 if(!empty($parentItem)) {
                     $parentItem = $parentItem->$getter();
                     if($parentItem) {
@@ -157,7 +157,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                 $value = $fielddefinition->getDataForEditmode($item->$valueGetter(), $baseObject);
             }
             if(empty($value) && !empty($parent)) {
-                $parentItem = $parent->{"get" . ucfirst($this->getName())}()->$getter();
+                $parentItem = $this->getDataFromObjectParam($parent);
                 if(!empty($parentItem)) {
                     return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion);
                 }
@@ -177,11 +177,8 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      */
     public function getDataFromEditmode($data, $object = null)
     {
+        $container = $this->getDataFromObjectParam($object);
 
-        $getter = "get" . ucfirst($this->getName());
-
-
-        $container = $object->$getter(); //$this->getObject()->$getter();
         if(empty($container)) {
             $className = $object->getClass()->getName(); //$this->getObject()->getClass()->getName();
 
@@ -254,8 +251,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
     public function save($object, $params = array())
     {
-        $getter = "get" . ucfirst($this->getName());
-        $container = $object->$getter();
+        $container = $this->getDataFromObjectParam($object);
         if ($container instanceof Object_Objectbrick) {
             $container->save($object);
         }
@@ -317,8 +313,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      */
     public function getForWebserviceExport($object)
     {
-        $getter = "get" . ucfirst($this->getName());
-        $data = $object->$getter();
+        $data = $this->getDataFromObjectParam($object);
         $wsData = array();
 
         if ($data instanceof Object_Objectbrick) {

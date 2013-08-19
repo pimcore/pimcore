@@ -160,10 +160,9 @@ class Object_Class_Data_Geobounds extends Object_Class_Data_Geo_Abstract {
      * @return string
      */
     public function getForCsvExport($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        if($object->$getter() instanceof Object_Data_Geobounds){
-            return  $object->$getter()->getNorthEast()->getLongitude().",".$object->$getter()->getNorthEast()->getLatitude()."|".$object->$getter()->getSouthWest()->getLongitude().",".$object->$getter()->getSouthWest()->getLatitude();
+        $data = $this->getDataFromObjectParam($object);
+        if($data instanceof Object_Data_Geobounds){
+            return  $data->getNorthEast()->getLongitude().",".$data->getNorthEast()->getLatitude()."|".$data->getSouthWest()->getLongitude().",".$data->getSouthWest()->getLatitude();
         } else return null;
     }
 
@@ -195,14 +194,13 @@ class Object_Class_Data_Geobounds extends Object_Class_Data_Geo_Abstract {
      * @return mixed
      */
     public function getForWebserviceExport ($object) {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        if ($object->$getter() instanceof Object_Data_Geobounds) {
+        $data = $this->getDataFromObjectParam($object);
+        if ($data instanceof Object_Data_Geobounds) {
             return array(
-                "NElongitude" => $object->$getter()->getNorthEast()->getLongitude(),
-                "NElatitude" => $object->$getter()->getNorthEast()->getLatitude(),
-                "SWlongitude" => $object->$getter()->getSouthWest()->getLongitude(),
-                "SWlatitude" => $object->$getter()->getSouthWest()->getLatitude()
+                "NElongitude" => $data->getNorthEast()->getLongitude(),
+                "NElatitude" => $data->getNorthEast()->getLatitude(),
+                "SWlongitude" => $data->getSouthWest()->getLongitude(),
+                "SWlatitude" => $data->getSouthWest()->getLatitude()
             );
         } else return null;
     }
