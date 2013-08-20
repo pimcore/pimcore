@@ -17,14 +17,10 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
 
     initialize: function(id, name, options, data, inherited) {
 
-        if (!options) {
-            options = {};
-        }
-
         this.id = id;
         this.name = name;
         this.elements = [];
-        this.options = options;
+        this.options = this.parseOptions(options);
 
         var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, amountDiv, amountBox;
         this.elements = Ext.get(id).query("div." + name + "[key]");

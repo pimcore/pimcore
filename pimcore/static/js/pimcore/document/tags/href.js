@@ -19,7 +19,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
 
         this.id = id;
         this.name = name;
-
+        this.options = this.parseOptions(options);
 
         this.data = {
             id: null,
@@ -27,32 +27,25 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
             type: ""
         };
 
-        if (!options) {
-            options = {};
+        if (!this.options.width) {
+            this.options.width = Ext.get(id).getWidth() - 2;
         }
-
-        if (!options.width) {
-            options.width = Ext.get(id).getWidth() - 2;
-        }
-
 
         if (data) {
             this.data = data;
-            options.value = this.data.path;
+            this.options.value = this.data.path;
         }
-
-        this.options = options;
 
         this.setupWrapper();
 
-        options.enableKeyEvents = true;
+        this.options.enableKeyEvents = true;
 
-        if(typeof options.emptyText == "undefined") {
-            options.emptyText = t("drop_element_here");
+        if(typeof this.options.emptyText == "undefined") {
+            this.options.emptyText = t("drop_element_here");
         }
 
-        options.name = id + "_editable";
-        this.element = new Ext.form.TextField(options);
+        this.options.name = id + "_editable";
+        this.element = new Ext.form.TextField(this.options);
 
 
         this.element.on("render", function (el) {

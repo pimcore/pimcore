@@ -19,9 +19,8 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
         this.id = id;
         this.name = name;
         this.setupWrapper();
-        if (!options) {
-            options = {};
-        }
+        options = this.parseOptions(options);
+
         if (!data) {
             data = "";
         }

@@ -21,7 +21,7 @@ pimcore.document.tags.multiselect = Class.create(pimcore.document.tag, {
 
         this.setupWrapper();
 
-
+        options = this.parseOptions(options);
         options.name = id + "_editable";
         options.value = data;
 

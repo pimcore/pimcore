@@ -20,6 +20,7 @@ pimcore.document.tags.select = Class.create(pimcore.document.tag, {
         this.name = name;
 
         this.setupWrapper();
+        options = this.parseOptions(options);
 
         options.listeners = {};
 

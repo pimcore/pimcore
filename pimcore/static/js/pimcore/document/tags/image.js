@@ -19,10 +19,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         this.id = id;
         this.name = name;
         this.datax = new Object();
-
-        if (!options) {
-            options = {};
-        }
+        this.options = this.parseOptions(options);
 
         this.options = options;
 
@@ -31,10 +28,6 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             height: this.options.height
         };
 
-        // set width & height
-        /*if(!this.options.width) {
-         this.options.width = 100;
-         }*/
         if (!this.options.height) {
             this.options.height = 100;
         }
