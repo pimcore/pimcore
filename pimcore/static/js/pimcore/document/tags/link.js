@@ -39,11 +39,8 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
         this.id = id;
         this.name = name;
         this.setupWrapper();
-        if (!options) {
-            options = {};
-        }
+        this.options = this.parseOptions(options);
 
-        this.options = options;
 
         Ext.get(id).setStyle({
             display:"inline"

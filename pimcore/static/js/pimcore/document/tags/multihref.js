@@ -19,10 +19,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         this.id = id;
         this.name = name;
 
-        if (!options) {
-            options = {};
-        }
-        this.options = options;
+        this.options = this.parseOptions(options);
         this.data = data;
 
         this.setupWrapper();

@@ -20,10 +20,7 @@ pimcore.document.tags.date = Class.create(pimcore.document.tag, {
         this.id = id;
         this.name = name;
         this.setupWrapper();
-
-        if (!options) {
-            options = {};
-        }
+        options = this.parseOptions(options);
 
         if (data) {
             var tmpDate = new Date(intval(data) * 1000);

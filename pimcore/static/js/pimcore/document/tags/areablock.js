@@ -20,7 +20,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.id = id;
         this.name = name;
         this.elements = [];
-        this.options = options;
+        this.options = this.parseOptions(options);
 
         this.toolbarGlobalVar = this.getType() + "toolbar";
 

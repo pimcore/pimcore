@@ -90,6 +90,14 @@ pimcore.document.tag = Class.create({
         return this.id;
     },
 
+    parseOptions: function (options) {
+        if(!options || options instanceof Array || typeof options != "object") {
+            options = {};
+        }
+
+        return options;
+    },
+
     /**
      * HACK to get custom data from a grid instead of the tree
      * better solutions are welcome ;-)

@@ -20,11 +20,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         this.name = name;
         this.data = {};
 
-        if (!options) {
-            options = {};
-        }
-
-        this.options = options;
+        this.options = this.parseOptions(options);
 
 
         // set width

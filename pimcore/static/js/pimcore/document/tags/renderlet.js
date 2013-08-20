@@ -20,19 +20,13 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
     initialize: function(id, name, options, data, inherited) {
         this.id = id;
         this.name = name;
-        this.options = options;
+        this.options = this.parseOptions(options);
 
         this.data = {};
 
-        if (!this.options) {
-            this.options = {};
-        }
         if (!data) {
             data = {};
         }
-
-        // cast array to object
-        this.options = Ext.apply({}, this.options);
 
         // height management
         this.defaultHeight = 100;

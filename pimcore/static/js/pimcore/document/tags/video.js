@@ -20,12 +20,7 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
         this.name = name;
         this.data = {};
 
-        if (!options) {
-            options = {};
-            options = {};
-        }
-
-        this.options = options;
+        this.options = this.parseOptions(options);
         this.data = data;
 
         this.setupWrapper();
