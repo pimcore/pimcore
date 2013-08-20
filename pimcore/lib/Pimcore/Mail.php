@@ -115,6 +115,7 @@ class Pimcore_Mail extends Zend_Mail
      */
     protected $hostUrl = null;
 
+
     public function setHostUrl($url){
         $this->hostUrl = $url;
         return $this;
@@ -123,6 +124,10 @@ class Pimcore_Mail extends Zend_Mail
     public function getHostUrl(){
         return $this->hostUrl;
     }
+
+    // true - prevent setting the recipients from the Document - set in $this->clearRecipients()
+    protected $recipientsCleared = false;
+
 
     /**
      * Creates a new Pimcore_Mail object (extends Zend_Mail)
@@ -349,6 +354,7 @@ class Pimcore_Mail extends Zend_Mail
         unset($this->temporaryStorage['To']);
         unset($this->temporaryStorage['Cc']);
         unset($this->temporaryStorage['Bcc']);
+        $this->recipientsCleared = true;
         return parent::clearRecipients();
     }
 
@@ -510,19 +516,21 @@ class Pimcore_Mail extends Zend_Mail
 
         if ($document instanceof Document_Email) {
 
-            $to = $document->getToAsArray();
-            if (!empty($to)) {
-                $this->addTo($to);
-            }
+            if(!$this->recipientsCleared){
+                $to = $document->getToAsArray();
+                if (!empty($to)) {
+                    $this->addTo($to);
+                }
 
-            $cc = $document->getCcAsArray();
-            if (!empty($cc)) {
-                $this->addCc($cc);
-            }
+                $cc = $document->getCcAsArray();
+                if (!empty($cc)) {
+                    $this->addCc($cc);
+                }
 
-            $bcc = $document->getBccAsArray();
-            if (!empty($bcc)) {
-                $this->addBcc($bcc);
+                $bcc = $document->getBccAsArray();
+                if (!empty($bcc)) {
+                    $this->addBcc($bcc);
+                }
             }
 
             //if more than one "from" email address is defined -> we set the first one
