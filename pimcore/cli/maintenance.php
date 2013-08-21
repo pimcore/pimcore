@@ -100,7 +100,6 @@ $manager->registerJob(new Schedule_Maintenance_Job("cleanuplogfiles", new Pimcor
 $manager->registerJob(new Schedule_Maintenance_Job("httperrorlog", new Pimcore_Log_Maintenance(), "httpErrorLogCleanup"));
 $manager->registerJob(new Schedule_Maintenance_Job("usagestatistics", new Pimcore_Log_Maintenance(), "usageStatistics"));
 $manager->registerJob(new Schedule_Maintenance_Job("sanitycheck", "Element_Service", "runSanityCheck"));
-$manager->registerJob(new Schedule_Maintenance_Job("cleanupoldpidfiles", "Schedule_Manager_Factory", "cleanupOldPidFiles"), true);
 $manager->registerJob(new Schedule_Maintenance_Job("versioncleanup", new Version(), "maintenanceCleanUp"));
 $manager->registerJob(new Schedule_Maintenance_Job("redirectcleanup", "Redirect", "maintenanceCleanUp"));
 $manager->registerJob(new Schedule_Maintenance_Job("cleanupbrokenviews", "Pimcore_Resource", "cleanupBrokenViews"));
