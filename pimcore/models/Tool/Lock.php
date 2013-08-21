@@ -51,9 +51,9 @@ class Tool_Lock extends Pimcore_Model_Abstract {
     /**
      * @param string $key
      */
-    public static function acquire ($key) {
+    public static function acquire ($key, $refreshInterval = 1) {
         $instance = self::getInstance();
-        $instance->getResource()->acquire($key);
+        $instance->getResource()->acquire($key, $refreshInterval);
 
         self::$acquiredLocks[$key] = $key;
     }
