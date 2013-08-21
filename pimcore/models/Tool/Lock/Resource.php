@@ -56,7 +56,7 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
 
     public function acquire ($key, $expire = 120, $refreshInterval = 1) {
         if(!is_numeric($refreshInterval)) {
-            $expire = 1;
+            $refreshInterval = 1;
         }
 
         while($this->isLocked($key, $expire)) {
