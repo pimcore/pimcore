@@ -18,6 +18,16 @@
 class Tool_Lock extends Pimcore_Model_Abstract {
 
     /**
+     * @var string
+     */
+    public $id;
+
+    /**
+     * @var int
+     */
+    public $date;
+
+    /**
      * @var array
      */
     protected static $acquiredLocks = array();
@@ -78,6 +88,16 @@ class Tool_Lock extends Pimcore_Model_Abstract {
     }
 
     /**
+     * @param $key
+     * @return Tool_Lock
+     */
+    public static function get($key) {
+        $lock = new self;
+        $lock->getById($key);
+        return $lock;
+    }
+
+    /**
      *
      */
     public static function releaseAll() {
@@ -88,5 +108,37 @@ class Tool_Lock extends Pimcore_Model_Abstract {
         foreach($locks as $key) {
             self::release($key);
         }
+    }
+
+    /**
+     * @param int $date
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 }
