@@ -170,7 +170,7 @@ class Asset_Video_Thumbnail_Processor {
         }
 
         // check if there is already a transcoding process running, wait if so ...
-        Tool_Lock::acquire("video-transcoding", 10); //
+        Tool_Lock::acquire("video-transcoding", 7200, 10); // expires after 2 hrs, refreshes every 10 secs
 
         // start converting
         foreach ($instance->queue as $converter) {
