@@ -63,11 +63,8 @@ class Schedule_Maintenance_Job {
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getLockFile() {
-        return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/maintenance_" . $this->getId() . ".pid";
+    public function getLockKey() {
+        return "maintenance-job-" . $this->getId();
     }
 
     /**
@@ -75,8 +72,7 @@ class Schedule_Maintenance_Job {
      * @return void
      */
     public function lock() {
-        file_put_contents($this->getLockFile(), time());
-        chmod($this->getLockFile(), 0766);
+        Tool_Lock::lock($this->getLockKey());
     }
 
     /**
@@ -84,17 +80,14 @@ class Schedule_Maintenance_Job {
      * @return void
      */
     public function unlock() {
-        @unlink($this->getLockFile());
+        Tool_Lock::release($this->getLockKey());
     }
 
     /**
      * @return bool
      */
     public function isLocked() {
-        if (file_exists($this->getLockFile())) {
-            return true;
-        }
-        return false;
+        return Tool_Lock::isLocked($this->getLockKey(), 86400); // 24h expire
     }
 
     /**
