@@ -178,7 +178,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
      */
     protected function getLogFile() {
 
-        $logfile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/loginerror.log";
+        $logfile = PIMCORE_LOG_DIRECTORY . "/loginerror.log";
 
         if (!is_file($logfile)) {
             file_put_contents($logfile, "");
@@ -248,7 +248,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
     protected function writeLogFile($username, $error) {
 
-        $logfile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/loginerror.log";
+        $logfile = PIMCORE_LOG_DIRECTORY . "/loginerror.log";
         $data = $this->readLogFile();
 
         $remoteHost = Pimcore_Tool::getAnonymizedClientIp();
