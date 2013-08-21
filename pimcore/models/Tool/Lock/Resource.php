@@ -72,4 +72,9 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
             "date" => time()
         ));
     }
+
+    public function getById($key) {
+        $lock = $this->db->fetchRow("SELECT * FROM locks WHERE id = ?", $key);
+        $this->assignVariablesToModel($lock);
+    }
 }
