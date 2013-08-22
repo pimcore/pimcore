@@ -5,6 +5,11 @@
  */
 class OnlineShop_Framework_AbstractOrder extends Object_Concrete {
 
+    const ORDER_STATE_COMMITTED = "committed";
+    const ORDER_STATE_CANCELLED = "cancelled";
+    const ORDER_STATE_PAYMENT_PENDING = "paymentPending";
+    const ORDER_STATE_ABORTED = "aborted";
+
     /**
      * @return string
      * @throws OnlineShop_Framework_Exception_UnsupportedException
@@ -71,6 +76,7 @@ class OnlineShop_Framework_AbstractOrder extends Object_Concrete {
 
     /**
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * committed
      * @return mixed
      */
     public function getCustomer() {
@@ -100,5 +106,54 @@ class OnlineShop_Framework_AbstractOrder extends Object_Concrete {
     public function setPriceModifications ($priceModifications) {
         throw new OnlineShop_Framework_Exception_UnsupportedException("setPriceModifications is not implemented for " . get_class($this));
     }
+
+    /**
+     * @return string
+     */
+    public function getOrderState() {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("getOrderState is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $orderState
+     * @return void
+     */
+    public function setOrderState ($orderState) {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("setOrderState is not implemented for " . get_class($this));
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getCartId() {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("getCartId is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $cartId
+     * @return void
+     */
+    public function setCartId($cartId) {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("setCartId is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return Object_Fieldcollection
+     */
+    public function getPaymentInfo() {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("getPaymentInfo is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param Object_Fieldcollection $paymentInfo
+     * @return void
+     */
+    public function setPaymentInfo ($paymentInfo) {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("setPaymentInfo is not implemented for " . get_class($this));
+    }
+
+
 
 }

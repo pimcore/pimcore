@@ -24,7 +24,7 @@ interface OnlineShop_Framework_ICheckoutPayment
     /**
      * handle response / execute payment
      * @param mixed $response
-     * @return bool
+     * @return OnlineShop_Framework_Impl_Checkout_Payment_Status
      */
     public function handleResponse($response);
 

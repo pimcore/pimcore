@@ -1,13 +1,12 @@
 <?php
 
-class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements OnlineShop_Framework_ICart {
+class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart implements OnlineShop_Framework_ICart {
 
     protected $items = array();
     public $checkoutData = array();
     protected $name;
     protected $creationDate;
     protected $creationDateTimestamp;
-    protected $modificationDateTimestamp;
     protected $id;
 
     /**
@@ -17,8 +16,9 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
 
 
     public function __construct() {
+        $this->setIgnoreReadonly();
         $this->setCreationDate(Zend_Date::now());
-        $this->setModificationDate(Zend_Date::now());
+        $this->unsetIgnoreReadonly();
     }
 
     /**
@@ -27,6 +27,8 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
     protected $priceCalcuator;
 
     public function addItem(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
+
+        $this->checkCartIsReadOnly();
 
         if(empty($itemKey)) {
             $itemKey = $product->getId();
@@ -40,6 +42,9 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
     }
 
     public function updateItem($itemKey, OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
+
+        $this->checkCartIsReadOnly();
+
         $this->itemAmount = null;
         $this->subItemAmount = null;
 
@@ -100,6 +105,8 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
      */
     public function addGiftItem(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null)
     {
+        $this->checkCartIsReadOnly();
+
         if(empty($itemKey)) {
             $itemKey = $product->getId();
 
@@ -124,6 +131,8 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
      */
     public function updateGiftItem($itemKey, OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null)
     {
+        $this->checkCartIsReadOnly();
+
         // item already exists?
         if(!array_key_exists($itemKey, $this->giftItems))
         {
@@ -169,6 +178,8 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
     }
 
     public function clear() {
+        $this->checkCartIsReadOnly();
+
         $this->itemAmount = null;
         $this->subItemAmount = null;
 
@@ -264,6 +275,8 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
      * @param OnlineShop_Framework_ICartItem[] $items
      */
     public function setItems($items) {
+        $this->checkCartIsReadOnly();
+
         $this->itemAmount = null;
         $this->subItemAmount = null;
 
@@ -277,6 +290,8 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
      * @param string $itemKey
      */
     public function removeItem($itemKey) {
+        $this->checkCartIsReadOnly();
+
         $this->itemAmount = null;
         $this->subItemAmount = null;
 
@@ -325,6 +340,8 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
     }
 
     public function setCreationDate(Zend_Date $creationDate = null) {
+        $this->checkCartIsReadOnly();
+
         $this->creationDate = $creationDate;
         if($creationDate) {
             $this->creationDateTimestamp = $creationDate->get(Zend_Date::TIMESTAMP);
@@ -336,6 +353,8 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
 
 
     public function setCreationDateTimestamp($creationDateTimestamp) {
+        $this->checkCartIsReadOnly();
+
         $this->creationDateTimestamp = $creationDateTimestamp;
         $this->creationDate = null;
     }
@@ -353,10 +372,14 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
     }
 
     public function setModificationDate($date) {
+        $this->checkCartIsReadOnly();
+
         $this->modificationDate = $date;
     }
 
     public function setModificationDateTimestamp($modificationDateTimestamp) {
+        $this->checkCartIsReadOnly();
+
         $this->modificationDateTimestamp = $modificationDateTimestamp;
     }
 
@@ -438,6 +461,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
             try {
                 $cartClass = get_called_class();
                 $cart = new $cartClass;
+                $cart->setIgnoreReadonly();
                 $cart->getResource()->getById($id);
 
                 $itemList = new OnlineShop_Framework_Impl_CartItem_List();
@@ -461,6 +485,8 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
                 foreach ($dataList->getCartCheckoutDataItems() as $data) {
                     $cart->setCheckoutData($data->getKey(), $data->getData());
                 }
+
+                $cart->unsetIgnoreReadonly();
 
                 Zend_Registry::set($cacheKey, $cart);
             } catch (Exception $ex) {

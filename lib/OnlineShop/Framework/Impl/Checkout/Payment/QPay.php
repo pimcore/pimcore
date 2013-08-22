@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: tballmann
- * Date: 30.07.13
- * Time: 16:51
- * To change this template use File | Settings | File Templates.
- */
 
 class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framework_Impl_Checkout_AbstractPayment implements OnlineShop_Framework_ICheckoutPayment
 {
@@ -24,7 +17,7 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
     /**
      * @var string
      */
-    protected $paymenttype = 'CCARD';   # SELECT
+    protected $paymenttype = 'SELECT';   # SELECT
 
     /**
      * @var string
@@ -56,15 +49,6 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
 
         // load checkout data
         $this->loadCheckoutData();
-    }
-
-
-    /**
-     * save session data
-     */
-    public function __destruct()
-    {
-        $this->saveCheckoutData();
     }
 
 
@@ -107,6 +91,7 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
         $paymentData['language'] = $config['language'];
         $paymentData['orderDescription'] = $config['orderDescription'];
         $paymentData['successURL'] = $config['successURL'];
+        $paymentData['duplicateRequestCheck'] = 'yes';
         $paymentData['requestfingerprintorder'] = '';
 
         if(array_key_exists('displayText', $config)) {
@@ -135,6 +120,7 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
         $form->addElement( 'hidden', 'failureURL', array('value' => $config['failureURL']) );
         $form->addElement( 'hidden', 'cancelURL', array('value' => $config['cancelURL']) );
         $form->addElement( 'hidden', 'serviceURL', array('value' => $config['serviceURL']) );
+        $form->addElement( 'hidden', 'duplicateRequestCheck', array('value' => 'yes') );
 
         // add optional data
         if(array_key_exists('displayText', $config)) {
@@ -154,7 +140,7 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
     /**
      * @param mixed $response
      *
-     * @return bool
+     * @return OnlineShop_Framework_Impl_Checkout_Payment_Status
      */
     public function handleResponse($response)
     {
@@ -175,13 +161,22 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
         {
             // fingerprint is wrong, ignore this response
             $this->errors[] = 'fingerprint is invalid';
-            return $return;
         }
 
 
         // save
         $this->gatewayReferenceNumber = $response['gatewayReferenceNumber'];
-        return true;
+
+        $status = new OnlineShop_Framework_Impl_Checkout_Payment_Status(
+             base64_decode($response['internal_id']),
+             $this->gatewayReferenceNumber,
+             $this->isPaid() ? OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED : OnlineShop_Framework_AbstractOrder::ORDER_STATE_CANCELLED
+        );
+
+
+        $this->saveCheckoutData();
+
+        return $status;
     }
 
 

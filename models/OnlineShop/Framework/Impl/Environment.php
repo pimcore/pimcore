@@ -22,22 +22,24 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     }
 
     protected function loadFromSession() {
-        $this->session = new Zend_Session_Namespace(self::SESSION_NAMESPACE);
+        if(php_sapi_name() != "cli") {
+            $this->session = new Zend_Session_Namespace(self::SESSION_NAMESPACE);
 
-        $key = self::SESSION_KEY_CUSTOM_ITEMS;
-        $this->customItems = $this->session->$key;
-        if ($this->customItems==null){
-            $this->customItems=array();
+            $key = self::SESSION_KEY_CUSTOM_ITEMS;
+            $this->customItems = $this->session->$key;
+            if ($this->customItems==null){
+                $this->customItems=array();
+            }
+
+            $key = self::SESSION_KEY_USERID;
+            $this->userId = $this->session->$key;
+
+            $key = self::SESSION_KEY_TENANT;
+            $this->currentTenant = $this->session->$key;
+
+            $key = self::SESSION_KEY_SUB_TENANT;
+            $this->currentSubTenant = $this->session->$key;
         }
-
-        $key = self::SESSION_KEY_USERID;
-        $this->userId = $this->session->$key;
-
-        $key = self::SESSION_KEY_TENANT;
-        $this->currentTenant = $this->session->$key;
-
-        $key = self::SESSION_KEY_SUB_TENANT;
-        $this->currentSubTenant = $this->session->$key;
     }
 
     public function save() {

@@ -1,6 +1,6 @@
 <?php
 
-class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract implements OnlineShop_Framework_ICart {
+class OnlineShop_Framework_Impl_SessionCart extends OnlineShop_Framework_AbstractCart implements OnlineShop_Framework_ICart {
 
     protected $items = array();
     public $checkoutData = array();
@@ -16,7 +16,9 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
 
 
     public function __construct() {
+        $this->setIgnoreReadonly();
         $this->setCreationDate(Zend_Date::now());
+        $this->unsetIgnoreReadonly();
     }
 
     /**
@@ -25,6 +27,8 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
     protected $priceCalcuator;
 
     public function addItem(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
+        $this->checkCartIsReadOnly();
+
         if(empty($itemKey)) {
             $itemKey = $product->getId();
 
@@ -37,6 +41,8 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
     }
 
     public function updateItem($itemKey, OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
+        $this->checkCartIsReadOnly();
+
         $this->itemAmount = null;
         $this->subItemAmount = null;
 
@@ -84,6 +90,8 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
     }
 
     public function clear() {
+        $this->checkCartIsReadOnly();
+
         $this->itemAmount = null;
         $this->subItemAmount = null;
         $this->items = array();
@@ -164,6 +172,9 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
 
 
     public function setItems($items) {
+        $this->checkCartIsReadOnly();
+
+
         $this->itemAmount = null;
         $this->subItemAmount = null;
 
@@ -175,6 +186,8 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
     }
 
     public function removeItem($itemKey) {
+        $this->checkCartIsReadOnly();
+
         $this->itemAmount = null;
         $this->subItemAmount = null;
 
@@ -217,6 +230,8 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
     }
 
     public function setCreationDate(Zend_Date $creationDate = null) {
+        $this->checkCartIsReadOnly();
+
         $this->creationDate = $creationDate;
         if($creationDate) {
             $this->creationDateTimestamp = $creationDate->get(Zend_Date::TIMESTAMP);
@@ -226,6 +241,8 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
     }
 
     public function setCreationDateTimestamp($creationDateTimestamp) {
+        $this->checkCartIsReadOnly();
+
         $this->creationDateTimestamp = $creationDateTimestamp;
         $this->creationDate = null;
     }
@@ -308,6 +325,7 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
 
             try {
                 $cart = new static();
+                $cart->setIgnoreReadonly();
                 $cart->getResource()->getById($id);
 
                 $itemList = new OnlineShop_Framework_Impl_SessionCartItem_List();
@@ -329,6 +347,7 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
                     $cart->setCheckoutData($checkoutDataItem->getKey(), $checkoutDataItem->getData());
                 }
 
+                $cart->unsetIgnoreReadonly();
                 Zend_Registry::set($cacheKey, $cart);
             } catch (Exception $ex) {
                 Logger::debug($ex->getMessage());
@@ -365,7 +384,7 @@ class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract imple
         return $this->priceCalcuator;
     }
 
-    public function setValues($data) {
+    public function setValues($data = array()) {
         if ($data instanceof stdClass && count($data) > 0) {
             foreach ($data as $key => $value) {
                 $this->setValue($key,$value);

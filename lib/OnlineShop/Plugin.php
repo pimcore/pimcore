@@ -379,4 +379,11 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
 
         return true;
     }
+
+
+
+    public function maintenance() {
+        $checkoutManager = OnlineShop_Framework_Factory::getInstance()->getCheckoutManager(new OnlineShop_Framework_Impl_Cart());
+        $checkoutManager->cleanUpPendingOrders();
+    }
 }

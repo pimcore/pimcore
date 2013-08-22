@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: tballmann
- * Date: 30.07.13
- * Time: 16:51
- * To change this template use File | Settings | File Templates.
- */
 
 class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Framework_Impl_Checkout_AbstractPayment implements OnlineShop_Framework_ICheckoutPayment
 {
@@ -64,15 +57,6 @@ class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Frame
 
         $this->client->__setSoapHeaders($header);
 
-    }
-
-
-    /**
-     * save session data
-     */
-    public function __destruct()
-    {
-        $this->saveCheckoutData();
     }
 
 
@@ -157,7 +141,6 @@ class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Frame
             }
         }
 
-
         return $return;
     }
 
@@ -170,6 +153,15 @@ class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Frame
      */
     public function handleResponse($response)
     {
+        $orderId = explode("~", base64_decode($response['internal_id']));
+        $orderId = $orderId[1];
+
+        //TODO make order class configurable
+        $order = Object_OnlineShopOrder::getById($orderId);
+        if($order->getOrderState() == OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED) {
+            throw new Exception("Order already committed.");
+        }
+
         // init
         $return = false;
         $this->errors = array();
@@ -178,7 +170,6 @@ class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Frame
         if($response['token'] == '' || $response['PayerID'] == '')
         {
             $this->errors[] = 'required field "token" or "PayerId" is missing';
-            return $return;
         }
 
 
@@ -198,7 +189,6 @@ class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Frame
         catch (Exception $e)
         {
             $this->errors[] = $e->getMessage();
-            return $return;
         }
 
 
@@ -206,7 +196,6 @@ class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Frame
         if($ret->Ack == 'Success' || $ret->Ack == 'SuccessWithWarning')
         {
             $this->TransactionID = $ret->DoExpressCheckoutPaymentResponseDetails->PaymentInfo->TransactionID;
-            $return = true;
         }
         else
         {
@@ -219,7 +208,18 @@ class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Frame
             }
         }
 
-        return $return;
+
+        $status = new OnlineShop_Framework_Impl_Checkout_Payment_Status(
+            base64_decode($response['internal_id']),
+            $this->TransactionID,
+            $this->isPaid() ? OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED : OnlineShop_Framework_AbstractOrder::ORDER_STATE_CANCELLED
+        );
+
+
+        $this->saveCheckoutData();
+
+        return $status;
+
     }
 
 

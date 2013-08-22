@@ -4,6 +4,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
     const CURRENT_STEP = "checkout_current_step";
     const FINISHED = "checkout_finished";
+    const CART_READONLY_PREFIX = "checkout_cart_readonly";
     const COMMITTED = "checkout_committed";
     const TRACK_ECOMMERCE = "checkout_trackecommerce";
     const TRACK_ECOMMERCE_UNIVERSAL = "checkout_trackecommerce_universal";
@@ -13,6 +14,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     protected $currentStep;
     protected $finished = false;
     protected $committed = false;
+    protected $paid = true;
 
     protected $parentFolderId = 1;
     protected $orderClassname;
@@ -66,8 +68,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
 
         // init payment provider
-        if($config->payment)
-        {
+        if($config->payment) {
             $this->payment = new $config->payment->class( $config->payment, $cart );
         }
 
@@ -82,6 +83,70 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
             $this->commitOrderProcessor->setConfirmationMail($this->confirmationMail);
         }
         return $this->commitOrderProcessor;
+    }
+
+    /**
+     * @return OnlineShop_Framework_AbstractPaymentInformation
+     */
+    public function startOrderPayment() {
+        if($this->committed) {
+            throw new OnlineShop_Framework_Exception_UnsupportedException("Cart already committed.");
+        }
+
+        if(!$this->isFinished()) {
+            throw new OnlineShop_Framework_Exception_UnsupportedException("Checkout not finished yet.");
+        }
+
+        if(!$this->payment) {
+            throw new OnlineShop_Framework_Exception_UnsupportedException("Payment is not activated");
+        }
+
+        //Create Order and PaymentInformation
+        $order = $this->getCommitOrderProcessor()->getOrCreateOrder($this->cart);
+
+        if($order->getOrderState() == OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED) {
+            throw new Exception("Order already committed");
+        }
+
+        $paymentInfo = $this->getCommitOrderProcessor()->getOrCreateActivePaymentInfo($order);
+
+        //Make Cart ReadOnly and in PaymentMode
+        $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+        $env->setCustomItem(self::CART_READONLY_PREFIX . "_" . $this->cart->getId(), "READONLY");
+        $env->save();
+
+        return $paymentInfo;
+    }
+
+
+    /**
+     * @return OnlineShop_Framework_AbstractOrder
+     */
+    public function commitOrderPayment(OnlineShop_Framework_Impl_Checkout_Payment_Status $status) {
+        if(!$this->payment) {
+            throw new OnlineShop_Framework_Exception_UnsupportedException("Payment is not activated");
+        }
+
+        $order = $this->getCommitOrderProcessor()->updateOrderPayment($status);
+
+        $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+        $env->removeCustomItem(self::CART_READONLY_PREFIX . "_" . $this->cart->getId());
+        $env->save();
+
+        if($status->getStatus() == OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED) {
+            $order = $this->commitOrder();
+        } else {
+            $this->currentStep = $this->checkoutStepOrder[count($this->checkoutStepOrder) - 1];
+            $this->finished = false;
+
+            $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+            $env->setCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId(), $this->currentStep->getName());
+            $env->setCustomItem(self::FINISHED . "_" . $this->cart->getId(), $this->finished);
+            $env->save();
+        }
+
+
+        return $order;
     }
 
     /**
@@ -251,6 +316,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         return $result;
     }
 
+
     /**
      * @return OnlineShop_Framework_ICart
      */
@@ -301,5 +367,10 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     public function getPayment()
     {
         return $this->payment;
+    }
+
+
+    public function cleanUpPendingOrders() {
+        $this->getCommitOrderProcessor()->cleanUpPendingOrders();
     }
 }

@@ -42,6 +42,17 @@ interface OnlineShop_Framework_ICheckoutManager {
     public function isFinished();
 
     /**
+     * @return OnlineShop_Framework_AbstractPaymentInformation
+     */
+    public function startOrderPayment();
+
+    /**
+     * @param OnlineShop_Framework_Impl_Checkout_Payment_Status $status
+     * @return OnlineShop_Framework_AbstractOrder
+     */
+    public function commitOrderPayment(OnlineShop_Framework_Impl_Checkout_Payment_Status $status);
+
+    /**
      * @abstract
      * @return OnlineShop_Framework_AbstractOrder
      */
@@ -57,4 +68,9 @@ interface OnlineShop_Framework_ICheckoutManager {
      * @return OnlineShop_Framework_ICheckoutPayment|null
      */
     public function getPayment();
+
+    /**
+     * @return void
+     */
+    public function cleanUpPendingOrders();
 }

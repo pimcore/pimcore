@@ -236,7 +236,7 @@ class OnlineShop_Framework_Impl_SessionCartItem extends Pimcore_Model_Abstract i
         return $this->comment;
     }
 
-    public function setValues($data) {
+    public function setValues($data = array()) {
         if ($data instanceof stdClass && count($data) > 0) {
             foreach ($data as $key => $value) {
                 $this->setValue($key,$value);

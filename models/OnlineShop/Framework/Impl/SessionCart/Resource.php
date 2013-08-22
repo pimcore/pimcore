@@ -32,13 +32,13 @@ class OnlineShop_Framework_Impl_SessionCart_Resource extends Pimcore_Model_Resou
 
     public function create() {
         if(!$this->model->getId()) {
-            $cartsSystem = new Zend_Session_Namespace('cartsSystem');
-            if (!isset($cartsSystem->lastId)) {
-                $cartsSystem->lastId = 1;
-            } else {
-                $cartsSystem->lastId++;
-            }
-            $this->model->setId($cartsSystem->lastId);
+//            $cartsSystem = new Zend_Session_Namespace('cartsSystem');
+//            if (!isset($cartsSystem->lastId)) {
+//                $cartsSystem->lastId = 1;
+//            } else {
+//                $cartsSystem->lastId++;
+//            }
+            $this->model->setId(uniqid("cart_"));
         }
         $this->save();
     }
