@@ -415,7 +415,8 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
 
         OnlineShop_Framework_Impl_CartItem::removeAllFromCart($this->getId());
         OnlineShop_Framework_Impl_CartCheckoutData::removeAllFromCart($this->getId());
-        
+
+        $this->clear();
         $this->getResource()->delete();
     }
 

@@ -280,7 +280,8 @@ class OnlineShop_Framework_Impl_SessionCart extends OnlineShop_Framework_Abstrac
 
         OnlineShop_Framework_Impl_SessionCartItem::removeAllFromCart($this->getId());
         OnlineShop_Framework_Impl_SessionCartCheckoutData::removeAllFromCart($this->getId());
-        
+
+        $this->clear();
         $this->getResource()->delete();
     }
 
