@@ -39,8 +39,8 @@
     <?php
         $i=0;
         foreach($thumbnails as $title => $name) { ?>
-        <?php if($i % 3 === 0) { ?><ul class="row-fluid"><?php } ?>
-            <div class="span4">
+        <?php if($i % 3 === 0) { ?><div class="row"><?php } ?>
+            <div class="col-lg-4">
                 <?php
                     $thumbnail = $image->getThumbnail($name);
                 ?>
@@ -55,7 +55,7 @@
                     ?>
                 </div>
             </div>
-        <?php $i++; if($i % 3 === 0 || $i >= count($thumbnails)) { ?></ul><?php } ?>
+        <?php $i++; if($i % 3 === 0 || $i >= count($thumbnails)) { ?></div><?php } ?>
     <?php } ?>
 </section>
 

@@ -11,17 +11,17 @@
     <?php echo $this->news->getText(); ?>
 
 
-    <div class="row-fluid">
+    <div class="row">
         <?php for($i=1; $i<=3; $i++) { ?>
             <?php
                 $image = $this->news->{"getImage_" . $i}();
             ?>
             <?php if($image) { ?>
-                <li class="span3">
+                <div class="col-lg-3">
                     <a href="<?php echo $image->getThumbnail("galleryLightbox"); ?>" class="thumbnail">
                         <img src="<?php echo $image->getThumbnail("galleryThumbnail"); ?>">
                     </a>
-                </li>
+                </div>
             <?php } ?>
         <?php } ?>
     </div>

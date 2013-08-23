@@ -11,6 +11,8 @@
         <h2>Checkbox</h2>
         <?php echo $this->checkbox("myCheckbox") ?>
 
+        <div class="clearfix"></div>
+
         <h2>Date</h2>
         <?php echo $this->date("myDate"); ?>
 
