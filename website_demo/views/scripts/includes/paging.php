@@ -2,8 +2,7 @@
 // made by Twitter user @remisouverain
 //my_pagination_control.phtml
 if ($this->pageCount): ?>
-<div class="pagination paginationControl pagination-left">
-	<ul>
+	<ul class="pagination">
 	<!-- <li class="desc disabled"><a href="#"><?php echo $this->firstItemNumber; ?>-<?php echo $this->lastItemNumber; ?> / <?php echo $this->totalItemCount; ?></a></li> -->
 	
 	<?php if (isset($this->previous)): ?>
@@ -39,5 +38,4 @@ if ($this->pageCount): ?>
 	<?php endif; ?>
 
 	</ul>
-</div>
 <?php endif; ?>

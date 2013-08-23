@@ -7,20 +7,21 @@
 
 <div>
 
-    <form class="form-search" method="get">
-        <input name="q" type="text" class="input-medium search-query" value="<?= $this->getParam("q") ?>">
-        <button type="submit" name="submit" class="btn"><?php echo $this->translate("Search"); ?></button>
+    <form class="form-inline" role="form">
+        <div class="form-group">
+            <input type="text" name="q" class="form-control" placeholder="<?php echo $this->translate("Keyword"); ?>">
+        </div>
+        <button type="submit" name="submit" class="btn btn-default"><?php echo $this->translate("Search"); ?></button>
     </form>
-
 
     <?php if ($this->paginator) { ?>
 
         <?php $facets = $this->result->getFacets(); ?>
         <?php if(!empty($facets)) { ?>
-            <div>
+            <div class="row" style="margin-top: 20px">
                 Facets:
                 <?php foreach ($facets as $label => $anchor) { ?>
-                    <a href="<?= $this->url(array('facet' => $label, "page" => null)); ?>"><?= $anchor ?></a>
+                    <a class="btn btn-default btn-xs" href="<?= $this->url(array('facet' => $label, "page" => null)); ?>"><?= $anchor ?></a>
                 <?php } ?>
             </div>
         <?php } ?>

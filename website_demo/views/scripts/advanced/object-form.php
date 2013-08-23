@@ -11,36 +11,58 @@
 <?php } ?>
 
 <?php if(!$this->success) { ?>
-    <form action="" method="post">
-        <fieldset>
+    <form class="form-horizontal" role="form" action="" method="post">
+            <div class="form-group">
+                <label class="col-lg-2 control-label"><?php echo $this->translate("Gender"); ?></label>
+                <div class="col-lg-10">
+                    <select name="gender" class="form-control">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label"><?php echo $this->translate("Firstname"); ?></label>
+                <div class="col-lg-10">
+                    <input name="firstname" type="text" class="form-control" placeholder="" value="<?php echo $this->firstname; ?>">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label"><?php echo $this->translate("Lastname"); ?></label>
+                <div class="col-lg-10">
+                    <input name="lastname" type="text" class="form-control" placeholder="" value="<?php echo $this->lastname; ?>">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label"><?php echo $this->translate("E-Mail"); ?></label>
+                <div class="col-lg-10">
+                    <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?php echo $this->email; ?>">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label"><?php echo $this->translate("Message"); ?></label>
+                <div class="col-lg-10">
+                    <textarea name="message" type="text" class="form-control" placeholder="" value="<?php echo $this->message; ?>"></textarea>
+                </div>
+            </div>
 
-            <label><?php echo $this->translate("Gender"); ?></label>
-            <select name="gender">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-            </select>
-
-            <label><?php echo $this->translate("Firstname"); ?></label>
-            <input name="firstname" type="text" placeholder="" value="<?php echo $this->firstname; ?>">
-
-            <label><?php echo $this->translate("Lastname"); ?></label>
-            <input name="lastname" type="text" placeholder="" value="<?php echo $this->lastname; ?>">
-
-            <label><?php echo $this->translate("E-Mail"); ?></label>
-            <input name="email" type="text" placeholder="example@example.com" value="<?php echo $this->email; ?>">
-
-
-            <label><?php echo $this->translate("Message"); ?></label>
-            <textarea name="message" type="text" placeholder="" value="<?php echo $this->message; ?>"></textarea>
-
-            <label class="checkbox">
-                <input name="terms" type="checkbox"> <?php echo $this->translate("I accept the terms of use"); ?>
-            </label>
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+                    <div class="checkbox">
+                        <label>
+                            <input name="terms" type="checkbox"> <?php echo $this->translate("I accept the terms of use"); ?>
+                        </label>
+                    </div>
+                </div>
+            </div>
 
             <br />
 
-            <button type="submit" class="btn"><?php echo $this->translate("Submit"); ?></button>
-        </fieldset>
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+                    <button type="submit" class="btn btn-default"><?php echo $this->translate("Submit"); ?></button>
+                </div>
+            </div>
     </form>
 <?php } else { ?>
 

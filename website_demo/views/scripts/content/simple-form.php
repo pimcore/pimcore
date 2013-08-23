@@ -5,22 +5,40 @@
 <?php echo $this->areablock("content"); ?>
 
 <?php if(!$this->success) { ?>
-    <form action="" method="post">
-        <fieldset>
-            <label><?php echo $this->translate("Firstname"); ?></label>
-            <input name="firstname" type="text" placeholder="" value="<?php echo $this->firstname; ?>">
+    <form class="form-horizontal" role="form" action="" method="post">
+        <div class="form-group">
+            <label class="col-lg-2 control-label"><?php echo $this->translate("Firstname"); ?></label>
+            <div class="col-lg-10">
+                <input name="firstname" type="text" class="form-control" placeholder="" value="<?php echo $this->firstname; ?>">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label"><?php echo $this->translate("Lastname"); ?></label>
+            <div class="col-lg-10">
+                <input name="lastname" type="text" class="form-control" placeholder="" value="<?php echo $this->lastname; ?>">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label"><?php echo $this->translate("E-Mail"); ?></label>
+            <div class="col-lg-10">
+                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?php echo $this->email; ?>">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"> <?php echo $this->translate("Check me out"); ?>
+                    </label>
+                </div>
+            </div>
+        </div>
 
-            <label><?php echo $this->translate("Lastname"); ?></label>
-            <input name="lastname" type="text" placeholder="" value="<?php echo $this->lastname; ?>">
-
-            <label><?php echo $this->translate("E-Mail"); ?></label>
-            <input name="email" type="text" placeholder="example@example.com" value="<?php echo $this->email; ?>">
-
-            <label class="checkbox">
-                <input type="checkbox"> <?php echo $this->translate("Check me out"); ?>
-            </label>
-            <button type="submit" class="btn"><?php echo $this->translate("Submit"); ?></button>
-        </fieldset>
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                <button type="submit" class="btn btn-default"><?php echo $this->translate("Submit"); ?></button>
+            </div>
+        </div>
     </form>
 <?php } else { ?>
 

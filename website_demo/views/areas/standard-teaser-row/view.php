@@ -1,8 +1,8 @@
 
 <section class="area-standard-teaser-row">
-    <div class="row-fluid">
+    <div class="row">
         <?php for($t=0; $t<3; $t++) { ?>
-            <div class="span4">
+            <div class="col-lg-4">
                 <?php if($this->editmode) { ?>
                     <div class="editmode-label">
                         <label>Type:</label>

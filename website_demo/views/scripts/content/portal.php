@@ -4,26 +4,20 @@
     "href" => "/website/static/css/portal.css"));
 ?>
 
-<?php if($this->editmode) { ?>
-    <div class="editmode-carousel-container">
-        Number of Slides: <?php echo $this->select("carouselSlides", array(
-            "width" => 60,
-            "reload" => true,
-            "store" => array(array(1,1),array(2,2),array(3,3), array(4,4))
-        )); ?>
-    </div>
-<?php } ?>
-
-<!-- Carousel
-    ================================================== -->
 <div id="myCarousel" class="carousel slide">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
     <div class="carousel-inner">
         <?php
-            $count = $this->select("carouselSlides")->getData();
-            if(!$count) {
-                $count = 1;
-            }
-            for($i=0; $i<$count; $i++) { ?>
+        $count = $this->select("carouselSlides")->getData();
+        if(!$count) {
+            $count = 1;
+        }
+        for($i=0; $i<$count; $i++) { ?>
             <div class="item<?php if(!$i) { ?> active<?php } ?>">
                 <?php echo $this->image("cImage_".$i, array())->frontend(); ?>
                 <div class="container">
@@ -39,24 +33,29 @@
                                 echo "<br /><br />";
                             }
                         ?>
-                        <h1><?php echo $this->input("cHeadline_".$i, array("width" => "300")); ?></h1>
 
-                        <p class="lead"><?php echo $this->textarea("cText_".$i, array("width" => "300")); ?></p>
-                        <?php echo $this->link("cLink_".$i, array("class" => "btn btn-large")); ?>
+                        <h1><?php echo $this->input("cHeadline_".$i, array("width" => "300")); ?></h1>
+                        <p><?php echo $this->textarea("cText_".$i, array("width" => "300")); ?></p>
+                        <p><?php echo $this->link("cLink_".$i, array("class" => "btn btn-large btn-default")); ?></p>
                     </div>
                 </div>
             </div>
         <?php } ?>
     </div>
-    <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-    <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
-</div><!-- /.carousel -->
+    <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+    <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+</div>
 
+<?php if($this->editmode) { ?>
+    <div class="container" style="padding-bottom: 40px">
+        Number of Slides: <?php echo $this->select("carouselSlides", array(
+            "width" => 60,
+            "reload" => true,
+            "store" => array(array(1,1),array(2,2),array(3,3), array(4,4))
+        )); ?>
+    </div>
+<?php } ?>
 
-<!-- Marketing messaging and featurettes
-================================================== -->
-<!-- Wrap the rest of the page in another container to center all the content. -->
-
-<div class="container marketing">
+<div class="container">
     <?php echo $this->areablock("content"); ?>
-</div><!-- /.container -->
+</div>
