@@ -10,7 +10,15 @@
 
     /* Negative margin to pull up carousel. 90px is roughly margins and height of navbar. */
     margin-top: -90px;
+    height: 400px;
 }
+
+.carousel-inner {
+    position: absolute !important;
+    top:0;
+    left: 0;
+}
+
 /* Since positioning the image, we need to help out the caption */
 .carousel-caption {
     z-index: 10;
