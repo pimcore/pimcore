@@ -27,6 +27,9 @@ body {
     height: 30px;
 }
 
+.navbar-wrapper ul {
+    list-style: none !important; /* IE FIX */
+}
 
 
 /* Featurettes
