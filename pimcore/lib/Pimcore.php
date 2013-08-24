@@ -339,7 +339,7 @@ class Pimcore {
 
         Logger::setPriorities($prios);
 
-        if (is_writable(PIMCORE_LOG_DEBUG) && false) {
+        if (is_writable(PIMCORE_LOG_DEBUG)) {
             
             // check for big logfile, empty it if it's bigger than about 200M
             if (filesize(PIMCORE_LOG_DEBUG) > 200000000) {
