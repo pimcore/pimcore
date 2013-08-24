@@ -140,7 +140,7 @@
                     $navigation = $this->pimcoreNavigation()->getNavigation($this->document, $startNode);
                     $this->navigation($navigation);
                     echo $this->navigation()->menu($navigation)->setUseTranslator(false)->renderMenu($navigation, array(
-                        "ulClass" => "nav",
+                        "ulClass" => "nav bs-sidenav",
                         "expandSiblingNodesOfActiveBranch" => true
                     ));
                     ?>
@@ -185,6 +185,11 @@ echo $this->inc("/shared/includes/footer");
         li.on("mouseleave", function () {
             $("ul", $(this)).hide();
         });
+    });
+
+    // side menu
+    $(".bs-sidenav ul").each(function () {
+        $(this).addClass("nav");
     });
 
     <?php if(!$this->editmode) { ?>
