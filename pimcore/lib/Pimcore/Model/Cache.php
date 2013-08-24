@@ -202,8 +202,8 @@ class Pimcore_Model_Cache {
             $config["customBackendNaming"] = true;
         } else {
             // file fallback if mysql isn't available (at install, ...)
-            $config["backendType"] = "BlackHole";
-            $config["customBackendNaming"] = false;
+            $config["backendType"] = "Zend_Cache_Backend_BlackHole"; // just BlackHole doesn't work, that's why customBackendNaming=true
+            $config["customBackendNaming"] = true;
             self::disable(); // disable it here too
         }
 
