@@ -202,17 +202,9 @@ class Pimcore_Model_Cache {
             $config["customBackendNaming"] = true;
         } else {
             // file fallback if mysql isn't available (at install, ...)
-            $config["backendType"] = "File";
-            $config["backendConfig"] = array(
-                "cache_dir" => PIMCORE_CACHE_DIRECTORY,
-                "cache_file_perm" => 0755
-            );
+            $config["backendType"] = "BlackHole";
             $config["customBackendNaming"] = false;
-        }
-
-        // create cache dir
-        if(!is_dir(PIMCORE_CACHE_DIRECTORY)) {
-            mkdir(PIMCORE_CACHE_DIRECTORY, 0777, true);
+            self::disable(); // disable it here too
         }
 
         return $config;
