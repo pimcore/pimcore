@@ -4,38 +4,38 @@
     <meta charset="utf-8">
 
     <?php
-        // portal detection => portal needs an adapted version of the layout
-        $isPortal = false;
-        if($this->getParam("controller") == "content" && $this->getParam("action") == "portal") {
-            $isPortal = true;
-        }
+    // portal detection => portal needs an adapted version of the layout
+    $isPortal = false;
+    if($this->getParam("controller") == "content" && $this->getParam("action") == "portal") {
+        $isPortal = true;
+    }
 
-        // output the collected meta-data
-        if(!$this->document) {
-            $this->document = Document::getById(1);
-        }
+    // output the collected meta-data
+    if(!$this->document) {
+        $this->document = Document::getById(1);
+    }
 
-        if($this->document->getTitle()) {
-            // use the manually set title if available
-            $this->headTitle()->set($this->document->getTitle());
-        }
+    if($this->document->getTitle()) {
+        // use the manually set title if available
+        $this->headTitle()->set($this->document->getTitle());
+    }
 
-        if($this->document->getDescription()) {
-            // use the manually set description if available
-            $this->headMeta()->appendName('description', $this->document->getDescription());
-        }
+    if($this->document->getDescription()) {
+        // use the manually set description if available
+        $this->headMeta()->appendName('description', $this->document->getDescription());
+    }
 
-        $this->headTitle()->append("pimcore Demo");
-        $this->headTitle()->setSeparator(" : ");
+    $this->headTitle()->append("pimcore Demo");
+    $this->headTitle()->setSeparator(" : ");
 
-        echo $this->headTitle();
-        echo $this->headMeta();
+    echo $this->headTitle();
+    echo $this->headMeta();
     ?>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Le styles -->
-    <link href="/website/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/website/static/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
 
     <link href="/website/static/css/global.css" rel="stylesheet">
 
@@ -55,13 +55,13 @@
     <![endif]-->
 
     <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-      ga('create', 'UA-12436865-5', 'pimcore.org');
-      ga('send', 'pageview');
+        ga('create', 'UA-12436865-5', 'pimcore.org');
+        ga('send', 'pageview');
     </script>
 </head>
 
@@ -83,10 +83,10 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <?php
-                        $navStartNode = Document::getById(1);
-                        $navigation = $this->pimcoreNavigation()->getNavigation($this->document, $navStartNode);
-                        $this->navigation($navigation);
-                        echo $this->navigation()->menu()->setUseTranslator(false)->renderMenu($navigation, array("maxDepth" => 1, "ulClass" => "nav navbar-nav"));
+                    $navStartNode = Document::getById(1);
+                    $navigation = $this->pimcoreNavigation()->getNavigation($this->document, $navStartNode);
+                    $this->navigation($navigation);
+                    echo $this->navigation()->menu()->setUseTranslator(false)->renderMenu($navigation, array("maxDepth" => 1, "ulClass" => "nav navbar-nav"));
                     ?>
                 </div>
             </div>
@@ -130,19 +130,19 @@
             <div class="col-md-3">
                 <div class="bs-sidebar hidden-print affix-top" role="complementary">
                     <?php
-                        $startNode = $this->document->getProperty("leftNavStartNode");
-                        if(!$startNode) {
-                            $startNode = Document::getById(1);
-                        }
+                    $startNode = $this->document->getProperty("leftNavStartNode");
+                    if(!$startNode) {
+                        $startNode = Document::getById(1);
+                    }
                     ?>
                     <h3><?php echo $startNode->getProperty("navigation_name"); ?></h3>
                     <?php
-                        $navigation = $this->pimcoreNavigation()->getNavigation($this->document, $startNode);
-                        $this->navigation($navigation);
-                        echo $this->navigation()->menu($navigation)->setUseTranslator(false)->renderMenu($navigation, array(
-                            "ulClass" => "nav",
-                            "expandSiblingNodesOfActiveBranch" => true
-                        ));
+                    $navigation = $this->pimcoreNavigation()->getNavigation($this->document, $startNode);
+                    $this->navigation($navigation);
+                    echo $this->navigation()->menu($navigation)->setUseTranslator(false)->renderMenu($navigation, array(
+                        "ulClass" => "nav",
+                        "expandSiblingNodesOfActiveBranch" => true
+                    ));
                     ?>
                 </div>
             </div>
@@ -158,8 +158,8 @@
 
 
 <?php
-    // include a document-snippet - in this case the footer document
-    echo $this->inc("/shared/includes/footer");
+// include a document-snippet - in this case the footer document
+echo $this->inc("/shared/includes/footer");
 ?>
 
 <script src="/website/static/bootstrap/assets/js/jquery.js"></script>
@@ -188,24 +188,24 @@
     });
 
     <?php if(!$this->editmode) { ?>
-        $(document).ready(function() {
-            // initialize projekktor, the HTML5 video player
-            projekktor(
-                'video',
-                {playerFlashMP4: "/website/static/lib/projekktor/jarisplayer.swf"}
-            );
+    $(document).ready(function() {
+        // initialize projekktor, the HTML5 video player
+        projekktor(
+            'video',
+            {playerFlashMP4: "/website/static/lib/projekktor/jarisplayer.swf"}
+        );
 
-            // lightbox (magnific)
-            $('a.thumbnail').magnificPopup({
-                type:'image',
-                gallery: {
-                    enabled: true
-                }
-            });
-
-            $(".image-hotspot").tooltip();
-            $(".image-marker").tooltip();
+        // lightbox (magnific)
+        $('a.thumbnail').magnificPopup({
+            type:'image',
+            gallery: {
+                enabled: true
+            }
         });
+
+        $(".image-hotspot").tooltip();
+        $(".image-marker").tooltip();
+    });
     <?php } ?>
 </script>
 
