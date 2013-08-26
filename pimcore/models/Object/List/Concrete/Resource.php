@@ -180,9 +180,12 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
                     $name .= "~" . $fc['fieldname'];
                 }
 
-
-                $join .= " `" . $name . "`";
-                $join .= " ON (`" . $name . "`.o_id = `" . $this->getTableName() . "`.o_id AND `" . $name . "`.fieldname = '" . $fc['fieldname'] . "')";
+                $join .= " " . $this->db->quoteIdentifier($name);
+                $join .= " ON (" . $this->db->quoteIdentifier($name) . ".o_id = " . $this->db->quoteIdentifier($this->getTableName()) . ".o_id";
+                if(!empty($fc['fieldname'])) {
+                    $join .= " AND " . $this->db->quoteIdentifier($name) . ".fieldname = '" . $fc['fieldname'] . "'";
+                }
+                $join .= ")";
             }
         }
 
