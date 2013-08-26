@@ -49,7 +49,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
             "CREATE TABLE `plugin_onlineshop_cartcheckoutdata` (
               `cartId` int(20) NOT NULL,
               `key` varchar(150) COLLATE utf8_bin NOT NULL,
-              `data` longtext CHARACTER SET latin1,
+              `data` longtext,
               PRIMARY KEY (`cartId`,`key`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;"
         );
