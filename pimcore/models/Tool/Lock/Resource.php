@@ -48,7 +48,6 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
                 $this->release($key);
                 return false;
             }
-            return false;
         }
 
         return true;
