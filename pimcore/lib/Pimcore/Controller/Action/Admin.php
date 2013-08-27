@@ -270,6 +270,6 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             ($this->getUser() ? $this->getUser()->getId() : "0") . "|" .
             $this->getParam("module") . "|" .
             $this->getParam("controller") . "|" .
-            $this->getParam("action")."|".Zend_Json::encode($params));
+            $this->getParam("action")."|" . @json_encode($params));
     }
 }
