@@ -434,7 +434,7 @@ class Document_Tag_Video extends Document_Tag
                 $youtubeId = $explodedPath[array_search('embed',$explodedPath)+1];
             }
 
-            if(!$youtubeId && $parts["host"] == "youtu.be") {
+            if($parts["host"] == "youtu.be") {
                 $youtubeId = trim($parts["path"]," /");
             }
         }
