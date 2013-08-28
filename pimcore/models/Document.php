@@ -16,7 +16,7 @@
  *
  */
 
-class Document extends Pimcore_Model_Abstract implements Document_Interface {
+class Document extends Element_Abstract {
 
     /**
      * possible types of a document
