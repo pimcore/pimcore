@@ -279,10 +279,11 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
                     if(empty($values["old_password"])) {
                         // if the user want to reset the password, the old password isn't required
-                        Pimcore_Tool_Session::useSession(function($adminSession) {
+                        $oldPasswordCheck = Pimcore_Tool_Session::useSession(function($adminSession) use ($oldPasswordCheck) {
                             if($adminSession->password_reset) {
-                                $oldPasswordCheck = true;
+                                return true;
                             }
+                            return false;
                         });
 
                     } else {
