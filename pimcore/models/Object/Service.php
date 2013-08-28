@@ -394,6 +394,9 @@ class Object_Service extends Element_Service {
      * @return void
      */
     public static function loadAllObjectFields($object) {
+
+        $object->getProperties();
+
         if ($object instanceof Object_Concrete) {
             //load all in case of lazy loading fields
             $fd = $object->getO_class()->getFieldDefinitions();

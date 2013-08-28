@@ -324,6 +324,8 @@ class Document_Service extends Element_Service {
      */
     public static function loadAllDocumentFields ( $doc ) {
 
+        $doc->getProperties();
+
         if($doc instanceof Document_PageSnippet) {
             foreach($doc->getElements() as $name => $data) {
                 if(method_exists($data, "load")) {
