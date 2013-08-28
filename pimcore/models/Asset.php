@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset extends Pimcore_Model_Abstract implements Element_Interface {
+class Asset extends Element_Abstract {
 
     public static $chmod = 0766;
 

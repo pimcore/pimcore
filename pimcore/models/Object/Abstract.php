@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interface {
+class Object_Abstract extends Element_Abstract {
 
     const OBJECT_TYPE_FOLDER = "folder";
     const OBJECT_TYPE_OBJECT = "object";
