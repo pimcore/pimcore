@@ -220,7 +220,9 @@ class OnlineShop_PricingController extends Pimcore_Controller_Action_Admin
 
                 if( $settings->bracketRight == true )
                 {
+                    $old = $currentContainer;
                     $currentContainer = $currentContainer->parent;
+                    unset($old->parent);
                 }
             }
 
