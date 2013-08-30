@@ -169,11 +169,15 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
             foreach($savedColumns as $key => $sc) {
                 if(!$sc['hidden']) {
                     if(in_array($key, $systemColumns)) {
-                        $availableFields[] = array(
+                        $colConfig = array(
                             "key" => $key,
                             "type" => "system",
                             "label" => $key,
                             "position" => $sc['position']);
+                        if (isset($sc['width'])) {
+                            $colConfig['width'] = $sc['width'];
+                        }
+                        $availableFields[] = $colConfig;
                     } else {
                         $keyParts = explode("~", $key);
 
@@ -191,6 +195,9 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                             if(!empty($fd)) {
                                 $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, $brick . "~");
                                 if(!empty($fieldConfig)) {
+                                    if (isset($sc['width'])) {
+                                        $fieldConfig['width'] = $sc['width'];
+                                    }
                                     $availableFields[] = $fieldConfig;
                                 }
                             }
@@ -209,6 +216,10 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                             if(!empty($fd)) {
                                 $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true);
                                 if(!empty($fieldConfig)) {
+                                    if (isset($sc['width'])) {
+                                        $fieldConfig['width'] = $sc['width'];
+                                    }
+
                                     $availableFields[] = $fieldConfig;
                                 }
                             }
