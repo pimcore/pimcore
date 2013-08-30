@@ -103,12 +103,10 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                     } else {
                         return Ext.dd.DropZone.prototype.dropNotAllowed;
                     }
-
                 },
 
                 onNodeDrop : this.onNodeDrop.bind(this)
             });
-
 
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
@@ -118,10 +116,8 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
         }.bind(this));
 
-
         return this.component;
     },
-
 
     getLayoutShow: function () {
 
@@ -218,8 +214,8 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                                                 + "/height/" + (this.fieldConfig.height - 20) + "/contain/true";
         this.getBody().setStyle({
             backgroundImage: "url(" + path + ")",
-            BackgroundPosition: "center center"
-
+            backgroundPosition: "center center",
+            backgroundRepeat: "no-repeat"
         });
         this.getBody().repaint();
     },
