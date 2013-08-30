@@ -396,7 +396,7 @@ class Element_Service extends Pimcore_Model_Abstract {
     }
 
 
-    /** 
+    /**
      * @param  Element_Interface $target the parent element
      * @param  Element_Interface $new the newly inserted child
      * @return void
@@ -602,9 +602,15 @@ class Element_Service extends Pimcore_Model_Abstract {
 
         $lastFolder = null;
         $pathsArray = array();
-        if (!$folderType::getByPath($path)) {
-            $parts = explode('/', $path);
-            $parts = array_filter($parts);
+        $parts = explode('/', $path);
+        $parts = array_filter($parts);
+
+        $sanitizedPath = "/";
+        foreach($parts as $part) {
+            $sanitizedPath = $sanitizedPath . Pimcore_File::getValidFilename($part) . "/";
+        }
+
+        if (!$folderType::getByPath($sanitizedPath)) {
 
             foreach ($parts as $part) {
                 $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . Pimcore_File::getValidFilename($part);
@@ -650,7 +656,7 @@ class Element_Service extends Pimcore_Model_Abstract {
                 }
             }
         } else {
-            return $folderType::getByPath($path);
+            return $folderType::getByPath($sanitizedPath);
         }
         return $lastFolder;
     }
