@@ -154,14 +154,14 @@ pimcore.object.helpers.grid = Class.create({
             var field = fields[i];
 //            console.log(field);
             if(field.key == "subtype") {
-                gridColumns.push({header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
+                gridColumns.push({header: t("type"), width: this.getColumnWidth(field, 40), sortable: true, dataIndex: 'subtype',
                                         hidden: !this.showSubtype,
                                         renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_'
                                     + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }});
             } else if(field.key == "id") {
-                gridColumns.push({header: 'ID', width: 40, sortable: true,
+                gridColumns.push({header: 'ID', width: this.getColumnWidth(field, this.getColumnWidth(field, 40)), sortable: true,
                                                 dataIndex: 'id'/*, hidden: !propertyVisibility.id*/});
             } else if(field.key == "published") {
                 gridColumns.push(new Ext.grid.CheckColumn({
@@ -175,34 +175,44 @@ pimcore.object.helpers.grid = Class.create({
                     }.bind(this, field.key)
                 }));
             } else if(field.key == "fullpath") {
-                gridColumns.push({header: t("path"), width: 200, sortable: true,
+                gridColumns.push({header: t("path"), width: this.getColumnWidth(field, 200), sortable: true,
                                   dataIndex: 'fullpath'/*, hidden: !propertyVisibility.path*/});
             } else if(field.key == "filename") {
-                gridColumns.push({header: t("filename"), width: 200, sortable: true,
+                gridColumns.push({header: t("filename"), width: this.getColumnWidth(field, 200), sortable: true,
                                   dataIndex: 'filename', hidden: !showKey});
             } else if(field.key == "classname") {
-                gridColumns.push({header: t("class"), width: 200, sortable: true,
+                gridColumns.push({header: t("class"), width: this.getColumnWidth(field, 200), sortable: true,
                                   dataIndex: 'classname',renderer: function(v){return ts(v);}/*, hidden: true*/});
             } else if(field.key == "creationDate") {
-                gridColumns.push({header: t("creationdate") + " (System)", width: 200, sortable: true,
+                gridColumns.push({header: t("creationdate") + " (System)", width: this.getColumnWidth(field, 200), sortable: true,
                                     dataIndex: "creationDate", editable: false, renderer: function(d) {
                                     var date = new Date(d * 1000);
                                     return date.format("Y-m-d H:i:s");
                                 }/*, hidden: !propertyVisibility.creationDate*/});
             } else if(field.key == "modificationDate") {  
-                gridColumns.push({header: t("modificationdate") + " (System)", width: 200, sortable: true,
+                gridColumns.push({header: t("modificationdate") + " (System)", width: this.getColumnWidth(field, 200), sortable: true,
                                     dataIndex: "modificationDate", editable: false, renderer: function(d) {
                                     var date = new Date(d * 1000);
                                     return date.format("Y-m-d H:i:s");
                                 }/*, hidden: !propertyVisibility.modificationDate*/});
             } else {
-                gridColumns.push(pimcore.object.tags[fields[i].type].prototype.getGridColumnConfig(fields[i]));
+                var fc = pimcore.object.tags[fields[i].type].prototype.getGridColumnConfig(field);
+                fc.width = this.getColumnWidth(field, 100);
+                gridColumns.push(fc);
                 gridColumns[gridColumns.length-1].hidden = false;
                 gridColumns[gridColumns.length-1].layout = fields[i];
             }
         }
 
         return gridColumns;
+    },
+
+    getColumnWidth: function(field, defaultValue) {
+        if (field.width) {
+            return field.width;
+        } else {
+            return defaultValue;
+        }
     },
 
     getGridFilters: function() {

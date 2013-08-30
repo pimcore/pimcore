@@ -55,6 +55,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 obj.label = child.attributes.text;
                 obj.type = child.attributes.dataType;
                 obj.layout = child.attributes.layout;
+                if (child.attributes.width) {
+                    obj.width = child.attributes.width;
+                }
 
                 this.data.columns.push(obj);
             }.bind(this));
@@ -119,7 +122,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             var childs = [];
             for (var i = 0; i < this.config.selectedGridColumns.length; i++) {
                 var nodeConf = this.config.selectedGridColumns[i];
-                childs.push({
+                var child = {
                     text: nodeConf.label,
                     key: nodeConf.key,
                     type: "data",
@@ -127,7 +130,11 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     leaf: true,
                     layout: nodeConf.layout,
                     iconCls: "pimcore_icon_" + nodeConf.dataType
-                });
+                };
+                if (nodeConf.width) {
+                    child.width = nodeConf.width;
+                }
+                childs.push(child);
             }
 
             this.selectionPanel = new Ext.tree.TreePanel({
