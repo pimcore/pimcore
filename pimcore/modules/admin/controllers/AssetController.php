@@ -427,9 +427,9 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         $this->_helper->json(array(
-              "hasDependencies" => $hasDependency,
-              "childs" => $childs,
-              "deletejobs" => $deleteJobs
+            "hasDependencies" => $hasDependency,
+            "childs" => $childs,
+            "deletejobs" => $deleteJobs
         ));
     }
 
@@ -610,11 +610,11 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         } else if ($asset->isAllowed("rename") &&  $this->getParam("filename")  ) {
             //just rename
             try {
-                    $asset->setFilename($this->getParam("filename"));
-                    $asset->save();
-                    $success = true;
+                $asset->setFilename($this->getParam("filename"));
+                $asset->save();
+                $success = true;
             } catch (Exception $e) {
-                    $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
             }
         } else {
             Logger::debug("prevented update asset because of missing permissions ");
@@ -802,7 +802,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 $thumbnail = $image->getThumbnailConfig($this->getAllParams());
             }
         }
-        
+
         $format = strtolower($thumbnail->getFormat());
         if ($format == "source" || $format == "print") {
             $thumbnail->setFormat("PNG");
@@ -954,9 +954,9 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             array(
                 "method" => "scaleByWidth",
                 "arguments" =>
-                    array(
-                        "width" => 500
-                    )
+                array(
+                    "width" => 500
+                )
             )
         ));
 
@@ -1345,12 +1345,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                             $relativePath = dirname($path);
                         }
 
-                        $fullPath = $importAsset->getFullPath();
-                        if ($fullPath != '/') {
-                            $parentPath = $importAsset->getFullPath() . "/" . preg_replace("@^/@", "", $relativePath);
-                        } else {
-                            $parentPath = "/";
-                        }
+                        $parentPath = $importAsset->getFullPath() . "/" . preg_replace("@^/@", "", $relativePath);
                         $parent = Asset_Service::createFolderByPath($parentPath);
 
                         // check for duplicate filename
