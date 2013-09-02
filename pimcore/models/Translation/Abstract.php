@@ -38,6 +38,11 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
     public $modificationDate;
 
     /**
+     * @var array
+     */
+    public static $_keyCache = array();
+
+    /**
      * @return string
      */
     public function getKey() {
@@ -150,6 +155,10 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
       */
      public static function getByKey($id, $create = false, $returnIdIfEmpty = false)
      {
+         if(array_key_exists($id, static::$_keyCache)) {
+            return static::$_keyCache[$id];
+         }
+
          $translation = new static();
 
          $idOriginal = $id;
@@ -182,6 +191,9 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
              }
              $translation->setTranslations($translations);
          }
+
+         // add to key cache
+         static::$_keyCache[$idOriginal] = $translation;
 
          return $translation;
      }
