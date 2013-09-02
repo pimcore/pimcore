@@ -39,6 +39,8 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
      */
     protected $_totalElapsedTime = 0;
 
+    protected $_totalQueries = 0;
+
     /**
      * @var resource
      */
@@ -48,6 +50,11 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
      * @var int
      */
     protected $connectionId;
+
+    /**
+     * @var array
+     */
+    protected $queries = array();
 
     /**
      * Constructor
@@ -93,11 +100,18 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
         
         $profile = $this->getQueryProfile($queryId);
         $this->_totalElapsedTime += $profile->getElapsedSecs();
+        $this->_totalQueries++;
 
-        $logEntry = "Process: " . $this->getConnectionId() . " | DB Query: " . (string)round($profile->getElapsedSecs(),5) . " | " . $profile->getQuery() . " | " . implode(",",$profile->getQueryParams());
+        $logEntry = "Process: " . $this->getConnectionId() . " | DB Query (#" . $this->_totalQueries . "): " . (string)round($profile->getElapsedSecs(),5) . " | " . $profile->getQuery() . " | " . implode(",",$profile->getQueryParams());
         Logger::debug($logEntry);
 
         if(!empty($_REQUEST["pimcore_dbprofile"])) {
+
+            $this->queries[] = array(
+                "time" => $profile->getElapsedSecs(),
+                "query" => $profile->getQuery() . " | " . implode(",",$profile->getQueryParams())
+            );
+
             if(!is_resource($this->logFile)) {
                 $logFile = dirname(PIMCORE_LOG_DEBUG) . "/dbprofile-" . $_REQUEST["pimcore_dbprofile"] . ".log";
                 file_put_contents($logFile,"");
@@ -115,7 +129,36 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
         if(is_resource($this->logFile)) {
 
             // write the total time at the end
-            fwrite($this->logFile, "\n\n\n--------------------\nTotal Elapsed Time: " . (string)round($this->_totalElapsedTime,5). "\n--------------------\n\n");
+            $message = "\n\n\n--------------------\n";
+            $message .= "Total Elapsed Time: ". (string)round($this->_totalElapsedTime,5) . "\n";
+            $message .= "Total Queries: " . $this->_totalQueries . "\n";
+            $message .= "Top Queries: \n";
+
+            uasort($this->queries, function ($x, $y) {
+                $a = $x["time"];
+                $b = $y["time"];
+
+                if ($a == $b) {
+                    return 0;
+                }
+                return ($b < $a) ? -1 : 1;
+            });
+
+            $count = 0;
+            foreach ($this->queries as $key => $value) {
+                $count++;
+                if($count > 5) {
+                    break;
+                }
+
+                $message .= "#" . $key . ":  " . (string)round($value["time"],5) . " | " . $value["query"] . "\n";
+            }
+            $message .= "\n";
+
+            $message .= "\n--------------------\n\n";
+
+
+            fwrite($this->logFile, $message);
 
             fclose($this->logFile);    
         }
