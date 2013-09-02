@@ -401,9 +401,6 @@ class Pimcore {
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
         //@ini_set("memory_limit", "1024M");
         @ini_set("max_execution_time", $maxExecutionTime);
-        @ini_set("short_open_tag", 1);
-        @ini_set("magic_quotes_gpc", 0);
-        @ini_set("magic_quotes_runtime", 0);
         set_time_limit($maxExecutionTime);
         mb_internal_encoding("UTF-8");
 
@@ -422,9 +419,14 @@ class Pimcore {
             Pimcore_Tool::exitWithError($m);
         }
 
-        if (get_magic_quotes_gpc()) {
-            $m = "pimcore requires magic_quotes_gpc OFF";
-            Pimcore_Tool::exitWithError($m);
+        if (version_compare(PHP_VERSION, '5.4.0', "<")) {
+            @ini_set("magic_quotes_gpc", 0);
+            @ini_set("magic_quotes_runtime", 0);
+
+            if (get_magic_quotes_gpc()) {
+                $m = "pimcore requires magic_quotes_gpc OFF";
+                Pimcore_Tool::exitWithError($m);
+            }
         }
     }
 
