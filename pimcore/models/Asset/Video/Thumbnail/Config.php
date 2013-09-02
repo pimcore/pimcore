@@ -82,6 +82,27 @@ class Asset_Video_Thumbnail_Config {
         return $dir;
     }
 
+    /**
+     * @return Asset_Video_Thumbnail_Config
+     */
+    public static function getPreviewConfig () {
+        $config = new self();
+        $config->setName("pimcore-system-treepreview");
+        $config->setAudioBitrate(128);
+        $config->setVideoBitrate(700);
+
+        $config->setItems(array(
+            array(
+                "method" => "scaleByWidth",
+                "arguments" =>
+                array(
+                    "width" => 500
+                )
+            )
+        ));
+
+        return $config;
+    }
 
     /**
      * @return void
