@@ -116,7 +116,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         this.component.add(this.panel);
 
 
-        this.panel.on("render", function (el) {
+        this.panel.on("afterrender", function (el) {
 
             // add drop zone
             new Ext.dd.DropZone(el.getEl(), {
@@ -153,12 +153,20 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     },
 
     updateImage: function () {
-        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.fieldConfig.width - 2)
-                                        + "/height/" + (this.fieldConfig.height - 30) + "/aspectratio/true"
-                                        + "?" + Ext.urlEncode(this.crop);
 
+        // 5px padding (-10)
+        var width = this.getBody().getWidth()-10;
+        var height = this.getBody().getHeight()-10;
 
-        this.panel.update('<img align="center" class="pimcore_droptarget_image" src="' + path + '" />');
+        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + width
+                                        + "/height/" + height + "/contain/true" + "?" + Ext.urlEncode(this.crop);
+
+        this.getBody().setStyle({
+            backgroundImage: "url(" + path + ")",
+            backgroundPosition: "center center",
+            backgroundRepeat: "no-repeat"
+        });
+        this.getBody().repaint();
     },
 
 
