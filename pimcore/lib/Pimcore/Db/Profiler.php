@@ -113,6 +113,10 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
      */
     public function __destruct() {
         if(is_resource($this->logFile)) {
+
+            // write the total time at the end
+            fwrite($this->logFile, "\n\n\n--------------------\nTotal Elapsed Time: " . (string)round($this->_totalElapsedTime,5). "\n--------------------\n\n");
+
             fclose($this->logFile);    
         }
     }
