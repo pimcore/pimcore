@@ -69,7 +69,12 @@ $includePaths = array(
     PIMCORE_PATH . "/modules/deployment/models"
 );
 set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
-require_once PIMCORE_PATH . '/modules/deployment/config/startup.php';
+
+$deploymentStartup = PIMCORE_PATH . '/modules/deployment/config/startup.php';
+if(@is_file($deploymentStartup)) {
+    require_once($deploymentStartup);
+}
+
 // helper functions
 include(dirname(__FILE__) . "/helper.php");
 
