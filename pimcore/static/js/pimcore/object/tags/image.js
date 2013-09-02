@@ -86,7 +86,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         this.component = new Ext.Panel(conf);
 
 
-        this.component.on("render", function (el) {
+        this.component.on("afterrender", function (el) {
 
             // add drop zone
             new Ext.dd.DropZone(el.getEl(), {
@@ -137,7 +137,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
         this.component = new Ext.Panel(conf);
 
-        this.component.on("render", function (el) {
+        this.component.on("afterrender", function (el) {
             if (this.data) {
                 this.updateImage();
             }
@@ -210,8 +210,14 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
     
     updateImage: function () {
-        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.fieldConfig.width - 20)
-                                                + "/height/" + (this.fieldConfig.height - 20) + "/contain/true";
+
+        // 5px padding (-10)
+        var width = this.getBody().getWidth()-10;
+        var height = this.getBody().getHeight()-10;
+
+        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + width + "/height/" + height
+            + "/contain/true";
+
         this.getBody().setStyle({
             backgroundImage: "url(" + path + ")",
             backgroundPosition: "center center",
@@ -223,7 +229,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     getBody: function () {
         // get the id from the body element of the panel because there is no method to set body's html
         // (only in configure)
-        var bodyId = Ext.get(this.component.getEl().dom).query(".x-panel-body")[0].getAttribute("id");
+        var bodyId = Ext.get(this.component.getEl().dom).query(".pimcore_droptarget_image")[0].getAttribute("id");
         return Ext.get(bodyId);
     },
 
