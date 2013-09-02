@@ -121,7 +121,7 @@ class OnlineShop_Framework_Impl_CartItem extends Pimcore_Model_Abstract implemen
         }
         catch (Exception $e) {
             try {
-                $cartItem = new self();
+                $cartItem = new static();
                 $cartItem->getResource()->getByCartIdItemKey($cartId, $itemKey, $parentKey);
                 $cartItem->getSubItems();
                 Zend_Registry::set($cacheKey, $cartItem);
