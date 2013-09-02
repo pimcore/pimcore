@@ -945,20 +945,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $this->view->asset = $asset;
 
-        $config = new Asset_Video_Thumbnail_Config();
-        $config->setName("pimcore_video_preview_" . $asset->getId());
-        $config->setAudioBitrate(128);
-        $config->setVideoBitrate(700);
-
-        $config->setItems(array(
-            array(
-                "method" => "scaleByWidth",
-                "arguments" =>
-                array(
-                    "width" => 500
-                )
-            )
-        ));
+        $config = Asset_Video_Thumbnail_Config::getPreviewConfig();
 
         $thumbnail = $asset->getThumbnail($config, array("mp4"));
 
