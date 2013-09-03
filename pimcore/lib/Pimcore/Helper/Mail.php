@@ -182,6 +182,8 @@ CSS;
         }
 
         $emailLog->save();
+
+        return $emailLog;
     }
 
     /**
