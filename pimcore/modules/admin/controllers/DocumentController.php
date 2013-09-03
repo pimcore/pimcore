@@ -734,16 +734,17 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $id = array_shift($idStore["rewrite-stack"]);
         $document = Document::getById($id);
 
-        // create rewriteIds() config parameter
-        $rewriteConfig = array("document" => $idStore["idMapping"]);
+        if($document) {
+            // create rewriteIds() config parameter
+            $rewriteConfig = array("document" => $idStore["idMapping"]);
 
-        $document = Document_Service::rewriteIds($document, $rewriteConfig, array(
-            "enableInheritance" => ($this->getParam("enableInheritance") == "true") ? true : false
-        ));
+            $document = Document_Service::rewriteIds($document, $rewriteConfig, array(
+                "enableInheritance" => ($this->getParam("enableInheritance") == "true") ? true : false
+            ));
 
-        $document->setUserModification($this->getUser()->getId());
-        $document->save();
-        
+            $document->setUserModification($this->getUser()->getId());
+            $document->save();
+        }
 
         // write the store back to the session
         Pimcore_Tool_Session::useSession(function ($session) use ($transactionId, $idStore) {
