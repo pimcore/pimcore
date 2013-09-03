@@ -22,6 +22,13 @@ class Pimcore_Tool_Session {
     protected static $sessions = array();
 
     /**
+     * contains how many sessions are currently open, this is important, because writeClose() must not be called if
+     * there is still an open session, this is especially important if something doesn't use the method use() but get()
+     * so the session isn't closed automatically after the action is done
+     */
+    protected static $openedSessions = 0;
+
+    /**
      * @static
      * @return void
      */
@@ -84,6 +91,8 @@ class Pimcore_Tool_Session {
             self::$sessions[$namespace] = new Zend_Session_Namespace($namespace);
         }
 
+        self::$openedSessions++;
+
         return self::$sessions[$namespace];
     }
 
@@ -94,8 +103,11 @@ class Pimcore_Tool_Session {
     }
 
     public static function writeClose() {
-        // TEMP DISABLED
-        session_write_close();
+        self::$openedSessions--;
+
+        if(!self::$openedSessions) { // do not write session data if there's still an open session
+            session_write_close();
+        }
     }
 
 }
