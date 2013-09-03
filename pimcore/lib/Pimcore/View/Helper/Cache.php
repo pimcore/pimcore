@@ -55,7 +55,7 @@ class Pimcore_View_Helper_Cache_Controller {
 
     public function start() {
                 
-        if($this->editmode && !$this->force) {
+        if(Pimcore_Tool::isFrontentRequestByAdmin() && !$this->force) {
             return false;
         }
         
