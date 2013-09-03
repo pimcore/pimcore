@@ -16,11 +16,6 @@
 class Pimcore_Tool_Frontend {
 
     /**
-     * @var null
-     */
-    protected static $_sitesCache = null;
-
-    /**
      * Returns the Website-Config
      * @return Zend_Config
      * @depricated
@@ -93,12 +88,13 @@ class Pimcore_Tool_Frontend {
      */
     public static function getSiteForDocument($document) {
 
-        if(self::$_sitesCache) {
-            $sites = self::$_sitesCache;
+        $cacheKey = "sites_full_list";
+        if(Zend_Registry::isRegistered($cacheKey)) {
+            $sites = Zend_Registry::get($cacheKey);
         } else {
             $sites = new Site_List();
             $sites = $sites->load();
-            self::$_sitesCache = $sites;
+            Zend_Registry::set($cacheKey, $sites);
         }
 
         foreach ($sites as $site) {
