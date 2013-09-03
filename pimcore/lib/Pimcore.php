@@ -827,6 +827,10 @@ class Pimcore {
         $output = null;
         $contentEncoding = null;
 
+        if(headers_sent()) {
+            return $data;
+        }
+
         header("Connection: close\r\n");
 
         // check for supported content-encodings
@@ -895,7 +899,7 @@ class Pimcore {
         }
 
         if(strlen($output) > 0) {
-            // check here for existing content, otherwise readfile() and similar functions are not working anymore
+            // check here if there is actually content, otherwise readfile() and similar functions are not working anymore
             header("Content-Length: " . mb_strlen($output, "latin1"));
         }
         header("X-Powered-By: pimcore");
