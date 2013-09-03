@@ -38,11 +38,6 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
     public $modificationDate;
 
     /**
-     * @var array
-     */
-    public static $_keyCache = array();
-
-    /**
      * @return string
      */
     public function getKey() {
@@ -155,8 +150,9 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
       */
      public static function getByKey($id, $create = false, $returnIdIfEmpty = false)
      {
-         if(array_key_exists($id, static::$_keyCache)) {
-            return static::$_keyCache[$id];
+         $cacheKey = "translation_" . $id;
+         if(Zend_Registry::isRegistered($cacheKey)) {
+            return Zend_Registry::get($cacheKey);
          }
 
          $translation = new static();
@@ -193,7 +189,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
          }
 
          // add to key cache
-         static::$_keyCache[$idOriginal] = $translation;
+         Zend_Registry::set($cacheKey, $translation);
 
          return $translation;
      }
