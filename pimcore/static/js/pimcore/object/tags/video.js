@@ -141,6 +141,13 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                         this.form.getComponent("type").setValue("youtube");
 
                         // get id
+                        /*
+                            Possible Links:
+                            # //www.youtube.com/embed/Vhf5cuXiLTA
+                            # http://www.youtube.com/watch?v=Vhf5cuXiLTA
+                            # http://youtu.be/Vhf5cuXiLTA
+
+                         */
                         var path = el.getValue();
                         var parts = parse_url(path);
 
@@ -167,11 +174,24 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                     } else if (el.getValue().indexOf("vime") >= 0 && el.getValue().indexOf("//") >= 0) {
                         this.form.getComponent("type").setValue("vimeo");
 
+                        /*
+                            Possible Links
+                            # http://vimeo.com/11696823
+                            # http://player.vimeo.com/video/22775048?title=0&byline=0&portrait=0
+                         */
+
                         var path = el.getValue();
                         var parts = parse_url(path);
 
                         var pathParts = trim(parts["path"]," /").split("/");
-                        tmpId = intval(pathParts[1]);
+
+                        for(var i=0; i<pathParts.length; i++) {
+                            if(intval(pathParts[i]) > 0 && pathParts[i].length > 3) {
+                                tmpId = pathParts[i];
+                                break;
+                            }
+                        }
+
                         if(tmpId) {
                             el.setValue(tmpId);
                         }
