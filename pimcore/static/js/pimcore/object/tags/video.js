@@ -37,11 +37,9 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                                         metaData.css += " grid_value_inherited";
                                     }
 
-                                    if (value && value.id) {
-                                        /*
-                                        @TODO
-                                        return '<img src="/admin/asset/get-image-thumbnail/id/' + value.id
-                                            + '/width/88/height/88/frame/true" />';*/
+                                    if (value) {
+                                        return '<img src="/admin/asset/get-video-thumbnail/id/' + value
+                                            + '/width/88/height/88/frame/true" />';
                                     }
                                 }.bind(this, field.key)};
     },    
@@ -99,7 +97,8 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             title: this.fieldConfig.title,
-            cls: "object_field"
+            cls: "object_field",
+            bodyCssClass: "pimcore_video_container"
         };
 
         this.component = new Ext.Panel(conf);
@@ -358,7 +357,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
         var width = this.getBody().getWidth();
         var height = this.getBody().getHeight();
 
-        var content = '<div style="">' + t("preview_not_available") + "</div>";
+        var content = '';
 
         if(this.data.type == "asset" && pimcore.settings.videoconverter) {
             content = '<img src="/admin/asset/get-video-thumbnail/width/'

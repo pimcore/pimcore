@@ -195,6 +195,12 @@ class Object_Class_Data_Video extends Object_Class_Data {
         return $video;
     }
 
+    public function getDataForGrid($data, $object = null) {
+        if ($data && $data->getType() == "asset" && $data->getData() instanceof Asset) {
+            return $data->getData()->getId();
+        }
+    }
+
     /**
      * @see Object_Class_Data::getVersionPreview
      * @param Asset_Image $data
