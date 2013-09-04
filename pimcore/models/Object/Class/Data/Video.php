@@ -41,14 +41,14 @@ class Object_Class_Data_Video extends Object_Class_Data {
      *
      * @var string
      */
-    public $queryColumnType = "varchar(255)";
+    public $queryColumnType = "text";
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "varchar(255)";
+    public $columnType = "text";
 
     /**
      * Type for the generated phpdoc
