@@ -15,14 +15,14 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Class_Data_Image extends Object_Class_Data {
+class Object_Class_Data_Video extends Object_Class_Data {
 
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "image";
+    public $fieldtype = "video";
 
     /**
      * @var integer
@@ -37,30 +37,25 @@ class Object_Class_Data_Image extends Object_Class_Data {
     public $height;
 
     /**
-     * @var string
-     */
-    public $uploadPath;
-
-    /**
      * Type for the column to query
      *
      * @var string
      */
-    public $queryColumnType = "int(11)";
+    public $queryColumnType = "varchar(255)";
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "int(11)";
+    public $columnType = "varchar(255)";
 
     /**
      * Type for the generated phpdoc
      *
      * @var string
      */
-    public $phpdocType = "Asset_Image";
+    public $phpdocType = "Object_Data_Video";
 
     /**
      * @return integer
@@ -101,8 +96,14 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @return integer|null
      */
     public function getDataForResource($data, $object = null) {
-        if ($data instanceof Asset) {
-            return $data->getId();
+        if($data) {
+            $data = clone $data;
+            if($data->getData() instanceof Asset) {
+                $data->setData($data->getData()->getId());
+            }
+
+            $data = object2array($data);
+            return serialize($data);
         }
         return null;
     }
@@ -113,8 +114,24 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @return Asset
      */
     public function getDataFromResource($data) {
-        if (intval($data) > 0) {
-            return Asset_Image::getById($data);
+        if($data) {
+            $raw = unserialize($data);
+
+            if($raw["type"] == "asset") {
+                if($asset = Asset::getById($raw["data"])) {
+                    $raw["data"] = $asset;
+                }
+            }
+
+            if($raw["data"]) {
+                $video = new Object_Data_Video();
+                $video->setData($raw["data"]);
+                $video->setType($raw["type"]);
+                $video->setPoster($raw["poster"]);
+                $video->setTitle($raw["title"]);
+                $video->setDescription($raw["description"]);
+                return $video;
+            }
         }
         return null;
     }
@@ -126,12 +143,7 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @return integer|null
      */
     public function getDataForQueryResource($data, $object = null) {
-
-     
-        if ($data instanceof Asset) {
-            return $data->getId();
-        } 
-        return null;
+        return $this->getDataForResource($data, $object);
     }
 
     /**
@@ -141,7 +153,16 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @return integer
      */
     public function getDataForEditmode($data, $object = null) {
-        return $this->getDataForResource($data, $object);
+
+        if($data) {
+            $data = clone $data;
+            if($data->getData() instanceof Asset) {
+                $data->setData($data->getData()->getFullpath());
+            }
+            $data = object2array($data);
+        }
+
+        return $data;
     }
 
     /**
@@ -151,7 +172,27 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @return Asset
      */
     public function getDataFromEditmode($data, $object = null) {
-        return $this->getDataFromResource($data);
+
+        $video = null;
+
+        if($data["type"] == "asset") {
+            if($asset = Asset::getByPath($data["data"])){
+                $data["data"] = $asset;
+            } else {
+                $data["data"] = null;
+            }
+        }
+
+        if(!empty($data["data"])) {
+            $video = new Object_Data_Video();
+            $video->setData($data["data"]);
+            $video->setType($data["type"]);
+            $video->setPoster($data["poster"]);
+            $video->setTitle($data["title"]);
+            $video->setDescription($data["description"]);
+        }
+
+        return $video;
     }
 
     /**
@@ -160,9 +201,11 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @return string
      */
     public function getVersionPreview($data) {
-        if ($data instanceof Asset_Image) {
-            return '<img src="/admin/asset/get-image-thumbnail/id/' . $data->getId() . '/width/100/height/100/aspectratio/true" />';
+        if ($data && $data->getType() == "asset" && $data->getData() instanceof Asset) {
+            return '<img src="/admin/asset/get-video-thumbnail/id/' . $data->getData()->getId() . '/width/100/height/100/aspectratio/true" />';
         }
+
+        return parent::getVersionPreview($data);
     }
 
     /**
@@ -173,8 +216,12 @@ class Object_Class_Data_Image extends Object_Class_Data {
      */
     public function getForCsvExport($object) {
         $data = $this->getDataFromObjectParam($object);
-        if ($data instanceof Element_Interface) {
-            return $data->getFullPath();
+        if ($data) {
+            $value = $data->getData();
+            if($value instanceof Asset) {
+                $value = $value->getId();
+            }
+            return $data->getType() . "~" . $value;
         } else return null;
     }
 
@@ -187,12 +234,24 @@ class Object_Class_Data_Image extends Object_Class_Data {
      */
     public function getFromCsvImport($importValue) {
         $value = null;
-        if ($el = Asset::getByPath($importValue)) {
-            $value = $el;
+
+        if($importValue && strpos($importValue, "~")) {
+            list($type, $data) = explode("~", $importValue);
+            if($type && $data) {
+                $video = new Object_Data_Video();
+                $video->setType($type);
+                if($type == "asset") {
+                    if($asset = Asset::getById($data)) {
+                        $video->setData($asset);
+                    } else {
+                        return null;
+                    }
+                } else {
+                    $video->setData($data);
+                }
+            }
         }
-        else {
-            $value = null;
-        }
+
         return $value;
     }
 
@@ -205,9 +264,9 @@ class Object_Class_Data_Image extends Object_Class_Data {
 
         $tags = is_array($tags) ? $tags : array();
 
-        if ($data instanceof Asset_Image) {
-            if (!array_key_exists($data->getCacheTag(), $tags)) {
-                $tags = $data->getCacheTags($tags);
+        if ($data && $data->getData() instanceof Asset) {
+            if (!array_key_exists($data->getData()->getCacheTag(), $tags)) {
+                $tags = $data->getData()->getCacheTags($tags);
             }
         }
         return $tags;
@@ -220,9 +279,9 @@ class Object_Class_Data_Image extends Object_Class_Data {
 
         $dependencies = array();
 
-        if ($data instanceof Asset) {
-            $dependencies["asset_" . $data->getId()] = array(
-                "id" => $data->getId(),
+        if ($data && $data->getData() instanceof Asset) {
+            $dependencies["asset_" . $data->getData()->getId()] = array(
+                "id" => $data->getData()->getId(),
                 "type" => "asset"
             );
         }
@@ -238,8 +297,8 @@ class Object_Class_Data_Image extends Object_Class_Data {
      */
     public function getForWebserviceExport ($object) {
         $data = $this->getDataFromObjectParam($object);
-        if($data instanceof Asset){
-            return  $data->getId();
+        if($data){
+            return  $this->getDataForResource($data);
         }
     }
 
@@ -252,50 +311,15 @@ class Object_Class_Data_Image extends Object_Class_Data {
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null) {
 
-        $id = $value;
-
-        if ($idMapper && !empty($value)) {
-            $id = $idMapper->getMappedId("asset", $value);
-            $fromMapper = true;
-
-        }
-
-        $asset = Asset::getById($id);
-        if(empty($id) && !$fromMapper){
-            return null;
-        } else if (is_numeric($value) and $asset instanceof Asset) {
-            return $asset;
-        } else {
-            if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                throw new Exception("cannot get values from web service import - invalid data, referencing unknown asset with id [ ".$value." ]");
-            } else {
-                $idMapper->recordMappingFailure("object", $relatedObject->getId(), "asset", $value);
-            }
-        }
-    }
-
-    /**
-     * @param string $uploadPath
-     */
-    public function setUploadPath($uploadPath)
-    {
-        $this->uploadPath = $uploadPath;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUploadPath()
-    {
-        return $this->uploadPath;
+        // @TODO
+        return null;
     }
 
     /** True if change is allowed in edit mode.
      * @return bool
      */
     public function isDiffChangeAllowed() {
-        return true;
+        return false;
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
@@ -306,8 +330,9 @@ class Object_Class_Data_Image extends Object_Class_Data {
      */
     public function getDiffVersionPreview($data, $object = null) {
         $versionPreview = null;
-        if ($data instanceof Asset_Image) {
-            $versionPreview = "/admin/asset/get-image-thumbnail/id/" . $data->getId() . "/width/150/height/150/aspectratio/true";
+
+        if ($data && $data->getData() instanceof Asset) {
+            $versionPreview = '/admin/asset/get-video-thumbnail/id/' . $data->getData()->getId() . '/width/100/height/100/aspectratio/true';
         }
 
         if ($versionPreview) {
@@ -315,9 +340,9 @@ class Object_Class_Data_Image extends Object_Class_Data {
             $value["src"] = $versionPreview;
             $value["type"] = "img";
             return $value;
-        } else {
-            return "";
         }
+
+        return "";
     }
 
     /**
@@ -337,9 +362,9 @@ class Object_Class_Data_Image extends Object_Class_Data {
      */
     public function rewriteIds($object, $idMapping, $params = array()) {
         $data = $this->getDataFromObjectParam($object, $params);
-        if($data instanceof Asset_Image) {
-            if(array_key_exists("asset", $idMapping) and array_key_exists($data->getId(), $idMapping["asset"])) {
-                return Asset::getById($idMapping["asset"][$data->getId()]);
+        if ($data && $data->getData() instanceof Asset) {
+            if(array_key_exists("asset", $idMapping) and array_key_exists($data->getData()->getId(), $idMapping["asset"])) {
+                return Asset::getById($idMapping["asset"][$data->getData()->getId()]);
             }
         }
         return $data;
