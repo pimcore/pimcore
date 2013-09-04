@@ -23,12 +23,12 @@ class Object_Data_Video {
     public $type;
 
     /**
-     * @var string
+     * @var Asset|string
      */
     public $data;
 
     /**
-     * @var int
+     * @var Asset
      */
     public $poster;
 
@@ -43,7 +43,7 @@ class Object_Data_Video {
     public $description;
 
     /**
-     * @param string $data
+     * @param Asset|string $data
      */
     public function setData($data)
     {
@@ -51,7 +51,7 @@ class Object_Data_Video {
     }
 
     /**
-     * @return string
+     * @return Asset|string
      */
     public function getData()
     {
@@ -91,7 +91,7 @@ class Object_Data_Video {
     }
 
     /**
-     * @param int $poster
+     * @param Asset $poster
      */
     public function setPoster($poster)
     {
@@ -99,7 +99,7 @@ class Object_Data_Video {
     }
 
     /**
-     * @return int
+     * @return Asset
      */
     public function getPoster()
     {

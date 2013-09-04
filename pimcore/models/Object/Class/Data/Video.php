@@ -101,6 +101,9 @@ class Object_Class_Data_Video extends Object_Class_Data {
             if($data->getData() instanceof Asset) {
                 $data->setData($data->getData()->getId());
             }
+            if($data->getPoster() instanceof Asset) {
+                $data->setPoster($data->getPoster()->getId());
+            }
 
             $data = object2array($data);
             return serialize($data);
@@ -120,6 +123,12 @@ class Object_Class_Data_Video extends Object_Class_Data {
             if($raw["type"] == "asset") {
                 if($asset = Asset::getById($raw["data"])) {
                     $raw["data"] = $asset;
+                }
+            }
+
+            if($raw["poster"]) {
+                if($poster = Asset::getById($raw["poster"])) {
+                    $raw["poster"] = $poster;
                 }
             }
 
@@ -159,6 +168,9 @@ class Object_Class_Data_Video extends Object_Class_Data {
             if($data->getData() instanceof Asset) {
                 $data->setData($data->getData()->getFullpath());
             }
+            if($data->getPoster() instanceof Asset) {
+                $data->setPoster($data->getPoster()->getFullpath());
+            }
             $data = object2array($data);
         }
 
@@ -180,6 +192,14 @@ class Object_Class_Data_Video extends Object_Class_Data {
                 $data["data"] = $asset;
             } else {
                 $data["data"] = null;
+            }
+        }
+
+        if($data["poster"]) {
+            if($poster = Asset::getByPath($data["poster"])){
+                $data["poster"] = $poster;
+            } else {
+                $data["poster"] = null;
             }
         }
 
@@ -275,6 +295,13 @@ class Object_Class_Data_Video extends Object_Class_Data {
                 $tags = $data->getData()->getCacheTags($tags);
             }
         }
+
+        if ($data && $data->getPoster() instanceof Asset) {
+            if (!array_key_exists($data->getPoster()->getCacheTag(), $tags)) {
+                $tags = $data->getPoster()->getCacheTags($tags);
+            }
+        }
+
         return $tags;
     }
 
@@ -288,6 +315,13 @@ class Object_Class_Data_Video extends Object_Class_Data {
         if ($data && $data->getData() instanceof Asset) {
             $dependencies["asset_" . $data->getData()->getId()] = array(
                 "id" => $data->getData()->getId(),
+                "type" => "asset"
+            );
+        }
+
+        if ($data && $data->getPoster() instanceof Asset) {
+            $dependencies["asset_" . $data->getPoster()->getId()] = array(
+                "id" => $data->getPoster()->getId(),
                 "type" => "asset"
             );
         }
@@ -368,11 +402,19 @@ class Object_Class_Data_Video extends Object_Class_Data {
      */
     public function rewriteIds($object, $idMapping, $params = array()) {
         $data = $this->getDataFromObjectParam($object, $params);
+
         if ($data && $data->getData() instanceof Asset) {
             if(array_key_exists("asset", $idMapping) and array_key_exists($data->getData()->getId(), $idMapping["asset"])) {
-                return Asset::getById($idMapping["asset"][$data->getData()->getId()]);
+                $data->setData(Asset::getById($idMapping["asset"][$data->getData()->getId()]));
             }
         }
+
+        if ($data && $data->getPoster() instanceof Asset) {
+            if(array_key_exists("asset", $idMapping) and array_key_exists($data->getPoster()->getId(), $idMapping["asset"])) {
+                $data->setPoster(Asset::getById($idMapping["asset"][$data->getPoster()->getId()]));
+            }
+        }
+
         return $data;
     }
 }
