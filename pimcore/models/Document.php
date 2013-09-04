@@ -992,7 +992,7 @@ class Document extends Element_Abstract {
 
             // try to get from cache
             $cacheKey = "document_properties_" . $this->getId();
-            $cacheTags = $this->getCacheTags(array("properties"));
+            $cacheTags = $this->getCacheTags(array("properties" => "properties"));
 
             if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
                 $properties = $this->getResource()->getProperties();
