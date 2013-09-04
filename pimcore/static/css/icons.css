@@ -1353,3 +1353,7 @@
 .pimcore_icon_deployment {
     background: url(/pimcore/static/img/icon/database_refresh.png) left center no-repeat !important;
 }
+
+.pimcore_icon_video {
+    background: url(/pimcore/static/img/icon/film.png) left center no-repeat !important;
+}

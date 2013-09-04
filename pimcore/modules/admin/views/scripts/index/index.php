@@ -293,6 +293,7 @@ $scripts = array(
     "pimcore/object/classes/data/href.js",
     "pimcore/object/classes/data/image.js",
     "pimcore/object/classes/data/hotspotimage.js",
+    "pimcore/object/classes/data/video.js",
     "pimcore/object/classes/data/input.js",
     "pimcore/object/classes/data/numeric.js",
     "pimcore/object/classes/data/objects.js",
@@ -349,6 +350,7 @@ $scripts = array(
     "pimcore/object/tags/href.js",
     "pimcore/object/tags/image.js",
     "pimcore/object/tags/hotspotimage.js",
+    "pimcore/object/tags/video.js",
     "pimcore/object/tags/input.js",
     "pimcore/object/tags/numeric.js",
     "pimcore/object/tags/objects.js",
@@ -503,7 +505,8 @@ if($this->config->services->google->browserapikey) {
         showCloseConfirmation: true,
         debug_admin_translations: <?php echo Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
         document_generatepreviews: <?php echo Zend_Json::encode((bool) $this->config->documents->generatepreview) ?>,
-        htmltoimage: <?php echo Zend_Json::encode(Pimcore_Image_HtmlToImage::isSupported()) ?>
+        htmltoimage: <?php echo Zend_Json::encode(Pimcore_Image_HtmlToImage::isSupported()) ?>,
+        videoconverter: <?php echo Zend_Json::encode(Pimcore_Video::isAvailable()) ?>
     };
 </script>
 

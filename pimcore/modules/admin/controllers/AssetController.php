@@ -848,7 +848,11 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
     public function getVideoThumbnailAction() {
 
-        $video = Asset::getById(intval($this->getParam("id")));
+        if($this->getParam("id")) {
+            $video = Asset::getById(intval($this->getParam("id")));
+        } else if ($this->getParam("path")) {
+            $video = Asset::getByPath($this->getParam("path"));
+        }
         $thumbnail = $video->getImageThumbnailConfig($this->getAllParams());
 
         $format = strtolower($thumbnail->getFormat());
