@@ -71,6 +71,18 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
             self::$isInitial = false;
 
+            // check for a locale first, and set it if available
+            if($this->getParam("pimcore_parentDocument")) {
+                // this is a special exception for renderlets in editmode (ajax request), because they depend on the locale of the parent document
+                // otherwise there'll be notices like:  Notice: 'No translation for the language 'XX' available.'
+                if($parentDocument = Document::getById($this->getParam("pimcore_parentDocument"))) {
+                    if($parentDocument->getProperty("language")) {
+                        $this->setLocale($parentDocument->getProperty("language"));
+                    }
+                }
+            }
+
+
             // no document available, continue, ...
             return;
         }
@@ -113,9 +125,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
         // register global locale if the document has the system property "language"
         if($this->document->getProperty("language")) {
-            $locale = new Zend_Locale($this->document->getProperty("language"));
-		    Zend_Registry::set('Zend_Locale', $locale);
-            $this->getResponse()->setHeader("Content-Language",strtolower(str_replace("_","-", (string) $locale)), true);
+            $this->setLocale($this->document->getProperty("language"));
         }
 
         // for editmode
@@ -233,6 +243,14 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
     
     public function getConfig () {
         return $this->config;
+    }
+
+    public function setLocale($locale) {
+        if(Zend_Locale::isLocale($locale)) {
+            $locale = new Zend_Locale($locale);
+            Zend_Registry::set('Zend_Locale', $locale);
+            $this->getResponse()->setHeader("Content-Language",strtolower(str_replace("_","-", (string) $locale)), true);
+        }
     }
 
     public function setDocument($document) {
