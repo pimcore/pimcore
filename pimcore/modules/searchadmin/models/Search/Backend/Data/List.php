@@ -29,9 +29,9 @@ class Search_Backend_Data_List extends Pimcore_Model_List_Abstract {
         "type",
         "subtype",
         "published",
-        "creationdate",
-        "modificationdate",
-        "userowner",
+        "creationDate",
+        "modificationDate",
+        "userOwner",
         "userModification"
     );
 

@@ -17,29 +17,32 @@ abstract class Pimcore_Model_List_Resource_Abstract extends Pimcore_Model_Resour
 
     protected  function getOrder() {
 
-        if ($this->model->getOrder() || $this->model->getOrderKey()) {
+        $orderKey = $this->model->getOrderKey();
+        $order = $this->model->getOrder();
 
-            $orderKey = $this->model->getOrderKey();
-            $order = $this->model->getOrder();
-
+        if (!empty($order) || !empty($orderKey)) {
             $c = 0;
             $lastOrder = $order[0];
             $parts = array();
 
-            foreach ($orderKey as $key) {
-                if ($order[$c]) {
-                    $lastOrder = $order[$c];
+            if(is_array($orderKey)) {
+                foreach ($orderKey as $key) {
+                    if ($order[$c]) {
+                        $lastOrder = $order[$c];
+                    }
+
+                    $parts[] = $key . " " . $lastOrder;
+
+                    $c++;
                 }
-
-                $parts[] = $key . " " . $lastOrder;
-
-                $c++;
             }
-            return " ORDER BY " . implode(", ", $parts);
+
+            if(!empty($parts)) {
+                return " ORDER BY " . implode(", ", $parts);
+            }
         }
 
         return "";
-
     }
 
     protected  function getGroupBy() {
