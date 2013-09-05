@@ -159,31 +159,33 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
 			  PRIMARY KEY  (`oo_id`)
 			) DEFAULT CHARSET=utf8;");
 
+        // update default value of classname columns
+        $this->db->query('ALTER TABLE `' . $objectTable . "` ALTER COLUMN `oo_className` SET DEFAULT '" . $this->model->getName() . "';");
+
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTable . "` (
 			  `oo_id` int(11) NOT NULL default '0',
 			  PRIMARY KEY  (`oo_id`)
 			) DEFAULT CHARSET=utf8;");
 
-            $this->db->query("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTableRelation . "` (
-              `src_id` int(11) NOT NULL DEFAULT '0',
-              `dest_id` int(11) NOT NULL DEFAULT '0',
-              `type` varchar(50) NOT NULL DEFAULT '',
-              `fieldname` varchar(70) NOT NULL DEFAULT '0',
-              `index` int(11) unsigned NOT NULL DEFAULT '0',
-              `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
-              `ownername` varchar(70) NOT NULL DEFAULT '',
-              `position` varchar(70) NOT NULL DEFAULT '0',
-              PRIMARY KEY (`src_id`,`dest_id`,`ownertype`,`ownername`,`fieldname`,`type`,`position`),
-              KEY `index` (`index`),
-              KEY `src_id` (`src_id`),
-              KEY `dest_id` (`dest_id`),
-              KEY `fieldname` (`fieldname`),
-              KEY `position` (`position`),
-              KEY `ownertype` (`ownertype`),
-              KEY `type` (`type`),
-              KEY `ownername` (`ownername`)
-            ) DEFAULT CHARSET=utf8;");
-
+        $this->db->query("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTableRelation . "` (
+          `src_id` int(11) NOT NULL DEFAULT '0',
+          `dest_id` int(11) NOT NULL DEFAULT '0',
+          `type` varchar(50) NOT NULL DEFAULT '',
+          `fieldname` varchar(70) NOT NULL DEFAULT '0',
+          `index` int(11) unsigned NOT NULL DEFAULT '0',
+          `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
+          `ownername` varchar(70) NOT NULL DEFAULT '',
+          `position` varchar(70) NOT NULL DEFAULT '0',
+          PRIMARY KEY (`src_id`,`dest_id`,`ownertype`,`ownername`,`fieldname`,`type`,`position`),
+          KEY `index` (`index`),
+          KEY `src_id` (`src_id`),
+          KEY `dest_id` (`dest_id`),
+          KEY `fieldname` (`fieldname`),
+          KEY `position` (`position`),
+          KEY `ownertype` (`ownertype`),
+          KEY `type` (`type`),
+          KEY `ownername` (`ownername`)
+        ) DEFAULT CHARSET=utf8;");
 
 
 
