@@ -412,7 +412,7 @@ class Document_Tag_Video extends Document_Tag
 
         // get youtube id
         $youtubeId = $this->id;
-        if(strpos($youtubeId, "//") === 0) {
+        if(strpos($youtubeId, "//") !== false) {
             $parts = parse_url($this->id);
             parse_str($parts["query"], $vars);
 
