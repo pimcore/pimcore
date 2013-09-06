@@ -19,6 +19,21 @@
         <th>Value</th>
     </tr>
 
+    <tr class="system">
+        <td>Path</td>
+        <td>o_path</td>
+        <td><?php echo $this->object->getFullpath(); ?></td>
+    </tr>
+    <tr class="system">
+        <td>Published</td>
+        <td>o_published</td>
+        <td><?php echo Zend_Json::encode($this->object->getPublished()); ?></td>
+    </tr>
+
+    <tr class="">
+        <td colspan="3">&nbsp;</td>
+    </tr>
+
 <?php $c = 0; ?>
 <?php foreach ($fields as $fieldName => $definition) { ?>
     <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
