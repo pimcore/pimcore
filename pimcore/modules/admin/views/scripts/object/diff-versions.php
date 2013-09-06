@@ -22,6 +22,23 @@ $fields = $this->object1->geto_class()->getFieldDefinitions();
         <th>Version 2</th>
     </tr>
 
+    <tr class="system">
+        <td>Path</td>
+        <td>o_path</td>
+        <td><?php echo $this->object1->getFullpath(); ?></td>
+        <td><?php echo $this->object2->getFullpath(); ?></td>
+    </tr>
+    <tr class="system">
+        <td>Published</td>
+        <td>o_published</td>
+        <td><?php echo Zend_Json::encode($this->object1->getPublished()); ?></td>
+        <td><?php echo Zend_Json::encode($this->object2->getPublished()); ?></td>
+    </tr>
+
+    <tr class="">
+        <td colspan="3">&nbsp;</td>
+    </tr>
+
 <?php $c = 0; ?>
 <?php foreach ($fields as $fieldName => $definition) { ?>
 <?php
