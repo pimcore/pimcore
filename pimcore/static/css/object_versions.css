@@ -45,3 +45,7 @@ body {
 .preview .modified {
 	background: #ffe5e5;
 }
+
+.system {
+    font-family: "courier new";
+}
