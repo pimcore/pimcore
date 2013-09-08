@@ -20,6 +20,9 @@ $workingDirectory = getcwd();
 include("../../../cli/startup.php");
 chdir($workingDirectory);
 
+// start global session an keep it open (this is needed for the CSRF protections from adminer)
+Pimcore_Tool_Session::get();
+
 // only for logged in users
 $user = Pimcore_Tool_Authentication::authenticateSession();
 if(!$user instanceof User) {
