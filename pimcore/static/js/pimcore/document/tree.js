@@ -580,7 +580,7 @@ pimcore.document.tree = Class.create({
             }
         }
 
-        if (this.attributes.type == "page") {
+        if (this.attributes.type == "page" || this.attributes.type == "hardlink") {
             menu.add(new Ext.menu.Item({
                 text: t('open'),
                 iconCls: "pimcore_icon_openpage",
