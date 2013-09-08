@@ -543,7 +543,7 @@ class Asset extends Element_Abstract {
         // create foldertree
         $destinationPath = $this->getFileSystemPath();
         if (!is_dir(dirname($destinationPath))) {
-            mkdir(dirname($destinationPath), self::$chmod, true);
+            mkdir(dirname($destinationPath), 0777, true); // note that the permission in mkdir is umasked
         }
 
         if ($this->getType() != "folder") {
