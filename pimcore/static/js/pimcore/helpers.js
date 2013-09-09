@@ -1319,6 +1319,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                 }
 
                 var imageHtml = "";
+                var imagePreload = [];
 
                 var uriPrefix = window.location.protocol + "//" + window.location.host;
 
@@ -1326,15 +1327,14 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                 if(thumbnails && thumbnails.length) {
                     imageHtml += '<div class="thumbnails">';
                     for(var i=0; i<thumbnails.length; i++) {
-                        imageHtml += '<div class="small" ' +
-                            'style="background-image:url(' + uriPrefix + thumbnails[i] + ')"></div>';
+                        imageHtml += '<div class="thumb small"><img src="' + uriPrefix + thumbnails[i] + '" onload="this.parentNode.className += \' complete\';" /></div>';
                     }
                     imageHtml += '</div>';
                 }
 
                 var thumbnail = node.attributes.thumbnail;
                 if(thumbnail) {
-                    imageHtml = '<img src="' + uriPrefix + thumbnail + '" />';
+                    imageHtml = '<div class="thumb big"><img src="' + uriPrefix + thumbnail + '" onload="this.parentNode.className += \' complete\';" /></div>';
                 }
 
                 if(imageHtml) {
@@ -1376,8 +1376,18 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                     iframe.setAttribute("marginwidth", "0");
                     iframe.setAttribute("style", "width: 100%; height: 2500px;");
 
-                    imageHtml += '<link rel="stylesheet" type="text/css" ' +
-                        'href="' + uriPrefix + '/pimcore/static/css/tree-preview-frame.css" />';
+                    imageHtml =
+                        '<style type="text/css">' +
+                            'body { margin:0; padding: 0; } ' +
+                            '.thumbnails { width: 410px; } ' +
+                            '.thumb { border: 1px solid #999; border-radius: 5px; background: url(' + uriPrefix + '/pimcore/static/img/loading.gif) no-repeat center center; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing:border-box; } ' +
+                            '.big { min-height: 300px; } ' +
+                            '.complete { border:none; border-radius: 0;}' +
+                            '.small { width: 130px; height: 130px; float: left; overflow: hidden; margin: 0 5px 5px 0; } ' +
+                            '.small.complete img { min-width: 100%; max-height: 100%; } ' +
+                            '/* firefox fix: remove loading/broken image icon */ @-moz-document url-prefix() { img:-moz-loading { visibility: hidden; } img:-moz-broken { -moz-force-broken-image-icon: 0;}} ' +
+                        '</style>' +
+                        imageHtml;
 
                     iframe.onload = function () {
                         this.contentWindow.document.body.innerHTML = imageHtml;
