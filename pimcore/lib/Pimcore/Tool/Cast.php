@@ -1,11 +1,18 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: jaichhorn
- * Date: 08.02.13
- * Time: 09:10
- * To change this template use File | Settings | File Templates.
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     New BSD License
  */
+
 class Pimcore_Tool_Cast {
 
     public static function castToClass($class, $object)
