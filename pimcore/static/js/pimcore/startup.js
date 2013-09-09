@@ -292,7 +292,7 @@ Ext.onReady(function () {
     }
 
     // check for flash player
-    if (!swfobject.hasFlashPlayerVersion("10.1")) {
+    if (!swfobject.hasFlashPlayerVersion("11")) {
         statusbar.add('<div class="pimcore_statusbar_flash">' + t("update_flash") + "</div>");
         statusbar.add("-");
     }
