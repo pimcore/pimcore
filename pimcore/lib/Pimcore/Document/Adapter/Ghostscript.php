@@ -102,6 +102,21 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
         return $this;
     }
 
+    public function getPdf($path = null) {
+
+        if(!$path && $this->path) {
+            $path = $this->path;
+        }
+
+        if(preg_match("/\.?pdf$/", $path)) { // only PDF's are supported
+            return $path;
+        }
+
+        $message = "Couldn't load document " . $path . " only PDF documents are currently supported";
+        Logger::error($message);
+        throw new \Exception($message);
+    }
+
     /**
      * @param bool $blob
      * @return int
