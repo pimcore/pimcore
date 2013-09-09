@@ -1,4 +1,4 @@
-Copyright (c) 2010, elements.at New Media Solutions GmbH, pimcore.org
+Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
 All rights reserved.
 
 For details please see: http://www.pimcore.org/license
@@ -13,7 +13,7 @@ are permitted provided that the following conditions are met:
       this list of conditions and the following disclaimer in the documentation
       and/or other materials provided with the distribution.
 
-    * Neither the name of elements.at New Media Solutions GmbH nor the names of its
+    * Neither the name of pimcore GmbH nor the names of its
       contributors may be used to endorse or promote products derived from this
       software without specific prior written permission.
 

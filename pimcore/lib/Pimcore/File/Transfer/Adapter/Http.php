@@ -1,9 +1,16 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: Christian Kogler
- * Date: 01.06.13
- * Time: 12:50
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     New BSD License
  */
 
 class Pimcore_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Http {
