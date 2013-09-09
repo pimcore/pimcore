@@ -124,10 +124,12 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         $loadChildren = true;
 
         if($this->getElement() instanceof Asset_Folder) {
-            $size = foldersize($this->getElement()->getFileSystemPath());
-            $limit = filesize2bytes(ini_get("memory_limit") . "B") / 2;
-            if($size > $limit) {
-                $loadChildren = false; // do not load children, it's simply too big
+            if(is_dir($this->getElement()->getFileSystemPath())) {
+                $size = foldersize($this->getElement()->getFileSystemPath());
+                $limit = filesize2bytes(ini_get("memory_limit") . "B") / 2;
+                if($size > $limit) {
+                    $loadChildren = false; // do not load children, it's simply too big
+                }
             }
         }
 
