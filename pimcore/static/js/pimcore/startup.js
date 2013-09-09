@@ -298,8 +298,8 @@ Ext.onReady(function () {
     }
 
     statusbar.add("->");
-    statusbar.add('powered by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">'
-                + 'pimcore</a> - Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
+    statusbar.add('&copy by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">'
+                + 'pimcore GmbH</a> - pimcore Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
 
     if (!empty(pimcore.settings.liveconnectToken)) {
         pimcore.settings.liveconnect.setToken(pimcore.settings.liveconnectToken);
