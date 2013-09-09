@@ -108,7 +108,8 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
     		`key` INT NOT NULL,
     		`value` VARCHAR(255),
             `translated` LONGTEXT NULL,
-    	    PRIMARY KEY  (`id`)
+    	    PRIMARY KEY  (`id`),
+	        INDEX `o_id` (`o_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
         $validColumns = $this->getValidTableColumns($table, false); // no caching of table definition
