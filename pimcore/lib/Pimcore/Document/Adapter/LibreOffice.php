@@ -119,6 +119,7 @@ class Pimcore_Document_Adapter_LibreOffice extends Pimcore_Document_Adapter_Ghos
         }
 
         try {
+            // if the document is already an PDF, delegate the call directly to parent::getPdf() (Ghostscript)
             $pdfPath = parent::getPdf($path);
             return $pdfPath;
         } catch (\Exception $e) {
