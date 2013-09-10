@@ -47,13 +47,14 @@ limitations under the License.
         PDFJS.imageResourcesPath = '/pimcore/static/js/lib/pdf.js/web/images/';
         PDFJS.workerSrc = '/pimcore/static/js/lib/pdf.js/build/pdf.worker.js';
         DEFAULT_URL = '<?php echo $pdfPath; ?>';
+        SETTINGS_MEMORY = 50;
     </script>
 </head>
 
 <body tabindex="1">
-<div id="outerContainer" class="loadingInProgress">
+<div id="outerContainer" class="loadingInProgress sidebarOpen">
 
-<div id="sidebarContainer">
+<div id="sidebarContainer" class="">
     <div id="toolbarSidebar">
         <div class="splitToolbarButton toggled">
             <button id="viewThumbnail" class="toolbarButton group toggled" title="Show Thumbnails" tabindex="2"
