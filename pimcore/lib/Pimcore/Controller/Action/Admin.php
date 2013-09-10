@@ -259,8 +259,22 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
     protected function logUsageStatistics() {
 
         $params = array();
-        $disallowedKeys = array("_dc", "module", "controller", "action");
+        $disallowedKeys = array("_dc", "module", "controller", "action", "password");
         foreach($this->getAllParams() as $key => $value) {
+
+            if(is_json($value)) {
+                $value = Zend_Json::decode($value);
+                if(is_array($value)) {
+                    array_walk_recursive($value, function (&$item, $key) {
+                        if(strpos($key, "pass") !== false) {
+                            $item = "*************";
+                        }
+                    });
+                }
+                $value = Zend_Json::encode($value);
+            }
+
+
             if(!in_array($key, $disallowedKeys) && is_string($value)) {
                 $params[$key] = (strlen($value) > 40) ? substr($value, 0, 40) . "..." : $value;
             }

@@ -13,6 +13,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+function is_json($string) {
+    json_decode($string);
+    return (json_last_error() == JSON_ERROR_NONE);
+}
 
 function foldersize($path) {
     $total_size = 0;
