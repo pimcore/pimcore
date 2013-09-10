@@ -491,7 +491,6 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
 
                 Zend_Registry::set($cacheKey, $cart);
             } catch (Exception $ex) {
-                echo $ex;
                 Logger::debug($ex->getMessage());
                 return null;
             }
