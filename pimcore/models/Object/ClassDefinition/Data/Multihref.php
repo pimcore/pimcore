@@ -295,7 +295,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         //return null when data is not set
         if (!$data) return null;
 
-        $ids = array();
+        $d = array();
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
