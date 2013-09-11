@@ -104,7 +104,7 @@ class Document_Tag_Areablock extends Document_Tag {
                 $disabled = true;
             }
 
-            if(!Pimcore_ExtensionManager::isEnabled("brick", $index["type"]) && $options['dontCheckEnabled'] != true) {
+            if(!$this->isBrickEnabled($index["type"]) && $options['dontCheckEnabled'] != true) {
                 $disabled = true;
             }
 
@@ -140,8 +140,8 @@ class Document_Tag_Areablock extends Document_Tag {
             $info = new Document_Tag_Area_Info();
             $info->setId($this->currentIndex["type"]);
             $info->setIndex($this->current);
-            $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", Pimcore_ExtensionManager::getPathForExtension($this->currentIndex["type"],"brick")));
-            $info->setConfig(Pimcore_ExtensionManager::getBrickConfig($this->currentIndex["type"]));
+            $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getPathForBrick($this->currentIndex["type"])));
+            $info->setConfig($this->getBrickConfig($this->currentIndex["type"]));
         } catch (Exception $e) {
             $info = null;
         }
@@ -305,7 +305,7 @@ class Document_Tag_Areablock extends Document_Tag {
 
         reset($this->indices);
         $this->setupStaticEnvironment();
-        
+
         // get configuration data for admin
         if (method_exists($this, "getDataEditmode")) {
             $data = $this->getDataEditmode();
@@ -326,13 +326,13 @@ class Document_Tag_Areablock extends Document_Tag {
         );
         $options = @Zend_Json::encode($options);
         //$options = base64_encode($options);
-        
+
         $this->outputEditmode('
             <script type="text/javascript">
                 editableConfigurations.push('.$options.');
             </script>
         ');
-        
+
         // set name suffix for the whole block element, this will be addet to all child elements of the block
         $suffixes = Zend_Registry::get("pimcore_tag_block_current");
         $suffixes[] = $this->getName();
@@ -435,22 +435,25 @@ class Document_Tag_Areablock extends Document_Tag {
      * @return void
      */
     public function setOptions($options) {
-               
+
+        // we need to set this here otherwise custom areaDir's won't work
+        $this->options = $options;
+
         // read available types
         $areaConfigs = $this->getBrickConfigs();
         $availableAreas = array();
         $availableAreasSort = array();
-        
+
         if(!is_array($options["allowed"])) {
             $options["allowed"] = array();
         }
-        
+
         foreach ($areaConfigs as $areaName => $areaConfig) {
 
             // don't show disabled bricks
             if(!$options['dontCheckEnabled']){
-                if(!Pimcore_ExtensionManager::isEnabled("brick", $areaName)) {
-                     continue;
+                if(!$this->isBrickEnabled($areaName)) {
+                    continue;
                 }
             }
 
@@ -463,7 +466,7 @@ class Document_Tag_Areablock extends Document_Tag {
 
                 if($this->view->editmode) {
                     if(empty($icon)) {
-                        $path = Pimcore_ExtensionManager::getPathForExtension($areaName,"brick");
+                        $path = $this->getPathForBrick($areaName);
                         $iconPath = $path . "/icon.png";
                         if(file_exists($iconPath)) {
                             $icon = str_replace(PIMCORE_DOCUMENT_ROOT, "", $iconPath);
@@ -500,7 +503,7 @@ class Document_Tag_Areablock extends Document_Tag {
             foreach ($availableAreas as $area) {
                 $groupingareas[$area["type"]] = $area["type"];
             }
-            
+
             $groups = array();
             foreach ($options["group"] as $name => $areas) {
 
@@ -529,11 +532,11 @@ class Document_Tag_Areablock extends Document_Tag {
 
             $options["group"] = $groups;
         }
-        
+
         if (empty($options["limit"])) {
             $options["limit"] = 1000000;
         }
-        
+
 
         $this->options = $options;
         return $this;
@@ -556,7 +559,7 @@ class Document_Tag_Areablock extends Document_Tag {
     public function getCurrent() {
         return $this->current-1;
     }
-    
+
     /**
      * Return current index
      *
@@ -575,7 +578,7 @@ class Document_Tag_Areablock extends Document_Tag {
         $this->current = 0;
         reset($this->indices);
     }
-    
+
     /**
      * @return bool
      */
@@ -584,7 +587,7 @@ class Document_Tag_Areablock extends Document_Tag {
     }
 
 
-     /**
+    /**
      * Receives a Webservice_Data_Document_Element from webservice import and fill the current tag's data
      *
      * @abstract
@@ -598,14 +601,59 @@ class Document_Tag_Areablock extends Document_Tag {
     }
 
 
+    public function isCustomAreaPath(){
+        $options = $this->getOptions();
+        return array_key_exists("areaDir", $options);
+    }
+
+    public function isBrickEnabled($name) {
+        if($this->isCustomAreaPath()) {
+            return true;
+        }
+
+        return Pimcore_ExtensionManager::isEnabled("brick", $name);
+    }
+
+    public function getAreaDirectory() {
+        $options = $this->getOptions();
+        return PIMCORE_DOCUMENT_ROOT . "/" . trim($options["areaDir"], "/");
+    }
+
+    public function getPathForBrick($name) {
+        if($this->isCustomAreaPath()) {
+            return $this->getAreaDirectory() . "/" . $name;
+        }
+
+        return Pimcore_ExtensionManager::getPathForExtension($name,"brick");
+    }
+
+    public function getBrickConfig($name) {
+        if($this->isCustomAreaPath()) {
+            $path = $this->getPathForBrick($name);
+            Pimcore_ExtensionManager::getBrickConfig($name, $path);
+        }
+
+        return Pimcore_ExtensionManager::getBrickConfig($name);
+    }
+
     /**
      * @return array
      */
     public function getAreaDirs () {
+
+        if($this->isCustomAreaPath()) {
+            return Pimcore_ExtensionManager::getBrickDirectories($this->getAreaDirectory());
+        }
+
         return Pimcore_ExtensionManager::getBrickDirectories();
     }
 
     public function getBrickConfigs() {
+
+        if($this->isCustomAreaPath()) {
+            return Pimcore_ExtensionManager::getBrickConfigs($this->getAreaDirectory());
+        }
+
         return Pimcore_ExtensionManager::getBrickConfigs();
     }
 }
