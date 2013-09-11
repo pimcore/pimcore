@@ -26,3 +26,9 @@ $routeCustom = new Zend_Controller_Router_Route(
 $router->addRoute('custom', $routeCustom);
 $front->setRouter($router);
 */
+
+/*
+// add a custom module directory
+$front = Zend_Controller_Front::getInstance();
+$front->addModuleDirectory(PIMCORE_DOCUMENT_ROOT . "/customModuleDirectory");
+*/
