@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -158,24 +158,34 @@ class Pimcore_ExtensionManager {
     }
 
 
-    public static function getBrickDirectories () {
+    public static function getBrickDirectories ($customPath = null) {
+
+        $cacheKey = "brick_directories";
+        if($customPath) {
+            $cacheKey .= "_" . crc32($customPath);
+        }
+
         $areas = array();
         try
         {
-            $areas = Zend_Registry::get('brick_directories');
+            $areas = Zend_Registry::get($cacheKey);
         }
         catch  (Exception $e)
         {
-            $areaRepositories = array(
-                PIMCORE_WEBSITE_PATH . "/views/areas",
-                PIMCORE_WEBSITE_VAR . "/areas"
-            );
+            if($customPath) {
+                $areaRepositories = array($customPath);
+            } else {
+                $areaRepositories = array(
+                    PIMCORE_WEBSITE_PATH . "/views/areas",
+                    PIMCORE_WEBSITE_VAR . "/areas"
+                );
+            }
 
             // get directories
             foreach ($areaRepositories as $respository) {
 
-            if(is_dir($respository) && is_readable($respository)) {
-                $blockDirs = scandir($respository);
+                if(is_dir($respository) && is_readable($respository)) {
+                    $blockDirs = scandir($respository);
 
                     foreach ($blockDirs as $blockDir) {
                         if(is_dir($respository . "/" . $blockDir)) {
@@ -186,20 +196,25 @@ class Pimcore_ExtensionManager {
                     }
                 }
             }
-            Zend_Registry::set('brick_directories', $areas);
+            Zend_Registry::set($cacheKey, $areas);
         }
 
         return $areas;
     }
 
-    public static function getBrickConfigs() {
+    public static function getBrickConfigs($customPath = null) {
+
+        $cacheKey = "brick_configs";
+        if($customPath) {
+            $cacheKey .= "_" . crc32($customPath);
+        }
 
         try {
-            $configs = Zend_Registry::get('brick_configs');
+            $configs = Zend_Registry::get($cacheKey);
         } catch (Exception $e) {
             $configs = array();
 
-            foreach (self::getBrickDirectories() as $areaName => $path) {
+            foreach (self::getBrickDirectories($customPath) as $areaName => $path) {
                 try {
                     $configs[$areaName] = new Zend_Config_Xml($path . "/area.xml");
                 } catch (Exception $e) {
@@ -208,7 +223,7 @@ class Pimcore_ExtensionManager {
                 }
             }
 
-            Zend_Registry::set('brick_configs', $configs);
+            Zend_Registry::set($cacheKey, $configs);
         }
 
         return $configs;
