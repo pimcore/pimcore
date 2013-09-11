@@ -39,7 +39,7 @@ class Tool_CustomReport_Adapter_Sql {
             }
 
             $sql = $baseQuery["data"] . $order;
-            if($offset && $limit) {
+            if($offset !== null && $limit) {
                 $sql .= " LIMIT $offset,$limit";
             }
             $data = $db->fetchAll($sql);
