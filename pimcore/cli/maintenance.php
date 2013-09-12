@@ -109,7 +109,7 @@ $manager->registerJob(new Schedule_Maintenance_Job("downloadmaxminddb", "Pimcore
 // call plugins
 $plugins = Pimcore_API_Plugin_Broker::getInstance()->getPlugins();
 foreach ($plugins as $plugin) {
-    $id = get_class($plugin);
+    $id = str_replace('\\', '_', get_class($plugin));
 
     $jobRegistered = null;
 
