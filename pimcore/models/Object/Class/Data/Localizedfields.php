@@ -200,6 +200,8 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
      */
     public function getVersionPreview($data)
     {
+        // this is handled directly in the template
+        // /pimcore/modules/admin/views/scripts/object/preview-version.php
         return "LOCALIZED FIELDS";
     }
 

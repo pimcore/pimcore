@@ -41,18 +41,36 @@ $fields = $this->object1->geto_class()->getFieldDefinitions();
 
 <?php $c = 0; ?>
 <?php foreach ($fields as $fieldName => $definition) { ?>
-<?php
-$v1 = $definition->getVersionPreview($this->object1->getValueForFieldName($fieldName));
-$v2 = $definition->getVersionPreview($this->object2->getValueForFieldName($fieldName));
-
-?>
-    <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-        <td><?php echo $definition->getTitle() ?></td>
-        <td><?php echo $definition->getName() ?></td>
-        <td><?php echo $v1 ?></td>
-        <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?php echo $v2 ?></td>
-    </tr>
-<?php $c++;
+    <?php if($definition instanceof Object_Class_Data_Localizedfields) { ?>
+        <?php foreach(Pimcore_Tool::getValidLanguages() as $language) { ?>
+            <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
+                <?php
+                    $v1 = $lfd->getVersionPreview($this->object1->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
+                    $v2 = $lfd->getVersionPreview($this->object2->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
+                ?>
+                <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
+                    <td><?php echo $lfd->getTitle() ?> (<?php echo $language; ?>)</td>
+                    <td><?php echo $lfd->getName() ?></td>
+                    <td><?php echo $v1 ?></td>
+                    <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?php echo $v2 ?></td>
+                </tr>
+                <?php
+                $c++;
+            } ?>
+        <?php } ?>
+    <?php } else { ?>
+        <?php
+            $v1 = $definition->getVersionPreview($this->object1->getValueForFieldName($fieldName));
+            $v2 = $definition->getVersionPreview($this->object2->getValueForFieldName($fieldName));
+        ?>
+        <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
+            <td><?php echo $definition->getTitle() ?></td>
+            <td><?php echo $definition->getName() ?></td>
+            <td><?php echo $v1 ?></td>
+            <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?php echo $v2 ?></td>
+        </tr>
+    <?php } ?>
+    <?php $c++;
 } ?>
 </table>
 
