@@ -27,10 +27,10 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
         return "pimcore_icon_analytics";
     },
 
-    getLayout: function () {
+    getLayout: function (portletId) {
         var site = 0;
         try {
-            site = this.portal.userConf.settings["pimcore.layout.portlets.analytics"].site;
+            site = this.getConfig();
         }
         catch(e) {
 
@@ -64,6 +64,10 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
                         autoDestroy: true,
                         url: '/admin/portal/portlet-analytics-sites',
                         root: 'data',
+                        baseParams: {
+                            key: this.portal.key,
+                            id: portletId
+                        },
                         fields: ['id','site']
                     }),
                     triggerAction: "all",
@@ -75,12 +79,14 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
                                 }
                             });
                             Ext.Ajax.request({
-                                url: "/admin/portal/portlet-analytics-save",
+                                url: "/admin/portal/update-portlet-config",
                                 params: {
-                                    site:  el.getValue()
+                                    key: this.portal.key,
+                                    id: portletId,
+                                    config:  el.getValue()
                                 }
                             });
-                        }
+                        }.bind(this)
                    }
                 }
             ];
@@ -123,6 +129,7 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
             items: [panel]
         }));
 
+        this.layout.portletId = portletId;
         return this.layout;
     }
 });

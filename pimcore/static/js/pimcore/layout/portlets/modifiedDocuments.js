@@ -27,7 +27,7 @@ pimcore.layout.portlets.modifiedDocuments = Class.create(pimcore.layout.portlets
         return "pimcore_icon_portlet_modified_documents";
     },
 
-    getLayout: function () {
+    getLayout: function (portletId) {
 
         var store = new Ext.data.JsonStore({
             autoDestroy: true,
@@ -65,6 +65,7 @@ pimcore.layout.portlets.modifiedDocuments = Class.create(pimcore.layout.portlets
             items: [grid]
         }));
 
+        this.layout.portletId = portletId;
         return this.layout;
     }
 });

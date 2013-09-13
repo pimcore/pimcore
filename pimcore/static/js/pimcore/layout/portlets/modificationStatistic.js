@@ -27,7 +27,7 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
         return "pimcore_icon_portlet_modification_statistic";
     },
 
-    getLayout: function () {
+    getLayout: function (portletId) {
 
         var store = new Ext.data.JsonStore({
             autoDestroy: true,
@@ -84,6 +84,7 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
             items: [panel]
         }));
 
+        this.layout.portletId = portletId;
         return this.layout;
     }
 });

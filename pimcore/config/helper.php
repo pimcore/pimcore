@@ -14,8 +14,12 @@
  */
 
 function is_json($string) {
-    json_decode($string);
-    return (json_last_error() == JSON_ERROR_NONE);
+    if(is_string($string)) {
+        json_decode($string);
+        return (json_last_error() == JSON_ERROR_NONE);
+    } else {
+        return false;
+    }
 }
 
 function foldersize($path) {

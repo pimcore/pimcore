@@ -15,14 +15,24 @@
 pimcore.registerNS("pimcore.layout.portal");
 pimcore.layout.portal = Class.create({
 
-    initialize: function () {
+    key: "welcome",
+
+    initialize: function (key) {
         this.activePortlets = [];
+
+        if(key) {
+            this.key = key;
+        }
+
         this.loadConfiguration();
     },
 
     loadConfiguration: function () {
         Ext.Ajax.request({
             url: "/admin/portal/get-configuration",
+            params: {
+                key: this.key
+            },
             success: this.initConfiguration.bind(this) 
         });
     },
@@ -41,14 +51,17 @@ pimcore.layout.portal = Class.create({
         if (userConf.positions.length == 2) {
 
             for (var i = 0; i < 2; i++) {
-                for (var c = 0; c <= userConf.positions[i].length; c++) {
+                for (var c = 0; c < userConf.positions[i].length; c++) {
                     try {
-                        dynClass = eval(userConf.positions[i][c]);
+                        dynClass = eval(userConf.positions[i][c].type);
                         if (dynClass) {
                             portletInstance = new dynClass();
                             portletInstance.setPortal(this);
-                            config[i].push(portletInstance.getLayout());
-                            this.activePortlets.push(userConf.positions[i][c]);
+                            portletInstance.setConfig(userConf.positions[i][c].config);
+                            var portletLayout = portletInstance.getLayout(userConf.positions[i][c].id);
+
+                            config[i].push(portletLayout);
+                            this.activePortlets.push(userConf.positions[i][c].id);
                         }
                     }
                     catch (e) {
@@ -56,6 +69,7 @@ pimcore.layout.portal = Class.create({
                     }
                 }
             }
+
             this.getTabPanel(config);
         }
 
@@ -63,7 +77,7 @@ pimcore.layout.portal = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_portal");
+        tabPanel.activate("pimcore_portal_" + key);
     },
 
     getTabPanel: function (config) {
@@ -83,18 +97,54 @@ pimcore.layout.portal = Class.create({
 
         if (!this.panel) {
             this.panel = new Ext.Panel({
-                id: "pimcore_portal",
-                title: t("welcome"),
+                id: "pimcore_portal_" + this.key,
+                title: this.key == "welcome" ? t("welcome") : this.key,
                 border: false,
                 iconCls: "pimcore_icon_welcome",
                 closable:true,
                 autoScroll: true,
                 tbar: {
-                    items: ["->",{
-                        text: t("add_portlet"),
-                        iconCls: "pimcore_icon_portlet_add",
-                        menu: portletMenu
-                    }]
+                    items: [
+                        "->",
+                        {
+                            text: t("add_portlet"),
+                            iconCls: "pimcore_icon_portlet_add",
+                            menu: portletMenu
+                        },
+                        {
+                            text: t("delete_dashboard"),
+                            iconCls: "pimcore_icon_delete",
+                            handler: function() {
+                                Ext.Msg.show({
+                                    title:t('delete_dashboard'),
+                                    msg: t('really_delete_dashboard'),
+                                    buttons: Ext.Msg.YESNO,
+                                    fn: function(btn) {
+                                        if(btn == "yes") {
+                                            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+                                            tabPanel.remove("pimcore_portal_" + this.key);
+
+                                            Ext.Ajax.request({
+                                                url: "/admin/portal/delete-dashboard",
+                                                params: {
+                                                    key: this.key
+                                                },
+                                                success: function() {
+                                                    Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
+                                                        if (buttonValue == "yes") {
+                                                            window.location.reload();
+                                                        }
+                                                    });
+                                                }
+                                            });
+
+                                        }
+                                    }.bind(this),
+                                    icon: Ext.MessageBox.QUESTION
+                                });
+                            }.bind(this)
+                        }
+                    ]
                 },
                 items: [
                     {
@@ -104,13 +154,13 @@ pimcore.layout.portal = Class.create({
                         autoHeight: true,
                         items:[
                             {
-                                id: "pimcore_portal_col0",
+                                id: "pimcore_portal_col0_" + this.key,
                                 columnWidth: 0.5,
                                 style:'padding:10px',
                                 items:[config[0]]
                             },
                             {
-                                id: "pimcore_portal_col1",
+                                id: "pimcore_portal_col1_" + this.key,
                                 columnWidth: 0.5,
                                 style:'padding:10px 10px 10px 0',
                                 items:[config[1]]
@@ -121,24 +171,25 @@ pimcore.layout.portal = Class.create({
                             Ext.Ajax.request({
                                 url: "/admin/portal/reorder-widget",
                                 params: {
-                                    type: e.panel.initialConfig.widgetType,
+                                    key: this.key,
+                                    id: e.panel.portletId,
                                     column: e.columnIndex,
                                     row: e.position
                                 }
                             });
-                        }
+                        }.bind(this)
                     }
                     }
                 ]
             });
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("layout_portal");
+                pimcore.globalmanager.remove("layout_portal_" + this.key);
             }.bind(this));
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
-            tabPanel.activate("pimcore_portal");
+            tabPanel.activate("pimcore_portal_" + this.key);
 
             pimcore.layout.refresh();
         }
@@ -148,22 +199,26 @@ pimcore.layout.portal = Class.create({
 
     addPortlet: function (type) {
 
-        if (in_array(type, this.activePortlets)) {
-            return;
-        }
-
         var dynClass = eval(type);
         if (dynClass) {
-            var portletInstance = new dynClass();
-            portletInstance.setPortal(this);
 
-            var col = Ext.getCmp("pimcore_portal_col0");
-            col.add(portletInstance.getLayout());
-            this.panel.doLayout();
-            
             Ext.Ajax.request({
                 url: "/admin/portal/add-widget",
-                params: {type: type}
+                params: {
+                    key: this.key,
+                    type: type
+                },
+                success: function(response) {
+                    var response = Ext.decode(response.responseText);
+                    if(response.success) {
+                        var portletInstance = new dynClass();
+                        portletInstance.setPortal(this);
+
+                        var col = Ext.getCmp("pimcore_portal_col0_" + this.key);
+                        col.add(portletInstance.getLayout(response.id));
+                        this.panel.doLayout();
+                    }
+                }.bind(this)
             });
 
             this.activePortlets.push(type);
