@@ -15,46 +15,53 @@
 
 class Admin_PortalController extends Pimcore_Controller_Action_Admin {
 
+    /**
+     * @var Pimcore_Helper_Dashboard
+     */
+    protected $dashboardHelper = null;
 
-    protected function getConfigDir () {
-        return PIMCORE_CONFIGURATION_DIRECTORY."/portal";
-    }
-
-    protected function getConfigFile () {
-        return $this->getConfigDir()."/portal_".$this->getUser()->getId().".psf";
+    public function init() {
+        parent::init();
+        $this->dashboardHelper = new Pimcore_Helper_Dashboard($this->getUser());
     }
 
     protected function getCurrentConfiguration () {
-
-        if(is_file($this->getConfigFile())) {
-            $conf = Pimcore_Tool_Serialize::unserialize(file_get_contents($this->getConfigFile()));
-            if($conf["positions"]) {
-                return $conf;
-            }
-        }
-
-        // if no configuration exists, return the base config
-        return array(
-            "positions" => array(
-                array(
-                    "pimcore.layout.portlets.modificationStatistic",
-                    "pimcore.layout.portlets.modifiedAssets"
-                ),
-                array(
-                    "pimcore.layout.portlets.modifiedObjects",
-                    "pimcore.layout.portlets.modifiedDocuments"
-                )
-            )
-        );
+        return $this->dashboardHelper->getDashboard($this->getParam("key"));
     }
 
     protected function saveConfiguration ($config) {
-        if(!is_dir($this->getConfigDir())) {
-            mkdir($this->getConfigDir());
+        $this->dashboardHelper->saveDashboard($this->getParam("key"), $config);
+    }
+
+    public function dashboardListAction() {
+        $dashboards = $this->dashboardHelper->getAllDashboards();
+
+        $data = array();
+        foreach($dashboards as $key => $config) {
+            if($key != "welcome") {
+                $data[] = $key;
+            }
         }
 
-        file_put_contents($this->getConfigFile(), Pimcore_Tool_Serialize::serialize($config));
-        chmod($this->getConfigFile(), 0766);
+        $this->_helper->json($data);
+    }
+
+    public function createDashboardAction() {
+        $dashboards = $this->dashboardHelper->getAllDashboards();
+        $key = $this->getParam("key");
+
+        if($dashboards[$key]) {
+            throw new Exception("Dashboard with name $key already exists!");
+        } else {
+            $this->dashboardHelper->saveDashboard($key);
+            $this->_helper->json(array("success" => true));
+        }
+    }
+
+    public function deleteDashboardAction() {
+        $key = $this->getParam("key");
+        $this->dashboardHelper->deleteDashboard($key);
+        $this->_helper->json(array("success" => true));
     }
 
     public function getConfigurationAction () {
@@ -69,7 +76,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
 
         foreach ($config["positions"] as $col) {
             foreach ($col as $row) {
-                if($row != $this->getParam("type")) {
+                if($row['id'] != $this->getParam("id")) {
                     $newConfig[$colCount][] = $row;
                 }
             }
@@ -86,17 +93,22 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
 
         $config = $this->getCurrentConfiguration();
 
-        $config["positions"][0][] = $this->getParam("type");
+        $nextId = 0;
+        foreach($config['positions'] as $col) {
+            foreach($col as $row) {
+                $nextId = ($row['id'] > $nextId ? $row['id'] : $nextId);
+            }
+        }
+
+        $nextId = $nextId+1;
+        $config["positions"][0][] = array("id" => $nextId, "type" => $this->getParam("type"), "config" => null);
 
         $this->saveConfiguration($config);
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(array("success" => true, "id" => $nextId));
     }
 
     public function reorderWidgetAction () {
-
-        $config = $this->getCurrentConfiguration();
-
 
         $config = $this->getCurrentConfiguration();
         $newConfig = array(array(),array());
@@ -104,14 +116,16 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
 
         foreach ($config["positions"] as $col) {
             foreach ($col as $row) {
-                if($row != $this->getParam("type")) {
+                if($row['id'] != $this->getParam("id")) {
                     $newConfig[$colCount][] = $row;
+                } else {
+                   $toMove = $row;
                 }
             }
             $colCount++;
         }
 
-        array_splice($newConfig[$this->getParam("column")],$this->getParam("row"),0,$this->getParam("type"));
+        array_splice($newConfig[$this->getParam("column")],$this->getParam("row"),0,array($toMove));
 
         $config["positions"] = $newConfig;
         $this->saveConfiguration($config);
@@ -120,11 +134,30 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
     }
 
 
+    public function updatePortletConfigAction() {
 
+        $key = $this->getParam("key");
+        $id = $this->getParam("id");
+        $configuration = $this->getParam("config");
+
+        $dashboard = $this->dashboardHelper->getDashboard($key);
+        foreach ($dashboard["positions"] as &$col) {
+            foreach ($col as &$portlet) {
+                if($portlet['id'] == $id) {
+                    $portlet['config'] = $configuration;
+                    break;
+                }
+            }
+        }
+        $this->dashboardHelper->saveDashboard($key, $dashboard);
+
+        $this->_helper->json(array("success" => true));
+    }
 
 
     public function portletFeedAction () {
-        $config = $this->getCurrentConfiguration();
+        $dashboard = $this->getCurrentConfiguration();
+        $id = $this->getParam("id");
 
         $cache = Pimcore_Model_Cache::getInstance();
         if($cache) {
@@ -132,11 +165,16 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
             Zend_Feed_Reader::setCache($cache);
         }
 
-
-        $feedUrl = "";
-        if($config["settings"]["pimcore.layout.portlets.feed"]["url"]) {
-            $feedUrl = $config["settings"]["pimcore.layout.portlets.feed"]["url"];
+        $portlet = array();
+        foreach ($dashboard["positions"] as $col) {
+            foreach ($col as $row) {
+                if($row['id'] == $id) {
+                    $portlet = $row;
+                }
+            }
         }
+
+        $feedUrl = $portlet['config'];
 
         $feed = null;
         if(!empty($feedUrl)) {
@@ -173,16 +211,6 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array(
             "entries" => $entries
         ));
-    }
-
-    public function portletFeedSaveAction () {
-        $config = $this->getCurrentConfiguration();
-
-        $config["settings"]["pimcore.layout.portlets.feed"]["url"] = $this->getParam("url");
-
-        $this->saveConfiguration($config);
-
-        $this->_helper->json(array("success" => true));
     }
 
     public function portletModifiedDocumentsAction () {
@@ -319,17 +347,5 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
 
         $this->_helper->json(array("data" => $data));
     }
-
-    public function portletAnalyticsSaveAction () {
-        $config = $this->getCurrentConfiguration();
-
-        $config["settings"]["pimcore.layout.portlets.analytics"]["site"] = $this->getParam("site");
-
-        $this->saveConfiguration($config);
-
-        $this->_helper->json(array("success" => true));
-    }
-
-
 
 }

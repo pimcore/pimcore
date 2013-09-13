@@ -22,18 +22,86 @@ pimcore.layout.toolbar = Class.create({
 
         var fileItems = [];
 
-        fileItems.push({
-            text: t("welcome"),
+        this.dashboardMenu = new Ext.menu.Item({
+            text: t("dashboards"),
             iconCls: "pimcore_icon_welcome",
             handler: function () {
-                try {
-                    pimcore.globalmanager.get("layout_portal").activate();
+            },
+            menu: [
+                {
+                    text: t("welcome"),
+                    iconCls: "pimcore_icon_welcome",
+                    handler: function () {
+                        try {
+                            pimcore.globalmanager.get("layout_portal_welcome").activate();
+                        }
+                        catch (e) {
+                            pimcore.globalmanager.add("layout_portal_welcome", new pimcore.layout.portal());
+                        }
+                    }
                 }
-                catch (e) {
-                    pimcore.globalmanager.add("layout_portal", new pimcore.layout.portal());
-                }
-            }
+            ]
         });
+
+        Ext.Ajax.request({
+            url: "/admin/portal/dashboard-list",
+            success: function (response) {
+                var data = Ext.decode(response.responseText);
+                for(var i = 0; i < data.length; i++) {
+                    this.dashboardMenu.menu.add(new Ext.menu.Item({
+                        text: data[i],
+                        iconCls: "pimcore_icon_welcome",
+                        handler: function (key) {
+                            try {
+                                pimcore.globalmanager.get("layout_portal_" + key).activate();
+                            }
+                            catch (e) {
+                                pimcore.globalmanager.add("layout_portal_" + key, new pimcore.layout.portal(key));
+                            }
+                        }.bind(this, data[i])
+                    }));
+                }
+
+                this.dashboardMenu.menu.add(new Ext.menu.Separator({}));
+                this.dashboardMenu.menu.add({
+                    text: t("add_dashboard"),
+                    iconCls: "pimcore_icon_add",
+                    handler: function () {
+                        Ext.MessageBox.prompt(t('create_new_dashboard'), t('please_enter_the_name_of_the_new_dashboard'),
+                            function (button, value, object) {
+                                if(button == "ok") { 
+                                    Ext.Ajax.request({
+                                        url: "/admin/portal/create-dashboard",
+                                        params: {
+                                            key: value
+                                        },
+                                        success: function(response) {
+                                            var response = Ext.decode(response.responseText);
+                                            if(response.success) {
+                                                Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
+                                                    if (buttonValue == "yes") {
+                                                        window.location.reload();
+                                                    }
+                                                });
+                                                try {
+                                                    pimcore.globalmanager.get("layout_portal_" + value).activate();
+                                                }
+                                                catch (e) {
+                                                    pimcore.globalmanager.add("layout_portal_" + value, new pimcore.layout.portal(value));
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        );
+                    }.bind(this)
+                });
+            }.bind(this)
+        });
+
+
+        fileItems.push(this.dashboardMenu);
 
         if (user.isAllowed("documents")) {
 //            fileItems.push({
