@@ -239,7 +239,10 @@ class Asset_Video_Thumbnail_Processor {
         $instance->setProcessId($processId);
 
         if(is_file($instance->getJobFile())) {
-            $instance = Pimcore_Tool_Serialize::unserialize(file_get_contents($instance->getJobFile()));
+            $i = Pimcore_Tool_Serialize::unserialize(file_get_contents($instance->getJobFile()));
+            if($i instanceof Asset_Video_Thumbnail_Processor) {
+                $instance = $i;
+            }
         }
 
         return $instance->getStatus();
