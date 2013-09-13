@@ -42,9 +42,35 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
 
     public function getSubtypeAction () {
 
-        $id = (int) $this->getParam("id");
+        $idOrPath = $this->getParam("id");
         $type = $this->getParam("type");
-        $el = Element_Service::getElementById($type, $id);
+        if (is_numeric($idOrPath)) {
+            $el = Element_Service::getElementById($type, (int) $idOrPath);
+        } else {
+            if ($type == "document") {
+                $urlParts = parse_url($idOrPath);
+                if($urlParts["path"]) {
+                    $document = Document::getByPath($urlParts["path"]);
+
+                    // search for a page in a site
+                    if(!$document) {
+                        $sitesList = new Site_List();
+                        $sitesObjects = $sitesList->load();
+
+                        foreach ($sitesObjects as $site) {
+                            if ($site->getRootDocument() && in_array($urlParts["host"],$site->getDomains())) {
+                                if($document = Document::getByPath($site->getRootDocument() . $urlParts["path"])) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                $el = $document;
+            } else {
+                $el = Element_Service::getElementByPath($type, $idOrPath);
+            }
+        }
 
         if($el) {
             if($el instanceof Asset || $el instanceof Document) {
@@ -57,7 +83,7 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
 
             $this->_helper->json(array(
                 "subtype" => $subtype,
-                "id" => $id,
+                "id" => $el->getId(),
                 "type" => $type,
                 "success" => true
             ));

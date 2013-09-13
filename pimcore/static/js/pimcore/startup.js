@@ -522,7 +522,7 @@ Ext.onReady(function () {
 
     var openDocumentByPath = new Ext.KeyMap(document, {
         key:"f",
-        fn:pimcore.helpers.openDocumentByPathDialog,
+        fn:pimcore.helpers.openElementByIdDialog.bind(this, "document"),
         ctrl:true,
         alt:false,
         shift:true,

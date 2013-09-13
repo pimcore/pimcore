@@ -36,11 +36,11 @@ pimcore.layout.toolbar = Class.create({
         });
 
         if (user.isAllowed("documents")) {
-            fileItems.push({
-                text: t("open_document_by_url"),
-                iconCls: "pimcore_icon_open_document_by_url",
-                handler: pimcore.helpers.openDocumentByPathDialog
-            });
+//            fileItems.push({
+//                text: t("open_document_by_url"),
+//                iconCls: "pimcore_icon_open_document_by_url",
+//                handler: pimcore.helpers.openDocumentByPathDialog
+//            });
 
             fileItems.push({
                 text: t("open_document_by_id"),
