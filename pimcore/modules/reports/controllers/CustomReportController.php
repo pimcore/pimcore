@@ -37,7 +37,13 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
             }
         }
 
-        $this->_helper->json($reports);
+        if($this->getParam("portlet")) {
+            $this->_helper->json(array("data" => $reports));
+        } else {
+            $this->_helper->json($reports);
+        }
+
+
     }
 
     public function addAction () {

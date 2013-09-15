@@ -849,6 +849,10 @@
     background: url(/pimcore/static/img/icon/brick_edit.png) left center no-repeat !important;
 }
 
+.pimcore_icon_portlet_custom_reports {
+    background: url(/pimcore/static/img/icon/database.png) left center no-repeat !important;
+}
+
 
 
 .pimcore_icon_portlet_modification_statistic {
