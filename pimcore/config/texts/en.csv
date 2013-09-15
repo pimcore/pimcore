@@ -1436,3 +1436,5 @@
 "please_enter_the_name_of_the_new_dashboard","Please Enter the name of the new Dashboard"
 "delete_dashboard","Delete Dashboard"
 "really_delete_dashboard","Really delete current dashboard?"
+"portlet_customreport", "Custom Report"
+"portlet_customreport_settings", "Settings Custom Report"
