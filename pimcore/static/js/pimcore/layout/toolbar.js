@@ -89,6 +89,14 @@ pimcore.layout.toolbar = Class.create({
                                                 catch (e) {
                                                     pimcore.globalmanager.add("layout_portal_" + value, new pimcore.layout.portal(value));
                                                 }
+                                            } else {
+                                                Ext.Msg.show({
+                                                    title: t("error"),
+                                                    msg: t(response.message),
+                                                    buttons: Ext.Msg.OK,
+                                                    animEl: 'elId',
+                                                    icon: Ext.MessageBox.ERROR
+                                                });
                                             }
                                         }
                                     });

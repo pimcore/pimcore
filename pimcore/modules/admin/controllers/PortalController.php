@@ -51,7 +51,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         $key = $this->getParam("key");
 
         if($dashboards[$key]) {
-            throw new Exception("Dashboard with name $key already exists!");
+            $this->_helper->json(array("success" => false, "message" => "dashboard_already_exists"));
         } else {
             $this->dashboardHelper->saveDashboard($key);
             $this->_helper->json(array("success" => true));
