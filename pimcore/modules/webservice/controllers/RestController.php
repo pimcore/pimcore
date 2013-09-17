@@ -881,7 +881,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      * GET http://[YOUR-DOMAIN]/webservice/rest/object-inquire?apikey=[API-KEY]
      * Parameters:
      *      - id single object ID
-     *      - ids comma seperated list of object IDs
+     *      - ids comma separated list of object IDs
      * Returns:
      *      - List with true or false for each ID
      */
@@ -893,7 +893,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      * GET http://[YOUR-DOMAIN]/webservice/rest/asset-inquire?apikey=[API-KEY]
      * Parameters:
      *      - id single asset ID
-     *      - ids comma seperated list of asset IDs
+     *      - ids comma separated list of asset IDs
      * Returns:
      *      - List with true or false for each ID
      */
@@ -905,7 +905,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      * GET http://[YOUR-DOMAIN]/webservice/rest/document-inquire?apikey=[API-KEY]
      * Parameters:
      *      - id single document ID
-     *      - ids comma seperated list of document IDs
+     *      - ids comma separated list of document IDs
      * Returns:
      *      - List with true or false for each ID
      */
