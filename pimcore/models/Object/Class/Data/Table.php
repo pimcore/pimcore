@@ -57,14 +57,14 @@ class Object_Class_Data_Table extends Object_Class_Data {
      *
      * @var string
      */
-    public $queryColumnType = "text";
+    public $queryColumnType = "longtext";
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "text";
+    public $columnType = "longtext";
 
     /**
      * Type for the generated phpdoc
