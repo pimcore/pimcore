@@ -837,6 +837,84 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $this->encoder->encode(array("success" => true, "data" => $result));
     }
 
+    private function inquire($type) {
+        try {
+            $this->checkUserPermission($type . "s");
+            if ($this->isPost()) {
+                $data = file_get_contents("php://input");
+                $idList = explode(',', $data);
+            } else if ($this->getParam("ids")) {
+                $idList = explode(',', $this->getParam("ids"));
+            } else {
+                $idList = array();
+            }
+
+            if ($this->getParam("id")) {
+                $idList[] = $this->getParam("id");
+            }
+
+            $resultData = array();
+
+            foreach ($idList as $id) {
+                $resultData[$id] = false;
+            }
+
+            if ($type == "object") {
+                $col = "o_id";
+            } else {
+                $col = "id";
+            }
+            $sql = "select " . $col . " from " .$type . "s where " . $col . " IN (" . implode(',', $idList) . ")";
+
+            $result = Pimcore_Resource::get()->query($sql);
+            foreach ($result as $item) {
+                $id = $item[$col];
+                $resultData[$id] = true;
+            }
+            $this->encoder->encode(array("success" => true, "data" => $resultData));
+        } catch (Exception $e) {
+            $this->encoder->encode(array("success" => false, "msg" => $e->getMessage()));
+        }
+    }
+
+    /** Checks for existence of the given object IDs
+     * GET http://[YOUR-DOMAIN]/webservice/rest/object-inquire?apikey=[API-KEY]
+     * Parameters:
+     *      - id single object ID
+     *      - ids comma seperated list of object IDs
+     * Returns:
+     *      - List with true or false for each ID
+     */
+    public function objectInquireAction() {
+        $this->inquire("object");
+    }
+
+    /** Checks for existence of the given asset IDs
+     * GET http://[YOUR-DOMAIN]/webservice/rest/asset-inquire?apikey=[API-KEY]
+     * Parameters:
+     *      - id single asset ID
+     *      - ids comma seperated list of asset IDs
+     * Returns:
+     *      - List with true or false for each ID
+     */
+    public function assetInquireAction() {
+        $this->inquire("asset");
+    }
+
+    /** Checks for existence of the given document IDs
+     * GET http://[YOUR-DOMAIN]/webservice/rest/document-inquire?apikey=[API-KEY]
+     * Parameters:
+     *      - id single document ID
+     *      - ids comma seperated list of document IDs
+     * Returns:
+     *      - List with true or false for each ID
+     */
+    public function documentInquireAction() {
+        $this->inquire("document");
+    }
+
+
+
     /**
      * Returns a list of all object brick definitions.
      */
