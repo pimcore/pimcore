@@ -537,6 +537,10 @@
         user = {};
     }
 
+    // unset current assigned persona
+    if(user["persona"]) {
+        delete user["persona"];
+    }
 
     try {
         if(!user["location"] && window["pimcore"] && pimcore["location"] && pimcore["location"]["latitude"]) {
@@ -631,20 +635,6 @@
         util.log(e9);
     }
 
-    try {
-        if(!user["personas"]) {
-            user["personas"] = [];
-        }
-
-        // get new events
-        if(pushData["personas"] && pushData["personas"].length > 0) {
-            for(var ev=0; ev<pushData["personas"].length; ev++) {
-                user["personas"].push(pushData["personas"][ev]);
-            }
-        }
-    } catch (e9) {
-        util.log(e9);
-    }
 
     try {
         if(!user["referrer"]) {
@@ -686,6 +676,8 @@
     try {
         if(!user["persona"] && user["personas"] && user["personas"].length > 0) {
             var personaMatches = {};
+            var personaMatch;
+
             for(var pc=0; pc<user["personas"].length; pc++) {
                 if(!personaMatches[user["personas"][pc]]) {
                     personaMatches[user["personas"][pc]] = 0;
@@ -698,13 +690,14 @@
             var personaMatchesLastAmount = 0;
             for(pc=0; pc<personaMatchesKeys.length; pc++) {
                 if(personaMatches[personaMatchesKeys[pc]] > personaMatchesLastAmount) {
-                    pageVariantMatch = personaMatchesKeys[pc];
+                    personaMatch = personaMatchesKeys[pc];
                     personaMatchesLastAmount = personaMatches[personaMatchesKeys[pc]];
                 }
             }
 
-            if(pageVariantMatch) {
-                user["persona"] = pageVariantMatch;
+            if(personaMatch) {
+                user["persona"] = personaMatch;
+                console.log("user has assigned " + personaMatchesLastAmount + " personas of " + personaMatch + " -> use this as primary persona for this page")
             }
         }
     } catch (e16) {
@@ -712,24 +705,33 @@
     }
 
     try {
-        if(!user["persona"]) {
-            var personas = pimcore.targeting["personas"];
-            var prevConditionCount = 0;
-            if(typeof personas != "undefined") {
-                for(var pi=0; pi<personas.length; pi++) {
-                    if(personas[pi].conditions.length > 0) {
-                        try {
-                            if(app.testConditions(personas[pi].conditions)) {
-                                // if multiple persona match, use the one with the bigger amount of conditions
-                                // this should be the most accurate match then
-                                if(personas[pi].conditions.length > prevConditionCount) {
-                                    user["persona"] = personas[pi]["id"];
-                                    prevConditionCount = personas[pi].conditions.length;
-                                }
-                            }
-                        } catch (e) {
-                            util.log(e);
+        if(!user["personas"]) {
+            user["personas"] = [];
+        }
+
+        // get new events
+        if(pushData["personas"] && pushData["personas"].length > 0) {
+            for(var ev=0; ev<pushData["personas"].length; ev++) {
+                user["personas"].push(pushData["personas"][ev]);
+                util.log("persona " + pushData["personas"][ev] + " is assigned to the current document -> put it onto the stack");
+            }
+        }
+    } catch (e9) {
+        util.log(e9);
+    }
+
+    try {
+        var personas = pimcore.targeting["personas"];
+        if(typeof personas != "undefined") {
+            for(var pi=0; pi<personas.length; pi++) {
+                if(personas[pi].conditions.length > 0) {
+                    try {
+                        if(app.testConditions(personas[pi].conditions)) {
+                            user["personas"].push(personas[pi]["id"]);
+                            util.log("persona " + personas[pi]["id"] + " matched -> put it onto the stack");
                         }
+                    } catch (e) {
+                        util.log(e);
                     }
                 }
             }
@@ -769,7 +771,7 @@
 
     if(pageVariants && pageVariants.length > 0 && !/_ptp=/.test(window.location.href)) {
         // get the most accurate persona out of the collected data from visited pages
-        if(user["personas"] && user["personas"].length > 0) {
+        /*if(user["personas"] && user["personas"].length > 0) {
             for(var pc=0; pc<user["personas"].length; pc++) {
                 if(util.in_array(user["personas"][pc], pageVariants)) {
 
@@ -789,8 +791,9 @@
                     pageVariantMatchesLastAmount = pageVariantMatches[pageVariantMatchesKeys[pc]];
                 }
             }
-        }
+        }*/
 
+        // most accurate persona is stored in user["persona"]
         if(!pageVariantMatch && user["persona"]) {
             if(util.in_array(user["persona"], pageVariants)) {
                 pageVariantMatch = user["persona"];
