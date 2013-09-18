@@ -839,6 +839,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
     private function inquire($type) {
         try {
+            $condense = $this->getParam("condense");
             $this->checkUserPermission($type . "s");
             if ($this->isPost()) {
                 $data = file_get_contents("php://input");
@@ -856,7 +857,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             $resultData = array();
 
             foreach ($idList as $id) {
-                $resultData[$id] = false;
+                $resultData[$id] = 0;
             }
 
             if ($type == "object") {
@@ -869,7 +870,11 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             $result = Pimcore_Resource::get()->query($sql);
             foreach ($result as $item) {
                 $id = $item[$col];
-                $resultData[$id] = true;
+                if ($condense) {
+                    unset($resultData[$id]);
+                } else {
+                    $resultData[$id] = 1;
+                }
             }
             $this->encoder->encode(array("success" => true, "data" => $resultData));
         } catch (Exception $e) {
