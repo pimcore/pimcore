@@ -673,6 +673,46 @@
         util.log(e11);
     }
 
+
+    // collecting personas
+    if(!user["personas"]) {
+        user["personas"] = [];
+    }
+
+    try {
+        // here we check the entry conditions
+        var personas = pimcore.targeting["personas"];
+        if(typeof personas != "undefined" && user["personas"].length < 1) {
+            for(var pi=0; pi<personas.length; pi++) {
+                if(personas[pi].conditions.length > 0) {
+                    try {
+                        if(app.testConditions(personas[pi].conditions)) {
+                            user["personas"].push(personas[pi]["id"]);
+                            util.log("persona entry condition " + personas[pi]["id"] + " matched -> put it onto the stack");
+                        }
+                    } catch (e) {
+                        util.log(e);
+                    }
+                }
+            }
+        }
+    } catch (e11) {
+        util.log(e11);
+    }
+
+    try {
+        if(pushData["personas"] && pushData["personas"].length > 0) {
+            for(var ev=0; ev<pushData["personas"].length; ev++) {
+                user["personas"].push(pushData["personas"][ev]);
+                util.log("persona " + pushData["personas"][ev] + " is assigned to the current document -> put it onto the stack");
+            }
+        }
+    } catch (e9) {
+        util.log(e9);
+    }
+
+
+
     try {
         if(!user["persona"] && user["personas"] && user["personas"].length > 0) {
             var personaMatches = {};
@@ -704,41 +744,6 @@
 
     }
 
-    try {
-        if(!user["personas"]) {
-            user["personas"] = [];
-        }
-
-        // get new events
-        if(pushData["personas"] && pushData["personas"].length > 0) {
-            for(var ev=0; ev<pushData["personas"].length; ev++) {
-                user["personas"].push(pushData["personas"][ev]);
-                util.log("persona " + pushData["personas"][ev] + " is assigned to the current document -> put it onto the stack");
-            }
-        }
-    } catch (e9) {
-        util.log(e9);
-    }
-
-    try {
-        var personas = pimcore.targeting["personas"];
-        if(typeof personas != "undefined") {
-            for(var pi=0; pi<personas.length; pi++) {
-                if(personas[pi].conditions.length > 0) {
-                    try {
-                        if(app.testConditions(personas[pi].conditions)) {
-                            user["personas"].push(personas[pi]["id"]);
-                            util.log("persona " + personas[pi]["id"] + " matched -> put it onto the stack");
-                        }
-                    } catch (e) {
-                        util.log(e);
-                    }
-                }
-            }
-        }
-    } catch (e11) {
-        util.log(e11);
-    }
 
     // dom stuff
     util.contentLoaded(window, function () {
@@ -771,7 +776,7 @@
 
     if(pageVariants && pageVariants.length > 0 && !/_ptp=/.test(window.location.href)) {
         // get the most accurate persona out of the collected data from visited pages
-        /*if(user["personas"] && user["personas"].length > 0) {
+        if(user["personas"] && user["personas"].length > 0) {
             for(var pc=0; pc<user["personas"].length; pc++) {
                 if(util.in_array(user["personas"][pc], pageVariants)) {
 
@@ -791,7 +796,7 @@
                     pageVariantMatchesLastAmount = pageVariantMatches[pageVariantMatchesKeys[pc]];
                 }
             }
-        }*/
+        }
 
         // most accurate persona is stored in user["persona"]
         if(!pageVariantMatch && user["persona"]) {
