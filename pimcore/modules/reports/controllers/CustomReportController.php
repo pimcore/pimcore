@@ -101,23 +101,31 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
 
         $configuration = json_decode($this->getParam("configuration"));
         $configuration = $configuration[0];
-        $adapter = new Tool_CustomReport_Adapter_Sql($configuration);
 
         $success = false;
         $columns = null;
         $errorMessage = null;
+
         try {
+
+            $adapter = $this->getAdapter($configuration);
             $columns = $adapter->getColumns($configuration);
             $success = true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $errorMessage = $e->getMessage();
         }
 
         $this->_helper->json(array(
-            "success" => $success,
-            "columns" => $columns,
-            "errorMessage" => $errorMessage
-        ));
+                                  "success" => $success,
+                                  "columns" => $columns,
+                                  "errorMessage" => $errorMessage
+                             ));
+    }
+
+    protected function getAdapter($configuration) {
+        $type = $configuration->type ? ucfirst($configuration->type) : 'Sql';
+        $adapter = "Tool_CustomReport_Adapter_{$type}";
+        return new $adapter($configuration);
     }
 
     public function getReportConfigAction() {
@@ -141,9 +149,9 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
         }
 
         $this->_helper->json(array(
-            "success" => true,
-            "reports" => $reports
-        ));
+                                  "success" => true,
+                                  "reports" => $reports
+                             ));
     }
 
     public function dataAction() {
@@ -156,15 +164,16 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
         $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
-        $adapter = new Tool_CustomReport_Adapter_Sql($configuration);
+
+        $adapter = $this->getAdapter($configuration);
 
         $result = $adapter->getData($filters, $sort, $dir, $offset, $limit);
 
         $this->_helper->json(array(
-            "success" => true,
-            "data" => $result['data'],
-            "total" => $result['total']
-        ));
+                                  "success" => true,
+                                  "data" => $result['data'],
+                                  "total" => $result['total']
+                             ));
     }
 
     public function chartAction() {
@@ -175,15 +184,15 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
         $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
-        $adapter = new Tool_CustomReport_Adapter_Sql($configuration);
+        $adapter = $this->getAdapter($configuration);
 
         $result = $adapter->getData($filters, $sort, $dir, null, null);
 
         $this->_helper->json(array(
-            "success" => true,
-            "data" => $result['data'],
-            "total" => $result['total']
-        ));
+                                  "success" => true,
+                                  "data" => $result['data'],
+                                  "total" => $result['total']
+                             ));
     }
 
     public function downloadCsvAction() {
@@ -196,7 +205,7 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
         $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
-        $adapter = new Tool_CustomReport_Adapter_Sql($configuration);
+        $adapter = $this->getAdapter($configuration);
 
         $result = $adapter->getData($filters, $sort, $dir, null, null);
 

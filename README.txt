@@ -41,5 +41,5 @@ Community:
 http://www.pimcore.org/board/
 
 License:
-http://www.pimcore.org/license/..
+http://www.pimcore.org/license/
 

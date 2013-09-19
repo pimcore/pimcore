@@ -32,7 +32,7 @@ pimcore.report.custom.item = Class.create({
             text: t("save"),
             iconCls: "pimcore_icon_apply",
             handler: this.save.bind(this)
-        }); 
+        });
 
         this.columnStore = new Ext.data.JsonStore({
             autoDestroy: false,
@@ -462,7 +462,13 @@ pimcore.report.custom.item = Class.create({
         if(this.currentElementCount < 1) {
             classMenu.push({
                 text: t("custom_report_adapter_sql"),
-                handler: this.addSourceDefinition.bind(this, null),
+                handler: this.addSourceDefinition.bind(this, {type:'sql'}),
+                iconCls: "pimcore_icon_objectbricks"
+            });
+
+            classMenu.push({
+                text: t("custom_report_adapter_analytics"),
+                handler: this.addSourceDefinition.bind(this, {type:'analytics'}),
                 iconCls: "pimcore_icon_objectbricks"
             });
         }
@@ -507,7 +513,11 @@ pimcore.report.custom.item = Class.create({
 
         var key = this.currentElements.length;
 
-        var adapter = new pimcore.report.custom.definition.sql(sourceDefinitionData, key, this.getDeleteControl(t("custom_report_adapter_sql"), key), this.getColumnSettings.bind(this));
+        sourceDefinitionData.type = sourceDefinitionData.type ? sourceDefinitionData.type : 'sql';
+
+        var adapter = new pimcore.report.custom.definition[sourceDefinitionData.type](sourceDefinitionData, key, this.getDeleteControl(t("custom_report_adapter_"+sourceDefinitionData.type), key), this.getColumnSettings.bind(this));
+
+
 
         this.currentElements.push({key: key, adapter: adapter});
         this.currentElementCount++;
@@ -609,6 +619,7 @@ pimcore.report.custom.item = Class.create({
                 dataSourceConfig.push(this.currentElements[i].adapter.getValues());
             }
         }
+
         allValues["dataSourceConfig"] = dataSourceConfig;
         allValues["sql"] = "";
 
