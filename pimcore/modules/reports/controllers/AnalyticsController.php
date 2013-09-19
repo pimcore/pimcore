@@ -49,8 +49,11 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
             $result = $this->service->management_accounts->listManagementAccounts();
 
             $accountIds = array();
-            foreach($result['items'] as $account) {
-                $accountIds[] = $account['id'];
+            if (is_array($result['items'])) {
+                foreach($result['items'] as $account) {
+                    $accountIds[] = $account['id'];
+
+                }
             }
 
             foreach($accountIds as $accountId) {
