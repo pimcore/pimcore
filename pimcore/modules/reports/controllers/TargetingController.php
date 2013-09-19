@@ -35,7 +35,8 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
         foreach($list->load() as $target) {
             $targets[] = array(
                 "id" => $target->getId(),
-                "text" => $target->getName()
+                "text" => $target->getName(),
+                "qtip" => $target->getId()
             );
         }
 
@@ -122,7 +123,8 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
         foreach($list->load() as $persona) {
             $personas[] = array(
                 "id" => $persona->getId(),
-                "text" => $persona->getName()
+                "text" => $persona->getName(),
+                "qtip" => $persona->getId()
             );
         }
 

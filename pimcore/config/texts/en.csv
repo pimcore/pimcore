@@ -1,3 +1,5 @@
+"entry_conditions","Entry Conditions"
+"entry_conditions_description","Entry conditions are only checked at the first visit of the user"
 "dublicate","Dublicate"
 "optional","optional"
 "search_replace_assignments_error","Please select items where to replace and a new target item."
