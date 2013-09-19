@@ -71,6 +71,11 @@ pimcore.settings.targeting.personas.item = Class.create({
                 width: 400,
                 height: 100,
                 value: this.data.description
+            }, {
+                name: "threshold",
+                fieldLabel: t("threshold"),
+                xtype: "spinnerfield",
+                value: this.data["threshold"]
             }]
         });
 
@@ -79,9 +84,11 @@ pimcore.settings.targeting.personas.item = Class.create({
 
     getConditions: function() {
         var addMenu = [];
+        var allowedTypes = ["itemBrowser", "itemCountry", "itemLanguage", "itemGeopoint", "itemReferringsite",
+            "itemSearchengine", "itemHardwareplatform", "itemOperatingsystem"];
         var itemTypes = Object.keys(pimcore.settings.targeting.conditions);
         for(var i=0; i<itemTypes.length; i++) {
-            if(itemTypes[i].indexOf("item") == 0) {
+            if(itemTypes[i].indexOf("item") == 0 && in_array(itemTypes[i], allowedTypes)) {
                 addMenu.push({
                     iconCls: "pimcore_icon_add",
                     handler: this.addCondition.bind(this, itemTypes[i]),
@@ -91,12 +98,15 @@ pimcore.settings.targeting.personas.item = Class.create({
         }
 
         this.conditionsContainer = new Ext.Panel({
-            title: t("conditions"),
+            title: t("entry_conditions"),
             autoScroll: true,
             forceLayout: true,
             tbar: [{
                 iconCls: "pimcore_icon_add",
                 menu: addMenu
+            }, "-", {
+                xtype: "tbtext",
+                text: t("entry_conditions_description")
             }],
             border: false
         });

@@ -159,6 +159,8 @@
         persona: function (params) {
             if(user["persona"] == params["persona"]
                 || util.in_array(params["persona"], user["personas"])) {
+                var personaData = util.getPersonaDataById(params["persona"]);
+
                 return true;
             }
             return false;
@@ -339,6 +341,53 @@
                 doc[add](pre + 'readystatechange', init, false);
                 win[add](pre + 'load', init, false);
             }
+        },
+
+        getPersonaDataById: function (id) {
+            if(window["pimcore"] && window["pimcore"]["targeting"] && window["pimcore"]["targeting"]["personas"]) {
+                var personas = window["pimcore"]["targeting"]["personas"];
+                for(var i=0; i<personas.length; i++) {
+                    if(personas[i]["id"] == id) {
+                        return personas[i];
+                    }
+                }
+            }
+            return null;
+        },
+
+        getPersonaAmounts: function () {
+            var personaMatches = {};
+
+            for(var pc=0; pc<user["personas"].length; pc++) {
+                if(!personaMatches[user["personas"][pc]]) {
+                    personaMatches[user["personas"][pc]] = 0;
+                }
+
+                personaMatches[user["personas"][pc]]++;
+            }
+
+            return personaMatches;
+
+
+        },
+
+        getPrimaryPersona: function () {
+            var personaMatch, personaData;
+            var personaAmounts = util.getPersonaAmounts();
+
+            var personaMatchesKeys = util.array_keys(personaAmounts);
+            var personaMatchesLastAmount = 0;
+            for(pc=0; pc<personaMatchesKeys.length; pc++) {
+                if(personaAmounts[personaMatchesKeys[pc]] > personaMatchesLastAmount) {
+                    personaData = util.getPersonaDataById(personaMatchesKeys[pc]);
+                    if(personaData && personaAmounts[personaMatchesKeys[pc]] >= personaData["threshold"]) {
+                        personaMatch = personaMatchesKeys[pc];
+                        personaMatchesLastAmount = personaAmounts[personaMatchesKeys[pc]];
+                    }
+                }
+            }
+
+            return personaMatch;
         }
     };
 
@@ -493,6 +542,7 @@
             try {
                 if(actions["personaEnabled"]) {
                     user["personas"].push(actions["personaId"]);
+                    util.log("persona global targeting condition matched -> put ID " + actions["personaId"] + " onto the stack");
                 }
             } catch (e6) {
                 util.log(e6);
@@ -688,7 +738,7 @@
                     try {
                         if(app.testConditions(personas[pi].conditions)) {
                             user["personas"].push(personas[pi]["id"]);
-                            util.log("persona entry condition " + personas[pi]["id"] + " matched -> put it onto the stack");
+                            util.log("persona entry condition ID " + personas[pi]["id"] + " matched -> put it onto the stack");
                         }
                     } catch (e) {
                         util.log(e);
@@ -704,7 +754,7 @@
         if(pushData["personas"] && pushData["personas"].length > 0) {
             for(var ev=0; ev<pushData["personas"].length; ev++) {
                 user["personas"].push(pushData["personas"][ev]);
-                util.log("persona " + pushData["personas"][ev] + " is assigned to the current document -> put it onto the stack");
+                util.log("persona ID " + pushData["personas"][ev] + " is assigned to the current document -> put it onto the stack");
             }
         }
     } catch (e9) {
@@ -715,29 +765,10 @@
 
     try {
         if(!user["persona"] && user["personas"] && user["personas"].length > 0) {
-            var personaMatches = {};
-            var personaMatch;
-
-            for(var pc=0; pc<user["personas"].length; pc++) {
-                if(!personaMatches[user["personas"][pc]]) {
-                    personaMatches[user["personas"][pc]] = 0;
-                }
-
-                personaMatches[user["personas"][pc]]++;
-            }
-
-            var personaMatchesKeys = util.array_keys(personaMatches);
-            var personaMatchesLastAmount = 0;
-            for(pc=0; pc<personaMatchesKeys.length; pc++) {
-                if(personaMatches[personaMatchesKeys[pc]] > personaMatchesLastAmount) {
-                    personaMatch = personaMatchesKeys[pc];
-                    personaMatchesLastAmount = personaMatches[personaMatchesKeys[pc]];
-                }
-            }
-
+            var personaMatch = util.getPrimaryPersona();
             if(personaMatch) {
                 user["persona"] = personaMatch;
-                console.log("user has assigned " + personaMatchesLastAmount + " personas of " + personaMatch + " -> use this as primary persona for this page")
+                console.log("use persona ID " + personaMatch + " as primary persona for this page")
             }
         }
     } catch (e16) {
@@ -773,35 +804,26 @@
     var pageVariants = pimcore["targeting"]["dataPush"]["personaPageVariants"];
     var pageVariantMatches = {};
     var pageVariantMatch;
+    var personaData;
 
     if(pageVariants && pageVariants.length > 0 && !/_ptp=/.test(window.location.href)) {
         // get the most accurate persona out of the collected data from visited pages
         if(user["personas"] && user["personas"].length > 0) {
-            for(var pc=0; pc<user["personas"].length; pc++) {
-                if(util.in_array(user["personas"][pc], pageVariants)) {
 
-                    if(!pageVariantMatches[user["personas"][pc]]) {
-                        pageVariantMatches[user["personas"][pc]] = 0;
-                    }
-
-                    pageVariantMatches[user["personas"][pc]]++;
-                }
-            }
-
+            pageVariantMatches = util.getPersonaAmounts();
             var pageVariantMatchesKeys = util.array_keys(pageVariantMatches);
             var pageVariantMatchesLastAmount = 0;
-            for(pc=0; pc<pageVariantMatchesKeys.length; pc++) {
-                if(pageVariantMatches[pageVariantMatchesKeys[pc]] > pageVariantMatchesLastAmount) {
-                    pageVariantMatch = pageVariantMatchesKeys[pc];
-                    pageVariantMatchesLastAmount = pageVariantMatches[pageVariantMatchesKeys[pc]];
-                }
-            }
-        }
 
-        // most accurate persona is stored in user["persona"]
-        if(!pageVariantMatch && user["persona"]) {
-            if(util.in_array(user["persona"], pageVariants)) {
-                pageVariantMatch = user["persona"];
+            for(var pc=0; pc<pageVariantMatchesKeys.length; pc++) {
+                if(pageVariantMatches[pageVariantMatchesKeys[pc]] > pageVariantMatchesLastAmount) {
+                    personaData = util.getPersonaDataById(pageVariantMatchesKeys[pc]);
+                    if(personaData
+                        && pageVariantMatches[pageVariantMatchesKeys[pc]] >= personaData["threshold"]
+                        && util.in_array(personaData["id"], pageVariants)) {
+                        pageVariantMatch = pageVariantMatchesKeys[pc];
+                        pageVariantMatchesLastAmount = pageVariantMatches[pageVariantMatchesKeys[pc]];
+                    }
+                }
             }
         }
 

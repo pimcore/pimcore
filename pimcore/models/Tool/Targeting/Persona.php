@@ -33,6 +33,11 @@ class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
     public $description = "";
 
     /**
+     * @var int
+     */
+    public $threshold = 1;
+
+    /**
      * @var array
      */
     public $conditions = array();
@@ -136,5 +141,21 @@ class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
     public function getConditions()
     {
         return $this->conditions;
+    }
+
+    /**
+     * @param int $threshold
+     */
+    public function setThreshold($threshold)
+    {
+        $this->threshold = $threshold;
+    }
+
+    /**
+     * @return int
+     */
+    public function getThreshold()
+    {
+        return $this->threshold;
     }
 }

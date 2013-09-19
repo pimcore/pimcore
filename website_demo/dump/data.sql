@@ -765,6 +765,7 @@ CREATE TABLE `targeting_personas` (
   `name` varchar(255) NOT NULL DEFAULT '',
   `description` text,
   `conditions` longtext,
+  `threshold` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
