@@ -114,6 +114,7 @@ pimcore.layout.portal = Class.create({
                         {
                             text: t("delete_dashboard"),
                             iconCls: "pimcore_icon_delete",
+                            hidden: (this.key == "welcome"),
                             handler: function() {
                                 Ext.Msg.show({
                                     title:t('delete_dashboard'),
