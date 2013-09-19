@@ -229,4 +229,42 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
 
         return $this;
     }
+
+    public function  addOverlay ($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left') {
+
+        $image = ltrim($image,"/");
+        $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+
+        // 100 alpha is default
+        if(empty($alpha)) {
+            $alpha = 100;
+        }
+        $alpha = round($alpha / 100, 1);
+
+
+        if(is_file($image)) {
+
+            list($oWidth, $oHeight) = getimagesize($image);
+
+            if($origin == 'top-right') {
+                $x = $this->getWidth() - $oWidth - $x;
+            } elseif($origin == 'bottom-left') {
+                $y = $this->getHeight() - $oHeight - $y;
+            } elseif($origin == 'bottom-right') {
+                $x = $this->getWidth() - $oWidth - $x;
+                $y = $this->getHeight() - $oHeight - $y;
+            } elseif($origin == 'center') {
+                $x = round($this->getWidth() / 2) - round($oWidth / 2) + $x;
+                $y = round($this->getHeight() / 2) -round($oHeight / 2) + $y;
+            }
+
+            $overlay = imagecreatefromstring(file_get_contents($image));
+            imagealphablending($this->resource, true);
+            imagecopyresampled($this->resource, $overlay, $x, $y, 0, 0, $oWidth, $oHeight, $oWidth, $oHeight);
+        }
+
+        $this->reinitializeImage();
+
+        return $this;
+    }
 }
