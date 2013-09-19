@@ -46,12 +46,15 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
 
         try {
             $data = array("data" => array());
-            $result = $this->service->management_webproperties->listManagementWebproperties("~all");
+            $result = $this->service->management_accounts->listManagementAccounts();
 
+            $accountIds = array();
+            foreach($result['items'] as $account) {
+                $accountIds[] = $account['id'];
+            }
 
-            foreach ($result["items"] as $entry) {
-
-                $details = $this->service->management_profiles->listManagementProfiles($entry["accountId"], $entry["id"]);
+            foreach($accountIds as $accountId) {
+                $details = $this->service->management_profiles->listManagementProfiles($accountId, "~all");
 
                 if (is_array($details["items"])) {
                     foreach ($details["items"] as $detail) {
@@ -66,9 +69,11 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
                 }
             }
 
+
             $this->_helper->json($data);
         }
         catch (Exception $e) {
+
             $this->_helper->json(false);
         }
     }
