@@ -145,10 +145,16 @@ pimcore.report.analytics.settings = Class.create({
                         displayField: 'name',
                         store: new Ext.data.JsonStore({
                             autoDestroy: true,
+                            autoLoad: true,
                             url: "/admin/reports/analytics/get-profiles",
                             root: "data",
                             idProperty: "id",
-                            fields: ["name","id","trackid","accountid","internalid"]
+                            fields: ["name","id","trackid","accountid","internalid"],
+                            listeners: {
+                                load: function() {
+                                    Ext.getCmp("report_settings_analytics_profile_" + id).setValue(this.parent.getValue("analytics.sites." + key + ".profile"));
+                                }.bind(this, id)
+                            }
                         }),
                         listeners: {
                             "select": function (id, el, record, index) {

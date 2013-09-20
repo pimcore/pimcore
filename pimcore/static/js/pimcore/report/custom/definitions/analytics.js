@@ -18,7 +18,7 @@ pimcore.report.custom.definition.analytics = Class.create({
     element: null,
     sourceDefinitionData: null,
 
-    initialize: function (sourceDefinitionData, key, deleteControl, columnSettingsCallback, store) {
+    initialize: function (sourceDefinitionData, key, deleteControl, columnSettingsCallback) {
         sourceDefinitionData = sourceDefinitionData ? sourceDefinitionData : {filters: '', sort: '', startDate: '', endDate: '', dimension: '', metric: '', segment: '', profileId: ''};
 
         if (sourceDefinitionData.startDate) {
@@ -40,44 +40,6 @@ pimcore.report.custom.definition.analytics = Class.create({
         var metricLoaded = false;
         var segmentLoaded = false;
 
-        this.profileStore = new Ext.data.JsonStore({
-            autoDestroy: true,
-            url: "/admin/reports/analytics/get-profiles",
-            root: "data",
-            idProperty: "id",
-            fields: ["name", "id"],
-            listeners: {
-                load: function () {
-                    if (profileLoaded) {
-                        return;
-                    }
-                    var dimensions = new Ext.form.ComboBox({
-                        name: "profileId",
-                        triggerAction: "all",
-                        editable: false,
-                        fieldLabel: t("profile"),
-                        store: this.profileStore,
-
-                        displayField: "name",
-                        valueField: "id",
-                        width: 300,
-                        value: sourceDefinitionData.profileId,
-                        listeners: {
-                            change: columnSettingsCallback
-                        }
-
-                    });
-
-                    this.element.insert(0, dimensions);
-
-
-                    this.element.doLayout();
-                    profileLoaded = true;
-
-                }.bind(this)
-            }
-        });
-        this.profileStore.load();
 
         this.dimensionStore = new Ext.data.JsonStore({
             autoDestroy: true,
@@ -104,10 +66,8 @@ pimcore.report.custom.definition.analytics = Class.create({
                         }
 
                     });
-                    var index = 0;
-                    if (profileLoaded) {
-                        index++;
-                    }
+                    var index = 1;
+
                     this.element.insert(index, dimensions);
 
 
@@ -144,10 +104,8 @@ pimcore.report.custom.definition.analytics = Class.create({
                         }
                     });
 
-                    var index = 0;
-                    if (profileLoaded) {
-                        index++;
-                    }
+                    var index = 1;
+
                     if (dimensionLoaded) {
                         index++;
                     }
@@ -182,6 +140,7 @@ pimcore.report.custom.definition.analytics = Class.create({
                         store: this.segementsStore,
                         displayField: "name",
                         valueField: "id",
+                        mode: "local",
                         width: 300,
                         value: sourceDefinitionData.segment,
                         listeners: {
@@ -189,10 +148,8 @@ pimcore.report.custom.definition.analytics = Class.create({
                         }
                     });
 
-                    var index = 0;
-                    if (profileLoaded) {
-                        index++;
-                    }
+                    var index = 1;
+
                     if (dimensionLoaded) {
                         index++;
                     }
@@ -217,6 +174,37 @@ pimcore.report.custom.definition.analytics = Class.create({
             border: false,
             tbar: deleteControl, //this.getDeleteControl("SQL", key),
             items: [
+                {
+                    xtype: "combo",
+                    name: "profileId",
+                    fieldLabel: t('profile'),
+                    id: "custom_reports_analytics_" + key + "_profileId",
+                    typeAhead: true,
+                    displayField: 'name',
+
+                    store: new Ext.data.JsonStore({
+                        autoDestroy: true,
+                        autoLoad: true,
+                        url: "/admin/reports/analytics/get-profiles",
+                        root: "data",
+                        idProperty: "id",
+                        fields: ["name", "id"],
+                        listeners: {
+                            load: function () {
+                                Ext.getCmp("custom_reports_analytics_" + key + "_profileId").setValue(sourceDefinitionData.profileId);
+                            }.bind(this, key, sourceDefinitionData)
+                        }
+                    }),
+                    valueField: 'id',
+                    forceSelection: true,
+                    triggerAction: 'all',
+                    width: 300,
+                    value: sourceDefinitionData.profileId,
+                    listeners: {
+                        change: columnSettingsCallback
+                    }
+
+                },
                 {
                     xtype: "textfield",
                     name: "filters",
