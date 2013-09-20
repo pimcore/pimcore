@@ -286,7 +286,7 @@ class Asset extends Element_Abstract {
         if(array_key_exists("filename", $data) && array_key_exists("data", $data)) {
             $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-create-tmp-file-" . uniqid() . "." . Pimcore_File::getFileExtension($data["filename"]);
             file_put_contents($tmpFile, $data["data"]);
-            $mimeType = MIME_Type::autoDetect($tmpFile);
+            $mimeType = Pimcore_Tool_Mime::detect($tmpFile);
             unlink($tmpFile);
             $type = self::getTypeFromMimeMapping($mimeType, $data["filename"]);
             $class = "Asset_" . ucfirst($type);
@@ -569,7 +569,7 @@ class Asset extends Element_Abstract {
 
             // set mime type
 
-            $mimetype = MIME_Type::autoDetect($this->getFileSystemPath());
+            $mimetype = Pimcore_Tool_Mime::detect($this->getFileSystemPath());
             $this->setMimetype($mimetype);
 
             // set type

@@ -594,7 +594,6 @@ class Pimcore {
         $autoloader->registerNamespace('Services_');
         $autoloader->registerNamespace('HTTP_');
         $autoloader->registerNamespace('Net_');
-        $autoloader->registerNamespace('MIME_');
         $autoloader->registerNamespace('File_');
         $autoloader->registerNamespace('System_');
         $autoloader->registerNamespace('PEAR_');
