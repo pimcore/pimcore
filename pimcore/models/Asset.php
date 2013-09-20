@@ -284,7 +284,7 @@ class Asset extends Element_Abstract {
         // (tree) is generated immediately after creating an image
         $class = "Asset";
         if(array_key_exists("filename", $data) && array_key_exists("data", $data)) {
-            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-create-tmp-file-" . md5($data["data"]) . ".tmp";
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-create-tmp-file-" . uniqid() . "." . Pimcore_File::getFileExtension($data["filename"]);
             file_put_contents($tmpFile, $data["data"]);
             $mimeType = MIME_Type::autoDetect($tmpFile);
             unlink($tmpFile);
