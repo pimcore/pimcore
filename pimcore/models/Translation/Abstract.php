@@ -235,10 +235,8 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
             //read import data
             $tmpData = file_get_contents($file);
             //convert to utf-8 if needed
-            $encoding = Pimcore_Tool_Text::detectEncoding($tmpData);
-            if ($encoding) {
-                $tmpData = iconv($encoding, "UTF-8", $tmpData);
-            }
+            $tmpData = Pimcore_Tool_Text::convertToUTF8($tmpData);
+
             //store data for further usage
             $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations";
             file_put_contents($importFile, $tmpData);
