@@ -149,4 +149,25 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
             return false;
         }
     }
+
+    public function getText($page) {
+        try {
+            $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/pdf-text-extract-" . uniqid() . ".txt";
+            Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -dBATCH -dNOPAUSE -sDEVICE=txtwrite -dFirstPage=" . $page . " -dLastPage=" . $page . " -dTextFormat=2 -sOutputFile=" . $textFile . " " . $this->path);
+
+            if(is_file($textFile)) {
+                $text =  file_get_contents($textFile);
+
+                // this is a little bit strange the default option -dTextFormat=3 from ghostscript should return utf-8 but it doesn't
+                // so we use option 2 which returns UCS-2LE and convert it here back to UTF-8 which works fine
+                $text = mb_convert_encoding($text, 'UTF-8', 'UCS-2LE');
+                unlink($textFile);
+                return $text;
+            }
+
+        } catch (Exception $e) {
+            Logger::error($e);
+            return false;
+        }
+    }
 }
