@@ -123,6 +123,14 @@ class Tool_CustomReport_Adapter_Analytics {
             throw new Exception("no metric given");
         }
 
+        if(!$configuration->startDate) {
+            throw new Exception("no start date given");
+        }
+
+        if(!$configuration->endDate) {
+            throw new Exception("no end date given");
+        }
+
         $options = array();
 
         if($configuration->filters) {
