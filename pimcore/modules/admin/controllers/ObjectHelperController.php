@@ -371,11 +371,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
     public function importUploadAction()
     {
         $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
-
-        $encoding = Pimcore_Tool_Text::detectEncoding($data);
-        if ($encoding) {
-            $data = iconv($encoding, "UTF-8", $data);
-        }
+        $data = Pimcore_Tool_Text::convertToUTF8($data);
 
         $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->getParam("id");
         file_put_contents($importFile, $data);

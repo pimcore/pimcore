@@ -308,6 +308,14 @@ class Pimcore_Tool_Text
         return $tags;
     }
 
+    public static function convertToUTF8($text) {
+        $encoding = Pimcore_Tool_Text::detectEncoding($text);
+        if ($encoding) {
+            $text = iconv($encoding, "UTF-8", $text);
+        }
+        return $text;
+    }
+
     public static function detectEncoding($text)
     {
 
