@@ -356,12 +356,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
 
             if($element instanceof Asset_Document && Pimcore_Document::isAvailable()) {
                 if(Pimcore_Document::isFileTypeSupported($element->getFilename())) {
-                    $pages = $element->getPageCount();
-                    if($pages) {
-                        for($i=1; $i<=$pages; $i++) {
-                            $this->data .= " " . $element->getText($i);
-                        }
-                    }
+                    $this->data .= " " . $element->getText();
                 }
             }
 
