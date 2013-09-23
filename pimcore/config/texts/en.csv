@@ -99,6 +99,11 @@
 "custom_report_y_axis","Y-Axis"
 "custom_report_datacolumn","Data Column"
 "custom_report_labelcolumn","Label Column"
+"start_date","Start date",
+"start_date_relative","Start date (relative to today)"
+"end_date","End date"
+"end_date_relative","End date (relative to today)"
+"relative_date_description","i.e. -1m +1d (d=days, m=months, y=years)"
 "no_further_sources_allowed","No further data sources allowed"
 "source_definition","Source Definition"
 "content_social_analysis","Content & Social Analysis"

@@ -123,13 +123,6 @@ class Tool_CustomReport_Adapter_Analytics {
             throw new Exception("no metric given");
         }
 
-        if(!$configuration->startDate) {
-            throw new Exception("no start date given");
-        }
-
-        if(!$configuration->endDate) {
-            throw new Exception("no end date given");
-        }
 
         $options = array();
 
@@ -152,11 +145,63 @@ class Tool_CustomReport_Adapter_Analytics {
             $options['segment'] = $configuration->segment;
         }
 
-        return $service->data_ga->get('ga:'.$configuration->profileId, date('Y-m-d', $configuration->startDate/1000), date('Y-m-d', $configuration->endDate/1000), $configuration->metric, $options);
+        $configuration->startDate = $this->calcDate($configuration->startDate, $configuration->relativeStartDate);
+        $configuration->endDate = $this->calcDate($configuration->endDate, $configuration->relativeEndDate);
+
+
+        if(!$configuration->startDate) {
+            throw new Exception("no start date given");
+        }
+
+        if(!$configuration->endDate) {
+            throw new Exception("no end date given");
+        }
+
+        return $service->data_ga->get('ga:'.$configuration->profileId, date('Y-m-d', $configuration->startDate), date('Y-m-d', $configuration->endDate), $configuration->metric, $options);
 
     }
 
 
+    protected function calcDate($date, $relativeDate) {
 
+
+        if(strpos($relativeDate, '-') !== false || strpos($relativeDate, '+') !== false) {
+
+            $modifiers = explode(' ', str_replace('  ', ' ', $relativeDate));
+
+            $applyModifiers = array();
+            foreach ($modifiers as $modifier) {
+                $modifier = trim($modifier);
+                if (preg_match('/^([+-])(\d+)([dmy])$/', $modifier, $matches)) {
+                    if (in_array($matches[1], array('+', '-')) && is_numeric($matches[2])
+                        && in_array($matches[3], array('d', 'm', 'y'))
+                    ) {
+                        $applyModifiers[] = array('sign' => $matches[1], 'number' => $matches[2],
+                                                  'type' => $matches[3]);
+                    }
+                }
+            }
+
+            if(sizeof($applyModifiers)) {
+                $date = new Zend_Date();
+
+                foreach($applyModifiers as $modifier) {
+
+                    if($modifier['sign'] == '-') {
+                        $modifier['number'] *= -1;
+                    }
+
+                    $typeMap = array('d' => Zend_Date::DAY, 'm' => Zend_Date::MONTH, 'y' => Zend_Date::YEAR);
+
+                    $date->add($modifier['number'], $typeMap[$modifier['type']]);
+
+                }
+
+                return $date->getTimestamp();
+            }
+        }
+
+        return $date/1000;
+    }
 
 }
