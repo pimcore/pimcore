@@ -226,7 +226,7 @@ class Pimcore_Tool_Mime {
         // check for an extension mapping first
         $extension = Pimcore_File::getFileExtension($file);
         if(array_key_exists($extension, self::$extensionMapping)) {
-            //return self::$extensionMapping[$extension];
+            return self::$extensionMapping[$extension];
         }
 
         // check with fileinfo, if there's no extension mapping
