@@ -150,6 +150,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 switch ($this->getParam("type")) {
                     case "page":
                         $document = Document_Page::create($this->getParam("parentId"), $createValues);
+                        $document->setTitle($this->getParam('title', null));
+                        $document->setName($this->getParam('name', null));
+                        $document->save();
                         $success = true;
                         break;
                     case "snippet":
