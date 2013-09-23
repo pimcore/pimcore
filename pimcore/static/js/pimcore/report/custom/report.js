@@ -15,6 +15,8 @@
 pimcore.registerNS("pimcore.report.custom.report");
 pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
+    drillDownFilters: {},
+
     matchType: function (type) {
         var types = ["global"];
         if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)) {
@@ -38,6 +40,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         var colConfig;
         var gridColConfig = {};
         var filters = [];
+        var drillDownFilterDefinitions = [];
         this.columnLabels = {};
 
         for(var f=0; f<data.columnConfiguration.length; f++) {
@@ -67,7 +70,15 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 gridColConfig["filterable"] = true;
             }
 
-            gridColums.push(gridColConfig);
+
+            if(colConfig["filter_drilldown"] == 'only_filter' || colConfig["filter_drilldown"] == 'filter_and_show') {
+                drillDownFilterDefinitions.push(colConfig);
+            }
+
+            if(colConfig["filter_drilldown"] != 'only_filter') {
+                gridColums.push(gridColConfig);
+            }
+
         }
 
         this.gridFilters = new Ext.ux.grid.GridFilters({
@@ -137,6 +148,37 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             }
         }));
 
+        var topBar = this.buildTopBar(drillDownFilterDefinitions);
+
+        topBar.push("->");
+        topBar.push({
+            xtype: "button",
+            text: t("export_csv"),
+            iconCls: "pimcore_icon_export",
+            handler: function () {
+                var query = "";
+                var filterData = this.gridFilters.getFilterData();
+                if(filterData.length > 0) {
+                    query = "filter=" + encodeURIComponent(this.gridFilters.buildQuery(filterData).filter);
+                } else {
+                    query = "filter="
+                }
+
+                query += "&name=" + this.config.name;
+
+                if(this.drillDownFilters) {
+                    var fieldnames = Object.getOwnPropertyNames(this.drillDownFilters);
+                    for(var j = 0; j < fieldnames.length; j++) {
+                        query += "&" + 'drillDownFilters[' + fieldnames[j] + ']=' + this.drillDownFilters[fieldnames[j]];
+                    }
+                }
+
+                var downloadUrl = "/admin/reports/custom-report/download-csv?" + query;
+                pimcore.helpers.download(downloadUrl);
+            }.bind(this)
+        });
+
+
         this.grid = new Ext.grid.GridPanel({
             region: "center",
             store: this.store,
@@ -149,28 +191,55 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             viewConfig: {
                 forceFit: false
             },
-            tbar: ["->",{
-                xtype: "button",
-                text: t("export_csv"),
-                iconCls: "pimcore_icon_export",
-                handler: function () {
-                    var query = "";
-                    var filterData = this.gridFilters.getFilterData();
-                    if(filterData.length > 0) {
-                        query = "filter=" + encodeURIComponent(this.gridFilters.buildQuery(filterData).filter);
-                    } else {
-                        query = "filter="
-                    }
-
-                    query += "&name=" + this.config.name;
-
-                    var downloadUrl = "/admin/reports/custom-report/download-csv?" + query;
-                    pimcore.helpers.download(downloadUrl);
-                }.bind(this)
-            }]
+            tbar: topBar
         });
 
         return this.grid;
+    },
+
+    buildTopBar: function(drillDownFilterDefinitions) {
+        var drillDownFilterComboboxes = [];
+
+        for(var i = 0; i < drillDownFilterDefinitions.length; i++) {
+            drillDownFilterComboboxes.push({
+                xtype: 'label',
+                text: drillDownFilterDefinitions[i]["label"] ? ts(drillDownFilterDefinitions[i]["label"]) : ts(drillDownFilterDefinitions[i]["name"]),
+                style: 'padding-right: 5px'
+            });
+            drillDownFilterComboboxes.push({
+                fieldLabel: "test",
+                xtype: 'combo',
+                typeAhead: false,
+                triggerAction: 'all',
+                lazyRender: false,
+                store: new Ext.data.JsonStore({
+                    url: '/admin/reports/custom-report/drill-down-options',
+                    root: 'data',
+                    baseParams: {
+                        name: this.config["name"],
+                        field: drillDownFilterDefinitions[i]["name"]
+                    },
+                    fields: [
+                        'value'
+                    ]
+                }),
+                listeners: {
+                    select: function(fieldname, combo, record, index) {
+                        var value = combo.getValue();
+                        this.store.setBaseParam('drillDownFilters[' + fieldname + ']', value);
+                        this.chartStore.setBaseParam('drillDownFilters[' + fieldname + ']', value);
+                        this.drillDownFilters[fieldname] = value;
+                        this.store.reload();
+                    }.bind(this, drillDownFilterDefinitions[i]["name"])
+                },
+                valueField: 'value',
+                displayField: 'value'
+            });
+            if(i < drillDownFilterDefinitions.length-1) {
+                drillDownFilterComboboxes.push('-');
+            }
+        }
+        return drillDownFilterComboboxes;
     },
 
     chartColors: [

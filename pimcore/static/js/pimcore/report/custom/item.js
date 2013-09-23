@@ -37,7 +37,7 @@ pimcore.report.custom.item = Class.create({
         this.columnStore = new Ext.data.JsonStore({
             autoDestroy: false,
             data: [],
-            fields: ["name", "filter", "display", "export", "order", "width", "label"]
+            fields: ["name", "filter", "filter_drilldown", "display", "export", "order", "width", "label"]
         });
 
         var checkDisplay = new Ext.grid.CheckColumn({
@@ -72,6 +72,19 @@ pimcore.report.custom.item = Class.create({
                         ["string", t("text")],
                         ["boolean", t("bool")],
                         ["numeric", t("numeric")]
+                    ],
+                    mode: "local",
+                    typeAhead: false,
+                    editable: false,
+                    forceSelection: true,
+                    triggerAction: "all"
+                })},
+                {header: t("custom_report_filter_drilldown"), width:100, sortable: false, dataIndex: 'filter_drilldown', editable: true, editor: new Ext.form.ComboBox({
+                    store: [
+                        //["date", t("date")],
+                        ["", t("empty")],
+                        ["only_filter", t("custom_report_only_filter")],
+                        ["filter_and_show", t("custom_report_filter_and_show")]
                     ],
                     mode: "local",
                     typeAhead: false,
@@ -584,6 +597,7 @@ pimcore.report.custom.item = Class.create({
                                 insertData["export"] = cc[o]["export"];
                                 insertData["order"] = cc[o]["order"];
                                 insertData["filter"] = cc[o]["filter"];
+                                insertData["filter_drilldown"] = cc[o]["filter_drilldown"];
                                 insertData["width"] = cc[o]["width"];
                                 insertData["label"] = cc[o]["label"];
                                 break;

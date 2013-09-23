@@ -23,7 +23,7 @@ class Tool_CustomReport_Adapter_Analytics {
     /**
      *
      */
-    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null) {
+    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null) {
 
         $this->setFilters($filters);
 

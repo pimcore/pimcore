@@ -155,11 +155,14 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
     }
 
     public function dataAction() {
+
         $offset = $this->getParam("start", 0);
         $limit = $this->getParam("limit", 40);
         $sort = $this->getParam("sort");
         $dir = $this->getParam("dir");
-        $filters = ($this->_getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
+        $filters = ($this->getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
+
+        $drillDownFilters = $this->getParam("drillDownFilters", null);
 
         $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
         $configuration = $config->getDataSourceConfig();
@@ -167,7 +170,7 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
 
         $adapter = $this->getAdapter($configuration);
 
-        $result = $adapter->getData($filters, $sort, $dir, $offset, $limit);
+        $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters);
 
         $this->_helper->json(array(
                                   "success" => true,
@@ -176,17 +179,35 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
                              ));
     }
 
+    public function drillDownOptionsAction() {
+
+        $field = $this->getParam("field");
+        $filters = ($this->getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
+
+        $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
+        $configuration = $config->getDataSourceConfig();
+        $configuration = $configuration[0];
+
+        $adapter = $this->getAdapter($configuration);
+        $result = $adapter->getAvailableOptions($filters, $field);
+        $this->_helper->json(array(
+            "success" => true,
+            "data" => $result['data'],
+        ));
+    }
+
     public function chartAction() {
         $sort = $this->getParam("sort");
         $dir = $this->getParam("dir");
         $filters = ($this->_getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
+        $drillDownFilters = $this->getParam("drillDownFilters", null);
 
         $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
         $adapter = $this->getAdapter($configuration);
 
-        $result = $adapter->getData($filters, $sort, $dir, null, null);
+        $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
 
         $this->_helper->json(array(
                                   "success" => true,
