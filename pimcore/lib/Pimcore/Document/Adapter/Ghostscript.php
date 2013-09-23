@@ -150,10 +150,17 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
         }
     }
 
-    public function getText($page) {
+    public function getText($page = null, $path = null) {
         try {
+
+            $path = $path ? $path : $this->path;
+
+            if($page) {
+                $pageRange = "-dFirstPage=" . $page . " -dLastPage=" . $page . " ";
+            }
+
             $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/pdf-text-extract-" . uniqid() . ".txt";
-            Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -dBATCH -dNOPAUSE -sDEVICE=txtwrite -dFirstPage=" . $page . " -dLastPage=" . $page . " -dTextFormat=2 -sOutputFile=" . $textFile . " " . $this->path);
+            Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -dBATCH -dNOPAUSE -sDEVICE=txtwrite " . $pageRange . "-dTextFormat=2 -sOutputFile=" . $textFile . " " . $path);
 
             if(is_file($textFile)) {
                 $text =  file_get_contents($textFile);

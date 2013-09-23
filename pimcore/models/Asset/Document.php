@@ -111,11 +111,10 @@ class Asset_Document extends Asset {
         return "/pimcore/static/img/filetype-not-supported.png";
     }
 
-    public function getText($page) {
+    public function getText($page = null) {
         if(Pimcore_Document::isAvailable() && Pimcore_Document::isFileTypeSupported($this->getFilename())) {
             $document = Pimcore_Document::getInstance();
-            $document->load($this->getFileSystemPath());
-            return $document->getText($page);
+            return $document->getText($page, $this->getFileSystemPath());
         } else {
             Logger::error("Couldn't get text out of document " . $this->getFullPath() . " no document adapter is available");
         }
