@@ -19,7 +19,7 @@ pimcore.report.custom.definition.analytics = Class.create({
     sourceDefinitionData: null,
 
     initialize: function (sourceDefinitionData, key, deleteControl, columnSettingsCallback) {
-        sourceDefinitionData = sourceDefinitionData ? sourceDefinitionData : {filters: '', sort: '', startDate: '', endDate: '', dimension: '', metric: '', segment: '', profileId: ''};
+        sourceDefinitionData = sourceDefinitionData ? sourceDefinitionData : {filters: '', sort: '', startDate: '', relativeStartDate: '', relativeEndDate: '', endDate: '', relativeStartDate: '', dimension: '', metric: '', segment: '', profileId: ''};
 
         if (sourceDefinitionData.startDate) {
             var startDate = new Date();
@@ -173,6 +173,7 @@ pimcore.report.custom.definition.analytics = Class.create({
             autoHeight: true,
             border: false,
             tbar: deleteControl, //this.getDeleteControl("SQL", key),
+            labelWidth: 200,
             items: [
                 {
                     xtype: "combo",
@@ -229,9 +230,13 @@ pimcore.report.custom.definition.analytics = Class.create({
                     }
                 },
                 {
+                    xtype: 'spacer',
+                    height: 30
+                },
+                {
                     xtype: "datefield",
                     name: "startDate",
-                    fieldLabel: "Start date",
+                    fieldLabel: t("start_date"),
                     value: (sourceDefinitionData.startDate),
                     width: 250,
                     enableKeyEvents: true,
@@ -240,10 +245,34 @@ pimcore.report.custom.definition.analytics = Class.create({
                     }
                 },
                 {
+                    xtype: "textfield",
+                    name: "relativeStartDate",
+                    fieldLabel: t("start_date_relative") + '<br/><small>'+t("relative_date_description")+"</small>",
+                    value: (sourceDefinitionData.relativeStartDate),
+                    width: 250,
+                    enableKeyEvents: true,
+                    listeners: {
+                        change: columnSettingsCallback
+                    }
+                },{
+                    xtype: 'spacer',
+                    height: 30
+                },
+                {
                     xtype: "datefield",
                     name: "endDate",
-                    fieldLabel: "End date",
+                    fieldLabel: t("end_date"),
                     value: (sourceDefinitionData.endDate),
+                    width: 250,
+                    enableKeyEvents: true,
+                    listeners: {
+                        change: columnSettingsCallback
+                    }
+                },{
+                    xtype: "textfield",
+                    name: "relativeEndDate",
+                    fieldLabel: t("end_date_relative") + '<br/><small>'+t("relative_date_description")+"</small>",
+                    value: (sourceDefinitionData.relativeEndDate),
                     width: 250,
                     enableKeyEvents: true,
                     listeners: {
