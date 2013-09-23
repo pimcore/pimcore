@@ -181,6 +181,7 @@ pimcore.report.custom.definition.analytics = Class.create({
                     id: "custom_reports_analytics_" + key + "_profileId",
                     typeAhead: true,
                     displayField: 'name',
+                    mode: 'local',
 
                     store: new Ext.data.JsonStore({
                         autoDestroy: true,
