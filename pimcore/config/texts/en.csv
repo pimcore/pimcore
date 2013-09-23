@@ -99,6 +99,10 @@
 "custom_report_y_axis","Y-Axis"
 "custom_report_datacolumn","Data Column"
 "custom_report_labelcolumn","Label Column"
+"custom_report_groupBy_columns", "GroupBy Columns"
+"custom_report_only_filter", "Only Filter"
+"custom_report_filter_and_show", "Filter and Show"
+"custom_report_filter_drilldown", "Filter Drilldown"
 "start_date","Start date",
 "start_date_relative","Start date (relative to today)"
 "end_date","End date"

@@ -22,13 +22,10 @@ class Tool_CustomReport_Adapter_Sql {
         $this->config = $config;
     }
 
-    /**
-     *
-     */
-    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null) {
+    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null) {
         $db = Pimcore_Resource::get();
 
-        $baseQuery = $this->getBaseQuery($filters, $fields);
+        $baseQuery = $this->getBaseQuery($filters, $fields, false, $drillDownFilters);
 
         if($baseQuery) {
             $total = $db->fetchOne($baseQuery["count"]);
@@ -42,6 +39,7 @@ class Tool_CustomReport_Adapter_Sql {
             if($offset !== null && $limit) {
                 $sql .= " LIMIT $offset,$limit";
             }
+
             $data = $db->fetchAll($sql);
         }
 
@@ -51,8 +49,7 @@ class Tool_CustomReport_Adapter_Sql {
     public function getColumns($configuration) {
         $sql = "";
         if($configuration) {
-            $sql = $configuration->sql;
-
+            $sql = $this->buildQueryString($configuration);
         }
 
         $res = null;
@@ -71,12 +68,58 @@ class Tool_CustomReport_Adapter_Sql {
         return $columns;
     }
 
+    protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null) {
+        $sql = "";
+        if($config->sql && !$ignoreSelectAndGroupBy) {
+            if(strpos($config->sql, "SELECT") === false) {
+                $sql .= "SELECT ";
+            }
+            $sql .= $config->sql;
+        } else {
+            $sql .= "SELECT *";
+        }
+        if($config->from) {
+            if(strpos($config->from, "FROM") === false) {
+                $sql .= " FROM ";
+            }
+            $sql .= $config->from;
+        }
+        if($config->where || $drillDownFilters) {
+            if(strpos($config->where, "WHERE") === false) {
+                $sql .= " WHERE ";
+            }
+            $whereParts = array();
+            if($config->where) {
+                $whereParts[] = "(" . $config->where . ")";
+            }
 
-    protected function getBaseQuery($filters, $fields) {
+            if($drillDownFilters) {
+                $db = Pimcore_Resource::get();
+                foreach($drillDownFilters as $field => $value) {
+                    if($value !== "") {
+                        $whereParts[] = "`$field` = " . $db->quote($value);
+                    }
+                }
+            }
+
+            $sql .= implode(" AND ", $whereParts);
+        }
+        if($config->groupby && !$ignoreSelectAndGroupBy) {
+            if(strpos($config->groupby, "GROUP BY") === false) {
+                $sql .= " GROUP BY ";
+            }
+            $sql .= $config->groupby;
+        }
+
+        return $sql;
+    }
+
+    protected function getBaseQuery($filters, $fields, $ignoreSelectAndGroupBy = false, $drillDownFilters = null) {
         $db = Pimcore_Resource::get();
         $condition = array("1 = 1");
 
-        $sql = $this->config->sql;
+        $sql = $this->buildQueryString($this->config, $ignoreSelectAndGroupBy, $drillDownFilters);
+
         $data = "";
 
         if($filters) {
@@ -122,6 +165,17 @@ class Tool_CustomReport_Adapter_Sql {
             "data" => $data,
             "count" => $total
         );
+    }
+
+    public function getAvailableOptions($filters, $field) {
+        $db = Pimcore_Resource::get();
+        $baseQuery = $this->getBaseQuery($filters, array($field . '` as `value'), true);
+        $data = array();
+        if($baseQuery) {
+            $sql = $baseQuery["data"] . " GROUP BY " . $db->quoteIdentifier($field);
+            $data = $db->fetchAll($sql);
+        }
+        return array("data" => array_merge(array(array("value" => null)), $data));
     }
 
 
