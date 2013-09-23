@@ -15,6 +15,8 @@
 
 class Pimcore_Google_Api {
 
+    const ANALYTICS_API_URL = 'https://www.googleapis.com/analytics/v3/';
+
     public static function getPrivateKeyPath() {
         return PIMCORE_CONFIGURATION_DIRECTORY . "/google-api-private-key.p12";
     }
@@ -115,6 +117,54 @@ class Pimcore_Google_Api {
         $client->setDeveloperKey(Pimcore_Config::getSystemConfig()->services->google->simpleapikey);
 
         return $client;
+    }
+
+    public static function getAnalyticsDimensions() {
+        return self::getAnalyticsMetadataByType('DIMENSION');
+    }
+
+    public static function getAnalyticsMetrics() {
+        return self::getAnalyticsMetadataByType('METRIC');
+    }
+
+    public static function getAnalyticsMetadata() {
+        $client = Pimcore_Tool::getHttpClient();
+        $client->setUri(self::ANALYTICS_API_URL.'metadata/ga/columns');
+
+        $result = $client->request();
+        return Zend_Json::decode($result->getBody());
+    }
+
+    protected static function getAnalyticsMetadataByType($type) {
+        $data = self::getAnalyticsMetadata();
+        $t = Zend_Registry::get("Zend_Translate");
+
+        $result = array();
+        foreach($data['items'] as $item) {
+            if($item['attributes']['type'] == $type) {
+
+                if(strpos($item['id'], 'XX') !== false) {
+                    for($i = 1; $i<=5; $i++) {
+                        $name = str_replace('1', $i, str_replace('01', $i, $t->translate($item['attributes']['uiName'])));
+
+                        if(in_array($item['id'], array('ga:dimensionXX', 'ga:metricXX'))) {
+                            $name .= ' '.$i;
+                        }
+                        $result[] = array(
+                            'id'=>str_replace('XX', $i, $item['id']),
+                            'name'=>$name
+                        );
+                    }
+                } else {
+                    $result[] = array(
+                        'id'=>$item['id'],
+                        'name'=>$t->translate($item['attributes']['uiName'])
+                    );
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**

@@ -20,6 +20,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
      */
     protected $service;
 
+
     public function init () {
         parent::init();
 
@@ -532,155 +533,13 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
 
     public function getDimensionsAction () {
 
-        $t = Zend_Registry::get("Zend_Translate");
-        $def = array(
-            "ga:browser",
-            "ga:browserVersion",
-            "ga:city",
-            "ga:connectionSpeed",
-            "ga:continent",
-            "ga:country",
-            "ga:date",
-            "ga:day",
-            "ga:daysSinceLastVisit",
-            "ga:flashVersion",
-            "ga:hostname",
-            "ga:hour",
-            "ga:javaEnabled",
-            "ga:language",
-            "ga:latitude",
-            "ga:longitude",
-            "ga:month",
-            "ga:networkDomain",
-            "ga:networkLocation",
-            "ga:operatingSystem",
-            "ga:operatingSystemVersion",
-            "ga:pageDepth",
-            "ga:region",
-            "ga:screenColors",
-            "ga:screenResolution",
-            "ga:subContinent",
-            "ga:userDefinedValue",
-            "ga:visitCount",
-            "ga:visitLength",
-            "ga:visitorType",
-            "ga:week",
-            "ga:year",
-
-            "ga:adContent",
-            "ga:adGroup",
-            "ga:adSlot",
-            "ga:adSlotPosition",
-            "ga:campaign",
-            "ga:keyword",
-            "ga:medium",
-            "ga:referralPath",
-            "ga:source",
-
-            "ga:exitPagePath",
-            "ga:landingPagePath",
-            "ga:landingPagePath",
-            "ga:pagePath",
-            "ga:pageTitle",
-            "ga:secondPagePath",
-
-            "ga:affiliation",
-            "ga:daysToTransaction",
-            "ga:productCategory",
-            "ga:productName",
-            "ga:productSku",
-            "ga:transactionId",
-            "ga:visitsToTransaction",
-
-            "ga:searchCategory",
-            "ga:searchDestinationPage",
-            "ga:searchKeyword",
-            "ga:searchKeywordRefinement",
-            "ga:searchStartPage",
-            "ga:searchUsed",
-
-            "ga:previousPagePath",
-            "ga:nextPagePath",
-
-            "ga:eventCategory",
-            "ga:eventAction",
-            "ga:eventLabel",
-
-            "ga:customVarName1",
-            "ga:customVarName2",
-            "ga:customVarName3",
-            "ga:customVarName4",
-            "ga:customVarName5",
-            "ga:customVarValue1",
-            "ga:customVarValue2",
-            "ga:customVarValue3",
-            "ga:customVarValue4",
-            "ga:customVarValue5"
-        );
-
-        foreach ($def as $dimension) {
-            $data[] = array(
-                "id" => $dimension,
-                "name" => $t->translate($dimension)
-            );
-        }
-
-        $this->_helper->json(array("data" => $data));
+        $this->_helper->json(array("data" => Pimcore_Google_Api::getAnalyticsDimensions()));
     }
 
 
     public function getMetricsAction () {
 
-        $t = Zend_Registry::get("Zend_Translate");
-        $def = array(
-            "ga:bounces",
-            "ga:entrances",
-            "ga:exits",
-            "ga:newVisits",
-            "ga:pageviews",
-            "ga:timeOnPage",
-            "ga:timeOnSite",
-            "ga:visitors",
-            "ga:visits",
-            "ga:adClicks",
-            "ga:adCost",
-            "ga:CPC",
-            "ga:CPM",
-            "ga:CTR",
-            "ga:impressions",
-            "ga:uniquePageviews",
-            "ga:itemRevenue",
-            "ga:itemQuantity",
-            "ga:transactions",
-            "ga:transactionRevenue",
-            "ga:transactionShipping",
-            "ga:transactionTax",
-            "ga:uniquePurchases",
-            "ga:searchDepth",
-            "ga:searchDuration",
-            "ga:searchExits",
-            "ga:searchRefinements",
-            "ga:searchUniques",
-            "ga:searchVisits",
-            "ga:goalCompletionsAll",
-            "ga:goalStartsAll",
-            "ga:goalValueAll",
-            "ga:goal1Completions",
-            "ga:goal1Starts",
-            "ga:goal1Value",
-            "ga:totalEvents",
-            "ga:uniqueEvents",
-            "ga:eventValue"
-        );
-
-        foreach ($def as $metric) {
-            $data[] = array(
-                "id" => $metric,
-                "name" => $t->translate($metric)
-            );
-        }
-
-        $this->_helper->json(array("data" => $data));
+        $this->_helper->json(array("data" => Pimcore_Google_Api::getAnalyticsMetrics()));
     }
 
     public function getSegmentsAction() {
