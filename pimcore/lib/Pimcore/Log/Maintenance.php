@@ -110,6 +110,9 @@ class Pimcore_Log_Maintenance {
             foreach ($files as $file) {
                 if(filemtime($file) < (time()-(86400*30))) { // we keep the logs for 30 days
                     unlink($file);
+                } else if (!preg_match("/\.gz$/", $file)) {
+                    gzcompressfile($file);
+                    unlink($file);
                 }
             }
         }
