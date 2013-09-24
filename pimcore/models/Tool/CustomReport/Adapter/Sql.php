@@ -167,15 +167,23 @@ class Tool_CustomReport_Adapter_Sql {
         );
     }
 
-    public function getAvailableOptions($filters, $field) {
+    public function getAvailableOptions($filters, $field, $drillDownFilters) {
         $db = Pimcore_Resource::get();
-        $baseQuery = $this->getBaseQuery($filters, array($field . '` as `value'), true);
+        $baseQuery = $this->getBaseQuery($filters, array($field), true, $drillDownFilters);
         $data = array();
         if($baseQuery) {
             $sql = $baseQuery["data"] . " GROUP BY " . $db->quoteIdentifier($field);
             $data = $db->fetchAll($sql);
         }
-        return array("data" => array_merge(array(array("value" => null)), $data));
+
+        $filteredData = array();
+        foreach($data as $d) {
+            if(!empty($d[$field]) || $d[$field] === 0) {
+                $filteredData[] = array("value" => $d[$field]);
+            }
+        }
+
+        return array("data" => array_merge(array(array("value" => null)), $filteredData));
     }
 
 

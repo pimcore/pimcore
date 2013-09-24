@@ -67,11 +67,11 @@ pimcore.report.custom.item = Class.create({
                 checkOrder,
                 {header: t("filter_type"), width:100, sortable: false, dataIndex: 'filter', editable: true, editor: new Ext.form.ComboBox({
                     store: [
-                        //["date", t("date")],
                         ["", t("empty")],
                         ["string", t("text")],
-                        ["boolean", t("bool")],
-                        ["numeric", t("numeric")]
+                        ["numeric", t("numeric")],
+//                        ["date", t("date")],
+                        ["boolean", t("bool")]
                     ],
                     mode: "local",
                     typeAhead: false,

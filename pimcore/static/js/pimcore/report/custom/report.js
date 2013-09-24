@@ -16,6 +16,7 @@ pimcore.registerNS("pimcore.report.custom.report");
 pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
     drillDownFilters: {},
+    drillDownStores: [],
 
     matchType: function (type) {
         var types = ["global"];
@@ -34,6 +35,8 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
     },
 
     initGrid: function (data) {
+        this.drillDownFilters = {};
+        this.drillDownStores = [];
 
         var storeFields = [];
         var gridColums = [];
@@ -105,6 +108,20 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                                 filter: this.gridFilters.buildQuery(filterData).filter
                             }
                         });
+
+                        for(var j = 0; j < this.drillDownStores.length; j++) {
+                            if(this.drillDownStores[j].notReload) {
+                                //to prevent reopening of combo box
+                                this.drillDownStores[j].notReload = false;
+                            } else {
+                                this.drillDownStores[j].load({
+                                    params: {
+                                        filter: this.gridFilters.buildQuery(filterData).filter
+                                    }
+                                });
+                            }
+                        }
+
                     }
 
                 }.bind(this)
@@ -208,29 +225,38 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                                                     : ts(drillDownFilterDefinitions[i]["name"]),
                 style: 'padding-right: 5px'
             });
+
+            var drillDownStore = new Ext.data.JsonStore({
+                url: '/admin/reports/custom-report/drill-down-options',
+                root: 'data',
+                baseParams: {
+                    name: this.config["name"],
+                    field: drillDownFilterDefinitions[i]["name"]
+                },
+                fields: ['value']
+            });
+            this.drillDownStores.push(drillDownStore);
+
             drillDownFilterComboboxes.push({
-                fieldLabel: "test",
                 xtype: 'combo',
-                typeAhead: false,
+                forceSelection: true,
                 triggerAction: 'all',
-                lazyRender: false,
-                store: new Ext.data.JsonStore({
-                    url: '/admin/reports/custom-report/drill-down-options',
-                    root: 'data',
-                    baseParams: {
-                        name: this.config["name"],
-                        field: drillDownFilterDefinitions[i]["name"]
-                    },
-                    fields: [
-                        'value'
-                    ]
-                }),
+                store: drillDownStore,
                 listeners: {
                     select: function(fieldname, combo, record, index) {
                         var value = combo.getValue();
+                        this.drillDownFilters[fieldname] = value;
+
                         this.store.setBaseParam('drillDownFilters[' + fieldname + ']', value);
                         this.chartStore.setBaseParam('drillDownFilters[' + fieldname + ']', value);
-                        this.drillDownFilters[fieldname] = value;
+                        for(var j = 0; j < this.drillDownStores.length; j++) {
+                            if(this.drillDownStores[j] != combo.getStore()) {
+                                this.drillDownStores[j].setBaseParam('drillDownFilters[' + fieldname + ']', value);
+                            } else {
+                                this.drillDownStores[j].notReload = true;
+                            }
+                        }
+
                         this.store.reload();
                     }.bind(this, drillDownFilterDefinitions[i]["name"])
                 },
