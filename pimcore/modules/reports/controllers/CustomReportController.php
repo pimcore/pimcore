@@ -183,13 +183,14 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
 
         $field = $this->getParam("field");
         $filters = ($this->getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
+        $drillDownFilters = $this->getParam("drillDownFilters", null);
 
         $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
 
         $adapter = $this->getAdapter($configuration);
-        $result = $adapter->getAvailableOptions($filters, $field);
+        $result = $adapter->getAvailableOptions($filters, $field, $drillDownFilters);
         $this->_helper->json(array(
             "success" => true,
             "data" => $result['data'],
