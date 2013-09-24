@@ -48,6 +48,8 @@ pimcore.report.custom.definition.sql = Class.create({
                     value: (sourceDefinitionData ? sourceDefinitionData.sql : ""),
                     width: 500,
                     height: 50,
+                    grow: true,
+                    growMax: 200,
                     enableKeyEvents: true,
                     listeners: {
                         keyup: function() {
@@ -62,6 +64,8 @@ pimcore.report.custom.definition.sql = Class.create({
                     value: (sourceDefinitionData ? sourceDefinitionData.from : ""),
                     width: 500,
                     height: 50,
+                    grow: true,
+                    growMax: 200,
                     enableKeyEvents: true,
                     listeners: {
                         keyup: function() {
@@ -76,6 +80,8 @@ pimcore.report.custom.definition.sql = Class.create({
                     value: (sourceDefinitionData ? sourceDefinitionData.where : ""),
                     width: 500,
                     height: 50,
+                    grow: true,
+                    growMax: 200,
                     enableKeyEvents: true,
                     listeners: {
                         keyup: function() {
@@ -90,6 +96,8 @@ pimcore.report.custom.definition.sql = Class.create({
                     value: (sourceDefinitionData ? sourceDefinitionData.groupby : ""),
                     width: 500,
                     height: 50,
+                    grow: true,
+                    growMax: 200,
                     enableKeyEvents: true,
                     listeners: {
                         keyup: function() {
@@ -125,7 +133,7 @@ pimcore.report.custom.definition.sql = Class.create({
         if(this.sqlText) {
             var sqlText = "";
             if(values.sql) {
-                if(values.sql.indexOf("SELECT") < 0) {
+                if(values.sql.indexOf("SELECT") < 0 || values.sql.indexOf("SELECT") > 5) {
                     sqlText += "SELECT ";
                 }
                 sqlText += values.sql;

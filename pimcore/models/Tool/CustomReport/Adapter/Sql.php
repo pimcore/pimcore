@@ -67,7 +67,7 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
     protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null) {
         $sql = "";
         if($config->sql && !$ignoreSelectAndGroupBy) {
-            if(strpos(strtoupper($config->sql), "SELECT") === false) {
+            if(strpos(strtoupper(trim($config->sql)), "SELECT") === false || strpos(strtoupper(trim($config->sql)), "SELECT") > 5) {
                 $sql .= "SELECT ";
             }
             $sql .= str_replace("\n", " ", $config->sql);
@@ -75,13 +75,13 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
             $sql .= "SELECT *";
         }
         if($config->from) {
-            if(strpos(strtoupper($config->from), "FROM") === false) {
+            if(strpos(strtoupper(trim($config->from)), "FROM") === false) {
                 $sql .= " FROM ";
             }
             $sql .= " " . str_replace("\n", " ", $config->from);
         }
         if($config->where || $drillDownFilters) {
-            if(strpos(strtoupper($config->where), "WHERE") === false) {
+            if(strpos(strtoupper(trim($config->where)), "WHERE") === false) {
                 $sql .= " WHERE ";
             }
             $whereParts = array();
