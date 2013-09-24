@@ -186,8 +186,10 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 if(this.drillDownFilters) {
                     var fieldnames = Object.getOwnPropertyNames(this.drillDownFilters);
                     for(var j = 0; j < fieldnames.length; j++) {
-                        query += "&" + 'drillDownFilters[' + fieldnames[j] + ']='
-                                                                + this.drillDownFilters[fieldnames[j]];
+                        if(this.drillDownFilters[fieldnames[j]] !== null) {
+                            query += "&" + 'drillDownFilters[' + fieldnames[j] + ']='
+                                + this.drillDownFilters[fieldnames[j]];
+                        }
                     }
                 }
 

@@ -13,16 +13,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_CustomReport_Adapter_Analytics {
+class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abstract {
 
-
-    public function __construct($config) {
-        $this->config = $config;
-    }
-
-    /**
-     *
-     */
     public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null) {
 
         $this->setFilters($filters);
@@ -204,4 +196,8 @@ class Tool_CustomReport_Adapter_Analytics {
         return $date/1000;
     }
 
+    public function getAvailableOptions($filters, $field, $drillDownFilters)
+    {
+        // TODO: Implement getAvailableOptions() method.
+    }
 }
