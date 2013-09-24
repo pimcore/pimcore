@@ -122,10 +122,10 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
                              ));
     }
 
-    protected function getAdapter($configuration) {
+    protected function getAdapter($configuration, $fullConfig = null) {
         $type = $configuration->type ? ucfirst($configuration->type) : 'Sql';
         $adapter = "Tool_CustomReport_Adapter_{$type}";
-        return new $adapter($configuration);
+        return new $adapter($configuration, $fullConfig);
     }
 
     public function getReportConfigAction() {
@@ -168,9 +168,10 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
 
-        $adapter = $this->getAdapter($configuration);
+        $adapter = $this->getAdapter($configuration, $config);
 
-        $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters);
+        $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters, $config);
+
 
         $this->_helper->json(array(
                                   "success" => true,
@@ -189,7 +190,7 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
 
-        $adapter = $this->getAdapter($configuration);
+        $adapter = $this->getAdapter($configuration, $config);
         $result = $adapter->getAvailableOptions($filters, $field, $drillDownFilters);
         $this->_helper->json(array(
             "success" => true,
@@ -207,7 +208,7 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
 
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
-        $adapter = $this->getAdapter($configuration);
+        $adapter = $this->getAdapter($configuration, $config);
 
         $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
 
@@ -238,7 +239,7 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
 
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
-        $adapter = $this->getAdapter($configuration);
+        $adapter = $this->getAdapter($configuration, $config);
 
         $result = $adapter->getData($filters, $sort, $dir, null, null, $fields, $drillDownFilters);
 

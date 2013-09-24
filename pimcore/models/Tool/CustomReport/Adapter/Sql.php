@@ -17,6 +17,7 @@
 
 class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
 
+
     public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null) {
         $db = Pimcore_Resource::get();
 

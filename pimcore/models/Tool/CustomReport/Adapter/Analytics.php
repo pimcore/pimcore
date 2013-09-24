@@ -15,9 +15,9 @@
 
 class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abstract {
 
-    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null) {
+    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null, $fullConfig = null) {
 
-        $this->setFilters($filters);
+        $this->setFilters($filters, $drillDownFilters);
 
         if($sort) {
             $dir = $dir == 'DESC' ? '-' : '';
@@ -33,18 +33,8 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
         }
 
 
-        $results = $this->getDataHelper();
-        $data = array();
-
-        if($results['rows']) {
-            foreach($results['rows'] as $row) {
-                $entry = array();
-                foreach($results['columnHeaders'] as $key => $header) {
-                    $entry[$header['name']] = $row[$key];
-                }
-                $data[] = $entry;
-            }
-        }
+        $results = $this->getDataHelper($fields, $drillDownFilters);
+        $data = $this->extractData($results);
         return array("data" => $data, "total" => $results['totalResults']);
     }
 
@@ -59,31 +49,36 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
         return $columns;
     }
 
-    protected function setFilters($filters) {
-
-        if(!sizeof($filters) ) {
-            return;
-        }
+    protected function setFilters($filters, $drillDownFilters = array()) {
 
         $gaFilters = array($this->config->filters);
-        foreach($filters as $filter) {
-            if($filter['type'] == 'string') {
-                $value = str_replace(';', '', addslashes($filter['value']));
-                $gaFilters[] = "{$filter['field']}=~{$value}";
-            } else if($filter["type"] == "numeric") {
-                $value = floatval($filter['value']);
-                $compMapping = array(
-                    "lt" => "<",
-                    "gt" => ">",
-                    "eq" => "=="
-                );
-                if($compMapping[$filter["comparison"]]) {
-                    $gaFilters[] = "{$filter['field']}{$compMapping[$filter["comparison"]]}{$value}";
-                }
-            } else if ($filter["type"] == "boolean") {
+        if(sizeof($filters) ) {
 
-                $value = $filter['value'] ? 'Yes' : 'No';
-                $gaFilters[] = "{$filter['field']}=={$value}";
+            foreach($filters as $filter) {
+                if($filter['type'] == 'string') {
+                    $value = str_replace(';', '', addslashes($filter['value']));
+                    $gaFilters[] = "{$filter['field']}=~{$value}";
+                } else if($filter["type"] == "numeric") {
+                    $value = floatval($filter['value']);
+                    $compMapping = array(
+                        "lt" => "<",
+                        "gt" => ">",
+                        "eq" => "=="
+                    );
+                    if($compMapping[$filter["comparison"]]) {
+                        $gaFilters[] = "{$filter['field']}{$compMapping[$filter["comparison"]]}{$value}";
+                    }
+                } else if ($filter["type"] == "boolean") {
+
+                    $value = $filter['value'] ? 'Yes' : 'No';
+                    $gaFilters[] = "{$filter['field']}=={$value}";
+                }
+            }
+        }
+
+        if(sizeof($drillDownFilters)) {
+            foreach($drillDownFilters as $key => $value) {
+                $gaFilters[] = "{$key}=={$value}";
             }
         }
 
@@ -97,8 +92,16 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
 
     }
 
-    protected function getDataHelper() {
+    protected function getDataHelper($fields = null, $drillDownFilters = null, $useDimensionHandling = true) {
         $configuration = $this->config;
+
+        if(is_array($fields) && sizeof($fields)) {
+            $configuration = $this->handleFields($configuration, $fields);
+        }
+
+        if($this->fullConfig && $useDimensionHandling) {
+            $configuration = $this->handleDimensions($configuration);
+        }
 
         $client = Pimcore_Google_Api::getServiceClient();
         if(!$client) {
@@ -153,6 +156,62 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
 
     }
 
+    protected function extractData($results) {
+        $data = array();
+
+        if($results['rows']) {
+            foreach($results['rows'] as $row) {
+                $entry = array();
+                foreach($results['columnHeaders'] as $key => $header) {
+                    $entry[$header['name']] = $row[$key];
+                }
+                $data[] = $entry;
+            }
+        }
+
+        return $data;
+    }
+
+    protected function handleFields($configuration, $fields) {
+
+        $metrics = explode(',', $configuration->metric);
+        foreach($metrics as $key => $metric) {
+            if(!in_array($metric, $fields)) {
+                unset($metrics[$key]);
+            }
+        }
+        $configuration->metric = implode(',', $metrics);
+
+
+        $dimensions = explode(',', $configuration->dimension);
+        foreach($dimensions as $key => $dimension) {
+            if(!in_array($dimension, $fields)) {
+                unset($dimensions[$key]);
+            }
+        }
+        $configuration->dimension = implode(',', $dimensions);
+
+        return $configuration;
+    }
+
+    protected function handleDimensions($configuration) {
+        $dimension = explode(',',$configuration->dimension);
+        if(sizeof($dimension)) {
+            foreach($this->fullConfig->columnConfiguration as $column) {
+                if($column['filter_drilldown'] == 'only_filter') {
+                    foreach($dimension as $key => $dim) {
+                        if($dim == $column['name']) {
+                            unset($dimension[$key]);
+                        }
+                    }
+                }
+            }
+        }
+        $configuration->dimension = implode(',', $dimension);
+
+        return $configuration;
+    }
+
 
     protected function calcDate($date, $relativeDate) {
 
@@ -198,6 +257,16 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
 
     public function getAvailableOptions($filters, $field, $drillDownFilters)
     {
-        // TODO: Implement getAvailableOptions() method.
+        $this->setFilters($filters, $drillDownFilters);
+        $results = $this->getDataHelper(array(), $drillDownFilters, false);
+
+        $data = $this->extractData($results);
+
+        $return = array();
+        foreach($data as $row) {
+            $return[] = array('value'=>$row[$field]);
+        }
+
+        return array('data'=> $return);
     }
 }
