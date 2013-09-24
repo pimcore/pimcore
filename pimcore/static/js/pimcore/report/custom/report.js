@@ -161,7 +161,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 if(filterData.length > 0) {
                     query = "filter=" + encodeURIComponent(this.gridFilters.buildQuery(filterData).filter);
                 } else {
-                    query = "filter="
+                    query = "filter=";
                 }
 
                 query += "&name=" + this.config.name;
@@ -169,7 +169,8 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 if(this.drillDownFilters) {
                     var fieldnames = Object.getOwnPropertyNames(this.drillDownFilters);
                     for(var j = 0; j < fieldnames.length; j++) {
-                        query += "&" + 'drillDownFilters[' + fieldnames[j] + ']=' + this.drillDownFilters[fieldnames[j]];
+                        query += "&" + 'drillDownFilters[' + fieldnames[j] + ']='
+                                                                + this.drillDownFilters[fieldnames[j]];
                     }
                 }
 
@@ -203,7 +204,8 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         for(var i = 0; i < drillDownFilterDefinitions.length; i++) {
             drillDownFilterComboboxes.push({
                 xtype: 'label',
-                text: drillDownFilterDefinitions[i]["label"] ? ts(drillDownFilterDefinitions[i]["label"]) : ts(drillDownFilterDefinitions[i]["name"]),
+                text: drillDownFilterDefinitions[i]["label"] ? ts(drillDownFilterDefinitions[i]["label"])
+                                                    : ts(drillDownFilterDefinitions[i]["name"]),
                 style: 'padding-right: 5px'
             });
             drillDownFilterComboboxes.push({
