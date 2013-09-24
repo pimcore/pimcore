@@ -204,6 +204,7 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
         $drillDownFilters = $this->getParam("drillDownFilters", null);
 
         $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
+
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
         $adapter = $this->getAdapter($configuration);
@@ -223,13 +224,23 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
         $sort = $this->getParam("sort");
         $dir = $this->getParam("dir");
         $filters = ($this->_getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
+        $drillDownFilters = $this->getParam("drillDownFilters", null);
 
         $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
+
+        $columns = $config->getColumnConfiguration();
+        $fields = array();
+        foreach($columns as $column) {
+            if($column['export']) {
+                $fields[] = $column['name'];
+            }
+        }
+
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
         $adapter = $this->getAdapter($configuration);
 
-        $result = $adapter->getData($filters, $sort, $dir, null, null);
+        $result = $adapter->getData($filters, $sort, $dir, null, null, $fields, $drillDownFilters);
 
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/report-export-" . uniqid() . ".csv";
         @unlink($exportFile);

@@ -15,12 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_CustomReport_Adapter_Sql {
-
-
-    public function __construct($config) {
-        $this->config = $config;
-    }
+class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
 
     public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null) {
         $db = Pimcore_Resource::get();
@@ -96,7 +91,7 @@ class Tool_CustomReport_Adapter_Sql {
             if($drillDownFilters) {
                 $db = Pimcore_Resource::get();
                 foreach($drillDownFilters as $field => $value) {
-                    if($value !== "") {
+                    if($value !== "" && $value !== null) {
                         $whereParts[] = "`$field` = " . $db->quote($value);
                     }
                 }
