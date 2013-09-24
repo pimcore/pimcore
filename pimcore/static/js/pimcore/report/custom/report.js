@@ -250,7 +250,9 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                         this.drillDownFilters[fieldname] = value;
 
                         this.store.setBaseParam('drillDownFilters[' + fieldname + ']', value);
-                        this.chartStore.setBaseParam('drillDownFilters[' + fieldname + ']', value);
+                        if(this.chartStore) {
+                            this.chartStore.setBaseParam('drillDownFilters[' + fieldname + ']', value);
+                        }
                         for(var j = 0; j < this.drillDownStores.length; j++) {
                             if(this.drillDownStores[j] != combo.getStore()) {
                                 this.drillDownStores[j].setBaseParam('drillDownFilters[' + fieldname + ']', value);
