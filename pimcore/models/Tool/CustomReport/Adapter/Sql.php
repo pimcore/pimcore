@@ -64,7 +64,7 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
         return $columns;
     }
 
-    protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField) {
+    protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null) {
         $sql = "";
         if($config->sql && !$ignoreSelectAndGroupBy) {
             if(strpos(strtoupper(trim($config->sql)), "SELECT") === false || strpos(strtoupper(trim($config->sql)), "SELECT") > 5) {
