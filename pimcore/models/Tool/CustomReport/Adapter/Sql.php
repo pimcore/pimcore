@@ -64,13 +64,16 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
         return $columns;
     }
 
-    protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null) {
+    protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField) {
         $sql = "";
         if($config->sql && !$ignoreSelectAndGroupBy) {
             if(strpos(strtoupper(trim($config->sql)), "SELECT") === false || strpos(strtoupper(trim($config->sql)), "SELECT") > 5) {
                 $sql .= "SELECT ";
             }
             $sql .= str_replace("\n", " ", $config->sql);
+        } else if($selectField) {
+            $db = Pimcore_Resource::get();
+            $sql .= "SELECT " . $db->quoteIdentifier($selectField);
         } else {
             $sql .= "SELECT *";
         }
@@ -110,11 +113,11 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
         return $sql;
     }
 
-    protected function getBaseQuery($filters, $fields, $ignoreSelectAndGroupBy = false, $drillDownFilters = null) {
+    protected function getBaseQuery($filters, $fields, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null) {
         $db = Pimcore_Resource::get();
         $condition = array("1 = 1");
 
-        $sql = $this->buildQueryString($this->config, $ignoreSelectAndGroupBy, $drillDownFilters);
+        $sql = $this->buildQueryString($this->config, $ignoreSelectAndGroupBy, $drillDownFilters, $selectField);
 
         $data = "";
 
@@ -166,7 +169,7 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
 
     public function getAvailableOptions($filters, $field, $drillDownFilters) {
         $db = Pimcore_Resource::get();
-        $baseQuery = $this->getBaseQuery($filters, array($field), true, $drillDownFilters);
+        $baseQuery = $this->getBaseQuery($filters, array($field), true, $drillDownFilters, $field);
         $data = array();
         if($baseQuery) {
             $sql = $baseQuery["data"] . " GROUP BY " . $db->quoteIdentifier($field);
