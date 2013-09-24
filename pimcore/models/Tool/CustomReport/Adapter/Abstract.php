@@ -17,8 +17,9 @@
 
 abstract class Tool_CustomReport_Adapter_Abstract {
 
-    public function __construct($config) {
+    public function __construct($config, $fullConfig = null) {
         $this->config = $config;
+        $this->fullConfig = $fullConfig;
     }
 
     /**
