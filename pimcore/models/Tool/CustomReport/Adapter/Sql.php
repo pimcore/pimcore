@@ -67,26 +67,26 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
     protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null) {
         $sql = "";
         if($config->sql && !$ignoreSelectAndGroupBy) {
-            if(strpos($config->sql, "SELECT") === false) {
+            if(strpos(strtoupper($config->sql), "SELECT") === false) {
                 $sql .= "SELECT ";
             }
-            $sql .= $config->sql;
+            $sql .= str_replace("\n", " ", $config->sql);
         } else {
             $sql .= "SELECT *";
         }
         if($config->from) {
-            if(strpos($config->from, "FROM") === false) {
+            if(strpos(strtoupper($config->from), "FROM") === false) {
                 $sql .= " FROM ";
             }
-            $sql .= $config->from;
+            $sql .= " " . str_replace("\n", " ", $config->from);
         }
         if($config->where || $drillDownFilters) {
-            if(strpos($config->where, "WHERE") === false) {
+            if(strpos(strtoupper($config->where), "WHERE") === false) {
                 $sql .= " WHERE ";
             }
             $whereParts = array();
             if($config->where) {
-                $whereParts[] = "(" . $config->where . ")";
+                $whereParts[] = "(" . str_replace("\n", " ", $config->where) . ")";
             }
 
             if($drillDownFilters) {
@@ -98,13 +98,13 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
                 }
             }
 
-            $sql .= implode(" AND ", $whereParts);
+            $sql .= " " . implode(" AND ", $whereParts);
         }
         if($config->groupby && !$ignoreSelectAndGroupBy) {
-            if(strpos($config->groupby, "GROUP BY") === false) {
+            if(strpos(strtoupper($config->groupby), "GROUP BY") === false) {
                 $sql .= " GROUP BY ";
             }
-            $sql .= $config->groupby;
+            $sql .= " " . str_replace("\n", " ", $config->groupby);
         }
 
         return $sql;
@@ -156,6 +156,7 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
         } else {
             return;
         }
+
 
         return array(
             "data" => $data,
