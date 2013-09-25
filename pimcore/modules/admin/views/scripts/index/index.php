@@ -58,7 +58,7 @@
 $styles = array(
     "/admin/misc/admin-css",
     "/pimcore/static/css/icons.css",
-    "/pimcore/static/js/lib/ext/resources/css/ext-all.css",
+    "/pimcore/static/js/lib/ext/resources/css/ext-all-notheme.css",
     "/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css",
     "/pimcore/static/js/lib/ext-plugins/SwfUploadPanel/SwfUploadPanel.css",
     "/pimcore/static/js/lib/ext-plugins/Notification/notification.css",
