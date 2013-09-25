@@ -206,6 +206,35 @@ class Tool_CustomReport_Config {
     }
 
     /**
+     * @return array
+     */
+    public function getReportsList () {
+        $dir = Tool_CustomReport_Config::getWorkingDir();
+
+        $reports = array();
+        $files = scandir($dir);
+        foreach ($files as $file) {
+            if(strpos($file, ".xml")) {
+                $name = str_replace(".xml", "", $file);
+                $reports[] = array(
+                    "id" => $name,
+                    "text" => $name
+                );
+            }
+        }
+
+        return $reports;
+
+    }
+
+    public function getAdapter($configuration, $fullConfig = null) {
+
+        $type = $configuration->type ? ucfirst($configuration->type) : 'Sql';
+        $adapter = "Tool_CustomReport_Adapter_{$type}";
+        return new $adapter($configuration, $fullConfig);
+    }
+
+    /**
      * @return void
      */
     public function delete() {

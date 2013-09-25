@@ -40,7 +40,6 @@ pimcore.report.custom.definition.analytics = Class.create({
         var metricLoaded = false;
         var segmentLoaded = false;
 
-
         this.dimensionStore = new Ext.data.JsonStore({
             autoDestroy: true,
             url: "/admin/reports/analytics/get-dimensions",
@@ -166,6 +165,8 @@ pimcore.report.custom.definition.analytics = Class.create({
         });
         this.segementsStore.load();
 
+        var time = new Date().getTime();
+
         this.element = new Ext.form.FormPanel({
             key: key,
             bodyStyle: "padding:10px;",
@@ -179,7 +180,7 @@ pimcore.report.custom.definition.analytics = Class.create({
                     xtype: "combo",
                     name: "profileId",
                     fieldLabel: t('profile'),
-                    id: "custom_reports_analytics_" + key + "_profileId",
+                    id: "custom_reports_analytics_" + time + "_profileId",
                     typeAhead: true,
                     displayField: 'name',
                     mode: 'local',
@@ -193,8 +194,8 @@ pimcore.report.custom.definition.analytics = Class.create({
                         fields: ["name", "id"],
                         listeners: {
                             load: function () {
-                                Ext.getCmp("custom_reports_analytics_" + key + "_profileId").setValue(sourceDefinitionData.profileId);
-                            }.bind(this, key, sourceDefinitionData)
+                                Ext.getCmp("custom_reports_analytics_" + time + "_profileId").setValue(sourceDefinitionData.profileId);
+                            }.bind(this, time, sourceDefinitionData)
                         }
                     }),
                     valueField: 'id',
