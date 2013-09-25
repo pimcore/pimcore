@@ -115,6 +115,14 @@ Ext.onReady(function () {
             }
         }
 
+        // add lazyload styles
+        // this is necessary, because otherwise ext will overwrite many default styles (reset.css)
+        // and then the style detection of eg. input, textarea editable isn't accurate anymore
+        Ext.each(Ext.query("link[type='pimcore-lazyload-style']"), function (item) {
+            item.setAttribute("type", "text/css");
+            item.setAttribute("rel", "stylesheet");
+        });
+
         // handler for Esc
         var mapEsc = new Ext.KeyMap(document, {
             key: [27],
