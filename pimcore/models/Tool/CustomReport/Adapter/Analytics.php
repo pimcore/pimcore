@@ -93,7 +93,7 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
     }
 
     protected function getDataHelper($fields = null, $drillDownFilters = null, $useDimensionHandling = true) {
-        $configuration = $this->config;
+        $configuration = clone $this->config;
 
         if(is_array($fields) && sizeof($fields)) {
             $configuration = $this->handleFields($configuration, $fields);
