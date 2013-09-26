@@ -214,6 +214,32 @@ class Asset_Image_Thumbnail {
     }
 
     /**
+     * @param string $type
+     * @return null|string
+     */
+    public function getChecksum($type = "md5") {
+        $file = $this->getFileSystemPath();
+        if(is_file($file)) {
+            if($type == "md5") {
+                return md5_file($file);
+            } else if ($type = "sha1") {
+                return sha1_file($file);
+            } else {
+                throw new \Exception("hashing algorithm '" . $type . "' isn't supported");
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileSystemPath() {
+        return PIMCORE_DOCUMENT_ROOT . $this->getPath();
+    }
+
+    /**
      * Get a thumbnail image configuration.
      * @param mixed $selector Name, array or object describing a thumbnail configuration.
      * @return Asset_Image_Thumbnail_Config
@@ -227,7 +253,7 @@ class Asset_Image_Thumbnail {
      * Some of the data is ignored.
     */
     protected function applyFileInfo() {
-        $info = @getimagesize(PIMCORE_DOCUMENT_ROOT . $this->getPath());
+        $info = @getimagesize($this->getFileSystemPath());
         if($info) {
             list($this->width, $this->height, $type, $attr, $this->mimetype) = $info;
 
