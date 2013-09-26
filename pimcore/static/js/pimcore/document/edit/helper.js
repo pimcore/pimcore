@@ -21,18 +21,27 @@ function pimcoreOnUnload() {
 }
 
 
-pimcore.edithelpers = {};
+pimcore.edithelpers = {
+    __lastPageHeight: null // contains the last page height determined by setBodyHeight()
+};
 
 pimcore.edithelpers.setBodyHeight = function () {
     try {
         var body = document.body,
-            html = document.documentElement;
+            html = document.documentElement,
+            lastPageHeight = pimcore.edithelpers.__lastPageHeight;
 
         var height = Math.max(body.scrollHeight, body.offsetHeight,
             html.clientHeight, html.scrollHeight, html.offsetHeight);
 
-        Ext.getBody().setHeight(height);
-        Ext.get(Ext.query("html")[0]).setHeight(height);
+
+        if(!lastPageHeight || lastPageHeight < (height-100)) {
+            Ext.getBody().setHeight(height);
+            Ext.get(Ext.query("html")[0]).setHeight(height);
+
+            pimcore.edithelpers.__lastPageHeight = height;
+            console.log("hi!");
+        }
     } catch (e) {
         console.log(e);
     }
