@@ -983,6 +983,8 @@ class Asset extends Element_Abstract {
                 return md5_file($file);
             } else if ($type = "sha1") {
                 return sha1_file($file);
+            } else {
+                throw new \Exception("hashing algorithm '" . $type . "' isn't supported");
             }
         }
 
