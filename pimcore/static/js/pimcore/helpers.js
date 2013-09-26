@@ -16,6 +16,66 @@
 pimcore.registerNS("pimcore.helpers.x");
 
 
+pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
+
+    if(!ExtJS) {
+        ExtJS = Ext;
+    }
+
+    // handler for STRG+S (Save&Publish)
+    var mapCtrlS = new ExtJS.KeyMap(bindEl, {
+        key:"s",
+        fn: top.pimcore.helpers.handleCtrlS,
+        ctrl:true,
+        alt:false,
+        shift:false,
+        stopEvent:true
+    });
+
+    // handler for F5
+    var mapF5 = new ExtJS.KeyMap(bindEl, {
+        key:[116],
+        fn: top.pimcore.helpers.handleF5,
+        stopEvent:true
+    });
+
+    var openAssetById = new ExtJS.KeyMap(bindEl, {
+        key:"a",
+        fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "asset"),
+        ctrl:true,
+        alt:false,
+        shift:true,
+        stopEvent:true
+    });
+
+    var openObjectById = new ExtJS.KeyMap(bindEl, {
+        key:"o",
+        fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "object"),
+        ctrl:true,
+        alt:false,
+        shift:true,
+        stopEvent:true
+    });
+
+    var openDocumentById = new ExtJS.KeyMap(bindEl, {
+        key:"d",
+        fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "document"),
+        ctrl:true,
+        alt:false,
+        shift:true,
+        stopEvent:true
+    });
+
+    var openDocumentByPath = new ExtJS.KeyMap(bindEl, {
+        key:"f",
+        fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "document"),
+        ctrl:true,
+        alt:false,
+        shift:true,
+        stopEvent:true
+    });
+};
+
 pimcore.helpers.openAsset = function (id, type, ignoreForHistory) {
 
     if (pimcore.globalmanager.exists("asset_" + id) == false) {

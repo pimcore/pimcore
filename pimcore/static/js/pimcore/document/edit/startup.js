@@ -132,24 +132,10 @@ Ext.onReady(function () {
             stopEvent: true
         });
 
-        // handler for STRG+S
-        var mapCtrlS = new Ext.KeyMap(document, {
-            key: "s",
-            fn: parent.pimcore.helpers.handleCtrlS,
-            ctrl:true,
-            alt: false,
-            shift:false,
-            stopEvent: true
-        });
-    
-        // handler for F5
-        var mapF5 = new Ext.KeyMap(document, {
-            key: [116],
-            fn: parent.pimcore.helpers.handleF5,
-            stopEvent: true
-        });
+        // register the global key bindings
+        pimcore.helpers.registerKeyBindings(document, Ext);
 
-        
+
         // add contextmenu note in help tool-tips
         var editablesForTooltip = Ext.query(".pimcore_editable");
         var tmpEl;

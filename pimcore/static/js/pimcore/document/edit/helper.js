@@ -40,7 +40,6 @@ pimcore.edithelpers.setBodyHeight = function () {
             Ext.get(Ext.query("html")[0]).setHeight(height);
 
             pimcore.edithelpers.__lastPageHeight = height;
-            console.log("hi!");
         }
     } catch (e) {
         console.log(e);
