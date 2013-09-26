@@ -77,7 +77,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
         $conf = Pimcore_Config::getSystemConfig();
 
         $editmodeStylesheets = array(
-            "/pimcore/static/js/lib/ext/resources/css/ext-all-notheme.css",
+            "/pimcore/static/js/lib/ext/resources/css/ext-all.css",
             "/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css",
             "/pimcore/static/css/icons.css",
             "/pimcore/static/css/editmode.css",
@@ -155,8 +155,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
 
         // include stylesheets
         foreach ($editmodeStylesheets as $sheet) {
-            // styles are lazy loading, see edit/startup.js for details
-            $editmodeHeadHtml .= '<link type="pimcore-lazyload-style" href="' . $sheet . '?_dc=' . Pimcore_Version::$revision . '" />';
+            $editmodeHeadHtml .= '<link rel="stylesheet" type="text/css" href="' . $sheet . '?_dc=' . Pimcore_Version::$revision . '" />';
             $editmodeHeadHtml .= "\n";
         }
         
