@@ -989,19 +989,6 @@ class Asset extends Element_Abstract {
         return null;
     }
 
-
-    /**
-     * @return int|null
-     */
-    public function getFilesize() {
-        $file = $this->getFileSystemPath();
-        if(is_file($file)) {
-            return filesize($file);
-        }
-
-        return null;
-    }
-
     /**
      * @return bool
      */
