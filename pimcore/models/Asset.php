@@ -973,6 +973,36 @@ class Asset extends Element_Abstract {
     }
 
     /**
+     * @param string $type
+     * @return null|string
+     */
+    public function getChecksum($type = "md5") {
+        $file = $this->getFileSystemPath();
+        if(is_file($file)) {
+            if($type == "md5") {
+                return md5_file($file);
+            } else if ($type = "sha1") {
+                return sha1_file($file);
+            }
+        }
+
+        return null;
+    }
+
+
+    /**
+     * @return int|null
+     */
+    public function getFilesize() {
+        $file = $this->getFileSystemPath();
+        if(is_file($file)) {
+            return filesize($file);
+        }
+
+        return null;
+    }
+
+    /**
      * @return bool
      */
     public function getDataChanged() {
