@@ -972,7 +972,17 @@ class Asset extends Element_Abstract {
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function getDataChanged() {
+        return $this->_dataChanged;
+    }
 
+    /**
+     * @param bool $changed
+     * @return $this
+     */
     public function setDataChanged ($changed = true) {
         $this->_dataChanged = $changed;
         return $this;
