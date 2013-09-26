@@ -476,60 +476,7 @@ Ext.onReady(function () {
     // NOTE: the event pimcoreReady is fired in pimcore.layout.treepanelmanager
     pimcore.layout.treepanelmanager.startup();
 
-    // handler for STRG+S (Save&Publish)
-    var mapCtrlS = new Ext.KeyMap(document, {
-        key:"s",
-        fn:pimcore.helpers.handleCtrlS,
-        ctrl:true,
-        alt:false,
-        shift:false,
-        stopEvent:true
-    });
-
-    // handler for F5
-    mapF5 = new Ext.KeyMap(document, {
-        key:[116],
-        fn:pimcore.helpers.handleF5,
-        stopEvent:true
-    });
-
-    var openAssetById = new Ext.KeyMap(document, {
-        key:"a",
-        fn:pimcore.helpers.openElementByIdDialog.bind(this, "asset"),
-        ctrl:true,
-        alt:false,
-        shift:true,
-        stopEvent:true
-    });
-
-    var openObjectById = new Ext.KeyMap(document, {
-        key:"o",
-        fn:pimcore.helpers.openElementByIdDialog.bind(this, "object"),
-        ctrl:true,
-        alt:false,
-        shift:true,
-        stopEvent:true
-    });
-
-    var openDocumentById = new Ext.KeyMap(document, {
-        key:"d",
-        fn:pimcore.helpers.openElementByIdDialog.bind(this, "document"),
-        ctrl:true,
-        alt:false,
-        shift:true,
-        stopEvent:true
-    });
-
-    var openDocumentByPath = new Ext.KeyMap(document, {
-        key:"f",
-        fn:pimcore.helpers.openElementByIdDialog.bind(this, "document"),
-        ctrl:true,
-        alt:false,
-        shift:true,
-        stopEvent:true
-    });
-
-
+    pimcore.helpers.registerKeyBindings(document);
 });
 
 
