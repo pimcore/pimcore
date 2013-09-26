@@ -155,7 +155,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
 
         // include stylesheets
         foreach ($editmodeStylesheets as $sheet) {
-            $editmodeHeadHtml .= '<link rel="stylesheet" type="text/css" href="' . $sheet . '?_dc=' . Pimcore_Version::$revision . '" />';
+            $editmodeHeadHtml .= '<link type="pimcore-lazyload-style" href="' . $sheet . '?_dc=' . Pimcore_Version::$revision . '" />';
             $editmodeHeadHtml .= "\n";
         }
         
