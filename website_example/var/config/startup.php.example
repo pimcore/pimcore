@@ -31,4 +31,7 @@ $front->setRouter($router);
 // add a custom module directory
 $front = Zend_Controller_Front::getInstance();
 $front->addModuleDirectory(PIMCORE_DOCUMENT_ROOT . "/customModuleDirectory");
+
+//init the autoloader
+Pimcore::initAutoloader();
 */
