@@ -179,9 +179,17 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
     public function loadChilds (Element_Interface $element) {
         
         $this->amount++;
-        
+
+        // not sure anymore why this is needed, but anyway, it doesn't matter here
+        if ($element instanceof Asset) {
+            if(!$element instanceof Asset_Folder) {
+                $element->setData(null);
+            }
+        }
+
         Element_Service::loadAllFields($element);
-        
+
+
         // for all
         $element->getProperties();
         if(method_exists($element,"getScheduledTasks")) {
