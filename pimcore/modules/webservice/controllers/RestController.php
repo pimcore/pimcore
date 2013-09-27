@@ -404,6 +404,20 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 } else {
                     $object = $this->service->getAssetFileById($id);
                     $light = $this->getParam("light");
+                    $algo = "sha1";
+
+                    $thumbnailConfig = $this->getParam("thumbnail");
+                    if ($thumbnailConfig) {
+                        $checksum = $asset->getThumbnail($thumbnailConfig)->getChecksum($algo);
+                    } else {
+                        $checksum = $asset->getChecksum($algo);
+                    }
+
+                    $object->checksum = array(
+                        "algo" => $algo,
+                        "value" => $checksum
+                    );
+
                     if ($light) {
                         unset($object->data);
                     }
@@ -1075,7 +1089,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $this->checkUserPermission("system_settings");
         $systemSettings = Pimcore_Config::getSystemConfig()->toArray();
         $system = array("currentTime" => time(),
-                        "phpCli" => Pimcore_Tool_Console::getPhpCli(),
+            "phpCli" => Pimcore_Tool_Console::getPhpCli(),
         );
 
         $pimcoreConstants = array(); //only Pimcore_ constants -> others might break the Zend_Encode functionality
@@ -1086,10 +1100,10 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         }
 
         $pimcore = array("version" => Pimcore_Version::getVersion(),
-                         "revision" => Pimcore_Version::getRevision(),
-                         "instanceIdentifier" => $systemSettings["general"]["instanceIdentifier"],
-                         "modules" => array(),
-                         "constants" => $pimcoreConstants,
+            "revision" => Pimcore_Version::getRevision(),
+            "instanceIdentifier" => $systemSettings["general"]["instanceIdentifier"],
+            "modules" => array(),
+            "constants" => $pimcoreConstants,
         );
 
 
