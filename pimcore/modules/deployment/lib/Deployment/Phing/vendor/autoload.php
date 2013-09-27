@@ -18,6 +18,7 @@
  * required to get the autoloader...
  */
 require_once dirname(__FILE__) . '/../../../../../../cli/startup.php';
+set_include_path(get_include_path() . PATH_SEPARATOR . PIMCORE_PATH . '/lib/PEAR');
 
 if(Pimcore_API_Plugin_Broker::getInstance()->hasModule('Deployment_Module')){
     //add system and ext path to inlude path to prevent autoloading warning, that PropertyPromptTask.php and VersionTask.php could not be loaded
