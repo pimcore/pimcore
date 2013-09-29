@@ -278,7 +278,7 @@ class Asset extends Element_Abstract {
      * @param array $data
      * @return Asset
      */
-    public static function create($parentId, $data = array()) {
+    public static function create($parentId, $data = array(), $save = true) {
 
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
@@ -297,12 +297,16 @@ class Asset extends Element_Abstract {
         foreach ($data as $key => $value) {
             $asset->setValue($key, $value);
         }
-        $asset->save();
 
-        // get concrete type of asset
-        Zend_Registry::set("asset_" . $asset->getId(), null);
-        $asset = self::getById($asset->getId());
-        Zend_Registry::set("asset_" . $asset->getId(), $asset);
+        if($save) {
+            $asset->save();
+
+            // get concrete type of asset
+            Zend_Registry::set("asset_" . $asset->getId(), null);
+            $asset = self::getById($asset->getId());
+            Zend_Registry::set("asset_" . $asset->getId(), $asset);
+        }
+
 
         return $asset;
     }

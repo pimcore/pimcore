@@ -283,7 +283,7 @@ class Document extends Element_Abstract {
      * @param array $data
      * @return Document
      */
-    public static function create($parentId, $data = array()) {
+    public static function create($parentId, $data = array(), $save = true) {
 
         $document = new static();
         $document->setParentId($parentId);
@@ -291,7 +291,10 @@ class Document extends Element_Abstract {
         foreach ($data as $key => $value) {
             $document->setValue($key, $value);
         }
-        $document->save();
+
+        if($save) {
+            $document->save();
+        }
 
         return $document;
     }
