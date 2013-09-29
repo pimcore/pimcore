@@ -805,16 +805,112 @@ pimcore.document.tree = Class.create({
     addDocument : function (type, docTypeId) {
         var textKeyTitle;
         var textKeyMessage;
-        if (type == "folder") {
-            textKeyTitle = "add_folder"
-            textKeyMessage = "please_enter_the_name_of_the_new_folder";
+        
+        if(type == "page") {
+        	
+        	textKeyTitle = "add_document";
+        	textKeyMessage = "please_enter_the_name_of_the_new_document";
+        	
+        	//create a custom form
+        	var newDocForm = new Ext.FormPanel({
+        		title: t(textKeyMessage),
+        		border: false,
+        		id: 'new_document_page_modal_form',
+        		items: [{
+        			xtype: 'fieldset',
+        			border:false,
+        			columnWidth: 0.5,
+        			autoHeight: true,
+        			defaultType: 'textfield',
+        			items: [{
+        				fieldLabel: t('key'),
+        				name: 'new_document_key',
+        				id: 'new_document_key',
+        				width: '200px'
+        			},{
+        				fieldLabel: t('title'),
+        				name: 'new_document_title',
+        				id: 'new_document_title',
+        				width: '200px'
+        			},{
+        				fieldLabel: t('name'),
+        				name: 'new_document_name',
+        				id: 'new_document_name',
+        				width: '200px'
+        			}]
+        		}]
+        	});
+        	
+        	var self = this;
+        	//create a custom MessageBox
+        	var messageBox = new Ext.Window({
+        		modal: true,
+        		width: 400,
+        		items: [
+        		  newDocForm,
+        		  {
+        			  layout: 'hbox',
+        			  bodyStyle: 'padding-bottom:10px',
+        			  border: false,
+        			  items: [{
+        				  xtype: 'spacer',
+        				  flex: 2
+        			  },{
+            			  xtype: 'button',
+            			  flex: 2,
+            			  text: t('add_document'),
+            			  handler: function() {
+        				   	//get the key
+        			    	var key = Ext.getCmp('new_document_key').getRawValue(),
+        			    	//get the title
+        			    		title = Ext.getCmp('new_document_title').getRawValue(),
+        			    	//get the navigation title
+        			    		name = Ext.getCmp('new_document_name').getRawValue();
+        			    	
+            				if(key.length > 1) {
+            					self.attributes.reference.addDocumentPageCreate.apply(this, [type, docTypeId, key, title, name]);
+            				} else {
+            					return; //ignore
+            				}
+        			    	
+        			    	//close the messagebox
+        			    	messageBox.close();
+            			  }.bind(this)
+            		  },{
+            			xtype: 'spacer',
+            			flex: 0.5
+            		  },{
+            			  xtype: 'button',
+            			  flex: 2,
+            			  text: t('cancel'),
+            			  handler: function() {
+            				  messageBox.close();
+            			  }
+            		  },{
+        				  xtype: 'spacer',
+        				  flex: 2
+        			  }]
+        		  }//hbox
+        		]
+        	});
+        	
+        	messageBox.show();
+        	
+        	
+        	
         } else {
-            textKeyTitle = "add_document";
-            textKeyMessage = "please_enter_the_name_of_the_new_document";
+        	
+        	if (type == "folder") {
+                textKeyTitle = "add_folder"
+                textKeyMessage = "please_enter_the_name_of_the_new_folder";
+            } else {
+                textKeyTitle = "add_document";
+                textKeyMessage = "please_enter_the_name_of_the_new_document";
+            }
+        	
+        	Ext.MessageBox.prompt(t(textKeyTitle), t(textKeyMessage),
+                    this.attributes.reference.addDocumentCreate.bind(this, type, docTypeId));
         }
-
-        Ext.MessageBox.prompt(t(textKeyTitle), t(textKeyMessage),
-                            this.attributes.reference.addDocumentCreate.bind(this, type, docTypeId));
     },
 
     publishDocument: function (type, id, task) {
@@ -896,6 +992,35 @@ pimcore.document.tree = Class.create({
                 success: this.attributes.reference.addDocumentComplete.bind(this)
             });
         }
+    },
+    
+    addDocumentPageCreate: function (type, docTypeId, docKey, docTitle, docName) {
+		
+		//check key doesnt exist in level
+		if(this.attributes.reference.isExistingKeyInLevel(this, docKey)) {
+            return;
+        }
+
+		//check key is allowed
+        if(this.attributes.reference.isDisallowedKey(this.id, docKey)) {
+            return;
+        }
+        
+        Ext.Ajax.request({
+            url: "/admin/document/add/",
+            method: 'POST',
+            params: {
+                parentId: this.id,
+                index: this.childNodes.length,
+                type: type,
+                docTypeId: docTypeId,
+                key: pimcore.helpers.getValidFilename(docKey),
+                title: docTitle,
+                name: docName
+            },
+            success: this.attributes.reference.addDocumentComplete.bind(this)
+        });
+   
     },
 
     addDocumentComplete: function (response) {
