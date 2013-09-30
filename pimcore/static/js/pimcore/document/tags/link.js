@@ -239,7 +239,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
             text = this.data.text;
         }
         if (this.data.path) {
-            return '<a href="' + this.data.path + '">' + text + '</a>';
+            return '<a href="' + this.data.path + '" class="' + this.options["class"] + ' ' + this.data["class"] + '">' + text + '</a>';
         }
         return text;
     },
