@@ -176,6 +176,10 @@ section img {
     font-size: 90%;
 }
 
+.margin-bottom-10 {
+    margin-bottom: 10px;
+}
+
 /* Show and affix the side nav when space allows it */
 @media screen and (min-width: 992px) {
     .bs-sidebar .nav > .active > ul {
@@ -241,6 +245,12 @@ section img {
         font-size: 50px;
     }
 
+    /* Bump up size of carousel content */
+    .carousel-caption .caption {
+        margin-bottom: 20px;
+        font-size: 21px;
+        line-height: 1.4;
+    }
 }
 
 @media (min-width: 992px) {

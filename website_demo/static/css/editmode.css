@@ -25,12 +25,33 @@
 }
 
 .editable-roundup h2
- {
+{
     font-size: 30px;
     margin-top: 20px;
     margin-bottom: 10px;
 }
 
+#content h1, #myCarousel h1 {
+    font-size: 36px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+#content h2, .teaser h2 {
+    font-size: 30px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.jumbotron h2 {
+    font-size: 30px;
+}
+
+.teaser {
+    text-align: center;
+}
+
+/* bootstrap 3 ExtJS fixes */
 .x-form-field, .x-form-trigger, .x-form-item, .x-panel-body {
     -moz-box-sizing:content-box;
     box-sizing: content-box;

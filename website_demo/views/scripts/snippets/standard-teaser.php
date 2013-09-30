@@ -1,17 +1,28 @@
 
-<div class="teaser">
-    <?php
-        $suffix = $this->suffix;
-        if(!$suffix) {
-            $suffix = "";
+<?php
+    $suffix = $this->suffix;
+    if(!$suffix) {
+        $suffix = "";
+    }
+?>
+
+<?php if(empty($suffix) && $this->editmode) { ?>
+    <style type="text/css">
+        .teaser {
+            max-width: 250px;
         }
-    ?>
+
+        .teaser img {
+            max-width: 100%;
+        }
+    </style>
+<?php } ?>
+
+<div class="teaser">
 
     <?php echo $this->image("image".$suffix, array(
         "thumbnail" => "standardTeaser",
-        "class" => $this->checkbox("circle".$suffix)->isChecked() ? "img-circle" : "",
-        "width" => 140,
-        "height" => 140
+        "class" => $this->checkbox("circle".$suffix)->isChecked() ? "img-circle" : ""
     )) ?>
 
     <?php if($this->editmode) { ?>
@@ -21,10 +32,10 @@
         </div>
     <?php } ?>
 
-    <h2><?php echo $this->input("headline".$suffix, array("width" => 200)) ?></h2>
+    <h2><?php echo $this->input("headline".$suffix) ?></h2>
 
     <div>
-        <?php echo $this->wysiwyg("text".$suffix, array("width" => 200, "height" => 100)); ?>
+        <?php echo $this->wysiwyg("text".$suffix, array("height" => 100)); ?>
     </div>
 
     <p>
@@ -32,8 +43,8 @@
     </p>
 
     <?php
-        // unset the suffix otherwise it will cause problems when using in a loop
-        $this->suffix = null;
+    // unset the suffix otherwise it will cause problems when using in a loop
+    $this->suffix = null;
     ?>
 
 </div>

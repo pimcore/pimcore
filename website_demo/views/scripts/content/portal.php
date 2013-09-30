@@ -23,20 +23,20 @@
                 <div class="container">
                     <div class="carousel-caption">
                         <?php
-                            if($this->editmode) {
-                                echo $this->image("cImage_".$i, array(
-                                    "reload" => true,
-                                    "hidetext" => true,
-                                    "title" => "Drag Image Here",
-                                    "height" => 30
-                                ));
-                                echo "<br /><br />";
-                            }
+                        if($this->editmode) {
+                            echo $this->image("cImage_".$i, array(
+                                "reload" => true,
+                                "hidetext" => true,
+                                "title" => "Drag Image Here",
+                                "height" => 30
+                            ));
+                            echo "<br /><br />";
+                        }
                         ?>
 
-                        <h1><?php echo $this->input("cHeadline_".$i, array("width" => "300")); ?></h1>
-                        <p><?php echo $this->textarea("cText_".$i, array("width" => "300")); ?></p>
-                        <p><?php echo $this->link("cLink_".$i, array("class" => "btn btn-large btn-default")); ?></p>
+                        <h1><?php echo $this->input("cHeadline_".$i); ?></h1>
+                        <div class="caption"><?php echo $this->textarea("cText_".$i); ?></div>
+                        <div class="margin-bottom-10"><?php echo $this->link("cLink_".$i, array("class" => "btn btn-large btn-default")); ?></div>
                     </div>
                 </div>
             </div>
