@@ -10,8 +10,7 @@
             <div class="col-md-3 col-xs-6">
                 <a href="<?php echo $this->image("image")->getThumbnail("galleryLightbox"); ?>" class="thumbnail">
                     <?php echo $this->image("image", array(
-                        "thumbnail" => "galleryThumbnail",
-                        "width" => 140
+                        "thumbnail" => "galleryThumbnail"
                     )); ?>
                 </a>
             </div>
