@@ -331,7 +331,7 @@ pimcore.object.tree = Class.create({
                 tmpMenuEntry = {
                     text: groupName,
                     iconCls: "pimcore_icon_folder",
-                    handler: this.attributes.reference.addObject.bind(this, classGroups[groupName][0].get("id"), classGroups[groupName][0].get("text")),
+                    hideOnClick: false,
                     menu: {
                         items: []
                     }
