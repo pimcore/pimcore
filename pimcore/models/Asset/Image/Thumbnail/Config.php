@@ -337,11 +337,7 @@ class Asset_Image_Thumbnail_Config {
      */
     public function setHighResolution($highResolution)
     {
-        if(!$highResolution) {
-            $highResolution = null;
-        } else {
-            $this->highResolution = (float) $highResolution;
-        }
+        $this->highResolution = (float) $highResolution;
     }
 
     /**
