@@ -70,6 +70,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                         if (record.data.type == "translated") {
                             // whoooo, we have to go to the server and ask for a new translation
                             this.translate(record);
+                        } else {
+                            record.set("translated", record.data.value);
                         }
                     }
                 }.bind(this)
