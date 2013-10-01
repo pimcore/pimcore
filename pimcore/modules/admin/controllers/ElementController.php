@@ -40,9 +40,12 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json($response);
     }
 
+    /**
+     * Returns the element data denoted by the given type and ID or path.
+     */
     public function getSubtypeAction () {
 
-        $idOrPath = $this->getParam("id");
+        $idOrPath = trim($this->getParam("id"));
         $type = $this->getParam("type");
         if (is_numeric($idOrPath)) {
             $el = Element_Service::getElementById($type, (int) $idOrPath);
