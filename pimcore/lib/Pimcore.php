@@ -53,6 +53,7 @@ class Pimcore {
         $cache = Pimcore_Model_Cache::getInstance();
         Zend_Locale_Data::setCache($cache);
         Zend_Locale::setCache($cache);
+        Zend_Locale_Data::setCache($cache);
         Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
 
         // load plugins and modules (=core plugins)
