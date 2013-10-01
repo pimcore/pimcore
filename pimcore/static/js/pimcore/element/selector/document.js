@@ -44,7 +44,10 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                         if (key.getKey() == key.ENTER) {
                             this.search();
                         }
-                    }.bind(this)
+                    }.bind(this),
+                    afterrender: function () {
+                        this.focus(true,500);
+                    }
                 }
             }, new Ext.Button({
                 handler: function () {
