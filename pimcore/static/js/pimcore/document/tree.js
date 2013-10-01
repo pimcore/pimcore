@@ -840,6 +840,18 @@ pimcore.document.tree = Class.create({
                 }]
             });
 
+            var submitFunction = function() {
+                var params = pageForm.getForm().getFieldValues();
+                messageBox.close();
+                if(params["key"].length > 1) {
+                    params["type"] = type;
+                    params["docTypeId"] = docTypeId;
+                    this.attributes.reference.addDocumentCreate(params, this);
+                } else {
+                    return; //ignore
+                }
+            };
+
             //create a custom MessageBox
             var messageBox = new Ext.Window({
                 modal: true,
@@ -847,19 +859,7 @@ pimcore.document.tree = Class.create({
                 items: pageForm,
                 buttons: [{
                     text: t('OK'),
-                    handler: function() {
-
-                        var params = pageForm.getForm().getFieldValues();
-                        if(params["key"].length > 1) {
-                            params["type"] = type;
-                            params["docTypeId"] = docTypeId;
-                            this.attributes.reference.addDocumentCreate(params, this);
-                        } else {
-                            return; //ignore
-                        }
-
-                        messageBox.close();
-                    }.bind(this)
+                    handler: submitFunction.bind(this)
                 },{
                     text: t('cancel'),
                     handler: function() {
@@ -869,6 +869,11 @@ pimcore.document.tree = Class.create({
             });
 
             messageBox.show();
+
+            var keyMap = new Ext.KeyMap(messageBox.getEl(), {
+                key: Ext.EventObject.ENTER,
+                handler: submitFunction.bind(this)
+            });
         } else {
 
             if (type == "folder") {
