@@ -428,7 +428,8 @@ class Document_Tag_Renderlet extends Document_Tag {
      * @return void
      */
     public function rewriteIds($idMapping) {
-        if(array_key_exists($this->type, $idMapping) and array_key_exists($this->getId(), $idMapping[$this->type])) {
+        $type = (string) $this->type;
+        if($type && array_key_exists($this->type, $idMapping) and array_key_exists($this->getId(), $idMapping[$this->type])) {
             $this->setId($idMapping[$this->type][$this->getId()]);
             $this->setO(null);
         }
