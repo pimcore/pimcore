@@ -407,13 +407,15 @@ pimcore.document.tree = Class.create({
             }));
         }
 
-        menu.add(new Ext.menu.Item({
-            text: t('copy'),
-            iconCls: "pimcore_icon_copy",
-            handler: this.attributes.reference.copy.bind(this)
-        }));
+        if(this.attributes.permissions.view) {
+            menu.add(new Ext.menu.Item({
+                text: t('copy'),
+                iconCls: "pimcore_icon_copy",
+                handler: this.attributes.reference.copy.bind(this)
+            }));
+        }
 
-        if (this.id != 1 && !this.attributes.locked) {
+        if (this.id != 1 && !this.attributes.locked && this.attributes.permissions.rename) {
             menu.add(new Ext.menu.Item({
                 text: t('cut'),
                 iconCls: "pimcore_icon_cut",
@@ -430,7 +432,7 @@ pimcore.document.tree = Class.create({
         }
 
         // not for the home document
-        if(this.id != 1) {
+        if(this.id != 1 && this.attributes.permissions.publish && !this.attributes.locked) {
             menu.add(new Ext.menu.Item({
                 text: t('convert_to'),
                 iconCls: "pimcore_icon_convert",
@@ -465,15 +467,15 @@ pimcore.document.tree = Class.create({
         }
 
         //publish
-        if (this.attributes.permissions.publish && this.attributes.type != "folder") {
-            if (this.attributes.published && !this.attributes.locked) {
+        if (this.attributes.type != "folder" && !this.attributes.locked) {
+            if (this.attributes.published && this.attributes.permissions.unpublish) {
                 menu.add(new Ext.menu.Item({
                     text: t('unpublish'),
                     iconCls: "pimcore_icon_tree_unpublish",
                     handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type,
                         this.attributes.id, 'unpublish')
                 }));
-            } else {
+            } else if(!this.attributes.published && this.attributes.permissions.publish) {
                 menu.add(new Ext.menu.Item({
                     text: t('publish'),
                     iconCls: "pimcore_icon_tree_publish",
@@ -580,7 +582,7 @@ pimcore.document.tree = Class.create({
             }
         }
 
-        if (this.attributes.type == "page" || this.attributes.type == "hardlink") {
+        if ((this.attributes.type == "page" || this.attributes.type == "hardlink") && this.attributes.permissions.view) {
             menu.add(new Ext.menu.Item({
                 text: t('open'),
                 iconCls: "pimcore_icon_openpage",

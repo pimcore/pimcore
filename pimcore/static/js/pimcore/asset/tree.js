@@ -391,7 +391,7 @@ pimcore.asset.tree = Class.create({
             }));
         }
 
-        if (this.id != 1) {
+        if (this.id != 1 && this.attributes.permissions.view) {
             menu.add(new Ext.menu.Item({
                 text: t('copy'),
                 iconCls: "pimcore_icon_copy",
@@ -400,7 +400,7 @@ pimcore.asset.tree = Class.create({
         }
 
         //cut
-        if (this.id != 1 && !this.attributes.locked) {
+        if (this.id != 1 && !this.attributes.locked && this.attributes.permissions.rename) {
             menu.add(new Ext.menu.Item({
                 text: t('cut'),
                 iconCls: "pimcore_icon_cut",

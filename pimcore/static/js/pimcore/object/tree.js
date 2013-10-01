@@ -527,7 +527,7 @@ pimcore.object.tree = Class.create({
         }
 
         if (!isVariant) {
-            if (this.id != 1) {
+            if (this.id != 1 && this.attributes.permissions.view) {
                 menu.add(new Ext.menu.Item({
                     text: t('copy'),
                     iconCls: "pimcore_icon_copy",
@@ -536,7 +536,7 @@ pimcore.object.tree = Class.create({
             }
 
             //cut
-            if (this.id != 1 && !this.attributes.locked) {
+            if (this.id != 1 && !this.attributes.locked && this.attributes.permissions.rename) {
                 menu.add(new Ext.menu.Item({
                     text: t('cut'),
                     iconCls: "pimcore_icon_cut",
@@ -546,8 +546,8 @@ pimcore.object.tree = Class.create({
         }
 
         //publish
-        if (this.attributes.permissions.publish && this.attributes.type != "folder") {
-            if (this.attributes.published && this.attributes.permissions.unpublish && !this.attributes.locked) {
+        if (this.attributes.type != "folder" && !this.attributes.locked) {
+            if (this.attributes.published && this.attributes.permissions.unpublish) {
                 menu.add(new Ext.menu.Item({
                     text: t('unpublish'),
                     iconCls: "pimcore_icon_tree_unpublish",
