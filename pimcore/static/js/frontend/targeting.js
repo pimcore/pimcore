@@ -388,6 +388,20 @@
             }
 
             return personaMatch;
+        },
+
+        isGet: function () {
+            if(window["pimcore"] && window["pimcore"]["targeting"] && window["pimcore"]["targeting"]["requestInfo"]
+                && window["pimcore"]["targeting"]["requestInfo"]["method"]) {
+                if(window["pimcore"]["targeting"]["requestInfo"]["method"] == "get") {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            // default true
+            return false;
         }
     };
 
@@ -470,7 +484,7 @@
             // redirects
             try {
                 var regexp = new RegExp("_ptr=" + target.id);
-                if(actions["redirectEnabled"] && actions["redirectUrl"].length > 0
+                if(actions["redirectEnabled"] && actions["redirectUrl"].length > 0 && util.isGet()
                                               && !regexp.test(window.location.href)) {
                     window.location.href = actions["redirectUrl"]
                                             + (actions["redirectUrl"].indexOf("?") < 0 ? "?" : "&")
@@ -550,7 +564,7 @@
         },
 
         callTargets: function (targets) {
-            if(targets.length > 0 && !/_ptc=/.test(window.location.href)) {
+            if(targets.length > 0 && !/_ptc=/.test(window.location.href) && util.isGet()) {
                 window.location.href = "?_ptc=" + targets.join(",");
             }
         },
@@ -827,7 +841,7 @@
             }
         }
 
-        if(pageVariantMatch) {
+        if(pageVariantMatch && util.isGet()) {
             // redirect to the persona specific version of the current page
             window.location.href = window.location.href + (window.location.href.indexOf("?") < 0 ? "?" : "&")
                 + "_ptp=" + pageVariantMatch;
