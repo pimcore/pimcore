@@ -485,7 +485,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                         $target = $redirect->getTarget();
                         if(is_numeric($target)){
                             $d = Document::getById($target);
-                            if($d instanceof Document_Page){
+                            if($d instanceof Document_Page || $d instanceof Document_Link || $d instanceof Document_Hardlink) {
                                 $target = $d->getFullPath();
                             } else {
                                 Logger::error("Target of redirect no found (Document-ID: " . $target . ")!");
