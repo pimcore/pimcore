@@ -81,14 +81,16 @@ pimcore.tool.paralleljobs = Class.create({
                 success: function (response) {
 
                     try {
-                        response = Ext.decode(response.responseText);
-                        if(!response.success) {
+                        var res = Ext.decode(response.responseText);
+                        if(!res["success"]) {
                             // if the download fails, stop all activity
-                            throw response;
+                            throw res;
                         }
                     } catch (e) {
                         clearInterval(this.jobsInterval);
-                        this.error(response.message);
+                        console.log(e);
+                        console.log(response);
+                        this.error( (res && res["message"]) ? res["message"] : response.responseText);
                         return;
                     }
 
