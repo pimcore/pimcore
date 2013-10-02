@@ -44,6 +44,8 @@ class Pimcore_Controller_Action_Helper_Json extends Zend_Controller_Action_Helpe
             }
         } else if (is_object($element)) {
 
+            $element = clone $element; // do not modify the original object
+
             if(in_array($element, $this->processedObjects, true)) {
                 return '"* RECURSION (' . get_class($element) . ') *"';
             }
