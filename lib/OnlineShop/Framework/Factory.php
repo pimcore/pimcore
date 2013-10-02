@@ -352,7 +352,7 @@ class OnlineShop_Framework_Factory {
      * @return string[]
      */
     public function getAllTenants() {
-        if(empty($this->allTenants) && $this->config->onlineshop->productindex->tenants) {
+        if(empty($this->allTenants) && $this->config->onlineshop->productindex->tenants && is_array($this->config->onlineshop->productindex->tenants)) {
             foreach($this->config->onlineshop->productindex->tenants as $name => $tenant) {
                 $this->allTenants[$name] = $name;
             }
