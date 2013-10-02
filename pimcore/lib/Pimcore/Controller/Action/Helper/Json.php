@@ -44,7 +44,7 @@ class Pimcore_Controller_Action_Helper_Json extends Zend_Controller_Action_Helpe
             }
         } else if (is_object($element)) {
 
-            $element = clone $element; // do not modify the original object
+            $clone = clone $element; // do not modify the original object
 
             if(in_array($element, $this->processedObjects, true)) {
                 return '"* RECURSION (' . get_class($element) . ') *"';
@@ -52,13 +52,15 @@ class Pimcore_Controller_Action_Helper_Json extends Zend_Controller_Action_Helpe
 
             $this->processedObjects[] = $element;
 
-            $propCollection = get_object_vars($element);
+            $propCollection = get_object_vars($clone);
 
             foreach ($propCollection as $name => $propValue) {
-                $element->$name = $this->filterCycles($propValue);
+                $clone->$name = $this->filterCycles($propValue);
             }
 
             array_splice($this->processedObjects, array_search($element, $this->processedObjects, true), 1);
+
+            return $clone;
         }
 
         return $element;
