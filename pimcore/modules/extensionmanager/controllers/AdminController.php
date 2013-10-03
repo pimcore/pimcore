@@ -181,20 +181,19 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         ));
     }
 
-    public function createAction () {
-
+    public function createAction()
+    {
         $success = false;
-        $name = $this->getParam("name");
-        $name = ucfirst($name);
-        $examplePluginPath = PIMCORE_PATH . "/modules/extensionmanager/example-plugin";
-        $pluginDestinationPath = PIMCORE_PLUGINS_PATH . "/" . $name;
+        $name = ucfirst($this->getParam("name"));
+        $examplePluginPath = realpath(PIMCORE_PATH . "/modules/extensionmanager/example-plugin");
+        $pluginDestinationPath = realpath(PIMCORE_PLUGINS_PATH) . DIRECTORY_SEPARATOR . $name;
 
-        if(preg_match("/^[a-zA-Z0-9_]+$/", $name, $matches) && !is_dir($pluginDestinationPath)) {
-            $pluginExampleFiles = rscandir($examplePluginPath . "/");
+        if (preg_match("/^[a-zA-Z0-9_]+$/", $name, $matches) && !is_dir($pluginDestinationPath)) {
+            $pluginExampleFiles = rscandir($examplePluginPath);
             foreach ($pluginExampleFiles as $pluginExampleFile) {
                 if(!is_file($pluginExampleFile)) continue;
-                $newPath = preg_replace("/^" . preg_quote($examplePluginPath . "/Example", "/") . "/", $pluginDestinationPath, $pluginExampleFile);
-                $newPath = str_replace("/Example/", "/" . $name . "/", $newPath);
+                $newPath = $pluginDestinationPath . str_replace($examplePluginPath . DIRECTORY_SEPARATOR . 'Example', '', $pluginExampleFile);
+                $newPath = str_replace(DIRECTORY_SEPARATOR . "Example" . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR, $newPath);
 
                 $content = file_get_contents($pluginExampleFile);
 
@@ -206,7 +205,9 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
                 $content = str_replace("examplePlugin", strtolower($name)."Plugin", $content);
                 $content = str_replace("Example Plugin", $name . " Plugin", $content);
 
-                @mkdir(dirname($newPath), 0755, true);
+                if (!file_exists(dirname($newPath))) {
+                    @mkdir(dirname($newPath), 0755, true);
+                }
 
                 file_put_contents($newPath, $content);
             }
