@@ -79,7 +79,7 @@ class Update_IndexController extends Pimcore_Controller_Action_Admin {
     
     public function getLanguagesAction() {
         
-        $languagesJson = Pimcore_Tool::getHttpData("http://www.pimcore.org/community/translations/pimcore_download");
+        $languagesJson = Pimcore_Tool::getHttpData("http://www.pimcore.org/?controller=translation&action=json");
         
         echo $languagesJson;
         exit;
