@@ -31,24 +31,24 @@ class Pimcore {
      */
     public static function run() {
 
-        self::setSystemRequirements();
+        static::setSystemRequirements();
 
         // detect frontend (website)
         $frontend = Pimcore_Tool::isFrontend();
 
-        // enable the output-buffer, why? see in self::outputBufferStart()
+        // enable the output-buffer, why? see in static::outputBufferStart()
         //if($frontend) {
-        self::outputBufferStart();
+        static::outputBufferStart();
         //}
 
-        self::initAutoloader();
-        self::initConfiguration();
-        self::setupFramework();
+        static::initAutoloader();
+        static::initConfiguration();
+        static::setupFramework();
 
         // config is loaded now init the real logger
-        self::initLogger();
+        static::initLogger();
 
-        // set locale data cache, this must be after self::initLogger() since Pimcore_Model_Cache requires the logger
+        // set locale data cache, this must be after static::initLogger() since Pimcore_Model_Cache requires the logger
         // to log if there's something wrong with the cache configuration in cache.xml
         $cache = Pimcore_Model_Cache::getInstance();
         Zend_Locale_Data::setCache($cache);
@@ -57,8 +57,8 @@ class Pimcore {
         Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
 
         // load plugins and modules (=core plugins)
-        self::initModules();
-        self::initPlugins();
+        static::initModules();
+        static::initPlugins();
 
         // init front controller
         $front = Zend_Controller_Front::getInstance();
@@ -95,7 +95,7 @@ class Pimcore {
             $front->registerPlugin(new Pimcore_Controller_Plugin_Cache(), 901); // for caching
         }
 
-        self::initControllerFront($front);
+        static::initControllerFront($front);
 
         // set router
         $router = $front->getRouter();
@@ -636,7 +636,7 @@ class Pimcore {
                 }
             }
 
-            $debug = self::inDebugMode();
+            $debug = static::inDebugMode();
             
             if (!defined("PIMCORE_DEBUG")) define("PIMCORE_DEBUG", $debug);
             if (!defined("PIMCORE_DEVMODE")) define("PIMCORE_DEVMODE", (bool) $conf->general->devmode);
@@ -715,7 +715,7 @@ class Pimcore {
      * @return void
      */
     public static function setAdminMode () {
-        self::$adminMode = true;
+        static::$adminMode = true;
     }
 
     /**
@@ -724,7 +724,7 @@ class Pimcore {
      * @return void
      */
     public static function unsetAdminMode() {
-        self::$adminMode = false;
+        static::$adminMode = false;
     }
 
     /**
@@ -734,8 +734,8 @@ class Pimcore {
      */
     public static function inAdmin () {
 
-        if(self::$adminMode !== null) {
-            return self::$adminMode;
+        if(static::$adminMode !== null) {
+            return static::$adminMode;
         }
 
         return false;
@@ -804,7 +804,7 @@ class Pimcore {
      * already arrived at the browser, he blocks the javascript execution (eg. jQuery's $(document).ready() ), because
      * the request is not finished or wasn't closed (sure the script is still running), what is really not necessary
      * This method is only called in Pimcore_Controller_Action_Frontend::init() to enable it only for frontend/website HTTP requests
-     * - more infos see also self::outputBufferEnd()
+     * - more infos see also static::outputBufferEnd()
      * @static
      * @return void
      */
@@ -817,7 +817,7 @@ class Pimcore {
     }
 
     /**
-     * if this method is called in self::shutdown() it forces the browser to close the connection an allows the
+     * if this method is called in static::shutdown() it forces the browser to close the connection an allows the
      * shutdown-function to run in the background
      * @static
      * @return string
@@ -839,7 +839,7 @@ class Pimcore {
         }
 
         // only send this headers in the shutdown-function, so that it is also possible to get the contents of this buffer earlier without sending headers
-        if(self::$inShutdown && !headers_sent() && !empty($data) && $contentEncoding) {
+        if(static::$inShutdown && !headers_sent() && !empty($data) && $contentEncoding) {
             ignore_user_abort(true);
 
             // find the content-type of the response
@@ -916,7 +916,7 @@ class Pimcore {
     public static function shutdown () {
 
         // set inShutdown to true so that the output-buffer knows that he is allowed to send the headers
-        self::$inShutdown = true;
+        static::$inShutdown = true;
 
         // flush all custom output buffers
         while(@ob_end_flush());
