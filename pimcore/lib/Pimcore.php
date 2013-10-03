@@ -33,13 +33,8 @@ class Pimcore {
 
         static::setSystemRequirements();
 
-        // detect frontend (website)
-        $frontend = Pimcore_Tool::isFrontend();
-
         // enable the output-buffer, why? see in static::outputBufferStart()
-        //if($frontend) {
         static::outputBufferStart();
-        //}
 
         static::initAutoloader();
         static::initConfiguration();
@@ -48,8 +43,7 @@ class Pimcore {
         // config is loaded now init the real logger
         static::initLogger();
 
-        self::initCache();
-
+        static::initCache();
 
         // load plugins and modules (=core plugins)
         static::initModules();
@@ -57,38 +51,148 @@ class Pimcore {
 
         // init front controller
         $front = Zend_Controller_Front::getInstance();
+        $frontend = Pimcore_Tool::isFrontend();
 
-        self::checkInstalled();
-
+        static::redirectIfNotInstalled();
 
         $conf = Pimcore_Config::getSystemConfig();
 
-        $front->registerPlugin(new Pimcore_Controller_Plugin_ErrorHandler(), 1);
-        $front->registerPlugin(new Pimcore_Controller_Plugin_Maintenance(), 2);
-
-        // register general pimcore plugins for frontend
-        if ($frontend) {
-            $front->registerPlugin(new Pimcore_Controller_Plugin_Less(), 799);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_AdminButton(), 806);
-        }
-
-        if (Pimcore_Tool::useFrontendOutputFilters(new Zend_Controller_Request_Http())) {
-            $front->registerPlugin(new Pimcore_Controller_Plugin_QrCode(), 793);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_CommonFilesFilter(), 794);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_Thumbnail(), 795);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_WysiwygAttributes(), 796);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_Webmastertools(), 797);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_Analytics(), 798);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_TagManagement(), 804);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_Targeting(), 805);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_HttpErrorLog(), 850);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_ContentLog(), 851);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_Cache(), 901); // for caching
-        }
-
+        static::initFrontPlugins($front, $frontend);
         static::initControllerFront($front);
 
-        // set router
+        // routings
+        $router = static::initRouter($front, $frontend, $conf);
+        static::forceMainDomainForAdminRequests($frontend, $conf);
+        static::initRouterWebdav($conf, $router, $front);
+
+        Pimcore_API_Plugin_Broker::getInstance()->preDispatch();
+
+        self::handelErrorReporting();
+
+        self::dispatch($front, self::displayErrors());
+    }
+
+    /**
+     * @return bool
+     */
+    public static function displayErrors() {
+        return !(!PIMCORE_DEBUG && !self::shouldThrowExceptions() && !PIMCORE_DEVMODE);
+    }
+
+    /**
+     * @param $front
+     * @param $debug
+     * @throws Zend_Controller_Router_Exception
+     * @throws Exception
+     */
+    public static function dispatch($front, $debug = false) {
+
+        if ($debug) {
+            @ini_set("display_errors", "Off");
+            @ini_set("display_startup_errors", "Off");
+
+            $front->dispatch();
+        } else {
+            @ini_set("display_errors", "On");
+            @ini_set("display_startup_errors", "On");
+
+            $front->throwExceptions(true);
+
+            try {
+                $front->dispatch();
+            } catch (Zend_Controller_Router_Exception $e) {
+                header("HTTP/1.0 404 Not Found");
+                throw new Zend_Controller_Router_Exception("No route, document, custom route or redirect is matching the request: " . $_SERVER["REQUEST_URI"] . " | \n" . "Specific ERROR: " . $e->getMessage());
+            }
+            catch (Exception $e) {
+                header("HTTP/1.0 500 Internal Server Error");
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public static function shouldThrowExceptions() {
+        // throw exceptions also when in preview or in editmode (documents) to see it immediately when there's a problem with this page
+        $throwExceptions = false;
+        if (Pimcore_Tool::isFrontentRequestByAdmin()) {
+            $user = Pimcore_Tool_Authentication::authenticateSession();
+            if ($user instanceof User) {
+                $throwExceptions = true;
+                return $throwExceptions;
+            }
+            return $throwExceptions;
+        }
+        return $throwExceptions;
+    }
+
+    /**
+     * @param $throwExceptions
+     */
+    public static function handelErrorReporting() {
+
+        if (self::displayErrors()) {
+            @ini_set("display_errors", "Off");
+            @ini_set("display_startup_errors", "Off");
+        } else {
+            @ini_set("display_errors", "On");
+            @ini_set("display_startup_errors", "On");
+        }
+    }
+
+    /**
+     * @param $frontend
+     * @param $conf
+     */
+    public static function forceMainDomainForAdminRequests($frontend, $conf)
+    {
+        if (!$frontend) {
+            // force the main (default) domain for "admin" requests
+            if ($conf->general->domain && $conf->general->domain != Pimcore_Tool::getHostname()) {
+                $url = (($_SERVER['HTTPS'] == "on") ? "https" : "http") . "://" . $conf->general->domain . $_SERVER["REQUEST_URI"];
+                header("HTTP/1.1 301 Moved Permanently");
+                header("Location: " . $url, true, 301);
+                exit;
+            }
+        }
+    }
+
+    /**
+     * @param $conf
+     * @param $router
+     * @param $front
+     */
+    public static function initRouterWebdav($conf, $router, $front)
+    {
+// check if webdav is configured and add router
+        if ($conf instanceof Zend_Config) {
+            if ($conf->assets->webdav->hostname) {
+                $routeWebdav = new Zend_Controller_Router_Route_Hostname(
+                    $conf->assets->webdav->hostname,
+                    array(
+                        "module" => "admin",
+                        'controller' => 'asset',
+                        'action' => 'webdav'
+                    )
+                );
+                $router->addRoute('webdav', $routeWebdav);
+            }
+        }
+
+        $front->setRouter($router);
+    }
+
+    /**
+     * @param $front
+     * @param $frontend
+     * @param $conf
+     * @return mixed
+     */
+    public static function initRouter($front, $frontend, $conf)
+    {
+// set router
         $router = $front->getRouter();
         $routeAdmin = new Zend_Controller_Router_Route(
             'admin/:controller/:action/*',
@@ -180,76 +284,47 @@ class Pimcore {
             $router->addRoute('extensionmanager', $routeExtensions);
             $router->addRoute('reports', $routeReports);
             $router->addRoute('searchadmin', $routeSearchAdmin);
+
             if ($conf instanceof Zend_Config and $conf->webservice and $conf->webservice->enabled) {
-                    $router->addRoute('webservice', $routeWebservice);
+                $router->addRoute('webservice', $routeWebservice);
+                return $router;
             }
+            return $router;
+        }
+        return $router;
+    }
 
-            // force the main (default) domain for "admin" requests
-            if($conf->general->domain && $conf->general->domain != Pimcore_Tool::getHostname()) {
-                $url = (($_SERVER['HTTPS'] == "on") ? "https" : "http") . "://" . $conf->general->domain . $_SERVER["REQUEST_URI"];
-                header("HTTP/1.1 301 Moved Permanently");
-                header("Location: " . $url, true, 301);
-                exit;
-            }
+    /**
+     * @param $front
+     * @param $frontend
+     */
+    public static function initFrontPlugins($front, $frontend)
+    {
+        $front->registerPlugin(new Pimcore_Controller_Plugin_ErrorHandler(), 1);
+        $front->registerPlugin(new Pimcore_Controller_Plugin_Maintenance(), 2);
+
+        // register general pimcore plugins for frontend
+        if ($frontend) {
+            $front->registerPlugin(new Pimcore_Controller_Plugin_Less(), 799);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_AdminButton(), 806);
         }
 
-        // check if webdav is configured and add router
-        if ($conf instanceof Zend_Config) {
-            if ($conf->assets->webdav->hostname) {
-                $routeWebdav = new Zend_Controller_Router_Route_Hostname(
-                    $conf->assets->webdav->hostname,
-                    array(
-                        "module" => "admin",
-                        'controller' => 'asset',
-                        'action' => 'webdav'
-                    )
-                );
-                $router->addRoute('webdav', $routeWebdav);
-            }
-        }
-
-        $front->setRouter($router);
-
-        Pimcore_API_Plugin_Broker::getInstance()->preDispatch();
-
-
-        // throw exceptions also when in preview or in editmode (documents) to see it immediately when there's a problem with this page
-        $throwExceptions = false;
-        if(Pimcore_Tool::isFrontentRequestByAdmin()) {
-            $user = Pimcore_Tool_Authentication::authenticateSession();
-            if($user instanceof User) {
-                $throwExceptions = true;
-            }
-        }
-
-        // run dispatcher
-        if (!PIMCORE_DEBUG && !$throwExceptions && !PIMCORE_DEVMODE) {
-            @ini_set("display_errors", "Off");
-            @ini_set("display_startup_errors", "Off");
-
-            $front->dispatch();
-        }
-        else {
-            @ini_set("display_errors", "On");
-            @ini_set("display_startup_errors", "On");
-
-            $front->throwExceptions(true);
-
-            try {
-                $front->dispatch();
-            }
-            catch (Zend_Controller_Router_Exception $e) {
-                header("HTTP/1.0 404 Not Found");
-                throw new Zend_Controller_Router_Exception("No route, document, custom route or redirect is matching the request: " . $_SERVER["REQUEST_URI"] . " | \n" . "Specific ERROR: " . $e->getMessage());
-            }
-            catch (Exception $e) {
-                header("HTTP/1.0 500 Internal Server Error");
-                throw $e;
-            }
+        if (Pimcore_Tool::useFrontendOutputFilters(new Zend_Controller_Request_Http())) {
+            $front->registerPlugin(new Pimcore_Controller_Plugin_QrCode(), 793);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_CommonFilesFilter(), 794);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_Thumbnail(), 795);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_WysiwygAttributes(), 796);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_Webmastertools(), 797);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_Analytics(), 798);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_TagManagement(), 804);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_Targeting(), 805);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_HttpErrorLog(), 850);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_ContentLog(), 851);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_Cache(), 901); // for caching
         }
     }
 
-    public static function checkInstalled() {
+    public static function redirectIfNotInstalled() {
 
         $conf = Pimcore_Config::getSystemConfig();
         if($conf) {
