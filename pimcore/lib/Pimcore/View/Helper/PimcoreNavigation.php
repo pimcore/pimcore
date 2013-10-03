@@ -108,6 +108,14 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
                       $classes .= " active active-trail";
                     }
 
+                    // if the child is a link, check if the target is the same as the active document
+                    // if so, mark it as active
+                    if($child instanceof Document_Link) {
+                        if ($this->_activeDocument->getRealFullPath() == $child->getHref()) {
+                            $active = true;
+                        }
+                    }
+
                     $path = $child->getFullPath();
                     if ($child instanceof Document_Link) {
                         $path = $child->getHref();
