@@ -351,7 +351,7 @@ class OnlineShop_Framework_Impl_SessionCart extends OnlineShop_Framework_Abstrac
                 $cart->unsetIgnoreReadonly();
                 Zend_Registry::set($cacheKey, $cart);
             } catch (Exception $ex) {
-                Logger::debug($ex->getMessage());
+                Logger::error($ex);
                 return null;
             }
 

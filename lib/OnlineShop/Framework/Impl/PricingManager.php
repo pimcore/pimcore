@@ -11,11 +11,6 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
 {
 
     /**
-     * @var OnlineShop_Framework_Pricing_IEnvironment
-     */
-    protected $environment;
-
-    /**
      * @var Zend_Config
      */
     protected $config;
@@ -80,6 +75,19 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
         $env->setCart( $cart );
         $env->setProduct( null );
 
+        $categories = array();
+        foreach($cart->getItems() as $item) {
+            if($product = $item->getProduct()) {
+                if(method_exists($product, "getCategories")) {
+                    $productCategories = $product->getCategories();
+                    foreach($productCategories as $c) {
+                        $categories[$c->getId()] = $c;
+                    }
+                }
+            }
+        }
+        $env->setCategories(array_values($categories));
+
 
         // execute all valid rules
         foreach($this->getValidRules($env) as $rule)
@@ -88,8 +96,9 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
             $env->setRule($rule);
 
             // test rule
-            if($rule->check($env) === false)
+            if($rule->check($env) === false) {
                 continue;
+            }
 
             // execute rule
             $rule->executeOnCart( $env );
@@ -102,6 +111,18 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
         return $this;
     }
 
+    private $rules;
+    private function getRulesFromDatabase() {
+        if(empty($this->rules)) {
+            $rules = new OnlineShop_Framework_Impl_Pricing_Rule_List();
+            $rules->setCondition('active = 1');
+            $rules->setOrderKey('prio');
+            $rules->setOrder('ASC');
+            $this->rules = $rules->getRules();
+        }
+        return $this->rules;
+    }
+
 
     /**
      * @param OnlineShop_Framework_Pricing_IEnvironment $environment
@@ -111,13 +132,7 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
     public function getValidRules(OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
         // load all active rules from database
-        $rules = new OnlineShop_Framework_Impl_Pricing_Rule_List();
-        $rules->setCondition('active = 1');
-        $rules->setOrderKey('prio');
-        $rules->setOrder('ASC');
-        $list = $rules->getRules();
-
-        return $list;
+        return $this->getRulesFromDatabase();
 
 //        // test all rules
 //        $validRules = array();
@@ -142,10 +157,7 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
      */
     public function getEnvironment()
     {
-        if(!$this->environment)
-            $this->environment = new OnlineShop_Framework_Impl_Pricing_Environment();
-
-        return $this->environment;
+       return new OnlineShop_Framework_Impl_Pricing_Environment();
     }
 
     /**

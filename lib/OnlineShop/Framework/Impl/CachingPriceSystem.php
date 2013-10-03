@@ -28,10 +28,11 @@ abstract class OnlineShop_Framework_Impl_CachingPriceSystem extends OnlineShop_F
      * @return OnlineShop_Framework_AbstractPriceInfo
      */
     public function getPriceInfo(OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct, $quantityScale = 1, $products = null) {
-        if (!(is_numeric($quantityScale)&&$quantityScale>=0)||!in_array($quantityScale,array(OnlineShop_Framework_IPriceInfo::MIN_PRICE))){
-        //    throw new OnlineShop_Framework_Exception_UnsupportedException(__METHOD__  . " not supports quantity =  " . $quantityScale ."!");
-
-        }
+//        if (!(is_numeric($quantityScale)&&$quantityScale>=0)||!in_array($quantityScale,array(OnlineShop_Framework_IPriceInfo::MIN_PRICE))){
+//            return $this->initPriceInfoInstance($quantityScale,$abstractProduct,$products);
+//        //    throw new OnlineShop_Framework_Exception_UnsupportedException(__METHOD__  . " not supports quantity =  " . $quantityScale ."!");
+//
+//        }
         $pId = $abstractProduct->getId();
         if (!is_array($this->priceInfos[$pId])){
             $this->priceInfos[$pId] = array();

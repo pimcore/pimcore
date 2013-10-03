@@ -90,14 +90,10 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
         $env->setProduct( $this->getProduct() )
             ->setPriceInfo( $this );
 
-        foreach($this->rules as $rule)
+        foreach($this->getRules() as $rule)
         {
             /* @var OnlineShop_Framework_Pricing_IRule $rule */
             $env->setRule($rule);
-
-            // test rule
-            if($rule->check($env) === false)
-                continue;
 
             // execute rule
             $rule->executeOnProduct( $env );
@@ -106,8 +102,6 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
         $price = $this->priceInfo->getPrice();
         $price->setAmount($this->getAmount());
         return $price;
-
-//        return new OnlineShop_Framework_Impl_Price($this->getAmount(), $this->priceInfo->getPrice()->getCurrency() , true);
     }
 
     /**
@@ -122,8 +116,6 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
         $price = $this->priceInfo->getPrice();
         $price->setAmount($this->getPrice()->getAmount() * $this->getQuantity());
         return $price;
-
-//        return new OnlineShop_Framework_Impl_Price($this->getPrice()->getAmount() * $this->getQuantity(), ($this->getPrice()->getCurrency()), false);
     }
 
     /**
