@@ -15,7 +15,7 @@ RewriteBase /
 </IfModule>
 
 # ASSETS: check if request method is GET (because of WebDAV) and if the requested file (asset) exists on the filesystem, if both match, deliver the asset directly 
-RewriteCond %{REQUEST_METHOD} ^GET
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)
 RewriteCond %{DOCUMENT_ROOT}/website/var/assets%{REQUEST_URI} -f
 RewriteRule ^(.*)$ /website/var/assets%{REQUEST_URI} [PT,L]
 
