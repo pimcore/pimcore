@@ -175,9 +175,11 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
      */
     public function removeModificator(OnlineShop_Framework_ICartPriceModificator $modificator)
     {
-        foreach($this->modificators as $key => $mod)
-            if($mod === $modificator)
+        foreach($this->modificators as $key => $mod) {
+            if($mod === $modificator) {
                 unset($this->modificators[$key]);
+            }
+        }
 
         return $this;
     }

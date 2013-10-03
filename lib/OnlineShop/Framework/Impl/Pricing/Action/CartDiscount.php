@@ -40,7 +40,7 @@ class OnlineShop_Framework_Impl_Pricing_Action_CartDiscount implements OnlineSho
         $modDiscount = new OnlineShop_Framework_Impl_CartPriceModificator_Discount($environment->getRule());
 
 
-        $amount = round($this->getAmount() !== 0 ? $this->getAmount() : ($priceCalculator->getGrandTotal()->getAmount() * ($this->getPercent() / 100)), 2);
+        $amount = round($this->getAmount() !== 0 ? $this->getAmount() : ($priceCalculator->getSubTotal()->getAmount() * ($this->getPercent() / 100)), 2);
         $modDiscount->setAmount( '-'.$amount );
         $priceCalculator->addModificator( $modDiscount );
 

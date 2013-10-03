@@ -16,7 +16,6 @@ class OnlineShop_Framework_Impl_Pricing_Action_FreeShipping implements OnlineSho
      */
     public function executeOnProduct(OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
-        // TODO: Implement executeOnCart() method.
         return $this;
     }
 
@@ -27,7 +26,6 @@ class OnlineShop_Framework_Impl_Pricing_Action_FreeShipping implements OnlineSho
      */
     public function executeOnCart(OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
-        // TODO: Implement executeOnCart() method.
         $priceCalculator = $environment->getCart()->getPriceCalculator();
 
         $list = $priceCalculator->getModificators();
@@ -36,8 +34,10 @@ class OnlineShop_Framework_Impl_Pricing_Action_FreeShipping implements OnlineSho
             /* @var OnlineShop_Framework_ICartPriceModificator $modificator_ */
 
             // remove shipping charge
-            if($modificator instanceof OnlineShop_Framework_CartPriceModificator_IShipping)
+            if($modificator instanceof OnlineShop_Framework_CartPriceModificator_IShipping) {
                 $modificator->setCharge(0);
+                $priceCalculator->reset();
+            }
         }
 
         return $this;

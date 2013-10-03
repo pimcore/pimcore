@@ -344,8 +344,9 @@ class OnlineShop_Framework_Impl_Pricing_Rule extends Pimcore_Model_Abstract impl
     public function check(OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
         $condition = $this->getCondition();
-        if($condition)
+        if($condition) {
             return $condition->check($environment);
+        }
 
         return true;
     }

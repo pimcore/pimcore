@@ -30,6 +30,9 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     protected $validRules = array();
 
 
+    protected $rulesApplied = false;
+
+
     /**
      * @param OnlineShop_Framework_IPriceInfo $priceInfo
      */
@@ -50,6 +53,17 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
         $this->rules[] = $rule;
     }
 
+    private function getEnvironment() {
+        $env = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getEnvironment();
+        $env->setProduct( $this->getProduct() )
+            ->setPriceInfo( $this );
+        if(method_exists($this->getProduct(), "getCategories")) {
+            $env->setCategories( (array)$this->getProduct()->getCategories() );
+        }
+
+        return $env;
+    }
+
     /**
      * returns all valid rules, if forceRecalc, recalculation of valid rules is forced
      *
@@ -59,12 +73,9 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     public function getRules($forceRecalc = false)
     {
 
-        if($forceRecalc ||empty($this->validRules))
+        if($forceRecalc || empty($this->validRules))
         {
-            $env = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getEnvironment();
-            $env->setProduct( $this->getProduct() )
-                ->setPriceInfo( $this );
-
+            $env = $this->getEnvironment();
             $this->validRules = array();
             foreach($this->rules as $rule)
             {
@@ -86,18 +97,20 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
             return null;
         }
 
-        $env = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getEnvironment();
-        $env->setProduct( $this->getProduct() )
-            ->setPriceInfo( $this );
+        if(!$this->rulesApplied) {
+            $env = $this->getEnvironment();
 
-        foreach($this->getRules() as $rule)
-        {
-            /* @var OnlineShop_Framework_Pricing_IRule $rule */
-            $env->setRule($rule);
+            foreach($this->getRules() as $rule)
+            {
+                /* @var OnlineShop_Framework_Pricing_IRule $rule */
+                $env->setRule($rule);
 
-            // execute rule
-            $rule->executeOnProduct( $env );
+                // execute rule
+                $rule->executeOnProduct( $env );
+            }
+            $this->rulesApplied = true;
         }
+
 
         $price = $this->priceInfo->getPrice();
         $price->setAmount($this->getAmount());

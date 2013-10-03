@@ -52,8 +52,9 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
             $priceInfoWithRules->addRule($rule);
 
             // is this a stop rule?
-            if($rule->getBehavior() == 'stopExecute')
+            if($rule->getBehavior() == 'stopExecute') {
                 break;
+            }
         }
 
         return $priceInfoWithRules;
@@ -104,8 +105,9 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
             $rule->executeOnCart( $env );
 
             // is this a stop rule?
-            if($rule->getBehavior() == 'stopExecute')
+            if($rule->getBehavior() == 'stopExecute') {
                 break;
+            }
         }
 
         return $this;
