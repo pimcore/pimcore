@@ -514,13 +514,13 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $objectData["general"] = array();
             $objectData["idPath"] = Element_Service::getIdPath($object);
-
-            $allowedKeys = array("o_published", "o_key", "o_id", "o_type","o_path");
+            $allowedKeys = array("o_published", "o_key", "o_id", "o_type","o_path", "o_modificationDate", "o_creationDate", "o_userOwner", "o_userModification");
             foreach (get_object_vars($object) as $key => $value) {
                 if (strstr($key, "o_") && in_array($key, $allowedKeys)) {
                     $objectData["general"][$key] = $value;
                 }
             }
+            $objectData["general"]["fullpath"] = $object->getFullPath();
 
             $objectData["general"]["o_locked"] = $object->isLocked();
 

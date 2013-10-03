@@ -182,6 +182,16 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 handler: this.selectInTree.bind(this, "folder")
             });
 
+            var user = pimcore.globalmanager.get("user");
+            if (user.admin) {
+                buttons.push({
+                    text: t("show_metainfo"),
+                    scale: "medium",
+                    iconCls: "pimcore_icon_info_large",
+                    handler: this.showMetaInfo.bind(this)
+                });
+            }
+
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
@@ -230,7 +240,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         return this.tabbar;
     },
-    
+
     getSaveData: function () {
         var data = {};
 
@@ -251,17 +261,17 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         catch (e2) {
             //console.log(e2);
         }
-        
+
         try {
             data.gridconfig = Ext.encode(this.search.getGridConfig());
             data.class_id = this.search.currentClass;
         } catch (e3) {
             //console.log(e3);
         }
-        
+
         return data;
     },
-    
+
     save : function (task) {
 
         Ext.Ajax.request({
@@ -277,7 +287,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                     }
                     else {
                         pimcore.helpers.showNotification(t("error"), t("error_saving_object"),
-                                                                                "error",t(rdata.message));
+                            "error",t(rdata.message));
                     }
                 } catch(e){
                     pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
@@ -302,6 +312,30 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         }.bind(window, this.id), 500);
 
         pimcore.helpers.closeObject(this.id);
+    },
+
+    showMetaInfo: function() {
+
+        new pimcore.element.metainfo([{
+            name: "path",
+            value: this.data.general.fullpath
+        }, {
+            name: "modificationdate",
+            type: "date",
+            value: this.data.general.o_modificationDate
+        }, {
+            name: "creationdate",
+            type: "date",
+            value: this.data.general.o_creationDate
+        }, {
+            name: "usermodification",
+            type: "user",
+            value: this.data.general.o_userModification
+        }, {
+            name: " userowner",
+            type: "user",
+            value: this.data.general.o_userOwner
+        }], "folder");
     }
 
 });

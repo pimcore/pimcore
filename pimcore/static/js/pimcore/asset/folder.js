@@ -64,16 +64,16 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         store.load();
 
         var tpl = new Ext.XTemplate(
-                '<tpl for=".">',
-                '<div class="thumb-wrap">',
-                '<div class="thumb"><table cellspacing="0" cellpadding="0" border="0"><tr><td align="center" '
-                    + 'valign="middle" style="background: url({url}) center center no-repeat; ' +
-                    'background-size: contain;" id="{type}_{id}">'
-                    + '</td></tr></table></div>',
-                '<span class="filename">{filename}</span></div>',
-                '</tpl>',
-                '<div class="x-clear"></div>'
-                );
+            '<tpl for=".">',
+            '<div class="thumb-wrap">',
+            '<div class="thumb"><table cellspacing="0" cellpadding="0" border="0"><tr><td align="center" '
+                + 'valign="middle" style="background: url({url}) center center no-repeat; ' +
+                'background-size: contain;" id="{type}_{id}">'
+                + '</td></tr></table></div>',
+            '<span class="filename">{filename}</span></div>',
+            '</tpl>',
+            '<div class="x-clear"></div>'
+        );
 
         this.dataview = new Ext.Panel({
             layout:'fit',
@@ -148,15 +148,15 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             }
 
             this.toolbarButtons.remove = new Ext.Button({
-                 text: t('delete_folder'),
-                 iconCls: "pimcore_icon_delete_medium",
-                 scale: "medium",
-                 handler: this.remove.bind(this)
+                text: t('delete_folder'),
+                iconCls: "pimcore_icon_delete_medium",
+                scale: "medium",
+                handler: this.remove.bind(this)
             });
             if (this.isAllowed("delete") && !this.data.locked) {
                 buttons.push(this.toolbarButtons.remove);
             }
-            
+
             this.toolbarButtons.download = new Ext.Button({
                 text: t("download_as_zip"),
                 iconCls: "pimcore_icon_download_zip_medium",
@@ -182,6 +182,16 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 handler: this.selectInTree.bind(this)
             });
 
+            var user = pimcore.globalmanager.get("user");
+            if (user.admin) {
+                buttons.push({
+                    text: t("show_metainfo"),
+                    scale: "medium",
+                    iconCls: "pimcore_icon_info_large",
+                    handler: this.showMetaInfo.bind(this)
+                });
+            }
+
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
@@ -201,7 +211,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
         return this.toolbar;
     },
-    
+
     downloadZip: function () {
         //pimcore.helpers.download('/admin/asset/download-as-zip/?id='+ this.id);
 
@@ -255,6 +265,33 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 });
             }.bind(this)
         });
+    },
+
+    showMetaInfo: function() {
+
+        new pimcore.element.metainfo([{
+            name: "path",
+            value: this.data.path + this.data.filename
+        }, {
+            name: "type",
+            value: this.data.type
+        }, {
+            name: "modificationdate",
+            type: "date",
+            value: this.data.modificationDate
+        }, {
+            name: "creationdate",
+            type: "date",
+            value: this.data.creationDate
+        }, {
+            name: "usermodification",
+            type: "user",
+            value: this.data.userModification
+        }, {
+            name: "userowner",
+            type: "user",
+            value: this.data.userOwner
+        }], "folder");
     }
 });
 
