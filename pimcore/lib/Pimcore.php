@@ -67,16 +67,16 @@ class Pimcore {
 
         Pimcore_API_Plugin_Broker::getInstance()->preDispatch();
 
-        self::handelErrorReporting();
+        static::handelErrorReporting();
 
-        self::dispatch($front, self::displayErrors());
+        static::dispatch($front, static::displayErrors());
     }
 
     /**
      * @return bool
      */
     public static function displayErrors() {
-        return !(!PIMCORE_DEBUG && !self::shouldThrowExceptions() && !PIMCORE_DEVMODE);
+        return PIMCORE_DEBUG && static::shouldThrowExceptions() && PIMCORE_DEVMODE;
     }
 
     /**
@@ -87,27 +87,22 @@ class Pimcore {
      */
     public static function dispatch($front, $debug = false) {
 
-        if ($debug) {
-            @ini_set("display_errors", "Off");
-            @ini_set("display_startup_errors", "Off");
-
+        if (!$debug) {
             $front->dispatch();
-        } else {
-            @ini_set("display_errors", "On");
-            @ini_set("display_startup_errors", "On");
+            return;
+        }
 
-            $front->throwExceptions(true);
+        $front->throwExceptions(true);
 
-            try {
-                $front->dispatch();
-            } catch (Zend_Controller_Router_Exception $e) {
-                header("HTTP/1.0 404 Not Found");
-                throw new Zend_Controller_Router_Exception("No route, document, custom route or redirect is matching the request: " . $_SERVER["REQUEST_URI"] . " | \n" . "Specific ERROR: " . $e->getMessage());
-            }
-            catch (Exception $e) {
-                header("HTTP/1.0 500 Internal Server Error");
-                throw $e;
-            }
+        try {
+            $front->dispatch();
+        } catch (Zend_Controller_Router_Exception $e) {
+            header("HTTP/1.0 404 Not Found");
+            throw new Zend_Controller_Router_Exception("No route, document, custom route or redirect is matching the request: " . $_SERVER["REQUEST_URI"] . " | \n" . "Specific ERROR: " . $e->getMessage());
+        }
+        catch (Exception $e) {
+            header("HTTP/1.0 500 Internal Server Error");
+            throw $e;
         }
     }
 
@@ -133,7 +128,7 @@ class Pimcore {
      */
     public static function handelErrorReporting() {
 
-        if (self::displayErrors()) {
+        if (!static::displayErrors()) {
             @ini_set("display_errors", "Off");
             @ini_set("display_startup_errors", "Off");
         } else {
