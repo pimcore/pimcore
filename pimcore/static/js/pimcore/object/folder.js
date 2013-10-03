@@ -116,6 +116,12 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         this.tab.on("afterrender", function (tabId) {
             this.tabPanel.activate(tabId);
             pimcore.plugin.broker.fireEvent("postOpenObject", this, "folder");
+
+            // load selected class if available
+            if(this.data["selectedClass"]) {
+                this.search.setClass(this.data["selectedClass"]);
+            }
+
         }.bind(this, tabId));
 
         this.removeLoadingPanel();
@@ -264,7 +270,6 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         try {
             data.gridconfig = Ext.encode(this.search.getGridConfig());
-            data.class_id = this.search.currentClass;
         } catch (e3) {
             //console.log(e3);
         }

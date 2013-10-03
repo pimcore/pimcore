@@ -528,6 +528,15 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData["userPermissions"] = $object->getUserPermissions();
             $objectData["classes"] = $object->getResource()->getClasses();
 
+            // grid-config
+            $configFile= PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "-user_" . $this->getUser()->getId() . ".psf";
+            if (is_file($configFile)) {
+                $gridConfig = Pimcore_Tool_Serialize::unserialize(file_get_contents($configFile));
+                if($gridConfig) {
+                    $objectData["selectedClass"] = $gridConfig["classId"];
+                }
+            }
+
             $this->_helper->json($objectData);
         }
         else {

@@ -42,20 +42,24 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     return;
                 }
 
+                this.classSelector = new Ext.form.ComboBox({
+                    name: "selectClass",
+                    listWidth: 'auto',
+                    store: classStore,
+                    mode:"local",
+                    valueField: 'id',
+                    displayField: 'translatedText',
+                    triggerAction: 'all',
+                    value: this.object.data["selectedClass"],
+                    listeners: {
+                        "select": this.changeClassSelect.bind(this)
+                    }
+                });
+
                 if (this.object.data.classes.length > 1) {
                     toolbarConfig = [new Ext.Toolbar.TextItem({
                         text: t("please_select_a_type")
-                    }),new Ext.form.ComboBox({
-                        name: "selectClass",
-                        listWidth: 'auto',
-                        store: classStore,
-                        valueField: 'id',
-                        displayField: 'translatedText',
-                        triggerAction: 'all',
-                        listeners: {
-                            "select": this.changeClassSelect.bind(this)
-                        }
-                    })];
+                    }),this.classSelector];
                 }
                 else {
                     this.currentClass = this.object.data.classes[0].id;

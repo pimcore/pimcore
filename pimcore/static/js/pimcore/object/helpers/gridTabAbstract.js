@@ -349,6 +349,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         var config = {
             language: this.gridLanguage,
             sortinfo: this.sortinfo,
+            classId: this.classId,
             columns: {}
         };
         var cm = this.grid.getColumnModel();
