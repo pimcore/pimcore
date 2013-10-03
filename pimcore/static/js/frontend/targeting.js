@@ -565,7 +565,8 @@
 
         callTargets: function (targets) {
             if(targets.length > 0 && !/_ptc=/.test(window.location.href) && util.isGet()) {
-                window.location.href = "?_ptc=" + targets.join(",");
+                window.location.href = window.location.href + (window.location.href.indexOf("?") < 0 ? "?" : "&")
+                    + "_ptc=" + targets.join(",");
             }
         },
 
