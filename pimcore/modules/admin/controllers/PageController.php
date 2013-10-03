@@ -199,7 +199,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         if($this->getParam("id")) {
 
             $doc = Document::getById($this->getParam("id"));
-            $url = Pimcore_Tool::getHostUrl() . $doc->getRealFullPath();
+            $url = Pimcore_Tool::getHostUrl() . $doc->getRealFullPath() . "?pimcore_preview=true";
 
             $config = Pimcore_Config::getSystemConfig();
             if ($config->general->http_auth) {
