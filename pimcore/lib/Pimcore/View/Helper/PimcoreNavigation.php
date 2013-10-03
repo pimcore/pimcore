@@ -133,7 +133,7 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
                     if ($active and !$isRoot) {
                         $classes .= " active";
                     } else if ($active and $isRoot) {
-                        $classes .= " main mainactive";
+                        $classes .= " main mainactive active";
                     } else if ($isRoot) {
                        $classes .= " main";
                     }
