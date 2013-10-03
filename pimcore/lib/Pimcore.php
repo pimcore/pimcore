@@ -48,13 +48,8 @@ class Pimcore {
         // config is loaded now init the real logger
         static::initLogger();
 
-        // set locale data cache, this must be after static::initLogger() since Pimcore_Model_Cache requires the logger
-        // to log if there's something wrong with the cache configuration in cache.xml
-        $cache = Pimcore_Model_Cache::getInstance();
-        Zend_Locale_Data::setCache($cache);
-        Zend_Locale::setCache($cache);
-        Zend_Locale_Data::setCache($cache);
-        Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
+        self::initCache();
+
 
         // load plugins and modules (=core plugins)
         static::initModules();
@@ -63,14 +58,10 @@ class Pimcore {
         // init front controller
         $front = Zend_Controller_Front::getInstance();
 
+        self::checkInstalled();
+
+
         $conf = Pimcore_Config::getSystemConfig();
-        if(!$conf) {
-            // redirect to installer if configuration isn't present
-            if (!preg_match("/^\/install.*/", $_SERVER["REQUEST_URI"])) {
-                header("Location: /install/");
-                exit;
-            }
-        }
 
         $front->registerPlugin(new Pimcore_Controller_Plugin_ErrorHandler(), 1);
         $front->registerPlugin(new Pimcore_Controller_Plugin_Maintenance(), 2);
@@ -256,6 +247,33 @@ class Pimcore {
                 throw $e;
             }
         }
+    }
+
+    public static function checkInstalled() {
+
+        $conf = Pimcore_Config::getSystemConfig();
+        if($conf) {
+            return;
+        }
+            // redirect to installer if configuration isn't present
+        if (preg_match("/^\/install.*/", $_SERVER["REQUEST_URI"])) {
+            return;
+        }
+
+        header("Location: /install/");
+        exit;
+    }
+
+    public static function initCache() {
+
+        // set locale data cache, this must be after static::initLogger() since Pimcore_Model_Cache requires the logger
+        // to log if there's something wrong with the cache configuration in cache.xml
+
+        $cache = Pimcore_Model_Cache::getInstance();
+        Zend_Locale_Data::setCache($cache);
+        Zend_Locale::setCache($cache);
+        Zend_Locale_Data::setCache($cache);
+        Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
     }
 
     /**
