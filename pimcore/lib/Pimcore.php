@@ -110,17 +110,16 @@ class Pimcore {
      * @return bool
      */
     public static function shouldThrowExceptions() {
-        // throw exceptions also when in preview or in editmode (documents) to see it immediately when there's a problem with this page
-        $throwExceptions = false;
-        if (Pimcore_Tool::isFrontentRequestByAdmin()) {
-            $user = Pimcore_Tool_Authentication::authenticateSession();
-            if ($user instanceof User) {
-                $throwExceptions = true;
-                return $throwExceptions;
-            }
-            return $throwExceptions;
+
+        if (!Pimcore_Tool::isFrontentRequestByAdmin()) {
+            return false;
         }
-        return $throwExceptions;
+
+        if (!(Pimcore_Tool_Authentication::authenticateSession() instanceof User)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -131,10 +130,11 @@ class Pimcore {
         if (!static::displayErrors()) {
             @ini_set("display_errors", "Off");
             @ini_set("display_startup_errors", "Off");
-        } else {
-            @ini_set("display_errors", "On");
-            @ini_set("display_startup_errors", "On");
+            return;
         }
+
+        @ini_set("display_errors", "On");
+        @ini_set("display_startup_errors", "On");
     }
 
     /**
@@ -143,15 +143,18 @@ class Pimcore {
      */
     public static function forceMainDomainForAdminRequests($frontend, $conf)
     {
-        if (!$frontend) {
-            // force the main (default) domain for "admin" requests
-            if ($conf->general->domain && $conf->general->domain != Pimcore_Tool::getHostname()) {
-                $url = (($_SERVER['HTTPS'] == "on") ? "https" : "http") . "://" . $conf->general->domain . $_SERVER["REQUEST_URI"];
-                header("HTTP/1.1 301 Moved Permanently");
-                header("Location: " . $url, true, 301);
-                exit;
-            }
+        if ($frontend) {
+            return;
         }
+
+        // force the main (default) domain for "admin" requests
+        if ($conf->general->domain && $conf->general->domain != Pimcore_Tool::getHostname()) {
+            $url = (($_SERVER['HTTPS'] == "on") ? "https" : "http") . "://" . $conf->general->domain . $_SERVER["REQUEST_URI"];
+            header("HTTP/1.1 301 Moved Permanently");
+            header("Location: " . $url, true, 301);
+            exit;
+        }
+
     }
 
     /**
@@ -159,23 +162,27 @@ class Pimcore {
      * @param $router
      * @param $front
      */
-    public static function initRouterWebdav($conf, $router, $front)
-    {
-// check if webdav is configured and add router
-        if ($conf instanceof Zend_Config) {
-            if ($conf->assets->webdav->hostname) {
-                $routeWebdav = new Zend_Controller_Router_Route_Hostname(
-                    $conf->assets->webdav->hostname,
-                    array(
-                        "module" => "admin",
-                        'controller' => 'asset',
-                        'action' => 'webdav'
-                    )
-                );
-                $router->addRoute('webdav', $routeWebdav);
-            }
+    public static function initRouterWebdav($conf, $router, $front) {
+
+        // check if webdav is configured and add router
+        if (!($conf instanceof Zend_Config)) {
+            return;
         }
 
+        if (!$conf->assets->webdav->hostname) {
+            return;
+        }
+
+        $routeWebdav = new Zend_Controller_Router_Route_Hostname(
+            $conf->assets->webdav->hostname,
+            array(
+                "module" => "admin",
+                'controller' => 'asset',
+                'action' => 'webdav'
+            )
+        );
+
+        $router->addRoute('webdav', $routeWebdav);
         $front->setRouter($router);
     }
 
@@ -185,9 +192,9 @@ class Pimcore {
      * @param $conf
      * @return mixed
      */
-    public static function initRouter($front, $frontend, $conf)
-    {
-// set router
+    public static function initRouter($front, $frontend, $conf) {
+
+        // set router
         $router = $front->getRouter();
         $routeAdmin = new Zend_Controller_Router_Route(
             'admin/:controller/:action/*',
@@ -286,6 +293,7 @@ class Pimcore {
             }
             return $router;
         }
+
         return $router;
     }
 
@@ -293,8 +301,8 @@ class Pimcore {
      * @param $front
      * @param $frontend
      */
-    public static function initFrontPlugins($front, $frontend)
-    {
+    public static function initFrontPlugins($front, $frontend) {
+
         $front->registerPlugin(new Pimcore_Controller_Plugin_ErrorHandler(), 1);
         $front->registerPlugin(new Pimcore_Controller_Plugin_Maintenance(), 2);
 
@@ -338,7 +346,6 @@ class Pimcore {
 
         // set locale data cache, this must be after static::initLogger() since Pimcore_Model_Cache requires the logger
         // to log if there's something wrong with the cache configuration in cache.xml
-
         $cache = Pimcore_Model_Cache::getInstance();
         Zend_Locale_Data::setCache($cache);
         Zend_Locale::setCache($cache);
@@ -546,8 +553,8 @@ class Pimcore {
     }
 
     public static function initPlugins() {
-        // add plugin include paths
 
+        // add plugin include paths
         $autoloader = Zend_Loader_Autoloader::getInstance();
 
         try {
@@ -990,10 +997,15 @@ class Pimcore {
             // check here if there is actually content, otherwise readfile() and similar functions are not working anymore
             header("Content-Length: " . mb_strlen($output, "latin1"));
         }
-        header("X-Powered-By: pimcore");
+
+        static::addHeaderXPowered();
 
         // return the data unchanged
         return $output;
+    }
+
+    public static function addHeaderXPowered() {
+        header("X-Powered-By: pimcore");
     }
 
     /**
