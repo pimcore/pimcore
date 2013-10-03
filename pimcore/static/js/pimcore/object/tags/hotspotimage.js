@@ -75,10 +75,12 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 text: "<b>" + this.fieldConfig.title + "</b>"
             },"->",{
                 xtype: "button",
+                tooltip: t("crop"),
                 iconCls: "pimcore_icon_image_region",
                 handler: this.openCropWindow.bind(this)
             },{
                 xtype: "button",
+                tooltip: t("add_marker_or_hotspots"),
                 iconCls: "pimcore_icon_image_add_hotspot",
                 handler: this.openHotspotWindow.bind(this)
             },{
