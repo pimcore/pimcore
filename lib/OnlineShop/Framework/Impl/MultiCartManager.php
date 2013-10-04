@@ -149,8 +149,8 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
 //            throw new OnlineShop_Framework_Exception_InvalidConfigException("No name specified.");
 //        }
 //
-        if(array_key_exists($param['name'], $this->carts)) {
-            throw new OnlineShop_Framework_Exception_InvalidConfigException("Cart with name " . $param['name'] . " exists already.");
+        if(array_key_exists($param['id'], $this->carts)) {
+            throw new OnlineShop_Framework_Exception_InvalidConfigException("Cart with id " . $param['id'] . " exists already.");
         }
 
         // create cart
@@ -193,6 +193,25 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
         }
         return $this->carts[$key];
     }
+
+    /**
+     * return cart with the given name
+     * @param $name
+     *
+     * @return OnlineShop_Framework_ICart
+     */
+    public function getCartByName($name)
+    {
+        $this->checkForInit();
+        foreach($this->carts as $cart)
+        {
+            if($cart->getName() == $name)
+            {
+                return $cart;
+            }
+        }
+    }
+
 
     public function getCarts() {
         $this->checkForInit();
