@@ -493,6 +493,9 @@ class Pimcore_Tool {
             $ip = $_SERVER['REMOTE_ADDR'];
         }
 
+        $ips = explode(",", $ip);
+        $ip = trim(array_pop($ips));
+
         return $ip;
     }
 
