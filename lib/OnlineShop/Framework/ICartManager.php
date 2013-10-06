@@ -38,6 +38,12 @@ interface OnlineShop_Framework_ICartManager extends OnlineShop_Framework_ICompon
     public function getCart($key = null);
 
     /**
+     * @param $name
+     * @return mixed
+     */
+    public function getCartByName($name);
+
+    /**
      * @abstract
      * @return OnlineShop_Framework_ICart[]
      */

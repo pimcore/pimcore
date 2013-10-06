@@ -2,362 +2,69 @@
 
 class OnlineShop_Framework_Impl_SessionCart extends OnlineShop_Framework_AbstractCart implements OnlineShop_Framework_ICart {
 
-    protected $items = array();
-    public $checkoutData = array();
-    protected $name;
-    protected $creationDate;
-    protected $creationDateTimestamp;
-    protected $id;
+    const SESSION_CART_NAMESPACE = "onlineshop_sessioncarts";
 
     /**
-     * @var OnlineShop_Framework_ICartItem[]
+     * @return string
      */
-    protected $giftItems = array();
-
-
-    public function __construct() {
-        $this->setIgnoreReadonly();
-        $this->setCreationDate(Zend_Date::now());
-        $this->unsetIgnoreReadonly();
+    protected function getCartItemClassName() {
+        return "OnlineShop_Framework_Impl_SessionCartItem";
     }
 
     /**
-     * @var OnlineShop_Framework_ICartPriceCalculator
+     * @return string
      */
-    protected $priceCalcuator;
+    protected function getCartCheckoutDataClassName() {
+        return "OnlineShop_Framework_Impl_SessionCartCheckoutData";
+    }
 
-    public function addItem(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
-        $this->checkCartIsReadOnly();
-
-        if(empty($itemKey)) {
-            $itemKey = $product->getId();
-
-            if(!empty($subProducts)) {
-                $itemKey = $itemKey . "_" . uniqid();
-            }
+    protected static function getSession() {
+        $session = new Zend_Session_Namespace(self::SESSION_CART_NAMESPACE);
+        if(empty($session->carts)) {
+            $session->carts = array();
         }
 
-        return $this->updateItem($itemKey, $product, $count, $replace, $params, $subProducts, $comment);
-    }
-
-    public function updateItem($itemKey, OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
-        $this->checkCartIsReadOnly();
-
-        $this->itemAmount = null;
-        $this->subItemAmount = null;
-
-
-        $item = $this->items[$itemKey];
-        if (empty($item)) {
-            $item = new OnlineShop_Framework_Impl_SessionCartItem();
-            $item->setCart($this);
-        }
-
-        $item->setProduct($product);
-        $item->setItemKey($itemKey);
-        $item->setComment($comment);
-        if($replace) {
-            $item->setCount($count);
-        } else {
-            $item->setCount($item->getCount() + $count);
-        }
-
-
-        if(!empty($subProducts)) {
-            $subItems = array();
-            foreach($subProducts as $subProduct) {
-                if($subItems[$subProduct->getProduct()->getId()]) {
-                    $subItem = $subItems[$subProduct->getProduct()->getId()];
-                    $subItem->setCount($subItem->getCount() + $subProduct->getQuantity());
-                } else {
-                    $subItem = new OnlineShop_Framework_Impl_CartItem();
-                    $subItem->setCart($this);
-                    $subItem->setItemKey($subProduct->getProduct()->getId());
-                    $subItem->setProduct($subProduct->getProduct());
-                    $subItem->setCount($subProduct->getQuantity());
-                    $subItems[$subProduct->getProduct()->getId()] = $subItem;
-                }
-            }
-            $item->setSubItems($subItems);
-        }
-
-        $this->items[$itemKey] = $item;
-
-        // trigger cart has been modified
-        $this->modified();
-
-        return $itemKey;
-    }
-
-    public function clear() {
-        $this->checkCartIsReadOnly();
-
-        $this->itemAmount = null;
-        $this->subItemAmount = null;
-        $this->items = array();
-
-        // trigger cart has been modified
-        $this->modified();
-
-    }
-
-    protected $itemAmount;
-    protected $subItemAmount;
-
-    /**
-     * @param bool $countSubItems
-     */
-    public function getItemAmount($countSubItems = false) {
-        if($countSubItems) {
-            if($this->subItemAmount == null) {
-                $count = 0;
-                $items = $this->getItems();
-                if(!empty($items)) {
-                    foreach($items as $item) {
-                        $subItems = $item->getSubItems();
-                        if($subItems) {
-                            foreach($subItems as $subItem) {
-                                $count += ($subItem->getCount() * $item->getCount());
-                            }
-                        } else {
-                            $count += $item->getCount();
-                        }
-                    }
-                }
-                $this->subItemAmount = $count;
-            }
-            return $this->subItemAmount;
-        } else {
-            if($this->itemAmount == null) {
-                $count = 0;
-                $items = $this->getItems();
-                if(!empty($items)) {
-                    foreach($items as $item) {
-                        $count += $item->getCount();
-                    }
-                }
-                $this->itemAmount = $count;
-            }
-            return $this->itemAmount;
-        }
-    }
-
-    /**
-     * @return OnlineShop_Framework_ICartItem[]
-     */
-    public function getItems() {
-        return $this->items;
-    }
-
-    /**
-     * @param string $itemKey
-     *
-     * @return OnlineShop_Framework_ICartItem
-     */
-    public function getItem($itemKey)
-    {
-        return array_key_exists($itemKey, $this->items) ? $this->items[ $itemKey ] : null;
-    }
-
-
-    /**
-     * @param string $itemKey
-     *
-     * @return OnlineShop_Framework_ICartItem
-     */
-    public function getGiftItem($itemKey)
-    {
-        return array_key_exists($itemKey, $this->giftItems) ? $this->giftItems[ $itemKey ] : null;
-    }
-
-
-    public function setItems($items) {
-        $this->checkCartIsReadOnly();
-
-
-        $this->itemAmount = null;
-        $this->subItemAmount = null;
-
-        $this->items = $items;
-
-        // trigger cart has been modified
-        $this->modified();
-
-    }
-
-    public function removeItem($itemKey) {
-        $this->checkCartIsReadOnly();
-
-        $this->itemAmount = null;
-        $this->subItemAmount = null;
-
-        unset($this->items[$itemKey]);
-
-        // trigger cart has been modified
-        $this->modified();
-    }
-
-    public function setName($name) {
-        $this->name = $name;
-    }
-
-    public function getName() {
-        return $this->name;
-    }
-
-    public function getIsBookable() {
-        foreach($this->getItems() as $item) {
-            if(!$item->getProduct()->getOSIsBookable($item->getCount(), $item->getSetEntries())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function setId($id) {
-        $this->id = $id;
-    }
-
-    public function getId() {
-        return $this->id;
-    }
-
-    public function getCreationDate() {
-        if(empty($this->creationDate) && $this->creationDateTimestamp) {
-            $this->creationDate = new Zend_Date($this->creationDateTimestamp, Zend_Date::TIMESTAMP);
-        }
-        return $this->creationDate;
-    }
-
-    public function setCreationDate(Zend_Date $creationDate = null) {
-        $this->checkCartIsReadOnly();
-
-        $this->creationDate = $creationDate;
-        if($creationDate) {
-            $this->creationDateTimestamp = $creationDate->get(Zend_Date::TIMESTAMP);
-        } else {
-            $this->creationDateTimestamp = null;
-        }
-    }
-
-    public function setCreationDateTimestamp($creationDateTimestamp) {
-        $this->checkCartIsReadOnly();
-
-        $this->creationDateTimestamp = $creationDateTimestamp;
-        $this->creationDate = null;
-    }
-
-    public function getCreationDateTimestamp() {
-        return $this->creationDateTimestamp;
-    }
-
-
-    public function getUserId() {
-        return OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentUserId();
+        return $session;
     }
 
 
     public function save() {
-        $this->getResource()->save();
-        OnlineShop_Framework_Impl_SessionCartItem::removeAllFromCart($this->getId());
-        foreach ($this->items as $item) {
-            $item->save();
+        $session = self::getSession();
+
+        if(!$this->getId()) {
+            $this->setId(uniqid("sesscart_"));
         }
 
-
-        OnlineShop_Framework_Impl_SessionCartCheckoutData::removeAllFromCart($this->getId());
-        foreach ($this->checkoutData as $data) {
-            $data->save();
-        }
+        $session->carts[$this->getId()] = serialize($this);
     }
 
     /**
      * @return void
      */
     public function delete() {
-        $cacheKey = "SessionCart_" . $this->getId();
-        Zend_Registry::set($cacheKey, null);
 
-        OnlineShop_Framework_Impl_SessionCartItem::removeAllFromCart($this->getId());
-        OnlineShop_Framework_Impl_SessionCartCheckoutData::removeAllFromCart($this->getId());
+        $session = self::getSession();
+
+        if(!$this->getId()) {
+            throw new Exception("Cart saved not yes.");
+        }
 
         $this->clear();
-        $this->getResource()->delete();
+        unset($session->carts[$this->getId()]);
+
     }
 
 
-    /**
-     * @param  $key string
-     * @return string
-     */
-    public function getCheckoutData($key) {
-        $entry = $this->checkoutData[$key];
-        if($entry) {
-            return $this->checkoutData[$key]->getData();
-        } else {
-            return null;
-        }
-    }
 
-    /**
-     * @param  $key string
-     * @param  $data string
-     * @return void
-     */
-    public function setCheckoutData($key, $data) {
-        $value = new OnlineShop_Framework_Impl_SessionCartCheckoutData();
-        $value->setCart($this);
-        $value->setKey($key);
-        $value->setData($data);
-        $this->checkoutData[$key] = $value;
-    }
-
+    protected static $unserializedCarts = null;
 
     /**
      * @param int $id
      * @return OnlineShop_Framework_Impl_Cart
      */
     public static function getById($id) {
-        $cacheKey = "SessionCart_" . $id;
-        try {
-            $cart = Zend_Registry::get($cacheKey);
-        }
-        catch (Exception $e) {
-
-            try {
-                $cart = new static();
-                $cart->setIgnoreReadonly();
-                $cart->getResource()->getById($id);
-
-                $itemList = new OnlineShop_Framework_Impl_SessionCartItem_List();
-                $itemList->setCondition("cartId=" . $cart->getId() . "||parentItemKey=''");
-                $items = array();
-                foreach ($itemList->getCartItems() as $item) {
-                    if ($item->getProduct() != null) {
-                        $items[$item->getItemKey()] = $item;
-//                        $cart->addItem($item->getProduct(), $item->getCount(), $item->getItemKey(), array(), $item->getSubItems());
-                    }else {
-                        Logger::warn("product " . $item->getProductId() . " not found");
-                    }
-                }
-                $cart->setItems($items);
-
-                $dataList = new OnlineShop_Framework_Impl_SessionCartCheckoutData_List();
-                $dataList->setCondition("cartId=" . $cart->getId());
-                foreach ($dataList->getCartCheckoutDataItems() as $checkoutDataItem) {
-                    $cart->setCheckoutData($checkoutDataItem->getKey(), $checkoutDataItem->getData());
-                }
-
-                $cart->unsetIgnoreReadonly();
-                Zend_Registry::set($cacheKey, $cart);
-            } catch (Exception $ex) {
-                Logger::error($ex);
-                return null;
-            }
-
-        }
-
-        return $cart;
+        $carts = self::getAllCartsForUser(-1);
+        return $carts[$id];
     }
 
     /**
@@ -366,130 +73,42 @@ class OnlineShop_Framework_Impl_SessionCart extends OnlineShop_Framework_Abstrac
      * @return array
      */
     public static function getAllCartsForUser($userId) {
-        $carts = new Zend_Session_Namespace('carts');
-        foreach ($carts as $cart) {
-            $cartList[] = self::getById($cart->id);
+        if(self::$unserializedCarts == null) {
+            foreach(self::getSession()->carts as $serializedCart) {
+                $cart = unserialize($serializedCart);
+                self::$unserializedCarts[$cart->getId()] = $cart;
+            }
         }
-        return $cartList;
+        return self::$unserializedCarts;
     }
 
-    /**
-     * @return OnlineShop_Framework_ICartPriceCalculator
-     */
-    public function getPriceCalculator() {
-
-        if(empty($this->priceCalcuator)) {
-            $this->priceCalcuator = OnlineShop_Framework_Factory::getInstance()->getCartManager()->getCartPriceCalcuator($this);
-        }
-
-        return $this->priceCalcuator;
-    }
-
+/*
     public function setValues($data = array()) {
         if ($data instanceof stdClass && count($data) > 0) {
             foreach ($data as $key => $value) {
                 $this->setValue($key,$value);
             }
         }
-    }
+    }*/
+
 
 
     /**
-     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
-     * @param int                                  $count
-     * @param null                                 $itemKey
-     * @param bool                                 $replace
-     * @param array                                $params
-     * @param array                                $subProducts
-     * @param null                                 $comment
-     *
-     * @return string
+     * @return array
      */
-    public function addGiftItem(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null)
-    {
-        if(empty($itemKey)) {
-            $itemKey = $product->getId();
+    public function __sleep() {
+        $vars = parent::__sleep();
 
-            if(!empty($subProducts)) {
-                $itemKey = $itemKey . "_" . uniqid();
+        $blockedVars = array("creationDate","modificationDate","priceCalcuator");
+
+        $finalVars = array();
+        foreach ($vars as $key) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
             }
         }
 
-        return $this->updateGiftItem($itemKey, $product, $count, $replace, $params, $subProducts, $comment);
+        return $finalVars;
     }
 
-    /**
-     * @param string                               $itemKey
-     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
-     * @param int                                  $count
-     * @param bool                                 $replace
-     * @param array                                $params
-     * @param array                                $subProducts
-     * @param null                                 $comment
-     *
-     * @return string
-     */
-    public function updateGiftItem($itemKey, OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null)
-    {
-        // item already exists?
-        if(!array_key_exists($itemKey, $this->giftItems))
-        {
-            $item = new OnlineShop_Framework_Impl_CartItem();
-            $item->setCart($this);
-        }
-        else
-        {
-            $item = $this->giftItems[$itemKey];
-        }
-
-        // update item
-        $item->setProduct($product);
-        $item->setItemKey($itemKey);
-        $item->setComment($comment);
-        if($replace) {
-            $item->setCount($count);
-        } else {
-            $item->setCount($item->getCount() + $count);
-        }
-
-        // handle sub products
-        if(!empty($subProducts)) {
-            $subItems = array();
-            foreach($subProducts as $subProduct) {
-                if($subItems[$subProduct->getProduct()->getId()]) {
-                    $subItem = $subItems[$subProduct->getProduct()->getId()];
-                    $subItem->setCount($subItem->getCount() + $subProduct->getQuantity());
-                } else {
-                    $subItem = new OnlineShop_Framework_Impl_CartItem();
-                    $subItem->setCart($this);
-                    $subItem->setItemKey($subProduct->getProduct()->getId());
-                    $subItem->setProduct($subProduct->getProduct());
-                    $subItem->setCount($subProduct->getQuantity());
-                    $subItems[$subProduct->getProduct()->getId()] = $subItem;
-                }
-            }
-            $item->setSubItems($subItems);
-        }
-
-        $this->giftItems[$itemKey] = $item;
-        return $itemKey;
-    }
-
-
-    /**
-     * @return OnlineShop_Framework_ICartItem[]
-     */
-    public function getGiftItems()
-    {
-        return $this->giftItems;
-    }
-
-    /**
-     * cart has been changed
-     */
-    protected function modified()
-    {
-        // apply pricing rules
-        OnlineShop_Framework_Factory::getInstance()->getPricingManager()->applyCartRules($this);
-    }
 }

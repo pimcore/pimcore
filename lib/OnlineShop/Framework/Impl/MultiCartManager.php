@@ -111,8 +111,6 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
         foreach($this->carts as $cart) {
             $cart->save();
         }
-//        $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
-//        $env->setCustomItem("carts", $this->carts);
     }
 
     /**
@@ -144,18 +142,14 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
      */
     public function createCart($param) {
         $this->checkForInit();
-        //TODO 
-//        if(empty($param['name'])) {
-//            throw new OnlineShop_Framework_Exception_InvalidConfigException("No name specified.");
-//        }
-//
+
         if(array_key_exists($param['id'], $this->carts)) {
             throw new OnlineShop_Framework_Exception_InvalidConfigException("Cart with id " . $param['id'] . " exists already.");
         }
 
         // create cart
         $class = $this->getCartClassName();
-        $cart = new $class;
+        $cart = new $class();
         $cart->setName($param['name']);
         if($param['id']) {
             $cart->setId($param['id']);

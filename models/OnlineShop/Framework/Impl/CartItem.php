@@ -1,64 +1,8 @@
 <?php
 
-class OnlineShop_Framework_Impl_CartItem extends Pimcore_Model_Abstract implements OnlineShop_Framework_ICartItem {
-
-    /**
-     * @var OnlineShop_Framework_ProductInterfaces_ICheckoutable
-     */
-    protected $product;
-    protected $productId;
-    protected $itemKey;
-    protected $count;
-    protected $comment;
-    protected $parentItemKey = "";
-
-    protected $subItems = null;
-
-    /**
-     * @var OnlineShop_Framework_ICart
-     */
-    protected $cart;
-    protected $cartId;
+class OnlineShop_Framework_Impl_CartItem extends OnlineShop_Framework_AbstractCartItem implements OnlineShop_Framework_ICartItem {
 
 
-    /**
-     * @var int unix timestamp
-     */
-    protected $addedDateTimestamp;
-
-
-    public function __construct()
-    {
-        $this->setAddedDate(Zend_Date::now());
-    }
-
-    public function setCount($count) {
-        $this->count = $count;
-    }
-
-    public function getCount() {
-        return $this->count;
-    }
-
-    public function setProduct(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product) {
-        $this->product = $product;
-    }
-
-    /**
-     * @return OnlineShop_Framework_ProductInterfaces_ICheckoutable
-     */
-    public function getProduct() {
-        if ($this->product) {
-            return $this->product;
-        }
-        $this->product = Object_Abstract::getById($this->productId);
-        return $this->product;
-    }
-
-    public function setCart(OnlineShop_Framework_ICart $cart) {
-        $this->cart = $cart;
-        $this->cartId = $cart->getId();
-    }
 
     public function getCart() {
         if (empty($this->cart)) {
@@ -67,40 +11,7 @@ class OnlineShop_Framework_Impl_CartItem extends Pimcore_Model_Abstract implemen
         return $this->cart;
     }
 
-    public function getCartId() {
-        return $this->cartId;
-    }
 
-    public function setCartId($cartId) {
-        $this->cartId = $cartId;
-    }
-
-    public function getProductId() {
-        if ($this->productId) {
-            return $this->productId;
-        }
-        return $this->getProduct()->getId();
-    }
-
-    public function setProductId($productId) {
-        $this->productId = $productId;
-    }
-
-    public function setParentItemKey($parentItemKey) {
-        $this->parentItemKey = $parentItemKey;
-    }
-
-    public function getParentItemKey() {
-        return $this->parentItemKey;
-    }
-
-    public function setItemKey($itemKey) {
-        $this->itemKey = $itemKey;
-    }
-
-    public function getItemKey() {
-        return $this->itemKey;
-    }
 
 
     public function save() {
@@ -163,102 +74,6 @@ class OnlineShop_Framework_Impl_CartItem extends Pimcore_Model_Abstract implemen
         return $this->subItems;
     }
 
-    /**
-     * @param  OnlineShop_Framework_ICartItem[] $subItems
-     * @return void
-     */
-    public function setSubItems($subItems) {
-        foreach ($subItems as $item) {
-            $item->setParentItemKey($this->getItemKey());
-        }
-        $this->subItems = $subItems;
-    }
 
 
-    /**
-     * @return OnlineShop_Framework_IPrice
-     */
-    public function getPrice() {
-        if ($this->getProduct() instanceof OnlineShop_Framework_AbstractSetProduct) {
-            return $this->getProduct()->getOSPrice($this->getCount(),$this->getSetEntries());
-
-        } else {
-            return $this->getProduct()->getOSPrice($this->getCount());
-        }
-    }
-
-    public function getTotalPrice() {
-        return $this->getPriceInfo()->getTotalPrice();
-    }
-
-    /**
-     * @return stdClass
-     */
-    public function getPriceInfo() {
-        if ($this->getProduct() instanceof OnlineShop_Framework_AbstractSetProduct) {
-            return $this->getProduct()->getOSPriceInfo($this->getCount(),$this->getSetEntries());
-        } else {
-            return $this->getProduct()->getOSPriceInfo($this->getCount());
-        }
-    }
-
-    /**
-     * @return OnlineShop_Framework_IAvailability
-     */
-    public function getAvailabilityInfo() {
-        if ($this->getProduct() instanceof OnlineShop_Framework_AbstractSetProduct) {
-            return $this->getProduct()->getOSAvailabilityInfo($this->getCount(),$this->getSetEntries());
-
-        } else {
-            return $this->getProduct()->getOSAvailabilityInfo($this->getCount());
-        }
-    }
-
-     /**
-     * @return OnlineShop_Framework_AbstractSetProductEntry[]
-     */
-    public function getSetEntries() {
-        $products = array();
-        foreach ($this->getSubItems() as $item) {
-            $products[] = new OnlineShop_Framework_AbstractSetProductEntry($item->getProduct(), $item->getCount());
-        }
-        return $products;
-
-    }
-
-    /**
-     * @param string $comment
-     */
-    public function setComment($comment) {
-        $this->comment = $comment;
-    }
-
-    /**
-     * @return string
-     */
-    public function getComment() {
-        return $this->comment;
-    }
-
-    public function setAddedDate(Zend_Date $date = null) {
-        if($date) {
-            $this->addedDateTimestamp = $date->getTimestamp();
-        } else {
-            $this->addedDateTimestamp = null;
-        }
-    }
-
-    public function getAddedDate() {
-        return $this->addedDateTimestamp !== NULL ? new Zend_Date($this->addedDateTimestamp) : null;
-    }
-
-    public function getAddedDateTimestamp()
-    {
-        return $this->addedDateTimestamp;
-    }
-
-    public function setAddedDateTimestamp($time)
-    {
-        $this->addedDateTimestamp = $time;
-    }
 }

@@ -1,85 +1,60 @@
 <?php
 
-class OnlineShop_Framework_Impl_SessionCartCheckoutData extends Pimcore_Model_Abstract {
+class OnlineShop_Framework_Impl_SessionCartCheckoutData extends OnlineShop_Framework_AbstractCartCheckoutData {
 
-    protected $key;
-    protected $data;
-    /**
-     * @var OnlineShop_Framework_ICart
-     */
-    protected $cart;
-
-    public function setCart(OnlineShop_Framework_ICart $cart) {
-        $this->cart = $cart;
-    }
-
-    public function getCart() {
-        return $this->cart;
-    }
-
-    public function getCartId() {
-        return $this->getCart()->getId();
-    }
+    protected $cartId;
 
     public function save() {
-        $this->getResource()->save();
+        throw new Exception("Not implemented, should not be needed for this cart type.");
     }
 
     public static function getByKeyCartId($key, $cartId) {
-        $cacheKey = "SessionCheckOutData_" . $key . "_" . $cartId;
-
-        try {
-            $checkoutDataItem = Zend_Registry::get($cacheKey);
-        }
-        catch (Exception $e) {
-            try {
-                $checkoutDataItem = new self();
-                $checkoutDataItem->getResource()->getByKeyCartId($key, $cartId);
-                Zend_Registry::set($cacheKey, $checkoutDataItem);
-            } catch(Exception $ex) {
-                Logger::debug($ex->getMessage());
-                return null;
-            }
-
-        }
-        return $checkoutDataItem;
+        throw new Exception("Not implemented, should not be needed for this cart type.");
     }
 
     public static function removeAllFromCart($cartId) {
         $checkoutDataItem = new self();
-        $checkoutDataItem->getResource()->removeAllFromCart($cartId);
+        $checkoutDataItem->getCart()->checkoutData = array();
     }
 
-    public function setKey($key) {
-        $this->key = $key;
+
+    public function setCart(OnlineShop_Framework_ICart $cart) {
+        $this->cart = $cart;
+        $this->cartId = $cart->getId();
     }
 
-    public function getKey() {
-        return $this->key;
+    public function getCart() {
+        if (empty($this->cart)) {
+            $this->cart = OnlineShop_Framework_Impl_SessionCart::getById($this->cartId);
+        }
+        return $this->cart;
     }
 
-    public function setData($data) {
-        $this->data = $data;
+    public function getCartId() {
+        return $this->cartId;
     }
 
-    public function getData() {
-        return $this->data;
+    public function setCartId($cartId) {
+        $this->cartId = $cartId;
     }
 
-    public function setValues($data = array()) {
-        if ($data instanceof stdClass && count($data) > 0) {
-            foreach ($data as $key => $value) {
-                $this->setValue($key,$value);
+
+    /**
+     * @return array
+     */
+    public function __sleep() {
+        $vars = parent::__sleep();
+
+        $blockedVars = array("cart","product");
+
+        $finalVars = array();
+        foreach ($vars as $key) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
             }
         }
-    }
 
-    public function setValue($key, $value) {
-        $method = "set" . ucfirst($key);
-        if (method_exists($this, $method)) {
-            $this->$method($value);
-        }
+        return $finalVars;
     }
-
 
 }

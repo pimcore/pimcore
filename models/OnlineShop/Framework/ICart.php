@@ -196,6 +196,7 @@ interface OnlineShop_Framework_ICart {
      */
     public function delete();
 
+
     /**
      * @static
      * @abstract
