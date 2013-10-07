@@ -763,9 +763,11 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $d = $fd->rewriteIds($item, $idMapping, $params);
-                    $setter = "set" . ucfirst($fd->getName());
-                    $item->$setter($d);
+                    if(method_exists($fd, "rewriteIds")) {
+                        $d = $fd->rewriteIds($item, $idMapping, $params);
+                        $setter = "set" . ucfirst($fd->getName());
+                        $item->$setter($d);
+                    }
                 }
             }
         }
