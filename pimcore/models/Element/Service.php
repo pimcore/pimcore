@@ -655,9 +655,6 @@ class Element_Service extends Pimcore_Model_Abstract {
                 }
             }
         } else {
-            if(!($foundElement instanceof $folderType)) {
-                throw new Exception("path already exists [$path]");
-            }
             return $foundElement;
         }
         return $lastFolder;
