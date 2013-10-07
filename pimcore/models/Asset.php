@@ -300,11 +300,6 @@ class Asset extends Element_Abstract {
 
         if($save) {
             $asset->save();
-
-            // get concrete type of asset
-            Zend_Registry::set("asset_" . $asset->getId(), null);
-            $asset = self::getById($asset->getId());
-            Zend_Registry::set("asset_" . $asset->getId(), $asset);
         }
 
 
@@ -795,6 +790,15 @@ class Asset extends Element_Abstract {
     }
 
     public function clearDependentCache($additionalTags = array()) {
+
+        // get concrete type of asset
+        // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
+        // the type (image, document, ...) depends on the mime-type
+        Zend_Registry::set("asset_" . $this->getId(), null);
+        $asset = self::getById($this->getId());
+        Zend_Registry::set("asset_" . $this->getId(), $asset);
+
+
         try {
             $tags = array("asset_" . $this->getId(), "properties", "output");
             $tags = array_merge($tags, $additionalTags);
