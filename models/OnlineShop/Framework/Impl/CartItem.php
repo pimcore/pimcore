@@ -47,7 +47,7 @@ class OnlineShop_Framework_Impl_CartItem extends OnlineShop_Framework_AbstractCa
     }
 
     public static function removeAllFromCart($cartId) {
-        $cartItem = new self();
+        $cartItem = new static();
         $cartItem->getResource()->removeAllFromCart($cartId);
     }
 
