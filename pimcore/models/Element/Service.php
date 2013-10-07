@@ -592,7 +592,6 @@ class Element_Service extends Pimcore_Model_Abstract {
      */
     public static function createFolderByPath($path,$options = array()) {
         $calledClass = get_called_class();
-
         if($calledClass == __CLASS__){
             throw new Exception("This method must be called from a extended class. e.g Asset_Service, Object_Service, Document_Service");
         }
@@ -610,7 +609,7 @@ class Element_Service extends Pimcore_Model_Abstract {
             $sanitizedPath = $sanitizedPath . Pimcore_File::getValidFilename($part) . "/";
         }
 
-        if (!$folderType::getByPath($sanitizedPath)) {
+        if (!($foundElement = $type::getByPath($sanitizedPath))) {
 
             foreach ($parts as $part) {
                 $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . Pimcore_File::getValidFilename($part);
@@ -618,7 +617,7 @@ class Element_Service extends Pimcore_Model_Abstract {
 
             for ($i = 0; $i < count($pathsArray); $i++) {
                 $currentPath = $pathsArray[$i];
-                if (!$folderType::getByPath($currentPath) instanceof $folderType) {
+                if (!($type::getByPath($currentPath) instanceof $type)) {
                     $parentFolderPath = ($i ==0) ? '/' : $pathsArray[$i - 1];
 
                     $parentFolder = $folderType::getByPath($parentFolderPath);
@@ -656,7 +655,10 @@ class Element_Service extends Pimcore_Model_Abstract {
                 }
             }
         } else {
-            return $folderType::getByPath($sanitizedPath);
+            if(!($foundElement instanceof $folderType)) {
+                throw new Exception("path already exists [$path]");
+            }
+            return $foundElement;
         }
         return $lastFolder;
     }
