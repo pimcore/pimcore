@@ -612,7 +612,7 @@ class Object_Concrete extends Object_Abstract {
 
             list($value, $limit, $offset) = $arguments;
 
-            $defaultCondition = $propertyName . " = '" . $value . "' ";
+            $defaultCondition = $propertyName . " = " . Pimcore_Resource::get()->quote($value) . " ";
             $listConfig = array(
                 "condition" => $defaultCondition
             );
