@@ -70,7 +70,7 @@
 
     <div id="site">
         <div id="logo">
-            <img src="/pimcore/static/img/loading-logo.png" />
+            <img src="/pimcore/static/img/logo-gray.png" />
         </div>
 
         <h1>Hello World!</h1>
