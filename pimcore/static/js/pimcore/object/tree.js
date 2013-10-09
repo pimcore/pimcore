@@ -864,7 +864,7 @@ pimcore.object.tree = Class.create({
     },
 
     addFolder : function (classId, className) {
-        Ext.MessageBox.prompt(t('add_object'), t('please_enter_the_name_of_the_new_object'),
+        Ext.MessageBox.prompt(t('add_folder'), t('please_enter_the_name_of_the_new_folder'),
                                         this.attributes.reference.addFolderCreate.bind(this));
     },
 
