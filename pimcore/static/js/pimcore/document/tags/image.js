@@ -102,6 +102,16 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         var menu = new Ext.menu.Menu();
 
         if(this.datax.id) {
+
+            menu.add(new Ext.menu.TextItem( {
+                iconCls: "none",
+                disabled: true,
+                text: this.name
+            })
+            );
+
+            menu.add(new Ext.menu.Separator());
+
             menu.add(new Ext.menu.Item({
                 text: t('select_specific_area_of_image'),
                 iconCls: "pimcore_icon_image_region",
@@ -157,7 +167,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             handler: function (item) {
                 item.parentMenu.destroy();
                 this.openSearchEditor();
-            }.bind(this) 
+            }.bind(this)
         }));
 
         menu.add(new Ext.menu.Item({
@@ -230,8 +240,8 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             }
         });
     },
-    
-    addDataFromSelector: function (item) {        
+
+    addDataFromSelector: function (item) {
         if(item) {
             this.resetData();
             this.datax.id = item.id;
@@ -283,22 +293,22 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         if (!this.options["thumbnail"] && !this.originalDimensions["width"] && !this.originalDimensions["height"]) {
             path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.element.getEl().getWidth()
-                            + "/aspectratio/true?" + Ext.urlEncode(this.datax);
+                + "/aspectratio/true?" + Ext.urlEncode(this.datax);
         } else if (this.originalDimensions["width"]) {
             path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.originalDimensions["width"]
-                            + "/aspectratio/true?" + Ext.urlEncode(this.datax);
+                + "/aspectratio/true?" + Ext.urlEncode(this.datax);
         } else if (this.originalDimensions["height"]) {
             path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/height/"
-                            + this.originalDimensions["height"] + "/aspectratio/true?" + Ext.urlEncode(this.datax);
+                + this.originalDimensions["height"] + "/aspectratio/true?" + Ext.urlEncode(this.datax);
         } else {
             if (typeof this.options.thumbnail == "string") {
                 path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/thumbnail/" + this.options.thumbnail
-                            + "?" + Ext.urlEncode(this.datax);
+                    + "?" + Ext.urlEncode(this.datax);
             }
             else if (this.options.thumbnail.width || this.options.thumbnail.height) {
                 path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/"
-                            + this.options.thumbnail.width + "/height/" + this.options.thumbnail.height + "?"
-                            + Ext.urlEncode(this.datax);
+                    + this.options.thumbnail.width + "/height/" + this.options.thumbnail.height + "?"
+                    + Ext.urlEncode(this.datax);
             }
         }
 
