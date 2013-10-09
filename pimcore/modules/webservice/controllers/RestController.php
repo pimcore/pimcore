@@ -17,6 +17,7 @@
 
 class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
+    const ELEMENT_DOES_NOT_EXIST = -1;
     /**
      * the webservice
      * @var
@@ -123,6 +124,13 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                     }
 
                     $object = Object_Abstract::getById($id);
+                    if (!$object) {
+                        $this->encoder->encode(array(  "success" => false,
+                                                       "msg" => "Object does not exist",
+                                                       "code" => self::ELEMENT_DOES_NOT_EXIST));
+                        return;
+                    }
+
                     if ($profile) {
                         $timeConsumedGet = round(microtime(true) - $startTs,3)*1000;
                         $startTs = microtime(true);
@@ -397,6 +405,13 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         try {
             if ($this->isGet()) {
                 $asset = Asset::getById($id);
+                if (!$asset) {
+                    $this->encoder->encode(array(  "success" => false,
+                        "msg" => "Asset does not exist",
+                        "code" => self::ELEMENT_DOES_NOT_EXIST));
+                    return;
+                }
+
                 $this->checkPermission($asset, "get");
 
                 if ($asset instanceof Asset_Folder) {
@@ -580,6 +595,13 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         try {
             if ($this->isGet()) {
                 $doc = Document::getById($id);
+                if (!$doc) {
+                    $this->encoder->encode(array(  "success" => false,
+                        "msg" => "Documengt does not exist",
+                        "code" => self::ELEMENT_DOES_NOT_EXIST));
+                    return;
+                }
+
                 $this->checkPermission($doc, "get");
 
                 if ($doc) {
