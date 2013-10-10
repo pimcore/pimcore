@@ -421,7 +421,7 @@ pimcore.object.classes.klass = Class.create({
             if (this.attributes.type == "data") {
                 var dataComps = Object.keys(pimcore.object.classes.data);
                 menu.add(new Ext.menu.Item({
-                    text: t('dublicate'),
+                    text: t('duplicate'),
                     iconCls: "pimcore_icon_clone",
                     hideOnClick: true,
                     handler: this.attributes.reference.changeDataType.bind(this, this.attributes.object.type, dataComps, false)
