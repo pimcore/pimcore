@@ -110,7 +110,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                 $dataPush["events"] = $this->events;
             }
 
-            if($this->document instanceof Document_Page) {
+            if($this->document instanceof Document_Page && !Staticroute::getCurrentRoute()) {
                 $dataPush["document"] = $this->document->getId();
                 if($this->document->getPersonas()) {
                     if($_GET["_ptp"]) { // if a special version is requested only return this id as target group for this page
