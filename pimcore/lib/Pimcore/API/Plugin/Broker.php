@@ -212,6 +212,8 @@ class Pimcore_API_Plugin_Broker {
         $plugins = (array)$this->getPlugins();
         return array_merge($modules,$plugins);
     }
+
+
     /**
      *
      * Calls preAddAsset functions of all registered plugins and system modules
@@ -219,18 +221,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Asset $asset
      */
     public function preAddAsset(Asset $asset) {
-
-        foreach ($this->_systemModules as $module) {
-            $module->preAddAsset($asset);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preAddAsset($asset);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preAddAsset");
-            }
-        }
-
+        $this->executeMethod('preAddAsset', $asset);
     }
 
     /**
@@ -240,18 +231,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Asset $asset
      */
     public function postAddAsset(Asset $asset) {
-
-        foreach ($this->_systemModules as $module) {
-            $module->postAddAsset($asset);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postAddAsset($asset);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postAddAsset");
-            }
-        }
-
+        $this->executeMethod('postAddAsset', $asset);
     }
 
     /**
@@ -260,16 +240,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Asset $asset
      */
     public function preDeleteAsset(Asset $asset) {
-        foreach ($this->_systemModules as $module) {
-            $module->preDeleteAsset($asset);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preDeleteAsset($asset);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preDeleteAsset");
-            }
-        }
+        $this->executeMethod('preDeleteAsset', $asset);
     }
 
 
@@ -279,16 +250,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Asset $asset
      */
     public function postDeleteAsset(Asset $asset) {
-        foreach ($this->_systemModules as $module) {
-            $module->postDeleteAsset($asset);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postDeleteAsset($asset);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postDeleteAsset");
-            }
-        }
+        $this->executeMethod('postDeleteAsset', $asset);
     }
 
     /**
@@ -297,16 +259,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Asset $asset
      */
     public function preUpdateAsset(Asset $asset) {
-        foreach ($this->_systemModules as $module) {
-            $module->preUpdateAsset($asset);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preUpdateAsset($asset);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preUpdateAsset");
-            }
-        }
+        $this->executeMethod('preUpdateAsset', $asset);
     }
 
     /**
@@ -315,16 +268,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Asset $asset
      */
     public function postUpdateAsset(Asset $asset) {
-        foreach ($this->_systemModules as $module) {
-            $module->postUpdateAsset($asset);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postUpdateAsset($asset);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postUpdateAsset");
-            }
-        }
+        $this->executeMethod('postUpdateAsset', $asset);
     }
 
 
@@ -335,16 +279,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Document $document
      */
     public function preAddDocument(Document $document) {
-        foreach ($this->_systemModules as $module) {
-            $module->preAddDocument($document);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preAddDocument($document);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preAddDocument");
-            }
-        }
+        $this->executeMethod('preAddDocument', $document);
     }
 
     /**
@@ -354,16 +289,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Document $document
      */
     public function postAddDocument(Document $document) {
-        foreach ($this->_systemModules as $module) {
-            $module->postAddDocument($document);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postAddDocument($document);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postAddDocument");
-            }
-        }
+        $this->executeMethod('postAddDocument', $document);
     }
 
     /**
@@ -372,16 +298,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Document $document
      */
     public function preDeleteDocument(Document $document) {
-        foreach ($this->_systemModules as $module) {
-            $module->preDeleteDocument($document);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preDeleteDocument($document);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preDeleteDocument");
-            }
-        }
+        $this->executeMethod('preDeleteDocument', $document);
     }
 
     /**
@@ -390,16 +307,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Document $document
      */
     public function postDeleteDocument(Document $document) {
-        foreach ($this->_systemModules as $module) {
-            $module->postDeleteDocument($document);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postDeleteDocument($document);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postDeleteDocument");
-            }
-        }
+        $this->executeMethod('postDeleteDocument', $document);
     }
 
     /**
@@ -408,20 +316,8 @@ class Pimcore_API_Plugin_Broker {
      * @param Document $document
      */
     public function preUpdateDocument(Document $document) {
-        foreach ($this->_systemModules as $module) {
-            $module->preUpdateDocument($document);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preUpdateDocument($document);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preUpdateDocument");
-            }
-        }
+        $this->executeMethod('preUpdateDocument', $document);
     }
-
-
-
 
     /**
      * Calls postUpdateDocument functions of all registered plugins and system modules
@@ -429,17 +325,9 @@ class Pimcore_API_Plugin_Broker {
      * @param Document $document
      */
     public function postUpdateDocument(Document $document) {
-        foreach ($this->_systemModules as $module) {
-            $module->postUpdateDocument($document);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postUpdateDocument($document);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postUpdateDocument");
-            }
-        }
+        $this->executeMethod('postUpdateDocument', $document);
     }
+
 
 
     /**
@@ -448,18 +336,8 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_Abstract $object
      */
     public function preAddObject(Object_Abstract $object) {
-        foreach ($this->_systemModules as $module) {
-            $module->preAddObject($object);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preAddObject($object);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preAddObject");
-            }
-        }
+        $this->executeMethod('preAddObject', $object);
     }
-
 
     /**
      * Calls postAddObject functions of all registered plugins and system modules
@@ -467,16 +345,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_Abstract $object
      */
     public function postAddObject(Object_Abstract $object) {
-        foreach ($this->_systemModules as $module) {
-            $module->postAddObject($object);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postAddObject($object);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postAddObject");
-            }
-        }
+        $this->executeMethod('postAddObject', $object);
     }
 
     /**
@@ -485,16 +354,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_Abstract $object
      */
     public function preDeleteObject(Object_Abstract $object) {
-        foreach ($this->_systemModules as $module) {
-            $module->preDeleteObject($object);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preDeleteObject($object);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preDeleteObject");
-            }
-        }
+        $this->executeMethod('preDeleteObject', $object);
     }
 
     /**
@@ -503,16 +363,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_Abstract $object
      */
     public function postDeleteObject(Object_Abstract $object) {
-        foreach ($this->_systemModules as $module) {
-            $module->postDeleteObject($object);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postDeleteObject($object);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postDeleteObject");
-            }
-        }
+        $this->executeMethod('postDeleteObject', $object);
     }
 
     /**
@@ -521,18 +372,8 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_Abstract $object
      */
     public function preUpdateObject(Object_Abstract $object) {
-        foreach ($this->_systemModules as $module) {
-            $module->preUpdateObject($object);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preUpdateObject($object);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preUpdateObject");
-            }
-        }
+        $this->executeMethod('preUpdateObject', $object);
     }
-
 
     /**
      * Calls postUpdateObject functions of all registered plugins and system modules
@@ -540,16 +381,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_Abstract $object
      */
     public function postUpdateObject(Object_Abstract $object) {
-        foreach ($this->_systemModules as $module) {
-            $module->postUpdateObject($object);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postUpdateObject($object);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postUpdateObject");
-            }
-        }
+        $this->executeMethod('postUpdateObject', $object);
     }
 
 
@@ -559,16 +391,7 @@ class Pimcore_API_Plugin_Broker {
      * @param User $user
      */
     public function preLogoutUser(User $user) {
-        foreach ($this->_systemModules as $module) {
-            $module->preLogoutUser($user);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preLogoutUser($user);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preLogoutUser");
-            }
-        }
+        $this->executeMethod('preLogoutUser', $user);
     }
 
     /**
@@ -596,19 +419,15 @@ class Pimcore_API_Plugin_Broker {
 
         }
         foreach ($this->_plugins as $plugin) {
-            try {
-                $user = $plugin->authenticateUser($username, $password);
-                if($user instanceof User){
-                    if(!$user->isActive()){
-                        Logger::error("User provided by plugin [ ".get_class($plugin)." ] is inactive");
-                    } else if (!$user->getId()){
-                        Logger::error("User provided by plugin [ ".get_class($plugin)." ] has no id");
-                    } else {
-                        return $user;
-                    }
+            $user = $plugin->authenticateUser($username, $password);
+            if($user instanceof User){
+                if(!$user->isActive()){
+                    Logger::error("User provided by plugin [ ".get_class($plugin)." ] is inactive");
+                } else if (!$user->getId()){
+                    Logger::error("User provided by plugin [ ".get_class($plugin)." ] has no id");
+                } else {
+                    return $user;
                 }
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postLoginUser");
             }
         }
 
@@ -622,16 +441,7 @@ class Pimcore_API_Plugin_Broker {
      * Calls preDispatch of all registered plugins and system modules
      */
     public function preDispatch() {
-        foreach ($this->_systemModules as $module) {
-            $module->preDispatch();
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preDispatch();
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preDispatch");
-            }
-        }
+        $this->executeMethod('preDispatch');
     }
 
 
@@ -639,17 +449,7 @@ class Pimcore_API_Plugin_Broker {
      * Calls maintenance functions of all registered plugins and system modules
      */
     public function maintenance() {
-        foreach ($this->_plugins as $plugin) {
-            try {
-                if(method_exists($plugin, "maintainance")) {
-                    $plugin->maintainance();
-                } else if(method_exists($plugin, "maintenance")) {
-                    $plugin->maintenance();
-                }
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in maintenance");
-            }
-        }
+        $this->executeMethod('maintenance');
     }
 
 
@@ -697,18 +497,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_KeyValue_KeyConfig $config
      */
     public function preAddKeyValueKeyConfig(Object_KeyValue_KeyConfig $config) {
-
-        foreach ($this->_systemModules as $module) {
-            $module->preAddKeyValueKeyConfig($config);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preAddKeyValueKeyConfig($config);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preAddKeyValueKeyConfig");
-            }
-        }
-
+        $this->executeMethod('preAddKeyValueKeyConfig', $config);
     }
 
     /**
@@ -718,18 +507,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_KeyValue_KeyConfig $config
      */
     public function postAddKeyValueKeyConfig(Object_KeyValue_KeyConfig $config) {
-
-        foreach ($this->_systemModules as $module) {
-            $module->postAddKeyValueKeyConfig($config);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postAddKeyValueKeyConfig($config);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postAddKeyValueKeyConfig");
-            }
-        }
-
+        $this->executeMethod('postAddKeyValueKeyConfig', $config);
     }
 
     /**
@@ -738,16 +516,7 @@ class Pimcore_API_Plugin_Broker {
      * @param preDeleteKeyValueKeyConfig $config
      */
     public function preDeleteKeyValueKeyConfig(Object_KeyValue_KeyConfig $config) {
-        foreach ($this->_systemModules as $module) {
-            $module->preDeleteKeyValueKeyConfig($config);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preDeleteKeyValueKeyConfig($config);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preDeleteKeyValueKeyConfig");
-            }
-        }
+        $this->executeMethod('preDeleteKeyValueKeyConfig', $config);
     }
 
 
@@ -757,16 +526,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_KeyValue_KeyConfig $asset
      */
     public function postDeleteKeyValueKeyConfig(Object_KeyValue_KeyConfig $config) {
-        foreach ($this->_systemModules as $module) {
-            $module->postDeleteKeyValueKeyConfig($config);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postDeleteKeyValueKeyConfig($config);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postDeleteKeyValueKeyConfig");
-            }
-        }
+        $this->executeMethod('postDeleteKeyValueKeyConfig', $config);
     }
 
     /**
@@ -775,16 +535,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_KeyValue_KeyConfig $asset
      */
     public function preUpdateKeyValueKeyConfig(Object_KeyValue_KeyConfig $config) {
-        foreach ($this->_systemModules as $module) {
-            $module->preUpdateKeyValueKeyConfig($config);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preUpdateKeyValueKeyConfig($config);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preUpdateKeyValueKeyConfig");
-            }
-        }
+        $this->executeMethod('preUpdateKeyValueKeyConfig', $config);
     }
 
     /**
@@ -793,16 +544,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_KeyValue_KeyConfig $config
      */
     public function postUpdateKeyValueKeyConfig(Object_KeyValue_KeyConfig $config) {
-        foreach ($this->_systemModules as $module) {
-            $module->postUpdateKeyValueKeyConfig($config);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postUpdateKeyValueKeyConfig($config);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postUpdateKeyValueKeyConfig");
-            }
-        }
+        $this->executeMethod('postUpdateKeyValueKeyConfig', $config);
     }
 
 
@@ -813,18 +555,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_KeyValue_GroupConfig $config
      */
     public function preAddKeyValueGroupConfig(Object_KeyValue_GroupConfig $config) {
-
-        foreach ($this->_systemModules as $module) {
-            $module->preAddKeyValueGroupConfig($config);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preAddKeyValueGroupConfig($config);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preAddKeyValueGroupConfig");
-            }
-        }
-
+        $this->executeMethod('preAddKeyValueGroupConfig', $config);
     }
 
     /**
@@ -834,18 +565,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_KeyValue_GroupConfig $config
      */
     public function postAddKeyValueGroupConfig(Object_KeyValue_GroupConfig $config) {
-
-        foreach ($this->_systemModules as $module) {
-            $module->postAddKeyValueGroupConfig($config);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postAddKeyValueGroupConfig($config);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postAddKeyValueGroupConfig");
-            }
-        }
-
+        $this->executeMethod('postAddKeyValueGroupConfig', $config);
     }
 
     /**
@@ -854,16 +574,7 @@ class Pimcore_API_Plugin_Broker {
      * @param preDeleteKeyValueGroupConfig $config
      */
     public function preDeleteKeyValueGroupConfig(Object_KeyValue_GroupConfig $config) {
-        foreach ($this->_systemModules as $module) {
-            $module->preDeleteKeyValueGroupConfig($config);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preDeleteKeyValueGroupConfig($config);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preDeleteKeyValueGroupConfig");
-            }
-        }
+        $this->executeMethod('preDeleteKeyValueGroupConfig', $config);
     }
 
 
@@ -873,16 +584,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_KeyValue_GroupConfig $asset
      */
     public function postDeleteKeyValueGroupConfig(Object_KeyValue_GroupConfig $config) {
-        foreach ($this->_systemModules as $module) {
-            $module->postDeleteKeyValueGroupConfig($config);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postDeleteKeyValueGroupConfig($config);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postDeleteKeyValueGroupConfig");
-            }
-        }
+        $this->executeMethod('postDeleteKeyValueGroupConfig', $config);
     }
 
     /**
@@ -891,16 +593,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_KeyValue_GroupConfig $asset
      */
     public function preUpdateKeyValueGroupConfig(Object_KeyValue_GroupConfig $config) {
-        foreach ($this->_systemModules as $module) {
-            $module->preUpdateKeyValueGroupConfig($config);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->preUpdateKeyValueGroupConfig($config);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preUpdateKeyValueGroupConfig");
-            }
-        }
+        $this->executeMethod('preUpdateKeyValueGroupConfig', $config);
     }
 
     /**
@@ -909,16 +602,7 @@ class Pimcore_API_Plugin_Broker {
      * @param Object_KeyValue_GroupConfig $config
      */
     public function postUpdateKeyValueGroupConfig(Object_KeyValue_GroupConfig $config) {
-        foreach ($this->_systemModules as $module) {
-            $module->postUpdateKeyValueGroupConfig($config);
-        }
-        foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->postUpdateKeyValueGroupConfig($config);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postUpdateKeyValueGroupConfig");
-            }
-        }
+        $this->executeMethod('postUpdateKeyValueGroupConfig', $config);
     }
 
     /**
@@ -941,18 +625,16 @@ class Pimcore_API_Plugin_Broker {
 
 
 
+    protected function executeMethod($method){
 
+        $arguments = func_get_args();
+        array_shift($arguments);
 
-    protected function executeMethod($method,$item){
         foreach ($this->_systemModules as $module) {
-            $module->$method($item);
+            call_user_func_array(array($module, $method), $arguments);
         }
         foreach ($this->_plugins as $plugin) {
-            try {
-                $plugin->$method($item);
-            } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception in $method");
-            }
+            call_user_func_array(array($plugin, $method), $arguments);
         }
     }
 
