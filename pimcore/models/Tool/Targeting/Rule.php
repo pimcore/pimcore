@@ -33,6 +33,11 @@ class Tool_Targeting_Rule extends Pimcore_Model_Abstract {
     public $description = "";
 
     /**
+     * @var string
+     */
+    public $scope = "hit";
+
+    /**
      * @var array
      */
     public $conditions = array();
@@ -209,5 +214,21 @@ class Tool_Targeting_Rule extends Pimcore_Model_Abstract {
     public function getConditions()
     {
         return $this->conditions;
+    }
+
+    /**
+     * @param string $scope
+     */
+    public function setScope($scope)
+    {
+        $this->scope = $scope;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScope()
+    {
+        return $this->scope;
     }
 }
