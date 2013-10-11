@@ -10,7 +10,7 @@
 
     <div>
         <h1>
-            Promotion Enquiry for:
+            <?php echo $this->translate("promotion_enquiry_for"); ?>:
             <br />
             <small><?php echo $this->getParam("url"); ?></small>
 
@@ -19,25 +19,25 @@
         <?php if(!$this->getParam("submit")) { ?>
             <form action="" method="post">
 
-                <label>Ad-Type (Display, AdWords, ...)</label>
+                <label><?php echo $this->translate("ad_type"); ?> (Display, AdWords, ...)</label>
                 <input type="text" name="type" />
 
-                <label>Budget</label>
+                <label><?php echo $this->translate("budget"); ?></label>
                 <input type="text" name="budget" />
 
-                <label>Duration</label>
+                <label><?php echo $this->translate("duration"); ?></label>
                 <input type="text" name="duration" />
 
-                <label>Notes</label>
+                <label><?php echo $this->translate("notes"); ?></label>
                 <textarea name="notes"></textarea>
 
-                <input type="submit" name="submit" value="Submit" />
+                <input type="submit" name="submit" value="<?php echo $this->translate("submit"); ?>" />
             </form>
         <?php } else { ?>
             <br />
             <br />
             <br />
-            <strong>Your promotion enquiry was sent to the manager of this project (<?php echo $this->contactEmail; ?>).</strong>
+            <strong><?php echo $this->translate("promotion_enquiry_sent_success"); ?> (<?php echo $this->contactEmail; ?>).</strong>
 
 
             <script type="text/javascript">

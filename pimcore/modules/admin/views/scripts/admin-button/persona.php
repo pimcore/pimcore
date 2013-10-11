@@ -57,7 +57,7 @@
 
     <div>
         <h1>
-            Change Persona to (not permanently):
+            <?php echo $this->translate("change_persona_to"); ?>:
         </h1>
 
         <ul>
@@ -67,7 +67,7 @@
         </ul>
 
         <h1>
-            Collected Information:
+            <?php echo $this->translate("change_persona_to"); ?>:
         </h1>
 
         <pre id="json" class="source"></pre>
