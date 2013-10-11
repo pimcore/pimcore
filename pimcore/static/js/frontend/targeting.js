@@ -415,6 +415,7 @@
             var targets = pimcore.targeting["targets"];
             if(typeof targets != "undefined") {
                 var target;
+                var callAction = true;
                 var matchingTargets = [];
 
                 for(var t=0; t<targets.length; t++) {
@@ -431,11 +432,25 @@
                     }
                 }
 
-                for(t=0; t<matchingTargets.length; t++) {
-                    app.callActions(matchingTargets[t]);
+                if(!user["targetRulesExecuted"]) {
+                    user["targetRulesExecuted"] = [];
                 }
 
-                //util.log(matchingTargets);
+                for(t=0; t<matchingTargets.length; t++) {
+                    if(target["scope"] == "user") {
+
+                    } else if(target["scope"] == "session") {
+
+                    } else { // hit
+
+                    }
+
+                    if(callAction) {
+                        app.callActions(matchingTargets[t]);
+                    }
+                }
+
+                app.saveUser(); // save user before redirecting
                 app.callTargets(app.matchesForProgrammatically);
             }
         },
@@ -587,6 +602,8 @@
     // common used vars
     var ua = navigator.userAgent.toLowerCase();
     var now = new Date();
+    var nowTimestamp = now.getTime();
+    var sessionId;
 
 
     // create user object
@@ -605,6 +622,22 @@
     // unset current assigned persona
     if(user["persona"]) {
         delete user["persona"];
+    }
+
+    var addActivityLog = function (data) {
+        data["timestamp"] = nowTimestamp;
+        data["sessionId"] = sessionId;
+
+
+        user["activityLog"].push(data);
+    };
+
+    try {
+        if(!user["activityLog"]) {
+            user["activityLog"] = [];
+        }
+    } catch (e19) {
+        util.log(e19);
     }
 
     try {
@@ -627,6 +660,11 @@
         // do not add programmatic actions and persona content to history
         if(!/_pt(c|p)=/.test(window.location.href)) {
             user["history"].push(location.href);
+
+            addActivityLog({
+                type: "pageView",
+                url: location.href
+            });
         }
     } catch (e6) {
         util.log(e6);
@@ -694,6 +732,11 @@
         if(pushData["events"] && pushData["events"].length > 0) {
             for(var ev=0; ev<pushData["events"].length; ev++) {
                 user["events"].push(pushData["events"][ev]);
+
+                addActivityLog({
+                    type: "event",
+                    event: pushData["events"][ev],
+                });
             }
         }
     } catch (e9) {
@@ -800,6 +843,12 @@
                     try {
                         var el = ev.target ? ev.target : ev.srcElement;
                         user["behavior"]["linksClicked"].push(el.getAttribute("href"));
+
+                        addActivityLog({
+                            type: "linkClicked",
+                            href: el.getAttribute("href")
+                        })
+
                         app.saveUser();
                     } catch (e) {
                         util.log(e);
