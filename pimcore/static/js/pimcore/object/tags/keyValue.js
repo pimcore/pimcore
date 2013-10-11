@@ -38,6 +38,9 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         fields.push("source");
         fields.push("altSource");
         fields.push("altValue");
+        if (fieldConfig.metaVisible) {
+            fields.push("metadata");
+        }
         // this.visibleFields = fields;
 
         this.store = new Ext.data.ArrayStore({
@@ -197,6 +200,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var groupWidth = 200;
         var groupDescWidth = 200;
         var valueWidth = 600;
+        var metaWidth = 200;
         var maxHeight = 190;
 
         if (this.fieldConfig.maxheight > 0) {
@@ -215,8 +219,6 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             groupDescWidth = this.fieldConfig.groupDescWidth;
         }
 
-
-
         if (this.fieldConfig.valueWidth) {
             valueWidth = this.fieldConfig.valueWidth;
         }
@@ -225,6 +227,9 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             descWidth = this.fieldConfig.descWidth;
         }
 
+        if (this.fieldConfig.metawidth) {
+            metawidth = this.fieldConfig.metawidth;
+        }
 
         var readOnly = false;
         // css class for editorGridPanel
@@ -234,7 +239,9 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
         // var visibleFields = ['key','description', 'value','type','possiblevalues'];
         var visibleFields = ['group', 'groupDesc', 'keyName', 'keyDesc', 'value' /*, 'inherited', 'source' ,'altSource', 'altValue' */];
-
+        if (this.fieldConfig.metaVisible) {
+            visibleFields.push('metadata');
+        }
 
         for(var i = 0; i < visibleFields.length; i++) {
             var editor = null;
@@ -255,20 +262,23 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
             if (col == "group") {
                 colWidth = groupWidth;
-            }
-
-            if (col == "groupDesc") {
+            } else if (col == "groupDesc") {
                 colWidth = groupDescWidth;
+            } else if (col == "metadata") {
+                colWidth = metawidth;
             }
 
             if (col == 'value') {
                 colWidth = valueWidth;
                 editable = true;
-                cellEditor = this.getCellEditor.bind(this);
+                cellEditor = this.getCellEditor.bind(this, col);
                 renderer = this.getCellRenderer.bind(this);
                 listeners =  {
                     "mousedown": this.cellMousedown.bind(this)
                 };
+            } else if (col == "metadata") {
+                editable = true;
+                cellEditor = this.getCellEditor.bind(this, col);
             }
 
             gridWidth += colWidth;
@@ -371,6 +381,13 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             }
         ];
 
+        if (this.fieldConfig.metaVisible) {
+            configuredFilters.push(            {
+                    type: "string",
+                    dataIndex: "metadata"
+                }
+            );
+        }
         // filters
         var gridfilters = new Ext.ux.grid.GridFilters({
             encode: true,
@@ -497,51 +514,54 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
     },
 
 
-    getCellEditor: function (rowIndex) {
+    getCellEditor: function (col, rowIndex) {
 
-        var store = this.store;
-        var data = store.getAt(rowIndex).data;
-        // var value = data.all;
-
-        var type = data.type;
-        var property;
-
-        if (type == "text" || type =="translated") {
+        if (col == "metadata") {
             property = new Ext.form.TextField();
-        } else if (type == "number") {
-            property = new Ext.form.NumberField();
-        } else if (type == "bool") {
-            property = new Ext.form.Checkbox();
-            return false;
-        } else if (type == "select") {
-            var values = [];
-            var possiblevalues = data.possiblevalues;
+        } else {
+            var store = this.store;
+            var data = store.getAt(rowIndex).data;
 
-            var storedata = [];
+            var type = data.type;
+            var property;
 
-            var decodedValues = Ext.util.JSON.decode(possiblevalues);
-            for (var i = 0;  i < decodedValues.length; i++) {
-                var val = decodedValues[i];
-                var entry = [val.value , val.key];
-                storedata.push(entry);
+            if (type == "text" || type =="translated") {
+                property = new Ext.form.TextField();
+            } else if (type == "number") {
+                property = new Ext.form.NumberField();
+            } else if (type == "bool") {
+                property = new Ext.form.Checkbox();
+                return false;
+            } else if (type == "select") {
+                var values = [];
+                var possiblevalues = data.possiblevalues;
+
+                var storedata = [];
+
+                var decodedValues = Ext.util.JSON.decode(possiblevalues);
+                for (var i = 0;  i < decodedValues.length; i++) {
+                    var val = decodedValues[i];
+                    var entry = [val.value , val.key];
+                    storedata.push(entry);
+                }
+
+                property = new Ext.form.ComboBox({
+                    triggerAction: 'all',
+                    editable: false,
+                    mode: "local",
+                    store: new Ext.data.ArrayStore({
+                        id: 0,
+                        fields: [
+                            'id',
+                            'label'
+                        ],
+                        data: storedata
+                    }),
+                    valueField: 'id',
+                    displayField: 'label'
+
+                });
             }
-
-            property = new Ext.form.ComboBox({
-                triggerAction: 'all',
-                editable: false,
-                mode: "local",
-                store: new Ext.data.ArrayStore({
-                    id: 0,
-                    fields: [
-                        'id',
-                        'label'
-                    ],
-                    data: storedata
-                }),
-                valueField: 'id',
-                displayField: 'label'
-
-            });
         }
 
 
