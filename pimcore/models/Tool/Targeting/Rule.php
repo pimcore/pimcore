@@ -221,7 +221,9 @@ class Tool_Targeting_Rule extends Pimcore_Model_Abstract {
      */
     public function setScope($scope)
     {
-        $this->scope = $scope;
+        if(!empty($scope)) {
+            $this->scope = $scope;
+        }
     }
 
     /**
