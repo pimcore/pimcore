@@ -11,9 +11,9 @@
     <div>
         <h1>
             <?php if($this->type == "bug") { ?>
-                Bug Report for:
+                <?php echo $this->translate("bug_report_for"); ?>:
             <?php } else { ?>
-                Feature Request for:
+                <?php echo $this->translate("feature_request_for"); ?>:
             <?php } ?>
             <br />
             <small><?php echo $this->getParam("url"); ?></small>
@@ -22,14 +22,14 @@
 
         <?php if(!$this->getParam("submit")) { ?>
             <form action="" method="post">
-                <label>Description</label>
+                <label><?php echo $this->translate("description"); ?></label>
                 <textarea name="description"></textarea>
 
                 <?php if($this->image) { ?>
                     <br />
                     <br />
 
-                    <label>Put some notes on the screenshot! (click on the image)</label>
+                    <label><?php echo $this->translate("notes_screenshot"); ?></label>
                     <div class="screenshot">
                         <img src="<?php echo $this->image; ?>" />
                     </div>
@@ -39,7 +39,7 @@
                 <input type="hidden" name="markers" />
                 <input type="hidden" name="screenshot" value="<?php echo $this->image; ?>" />
 
-                <input type="submit" name="submit" value="Submit" />
+                <input type="submit" name="submit" value="<?php echo $this->translate("submit"); ?>" />
             </form>
 
             <script type="text/javascript" src="/pimcore/static/js/lib/jquery.min.js"></script>
@@ -89,13 +89,13 @@
             <br />
             <br />
             <br />
-            <strong>Your
+            <strong>
                 <?php if($this->type == "bug") { ?>
-                    bug report
+                    <?php echo $this->translate("bug_report_sent_success"); ?>
                 <?php } else { ?>
-                    feature request
+                    <?php echo $this->translate("feature_request_sent_success"); ?>
                 <?php } ?>
-                was sent to the manager of this project (<?php echo $this->contactEmail; ?>).
+                (<?php echo $this->contactEmail; ?>).
             </strong>
 
 
