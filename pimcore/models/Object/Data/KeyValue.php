@@ -226,7 +226,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         $propsWithInheritance = $this->getProperties();
         foreach ($propsWithInheritance as $pair) {
             if ($pair["key"] == $keyId) {
-                $result[] = new Object_Data_KeyValue_Entry($pair["value"], $pair["translated"]);
+                $result[] = new Object_Data_KeyValue_Entry($pair["value"], $pair["translated"], $pair["metadata"]);
             }
         }
         $count = count($result);

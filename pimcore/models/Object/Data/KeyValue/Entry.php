@@ -19,10 +19,12 @@
 class Object_Data_KeyValue_Entry {
     private $value;
     private $translated;
+    private $metadata;
 
-    public function __construct($value, $translated) {
+    public function __construct($value, $translated, $metadata) {
         $this->value = $value;
         $this->translated = $translated;
+        $this->metadata = $metadata;
     }
 
     public function getValue() {
@@ -31,6 +33,11 @@ class Object_Data_KeyValue_Entry {
 
     public function getTranslated() {
         return $this->translated;
+    }
+
+    public function getMetadata()
+    {
+        return $this->metadata;
     }
 
 

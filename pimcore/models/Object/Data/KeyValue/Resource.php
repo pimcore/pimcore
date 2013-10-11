@@ -49,7 +49,8 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
             $key = $db->quote($pair["key"]);
             $value = $db->quote($pair["value"]);
             $translated = $db->quote($pair["translated"]);
-            $sql = "INSERT INTO " . $this->getTableName() . " (`o_id`, `key`, `value`, `translated`) VALUES (" . $objectId . "," . $key . "," . $value . "," . $translated . ")";
+            $metadata = $db->quote($pair["metadata"]);
+            $sql = "INSERT INTO " . $this->getTableName() . " (`o_id`, `key`, `value`, `translated`, `metadata`) VALUES (" . $objectId . "," . $key . "," . $value . "," . $translated . "," . $metadata . ")";
             Logger::debug($sql);
             $db->query($sql);
         }
@@ -108,6 +109,7 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
     		`key` INT NOT NULL,
     		`value` VARCHAR(255),
             `translated` LONGTEXT NULL,
+            `metadata` LONGTEXT NULL,
     	    PRIMARY KEY  (`id`),
 	        INDEX `o_id` (`o_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
@@ -116,6 +118,10 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
 
         if (!in_array("translated", $validColumns)) {
             $db->query("ALTER TABLE `" . $table . "` ADD COLUMN `translated` LONGTEXT NULL AFTER `value`;");
+        }
+
+        if (!in_array("metadata", $validColumns)) {
+            $db->query("ALTER TABLE `" . $table . "` ADD COLUMN `metadata` LONGTEXT NULL AFTER `translated`;");
         }
 
         Logger::debug("createUpdateTable done");

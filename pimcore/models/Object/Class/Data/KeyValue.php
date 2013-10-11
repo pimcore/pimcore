@@ -72,6 +72,32 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      */
     public $multivalent;
 
+    /** Width of metadata column
+     * @var
+     */
+    public $metawidth;
+
+    /** Whether the metadata column is visible
+     * @var bool
+     */
+    public $metaVisible = false;
+
+    /**
+     * @param  $metawidth
+     */
+    public function setMetawidth($metawidth)
+    {
+        $this->metawidth = $metawidth;
+    }
+
+    /**
+     * @return
+     */
+    public function getMetawidth()
+    {
+        return $this->metawidth;
+    }
+
     /**
      * @param  $multivalent
      */
@@ -455,6 +481,23 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
             $keyValueData->setObjectId($relatedObject->getId());
             return ($keyValueData);
         }
+    }
+
+
+    /**
+     * @param boolean $metaVisible
+     */
+    public function setMetaVisible($metaVisible)
+    {
+        $this->metaVisible = $metaVisible;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getMetaVisible()
+    {
+        return $this->metaVisible;
     }
 
 }

@@ -65,6 +65,8 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
         var height = 200;
         var maxheight = 0;
         var multivalent = 0;
+        var metavisible = 0;
+        var metaWidth = 200;
 
         if (this.datax.keyWidth) {
             keyWidth = this.datax.keyWidth;
@@ -93,6 +95,15 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
         if (this.datax.multivalent) {
             multivalent = this.datax.multivalent;
         }
+
+        if (this.datax.metaVisible) {
+            metaVisible = this.datax.metaVisible;
+        }
+
+        if (this.datax.metawidth) {
+            metaWidth = this.datax.metawidth;
+        }
+
 
 
         this.specificPanel.removeAll();
@@ -126,6 +137,18 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
                 fieldLabel: t("keyvalue_data_descwidth"),
                 name: "descWidth",
                 value: descWidth
+            },
+            {
+                xtype: "checkbox",
+                fieldLabel: t("keyvalue_data_metavisible"),
+                name: "metaVisible",
+                checked: this.datax.metaVisible
+            },
+            {
+                xtype: "spinnerfield",
+                fieldLabel: t("keyvalue_data_metawidth"),
+                name: "metawidth",
+                value: metaWidth
             },
             {
                 xtype: "spinnerfield",
