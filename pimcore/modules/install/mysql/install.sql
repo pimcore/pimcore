@@ -538,6 +538,7 @@ CREATE TABLE `targeting_rules` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `description` text,
+  `scope` varchar(50) DEFAULT NULL,
   `conditions` longtext,
   `actions` longtext,
   PRIMARY KEY (`id`)

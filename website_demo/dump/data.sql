@@ -369,7 +369,7 @@ CREATE TABLE `keyvalue_keys` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `description` text,
-  `type` enum('bool','number','select','text') DEFAULT NULL,
+  `type` enum('bool','number','select','text','translated') DEFAULT NULL,
   `unit` varchar(255) DEFAULT NULL,
   `possiblevalues` text,
   `group` int(11) DEFAULT NULL,
@@ -776,6 +776,7 @@ CREATE TABLE `targeting_rules` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `description` text,
+  `scope` varchar(50) DEFAULT NULL,
   `conditions` longtext,
   `actions` longtext,
   PRIMARY KEY (`id`)
