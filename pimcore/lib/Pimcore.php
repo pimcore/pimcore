@@ -48,13 +48,8 @@ class Pimcore {
         // config is loaded now init the real logger
         self::initLogger();
 
-        // set locale data cache, this must be after self::initLogger() since Pimcore_Model_Cache requires the logger
-        // to log if there's something wrong with the cache configuration in cache.xml
-        $cache = Pimcore_Model_Cache::getInstance();
-        Zend_Locale_Data::setCache($cache);
-        Zend_Locale::setCache($cache);
-        Zend_Locale_Data::setCache($cache);
-        Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
+        // initialize cache
+        Pimcore_Model_Cache::init();
 
         // load plugins and modules (=core plugins)
         self::initModules();

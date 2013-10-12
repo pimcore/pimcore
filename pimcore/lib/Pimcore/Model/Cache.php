@@ -24,7 +24,7 @@ class Pimcore_Model_Cache {
     /**
      * @var bool
      */
-    public static $enabled = true;
+    protected  static $enabled = true;
 
     /**
      * @var null
@@ -93,16 +93,24 @@ class Pimcore_Model_Cache {
      * @return Zend_Cache_Core|Zend_Cache_Frontend
      */
     public static function getInstance() {
-        
+
+        if (!self::$instance instanceof Zend_Cache_Core) {
+            self::init();
+        }
+
         if (!empty($_REQUEST["nocache"])) {
             self::disable();
         }
-        
+
+        return self::$instance;
+    }
+
+    public static function init() {
+
         if (!self::$instance instanceof Zend_Cache_Core) {
-            
             // default file based configuration
             $config = self::getDefaultConfig();
-            
+
             // check for custom cache configuration
             $customCacheFile = PIMCORE_CONFIGURATION_DIRECTORY . "/cache.xml";
             if (is_file($customCacheFile)) {
@@ -161,7 +169,8 @@ class Pimcore_Model_Cache {
             self::hasWriteLock();
         }
 
-        return self::$instance;
+        self::setZendFrameworkCaches(self::$instance);
+
     }
 
     /**
@@ -635,6 +644,9 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function disable() {
+        if(self::$enabled) {
+            self::setZendFrameworkCaches(null);
+        }
         self::$enabled = false;
     }
 
@@ -644,6 +656,18 @@ class Pimcore_Model_Cache {
      */
     public static function enable() {
         self::$enabled = true;
+        self::setZendFrameworkCaches(self::getInstance());
+    }
+
+
+    /**
+     * @param null $cache
+     */
+    public static function setZendFrameworkCaches ($cache = null) {
+        Zend_Locale_Data::setCache($cache);
+        Zend_Locale::setCache($cache);
+        Zend_Locale_Data::setCache($cache);
+        Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
     }
 
     /**
