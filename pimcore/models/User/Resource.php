@@ -41,7 +41,7 @@ class User_Resource extends User_UserRole_Resource {
 
         // documents
         $this->db->update("documents", array("userOwner" => null), $this->db->quoteInto("userOwner = ?", $userId));
-        $this->db->update("documents", array("userModification" => null), $this->db->quoteInto("userModification = ?", $userId . "'"));
+        $this->db->update("documents", array("userModification" => null), $this->db->quoteInto("userModification = ?", $userId));
         $this->db->delete("users_workspaces_document", $this->db->quoteInto("userId = ?", $userId ));
 
         // objects
