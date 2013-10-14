@@ -103,7 +103,8 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
             $targets = array();
             $personas = array();
             $dataPush = array(
-                "personas" => $this->personas
+                "personas" => $this->personas,
+                "method" => strtolower($this->getRequest()->getMethod())
             );
 
             if(count($this->events) > 0) {
@@ -186,9 +187,8 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                 $code .= 'var pimcore = pimcore || {};';
                 $code .= 'pimcore["targeting"] = {};';
                 $code .= 'pimcore["targeting"]["dataPush"] = ' . Zend_Json::encode($dataPush) . ';';
-                $code .= 'pimcore["targeting"]["targets"] = ' . Zend_Json::encode($targets) . ';';
+                $code .= 'pimcore["targeting"]["targetingRules"] = ' . Zend_Json::encode($targets) . ';';
                 $code .= 'pimcore["targeting"]["personas"] = ' . Zend_Json::encode($personas) . ';';
-                $code .= 'pimcore["targeting"]["requestInfo"] = ' . Zend_Json::encode(array("method" => strtolower($this->getRequest()->getMethod()))) . ';';
             $code .= '</script>';
             $code .= '<script type="text/javascript" src="/pimcore/static/js/frontend/targeting.js"></script>';
             $code .= "\n";

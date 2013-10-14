@@ -36,21 +36,34 @@
         },
 
         language: function (params) {
-            if(util.toString(params["language"]).toLowerCase() == util.toString(user["language"]).toLowerCase()) {
+            var needle = util.toString(params["language"]).replace("_", "-").toLocaleLowerCase();
+            var userLocale = util.toString(user["language"]).toLowerCase();
+            if(needle == userLocale) {
                 return true;
             }
+
+            // check only the language without the terretory
+            if(needle.indexOf("-") < 0 && userLocale.indexOf("-")) {
+                userLocale = userLocale.split("-")[0];
+                if(needle == userLocale) {
+                    return true;
+                }
+            }
+
             return false;
         },
 
         event: function (params) {
-            for(var i=0; i<user["events"].length; i++) {
-                if(user["events"][i]["key"] == params["key"] && user["events"][i]["value"] == params["value"]) {
-                    return true;
-                }
-                if(user["events"][i]["key"] == params["key"] && !user["events"][i]["value"] && !params["value"]) {
-                    return true;
+            for(var al=0; al<user["activityLog"].length; al++) {
+                if(user["activityLog"][al]["type"] == "event") {
+                    if(user["activityLog"][al]["event"]["key"] == params["key"]) {
+                        if(user["activityLog"][al]["event"]["value"] == params["value"] || !params["value"]) {
+                            return true;
+                        }
+                    }
                 }
             }
+
             return false;
         },
 
@@ -85,8 +98,9 @@
         vistitedpagebefore: function (params) {
             if(params["url"]) {
                 var regexp = new RegExp(params["url"]);
-                for(var i=0; i<(user["history"].length-1); i++) { // not the current page
-                    if(regexp.test(user["history"][i])) {
+
+                for(var al=0; al<user["activityLog"].length; al++) {
+                    if(user["activityLog"][al]["type"] == "pageView" && regexp.test(user["activityLog"][al]["url"])) {
                         return true;
                     }
                 }
@@ -96,7 +110,15 @@
 
         vistitedpagesbefore: function (params) {
             if(params["number"]) {
-                return ((user["history"].length-1) >= params["number"]);
+
+                var count = 0;
+                for(var al=0; al<user["activityLog"].length; al++) {
+                    if(user["activityLog"][al]["type"] == "pageView") {
+                        count++;
+                    }
+                }
+
+                return (count >= params["number"]);
             }
             return false;
         },
@@ -115,8 +137,16 @@
                     msecs += (params["seconds"] * 1000);
                 }
 
+
+                var firstActivity;
+                for(var al=0; al<user["activityLog"].length; al++) {
+                    if(user["activityLog"][al]["sessionId"] == sessionId) {
+                        firstActivity = user["activityLog"][al];
+                    }
+                }
+
                 var date = new Date();
-                if( date.getTime() > (user["behavior"]["enterTime"] + msecs) ) {
+                if( date.getTime() > (firstActivity["timestamp"] + msecs) ) {
                     return true;
                 }
             }
@@ -126,9 +156,12 @@
         linkclicked: function (params) {
             if(params["url"]) {
                 var regexp = new RegExp(params["url"]);
-                for(var i=0; i<(user["behavior"]["linksClicked"].length-1); i++) { // not the current page
-                    if(regexp.test(util.toString(user["behavior"]["linksClicked"][i]))) {
-                        return true;
+
+                for(var al=0; al<user["activityLog"].length; al++) {
+                    if(user["activityLog"][al]["type"] == "linkClicked") {
+                        if(regexp.test(user["activityLog"][al]["href"])) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -137,7 +170,15 @@
 
         linksclicked: function (params) {
             if(params["number"]) {
-                return ((user["behavior"]["linksClicked"].length-1) >= params["number"]);
+
+                var count = 0;
+                for(var al=0; al<user["activityLog"].length; al++) {
+                    if(user["activityLog"][al]["type"] == "linkClicked") {
+                        count++;
+                    }
+                }
+
+                return (count >= params["number"]);
             }
             return false;
         },
@@ -391,9 +432,9 @@
         },
 
         isGet: function () {
-            if(window["pimcore"] && window["pimcore"]["targeting"] && window["pimcore"]["targeting"]["requestInfo"]
-                && window["pimcore"]["targeting"]["requestInfo"]["method"]) {
-                if(window["pimcore"]["targeting"]["requestInfo"]["method"] == "get") {
+            if(window["pimcore"] && window["pimcore"]["targeting"] && window["pimcore"]["targeting"]["dataPush"]
+                && window["pimcore"]["targeting"]["dataPush"]["method"]) {
+                if(window["pimcore"]["targeting"]["dataPush"]["method"] == "get") {
                     return true;
                 } else {
                     return false;
@@ -412,7 +453,7 @@
 
         processTargets: function () {
             // process targets
-            var targets = pimcore.targeting["targets"];
+            var targets = pimcore.targeting["targetingRules"];
             if(typeof targets != "undefined") {
                 var target;
                 var callAction = true;
@@ -432,20 +473,36 @@
                     }
                 }
 
-                if(!user["targetRulesExecuted"]) {
-                    user["targetRulesExecuted"] = [];
-                }
-
                 for(t=0; t<matchingTargets.length; t++) {
-                    if(target["scope"] == "user") {
 
-                    } else if(target["scope"] == "session") {
+                    callAction = true;
 
-                    } else { // hit
+                    var lastTargetCall = null;
+                    for(var al=0; al<user["activityLog"].length; al++) {
+                        if(user["activityLog"][al]["type"] == "targetRule") {
+                            if(user["activityLog"][al]["id"] == matchingTargets[t]["id"]) {
+                                lastTargetCall = user["activityLog"][al];
+                                break;
+                            }
+                        }
+                    }
 
+                    if(lastTargetCall) {
+                        if(matchingTargets[t]["scope"] == "user") {
+                            callAction = false;
+                        } else if(matchingTargets[t]["scope"] == "session") {
+                            if(lastTargetCall["sessionId"] == sessionId) {
+                                callAction = false;
+                            }
+                        }
                     }
 
                     if(callAction) {
+                        addActivityLog({
+                            type: "targetRule",
+                            id: matchingTargets[t]["id"],
+                            scope: matchingTargets[t]["scope"]
+                        });
                         app.callActions(matchingTargets[t]);
                     }
                 }
@@ -512,9 +569,12 @@
             // event
             try {
                 if(actions["eventEnabled"] && actions["eventKey"]) {
-                    user["events"].push({
-                        key: actions["eventKey"],
-                        value: actions["eventValue"]
+                    addActivityLog({
+                        type: "event",
+                        event: {
+                            key: actions["eventKey"],
+                            value: actions["eventValue"]
+                        }
                     });
                     app.saveUser();
                 }
@@ -628,16 +688,23 @@
         data["timestamp"] = nowTimestamp;
         data["sessionId"] = sessionId;
 
-
-        user["activityLog"].push(data);
+        user["activityLog"].unshift(data);
     };
 
-    try {
-        if(!user["activityLog"]) {
-            user["activityLog"] = [];
+    // check / generate sessionId
+    if(!user["activityLog"] || !user["activityLog"][0]) {
+        sessionId = nowTimestamp;
+        user["activityLog"] = [];
+        util.log("no previous activity - new sessionId: " + sessionId);
+    } else {
+        var lastActivity = user["activityLog"][0];
+        if(lastActivity["timestamp"] < (nowTimestamp-(30*60*1000))) {
+            sessionId = nowTimestamp; // session expired
+            util.log("previous session expired, new sessionId: " + sessionId);
+        } else {
+            sessionId = lastActivity["sessionId"];
+            util.log("sessionId present: " + sessionId);
         }
-    } catch (e19) {
-        util.log(e19);
     }
 
     try {
@@ -652,23 +719,16 @@
         util.log(e5);
     }
 
-    try {
-        if(!user["history"]) {
-            user["history"] = [];
-        }
 
-        // do not add programmatic actions and persona content to history
-        if(!/_pt(c|p)=/.test(window.location.href)) {
-            user["history"].push(location.href);
 
-            addActivityLog({
-                type: "pageView",
-                url: location.href
-            });
-        }
-    } catch (e6) {
-        util.log(e6);
+    // do not add programmatic actions and persona content to history
+    if(!/_pt(c|p)=/.test(window.location.href) || user["activityLog"].length < 1) {
+        addActivityLog({
+            type: "pageView",
+            url: location.href
+        });
     }
+
 
     try {
         if(!user["language"]) {
@@ -723,24 +783,14 @@
 
     // push data
     var pushData = pimcore.targeting["dataPush"];
-    try {
-        if(!user["events"]) {
-            user["events"] = [];
+    // get new events
+    if(pushData["events"] && pushData["events"].length > 0) {
+        for(var ev=0; ev<pushData["events"].length; ev++) {
+            addActivityLog({
+                type: "event",
+                event: pushData["events"][ev]
+            });
         }
-
-        // get new events
-        if(pushData["events"] && pushData["events"].length > 0) {
-            for(var ev=0; ev<pushData["events"].length; ev++) {
-                user["events"].push(pushData["events"][ev]);
-
-                addActivityLog({
-                    type: "event",
-                    event: pushData["events"][ev],
-                });
-            }
-        }
-    } catch (e9) {
-        util.log(e9);
     }
 
 
@@ -764,23 +814,6 @@
     } catch (e10) {
         util.log(e10);
     }
-
-    try {
-        if(!user["behavior"]) {
-            user["behavior"] = {};
-        }
-
-        if(!user["behavior"]["enterTime"]) {
-            user["behavior"]["enterTime"] = now.getTime();
-        }
-
-        if(!user["behavior"]["linksClicked"]) {
-            user["behavior"]["linksClicked"] = [];
-        }
-    } catch (e11) {
-        util.log(e11);
-    }
-
 
     // collecting personas
     if(!user["personas"]) {
@@ -842,8 +875,6 @@
                 util.listen(linkElements[le], "click", function (ev) {
                     try {
                         var el = ev.target ? ev.target : ev.srcElement;
-                        user["behavior"]["linksClicked"].push(el.getAttribute("href"));
-
                         addActivityLog({
                             type: "linkClicked",
                             href: el.getAttribute("href")
