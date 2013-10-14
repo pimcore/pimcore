@@ -76,6 +76,11 @@ pimcore.settings.targeting.personas.item = Class.create({
                 fieldLabel: t("threshold"),
                 xtype: "spinnerfield",
                 value: this.data["threshold"]
+            }, {
+                name: "active",
+                fieldLabel: t("active"),
+                xtype: "checkbox",
+                checked: this.data["active"]
             }]
         });
 

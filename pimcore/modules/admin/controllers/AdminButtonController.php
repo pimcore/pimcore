@@ -159,6 +159,7 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
     public function personaAction() {
 
         $list = new Tool_Targeting_Persona_List();
+        $list->setCondition("active = 1");
         $this->view->personas = $list->load();
     }
 }

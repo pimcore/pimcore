@@ -530,6 +530,7 @@ CREATE TABLE `targeting_personas` (
   `description` text,
   `conditions` longtext,
   `threshold` int(11) DEFAULT NULL,
+  `active` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
@@ -539,6 +540,7 @@ CREATE TABLE `targeting_rules` (
   `name` varchar(255) NOT NULL DEFAULT '',
   `description` text,
   `scope` varchar(50) DEFAULT NULL,
+  `active` tinyint(1) DEFAULT NULL,
   `conditions` longtext,
   `actions` longtext,
   PRIMARY KEY (`id`)

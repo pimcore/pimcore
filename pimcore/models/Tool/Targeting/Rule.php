@@ -38,6 +38,11 @@ class Tool_Targeting_Rule extends Pimcore_Model_Abstract {
     public $scope = "hit";
 
     /**
+     * @var bool
+     */
+    public $active = true;
+
+    /**
      * @var array
      */
     public $conditions = array();
@@ -232,5 +237,21 @@ class Tool_Targeting_Rule extends Pimcore_Model_Abstract {
     public function getScope()
     {
         return $this->scope;
+    }
+
+    /**
+     * @param boolean $active
+     */
+    public function setActive($active)
+    {
+        $this->active = (bool) $active;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
     }
 }

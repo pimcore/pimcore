@@ -92,6 +92,9 @@ class Tool_Targeting_Persona_Resource extends Pimcore_Model_Resource_Abstract {
                     if(is_array($value) || is_object($value)) {
                         $value = Pimcore_Tool_Serialize::serialize($value);
                     }
+                    if(is_bool($value)) {
+                        $value = (int) $value;
+                    }
                     $data[$key] = $value;
                 }
             }
