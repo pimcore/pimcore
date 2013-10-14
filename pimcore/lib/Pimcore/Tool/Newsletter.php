@@ -38,6 +38,10 @@ class Pimcore_Tool_Newsletter {
         $mail = new Pimcore_Mail();
         $mail->setIgnoreDebugMode(true);
 
+        if(Pimcore_Config::getSystemConfig()->newsletter->usespecific) {
+            $mail->init("newsletter");
+        }
+
         if($emailAddress) {
             $mail->addTo($emailAddress);
         } else {
