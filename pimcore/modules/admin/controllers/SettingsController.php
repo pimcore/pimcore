@@ -143,18 +143,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             }
         }
 
-        //debug email addresses - add as array ckogler
-        if (!empty($valueArray['email']['debug']['emailaddresses'])) {
-            $emailAddresses = explode(",", $valueArray['email']['debug']['emailaddresses']);
-            if (is_array($emailAddresses)) {
-                foreach ($emailAddresses as $emailAddress) {
-                    $valueArray['email']['debug']['emaildebugaddressesArray'][] = array("value" => $emailAddress);
-                }
-            }
-        }else{
-            $valueArray['email']['debug']['emaildebugaddressesArray'][] = array("value" => '');
-        }
-
         //cache exclude patterns - add as array
         if (!empty($valueArray['cache']['excludePatterns'])) {
             $patterns = explode(",", $valueArray['cache']['excludePatterns']);
@@ -209,10 +197,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         // email settings
         $oldConfig = Pimcore_Config::getSystemConfig();
         $oldValues = $oldConfig->toArray();
-        $smtpPassword = $values["email.smtp.auth.password"];
-        if (empty($smtpPassword)) {
-            $smtpPassword = $oldValues['email']['smtp']['auth']['password'];
-        }
 
         // error pages
         $errorPages = array();
@@ -331,41 +315,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "less" => $values["outputfilters.less"],
                 "lesscpath" => $values["outputfilters.lesscpath"]
             ),
-            "email" => array(
-                "sender" => array(
-                    "name" => $values["email.sender.name"],
-                    "email" => $values["email.sender.email"]),
-                "return" => array(
-                    "name" => $values["email.return.name"],
-                    "email" => $values["email.return.email"]),
-                "method" => $values["email.method"],
-                "smtp" => array(
-                    "host" => $values["email.smtp.host"],
-                    "port" => $values["email.smtp.port"],
-                    "ssl" => $values["email.smtp.ssl"],
-                    "name" => $values["email.smtp.name"],
-                    "auth" => array(
-                        "method" => $values["email.smtp.auth.method"],
-                        "username" => $values["email.smtp.auth.username"],
-                        "password" => $smtpPassword
-                    )
-                ),
-                "debug" => array(
-                    "emailaddresses" => $values["email.debug.emailAddresses"],
-                ),
-                "bounce" => array(
-                    "type" => $values["email.bounce.type"],
-                    "maildir" => $values["email.bounce.maildir"],
-                    "mbox" => $values["email.bounce.mbox"],
-                    "imap" => array(
-                        "host" => $values["email.bounce.imap.host"],
-                        "port" => $values["email.bounce.imap.port"],
-                        "username" => $values["email.bounce.imap.username"],
-                        "password" => $values["email.bounce.imap.password"],
-                        "ssl" => $values["email.bounce.imap.ssl"]
-                    )
-                )
-            ),
             "webservice" => array(
                 "enabled" => $values["webservice.enabled"]
             ),
@@ -382,6 +331,56 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "environment" => "live",
             )
         );
+
+        // email & newsletter
+        foreach(array("email", "newsletter") as $type) {
+            $smtpPassword = $values[$type . ".smtp.auth.password"];
+            if (empty($smtpPassword)) {
+                $smtpPassword = $oldValues[$type]['smtp']['auth']['password'];
+            }
+
+            $settings[$type] = array(
+                "sender" => array(
+                    "name" => $values[$type . ".sender.name"],
+                    "email" => $values[$type . ".sender.email"]),
+                "return" => array(
+                    "name" => $values[$type . ".return.name"],
+                    "email" => $values[$type . ".return.email"]),
+                "method" => $values[$type . ".method"],
+                "smtp" => array(
+                    "host" => $values[$type . ".smtp.host"],
+                    "port" => $values[$type . ".smtp.port"],
+                    "ssl" => $values[$type . ".smtp.ssl"],
+                    "name" => $values[$type . ".smtp.name"],
+                    "auth" => array(
+                        "method" => $values[$type . ".smtp.auth.method"],
+                        "username" => $values[$type . ".smtp.auth.username"],
+                        "password" => $smtpPassword
+                    )
+                )
+            );
+
+            if(array_key_exists($type . ".debug.emailAddresses", $values)) {
+                $settings[$type]["debug"] = array("emailaddresses" => $values[$type . ".debug.emailAddresses"]);
+            }
+
+            if(array_key_exists($type . ".bounce.type", $values)) {
+                $settings[$type]["bounce"] = array(
+                    "type" => $values[$type . ".bounce.type"],
+                    "maildir" => $values[$type . ".bounce.maildir"],
+                    "mbox" => $values[$type . ".bounce.mbox"],
+                    "imap" => array(
+                        "host" => $values[$type . ".bounce.imap.host"],
+                        "port" => $values[$type . ".bounce.imap.port"],
+                        "username" => $values[$type . ".bounce.imap.username"],
+                        "password" => $values[$type . ".bounce.imap.password"],
+                        "ssl" => $values[$type . ".bounce.imap.ssl"]
+                    )
+                );
+            }
+        }
+        $settings["newsletter"]["usespecific"] = $values["newsletter.usespecific"];
+
 
         //@Todo: remove when deployment is enabled
         if($oldValues['deployment']){ $settings['deployment'] = $oldValues['deployment'];}

@@ -169,10 +169,10 @@ class Pimcore_Mail extends Zend_Mail
      *
      * @return void
      */
-    protected function init()
+    public function init($type = "email")
     {
         $systemConfig = Pimcore_Config::getSystemConfig()->toArray();
-        $emailSettings =& $systemConfig['email'];
+        $emailSettings =& $systemConfig[$type];
 
         if ($emailSettings['sender']['email']) {
             $this->setDefaultFrom($emailSettings['sender']['email'], $emailSettings['sender']['name']);
@@ -205,7 +205,7 @@ class Pimcore_Mail extends Zend_Mail
         }
 
         //setting debug email addresses
-        if (empty(self::$debugEmailAddresses)) {
+        if ($type == "email" && empty(self::$debugEmailAddresses)) {
             if ($emailSettings['debug']['emailaddresses']) {
                 foreach (explode(',', $emailSettings['debug']['emailaddresses']) as $emailAddress) {
                     self::$debugEmailAddresses[] = $emailAddress;
