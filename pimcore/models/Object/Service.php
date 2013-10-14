@@ -517,7 +517,7 @@ class Object_Service extends Element_Service {
             }
         }
 
-        $conditionFilters = "";
+        $conditionFilters = "1 = 1";
         if (count($conditionPartsFilters) > 0) {
             $conditionFilters = "(" . implode(" AND ", $conditionPartsFilters) . ")";
         }
