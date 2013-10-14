@@ -21,7 +21,7 @@ class Object_Data_KeyValue_Entry {
     private $translated;
     private $metadata;
 
-    public function __construct($value, $translated, $metadata) {
+    public function __construct($value, $translated, $metadata = null) {
         $this->value = $value;
         $this->translated = $translated;
         $this->metadata = $metadata;
