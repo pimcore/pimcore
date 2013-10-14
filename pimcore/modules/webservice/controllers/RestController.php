@@ -422,7 +422,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                     $algo = "sha1";
 
                     $thumbnailConfig = $this->getParam("thumbnail");
-                    if ($thumbnailConfig) {
+                    if ($thumbnailConfig && $asset->getType() == "image") {
                         $checksum = $asset->getThumbnail($thumbnailConfig)->getChecksum($algo);
                     } else {
                         $checksum = $asset->getChecksum($algo);
