@@ -86,6 +86,11 @@ class Pimcore_Model_Cache {
      * @var int
      */
     protected static $writeLockTimestamp;
+
+    /**
+     * @var Zend_Cache_Core
+     */
+    protected static $blackHoleCache = null;
     
     /**
      * Returns a instance of the cache, if the instance isn't available it creates a new one
@@ -108,12 +113,10 @@ class Pimcore_Model_Cache {
     public static function init() {
 
         if (!self::$instance instanceof Zend_Cache_Core) {
-            // default file based configuration
-            $config = self::getDefaultConfig();
-
             // check for custom cache configuration
             $customCacheFile = PIMCORE_CONFIGURATION_DIRECTORY . "/cache.xml";
             if (is_file($customCacheFile)) {
+                $config = self::getDefaultConfig();
                 try {
                     $conf = new Zend_Config_Xml($customCacheFile);
 
@@ -132,23 +135,22 @@ class Pimcore_Model_Cache {
                             $config["backendConfig"] = $conf->backend->options->toArray();
                         }
                     }
-                }
-                catch (Exception $e) {
+
+                    if(isset($config["frontendConfig"]["lifetime"])) {
+                        self::$defaultLifetime = $config["frontendConfig"]["lifetime"];
+                    }
+
+                    // here you can use the cache backend you like
+                    try {
+                        self::$instance = self::initializeCache($config);
+                    } catch (Exception $e) {
+                        Logger::crit("can't initialize cache with the given configuration " . $e->getMessage());
+                    }
+
+                } catch (Exception $e) {
                     Logger::crit($e);
                     Logger::crit("Error while reading cache configuration, using the default file backend");
                 }
-            }
-
-            if(isset($config["frontendConfig"]["lifetime"])) {
-                self::$defaultLifetime = $config["frontendConfig"]["lifetime"];
-            }
-
-            // here you can use the cache backend you like
-            try {
-                self::$instance = self::initializeCache($config);
-            }
-            catch (Exception $e) {
-                Logger::crit("can't initialize cache with the given configuration " . $e->getMessage());
             }
         }
 
@@ -157,10 +159,7 @@ class Pimcore_Model_Cache {
             self::$instance = self::getDefaultCache();
         }
 
-        // reset default lifetime
         self::$instance->setLifetime(self::$defaultLifetime);
-
-        // always enable the automatic_serialization in this case Pimcore_Tool_Serialize is not used
         self::$instance->setOption("automatic_serialization", true);
 
         // init the write lock once (from other processes etc.)
@@ -170,7 +169,6 @@ class Pimcore_Model_Cache {
         }
 
         self::setZendFrameworkCaches(self::$instance);
-
     }
 
     /**
@@ -184,40 +182,55 @@ class Pimcore_Model_Cache {
     }
 
     /**
-     * @static
-     * @return Zend_Cache_Core|Zend_Cache_Frontend
+     * @param string|null $adapter
+     * @return array
      */
-    public static function getDefaultCache () {
-        $config = self::getDefaultConfig();
-        $cache = self::initializeCache($config);
-        return $cache;
+    public static function getDefaultConfig($adapter = null) {
+        $config =  array(
+            "frontendType" => "Core",
+            "frontendConfig" => array(
+                "lifetime" => self::$defaultLifetime,
+                "automatic_serialization" => true
+            ),
+            "customFrontendNaming" => true,
+            "backendType" => "Pimcore_Cache_Backend_MysqlTable",
+            "backendConfig" => array(),
+            "customBackendNaming" => true
+        );
+
+        if($adapter) {
+            $config["backendType"] = $adapter;
+        }
+
+        return $config;
     }
 
     /**
      * @static
-     * @return array
+     * @return Zend_Cache_Core|Zend_Cache_Frontend
      */
-    public static function getDefaultConfig () {
-        $config["frontendType"] = "Core";
-        $config["frontendConfig"] = array(
-            "lifetime" => self::$defaultLifetime, // never expire
-            "automatic_serialization" => true
-        );
-        $config["customFrontendNaming"] = false;
-
+    public static function getDefaultCache () {
         if(Pimcore_Config::getSystemConfig()) {
-            $config["backendType"] = "Pimcore_Cache_Backend_MysqlTable";
-            $config["backendConfig"] = array();
-            $config["customBackendNaming"] = true;
+            // default mysql cache adapter
+            $config = self::getDefaultConfig();
+            $cache = self::initializeCache($config);
         } else {
-            // file fallback if mysql isn't available (at install, ...)
-            $config["backendType"] = "Zend_Cache_Backend_BlackHole"; // just BlackHole doesn't work, that's why customBackendNaming=true
-            $config["backendConfig"] = array();
-            $config["customBackendNaming"] = true;
-            self::disable(); // disable it here too
+            $cache = self::getBlackHoleCache();
         }
 
-        return $config;
+        return $cache;
+    }
+
+    /**
+     * @return Zend_Cache_Core|Zend_Cache_Frontend
+     */
+    public static function getBlackHoleCache() {
+        if(!self::$blackHoleCache) {
+            $config = self::getDefaultConfig();
+            $config["backendType"] = "Zend_Cache_Backend_BlackHole";
+            self::$blackHoleCache = self::initializeCache($config);
+        }
+        return self::$blackHoleCache;
     }
     
     /**
@@ -645,7 +658,7 @@ class Pimcore_Model_Cache {
      */
     public static function disable() {
         if(self::$enabled) {
-            self::setZendFrameworkCaches(null);
+            self::setZendFrameworkCaches(self::getBlackHoleCache());
         }
         self::$enabled = false;
     }
@@ -664,7 +677,6 @@ class Pimcore_Model_Cache {
      * @param null $cache
      */
     public static function setZendFrameworkCaches ($cache = null) {
-        Zend_Locale_Data::setCache($cache);
         Zend_Locale::setCache($cache);
         Zend_Locale_Data::setCache($cache);
         Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
