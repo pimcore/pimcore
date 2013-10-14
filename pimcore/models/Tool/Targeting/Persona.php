@@ -38,6 +38,11 @@ class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
     public $threshold = 1;
 
     /**
+     * @var bool
+     */
+    public $active = true;
+
+    /**
      * @var array
      */
     public $conditions = array();
@@ -69,6 +74,17 @@ class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
         if($plugin instanceof Pimcore_Controller_Plugin_Targeting) {
             $plugin->addPersona($id);
         }
+    }
+
+    /**
+     * @param $id
+     */
+    public static function isIdActive($id) {
+        $persona = Tool_Targeting_Persona::getById($id);
+        if($persona) {
+            return $persona->getActive();
+        }
+        return false;
     }
 
     /**
@@ -157,5 +173,21 @@ class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
     public function getThreshold()
     {
         return $this->threshold;
+    }
+
+    /**
+     * @param boolean $active
+     */
+    public function setActive($active)
+    {
+        $this->active = (bool) $active;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
     }
 }

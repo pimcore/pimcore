@@ -215,6 +215,11 @@ pimcore.settings.targeting.rules.item = Class.create({
                 mode: "local",
                 triggerAction: "all",
                 store: [["user", t("user")],["session", t("session")], ["hit", t("hit")]]
+            }, {
+                name: "active",
+                fieldLabel: t("active"),
+                xtype: "checkbox",
+                checked: this.data["active"]
             }]
         });
 
