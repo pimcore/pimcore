@@ -34,7 +34,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
      */
     public function init() {  
         parent::init();
-        $this->inheritanceHelper = new Object_Concrete_Resource_InheritanceHelper($this->model->getO_classId());
+        $this->inheritanceHelper = new Object_Concrete_Resource_InheritanceHelper($this->model->getClassId());
     }
 
     /**
@@ -69,7 +69,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
      */
     public function getRelationIds($fieldName) {
         $relations = array();
-        $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $this->model->getO_classId() . " WHERE fieldname = ? AND src_id = ? AND ownertype = 'object' ORDER BY `index` ASC", array($fieldName, $this->model->getO_id()));
+        $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $this->model->getClassId() . " WHERE fieldname = ? AND src_id = ? AND ownertype = 'object' ORDER BY `index` ASC", array($fieldName, $this->model->getId()));
         foreach ($allRelations as $relation) {
             $relations[] = $relation["dest_id"];
         }
@@ -82,11 +82,11 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
      */
     public function getRelationData($field, $forOwner, $remoteClassId) {
 
-        $id = $this->model->getO_id();
+        $id = $this->model->getId();
         if ($remoteClassId) {
             $classId = $remoteClassId;
         } else {
-            $classId = $this->model->getO_classId();
+            $classId = $this->model->getClassId();
         }
 
 
@@ -138,9 +138,9 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
      */
     public function getData() {
 
-        $data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getO_classId() . ' WHERE oo_id = ?', $this->model->getO_id());
+        $data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId());
 
-        foreach ($this->model->geto_class()->getFieldDefinitions() as $key => $value) {
+        foreach ($this->model->getClass()->getFieldDefinitions() as $key => $value) {
             if (method_exists($value, "load")) {
                 // datafield has it's own loader
                 $value = $value->load($this->model);
@@ -154,7 +154,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
                         $multidata[$key . "__" . $fkey] = $data[$key . "__" . $fkey];
                     }
-                    $this->model->setValue( $key, $this->model->geto_class()->getFieldDefinition($key)->getDataFromResource($multidata));
+                    $this->model->setValue( $key, $this->model->getClass()->getFieldDefinition($key)->getDataFromResource($multidata));
 
                 } else {
                     $this->model->setValue( $key, $value->getDataFromResource($data[$key]));
@@ -208,7 +208,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
         //$this->createDataRows();
 
         // get fields which shouldn't be updated
-        $fd = $this->model->geto_class()->getFieldDefinitions();
+        $fd = $this->model->getClass()->getFieldDefinitions();
         $untouchable = array();
         foreach ($fd as $key => $value) {
             if (method_exists($value, "getLazyLoading") && $value->getLazyLoading()) {
@@ -222,9 +222,9 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
         // empty relation table except the untouchable fields (eg. lazy loading fields)
         if (count($untouchable) > 0) {
             $untouchables = "'" . implode("','", $untouchable) . "'";
-            $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("src_id = ? AND fieldname not in (" . $untouchables . ") AND ownertype = 'object'", $this->model->getO_id()));
+            $this->db->delete("object_relations_" . $this->model->getClassId(), $this->db->quoteInto("src_id = ? AND fieldname not in (" . $untouchables . ") AND ownertype = 'object'", $this->model->getId()));
         } else {
-            $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("src_id = ? AND ownertype = 'object'",  $this->model->getO_id()));
+            $this->db->delete("object_relations_" . $this->model->getClassId(), $this->db->quoteInto("src_id = ? AND ownertype = 'object'",  $this->model->getId()));
         }
 
         
@@ -232,7 +232,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
         Object_Abstract::setGetInheritedValues(false);
 
         $data = array();
-        $data["oo_id"] = $this->model->getO_id();
+        $data["oo_id"] = $this->model->getId();
         foreach ($fd as $key => $value) {
 
             $getter = "get" . ucfirst($key);
@@ -254,7 +254,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
             }
         }
 
-        $this->db->insertOrUpdate("object_store_" . $this->model->getO_classId(), $data);
+        $this->db->insertOrUpdate("object_store_" . $this->model->getClassId(), $data);
 
         // get data for query table
         // this is special because we have to call each getter to get the inherited values from a possible parent object
@@ -264,10 +264,10 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
 
         $data = array();
         $this->inheritanceHelper->resetFieldsToCheck();
-        $oldData = $this->db->fetchRow("SELECT * FROM object_query_" . $this->model->getO_classId() . " WHERE oo_id = ?", $this->model->getId());
+        $oldData = $this->db->fetchRow("SELECT * FROM object_query_" . $this->model->getClassId() . " WHERE oo_id = ?", $this->model->getId());
 
         foreach ($object as $key => $value) {
-            $fd = $this->model->geto_class()->getFieldDefinition($key);
+            $fd = $this->model->getClass()->getFieldDefinition($key);
 
             if ($fd) {
                 if ($fd->getQueryColumnType()) {
@@ -322,9 +322,9 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
                 }
             }
         }
-        $data["oo_id"] = $this->model->getO_id();
+        $data["oo_id"] = $this->model->getId();
 
-        $this->db->insertOrUpdate("object_query_" . $this->model->getO_classId(), $data);
+        $this->db->insertOrUpdate("object_query_" . $this->model->getClassId(), $data);
 
         Object_Abstract::setGetInheritedValues($inheritedValues);
     }
@@ -341,13 +341,13 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
      * @return void
      */
     public function delete() {
-        $this->db->delete("object_query_" . $this->model->getO_classId(), $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
-        $this->db->delete("object_store_" . $this->model->getO_classId(), $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
-        $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("src_id = ?", $this->model->getO_id()));
-        $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("dest_id = ?", $this->model->getO_id()));
+        $this->db->delete("object_query_" . $this->model->getClassId(), $this->db->quoteInto("oo_id = ?", $this->model->getId()));
+        $this->db->delete("object_store_" . $this->model->getClassId(), $this->db->quoteInto("oo_id = ?", $this->model->getId()));
+        $this->db->delete("object_relations_" . $this->model->getClassId(), $this->db->quoteInto("src_id = ?", $this->model->getId()));
+        $this->db->delete("object_relations_" . $this->model->getClassId(), $this->db->quoteInto("dest_id = ?", $this->model->getId()));
 
         // delete fields wich have their own delete algorithm
-        foreach ($this->model->geto_class()->getFieldDefinitions() as $fd) {
+        foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
             if (method_exists($fd, "delete")) {
                 $fd->delete($this->model);
             }
@@ -362,14 +362,14 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
      * @return array
      */
     public function getVersions() {
-        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC", $this->model->getO_Id());
+        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC", $this->model->getId());
 
         $versions = array();
         foreach ($versionIds as $versionId) {
             $versions[] = Version::getById($versionId);
         }
 
-        $this->model->setO_Versions($versions);
+        $this->model->setVersions($versions);
 
         return $versions;
     }
@@ -380,9 +380,9 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
      * @return array
      */
     public function getLatestVersion($force = false) {
-        $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC LIMIT 1", $this->model->getO_Id());
+        $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
 
-        if(($versionData["id"] && $versionData["date"] > $this->model->getO_modificationDate()) || $force) {
+        if(($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
             $version = Version::getById($versionData["id"]);
             return $version;
         }
@@ -393,7 +393,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
      * @return void
      */
     public function deleteAllTasks() {
-        $this->db->delete("schedule_tasks", "cid='" . $this->model->getO_Id() . "' AND ctype='object'");
-        $this->db->delete("schedule_tasks", $this->db->quoteInto("cid = ? AND ctype='object'", $this->model->getO_Id()));
+        $this->db->delete("schedule_tasks", "cid='" . $this->model->getId() . "' AND ctype='object'");
+        $this->db->delete("schedule_tasks", $this->db->quoteInto("cid = ? AND ctype='object'", $this->model->getId()));
     }
 }

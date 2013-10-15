@@ -380,30 +380,6 @@ class Asset extends Element_Abstract {
         return $type;
     }
 
-
-    /**
-     * get the cache tag for the current asset
-     *
-     * @return Dependency
-     */
-    public function getCacheTag() {
-        return "asset_" . $this->getId();
-    }
-
-    /**
-     * Get the cache tags for the asset, resolve all dependencies to tag the cache entries
-     * This is necessary to update the cache if there is a change in an depended object
-     *
-     * @return array
-     */
-    public function getCacheTags($tags = array()) {
-
-        $tags = is_array($tags) ? $tags : array();
-        
-        $tags[$this->getCacheTag()] = $this->getCacheTag();
-        return $tags;
-    }
-
     /**
      * Get full path to the asset on the filesystem
      *
@@ -687,16 +663,6 @@ class Asset extends Element_Abstract {
     }
 
     /**
-     * @return boolean
-     */
-    public function hasNoChilds() {
-        if ($this->hasChilds()) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Returns true if the element is locked
      * @return string
      */
@@ -711,19 +677,6 @@ class Asset extends Element_Abstract {
     public function setLocked($locked){
         $this->locked = $locked;
         return $this;
-    }
-
-    /**
-     * Returns true if the element is locked
-     * @return bool
-     */
-    public function isLocked(){
-        if($this->getLocked()) {
-            return true;
-        }
-        
-        // check for inherited
-        return $this->getResource()->isLocked();
     }
 
     /**
@@ -819,24 +772,6 @@ class Asset extends Element_Abstract {
             $this->dependencies = Dependency::getBySourceId($this->getId(), "asset");
         }
         return $this->dependencies;
-    }
-
-    /**
-     * @return array
-     */
-    public function resolveDependencies() {
-
-        $dependencies = array();
-
-        // check for properties
-        if (method_exists($this, "getProperties")) {
-            $properties = $this->getProperties();
-            foreach ($properties as $property) {
-                $dependencies = array_merge($dependencies, $property->resolveDependencies());
-            }
-        }
-
-        return $dependencies;
     }
 
     /**
@@ -1045,33 +980,6 @@ class Asset extends Element_Abstract {
     }
 
     /**
-     * Get specific property data or the property object itself ($asContainer=true) by it's name, if the property doesn't exists return null
-     * @param string $name
-     * @param bool $asContainer
-     * @return mixed
-     */
-    public function getProperty($name, $asContainer = false) {
-        $properties = $this->getProperties();
-        if ($this->hasProperty($name)) {
-            if($asContainer) {
-                return $properties[$name];
-            } else {
-                return $properties[$name]->getData();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param  $name
-     * @return bool
-     */
-    public function hasProperty ($name) {
-        $properties = $this->getProperties();
-        return array_key_exists($name, $properties);
-    }
-
-    /**
      * set a property
      *
      * @param string $name
@@ -1228,42 +1136,6 @@ class Asset extends Element_Abstract {
     }
 
     /**
-     * This is used for user-permissions, pass a permission type (eg. list, view, save) an you know if the current user is allowed to perform the requested action
-     *
-     * @param string $type
-     * @return integer
-     */
-    public function isAllowed($type) {
-
-        $currentUser = Pimcore_Tool_Admin::getCurrentUser();
-        //everything is allowed for admin
-        if ($currentUser->isAdmin()) {
-            return true;
-        }
-
-        return $this->getResource()->isAllowed($type, $currentUser);
-    }
-
-    /**
-     * @return array
-     */
-    public function getUserPermissions () {
-
-        $vars = get_class_vars("User_Workspace_Asset");
-        $ignored = array("userId","cid","cpath","resource");
-        $permissions = array();
-
-        foreach ($vars as $name => $defaultValue) {
-            if(!in_array($name, $ignored)) {
-                $permissions[$name] = $this->isAllowed($name);
-            }
-        }
-
-        return $permissions;
-    }
-
-
-    /**
      * @return array
      */
     public function getScheduledTasks() {
@@ -1355,13 +1227,6 @@ class Asset extends Element_Abstract {
             $this->parentId = $parent->getId();
         }
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString() {
-        return $this->getFullPath();
     }
 
     /**

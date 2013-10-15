@@ -151,7 +151,7 @@ class Object_Class_Data_Nonownerobjects extends Object_Class_Data_Objects {
     protected function allowObjectRelation($object) {
         //only relations of owner type are allowed
         $ownerClass = Object_Class::getByName($this->getOwnerClassName());
-        if($ownerClass->getId()>0 and $ownerClass->getId() == $object->getO_classId()){
+        if($ownerClass->getId()>0 and $ownerClass->getId() == $object->getClassId()){
             $fd = $ownerClass->getFieldDefinition($this->getOwnerFieldName());
             if($fd instanceof Object_Class_Data_Objects){
                 return $fd->allowObjectRelation($object);

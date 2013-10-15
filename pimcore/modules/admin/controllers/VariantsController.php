@@ -23,7 +23,7 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
 
         try {
             if(!empty($object)) {
-                $object->setO_key($key);
+                $object->setKey($key);
                 $object->save();
                 $this->_helper->json(array("success" => true));
             } else {
@@ -110,8 +110,8 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
                 throw new Exception("No Object found with id " . $this->getParam("objectId"));
             }
 
-            $class = $parentObject->getO_class();
-            $className = $parentObject->getO_class()->getName();
+            $class = $parentObject->getClass();
+            $className = $parentObject->getClass()->getName();
 
             $start = 0;
             $limit = 15;

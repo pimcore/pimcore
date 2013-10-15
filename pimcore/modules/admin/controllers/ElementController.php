@@ -79,7 +79,7 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
             if($el instanceof Asset || $el instanceof Document) {
                 $subtype = $el->getType();
             } else if($el instanceof Object_Concrete) {
-                $subtype = $el->geto_className();
+                $subtype = $el->getClassName();
             } else if ($el instanceof Object_Folder) {
                 $subtype = "folder";
             }

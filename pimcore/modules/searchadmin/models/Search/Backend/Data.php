@@ -308,7 +308,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
 
         $this->type = $element->getType();
         if($element instanceof Object_Concrete){
-            $this->subtype = $element->getO_className();
+            $this->subtype = $element->getClassName();
         } else {
             $this->subtype = $this->type;
         }

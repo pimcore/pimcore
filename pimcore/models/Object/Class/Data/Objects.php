@@ -84,7 +84,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
             foreach ($data as $object) {
                 if ($object instanceof Object_Concrete) {
                     $return[] = array(
-                        "dest_id" => $object->getO_id(), 
+                        "dest_id" => $object->getId(),
                         "type" => "object",
                         "fieldname" => $this->getName(),
                         "index" => $counter
@@ -140,7 +140,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 if ($object instanceof Object_Concrete) {
-                    $ids[] = $object->geto_id();
+                    $ids[] = $object->getId();
                 }
             }
             return "," . implode(",", $ids) . ",";
@@ -164,7 +164,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 if ($object instanceof Object_Concrete) {
-                    $return[] = array($object->geto_id(), $object->getO_FullPath(), $object->geto_className());
+                    $return[] = array($object->getId(), $object->getFullPath(), $object->getClassName());
                 }
             }
             if (empty ($return)) {
@@ -223,7 +223,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $o) {
                 if($o instanceof Element_Interface) {
-                    $pathes[] = $o->geto_FullPath();
+                    $pathes[] = $o->getFullPath();
                 }
             }
             return implode("<br />", $pathes);
@@ -364,8 +364,8 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         if (is_array($data) && count($data) > 0) {
 			foreach ($data as $o) {
 				if ($o instanceof Object_Abstract) {
-					$dependencies["object_" . $o->getO_Id()] = array(
-						"id" => $o->getO_Id(),
+					$dependencies["object_" . $o->getId()] = array(
+						"id" => $o->getId(),
 						"type" => "object"
 					);
 				}

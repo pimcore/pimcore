@@ -89,10 +89,10 @@ class Object_Abstract_Resource extends Element_Resource {
             "o_key" => $this->model->getKey(),
             "o_path" => $this->model->getPath()
         ));
-        $this->model->setO_id($this->db->lastInsertId());
+        $this->model->setId($this->db->lastInsertId());
 
-        if (!$this->model->geto_key()) {
-            $this->model->setO_key($this->db->lastInsertId());
+        if (!$this->model->getKey()) {
+            $this->model->setKey($this->db->lastInsertId());
         }
         //$this->model->save();
     }
@@ -135,7 +135,7 @@ class Object_Abstract_Resource extends Element_Resource {
      * @return void
      */
     public function delete() {
-        $this->db->delete("objects", $this->db->quoteInto("o_id = ?", $this->model->getO_id() ));
+        $this->db->delete("objects", $this->db->quoteInto("o_id = ?", $this->model->getId() ));
     }
 
     /**
@@ -218,12 +218,12 @@ class Object_Abstract_Resource extends Element_Resource {
             try {
                 $property = new Property();
                 $property->setType($propertyRaw["type"]);
-                $property->setCid($this->model->getO_Id());
+                $property->setCid($this->model->getId());
                 $property->setName($propertyRaw["name"]);
                 $property->setCtype("object");
                 $property->setDataFromResource($propertyRaw["data"]);
                 $property->setInherited(true);
-                if ($propertyRaw["cid"] == $this->model->getO_Id()) {
+                if ($propertyRaw["cid"] == $this->model->getId()) {
                     $property->setInherited(false);
                 }
                 $property->setInheritable(false);
@@ -247,7 +247,7 @@ class Object_Abstract_Resource extends Element_Resource {
             return $properties;
         }
         
-        $this->model->setO_Properties($properties);
+        $this->model->setProperties($properties);
 
         return $properties;
     }
@@ -257,7 +257,7 @@ class Object_Abstract_Resource extends Element_Resource {
      * @return void
      */
     public function deleteAllPermissions() {
-        $this->db->delete("users_workspaces_object", $this->db->quoteInto("cid = ?", $this->model->getO_Id()));
+        $this->db->delete("users_workspaces_object", $this->db->quoteInto("cid = ?", $this->model->getId()));
     }
 
     /**
@@ -266,7 +266,7 @@ class Object_Abstract_Resource extends Element_Resource {
      * @return boolean
      */
     public function hasChilds($objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER)) {
-        $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getO_id());
+        $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getId());
         return (bool) $c;
     }
 
@@ -276,7 +276,7 @@ class Object_Abstract_Resource extends Element_Resource {
      * @return integer
      */
     public function getChildAmount($objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER)) {
-        $c = $this->db->fetchOne("SELECT COUNT(*) AS count FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getO_id());
+        $c = $this->db->fetchOne("SELECT COUNT(*) AS count FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getId());
         return $c;
     }
 

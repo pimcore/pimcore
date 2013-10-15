@@ -10,7 +10,7 @@
 <body>
 
 
-<?php $fields = $this->object->geto_class()->getFieldDefinitions(); ?>
+<?php $fields = $this->object->getClass()->getFieldDefinitions(); ?>
 
 <table class="preview" border="0" cellpadding="0" cellspacing="0">
     <tr>

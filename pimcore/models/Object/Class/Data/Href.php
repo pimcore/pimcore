@@ -259,26 +259,14 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      * @return array
      */
     public function getDataForEditmode($data, $object = null) {
-        if ($data) {
+        if ($data instanceof Element_Interface) {
 
             $r = array(
                 "id" => $data->getId(),
-                "path" => $data->getFullPath()
+                "path" => $data->getFullPath(),
+                "subtype" => $data->getType(),
+                "type" => Element_Service::getElementType($data)
             );
-
-            if ($data instanceof Document) {
-                $r["subtype"] = $data->getType();
-                $r["type"] = "document";
-            }
-            else if ($data instanceof Asset) {
-                $r["subtype"] = $data->getType();
-                $r["type"] = "asset";
-            }
-            else if ($data instanceof Object_Abstract) {
-                $r["subtype"] = $data->getO_Type();
-                $r["type"] = "object";
-            }
-
             return $r;
         }
         return;
@@ -437,22 +425,11 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         
         $dependencies = array();
         
-        if ($data instanceof Asset) {
-			$dependencies["asset_" . $data->getId()] = array(
+        if ($data instanceof Element_Interface) {
+            $elementType = Element_Service::getElementType($data);
+			$dependencies[$elementType . "_" . $data->getId()] = array(
 				"id" => $data->getId(),
-				"type" => "asset"
-			);
-		}
-		else if ($data instanceof Document) {
-			$dependencies["document_" . $data->getId()] = array(
-				"id" => $data->getId(),
-				"type" => "document"
-			);
-		}
-		else if ($data instanceof Object_Abstract) {
-			$dependencies["object_" . $data->getO_Id()] = array(
-				"id" => $data->getO_Id(),
-				"type" => "object"
+				"type" => $elementType
 			);
 		}
         

@@ -26,17 +26,10 @@ class Element_Service extends Pimcore_Model_Abstract {
 
         $path = "";
 
-        if ($element instanceof Document) {
+        if ($element instanceof Element_Interface) {
+            $elementType = Element_Service::getElementType($element);
             $nid = $element->getParentId();
-            $ne = Document::getById($nid);
-        }
-        else if ($element instanceof Asset) {
-            $nid = $element->getParentId();
-            $ne = Asset::getById($nid);
-        }
-        else if ($element instanceof Object_Abstract) {
-            $nid = $element->getO_parentId();
-            $ne = Object_Abstract::getById($nid);
+            $ne = Element_Service::getElementById($elementType, $nid);
         }
 
         if ($ne) {
@@ -103,28 +96,12 @@ class Element_Service extends Pimcore_Model_Abstract {
      */
     public static function getDependencyForFrontend($element)
     {
-        if ($element instanceof Document) {
+        if ($element instanceof Element_Interface) {
             return array(
                 "id" => $element->getId(),
                 "path" => $element->getFullPath(),
-                "type" => "document",
+                "type" => Element_Service::getElementType($element),
                 "subtype" => $element->getType()
-            );
-        }
-        else if ($element instanceof Asset) {
-            return array(
-                "id" => $element->getId(),
-                "path" => $element->getFullPath(),
-                "type" => "asset",
-                "subtype" => $element->getType()
-            );
-        }
-        else if ($element instanceof Object_Abstract) {
-            return array(
-                "id" => $element->getId(),
-                "path" => $element->getFullPath(),
-                "type" => "object",
-                "subtype" => $element->geto_Type()
             );
         }
     }
@@ -607,10 +584,6 @@ class Element_Service extends Pimcore_Model_Abstract {
         $sanitizedPath = "/";
         foreach($parts as $part) {
             $sanitizedPath = $sanitizedPath . Pimcore_File::getValidFilename($part) . "/";
-        }
-
-        if ($type == "Object") {
-            $type = "Object_Abstract";
         }
 
         if (!($foundElement = $type::getByPath($sanitizedPath))) {

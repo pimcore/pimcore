@@ -295,14 +295,9 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
-                if ($element instanceof Object_Abstract) {
-                    $d[] = "object|" . $element->geto_id();
-                }
-                else if ($element instanceof Asset) {
-                    $d[] = "asset|" . $element->getId();
-                }
-                else if ($element instanceof Document) {
-                    $d[] = "document|" . $element->getId();
+                if ($element instanceof Element_Interface) {
+                    $elementType = Element_Service::getElementType($element);
+                    $d[] = $elementType . "|" . $element->getId();
                 }
             }
             return "," . implode(",", $d) . ",";
@@ -327,10 +322,10 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 if ($element instanceof Object_Concrete) {
-                    $return[] = array($element->geto_id(), $element->getFullPath(), "object", $element->geto_className());
+                    $return[] = array($element->getId(), $element->getFullPath(), "object", $element->getClassName());
                 }
                 else if ($element instanceof Object_Abstract) {
-                    $return[] = array($element->geto_id(), $element->getFullPath(), "object", "folder");
+                    $return[] = array($element->getId(), $element->getFullPath(), "object", "folder");
                 }
                 else if ($element instanceof Asset) {
                     $return[] = array($element->getId(), $element->getFullPath(), "asset", $element->getType());
@@ -577,22 +572,11 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $e) {
-                if ($e instanceof Object_Abstract) {
-                    $dependencies["object_" . $e->getO_Id()] = array(
-                        "id" => $e->getO_Id(),
-                        "type" => "object"
-                    );
-                }
-                else if ($e instanceof Asset) {
-                    $dependencies["asset_" . $e->getId()] = array(
+                if ($e instanceof Element_Interface) {
+                    $elementType = Element_Service::getElementType($e);
+                    $dependencies[$elementType . "_" . $e->getId()] = array(
                         "id" => $e->getId(),
-                        "type" => "asset"
-                    );
-                }
-                else if ($e instanceof Document) {
-                    $dependencies["document_" . $e->getId()] = array(
-                        "id" => $e->getId(),
-                        "type" => "document"
+                        "type" => $elementType
                     );
                 }
             }
