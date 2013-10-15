@@ -17,6 +17,10 @@
 
 class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
 
+    static $cache = array();
+
+    static $cacheEnabled = false;
+
     /**
      * @var integer
      */
@@ -127,15 +131,40 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      */
     public static function getById($id) {
         try {
-
+            $id = intval($id);
+            if (self::$cacheEnabled && self::$cache[$id]) {
+                return self::$cache[$id];
+            }
             $config = new self();
-            $config->setId(intval($id));
+            $config->setId($id);
             $config->getResource()->getById();
+            if (self::$cacheEnabled) {
+                self::$cache[$id] = $config;
+            }
 
             return $config;
         } catch (Exception $e) {
 
         }
+    }
+
+    /**
+     * @param boolean $cacheEnabled
+     */
+    public static function setCacheEnabled($cacheEnabled)
+    {
+        self::$cacheEnabled = $cacheEnabled;
+        if(!$cacheEnabled){
+            self::$cache = array();
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public static function getCacheEnabled()
+    {
+        return self::$cacheEnabled;
     }
 
 
@@ -218,6 +247,9 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      */
     public function delete() {
         Pimcore_API_Plugin_Broker::getInstance()->preDeleteKeyValueKeyConfig($this);
+        if ($this->getId()) {
+            unset(self::$cache[$this->getId()]);
+        }
         parent::delete();
         Pimcore_API_Plugin_Broker::getInstance()->postDeleteKeyValueKeyConfig($this);
     }
@@ -226,9 +258,11 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      * Saves the key config
      */
     public function save() {
+
         $isUpdate = false;
 
         if ($this->getId()) {
+            unset(self::$cache[$this->getId()]);
             $isUpdate = true;
             Pimcore_API_Plugin_Broker::getInstance()->preUpdateKeyValueKeyConfig($this);
         } else {
