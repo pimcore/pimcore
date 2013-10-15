@@ -128,7 +128,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
         }        
 
         // filtering for objects
-        if ($this->getParam("filter")) {
+        if ($this->getParam("filter") && $this->getParam("class")) {
             $class = Object_Class::getByName($this->getParam("class"));
             $conditionFilters = Object_Service::getFilterCondition($this->getParam("filter"), $class);
             $join = "";
