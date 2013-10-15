@@ -16,7 +16,7 @@ class OnlineShop_Framework_IndexService {
         $this->defaultWorker = new OnlineShop_Framework_IndexService_Tenant_Worker(new OnlineShop_Framework_IndexService_Tenant_DefaultConfig($config));
 
         $this->tenantWorkers = array();
-        if($config->tenants && is_array($config->tenants)) {
+        if($config->tenants && $config->tenants instanceof Zend_Config) {
             foreach($config->tenants as $name => $tenant) {
                 $tenantConfigClass = (string) $tenant->class;
 
