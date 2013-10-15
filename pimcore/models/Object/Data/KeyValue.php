@@ -320,7 +320,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         $result = array();
         foreach($this->getProperties() as $property) {
             if($property['key'] == $keyId) {
-                $result[] = new Object_Data_KeyValue_Entry($property["value"], $property["translated"]);
+                $result[] = new Object_Data_KeyValue_Entry($property["value"], $property["translated"],$property["metadata"]);
             }
         }
 
