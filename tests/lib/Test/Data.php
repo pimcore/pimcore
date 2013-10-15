@@ -699,10 +699,14 @@ class Test_Data
         $pair = array();
         $pair["key"] = $keyConfig1->getId();
         $pair["value"] = "text1_" . $seed;
+        $pair["metadata"] = "meta1_" . $seed;
+        $pairs[] = $pair;
 
         $pair = array();
         $pair["key"] = $keyConfig2->getId();
         $pair["value"] = 1 + ($seed % 2);
+        $pair["metadata"] = "metda" . (1 + ($seed % 2));
+
 
         $pairs[] = $pair;
         return $pairs;
@@ -735,7 +739,7 @@ class Test_Data
         for ($i = 0; $i < count($expected); $i++) {
             $p1 = $expected[i];
             $p2 = $properties[i];
-            if ($p1["key"] != $p2["key"] || $p1["value"] != $p2["value"]) {
+            if ($p1["key"] != $p2["key"] || $p1["value"] != $p2["value"] || $p1["metadata"] != $p2["metadata"]) {
                 print("    property does not match\n");
                 return false;
             }
