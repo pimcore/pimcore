@@ -116,7 +116,6 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
     updateContent: function (path) {
 
         var params = this.options;
-        params.blockAutoHtml = true;
         params.pimcore_admin = true;
 
         Ext.Ajax.request({

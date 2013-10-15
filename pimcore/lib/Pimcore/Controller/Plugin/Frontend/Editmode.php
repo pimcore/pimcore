@@ -199,18 +199,10 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
 
         // add html headers for snippets in editmode, so there is no problem with javascript
         $body = $this->getResponse()->getBody();
-        if ($this->controller->editmode && strpos($body, "</body>") === false && !$request->getParam("blockAutoHtml")) {
+        if ($this->controller->editmode && strpos($body, "</body>") === false) {
             $body = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $body . "</body></html>";
 
             $this->getResponse()->setBody($body);
-        }
-
-        if ($this->controller->editmode
-            && strpos($body, "<head") === false
-            && !$request->getParam("blockAutoHtml")
-        ) {
-            // add error message if no head or body is in the response
-            $this->getResponse()->setBody('<span style="font-size:30px; font-weight:bold; color:red;">You have to define a &lt;head&gt; element in your view/layout!</span><br /><br />' . $body);
         }
 
         // add scripts in html header for pages in editmode
@@ -220,17 +212,18 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
 
             $html = str_get_html($body);
             if($html) {
-                if($head = $html->find("head", 0)) {
+                $head = $html->find("head", 0);
+                $bodyElement = $html->find("body", 0);
 
+                if($head && $bodyElement) {
                     $head->innertext = $head->innertext . "\n\n" . $editmodeHeadHtml;
-
-                    $bodyElement = $html->find("body", 0);
                     $bodyElement->onunload = "pimcoreOnUnload();";
                     $bodyElement->innertext = $bodyElement->innertext . "\n\n" . '<script type="text/javascript" src="/pimcore/static/js/pimcore/document/edit/startup.js?_dc=' . Pimcore_Version::$revision . '"></script>' . "\n\n";
 
                     $body = $html->save();
-
                     $this->getResponse()->setBody($body);
+                } else {
+                    $this->getResponse()->setBody('<span style="font-size:30px; font-weight:bold; color:red;">You have to define a &lt;head&gt; &amp; &lt;body&gt; element in your view/layout!</span><br /><br />' . $body);
                 }
 
                 $html->clear();
