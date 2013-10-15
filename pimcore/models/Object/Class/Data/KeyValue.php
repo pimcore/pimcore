@@ -426,7 +426,8 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
                 $resultItem = array(
                     "id" => $item["key"],
                     "name" => $keyName,
-                    "value" => $item["value"]
+                    "value" => $item["value"],
+                    "metadata" => $item["metadata"]
                 );
 
                 if ($keyConfig->getType() == "translated") {
