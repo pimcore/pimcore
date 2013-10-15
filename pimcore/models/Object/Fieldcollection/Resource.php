@@ -115,6 +115,6 @@ class Object_Fieldcollection_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         // empty relation table
-        $this->db->delete("object_relations_" . $object->getO_classId(), "ownertype = 'fieldcollection' AND " . $this->db->quoteInto("ownername = ?", $this->model->getFieldname()) . " AND " . $this->db->quoteInto("src_id = ?", $object->getId()));
+        $this->db->delete("object_relations_" . $object->getClassId(), "ownertype = 'fieldcollection' AND " . $this->db->quoteInto("ownername = ?", $this->model->getFieldname()) . " AND " . $this->db->quoteInto("src_id = ?", $object->getId()));
     }
 }

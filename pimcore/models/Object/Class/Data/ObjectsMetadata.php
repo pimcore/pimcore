@@ -53,7 +53,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                 $object = $metaObject->getObject();
                 if ($object instanceof Object_Concrete) {
                     $return[] = array(
-                        "dest_id" => $object->getO_id(),
+                        "dest_id" => $object->getId(),
                         "type" => "object",
                         "fieldname" => $this->getName(),
                         "index" => $counter
@@ -115,7 +115,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
             foreach ($data as $metaObject) {
                 $object = $metaObject->getObject();
                 if ($object instanceof Object_Concrete) {
-                    $ids[] = $object->geto_id();
+                    $ids[] = $object->getId();
                 }
             }
             return "," . implode(",", $ids) . ",";
@@ -142,7 +142,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                 $object = $metaObject->getObject();
                 if ($object instanceof Object_Concrete) {
 
-                    $value = array("id" => $object->geto_id());
+                    $value = array("id" => $object->getId());
                     foreach($visibleFieldsArray as $key) {
                         $getter = "get" . ucfirst($key);
                         if(method_exists($object, $getter)) {
@@ -229,7 +229,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $o = $metaObject->getObject();
-                $pathes[] = $o->geto_FullPath();
+                $pathes[] = $o->getFullPath();
             }
             return implode("<br />", $pathes);
         }
@@ -345,8 +345,8 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 			foreach ($data as $metaObject) {
                 $o = $metaObject->getObject();
 				if ($o instanceof Object_Abstract) {
-					$dependencies["object_" . $o->getO_Id()] = array(
-						"id" => $o->getO_Id(),
+					$dependencies["object_" . $o->getId()] = array(
+						"id" => $o->getId(),
 						"type" => "object"
 					);
 				}
@@ -513,7 +513,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
      */
     public function delete($object) {
         $db = Pimcore_Resource::get();
-        $db->delete("object_metadata_" . $object->getO_classId(), $db->quoteInto("o_id = ?", $object->getId()) . " AND " . $db->quoteInto("fieldname = ?", $this->getName()));
+        $db->delete("object_metadata_" . $object->getClassId(), $db->quoteInto("o_id = ?", $object->getId()) . " AND " . $db->quoteInto("fieldname = ?", $this->getName()));
     }
 
     public function setAllowedClassId($allowedClassId) {

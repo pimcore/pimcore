@@ -578,7 +578,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                 if (!$object instanceof Object_Concrete) {
                     //create new object
                     $object = new $className();
-                } else if (object instanceof Object_Concrete and $object->getO_className() !== $className) {
+                } else if (object instanceof Object_Concrete and $object->getClassName() !== $className) {
                     //delete the old object it is of a different class
                     $object->delete();
                     $object = new $className();
@@ -785,7 +785,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
             $object = Object_Abstract::getById($this->getParam("job"));
 
             if ($object) {
-                $className = $object->getO_className();
+                $className = $object->getClassName();
                 $class = Object_Class::getByName($className);
                 $value = $this->getParam("value");
                 if ($this->getParam("valueType") == "object") {

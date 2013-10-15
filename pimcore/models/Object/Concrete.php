@@ -120,7 +120,7 @@ class Object_Concrete extends Object_Abstract {
     protected function update() {
 
 
-        $fieldDefintions = $this->getO_class()->getFieldDefinitions();
+        $fieldDefintions = $this->getClass()->getFieldDefinitions();
         foreach($fieldDefintions as $fd){
             $getter = "get".ucfirst($fd->getName());
             $setter = "set".ucfirst($fd->getName());
@@ -158,7 +158,7 @@ class Object_Concrete extends Object_Abstract {
                     $fd->checkValidity($value, $omitMandatoryCheck);
                 } catch (Exception $e) {
 
-                    if($this->getO_class()->getAllowInherit()) {
+                    if($this->getClass()->getAllowInherit()) {
                         //try again with parent data when inheritance in activated
                         try {
 
@@ -210,7 +210,7 @@ class Object_Concrete extends Object_Abstract {
             foreach ($this->getScheduledTasks() as $task) {
                 $task->setId(null);
                 $task->setResource(null);
-                $task->setCid($this->getO_Id());
+                $task->setCid($this->getId());
                 $task->setCtype("object");
                 $task->save();
             }
@@ -223,7 +223,7 @@ class Object_Concrete extends Object_Abstract {
     public function delete() {
 
         // delete all versions
-        foreach ($this->getO_versions() as $v) {
+        foreach ($this->getVersions() as $v) {
             $v->delete();
         }
 
@@ -242,7 +242,7 @@ class Object_Concrete extends Object_Abstract {
     public function saveVersion($setModificationDate = true, $directCall = true) {
 
         if ($setModificationDate) {
-            $this->setO_modificationDate(time());
+            $this->setModificationDate(time());
         }
 
         // hook should be also called if "save only new version" is selected
@@ -262,10 +262,10 @@ class Object_Concrete extends Object_Abstract {
             || Pimcore_Config::getSystemConfig()->objects->versions->days) {
             // create version
             $version = new Version();
-            $version->setCid($this->getO_Id());
+            $version->setCid($this->getId());
             $version->setCtype("object");
-            $version->setDate($this->getO_modificationDate());
-            $version->setUserId($this->getO_userModification());
+            $version->setDate($this->getModificationDate());
+            $version->setUserId($this->getUserModification());
             $version->setData($this);
             $version->save();
         }
@@ -281,38 +281,21 @@ class Object_Concrete extends Object_Abstract {
     /**
      * @return array
      */
-    public function getO_versions() {
+    public function getVersions() {
         if ($this->o_versions === null) {
-            $this->setO_Versions($this->getResource()->getVersions());
+            $this->setVersions($this->getResource()->getVersions());
         }
         return $this->o_versions;
     }
 
     /**
-     * @return array
-     */
-    public function getVersions () {
-        return $this->getO_versions();
-    }
-
-    /**
      * @param array $o_versions
      * @return void
      */
-    public function setO_versions($o_versions) {
+    public function setVersions($o_versions) {
         $this->o_versions = $o_versions;
         return $this;
     }
-
-    /**
-     * @param array $o_versions
-     * @return void
-     */
-    public function setVersions ($o_versions) {
-        $this->setO_versions($o_versions);
-        return $this;
-    }
-
 
     /**
      * @param string $key
@@ -334,8 +317,8 @@ class Object_Concrete extends Object_Abstract {
 
         $tags = parent::getCacheTags($tags);
 
-        $tags["class_" . $this->getO_classId()] = "class_" . $this->getO_classId();
-        foreach ($this->getO_class()->getFieldDefinitions() as $name => $def) {
+        $tags["class_" . $this->getClassId()] = "class_" . $this->getClassId();
+        foreach ($this->getClass()->getFieldDefinitions() as $name => $def) {
             // no need to add lazy-loading fields to the cache tags
             if (!method_exists($def, "getLazyLoading") or !$def->getLazyLoading()) {
                 $tags = $def->getCacheTags($this->getValueForFieldName($name), $this, $tags);
@@ -352,8 +335,8 @@ class Object_Concrete extends Object_Abstract {
         $dependencies = parent::resolveDependencies();
 
         // check in fields
-        if ($this->geto_class() instanceof Object_Class) {
-        	foreach ($this->geto_class()->getFieldDefinitions() as $field) {
+        if ($this->getClass() instanceof Object_Class) {
+        	foreach ($this->getClass()->getFieldDefinitions() as $field) {
         		$key = $field->getName();
                 $dependencies = array_merge($dependencies, $field->resolveDependencies($this->$key));
         	}
@@ -364,58 +347,26 @@ class Object_Concrete extends Object_Abstract {
     /**
      * @param Object_Class $o_class
      */
-    public function setO_class($o_class) {
+    public function setClass($o_class) {
         $this->o_class = $o_class;
         return $this;
-    }
-
-    /**
-     * @param int $o_class
-     * @return void
-     */
-    public function setClass($o_class) {
-        $this->setO_class($o_class);
-        return $this;
-    }
-
-    /**
-     * @return Object_Class
-     */
-    public function getO_class() {
-        if (!$this->o_class) {
-            $this->setO_class(Object_Class::getById($this->getO_classId()));
-        }
-        return $this->o_class;
     }
 
     /**
      * @return Object_Class
      */
     public function getClass() {
-        return $this->getO_class();
-    }
-
-    /**
-     * @return integer
-     */
-    public function getO_classId() {
-        return (int) $this->o_classId;
+        if (!$this->o_class) {
+            $this->setClass(Object_Class::getById($this->getClassId()));
+        }
+        return $this->o_class;
     }
 
     /**
      * @return integer
      */
     public function getClassId() {
-        return $this->getO_classId();
-    }
-
-    /**
-     * @param int $o_classId
-     * @return void
-     */
-    public function setO_classId($o_classId) {
-        $this->o_classId = (int) $o_classId;
-        return $this;
+        return (int) $this->o_classId;
     }
 
     /**
@@ -423,23 +374,7 @@ class Object_Concrete extends Object_Abstract {
      * @return void
      */
     public function setClassId($o_classId) {
-        $this->setO_classId($o_classId);
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getO_className() {
-        return $this->o_className;
-    }
-
-    /**
-     * @param string $o_className
-     * @return void
-     */
-    public function setO_className($o_className) {
-        $this->o_className = $o_className;
+        $this->o_classId = (int) $o_classId;
         return $this;
     }
 
@@ -447,7 +382,7 @@ class Object_Concrete extends Object_Abstract {
      * @return string
      */
     public function getClassName() {
-        return $this->getO_className();
+        return $this->o_className;
     }
 
     /**
@@ -455,39 +390,22 @@ class Object_Concrete extends Object_Abstract {
      * @return void
      */
     public function setClassName($o_className) {
-        $this->setO_className($o_className);
+        $this->o_className = $o_className;
         return $this;
-    }
-
-
-    /**
-     * @return boolean
-     */
-    public function getO_published() {
-        return (bool) $this->o_published;
     }
 
     /**
      * @return boolean
      */
     public function getPublished() {
-        return (bool) $this->getO_published();
+        return (bool) $this->o_published;
     }
 
     /**
      * @return boolean
      */
     public function isPublished() {
-        return (bool) $this->getO_published();
-    }
-
-    /**
-     * @param boolean $o_published
-     * @return void
-     */
-    public function setO_published($o_published) {
-        $this->o_published = (bool) $o_published;
-        return $this;
+        return (bool) $this->getPublished();
     }
 
     /**
@@ -495,7 +413,7 @@ class Object_Concrete extends Object_Abstract {
      * @return void
      */
     public function setPublished($o_published) {
-        $this->setO_published($o_published);
+        $this->o_published = (bool) $o_published;
         return $this;
     }
 
@@ -522,7 +440,7 @@ class Object_Concrete extends Object_Abstract {
     public function getScheduledTasks() {
         if ($this->scheduledTasks === null) {
             $taskList = new Schedule_Task_List();
-            $taskList->setCondition("cid = ? AND ctype='object'", $this->getO_Id());
+            $taskList->setCondition("cid = ? AND ctype='object'", $this->getId());
             $this->scheduledTasks = $taskList->load();
         }
         return $this->scheduledTasks;
@@ -540,15 +458,15 @@ class Object_Concrete extends Object_Abstract {
      * @return mixed
      */
     public function getValueFromParent($key, $params = null) {
-        if ($this->getO_parent() instanceof Object_Abstract) {
+        if ($this->getParent() instanceof Object_Abstract) {
 
-            $parent = $this->getO_parent();
-            while($parent && $parent->getO_type() == "folder") {
-                $parent = $parent->getO_parent();
+            $parent = $this->getParent();
+            while($parent && $parent->getType() == "folder") {
+                $parent = $parent->getParent();
             }
 
-            if ($parent && ($parent->getO_type() == "object" || $parent->getO_type() == "variant")) {
-                if ($parent->getO_classId() == $this->getO_classId()) {
+            if ($parent && ($parent->getType() == "object" || $parent->getType() == "variant")) {
+                if ($parent->getClassId() == $this->getClassId()) {
                     $method = "get" . $key;
                     if (method_exists($parent, $method)) {
                         if (method_exists($parent, $method)) {

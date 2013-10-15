@@ -117,7 +117,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
         } else if ($this->getObjectsAllowed() and is_array($allowedClasses) and count($allowedClasses) > 0) {
             //check for allowed classes
             if($object instanceof Object_Concrete){
-                $classname = $object->getO_className();
+                $classname = $object->getClassName();
                 foreach ($allowedClasses as $c) {
                     $allowedClassnames[] = $c['classes'];
                 }
@@ -285,7 +285,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
 
         if($object instanceof Object_Concrete) {
             if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading() or (array_key_exists("force", $params) && $params["force"])) {
-                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", array($object->getO_id(), $this->getName()));
+                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", array($object->getId(), $this->getName()));
             } else {
                 return null;
             }

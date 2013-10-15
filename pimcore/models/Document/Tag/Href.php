@@ -216,31 +216,12 @@ class Document_Tag_Href extends Document_Tag {
         $dependencies = array();
 		$this->setElement();
 
-        if ($this->element instanceof Document) {
-
-            $key = "document_" . $this->element->getId();
-
+        if ($this->element instanceof Element_Interface) {
+            $elementType = Element_Service::getElementType($this->element);
+            $key = $elementType . "_" . $this->element->getId();
             $dependencies[$key] = array(
                 "id" => $this->element->getId(),
-                "type" => "document"
-            );
-        }
-        else if ($this->element instanceof Asset) {
-
-            $key = "asset_" . $this->element->getId();
-
-            $dependencies[$key] = array(
-                "id" => $this->element->getId(),
-                "type" => "asset"
-            );
-        }
-        else if ($this->element instanceof Object_Abstract) {
-
-            $key = "object_" . $this->element->getO_Id();
-
-            $dependencies[$key] = array(
-                "id" => $this->element->getO_Id(),
-                "type" => "object"
+                "type" => $elementType
             );
         }
 

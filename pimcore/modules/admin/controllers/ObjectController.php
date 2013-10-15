@@ -215,16 +215,16 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $tmpObject["iconCls"] = "pimcore_icon_tree_variant";
         } else {
             if($child->getElementAdminStyle()->getElementIcon()) {
-                $tmpObject["icon"] = $child->getO_elementAdminStyle()->getElementIcon();
+                $tmpObject["icon"] = $child->getElementAdminStyle()->getElementIcon();
             }
 
             if($child->getElementAdminStyle()->getElementIconClass()) {
-                $tmpObject["iconCls"] = $child->getO_elementAdminStyle()->getElementIconClass();
+                $tmpObject["iconCls"] = $child->getElementAdminStyle()->getElementIconClass();
             }
         }
 
         if($child->getElementAdminStyle()->getElementCssClass()) {
-            $tmpObject["cls"] .= $child->getO_elementAdminStyle()->getElementCssClass() . " ";
+            $tmpObject["cls"] .= $child->getElementAdminStyle()->getElementCssClass() . " ";
         }
 
 
@@ -337,10 +337,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData["general"]["fullpath"] = $object->getFullPath();
 
             if($object->getElementAdminStyle()->getElementIcon()) {
-                $objectData["general"]["icon"] = $object->getO_elementAdminStyle()->getElementIcon();
+                $objectData["general"]["icon"] = $object->getElementAdminStyle()->getElementIcon();
             }
             if($object->getElementAdminStyle()->getElementIconClass()) {
-                $objectData["general"]["iconCls"] = $object->getO_elementAdminStyle()->getElementIconClass();
+                $objectData["general"]["iconCls"] = $object->getElementAdminStyle()->getElementIconClass();
             }
 
 
@@ -489,7 +489,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     {
         $object = Object_Abstract::getById($this->getParam("id"));
         if ($object instanceof Object_Abstract) {
-            $object->setO_locked((bool)$this->getParam("locked"));
+            $object->setLocked((bool)$this->getParam("locked"));
             //TODO: if latest version published - publish
             //if latest version not published just save new version
 
@@ -585,7 +585,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $object->setPublished(false);
 
                 if($this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_OBJECT || $this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_VARIANT) {
-                    $object->setO_type($this->getParam("objecttype"));
+                    $object->setType($this->getParam("objecttype"));
                 }
 
                 try {

@@ -116,12 +116,12 @@ class Element_Import_Service
             $element->setData(base64_decode($apiElement->data));
         } else if ($element instanceof Object_Concrete) {
             $element->setKey($apiElement->key);
-            $element->setO_className($apiElement->className);
+            $element->setClassName($apiElement->className);
             $class = Object_Class::getByName($apiElement->className);
             if (!$class instanceof Object_Class) {
                 throw new Exception("Unknown object class [ " . $apiElement->className . " ] ");
             }
-            $element->setO_classId($class->getId());
+            $element->setClassId($class->getId());
 
         } else {
             $element->setKey($apiElement->key);

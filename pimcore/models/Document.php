@@ -531,47 +531,6 @@ class Document extends Element_Abstract {
     }
 
     /**
-     * get the cache tag for the current document
-     *
-     * @return string
-     */
-    public function getCacheTag() {
-        return "document_" . $this->getId();
-    }
-
-    /**
-     * Get the cache tags for the documents, resolve all dependencies to tag the cache entries
-     * This is necessary to update the cache if there is a change in an depended object
-     *
-     * @return array
-     */
-    public function getCacheTags($tags = array()) {
-
-        $tags = is_array($tags) ? $tags : array();
-        
-        $tags[$this->getCacheTag()] = $this->getCacheTag();
-        return $tags;
-    }
-
-    /**
-     * Resolve the dependencies of the document and returns an array of them - Used by update()
-     *
-     * @return array
-     */
-    public function resolveDependencies() {
-
-        $dependencies = array();
-
-        // check for properties
-        $properties = $this->getProperties();
-        foreach ($properties as $property) {
-            $dependencies = array_merge($dependencies, $property->resolveDependencies());
-        }
-
-        return $dependencies;
-    }
-
-    /**
      * set the children of the document
      *
      * @return array
@@ -620,16 +579,6 @@ class Document extends Element_Abstract {
         return $this->getResource()->hasChilds();
     }
 
-
-    /**
-     * Inverted hasChilds()
-     *
-     * @return boolean
-     */
-    public function hasNoChilds() {
-        return !$this->hasChilds();
-    }
-
     /**
      * Returns true if the element is locked
      * @return string
@@ -648,19 +597,6 @@ class Document extends Element_Abstract {
     public function setLocked($locked){
         $this->locked = $locked;
         return $this;
-    }
-
-    /**
-     * Returns true if the element is locked 
-     * @return bool
-     */
-    public function isLocked(){
-        if($this->getLocked()) {
-            return true;
-        }
-        
-        // check for inherited
-        return $this->getResource()->isLocked();
     }
 
     /**
@@ -1016,34 +952,6 @@ class Document extends Element_Abstract {
     }
 
     /**
-     * Get specific property data or the property object itself ($asContainer=true) by it's name, if the property doesn't exists return null
-     * @param string $name
-     * @param bool $asContainer
-     * @return mixed
-     */
-    public function getProperty($name, $asContainer = false) {
-        $properties = $this->getProperties();
-        if ($this->hasProperty($name)) {
-            if($asContainer) {
-                return $properties[$name];
-            } else {
-                return $properties[$name]->getData();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param  $name
-     * @return bool
-     */
-    public function hasProperty ($name) {
-        $properties = $this->getProperties();
-        return array_key_exists($name, $properties);
-    }
-
-
-    /**
      * @param string $name
      * @param string $type
      * @param mixed $data
@@ -1091,49 +999,6 @@ class Document extends Element_Abstract {
         }
         return $this;
     }
-
-    /**
-     * This is used for user-permissions, pass a permission type (eg. list, view, save) an you know if the current user is allowed to perform the requested action
-     *
-     * @param string $type
-     * @return boolean
-     */
-    public function isAllowed($type) {
-
-        $currentUser = Pimcore_Tool_Admin::getCurrentUser();
-        //everything is allowed for admin
-        if ($currentUser->isAdmin()) {
-            return true;
-        }
-
-        return $this->getResource()->isAllowed($type, $currentUser);
-    }
-
-    /**
-     * @return array
-     */
-    public function getUserPermissions () {
-
-        $vars = get_class_vars("User_Workspace_Document");
-        $ignored = array("userId","cid","cpath","resource");
-        $permissions = array();
-
-        foreach ($vars as $name => $defaultValue) {
-            if(!in_array($name, $ignored)) {
-                $permissions[$name] = $this->isAllowed($name);
-            }
-        }
-
-        return $permissions;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString() {
-        return $this->getFullPath();
-    }
-
 
     /**
      *

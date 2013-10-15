@@ -302,7 +302,7 @@ class Object_Abstract extends Element_Abstract {
         // get classname
         if(get_called_class() != "Object_Abstract" && get_called_class() != "Object_Concrete") {
             $tmpObject = new static();
-            $className = "Object_" . ucfirst($tmpObject->getO_className());
+            $className = "Object_" . ucfirst($tmpObject->getClassName());
         }
 
         if (!empty($config["class"])) {
@@ -342,7 +342,7 @@ class Object_Abstract extends Element_Abstract {
         // get classname
         if(get_called_class() != "Object_Abstract" && get_called_class() != "Object_Concrete") {
             $tmpObject = new static();
-            $className = "Object_" . ucfirst($tmpObject->getO_className());
+            $className = "Object_" . ucfirst($tmpObject->getClassName());
         }
 
         if (!empty($config["class"])) {
@@ -369,38 +369,18 @@ class Object_Abstract extends Element_Abstract {
         }
     }
 
-
-    /*
-      * @return array
-      */
-    public function getCacheTag() {
-        return "object_" . $this->getO_id();
-    }
-
-    /*
-      * @return array
-      */
-    public function getCacheTags($tags = array()) {
-        
-        $tags = is_array($tags) ? $tags : array();
-
-        $tags[$this->getCacheTag()] = $this->getCacheTag();
-        return $tags;
-    }
-
-
     private $lastGetChildsObjectTypes = array();
 
     /**
      * @return array
      */
-    public function getO_childs($objectTypes = array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER)) {
+    public function getChilds($objectTypes = array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER)) {
 
         if ($this->o_childs === null || $this->lastGetChildsObjectTypes != $objectTypes) {
             $this->lastGetChildsObjectTypes = $objectTypes;
 
             $list = new Object_List(true);
-            $list->setCondition("o_parentId = ?", $this->getO_id());
+            $list->setCondition("o_parentId = ?", $this->getId());
             $list->setOrderKey("o_key");
             $list->setOrder("asc");
             $list->setObjectTypes($objectTypes);
@@ -409,24 +389,6 @@ class Object_Abstract extends Element_Abstract {
 
         return $this->o_childs;
     }
-    
-    /**
-     * @return array
-     */
-    public function getChilds ($objectTypes = array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER)) {
-        return $this->getO_childs($objectTypes);
-    }
-    
-    /**
-     * @return boolean
-     */
-    public function hasNoChilds() {
-        if ($this->hasChilds()) {
-            return false;
-        }
-        return true;
-    }
-
 
     /**
      * @return boolean
@@ -446,23 +408,6 @@ class Object_Abstract extends Element_Abstract {
      * Returns true if the element is locked
      * @return string
      */
-    public function getO_locked(){
-        return $this->o_locked;
-    }
-
-    /**
-     * @param  $locked
-     * @return void
-     */
-    public function setO_locked($o_locked){
-        $this->o_locked = $o_locked;
-        return $this;
-    }
-    
-    /**
-     * Returns true if the element is locked
-     * @return string
-     */
     public function getLocked(){
         return $this->o_locked;
     }
@@ -475,51 +420,6 @@ class Object_Abstract extends Element_Abstract {
         $this->o_locked = $o_locked;
         return $this;
     }
-    
-    /**
-     * Returns true if the element is locked
-     * @return bool
-     */
-    public function isLocked(){
-        if($this->getO_locked()) {
-            return true;
-        }
-        
-        // check for inherited
-        return $this->getResource()->isLocked();
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isAllowed($type) {
-
-        $currentUser = Pimcore_Tool_Admin::getCurrentUser();
-        //everything is allowed for admin
-        if ($currentUser->isAdmin()) {
-            return true;
-        }
-
-        return $this->getResource()->isAllowed($type, $currentUser);
-    }
-
-    /**
-     * @return array
-     */
-    public function getUserPermissions () {
-
-        $vars = get_class_vars("User_Workspace_Object");
-        $ignored = array("userId","cid","cpath");
-        $permissions = array();
-
-        foreach ($vars as $name => $defaultValue) {
-            if(!in_array($name, $ignored)) {
-                $permissions[$name] = $this->isAllowed($name);
-            }
-        }
-
-        return $permissions;
-    }
 
     /**
      * @return void
@@ -530,7 +430,7 @@ class Object_Abstract extends Element_Abstract {
 
         // delete childs
         if ($this->hasChilds(array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT))) {
-            foreach ($this->getO_childs(array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT)) as $value) {
+            foreach ($this->getChilds(array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT)) as $value) {
                 $value->delete();
             }
         }
@@ -564,7 +464,7 @@ class Object_Abstract extends Element_Abstract {
     public function save() {
 
         $isUpdate = false;
-        if ($this->getO_Id()) {
+        if ($this->getId()) {
             $isUpdate = true;
             Pimcore_API_Plugin_Broker::getInstance()->preUpdateObject($this);
         } else {
@@ -646,8 +546,8 @@ class Object_Abstract extends Element_Abstract {
                 //$this->delete();
 
                 // parent document doesn't exist anymore, set the parent to to root
-                $this->setO_parentId(1);
-                $this->setO_path("/");
+                $this->setParentId(1);
+                $this->setPath("/");
             }
         }
 
@@ -671,23 +571,23 @@ class Object_Abstract extends Element_Abstract {
         }
         
         // set mod date
-        $this->setO_modificationDate(time());
+        $this->setModificationDate(time());
 
         if(!$this->getCreationDate()) {
             $this->setCreationDate(time());
         }
 
         // save properties
-        $this->getO_Properties();
+        $this->getProperties();
         $this->getResource()->deleteAllProperties();
 
-        if (is_array($this->getO_Properties()) and count(is_array($this->getO_Properties())) > 0) {
-            foreach ($this->getO_Properties() as $property) {
+        if (is_array($this->getProperties()) and count(is_array($this->getProperties())) > 0) {
+            foreach ($this->getProperties() as $property) {
                 if (!$property->getInherited()) {
                     $property->setResource(null);
-                    $property->setCid($this->getO_Id());
+                    $property->setCid($this->getId());
                     $property->setCtype("object");
-                    $property->setCpath($this->getO_Path() . $this->getO_Key());
+                    $property->setCpath($this->getPath() . $this->getKey());
                     $property->save();
                 }
             }
@@ -699,7 +599,7 @@ class Object_Abstract extends Element_Abstract {
 
         foreach ($this->resolveDependencies() as $requirement) {
 
-            if ($requirement["id"] == $this->getO_id() && $requirement["type"] == "object") {
+            if ($requirement["id"] == $this->getId() && $requirement["type"] == "object") {
                 // dont't add a reference to yourself
                 continue;
             }
@@ -727,206 +627,93 @@ class Object_Abstract extends Element_Abstract {
     }
 
     /**
-     * @return array
-     */
-    public function resolveDependencies() {
-
-        $dependencies = array();
-
-        // check for properties
-        if (method_exists($this, "getO_properties")) {
-            $properties = $this->getO_properties();
-
-            foreach ($properties as $property) {
-                $dependencies = array_merge($dependencies, $property->resolveDependencies());
-            }
-        }
-
-        return $dependencies;
-    }
-
-    /**
      * @return Dependency
      */
-    public function getO_Dependencies() {
+    public function getDependencies() {
 
         if (!$this->o_dependencies) {
             $this->o_dependencies = Dependency::getBySourceId($this->getId(), "object");
         }
         return $this->o_dependencies;
     }
-    
-    /**
-     * @return Dependency
-     */
-    public function getDependencies() {
-        return $this->getO_Dependencies();
-    }
-
-    /**
-     * @return string
-     */
-    public function getO_FullPath() {
-        $path = $this->getO_Path() . $this->getO_Key();
-        return $path;
-    }
 
     /**
      * @return string
      */
     public function getFullPath() {
-        return $this->getO_FullPath();
+        $path = $this->getPath() . $this->getKey();
+        return $path;
     }
 
     /**
      * @return integer
-     */
-    public function getO_id() {
-        return $this->o_id;
-    }
-    
-    /**
-     * @return integer $id
      */
     public function getId() {
-        return (int) $this->getO_id();
+        return $this->o_id;
     }
 
-    /**
-     * @return integer
-     */
-    public function getO_parentId() {
-        return $this->o_parentId;
-    }
 
     /**
      * @return integer
      */
     public function getParentId() {
-        return $this->getO_parentId();
-    }
-
-    /**
-     * @return string
-     */
-    public function getO_type() {
-        return $this->o_type;
+        return $this->o_parentId;
     }
 
     /**
      * @return string
      */
     public function getType() {
-        return $this->getO_type();
+        return $this->o_type;
     }
-
-    /**
-     * @return string
-     */
-    public function getO_key() {
-        return $this->o_key;
-    }
-
 
     /**
      * @return string
      */
     public function getKey() {
-        return $this->getO_key();
-    }
-
-    /**
-     * @return path
-     */
-    public function getO_path() {
-        return $this->o_path;
+        return $this->o_key;
     }
 
     /**
      * @return path
      */
     public function getPath() {
-        return $this->getO_path();
-    }
-
-    /**
-     * @return integer
-     */
-    public function getO_index() {
-        return $this->o_index;
+        return $this->o_path;
     }
 
     /**
      * @return integer
      */
     public function getIndex() {
-        return $this->getO_index();
-    }
-
-    /**
-     * @return integer
-     */
-    public function getO_creationDate() {
-        return $this->o_creationDate;
+        return $this->o_index;
     }
 
     /**
      * @return integer
      */
     public function getCreationDate() {
-        return $this->getO_creationDate();
-    }
-
-    /**
-     * @return integer
-     */
-    public function getO_modificationDate() {
-        return $this->o_modificationDate;
+        return $this->o_creationDate;
     }
 
     /**
      * @return integer
      */
     public function getModificationDate() {
-        return $this->getO_modificationDate();
-    }
-
-    /**
-     * @return integer
-     */
-    public function getO_userOwner() {
-        return $this->o_userOwner;
+        return $this->o_modificationDate;
     }
 
     /**
      * @return integer
      */
     public function getUserOwner() {
-        return $this->getO_userOwner();
-    }
-
-    /**
-     * @return integer
-     */
-    public function getO_userModification() {
-        return $this->o_userModification;
+        return $this->o_userOwner;
     }
 
     /**
      * @return integer
      */
     public function getUserModification() {
-        return $this->getO_userModification();
-    }
-
-
-    /**
-     * @param int $o_id
-     * @return void
-     */
-    public function setO_id($o_id) {
-        $this->o_id = (int) $o_id;
-        return $this;
+        return $this->o_userModification;
     }
 
     /**
@@ -934,7 +721,7 @@ class Object_Abstract extends Element_Abstract {
      * @return void
      */
     public function setId($o_id) {
-        $this->setO_id($o_id);
+        $this->o_id = (int) $o_id;
         return $this;
     }
 
@@ -942,7 +729,7 @@ class Object_Abstract extends Element_Abstract {
      * @param int $o_parentId
      * @return void
      */
-    public function setO_parentId($o_parentId) {
+    public function setParentId($o_parentId) {
         $this->o_parentId = (int) $o_parentId;
 
         try {
@@ -954,38 +741,11 @@ class Object_Abstract extends Element_Abstract {
     }
 
     /**
-     * @param int $o_parentId
-     * @return void
-     */
-    public function setParentId($o_parentId) {
-        $this->setO_parentId($o_parentId);
-        return $this;
-    }
-
-    /**
-     * @param string $o_type
-     * @return void
-     */
-    public function setO_type($o_type) {
-        $this->o_type = $o_type;
-        return $this;
-    }
-
-    /**
      * @param string $o_type
      * @return void
      */
     public function setType($o_type) {
-        $this->setO_type($o_type);
-        return $this;
-    }
-
-    /**
-     * @param string $o_key
-     * @return void
-     */
-    public function setO_key($o_key) {
-        $this->o_key = $o_key;
+        $this->o_type = $o_type;
         return $this;
     }
 
@@ -994,34 +754,16 @@ class Object_Abstract extends Element_Abstract {
      * @return void
      */
     public function setKey($o_key) {
-        $this->setO_key($o_key);
+        $this->o_key = $o_key;
         return $this;
     }
 
-    /**
-     * @param string $o_path
-     * @return void
-     */
-    public function setO_path($o_path) {
-        $this->o_path = $o_path;
-        return $this;
-    }
-    
     /**
      * @param string $o_path
      * @return void
      */
     public function setPath($o_path) {
-        $this->setO_path($o_path);
-        return $this;
-    }
-
-    /**
-     * @param int $o_index
-     * @return void
-     */
-    public function setO_index($o_index) {
-        $this->o_index = (int) $o_index;
+        $this->o_path = $o_path;
         return $this;
     }
 
@@ -1030,16 +772,7 @@ class Object_Abstract extends Element_Abstract {
      * @return void
      */
     public function setIndex($o_index) {
-        $this->setO_index($o_index);
-        return $this;
-    }
-
-    /**
-     * @param int $o_creationDate
-     * @return void
-     */
-    public function setO_creationDate($o_creationDate) {
-        $this->o_creationDate = (int) $o_creationDate;
+        $this->o_index = (int) $o_index;
         return $this;
     }
 
@@ -1048,16 +781,7 @@ class Object_Abstract extends Element_Abstract {
      * @return void
      */
     public function setCreationDate($o_creationDate) {
-        $this->setO_creationDate($o_creationDate);
-        return $this;
-    }
-
-    /**
-     * @param int $o_modificationDate
-     * @return void
-     */
-    public function setO_modificationDate($o_modificationDate) {
-        $this->o_modificationDate = (int) $o_modificationDate;
+        $this->o_creationDate = (int) $o_creationDate;
         return $this;
     }
 
@@ -1066,16 +790,7 @@ class Object_Abstract extends Element_Abstract {
      * @return void
      */
     public function setModificationDate($o_modificationDate) {
-        $this->setO_modificationDate($o_modificationDate);
-        return $this;
-    }
-
-    /**
-     * @param int $o_userOwner
-     * @return void
-     */
-    public function setO_userOwner($o_userOwner) {
-        $this->o_userOwner = (int) $o_userOwner;
+        $this->o_modificationDate = (int) $o_modificationDate;
         return $this;
     }
 
@@ -1084,16 +799,7 @@ class Object_Abstract extends Element_Abstract {
      * @return void
      */
     public function setUserOwner($o_userOwner) {
-        $this->setO_userOwner($o_userOwner);
-        return $this;
-    }
-
-    /**
-     * @param int $o_userModification
-     * @return void
-     */
-    public function setO_userModification($o_userModification) {
-        $this->o_userModification = (int) $o_userModification;
+        $this->o_userOwner = (int) $o_userOwner;
         return $this;
     }
 
@@ -1102,7 +808,7 @@ class Object_Abstract extends Element_Abstract {
      * @return void
      */
     public function setUserModification($o_userModification) {
-        $this->setO_userModification($o_userModification);
+        $this->o_userModification = (int) $o_userModification;
         return $this;
     }
 
@@ -1110,7 +816,7 @@ class Object_Abstract extends Element_Abstract {
      * @param array $o_childs
      * @return void
      */
-    public function setO_childs($o_childs) {
+    public function setChilds($o_childs) {
         $this->o_childs = $o_childs;
         if(is_array($o_childs) and count($o_childs)>0){
             $this->o_hasChilds=true;
@@ -1121,38 +827,22 @@ class Object_Abstract extends Element_Abstract {
     }
 
     /**
-     * @param array $o_childs
-     * @return void
-     */
-    public function setChilds($o_childs) {
-        $this->setO_childs($o_childs);
-        return $this;
-    }
-
-    /**
      * @return Object_Abstract
      */
-    public function getO_parent() {
+    public function getParent() {
 
         if($this->o_parent === null) {
-            $this->setO_parent(Object_Abstract::getById($this->getO_parentId()));
+            $this->setParent(Object_Abstract::getById($this->getParentId()));
         }
 
         return $this->o_parent;
     }
 
     /**
-     * @return Object_Abstract
-     */
-    public function getParent() {
-        return $this->getO_parent();
-    }
-
-    /**
      * @param Object_Abstract $o_parent
      * @return void
      */
-    public function setO_parent($o_parent) {
+    public function setParent($o_parent) {
         $this->o_parent = $o_parent;
         if($o_parent instanceof Object_Abstract) {
             $this->o_parentId = $o_parent->getId();
@@ -1161,18 +851,9 @@ class Object_Abstract extends Element_Abstract {
     }
 
     /**
-     * @param Object_Abstract $o_parent
-     * @return void
-     */
-    public function setParent($o_parent) {
-        $this->setO_parent($o_parent);
-        return $this;
-    }   
-
-    /**
      * @return Property[]
      */
-    public function getO_properties() {
+    public function getProperties() {
         if ($this->o_properties === null) {
             // try to get from cache
             $cacheKey = "object_properties_" . $this->getId();
@@ -1183,25 +864,9 @@ class Object_Abstract extends Element_Abstract {
                 Pimcore_Model_Cache::save($properties, $cacheKey, $cacheTags);
             }
 
-            $this->setO_Properties($properties);
+            $this->setProperties($properties);
         }
         return $this->o_properties;
-    }
-
-    /**
-     * @return array
-     */
-    public function getProperties() {
-        return $this->getO_properties();
-    }
-
-    /**
-     * @param array $o_properties
-     * @return void
-     */
-    public function setO_properties($o_properties) {
-        $this->o_properties = $o_properties;
-        return $this;
     }
 
     /**
@@ -1209,37 +874,10 @@ class Object_Abstract extends Element_Abstract {
      * @return void
      */
     public function setProperties($o_properties) {
-        $this->setO_properties($o_properties);
+        $this->o_properties = $o_properties;
         return $this;
     }
-    
-    /**
-     * Get specific property data or the property object itself ($asContainer=true) by it's name, if the property doesn't exists return null
-     * @param string $name
-     * @param bool $asContainer
-     * @return mixed
-     */
-    public function getProperty($name, $asContainer = false) {
-        $properties = $this->getProperties();
-        if ($this->hasProperty($name)) {
-            if($asContainer) {
-                return $properties[$name];
-            } else {
-                return $properties[$name]->getData();
-            }
-        }
-        return null;
-    }
 
-    /**
-     * @param  $name
-     * @return bool
-     */
-    public function hasProperty ($name) {
-        $properties = $this->getProperties();
-        return array_key_exists($name, $properties);
-    }
-    
     /**
      * set a property
      *
@@ -1267,28 +905,12 @@ class Object_Abstract extends Element_Abstract {
     /**
      * @return Element_AdminStyle
      */
-    public function getO_elementAdminStyle() {
-        return $this->getElementAdminStyle();
-    }
-
-    /**
-     * @return Element_AdminStyle
-     */
     public function getElementAdminStyle() {
         if(empty($this->o_elementAdminStyle)) {
             $this->o_elementAdminStyle = new Element_AdminStyle($this);
         }
         return $this->o_elementAdminStyle;
     }
-
-
-    /**
-     * @return string
-     */
-    public function __toString() {
-        return $this->getFullPath();
-    }
-
 
     /**
      * 
@@ -1324,8 +946,8 @@ class Object_Abstract extends Element_Abstract {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
             $originalElement = Object_Abstract::getById($this->getId());
             if($originalElement) {
-                $this->setO_key($originalElement->getO_key());
-                $this->setO_path($originalElement->getO_path());
+                $this->setKey($originalElement->getKey());
+                $this->setPath($originalElement->getPath());
             }
 
             unset($this->_fulldump);
@@ -1338,17 +960,17 @@ class Object_Abstract extends Element_Abstract {
     
     public function removeInheritedProperties () {
         
-        $myProperties = $this->getO_Properties();
+        $myProperties = $this->getProperties();
         
         if($myProperties) {
-            foreach ($this->getO_Properties() as $name => $property) {
+            foreach ($this->getProperties() as $name => $property) {
                 if($property->getInherited()) {
                     unset($myProperties[$name]);
                 }
             }
         }
         
-        $this->setO_Properties($myProperties);
+        $this->setProperties($myProperties);
     }
     
     public function renewInheritedProperties () {
@@ -1360,8 +982,23 @@ class Object_Abstract extends Element_Abstract {
             Zend_Registry::set($cacheKey, $this);
         }
 
-        $myProperties = $this->getO_Properties();
+        $myProperties = $this->getProperties();
         $inheritedProperties = $this->getResource()->getProperties(true);
-        $this->setO_Properties(array_merge($inheritedProperties, $myProperties));
+        $this->setProperties(array_merge($inheritedProperties, $myProperties));
+    }
+
+
+    public function __call($method, $args) {
+
+        // compatibility mode (they do not have any set_oXyz() methods anymore)
+        if(preg_match("/^(get|set)o_/", $method)) {
+            $newMethod = preg_replace("/^(get|set)o_/", "$1", $method);
+            if(method_exists($this, $newMethod)) {
+                $r = call_user_func_array(array($this, $newMethod), $args);
+                return $r;
+            }
+        }
+
+        return parent::__call($method, $args);
     }
 }

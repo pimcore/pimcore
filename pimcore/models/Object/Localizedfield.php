@@ -188,14 +188,14 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
 
             if ($allowInherit) {
 
-                if ($object->getO_parent() instanceof Object_Abstract) {
-                    $parent = $object->getO_parent();
-                    while($parent && $parent->getO_type() == "folder") {
-                        $parent = $parent->getO_parent();
+                if ($object->getParent() instanceof Object_Abstract) {
+                    $parent = $object->getParent();
+                    while($parent && $parent->getType() == "folder") {
+                        $parent = $parent->getParent();
                     }
 
-                    if ($parent && ($parent->getO_type() == "object" || $parent->getO_type() == "variant")) {
-                        if ($parent->getO_classId() == $object->getO_classId()) {
+                    if ($parent && ($parent->getType() == "object" || $parent->getType() == "variant")) {
+                        if ($parent->getClassId() == $object->getClassId()) {
                             $method = "getLocalizedfields";
                             if (method_exists($parent, $method)) {
                                 $localizedFields = $parent->getLocalizedFields();

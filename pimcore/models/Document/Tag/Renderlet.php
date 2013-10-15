@@ -191,31 +191,14 @@ class Document_Tag_Renderlet extends Document_Tag {
 
         $dependencies = array();
 
-        if ($this->o instanceof Document) {
+        if ($this->o instanceof Element_Interface) {
 
-            $key = "document_" . $this->o->getId();
-
-            $dependencies[$key] = array(
-                "id" => $this->o->getId(),
-                "type" => "document"
-            );
-        }
-        else if ($this->o instanceof Asset) {
-
-            $key = "asset_" . $this->o->getId();
+            $elementType = Element_Service::getElementType($this->o);
+            $key = $elementType . "_" . $this->o->getId();
 
             $dependencies[$key] = array(
                 "id" => $this->o->getId(),
-                "type" => "asset"
-            );
-        }
-        else if ($this->o instanceof Object_Abstract) {
-
-            $key = "object_" . $this->o->getO_Id();
-
-            $dependencies[$key] = array(
-                "id" => $this->o->getO_Id(),
-                "type" => "object"
+                "type" => $elementType
             );
         }
 

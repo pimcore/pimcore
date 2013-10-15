@@ -80,10 +80,10 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
         if (is_array($this->elements) && count($this->elements) > 0) {
             foreach ($this->elements as $element) {
                 if ($element instanceof Object_Concrete) {
-                    $return[] = array($element->geto_id(), $element->getFullPath(), "object", $element->geto_className());
+                    $return[] = array($element->getId(), $element->getFullPath(), "object", $element->getClassName());
                 }
                 else if ($element instanceof Object_Abstract) {
-                    $return[] = array($element->geto_id(), $element->getFullPath(), "object", "folder");
+                    $return[] = array($element->getId(), $element->getFullPath(), "object", "folder");
                 }
                 else if ($element instanceof Asset) {
                     $return[] = array($element->getId(), $element->getFullPath(), "asset", $element->getType());
@@ -165,31 +165,14 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
 
         if (is_array($this->elements) && count($this->elements) > 0) {
             foreach ($this->elements as $element) {
-                if ($element instanceof Document) {
+                if ($element instanceof Element_Interface) {
 
-                    $key = "document_" . $element->getId();
-
-                    $dependencies[$key] = array(
-                        "id" => $element->getId(),
-                        "type" => "document"
-                    );
-                }
-                else if ($element instanceof Asset) {
-
-                    $key = "asset_" . $element->getId();
+                    $elementType = Element_Service::getElementType($element);
+                    $key = $elementType . "_" . $element->getId();
 
                     $dependencies[$key] = array(
                         "id" => $element->getId(),
-                        "type" => "asset"
-                    );
-                }
-                else if ($element instanceof Object_Abstract) {
-
-                    $key = "object_" . $element->getO_Id();
-
-                    $dependencies[$key] = array(
-                        "id" => $element->getO_Id(),
-                        "type" => "object"
+                        "type" => $elementType
                     );
                 }
             }

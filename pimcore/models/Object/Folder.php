@@ -49,7 +49,7 @@ class Object_Folder extends Object_Abstract {
      */
     public function delete() {
 
-        if ($this->getO_Id() == 1) {
+        if ($this->getId() == 1) {
             throw new Exception("root-node cannot be deleted");
         }
 

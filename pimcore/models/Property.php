@@ -292,35 +292,13 @@ class Property extends Pimcore_Model_Abstract {
         
         $dependencies = array();
         
-        if ($this->getType() == "document") {
-            if ($this->getData() instanceof Document) {
-                $key = "document_" . $this->getData()->getId();
-
-                $dependencies[$key] = array(
-                    "id" => $this->getData()->getId(),
-                    "type" => "document"
-                );
-            }
-        }
-        if ($this->getType() == "asset") {
-            if ($this->getData() instanceof Asset) {
-                $key = "asset_" . $this->getData()->getId();
-
-                $dependencies[$key] = array(
-                    "id" => $this->getData()->getId(),
-                    "type" => "asset"
-                );
-            }
-        }
-        if ($this->getType() == "object") {
-            if ($this->getData() instanceof Object_Abstract) {
-                $key = "object_" . $this->getData()->getO_Id();
-
-                $dependencies[$key] = array(
-                    "id" => $this->getData()->getO_Id(),
-                    "type" => "object"
-                );
-            }
+        if ($this->getData() instanceof Element_Interface) {
+            $elementType = Element_Service::getElementType($this->getData());
+            $key = $elementType . "_" . $this->getData()->getId();
+            $dependencies[$key] = array(
+                "id" => $this->getData()->getId(),
+                "type" => $elementType
+            );
         }
         
         return $dependencies;

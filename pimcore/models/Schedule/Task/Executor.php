@@ -96,7 +96,7 @@ class Schedule_Task_Executor {
                                 $version = Version::getById($task->getVersion());
                                 $object = $version->getData();
                                 if($object instanceof Object_Abstract){
-                                    $object->setO_Published(true);
+                                    $object->setPublished(true);
                                     $object->save();
                                 } else {
                                     Logger::err("Schedule_Task_Executor: Could not restore object from version data.");
@@ -107,11 +107,11 @@ class Schedule_Task_Executor {
                             }
                         }
                         else if ($task->getAction() == "publish") {
-                            $object->setO_Published(true);
+                            $object->setPublished(true);
                             $object->save();
                         }
                         else if ($task->getAction() == "unpublish") {
-                            $object->setO_Published(false);
+                            $object->setPublished(false);
                             $object->save();
                         }
                         else if ($task->getAction() == "delete") {

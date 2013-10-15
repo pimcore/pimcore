@@ -953,7 +953,7 @@ class Webservice_Service
         $object = Object_Abstract::getById($wsDocument->id);
 
         $this->setModificationParams($object, false);
-        if ($object instanceof Object_Concrete and $object->getO_className() == $wsDocument->className) {
+        if ($object instanceof Object_Concrete and $object->getClassName() == $wsDocument->className) {
 
             $wsDocument->reverseMap($object);
             $object->save();

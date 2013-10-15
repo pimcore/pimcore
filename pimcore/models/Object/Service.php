@@ -175,7 +175,7 @@ class Object_Service extends Element_Service {
         $new = clone $source;
         $new->setChilds($target->getChilds());
         $new->setId($target->getId());
-        $new->setPath($target->getO_path());
+        $new->setPath($target->getPath());
         $new->setKey($target->getKey());
         $new->setParentId($target->getParentId());
         $new->setScheduledTasks($source->getScheduledTasks());
@@ -198,7 +198,7 @@ class Object_Service extends Element_Service {
         $data = Element_Service::gridElementData($object);
 
         if ($object instanceof Object_Concrete) {
-            $data["classname"] = $object->geto_ClassName();
+            $data["classname"] = $object->getClassName();
             $data["idPath"] = Element_Service::getIdPath($object);
             $data['inheritedFields'] = array();
 
@@ -370,15 +370,15 @@ class Object_Service extends Element_Service {
     }
 
     public static function hasInheritableParentObject(Object_Concrete $object) {
-        if($object->getO_class()->getAllowInherit()) {
-            if ($object->getO_parent() instanceof Object_Abstract) {
-                $parent = $object->getO_parent();
-                while($parent && $parent->getO_type() == "folder") {
-                    $parent = $parent->getO_parent();
+        if($object->getClass()->getAllowInherit()) {
+            if ($object->getParent() instanceof Object_Abstract) {
+                $parent = $object->getParent();
+                while($parent && $parent->getType() == "folder") {
+                    $parent = $parent->getParent();
                 }
 
-                if ($parent && ($parent->getO_type() == "object" || $parent->getO_type() == "variant")) {
-                    if ($parent->getO_classId() == $object->getO_classId()) {
+                if ($parent && ($parent->getType() == "object" || $parent->getType() == "variant")) {
+                    if ($parent->getClassId() == $object->getClassId()) {
                         return $parent;
                     }
                 }
@@ -399,7 +399,7 @@ class Object_Service extends Element_Service {
 
         if ($object instanceof Object_Concrete) {
             //load all in case of lazy loading fields
-            $fd = $object->getO_class()->getFieldDefinitions();
+            $fd = $object->getClass()->getFieldDefinitions();
             foreach ($fd as $def) {
                 $getter = "get" . ucfirst($def->getName());
                 if (method_exists($object, $getter)) {
