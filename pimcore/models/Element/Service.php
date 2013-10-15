@@ -609,6 +609,10 @@ class Element_Service extends Pimcore_Model_Abstract {
             $sanitizedPath = $sanitizedPath . Pimcore_File::getValidFilename($part) . "/";
         }
 
+        if ($type == "Object") {
+            $type = "Object_Abstract";
+        }
+
         if (!($foundElement = $type::getByPath($sanitizedPath))) {
 
             foreach ($parts as $part) {
