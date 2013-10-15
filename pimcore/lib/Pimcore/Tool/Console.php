@@ -131,6 +131,29 @@ class Pimcore_Tool_Console {
         return $pid;
     }
 
+    /**
+     * @static
+     * @param string $cmd
+     * @param string $outputFile
+     * @return int
+     */
+    protected static function execInBackgroundWindows($cmd, $outputFile) {
+
+        if(!$outputFile) {
+            $outputFile = "NUL";
+        }
+
+        $commandWrapped = "cmd /c " . $cmd . " > ". $outputFile . " 2>&1";
+        Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
+
+        $WshShell = new COM("WScript.Shell");
+        $WshShell->Run($commandWrapped, 0, false);
+        Logger::debug("Process started - returning the PID is not supported on Windows Systems");
+
+        return 0;
+    }
+
+
 
     /**
      * Returns a hash with all options passed to a cli script
