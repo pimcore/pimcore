@@ -414,39 +414,55 @@ class Asset extends Element_Abstract {
             Pimcore_API_Plugin_Broker::getInstance()->preAddAsset($this);
         }
 
-        $this->beginTransaction();
+        // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
+        // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
+        // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
+        $maxRetries = 5;
+        for($retries=0; $retries<$maxRetries; $retries++) {
 
-        try {
-            if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
-                throw new Exception("invalid filename '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
+            $this->beginTransaction();
+
+            try {
+                if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
+                    throw new Exception("invalid filename '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
+                }
+
+                $this->correctPath();
+
+                if (!$isUpdate) {
+                    $this->getResource()->create();
+                }
+
+                // get the old path from the database before the update is done
+                $oldPath = null;
+                if ($isUpdate) {
+                    $oldPath = $this->getResource()->getCurrentFullPath();
+                }
+
+                $this->update();
+
+                // if the old path is different from the new path, update all children
+                $updatedChildren = array();
+                if($oldPath && $oldPath != $this->getFullPath()) {
+                    @rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath());
+                    $updatedChildren = $this->getResource()->updateChildsPaths($oldPath);
+                }
+
+                $this->commit();
+
+                break; // transaction was successfully completed, so we cancel the loop here -> no restart required
+            } catch (Exception $e) {
+                $this->rollBack();
+
+                // we try to start the transaction $maxRetries times again (deadlocks, ...)
+                if($retries < ($maxRetries-1)) {
+                    $run = $retries+1;
+                    Logger::warn("Unable to finish transaction (" . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying ... (" . ($run+1) . " of " . $maxRetries . ")");
+                } else {
+                    // if the transaction still failes after $maxRetries retries, we throw out the exception
+                    throw $e;
+                }
             }
-
-            $this->correctPath();
-
-            if (!$isUpdate) {
-                $this->getResource()->create();
-            }
-
-            // get the old path from the database before the update is done
-            $oldPath = null;
-            if ($isUpdate) {
-                $oldPath = $this->getResource()->getCurrentFullPath();
-            }
-
-            $this->update();
-
-            // if the old path is different from the new path, update all children
-            $updatedChildren = array();
-            if($oldPath && $oldPath != $this->getFullPath()) {
-                @rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath());
-                $updatedChildren = $this->getResource()->updateChildsPaths($oldPath);
-            }
-
-            $this->commit();
-        } catch (Exception $e) {
-            $this->rollBack();
-
-            throw $e;
         }
 
         if ($isUpdate) {
