@@ -223,7 +223,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
                     $body = $html->save();
                     $this->getResponse()->setBody($body);
                 } else {
-                    $this->getResponse()->setBody('<span style="font-size:30px; font-weight:bold; color:red;">You have to define a &lt;head&gt; &amp; &lt;body&gt; element in your view/layout!</span><br /><br />' . $body);
+                    $this->getResponse()->setBody('<div style="font-size:30px; font-family: Arial; font-weight:bold; color:red; text-align: center; margin: 40px 0">You have to define a &lt;head&gt; &amp; &lt;body&gt; element in your view/layout!</div>');
                 }
 
                 $html->clear();
