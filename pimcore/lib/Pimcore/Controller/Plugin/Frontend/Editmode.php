@@ -197,13 +197,6 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
         
         $editmodeHeadHtml .= "\n\n<!-- /pimcore editmode -->\n\n\n";
 
-        // add html headers for snippets in editmode, so there is no problem with javascript
-        $body = $this->getResponse()->getBody();
-        if ($this->controller->editmode && strpos($body, "</body>") === false) {
-            $body = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $body . "</body></html>";
-
-            $this->getResponse()->setBody($body);
-        }
 
         // add scripts in html header for pages in editmode
         if ($this->controller->editmode && Document_Service::isValidType($this->controller->document->getType()) ) { //ckogler
@@ -212,10 +205,23 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
 
             $html = str_get_html($body);
             if($html) {
+                $htmlElement = $html->find("html", 0);
                 $head = $html->find("head", 0);
                 $bodyElement = $html->find("body", 0);
 
-                if($head && $bodyElement) {
+                // if there's no head and no body, create a wrapper including these elements
+                // add html headers for snippets in editmode, so there is no problem with javascript
+                if(!$head && !$bodyElement && !$htmlElement) {
+                    $body = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $body . "</body></html>";
+                    $html = str_get_html($body);
+
+                    // get them again with the updated html markup
+                    $htmlElement = $html->find("html", 0);
+                    $head = $html->find("head", 0);
+                    $bodyElement = $html->find("body", 0);
+                }
+
+                if($head && $bodyElement && $htmlElement) {
                     $head->innertext = $head->innertext . "\n\n" . $editmodeHeadHtml;
                     $bodyElement->onunload = "pimcoreOnUnload();";
                     $bodyElement->innertext = $bodyElement->innertext . "\n\n" . '<script type="text/javascript" src="/pimcore/static/js/pimcore/document/edit/startup.js?_dc=' . Pimcore_Version::$revision . '"></script>' . "\n\n";
@@ -223,7 +229,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
                     $body = $html->save();
                     $this->getResponse()->setBody($body);
                 } else {
-                    $this->getResponse()->setBody('<div style="font-size:30px; font-family: Arial; font-weight:bold; color:red; text-align: center; margin: 40px 0">You have to define a &lt;head&gt; &amp; &lt;body&gt; element in your view/layout!</div>');
+                    $this->getResponse()->setBody('<div style="font-size:30px; font-family: Arial; font-weight:bold; color:red; text-align: center; margin: 40px 0">You have to define a &lt;html&gt;, &lt;head&gt;, &lt;body&gt;<br />HTML-tag in your view/layout markup!</div>');
                 }
 
                 $html->clear();
