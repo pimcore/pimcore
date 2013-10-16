@@ -76,7 +76,7 @@ class Pimcore_Image_HtmlToImage {
      */
     public static function convert($url, $outputFile, $screenWidth = 1200, $format = "png") {
 
-        // add parameter pimcore_preview to prevent inclusion of google analytics code
+        // add parameter pimcore_preview to prevent inclusion of google analytics code, cache, etc.
         $url .= (strpos($url, "?") ? "&" : "?") . "pimcore_preview=true";
 
 
