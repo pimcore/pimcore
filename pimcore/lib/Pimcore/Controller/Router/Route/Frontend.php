@@ -436,6 +436,12 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
      * @return void
      */
     protected function checkForRedirect ($override = false) {
+
+        // not for admin requests
+        if(Pimcore_Tool::isFrontentRequestByAdmin()) {
+            return;
+        }
+
         try {
 
             $front = Zend_Controller_Front::getInstance();
