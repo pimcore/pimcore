@@ -121,6 +121,13 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => function_exists("mb_get_info") ? "ok" : "error"
         );
 
+        // file_info support
+        $checksPHP[] = array(
+            "name" => "File Information (file_info)",
+            "link" => "http://www.php.net/file_info",
+            "state" => function_exists("finfo_open") ? "ok" : "error"
+        );
+
         // zip
         $checksPHP[] = array(
             "name" => "zip",
