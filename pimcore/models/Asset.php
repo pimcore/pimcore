@@ -457,9 +457,12 @@ class Asset extends Element_Abstract {
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
                 if($retries < ($maxRetries-1)) {
                     $run = $retries+1;
-                    Logger::warn("Unable to finish transaction (" . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying ... (" . ($run+1) . " of " . $maxRetries . ")");
+                    $waitTime = 100000; // microseconds
+                    Logger::warn("Unable to finish transaction (" . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . " microseconds ... (" . ($run+1) . " of " . $maxRetries . ")");
+
+                    usleep($waitTime); // wait specified time until we restart the transaction
                 } else {
-                    // if the transaction still failes after $maxRetries retries, we throw out the exception
+                    // if the transaction still fail after $maxRetries retries, we throw out the exception
                     throw $e;
                 }
             }

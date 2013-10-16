@@ -519,9 +519,12 @@ class Object_Abstract extends Element_Abstract {
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
                 if($retries < ($maxRetries-1)) {
                     $run = $retries+1;
-                    Logger::warn("Unable to finish transaction (" . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying ... (" . ($run+1) . " of " . $maxRetries . ")");
+                    $waitTime = 100000; // microseconds
+                    Logger::warn("Unable to finish transaction (" . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . " microseconds ... (" . ($run+1) . " of " . $maxRetries . ")");
+
+                    usleep($waitTime); // wait specified time until we restart the transaction
                 } else {
-                    // if the transaction still failes after $maxRetries retries, we throw out the exception
+                    // if the transaction still fail after $maxRetries retries, we throw out the exception
                     throw $e;
                 }
             }
@@ -1007,8 +1010,8 @@ class Object_Abstract extends Element_Abstract {
     public function __call($method, $args) {
 
         // compatibility mode (they do not have any set_oXyz() methods anymore)
-        if(preg_match("/^(get|set)o_/", $method)) {
-            $newMethod = preg_replace("/^(get|set)o_/", "$1", $method);
+        if(preg_match("/^(get|set)o_/i", $method)) {
+            $newMethod = preg_replace("/^(get|set)o_/i", "$1", $method);
             if(method_exists($this, $newMethod)) {
                 $r = call_user_func_array(array($this, $newMethod), $args);
                 return $r;
