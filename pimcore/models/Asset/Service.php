@@ -132,7 +132,7 @@ class Asset_Service extends Element_Service {
         }
 
         if (!$source instanceof Asset_Folder) {
-            $target->setData($source->getData());
+            $target->setStream($source->getStream());
             $target->setCustomSettings($source->getCustomSettings());
         }
 
@@ -188,9 +188,9 @@ class Asset_Service extends Element_Service {
 
         $element->getProperties();
 
-        if($element instanceof Asset && method_exists($element, "getData")) {
-            $element->getData();
-        }
+        //if($element instanceof Asset && method_exists($element, "getData")) {
+        //    $element->getData();
+        //}
 
         return $element;
     }

@@ -159,6 +159,18 @@ class Version extends Pimcore_Model_Abstract {
             throw new Exception("Cannot save version for element " . $this->getCid() . " with type " . $this->getCtype() . " because the file " . $this->getFilePath() . " is not writeable.");
         } else {
             file_put_contents($this->getFilePath(),$dataString);
+
+            // assets are kina special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
+            if($data instanceof Asset && $data->getType() != "folder") {
+                // append binary data to version file
+                $handle = fopen($this->getFilePath(), "a+");
+                fwrite($handle, "\n||binary-content||\n");
+
+                $src = $data->getStream();
+                rewind($src);
+                stream_copy_to_stream($src, $handle);
+                fclose($handle);
+            }
         }
 
         // only do this in the maintenance job, to improve the speed of mass imports
@@ -190,10 +202,35 @@ class Version extends Pimcore_Model_Abstract {
             return;
         }
 
-        $data = file_get_contents($this->getFilePath());
+        $data = "";
+        $binaryHandle  = null;
+        $binaryFound = false;
+
+        $handle = fopen($this->getFilePath(), "r");
+        if ($handle) {
+            while (($buffer = fgets($handle)) !== false) {
+                if(trim($buffer) == "||binary-content||") {
+                    $binaryFound = true;
+                    $binaryHandle = tmpfile();
+                } else if($binaryFound) {
+                    fwrite($binaryHandle, $buffer);
+                } else {
+                    $data .= $buffer;
+                }
+            }
+            fclose($handle);
+        }
+
 
         if ($this->getSerialized()) {
             $data = Pimcore_Tool_Serialize::unserialize($data);
+        }
+
+        if($data instanceof Asset && $binaryHandle) {
+            $data->setStream($binaryHandle);
+        } else if($data instanceof Asset && $data->data) {
+            // this is for backward compatibility
+            $data->setData($data->data);
         }
 
         $data = Element_Service::renewReferences($data);

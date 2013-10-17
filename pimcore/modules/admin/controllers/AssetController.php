@@ -243,7 +243,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
             $asset = Asset::create($this->getParam("parentId"), array(
                 "filename" => $filename,
-                "data" => file_get_contents($_FILES["Filedata"]["tmp_name"]),
+                "sourcePath" => $_FILES["Filedata"]["tmp_name"],
                 "userOwner" => $this->user->getId(),
                 "userModification" => $this->user->getId()
             ));
@@ -281,7 +281,9 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
     public function replaceAssetAction() {
         $asset = Asset::getById($this->getParam("id"));
-        $asset->setData(file_get_contents($_FILES["Filedata"]["tmp_name"]));
+
+        $stream = fopen($_FILES["Filedata"]["tmp_name"], "r+");
+        $asset->setStream($stream);
         $asset->setCustomSetting("thumbnails",null);
         $asset->setUserModification($this->getUser()->getId());
 
@@ -1346,7 +1348,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
                             $asset = Asset::create($parent->getId(), array(
                                 "filename" => $filename,
-                                "data" => file_get_contents($tmpFile),
+                                "sourcePath" => $tmpFile,
                                 "userOwner" => $this->user->getId(),
                                 "userModification" => $this->user->getId()
                             ));
@@ -1428,7 +1430,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 if ($assetFolder->isAllowed("create")) {
                     $asset = Asset::create($folder->getId(), array(
                         "filename" => $filename,
-                        "data" => file_get_contents($absolutePath),
+                        "sourcePath" => $absolutePath,
                         "userOwner" => $this->getUser()->getId(),
                         "userModification" => $this->getUser()->getId()
                     ));

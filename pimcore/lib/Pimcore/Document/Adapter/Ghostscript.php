@@ -122,7 +122,7 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
      * @return int
      * @throws Exception
      */
-    public function getPageCount($blob = false) {
+    public function getPageCount() {
 
         $pages = Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -dNODISPLAY -q -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'");
         $pages = trim($pages);
