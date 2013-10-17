@@ -916,8 +916,12 @@ class Asset extends Element_Abstract {
      */
     public function getData() {
         $stream = $this->getStream();
-        rewind($stream);
-        return stream_get_contents($stream);
+        if($stream) {
+            rewind($stream);
+            return stream_get_contents($stream);
+        }
+
+        return "";
     }
 
     /**
@@ -939,7 +943,7 @@ class Asset extends Element_Abstract {
      * @return resource
      */
     public function getStream() {
-        if(!$this->stream) {
+        if(!$this->stream && $this->getType() != "folder") {
             $this->stream = fopen($this->getFileSystemPath(), "r+");
         }
 

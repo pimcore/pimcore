@@ -50,10 +50,6 @@ class Asset_Service extends Element_Service {
         }
 
         $source->getProperties();
-        if (!$source instanceof Asset_Folder) {
-            $source->getData();
-        }
-
 
         $new = clone $source;
         $new->id = null;
@@ -68,6 +64,7 @@ class Asset_Service extends Element_Service {
         $new->setResource(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
+        $new->setStream($source->getStream());
         $new->save();
 
         // add to store
@@ -93,9 +90,6 @@ class Asset_Service extends Element_Service {
     public function copyAsChild($target, $source) {
 
         $source->getProperties();
-        if (!$source instanceof Asset_Folder) {
-            $source->getData();
-        }
 
         $new = clone $source;
         $new->id = null;
@@ -110,6 +104,7 @@ class Asset_Service extends Element_Service {
         $new->setResource(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
+        $new->setStream($source->getStream());
         $new->save();
 
         if($target instanceof Asset_Folder){
