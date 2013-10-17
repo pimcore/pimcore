@@ -218,15 +218,21 @@ class Pimcore_Tool_Mime {
     );
 
 
-    public static function detect($file) {
+    public static function detect($file, $filename = null) {
         if(!file_exists($file)) {
             throw new \Exception("File " . $file . " doesn't exist");
         }
 
+        if(!$filename) {
+            $filename = basename($file);
+        }
+
         // check for an extension mapping first
-        $extension = Pimcore_File::getFileExtension($file);
-        if(array_key_exists($extension, self::$extensionMapping)) {
-            return self::$extensionMapping[$extension];
+        if($filename) {
+            $extension = Pimcore_File::getFileExtension($filename);
+            if(array_key_exists($extension, self::$extensionMapping)) {
+                return self::$extensionMapping[$extension];
+            }
         }
 
         // check with fileinfo, if there's no extension mapping

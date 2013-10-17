@@ -30,8 +30,7 @@ class Asset_Image extends Asset {
         try {
             // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
             // because the file is written in parent::update();
-            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid();
-            file_put_contents($tmpFile, $this->getData());
+            $tmpFile = $this->getTemporaryFile(true);
             $dimensions = $this->getDimensions($tmpFile);
             unlink($tmpFile);
 

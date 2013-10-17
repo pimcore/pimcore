@@ -88,11 +88,9 @@ class Asset extends Element_Abstract {
     public $modificationDate;
 
     /**
-     * Contains the whole data of the asset (raw)
-     *
-     * @var mixed
+     * @var resource
      */
-    public $data;
+    public $stream;
 
     /**
      * ID of the owner user
@@ -283,20 +281,32 @@ class Asset extends Element_Abstract {
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
         $class = "Asset";
-        if(array_key_exists("filename", $data) && array_key_exists("data", $data)) {
-            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-create-tmp-file-" . uniqid() . "." . Pimcore_File::getFileExtension($data["filename"]);
-            file_put_contents($tmpFile, $data["data"]);
-            $mimeType = Pimcore_Tool_Mime::detect($tmpFile);
-            unlink($tmpFile);
+        if(array_key_exists("filename", $data) && (array_key_exists("data", $data) || array_key_exists("sourcePath", $data) || array_key_exists("stream", $data))) {
+            if(array_key_exists("data", $data) || array_key_exists("stream", $data)) {
+                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-create-tmp-file-" . uniqid() . "." . Pimcore_File::getFileExtension($data["filename"]);
+                if(array_key_exists("data", $data)) {
+                    file_put_contents($tmpFile, $data["data"]);
+                } else {
+                    rewind($data["stream"]);
+                    $dest = fopen($tmpFile, "w+");
+                    stream_copy_to_stream($data["stream"], $dest);
+                    fclose($dest);
+                }
+                $mimeType = Pimcore_Tool_Mime::detect($tmpFile);
+                unlink($tmpFile);
+            } else {
+                $mimeType = Pimcore_Tool_Mime::detect($data["sourcePath"], $data["filename"]);
+                $data["stream"] = fopen($data["sourcePath"], "r+");
+                unset($data["sourcePath"]);
+            }
+
             $type = self::getTypeFromMimeMapping($mimeType, $data["filename"]);
             $class = "Asset_" . ucfirst($type);
         }
 
         $asset = new $class();
         $asset->setParentId($parentId);
-        foreach ($data as $key => $value) {
-            $asset->setValue($key, $value);
-        }
+        $asset->setValues($data);
 
         if($save) {
             $asset->save();
@@ -387,18 +397,6 @@ class Asset extends Element_Abstract {
      */
     public function getFileSystemPath() {
         return PIMCORE_ASSET_DIRECTORY . $this->getFullPath();
-    }
-
-    /**
-     * Load the binary data into the object
-     *
-     * @return void
-     */
-    public function loadData() {
-        if ($this->getType() != "folder" && file_exists($this->getFileSystemPath())) {
-            $this->setData(file_get_contents($this->getFileSystemPath()));
-            $this->_dataChanged = false;
-        }
     }
 
     /**
@@ -545,35 +543,34 @@ class Asset extends Element_Abstract {
 
         if ($this->getType() != "folder") {
 
-            // get data
-            $this->getData();
+            if($this->getDataChanged()) {
 
-            // remove if exists
-            if (is_file($destinationPath)) {
-                unlink($destinationPath);
+                $src = $this->getStream();
+                $dest = fopen($destinationPath, "w+");
+                rewind($src);
+                stream_copy_to_stream($src, $dest);
+                fclose($src);
+                fclose($dest);
+
+                $this->setStream(null);
+                chmod($destinationPath, self::$chmod);
+
+                // check file exists
+                if (!is_file($destinationPath)) {
+                    throw new Exception("couldn't create new asset, file " . $destinationPath . " doesn't exist");
+                }
+
+                // set mime type
+
+                $mimetype = Pimcore_Tool_Mime::detect($this->getFileSystemPath());
+                $this->setMimetype($mimetype);
+
+                // set type
+                $this->setTypeFromMapping();
             }
-
-            file_put_contents($destinationPath, $this->getData());
-            chmod($destinationPath, self::$chmod);
-
-            // check file exists
-            if (!is_file($destinationPath)) {
-                throw new Exception("couldn't create new asset, file " . $destinationPath . " doesn't exist");
-            }
-
-            // set mime type
-
-            $mimetype = Pimcore_Tool_Mime::detect($this->getFileSystemPath());
-            $this->setMimetype($mimetype);
-
-            // set type
-            $this->setTypeFromMapping();
 
             // update scheduled tasks
             $this->saveScheduledTasks();
-
-            // create version
-            $this->getData(); // load data from filesystem to put it into the version
 
             // only create a new version if there is at least 1 allowed
             if(Pimcore_Config::getSystemConfig()->assets->versions->steps
@@ -918,10 +915,9 @@ class Asset extends Element_Abstract {
      * @return mixed
      */
     public function getData() {
-        if (!$this->data) {
-            $this->loadData();
-        }
-        return $this->data;
+        $stream = $this->getStream();
+        rewind($stream);
+        return stream_get_contents($stream);
     }
 
     /**
@@ -929,9 +925,52 @@ class Asset extends Element_Abstract {
      * @return void
      */
     public function setData($data) {
-        $this->data = $data;
-        $this->_dataChanged = true;
+
+        $handle = tmpfile();
+        fwrite($handle, $data);
+        rewind($handle);
+        $this->setStream($handle);
+
         return $this;
+    }
+
+
+    /**
+     * @return resource
+     */
+    public function getStream() {
+        if(!$this->stream) {
+            $this->stream = fopen($this->getFileSystemPath(), "r+");
+        }
+
+        return $this->stream;
+    }
+
+    /**
+     * @param $stream
+     */
+    public function setStream($stream) {
+
+        // close existing stream
+        $this->closeStream();
+
+        if(is_resource($stream)) {
+            $this->_dataChanged = true;
+            $this->stream = $stream;
+        } else if(is_null($stream)) {
+            $this->stream = null;
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     */
+    protected function closeStream() {
+        if(is_resource($this->stream)) {
+            fclose($this->stream);
+        }
     }
 
     /**
@@ -1078,13 +1117,22 @@ class Asset extends Element_Abstract {
      *
      * @return string
      */
-    public function getTemporaryFile() {
+    public function getTemporaryFile($fullPath = false) {
 
         $conf = Pimcore_Config::getSystemConfig();
-        $destinationPath = PIMCORE_TEMPORARY_DIRECTORY . "/asset_" . $this->getId() . "_" . md5(microtime());
+        $destinationPath = PIMCORE_TEMPORARY_DIRECTORY . "/asset_" . $this->getId() . "_" . md5(microtime()) . "__" . $this->getFilename();
 
-        file_put_contents($destinationPath, $this->getData());
+        $src = $this->getStream();
+        $dest = fopen($destinationPath, "w+");
+        rewind($src);
+        stream_copy_to_stream($src, $dest);
+        fclose($dest);
+
         chmod($destinationPath, self::$chmod);
+
+        if($fullPath) {
+            return $destinationPath;
+        }
 
         return str_replace(PIMCORE_DOCUMENT_ROOT, "", $destinationPath);
     }
@@ -1258,12 +1306,12 @@ class Asset extends Element_Abstract {
 
         if(isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "hasChilds", "versions", "parent");
+            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "hasChilds", "versions", "parent", "stream");
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "hasChilds", "versions", "childs", "properties", "data", "parent");
+            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "hasChilds", "versions", "childs", "properties", "stream", "parent");
         }
 
 
@@ -1320,5 +1368,11 @@ class Asset extends Element_Abstract {
         $myProperties = $this->getProperties();
         $inheritedProperties = $this->getResource()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
+    }
+
+    public function __destruct() {
+
+        // close open streams
+        $this->closeStream();
     }
 }
