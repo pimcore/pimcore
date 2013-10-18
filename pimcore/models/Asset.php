@@ -960,7 +960,11 @@ class Asset extends Element_Abstract {
         }
 
         if(!$this->stream && $this->getType() != "folder") {
-            $this->stream = fopen($this->getFileSystemPath(), "r+");
+            if(file_exists($this->getFileSystemPath())) {
+                $this->stream = fopen($this->getFileSystemPath(), "r+");
+            } else {
+                $this->stream = tmpfile();
+            }
         }
 
         return $this->stream;
