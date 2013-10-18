@@ -309,6 +309,9 @@ class Asset extends Element_Abstract {
 
             $type = self::getTypeFromMimeMapping($mimeType, $data["filename"]);
             $class = "Asset_" . ucfirst($type);
+            if(array_key_exists("type", $data)) {
+                unset($data["type"]);
+            }
         }
 
         $asset = new $class();
@@ -832,7 +835,7 @@ class Asset extends Element_Abstract {
      * @return integer
      */
     public function getModificationDate() {
-        return $this->modificationDate;
+        return (int) $this->modificationDate;
     }
 
     /**

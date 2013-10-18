@@ -28,7 +28,7 @@ class Asset_Image extends Asset {
     public function update() {
 
         // only do this if the file exists and conains data
-        if($this->getDataChanged() && $this->getFileSize()) {
+        if($this->getDataChanged()) {
             try {
                 // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
                 // because the file is written in parent::update();
@@ -55,7 +55,7 @@ class Asset_Image extends Asset {
        $this->clearThumbnails();
 
         // now directly create "system" thumbnails (eg. for the tree, ...)
-        if($this->getDataChanged() && $this->getFileSize()) {
+        if($this->getDataChanged()) {
             try {
                 $path = $this->getThumbnail(Asset_Image_Thumbnail_Config::getPreviewConfig());
                 $path = PIMCORE_DOCUMENT_ROOT . $path;
