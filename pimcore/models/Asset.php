@@ -558,7 +558,7 @@ class Asset extends Element_Abstract {
                 fclose($src);
                 fclose($dest);
 
-                $this->setStream(null);
+                $this->closeStream();
                 chmod($destinationPath, self::$chmod);
 
                 // check file exists
@@ -711,6 +711,8 @@ class Asset extends Element_Abstract {
         }
 
         Pimcore_API_Plugin_Broker::getInstance()->preDeleteAsset($this);
+
+        $this->closeStream();
 
         // remove childs
         if ($this->hasChilds()) {
