@@ -81,8 +81,7 @@ class Admin_IndexController extends Pimcore_Controller_Action_Admin {
         // upload limit
         $max_upload = filesize2bytes(ini_get("upload_max_filesize") . "B");
         $max_post = filesize2bytes(ini_get("post_max_size") . "B");
-        $memory_limit = filesize2bytes(ini_get("memory_limit") . "B");
-        $upload_mb = min($max_upload, $max_post, $memory_limit);
+        $upload_mb = min($max_upload, $max_post);
         
         $this->view->upload_max_filesize = $upload_mb;
 
