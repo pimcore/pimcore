@@ -556,9 +556,12 @@ class Asset extends Element_Abstract {
             if($this->getDataChanged()) {
 
                 $src = $this->getStream();
-                $dest = fopen($destinationPath, "w+");
-                stream_copy_to_stream($src, $dest);
-                fclose($dest);
+                $streamMeta = stream_get_meta_data($src);
+                if($destinationPath != $streamMeta["uri"]) {
+                    $dest = fopen($destinationPath, "w+");
+                    stream_copy_to_stream($src, $dest);
+                    fclose($dest);
+                }
 
                 chmod($destinationPath, self::$chmod);
 
