@@ -27,41 +27,46 @@ class Asset_Image extends Asset {
      */
     public function update() {
 
-        try {
-            // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
-            // because the file is written in parent::update();
-            $tmpFile = $this->getTemporaryFile(true);
-            $dimensions = $this->getDimensions($tmpFile);
-            unlink($tmpFile);
+        // only do this if the file exists and conains data
+        if($this->getDataChanged() && $this->getFileSize()) {
+            try {
+                // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
+                // because the file is written in parent::update();
+                $tmpFile = $this->getTemporaryFile(true);
+                $dimensions = $this->getDimensions($tmpFile);
+                unlink($tmpFile);
 
-            if($dimensions && $dimensions["width"]) {
-                $this->setCustomSetting("imageWidth", $dimensions["width"]);
-                $this->setCustomSetting("imageHeight", $dimensions["height"]);
+                if($dimensions && $dimensions["width"]) {
+                    $this->setCustomSetting("imageWidth", $dimensions["width"]);
+                    $this->setCustomSetting("imageHeight", $dimensions["height"]);
+                }
+            } catch (Exception $e) {
+                Logger::error("Problem getting the dimensions of the image with ID " . $this->getId());
             }
-        } catch (Exception $e) {
-            Logger::error("Problem getting the dimensions of the image with ID " . $this->getId());
-        }
 
-        // this is to be downward compatible so that the controller can check if the dimensions are already calculated
-        // and also to just do the calculation once, because the calculation can fail, an then the controller tries to
-        // calculate the dimensions on every request an also will create a version, ...
-        $this->setCustomSetting("imageDimensionsCalculated", true);
+            // this is to be downward compatible so that the controller can check if the dimensions are already calculated
+            // and also to just do the calculation once, because the calculation can fail, an then the controller tries to
+            // calculate the dimensions on every request an also will create a version, ...
+            $this->setCustomSetting("imageDimensionsCalculated", true);
+        }
 
         parent::update();
 
-        $this->clearThumbnails();
+       $this->clearThumbnails();
 
         // now directly create "system" thumbnails (eg. for the tree, ...)
-        try {
-            $path = $this->getThumbnail(Asset_Image_Thumbnail_Config::getPreviewConfig());
-            $path = PIMCORE_DOCUMENT_ROOT . $path;
+        if($this->getDataChanged() && $this->getFileSize()) {
+            try {
+                $path = $this->getThumbnail(Asset_Image_Thumbnail_Config::getPreviewConfig());
+                $path = PIMCORE_DOCUMENT_ROOT . $path;
 
-            // set the modification time of the thumbnail to the same time from the asset
-            // so that the thumbnail check doesn't fail in Asset_Image_Thumbnail_Processor::process();
-            touch($path, $this->getModificationDate());
-        } catch (Exception $e) {
-            Logger::error("Problem while creating system-thumbnails for image " . $this->getFullPath());
-            Logger::error($e);
+                // set the modification time of the thumbnail to the same time from the asset
+                // so that the thumbnail check doesn't fail in Asset_Image_Thumbnail_Processor::process();
+                touch($path, $this->getModificationDate());
+            } catch (Exception $e) {
+                Logger::error("Problem while creating system-thumbnails for image " . $this->getFullPath());
+                Logger::error($e);
+            }
         }
     }
 
@@ -70,7 +75,7 @@ class Asset_Image extends Asset {
      */
     public function clearThumbnails($force = false) {
 
-        if($this->_dataChanged || $force) {
+        if($this->getDataChanged() || $force) {
             $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/thumb_" . $this->getId() . "__*");
             if(is_array($files)) {
                 foreach ($files as $file) {
@@ -87,13 +92,13 @@ class Asset_Image extends Asset {
      */
     public function getThumbnailConfig($config) {
 
-        $thumbnail = $this->getThumbnail($config); 
+        $thumbnail = $this->getThumbnail($config);
         return $thumbnail->getConfig();
     }
-    
+
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration.
-     * @param mixed$config 
+     * @param mixed$config
      * @return Asset_Image_Thumbnail
      */
     public function getThumbnail($config) {
