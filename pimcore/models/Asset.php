@@ -555,10 +555,8 @@ class Asset extends Element_Abstract {
                 $src = $this->getStream();
                 $dest = fopen($destinationPath, "w+");
                 stream_copy_to_stream($src, $dest);
-                fclose($src);
                 fclose($dest);
 
-                $this->closeStream();
                 chmod($destinationPath, self::$chmod);
 
                 // check file exists
@@ -626,6 +624,8 @@ class Asset extends Element_Abstract {
 
         //set object to registry
         Zend_Registry::set("asset_" . $this->getId(), $this);
+
+        $this->closeStream();
     }
 
     /**
@@ -949,12 +949,15 @@ class Asset extends Element_Abstract {
      * @return resource
      */
     public function getStream() {
-        if(!$this->stream && $this->getType() != "folder") {
-            $this->stream = fopen($this->getFileSystemPath(), "r+");
-        }
 
         if($this->stream) {
-            rewind($this->stream);
+            if(!@rewind($this->stream)) {
+                $this->stream = null;
+            }
+        }
+
+        if(!$this->stream && $this->getType() != "folder") {
+            $this->stream = fopen($this->getFileSystemPath(), "r+");
         }
 
         return $this->stream;
