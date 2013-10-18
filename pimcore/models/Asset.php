@@ -287,10 +287,17 @@ class Asset extends Element_Abstract {
                 if(array_key_exists("data", $data)) {
                     file_put_contents($tmpFile, $data["data"]);
                 } else {
-                    rewind($data["stream"]);
-                    $dest = fopen($tmpFile, "w+");
-                    stream_copy_to_stream($data["stream"], $dest);
-                    fclose($dest);
+                    $streamMeta = stream_get_meta_data($data["stream"]);
+                    if(file_exists($streamMeta["uri"])) {
+                        // stream is a local file, so we don't have to write a tmp file
+                        $tmpFile = $streamMeta["uri"];
+                    } else {
+                        // write a tmp file because the stream isn't a pointer to the local filesystem
+                        rewind($data["stream"]);
+                        $dest = fopen($tmpFile, "w+");
+                        stream_copy_to_stream($data["stream"], $dest);
+                        fclose($dest);
+                    }
                 }
                 $mimeType = Pimcore_Tool_Mime::detect($tmpFile);
                 unlink($tmpFile);
@@ -547,7 +554,6 @@ class Asset extends Element_Abstract {
 
                 $src = $this->getStream();
                 $dest = fopen($destinationPath, "w+");
-                rewind($src);
                 stream_copy_to_stream($src, $dest);
                 fclose($src);
                 fclose($dest);
@@ -917,7 +923,6 @@ class Asset extends Element_Abstract {
     public function getData() {
         $stream = $this->getStream();
         if($stream) {
-            rewind($stream);
             return stream_get_contents($stream);
         }
 
@@ -932,7 +937,6 @@ class Asset extends Element_Abstract {
 
         $handle = tmpfile();
         fwrite($handle, $data);
-        rewind($handle);
         $this->setStream($handle);
 
         return $this;
@@ -945,6 +949,10 @@ class Asset extends Element_Abstract {
     public function getStream() {
         if(!$this->stream && $this->getType() != "folder") {
             $this->stream = fopen($this->getFileSystemPath(), "r+");
+        }
+
+        if($this->stream) {
+            rewind($this->stream);
         }
 
         return $this->stream;
@@ -961,6 +969,7 @@ class Asset extends Element_Abstract {
         if(is_resource($stream)) {
             $this->_dataChanged = true;
             $this->stream = $stream;
+            rewind($this->stream);
         } else if(is_null($stream)) {
             $this->stream = null;
         }
@@ -973,7 +982,8 @@ class Asset extends Element_Abstract {
      */
     protected function closeStream() {
         if(is_resource($this->stream)) {
-            fclose($this->stream);
+            @fclose($this->stream);
+            $this->stream = null;
         }
     }
 
@@ -1128,7 +1138,6 @@ class Asset extends Element_Abstract {
 
         $src = $this->getStream();
         $dest = fopen($destinationPath, "w+");
-        rewind($src);
         stream_copy_to_stream($src, $dest);
         fclose($dest);
 

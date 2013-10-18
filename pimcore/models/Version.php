@@ -163,18 +163,12 @@ class Version extends Pimcore_Model_Abstract {
             // assets are kina special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
             if($data instanceof Asset && $data->getType() != "folder") {
                 // append binary data to version file
-                $handle = fopen($this->getFilePath(), "a+");
-                fwrite($handle, "\n||binary-content||\n");
-
+                $handle = fopen($this->getBinaryFilePath(), "w+");
                 $src = $data->getStream();
-                rewind($src);
                 stream_copy_to_stream($src, $handle);
                 fclose($handle);
             }
         }
-
-        // only do this in the maintenance job, to improve the speed of mass imports
-        //$this->cleanHistory();
     }
 
     /**
@@ -202,31 +196,14 @@ class Version extends Pimcore_Model_Abstract {
             return;
         }
 
-        $data = "";
-        $binaryHandle  = null;
-        $binaryFound = false;
-
-        $handle = fopen($this->getFilePath(), "r");
-        if ($handle) {
-            while (($buffer = fgets($handle)) !== false) {
-                if(trim($buffer) == "||binary-content||") {
-                    $binaryFound = true;
-                    $binaryHandle = tmpfile();
-                } else if($binaryFound) {
-                    fwrite($binaryHandle, $buffer);
-                } else {
-                    $data .= $buffer;
-                }
-            }
-            fclose($handle);
-        }
-
+        $data = file_get_contents($this->getFilePath());
 
         if ($this->getSerialized()) {
             $data = Pimcore_Tool_Serialize::unserialize($data);
         }
 
-        if($data instanceof Asset && $binaryHandle) {
+        if($data instanceof Asset && file_exists($this->getBinaryFilePath())) {
+            $binaryHandle = fopen($this->getBinaryFilePath(), "r+");
             $data->setStream($binaryHandle);
         } else if($data instanceof Asset && $data->data) {
             // this is for backward compatibility
@@ -247,6 +224,10 @@ class Version extends Pimcore_Model_Abstract {
      */
     protected function getFilePath() {
         return PIMCORE_VERSION_DIRECTORY . "/" . $this->getCtype() . "/" . $this->getId();
+    }
+
+    protected function getBinaryFilePath() {
+        return $this->getFilePath() . ".bin";
     }
 
     /**
