@@ -967,7 +967,7 @@ class Asset extends Element_Abstract {
         $this->closeStream();
 
         if(is_resource($stream)) {
-            $this->_dataChanged = true;
+            $this->setDataChanged(true);
             $this->stream = $stream;
             rewind($this->stream);
         } else if(is_null($stream)) {
@@ -1258,10 +1258,15 @@ class Asset extends Element_Abstract {
      * @param string $format ('GB','MB','KB','B')
      * @return string
      */
-    public function getFileSize($format = 'b', $precision = 2) {
+    public function getFileSize($format = 'noformatting', $precision = 2) {
 
-        $bytes = filesize($this->getFileSystemPath());
-        switch (strtolower($format))
+        $format = strtolower($format);
+        $bytes = 0;
+        if(is_file($this->getFileSystemPath())) {
+            $bytes = filesize($this->getFileSystemPath());
+        }
+
+        switch ($format)
         {
             case 'gb':
                 $size = (($bytes / 1024) / 1024) / 1024;
@@ -1280,6 +1285,10 @@ class Asset extends Element_Abstract {
                 $size = $bytes;
                 $precision = 0;
                 break;
+        }
+
+        if($format == "noformatting") {
+            return $size;
         }
 
         return round($size, $precision) . ' ' . $format;

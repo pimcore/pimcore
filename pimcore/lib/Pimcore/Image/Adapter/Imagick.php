@@ -56,7 +56,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 $this->resource->setcolorspace(Imagick::COLORSPACE_RGB);
             }
 
-            if(!$this->resource->readImage($imagePath."[0]")) {
+            if(!filesize($imagePath) || !$this->resource->readImage($imagePath."[0]")) {
                 return false;
             }
 

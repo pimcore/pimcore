@@ -26,7 +26,7 @@ class Asset_Document extends Asset {
 
         $this->clearThumbnails();
 
-        if($this->getDataChanged()) {
+        if($this->getDataChanged() && $this->getFileSize()) {
             $tmpFile = $this->getTemporaryFile(true);
 
             try {
