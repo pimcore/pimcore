@@ -1379,8 +1379,6 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                 }
 
                 var imageHtml = "";
-                var imagePreload = [];
-
                 var uriPrefix = window.location.protocol + "//" + window.location.host;
 
                 var thumbnails = node.attributes.thumbnails;
@@ -1442,7 +1440,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                             '.thumbnails { width: 410px; } ' +
                             '.thumb { border: 1px solid #999; border-radius: 5px; background: url(' + uriPrefix + '/pimcore/static/img/loading.gif) no-repeat center center; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing:border-box; } ' +
                             '.big { min-height: 300px; } ' +
-                            '.complete { border:none; border-radius: 0;}' +
+                            '.complete { border:none; border-radius: 0; background:none; }' +
                             '.small { width: 130px; height: 130px; float: left; overflow: hidden; margin: 0 5px 5px 0; } ' +
                             '.small.complete img { min-width: 100%; max-height: 100%; } ' +
                             '/* firefox fix: remove loading/broken image icon */ @-moz-document url-prefix() { img:-moz-loading { visibility: hidden; } img:-moz-broken { -moz-force-broken-image-icon: 0;}} ' +
