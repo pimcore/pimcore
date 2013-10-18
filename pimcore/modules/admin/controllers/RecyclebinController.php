@@ -19,6 +19,11 @@ class Admin_RecyclebinController extends Pimcore_Controller_Action_Admin {
 
         parent::init();
 
+        // recyclebin actions might take some time (save & restore)
+        $timeout = 600; // 10 minutes
+        @ini_set("max_execution_time", $timeout);
+        set_time_limit($timeout);
+
         // check permissions
         $notRestrictedActions = array("add");
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
