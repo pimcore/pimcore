@@ -10,7 +10,7 @@
 <body>
 
 
-<?php $fields = $this->object->getClass()->getFieldDefinitions(); ?>
+<?php $fields = $this->object->geto_class()->getFieldDefinitions(); ?>
 
 <table class="preview" border="0" cellpadding="0" cellspacing="0">
     <tr>
@@ -45,6 +45,34 @@
                     <td><?php echo $lfd->getVersionPreview($this->object->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language)) ?></td>
                 </tr>
             <?php
+                $c++;
+            } ?>
+    <?php } ?>
+    <?php } else if($definition instanceof Object_Class_Data_Objectbricks){ ?>
+        <?php foreach($definition->getAllowedTypes() as $asAllowedType) { ?>
+            <?php
+            $collectionDef = Object_Objectbrick_Definition::getByKey($asAllowedType);
+
+            foreach ($collectionDef->getFieldDefinitions() as $lfd) { ?>
+                <?php
+                $value = null;
+                $bricks = $this->object->{"get" . ucfirst($fieldName)}();
+                if ($bricks) {
+                    $brickValue = $bricks->{"get" . $asAllowedType}();
+                    if ($brickValue) {
+                        $value = $lfd->getVersionPreview($brickValue->getValueForFieldName($lfd->getName()));
+                    }
+                }
+                if (!$bricks) {
+                    continue;
+                }
+                ?>
+                <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
+                    <td><?php echo ucfirst($asAllowedType) . " - " . $lfd->getTitle() ?> (<?php echo $language; ?>)</td>
+                    <td><?php echo $lfd->getName() ?></td>
+                    <td><?php echo $value ?></td>
+                </tr>
+                <?php
                 $c++;
             } ?>
         <?php } ?>

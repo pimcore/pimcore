@@ -40,8 +40,10 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
     </tr>
 
 <?php $c = 0; ?>
-<?php foreach ($fields as $fieldName => $definition) { ?>
-    <?php if($definition instanceof Object_Class_Data_Localizedfields) { ?>
+<?php
+    foreach ($fields as $fieldName => $definition) { ?>
+    <?php
+        if($definition instanceof Object_Class_Data_Localizedfields) { ?>
         <?php foreach(Pimcore_Tool::getValidLanguages() as $language) { ?>
             <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
                 <?php
@@ -58,7 +60,49 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 $c++;
             } ?>
         <?php } ?>
-    <?php } else { ?>
+    <?php } else
+            if($definition instanceof Object_Class_Data_ObjectBricks) {
+                ?>
+                <?php foreach($definition->getAllowedTypes() as $asAllowedType) { ?>
+                    <?php
+                    $collectionDef = Object_Objectbrick_Definition::getByKey($asAllowedType);
+
+                    foreach ($collectionDef->getFieldDefinitions() as $lfd) { ?>
+                        <?php
+
+                        $v1 = null;
+                        $bricks1 = $this->object1->{"get" . ucfirst($fieldName)}();
+                        if ($bricks1) {
+                            $brick1Value = $bricks1->{"get" . $asAllowedType}();
+                            if ($brick1Value) {
+                                $v1 = $lfd->getVersionPreview($brick1Value->getValueForFieldName($lfd->getName()));
+                            }
+                        }
+                        $v2 = null;
+                        $bricks2 = $this->object2->{"get" . ucfirst($fieldName)}();
+                        if ($bricks2) {
+                            $brick2Value = $bricks2->{"get" . $asAllowedType}();
+                            if ($brick2Value) {
+                                $v2 = $lfd->getVersionPreview($brick2Value->getValueForFieldName($lfd->getName()));
+                            }
+                        }
+                        if (!$bricks1 && !$bricks2) {
+                            continue;
+                        }
+
+                        ?>
+                        <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
+                            <td><?php echo ucfirst($asAllowedType) . " - " . $lfd->getTitle() ?></td>
+                            <td><?php echo $lfd->getName() ?></td>
+                            <td><?php echo $v1 ?></td>
+                            <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?php echo $v2 ?></td>
+                        </tr>
+                        <?php
+                        $c++;
+                    } ?>
+                <?php } ?>
+            <?php } else
+            { ?>
         <?php
             $v1 = $definition->getVersionPreview($this->object1->getValueForFieldName($fieldName));
             $v2 = $definition->getVersionPreview($this->object2->getValueForFieldName($fieldName));
