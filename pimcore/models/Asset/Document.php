@@ -108,7 +108,7 @@ class Asset_Document extends Asset {
                 $path = Asset_Image_Thumbnail_Processor::process($this, $thumbnail, $path, $deferred);
             }
 
-            return preg_replace("@^" . PIMCORE_DOCUMENT_ROOT . "@", "", $path);
+            return preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT) . "@", "", $path);
         } catch (Exception $e) {
             Logger::error("Couldn't create image-thumbnail of document " . $this->getFullPath());
             Logger::error($e);
