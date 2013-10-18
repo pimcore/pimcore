@@ -132,7 +132,8 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             title: this.fieldConfig.title,
-            cls: "object_field"
+            cls: "object_field",
+            bodyCssClass: "pimcore_nodrop_image"
         };
 
         this.component = new Ext.Panel(conf);
@@ -229,7 +230,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     getBody: function () {
         // get the id from the body element of the panel because there is no method to set body's html
         // (only in configure)
-        var bodyId = Ext.get(this.component.getEl().dom).query(".pimcore_droptarget_image")[0].getAttribute("id");
+        var bodyId = Ext.get(this.component.getEl().dom).query(".pimcore_droptarget_image,.pimcore_nodrop_image")[0].getAttribute("id");
         return Ext.get(bodyId);
     },
 
