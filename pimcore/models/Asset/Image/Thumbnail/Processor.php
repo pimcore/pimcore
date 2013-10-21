@@ -124,9 +124,13 @@ class Asset_Image_Thumbnail_Processor {
             $highResSuffix = "@" . $config->getHighResolution() . "x";
         }
 
-        $filename = "thumb_" . $id . "__" . $config->getName() . $highResSuffix . "." . $format;
+        $subFolder = "image-thumbnails" . $asset->getPath() . "thumb_" . $id . "__" . $config->getName() . $highResSuffix;
+        $filename = preg_replace("/\." . preg_quote(Pimcore_File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename()) . "." . $format;
 
-        $fsPath = PIMCORE_TEMPORARY_DIRECTORY . "/" . $filename;
+        $fsPath = PIMCORE_TEMPORARY_DIRECTORY . "/" . $subFolder . "/" . $filename;
+        if(!is_dir(dirname($fsPath))) {
+            mkdir(dirname($fsPath), 0777, true);
+        }
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
 
         // deferred means that the image will be generated on-the-fly (when requested by the browser)
