@@ -120,17 +120,6 @@ pimcore.settings.system = Class.create({
                 pimcore.globalmanager.remove("settings_system");
             }.bind(this));
 
-            // sites error pages
-            var sitesErrorPagesFields = [];
-            var sites = pimcore.globalmanager.get("sites");
-            sites.each(function (record) {
-                var key = "site_" + record.data.id;
-                if(!record.data.id) {
-                    key = "default";
-                }
-                sitesErrorPagesFields.push(this.getErrorPageFieldConfig(key, record.data.domain));
-            }, this);
-
             // debug
             if (this.data.values.general.debug) {
                 this.data.values.general.debug = true;
@@ -728,7 +717,7 @@ pimcore.settings.system = Class.create({
                         defaults: {width: 150},
                         items :[
                             {
-                                fieldLabel: t("domain"),
+                                fieldLabel: t("main_domain"),
                                 name: "general.domain",
                                 value: this.getValue("general.domain")
                             },
@@ -739,14 +728,35 @@ pimcore.settings.system = Class.create({
                                 checked: this.getValue("general.redirect_to_maindomain")
                             },
                             {
-                                xtype:'fieldset',
-                                title: t('error_pages'),
-                                collapsible: false,
-                                collapsed: false,
-                                autoHeight:true,
-                                labelWidth: 300,
-                                width: 600,
-                                items: sitesErrorPagesFields
+                                fieldLabel: t("default_error_page"),
+                                name: "documents.error_pages.default",
+                                cls: "input_drop_target",
+                                value: this.getValue("documents.error_pages.default"),
+                                width: 250,
+                                xtype: "textfield",
+                                listeners: {
+                                    "render": function (el) {
+                                        new Ext.dd.DropZone(el.getEl(), {
+                                            reference: this,
+                                            ddGroup: "element",
+                                            getTargetFromEvent: function(e) {
+                                                return this.getEl();
+                                            }.bind(el),
+
+                                            onNodeOver : function(target, dd, e, data) {
+                                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                            },
+
+                                            onNodeDrop : function (target, dd, e, data) {
+                                                if (data.node.attributes.elementType == "document") {
+                                                    this.setValue(data.node.attributes.path);
+                                                    return true;
+                                                }
+                                                return false;
+                                            }.bind(el)
+                                        });
+                                    }
+                                }
                             }
                         ]
                     },
@@ -1531,40 +1541,6 @@ pimcore.settings.system = Class.create({
             this.layout.getForm().findField("system.settings." + type + ".smtp.auth.username").setValue("");
             this.layout.getForm().findField("system.settings." + type + ".smtp.auth.password").setValue("");
         }
-    },
-
-    getErrorPageFieldConfig: function (siteKey, labelText) {
-        return {
-            fieldLabel: labelText,
-            name: "documents.error_pages." + siteKey,
-            cls: "input_drop_target",
-            value: this.getValue("documents.error_pages." + siteKey),
-            width: 250,
-            xtype: "textfield",
-            listeners: {
-                "render": function (el) {
-                    new Ext.dd.DropZone(el.getEl(), {
-                        reference: this,
-                        ddGroup: "element",
-                        getTargetFromEvent: function(e) {
-                            return this.getEl();
-                        }.bind(el),
-
-                        onNodeOver : function(target, dd, e, data) {
-                            return Ext.dd.DropZone.prototype.dropAllowed;
-                        },
-
-                        onNodeDrop : function (target, dd, e, data) {
-                            if (data.node.attributes.elementType == "document") {
-                                this.setValue(data.node.attributes.path);
-                                return true;
-                            }
-                            return false;
-                        }.bind(el)
-                    });
-                }
-            }
-        };
     },
 
     checkVersionInputs: function (elementType, type, field, event) {

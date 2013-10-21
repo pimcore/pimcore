@@ -506,7 +506,7 @@ pimcore.document.tree = Class.create({
                     menu: [
                         {
                             text: t('use_as_site'),
-                            handler: this.attributes.reference.useAsSite.bind(this)
+                            handler: this.attributes.reference.addUpdateSite.bind(this)
                         }
                     ]
                 }));
@@ -518,12 +518,11 @@ pimcore.document.tree = Class.create({
                     hideOnClick: false,
                     menu: [
                         {
+                            text: t('edit_site'),
+                            handler: this.attributes.reference.addUpdateSite.bind(this)
+                        }, {
                             text: t('remove_site'),
                             handler: this.attributes.reference.removeSite.bind(this)
-                        },
-                        {
-                            text: t('edit_domains'),
-                            handler: this.attributes.reference.editSite.bind(this)
                         }
                     ]
                 }));
@@ -733,34 +732,6 @@ pimcore.document.tree = Class.create({
         node.reload();
     },
 
-    useAsSite: function () {
-        Ext.MessageBox.prompt(t('use_this_as_document_root_for_new_site'),
-            t('please_enter_the_domains_for_the_new_site'),
-            this.attributes.reference.useAsSiteCreate.bind(this), null, null, "");
-    },
-
-    useAsSiteCreate: function (button, value, object) {
-
-        if (button == "ok") {
-            Ext.Ajax.request({
-                url: "/admin/document/create-site/",
-                params: {
-                    id: this.id,
-                    domains: value
-                },
-                success: this.attributes.reference.useAsSiteCreateComplete.bind(this)
-            });
-        }
-    },
-
-    useAsSiteCreateComplete: function (response) {
-        var site = Ext.decode(response.responseText);
-        this.attributes.site = site;
-
-        this.parentNode.reload();
-        pimcore.globalmanager.get("sites").reload();
-    },
-
     removeSite: function () {
         Ext.Ajax.request({
             url: "/admin/document/remove-site/",
@@ -769,35 +740,118 @@ pimcore.document.tree = Class.create({
             },
             success: function () {
                 pimcore.globalmanager.get("sites").reload();
-            }
+                this.parentNode.reload();
+            }.bind(this)
         });
 
         delete this.attributes.site;
-        this.parentNode.reload();
     },
 
-    editSite: function () {
-        Ext.MessageBox.prompt(t('edit_site_domains'), t('please_enter_the_domains_for_the_site'),
-            this.attributes.reference.editSiteSave.bind(this), null, null,
-            this.attributes.site.domains.join(","));
-    },
+    addUpdateSite: function () {
 
-    editSiteSave: function (button, value, object) {
-        Ext.Ajax.request({
-            url: "/admin/document/update-site/",
-            params: {
-                id: this.id,
-                domains: value
-            },
-            success: this.attributes.reference.editSiteSaveComplete.bind(this)
+        var data = {
+            "domains": [],
+            "mainDomain": "",
+            "errorDocument": "",
+            "redirectToMainDomain": false
+        };
+
+        if(this.attributes["site"]) {
+            data = this.attributes["site"];
+        }
+
+        var win = new Ext.Window({
+            width: 600,
+            height: 500,
+            layout: "fit",
+            closeAction: "close",
+            items: [{
+                xtype: "form",
+                bodyStyle: "padding: 10px;",
+                labelWidth: 250,
+                itemId: "form",
+                items: [{
+                    xtype: "textfield",
+                    name: "mainDomain",
+                    width: 300,
+                    fieldLabel: t("main_domain"),
+                    value: data["mainDomain"]
+                }, {
+                    xtype: "textarea",
+                    name: "domains",
+                    width: 300,
+                    height: 150,
+                    style: "word-wrap: normal;",
+                    fieldLabel: t("additional_domains"),
+                    value: data.domains.join("\n")
+                }, {
+                    xtype: "textfield",
+                    name: "errorDocument",
+                    width: 300,
+                    cls: "input_drop_target",
+                    fieldLabel: t("error_page"),
+                    value: data["errorDocument"],
+                    listeners: {
+                        "render": function (el) {
+                            new Ext.dd.DropZone(el.getEl(), {
+                                reference: this,
+                                ddGroup: "element",
+                                getTargetFromEvent: function(e) {
+                                    return this.getEl();
+                                }.bind(el),
+
+                                onNodeOver : function(target, dd, e, data) {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                },
+
+                                onNodeDrop : function (target, dd, e, data) {
+                                    if (data.node.attributes.elementType == "document") {
+                                        this.setValue(data.node.attributes.path);
+                                        return true;
+                                    }
+                                    return false;
+                                }.bind(el)
+                            });
+                        }
+                    }
+                }, {
+                    xtype: "checkbox",
+                    name: "redirectToMainDomain",
+                    fieldLabel: t("redirect_to_main_domain"),
+                    checked: data["redirectToMainDomain"]
+                }]
+            }],
+            buttons: [{
+                text: t("cancel"),
+                iconCls: "pimcore_icon_delete",
+                handler: function () {
+                    win.close();
+                }
+            }, {
+                text: t("apply"),
+                iconCls: "pimcore_icon_apply",
+                handler: function () {
+                    var data = win.getComponent("form").getForm().getFieldValues();
+                    data["id"] = this.id;
+
+                    Ext.Ajax.request({
+                        url: "/admin/document/update-site/",
+                        params: data,
+                        success: function (response) {
+                            var site = Ext.decode(response.responseText);
+                            this.attributes.site = site;
+
+                            this.parentNode.reload();
+                            pimcore.globalmanager.get("sites").reload();
+                        }.bind(this)
+                    });
+
+                    win.close();
+                }.bind(this)
+            }]
         });
-    },
 
-    editSiteSaveComplete: function (response) {
-        var site = Ext.decode(response.responseText);
-        this.attributes.site = site;
-
-        pimcore.globalmanager.get("sites").reload();
+        win.show();
     },
 
     addDocument : function (type, docTypeId) {

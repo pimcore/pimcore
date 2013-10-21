@@ -112,6 +112,12 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                 $site = Site::getByDomain($domain);
                 $path = $site->getRootPath() . $path;
 
+                if($site->getRedirectToMainDomain()) {
+                    $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $site->getMainDomain() . $_SERVER["REQUEST_URI"];
+                    header("HTTP/1.1 301 Moved Permanently");
+                    header("Location: " . $url, true, 301);
+                }
+
                 Zend_Registry::set("pimcore_site", $site);
             }
         } catch (Exception $e) {

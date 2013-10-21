@@ -598,31 +598,27 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => true));
     }
 
-    public function createSiteAction() {
-
-        $domains = $this->getParam("domains");
-        $domains = str_replace(" ", "", $domains);
-        $domains = explode(",", $domains);
-
-        $site = Site::create(array(
-            "rootId" => intval($this->getParam("id")),
-            "domains" => $domains
-        ));
-        $site->save();
-
-        $this->_helper->json($site);
-    }
-
     public function updateSiteAction() {
 
         $domains = $this->getParam("domains");
         $domains = str_replace(" ", "", $domains);
-        $domains = explode(",", $domains);
+        $domains = explode("\n", $domains);
 
-        $site = Site::getByRootId(intval($this->getParam("id")));
+        try {
+            $site = Site::getByRootId(intval($this->getParam("id")));
+        } catch (\Exception $e) {
+            $site = Site::create(array(
+                "rootId" => intval($this->getParam("id"))
+            ));
+        }
+
         $site->setDomains($domains);
+        $site->setMainDomain($this->getParam("mainDomain"));
+        $site->setErrorDocument($this->getParam("errorDocument"));
+        $site->setRedirectToMainDomain( ($this->getParam("redirectToMainDomain") == "true") ? true : false);
         $site->save();
 
+        $site->setRootDocument(null); // do not send the document to the frontend
         $this->_helper->json($site);
     }
 

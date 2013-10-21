@@ -198,15 +198,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $oldConfig = Pimcore_Config::getSystemConfig();
         $oldValues = $oldConfig->toArray();
 
-        // error pages
-        $errorPages = array();
-        foreach ($values as $key => $value) {
-            if(strpos($key, "error_pages")) {
-                $keySteps = explode(".",$key);
-                $errorPages[$keySteps[2]] = $value;
-            }
-        }
-
         // fallback languages
         $fallbackLanguages = array();
         $languages = explode(",", $values["general.validLanguages"]);
@@ -265,7 +256,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 ),
                 "default_controller" => $values["documents.default_controller"],
                 "default_action" => $values["documents.default_action"],
-                "error_pages" => $errorPages,
+                "error_pages" => array(
+                    "default" => $values["documents.error_pages.default"]
+                ),
                 "createredirectwhenmoved" => $values["documents.createredirectwhenmoved"],
                 "allowtrailingslash" => $values["documents.allowtrailingslash"],
                 "allowcapitals" => $values["documents.allowcapitals"],

@@ -45,6 +45,21 @@ class Site extends Pimcore_Model_Abstract {
     public $rootPath;
 
     /**
+     * @var string
+     */
+    public $mainDomain = "";
+
+    /**
+     * @var string
+     */
+    public $errorDocument = "";
+
+    /**
+     * @var bool
+     */
+    public $redirectToMainDomain = false;
+
+    /**
      * @param integer $id
      * @return Site
      */
@@ -166,15 +181,6 @@ class Site extends Pimcore_Model_Abstract {
     }
 
     /**
-     * returns the main domain of the site (first domain in list)
-     * @return string
-     */
-    public function getMainDomain() {
-        $domains = $this->getDomains();
-        return trim((string) $domains[0]);
-    }
-
-    /**
      * @return integer
      */
     public function getRootId() {
@@ -247,8 +253,55 @@ class Site extends Pimcore_Model_Abstract {
         }
         return $this->rootPath;
     }
-    
-    
+
+    /**
+     * @param string $errorDocument
+     */
+    public function setErrorDocument($errorDocument)
+    {
+        $this->errorDocument = $errorDocument;
+    }
+
+    /**
+     * @return string
+     */
+    public function getErrorDocument()
+    {
+        return $this->errorDocument;
+    }
+
+    /**
+     * @param string $mainDomain
+     */
+    public function setMainDomain($mainDomain)
+    {
+        $this->mainDomain = $mainDomain;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMainDomain()
+    {
+        return $this->mainDomain;
+    }
+
+    /**
+     * @param boolean $redirectToMainDomain
+     */
+    public function setRedirectToMainDomain($redirectToMainDomain)
+    {
+        $this->redirectToMainDomain = $redirectToMainDomain;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getRedirectToMainDomain()
+    {
+        return $this->redirectToMainDomain;
+    }
+
     /**
      * @return void
      */
