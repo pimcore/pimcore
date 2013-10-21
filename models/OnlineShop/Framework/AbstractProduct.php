@@ -54,7 +54,7 @@ class OnlineShop_Framework_AbstractProduct extends Object_Concrete implements On
      * @return string
      */
     public function getOSIndexType() {
-        return $this->getO_type();
+        return $this->getType();
     }
 
 
@@ -65,7 +65,7 @@ class OnlineShop_Framework_AbstractProduct extends Object_Concrete implements On
      * @return int
      */
     public function getOSParentId() {
-        return $this->getO_parentId();
+        return $this->getParentId();
     }
 
     /**
