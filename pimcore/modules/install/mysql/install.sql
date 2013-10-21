@@ -499,8 +499,11 @@ CREATE TABLE `search_backend_data` (
 DROP TABLE IF EXISTS `sites`;
 CREATE TABLE `sites` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `mainDomain` varchar(255) DEFAULT NULL,
   `domains` text,
   `rootId` int(11) unsigned DEFAULT NULL,
+  `errorDocument` varchar(255) DEFAULT NULL,
+  `redirectToMainDomain` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `rootId` (`rootId`)
 ) DEFAULT CHARSET=utf8;

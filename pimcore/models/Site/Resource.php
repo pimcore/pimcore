@@ -69,7 +69,7 @@ class Site_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function getByDomain($domain) {
-        $data = $this->db->fetchRow("SELECT * FROM sites WHERE domains LIKE ?", "%\"" . $domain . "\"%");
+        $data = $this->db->fetchRow("SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?", array($domain, "%\"" . $domain . "\"%"));
         if (!$data["id"]) {
             throw new Exception("there is no site for the requested domain");
         }
@@ -113,6 +113,9 @@ class Site_Resource extends Pimcore_Model_Resource_Abstract {
 
                 if (is_array($value) || is_object($value)) {
                     $value = Pimcore_Tool_Serialize::serialize($value);
+                }
+                if(is_bool($value)) {
+                    $value = (int) $value;
                 }
                 $data[$key] = $value;
             }
