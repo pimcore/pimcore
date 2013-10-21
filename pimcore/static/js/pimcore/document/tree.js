@@ -494,47 +494,43 @@ pimcore.document.tree = Class.create({
             }));
         }
 
+        // site-mgnt
+        var user = pimcore.globalmanager.get("user");
 
-        if (this.attributes.type == "page") {
-
-            if (this.attributes.permissions.settings && this.id != 1) {
-                if (!this.attributes.site) {
-                    menu.add(new Ext.menu.Item({
-                        text: t('advanced'),
-                        iconCls: "",
-                        hideOnClick: false,
-                        menu: [
-                            {
-                                text: t('use_as_site'),
-                                handler: this.attributes.reference.useAsSite.bind(this)
-                            }
-                        ]
-                    }));
-                }
-                else {
-                    menu.add(new Ext.menu.Item({
-                        text: t('advanced'),
-                        iconCls: "",
-                        hideOnClick: false,
-                        menu: [
-                            {
-                                text: t('remove_site'),
-                                handler: this.attributes.reference.removeSite.bind(this)
-                            },
-                            {
-                                text: t('edit_domains'),
-                                handler: this.attributes.reference.editSite.bind(this)
-                            }
-                        ]
-                    }));
-                }
+        if (user.admin && this.attributes.type == "page" && this.id != 1) {
+            if (!this.attributes.site) {
+                menu.add(new Ext.menu.Item({
+                    text: t('advanced'),
+                    iconCls: "",
+                    hideOnClick: false,
+                    menu: [
+                        {
+                            text: t('use_as_site'),
+                            handler: this.attributes.reference.useAsSite.bind(this)
+                        }
+                    ]
+                }));
+            }
+            else {
+                menu.add(new Ext.menu.Item({
+                    text: t('advanced'),
+                    iconCls: "",
+                    hideOnClick: false,
+                    menu: [
+                        {
+                            text: t('remove_site'),
+                            handler: this.attributes.reference.removeSite.bind(this)
+                        },
+                        {
+                            text: t('edit_domains'),
+                            handler: this.attributes.reference.editSite.bind(this)
+                        }
+                    ]
+                }));
             }
         }
 
-
-
         if (this.id != 1) {
-            var user = pimcore.globalmanager.get("user");
             if(user.admin) { // only admins are allowed to change locks in frontend
 
                 var lockMenu = [];
