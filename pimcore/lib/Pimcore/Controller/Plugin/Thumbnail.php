@@ -22,16 +22,16 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
 
         // this is a filter which checks for common used files (by browser, crawlers, ...) and prevent the default
         // error page, because this is more resource-intensive than exiting right here
-        if(preg_match("@^/website/var/tmp/image-thumbnails/(.*)thumb_([0-9]+)__([a-zA-Z0-9_\-]+)(\@[0-9.]+x)?@",$request->getPathInfo(),$matches)) {
+        if(preg_match("@^/website/var/tmp/image-thumbnails/(.*)thumb_([0-9]+)__([a-zA-Z0-9_\-]+)([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@",$request->getPathInfo(),$matches)) {
             $assetId = $matches[2];
             $thumbnailName = $matches[3];
+            $format = $matches[6];
 
             if($asset = Asset::getById($assetId)) {
                 try {
 
                     $thumbnailConfig = null;
-
-                    $deferredConfig = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . basename($request->getPathInfo()) . ".deferred.config";
+                    $deferredConfig = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/thumb_" . $assetId . "__" . $thumbnailName . "." . $format . ".deferred.config";
                     if(file_exists($deferredConfig)) {
                         $thumbnailConfig = unserialize(file_get_contents($deferredConfig));
                         @unlink($deferredConfig); // cleanup, this isn't needed anymore
@@ -57,8 +57,8 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
                         $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getImageThumbnail($thumbnailConfig, $page);
                     } else if ($asset instanceof Asset_Image) {
                         //check if high res image is called
-                        if(array_key_exists(3, $matches)) {
-                            $highResFactor = (float) str_replace(array("@","x"),"", $matches[3]);
+                        if(array_key_exists(5, $matches)) {
+                            $highResFactor = (float) str_replace(array("@","x"),"", $matches[5]);
                             $thumbnailConfig->setHighResolution($highResFactor);
                         }
 

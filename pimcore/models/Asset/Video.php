@@ -150,7 +150,10 @@ class Asset_Video extends Asset {
 
         $converter = Pimcore_Video::getInstance();
         $converter->load($this->getFileSystemPath());
-        $path = PIMCORE_TEMPORARY_DIRECTORY . "/video_" . $this->getId() . "__thumbnail_" .  $timeOffset . ".png";
+        $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-image-cache/video_" . $this->getId() . "__thumbnail_" .  $timeOffset . ".png";
+        if(!is_dir(dirname($path))) {
+            mkdir(dirname($path), 0777, true);
+        }
 
         if(!is_file($path)) {
             $converter->saveImage($path, $timeOffset);
