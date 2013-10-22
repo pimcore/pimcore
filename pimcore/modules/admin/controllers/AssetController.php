@@ -832,8 +832,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $image->getThumbnail($thumbnail);
-        $imageContent = file_get_contents($thumbnailFile);
-
         $fileExtension = Pimcore_File::getFileExtension($thumbnailFile);
         if(in_array($fileExtension, array("gif","jpeg","jpeg","png","pjpeg"))) {
             header("Content-Type: image/".$fileExtension, true);
@@ -844,7 +842,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         header("Content-Length: " . filesize($thumbnailFile), true);
         $this->sendThumbnailCacheHeaders();
 
-        echo $imageContent;
+        while(@ob_end_flush());
+        flush();
+
+        readfile($thumbnailFile);
         exit;
     }
 
@@ -889,13 +890,16 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $video->save();
         }
 
+        $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $video->getImageThumbnail($thumbnail, $time, $image);
+
         header("Content-type: image/" . $format, true);
+        header("Content-Length: " . filesize($thumbnailFile), true);
         $this->sendThumbnailCacheHeaders();
 
         while(@ob_end_flush());
         flush();
 
-        readfile(PIMCORE_DOCUMENT_ROOT . $video->getImageThumbnail($thumbnail, $time, $image));
+        readfile($thumbnailFile);
         exit;
     }
 
@@ -919,14 +923,17 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
 
+        $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $document->getImageThumbnail($thumbnail, $page);
+
         $format = "png";
         header("Content-type: image/" . $format, true);
+        header("Content-Length: " . filesize($thumbnailFile), true);
         $this->sendThumbnailCacheHeaders();
 
         while(@ob_end_flush());
         flush();
 
-        readfile(PIMCORE_DOCUMENT_ROOT . $document->getImageThumbnail($thumbnail, $page));
+        readfile($thumbnailFile);
         exit;
     }
 
@@ -1012,6 +1019,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 $thumbnailMethod = "getThumbnail";
             } else if ($asset instanceof Asset_Video && Pimcore_Video::isAvailable()) {
                 $thumbnailMethod = "getImageThumbnail";
+            } else if ($asset instanceof Asset_Document && Pimcore_Document::isAvailable()) {
+                $thumbnailMethod = "getImageThumbnail";
             }
 
             if (!empty($thumbnailMethod)) {
@@ -1019,7 +1028,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                     "id" => $asset->getId(),
                     "type" => $asset->getType(),
                     "filename" => $asset->getFilename(),
-                    "url" => "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/treepreview/true"
+                    "url" => "/admin/asset/get-" . $asset->getType() . "-thumbnail/id/" . $asset->getId() . "/treepreview/true"
                 );
             }
         }
