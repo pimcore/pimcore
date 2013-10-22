@@ -12,7 +12,7 @@ class NewsController extends Website_Controller_Action
         $newsList->load();
 
         $paginator = Zend_Paginator::factory($newsList);
-        $paginator->setCurrentPageNumber( $this->_getParam('page') );
+        $paginator->setCurrentPageNumber( $this->getParam('page') );
         $paginator->setItemCountPerPage(5);
 
         $this->view->news = $paginator;
