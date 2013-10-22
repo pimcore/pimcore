@@ -97,8 +97,14 @@ class Asset_Video_Thumbnail_Processor {
 
         foreach ($formats as $format) {
 
-            $filename = "video_" . $asset->getId() . "__" . $config->getName() . "." . $format;
-            $fsPath = PIMCORE_TEMPORARY_DIRECTORY . "/" . $filename;
+            $subFolder = "video-thumbnails" . $asset->getPath() . $asset->getId() . "__" . $config->getName();
+            $filename = preg_replace("/\." . preg_quote(Pimcore_File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename()) . "." . $format;
+
+            $fsPath = PIMCORE_TEMPORARY_DIRECTORY . "/" . $subFolder . "/" . $filename;
+
+            if(!is_dir(dirname($fsPath))) {
+                mkdir(dirname($fsPath), 0777, true);
+            }
 
             if(is_file($fsPath)) {
                 @unlink($fsPath);

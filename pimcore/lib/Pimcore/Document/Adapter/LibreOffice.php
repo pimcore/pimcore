@@ -126,7 +126,11 @@ class Pimcore_Document_Adapter_LibreOffice extends Pimcore_Document_Adapter_Ghos
             // nothing to do, delegate to libreoffice
         }
 
-        $pdfFile = PIMCORE_TEMPORARY_DIRECTORY . "/document_" . md5($path . filemtime($path)) . "__libreoffice.pdf";
+        $pdfFile = PIMCORE_TEMPORARY_DIRECTORY . "/document-pdf-cache/document_" . md5($path . filemtime($path)) . "__libreoffice.pdf";
+        if(!is_dir(dirname($pdfFile))) {
+            mkdir(dirname($pdfFile), 0777, true);
+        }
+
         $lockKey = "soffice";
 
         if(!file_exists($pdfFile)) {
