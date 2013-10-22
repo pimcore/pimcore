@@ -46,7 +46,11 @@ class Document_DocType_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         $data = $this->db->fetchRow("SELECT * FROM documents_doctypes WHERE id = ?", $this->model->getId());
-        $this->assignVariablesToModel($data);
+        if($data["id"]) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new \Exception("doc-type with id " . $this->model->getId() . " doesn't exist");
+        }
     }
 
     /**

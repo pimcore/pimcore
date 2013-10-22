@@ -136,8 +136,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 $createValues["key"] = $this->getParam("key");
 
                 // check for a docType
-                if ($this->getParam("docTypeId") && is_numeric($this->getParam("docTypeId"))) {
-                    $docType = Document_DocType::getById(intval($this->getParam("docTypeId")));
+                $docType = Document_DocType::getById(intval($this->getParam("docTypeId")));
+                if ($docType) {
                     $createValues["template"] = $docType->getTemplate();
                     $createValues["controller"] = $docType->getController();
                     $createValues["action"] = $docType->getAction();
