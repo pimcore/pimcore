@@ -80,7 +80,12 @@ class Document_DocType extends Pimcore_Model_Abstract {
 
         $docType = new self();
         $docType->setId(intval($id));
-        $docType->getResource()->getById();
+
+        try {
+            $docType->getResource()->getById();
+        } catch (\Exception $e) {
+            return null;
+        }
 
         return $docType;
     }
