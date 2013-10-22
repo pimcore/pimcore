@@ -67,17 +67,17 @@ class AdvancedController extends Website_Controller_Action
     }
 
     public function searchAction () {
-        if ($this->_getParam("q")) {
+        if ($this->getParam("q")) {
             try {
-                $page = $this->_getParam('page');
+                $page = $this->getParam('page');
                 if (empty($page)) {
                     $page = 1;
                 }
                 $perPage = 10;
 
-                $result = Pimcore_Google_Cse::search($this->_getParam("q"), (($page - 1) * $perPage), null, array(
+                $result = Pimcore_Google_Cse::search($this->getParam("q"), (($page - 1) * $perPage), null, array(
                     "cx" => "002859715628130885299:baocppu9mii"
-                ), $this->_getParam("facet"));
+                ), $this->getParam("facet"));
 
                 $paginator = Zend_Paginator::factory($result);
                 $paginator->setCurrentPageNumber($page);
