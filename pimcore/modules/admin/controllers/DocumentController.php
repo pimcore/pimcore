@@ -883,7 +883,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 "remove" => $childDocument->isAllowed("delete"),
                 "settings" => $childDocument->isAllowed("settings"),
                 "rename" => $childDocument->isAllowed("rename"),
-                "publish" => $childDocument->isAllowed("publish")
+                "publish" => $childDocument->isAllowed("publish"),
+                "unpublish" => $childDocument->isAllowed("unpublish")
             )
         );
 

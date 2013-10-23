@@ -88,7 +88,12 @@ class Pimcore_Tool_Session {
         }
 
         if(!array_key_exists($namespace, self::$sessions) || !self::$sessions[$namespace] instanceof Zend_Session_Namespace) {
-            self::$sessions[$namespace] = new Zend_Session_Namespace($namespace);
+            try {
+                self::$sessions[$namespace] = new Zend_Session_Namespace($namespace);
+            } catch (\Exception $e) {
+                Zend_Session::destroy(true);
+
+            }
         }
 
         self::$openedSessions++;
