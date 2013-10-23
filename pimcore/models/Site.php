@@ -291,7 +291,7 @@ class Site extends Pimcore_Model_Abstract {
      */
     public function setRedirectToMainDomain($redirectToMainDomain)
     {
-        $this->redirectToMainDomain = $redirectToMainDomain;
+        $this->redirectToMainDomain = (bool) $redirectToMainDomain;
     }
 
     /**
