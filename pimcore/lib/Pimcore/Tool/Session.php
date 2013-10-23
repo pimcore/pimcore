@@ -91,8 +91,9 @@ class Pimcore_Tool_Session {
             try {
                 self::$sessions[$namespace] = new Zend_Session_Namespace($namespace);
             } catch (\Exception $e) {
-                Zend_Session::destroy(true);
-
+                // invalid session, regenerate the session, and return a dummy object
+                Zend_Session::regenerateId();
+                return new stdClass();
             }
         }
 
