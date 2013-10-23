@@ -71,16 +71,13 @@ class Property extends Pimcore_Model_Abstract {
     public function setDataFromEditmode($data) {
         // IMPORTANT: if you use this method be sure that the type of the property is already set
 
-        if ($this->type == "document") {
-            $this->data = Document::getByPath($data);
-        }
-        else if ($this->type == "asset") {
-            $this->data = Asset::getByPath($data);
-        }
-        else if ($this->type == "object") {
-            $this->data = Object_Abstract::getByPath($data);
-        }
-        else if ($this->type == "date") {
+        if(in_array($this->getType(), array("document","asset","object"))) {
+            $el = Element_Service::getElementByPath($this->getType(), $data);
+            $this->data = null;
+            if($el) {
+                $this->data = $el->getId();
+            }
+        } else if ($this->type == "date") {
             $this->data = new Zend_Date($data);
         }
         else if ($this->type == "bool") {
@@ -104,17 +101,8 @@ class Property extends Pimcore_Model_Abstract {
      */
     public function setDataFromResource($data) {
         // IMPORTANT: if you use this method be sure that the type of the property is already set
-
-        if ($this->type == "document") {
-            $this->data = Document::getById(intval($data));
-        }
-        else if ($this->type == "asset") {
-            $this->data = Asset::getById(intval($data));
-        }
-        else if ($this->type == "object") {
-            $this->data = Object_Abstract::getById(intval($data));
-        }
-        else if ($this->type == "date") {
+        // do not set data for object, asset and document here, this is loaded dynamically when calling $this->getData();
+        if ($this->type == "date") {
             $this->data = Pimcore_Tool_Serialize::unserialize($data);
         }
         else if ($this->type == "bool") {
@@ -164,6 +152,12 @@ class Property extends Pimcore_Model_Abstract {
      * @return mixed
      */
     public function getData() {
+
+        // lazy-load data of type asset, document, object
+        if(in_array($this->getType(), array("document","asset","object")) && !$this->data instanceof Element_Interface && is_numeric($this->data)) {
+            return Element_Service::getElementById($this->getType(), $this->data);
+        }
+
         return $this->data;
     }
 
