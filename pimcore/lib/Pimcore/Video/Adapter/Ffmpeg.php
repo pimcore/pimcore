@@ -320,7 +320,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     }
 
     protected function getConversionLogFile () {
-        return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/ffmpeg-" . $this->getProcessId() . ".log";
+        return PIMCORE_LOG_DIRECTORY . "/ffmpeg-" . $this->getProcessId() . ".log";
     }
 
     public function addArgument($key, $value) {

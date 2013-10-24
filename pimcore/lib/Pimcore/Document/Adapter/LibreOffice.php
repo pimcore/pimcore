@@ -140,7 +140,7 @@ class Pimcore_Document_Adapter_LibreOffice extends Pimcore_Document_Adapter_Ghos
             // a list of all available filters is here:
             // http://cgit.freedesktop.org/libreoffice/core/tree/filter/source/config/fragments/filters
             $cmd = self::getLibreOfficeCli() . " --headless --nologo --nofirststartwizard --norestore --server --convert-to pdf:writer_web_pdf_Export --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path;
-            $out = Pimcore_Tool_Console::exec($cmd);
+            $out = Pimcore_Tool_Console::exec($cmd, PIMCORE_LOG_DIRECTORY . "/libreoffice-pdf-convert.log", 180);
 
             Logger::debug("LibreOffice Output was: " . $out);
 
