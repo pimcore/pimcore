@@ -64,12 +64,24 @@ class Pimcore_Tool_Console {
         throw new Exception("No php executable found, please configure the correct path in the system settings");
     }
 
+    public static function getTimeoutBinary () {
+        $paths = array("/usr/bin/timeout","/usr/local/bin/timeout","/bin/timeout");
+
+        foreach ($paths as $path) {
+            if(@is_executable($path)) {
+                return $path;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @static
      * @param $cmd
      * @param null $outputFile
      */
-    public static function exec ($cmd, $outputFile = null) {
+    public static function exec ($cmd, $outputFile = null, $timeout = null) {
 
         /*if(!$outputFile) {
             if(self::getSystemEnvironment() == 'windows') {
@@ -78,6 +90,12 @@ class Pimcore_Tool_Console {
                 $outputFile = "/dev/null";
             }
         }*/
+
+        if($timeout && self::getTimeoutBinary()) {
+            $cmd = self::getTimeoutBinary() . " -k 1m " . $timeout . "s " . $cmd;
+        } else if($timeout) {
+            Logger::warn("timeout binary not found, executing command without timeout");
+        }
 
         if($outputFile) {
             $cmd = $cmd . " > ". $outputFile ." 2>&1";
