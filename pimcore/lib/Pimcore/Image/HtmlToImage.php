@@ -80,13 +80,17 @@ class Pimcore_Image_HtmlToImage {
         $url .= (strpos($url, "?") ? "&" : "?") . "pimcore_preview=true";
 
 
+        $arguments = "--width " . $screenWidth . " --format " . $format . " \"" . $url . "\" " . $outputFile;
+
         // use xvfb if possible
         if($xvfb = self::getXvfbBinary()) {
-            Pimcore_Tool_Console::exec($xvfb . " --auto-servernum --server-args=\"-screen 0, 1280x1024x24\" " .
-                self::getWkhtmltoimageBinary() . " --use-xserver --width " . $screenWidth . " --format " . $format . " \"" . $url . "\" " . $outputFile, PIMCORE_LOG_DIRECTORY . "/wkhtmltoimage.log");
+            $command = $xvfb . " --auto-servernum --server-args=\"-screen 0, 1280x1024x24\" " .
+                self::getWkhtmltoimageBinary() . " --use-xserver " . $arguments;
         } else {
-            Pimcore_Tool_Console::exec(self::getWkhtmltoimageBinary() . " --width " . $screenWidth . " --format " . $format . " \"" . $url . "\" " . $outputFile, PIMCORE_LOG_DIRECTORY . "/wkhtmltoimage.log");
+            $command = self::getWkhtmltoimageBinary() . $arguments;
         }
+
+        Pimcore_Tool_Console::exec($command, PIMCORE_LOG_DIRECTORY . "/wkhtmltoimage.log", 20);
 
         if(file_exists($outputFile) && filesize($outputFile) > 1000) {
             return true;
