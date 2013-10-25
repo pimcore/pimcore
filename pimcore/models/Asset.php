@@ -1144,9 +1144,10 @@ class Asset extends Element_Abstract {
      * @return string
      */
     public function getTemporaryFile($fullPath = false) {
-
-        $conf = Pimcore_Config::getSystemConfig();
-        $destinationPath = PIMCORE_TEMPORARY_DIRECTORY . "/asset_" . $this->getId() . "_" . md5(microtime()) . "__" . $this->getFilename();
+        $destinationPath = PIMCORE_TEMPORARY_DIRECTORY . "/asset-temporary/asset_" . $this->getId() . "_" . md5(microtime()) . "__" . $this->getFilename();
+        if(!is_dir(dirname($destinationPath))) {
+            Pimcore_File::mkdir(dirname($destinationPath));
+        }
 
         $src = $this->getStream();
         $dest = fopen($destinationPath, "w+");
