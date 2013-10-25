@@ -17,7 +17,7 @@
 
 class Asset extends Element_Abstract {
 
-    public static $chmod = 0766;
+    public static $chmod = 0755;
 
     /**
      * possible types of an asset
