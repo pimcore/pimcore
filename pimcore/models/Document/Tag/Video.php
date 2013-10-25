@@ -688,6 +688,7 @@ class Document_Tag_Video extends Document_Tag
                     color:#555;
                     font-family:Arial,Verdana,sans-serif;
                     line-height:66px;
+                    box-sizing:content-box;
                     background:#fff url(/pimcore/static/img/video-loading.gif) center center no-repeat;
                     width:66px;
                     height:66px;
