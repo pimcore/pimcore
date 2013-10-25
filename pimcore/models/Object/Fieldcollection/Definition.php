@@ -180,7 +180,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         
         // create folder if not exist
         if(!is_dir($fieldCollectionFolder)) {
-            mkdir($fieldCollectionFolder);
+            Pimcore_File::mkdir($fieldCollectionFolder);
         }
         
         $serialized = Pimcore_Tool_Serialize::serialize($this);
@@ -191,8 +191,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
             throw new Exception("Cannot write definition file in: " . $definitionFile . " please check write permission on this directory.");
         }
 
-        file_put_contents($definitionFile,$serialized);
-        chmod($definitionFile, 0766);
+        Pimcore_File::put($definitionFile, $serialized);
         
         $extendClass = "Object_Fieldcollection_Data_Abstract";
         if ($this->getParentClass()) {
@@ -235,7 +234,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         
         $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Fieldcollection/Data"; 
         if(!is_dir($fieldClassFolder)) {
-            mkdir($fieldClassFolder,0766,true);
+            Pimcore_File::mkdir($fieldClassFolder);
         }
 
 
@@ -244,9 +243,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
             throw new Exception("Cannot write definition file in: " . $classFile . " please check write permission on this directory.");
         }
 
-        file_put_contents($classFile,$cd);
-        chmod($classFile,0766);
-        
+        Pimcore_File::put($classFile,$cd);
         
         // update classes
         $classList = new Object_Class_List();

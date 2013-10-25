@@ -46,7 +46,7 @@ class Pimcore_Tool_Less {
                     $newFile = PIMCORE_TEMPORARY_DIRECTORY . "/less___" . Pimcore_File::getValidFilename(str_replace(".less", "", $source)) . "-" . filemtime($path) . ".css";
                     if(!is_file($newFile)) {
                         $compiledContent = self::compile($path, $source);
-                        file_put_contents($newFile, $compiledContent);
+                        Pimcore_File::put($newFile, $compiledContent);
                     }
 
                     $body = str_replace($tag,

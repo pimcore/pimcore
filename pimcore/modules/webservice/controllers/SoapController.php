@@ -51,9 +51,7 @@ class Webservice_SoapController extends Pimcore_Controller_Action_Webservice {
         //TODO: do we really want to normalize class names since we had to introduce request and response objects anyway?
         $wsdl = str_replace("Webservice_Data_", "", $wsdl); // normalize classnames
         $wsdlFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/wsdl.xml";
-        file_put_contents($wsdlFile, $wsdl);
-        chmod($wsdlFile, 0766);
-
+        Pimcore_File::put($wsdlFile, $wsdl);
 
         // let's go
         if (isset($_GET["wsdl"])) {

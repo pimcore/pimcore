@@ -99,7 +99,7 @@ class Asset_Document extends Asset {
                 $converter->load($this->getFileSystemPath());
                 $path = PIMCORE_TEMPORARY_DIRECTORY . "/document-image-cache/document_" . $this->getId() . "__thumbnail_" .  $page . ".png";
                 if(!is_dir(dirname($path))) {
-                    mkdir(dirname($path), 0777, true);
+                    Pimcore_File::mkdir(dirname($path));
                 }
 
                 if(!is_file($path)) {

@@ -139,8 +139,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         if(!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
             throw new Exception("Cannot write definition file in: " . $definitionFile . " please check write permission on this directory.");
         }
-        file_put_contents($definitionFile, Pimcore_Tool_Serialize::serialize($this->model->layoutDefinitions));
-        chmod($definitionFile,0766);
+        Pimcore_File::put($definitionFile, Pimcore_Tool_Serialize::serialize($this->model->layoutDefinitions));
                     
         $objectTable = "object_query_" . $this->model->getId();
         $objectDatastoreTable = "object_store_" . $this->model->getId();

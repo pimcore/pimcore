@@ -75,8 +75,7 @@ class Pimcore_Controller_Plugin_CssCombine extends Zend_Controller_Plugin_Abstra
 
                     if(!is_file($stylesheetPath)) {
                         // put minified contents into one single file
-                        file_put_contents($stylesheetPath, $stylesheetContent);
-                        chmod($stylesheetPath, 0766);
+                        Pimcore_File::put($stylesheetPath, $stylesheetContent);
                     }
 
                     $head = $html->find("head",0);

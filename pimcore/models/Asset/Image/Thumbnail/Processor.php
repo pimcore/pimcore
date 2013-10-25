@@ -129,7 +129,7 @@ class Asset_Image_Thumbnail_Processor {
 
         $fsPath = PIMCORE_TEMPORARY_DIRECTORY . "/" . $subFolder . "/" . $filename;
         if(!is_dir(dirname($fsPath))) {
-            mkdir(dirname($fsPath), 0777, true);
+            Pimcore_File::mkdir(dirname($fsPath));
         }
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
 
@@ -138,7 +138,7 @@ class Asset_Image_Thumbnail_Processor {
         // so that it can be used also with dynamic configurations
         if($deferred) {
             $configPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/thumb_" . $id . "__" . $config->getName() . "." . $format . ".deferred.config";
-            file_put_contents($configPath, Pimcore_Tool_Serialize::serialize($config));
+            Pimcore_File::put($configPath, Pimcore_Tool_Serialize::serialize($config));
 
             return $path;
         }

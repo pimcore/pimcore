@@ -167,17 +167,17 @@ class Pimcore_Update {
         
         $downloadDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision;
         if(!is_dir($downloadDir)) {
-            @mkdir($downloadDir,0755,true);
+            Pimcore_File::mkdir($downloadDir);
         }
         
         $filesDir = $downloadDir . "/files";
         if(!is_dir($filesDir)) {
-            @mkdir($filesDir,0755,true);
+            Pimcore_File::mkdir($filesDir);
         }
         
         $scriptsDir = $downloadDir . "/scripts";
         if(!is_dir($scriptsDir)) {
-            @mkdir($scriptsDir,0755,true);
+            Pimcore_File::mkdir($scriptsDir);
         }
         
         
@@ -191,8 +191,7 @@ class Pimcore_Update {
                     if ($file->action == "update" || $file->action == "add") {
                         $newPath = str_replace("/","~~~",$file->path);
                         $newFile = $filesDir."/".$newPath;
-                        file_put_contents($newFile, base64_decode((string) $file->content));
-                        chmod($newFile, 0766);
+                        Pimcore_File::put($newFile, base64_decode((string) $file->content));
                     }
                     
                     $db->insert(self::$tmpTable, array(
@@ -202,8 +201,7 @@ class Pimcore_Update {
                     ));
                 } else if ($file->type == "script") {
                     $newScript = $scriptsDir. $file->path;
-                    file_put_contents($newScript, base64_decode((string) $file->content));
-                    chmod($newScript, 0766);
+                    Pimcore_File::put($newScript, base64_decode((string) $file->content));
                 }
             }
         }
@@ -218,7 +216,7 @@ class Pimcore_Update {
             if ($file["action"] == "update" || $file["action"] == "add") {
                 if (!is_dir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]))) {
                     if(!self::$dryRun) {
-                        mkdir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]), 0755, true);
+                        Pimcore_File::mkdir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]));
                     }
                 }
                 $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision."/files/" . str_replace("/","~~~",$file["path"]);
@@ -325,7 +323,7 @@ class Pimcore_Update {
         //directory for additional languages
         $langDir = PIMCORE_CONFIGURATION_DIRECTORY . "/texts";
         if (!is_dir($langDir)) {
-            mkdir($langDir, 0755, true);
+            Pimcore_File::mkdir($langDir);
         }
 
         $success = is_dir($langDir);
@@ -375,7 +373,7 @@ class Pimcore_Update {
         if($filemtime < (time()-30*86400) || (date("m/d/Y") == date("m/d/Y", $firstTuesdayOfMonth) && $filemtime < time()-86400)) {
             $data = Pimcore_Tool::getHttpData($downloadUrl);
             if(strlen($data) > 1000000) {
-                file_put_contents($geoDbFileGz, $data);
+                Pimcore_File::put($geoDbFileGz, $data);
 
                 @unlink($geoDbFile);
 

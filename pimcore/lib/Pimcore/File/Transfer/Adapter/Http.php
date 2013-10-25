@@ -74,8 +74,8 @@ class Pimcore_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Http
         $response = $httpClient->request();
         if($response->isSuccessful()){
             $data = $response->getBody();
-            @mkdir(dirname($destinationFile),0755,true);
-            $result = file_put_contents($destinationFile,$data);
+            Pimcore_File::mkdir(dirname($destinationFile));
+            $result = Pimcore_File::put($destinationFile,$data);
             if($result === false){
                 throw new Exception("Couldn't write destination file:" . $destinationFile);
             }

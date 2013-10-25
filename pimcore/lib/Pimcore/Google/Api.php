@@ -95,7 +95,7 @@ class Pimcore_Google_Api {
         if(!$token) {
             $client->getAuth()->refreshTokenWithAssertion();
             $token = $client->getAuth()->getAccessToken();
-            file_put_contents($tokenFile, $token);
+            Pimcore_File::put($tokenFile, $token);
         }
 
         $client->setAccessToken($token);

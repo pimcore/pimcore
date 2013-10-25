@@ -1138,7 +1138,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         if($this->getParam("data") !== null) {
             // save data
-            file_put_contents($robotsPath, $this->getParam("data"));
+            Pimcore_File::put($robotsPath, $this->getParam("data"));
 
             $this->_helper->json(array(
                 "success" => true

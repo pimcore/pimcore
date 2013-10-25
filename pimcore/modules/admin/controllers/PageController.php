@@ -187,7 +187,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         if($this->getParam("data") && $this->getParam("id")) {
             $data = substr($this->getParam("data"),strpos($this->getParam("data"), ",")+1);
             $data = base64_decode($data);
-            file_put_contents(PIMCORE_TEMPORARY_DIRECTORY . "/document-page-screenshot-" . $this->getParam("id") . ".jpg", $data);
+            Pimcore_File::put(PIMCORE_TEMPORARY_DIRECTORY . "/document-page-screenshot-" . $this->getParam("id") . ".jpg", $data);
         }
 
         $this->_helper->json(array("success" => true));

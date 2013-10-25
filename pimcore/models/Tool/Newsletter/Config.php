@@ -79,7 +79,7 @@ class Tool_Newsletter_Config {
     public static function getWorkingDir () {
         $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/newsletter";
         if(!is_dir($dir)) {
-            mkdir($dir);
+            Pimcore_File::mkdir($dir);
         }
 
         return $dir;

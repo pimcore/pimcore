@@ -10,7 +10,7 @@ class Deployment_Setup {
 
     public function run(){
         if(!is_dir(PIMCORE_DEPLOYMENT_DIRECTORY)){
-            mkdir(PIMCORE_DEPLOYMENT_DIRECTORY,0755,true);
+            Pimcore_File::mkdir(PIMCORE_DEPLOYMENT_DIRECTORY);
         }
 
         $revisionFileCheck = PIMCORE_DEPLOYMENT_DIRECTORY .'/.lastPimcoreRevisionCheck';

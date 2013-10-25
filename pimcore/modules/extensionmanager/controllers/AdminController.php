@@ -206,10 +206,10 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
                 $content = str_replace("Example Plugin", $name . " Plugin", $content);
 
                 if (!file_exists(dirname($newPath))) {
-                    @mkdir(dirname($newPath), 0755, true);
+                    Pimcore_File::mkdir(dirname($newPath));
                 }
 
-                file_put_contents($newPath, $content);
+                Pimcore_File::put($newPath, $content);
             }
             $success = true;
         }

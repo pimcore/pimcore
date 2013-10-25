@@ -49,13 +49,13 @@ abstract class Deployment_Task_Pimcore_Phing_AbstractPackageTask extends Deploym
         recursiveDelete($directory);
 
         $this->log("Creating temporary task directory:\n\t" . $directory,Project::MSG_DEBUG);
-        @mkdir($directory,0755,true);
+        Pimcore_File::mkdir($directory);
         return $directory;
     }
 
     protected function getPackageDirectory(){
         $directory = PIMCORE_DEPLOYMENT_PACKAGES_DIRECTORY . '/' . $this->getPackageId() . '/';
-        @mkdir($directory,0755,true);
+        Pimcore_File::mkdir($directory);
         return $directory;
     }
 

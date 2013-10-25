@@ -181,8 +181,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         $logfile = PIMCORE_LOG_DIRECTORY . "/loginerror.log";
 
         if (!is_file($logfile)) {
-            file_put_contents($logfile, "");
-            chmod($logfile, 0766);
+            Pimcore_File::put($logfile, "");
         }
 
         if (!is_writable($logfile)) {
@@ -272,8 +271,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
             $lines = array_splice($lines, $maxEntries * -1);
         }
 
-        file_put_contents($logfile, implode("\n", $lines));
-        chmod($logfile, 0766);
+        Pimcore_File::put($logfile, implode("\n", $lines));
     }
 }
 

@@ -45,7 +45,7 @@ class Pimcore_Tool_Archive {
 
         $destinationDir = dirname($destinationFile);
         if(!is_dir($destinationDir)){
-            mkdir($destinationDir,0755,true);
+            Pimcore_File::mkdir($destinationDir);
         }
 
         $zip = new ZipArchive();
@@ -125,7 +125,7 @@ class Pimcore_Tool_Archive {
 
         $destinationDir = dirname($destinationFile);
         if(!is_dir($destinationDir)){
-            mkdir($destinationDir,0755,true);
+            Pimcore_File::mkdir($destinationDir);
         }
         return array($sourceDir,$destinationFile,$items);
     }
