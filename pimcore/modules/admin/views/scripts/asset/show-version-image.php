@@ -28,7 +28,7 @@
 <body>
 
 <?php
-    $thumbnail = PIMCORE_TEMPORARY_DIRECTORY . "/asset-version-preview-" . $this->asset->getId() . "-" . time() . ".png";
+    $thumbnail = $this->asset->getImageThumbnailSavePath() . "/asset-version-preview-" . $this->asset->getId() . "-" . time() . ".png";
     $convert = Pimcore_Image::getInstance();
     $convert->load($this->asset->getTemporaryFile(true));
     $convert->contain(500,500);
