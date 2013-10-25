@@ -436,20 +436,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $this->checkPermission("clear_temp_files");
 
         // public files
-        $files = scandir(PIMCORE_TEMPORARY_DIRECTORY);
-        foreach ($files as $file) {
-            if (is_file(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file)) {
-                unlink(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file);
-            }
-        }
+        recursiveDelete(PIMCORE_TEMPORARY_DIRECTORY, false);
 
         // system files
-        $files = scandir(PIMCORE_SYSTEM_TEMP_DIRECTORY);
-        foreach ($files as $file) {
-            if (is_file(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $file)) {
-                unlink(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $file);
-            }
-        }
+        recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY, false);
 
         $this->_helper->json(array("success" => true));
     }
