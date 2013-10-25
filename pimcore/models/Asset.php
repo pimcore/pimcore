@@ -1331,6 +1331,23 @@ class Asset extends Element_Abstract {
     }
 
     /**
+     * @return string
+     */
+    public function getImageThumbnailSavePath() {
+        $path = PIMCORE_TEMPORARY_DIRECTORY . "/image-thumbnails/" . $this->getId();
+        return $path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVideoThumbnailSavePath() {
+        $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-thumbnails/" . $this->getId();
+        return $path;
+    }
+
+
+    /**
      *
      */
     public function __sleep() {

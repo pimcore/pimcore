@@ -83,24 +83,29 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         }
     }
 
-    private function deleteThumbnailTmpFiles(Asset_Image_Thumbnail_Config $thumbnail) {
+
+    private function deleteThumbnailFolders ($root, $thumbnailName) {
         // delete all thumbnails which are using this config
-        $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/thumb_*__" . $thumbnail->getName() . "*");
-        if(is_array($files)) {
-            foreach ($files as $file) {
-                unlink($file);
+        function delete ($dir, $thumbnail, &$matches = array()) {
+            $dirs = glob($dir . '/*', GLOB_ONLYDIR);
+            foreach ($dirs as $dir) {
+                if(preg_match("@/thumb__" . $thumbnail . "$@", $dir)) {
+                    recursiveDelete($dir);
+                }
+                delete($dir, $thumbnail, $matches);
             }
-        }
+            return $matches;
+        };
+
+        delete($root, $thumbnailName);
+    }
+
+    private function deleteThumbnailTmpFiles(Asset_Image_Thumbnail_Config $thumbnail) {
+        $this->deleteThumbnailFolders(PIMCORE_TEMPORARY_DIRECTORY . "/image-thumbnails", $thumbnail->getName());
     }
 
     private function deleteVideoThumbnailTmpFiles(Asset_Video_Thumbnail_Config $thumbnail) {
-        // delete all thumbnails which are using this config
-        $files = scandir(PIMCORE_TEMPORARY_DIRECTORY);
-        foreach ($files as $file) {
-            if (preg_match("/^video_(.*)__" . $thumbnail->getName() . "/", $file)) {
-                unlink(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file);
-            }
-        }
+        $this->deleteThumbnailFolders(PIMCORE_TEMPORARY_DIRECTORY . "/video-thumbnails", $thumbnail->getName());
     }
 
     public function getSystemAction() {
