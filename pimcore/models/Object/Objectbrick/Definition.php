@@ -92,7 +92,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
         // create folder if not exist
         if(!is_dir($objectBrickFolder)) {
-            mkdir($objectBrickFolder);
+            Pimcore_File::mkdir($objectBrickFolder);
         }
 
         $newClassDefinitions = array();
@@ -116,9 +116,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
         $this->cleanupOldFiles($serializedFilename);
 
-
-        file_put_contents($serializedFilename, $serialized);
-        chmod($serializedFilename, 0766);
+        Pimcore_File::put($serializedFilename, $serialized);
 
         $extendClass = "Object_Objectbrick_Data_Abstract";
         if ($this->getParentClass()) {
@@ -159,12 +157,11 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
         $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
         if(!is_dir($fieldClassFolder)) {
-            mkdir($fieldClassFolder,0766,true);
+            Pimcore_File::mkdir($fieldClassFolder);
         }
 
         $fieldClassFile = $fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php";
-        file_put_contents($fieldClassFile,$cd);
-        chmod($fieldClassFile, 0766);
+        Pimcore_File::put($fieldClassFile,$cd);
 
         $this->createContainerClasses();
         $this->updateDatabase(); 
@@ -342,12 +339,11 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
                 $folder = $this->getContainerClassFolder($class->getName());
                 if(!is_dir($folder)) {
-                    mkdir($folder,0766,true);
+                    Pimcore_File::mkdir($folder);
                 }
 
                 $file = $folder . "/" . ucfirst($fieldname) . ".php";
-                file_put_contents($file,$cd);
-                chmod($file, 0766);
+                Pimcore_File::put($file,$cd);
             }
         }
 

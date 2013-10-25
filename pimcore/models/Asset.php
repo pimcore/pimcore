@@ -17,8 +17,6 @@
 
 class Asset extends Element_Abstract {
 
-    public static $chmod = 0755;
-
     /**
      * possible types of an asset
      * @var array
@@ -285,7 +283,7 @@ class Asset extends Element_Abstract {
             if(array_key_exists("data", $data) || array_key_exists("stream", $data)) {
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-create-tmp-file-" . uniqid() . "." . Pimcore_File::getFileExtension($data["filename"]);
                 if(array_key_exists("data", $data)) {
-                    file_put_contents($tmpFile, $data["data"]);
+                    Pimcore_File::put($tmpFile, $data["data"]);
                 } else {
                     $streamMeta = stream_get_meta_data($data["stream"]);
                     if(file_exists($streamMeta["uri"])) {
@@ -547,8 +545,7 @@ class Asset extends Element_Abstract {
 
         $dirPath = dirname($destinationPath);
         if (!is_dir($dirPath)) {
-            mkdir($dirPath, self::$chmod, true);
-            chmod($dirPath, self::$chmod);
+            Pimcore_File::mkdir($dirPath);
         }
 
         if ($this->getType() != "folder") {
@@ -563,7 +560,7 @@ class Asset extends Element_Abstract {
                     fclose($dest);
                 }
 
-                chmod($destinationPath, self::$chmod);
+                chmod($destinationPath, Pimcore_File::getDefaultMode());
 
                 // check file exists
                 if (!is_file($destinationPath)) {
@@ -1156,7 +1153,7 @@ class Asset extends Element_Abstract {
         stream_copy_to_stream($src, $dest);
         fclose($dest);
 
-        chmod($destinationPath, self::$chmod);
+        chmod($destinationPath, Pimcore_File::getDefaultMode());
 
         if($fullPath) {
             return $destinationPath;

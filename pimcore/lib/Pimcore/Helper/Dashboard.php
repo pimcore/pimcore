@@ -43,7 +43,7 @@ class Pimcore_Helper_Dashboard {
 
     protected function loadFile() {
         if(!is_dir($this->getConfigDir())) {
-            mkdir($this->getConfigDir());
+            Pimcore_File::mkdir($this->getConfigDir());
         }
 
         if(empty($this->dashboards)) {
@@ -111,16 +111,13 @@ class Pimcore_Helper_Dashboard {
         }
 
         $this->dashboards[$key] = $configuration;
-
-        file_put_contents($this->getConfigFile(), Pimcore_Tool_Serialize::serialize($this->dashboards));
-        chmod($this->getConfigFile(), 0766);
+        Pimcore_File::put($this->getConfigFile(), Pimcore_Tool_Serialize::serialize($this->dashboards));
     }
 
     public function deleteDashboard($key) {
         $this->loadFile();
         unset($this->dashboards[$key]);
-        file_put_contents($this->getConfigFile(), Pimcore_Tool_Serialize::serialize($this->dashboards));
-        chmod($this->getConfigFile(), 0766);
+        Pimcore_File::put($this->getConfigFile(), Pimcore_Tool_Serialize::serialize($this->dashboards));
     }
 
 }

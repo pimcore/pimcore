@@ -152,7 +152,7 @@ class Asset_Video extends Asset {
         $converter->load($this->getFileSystemPath());
         $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-image-cache/video_" . $this->getId() . "__thumbnail_" .  $timeOffset . ".png";
         if(!is_dir(dirname($path))) {
-            mkdir(dirname($path), 0777, true);
+            Pimcore_File::mkdir(dirname($path));
         }
 
         if(!is_file($path)) {

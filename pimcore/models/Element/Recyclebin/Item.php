@@ -143,10 +143,10 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         $this->getResource()->save();
         
         if(!is_dir(PIMCORE_RECYCLEBIN_DIRECTORY)) {
-            mkdir(PIMCORE_RECYCLEBIN_DIRECTORY);
+            Pimcore_File::mkdir(PIMCORE_RECYCLEBIN_DIRECTORY);
         }
-        
-        file_put_contents($this->getStoreageFile(),$data);
+
+        Pimcore_File::put($this->getStoreageFile(), $data);
 
         $saveBinaryData = function ($element, $rec) {
             // assets are kina special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
@@ -168,7 +168,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
         $saveBinaryData($this->getElement(), $saveBinaryData);
 
-        chmod($this->getStoreageFile(), 0766);
+        chmod($this->getStoreageFile(), Pimcore_File::getDefaultMode());
     }
 
     /**

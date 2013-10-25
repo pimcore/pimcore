@@ -57,7 +57,7 @@ class Pimcore_Log_Writer_Mail extends Zend_Log_Writer_Mail{
     {
 
         if(!is_file($this->_tempfile)){
-            @file_put_contents($this->_tempfile, "... continued ...\r\n");
+            @Pimcore_File::put($this->_tempfile, "... continued ...\r\n");
             $writerFile = new Zend_Log_Writer_Stream($this->_tempfile);
             $this->_tempLogger = new Zend_Log($writerFile);
         }

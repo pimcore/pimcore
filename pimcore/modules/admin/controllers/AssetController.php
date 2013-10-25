@@ -1327,7 +1327,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $tmpDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/zip-import";
 
         if(!is_dir($tmpDir)) {
-            mkdir($tmpDir, 0777, true);
+            Pimcore_File::mkdir($tmpDir, 0777, true);
         }
 
         $zip = new ZipArchive;

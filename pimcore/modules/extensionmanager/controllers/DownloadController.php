@@ -124,22 +124,19 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
         }
 
         if(!is_dir($parentPath)) {
-            mkdir($parentPath, 0755, true);
+            Pimcore_File::mkdir($parentPath);
         }
 
         $fileDestPath = $parentPath . $path;
         if(!is_dir(dirname($fileDestPath))) {
-            mkdir(dirname($fileDestPath), 0755, true);
+            Pimcore_File::mkdir(dirname($fileDestPath));
         }
 
-        file_put_contents($fileDestPath, base64_decode($file["content"]));
-        chmod($fileDestPath, 0766);
+        Pimcore_File::put($fileDestPath, base64_decode($file["content"]));
 
         // write revision information
         $revisionFile = $parentPath . "/" . $id .  "/.pimcore_extension_revision";
-        file_put_contents($revisionFile, $revision);
-        chmod($revisionFile, 0766);
-
+        Pimcore_File::put($revisionFile, $revision);
 
         $this->_helper->json(array("success" => true));
     }
@@ -158,20 +155,19 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
         }
 
         if(!is_dir($parentPath)) {
-            mkdir($parentPath, 0755, true);
+            Pimcore_File::mkdir($parentPath);
         }
 
         $fileDestPath = $parentPath . $path;
         if(!is_dir(dirname($fileDestPath))) {
-            mkdir(dirname($fileDestPath), 0755, true);
+            Pimcore_File::mkdir(dirname($fileDestPath));
         }
 
         @unlink($fileDestPath);
 
         // write revision information
         $revisionFile = $parentPath . "/" . $id .  "/.pimcore_extension_revision";
-        file_put_contents($revisionFile, $revision);
-        chmod($revisionFile, 0766);
+        Pimcore_File::put($revisionFile, $revision);
 
         $this->_helper->json(array("success" => true));
     }

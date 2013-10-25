@@ -51,6 +51,6 @@ class Asset_WebDAV_Service {
             }
         }
 
-        file_put_contents(Asset_WebDAV_Service::getDeleteLogFile(), serialize($tmpLog));
+        Pimcore_File::put(Asset_WebDAV_Service::getDeleteLogFile(), serialize($tmpLog));
     }
 }

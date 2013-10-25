@@ -299,7 +299,7 @@ class Pimcore {
 
         if(!is_file(PIMCORE_LOG_DEBUG)) {
             if(is_writable(dirname(PIMCORE_LOG_DEBUG))) {
-                file_put_contents(PIMCORE_LOG_DEBUG, "AUTOCREATE\n");
+                Pimcore_File::put(PIMCORE_LOG_DEBUG, "AUTOCREATE\n");
             }
         }
 
@@ -340,7 +340,7 @@ class Pimcore {
             // check for big logfile, empty it if it's bigger than about 200M
             if (filesize(PIMCORE_LOG_DEBUG) > 200000000) {
                 rename(PIMCORE_LOG_DEBUG, PIMCORE_LOG_DEBUG . "-archive-" . date("m-d-Y-H-i")); // archive log (will be cleaned up by maintenance)
-                file_put_contents(PIMCORE_LOG_DEBUG, ""); // create empty log
+                Pimcore_File::put(PIMCORE_LOG_DEBUG, "");
             }
 
             if(!empty($prios)) {
@@ -360,7 +360,7 @@ class Pimcore {
                             $mail = Pimcore_Tool::getMail(array($email),"pimcore log notification");
                             $mail->setIgnoreDebugMode(true);
                             if(!is_dir(PIMCORE_LOG_MAIL_TEMP)){
-                                mkdir(PIMCORE_LOG_MAIL_TEMP,0755,true);
+                                Pimcore_File::mkdir(PIMCORE_LOG_MAIL_TEMP);
                             }
                             $tempfile = PIMCORE_LOG_MAIL_TEMP."/log-".uniqid().".log";
                             $writerEmail = new Pimcore_Log_Writer_Mail($tempfile,$mail);

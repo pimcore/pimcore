@@ -15,6 +15,8 @@
 
 class Pimcore_File {
 
+    public static $defaultMode = 0775;
+
     /**
      * @var array
      */
@@ -87,5 +89,47 @@ class Pimcore_File {
         self::$isIncludeableCache[$filename] = $isIncludeAble;
 
         return $isIncludeAble;
+    }
+
+    /**
+     * @param $mode
+     */
+    public static function setDefaultMode($mode) {
+        self::$defaultMode = $mode;
+    }
+
+    /**
+     * @return int
+     */
+    public static function getDefaultMode() {
+        return self::$defaultMode;
+    }
+
+    /**
+     * @param $path
+     * @param $data
+     * @return int
+     */
+    public static function put ($path, $data) {
+        $return = file_put_contents($path, $data);
+        chmod($path, self::$defaultMode);
+        return $return;
+    }
+
+    /**
+     * @param $path
+     * @param null $mode
+     * @param bool $recursive
+     * @return bool
+     */
+    public static function mkdir($path, $mode = null, $recursive = true) {
+
+        if(!$mode) {
+            $mode = self::$defaultMode;
+        }
+
+        $return = @mkdir($path, 0777, $recursive);
+        chmod($path, $mode);
+        return $return;
     }
 }

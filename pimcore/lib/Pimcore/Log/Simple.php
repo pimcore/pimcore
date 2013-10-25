@@ -20,14 +20,14 @@ class Pimcore_Log_Simple {
         $log = PIMCORE_LOG_DIRECTORY . "/$name.log";
         if(!is_file($log)) {
             if(is_writable(dirname($log))) {
-                file_put_contents($log, "AUTOCREATE\n");
+                Pimcore_File::put($log, "AUTOCREATE\n");
             }
         }
 
         if (is_writable($log)) {
             // check for big logfile, empty it if it's bigger than about 200M
             if (filesize($log) > 200000000) {
-                file_put_contents($log, "");
+                Pimcore_File::put($log, "");
             }
 
             $f = fopen($log, "a+");

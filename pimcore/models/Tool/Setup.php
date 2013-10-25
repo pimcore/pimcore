@@ -109,7 +109,7 @@ class Tool_Setup extends Pimcore_Model_Abstract {
         // @TODO: should use values out of startup.php (Constants)
         $varFolders = array("areas","assets","backup","cache","classes","config","email","log","plugins","recyclebin","search","system","tmp","versions","webdav");
         foreach($varFolders as $folder) {
-            @mkdir(PIMCORE_WEBSITE_VAR . "/" . $folder, 0777, true);
+            Pimcore_File::mkdir(PIMCORE_WEBSITE_VAR . "/" . $folder);
         }
 		
         $config = new Zend_Config($settings, true);		

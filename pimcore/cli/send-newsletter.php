@@ -122,5 +122,5 @@ function obfuscateEmail($email) {
 }
 
 function writePid ($file, $content) {
-    file_put_contents($file, serialize($content));
+    Pimcore_File::put($file, serialize($content));
 }

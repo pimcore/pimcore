@@ -103,7 +103,7 @@ class Asset_Video_Thumbnail_Processor {
             $fsPath = PIMCORE_TEMPORARY_DIRECTORY . "/" . $subFolder . "/" . $filename;
 
             if(!is_dir(dirname($fsPath))) {
-                mkdir(dirname($fsPath), 0777, true);
+                Pimcore_File::mkdir(dirname($fsPath));
             }
 
             if(is_file($fsPath)) {
@@ -267,7 +267,7 @@ class Asset_Video_Thumbnail_Processor {
      * @return bool
      */
     public function save() {
-        file_put_contents($this->getJobFile(), Pimcore_Tool_Serialize::serialize($this));
+        Pimcore_File::put($this->getJobFile(), Pimcore_Tool_Serialize::serialize($this));
         return true;
     }
 

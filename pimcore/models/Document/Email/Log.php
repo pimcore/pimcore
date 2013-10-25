@@ -409,17 +409,17 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     {
         $this->getResource()->update();
         if (!is_dir(PIMCORE_LOG_MAIL_PERMANENT)) {
-            mkdir(PIMCORE_LOG_MAIL_PERMANENT, 0755, true);
+            Pimcore_File::mkdir(PIMCORE_LOG_MAIL_PERMANENT);
         }
 
         if ($html = $this->getBodyHtml()) {
-            if (file_put_contents(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log', $html) === false) {
+            if (Pimcore_File::put(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log', $html) === false) {
                 Logger::warn('Could not write html email log file. LogId: ' . $this->getId());
             }
         }
 
         if ($text = $this->getBodyText()) {
-            if (file_put_contents(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log', $text) === false) {
+            if (Pimcore_File::put(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log', $text) === false) {
                 Logger::warn('Could not write text email log file. LogId: ' . $this->getId());
             }
         }

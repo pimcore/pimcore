@@ -114,7 +114,7 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
 
             if(!is_resource($this->logFile)) {
                 $logFile = dirname(PIMCORE_LOG_DEBUG) . "/dbprofile-" . $_REQUEST["pimcore_dbprofile"] . ".log";
-                file_put_contents($logFile,"");
+                Pimcore_File::put($logFile,"");
                 $this->logFile = fopen($logFile, "a+");
             }
 

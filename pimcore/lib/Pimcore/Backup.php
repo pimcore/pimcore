@@ -89,7 +89,7 @@ class Pimcore_Backup {
 
         // create backup directory if not exists
         if (!is_dir(PIMCORE_BACKUP_DIRECTORY)) {
-            if (!mkdir(PIMCORE_BACKUP_DIRECTORY)) {
+            if (!Pimcore_File::mkdir(PIMCORE_BACKUP_DIRECTORY)) {
                 Logger::err("Directory " . PIMCORE_BACKUP_DIRECTORY . " does not exists and cannot be created.");
                 exit;
             }
@@ -392,7 +392,7 @@ class Pimcore_Backup {
         $archive = $this->getArchive();
         $tmpRestoreDirectory = PIMCORE_TEMPORARY_DIRECTORY .'/backup-restore';
         recursiveDelete($tmpRestoreDirectory);
-        mkdir($tmpRestoreDirectory,0755,true);
+        Pimcore_File::mkdir($tmpRestoreDirectory);
         $archive->extract($tmpRestoreDirectory);
         $dumpFile = $tmpRestoreDirectory.'/dump.sql';
         if(is_readable($dumpFile)){

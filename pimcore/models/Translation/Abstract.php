@@ -239,12 +239,10 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
 
             //store data for further usage
             $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations";
-            file_put_contents($importFile, $tmpData);
-            chmod($importFile, 0766);
+            Pimcore_File::put($importFile, $tmpData);
 
             $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations_original";
-            file_put_contents($importFileOriginal, $tmpData);
-            chmod($importFileOriginal, 0766);
+            Pimcore_File::put($importFileOriginal, $tmpData);
 
             // determine csv type
             $dialect = Pimcore_Tool_Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations_original");

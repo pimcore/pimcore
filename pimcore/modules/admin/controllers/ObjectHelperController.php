@@ -378,12 +378,10 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         $data = Pimcore_Tool_Text::convertToUTF8($data);
 
         $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->getParam("id");
-        file_put_contents($importFile, $data);
-        chmod($importFile, 0766);
+        Pimcore_File::put($importFile, $data);
 
         $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->getParam("id") . "_original";
-        file_put_contents($importFileOriginal, $data);
-        chmod($importFileOriginal, 0766);
+        Pimcore_File::put($importFileOriginal, $data);
 
         $this->_helper->json(array(
             "success" => true

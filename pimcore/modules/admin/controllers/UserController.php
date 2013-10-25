@@ -410,7 +410,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     public function uploadImageAction() {
         $userImageDir = PIMCORE_WEBSITE_VAR . "/user-image";
         if(!is_dir($userImageDir)) {
-            @mkdir($userImageDir);
+            Pimcore_File::mkdir($userImageDir);
         }
 
         $destFile = $userImageDir . "/user-" . $this->getParam("id") . ".png";
@@ -418,6 +418,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         @unlink($destFile);
         @unlink($thumb);
         copy($_FILES["Filedata"]["tmp_name"], $destFile);
+        chmod($destFile, Pimcore_File::getDefaultMode());
 
         $this->_helper->json(array(
             "success" => true

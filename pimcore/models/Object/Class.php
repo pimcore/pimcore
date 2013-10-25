@@ -217,7 +217,7 @@ class Object_Class extends Pimcore_Model_Abstract {
 
         // creaste directory if not exists
         if (!is_dir(PIMCORE_CLASS_DIRECTORY . "/Object")) {
-            mkdir(PIMCORE_CLASS_DIRECTORY . "/Object");
+            Pimcore_File::mkdir(PIMCORE_CLASS_DIRECTORY . "/Object");
         }
 
         $cd = '<?php ';
@@ -291,8 +291,7 @@ class Object_Class extends Pimcore_Model_Abstract {
         if(!is_writable(dirname($classFile)) || (is_file($classFile) && !is_writable($classFile))) {
             throw new Exception("Cannot write class file in " . $classFile . " please check the rights on this directory");
         }
-        file_put_contents($classFile,$cd);
-        chmod($classFile, 0766);
+        Pimcore_File::put($classFile, $cd);
 
         // create list class
 
@@ -310,14 +309,13 @@ class Object_Class extends Pimcore_Model_Abstract {
         /*$cd .= "?>";*/
 
 
-        @mkdir(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()));
+        Pimcore_File::mkdir(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()));
 
         $classListFile = PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . "/List.php";
         if(!is_writable(dirname($classListFile)) || (is_file($classListFile) && !is_writable($classListFile))) {
             throw new Exception("Cannot write class file in " . $classListFile . " please check the rights on this directory");
         }
-        file_put_contents($classListFile,$cd);
-        chmod($classListFile, 0766);
+        Pimcore_File::put($classListFile,$cd);
 
         // empty object cache
         try {
