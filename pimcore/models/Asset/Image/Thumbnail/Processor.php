@@ -124,10 +124,10 @@ class Asset_Image_Thumbnail_Processor {
             $highResSuffix = "@" . $config->getHighResolution() . "x";
         }
 
-        $subFolder = "image-thumbnails" . $asset->getPath() . "thumb_" . $id . "__" . $config->getName() . $highResSuffix;
+        $thumbDir = $asset->getImageThumbnailSavePath() . "/thumb__" . $config->getName() . $highResSuffix;
         $filename = preg_replace("/\." . preg_quote(Pimcore_File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename()) . "." . $format;
+        $fsPath = $thumbDir . "/" . $filename;
 
-        $fsPath = PIMCORE_TEMPORARY_DIRECTORY . "/" . $subFolder . "/" . $filename;
         if(!is_dir(dirname($fsPath))) {
             Pimcore_File::mkdir(dirname($fsPath));
         }

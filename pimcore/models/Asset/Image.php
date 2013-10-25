@@ -76,12 +76,7 @@ class Asset_Image extends Asset {
     public function clearThumbnails($force = false) {
 
         if($this->getDataChanged() || $force) {
-            $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/thumb_" . $this->getId() . "__*");
-            if(is_array($files)) {
-                foreach ($files as $file) {
-                    unlink($file);
-                }
-            }
+            recursiveDelete($this->getImageThumbnailSavePath());
         }
     }
 

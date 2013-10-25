@@ -138,19 +138,14 @@ class Asset_Document extends Asset {
 
         if($this->_dataChanged || $force) {
             // video thumbnails and image previews
-            $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/document_" . $this->getId() . "__*");
+            $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/document-image-cache/document_" . $this->getId() . "__*");
             if(is_array($files)) {
                 foreach ($files as $file) {
                     unlink($file);
                 }
             }
 
-            $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/thumb_" . $this->getId() . "__*");
-            if(is_array($files)) {
-                foreach ($files as $file) {
-                    unlink($file);
-                }
-            }
+            recursiveDelete($this->getImageThumbnailSavePath());
         }
     }
 }

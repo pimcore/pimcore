@@ -22,7 +22,7 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
 
         // this is a filter which checks for common used files (by browser, crawlers, ...) and prevent the default
         // error page, because this is more resource-intensive than exiting right here
-        if(preg_match("@^/website/var/tmp/image-thumbnails/(.*)thumb_([0-9]+)__([a-zA-Z0-9_\-]+)([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@",$request->getPathInfo(),$matches)) {
+        if(preg_match("@^/website/var/tmp/image-thumbnails(.*)?/([0-9]+)/thumb__([a-zA-Z0-9_\-]+)([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@",$request->getPathInfo(),$matches)) {
             $assetId = $matches[2];
             $thumbnailName = $matches[3];
             $format = $matches[6];
