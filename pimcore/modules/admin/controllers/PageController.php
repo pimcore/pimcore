@@ -187,7 +187,14 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         if($this->getParam("data") && $this->getParam("id")) {
             $data = substr($this->getParam("data"),strpos($this->getParam("data"), ",")+1);
             $data = base64_decode($data);
-            Pimcore_File::put(PIMCORE_TEMPORARY_DIRECTORY . "/document-page-screenshot-" . $this->getParam("id") . ".jpg", $data);
+
+            $file = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-previews/document-page-screenshot-" . $this->getParam("id") . ".jpg";
+            $dir = dirname($file);
+            if(!is_dir($dir)) {
+                Pimcore_File::mkdir($dir);
+            }
+
+            Pimcore_File::put($file, $data);
         }
 
         $this->_helper->json(array("success" => true));
@@ -210,8 +217,13 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                 }
             }
 
-            $tmpFile = PIMCORE_TEMPORARY_DIRECTORY . "/screenshot_tmp_" . $doc->getId() . ".png";
-            $file = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-screenshot-" . $doc->getId() . ".jpg";
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/screenshot_tmp_" . $doc->getId() . ".png";
+            $file = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-previews/document-page-screenshot-" . $doc->getId() . ".jpg";
+
+            $dir = dirname($file);
+            if(!is_dir($dir)) {
+                Pimcore_File::mkdir($dir);
+            }
 
             try {
                 if(Pimcore_Image_HtmlToImage::convert($url, $tmpFile)) {
