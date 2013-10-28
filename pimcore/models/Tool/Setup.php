@@ -45,7 +45,7 @@ class Tool_Setup extends Pimcore_Model_Abstract {
 				"general" => array(
 					"timezone" => "Europe/Berlin",
 					"language" => "en",
-					"validLanguages" => "en",
+					"validLanguages" => "en,de",
 					"debug" => "1",
 					"loglevel" => array(
 						"debug" => "1",
