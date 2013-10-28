@@ -124,8 +124,8 @@ class Asset_Image_Thumbnail_Processor {
             $highResSuffix = "@" . $config->getHighResolution() . "x";
         }
 
-        $thumbDir = $asset->getImageThumbnailSavePath() . "/thumb__" . $config->getName() . $highResSuffix;
-        $filename = preg_replace("/\." . preg_quote(Pimcore_File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename()) . "." . $format;
+        $thumbDir = $asset->getImageThumbnailSavePath() . "/thumb__" . $config->getName();
+        $filename = preg_replace("/\." . preg_quote(Pimcore_File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename()) . $highResSuffix . "." . $format;
         $fsPath = $thumbDir . "/" . $filename;
 
         if(!is_dir(dirname($fsPath))) {
