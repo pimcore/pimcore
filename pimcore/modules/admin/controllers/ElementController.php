@@ -61,7 +61,7 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
                         $sitesObjects = $sitesList->load();
 
                         foreach ($sitesObjects as $site) {
-                            if ($site->getRootDocument() && in_array($urlParts["host"],$site->getDomains())) {
+                            if ($site->getRootDocument() && (in_array($urlParts["host"],$site->getDomains()) || $site->getMainDomain() == $urlParts["host"])) {
                                 if($document = Document::getByPath($site->getRootDocument() . $urlParts["path"])) {
                                     break;
                                 }

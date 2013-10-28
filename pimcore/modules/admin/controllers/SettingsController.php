@@ -815,16 +815,13 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         foreach ($sitesObjects as $site) {
 
             if ($site->getRootDocument()) {
-                $domains = $site->getDomains();
-                $domain = $domains[0];
-
-                if ($domain) {
+                if ($site->getMainDomain()) {
                     $sites[] = array(
                         "id" => $site->getId(),
                         "rootId" => $site->getRootId(),
                         "domains" => implode(",", $site->getDomains()),
                         "rootPath" => $site->getRootPath(),
-                        "domain" => $domain
+                        "domain" => $site->getMainDomain()
                     );
                 }
             }
