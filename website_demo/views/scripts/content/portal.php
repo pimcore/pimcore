@@ -34,8 +34,8 @@
                         }
                         ?>
 
-                        <h1><?php echo $this->input("cHeadline_".$i); ?></h1>
-                        <div class="caption"><?php echo $this->textarea("cText_".$i); ?></div>
+                        <h1><?php echo $this->input("cHeadline_".$i, array("width" => 900)); ?></h1>
+                        <div class="caption"><?php echo $this->textarea("cText_".$i, array("width" => 900)); ?></div>
                         <div class="margin-bottom-10"><?php echo $this->link("cLink_".$i, array("class" => "btn btn-large btn-default")); ?></div>
                     </div>
                 </div>

@@ -21,7 +21,7 @@ if(empty($initInfo["errors"])) {
         if(array_key_exists($step[0], $stepMethodMapping)) {
 
             // skip these tables
-            if(in_array($step[1]["name"], array("tracking_events", "cache_tags"))) {
+            if(in_array($step[1]["name"], array("tracking_events", "cache_tags", "http_error_log", "versions"))) {
                 continue;
             }
 
@@ -41,9 +41,10 @@ $dumpData = file_get_contents($dumpFile);
 // remove user specific data
 $dumpData = preg_replace("/DEFINER(.*)DEFINER/i", "", $dumpData);
 
-file_put_contents($dumpFile, $dumpData);
+$finalDest = PIMCORE_WEBSITE_PATH . "/dump/data.sql";
+file_put_contents($finalDest, $dumpData);
 
-verboseMessage("Dump is here: " . $dumpFile);
+verboseMessage("Dump is here: " . $finalDest);
 
 function verboseMessage ($m) {
         echo $m . "\n";

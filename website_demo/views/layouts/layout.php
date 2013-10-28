@@ -4,32 +4,33 @@
     <meta charset="utf-8">
 
     <?php
-    // portal detection => portal needs an adapted version of the layout
-    $isPortal = false;
-    if($this->getParam("controller") == "content" && $this->getParam("action") == "portal") {
-        $isPortal = true;
-    }
+        // portal detection => portal needs an adapted version of the layout
+        $isPortal = false;
+        if($this->getParam("controller") == "content" && $this->getParam("action") == "portal") {
+            $isPortal = true;
+        }
 
-    // output the collected meta-data
-    if(!$this->document) {
-        $this->document = Document::getById(1);
-    }
+        // output the collected meta-data
+        if(!$this->document) {
+            // use "home" document as default if no document is present
+            $this->document = Document::getById(1);
+        }
 
-    if($this->document->getTitle()) {
-        // use the manually set title if available
-        $this->headTitle()->set($this->document->getTitle());
-    }
+        if($this->document->getTitle()) {
+            // use the manually set title if available
+            $this->headTitle()->set($this->document->getTitle());
+        }
 
-    if($this->document->getDescription()) {
-        // use the manually set description if available
-        $this->headMeta()->appendName('description', $this->document->getDescription());
-    }
+        if($this->document->getDescription()) {
+            // use the manually set description if available
+            $this->headMeta()->appendName('description', $this->document->getDescription());
+        }
 
-    $this->headTitle()->append("pimcore Demo");
-    $this->headTitle()->setSeparator(" : ");
+        $this->headTitle()->append("pimcore Demo");
+        $this->headTitle()->setSeparator(" : ");
 
-    echo $this->headTitle();
-    echo $this->headMeta();
+        echo $this->headTitle();
+        echo $this->headMeta();
     ?>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -68,6 +69,12 @@
 <body>
 
 <div class="navbar-wrapper">
+    <?php
+        $mainNavStartNode = $this->document->getProperty("mainNavStartNode");
+        if(!$mainNavStartNode) {
+            $mainNavStartNode = Document::getById(1);
+        }
+    ?>
     <div class="container">
         <div class="navbar navbar-inverse navbar-static-top">
             <div class="container">
@@ -77,19 +84,19 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="<?php echo Document::getById(1); ?>">
+                    <a class="navbar-brand" href="<?php echo $mainNavStartNode; ?>">
                         <img src="/website/static/img/logo.png">
                     </a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <?php
-                    $navStartNode = Document::getById(1);
-                    $navigation = $this->pimcoreNavigation()->getNavigation($this->document, $navStartNode);
-                    $this->navigation($navigation);
-                    echo $this->navigation()->menu()->setUseTranslator(false)->renderMenu($navigation, array("maxDepth" => 1, "ulClass" => "nav navbar-nav"));
+                        $mainNavigation = $this->pimcoreNavigation()->getNavigation($this->document, $mainNavStartNode);
+                        $this->navigation($mainNavigation);
+                        echo $this->navigation()->menu()->setUseTranslator(false)->renderMenu($mainNavigation, array("maxDepth" => 1, "ulClass" => "nav navbar-nav"));
                     ?>
                 </div>
             </div>
+            <?php echo $this->inc("/shared/includes/languages"); ?>
         </div>
     </div>
 </div>
@@ -102,14 +109,14 @@
         </div>
     </header>
     <?php
-    $color = $this->document->getProperty("headerColor");
-    if($color) { // orange is the default color
+        $color = $this->document->getProperty("headerColor");
+        if($color) { // orange is the default color
 
-        $colorMapping = array(
-            "blue" => array("#258dc1","#2aabeb"),
-            "green" => array("#278415","#1a9f00")
-        );
-        $c = $colorMapping[$color];
+            $colorMapping = array(
+                "blue" => array("#258dc1","#2aabeb"),
+                "green" => array("#278415","#1a9f00")
+            );
+            $c = $colorMapping[$color];
         ?>
         <style>
             .jumbotron {
@@ -130,25 +137,33 @@
             <div class="col-md-3">
                 <div class="bs-sidebar hidden-print affix-top" role="complementary">
                     <?php
-                    $startNode = $this->document->getProperty("leftNavStartNode");
-                    if(!$startNode) {
-                        $startNode = Document::getById(1);
-                    }
+                        $startNode = $this->document->getProperty("leftNavStartNode");
+                        if(!$startNode) {
+                            $startNode = $mainNavStartNode;
+                        }
                     ?>
                     <h3><?php echo $startNode->getProperty("navigation_name"); ?></h3>
                     <?php
-                    $navigation = $this->pimcoreNavigation()->getNavigation($this->document, $startNode);
-                    $this->navigation($navigation);
-                    echo $this->navigation()->menu($navigation)->setUseTranslator(false)->renderMenu($navigation, array(
-                        "ulClass" => "nav bs-sidenav",
-                        "expandSiblingNodesOfActiveBranch" => true
-                    ));
+                        $leftNavigation = $this->pimcoreNavigation()->getNavigation($this->document, $startNode);
+                        $this->navigation($leftNavigation);
+                        echo $this->navigation()->menu($leftNavigation)->setUseTranslator(false)->renderMenu($leftNavigation, array(
+                            "ulClass" => "nav bs-sidenav",
+                            "expandSiblingNodesOfActiveBranch" => true
+                        ));
                     ?>
                 </div>
             </div>
         <?php } ?>
         <div class="col-md-<?php if(!$this->document->getProperty("leftNavHide")) { ?>9<?php } else { ?>12<?php } ?>">
             <?php echo $this->layout()->content; ?>
+
+            <div>
+                <a href="/"><?= $this->translate("Home"); ?></a> &gt;
+                <?php
+                    $this->navigation($mainNavigation);
+                    echo $this->navigation()->breadcrumbs()->setMinDepth(null);
+                ?>
+            </div>
         </div>
     </div>
 <?php } else { ?>
@@ -158,8 +173,8 @@
 
 
 <?php
-// include a document-snippet - in this case the footer document
-echo $this->inc("/shared/includes/footer");
+    // include a document-snippet - in this case the footer document
+    echo $this->inc("/" . $this->language . "/shared/includes/footer");
 ?>
 
 <script src="/website/static/bootstrap/assets/js/jquery.js"></script>

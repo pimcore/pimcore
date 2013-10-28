@@ -4,10 +4,8 @@ class Object_News extends Object_Concrete {
 
 public $o_classId = 2;
 public $o_className = "news";
+public $localizedfields;
 public $date;
-public $title;
-public $shortText;
-public $text;
 public $image_1;
 public $image_2;
 public $image_3;
@@ -21,6 +19,82 @@ public static function create($values = array()) {
 	$object = new self();
 	$object->setValues($values);
 	return $object;
+}
+
+/**
+* @return array
+*/
+public function getLocalizedfields () {
+	$preValue = $this->preGetValue("localizedfields"); 
+	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
+	$data = $this->getClass()->getFieldDefinition("localizedfields")->preGetData($this);
+	 return $data;
+}
+
+/**
+* @return string
+*/
+public function getTitle ($language = null) {
+	$data = $this->getLocalizedfields()->getLocalizedValue("title", $language);
+	$preValue = $this->preGetValue("title"); 
+	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
+	 return $data;
+}
+
+/**
+* @return string
+*/
+public function getShortText ($language = null) {
+	$data = $this->getLocalizedfields()->getLocalizedValue("shortText", $language);
+	$preValue = $this->preGetValue("shortText"); 
+	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
+	 return $data;
+}
+
+/**
+* @return string
+*/
+public function getText ($language = null) {
+	$data = $this->getLocalizedfields()->getLocalizedValue("text", $language);
+	$preValue = $this->preGetValue("text"); 
+	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
+	 return $data;
+}
+
+/**
+* @param array $localizedfields
+* @return void
+*/
+public function setLocalizedfields ($localizedfields) {
+	$this->localizedfields = $localizedfields;
+	return $this;
+}
+
+/**
+* @param string $title
+* @return void
+*/
+public function setTitle ($title, $language = null) {
+	$this->getLocalizedfields()->setLocalizedValue("title", $title, $language);
+	return $this;
+}
+
+/**
+* @param string $shortText
+* @return void
+*/
+public function setShortText ($shortText, $language = null) {
+	$this->getLocalizedfields()->setLocalizedValue("shortText", $shortText, $language);
+	return $this;
+}
+
+/**
+* @param string $text
+* @return void
+*/
+public function setText ($text, $language = null) {
+	$this->getLocalizedfields()->setLocalizedValue("text", $text, $language);
+	return $this;
 }
 
 /**
@@ -39,63 +113,6 @@ public function getDate () {
 */
 public function setDate ($date) {
 	$this->date = $date;
-	return $this;
-}
-
-/**
-* @return string
-*/
-public function getTitle () {
-	$preValue = $this->preGetValue("title"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
-	$data = $this->title;
-	 return $data;
-}
-
-/**
-* @param string $title
-* @return void
-*/
-public function setTitle ($title) {
-	$this->title = $title;
-	return $this;
-}
-
-/**
-* @return string
-*/
-public function getShortText () {
-	$preValue = $this->preGetValue("shortText"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
-	$data = $this->shortText;
-	 return $data;
-}
-
-/**
-* @param string $shortText
-* @return void
-*/
-public function setShortText ($shortText) {
-	$this->shortText = $shortText;
-	return $this;
-}
-
-/**
-* @return string
-*/
-public function getText () {
-	$preValue = $this->preGetValue("text"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
-	$data = $this->getClass()->getFieldDefinition("text")->preGetData($this);
-	 return $data;
-}
-
-/**
-* @param string $text
-* @return void
-*/
-public function setText ($text) {
-	$this->text = $text;
 	return $this;
 }
 

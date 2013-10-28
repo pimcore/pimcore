@@ -180,6 +180,35 @@ section img {
     margin-bottom: 10px;
 }
 
+.languages {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+.languages a {
+    width: 24px;
+    height: 12px;
+    overflow: hidden;
+    margin-left: 5px;
+    display: inline-block;
+    border: 2px solid #999;
+    box-sizing: content-box;
+    font-size: 0;
+}
+
+.languages a:hover {
+    border-color: #fff;
+}
+
+.languages .de {
+    background-image: url(/website/static/img/de.png);
+}
+
+.languages .en {
+    background-image: url(/website/static/img/en.png);
+}
+
 /* Show and affix the side nav when space allows it */
 @media screen and (min-width: 992px) {
     .bs-sidebar .nav > .active > ul {
@@ -257,4 +286,8 @@ section img {
 
 }
 
-
+@media (max-width: 767px) {
+    .languages {
+        display: none;
+    }
+}
