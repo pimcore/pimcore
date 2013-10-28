@@ -179,7 +179,7 @@ CREATE TABLE `documents` (
   KEY `key` (`key`),
   KEY `path` (`path`),
   KEY `published` (`published`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
 
 
 
@@ -297,7 +297,7 @@ CREATE TABLE `edit_lock` (
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
   KEY `cidtype` (`cid`,`ctype`)
-) ENGINE=InnoDB AUTO_INCREMENT=394 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=432 DEFAULT CHARSET=utf8;
 
 
 
@@ -350,7 +350,7 @@ CREATE TABLE `http_error_log` (
   KEY `path` (`path`(255)),
   KEY `code` (`code`),
   KEY `date` (`date`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8;
 
 
 
@@ -418,15 +418,54 @@ CREATE TABLE `notes_data` (
 
 
 
+DROP TABLE IF EXISTS `object_localized_data_2`;
+CREATE TABLE `object_localized_data_2` (
+  `ooo_id` int(11) NOT NULL DEFAULT '0',
+  `language` varchar(10) NOT NULL DEFAULT '',
+  `title` varchar(255) DEFAULT NULL,
+  `shortText` longtext,
+  `text` longtext,
+  PRIMARY KEY (`ooo_id`,`language`),
+  KEY `ooo_id` (`ooo_id`),
+  KEY `language` (`language`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+DROP TABLE IF EXISTS `object_localized_query_2_de`;
+CREATE TABLE `object_localized_query_2_de` (
+  `ooo_id` int(11) NOT NULL DEFAULT '0',
+  `language` varchar(10) NOT NULL DEFAULT '',
+  `title` varchar(255) DEFAULT NULL,
+  `shortText` longtext,
+  `text` longtext,
+  PRIMARY KEY (`ooo_id`,`language`),
+  KEY `ooo_id` (`ooo_id`),
+  KEY `language` (`language`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+DROP TABLE IF EXISTS `object_localized_query_2_en`;
+CREATE TABLE `object_localized_query_2_en` (
+  `ooo_id` int(11) NOT NULL DEFAULT '0',
+  `language` varchar(10) NOT NULL DEFAULT '',
+  `title` varchar(255) DEFAULT NULL,
+  `shortText` longtext,
+  `text` longtext,
+  PRIMARY KEY (`ooo_id`,`language`),
+  KEY `ooo_id` (`ooo_id`),
+  KEY `language` (`language`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 DROP TABLE IF EXISTS `object_query_2`;
 CREATE TABLE `object_query_2` (
   `oo_id` int(11) NOT NULL DEFAULT '0',
   `oo_classId` int(11) DEFAULT '2',
   `oo_className` varchar(255) DEFAULT 'news',
   `date` bigint(20) DEFAULT NULL,
-  `title` varchar(255) DEFAULT NULL,
-  `shortText` longtext,
-  `text` longtext,
   `image_1` int(11) DEFAULT NULL,
   `image_2` int(11) DEFAULT NULL,
   `image_3` int(11) DEFAULT NULL,
@@ -540,9 +579,6 @@ DROP TABLE IF EXISTS `object_store_2`;
 CREATE TABLE `object_store_2` (
   `oo_id` int(11) NOT NULL DEFAULT '0',
   `date` bigint(20) DEFAULT NULL,
-  `title` varchar(255) DEFAULT NULL,
-  `shortText` longtext,
-  `text` longtext,
   `image_1` int(11) DEFAULT NULL,
   `image_2` int(11) DEFAULT NULL,
   `image_3` int(11) DEFAULT NULL,
@@ -992,7 +1028,7 @@ CREATE TABLE `versions` (
   PRIMARY KEY (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8;
 
 
 
@@ -1014,7 +1050,7 @@ INSERT INTO `assets` VALUES (23,17,'image','img_0411.jpg','/examples/panama/','i
 INSERT INTO `assets` VALUES (24,17,'image','img_0410.jpg','/examples/panama/','image/jpeg',1368532838,1368632468,2,2,'a:3:{s:10:\"imageWidth\";i:2000;s:11:\"imageHeight\";i:1500;s:25:\"imageDimensionsCalculated\";b:1;}');
 INSERT INTO `assets` VALUES (25,17,'image','img_0160.jpg','/examples/panama/','image/jpeg',1368532839,1368632468,2,2,'a:3:{s:10:\"imageWidth\";i:2000;s:11:\"imageHeight\";i:1500;s:25:\"imageDimensionsCalculated\";b:1;}');
 INSERT INTO `assets` VALUES (26,1,'folder','videos','/','',1368542684,1368632471,2,2,'a:0:{}');
-INSERT INTO `assets` VALUES (27,26,'video','home-trailer-english.mp4','/videos/','video/mp4',1368542794,1378991974,2,2,'a:1:{s:10:\"thumbnails\";a:2:{s:12:\"featurerette\";a:2:{s:6:\"status\";s:8:\"finished\";s:7:\"formats\";a:2:{s:3:\"mp4\";s:43:\"/website/var/tmp/video_27__featurerette.mp4\";s:4:\"webm\";s:44:\"/website/var/tmp/video_27__featurerette.webm\";}}s:7:\"content\";a:2:{s:6:\"status\";s:8:\"finished\";s:7:\"formats\";a:2:{s:3:\"mp4\";s:38:\"/website/var/tmp/video_27__content.mp4\";s:4:\"webm\";s:39:\"/website/var/tmp/video_27__content.webm\";}}}}');
+INSERT INTO `assets` VALUES (27,26,'video','home-trailer-english.mp4','/videos/','video/mp4',1368542794,1382960507,2,2,'a:1:{s:10:\"thumbnails\";a:2:{s:12:\"featurerette\";a:2:{s:6:\"status\";s:8:\"finished\";s:7:\"formats\";a:2:{s:3:\"mp4\";s:81:\"/website/var/tmp/video-thumbnails/27/thumb__featurerette/home-trailer-english.mp4\";s:4:\"webm\";s:82:\"/website/var/tmp/video-thumbnails/27/thumb__featurerette/home-trailer-english.webm\";}}s:7:\"content\";a:2:{s:6:\"status\";s:8:\"finished\";s:7:\"formats\";a:2:{s:3:\"mp4\";s:76:\"/website/var/tmp/video-thumbnails/27/thumb__content/home-trailer-english.mp4\";s:4:\"webm\";s:77:\"/website/var/tmp/video-thumbnails/27/thumb__content/home-trailer-english.webm\";}}}}');
 INSERT INTO `assets` VALUES (29,1,'folder','documents','/','',1368548619,1368632467,2,2,'a:0:{}');
 INSERT INTO `assets` VALUES (34,1,'folder','screenshots','/','',1368560793,1368632470,2,2,'a:0:{}');
 INSERT INTO `assets` VALUES (35,34,'image','glossary.png','/screenshots/','image/png',1368560809,1368632470,2,2,'a:3:{s:10:\"imageWidth\";i:908;s:11:\"imageHeight\";i:267;s:25:\"imageDimensionsCalculated\";b:1;}');
@@ -1058,7 +1094,7 @@ INSERT INTO `assets` VALUES (68,29,'document','example.pptx','/documents/','appl
 
 
 
-INSERT INTO `classes` VALUES (2,'news','',1368613289,1368616960,2,2,0,0,'','','/%title_n%o_id','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
+INSERT INTO `classes` VALUES (2,'news','',1368613289,1382958417,2,2,0,0,'','','/%title_n%o_id','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
 INSERT INTO `classes` VALUES (3,'inquiry','',1368620413,1368622807,2,2,0,0,'','','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
 INSERT INTO `classes` VALUES (4,'person','',1368620452,1368621909,2,2,0,0,'','','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
 
@@ -1084,6 +1120,7 @@ INSERT INTO `dependencies` VALUES ('document',1,'document',17);
 INSERT INTO `dependencies` VALUES ('document',1,'asset',18);
 INSERT INTO `dependencies` VALUES ('document',1,'asset',19);
 INSERT INTO `dependencies` VALUES ('document',1,'asset',27);
+INSERT INTO `dependencies` VALUES ('document',1,'document',40);
 INSERT INTO `dependencies` VALUES ('document',1,'asset',55);
 INSERT INTO `dependencies` VALUES ('document',3,'document',7);
 INSERT INTO `dependencies` VALUES ('document',3,'document',18);
@@ -1098,6 +1135,7 @@ INSERT INTO `dependencies` VALUES ('document',3,'document',27);
 INSERT INTO `dependencies` VALUES ('document',3,'document',28);
 INSERT INTO `dependencies` VALUES ('document',3,'document',29);
 INSERT INTO `dependencies` VALUES ('document',3,'asset',39);
+INSERT INTO `dependencies` VALUES ('document',3,'document',40);
 INSERT INTO `dependencies` VALUES ('document',3,'asset',40);
 INSERT INTO `dependencies` VALUES ('document',3,'asset',41);
 INSERT INTO `dependencies` VALUES ('document',3,'asset',44);
@@ -1115,9 +1153,15 @@ INSERT INTO `dependencies` VALUES ('document',4,'document',16);
 INSERT INTO `dependencies` VALUES ('document',4,'document',17);
 INSERT INTO `dependencies` VALUES ('document',4,'asset',22);
 INSERT INTO `dependencies` VALUES ('document',4,'asset',24);
+INSERT INTO `dependencies` VALUES ('document',4,'document',40);
+INSERT INTO `dependencies` VALUES ('document',5,'document',40);
+INSERT INTO `dependencies` VALUES ('document',6,'document',1);
+INSERT INTO `dependencies` VALUES ('document',6,'document',40);
 INSERT INTO `dependencies` VALUES ('document',7,'asset',27);
 INSERT INTO `dependencies` VALUES ('document',9,'document',5);
 INSERT INTO `dependencies` VALUES ('document',9,'asset',65);
+INSERT INTO `dependencies` VALUES ('document',10,'document',40);
+INSERT INTO `dependencies` VALUES ('document',12,'document',40);
 INSERT INTO `dependencies` VALUES ('document',15,'document',1);
 INSERT INTO `dependencies` VALUES ('document',15,'document',3);
 INSERT INTO `dependencies` VALUES ('document',15,'asset',21);
@@ -1140,7 +1184,11 @@ INSERT INTO `dependencies` VALUES ('document',19,'asset',52);
 INSERT INTO `dependencies` VALUES ('document',20,'asset',35);
 INSERT INTO `dependencies` VALUES ('document',21,'asset',53);
 INSERT INTO `dependencies` VALUES ('document',21,'asset',59);
+INSERT INTO `dependencies` VALUES ('document',22,'document',3);
+INSERT INTO `dependencies` VALUES ('document',22,'document',23);
+INSERT INTO `dependencies` VALUES ('document',22,'document',40);
 INSERT INTO `dependencies` VALUES ('document',22,'asset',60);
+INSERT INTO `dependencies` VALUES ('document',23,'document',41);
 INSERT INTO `dependencies` VALUES ('document',24,'asset',27);
 INSERT INTO `dependencies` VALUES ('document',24,'asset',44);
 INSERT INTO `dependencies` VALUES ('document',24,'asset',48);
@@ -1181,9 +1229,56 @@ INSERT INTO `dependencies` VALUES ('document',37,'document',5);
 INSERT INTO `dependencies` VALUES ('document',37,'document',38);
 INSERT INTO `dependencies` VALUES ('document',38,'document',5);
 INSERT INTO `dependencies` VALUES ('document',39,'document',1);
+INSERT INTO `dependencies` VALUES ('document',40,'document',1);
+INSERT INTO `dependencies` VALUES ('document',41,'asset',4);
+INSERT INTO `dependencies` VALUES ('document',41,'document',5);
+INSERT INTO `dependencies` VALUES ('document',41,'asset',5);
+INSERT INTO `dependencies` VALUES ('document',41,'document',6);
+INSERT INTO `dependencies` VALUES ('document',41,'asset',6);
+INSERT INTO `dependencies` VALUES ('document',41,'asset',18);
+INSERT INTO `dependencies` VALUES ('document',41,'asset',19);
+INSERT INTO `dependencies` VALUES ('document',41,'asset',27);
+INSERT INTO `dependencies` VALUES ('document',41,'document',47);
+INSERT INTO `dependencies` VALUES ('document',41,'document',48);
+INSERT INTO `dependencies` VALUES ('document',41,'document',49);
+INSERT INTO `dependencies` VALUES ('document',41,'asset',55);
+INSERT INTO `dependencies` VALUES ('document',42,'document',40);
+INSERT INTO `dependencies` VALUES ('document',43,'document',40);
+INSERT INTO `dependencies` VALUES ('document',44,'document',40);
+INSERT INTO `dependencies` VALUES ('document',45,'document',40);
+INSERT INTO `dependencies` VALUES ('document',46,'document',40);
+INSERT INTO `dependencies` VALUES ('document',47,'document',3);
+INSERT INTO `dependencies` VALUES ('document',47,'asset',21);
+INSERT INTO `dependencies` VALUES ('document',47,'document',40);
+INSERT INTO `dependencies` VALUES ('document',48,'document',5);
+INSERT INTO `dependencies` VALUES ('document',48,'asset',20);
+INSERT INTO `dependencies` VALUES ('document',48,'document',40);
+INSERT INTO `dependencies` VALUES ('document',49,'document',6);
+INSERT INTO `dependencies` VALUES ('document',49,'asset',18);
+INSERT INTO `dependencies` VALUES ('document',49,'document',40);
+INSERT INTO `dependencies` VALUES ('document',50,'document',5);
+INSERT INTO `dependencies` VALUES ('document',50,'asset',22);
+INSERT INTO `dependencies` VALUES ('document',50,'asset',24);
+INSERT INTO `dependencies` VALUES ('document',50,'document',41);
+INSERT INTO `dependencies` VALUES ('document',50,'document',47);
+INSERT INTO `dependencies` VALUES ('document',50,'document',48);
+INSERT INTO `dependencies` VALUES ('document',50,'document',49);
+INSERT INTO `dependencies` VALUES ('document',51,'document',3);
+INSERT INTO `dependencies` VALUES ('document',51,'document',41);
+INSERT INTO `dependencies` VALUES ('document',52,'document',5);
+INSERT INTO `dependencies` VALUES ('document',52,'document',41);
+INSERT INTO `dependencies` VALUES ('document',53,'document',41);
+INSERT INTO `dependencies` VALUES ('document',54,'document',40);
+INSERT INTO `dependencies` VALUES ('document',55,'document',40);
+INSERT INTO `dependencies` VALUES ('document',56,'document',40);
+INSERT INTO `dependencies` VALUES ('document',56,'document',41);
+INSERT INTO `dependencies` VALUES ('object',3,'document',19);
+INSERT INTO `dependencies` VALUES ('object',3,'document',24);
 INSERT INTO `dependencies` VALUES ('object',3,'asset',43);
 INSERT INTO `dependencies` VALUES ('object',3,'asset',49);
 INSERT INTO `dependencies` VALUES ('object',3,'asset',52);
+INSERT INTO `dependencies` VALUES ('object',4,'document',3);
+INSERT INTO `dependencies` VALUES ('object',4,'document',27);
 INSERT INTO `dependencies` VALUES ('object',4,'asset',51);
 INSERT INTO `dependencies` VALUES ('object',6,'asset',25);
 INSERT INTO `dependencies` VALUES ('object',7,'asset',18);
@@ -1203,43 +1298,60 @@ INSERT INTO `dependencies` VALUES ('object',31,'object',30);
 
 
 
-INSERT INTO `documents` VALUES (1,0,'page','','/',999999,1,1368522989,1370432677,1,2);
-INSERT INTO `documents` VALUES (3,1,'page','basic-examples','/',1,1,1368523212,1368626600,2,2);
-INSERT INTO `documents` VALUES (4,1,'page','introduction','/',0,1,1368523285,1368689817,2,2);
-INSERT INTO `documents` VALUES (5,1,'page','advanced-examples','/',2,1,1368523389,1368620091,2,2);
-INSERT INTO `documents` VALUES (6,1,'page','experiments','/',3,1,1368523410,1368626334,2,2);
-INSERT INTO `documents` VALUES (7,3,'page','html5-video','/basic-examples/',1,1,1368525394,1368545013,2,2);
-INSERT INTO `documents` VALUES (9,5,'page','creating-objects-using-forms','/advanced-examples/',1,1,1368525933,1369854600,2,2);
-INSERT INTO `documents` VALUES (10,1,'folder','shared','/',5,1,1368527956,1368527956,2,2);
-INSERT INTO `documents` VALUES (11,10,'folder','includes','/shared/',1,1,1368527961,1368527961,2,2);
-INSERT INTO `documents` VALUES (12,11,'snippet','footer','/shared/includes/',1,1,1368527967,1368529693,2,2);
-INSERT INTO `documents` VALUES (13,10,'folder','teasers','/shared/',2,1,1368531657,1368531657,2,2);
-INSERT INTO `documents` VALUES (14,13,'folder','standard','/shared/teasers/',1,1,1368531665,1368531665,2,2);
-INSERT INTO `documents` VALUES (15,14,'snippet','basic-examples','/shared/teasers/standard/',1,1,1368531692,1370432633,2,2);
-INSERT INTO `documents` VALUES (16,14,'snippet','advanced-examples','/shared/teasers/standard/',2,1,1368534298,1370432637,2,2);
-INSERT INTO `documents` VALUES (17,14,'snippet','experiments','/shared/teasers/standard/',3,1,1368534344,1370432641,2,2);
-INSERT INTO `documents` VALUES (18,3,'page','pdf-viewer','/basic-examples/',2,1,1368548449,1378992677,2,2);
-INSERT INTO `documents` VALUES (19,3,'page','galleries','/basic-examples/',3,1,1368549805,1368597503,2,2);
-INSERT INTO `documents` VALUES (20,3,'page','glossary','/basic-examples/',4,1,1368559903,1368561466,2,2);
-INSERT INTO `documents` VALUES (21,3,'page','thumbnails','/basic-examples/',5,1,1368602443,1368606841,2,2);
-INSERT INTO `documents` VALUES (22,3,'page','website-translations','/basic-examples/',6,1,1368607207,1368609001,2,2);
-INSERT INTO `documents` VALUES (23,22,'page','german-translation','/basic-examples/website-translations/',6,1,1368608357,1368608866,2,2);
-INSERT INTO `documents` VALUES (24,3,'page','content-page','/basic-examples/',0,1,1368609059,1368611682,2,2);
-INSERT INTO `documents` VALUES (25,3,'page','editable-roundup','/basic-examples/',7,1,1368609569,1368610457,2,2);
-INSERT INTO `documents` VALUES (26,3,'page','form','/basic-examples/',8,1,1368610663,1368610681,2,2);
-INSERT INTO `documents` VALUES (27,3,'page','news','/basic-examples/',9,1,1368613137,1368614363,2,2);
-INSERT INTO `documents` VALUES (28,3,'page','properties','/basic-examples/',10,1,1368615986,1368616909,2,2);
-INSERT INTO `documents` VALUES (29,3,'page','tag-and-snippet-management','/basic-examples/',11,1,1368617118,1368617704,2,2);
-INSERT INTO `documents` VALUES (30,5,'page','content-inheritance','/advanced-examples/',2,1,1368623726,1368623853,2,2);
-INSERT INTO `documents` VALUES (31,30,'page','content-inheritance','/advanced-examples/content-inheritance/',2,1,1368623866,1368624030,2,2);
-INSERT INTO `documents` VALUES (32,3,'link','pimcore.org','/basic-examples/',12,1,1368626404,1368626437,2,2);
-INSERT INTO `documents` VALUES (33,34,'hardlink','basic-examples','/advanced-examples/hard-link/',0,1,1368626461,1368626800,2,2);
-INSERT INTO `documents` VALUES (34,5,'page','hard-link','/advanced-examples/',4,1,1368626655,1368626835,2,2);
-INSERT INTO `documents` VALUES (35,5,'page','image-with-hotspots-and-markers','/advanced-examples/',5,1,1368626888,1368629331,2,2);
-INSERT INTO `documents` VALUES (36,5,'page','search','/advanced-examples/',6,1,1368629524,1368630250,2,2);
-INSERT INTO `documents` VALUES (37,5,'page','contact-form','/advanced-examples/',7,1,1368630444,1368631569,2,2);
-INSERT INTO `documents` VALUES (38,37,'email','email','/advanced-examples/contact-form/',1,1,1368631410,1368632025,2,2);
-INSERT INTO `documents` VALUES (39,1,'page','error','/',4,1,1369854325,1369854422,2,2);
+INSERT INTO `documents` VALUES (1,0,'page','','/',999999,1,1368522989,1382956534,1,2);
+INSERT INTO `documents` VALUES (3,40,'page','basic-examples','/en/',1,1,1368523212,1382956582,2,2);
+INSERT INTO `documents` VALUES (4,40,'page','introduction','/en/',0,1,1368523285,1382956038,2,2);
+INSERT INTO `documents` VALUES (5,40,'page','advanced-examples','/en/',2,1,1368523389,1382956042,2,2);
+INSERT INTO `documents` VALUES (6,40,'page','experiments','/en/',3,1,1368523410,1382956044,2,2);
+INSERT INTO `documents` VALUES (7,3,'page','html5-video','/en/basic-examples/',1,1,1368525394,1382956040,2,2);
+INSERT INTO `documents` VALUES (9,5,'page','creating-objects-using-forms','/en/advanced-examples/',1,1,1368525933,1382956042,2,2);
+INSERT INTO `documents` VALUES (10,40,'folder','shared','/en/',4,1,1368527956,1382956831,2,2);
+INSERT INTO `documents` VALUES (11,10,'folder','includes','/en/shared/',1,1,1368527961,1382956831,2,2);
+INSERT INTO `documents` VALUES (12,11,'snippet','footer','/en/shared/includes/',1,1,1368527967,1382956852,2,2);
+INSERT INTO `documents` VALUES (13,10,'folder','teasers','/en/shared/',2,1,1368531657,1382956831,2,2);
+INSERT INTO `documents` VALUES (14,13,'folder','standard','/en/shared/teasers/',1,1,1368531665,1382956831,2,2);
+INSERT INTO `documents` VALUES (15,14,'snippet','basic-examples','/en/shared/teasers/standard/',1,1,1368531692,1382956831,2,2);
+INSERT INTO `documents` VALUES (16,14,'snippet','advanced-examples','/en/shared/teasers/standard/',2,1,1368534298,1382956831,2,2);
+INSERT INTO `documents` VALUES (17,14,'snippet','experiments','/en/shared/teasers/standard/',3,1,1368534344,1382956831,2,2);
+INSERT INTO `documents` VALUES (18,3,'page','pdf-viewer','/en/basic-examples/',2,1,1368548449,1382956040,2,2);
+INSERT INTO `documents` VALUES (19,3,'page','galleries','/en/basic-examples/',3,1,1368549805,1382956040,2,2);
+INSERT INTO `documents` VALUES (20,3,'page','glossary','/en/basic-examples/',4,1,1368559903,1382956040,2,2);
+INSERT INTO `documents` VALUES (21,3,'page','thumbnails','/en/basic-examples/',5,1,1368602443,1382956040,2,2);
+INSERT INTO `documents` VALUES (22,3,'page','website-translations','/en/basic-examples/',6,1,1368607207,1382958131,2,2);
+INSERT INTO `documents` VALUES (23,51,'page','website-uebersetzungen','/de/einfache-beispiele/',0,1,1368608357,1382958135,2,2);
+INSERT INTO `documents` VALUES (24,3,'page','content-page','/en/basic-examples/',0,1,1368609059,1382956040,2,2);
+INSERT INTO `documents` VALUES (25,3,'page','editable-roundup','/en/basic-examples/',7,1,1368609569,1382956040,2,2);
+INSERT INTO `documents` VALUES (26,3,'page','form','/en/basic-examples/',8,1,1368610663,1382956040,2,2);
+INSERT INTO `documents` VALUES (27,3,'page','news','/en/basic-examples/',9,1,1368613137,1382956040,2,2);
+INSERT INTO `documents` VALUES (28,3,'page','properties','/en/basic-examples/',10,1,1368615986,1382956040,2,2);
+INSERT INTO `documents` VALUES (29,3,'page','tag-and-snippet-management','/en/basic-examples/',11,1,1368617118,1382956040,2,2);
+INSERT INTO `documents` VALUES (30,5,'page','content-inheritance','/en/advanced-examples/',2,1,1368623726,1382956042,2,2);
+INSERT INTO `documents` VALUES (31,30,'page','content-inheritance','/en/advanced-examples/content-inheritance/',2,1,1368623866,1382956042,2,2);
+INSERT INTO `documents` VALUES (32,3,'link','pimcore.org','/en/basic-examples/',12,1,1368626404,1382956040,2,2);
+INSERT INTO `documents` VALUES (33,34,'hardlink','basic-examples','/en/advanced-examples/hard-link/',0,1,1368626461,1382956042,2,2);
+INSERT INTO `documents` VALUES (34,5,'page','hard-link','/en/advanced-examples/',4,1,1368626655,1382956042,2,2);
+INSERT INTO `documents` VALUES (35,5,'page','image-with-hotspots-and-markers','/en/advanced-examples/',5,1,1368626888,1382956042,2,2);
+INSERT INTO `documents` VALUES (36,5,'page','search','/en/advanced-examples/',6,1,1368629524,1382956042,2,2);
+INSERT INTO `documents` VALUES (37,5,'page','contact-form','/en/advanced-examples/',7,1,1368630444,1382956042,2,2);
+INSERT INTO `documents` VALUES (38,37,'email','email','/en/advanced-examples/contact-form/',1,1,1368631410,1382956042,2,2);
+INSERT INTO `documents` VALUES (39,1,'page','error','/',3,1,1369854325,1369854422,2,2);
+INSERT INTO `documents` VALUES (40,1,'link','en','/',0,1,1382956013,1382956551,2,2);
+INSERT INTO `documents` VALUES (41,1,'page','de','/',2,1,1382956716,1382957674,2,2);
+INSERT INTO `documents` VALUES (42,41,'folder','shared','/de/',3,1,1382956884,1382956887,2,2);
+INSERT INTO `documents` VALUES (43,42,'folder','includes','/de/shared/',1,1,1382956885,1382956888,2,2);
+INSERT INTO `documents` VALUES (44,42,'folder','teasers','/de/shared/',2,1,1382956885,1382956888,2,2);
+INSERT INTO `documents` VALUES (45,44,'folder','standard','/de/shared/teasers/',1,1,1382956885,1382956888,2,2);
+INSERT INTO `documents` VALUES (46,43,'snippet','footer','/de/shared/includes/',1,1,1382956886,1382956919,2,2);
+INSERT INTO `documents` VALUES (47,45,'snippet','basic-examples','/de/shared/teasers/standard/',1,1,1382956886,1382957000,2,2);
+INSERT INTO `documents` VALUES (48,45,'snippet','advanced-examples','/de/shared/teasers/standard/',2,1,1382956886,1382957114,2,2);
+INSERT INTO `documents` VALUES (49,45,'snippet','experiments','/de/shared/teasers/standard/',3,1,1382956887,1382957197,2,2);
+INSERT INTO `documents` VALUES (50,41,'page','einfuehrung','/de/',0,1,1382957658,1382957760,2,2);
+INSERT INTO `documents` VALUES (51,41,'page','einfache-beispiele','/de/',1,1,1382957793,1382957910,2,2);
+INSERT INTO `documents` VALUES (52,41,'page','beispiele-fur-fortgeschrittene','/de/',2,1,1382957961,1382957999,2,2);
+INSERT INTO `documents` VALUES (53,51,'page','neuigkeiten','/de/einfache-beispiele/',9,1,1382958188,1382958240,2,2);
+INSERT INTO `documents` VALUES (54,1,'folder','shared','/',4,1,1382959757,1382959757,2,2);
+INSERT INTO `documents` VALUES (55,54,'folder','includes','/shared/',1,1,1382959767,1382959768,2,2);
+INSERT INTO `documents` VALUES (56,55,'snippet','languages','/shared/includes/',1,1,1382959774,1382959822,2,2);
 
 
 
@@ -1549,7 +1661,7 @@ INSERT INTO `documents_elements` VALUES (21,'myTextarea','textarea','');
 INSERT INTO `documents_elements` VALUES (21,'myWysiwyg','wysiwyg','');
 INSERT INTO `documents_elements` VALUES (22,'content','areablock','a:1:{i:0;a:2:{s:3:\"key\";s:1:\"1\";s:4:\"type\";s:7:\"wysiwyg\";}}');
 INSERT INTO `documents_elements` VALUES (22,'contentBottom','areablock','a:1:{i:0;a:2:{s:3:\"key\";s:1:\"1\";s:4:\"type\";s:5:\"image\";}}');
-INSERT INTO `documents_elements` VALUES (22,'contentcontent1','wysiwyg','<p>&nbsp;</p>\n\n<p><a href=\"/basic-examples/website-translations/german-translation\">Please visit this page to see the German translation of this page.</a></p>\n\n<p>&nbsp;</p>\n\n<p>Following some examples:&nbsp;</p>\n\n<p>&nbsp;</p>\n');
+INSERT INTO `documents_elements` VALUES (22,'contentcontent1','wysiwyg','<p>&nbsp;</p>\n\n<p><a href=\"/de/einfache-beispiele/website-uebersetzungen\" pimcore_id=\"23\" pimcore_type=\"document\">Please visit this page to see the German translation of this page.</a></p>\n\n<p>&nbsp;</p>\n\n<p>Following some examples:&nbsp;</p>\n\n<p>&nbsp;</p>\n');
 INSERT INTO `documents_elements` VALUES (22,'headDescription','input','');
 INSERT INTO `documents_elements` VALUES (22,'headline','input','Website Translations');
 INSERT INTO `documents_elements` VALUES (22,'headlinecontent1','input','');
@@ -1790,6 +1902,161 @@ INSERT INTO `documents_elements` VALUES (39,'headline','input','It seems that th
 INSERT INTO `documents_elements` VALUES (39,'headlinecontent1','input','');
 INSERT INTO `documents_elements` VALUES (39,'headTitle','input','Oh no!');
 INSERT INTO `documents_elements` VALUES (39,'leadcontent1','wysiwyg','');
+INSERT INTO `documents_elements` VALUES (41,'authorcontent3','input','Albert Einstein');
+INSERT INTO `documents_elements` VALUES (41,'blockcontent1','block','a:1:{i:0;s:1:\"1\";}');
+INSERT INTO `documents_elements` VALUES (41,'carouselSlides','select','3');
+INSERT INTO `documents_elements` VALUES (41,'cHeadline_0','input','Bereit beeindruckt zu werden? ');
+INSERT INTO `documents_elements` VALUES (41,'cHeadline_1','input','Es wird dich umhauen!');
+INSERT INTO `documents_elements` VALUES (41,'cHeadline_2','input','Oh ja, es ist wirklich so gut');
+INSERT INTO `documents_elements` VALUES (41,'cImage_0','image','a:9:{s:2:\"id\";i:4;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (41,'cImage_1','image','a:9:{s:2:\"id\";i:5;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (41,'cImage_2','image','a:9:{s:2:\"id\";i:6;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (41,'cLink_0','link','a:15:{s:4:\"text\";s:13:\"See in Action\";s:4:\"path\";s:18:\"/advanced-examples\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:5;s:12:\"internalType\";s:8:\"document\";s:4:\"type\";s:8:\"internal\";}');
+INSERT INTO `documents_elements` VALUES (41,'cLink_1','link','a:15:{s:4:\"text\";s:13:\"See in Action\";s:4:\"path\";s:18:\"/advanced-examples\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:5;s:12:\"internalType\";s:8:\"document\";s:4:\"type\";s:8:\"internal\";}');
+INSERT INTO `documents_elements` VALUES (41,'cLink_2','link','a:15:{s:4:\"text\";s:9:\"Checkmate\";s:4:\"path\";s:12:\"/experiments\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:6;s:12:\"internalType\";s:8:\"document\";s:4:\"type\";s:8:\"internal\";}');
+INSERT INTO `documents_elements` VALUES (41,'content','areablock','a:2:{i:0;a:2:{s:3:\"key\";s:1:\"2\";s:4:\"type\";s:19:\"standard-teaser-row\";}i:1;a:2:{s:3:\"key\";s:1:\"1\";s:4:\"type\";s:10:\"featurette\";}}');
+INSERT INTO `documents_elements` VALUES (41,'contentcontent_blockcontent11_1','wysiwyg','<p>In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.</p>\n');
+INSERT INTO `documents_elements` VALUES (41,'contentcontent_blockcontent11_2','wysiwyg','<p>Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>\n');
+INSERT INTO `documents_elements` VALUES (41,'contentcontent_blockcontent11_3','wysiwyg','<p>Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>\n');
+INSERT INTO `documents_elements` VALUES (41,'cText_0','textarea','Teste unsere Beispiele und tauche ein in die nächste Generation von digitalem Inhaltsmanagement');
+INSERT INTO `documents_elements` VALUES (41,'cText_1','textarea','Sieh\' selbst');
+INSERT INTO `documents_elements` VALUES (41,'cText_2','textarea','Sieh\' selbst!');
+INSERT INTO `documents_elements` VALUES (41,'headlinecontent_blockcontent11_1','input','Lorem ipsum.');
+INSERT INTO `documents_elements` VALUES (41,'headlinecontent_blockcontent11_2','input','Oh yeah, it\'s that good.');
+INSERT INTO `documents_elements` VALUES (41,'headlinecontent_blockcontent11_3','input','And lastly, this one.');
+INSERT INTO `documents_elements` VALUES (41,'imagecontent_blockcontent11_1','image','a:9:{s:2:\"id\";i:55;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (41,'imagecontent_blockcontent11_2','image','a:9:{s:2:\"id\";i:18;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (41,'imagecontent_blockcontent11_3','image','a:9:{s:2:\"id\";i:19;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (41,'imagePositioncontent_blockcontent11_1','select','');
+INSERT INTO `documents_elements` VALUES (41,'imagePositioncontent_blockcontent11_2','select','left');
+INSERT INTO `documents_elements` VALUES (41,'imagePositioncontent_blockcontent11_3','select','');
+INSERT INTO `documents_elements` VALUES (41,'multiselect','multiselect','a:0:{}');
+INSERT INTO `documents_elements` VALUES (41,'myCheckbox','checkbox','');
+INSERT INTO `documents_elements` VALUES (41,'myDate','date','');
+INSERT INTO `documents_elements` VALUES (41,'myHref','href','a:3:{s:2:\"id\";N;s:4:\"type\";N;s:7:\"subtype\";N;}');
+INSERT INTO `documents_elements` VALUES (41,'myImageBlock','block','a:0:{}');
+INSERT INTO `documents_elements` VALUES (41,'myInput','input','');
+INSERT INTO `documents_elements` VALUES (41,'myLink','link','a:10:{s:4:\"type\";s:8:\"internal\";s:4:\"path\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:6:\"target\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";}');
+INSERT INTO `documents_elements` VALUES (41,'myMultihref','multihref','a:0:{}');
+INSERT INTO `documents_elements` VALUES (41,'myNumber','numeric','');
+INSERT INTO `documents_elements` VALUES (41,'mySelect','select','');
+INSERT INTO `documents_elements` VALUES (41,'myTextarea','textarea','');
+INSERT INTO `documents_elements` VALUES (41,'myWysiwyg','wysiwyg','');
+INSERT INTO `documents_elements` VALUES (41,'postitioncontent_blockcontent11_1','select','');
+INSERT INTO `documents_elements` VALUES (41,'postitioncontent_blockcontent11_2','select','left');
+INSERT INTO `documents_elements` VALUES (41,'postitioncontent_blockcontent11_3','select','');
+INSERT INTO `documents_elements` VALUES (41,'quotecontent3','input','We can\'t solve problems by using the same kind of thinking we used when we created them.');
+INSERT INTO `documents_elements` VALUES (41,'sublinecontent_blockcontent11_1','input','Cum sociis.');
+INSERT INTO `documents_elements` VALUES (41,'sublinecontent_blockcontent11_2','input','See for yourself.');
+INSERT INTO `documents_elements` VALUES (41,'sublinecontent_blockcontent11_3','input','Checkmate.');
+INSERT INTO `documents_elements` VALUES (41,'teaser_0content2','snippet','47');
+INSERT INTO `documents_elements` VALUES (41,'teaser_1content2','snippet','48');
+INSERT INTO `documents_elements` VALUES (41,'teaser_2content2','snippet','49');
+INSERT INTO `documents_elements` VALUES (41,'typecontent_blockcontent11_1','select','');
+INSERT INTO `documents_elements` VALUES (41,'typecontent_blockcontent11_2','select','video');
+INSERT INTO `documents_elements` VALUES (41,'typecontent_blockcontent11_3','select','');
+INSERT INTO `documents_elements` VALUES (41,'type_0content2','select','');
+INSERT INTO `documents_elements` VALUES (41,'type_1content2','select','');
+INSERT INTO `documents_elements` VALUES (41,'type_2content2','select','');
+INSERT INTO `documents_elements` VALUES (41,'videocontent_blockcontent11_2','video','a:5:{s:2:\"id\";i:27;s:4:\"type\";s:5:\"asset\";s:5:\"title\";s:0:\"\";s:11:\"description\";s:0:\"\";s:6:\"poster\";N;}');
+INSERT INTO `documents_elements` VALUES (46,'linklinks1','link','a:12:{s:4:\"text\";s:11:\"pimcore.org\";s:4:\"path\";s:23:\"http://www.pimcore.org/\";s:6:\"target\";s:6:\"_blank\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";s:4:\"type\";s:8:\"internal\";}');
+INSERT INTO `documents_elements` VALUES (46,'linklinks2','link','a:11:{s:4:\"text\";s:13:\"Dokumentation\";s:4:\"path\";s:28:\"http://www.pimcore.org/wiki/\";s:6:\"target\";s:6:\"_blank\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";}');
+INSERT INTO `documents_elements` VALUES (46,'linklinks3','link','a:12:{s:4:\"text\";s:11:\"Bug Tracker\";s:4:\"path\";s:30:\"http://www.pimcore.org/issues/\";s:6:\"target\";s:6:\"_blank\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";s:4:\"type\";s:8:\"internal\";}');
+INSERT INTO `documents_elements` VALUES (46,'links','block','a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}');
+INSERT INTO `documents_elements` VALUES (46,'multiselect','multiselect','a:0:{}');
+INSERT INTO `documents_elements` VALUES (46,'myCheckbox','checkbox','');
+INSERT INTO `documents_elements` VALUES (46,'myDate','date','');
+INSERT INTO `documents_elements` VALUES (46,'myHref','href','a:3:{s:2:\"id\";N;s:4:\"type\";N;s:7:\"subtype\";N;}');
+INSERT INTO `documents_elements` VALUES (46,'myImageBlock','block','a:0:{}');
+INSERT INTO `documents_elements` VALUES (46,'myInput','input','');
+INSERT INTO `documents_elements` VALUES (46,'myLink','link','a:10:{s:4:\"type\";s:8:\"internal\";s:4:\"path\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:6:\"target\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";}');
+INSERT INTO `documents_elements` VALUES (46,'myMultihref','multihref','a:0:{}');
+INSERT INTO `documents_elements` VALUES (46,'myNumber','numeric','');
+INSERT INTO `documents_elements` VALUES (46,'mySelect','select','');
+INSERT INTO `documents_elements` VALUES (46,'myTextarea','textarea','');
+INSERT INTO `documents_elements` VALUES (46,'myWysiwyg','wysiwyg','');
+INSERT INTO `documents_elements` VALUES (46,'text','wysiwyg','<p>Designed and built with all the love in the world by&nbsp;<a href=\"http://twitter.com/mdo\" target=\"_blank\">@mdo</a>&nbsp;and&nbsp;<a href=\"http://twitter.com/fat\" target=\"_blank\">@fat</a>.</p>\n\n<p>Code licensed under&nbsp;<a href=\"http://www.apache.org/licenses/LICENSE-2.0\" target=\"_blank\">Apache License v2.0</a>,&nbsp;<a href=\"http://glyphicons.com/\">Glyphicons Free</a>&nbsp;licensed under&nbsp;<a href=\"http://creativecommons.org/licenses/by/3.0/\">CC BY 3.0</a>.</p>\n\n<p><strong>© Templates pimcore.org licensed under BSD License</strong></p>\n');
+INSERT INTO `documents_elements` VALUES (47,'circle','checkbox','');
+INSERT INTO `documents_elements` VALUES (47,'headline','input','Voll Responsive');
+INSERT INTO `documents_elements` VALUES (47,'image','image','a:9:{s:2:\"id\";i:21;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (47,'link','link','a:15:{s:4:\"text\";s:11:\"Lorem ipsum\";s:4:\"path\";s:18:\"/en/basic-examples\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:3;s:12:\"internalType\";s:8:\"document\";s:4:\"type\";s:8:\"internal\";}');
+INSERT INTO `documents_elements` VALUES (47,'text','wysiwyg','<p>Diese Demo basiert auf Bootstrap, dem wohl bekanntesten,&nbsp;beliebtesten und flexibelsten Fontend-Framework.</p>\n');
+INSERT INTO `documents_elements` VALUES (48,'circle','checkbox','');
+INSERT INTO `documents_elements` VALUES (48,'headline','input','Drag & Drop Inhaltserstellung');
+INSERT INTO `documents_elements` VALUES (48,'image','image','a:9:{s:2:\"id\";i:20;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (48,'link','link','a:15:{s:4:\"text\";s:12:\"Etiam rhoncu\";s:4:\"path\";s:21:\"/en/advanced-examples\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:5;s:12:\"internalType\";s:8:\"document\";s:4:\"type\";s:8:\"internal\";}');
+INSERT INTO `documents_elements` VALUES (48,'text','wysiwyg','<p>Inhalt wird einfach per drag &amp; drop mit Inhaltsblöcken erstellt, welche dann direkt in-line editiert werden können.</p>\n');
+INSERT INTO `documents_elements` VALUES (49,'circle','checkbox','');
+INSERT INTO `documents_elements` VALUES (49,'headline','input','HTML5 immer & überall');
+INSERT INTO `documents_elements` VALUES (49,'image','image','a:9:{s:2:\"id\";i:18;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (49,'link','link','a:15:{s:4:\"text\";s:14:\"Quisque rutrum\";s:4:\"path\";s:15:\"/en/experiments\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:6;s:12:\"internalType\";s:8:\"document\";s:4:\"type\";s:8:\"internal\";}');
+INSERT INTO `documents_elements` VALUES (49,'text','wysiwyg','<p>&nbsp;</p>\n\n<p>Bilder direkt per drag &amp; drop vom Desktop&nbsp;in den Baum in pimcore hochladen, automatische HTML5 Video Konvertierung&nbsp;und viel mehr ...</p>\n');
+INSERT INTO `documents_elements` VALUES (50,'blockcontent2','block','a:1:{i:0;s:1:\"1\";}');
+INSERT INTO `documents_elements` VALUES (50,'circle2content1','checkbox','');
+INSERT INTO `documents_elements` VALUES (50,'content','areablock','a:3:{i:0;a:2:{s:3:\"key\";s:1:\"3\";s:4:\"type\";s:7:\"wysiwyg\";}i:1;a:2:{s:3:\"key\";s:1:\"1\";s:4:\"type\";s:19:\"standard-teaser-row\";}i:2;a:2:{s:3:\"key\";s:1:\"2\";s:4:\"type\";s:10:\"featurette\";}}');
+INSERT INTO `documents_elements` VALUES (50,'contentcontent3','wysiwyg','<p>Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. <a href=\"/basic-examples\">Etiam rhoncus</a>.</p>\n\n<p>&nbsp;</p>\n\n<ul>\n	<li>Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.</li>\n	<li>Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.</li>\n	<li>Maecenas nec odio et ante tincidunt tempus.</li>\n	<li><a href=\"/basic-examples\">Donec vitae sapien ut libero venenatis faucibus.</a></li>\n	<li>Nullam quis ante.</li>\n	<li>Etiam sit amet orci eget eros <a href=\"/advanced-examples\">faucibus </a>tincidunt.</li>\n</ul>\n\n<p>&nbsp;</p>\n\n<p>Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform <a href=\"/experiments\">grammatica</a>, pronunciation e plu sommun paroles.</p>\n\n<p>&nbsp;</p>\n\n<ol>\n	<li>It va esser tam simplic quam Occidental in fact, it va esser Occidental.</li>\n	<li>A un Angleso it va semblar un simplificat Angles, quam un skeptic <a href=\"/introduction\">Cambridge </a>amico dit me que Occidental es.</li>\n	<li>Li Europan lingues es membres del sam familie.</li>\n	<li>Lor separat existentie es un myth.</li>\n	<li>Por scientie, musica, sport etc, litot Europa usa li sam vocabular.</li>\n	<li>Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules.</li>\n</ol>\n\n<p>&nbsp;</p>\n');
+INSERT INTO `documents_elements` VALUES (50,'contentcontent_blockcontent22_1','wysiwyg','<p>Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.</p>\n');
+INSERT INTO `documents_elements` VALUES (50,'headDescription','input','Überblick über das Projekt und wie man mit einer einfachen Vorlage loslegen kann.');
+INSERT INTO `documents_elements` VALUES (50,'headline','input','Einführung');
+INSERT INTO `documents_elements` VALUES (50,'headline2content1','input','');
+INSERT INTO `documents_elements` VALUES (50,'headlinecontent1','input','Nullam quis ante');
+INSERT INTO `documents_elements` VALUES (50,'headlinecontent3','input','Maecenas tempus, tellus eget condimentum rhoncu');
+INSERT INTO `documents_elements` VALUES (50,'headlinecontent_blockcontent22_1','input','Ullamcorper Scelerisque ');
+INSERT INTO `documents_elements` VALUES (50,'headTitle','input','Erste Schritte');
+INSERT INTO `documents_elements` VALUES (50,'image2content1','image','a:9:{s:2:\"id\";N;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (50,'imagecontent1','image','a:9:{s:2:\"id\";i:22;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (50,'imagecontent_blockcontent22_1','image','a:9:{s:2:\"id\";i:24;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (50,'imagePositioncontent_blockcontent22_1','select','');
+INSERT INTO `documents_elements` VALUES (50,'leadcontent3','wysiwyg','<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.</p>\n');
+INSERT INTO `documents_elements` VALUES (50,'link2content1','link','a:10:{s:4:\"type\";s:8:\"internal\";s:4:\"path\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:6:\"target\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";}');
+INSERT INTO `documents_elements` VALUES (50,'linkcontent1','link','a:14:{s:4:\"text\";s:12:\"Etiam rhoncu\";s:4:\"path\";s:18:\"/advanced-examples\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:5;s:12:\"internalType\";s:8:\"document\";}');
+INSERT INTO `documents_elements` VALUES (50,'postitioncontent_blockcontent22_1','select','');
+INSERT INTO `documents_elements` VALUES (50,'sublinecontent_blockcontent22_1','input','');
+INSERT INTO `documents_elements` VALUES (50,'teaser_0content1','snippet','47');
+INSERT INTO `documents_elements` VALUES (50,'teaser_1content1','snippet','48');
+INSERT INTO `documents_elements` VALUES (50,'teaser_2content1','snippet','49');
+INSERT INTO `documents_elements` VALUES (50,'text2content1','wysiwyg','');
+INSERT INTO `documents_elements` VALUES (50,'textcontent1','wysiwyg','<p>Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna.</p>\n');
+INSERT INTO `documents_elements` VALUES (50,'typecontent_blockcontent22_1','select','');
+INSERT INTO `documents_elements` VALUES (50,'type_0content1','select','');
+INSERT INTO `documents_elements` VALUES (50,'type_1content1','select','snippet');
+INSERT INTO `documents_elements` VALUES (50,'type_2content1','select','snippet');
+INSERT INTO `documents_elements` VALUES (51,'content','areablock','a:1:{i:0;a:2:{s:3:\"key\";s:1:\"1\";s:4:\"type\";s:7:\"wysiwyg\";}}');
+INSERT INTO `documents_elements` VALUES (51,'contentcontent1','wysiwyg','');
+INSERT INTO `documents_elements` VALUES (51,'headDescription','input','');
+INSERT INTO `documents_elements` VALUES (51,'headline','input','Übersicht über einfache Beispiele');
+INSERT INTO `documents_elements` VALUES (51,'headlinecontent1','input','');
+INSERT INTO `documents_elements` VALUES (51,'headTitle','input','');
+INSERT INTO `documents_elements` VALUES (51,'leadcontent1','wysiwyg','<p>Diese Seite dient nur zur Demonstration einer mehrsprachigen Seite.&nbsp;</p>\n\n<p><a href=\"/en/basic-examples\" pimcore_id=\"3\" pimcore_type=\"document\">Um die Beispiele zu sehen verwende bitte die Englische Beispielseite.&nbsp;</a></p>\n');
+INSERT INTO `documents_elements` VALUES (52,'content','areablock','a:1:{i:0;a:2:{s:3:\"key\";s:1:\"1\";s:4:\"type\";s:7:\"wysiwyg\";}}');
+INSERT INTO `documents_elements` VALUES (52,'contentcontent1','wysiwyg','');
+INSERT INTO `documents_elements` VALUES (52,'headDescription','input','');
+INSERT INTO `documents_elements` VALUES (52,'headline','input','Übersicht über fortgeschrittene Beispiele');
+INSERT INTO `documents_elements` VALUES (52,'headlinecontent1','input','');
+INSERT INTO `documents_elements` VALUES (52,'headTitle','input','');
+INSERT INTO `documents_elements` VALUES (52,'leadcontent1','wysiwyg','<p>Diese Seite dient nur zur Demonstration einer mehrsprachigen Seite.&nbsp;</p>\n\n<p><a href=\"/en/advanced-examples\" pimcore_id=\"5\" pimcore_type=\"document\">Um die Beispiele zu sehen verwende bitte die Englische Beispielseite.&nbsp;</a></p>\n');
+INSERT INTO `documents_elements` VALUES (53,'content','areablock','a:1:{i:0;a:2:{s:3:\"key\";s:1:\"1\";s:4:\"type\";s:7:\"wysiwyg\";}}');
+INSERT INTO `documents_elements` VALUES (53,'contentcontent1','wysiwyg','');
+INSERT INTO `documents_elements` VALUES (53,'headDescription','input','');
+INSERT INTO `documents_elements` VALUES (53,'headline','input','Neuigkeiten');
+INSERT INTO `documents_elements` VALUES (53,'headlinecontent1','input','');
+INSERT INTO `documents_elements` VALUES (53,'headTitle','input','');
+INSERT INTO `documents_elements` VALUES (53,'leadcontent1','wysiwyg','<p>Alle strukturierten Daten werden in \"Objects\" gespeichert.&nbsp;</p>\n');
+INSERT INTO `documents_elements` VALUES (53,'multiselect','multiselect','a:0:{}');
+INSERT INTO `documents_elements` VALUES (53,'myCheckbox','checkbox','');
+INSERT INTO `documents_elements` VALUES (53,'myDate','date','');
+INSERT INTO `documents_elements` VALUES (53,'myHref','href','a:3:{s:2:\"id\";N;s:4:\"type\";N;s:7:\"subtype\";N;}');
+INSERT INTO `documents_elements` VALUES (53,'myImageBlock','block','a:0:{}');
+INSERT INTO `documents_elements` VALUES (53,'myInput','input','');
+INSERT INTO `documents_elements` VALUES (53,'myLink','link','a:10:{s:4:\"type\";s:8:\"internal\";s:4:\"path\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:6:\"target\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";}');
+INSERT INTO `documents_elements` VALUES (53,'myMultihref','multihref','a:0:{}');
+INSERT INTO `documents_elements` VALUES (53,'myNumber','numeric','');
+INSERT INTO `documents_elements` VALUES (53,'mySelect','select','');
+INSERT INTO `documents_elements` VALUES (53,'myTextarea','textarea','');
+INSERT INTO `documents_elements` VALUES (53,'myWysiwyg','wysiwyg','');
+INSERT INTO `documents_elements` VALUES (56,'languages','block','a:2:{i:0;s:1:\"1\";i:1;s:1:\"2\";}');
+INSERT INTO `documents_elements` VALUES (56,'linklanguages1','link','a:14:{s:4:\"text\";s:7:\"English\";s:4:\"path\";s:3:\"/en\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:2:\"en\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:40;s:12:\"internalType\";s:8:\"document\";}');
+INSERT INTO `documents_elements` VALUES (56,'linklanguages2','link','a:14:{s:4:\"text\";s:6:\"German\";s:4:\"path\";s:3:\"/de\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:2:\"de\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:41;s:12:\"internalType\";s:8:\"document\";}');
 
 
 
@@ -1805,6 +2072,7 @@ INSERT INTO `documents_hardlink` VALUES (33,3,1,1);
 
 
 INSERT INTO `documents_link` VALUES (32,'',0,'http://www.pimcore.org/','direct');
+INSERT INTO `documents_link` VALUES (40,'document',1,'','internal');
 
 
 
@@ -1835,6 +2103,11 @@ INSERT INTO `documents_page` VALUES (35,'','content','default','','','','','a:0:
 INSERT INTO `documents_page` VALUES (36,'','advanced','search','','','','','a:0:{}','',0,'','');
 INSERT INTO `documents_page` VALUES (37,'','advanced','contact-form','','','','','a:0:{}','',0,'','');
 INSERT INTO `documents_page` VALUES (39,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (41,'','content','portal','','','','','a:0:{}','','','','');
+INSERT INTO `documents_page` VALUES (50,'','content','default','','','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (51,'','content','default','','Einfache Beispiele','','','a:0:{}','','','','');
+INSERT INTO `documents_page` VALUES (52,'','content','default','','Beispiele für Fortgeschrittene','','','a:0:{}','','','','');
+INSERT INTO `documents_page` VALUES (53,'','news','index','','','','','a:0:{}','',0,'','');
 
 
 
@@ -1843,6 +2116,11 @@ INSERT INTO `documents_snippet` VALUES (12,'','default','default','/includes/foo
 INSERT INTO `documents_snippet` VALUES (15,'','default','default','/snippets/standard-teaser.php',0);
 INSERT INTO `documents_snippet` VALUES (16,'','default','default','/snippets/standard-teaser.php',0);
 INSERT INTO `documents_snippet` VALUES (17,'','default','default','/snippets/standard-teaser.php',0);
+INSERT INTO `documents_snippet` VALUES (46,'','default','default','/includes/footer.php',0);
+INSERT INTO `documents_snippet` VALUES (47,'','default','default','/snippets/standard-teaser.php',0);
+INSERT INTO `documents_snippet` VALUES (48,'','default','default','/snippets/standard-teaser.php',0);
+INSERT INTO `documents_snippet` VALUES (49,'','default','default','/snippets/standard-teaser.php',0);
+INSERT INTO `documents_snippet` VALUES (56,'','default','default','/includes/language.php','');
 
 
 
@@ -1866,13 +2144,75 @@ INSERT INTO `glossary` VALUES (7,'en',0,1,'grammatica','','','grammatica',0);
 
 
 
-INSERT INTO `object_query_2` VALUES (3,2,'news',1374147900,'Lorem ipsum dolor sit amet','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.','Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam <a href=\"/basic-examples/content-page\">ultricies </a>nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget <a href=\"/basic-examples/editable-roundup\">condimentum </a>rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. ',49,43,52);
-INSERT INTO `object_query_2` VALUES (4,2,'news',1369761300,'In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. ','Nam eget dui. Etiam rhoncus. <a href=\"/basic-examples/pdf-viewer\">Maecenas </a>tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed <a href=\"/basic-examples/thumbnails\">fringilla </a>mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, ',51,0,0);
-INSERT INTO `object_query_2` VALUES (5,2,'news',1370037600,'Nam eget dui','Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, ',0,0,0);
-INSERT INTO `object_query_2` VALUES (6,2,'news',1354558500,'In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. ','Nam eget dui. Etiam rhoncus. <a href=\"/basic-examples/pdf-viewer\">Maecenas </a>tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed <a href=\"/basic-examples/thumbnails\">fringilla </a>mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, ',25,0,0);
-INSERT INTO `object_query_2` VALUES (7,2,'news',1360606500,'In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. ','Nam eget dui. Etiam rhoncus. <a href=\"/basic-examples/pdf-viewer\">Maecenas </a>tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed <a href=\"/basic-examples/thumbnails\">fringilla </a>mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, ',18,0,0);
-INSERT INTO `object_query_2` VALUES (8,2,'news',1360001700,'In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. ','Nam eget dui. Etiam rhoncus. <a href=\"/basic-examples/pdf-viewer\">Maecenas </a>tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed <a href=\"/basic-examples/thumbnails\">fringilla </a>mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, ',20,0,0);
-INSERT INTO `object_query_2` VALUES (9,2,'news',1352830500,'In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. ','Nam eget dui. Etiam rhoncus. <a href=\"/basic-examples/pdf-viewer\">Maecenas </a>tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed <a href=\"/basic-examples/thumbnails\">fringilla </a>mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, ',21,0,0);
+
+
+
+
+
+
+
+
+
+INSERT INTO `locks` VALUES ('maintenance.pid',1382961001);
+
+
+
+
+
+
+
+
+
+
+
+
+INSERT INTO `object_localized_data_2` VALUES (3,'de','Er hörte leise Schritte hinter sich','Das bedeutete nichts Gutes. Wer würde ihm schon folgen, spät in der Nacht und dazu noch in dieser engen Gasse mitten im übel beleumundeten Hafenviertel?','<p>Oder geh&ouml;rten die Schritte hinter ihm zu einem der unz&auml;hligen Gesetzesh&uuml;ter dieser Stadt, und die st&auml;hlerne Acht um seine Handgelenke w&uuml;rde gleich zuschnappen? Er konnte die Aufforderung stehen zu bleiben schon h&ouml;ren. Gehetzt sah er sich um. Pl&ouml;tzlich erblickte er den schmalen Durchgang. Blitzartig drehte er sich nach rechts und verschwand zwischen den beiden Geb&auml;uden. Beinahe w&auml;re er dabei &uuml;ber den umgest&uuml;rzten M&uuml;lleimer gefallen, der mitten im Weg lag.</p>\n\n<p>Er versuchte, sich in der Dunkelheit seinen Weg zu ertasten und erstarrte: Anscheinend gab es keinen anderen Ausweg aus diesem kleinen Hof als den Durchgang, durch den er gekommen war. Die Schritte wurden lauter und lauter, er sah eine dunkle Gestalt um die Ecke biegen. Fieberhaft irrten seine Augen durch die n&auml;chtliche Dunkelheit und suchten einen Ausweg. War jetzt wirklich alles vorbei.</p>\n');
+INSERT INTO `object_localized_data_2` VALUES (3,'en','Lorem ipsum dolor sit amet','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.','<p>Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam&nbsp;<a href=\"/en/basic-examples/content-page\" pimcore_id=\"24\" pimcore_type=\"document\">ultricies&nbsp;</a>nisi vel augue.</p>\n\n<p>Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget&nbsp;<a href=\"/en/basic-examples/galleries\" pimcore_id=\"19\" pimcore_type=\"document\">condimentum&nbsp;rhoncus</a>, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus.</p>\n');
+INSERT INTO `object_localized_data_2` VALUES (4,'de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','<p>Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.</p>\n\n<p>Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles.</p>\n');
+INSERT INTO `object_localized_data_2` VALUES (4,'en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','<p>Nam eget dui. Etiam rhoncus.&nbsp;<a href=\"/en/basic-examples\" pimcore_id=\"3\" pimcore_type=\"document\">Maecenas&nbsp;tempus</a>, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. <a href=\"/en/basic-examples/news\" pimcore_id=\"27\" pimcore_type=\"document\">Donec vitae sapien</a> ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed&nbsp;fringilla&nbsp;mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,</p>\n');
+INSERT INTO `object_localized_data_2` VALUES (5,'de','Zwei flinke Boxer jagen die quirlige Eva','Franz jagt im komplett verwahrlosten Taxi quer durch Bayern. Zwölf Boxkämpfer jagen Viktor quer über den großen Sylter Deich. Vogel Quax zwickt Johnys Pferd Bim.','<p>Victor jagt zw&ouml;lf Boxk&auml;mpfer quer &uuml;ber den gro&szlig;en Sylter Deich. Falsches &Uuml;ben von Xylophonmusik qu&auml;lt jeden gr&ouml;&szlig;eren Zwerg. Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung. Zwei flinke Boxer jagen die quirlige Eva und ihren Mops durch Sylt. Franz jagt im komplett verwahrlosten Taxi quer durch Bayern. Zw&ouml;lf Boxk&auml;mpfer jagen Viktor quer &uuml;ber den gro&szlig;en Sylter Deich. Vogel Quax zwickt Johnys Pferd Bim. Sylvia wagt quick den Jux bei Pforzheim. Polyfon zwitschernd a&szlig;en M&auml;xchens V&ouml;gel R&uuml;ben, Joghurt und Quark. &quot;Fix, Schwyz!&quot; qu&auml;kt J&uuml;rgen bl&ouml;d vom Pa&szlig;.</p>\n\n<p>Victor jagt zw&ouml;lf Boxk&auml;mpfer quer &uuml;ber den gro&szlig;en Sylter Deich. Falsches &Uuml;ben von Xylophonmusik qu&auml;lt jeden gr&ouml;&szlig;eren Zwerg. Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung.Zwei flinke Boxer jagen die quirlige Eva und ihren Mops durch Sylt. Franz jagt im komplett verwahrlosten Taxi quer durch Bayern. Zw&ouml;lf Boxk&auml;mpfer jagen Viktor quer &uuml;ber den gro&szlig;en Sylter Deich. Vogel Quax zwickt Johnys Pferd Bim. Sylvia wagt quick den Jux</p>\n');
+INSERT INTO `object_localized_data_2` VALUES (5,'en','Nam eget dui','Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.','<p>Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,</p>\n');
+INSERT INTO `object_localized_data_2` VALUES (6,'de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','<p>Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.</p>\n\n<p>Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles.</p>\n');
+INSERT INTO `object_localized_data_2` VALUES (6,'en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','');
+INSERT INTO `object_localized_data_2` VALUES (7,'de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','<p>Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.</p>\n\n<p>Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles.</p>\n');
+INSERT INTO `object_localized_data_2` VALUES (7,'en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','');
+INSERT INTO `object_localized_data_2` VALUES (8,'de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','<p>Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.</p>\n\n<p>Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles.</p>\n');
+INSERT INTO `object_localized_data_2` VALUES (8,'en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','');
+INSERT INTO `object_localized_data_2` VALUES (9,'de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','<p>Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.</p>\n\n<p>Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles.</p>\n');
+INSERT INTO `object_localized_data_2` VALUES (9,'en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','');
+
+
+
+
+INSERT INTO `object_localized_query_2_de` VALUES (3,'de','Er hörte leise Schritte hinter sich','Das bedeutete nichts Gutes. Wer würde ihm schon folgen, spät in der Nacht und dazu noch in dieser engen Gasse mitten im übel beleumundeten Hafenviertel?','Oder geh&ouml;rten die Schritte hinter ihm zu einem der unz&auml;hligen Gesetzesh&uuml;ter dieser Stadt, und die st&auml;hlerne Acht um seine Handgelenke w&uuml;rde gleich zuschnappen? Er konnte die Aufforderung stehen zu bleiben schon h&ouml;ren. Gehetzt sah er sich um. Pl&ouml;tzlich erblickte er den schmalen Durchgang. Blitzartig drehte er sich nach rechts und verschwand zwischen den beiden Geb&auml;uden. Beinahe w&auml;re er dabei &uuml;ber den umgest&uuml;rzten M&uuml;lleimer gefallen, der mitten im Weg lag. Er versuchte, sich in der Dunkelheit seinen Weg zu ertasten und erstarrte: Anscheinend gab es keinen anderen Ausweg aus diesem kleinen Hof als den Durchgang, durch den er gekommen war. Die Schritte wurden lauter und lauter, er sah eine dunkle Gestalt um die Ecke biegen. Fieberhaft irrten seine Augen durch die n&auml;chtliche Dunkelheit und suchten einen Ausweg. War jetzt wirklich alles vorbei. ');
+INSERT INTO `object_localized_query_2_de` VALUES (4,'de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. ');
+INSERT INTO `object_localized_query_2_de` VALUES (5,'de','Zwei flinke Boxer jagen die quirlige Eva','Franz jagt im komplett verwahrlosten Taxi quer durch Bayern. Zwölf Boxkämpfer jagen Viktor quer über den großen Sylter Deich. Vogel Quax zwickt Johnys Pferd Bim.','Victor jagt zw&ouml;lf Boxk&auml;mpfer quer &uuml;ber den gro&szlig;en Sylter Deich. Falsches &Uuml;ben von Xylophonmusik qu&auml;lt jeden gr&ouml;&szlig;eren Zwerg. Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung. Zwei flinke Boxer jagen die quirlige Eva und ihren Mops durch Sylt. Franz jagt im komplett verwahrlosten Taxi quer durch Bayern. Zw&ouml;lf Boxk&auml;mpfer jagen Viktor quer &uuml;ber den gro&szlig;en Sylter Deich. Vogel Quax zwickt Johnys Pferd Bim. Sylvia wagt quick den Jux bei Pforzheim. Polyfon zwitschernd a&szlig;en M&auml;xchens V&ouml;gel R&uuml;ben, Joghurt und Quark. &quot;Fix, Schwyz!&quot; qu&auml;kt J&uuml;rgen bl&ouml;d vom Pa&szlig;. Victor jagt zw&ouml;lf Boxk&auml;mpfer quer &uuml;ber den gro&szlig;en Sylter Deich. Falsches &Uuml;ben von Xylophonmusik qu&auml;lt jeden gr&ouml;&szlig;eren Zwerg. Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung.Zwei flinke Boxer jagen die quirlige Eva und ihren Mops durch Sylt. Franz jagt im komplett verwahrlosten Taxi quer durch Bayern. Zw&ouml;lf Boxk&auml;mpfer jagen Viktor quer &uuml;ber den gro&szlig;en Sylter Deich. Vogel Quax zwickt Johnys Pferd Bim. Sylvia wagt quick den Jux ');
+INSERT INTO `object_localized_query_2_de` VALUES (6,'de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. ');
+INSERT INTO `object_localized_query_2_de` VALUES (7,'de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. ');
+INSERT INTO `object_localized_query_2_de` VALUES (8,'de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. ');
+INSERT INTO `object_localized_query_2_de` VALUES (9,'de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. ');
+
+
+
+
+INSERT INTO `object_localized_query_2_en` VALUES (3,'en','Lorem ipsum dolor sit amet','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.','Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam&nbsp;<a href=\"/en/basic-examples/content-page\" pimcore_id=\"24\" pimcore_type=\"document\">ultricies&nbsp;</a>nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget&nbsp;<a href=\"/en/basic-examples/galleries\" pimcore_id=\"19\" pimcore_type=\"document\">condimentum&nbsp;rhoncus</a>, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. ');
+INSERT INTO `object_localized_query_2_en` VALUES (4,'en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','Nam eget dui. Etiam rhoncus.&nbsp;<a href=\"/en/basic-examples\" pimcore_id=\"3\" pimcore_type=\"document\">Maecenas&nbsp;tempus</a>, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. <a href=\"/en/basic-examples/news\" pimcore_id=\"27\" pimcore_type=\"document\">Donec vitae sapien</a> ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed&nbsp;fringilla&nbsp;mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, ');
+INSERT INTO `object_localized_query_2_en` VALUES (5,'en','Nam eget dui','Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, ');
+INSERT INTO `object_localized_query_2_en` VALUES (6,'en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','');
+INSERT INTO `object_localized_query_2_en` VALUES (7,'en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','');
+INSERT INTO `object_localized_query_2_en` VALUES (8,'en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','');
+INSERT INTO `object_localized_query_2_en` VALUES (9,'en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','');
+
+
+
+
+INSERT INTO `object_query_2` VALUES (3,2,'news',1374147900,49,43,52);
+INSERT INTO `object_query_2` VALUES (4,2,'news',1369761300,51,'','');
+INSERT INTO `object_query_2` VALUES (5,2,'news',1370037600,'','','');
+INSERT INTO `object_query_2` VALUES (6,2,'news',1354558500,25,'','');
+INSERT INTO `object_query_2` VALUES (7,2,'news',1360606500,18,'','');
+INSERT INTO `object_query_2` VALUES (8,2,'news',1360001700,20,'','');
+INSERT INTO `object_query_2` VALUES (9,2,'news',1352830500,21,'','');
 
 
 
@@ -1903,13 +2243,13 @@ INSERT INTO `object_relations_3` VALUES (31,30,'object','person',0,'object','','
 
 
 
-INSERT INTO `object_store_2` VALUES (3,1374147900,'Lorem ipsum dolor sit amet','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.','<p>Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam <a href=\"/basic-examples/content-page\">ultricies </a>nisi vel augue.</p>\n\n<p>Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget <a href=\"/basic-examples/editable-roundup\">condimentum </a>rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus.</p>\n',49,43,52);
-INSERT INTO `object_store_2` VALUES (4,1369761300,'In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. ','<p>Nam eget dui. Etiam rhoncus. <a href=\"/basic-examples/pdf-viewer\">Maecenas </a>tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed <a href=\"/basic-examples/thumbnails\">fringilla </a>mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,</p>\n',51,0,0);
-INSERT INTO `object_store_2` VALUES (5,1370037600,'Nam eget dui','Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.','<p>Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,</p>\n',0,0,0);
-INSERT INTO `object_store_2` VALUES (6,1354558500,'In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. ','<p>Nam eget dui. Etiam rhoncus. <a href=\"/basic-examples/pdf-viewer\">Maecenas </a>tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed <a href=\"/basic-examples/thumbnails\">fringilla </a>mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,</p>\n',25,0,0);
-INSERT INTO `object_store_2` VALUES (7,1360606500,'In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. ','<p>Nam eget dui. Etiam rhoncus. <a href=\"/basic-examples/pdf-viewer\">Maecenas </a>tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed <a href=\"/basic-examples/thumbnails\">fringilla </a>mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,</p>\n',18,0,0);
-INSERT INTO `object_store_2` VALUES (8,1360001700,'In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. ','<p>Nam eget dui. Etiam rhoncus. <a href=\"/basic-examples/pdf-viewer\">Maecenas </a>tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed <a href=\"/basic-examples/thumbnails\">fringilla </a>mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,</p>\n',20,0,0);
-INSERT INTO `object_store_2` VALUES (9,1352830500,'In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. ','<p>Nam eget dui. Etiam rhoncus. <a href=\"/basic-examples/pdf-viewer\">Maecenas </a>tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed <a href=\"/basic-examples/thumbnails\">fringilla </a>mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,</p>\n',21,0,0);
+INSERT INTO `object_store_2` VALUES (3,1374147900,49,43,52);
+INSERT INTO `object_store_2` VALUES (4,1369761300,51,'','');
+INSERT INTO `object_store_2` VALUES (5,1370037600,'','','');
+INSERT INTO `object_store_2` VALUES (6,1354558500,25,'','');
+INSERT INTO `object_store_2` VALUES (7,1360606500,18,'','');
+INSERT INTO `object_store_2` VALUES (8,1360001700,20,'','');
+INSERT INTO `object_store_2` VALUES (9,1352830500,21,'','');
 
 
 
@@ -1928,13 +2268,13 @@ INSERT INTO `object_store_4` VALUES (30,'female','Jane','Doe','jane@doe.com',0,0
 
 INSERT INTO `objects` VALUES (1,0,'folder','','/',999999,1,1368522989,1368522989,1,1,0,'');
 INSERT INTO `objects` VALUES (2,1,'folder','news','/',0,1,1368613451,1368613451,2,2,0,'');
-INSERT INTO `objects` VALUES (3,2,'object','lorem-ipsum','/news/',0,1,1368613483,1368614073,2,2,2,'news');
-INSERT INTO `objects` VALUES (4,2,'object','in-enim-justo','/news/',0,1,1368613645,1368613690,2,2,2,'news');
-INSERT INTO `objects` VALUES (5,2,'object','nam-eget-dui','/news/',0,1,1368613700,1368614036,2,2,2,'news');
-INSERT INTO `objects` VALUES (6,2,'object','in-enim-justo_2','/news/',0,1,1368615188,1368615389,2,2,2,'news');
-INSERT INTO `objects` VALUES (7,2,'object','in-enim-justo_3','/news/',0,1,1368615191,1368615267,2,2,2,'news');
-INSERT INTO `objects` VALUES (8,2,'object','in-enim-justo_4','/news/',0,1,1368615194,1368615264,2,2,2,'news');
-INSERT INTO `objects` VALUES (9,2,'object','in-enim-justo_5','/news/',0,1,1368615197,1368615261,2,2,2,'news');
+INSERT INTO `objects` VALUES (3,2,'object','lorem-ipsum','/news/',0,1,1368613483,1382958769,2,2,2,'news');
+INSERT INTO `objects` VALUES (4,2,'object','in-enim-justo','/news/',0,1,1368613645,1382958711,2,2,2,'news');
+INSERT INTO `objects` VALUES (5,2,'object','nam-eget-dui','/news/',0,1,1368613700,1382958801,2,2,2,'news');
+INSERT INTO `objects` VALUES (6,2,'object','in-enim-justo_2','/news/',0,1,1368615188,1382958710,2,2,2,'news');
+INSERT INTO `objects` VALUES (7,2,'object','in-enim-justo_3','/news/',0,1,1368615191,1382958709,2,2,2,'news');
+INSERT INTO `objects` VALUES (8,2,'object','in-enim-justo_4','/news/',0,1,1368615194,1382958708,2,2,2,'news');
+INSERT INTO `objects` VALUES (9,2,'object','in-enim-justo_5','/news/',0,1,1368615197,1382958706,2,2,2,'news');
 INSERT INTO `objects` VALUES (10,1,'folder','crm','/',0,1,1368620607,1368620607,2,2,0,'');
 INSERT INTO `objects` VALUES (11,1,'folder','inquiries','/',0,1,1368620624,1368620624,2,2,0,'');
 INSERT INTO `objects` VALUES (28,10,'object','john-doe.com','/crm/',0,1,1368630902,1368630902,0,0,4,'person');
@@ -1946,41 +2286,52 @@ INSERT INTO `objects` VALUES (31,11,'object','may-15-2013-5-15-16-pm~jane-doe.co
 
 
 INSERT INTO `properties` VALUES (1,'document','/','language','text','en',1);
-INSERT INTO `properties` VALUES (1,'document','/','leftNavStartNode','document','1',1);
+INSERT INTO `properties` VALUES (1,'document','/','leftNavStartNode','document','40',1);
+INSERT INTO `properties` VALUES (1,'document','/','mainNavStartNode','document','40',1);
 INSERT INTO `properties` VALUES (1,'document','/','navigation_name','text','Home',0);
-INSERT INTO `properties` VALUES (3,'document','/basic-examples','navigation_name','text','Basic Examples',0);
-INSERT INTO `properties` VALUES (4,'document','/introduction','navigation_name','text','Introduction',0);
-INSERT INTO `properties` VALUES (5,'document','/advanced-examples','leftNavStartNode','document','5',1);
-INSERT INTO `properties` VALUES (5,'document','/advanced-examples','navigation_name','text','Advanced Examples',0);
-INSERT INTO `properties` VALUES (6,'document','/experiments','navigation_name','text','Experiments',0);
-INSERT INTO `properties` VALUES (7,'document','/basic-examples/html5-video','navigation_name','text','HTML5 Video',0);
-INSERT INTO `properties` VALUES (9,'document','/advanced-examples/creating-objects-using-forms','navigation_name','text','Creating Objects with a Form',0);
-INSERT INTO `properties` VALUES (18,'document','/basic-examples/pdf-viewer','navigation_name','text','Document Viewer',0);
-INSERT INTO `properties` VALUES (19,'document','/basic-examples/galleries','navigation_name','text','Galleries',0);
-INSERT INTO `properties` VALUES (20,'document','/basic-examples/glossary','navigation_name','text','Glossary',0);
-INSERT INTO `properties` VALUES (21,'document','/basic-examples/thumbnails','navigation_name','text','Thumbnails',0);
-INSERT INTO `properties` VALUES (22,'document','/basic-examples/website-translations','navigation_name','text','Website Translations',0);
-INSERT INTO `properties` VALUES (23,'document','/basic-examples/website-translations/german-translation','language','text','de',1);
-INSERT INTO `properties` VALUES (23,'document','/basic-examples/website-translations/german-translation','navigation_name','text','Deutsche Übersetzung',0);
-INSERT INTO `properties` VALUES (24,'document','/basic-examples/content-page','navigation_name','text','Content Page',0);
-INSERT INTO `properties` VALUES (25,'document','/basic-examples/editable-roundup','navigation_name','text','Editable Round-Up',0);
-INSERT INTO `properties` VALUES (26,'document','/basic-examples/form','navigation_name','text','Simple Form',0);
-INSERT INTO `properties` VALUES (27,'document','/basic-examples/news','navigation_name','text','News',0);
-INSERT INTO `properties` VALUES (28,'document','/basic-examples/properties','headerColor','select','blue',1);
-INSERT INTO `properties` VALUES (28,'document','/basic-examples/properties','leftNavHide','bool','1',0);
-INSERT INTO `properties` VALUES (28,'document','/basic-examples/properties','navigation_name','text','Properties',0);
-INSERT INTO `properties` VALUES (29,'document','/basic-examples/tag-and-snippet-management','navigation_name','text','Tag & Snippet Management',0);
-INSERT INTO `properties` VALUES (30,'document','/advanced-examples/content-inheritance','navigation_name','text','Content Inheritance',0);
-INSERT INTO `properties` VALUES (31,'document','/advanced-examples/content-inheritance/content-inheritance','navigation_name','text','Slave Document',0);
-INSERT INTO `properties` VALUES (32,'document','/basic-examples/pimcore.org','navigation_name','text','External Link',0);
-INSERT INTO `properties` VALUES (32,'document','/basic-examples/pimcore.org','navigation_target','text','_blank',0);
-INSERT INTO `properties` VALUES (33,'document','/advanced-examples/hard-link/basic-examples','leftNavStartNode','document','5',1);
-INSERT INTO `properties` VALUES (34,'document','/advanced-examples/hard-link','navigation_name','text','Hard Link',0);
-INSERT INTO `properties` VALUES (35,'document','/advanced-examples/image-with-hotspots-and-markers','navigation_name','text','Image with Hotspots',0);
-INSERT INTO `properties` VALUES (36,'document','/advanced-examples/search','navigation_name','text','Search',0);
+INSERT INTO `properties` VALUES (3,'document','/en/basic-examples','leftNavStartNode','document','3',1);
+INSERT INTO `properties` VALUES (3,'document','/en/basic-examples','navigation_name','text','Basic Examples',0);
+INSERT INTO `properties` VALUES (4,'document','/en/introduction','navigation_name','text','Introduction',0);
+INSERT INTO `properties` VALUES (5,'document','/en/advanced-examples','leftNavStartNode','document','5',1);
+INSERT INTO `properties` VALUES (5,'document','/en/advanced-examples','navigation_name','text','Advanced Examples',0);
+INSERT INTO `properties` VALUES (6,'document','/en/experiments','navigation_name','text','Experiments',0);
+INSERT INTO `properties` VALUES (7,'document','/en/basic-examples/html5-video','navigation_name','text','HTML5 Video',0);
+INSERT INTO `properties` VALUES (9,'document','/en/advanced-examples/creating-objects-using-forms','navigation_name','text','Creating Objects with a Form',0);
+INSERT INTO `properties` VALUES (18,'document','/en/basic-examples/pdf-viewer','navigation_name','text','Document Viewer',0);
+INSERT INTO `properties` VALUES (19,'document','/en/basic-examples/galleries','navigation_name','text','Galleries',0);
+INSERT INTO `properties` VALUES (20,'document','/en/basic-examples/glossary','navigation_name','text','Glossary',0);
+INSERT INTO `properties` VALUES (21,'document','/en/basic-examples/thumbnails','navigation_name','text','Thumbnails',0);
+INSERT INTO `properties` VALUES (22,'document','/en/basic-examples/website-translations','navigation_name','text','Website Translations',0);
+INSERT INTO `properties` VALUES (23,'document','/de/einfache-beispiele/website-uebersetzungen','language','text','de',1);
+INSERT INTO `properties` VALUES (23,'document','/de/einfache-beispiele/website-uebersetzungen','navigation_name','text','Website Übersetzungen',0);
+INSERT INTO `properties` VALUES (24,'document','/en/basic-examples/content-page','navigation_name','text','Content Page',0);
+INSERT INTO `properties` VALUES (25,'document','/en/basic-examples/editable-roundup','navigation_name','text','Editable Round-Up',0);
+INSERT INTO `properties` VALUES (26,'document','/en/basic-examples/form','navigation_name','text','Simple Form',0);
+INSERT INTO `properties` VALUES (27,'document','/en/basic-examples/news','navigation_name','text','News',0);
+INSERT INTO `properties` VALUES (28,'document','/en/basic-examples/properties','headerColor','select','blue',1);
+INSERT INTO `properties` VALUES (28,'document','/en/basic-examples/properties','leftNavHide','bool','1',0);
+INSERT INTO `properties` VALUES (28,'document','/en/basic-examples/properties','navigation_name','text','Properties',0);
+INSERT INTO `properties` VALUES (29,'document','/en/basic-examples/tag-and-snippet-management','navigation_name','text','Tag & Snippet Management',0);
+INSERT INTO `properties` VALUES (30,'document','/en/advanced-examples/content-inheritance','navigation_name','text','Content Inheritance',0);
+INSERT INTO `properties` VALUES (31,'document','/en/advanced-examples/content-inheritance/content-inheritance','navigation_name','text','Slave Document',0);
+INSERT INTO `properties` VALUES (32,'document','/en/basic-examples/pimcore.org','navigation_name','text','External Link',0);
+INSERT INTO `properties` VALUES (32,'document','/en/basic-examples/pimcore.org','navigation_target','text','_blank',0);
+INSERT INTO `properties` VALUES (33,'document','/en/advanced-examples/hard-link/basic-examples','leftNavStartNode','document','5',1);
+INSERT INTO `properties` VALUES (34,'document','/en/advanced-examples/hard-link','navigation_name','text','Hard Link',0);
+INSERT INTO `properties` VALUES (35,'document','/en/advanced-examples/image-with-hotspots-and-markers','navigation_name','text','Image with Hotspots',0);
+INSERT INTO `properties` VALUES (36,'document','/en/advanced-examples/search','navigation_name','text','Search',0);
 INSERT INTO `properties` VALUES (36,'asset','/documents/documentation.pdf','document_page_count','text','39',0);
-INSERT INTO `properties` VALUES (37,'document','/advanced-examples/contact-form','email','document','38',1);
-INSERT INTO `properties` VALUES (37,'document','/advanced-examples/contact-form','navigation_name','text','Contact Form',0);
+INSERT INTO `properties` VALUES (37,'document','/en/advanced-examples/contact-form','email','document','38',1);
+INSERT INTO `properties` VALUES (37,'document','/en/advanced-examples/contact-form','navigation_name','text','Contact Form',0);
+INSERT INTO `properties` VALUES (40,'document','/en','navigation_name','text','Home',0);
+INSERT INTO `properties` VALUES (41,'document','/de','language','text','de',1);
+INSERT INTO `properties` VALUES (41,'document','/de','leftNavStartNode','document','41',1);
+INSERT INTO `properties` VALUES (41,'document','/de','mainNavStartNode','document','41',1);
+INSERT INTO `properties` VALUES (41,'document','/de','navigation_name','text','Startseite',0);
+INSERT INTO `properties` VALUES (50,'document','/de/einfuehrung','navigation_name','text','Einführung',0);
+INSERT INTO `properties` VALUES (51,'document','/de/einfache-beispiele','navigation_name','text','Einfache Beispiele',1);
+INSERT INTO `properties` VALUES (52,'document','/de/beispiele-fur-fortgeschrittene','navigation_name','text','Beispiele für Fortgeschrittene',1);
+INSERT INTO `properties` VALUES (53,'document','/de/einfache-beispiele/neuigkeiten','navigation_name','text','Neuigkeiten',0);
 
 
 
@@ -2008,16 +2359,16 @@ INSERT INTO `properties_predefined` VALUES (3,'Header Color','','headerColor','s
 
 
 
-INSERT INTO `search_backend_data` VALUES (5,'/advanced-examples','document','page','page',1,1368523389,1368620091,2,2,'ID: 5  \nPath: /advanced-examples  \n The following list is generated automatically. See controller/action to see how it\'s done.&nbsp; Advanced Examples Advanced Examples ','Advanced Examples ');
-INSERT INTO `search_backend_data` VALUES (3,'/basic-examples','document','page','page',1,1368523212,1368626600,2,2,'ID: 3  \nPath: /basic-examples  \n 1 1 1 1 1 1 Basic Examples HTML5 Video Glossary Simple Content News PDF Viewer Thumbnails Round-Up Properties Galleries Website Translations Simple Form Tag Manager See in Action See in Action See in Action See in Action See in Action See in Action See in Action See in Action See in Action See in Action See in Action Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. direct direct direct direct direct direct direct direct direct direct direct direct Basic Examples ','Basic Examples ');
-INSERT INTO `search_backend_data` VALUES (4,'/introduction','document','page','page',1,1368523285,1368689817,2,2,'ID: 4  \nPath: /introduction  \n Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. &nbsp; Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. &nbsp; Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. &nbsp; It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es. Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. &nbsp; Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Overview of the project and how to get started with a simple template. Introduction Nullam quis ante Maecenas tempus, tellus eget condimentum rhoncu Ullamcorper Scelerisque Getting started Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Etiam rhoncu Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. snippet snippet Introduction ','Introduction ');
-INSERT INTO `search_backend_data` VALUES (6,'/experiments','document','page','page',1,1368523410,1368626334,2,2,'ID: 6  \nPath: /experiments  \n Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. &nbsp; Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. &nbsp; Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, Experiments This space is reserved for your individual experiments &amp; tests. Experiments ','Experiments ');
-INSERT INTO `search_backend_data` VALUES (1,'/','document','page','page',1,1368522989,1370432677,1,2,'ID: 1  \nPath: /  \nAlbert Einstein 3 Ready to get impressed? It\'ll blow your mind. Oh yeah, it\'s that good See in Action See in Action Checkmate In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. Check out our examples and dive into the next generation of digital data management. See for yourself. See for yourself Lorem ipsum. Oh yeah, it\'s that good. And lastly, this one. left left We can\'t solve problems by using the same kind of thinking we used when we created them. Cum sociis. See for yourself. Checkmate. video a.pimcore_video_flowplayer { display:block; text-align:center; } #video_51af24a5cc09c .play { margin-top:108.5px; border:0px; display:inline-block; width:83px; height:83px; background:url(/pimcore/static/js/lib/flowplayer/play_large.png); } var player_config_video_51af24a5cc09c = array_merge_recursive({\"dummy\":true},{\"clip\":{\"url\":\"\\/videos\\/home-trailer-english.mp4\"}}); flowplayer(\"video_51af24a5cc09c\", { src: \"/pimcore/static/js/lib/flowplayer/flowplayer.swf\", width: \"100%\", height: \"300\" },player_config_video_51af24a5cc09c); ','navigation_name:Home leftNavStartNode:/ language:en ');
+INSERT INTO `search_backend_data` VALUES (5,'/en/advanced-examples','document','page','page',1,1368523389,1382956042,2,2,'ID: 5  \nPath: /en/advanced-examples  \n The following list is generated automatically. See controller/action to see how it\'s done.&nbsp; Advanced Examples ','leftNavStartNode:/en/advanced-examples navigation_name:Advanced Examples ');
+INSERT INTO `search_backend_data` VALUES (3,'/en/basic-examples','document','page','page',1,1368523212,1382956582,2,2,'ID: 3  \nPath: /en/basic-examples  \n 1 1 1 1 1 1 Basic Examples HTML5 Video Glossary Simple Content News PDF Viewer Thumbnails Round-Up Properties Galleries Website Translations Simple Form Tag Manager See in Action See in Action See in Action See in Action See in Action See in Action See in Action See in Action See in Action See in Action See in Action Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. direct direct direct direct direct direct direct direct direct direct direct direct ','leftNavStartNode:/en/basic-examples navigation_name:Basic Examples ');
+INSERT INTO `search_backend_data` VALUES (4,'/en/introduction','document','page','page',1,1368523285,1382956038,2,2,'ID: 4  \nPath: /en/introduction  \n Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. &nbsp; Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. &nbsp; Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. &nbsp; It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es. Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. &nbsp; Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Overview of the project and how to get started with a simple template. Introduction Nullam quis ante Maecenas tempus, tellus eget condimentum rhoncu Ullamcorper Scelerisque Getting started Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Etiam rhoncu Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. snippet snippet ','navigation_name:Introduction ');
+INSERT INTO `search_backend_data` VALUES (6,'/en/experiments','document','page','page',1,1368523410,1382956044,2,2,'ID: 6  \nPath: /en/experiments  \n Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. &nbsp; Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. &nbsp; Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, Experiments This space is reserved for your individual experiments &amp; tests. ','navigation_name:Experiments ');
+INSERT INTO `search_backend_data` VALUES (1,'/','document','page','page',1,1368522989,1382956534,1,2,'ID: 1  \nPath: /  \nAlbert Einstein 3 Ready to get impressed? It\'ll blow your mind. Oh yeah, it\'s that good See in Action See in Action Checkmate In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. Check out our examples and dive into the next generation of digital data management. See for yourself. See for yourself Lorem ipsum. Oh yeah, it\'s that good. And lastly, this one. left left We can\'t solve problems by using the same kind of thinking we used when we created them. Cum sociis. See for yourself. Checkmate. video a.pimcore_video_flowplayer { display:block; text-align:center; } #video_526e3df6ba431 .play { margin-top:108.5px; border:0px; display:inline-block; width:83px; height:83px; background:url(/pimcore/static/js/lib/flowplayer/play_large.png); } var player_config_video_526e3df6ba431 = array_merge_recursive({\"dummy\":true},{\"clip\":{\"url\":\"\\/videos\\/home-trailer-english.mp4\"}}); flowplayer(\"video_526e3df6ba431\", { src: \"/pimcore/static/js/lib/flowplayer/flowplayer.swf\", width: \"100%\", height: \"300\" },player_config_video_526e3df6ba431); ','navigation_name:Home leftNavStartNode:/en language:en mainNavStartNode:/en ');
 INSERT INTO `search_backend_data` VALUES (7,'/basic-examples/html5-video','document','page','page',1,1368525394,1368545013,2,2,'ID: 7  \nPath: /basic-examples/html5-video  \n HTML5 Video is just as simple as that .... Just drop an video from your assets, the video will be automatically converted to the different HTML5 formats and to the correct size.&nbsp; a.pimcore_video_flowplayer { display:block; text-align:center; } #video_519256f5bec42 .play { margin-top:108.5px; border:0px; display:inline-block; width:83px; height:83px; background:url(/pimcore/static/js/lib/flowplayer/play_large.png); } var player_config_video_519256f5bec42 = array_merge_recursive({\"dummy\":true},{\"clip\":{\"url\":\"\\/demo-website\\/videos\\/home-trailer-english.mp4\"}}); flowplayer(\"video_519256f5bec42\", { src: \"/pimcore/static/js/lib/flowplayer/flowplayer.swf\", width: \"100%\", height: \"300\" },player_config_video_519256f5bec42); HTML5 Video ','HTML5 Video ');
 INSERT INTO `search_backend_data` VALUES (9,'/advanced-examples/creating-objects-using-forms','document','page','page',1,1368525933,1369854600,2,2,'ID: 9  \nPath: /advanced-examples/creating-objects-using-forms  \n &nbsp; In this example we dynamically create objects out of the data submitted via the form. The you can use the same approach to create objects using a commandline script, or wherever you need it. After submitting the form you\'ll find the data in \"Objects\" /crm and /inquiries.&nbsp; &nbsp; &nbsp; And here\'s the form:&nbsp; Please fill all fields and accept the terms of use. Creating Objects &amp; Assets with a Form ','language:en leftNavStartNode:/advanced-examples navigation_name:Creating Objects with a Form ');
-INSERT INTO `search_backend_data` VALUES (10,'/shared','document','folder','folder',1,1368527956,1368527956,2,2,'ID: 10  \nPath: /shared  \nshared','en ');
+INSERT INTO `search_backend_data` VALUES (10,'/en/shared','document','folder','folder',1,1368527956,1382956831,2,2,'ID: 10  \nPath: /en/shared  \nshared','mainNavStartNode:/en leftNavStartNode:/en language:en ');
 INSERT INTO `search_backend_data` VALUES (11,'/shared/includes','document','folder','folder',1,1368527961,1368527961,2,2,'ID: 11  \nPath: /shared/includes  \nincludes','en ');
-INSERT INTO `search_backend_data` VALUES (12,'/shared/includes/footer','document','snippet','snippet',1,1368527967,1368529693,2,2,'ID: 12  \nPath: /shared/includes/footer  \n Designed and built with all the love in the world by&nbsp;@mdo&nbsp;and&nbsp;@fat. Code licensed under&nbsp;Apache License v2.0,&nbsp;Glyphicons Free&nbsp;licensed under&nbsp;CC BY 3.0. © Templates pimcore.org licensed under BSD License pimcore.org Documentation Bug Tracker ','');
+INSERT INTO `search_backend_data` VALUES (12,'/en/shared/includes/footer','document','snippet','snippet',1,1368527967,1382956852,2,2,'ID: 12  \nPath: /en/shared/includes/footer  \npimcore.org Documentation Bug Tracker Designed and built with all the love in the world by&nbsp;@mdo&nbsp;and&nbsp;@fat. Code licensed under&nbsp;Apache License v2.0,&nbsp;Glyphicons Free&nbsp;licensed under&nbsp;CC BY 3.0. © Templates pimcore.org licensed under BSD License ','');
 INSERT INTO `search_backend_data` VALUES (3,'/portal-sujets','asset','folder','folder',1,1368530371,1368632469,2,2,'ID: 3  \nPath: /portal-sujets  \nportal-sujets','');
 INSERT INTO `search_backend_data` VALUES (4,'/portal-sujets/slide-01.jpg','asset','image','image',1,1368530684,1370432846,2,2,'ID: 4  \nPath: /portal-sujets/slide-01.jpg  \nslide-01.jpg','');
 INSERT INTO `search_backend_data` VALUES (5,'/portal-sujets/slide-02.jpg','asset','image','image',1,1368530764,1370432868,2,2,'ID: 5  \nPath: /portal-sujets/slide-02.jpg  \nslide-02.jpg','');
@@ -2038,7 +2389,7 @@ INSERT INTO `search_backend_data` VALUES (25,'/demo-website/examples/panama/img_
 INSERT INTO `search_backend_data` VALUES (16,'/shared/teasers/standard/advanced-examples','document','snippet','snippet',1,1368534298,1370432637,2,2,'ID: 16  \nPath: /shared/teasers/standard/advanced-examples  \n Drag &amp; Drop Interface Etiam rhoncu Content is created by simply dragging &amp; dropping blocks, that can&nbsp;be editited in-place and wysiwyg.&nbsp; ','leftNavStartNode:/ language:en ');
 INSERT INTO `search_backend_data` VALUES (17,'/shared/teasers/standard/experiments','document','snippet','snippet',1,1368534344,1370432641,2,2,'ID: 17  \nPath: /shared/teasers/standard/experiments  \n HTML5 omnipresent Quisque rutrum Drag &amp; drop upload directly&nbsp;into the asset tree, automatic html5 video transcoding, and much more ... ','leftNavStartNode:/ language:en ');
 INSERT INTO `search_backend_data` VALUES (26,'/videos','asset','folder','folder',1,1368542684,1368632471,2,2,'ID: 26  \nPath: /videos  \nvideos','');
-INSERT INTO `search_backend_data` VALUES (27,'/videos/home-trailer-english.mp4','asset','video','video',1,1368542794,1378991974,2,2,'ID: 27  \nPath: /videos/home-trailer-english.mp4  \nhome-trailer-english.mp4','');
+INSERT INTO `search_backend_data` VALUES (27,'/videos/home-trailer-english.mp4','asset','video','video',1,1368542794,1382960507,2,2,'ID: 27  \nPath: /videos/home-trailer-english.mp4  \nhome-trailer-english.mp4','');
 INSERT INTO `search_backend_data` VALUES (20,'/basic-examples/glossary','document','page','page',1,1368559903,1368561466,2,2,'ID: 20  \nPath: /basic-examples/glossary  \n Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. &nbsp; Ma quande lingues coalesce, li grammatica del resultant lingue es plu simplic e regulari quam ti del coalescent lingues. Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es. &nbsp; Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. The Glossary ... ... makes it very simple to automatically link keywords, abbreviation and acronyms. This is not only perfect for SEO but also makes it super easy to navigate in the content.&nbsp; &nbsp; ... this is how it looks in the admin interface. Glossary ','Glossary ');
 INSERT INTO `search_backend_data` VALUES (18,'/basic-examples/pdf-viewer','document','page','page',1,1368548449,1378992677,2,2,'ID: 18  \nPath: /basic-examples/pdf-viewer  \n Isn\'t that amazing? Just drop a PDF, doc(x), xls(x) or many other formats, et voilá ...&nbsp; + &#x21e9; x var pimcore_pdf_pdfcontent1 = new pimcore.pdf({ id: \"pimcore-pdf-5231c2258795e\", data: {\"pages\":[{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-1.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-1.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-2.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-2.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-3.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-3.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-4.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-4.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-5.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-5.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-6.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-6.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-7.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-7.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-8.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-8.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-9.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-9.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-10.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-10.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-11.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-11.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-12.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-12.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-13.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-13.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-14.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-14.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-15.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-15.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-16.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-16.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-17.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-17.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-18.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-18.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-19.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-19.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-20.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-20.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-21.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-21.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-22.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-22.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-23.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-23.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-24.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-24.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-25.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-25.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-26.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-26.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-27.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-27.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-28.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-28.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-29.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-29.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-30.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-30.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-31.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-31.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-32.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-32.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-33.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-33.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-34.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-34.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-35.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-35.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-36.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-36.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-37.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-37.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-38.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-38.pjpeg\"},{\"thumbnail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_ca35914f842e48731761eda9e1b55fa1-39.pjpeg\",\"detail\":\"\\/website\\/var\\/tmp\\/thumb_36__document_auto_55c4d1de803e2f89c46b9a22287c3b50-39.pjpeg\"}],\"pdf\":\"\\/documents\\/documentation.pdf\",\"fullscreen\":true} }); ','navigation_name:Document Viewer ');
 INSERT INTO `search_backend_data` VALUES (29,'/documents','asset','folder','folder',1,1368548619,1368632467,2,2,'ID: 29  \nPath: /documents  \ndocuments','');
@@ -2066,21 +2417,21 @@ INSERT INTO `search_backend_data` VALUES (56,'/demo-website/examples/singapore/d
 INSERT INTO `search_backend_data` VALUES (57,'/demo-website/examples/singapore/dsc03835.jpg','asset','image','image',1,1368597119,1368597119,2,2,'ID: 57  \nPath: /demo-website/examples/singapore/dsc03835.jpg  \ndsc03835.jpg','');
 INSERT INTO `search_backend_data` VALUES (21,'/basic-examples/thumbnails','document','page','page',1,1368602443,1368606841,2,2,'ID: 21  \nPath: /basic-examples/thumbnails  \n Incredible Possibilities This is the original image This is how it looks in the admin interface ... Thumbnails ','Thumbnails ');
 INSERT INTO `search_backend_data` VALUES (59,'/demo-website/screenshots/thumbnail-configuration.png','asset','image','image',1,1368606782,1368606783,2,2,'ID: 59  \nPath: /demo-website/screenshots/thumbnail-configuration.png  \nthumbnail-configuration.png','');
-INSERT INTO `search_backend_data` VALUES (22,'/basic-examples/website-translations','document','page','page',1,1368607207,1368609001,2,2,'ID: 22  \nPath: /basic-examples/website-translations  \n &nbsp; Please visit this page to see the German translation of this page. &nbsp; Following some examples:&nbsp; &nbsp; Website Translations Common used terms across the website can be translated centrally, hassle-free and comfortable.&nbsp; &nbsp; &nbsp; This is how it looks in the admin interface ...&nbsp; Website Translations ','Website Translations ');
-INSERT INTO `search_backend_data` VALUES (23,'/basic-examples/website-translations/german-translation','document','page','page',1,1368608357,1368608866,2,2,'ID: 23  \nPath: /basic-examples/website-translations/german-translation  \n Folgend ein paar Beispiele:&nbsp; Website Übersetzungen Häufig genutzte Begriffe auf der gesamten Website können komfortabel, zentral und einfach übersetzt werden. Deutsche Übersetzung ','Deutsche Übersetzung de ');
+INSERT INTO `search_backend_data` VALUES (22,'/en/basic-examples/website-translations','document','page','page',1,1368607207,1382958131,2,2,'ID: 22  \nPath: /en/basic-examples/website-translations  \n &nbsp; Please visit this page to see the German translation of this page. &nbsp; Following some examples:&nbsp; &nbsp; Website Translations Common used terms across the website can be translated centrally, hassle-free and comfortable.&nbsp; &nbsp; &nbsp; This is how it looks in the admin interface ...&nbsp; ','navigation_name:Website Translations ');
+INSERT INTO `search_backend_data` VALUES (23,'/de/einfache-beispiele/website-uebersetzungen','document','page','page',1,1368608357,1382958135,2,2,'ID: 23  \nPath: /de/einfache-beispiele/website-uebersetzungen  \n Folgend ein paar Beispiele:&nbsp; Website Übersetzungen Häufig genutzte Begriffe auf der gesamten Website können komfortabel, zentral und einfach übersetzt werden. ','language:de navigation_name:Website Übersetzungen ');
 INSERT INTO `search_backend_data` VALUES (60,'/demo-website/screenshots/website-translations.png','asset','image','image',1,1368608949,1368608949,2,2,'ID: 60  \nPath: /demo-website/screenshots/website-translations.png  \nwebsite-translations.png','');
 INSERT INTO `search_backend_data` VALUES (24,'/basic-examples/content-page','document','page','page',1,1368609059,1368611682,2,2,'ID: 24  \nPath: /basic-examples/content-page  \nAlbert Einstein Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. &nbsp; Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. &nbsp; Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. This is just a simple Content-Page ... Where some Content-Blocks are mixed together. Nulla consequat massa quis enim Lorem ipsum. Etiam ultricies. African Animals Donec pede justo, fringilla vel, aliquet nec left We can\'t solve problems by using the same kind of thinking we used when we created them. Dolor sit amet. Nam eget dui. video a.pimcore_video_flowplayer { display:block; text-align:center; } #video_51935b6301d62 .play { margin-top:108.5px; border:0px; display:inline-block; width:83px; height:83px; background:url(/pimcore/static/js/lib/flowplayer/play_large.png); } var player_config_video_51935b6301d62 = array_merge_recursive({\"dummy\":true},{\"clip\":{\"url\":\"\\/demo-website\\/videos\\/home-trailer-english.mp4\"}}); flowplayer(\"video_51935b6301d62\", { src: \"/pimcore/static/js/lib/flowplayer/flowplayer.swf\", width: \"100%\", height: \"300\" },player_config_video_51935b6301d62); Content Page ','Content Page ');
 INSERT INTO `search_backend_data` VALUES (25,'/basic-examples/editable-roundup','document','page','page',1,1368609569,1368610457,2,2,'ID: 25  \nPath: /basic-examples/editable-roundup  \n This is an overview of all available &quot;editables&quot; (except area/areablock/block) Please view this page in the editmode (admin interface)! ... nothing to see here ;-)&nbsp; 1 May 16, 2013 2:00:00 AM /basic-examples/thumbnails Some Text My Link document: /basic-examples/glossarydocument: /basic-examples/thumbnailsdocument: /basic-examples/editable-roundupasset: /demo-website/examples/south-africa/img_1842.jpgasset: /demo-website/examples/south-africa/img_2133.jpgasset: /demo-website/examples/south-africa/img_2240.jpg value2,value4 123 option2 Some Text a.pimcore_video_flowplayer { display:block; text-align:center; } #video_5193569a0dcec .play { margin-top:108.5px; border:0px; display:inline-block; width:83px; height:83px; background:url(/pimcore/static/js/lib/flowplayer/play_large.png); } var player_config_video_5193569a0dcec = array_merge_recursive({\"dummy\":true},{\"clip\":{\"url\":\"\\/demo-website\\/videos\\/home-trailer-english.mp4\"}}); flowplayer(\"video_5193569a0dcec\", { src: \"/pimcore/static/js/lib/flowplayer/flowplayer.swf\", width: \"100%\", height: \"300\" },player_config_video_5193569a0dcec); Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. &nbsp; Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. &nbsp; Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, Value 1Value 2Value 3thisistest Editable Round-Up ','Editable Round-Up ');
 INSERT INTO `search_backend_data` VALUES (26,'/basic-examples/form','document','page','page',1,1368610663,1368610681,2,2,'ID: 26  \nPath: /basic-examples/form  \n Simple Form ','Simple Form ');
 INSERT INTO `search_backend_data` VALUES (27,'/basic-examples/news','document','page','page',1,1368613137,1368614363,2,2,'ID: 27  \nPath: /basic-examples/news  \n News Any kind of structured data is stored in \"Objects\".&nbsp; News ','News ');
 INSERT INTO `search_backend_data` VALUES (2,'/news','object','folder','folder',1,1368613451,1368613451,2,2,'ID: 2  \nPath: /news  \nnews','');
-INSERT INTO `search_backend_data` VALUES (3,'/news/lorem-ipsum','object','object','news',1,1368613483,1368614073,2,2,'ID: 3  \nPath: /news/lorem-ipsum  \nJul 18, 2013 1:45:00 PM Lorem ipsum dolor sit amet Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. /demo-website/examples/south-africa/img_2155.jpg /demo-website/examples/south-africa/img_1414.jpg /demo-website/examples/south-africa/img_1920.jpg ','');
-INSERT INTO `search_backend_data` VALUES (4,'/news/in-enim-justo','object','object','news',1,1368613645,1368613690,2,2,'ID: 4  \nPath: /news/in-enim-justo  \nMay 28, 2013 7:15:00 PM In enim justo Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, /demo-website/examples/south-africa/img_1842.jpg ','');
-INSERT INTO `search_backend_data` VALUES (5,'/news/nam-eget-dui','object','object','news',1,1368613700,1368614036,2,2,'ID: 5  \nPath: /news/nam-eget-dui  \nJun 1, 2013 12:00:00 AM Nam eget dui Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, ','');
-INSERT INTO `search_backend_data` VALUES (6,'/news/in-enim-justo_2','object','object','news',1,1368615188,1368615389,2,2,'ID: 6  \nPath: /news/in-enim-justo_2  \nDec 3, 2012 7:15:00 PM In enim justo Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, /demo-website/examples/panama/img_0160.jpg ','');
-INSERT INTO `search_backend_data` VALUES (7,'/news/in-enim-justo_3','object','object','news',1,1368615191,1368615267,2,2,'ID: 7  \nPath: /news/in-enim-justo_3  \nFeb 11, 2013 7:15:00 PM In enim justo Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, /demo-website/examples/panama/img_0117.jpg ','');
-INSERT INTO `search_backend_data` VALUES (8,'/news/in-enim-justo_4','object','object','news',1,1368615194,1368615264,2,2,'ID: 8  \nPath: /news/in-enim-justo_4  \nFeb 4, 2013 7:15:00 PM In enim justo Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, /demo-website/examples/panama/img_0089.jpg ','');
-INSERT INTO `search_backend_data` VALUES (9,'/news/in-enim-justo_5','object','object','news',1,1368615197,1368615261,2,2,'ID: 9  \nPath: /news/in-enim-justo_5  \nNov 13, 2012 7:15:00 PM In enim justo Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, /demo-website/examples/panama/img_0037.jpg ','');
+INSERT INTO `search_backend_data` VALUES (3,'/news/lorem-ipsum','object','object','news',1,1368613483,1382958769,2,2,'ID: 3  \nPath: /news/lorem-ipsum  \nEr hörte leise Schritte hinter sich Das bedeutete nichts Gutes. Wer würde ihm schon folgen, spät in der Nacht und dazu noch in dieser engen Gasse mitten im übel beleumundeten Hafenviertel? Oder geh&ouml;rten die Schritte hinter ihm zu einem der unz&auml;hligen Gesetzesh&uuml;ter dieser Stadt, und die st&auml;hlerne Acht um seine Handgelenke w&uuml;rde gleich zuschnappen? Er konnte die Aufforderung stehen zu bleiben schon h&ouml;ren. Gehetzt sah er sich um. Pl&ouml;tzlich erblickte er den schmalen Durchgang. Blitzartig drehte er sich nach rechts und verschwand zwischen den beiden Geb&auml;uden. Beinahe w&auml;re er dabei &uuml;ber den umgest&uuml;rzten M&uuml;lleimer gefallen, der mitten im Weg lag. Er versuchte, sich in der Dunkelheit seinen Weg zu ertasten und erstarrte: Anscheinend gab es keinen anderen Ausweg aus diesem kleinen Hof als den Durchgang, durch den er gekommen war. Die Schritte wurden lauter und lauter, er sah eine dunkle Gestalt um die Ecke biegen. Fieberhaft irrten seine Augen durch die n&auml;chtliche Dunkelheit und suchten einen Ausweg. War jetzt wirklich alles vorbei. Lorem ipsum dolor sit amet Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam&nbsp;ultricies&nbsp;nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget&nbsp;condimentum&nbsp;rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Jul 18, 2013 1:45:00 PM /examples/south-africa/img_2155.jpg /examples/south-africa/img_1414.jpg /examples/south-africa/img_1920.jpg ','');
+INSERT INTO `search_backend_data` VALUES (4,'/news/in-enim-justo','object','object','news',1,1368613645,1382958711,2,2,'ID: 4  \nPath: /news/in-enim-justo  \nLi Europan lingues es membres Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. In enim justo Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Nam eget dui. Etiam rhoncus.&nbsp;Maecenas&nbsp;tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed&nbsp;fringilla&nbsp;mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, May 28, 2013 7:15:00 PM /examples/south-africa/img_1842.jpg ','');
+INSERT INTO `search_backend_data` VALUES (5,'/news/nam-eget-dui','object','object','news',1,1368613700,1382958801,2,2,'ID: 5  \nPath: /news/nam-eget-dui  \nZwei flinke Boxer jagen die quirlige Eva Franz jagt im komplett verwahrlosten Taxi quer durch Bayern. Zwölf Boxkämpfer jagen Viktor quer über den großen Sylter Deich. Vogel Quax zwickt Johnys Pferd Bim. Victor jagt zw&ouml;lf Boxk&auml;mpfer quer &uuml;ber den gro&szlig;en Sylter Deich. Falsches &Uuml;ben von Xylophonmusik qu&auml;lt jeden gr&ouml;&szlig;eren Zwerg. Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung. Zwei flinke Boxer jagen die quirlige Eva und ihren Mops durch Sylt. Franz jagt im komplett verwahrlosten Taxi quer durch Bayern. Zw&ouml;lf Boxk&auml;mpfer jagen Viktor quer &uuml;ber den gro&szlig;en Sylter Deich. Vogel Quax zwickt Johnys Pferd Bim. Sylvia wagt quick den Jux bei Pforzheim. Polyfon zwitschernd a&szlig;en M&auml;xchens V&ouml;gel R&uuml;ben, Joghurt und Quark. &quot;Fix, Schwyz!&quot; qu&auml;kt J&uuml;rgen bl&ouml;d vom Pa&szlig;. Victor jagt zw&ouml;lf Boxk&auml;mpfer quer &uuml;ber den gro&szlig;en Sylter Deich. Falsches &Uuml;ben von Xylophonmusik qu&auml;lt jeden gr&ouml;&szlig;eren Zwerg. Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung.Zwei flinke Boxer jagen die quirlige Eva und ihren Mops durch Sylt. Franz jagt im komplett verwahrlosten Taxi quer durch Bayern. Zw&ouml;lf Boxk&auml;mpfer jagen Viktor quer &uuml;ber den gro&szlig;en Sylter Deich. Vogel Quax zwickt Johnys Pferd Bim. Sylvia wagt quick den Jux Nam eget dui Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, Jun 1, 2013 12:00:00 AM ','');
+INSERT INTO `search_backend_data` VALUES (6,'/news/in-enim-justo_2','object','object','news',1,1368615188,1382958710,2,2,'ID: 6  \nPath: /news/in-enim-justo_2  \nIn enim justo Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Li Europan lingues es membres Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. Dec 3, 2012 7:15:00 PM /examples/panama/img_0160.jpg ','');
+INSERT INTO `search_backend_data` VALUES (7,'/news/in-enim-justo_3','object','object','news',1,1368615191,1382958709,2,2,'ID: 7  \nPath: /news/in-enim-justo_3  \nIn enim justo Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Li Europan lingues es membres Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. Feb 11, 2013 7:15:00 PM /examples/panama/img_0117.jpg ','');
+INSERT INTO `search_backend_data` VALUES (8,'/news/in-enim-justo_4','object','object','news',1,1368615194,1382958708,2,2,'ID: 8  \nPath: /news/in-enim-justo_4  \nIn enim justo Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Li Europan lingues es membres Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. Feb 4, 2013 7:15:00 PM /examples/panama/img_0089.jpg ','');
+INSERT INTO `search_backend_data` VALUES (9,'/news/in-enim-justo_5','object','object','news',1,1368615197,1382958706,2,2,'ID: 9  \nPath: /news/in-enim-justo_5  \nIn enim justo Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Li Europan lingues es membres Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. Nov 13, 2012 7:15:00 PM /examples/panama/img_0037.jpg ','');
 INSERT INTO `search_backend_data` VALUES (28,'/basic-examples/properties','document','page','page',1,1368615986,1368616909,2,2,'ID: 28  \nPath: /basic-examples/properties  \n On this page we use \"Properties\" to hide the navigation on the left and to change the color of the header to blue.&nbsp; Properties are very useful to control the behavior or to store meta data of documents, assets and objects. And the best: they are inheritable.&nbsp; &nbsp; On the following screens you can see how this is done in this example. Properties Properties ','Properties ');
 INSERT INTO `search_backend_data` VALUES (61,'/demo-website/screenshots/properties-1.png','asset','image','image',1,1368616805,1368616805,2,2,'ID: 61  \nPath: /demo-website/screenshots/properties-1.png  \nproperties-1.png','');
 INSERT INTO `search_backend_data` VALUES (62,'/demo-website/screenshots/properties-2.png','asset','image','image',1,1368616805,1368616805,2,2,'ID: 62  \nPath: /demo-website/screenshots/properties-2.png  \nproperties-2.png','');
@@ -2110,6 +2461,23 @@ INSERT INTO `search_backend_data` VALUES (39,'/error','document','page','page',1
 INSERT INTO `search_backend_data` VALUES (66,'/documents/example-excel.xlsx','asset','document','document',1,1378992590,1378992590,2,2,'ID: 66  \nPath: /documents/example-excel.xlsx  \nexample-excel.xlsx','');
 INSERT INTO `search_backend_data` VALUES (67,'/documents/example.docx','asset','document','document',1,1378992591,1378992591,2,2,'ID: 67  \nPath: /documents/example.docx  \nexample.docx','');
 INSERT INTO `search_backend_data` VALUES (68,'/documents/example.pptx','asset','document','document',1,1378992592,1378992592,2,2,'ID: 68  \nPath: /documents/example.pptx  \nexample.pptx','');
+INSERT INTO `search_backend_data` VALUES (40,'/en','document','link','link',1,1382956013,1382956551,2,2,'ID: 40  \nPath: /en  \n /','mainNavStartNode:/en leftNavStartNode:/en language:en navigation_name:Home ');
+INSERT INTO `search_backend_data` VALUES (41,'/de','document','page','page',1,1382956716,1382957674,2,2,'ID: 41  \nPath: /de  \nAlbert Einstein 3 Bereit beeindruckt zu werden? Es wird dich umhauen! Oh ja, es ist wirklich so gut See in Action See in Action Checkmate In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. Teste unsere Beispiele und tauche ein in die nächste Generation von digitalem Inhaltsmanagement Sieh\' selbst Sieh\' selbst! Lorem ipsum. Oh yeah, it\'s that good. And lastly, this one. left left We can\'t solve problems by using the same kind of thinking we used when we created them. Cum sociis. See for yourself. Checkmate. video a.pimcore_video_flowplayer { display:block; text-align:center; } #video_526e426a5aefd .play { margin-top:108.5px; border:0px; display:inline-block; width:83px; height:83px; background:url(/pimcore/static/js/lib/flowplayer/play_large.png); } var player_config_video_526e426a5aefd = array_merge_recursive({\"dummy\":true},{\"clip\":{\"url\":\"\\/videos\\/home-trailer-english.mp4\"}}); flowplayer(\"video_526e426a5aefd\", { src: \"/pimcore/static/js/lib/flowplayer/flowplayer.swf\", width: \"100%\", height: \"300\" },player_config_video_526e426a5aefd); ','language:de mainNavStartNode:/de leftNavStartNode:/de navigation_name:Startseite ');
+INSERT INTO `search_backend_data` VALUES (42,'/de/shared','document','folder','folder',1,1382956884,1382956887,2,2,'ID: 42  \nPath: /de/shared  \nshared','language:de mainNavStartNode:/en leftNavStartNode:/en ');
+INSERT INTO `search_backend_data` VALUES (43,'/de/shared/includes','document','folder','folder',1,1382956885,1382956888,2,2,'ID: 43  \nPath: /de/shared/includes  \nincludes','language:de mainNavStartNode:/en leftNavStartNode:/en ');
+INSERT INTO `search_backend_data` VALUES (44,'/de/shared/teasers','document','folder','folder',1,1382956885,1382956888,2,2,'ID: 44  \nPath: /de/shared/teasers  \nteasers','language:de mainNavStartNode:/en leftNavStartNode:/en ');
+INSERT INTO `search_backend_data` VALUES (45,'/de/shared/teasers/standard','document','folder','folder',1,1382956885,1382956888,2,2,'ID: 45  \nPath: /de/shared/teasers/standard  \nstandard','language:de mainNavStartNode:/en leftNavStartNode:/en ');
+INSERT INTO `search_backend_data` VALUES (46,'/de/shared/includes/footer','document','snippet','snippet',1,1382956886,1382956919,2,2,'ID: 46  \nPath: /de/shared/includes/footer  \npimcore.org Dokumentation Bug Tracker Designed and built with all the love in the world by&nbsp;@mdo&nbsp;and&nbsp;@fat. Code licensed under&nbsp;Apache License v2.0,&nbsp;Glyphicons Free&nbsp;licensed under&nbsp;CC BY 3.0. © Templates pimcore.org licensed under BSD License ','');
+INSERT INTO `search_backend_data` VALUES (47,'/de/shared/teasers/standard/basic-examples','document','snippet','snippet',1,1382956886,1382957000,2,2,'ID: 47  \nPath: /de/shared/teasers/standard/basic-examples  \n Voll Responsive Lorem ipsum Diese Demo basiert auf Bootstrap, dem wohl bekanntesten,&nbsp;beliebtesten und flexibelsten Fontend-Framework. ','');
+INSERT INTO `search_backend_data` VALUES (48,'/de/shared/teasers/standard/advanced-examples','document','snippet','snippet',1,1382956886,1382957114,2,2,'ID: 48  \nPath: /de/shared/teasers/standard/advanced-examples  \n Drag &amp; Drop Inhaltserstellung Etiam rhoncu Inhalt wird einfach per drag &amp; drop mit Inhaltsblöcken erstellt, welche dann direkt in-line editiert werden können. ','');
+INSERT INTO `search_backend_data` VALUES (49,'/de/shared/teasers/standard/experiments','document','snippet','snippet',1,1382956887,1382957197,2,2,'ID: 49  \nPath: /de/shared/teasers/standard/experiments  \n HTML5 immer &amp; überall Quisque rutrum &nbsp; Bilder direkt per drag &amp; drop vom Desktop&nbsp;in den Baum in pimcore hochladen, automatische HTML5 Video Konvertierung&nbsp;und viel mehr ... ','');
+INSERT INTO `search_backend_data` VALUES (50,'/de/einfuehrung','document','page','page',1,1382957658,1382957760,2,2,'ID: 50  \nPath: /de/einfuehrung  \n Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. &nbsp; Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. &nbsp; Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. &nbsp; It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es. Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. &nbsp; Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Überblick über das Projekt und wie man mit einer einfachen Vorlage loslegen kann. Einführung Nullam quis ante Maecenas tempus, tellus eget condimentum rhoncu Ullamcorper Scelerisque Erste Schritte Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Etiam rhoncu Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. snippet snippet ','navigation_name:Einführung ');
+INSERT INTO `search_backend_data` VALUES (51,'/de/einfache-beispiele','document','page','page',1,1382957793,1382957910,2,2,'ID: 51  \nPath: /de/einfache-beispiele  \n Übersicht über einfache Beispiele Diese Seite dient nur zur Demonstration einer mehrsprachigen Seite.&nbsp; Um die Beispiele zu sehen verwende bitte die Englische Beispielseite.&nbsp; Einfache Beispiele ','navigation_name:Einfache Beispiele ');
+INSERT INTO `search_backend_data` VALUES (52,'/de/beispiele-fur-fortgeschrittene','document','page','page',1,1382957961,1382957999,2,2,'ID: 52  \nPath: /de/beispiele-fur-fortgeschrittene  \n Übersicht über fortgeschrittene Beispiele Diese Seite dient nur zur Demonstration einer mehrsprachigen Seite.&nbsp; Um die Beispiele zu sehen verwende bitte die Englische Beispielseite.&nbsp; Beispiele für Fortgeschrittene ','navigation_name:Beispiele für Fortgeschrittene ');
+INSERT INTO `search_backend_data` VALUES (53,'/de/einfache-beispiele/neuigkeiten','document','page','page',1,1382958188,1382958240,2,2,'ID: 53  \nPath: /de/einfache-beispiele/neuigkeiten  \n Neuigkeiten Alle strukturierten Daten werden in \"Objects\" gespeichert.&nbsp; ','navigation_name:Neuigkeiten ');
+INSERT INTO `search_backend_data` VALUES (54,'/shared','document','folder','folder',1,1382959757,1382959757,2,2,'ID: 54  \nPath: /shared  \nshared','mainNavStartNode:/en leftNavStartNode:/en language:en ');
+INSERT INTO `search_backend_data` VALUES (55,'/shared/includes','document','folder','folder',1,1382959767,1382959768,2,2,'ID: 55  \nPath: /shared/includes  \nincludes','mainNavStartNode:/en leftNavStartNode:/en language:en ');
+INSERT INTO `search_backend_data` VALUES (56,'/shared/includes/languages','document','snippet','snippet',1,1382959774,1382959822,2,2,'ID: 56  \nPath: /shared/includes/languages  \n English German ','');
 
 
 
@@ -2134,6 +2502,7 @@ INSERT INTO `staticroutes` VALUES (1,'news','/(.*)_n([\\d]+)/','%prefix/%text_n%
 INSERT INTO `translations_admin` VALUES ('blockquote','de','',1368611528,1368611528);
 INSERT INTO `translations_admin` VALUES ('blockquote','en','',1368611528,1368611528);
 INSERT INTO `translations_admin` VALUES ('content-page','en','',1368523214,1368523214);
+INSERT INTO `translations_admin` VALUES ('contents','en','',1382958363,1382958363);
 INSERT INTO `translations_admin` VALUES ('date','en','',1368613497,1368613497);
 INSERT INTO `translations_admin` VALUES ('dateregister','en','',1368621929,1368621929);
 INSERT INTO `translations_admin` VALUES ('email','en','',1368621928,1368621928);
@@ -2184,8 +2553,16 @@ INSERT INTO `translations_admin` VALUES ('wysiwyg','en','',1368608412,1368608412
 
 INSERT INTO `translations_website` VALUES ('\'%value%\' is not a valid email address in the basic format local-part@hostname','de','',1368631595,1368631595);
 INSERT INTO `translations_website` VALUES ('\'%value%\' is not a valid email address in the basic format local-part@hostname','en','',1368631595,1368631595);
-INSERT INTO `translations_website` VALUES ('back to top','de','','','');
-INSERT INTO `translations_website` VALUES ('back to top','en','','','');
+INSERT INTO `translations_website` VALUES ('advanced examples','de','','','');
+INSERT INTO `translations_website` VALUES ('advanced examples','en','','','');
+INSERT INTO `translations_website` VALUES ('aktuelles','de','','','');
+INSERT INTO `translations_website` VALUES ('aktuelles','en','','','');
+INSERT INTO `translations_website` VALUES ('back to top','de','',0,0);
+INSERT INTO `translations_website` VALUES ('back to top','en','',0,0);
+INSERT INTO `translations_website` VALUES ('basic examples','de','',0,0);
+INSERT INTO `translations_website` VALUES ('basic examples','en','',0,0);
+INSERT INTO `translations_website` VALUES ('beispiele für fortgeschrittene','de','','','');
+INSERT INTO `translations_website` VALUES ('beispiele für fortgeschrittene','en','','','');
 INSERT INTO `translations_website` VALUES ('check me out','de','',1368610820,1368610820);
 INSERT INTO `translations_website` VALUES ('check me out','en','',1368610820,1368610820);
 INSERT INTO `translations_website` VALUES ('combined 1','en','',1368606496,1368606496);
@@ -2193,7 +2570,11 @@ INSERT INTO `translations_website` VALUES ('combined 2','en','',1368606637,13686
 INSERT INTO `translations_website` VALUES ('combined 3','en','',1368606637,1368606637);
 INSERT INTO `translations_website` VALUES ('contain','en','',1368603255,1368603255);
 INSERT INTO `translations_website` VALUES ('contain &amp; overlay','en','',1368605819,1368605819);
+INSERT INTO `translations_website` VALUES ('content page','de','',0,0);
+INSERT INTO `translations_website` VALUES ('content page','en','',0,0);
 INSERT INTO `translations_website` VALUES ('cover','en','',1368602697,1368602697);
+INSERT INTO `translations_website` VALUES ('deutsche übersetzung','de','','','');
+INSERT INTO `translations_website` VALUES ('deutsche übersetzung','en','','','');
 INSERT INTO `translations_website` VALUES ('dimensions','en','',1368604632,1368604632);
 INSERT INTO `translations_website` VALUES ('download','de','Herunterladen',1368608523,1368608523);
 INSERT INTO `translations_website` VALUES ('download','en','',1368608523,1368608523);
@@ -2205,29 +2586,49 @@ INSERT INTO `translations_website` VALUES ('download source','de','Herunterladen
 INSERT INTO `translations_website` VALUES ('download source','en','',1368608508,1368608508);
 INSERT INTO `translations_website` VALUES ('e-mail','de','',1368610820,1368610820);
 INSERT INTO `translations_website` VALUES ('e-mail','en','',1368610820,1368610820);
+INSERT INTO `translations_website` VALUES ('einfache beispiele','de','','','');
+INSERT INTO `translations_website` VALUES ('einfache beispiele','en','','','');
+INSERT INTO `translations_website` VALUES ('einführung','de','','','');
+INSERT INTO `translations_website` VALUES ('einführung','en','','','');
+INSERT INTO `translations_website` VALUES ('experiments','de','','','');
+INSERT INTO `translations_website` VALUES ('experiments','en','','','');
 INSERT INTO `translations_website` VALUES ('fastest way to get started: get the compiled and minified versions of our css, js, and images. no docs or original source files.','de','Der schnellste Weg um loszulegen: Lade die kompilierten und reduzierten Versionen unserer CSS, JS und Grafiken. Keine Dokumentation oder Quelldateien.',1368608611,1368608611);
 INSERT INTO `translations_website` VALUES ('fastest way to get started: get the compiled and minified versions of our css, js, and images. no docs or original source files.','en','',1368608611,1368608611);
 INSERT INTO `translations_website` VALUES ('firstname','de','',1368610819,1368610819);
 INSERT INTO `translations_website` VALUES ('firstname','en','',1368610819,1368610819);
 INSERT INTO `translations_website` VALUES ('frame','en','',1368603255,1368603255);
+INSERT INTO `translations_website` VALUES ('galleries','de','','','');
+INSERT INTO `translations_website` VALUES ('galleries','en','','','');
 INSERT INTO `translations_website` VALUES ('gender','de','',1368622092,1368622092);
 INSERT INTO `translations_website` VALUES ('gender','en','',1368622092,1368622092);
 INSERT INTO `translations_website` VALUES ('get the original files for all css and javascript, along with a local copy of the docs by downloading the latest version directly from github.','de','Lade die originalen  CSS und Javascript Dateien zusammen mit einer lokalen Kopie der Dokumentation von github.com',1368608698,1368608698);
 INSERT INTO `translations_website` VALUES ('get the original files for all css and javascript, along with a local copy of the docs by downloading the latest version directly from github.','en','',1368608698,1368608698);
 INSERT INTO `translations_website` VALUES ('grayscale','en','',1368606077,1368606077);
+INSERT INTO `translations_website` VALUES ('home','de','Startseite',0,1382961053);
+INSERT INTO `translations_website` VALUES ('home','en','Home',0,1382961053);
+INSERT INTO `translations_website` VALUES ('html5 video','de','','','');
+INSERT INTO `translations_website` VALUES ('html5 video','en','','','');
 INSERT INTO `translations_website` VALUES ('i accept the terms of use','de','',1368620808,1368620808);
 INSERT INTO `translations_website` VALUES ('i accept the terms of use','en','',1368620808,1368620808);
-INSERT INTO `translations_website` VALUES ('keyword','de','','','');
-INSERT INTO `translations_website` VALUES ('keyword','en','','','');
+INSERT INTO `translations_website` VALUES ('introduction','de','','','');
+INSERT INTO `translations_website` VALUES ('introduction','en','','','');
+INSERT INTO `translations_website` VALUES ('keyword','de','',0,0);
+INSERT INTO `translations_website` VALUES ('keyword','en','',0,0);
 INSERT INTO `translations_website` VALUES ('lastname','de','',1368610820,1368610820);
 INSERT INTO `translations_website` VALUES ('lastname','en','',1368610820,1368610820);
 INSERT INTO `translations_website` VALUES ('mask','en','',1368606259,1368606259);
 INSERT INTO `translations_website` VALUES ('message','de','',1368620708,1368620708);
 INSERT INTO `translations_website` VALUES ('message','en','',1368620708,1368620708);
+INSERT INTO `translations_website` VALUES ('neuigkeiten','de','','','');
+INSERT INTO `translations_website` VALUES ('neuigkeiten','en','','','');
+INSERT INTO `translations_website` VALUES ('news','de','','','');
+INSERT INTO `translations_website` VALUES ('news','en','','','');
 INSERT INTO `translations_website` VALUES ('newsletter','de','',1368620340,1368620340);
 INSERT INTO `translations_website` VALUES ('newsletter','en','',1368620340,1368620340);
 INSERT INTO `translations_website` VALUES ('original dimensions of the image','en','',1368604779,1368604779);
 INSERT INTO `translations_website` VALUES ('overlay','en','',1368605562,1368605562);
+INSERT INTO `translations_website` VALUES ('properties','de','','','');
+INSERT INTO `translations_website` VALUES ('properties','en','','','');
 INSERT INTO `translations_website` VALUES ('resize','en','',1368603801,1368603801);
 INSERT INTO `translations_website` VALUES ('rotate','en','',1368603255,1368603255);
 INSERT INTO `translations_website` VALUES ('rounded corners','en','',1368605936,1368605936);
@@ -2244,19 +2645,23 @@ INSERT INTO `translations_website` VALUES ('total %s','de','',1368619656,1368619
 INSERT INTO `translations_website` VALUES ('total %s','en','',1368619656,1368619656);
 INSERT INTO `translations_website` VALUES ('total: %s','de','',1368619663,1368619663);
 INSERT INTO `translations_website` VALUES ('total: %s','en','',1368619663,1368619663);
+INSERT INTO `translations_website` VALUES ('website translations','de','','','');
+INSERT INTO `translations_website` VALUES ('website translations','en','','','');
+INSERT INTO `translations_website` VALUES ('website übersetzungen','de','','','');
+INSERT INTO `translations_website` VALUES ('website übersetzungen','en','','','');
 
 
 
 
 INSERT INTO `tree_locks` VALUES (12,'document','self');
+INSERT INTO `tree_locks` VALUES (46,'document','self');
+INSERT INTO `tree_locks` VALUES (56,'document','self');
 
 
 
 
+INSERT INTO `users` VALUES (0,0,'user','system','','','','','',1,1,'','',0,0,0);
 INSERT INTO `users` VALUES (2,0,'user','admin','7b29ec070e77fbfa8a65d4833a7bc646','','','','en',1,1,'assets,backup,bounce_mail_inbox,classes,clear_cache,clear_temp_files,documents,document_style_editor,document_types,glossary,http_errors,newsletter,notes_events,objects,plugins,predefined_properties,qr_codes,recyclebin,redirects,reports,robots.txt,routes,seemode,seo_document_editor,system_settings,tag_snippet_management,targeting,thumbnails,translations,website_settings','',1,1,1);
-INSERT INTO `users` VALUES (3,0,'user','webservice','037db32506b8582cfc438da250da68d3','','','','en',1,1,'assets,backup,bounce_mail_inbox,classes,clear_cache,clear_temp_files,documents,document_style_editor,document_types,glossary,http_errors,newsletter,notes_events,objects,plugins,predefined_properties,qr_codes,recyclebin,redirects,reports,robots.txt,routes,seemode,seo_document_editor,system_settings,tag_snippet_management,targeting,thumbnails,translations,website_settings','',1,1,1);
-INSERT INTO `users` VALUES (4,0,'user','rest','c4d1c32f83639573c734219b5793486a','','','','en',1,1,'assets,backup,bounce_mail_inbox,classes,clear_cache,clear_temp_files,documents,document_style_editor,document_types,glossary,http_errors,newsletter,notes_events,objects,plugins,predefined_properties,qr_codes,recyclebin,redirects,reports,robots.txt,routes,seemode,seo_document_editor,system_settings,tag_snippet_management,targeting,thumbnails,translations,website_settings','',1,1,1);
-INSERT INTO `users` VALUES (5,0,'user','system','','','','','',1,1,'','',0,0,0);
 
 
 
@@ -2296,8 +2701,10 @@ INSERT INTO `users_permission_definitions` VALUES ('website_settings');
 
 
 
+
+
 DROP VIEW IF EXISTS `object_2`;
-CREATE ALGORITHM=UNDEFINED  VIEW `object_2` AS select `object_query_2`.`oo_id` AS `oo_id`,`object_query_2`.`oo_classId` AS `oo_classId`,`object_query_2`.`oo_className` AS `oo_className`,`object_query_2`.`date` AS `date`,`object_query_2`.`title` AS `title`,`object_query_2`.`shortText` AS `shortText`,`object_query_2`.`text` AS `text`,`object_query_2`.`image_1` AS `image_1`,`object_query_2`.`image_2` AS `image_2`,`object_query_2`.`image_3` AS `image_3`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className` from (`object_query_2` join `objects` on((`objects`.`o_id` = `object_query_2`.`oo_id`)));
+CREATE ALGORITHM=UNDEFINED  VIEW `object_2` AS select `object_query_2`.`oo_id` AS `oo_id`,`object_query_2`.`oo_classId` AS `oo_classId`,`object_query_2`.`oo_className` AS `oo_className`,`object_query_2`.`date` AS `date`,`object_query_2`.`image_1` AS `image_1`,`object_query_2`.`image_2` AS `image_2`,`object_query_2`.`image_3` AS `image_3`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className` from (`object_query_2` join `objects` on((`objects`.`o_id` = `object_query_2`.`oo_id`)));
 
 
 
@@ -2312,4 +2719,18 @@ CREATE ALGORITHM=UNDEFINED  VIEW `object_3` AS select `object_query_3`.`oo_id` A
 
 DROP VIEW IF EXISTS `object_4`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_4` AS select `object_query_4`.`oo_id` AS `oo_id`,`object_query_4`.`oo_classId` AS `oo_classId`,`object_query_4`.`oo_className` AS `oo_className`,`object_query_4`.`gender` AS `gender`,`object_query_4`.`firstname` AS `firstname`,`object_query_4`.`lastname` AS `lastname`,`object_query_4`.`email` AS `email`,`object_query_4`.`newsletterActive` AS `newsletterActive`,`object_query_4`.`newsletterConfirmed` AS `newsletterConfirmed`,`object_query_4`.`dateRegister` AS `dateRegister`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className` from (`object_query_4` join `objects` on((`objects`.`o_id` = `object_query_4`.`oo_id`)));
+
+
+
+
+
+DROP VIEW IF EXISTS `object_localized_2_de`;
+CREATE ALGORITHM=UNDEFINED  VIEW `object_localized_2_de` AS select `object_query_2`.`oo_id` AS `oo_id`,`object_query_2`.`oo_classId` AS `oo_classId`,`object_query_2`.`oo_className` AS `oo_className`,`object_query_2`.`date` AS `date`,`object_query_2`.`image_1` AS `image_1`,`object_query_2`.`image_2` AS `image_2`,`object_query_2`.`image_3` AS `image_3`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className`,`object_localized_query_2_de`.`ooo_id` AS `ooo_id`,`object_localized_query_2_de`.`language` AS `language`,`object_localized_query_2_de`.`title` AS `title`,`object_localized_query_2_de`.`shortText` AS `shortText`,`object_localized_query_2_de`.`text` AS `text` from ((`object_query_2` join `objects` on((`objects`.`o_id` = `object_query_2`.`oo_id`))) left join `object_localized_query_2_de` on((`object_query_2`.`oo_id` = `object_localized_query_2_de`.`ooo_id`)));
+
+
+
+
+
+DROP VIEW IF EXISTS `object_localized_2_en`;
+CREATE ALGORITHM=UNDEFINED  VIEW `object_localized_2_en` AS select `object_query_2`.`oo_id` AS `oo_id`,`object_query_2`.`oo_classId` AS `oo_classId`,`object_query_2`.`oo_className` AS `oo_className`,`object_query_2`.`date` AS `date`,`object_query_2`.`image_1` AS `image_1`,`object_query_2`.`image_2` AS `image_2`,`object_query_2`.`image_3` AS `image_3`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className`,`object_localized_query_2_en`.`ooo_id` AS `ooo_id`,`object_localized_query_2_en`.`language` AS `language`,`object_localized_query_2_en`.`title` AS `title`,`object_localized_query_2_en`.`shortText` AS `shortText`,`object_localized_query_2_en`.`text` AS `text` from ((`object_query_2` join `objects` on((`objects`.`o_id` = `object_query_2`.`oo_id`))) left join `object_localized_query_2_en` on((`object_query_2`.`oo_id` = `object_localized_query_2_en`.`ooo_id`)));
 
