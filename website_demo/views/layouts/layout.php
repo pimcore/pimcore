@@ -134,7 +134,7 @@
 
     <div id="content" class="container">
         <?php if(!$this->document->getProperty("leftNavHide")) { ?>
-            <div class="col-md-3">
+            <div class="col-md-3 sidebar">
                 <div class="bs-sidebar hidden-print affix-top" role="complementary">
                     <?php
                         $startNode = $this->document->getProperty("leftNavStartNode");
@@ -152,6 +152,7 @@
                         ));
                     ?>
                 </div>
+                <?php echo $this->inc($this->document->getProperty("sidebar")); ?>
             </div>
         <?php } ?>
         <div class="col-md-<?php if(!$this->document->getProperty("leftNavHide")) { ?>9<?php } else { ?>12<?php } ?>">
