@@ -209,6 +209,21 @@ section img {
     background-image: url(/website/static/img/en.png);
 }
 
+.sidebar .teaser {
+    margin-bottom: 30px;
+    background-color: #f7f5fa;
+    border-radius: 5px;
+    padding-bottom: 5px;
+}
+
+.sidebar .teaser img {
+    max-width: 100%;
+}
+
+.sidebar .teaser h2, .sidebar .teaser > div {
+    padding: 0 10px;
+}
+
 /* Show and affix the side nav when space allows it */
 @media screen and (min-width: 992px) {
     .bs-sidebar .nav > .active > ul {
