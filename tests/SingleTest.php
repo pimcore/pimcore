@@ -10,6 +10,6 @@ class SingleTest extends Test_SuiteBase {
         $suite->addTest(TestSuite_Rest_AllTests::suite());
 
         return $suite;
-    }}
+    }
+}
 
-?>
