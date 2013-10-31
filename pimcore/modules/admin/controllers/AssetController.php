@@ -780,9 +780,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $asset = Asset::getById($this->getParam("id"));
 
         if ($asset->isAllowed("view")) {
-            $this->getResponse()->setHeader("Content-Type", $asset->getMimetype(), true);
-            $this->getResponse()->setHeader("Content-Disposition", 'attachment; filename="' . $asset->getFilename() . '"');
-
+            header("Content-Type: " . $asset->getMimetype(), true);
+            header('Content-Disposition: attachment; filename="' . $asset->getFilename() . '"');
             header("Content-Length: " . filesize($asset->getFileSystemPath()), true);
 
             while(@ob_end_flush());
