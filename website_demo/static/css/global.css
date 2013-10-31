@@ -49,18 +49,17 @@ body {
 
 
 .jumbotron {
-    background: #0088cc; /* Old browsers */
+    background: #074f73; /* Old browsers */
     background: -moz-linear-gradient(45deg, #074f73 0%, #0088cc 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, #074f73), color-stop(100%, #0088cc)); /* Chrome,Safari4+ */
     background: -webkit-linear-gradient(45deg, #074f73 0%, #0088cc 100%); /* Chrome10+,Safari5.1+ */
     background: -o-linear-gradient(45deg, #074f73 0%, #0088cc 100%); /* Opera 11.10+ */
     background: -ms-linear-gradient(45deg, #074f73 0%, #0088cc 100%); /* IE10+ */
     background: linear-gradient(45deg, #074f73 0%, #0088cc 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#074f73', endColorstr='#0088cc', GradientType=1); /* IE6-9 fallback on horizontal gradient */
     margin-top: -91px;
-    padding-bottom: 20px;
     color: #fff;
-    padding-top: 90px;
+    padding-bottom: 20px !important;
+    padding-top: 90px !important;
 }
 
 footer {
