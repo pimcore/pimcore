@@ -410,19 +410,9 @@ class Pimcore {
         }
 
         // check some system variables
-        if (version_compare(PHP_VERSION, '5.3.0', "<")) {
-            $m = "pimcore requires at least PHP version 5.3.0 your PHP version is: " . PHP_VERSION;
-            Pimcore_Tool::exitWithError($m);
-        }
-
         if (version_compare(PHP_VERSION, '5.4.0', "<")) {
-            @ini_set("magic_quotes_gpc", 0);
-            @ini_set("magic_quotes_runtime", 0);
-
-            if (get_magic_quotes_gpc()) {
-                $m = "pimcore requires magic_quotes_gpc OFF";
-                Pimcore_Tool::exitWithError($m);
-            }
+            $m = "pimcore requires at least PHP version 5.4.0 your PHP version is: " . PHP_VERSION;
+            Pimcore_Tool::exitWithError($m);
         }
     }
 
