@@ -23,7 +23,7 @@
  *
  * @author Chris Chabot <chabotc@google.com>
  */
-class googleApcCache extends Google_Cache {
+class Google_APCCache extends Google_Cache {
 
   public function __construct() {
     if (! function_exists('apc_add')) {
