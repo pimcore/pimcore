@@ -148,12 +148,12 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
         Pimcore_File::put($this->getStoreageFile(), $data);
 
-        $saveBinaryData = function ($element, $rec) {
+        $saveBinaryData = function ($element, $rec, $scope) {
             // assets are kina special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
             if($element instanceof Asset) {
 
                 if($element->getType() != "folder") {
-                    $handle = fopen($this->getStorageFileBinary($element), "w+");
+                    $handle = fopen($scope->getStorageFileBinary($element), "w+");
                     $src = $element->getStream();
                     stream_copy_to_stream($src, $handle);
                     fclose($handle);
@@ -161,12 +161,12 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
                 $children = $element->getChilds();
                 foreach ($children as $child) {
-                    $rec($child, $rec);
+                    $rec($child, $rec, $scope);
                 }
             }
         };
 
-        $saveBinaryData($this->getElement(), $saveBinaryData);
+        $saveBinaryData($this->getElement(), $saveBinaryData, $this);
 
         chmod($this->getStoreageFile(), Pimcore_File::getDefaultMode());
     }
@@ -225,10 +225,10 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
     public function restoreChilds (Element_Interface $element) {
 
 
-        $restoreBinaryData = function ($element, $rec) {
+        $restoreBinaryData = function ($element, $scope) {
             // assets are kina special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
             if($element instanceof Asset) {
-                $binFile = $this->getStorageFileBinary($element);
+                $binFile = $scope->getStorageFileBinary($element);
                 if(file_exists($binFile)) {
                     $binaryHandle = fopen($binFile, "r+");
                     $element->setStream($binaryHandle);
@@ -236,7 +236,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
             }
         };
 
-        $restoreBinaryData($element, $restoreBinaryData);
+        $restoreBinaryData($element, $this);
 
         $element->save();
         

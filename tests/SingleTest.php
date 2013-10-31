@@ -7,7 +7,9 @@ class SingleTest extends Test_SuiteBase {
 
     public static function suite() {
         $suite = new SingleTest('Models');
-        $suite->addTest(TestSuite_Inheritance_AllTests::suite());
+        $suite->addTest(TestSuite_Rest_AllTests::suite());
 
         return $suite;
     }}
+
+?>
