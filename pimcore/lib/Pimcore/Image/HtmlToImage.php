@@ -80,12 +80,12 @@ class Pimcore_Image_HtmlToImage {
         $url .= (strpos($url, "?") ? "&" : "?") . "pimcore_preview=true";
 
 
-        $arguments = "--width " . $screenWidth . " --format " . $format . " \"" . $url . "\" " . $outputFile;
+        $arguments = " --width " . $screenWidth . " --format " . $format . " \"" . $url . "\" " . $outputFile;
 
         // use xvfb if possible
         if($xvfb = self::getXvfbBinary()) {
             $command = $xvfb . " --auto-servernum --server-args=\"-screen 0, 1280x1024x24\" " .
-                self::getWkhtmltoimageBinary() . " --use-xserver " . $arguments;
+                self::getWkhtmltoimageBinary() . " --use-xserver" . $arguments;
         } else {
             $command = self::getWkhtmltoimageBinary() . $arguments;
         }
