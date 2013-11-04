@@ -199,7 +199,7 @@ class Object_Class_Data_Checkbox extends Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($value)
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
     {
         return (bool)$value;
     }

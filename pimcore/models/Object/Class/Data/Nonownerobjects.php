@@ -233,7 +233,7 @@ class Object_Class_Data_Nonownerobjects extends Object_Class_Data_Objects {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport ($value) {
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null) {
         return null;
     }
 

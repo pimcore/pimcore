@@ -193,7 +193,7 @@ class Object_Class_Data_Geopoint extends Object_Class_Data_Geo_Abstract {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport ($value) {
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null) {
         if(empty($value)){
             return null;   
         } else {
