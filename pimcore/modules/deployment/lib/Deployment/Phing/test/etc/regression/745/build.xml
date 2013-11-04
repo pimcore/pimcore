@@ -1,5 +1,0 @@
-<project name="745" default="test">
-	<target name="test">
-		<mkdir dir="./testdir" mode="0777" />
-	</target>
-</project>

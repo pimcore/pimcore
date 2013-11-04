@@ -1,5 +1,0 @@
-@DARL@
-
-@Hello@
-
-@DARL2@
