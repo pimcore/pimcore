@@ -176,61 +176,89 @@ pimcore.asset.tree = Class.create({
                             this.activeUploads++;
 
                             var reader = new FileReader();
-                            reader.onload = function(file, node, win, e) {
 
-                                var boundary = '------multipartformboundary' + (new Date()).getTime();
-                                var dashdash = '--';
-                                var crlf     = '\r\n';
+                            // binary upload
+                            if(typeof reader["readAsBinaryString"] == "function") {
+                                reader.onload = function(file, node, win, e) {
 
-                                var builder = '';
+                                    var boundary = '------multipartformboundary' + (new Date()).getTime();
+                                    var dashdash = '--';
+                                    var crlf     = '\r\n';
 
-                                builder += dashdash;
-                                builder += boundary;
-                                builder += crlf;
+                                    var builder = '';
 
-                                var xhr = new XMLHttpRequest();
+                                    builder += dashdash;
+                                    builder += boundary;
+                                    builder += crlf;
 
-                                builder += 'Content-Disposition: form-data; name="Filedata"';
-                                if (file.name) {
-                                    builder += '; filename="' + file.name + '"';
-                                }
-                                builder += crlf;
+                                    var xhr = new XMLHttpRequest();
 
-                                builder += 'Content-Type: ' + file.type;
-                                builder += crlf;
-                                builder += crlf;
-
-
-
-                                builder += e.target.result;
-                                builder += crlf;
-
-                                builder += dashdash;
-                                builder += boundary;
-                                builder += crlf;
-
-                                builder += dashdash;
-                                builder += boundary;
-                                builder += dashdash;
-                                builder += crlf;
-
-                                xhr.open("POST", "/admin/asset/add-asset/?pimcore_admin_sid="
-                                                        + pimcore.settings.sessionId + "&parentId=" + node.id, true);
-                                xhr.setRequestHeader('content-type', 'multipart/form-data; boundary='
-                                    + boundary);
-                                xhr.sendAsBinary(builder);
-
-                                xhr.onload = function () {
-                                    this.activeUploads--;
-                                    if(this.activeUploads < 1) {
-                                        win.close();
-                                        node.reload();
+                                    builder += 'Content-Disposition: form-data; name="Filedata"';
+                                    if (file.name) {
+                                        builder += '; filename="' + file.name + '"';
                                     }
-                                }.bind(this,node,win);
+                                    builder += crlf;
 
-                            }.bind(this, file, node, win);
+                                    builder += 'Content-Type: ' + file.type;
+                                    builder += crlf;
+                                    builder += crlf;
 
-                            reader.readAsBinaryString(file);
+
+
+                                    builder += e.target.result;
+                                    builder += crlf;
+
+                                    builder += dashdash;
+                                    builder += boundary;
+                                    builder += crlf;
+
+                                    builder += dashdash;
+                                    builder += boundary;
+                                    builder += dashdash;
+                                    builder += crlf;
+
+                                    xhr.open("POST", "/admin/asset/add-asset/?pimcore_admin_sid="
+                                                            + pimcore.settings.sessionId + "&parentId=" + node.id, true);
+                                    xhr.setRequestHeader('content-type', 'multipart/form-data; boundary='
+                                        + boundary);
+                                    xhr.sendAsBinary(builder);
+
+                                    xhr.onload = function () {
+                                        this.activeUploads--;
+                                        if(this.activeUploads < 1) {
+                                            win.close();
+                                            node.reload();
+                                        }
+                                    }.bind(this,node,win);
+
+                                }.bind(this, file, node, win);
+
+                                reader.readAsBinaryString(file);
+                            } else if(typeof reader["readAsDataURL"] == "function") {
+                                // "text" base64 upload
+                                reader.onload = function(file, node, win, e) {
+
+                                    Ext.Ajax.request({
+                                        url: "/admin/asset/add-asset/",
+                                        method: "post",
+                                        params: {
+                                            type: "base64",
+                                            parentId: node.id,
+                                            filename: file.name,
+                                            data: e.target.result
+                                        },
+                                        success: function () {
+                                            this.activeUploads--;
+                                            if(this.activeUploads < 1) {
+                                                win.close();
+                                                node.reload();
+                                            }
+                                        }.bind(this,node,win)
+                                    });
+                                }.bind(this, file, node, win);
+
+                                reader.readAsDataURL(file);
+                            }
                         }
                     }
                 }.bind(this), true);
@@ -805,15 +833,19 @@ pimcore.asset.tree = Class.create({
 
         var el = Ext.get(node.getUI().getEl()).dom;
         try {
-            el.addEventListener("dragover", function (e) {
+
+            var fn = function (e) {
                 //e.stopPropagation();
                 e.preventDefault();
-                e.dataTransfer.dropEffect = 'copy';
-
                 node.select();
 
+                e.dataTransfer.dropEffect = 'copy';
+
                 return false;
-            }.bind(node),true);
+            };
+
+            el.addEventListener("dragenter", fn, true);
+            el.addEventListener("dragover", fn,true);
         }
         catch (e) {
             console.log(e);

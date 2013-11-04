@@ -217,6 +217,16 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     protected function addAsset () {
         $success = false;
 
+        if(array_key_exists("Filedata", $_FILES)) {
+            $filename = $_FILES["Filedata"]["name"];
+            $sourcePath = $_FILES["Filedata"]["tmp_name"];
+        } else if($this->getParam("type") == "base64") {
+            $filename = $this->getParam("filename");
+            $sourcePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/upload-base64" . uniqid() . ".tmp";
+            $data = preg_replace("@^data:[^,]+;base64,@", "", $this->getParam("data"));
+            Pimcore_File::put($sourcePath, base64_decode($data));
+        }
+
         if(!$this->getParam("parentId") && $this->getParam("parentPath")) {
             $parent = Asset::getByPath($this->getParam("parentPath"));
             if($parent instanceof Asset_Folder) {
@@ -229,7 +239,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $this->setParam("parentId", 1);
         }
 
-        $filename = Pimcore_File::getValidFilename($_FILES["Filedata"]["name"]);
+        $filename = Pimcore_File::getValidFilename($filename);
         if(empty($filename)) {
             throw new Exception("The filename of the asset is empty");
         }
@@ -243,7 +253,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
             $asset = Asset::create($this->getParam("parentId"), array(
                 "filename" => $filename,
-                "sourcePath" => $_FILES["Filedata"]["tmp_name"],
+                "sourcePath" => $sourcePath,
                 "userOwner" => $this->user->getId(),
                 "userModification" => $this->user->getId()
             ));
