@@ -63,8 +63,8 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         $this->config = $config;
         $this->view->config = $config;
         
-        
-        if (!$this->getParam("document")) {
+        $document = $this->getParam("document");
+        if (!$document instanceof Document) {
             Zend_Registry::set("pimcore_editmode", false);
             $this->editmode = false;
             $this->view->editmode = false;
@@ -87,7 +87,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
             return;
         }
         else {
-            $this->setDocument($this->getParam("document"));
+            $this->setDocument($document);
 
             // append meta-data to the headMeta() view helper,  if it is a document-request
             if(!Staticroute::getCurrentRoute() && ($this->getDocument() instanceof Document_Page)) {

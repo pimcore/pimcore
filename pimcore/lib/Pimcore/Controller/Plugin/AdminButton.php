@@ -35,8 +35,9 @@ class Pimcore_Controller_Plugin_AdminButton extends Zend_Controller_Plugin_Abstr
             if($user instanceof User) {
                 $body = $this->getResponse()->getBody();
 
-                if($this->getRequest()->getParam("document") && !Staticroute::getCurrentRoute()) {
-                    $documentId =    $this->getRequest()->getParam("document")->getId();
+                $document = $this->getRequest()->getParam("document");
+                if($document instanceof Document && !Staticroute::getCurrentRoute()) {
+                    $documentId = $document->getId();
                 }
 
                 $config = Pimcore_Config::getSystemConfig();
