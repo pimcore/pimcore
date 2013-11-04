@@ -137,30 +137,6 @@ CREATE TABLE `dependencies` (
 
 
 
-DROP TABLE IF EXISTS `deployment_packages`;
-CREATE TABLE `deployment_packages` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `type` varchar(50) NOT NULL,
-  `subType` varchar(50) NOT NULL,
-  `creationDate` bigint(20) NOT NULL,
-  `version` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-DROP TABLE IF EXISTS `deployment_target`;
-CREATE TABLE `deployment_target` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `parentId` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(255) NOT NULL,
-  `creationDate` bigint(20) unsigned NOT NULL,
-  `status` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
 DROP TABLE IF EXISTS `documents`;
 CREATE TABLE `documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,

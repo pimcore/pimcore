@@ -431,15 +431,6 @@ class Pimcore {
         if($conf->general->instanceIdentifier) {
             $broker->registerModule("Tool_UUID_Module");
         }
-
-        if(is_readable(PIMCORE_DEPLOYMENT_CONFIG_FILE)){
-            $deploymentConfig = new Zend_Config_Xml(PIMCORE_DEPLOYMENT_CONFIG_FILE);
-            if($deploymentConfig->enabled){
-                $broker->registerModule("Deployment_Module");
-                $setup = new Deployment_Setup();
-                $setup->run();
-            }
-        }
     }
 
     public static function initPlugins() {
@@ -599,7 +590,6 @@ class Pimcore {
         $autoloader->registerNamespace('Search');
         $autoloader->registerNamespace('Tool');
         $autoloader->registerNamespace('KeyValue');
-        $autoloader->registerNamespace('Deployment');
 
         Pimcore_Tool::registerClassModelMappingNamespaces();
     }

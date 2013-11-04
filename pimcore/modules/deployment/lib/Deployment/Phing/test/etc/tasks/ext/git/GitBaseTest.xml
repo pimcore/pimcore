@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<project name="git_test" default="main">
-    <target name="main" description="==>Git tasks UTs">
-		
-	</target>
-</project>

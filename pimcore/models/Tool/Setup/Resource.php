@@ -155,7 +155,6 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
             array("key" => "bounce_mail_inbox"),
             array("key" => "website_settings"),
             array("key" => "newsletter"),
-            array("key" => "deployment"),
         );
         foreach ($userPermissions as $up) {
             $this->db->insert("users_permission_definitions", $up);

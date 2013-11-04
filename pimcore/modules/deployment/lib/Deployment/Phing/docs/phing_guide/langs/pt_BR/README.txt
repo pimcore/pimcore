@@ -1,1 +1,0 @@
-This is a placeholder for the brazilian portuguese translation tree.

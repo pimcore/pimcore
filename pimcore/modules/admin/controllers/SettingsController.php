@@ -322,11 +322,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "proxy_port" => $values["httpclient.proxy_port"],
                 "proxy_user" => $values["httpclient.proxy_user"],
                 "proxy_pass" => $values["httpclient.proxy_pass"],
-            ),
-            //currently not activated
-            "deployment" => array(
-                "enabled" => 0,
-                "environment" => "live",
             )
         );
 
@@ -378,10 +373,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             }
         }
         $settings["newsletter"]["usespecific"] = $values["newsletter.usespecific"];
-
-
-        //@Todo: remove when deployment is enabled
-        if($oldValues['deployment']){ $settings['deployment'] = $oldValues['deployment'];}
 
         $config = new Zend_Config($settings, true);
         $writer = new Zend_Config_Writer_Xml(array(

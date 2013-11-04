@@ -65,15 +65,9 @@ $includePaths = array(
     PIMCORE_WEBSITE_PATH . "/lib",
     PIMCORE_WEBSITE_PATH . "/models",
     PIMCORE_PATH . "/modules/searchadmin/models",
-    PIMCORE_CLASS_DIRECTORY,
-    PIMCORE_PATH . "/modules/deployment/models"
+    PIMCORE_CLASS_DIRECTORY
 );
 set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
-
-$deploymentStartup = PIMCORE_PATH . '/modules/deployment/config/startup.php';
-if(@is_file($deploymentStartup)) {
-    require_once($deploymentStartup);
-}
 
 // helper functions
 include(dirname(__FILE__) . "/helper.php");
