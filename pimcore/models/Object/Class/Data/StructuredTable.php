@@ -422,7 +422,7 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport ($value) {
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null) {
         if(empty($value)){
             return null;
         } else {

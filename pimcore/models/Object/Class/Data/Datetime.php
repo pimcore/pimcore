@@ -196,7 +196,7 @@ class Object_Class_Data_Datetime extends Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($value)
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
     {
         $timestamp = strtotime($value);
         if (empty($value)) {

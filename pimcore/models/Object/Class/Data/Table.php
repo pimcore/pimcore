@@ -337,7 +337,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      * @param null $object
      * @return array|mixed
      */
-    public function getFromWebserviceImport($value, $object = null)
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
     {
         if ($value && is_array($value)) {
             $result = array();
