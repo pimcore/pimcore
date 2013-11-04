@@ -79,10 +79,15 @@ $styles = array(
 ?>
 
 <!-- stylesheets -->
-<?php foreach ($styles as $style) { ?>
-    <link rel="stylesheet" type="text/css" href="<?php echo $style ?>?_dc=<?php echo Pimcore_Version::$revision ?>" />
-<?php } ?>
-
+<style type="text/css">
+    <?php
+    // use @import here, because if IE9 CSS file limitations (31 files)
+    // see also: http://blogs.telerik.com/blogs/posts/10-05-03/internet-explorer-css-limits.aspx
+    // @import bypasses this problem in an elegant way
+    foreach ($styles as $style) { ?>
+        @import url(<?php echo $style ?>?_dc=<?php echo Pimcore_Version::$revision ?>);
+    <?php } ?>
+</style>
 
 
 
