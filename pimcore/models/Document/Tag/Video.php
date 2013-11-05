@@ -664,6 +664,9 @@ class Document_Tag_Video extends Document_Tag
         $code .= '<meta itemprop="url" content="' . Pimcore_Tool::getHostUrl() . $_SERVER["REQUEST_URI"] . ($_SERVER["QUERY_STRING"] ? ("?" .$_SERVER["QUERY_STRING"]) : "") . '" />' . "\n";
         $code .= '<meta itemprop="thumbnail" content="' . Pimcore_Tool::getHostUrl() . $thumbnail . '" />' . "\n";
         $code .= '<video class="pimcore_video" width="' . $this->getWidth() . '" height="' . $this->getHeight() . '" poster="' . $thumbnail . '" controls="controls" preload="none">' . "\n";
+
+        $urls = array_reverse($urls); // use webm as the preferred format
+
             foreach ($urls as $type => $url) {
                 $code .= '<source type="video/' . $type . '" src="' . $url . '" />' . "\n";
             }
