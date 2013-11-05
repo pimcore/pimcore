@@ -514,20 +514,6 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => $ffmpegBin ? "ok" : "warning"
         );
 
-
-        // QT-FASTSTART BIN
-        try {
-            $qtfaststartBin = (bool) Pimcore_Video_Adapter_Ffmpeg::getQtfaststartCli();
-        } catch (Exception $e) {
-            $qtfaststartBin = false;
-        }
-
-        $checksApps[] = array(
-            "name" => "qt-faststart (CLI)",
-            "state" => $qtfaststartBin ? "ok" : "warning"
-        );
-
-
         // WKHTMLTOIMAGE BIN
         try {
             $wkhtmltopdfBin = (bool) Pimcore_Image_HtmlToImage::getWkhtmltoimageBinary();

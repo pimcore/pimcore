@@ -115,7 +115,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
                 // `-coder 0 -bf 0 -flags2 -wpred-dct8x8 -wpredp 0´ is the same as to -vpre baseline, using this to avid problems with missing preset files
                 // Some flags used were deprecated already
                 // todo set the -x264opts flag correctly and get profiles working as they should.
-                $arguments = "-strict experimental -f mp4 -vcodec libx264 -acodec aac -g 100 " . $arguments;
+                $arguments = "-strict experimental -f mp4 -vcodec libx264 -acodec aac -g 100 -pix_fmt yuv420p -movflags faststart " . $arguments;
             } else if($this->getFormat() == "webm") {
                 $arguments = "-f webm -vcodec libvpx -acodec libvorbis -ar 44000 -g 100 " . $arguments;
             } else {
@@ -130,60 +130,6 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         } else {
             throw new Exception("There is no destination file for video converter");
         }
-    }
-
-    /**
-     * @static
-     * @return bool|string
-     */
-    public static function getQtfaststartCli () {
-
-        if(Pimcore_Config::getSystemConfig()->assets->qtfaststart) {
-            if(@is_executable(Pimcore_Config::getSystemConfig()->assets->qtfaststart)) {
-                return Pimcore_Config::getSystemConfig()->assets->qtfaststart;
-            } else {
-                Logger::critical("qtfaststart binary: " . Pimcore_Config::getSystemConfig()->assets->qtfaststart . " is not executable");
-            }
-        }
-
-        $paths = array(
-            "/usr/bin/qtfaststart",
-            "/usr/local/bin/qtfaststart",
-            "/bin/qtfaststart",
-            realpath(PIMCORE_DOCUMENT_ROOT . "/../qt-faststart/qt-faststart.exe") // for windows sample package (XAMPP)
-        );
-        foreach ($paths as $path) {
-            if(@is_executable($path)) {
-                return $path;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function addMp4MetaData () {
-
-        if(isset($this->__mp4MetaDataAdded)) {
-            return;
-        }
-
-        if(self::getQtfaststartCli()) {
-            $tmpFile = $this->getDestinationFile() . ".tmp-qt-faststart";
-            $cmd = self::getQtfaststartCli() . " " . $this->getDestinationFile() . " " . $tmpFile;
-            Pimcore_Tool_Console::exec($cmd);
-
-            if(filesize($tmpFile) >= filesize($this->getDestinationFile())) {
-                unlink($this->getDestinationFile());
-                rename($tmpFile, $this->getDestinationFile());
-            }
-        } else {
-            Logger::error("qtfaststart is not installed on your system, unable to move (to the beginning -> pseudo streaming) metadata in the converted mp4 file: " . $this->getDestinationFile());
-        }
-
-        $this->__mp4MetaDataAdded = true;
     }
 
     /**
@@ -290,11 +236,6 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
 
         if(!$percent) {
             $percent = 1;
-        }
-
-        // add flash video metadata when conversion is finished
-        if($percent > 99 && $this->getFormat() == "mp4") {
-            $this->addMp4MetaData();
         }
 
         Logger::debug("Video transcoding status of " . $this->getDestinationFile() . ": " . $percent . " - " . $this->getFormat());
