@@ -2,6 +2,7 @@
 
 class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends OnlineShop_Framework_FilterService_SelectFromMultiSelect
 {
+
     /**
      * @param OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition
      * @param OnlineShop_Framework_ProductList                  $productList
@@ -10,13 +11,16 @@ class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends Onli
      * @return string[]
      */
     public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter) {
+
+        $field = $this->getField($filterDefinition);
+
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
         } else {
             $script = $this->script;
         }
 
-        $rawValues = $productList->getGroupByValues($filterDefinition->getField(), true, !$filterDefinition->getUseAndCondition());
+        $rawValues = $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
 
         $values = array();
         foreach($rawValues as $v) {
@@ -35,9 +39,9 @@ class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends Onli
         return $this->view->partial($script, array(
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$filterDefinition->getField()],
+            "currentValue" => $currentFilter[$field],
             "values" => array_values($values),
-            "fieldname" => $filterDefinition->getField()
+            "fieldname" => $field
         ));
     }
 
@@ -52,24 +56,27 @@ class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends Onli
      * @return string[]
      */
     public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false) {
-        $value = $params[$filterDefinition->getField()];
+        $field = $this->getField($filterDefinition);
+        $preSelect = $this->getPreSelect($filterDefinition);
+
+        $value = $params[$field];
 
 
-        if(empty($value)) {
-            $value = explode(",", $filterDefinition->getPreSelect());
+        if(empty($value) && !$params['is_reload']) {
+            $value = explode(",", $preSelect);
 
             foreach($value as $key => $v) {
                 if(!$v) {
                     unset($value[$key]);
                 }
             }
-        } else if(in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
+        } else if(!empty($value) && in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
         }
 
       //  $value = trim($value);
 
-        $currentFilter[$filterDefinition->getField()] = $value;
+        $currentFilter[$field] = $value;
 
 
         if(!empty($value)) {
@@ -78,7 +85,7 @@ class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends Onli
             $quotedValues = array();
             foreach($value as $v) {
                 $v =   "%" . OnlineShop_Framework_IndexService_Tenant_Worker::MULTISELECT_DELIMITER  . $v .  OnlineShop_Framework_IndexService_Tenant_Worker::MULTISELECT_DELIMITER . "%" ;
-                $quotedValues[] = $filterDefinition->getField(). ' like '.$productList->quote($v);
+                $quotedValues[] = $field . ' like '.$productList->quote($v);
             }
 
             if($filterDefinition->getUseAndCondition()) {
@@ -91,9 +98,9 @@ class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends Onli
             if(!empty($quotedValues)) {
 
                 if($isPrecondition) {
-                    $productList->addCondition($quotedValues, "PRECONDITION_" . $filterDefinition->getField());
+                    $productList->addCondition($quotedValues, "PRECONDITION_" . $field);
                 } else {
-                    $productList->addCondition($quotedValues, $filterDefinition->getField());
+                    $productList->addCondition($quotedValues, $field);
                 }
             }
 

@@ -35,6 +35,23 @@ class OnlineShop_Framework_FilterService {
         }
     }
 
+    /**
+     * @return OnlineShop_Framework_FilterService_FilterGroupHelper
+     * @throws Exception
+     */
+    public function getFilterGroupHelper() {
+        if(!$this->filterGroupHelper) {
+            $classname = (string)$this->config->helper;
+            if(!class_exists($classname)) {
+                Logger::warn("FilterGroupHelper " . $classname . " does not exist, using default implementation.");
+                $classname = "OnlineShop_Framework_FilterService_FilterGroupHelper";
+            }
+
+            $this->filterGroupHelper = new $classname();
+        }
+        return $this->filterGroupHelper;
+    }
+
 
     /**
      * Initializes the FilterService, adds all conditions to the ProductList and returns an array of the currently set filters

@@ -55,67 +55,33 @@
 						"visibleSearch":false
 					},
 					{
-						"fieldtype":"indexFieldSelectionCombo",
-						"specificPriceField":"",
-						"showAllFields":"",
+						"fieldtype":"indexFieldSelection",
+						"queryColumnType":{
+							"tenant":"varchar(100)",
+							"field":"varchar(200)",
+							"preSelect":"text"
+						},
+						"columnType":{
+							"tenant":"varchar(100)",
+							"field":"varchar(200)",
+							"preSelect":"text"
+						},
+						"phpdocType":"Object_Data_IndexFieldSelection",
 						"considerTenants":false,
-						"options":[
-							{
-								"key":"name",
-								"value":"name"
-							},
-							{
-								"key":"gender",
-								"value":"gender"
-							},
-							{
-								"key":"color",
-								"value":"color"
-							},
-							{
-								"key":"size",
-								"value":"size"
-							},
-							{
-								"key":"features",
-								"value":"features"
-							}
+						"multiPreSelect":"remote_single",
+						"filterGroups":"multiselect",
+						"predefinedPreSelectOptions":[
+
 						],
-						"width":300,
-						"queryColumnType":"varchar(255)",
-						"columnType":"varchar(255)",
-						"phpdocType":"string",
 						"name":"field",
 						"title":"Field",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
-						"locked":false,
+						"index":false,
+						"locked":null,
 						"style":"",
-						"permissions":"",
-						"datatype":"data",
-						"relationType":false,
-						"invisible":false,
-						"visibleGridView":false,
-						"visibleSearch":false
-					},
-					{
-						"fieldtype":"input",
-						"width":"300",
-						"queryColumnType":"varchar",
-						"columnType":"varchar",
-						"columnLength":"255",
-						"phpdocType":"string",
-						"name":"preSelect",
-						"title":"Pre Select",
-						"tooltip":"",
-						"mandatory":false,
-						"noteditable":false,
-						"index":"",
-						"locked":false,
-						"style":"",
-						"permissions":"",
+						"permissions":null,
 						"datatype":"data",
 						"relationType":false,
 						"invisible":false,

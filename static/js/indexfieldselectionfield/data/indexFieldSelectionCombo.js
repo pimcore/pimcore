@@ -41,7 +41,7 @@ pimcore.object.classes.data.indexFieldSelectionCombo = Class.create(pimcore.obje
     },
 
     getGroup: function () {
-        return "other";
+        return "ecommerce";
     },
 
     getIconClass: function () {

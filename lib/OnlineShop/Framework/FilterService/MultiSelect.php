@@ -3,6 +3,8 @@
 class OnlineShop_Framework_FilterService_MultiSelect extends OnlineShop_Framework_FilterService_AbstractFilterType {
 
     public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter) {
+        $field = $this->getField($filterDefinition);
+
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
         } else {
@@ -11,22 +13,25 @@ class OnlineShop_Framework_FilterService_MultiSelect extends OnlineShop_Framewor
         return $this->view->partial($script, array(
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$filterDefinition->getField()],
-            "values" => $productList->getGroupByValues($filterDefinition->getField(), true, !$filterDefinition->getUseAndCondition()),
-            "fieldname" => $filterDefinition->getField()
+            "currentValue" => $currentFilter[$field],
+            "values" => $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition()),
+            "fieldname" => $field
         ));
     }
 
     public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false) {
-        $value = $params[$filterDefinition->getField()];
+        $field = $this->getField($filterDefinition);
+        $preSelect = $this->getPreSelect($filterDefinition);
 
-        if(empty($value)) {
-            $value = explode(",", $filterDefinition->getPreSelect());
-        } else if(in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
+        $value = $params[$field];
+
+        if(empty($value) && !$params['is_reload']) {
+            $value = explode(",", $preSelect);
+        } else if(!empty($value) && in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
         }
 
-        $currentFilter[$filterDefinition->getField()] = $value;
+        $currentFilter[$field] = $value;
 
         if(!empty($value)) {
             $quotedValues = array();
@@ -39,16 +44,16 @@ class OnlineShop_Framework_FilterService_MultiSelect extends OnlineShop_Framewor
                 if($filterDefinition->getUseAndCondition()) {
                     foreach ($quotedValues as $value) {
                         if($isPrecondition) {
-                            $productList->addCondition($filterDefinition->getField() . " = " . $value, "PRECONDITION_" . $filterDefinition->getField());
+                            $productList->addCondition($field . " = " . $value, "PRECONDITION_" . $field);
                         } else {
-                            $productList->addCondition($filterDefinition->getField() . " = " . $value, $filterDefinition->getField());
+                            $productList->addCondition($field . " = " . $value, $field);
                         }
                     }
                 } else {
                     if($isPrecondition) {
-                        $productList->addCondition($filterDefinition->getField() . " IN (" . implode(",", $quotedValues) . ")", "PRECONDITION_" . $filterDefinition->getField());
+                        $productList->addCondition($field . " IN (" . implode(",", $quotedValues) . ")", "PRECONDITION_" . $field);
                     } else {
-                        $productList->addCondition($filterDefinition->getField() . " IN (" . implode(",", $quotedValues) . ")", $filterDefinition->getField());
+                        $productList->addCondition($field . " IN (" . implode(",", $quotedValues) . ")", $field);
                     }
                 }
 

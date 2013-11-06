@@ -24,6 +24,8 @@
             <path>/OnlineShop/static/js/indexfieldselectionfield/tags/indexFieldSelectionField.js</path>
             <path>/OnlineShop/static/js/indexfieldselectionfield/data/indexFieldSelectionCombo.js</path>
             <path>/OnlineShop/static/js/indexfieldselectionfield/tags/indexFieldSelectionCombo.js</path>
+            <path>/OnlineShop/static/js/indexfieldselectionfield/data/indexFieldSelection.js</path>
+            <path>/OnlineShop/static/js/indexfieldselectionfield/tags/indexFieldSelection.js</path>
             <path>/OnlineShop/static/js/plugin.js</path>
             <path>/OnlineShop/static/js/pricing/config/panel.js</path>
             <path>/OnlineShop/static/js/pricing/config/item.js</path>

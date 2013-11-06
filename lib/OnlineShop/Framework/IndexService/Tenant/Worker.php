@@ -8,6 +8,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
     protected $searchColumnConfig;
 
     protected $indexColumns;
+    protected $filterGroups;
 
     /**
      * @var OnlineShop_Framework_IndexService_Tenant_AbstractConfig
@@ -271,10 +272,6 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
 
                 $this->db->query($insert);
 
-//                $resultCount = $this->db->update($this->tenantConfig->getTablename(), $data, "o_id = " . $object->getId());
-//                if(!$resultCount) {
-//                    throw new Exception("Entry not added yet");
-//                }
             } catch (Exception $e) {
                 try {
                     $this->db->insert($this->tenantConfig->getTablename(), $data);
@@ -347,7 +344,29 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
 
         return $this->indexColumns;
     }
-    
+
+    public function getIndexColumnsByFilterGroup($filterGroup) {
+        $this->getAllFilterGroups();
+        return $this->filterGroups[$filterGroup];
+    }
+
+    public function getAllFilterGroups() {
+        if(empty($this->filterGroups)) {
+            $this->filterGroups = array();
+            $this->filterGroups['system'] = array_diff($this->getSystemColumns(), array("categoryIds"));
+            $this->filterGroups['category'] = array("categoryIds");
+
+
+            foreach($this->columnConfig->column as $column) {
+                if($column->filtergroup) {
+                    $this->filterGroups[(string)$column->filtergroup][] = (string)$column->name;
+                }
+            }
+        }
+
+        return array_keys($this->filterGroups);
+    }
+
 
     private function getAllColumns() {
         return array_merge($this->getSystemColumns(), $this->getIndexColumns());

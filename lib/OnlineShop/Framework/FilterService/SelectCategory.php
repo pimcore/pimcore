@@ -48,7 +48,7 @@ class OnlineShop_Framework_FilterService_SelectCategory extends OnlineShop_Frame
 
         if($value == OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } else if(empty($value)) {
+        } else if(empty($value) && !$params['is_reload']) {
             $value = $filterDefinition->getPreSelect();
             if(is_object($value)) {
                 $value = $value->getId();

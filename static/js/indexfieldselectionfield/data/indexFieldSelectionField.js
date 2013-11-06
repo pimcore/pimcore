@@ -27,7 +27,7 @@ pimcore.object.classes.data.indexFieldSelectionField = Class.create(pimcore.obje
     },
 
     getGroup: function () {
-            return "other";
+            return "ecommerce";
     },
 
 

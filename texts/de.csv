@@ -30,3 +30,14 @@ plugin_onlineshop_pricing_config_action_cart_discount_percent,"Prozent"
 plugin_onlineshop_pricing_config_action_product_discount,"Artikel Nachlass"
 plugin_onlineshop_pricing_config_action_product_discount_percent,"Artikel Nachlass"
 plugin_onlineshop_pricing_config_action_free_shipping,"Versandkostenfrei"
+ecommerce, E-Commerce
+preSelectMode,Vorauswahlmodus
+remote_single,Einfachauswahl von Serverliste
+remote_multi,Mehrfachauswahl von Serverliste
+local_single,Einfachauswahl von vordefinierter Liste
+local_multi,Mehrfachauswahl von vordefinierter Liste
+indexFieldSelection,Indexfeldauswahl
+indexFieldSelection_settings,Indexfeldauswahl Einstellungen
+filtergroups,Filtergruppen
+preSelect,Vorauswahl
+predefined_pre_select_options,Vordefinierte Vorauswahlsliste

@@ -91,6 +91,39 @@ class OnlineShop_Framework_IndexService {
         return $this->defaultWorker->getIndexColumns($considerHideInFieldList);
     }
 
+    public function getAllFilterGroups($tenant = null) {
+        if(empty($tenant)) {
+            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentTenant();
+        }
+
+        if($tenant) {
+            if(array_key_exists($tenant, $this->tenantWorkers)) {
+                return $this->tenantWorkers[$tenant]->getAllFilterGroups();
+            } else {
+                throw new OnlineShop_Framework_Exception_InvalidConfigException("Tenant $tenant doesn't exist.");
+            }
+        }
+
+        return $this->defaultWorker->getAllFilterGroups();
+    }
+
+    public function getIndexColumnsByFilterGroup($filterType, $tenant = null) {
+        if(empty($tenant)) {
+            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentTenant();
+        }
+
+        if($tenant) {
+            if(array_key_exists($tenant, $this->tenantWorkers)) {
+                return $this->tenantWorkers[$tenant]->getIndexColumnsByFilterGroup($filterType);
+            } else {
+                throw new OnlineShop_Framework_Exception_InvalidConfigException("Tenant $tenant doesn't exist.");
+            }
+        }
+
+        return $this->defaultWorker->getIndexColumnsByFilterGroup($filterType);
+    }
+
+
     /**
      * @return OnlineShop_Framework_IndexService_Tenant_AbstractConfig
      * @throws OnlineShop_Framework_Exception_InvalidConfigException

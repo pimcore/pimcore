@@ -113,6 +113,10 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
         $this->conditions[$fieldname][] = $condition;
     }
 
+    public function resetCondition($fieldname) {
+        unset($this->conditions[$fieldname]);
+    }
+
     /**
      * @param string $fieldname
      * @param string $condition
@@ -399,12 +403,12 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
                     if($condition) {
                         $condition .= " AND ";
                     }
-                    $condition .= $cond;
+                    $condition .= "(" . $cond . ")";
                 }
             }
         }
 
-        OnlineShop_Plugin::getSQLLogger()->log("User specific Condition Part: " . $cond, Zend_Log::INFO);
+        OnlineShop_Plugin::getSQLLogger()->log("User specific Condition Part: " . $condition, Zend_Log::INFO);
         return $condition;
     }
 

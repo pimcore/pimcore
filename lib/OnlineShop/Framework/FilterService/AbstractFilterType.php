@@ -18,6 +18,27 @@ abstract class OnlineShop_Framework_FilterService_AbstractFilterType {
         $this->config = $config;
     }
 
+
+
+    protected function getField(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition) {
+        $field = $filterDefinition->getField();
+        if($field instanceof Object_Data_IndexFieldSelection) {
+            return $field->getField();
+        }
+        return $field;
+    }
+
+    protected function getPreSelect(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition) {
+        $field = $filterDefinition->getField();
+        if($field instanceof Object_Data_IndexFieldSelection) {
+            return $field->getPreSelect();
+        } else if(method_exists($filterDefinition, "getPreSelect")) {
+            return $filterDefinition->getPreSelect();
+        }
+        return null;
+    }
+
+
     /**
      * @abstract
      * @param OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition

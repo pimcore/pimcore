@@ -3,8 +3,9 @@
 class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_Framework_FilterService_AbstractFilterType {
 
     public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter) {
+        $field = $this->getField($filterDefinition);
 
-        $values = $productList->getGroupByRelationValues($filterDefinition->getField(), true, !$filterDefinition->getUseAndCondition());
+        $values = $productList->getGroupByRelationValues($field, true, !$filterDefinition->getUseAndCondition());
 
         $objects = array();
         Logger::log("Load Objects...", Zend_Log::INFO);
@@ -28,10 +29,10 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_
         return $this->view->partial($script, array(
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$filterDefinition->getField()],
+            "currentValue" => $currentFilter[$field],
             "values" => $values,
             "objects" => $objects,
-            "fieldname" => $filterDefinition->getField()
+            "fieldname" => $field
         ));
     }
 
@@ -47,22 +48,35 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_
     }
 
     public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false) {
-        $value = $params[$filterDefinition->getField()];
+        $field = $this->getField($filterDefinition);
+        $preSelect = $this->getPreSelect($filterDefinition);
 
-        if(empty($value)) {
-            $objects = $filterDefinition->getPreSelect();
+
+        $value = $params[$field];
+
+        if(empty($value) && !$params['is_reload']) {
+            $objects = $preSelect;
             $value = array();
+
+            if(!is_array($objects)) {
+                $objects = explode(",", $objects);
+            }
+
             if (is_array($objects)){
                 foreach($objects as $o) {
-                    $value[] = $o->getId();
+                    if(is_object($o)) {
+                        $value[] = $o->getId();
+                    } else {
+                        $value[] = $o;
+                    }
                 }
             }
 
-        } else if(in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
+        } else if(!empty($value) && in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
         }
 
-        $currentFilter[$filterDefinition->getField()] = $value;
+        $currentFilter[$field] = $value;
 
         if(!empty($value)) {
             $quotedValues = array();
@@ -74,10 +88,10 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_
             if(!empty($quotedValues)) {
                 if($filterDefinition->getUseAndCondition()) {
                     foreach ($quotedValues as $value) {
-                        $productList->addRelationCondition($filterDefinition->getField(), "dest = " . $value);
+                        $productList->addRelationCondition($field, "dest = " . $value);
                     }
                 } else {
-                    $productList->addRelationCondition($filterDefinition->getField(),  "dest IN (" . implode(",", $quotedValues) . ")");
+                    $productList->addRelationCondition($field,  "dest IN (" . implode(",", $quotedValues) . ")");
                 }
             }
         }

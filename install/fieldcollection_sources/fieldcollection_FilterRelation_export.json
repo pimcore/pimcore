@@ -34,17 +34,17 @@
 				"childs":[
 					{
 						"fieldtype":"input",
-						"width":"300",
+						"width":300,
 						"queryColumnType":"varchar",
 						"columnType":"varchar",
-						"columnLength":"255",
+						"columnLength":255,
 						"phpdocType":"string",
 						"name":"label",
 						"title":"Label",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",
@@ -55,117 +55,35 @@
 						"visibleSearch":false
 					},
 					{
-						"fieldtype":"indexFieldSelectionCombo",
-						"specificPriceField":"",
-						"showAllFields":"",
+						"fieldtype":"indexFieldSelection",
+						"queryColumnType":{
+							"tenant":"varchar(100)",
+							"field":"varchar(200)",
+							"preSelect":"text"
+						},
+						"columnType":{
+							"tenant":"varchar(100)",
+							"field":"varchar(200)",
+							"preSelect":"text"
+						},
+						"phpdocType":"Object_Data_IndexFieldSelection",
 						"considerTenants":false,
-						"options":[
-							{
-								"key":"name",
-								"value":"name"
-							},
-							{
-								"key":"shortDescription",
-								"value":"shortDescription"
-							},
-							{
-								"key":"supplierRemoteId",
-								"value":"supplierRemoteId"
-							},
-							{
-								"key":"mainImage",
-								"value":"mainImage"
-							},
-							{
-								"key":"weight",
-								"value":"weight"
-							},
-							{
-								"key":"specialFeatures",
-								"value":"specialFeatures"
-							},
-							{
-								"key":"bundledSoftware",
-								"value":"bundledSoftware"
-							},
-							{
-								"key":"warranty",
-								"value":"warranty"
-							},
-							{
-								"key":"totalStorageCapacity",
-								"value":"totalStorageCapacity"
-							},
-							{
-								"key":"processorClockSpeed",
-								"value":"processorClockSpeed"
-							},
-							{
-								"key":"compatibleOperatingSystems",
-								"value":"compatibleOperatingSystems"
-							},
-							{
-								"key":"hardDiskRotationalSpeed",
-								"value":"hardDiskRotationalSpeed"
-							},
-							{
-								"key":"hardDiskDriveCapacity",
-								"value":"hardDiskDriveCapacity"
-							},
-							{
-								"key":"accessories",
-								"value":"accessories"
-							}
+						"multiPreSelect":"remote_single",
+						"filterGroups":"relation",
+						"predefinedPreSelectOptions":[
+
 						],
-						"width":300,
-						"queryColumnType":"varchar(255)",
-						"columnType":"varchar(255)",
-						"phpdocType":"string",
 						"name":"field",
 						"title":"Field",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
-						"locked":false,
+						"index":false,
+						"locked":null,
 						"style":"",
-						"permissions":"",
+						"permissions":null,
 						"datatype":"data",
 						"relationType":false,
-						"invisible":false,
-						"visibleGridView":false,
-						"visibleSearch":false
-					},
-					{
-						"fieldtype":"href",
-						"width":300,
-						"assetUploadPath":"",
-						"relationType":true,
-						"queryColumnType":{
-							"id":"int(11)",
-							"type":"enum('document','asset','object')"
-						},
-						"phpdocType":"Document_Page | Document_Snippet | Document | Asset | Object_Abstract",
-						"objectsAllowed":"",
-						"assetsAllowed":"",
-						"assetTypes":"",
-						"documentsAllowed":"",
-						"documentTypes":"",
-						"lazyLoading":"",
-						"classes":[
-
-						],
-						"name":"preSelect",
-						"title":"preSelect",
-						"tooltip":"",
-						"mandatory":false,
-						"noteditable":false,
-						"index":"",
-						"locked":false,
-						"style":"",
-						"permissions":"",
-						"datatype":"data",
-						"columnType":"",
 						"invisible":false,
 						"visibleGridView":false,
 						"visibleSearch":false
@@ -216,7 +134,7 @@
 						"mandatory":false,
 						"noteditable":false,
 						"index":false,
-						"locked":null,
+						"locked":false,
 						"style":"",
 						"permissions":null,
 						"datatype":"data",

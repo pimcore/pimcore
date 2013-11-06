@@ -3,8 +3,10 @@
 class OnlineShop_Framework_FilterService_SelectRelation extends OnlineShop_Framework_FilterService_AbstractFilterType {
 
     public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter) {
+        $field = $this->getField($filterDefinition);
 
-        $values = $productList->getGroupByRelationValues($filterDefinition->getField(), true);
+
+        $values = $productList->getGroupByRelationValues($field, true);
 
         $objects = array();
         Logger::log("Load Objects...", Zend_Log::INFO);
@@ -29,10 +31,10 @@ class OnlineShop_Framework_FilterService_SelectRelation extends OnlineShop_Frame
         return $this->view->partial($script, array(
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$filterDefinition->getField()],
+            "currentValue" => $currentFilter[$field],
             "values" => $values,
             "objects" => $objects,
-            "fieldname" => $filterDefinition->getField()
+            "fieldname" => $field
         ));
     }
 
@@ -49,25 +51,34 @@ class OnlineShop_Framework_FilterService_SelectRelation extends OnlineShop_Frame
 
 
     public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false) {
-        $value = $params[$filterDefinition->getField()];
+        $field = $this->getField($filterDefinition);
+        $preSelect = $this->getPreSelect($filterDefinition);
 
-        if(empty($value)) {
-            $o = $filterDefinition->getPreSelect();
+
+        $value = $params[$field];
+
+        if(empty($value) && !$params['is_reload']) {
+            $o = $preSelect;
             if(!empty($o)) {
-                $value = $o->getId();
+                if(is_object($o)) {
+                    $value = $o->getId();
+                } else {
+                    $value = $o;
+                }
+
             }
         } else if($value == OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING) {
             $value = null;
         }
 
-        $currentFilter[$filterDefinition->getField()] = $value;
+        $currentFilter[$field] = $value;
 
 
         if(!empty($value)) {
 //            if($isPrecondition) {
 //                $productList->addRelationCondition("PRECONDITION_" . $filterDefinition->getField(),  "dest = " . $productList->quote($value));
 //            } else {
-                $productList->addRelationCondition($filterDefinition->getField(),  "dest = " . $productList->quote($value));
+                $productList->addRelationCondition($field,  "dest = " . $productList->quote($value));
 //            }
 
         }

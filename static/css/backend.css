@@ -3,3 +3,12 @@
 .pimcore_icon_indexFieldSelectionCombo {
     background: url("/pimcore/static/img/icon/objectid.png") no-repeat scroll left center transparent !important;
 }
+
+.pimcore_icon_indexFieldSelection {
+    background: url("/pimcore/static/img/icon/database_table.png") no-repeat scroll left center transparent !important;
+}
+
+
+.pimcore_icon_data_group_ecommerce {
+    background: url("/pimcore/static/img/icon/cart_full.png") no-repeat !important;
+}

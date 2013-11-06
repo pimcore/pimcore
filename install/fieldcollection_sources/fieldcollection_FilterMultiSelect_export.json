@@ -55,103 +55,33 @@
 						"visibleSearch":false
 					},
 					{
-						"fieldtype":"indexFieldSelectionCombo",
-						"specificPriceField":"",
-						"showAllFields":"",
+						"fieldtype":"indexFieldSelection",
+						"queryColumnType":{
+							"tenant":"varchar(100)",
+							"field":"varchar(200)",
+							"preSelect":"text"
+						},
+						"columnType":{
+							"tenant":"varchar(100)",
+							"field":"varchar(200)",
+							"preSelect":"text"
+						},
+						"phpdocType":"Object_Data_IndexFieldSelection",
 						"considerTenants":false,
-						"options":[
-							{
-								"key":"name",
-								"value":"name"
-							},
-							{
-								"key":"shortDescription",
-								"value":"shortDescription"
-							},
-							{
-								"key":"supplierRemoteId",
-								"value":"supplierRemoteId"
-							},
-							{
-								"key":"mainImage",
-								"value":"mainImage"
-							},
-							{
-								"key":"weight",
-								"value":"weight"
-							},
-							{
-								"key":"specialFeatures",
-								"value":"specialFeatures"
-							},
-							{
-								"key":"bundledSoftware",
-								"value":"bundledSoftware"
-							},
-							{
-								"key":"warranty",
-								"value":"warranty"
-							},
-							{
-								"key":"totalStorageCapacity",
-								"value":"totalStorageCapacity"
-							},
-							{
-								"key":"processorClockSpeed",
-								"value":"processorClockSpeed"
-							},
-							{
-								"key":"compatibleOperatingSystems",
-								"value":"compatibleOperatingSystems"
-							},
-							{
-								"key":"hardDiskRotationalSpeed",
-								"value":"hardDiskRotationalSpeed"
-							},
-							{
-								"key":"hardDiskDriveCapacity",
-								"value":"hardDiskDriveCapacity"
-							},
-							{
-								"key":"accessories",
-								"value":"accessories"
-							}
+						"multiPreSelect":"remote_multi",
+						"filterGroups":"string",
+						"predefinedPreSelectOptions":[
+
 						],
-						"width":300,
-						"queryColumnType":"varchar(255)",
-						"columnType":"varchar(255)",
-						"phpdocType":"string",
 						"name":"field",
 						"title":"Field",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
-						"locked":false,
+						"index":false,
+						"locked":null,
 						"style":"",
-						"permissions":"",
-						"datatype":"data",
-						"relationType":false,
-						"invisible":false,
-						"visibleGridView":false,
-						"visibleSearch":false
-					},
-					{
-						"fieldtype":"textarea",
-						"width":300,
-						"height":"",
-						"queryColumnType":"longtext",
-						"columnType":"longtext",
-						"phpdocType":"string",
-						"name":"preSelect",
-						"title":"Pre Select",
-						"tooltip":"",
-						"mandatory":false,
-						"noteditable":false,
-						"index":"",
-						"locked":false,
-						"style":"",
-						"permissions":"",
+						"permissions":null,
 						"datatype":"data",
 						"relationType":false,
 						"invisible":false,
@@ -160,20 +90,41 @@
 					},
 					{
 						"fieldtype":"input",
-						"width":"300",
+						"width":"",
 						"queryColumnType":"varchar",
 						"columnType":"varchar",
-						"columnLength":"255",
+						"columnLength":255,
 						"phpdocType":"string",
 						"name":"scriptPath",
 						"title":"Script Path",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
+						"locked":null,
+						"style":"",
+						"permissions":null,
+						"datatype":"data",
+						"relationType":false,
+						"invisible":false,
+						"visibleGridView":false,
+						"visibleSearch":false
+					},
+					{
+						"fieldtype":"checkbox",
+						"defaultValue":0,
+						"queryColumnType":"tinyint(1)",
+						"columnType":"tinyint(1)",
+						"phpdocType":"boolean",
+						"name":"UseAndCondition",
+						"title":"Use And Condition",
+						"tooltip":"",
+						"mandatory":false,
+						"noteditable":false,
+						"index":false,
 						"locked":false,
 						"style":"",
-						"permissions":"",
+						"permissions":null,
 						"datatype":"data",
 						"relationType":false,
 						"invisible":false,

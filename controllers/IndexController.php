@@ -2,15 +2,88 @@
 
 class OnlineShop_IndexController extends Pimcore_Controller_Action_Admin {
 
+    public function getFilterGroupsAction() {
+        $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+        $tenants = OnlineShop_Framework_Factory::getInstance()->getAllTenants();
+
+        $filterGroups = $indexService->getAllFilterGroups();
+        if($tenants) {
+            foreach($tenants as $tenant) {
+                $filterGroups = array_merge($filterGroups, $indexService->getAllFilterGroups($tenant));
+            }
+        }
+
+        $data = array();
+        if($filterGroups) {
+            sort($filterGroups);
+            foreach($filterGroups as $group) {
+                $data[$group] = array("data" => $group);
+            }
+        }
+
+        $this->_helper->json(array("data" => array_values($data)));
+    }
+
+    public function getValuesForFilterFieldAction() {
+
+        $data = array();
+
+        if($this->getParam("field")) {
+
+            if($this->getParam("tenant")) {
+                OnlineShop_Framework_Factory::getInstance()->getEnvironment()->setCurrentTenant($this->getParam("tenant"));
+            }
+
+            $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+            $filterService = OnlineShop_Framework_Factory::getInstance()->getFilterService($this->view);
+
+            $columnGroup = "";
+            $filterGroups = $indexService->getAllFilterGroups();
+            foreach($filterGroups as $filterGroup) {
+                $fields = $indexService->getIndexColumnsByFilterGroup($filterGroup);
+                foreach($fields as $field) {
+                    if($field == $this->getParam("field")) {
+                        $columnGroup = $filterGroup;
+                        break 2;
+                    }
+                }
+            }
+
+            $productList = new OnlineShop_Framework_ProductList();
+            $helper = $filterService->getFilterGroupHelper();
+            $data = $helper->getGroupByValuesForFilterGroup($columnGroup, $productList, $this->getParam("field"));
+
+        }
+
+
+        $this->_helper->json(array("data" => array_values($data)));
+    }
+
     public function getFieldsAction() {
 
         $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
 
-        if($this->_getParam("show_all_fields") == "true") {
-            $indexColumns = $indexService->getIndexColumns(false, $this->getParam("tenant"));
+        if($this->getParam("filtergroup")) {
+            $filtergroups = $this->getParam("filtergroup");
+            $filtergroups = explode(",", $filtergroups);
+
+            $indexColumns = array();
+            foreach($filtergroups as $filtergroup) {
+                $indexColumns = array_merge($indexColumns, $indexService->getIndexColumnsByFilterGroup($filtergroup));
+            }
+
         } else {
-            $indexColumns = $indexService->getIndexColumns(true, $this->getParam("tenant"));
+            if($this->getParam("show_all_fields") == "true") {
+                $indexColumns = $indexService->getIndexColumns(false, $this->getParam("tenant"));
+            } else {
+                $indexColumns = $indexService->getIndexColumns(true, $this->getParam("tenant"));
+            }
         }
+
+        if(!$indexColumns) {
+            $indexColumns = array();
+        }
+
 
         $fields = array();
 

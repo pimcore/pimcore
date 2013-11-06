@@ -182,13 +182,22 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     protected function generateGaEcommerceCode(OnlineShop_Framework_AbstractOrder $order) {
         $code = "";
 
+        $shipping = 0;
+        $modifications = $order->getPriceModifications();
+        foreach($modifications as $modification) {
+            if($modification->getName() == "shipping") {
+                $shipping = $modification->getAmount();
+                break;
+            }
+        }
+
         $code .= "
             _gaq.push(['_addTrans',
               '" . $order->getOrdernumber() . "',           // order ID - required
               '',  // affiliation or store name
               '" . $order->getTotalPrice() . "',          // total - required
               '',           // tax
-              '',              // shipping
+              '" . $shipping . "',              // shipping
               '',       // city
               '',     // state or province
               ''             // country
@@ -233,12 +242,22 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     protected function generateUniversalEcommerceCode(OnlineShop_Framework_AbstractOrder $order) {
         $code = "ga('require', 'ecommerce', 'ecommerce.js');\n";
 
+
+        $shipping = 0;
+        $modifications = $order->getPriceModifications();
+        foreach($modifications as $modification) {
+            if($modification->getName() == "shipping") {
+                $shipping = $modification->getAmount();
+                break;
+            }
+        }
+
         $code .= "
             ga('ecommerce:addTransaction', {
               'id': '" . $order->getOrdernumber() . "',                     // Transaction ID. Required.
               'affiliation': '',   // Affiliation or store name.
               'revenue': '" . $order->getTotalPrice() . "',               // Grand Total.
-              'shipping': '',                  // Shipping.
+              'shipping': '" . $shipping . "',                  // Shipping.
               'tax': ''                     // Tax.
             });
         \n";
