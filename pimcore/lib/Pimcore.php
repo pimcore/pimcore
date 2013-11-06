@@ -809,7 +809,7 @@ class Pimcore {
         header("Connection: close\r\n");
 
         // check for supported content-encodings
-        if(strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip")) {
+        if(strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false) {
             $contentEncoding = "gzip";
         }
 
