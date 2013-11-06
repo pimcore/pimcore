@@ -199,15 +199,6 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         return $this;
     }
 
-    /**
-     * @deprecated
-     * @static
-     * @return void
-     */
-    public static function initSession() {
-        Pimcore_Tool_Authentication::initSession();
-    }
-
     public static function initTranslations($instance) {
 
         //add translations to registry
