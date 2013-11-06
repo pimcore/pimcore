@@ -113,6 +113,15 @@ interface OnlineShop_Framework_ICart {
      */
     public function getItemAmount($countSubItems = false);
 
+
+    /**
+     * @param int $count
+     *
+     * @return OnlineShop_Framework_ProductInterfaces_ICheckoutable[]
+     */
+    public function getRecentlyAddedItems($count);
+
+
     /**
      * returns price calculator of cart
      *

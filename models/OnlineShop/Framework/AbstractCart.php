@@ -599,4 +599,22 @@ abstract class OnlineShop_Framework_AbstractCart extends Pimcore_Model_Abstract 
         OnlineShop_Framework_Factory::getInstance()->getPricingManager()->applyCartRules($this);
     }
 
+
+    /**
+     * @param int $count
+     *
+     * @return OnlineShop_Framework_ProductInterfaces_ICheckoutable[]
+     */
+    public function getRecentlyAddedItems($count)
+    {
+        // get last items
+        $index = array();
+        foreach($this->getItems() as $item)
+        {
+            $index[ $item->getAddedDate()->getTimestamp() ] = $item;
+        }
+        krsort($index);
+
+        return array_slice($index, 0, $count);
+    }
 }
