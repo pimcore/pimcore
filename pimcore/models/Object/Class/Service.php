@@ -53,9 +53,6 @@ class Object_Class_Service  {
 
         $importData = Zend_Json::decode($json);
 
-        $values["modificationDate"] = time();
-        $values["userModification"] = $userId;
-
         // set layout-definition
         $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
         $class->setLayoutDefinitions($layout);
