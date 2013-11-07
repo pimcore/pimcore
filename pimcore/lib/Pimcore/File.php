@@ -112,7 +112,7 @@ class Pimcore_File {
      */
     public static function put ($path, $data) {
         $return = file_put_contents($path, $data);
-        chmod($path, self::$defaultMode);
+        @chmod($path, self::$defaultMode);
         return $return;
     }
 
@@ -129,7 +129,7 @@ class Pimcore_File {
         }
 
         $return = @mkdir($path, 0777, $recursive);
-        chmod($path, $mode);
+        @chmod($path, $mode);
         return $return;
     }
 }
