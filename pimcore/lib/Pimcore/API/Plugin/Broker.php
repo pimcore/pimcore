@@ -470,7 +470,7 @@ class Pimcore_API_Plugin_Broker {
                     if (is_file($languageFile) and strtolower(substr($languageFile, -4, 4)) == ".csv") {
 
                         $handle = fopen($languageFile, "r");
-                        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                        while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
                             $pluginTranslations[$data[0]] = $data[1];
                         }
                         fclose($handle);

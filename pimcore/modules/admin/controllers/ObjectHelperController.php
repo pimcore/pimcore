@@ -405,7 +405,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
 
         $count = 0;
         if (($handle = fopen($file, "r")) !== false) {
-            while (($rowData = fgetcsv($handle, 10000, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
+            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
                 if ($count == 0) {
                     $firstRowData = $rowData;
                 }
@@ -517,11 +517,11 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
 
         $count = 0;
         if (($handle = fopen($file, "r")) !== false) {
-            $data = fgetcsv($handle, 1000, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
+            $data = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
         }
         if ($skipFirstRow && $job == 1) {
             //read the next row, we need to skip the head row
-            $data = fgetcsv($handle, 1000, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
+            $data = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
         }
 
         $tmpFile = $file . "_tmp";
