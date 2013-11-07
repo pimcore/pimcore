@@ -55,7 +55,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $row = 1;
         $handle = fopen($languageFile, "r");
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
             $translations[$data[0]] = $data[1];
         }
         fclose($handle);
