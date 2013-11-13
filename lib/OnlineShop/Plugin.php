@@ -239,10 +239,11 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
      * @return void
      */
     public function postAddObject(Object_Abstract $object) {
-        if ($object instanceof OnlineShop_Framework_AbstractProduct) {
+        if ($object instanceof OnlineShop_Framework_ProductInterfaces_IIndexable) {
             $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
             $indexService->updateIndex($object);
         }
+        parent::postAddObject($object);
     }
 
     /**
@@ -254,6 +255,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
             $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
             $indexService->updateIndex($object);
         }
+        parent::postUpdateObject($object);
     }
 
     public function preDeleteObject(Object_Abstract $object) {
