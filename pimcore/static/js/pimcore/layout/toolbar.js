@@ -1057,6 +1057,7 @@ pimcore.layout.toolbar = Class.create({
     },
 
     editTranslations: function () {
+        pimcore.plugin.broker.fireEvent("preEditTranslations", this, "website");
         try {
             pimcore.globalmanager.get("translationwebsitemanager").activate();
         }
@@ -1066,6 +1067,7 @@ pimcore.layout.toolbar = Class.create({
     },
 
     editTranslationsSpecific: function () {
+        pimcore.plugin.broker.fireEvent("preEditTranslations", this, "admin");
         try {
             pimcore.globalmanager.get("translationadminmanager").activate();
         }
