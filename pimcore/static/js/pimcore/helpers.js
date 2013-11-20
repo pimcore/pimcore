@@ -1242,7 +1242,7 @@ pimcore.helpers.getClassForIcon = function (icon) {
 pimcore.helpers.openElementByIdDialog = function (type) {
     Ext.MessageBox.prompt(t('open_' + type + '_by_id'), t('please_enter_the_id_of_the_' + type),
         function (button, value, object) {
-            if(button == "ok") {
+            if(button == "ok" && !Ext.isEmpty(value)) {
                 pimcore.helpers.openElement(value, type);
             }
         });
