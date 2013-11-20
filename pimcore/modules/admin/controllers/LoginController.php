@@ -122,6 +122,9 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                         Pimcore_Tool_Session::useSession(function($adminSession) use ($user) {
                             $adminSession->user = $user;
                         });
+                        if($this->_getParam('deeplink')){
+                            $this->redirect('/admin/login/deeplink/?' . $this->_getParam('deeplink'));
+                        }
                     }
 
                 } else {
