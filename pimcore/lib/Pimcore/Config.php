@@ -105,7 +105,7 @@ class Pimcore_Config {
                             $cacheTags = $s->getCacheTags($cacheTags);
                         }
 
-                        if($s) {
+                        if(isset($s)) {
                             $settingsArray[$key] = $s;
                         }
                     }
