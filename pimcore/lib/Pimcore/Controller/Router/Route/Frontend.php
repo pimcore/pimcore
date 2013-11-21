@@ -149,7 +149,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             }
             if(Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
-                if($site->getMainDomain() != Pimcore_Tool::getHostname()) {
+                if($site->getRedirectToMainDomain() && $site->getMainDomain() != Pimcore_Tool::getHostname()) {
                     $hostRedirect = $site->getMainDomain();
                 }
             }
