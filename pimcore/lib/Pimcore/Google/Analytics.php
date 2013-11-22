@@ -78,7 +78,11 @@ class Pimcore_Google_Analytics {
               " . $config->additionalcodebeforepageview . "
 
               ga('create', '" . $config->trackid . "');
-              ga('send', 'pageview');
+              if (typeof _gaqPageView != \"undefined\"){
+                ga('send', 'pageview', _gaqPageView);
+              } else {
+                ga('send', 'pageview');
+              }
 
               " . $config->additionalcode . "
             </script>";
