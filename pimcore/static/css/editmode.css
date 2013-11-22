@@ -62,9 +62,10 @@
 .pimcore_block_up,
 .pimcore_block_down,
 .pimcore_block_amount,
-.pimcore_block_type {
-	float: left;
-	padding: 0 2px 0 0;
+.pimcore_block_type,
+.pimcore_block_options {
+    float: left;
+    padding: 0 2px 0 0;
 }
 
 .pimcore_block_clear {
