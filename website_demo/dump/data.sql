@@ -728,7 +728,7 @@ CREATE TABLE `search_backend_data` (
   `properties` text,
   PRIMARY KEY (`id`,`maintype`),
   KEY `id` (`id`),
-  KEY `fullpath` (`fullpath`(333)),
+  KEY `fullpath` (`fullpath`),
   KEY `maintype` (`maintype`),
   KEY `type` (`type`),
   KEY `subtype` (`subtype`),
