@@ -29,7 +29,7 @@ if(!$user instanceof User) {
     die("Authentication failed!");
 }
 
-if($user->isAllowed("database"))
+if(!$user->isAllowed("database"))
 {
 	die("Permission error!");
 }
