@@ -29,6 +29,11 @@ if(!$user instanceof User) {
     die("Authentication failed!");
 }
 
+if(!$user->isAllowed("database"))
+{
+	die("Permission error!");
+}
+
 $conf = Pimcore_Config::getSystemConfig()->database->params;
 if(empty($_SERVER["QUERY_STRING"])) {
     header("Location: /pimcore/modules/3rdparty/adminer/index.php?username=" . $conf->username . "&db=" . $conf->dbname);
