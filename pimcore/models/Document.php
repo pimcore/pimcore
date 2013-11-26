@@ -526,7 +526,7 @@ class Document extends Element_Abstract {
 
     public function clearDependentCache($additionalTags = array()) {
         try {
-            $tags = array("document_" . $this->getId(), "properties", "output");
+            $tags = array("document_" . $this->getId(), "output");
             $tags = array_merge($tags, $additionalTags);
 
             Pimcore_Model_Cache::clearTags($tags);
@@ -947,15 +947,15 @@ class Document extends Element_Abstract {
      */
     public function getProperties() {
         if ($this->properties === null) {
-
             // try to get from cache
             $cacheKey = "document_properties_" . $this->getId();
-            $cacheTags = $this->getCacheTags(array("properties" => "properties"));
-
             if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
                 $properties = $this->getResource()->getProperties();
+                $elementCacheTag = $this->getCacheTag();
+                $cacheTags = array("properties" => "properties", $elementCacheTag => $elementCacheTag);
                 Pimcore_Model_Cache::save($properties, $cacheKey, $cacheTags);
             }
+
             $this->setProperties($properties);
         }
         return $this->properties;
