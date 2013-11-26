@@ -780,7 +780,7 @@ class Asset extends Element_Abstract {
 
 
         try {
-            $tags = array("asset_" . $this->getId(), "properties", "output");
+            $tags = array("asset_" . $this->getId(), "output");
             $tags = array_merge($tags, $additionalTags);
 
             Pimcore_Model_Cache::clearTags($tags);
@@ -1042,10 +1042,10 @@ class Asset extends Element_Abstract {
         if ($this->properties === null) {
             // try to get from cache
             $cacheKey = "asset_properties_" . $this->getId();
-            $cacheTags = $this->getCacheTags(array("properties" => "properties"));
-
             if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
                 $properties = $this->getResource()->getProperties();
+                $elementCacheTag = $this->getCacheTag();
+                $cacheTags = array("properties" => "properties", $elementCacheTag => $elementCacheTag);
                 Pimcore_Model_Cache::save($properties, $cacheKey, $cacheTags);
             }
 
