@@ -10,7 +10,7 @@
   <name>facebook-box</name>
   <description></description>
   <siteId></siteId>
-  <urlPattern>@^/basic\-examples/tag\-and\-snippet\-management$@</urlPattern>
+  <urlPattern>@^/en/basic\-examples/tag\-and\-snippet\-management$@</urlPattern>
   <textPattern></textPattern>
   <httpMethod></httpMethod>
   <params>
