@@ -106,7 +106,7 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
                                     $html->clear();
                                     unset($html);
 
-                                    $html = str_get_html($body);
+                                    $html = null;
                                 }
                             }
                         }
