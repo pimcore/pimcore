@@ -43,11 +43,6 @@ class OnlineShop_Framework_Factory {
     private $pricingManager;
 
     /**
-     * @var OnlineShop_OfferTool_IService
-     */
-    private $offerToolService;
-
-    /**
      * @var string[]
      */
     private $allTenants;
@@ -71,15 +66,21 @@ class OnlineShop_Framework_Factory {
     }
 
     public function getConfig() {
+        if(empty($this->config)) {
+            if(!$config = Pimcore_Model_Cache::load("onlineshop_config")) {
+                $configPath = OnlineShop_Plugin::getConfig(true)->onlineshop_config_file;
+                $config = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . $configPath, null, true);
+                Pimcore_Model_Cache::save($config, "onlineshop_config", array("output"), 9999);
+            }
+            $this->config = $config;
+        }
+
         return $this->config;
     }
 
     private function initEnvironment() {
-        if(!$config = Pimcore_Model_Cache::load("onlineshop_config")) {
-            $configPath = OnlineShop_Plugin::getConfig(true)->onlineshop_config_file;
-            $config = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . $configPath, null, true);
-            Pimcore_Model_Cache::save($config, "onlineshop_config", array("output"), 9999);
-        }
+
+        $config = $this->getConfig();
 
         //Environment
         if (empty($config->onlineshop->environment->class)) {
@@ -97,9 +98,8 @@ class OnlineShop_Framework_Factory {
     }
 
     private function init() {
-        $configPath = OnlineShop_Plugin::getConfig(true)->onlineshop_config_file;
-        $this->config = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . $configPath);
-        $this->checkConfig($this->config);
+        $config = $this->getConfig();
+        $this->checkConfig($config);
     }
 
     private function checkConfig($config) {
@@ -110,7 +110,6 @@ class OnlineShop_Framework_Factory {
         $this->configureCheckoutManager($config);
         $this->configurePricingManager($config);
 
-        $this->configureOfferToolService($config);
     }
 
     private function configureCartManager($config) {
@@ -237,21 +236,6 @@ class OnlineShop_Framework_Factory {
     }
 
 
-    private function configureOfferToolService($config) {
-        if(!empty($config->onlineshop->offertool->class)) {
-            if (!class_exists($config->onlineshop->offertool->class)) {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("OfferTool class " . $config->onlineshop->offertool->class . " not found.");
-            }
-            if (!class_exists($config->onlineshop->offertool->orderstorage->offerClass)) {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("OfferToolOffer class " . $config->onlineshop->offertool->orderstorage->offerClass . " not found.");
-            }
-            if (!class_exists($config->onlineshop->offertool->orderstorage->offerItemClass)) {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("OfferToolOfferItem class " . $config->onlineshop->offertool->orderstorage->offerItemClass . " not found.");
-            }
-        }
-    }
-
-
     public function getCartManager() {
         return $this->cartManager;
     }
@@ -352,7 +336,7 @@ class OnlineShop_Framework_Factory {
      * @return string[]
      */
     public function getAllTenants() {
-        if(empty($this->allTenants) && $this->config->onlineshop->productindex->tenants && is_array($this->config->onlineshop->productindex->tenants)) {
+        if(empty($this->allTenants) && $this->config->onlineshop->productindex->tenants) {
             foreach($this->config->onlineshop->productindex->tenants as $name => $tenant) {
                 $this->allTenants[$name] = $name;
             }
@@ -378,21 +362,5 @@ class OnlineShop_Framework_Factory {
     public function getPricingManager()
     {
         return $this->pricingManager;
-    }
-
-    /**
-     * @return OnlineShop_OfferTool_IService
-     */
-    public function getOfferToolService() {
-        if(empty($this->offerToolService)) {
-            $className = (string)$this->config->onlineshop->offertool->class;
-            $this->offerToolService = new $className(
-                (string) $this->config->onlineshop->offertool->orderstorage->offerClass,
-                (string) $this->config->onlineshop->offertool->orderstorage->offerItemClass,
-                (string) $this->config->onlineshop->offertool->orderstorage->parentFolderPath
-            );
-        }
-
-        return $this->offerToolService;
     }
 }
