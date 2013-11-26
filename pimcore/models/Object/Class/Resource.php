@@ -74,7 +74,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             $name = $this->model->getName();
         }
 
-        $classRaw = $this->db->fetchRow("SELECT * FROM classes WHERE name = ?", $name);
+        $classRaw = $this->db->fetchRow("SELECT id FROM classes WHERE name = ?", $name);
 
         if($classRaw["id"]) {
             $this->assignVariablesToModel($classRaw);
