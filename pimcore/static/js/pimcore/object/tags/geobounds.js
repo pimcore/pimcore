@@ -154,7 +154,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
                         this.data = {
                             ne: this.overlay.getBounds().getNorthEast(),
                             sw: this.overlay.getBounds().getSouthWest()
-                        }
+                        };
                     }
 
                     this.updatePreviewImage();

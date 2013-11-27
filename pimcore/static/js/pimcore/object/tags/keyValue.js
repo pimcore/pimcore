@@ -202,6 +202,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var valueWidth = 600;
         var metaWidth = 200;
         var maxHeight = 190;
+        var metawidth = 100;
 
         if (this.fieldConfig.maxheight > 0) {
             maxHeight = this.fieldConfig.maxheight;
@@ -238,7 +239,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var columns = [];
 
         // var visibleFields = ['key','description', 'value','type','possiblevalues'];
-        var visibleFields = ['group', 'groupDesc', 'keyName', 'keyDesc', 'value' /*, 'inherited', 'source' ,'altSource', 'altValue' */];
+        var visibleFields = ['group', 'groupDesc', 'keyName', 'keyDesc', 'value'];
         if (this.fieldConfig.metaVisible) {
             visibleFields.push('metadata');
         }
@@ -329,7 +330,6 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                                     record.set("source", data.altSource);
                                     this.isDeleteOperation = false;
                                 } else {
-                                    var store = grid.getStore();
                                     var key = data.key;
 
                                     store.removeAt(rowIndex);
@@ -676,7 +676,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                         metaData.css += " grid_value_locked";
                     }
 
-                    metaData.css += ' x-grid3-check-col-td';g
+                    metaData.css += ' x-grid3-check-col-td';
                     return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
                 }.bind(this, field.key)
             });

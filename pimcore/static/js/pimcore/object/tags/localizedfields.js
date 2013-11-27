@@ -43,7 +43,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         if (this.inherited) {
 
             for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
-                currentLanguage = pimcore.settings.websiteLanguages[i];
+                var currentLanguage = pimcore.settings.websiteLanguages[i];
 
                 var metadataForLanguage = this.metaData[currentLanguage];
                 var dataKeys = Object.keys(metadataForLanguage);
@@ -55,7 +55,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                         this.keysToWatch.push({
                             lang: currentLanguage,
                             key: dataKey
-                        })
+                        });
                     }
                 }
             }
@@ -324,7 +324,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         var foundUnmodifiedInheritedField = false;
         for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
 
-            currentLanguage = pimcore.settings.websiteLanguages[i];
+            var currentLanguage = pimcore.settings.websiteLanguages[i];
 
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
 
