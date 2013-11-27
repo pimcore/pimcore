@@ -31,7 +31,7 @@ class OnlineShop_Framework_Impl_CartItem_List extends Pimcore_Model_List_Abstrac
     /**
      * @return array
      */
-    function getCartItems() {
+    public function getCartItems() {
         if(empty($this->cartItems)) {
             $this->load();
         }
@@ -42,8 +42,16 @@ class OnlineShop_Framework_Impl_CartItem_List extends Pimcore_Model_List_Abstrac
      * @param array $cartItems
      * @return void
      */
-    function setCartItems($cartItems) {
+    public function setCartItems($cartItems) {
         $this->cartItems = $cartItems;
+    }
+
+    /**
+     * @param string $className
+     */
+    public function setCartItemClassName( $className )
+    {
+        $this->getResource()->setClassName( $className );
     }
 
 }

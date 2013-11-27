@@ -3,6 +3,11 @@
 class OnlineShop_Framework_Impl_CartItem_List_Resource extends Pimcore_Model_List_Resource_Abstract {
 
     /**
+     * @var string
+     */
+    protected $className = 'OnlineShop_Framework_Impl_CartItem';
+
+    /**
      * @return array
      */
     public function load() {
@@ -11,7 +16,7 @@ class OnlineShop_Framework_Impl_CartItem_List_Resource extends Pimcore_Model_Lis
                                                  $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
 
         foreach ($cartItems as $item) {
-            $items[] = OnlineShop_Framework_Impl_CartItem::getByCartIdItemKey($item['cartid'], $item['itemKey'], $item['parentItemKey']);
+            $items[] = call_user_func(array($this->getClassName(), 'getByCartIdItemKey'), $item['cartid'], $item['itemKey'], $item['parentItemKey']);
         }
         $this->model->setCartItems($items);
 
@@ -23,4 +28,20 @@ class OnlineShop_Framework_Impl_CartItem_List_Resource extends Pimcore_Model_Lis
         return $amount["amount"];
     }
 
+
+    /**
+     * @param string $className
+     */
+    public function setClassName($className)
+    {
+        $this->className = $className;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClassName()
+    {
+        return $this->className;
+    }
 }

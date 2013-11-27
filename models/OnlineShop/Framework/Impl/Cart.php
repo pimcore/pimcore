@@ -63,6 +63,7 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
                 $cart->getResource()->getById($id);
 
                 $itemList = new OnlineShop_Framework_Impl_CartItem_List();
+                $itemList->setCartItemClassName( $cart->getCartItemClassName() );
                 $db = Pimcore_Resource::get();
                 $itemList->setCondition("cartId = " . $db->quote($cart->getId()) . " AND parentItemKey = ''");
                 $items = array();
