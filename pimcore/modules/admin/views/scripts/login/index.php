@@ -134,25 +134,11 @@ $config = Pimcore_Config::getSystemConfig();
 
 
 <script type="text/javascript">
-    // chrome safari autofill background-color (yellow) fix
-    if (/(chrome|safari)/.test(navigator.userAgent.toLowerCase())) {
-        var autofillFixInterval = window.setInterval(function () {
-            if($('input:-webkit-autofill').length > 0) {
-                $('input:-webkit-autofill').each(function(){
-                    var text = $(this).val();
-                    var name = $(this).attr('name');
-                    $(this).after(this.outerHTML).remove();
-                    $('input[name=' + name + ']').val(text);
-                });
-                window.clearInterval(autofillFixInterval);
-                //$("#username").select();
-            }
-        }, 20);
-    }
-
-    // clear opened tabs store
-    localStorage.removeItem("pimcore_opentabs");
-    //$("#username").select();
+    <?php if(!$this->getParam("deeplink")) { ?>
+        // clear opened tabs store
+        localStorage.removeItem("pimcore_opentabs");
+    <?php } ?>
+    $("#username").select();
 </script>
 
 <script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1&build=<?php echo Pimcore_Version::getRevision(); ?>"></script>
