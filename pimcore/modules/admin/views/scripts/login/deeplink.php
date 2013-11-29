@@ -9,7 +9,7 @@
             pimcore.helpers.clearOpenTab();
             pimcore.helpers.rememberOpenTab("<?php echo $this->tab ?>");
         <?php } ?>
-        window.location.href = "/admin/";
+        window.location.href = "/admin/login/?deeplink=true";
     </script>
 </head>
 <body>
