@@ -4,6 +4,7 @@
 
         <environment class="OnlineShop_Framework_Impl_Environment">
             <config>
+                <config defaultlocale="en_GB" />
             </config>
         </environment>
 

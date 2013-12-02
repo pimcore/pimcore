@@ -96,7 +96,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
      * @return Zend_Currency
      */
     protected function getDefaultCurrency() {
-        return new Zend_Currency(Zend_Registry::get("Zend_Locale"));
+        return new Zend_Currency(OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale());
     }
 
     /**

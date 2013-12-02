@@ -32,6 +32,9 @@ class OnlineShop_Framework_Impl_AttributePriceInfo extends OnlineShop_Framework_
 
     }
 
+    protected function getDefaultCurrency() {
+        return new Zend_Currency(OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale());
+    }
 
     /**
      * @return OnlineShop_Framework_Impl_Price
@@ -51,17 +54,16 @@ class OnlineShop_Framework_Impl_AttributePriceInfo extends OnlineShop_Framework_
                         $sum += $p->$getter();
                     }
                 }
-                return new OnlineShop_Framework_Impl_Price($sum, new Zend_Currency(Zend_Registry::get("Zend_Locale")), false);
+                return new OnlineShop_Framework_Impl_Price($sum, $this->getDefaultCurrency(), false);
 
             } else {
-                return new OnlineShop_Framework_Impl_Price($this->product->$getter(), new Zend_Currency(Zend_Registry::get("Zend_Locale")), false);
+                return new OnlineShop_Framework_Impl_Price($this->product->$getter(), $this->getDefaultCurrency(), false);
             }
         }
     }
 
     public function getTotalPrice() {
         return new OnlineShop_Framework_Impl_Price($this->getPrice()->getAmount() * $this->getQuantity(), ($this->getPrice()->getCurrency()), false);
-        //return new OnlineShop_Framework_Impl_Price(999, new Zend_Currency(new Zend_Locale('de_AT')), false);
     }
 
     public function __call($name, $arguments) {

@@ -89,4 +89,9 @@ interface OnlineShop_Framework_IEnvironment extends OnlineShop_Framework_ICompon
      * @return string
      */
     public function getCurrentSubTenant();
+
+    /**
+     * @return Zend_Locale
+     */
+    public function getCurrencyLocale();
 }

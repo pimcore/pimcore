@@ -17,8 +17,15 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     protected $currentTenant = null;
     protected $currentSubTenant = null;
 
-    public function __construct() {
+    public function __construct($config) {
         $this->loadFromSession();
+
+        $locale = (string)$config->defaultlocale;
+        if(empty($locale)) {
+            $this->currencyLocale = Zend_Registry::get("Zend_Locale");
+        } else {
+            $this->currencyLocale = new Zend_Locale($locale);
+        }
     }
 
     protected function loadFromSession() {
@@ -132,6 +139,12 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
         return $this->currentSubTenant;
     }
 
+    /**
+     * @return null|Zend_Locale
+     */
+    public function getCurrencyLocale() {
+        return $this->currencyLocale;
+    }
 
 
 }

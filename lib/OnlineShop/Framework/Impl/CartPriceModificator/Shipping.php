@@ -30,7 +30,7 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Shipping implements OnlineS
      */
     public function modify(OnlineShop_Framework_IPrice $currentSubTotal, OnlineShop_Framework_ICart $cart)
     {
-        return new OnlineShop_Framework_Impl_ModificatedPrice($this->getCharge(), new Zend_Currency(Zend_Registry::get("Zend_Locale")));
+        return new OnlineShop_Framework_Impl_ModificatedPrice($this->getCharge(), new Zend_Currency(OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
     }
 
     /**
