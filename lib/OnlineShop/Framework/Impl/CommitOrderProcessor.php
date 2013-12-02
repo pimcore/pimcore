@@ -309,14 +309,14 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             throw new Exception("Class $orderItemListClass does not exist.");
         }
 
-        $key = $item->getProduct()->getId() . "_" . $item->getItemKey();
+        $key = Pimcore_File::getValidFilename($item->getProduct()->getId() . "_" . $item->getItemKey());
 
         $orderItemList = new $orderItemListClass;
         $orderItemList->setCondition("o_parentId = ? AND o_key = ?", array($parent->getId(), $key));
 
         $orderItems = $orderItemList->load();
         if(count($orderItems) > 1) {
-            throw new Exception("No unique order found for $key.");
+            throw new Exception("No unique order item found for $key.");
         }
 
 
@@ -326,7 +326,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             $orderItem = $this->getNewOrderItemObject();
             $orderItem->setParent($parent);
             $orderItem->setPublished(true);
-            $orderItem->setKey($item->getProduct()->getId() . "_" . $item->getItemKey());
+            $orderItem->setKey($key);
         }
 
         $orderItem->setAmount($item->getCount());
