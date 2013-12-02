@@ -618,6 +618,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             }
             else {
                 Logger::debug("prevented moving asset, asset with same path+key already exists at target location ");
+                $this->_helper->json(array("success" => $success, "message" => "the_filename_is_already_in_use"));
             }
         } else if ($asset->isAllowed("rename") &&  $this->getParam("filename")  ) {
             //just rename
