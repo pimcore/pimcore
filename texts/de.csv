@@ -41,3 +41,4 @@ indexFieldSelection_settings,Indexfeldauswahl Einstellungen
 filtergroups,Filtergruppen
 preSelect,Vorauswahl
 predefined_pre_select_options,Vordefinierte Vorauswahlsliste
+plugin_onlineshop_clear_config_cache,Cache für Konfiguration löschen

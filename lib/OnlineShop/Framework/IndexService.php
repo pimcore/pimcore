@@ -25,7 +25,7 @@ class OnlineShop_Framework_IndexService {
                     if(!$tenantConfig = Pimcore_Model_Cache::load("onlineshop_config_tenant_" . $tenantConfigClass)) {
                         $tenantConfig = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file), null, true);
                         $tenantConfig = $tenantConfig->tenant;
-                        Pimcore_Model_Cache::save($tenantConfig, "onlineshop_config_tenant_" . $tenantConfigClass, array("output"), 9999);
+                        Pimcore_Model_Cache::save($tenantConfig, "onlineshop_config_tenant_" . $tenantConfigClass, array("ecommerceconfig"), 9999);
                     }
                 }
 

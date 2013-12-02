@@ -11,4 +11,9 @@ class OnlineShop_AdminController extends Pimcore_Controller_Action_Admin {
         }
     }
 
+    public function clearCacheAction() {
+        Pimcore_Model_Cache::clearTag("ecommerceconfig");
+        exit;
+    }
+
 }

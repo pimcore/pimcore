@@ -70,7 +70,7 @@ class OnlineShop_Framework_Factory {
             if(!$config = Pimcore_Model_Cache::load("onlineshop_config")) {
                 $configPath = OnlineShop_Plugin::getConfig(true)->onlineshop_config_file;
                 $config = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . $configPath, null, true);
-                Pimcore_Model_Cache::save($config, "onlineshop_config", array("output"), 9999);
+                Pimcore_Model_Cache::save($config, "onlineshop_config", array("ecommerceconfig"), 9999);
             }
             $this->config = $config;
         }

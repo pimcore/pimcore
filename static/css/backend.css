@@ -12,3 +12,7 @@
 .pimcore_icon_data_group_ecommerce {
     background: url("/pimcore/static/img/icon/cart_full.png") no-repeat !important;
 }
+
+.plugin_onlineshop_clear_config_cache {
+    background: url(/pimcore/static/img/icon/lightning.png) no-repeat !important;
+}
