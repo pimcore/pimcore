@@ -62,6 +62,7 @@ header("Expires: ". date("D, d M Y H:i:s T", time()+$lifetime));
 var pimcore = pimcore || {};
 pimcore["location"] = {
 <?php if($record) { ?>
+    ip: "<?= $ip ?>",
     latitude: <?= $record->location->latitude ?>,
     longitude: <?= $record->location->longitude ?>,
     country: {
