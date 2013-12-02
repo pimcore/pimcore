@@ -18,6 +18,11 @@ interface OnlineShop_Framework_ICart {
     public function getItems();
 
     /**
+     * @return bool
+     */
+    public function isEmpty();
+
+    /**
      * @param string $itemKey
      *
      * @return OnlineShop_Framework_ICartItem

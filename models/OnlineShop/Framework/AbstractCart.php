@@ -359,6 +359,13 @@ abstract class OnlineShop_Framework_AbstractCart extends Pimcore_Model_Abstract 
 
 
     /**
+     * @return bool|void
+     */
+    public function isEmpty() {
+        return count($this->getItems()) == 0;
+    }
+
+    /**
      * @return OnlineShop_Framework_ICartItem[]
      */
     public function getGiftItems()
