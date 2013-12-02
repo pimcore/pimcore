@@ -131,7 +131,7 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
         }
 
         // add submit button
-        $form->addElement( 'submit', 'submit' );
+        $form->addElement( 'submit', 'submitbutton' );
 
         return $form;
     }
