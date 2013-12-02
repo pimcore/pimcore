@@ -159,13 +159,15 @@ abstract class OnlineShop_Framework_AbstractCartItem extends Pimcore_Model_Abstr
         }
     }
 
-     /**
+    /**
      * @return OnlineShop_Framework_AbstractSetProductEntry[]
      */
     public function getSetEntries() {
         $products = array();
-        foreach ($this->getSubItems() as $item) {
-            $products[] = new OnlineShop_Framework_AbstractSetProductEntry($item->getProduct(), $item->getCount());
+        if($this->getSubItems()) {
+            foreach ($this->getSubItems() as $item) {
+                $products[] = new OnlineShop_Framework_AbstractSetProductEntry($item->getProduct(), $item->getCount());
+            }
         }
         return $products;
 
