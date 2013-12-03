@@ -9,7 +9,6 @@ class NewsController extends Website_Controller_Action
         $newsList = new Object_News_List();
         $newsList->setOrderKey("date");
         $newsList->setOrder("DESC");
-        $newsList->load();
 
         $paginator = Zend_Paginator::factory($newsList);
         $paginator->setCurrentPageNumber( $this->getParam('page') );
