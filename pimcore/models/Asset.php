@@ -780,7 +780,7 @@ class Asset extends Element_Abstract {
 
 
         try {
-            $tags = array("asset_" . $this->getId(), "output");
+            $tags = array("asset_" . $this->getId(), "properties", "output");
             $tags = array_merge($tags, $additionalTags);
 
             Pimcore_Model_Cache::clearTags($tags);
