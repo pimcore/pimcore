@@ -526,7 +526,7 @@ class Document extends Element_Abstract {
 
     public function clearDependentCache($additionalTags = array()) {
         try {
-            $tags = array("document_" . $this->getId(), "output");
+            $tags = array("document_" . $this->getId(), "properties", "output");
             $tags = array_merge($tags, $additionalTags);
 
             Pimcore_Model_Cache::clearTags($tags);
