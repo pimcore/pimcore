@@ -320,8 +320,6 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $newImage = new Imagick();
         $newImage->newimage($width, $height, $color);
 
-        $this->reinitializeImage();
-
         return $newImage;
     }
 
