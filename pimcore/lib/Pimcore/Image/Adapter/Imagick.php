@@ -285,7 +285,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
 
         $newImage = $this->createImage($width, $height);
-        $newImage->compositeImage($this->resource, Imagick::COMPOSITE_DEFAULT , $x, $y);
+        $newImage->compositeImage($this->resource, Imagick::COMPOSITE_COPY , $x, $y);
         $this->resource = $newImage;
 
         $this->setWidth($width);
