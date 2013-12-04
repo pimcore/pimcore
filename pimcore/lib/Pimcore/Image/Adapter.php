@@ -365,7 +365,7 @@ abstract class Pimcore_Image_Adapter {
      */
     protected function reinitializeImage() {
 
-        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_tmp_file";
+        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_tmp_file.png";
         $this->tmpFiles[] = $tmpFile;
 
         $this->save($tmpFile);
@@ -377,6 +377,7 @@ abstract class Pimcore_Image_Adapter {
      * 
      */
     public function __destruct() {
+        $this->destroy();
         $this->removeTmpFiles();
     }
 
