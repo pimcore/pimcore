@@ -136,7 +136,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 }
                 // then we add an RGB profile
                 $this->resource->profileImage('icc', self::getRGBColorProfile());
-                $this->resource->setImageColorspace(Imagick::COLORSPACE_RGB);
+                $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB); // we have to use SRGB here, no clue why but it works
             }
         } else if ($this->resource->getImageColorspace() == Imagick::COLORSPACE_RGB && $type == "CMYK") {
             if(self::getCMYKColorProfile() && self::getRGBColorProfile()) {
