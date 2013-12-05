@@ -107,9 +107,9 @@ abstract class Pimcore_Image_Adapter {
      * @param  $width
      * @return Pimcore_Image_Adapter
      */
-    public function scaleByWidth ($width) {
+    public function scaleByWidth ($width, $forceResize = false) {
 
-        if($width <= $this->getWidth() || $this->isVectorGraphic()) {
+        if($forceResize || $width <= $this->getWidth() || $this->isVectorGraphic()) {
             $height = round(($width / $this->getWidth()) * $this->getHeight(), 0);
             $this->resize(max(1, $width), max(1, $height));
         }
@@ -121,9 +121,9 @@ abstract class Pimcore_Image_Adapter {
      * @param  $height
      * @return Pimcore_Image_Adapter
      */
-    public function scaleByHeight ($height) {
+    public function scaleByHeight ($height, $forceResize = false) {
 
-        if($height < $this->getHeight() || $this->isVectorGraphic()) {
+        if($forceResize || $height < $this->getHeight() || $this->isVectorGraphic()) {
             $width = round(($height / $this->getHeight()) * $this->getWidth(), 0);
             $this->resize(max(1, $width), max(1, $height));
         }
@@ -162,9 +162,9 @@ abstract class Pimcore_Image_Adapter {
         $ratio = $this->getWidth() / $this->getHeight();
 
         if (($width / $height) > $ratio) {
-           $this->scaleByWidth($width);
+           $this->scaleByWidth($width, true);
         } else {
-           $this->scaleByHeight($height);
+           $this->scaleByHeight($height, true);
         }
 
         if($orientation == "center") {
