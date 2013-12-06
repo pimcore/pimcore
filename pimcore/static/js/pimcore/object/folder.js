@@ -279,6 +279,12 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     save : function (task) {
 
+        if(this.tab.disabled) {
+            return;
+        }
+
+        this.tab.disable();
+
         Ext.Ajax.request({
             url: '/admin/object/save-folder/task/' + task,
             method: "post",
@@ -297,7 +303,12 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 } catch(e){
                     pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
                 }
-            }.bind(this)
+
+                this.tab.enable();
+            }.bind(this),
+            failure: function () {
+                this.tab.enable();
+            }
         });
 
     },

@@ -116,10 +116,14 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
     save : function (task, only) {
 
+        if(this.tab.disabled) {
+            return;
+        }
+
+        this.tab.disable();
         var saveData = this.getSaveData(only);
 
         if (saveData) {
-
             // check for version notification
             if(this.newerVersionNotification) {
                 if(task == "publish") {
@@ -163,8 +167,15 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                             this.versions.reload();
                         }
                     }
-                }.bind(this)
+
+                    this.tab.enable();
+                }.bind(this),
+                failure: function () {
+                    this.tab.enable();
+                }
             });
+        } else {
+            this.tab.enable();
         }
     },
     
