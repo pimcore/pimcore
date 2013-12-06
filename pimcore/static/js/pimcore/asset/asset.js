@@ -338,6 +338,12 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
     },
 
     save : function (only) {
+
+        if(this.tab.disabled) {
+            return;
+        }
+
+        this.tab.disable();
         Ext.Ajax.request({
             url: '/admin/asset/save/',
             method: "post",
@@ -360,7 +366,12 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                         this.versions.reload();
                     }
                 }
+
+                this.tab.enable();
             }.bind(this),
+            failure: function () {
+                this.tab.enable();
+            },
             params: this.getSaveData(only)
         });
     },

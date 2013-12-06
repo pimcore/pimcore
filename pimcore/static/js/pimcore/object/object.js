@@ -540,7 +540,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             omitMandatoryCheck = true;
         }
 
-//        var callback = callback;
+        if(this.tab.disabled) {
+            return;
+        }
+
+        this.tab.disable();
+
         var saveData = this.getSaveData(only, omitMandatoryCheck);
 
         if (saveData.data != false && saveData.data != "false") {
@@ -586,10 +591,17 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     if(typeof callback == "function") {
                         callback();
                     }
-                }.bind(this)
+
+                    this.tab.enable();
+                }.bind(this),
+                failure: function () {
+                    this.tab.enable();
+                }
             });
 
             return true;
+        } else {
+            this.tab.enable();
         }
         return false;
     },
