@@ -219,7 +219,7 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
                 if(!$this->condition && $i == 0){
                     $conditionString .= $key . ' ';
                 }else{
-                    $conditionString .= ' ' . $value['concatenator'] . $key . ' ';
+                    $conditionString .= ' ' . $value['concatenator'] . ' ' . $key . ' ';
                 }
 
                 /* check value because of calls like
