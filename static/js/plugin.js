@@ -19,7 +19,11 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
         var toolbar = pimcore.globalmanager.get("layout_toolbar");
 
         // init
-        var menuItems = new Ext.menu.Menu({cls: "pimcore_navigation_flyout"});
+        var menuItems = toolbar.ecommerceMenu;
+        if(!menuItems) {
+            menuItems = new Ext.menu.Menu({cls: "pimcore_navigation_flyout"});
+            toolbar.ecommerceMenu = menuItems;
+        }
         var user = pimcore.globalmanager.get("user");
 
         var searchButton = Ext.get("pimcore_menu_settings");
