@@ -80,6 +80,28 @@ pimcore.settings.document.doctypes = Class.create({
                 mode: "local",
                 triggerAction: "all"
             })},
+            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
+                hidden: true,
+                renderer: function(d) {
+                    if (d !== undefined) {
+                        var date = new Date(d * 1000);
+                        return date.format("Y-m-d H:i:s");
+                    } else {
+                        return "";
+                    }
+                }
+            },
+            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false, width: 130,
+                hidden: true,
+                renderer: function(d) {
+                    if (d !== undefined) {
+                        var date = new Date(d * 1000);
+                        return date.format("Y-m-d H:i:s");
+                    } else {
+                        return "";
+                    }
+                }
+            },
             {
                 xtype: 'actioncolumn',
                 width: 10,
