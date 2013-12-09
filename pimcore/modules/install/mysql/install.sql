@@ -380,8 +380,6 @@ CREATE TABLE `properties` (
   `type` enum('text','date','document','asset','object','bool','select') DEFAULT NULL,
   `data` text,
   `inheritable` tinyint(1) unsigned DEFAULT '1',
-  `creationDate` bigint(20) unsigned DEFAULT NULL,
-  `modificationDate` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`cid`,`ctype`,`name`),
   KEY `cpath` (`cpath`),
   KEY `inheritable` (`inheritable`),

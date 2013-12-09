@@ -17,7 +17,6 @@ $tableNames = array(
     "glossary",
     "keyvalue_groups",
     "keyvalue_keys",
-    "properties",
     "properties_predefined",
     "redirects",
     "sites",

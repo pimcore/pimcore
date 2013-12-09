@@ -63,17 +63,6 @@ class Property extends Pimcore_Model_Abstract {
     public $config;
 
     /**
-     * @var integer
-     */
-    public $creationDate;
-
-    /**
-     * @var integer
-     */
-    public $modificationDate;
-
-
-    /**
      * Takes data from editmode and convert it to internal objects
      *
      * @param mixed $data
@@ -332,37 +321,4 @@ class Property extends Pimcore_Model_Abstract {
             }
         }
     }
-
-    /**
-     * @param int $creationDate
-     */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = $creationDate;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
-     * @param int $modificationDate
-     */
-    public function setModificationDate($modificationDate)
-    {
-        $this->modificationDate = $modificationDate;
-    }
-
-    /**
-     * @return int
-     */
-    public function getModificationDate()
-    {
-        return $this->modificationDate;
-    }
-
 }
