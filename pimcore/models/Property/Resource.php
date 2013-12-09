@@ -54,12 +54,6 @@ class Property_Resource extends Pimcore_Model_Resource_Abstract {
             $data = Pimcore_Tool_Serialize::serialize($data);
         }
 
-        $ts = time();
-        if (!$this->model->getCreationDate()) {
-            $this->model->setCreationDate($ts);
-        }
-        $this->model->setModificationDate($ts);
-
         $saveData = array(
             "cid" => $this->model->getCid(),
             "ctype" => $this->model->getCtype(),
