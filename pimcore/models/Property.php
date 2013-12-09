@@ -63,6 +63,17 @@ class Property extends Pimcore_Model_Abstract {
     public $config;
 
     /**
+     * @var integer
+     */
+    public $creationDate;
+
+    /**
+     * @var integer
+     */
+    public $modificationDate;
+
+
+    /**
      * Takes data from editmode and convert it to internal objects
      *
      * @param mixed $data

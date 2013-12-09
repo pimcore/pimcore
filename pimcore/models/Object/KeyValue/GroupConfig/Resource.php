@@ -98,6 +98,9 @@ class Object_KeyValue_GroupConfig_Resource extends Pimcore_Model_Resource_Abstra
      */
     public function update() {
         try {
+            $ts = time();
+            $this->model->setModificationDate($ts);
+
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
@@ -126,6 +129,10 @@ class Object_KeyValue_GroupConfig_Resource extends Pimcore_Model_Resource_Abstra
      * @return boolean
      */
     public function create() {
+        $ts = time();
+        $this->model->setModificationDate($ts);
+        $this->model->setCreationDate($ts);
+
         $this->db->insert(self::TABLE_NAME_GROUPS, array());
 
         $this->model->setId($this->db->lastInsertId());

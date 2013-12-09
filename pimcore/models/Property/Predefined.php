@@ -62,6 +62,17 @@ class Property_Predefined extends Pimcore_Model_Abstract {
      */
     public $inheritable = false;
 
+    /**
+     * @var integer
+     */
+    public $creationDate;
+
+    /**
+     * @var integer
+     */
+    public $modificationDate;
+
+
 
     /**
      * @param integer $id
@@ -254,4 +265,38 @@ class Property_Predefined extends Pimcore_Model_Abstract {
     {
         return $this->description;
     }
+
+    /**
+     * @param int $creationDate
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    /**
+     * @param int $modificationDate
+     */
+    public function setModificationDate($modificationDate)
+    {
+        $this->modificationDate = $modificationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getModificationDate()
+    {
+        return $this->modificationDate;
+    }
+
+
 }

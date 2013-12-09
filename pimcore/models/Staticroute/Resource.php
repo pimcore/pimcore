@@ -105,6 +105,9 @@ class Staticroute_Resource extends Pimcore_Model_Resource_Abstract {
      */
     public function update() {
         try {
+            $ts = time();
+            $this->model->setModificationDate($ts);
+
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
@@ -112,6 +115,7 @@ class Staticroute_Resource extends Pimcore_Model_Resource_Abstract {
                     $data[$key] = $value;
                 }
             }
+
 
             $this->db->update("staticroutes", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
@@ -128,6 +132,10 @@ class Staticroute_Resource extends Pimcore_Model_Resource_Abstract {
      * @return boolean
      */
     public function create() {
+        $ts = time();
+        $this->model->setModificationDate($ts);
+        $this->model->setCreationDate($ts);
+
         $this->db->insert("staticroutes", array());
 
         $this->model->setId($this->db->lastInsertId());

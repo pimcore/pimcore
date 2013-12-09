@@ -72,6 +72,16 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public $priority = 1;
 
+    /**
+     * @var integer
+     */
+    public $creationDate;
+
+    /**
+     * @var integer
+     */
+    public $modificationDate;
+
 
     /**
      * this is a small per request cache to know which route is which is, this info is used in self::getByName()
@@ -537,4 +547,38 @@ class Staticroute extends Pimcore_Model_Abstract {
             Logger::crit($e);
         }
     }
+
+    /**
+     * @param int $modificationDate
+     */
+    public function setModificationDate($modificationDate)
+    {
+        $this->modificationDate = $modificationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getModificationDate()
+    {
+        return $this->modificationDate;
+    }
+
+    /**
+     * @param int $creationDate
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+
 }
