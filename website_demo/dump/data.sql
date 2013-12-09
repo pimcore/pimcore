@@ -169,6 +169,8 @@ CREATE TABLE `documents_doctypes` (
   `template` varchar(255) DEFAULT NULL,
   `type` enum('page','snippet','email') DEFAULT NULL,
   `priority` int(3) DEFAULT '0',
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
@@ -305,6 +307,8 @@ CREATE TABLE `glossary` (
   `abbr` varchar(255) DEFAULT NULL,
   `acronym` varchar(255) DEFAULT NULL,
   `site` int(11) unsigned DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `language` (`language`),
   KEY `site` (`site`)
@@ -335,6 +339,8 @@ CREATE TABLE `keyvalue_groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `description` varchar(255) DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -349,6 +355,8 @@ CREATE TABLE `keyvalue_keys` (
   `unit` varchar(255) DEFAULT NULL,
   `possiblevalues` text,
   `group` int(11) DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `group` (`group`),
   CONSTRAINT `keyvalue_keys_ibfk_1` FOREIGN KEY (`group`) REFERENCES `keyvalue_groups` (`id`) ON DELETE SET NULL
@@ -643,6 +651,8 @@ CREATE TABLE `properties_predefined` (
   `config` text,
   `ctype` enum('document','asset','object') DEFAULT NULL,
   `inheritable` tinyint(1) unsigned DEFAULT '0',
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `id` (`id`),
@@ -680,6 +690,8 @@ CREATE TABLE `redirects` (
   `statusCode` varchar(3) DEFAULT NULL,
   `priority` int(2) DEFAULT '0',
   `expiry` bigint(20) DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -748,6 +760,8 @@ CREATE TABLE `sites` (
   `rootId` int(11) unsigned DEFAULT NULL,
   `errorDocument` varchar(255) DEFAULT NULL,
   `redirectToMainDomain` tinyint(1) DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `rootId` (`rootId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -767,6 +781,8 @@ CREATE TABLE `staticroutes` (
   `defaults` varchar(255) DEFAULT NULL,
   `siteId` int(11) DEFAULT NULL,
   `priority` int(3) DEFAULT '0',
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`),
   KEY `name` (`name`)
@@ -901,7 +917,7 @@ CREATE TABLE `users` (
   KEY `parentId` (`parentId`),
   KEY `name` (`name`),
   KEY `password` (`password`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 
 
@@ -1278,14 +1294,6 @@ INSERT INTO `dependencies` VALUES ('object',31,'object',30);
 
 
 
-
-
-
-
-
-
-
-
 INSERT INTO `documents` VALUES (1,0,'page','','/',999999,1,1368522989,1382962883,1,2);
 INSERT INTO `documents` VALUES (3,40,'page','basic-examples','/en/',1,1,1368523212,1382956582,2,2);
 INSERT INTO `documents` VALUES (4,40,'page','introduction','/en/',0,1,1368523285,1382962961,2,2);
@@ -1347,9 +1355,9 @@ INSERT INTO `documents` VALUES (59,4,'snippet','sidebar','/en/introduction/',1,1
 
 
 
-INSERT INTO `documents_doctypes` VALUES (1,'Content-Page','','content','default','','page',0);
-INSERT INTO `documents_doctypes` VALUES (2,'Standard-Teaser','','','','/snippets/standard-teaser.php','snippet',0);
-INSERT INTO `documents_doctypes` VALUES (3,'Sidebar','','','','/includes/sidebar.php','snippet',0);
+INSERT INTO `documents_doctypes` VALUES (1,'Content-Page','','content','default','','page',0,0,0);
+INSERT INTO `documents_doctypes` VALUES (2,'Standard-Teaser','','','','/snippets/standard-teaser.php','snippet',0,0,0);
+INSERT INTO `documents_doctypes` VALUES (3,'Sidebar','','','','/includes/sidebar.php','snippet',0,0,0);
 
 
 
@@ -2103,10 +2111,10 @@ INSERT INTO `documents_page` VALUES (35,'','content','default','','','','','a:0:
 INSERT INTO `documents_page` VALUES (36,'','advanced','search','','','','','a:0:{}','',0,'','');
 INSERT INTO `documents_page` VALUES (37,'','advanced','contact-form','','','','','a:0:{}','',0,'','');
 INSERT INTO `documents_page` VALUES (39,'','content','default','','','','','a:0:{}','',0,'','');
-INSERT INTO `documents_page` VALUES (41,'','content','portal','','','','','a:0:{}','','','','');
+INSERT INTO `documents_page` VALUES (41,'','content','portal','','','','','a:0:{}','',0,'','');
 INSERT INTO `documents_page` VALUES (50,'','content','default','','','','','a:0:{}','',0,'','');
-INSERT INTO `documents_page` VALUES (51,'','content','default','','Einfache Beispiele','','','a:0:{}','','','','');
-INSERT INTO `documents_page` VALUES (52,'','content','default','','Beispiele für Fortgeschrittene','','','a:0:{}','','','','');
+INSERT INTO `documents_page` VALUES (51,'','content','default','','Einfache Beispiele','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (52,'','content','default','','Beispiele für Fortgeschrittene','','','a:0:{}','',0,'','');
 INSERT INTO `documents_page` VALUES (53,'','news','index','','','','','a:0:{}','',0,'','');
 
 
@@ -2120,10 +2128,10 @@ INSERT INTO `documents_snippet` VALUES (46,'','default','default','/includes/foo
 INSERT INTO `documents_snippet` VALUES (47,'','default','default','/snippets/standard-teaser.php',0);
 INSERT INTO `documents_snippet` VALUES (48,'','default','default','/snippets/standard-teaser.php',0);
 INSERT INTO `documents_snippet` VALUES (49,'','default','default','/snippets/standard-teaser.php',0);
-INSERT INTO `documents_snippet` VALUES (56,'','default','default','/includes/language.php','');
-INSERT INTO `documents_snippet` VALUES (57,'','default','default','/includes/sidebar.php','');
-INSERT INTO `documents_snippet` VALUES (58,'','default','default','/includes/sidebar.php','');
-INSERT INTO `documents_snippet` VALUES (59,'','default','default','/includes/sidebar.php','');
+INSERT INTO `documents_snippet` VALUES (56,'','default','default','/includes/language.php',0);
+INSERT INTO `documents_snippet` VALUES (57,'','default','default','/includes/sidebar.php',0);
+INSERT INTO `documents_snippet` VALUES (58,'','default','default','/includes/sidebar.php',0);
+INSERT INTO `documents_snippet` VALUES (59,'','default','default','/includes/sidebar.php',0);
 
 
 
@@ -2141,13 +2149,13 @@ INSERT INTO `edit_lock` VALUES (439,4,'document',2,'v0vdohamc903sqas18hgg3k6p0',
 
 
 
-INSERT INTO `glossary` VALUES (1,'en',0,1,'occidental','7','','',0);
-INSERT INTO `glossary` VALUES (2,'en',0,1,'vocabular','20','','',0);
-INSERT INTO `glossary` VALUES (3,'en',0,1,'resultant','5','','',0);
-INSERT INTO `glossary` VALUES (4,'en',0,1,'familie','18','','',0);
-INSERT INTO `glossary` VALUES (5,'en',0,1,'omnicos','19','','',0);
-INSERT INTO `glossary` VALUES (6,'en',0,1,'coalesce','','coalesce','',0);
-INSERT INTO `glossary` VALUES (7,'en',0,1,'grammatica','','','grammatica',0);
+INSERT INTO `glossary` VALUES (1,'en',0,1,'occidental','7','','',0,0,0);
+INSERT INTO `glossary` VALUES (2,'en',0,1,'vocabular','20','','',0,0,0);
+INSERT INTO `glossary` VALUES (3,'en',0,1,'resultant','5','','',0,0,0);
+INSERT INTO `glossary` VALUES (4,'en',0,1,'familie','18','','',0,0,0);
+INSERT INTO `glossary` VALUES (5,'en',0,1,'omnicos','19','','',0,0,0);
+INSERT INTO `glossary` VALUES (6,'en',0,1,'coalesce','','coalesce','',0,0,0);
+INSERT INTO `glossary` VALUES (7,'en',0,1,'grammatica','','','grammatica',0,0,0);
 
 
 
@@ -2214,12 +2222,12 @@ INSERT INTO `object_localized_query_2_en` VALUES (9,'en','In enim justo','Nullam
 
 
 INSERT INTO `object_query_2` VALUES (3,2,'news',1374147900,49,43,52);
-INSERT INTO `object_query_2` VALUES (4,2,'news',1369761300,51,'','');
-INSERT INTO `object_query_2` VALUES (5,2,'news',1370037600,'','','');
-INSERT INTO `object_query_2` VALUES (6,2,'news',1354558500,25,'','');
-INSERT INTO `object_query_2` VALUES (7,2,'news',1360606500,18,'','');
-INSERT INTO `object_query_2` VALUES (8,2,'news',1360001700,20,'','');
-INSERT INTO `object_query_2` VALUES (9,2,'news',1352830500,21,'','');
+INSERT INTO `object_query_2` VALUES (4,2,'news',1369761300,51,0,0);
+INSERT INTO `object_query_2` VALUES (5,2,'news',1370037600,0,0,0);
+INSERT INTO `object_query_2` VALUES (6,2,'news',1354558500,25,0,0);
+INSERT INTO `object_query_2` VALUES (7,2,'news',1360606500,18,0,0);
+INSERT INTO `object_query_2` VALUES (8,2,'news',1360001700,20,0,0);
+INSERT INTO `object_query_2` VALUES (9,2,'news',1352830500,21,0,0);
 
 
 
@@ -2251,12 +2259,12 @@ INSERT INTO `object_relations_3` VALUES (31,30,'object','person',0,'object','','
 
 
 INSERT INTO `object_store_2` VALUES (3,1374147900,49,43,52);
-INSERT INTO `object_store_2` VALUES (4,1369761300,51,'','');
-INSERT INTO `object_store_2` VALUES (5,1370037600,'','','');
-INSERT INTO `object_store_2` VALUES (6,1354558500,25,'','');
-INSERT INTO `object_store_2` VALUES (7,1360606500,18,'','');
-INSERT INTO `object_store_2` VALUES (8,1360001700,20,'','');
-INSERT INTO `object_store_2` VALUES (9,1352830500,21,'','');
+INSERT INTO `object_store_2` VALUES (4,1369761300,51,0,0);
+INSERT INTO `object_store_2` VALUES (5,1370037600,0,0,0);
+INSERT INTO `object_store_2` VALUES (6,1354558500,25,0,0);
+INSERT INTO `object_store_2` VALUES (7,1360606500,18,0,0);
+INSERT INTO `object_store_2` VALUES (8,1360001700,20,0,0);
+INSERT INTO `object_store_2` VALUES (9,1352830500,21,0,0);
 
 
 
@@ -2346,10 +2354,10 @@ INSERT INTO `properties` VALUES (53,'document','/de/einfache-beispiele/neuigkeit
 
 
 
-INSERT INTO `properties_predefined` VALUES (1,'Left Navigation Start Node','Where the tree of the left navigation should start','leftNavStartNode','document','','','document',1);
-INSERT INTO `properties_predefined` VALUES (2,'Hide Left Navigation','','leftNavHide','bool','true','','document',0);
-INSERT INTO `properties_predefined` VALUES (3,'Header Color','','headerColor','select','','orange,blue,green','document',1);
-INSERT INTO `properties_predefined` VALUES (4,'Sidebar','','sidebar','document','','','document',1);
+INSERT INTO `properties_predefined` VALUES (1,'Left Navigation Start Node','Where the tree of the left navigation should start','leftNavStartNode','document','','','document',1,0,0);
+INSERT INTO `properties_predefined` VALUES (2,'Hide Left Navigation','','leftNavHide','bool','true','','document',0,0,0);
+INSERT INTO `properties_predefined` VALUES (3,'Header Color','','headerColor','select','','orange,blue,green','document',1,0,0);
+INSERT INTO `properties_predefined` VALUES (4,'Sidebar','','sidebar','document','','','document',1,0,0);
 
 
 
@@ -2500,7 +2508,7 @@ INSERT INTO `search_backend_data` VALUES (59,'/en/introduction/sidebar','documen
 
 
 
-INSERT INTO `staticroutes` VALUES (1,'news','/(.*)_n([\\d]+)/','%prefix/%text_n%id','','news','detail','text,id','',0,1);
+INSERT INTO `staticroutes` VALUES (1,'news','/(.*)_n([\\d]+)/','%prefix/%text_n%id','','news','detail','text,id','',0,1,0,0);
 
 
 
@@ -2568,16 +2576,16 @@ INSERT INTO `translations_admin` VALUES ('wysiwyg','en','',1368608412,1368608412
 
 INSERT INTO `translations_website` VALUES ('\'%value%\' is not a valid email address in the basic format local-part@hostname','de','',1368631595,1368631595);
 INSERT INTO `translations_website` VALUES ('\'%value%\' is not a valid email address in the basic format local-part@hostname','en','',1368631595,1368631595);
-INSERT INTO `translations_website` VALUES ('advanced examples','de','','','');
-INSERT INTO `translations_website` VALUES ('advanced examples','en','','','');
-INSERT INTO `translations_website` VALUES ('aktuelles','de','','','');
-INSERT INTO `translations_website` VALUES ('aktuelles','en','','','');
+INSERT INTO `translations_website` VALUES ('advanced examples','de','',0,0);
+INSERT INTO `translations_website` VALUES ('advanced examples','en','',0,0);
+INSERT INTO `translations_website` VALUES ('aktuelles','de','',0,0);
+INSERT INTO `translations_website` VALUES ('aktuelles','en','',0,0);
 INSERT INTO `translations_website` VALUES ('back to top','de','',0,0);
 INSERT INTO `translations_website` VALUES ('back to top','en','',0,0);
 INSERT INTO `translations_website` VALUES ('basic examples','de','',0,0);
 INSERT INTO `translations_website` VALUES ('basic examples','en','',0,0);
-INSERT INTO `translations_website` VALUES ('beispiele für fortgeschrittene','de','','','');
-INSERT INTO `translations_website` VALUES ('beispiele für fortgeschrittene','en','','','');
+INSERT INTO `translations_website` VALUES ('beispiele für fortgeschrittene','de','',0,0);
+INSERT INTO `translations_website` VALUES ('beispiele für fortgeschrittene','en','',0,0);
 INSERT INTO `translations_website` VALUES ('check me out','de','',1368610820,1368610820);
 INSERT INTO `translations_website` VALUES ('check me out','en','',1368610820,1368610820);
 INSERT INTO `translations_website` VALUES ('combined 1','en','',1368606496,1368606496);
@@ -2588,8 +2596,8 @@ INSERT INTO `translations_website` VALUES ('contain &amp; overlay','en','',13686
 INSERT INTO `translations_website` VALUES ('content page','de','',0,0);
 INSERT INTO `translations_website` VALUES ('content page','en','',0,0);
 INSERT INTO `translations_website` VALUES ('cover','en','',1368602697,1368602697);
-INSERT INTO `translations_website` VALUES ('deutsche übersetzung','de','','','');
-INSERT INTO `translations_website` VALUES ('deutsche übersetzung','en','','','');
+INSERT INTO `translations_website` VALUES ('deutsche übersetzung','de','',0,0);
+INSERT INTO `translations_website` VALUES ('deutsche übersetzung','en','',0,0);
 INSERT INTO `translations_website` VALUES ('dimensions','en','',1368604632,1368604632);
 INSERT INTO `translations_website` VALUES ('download','de','Herunterladen',1368608523,1368608523);
 INSERT INTO `translations_website` VALUES ('download','en','',1368608523,1368608523);
@@ -2601,19 +2609,19 @@ INSERT INTO `translations_website` VALUES ('download source','de','Herunterladen
 INSERT INTO `translations_website` VALUES ('download source','en','',1368608508,1368608508);
 INSERT INTO `translations_website` VALUES ('e-mail','de','',1368610820,1368610820);
 INSERT INTO `translations_website` VALUES ('e-mail','en','',1368610820,1368610820);
-INSERT INTO `translations_website` VALUES ('einfache beispiele','de','','','');
-INSERT INTO `translations_website` VALUES ('einfache beispiele','en','','','');
-INSERT INTO `translations_website` VALUES ('einführung','de','','','');
-INSERT INTO `translations_website` VALUES ('einführung','en','','','');
-INSERT INTO `translations_website` VALUES ('experiments','de','','','');
-INSERT INTO `translations_website` VALUES ('experiments','en','','','');
+INSERT INTO `translations_website` VALUES ('einfache beispiele','de','',0,0);
+INSERT INTO `translations_website` VALUES ('einfache beispiele','en','',0,0);
+INSERT INTO `translations_website` VALUES ('einführung','de','',0,0);
+INSERT INTO `translations_website` VALUES ('einführung','en','',0,0);
+INSERT INTO `translations_website` VALUES ('experiments','de','',0,0);
+INSERT INTO `translations_website` VALUES ('experiments','en','',0,0);
 INSERT INTO `translations_website` VALUES ('fastest way to get started: get the compiled and minified versions of our css, js, and images. no docs or original source files.','de','Der schnellste Weg um loszulegen: Lade die kompilierten und reduzierten Versionen unserer CSS, JS und Grafiken. Keine Dokumentation oder Quelldateien.',1368608611,1368608611);
 INSERT INTO `translations_website` VALUES ('fastest way to get started: get the compiled and minified versions of our css, js, and images. no docs or original source files.','en','',1368608611,1368608611);
 INSERT INTO `translations_website` VALUES ('firstname','de','',1368610819,1368610819);
 INSERT INTO `translations_website` VALUES ('firstname','en','',1368610819,1368610819);
 INSERT INTO `translations_website` VALUES ('frame','en','',1368603255,1368603255);
-INSERT INTO `translations_website` VALUES ('galleries','de','','','');
-INSERT INTO `translations_website` VALUES ('galleries','en','','','');
+INSERT INTO `translations_website` VALUES ('galleries','de','',0,0);
+INSERT INTO `translations_website` VALUES ('galleries','en','',0,0);
 INSERT INTO `translations_website` VALUES ('gender','de','',1368622092,1368622092);
 INSERT INTO `translations_website` VALUES ('gender','en','',1368622092,1368622092);
 INSERT INTO `translations_website` VALUES ('get the original files for all css and javascript, along with a local copy of the docs by downloading the latest version directly from github.','de','Lade die originalen  CSS und Javascript Dateien zusammen mit einer lokalen Kopie der Dokumentation von github.com',1368608698,1368608698);
@@ -2621,12 +2629,12 @@ INSERT INTO `translations_website` VALUES ('get the original files for all css a
 INSERT INTO `translations_website` VALUES ('grayscale','en','',1368606077,1368606077);
 INSERT INTO `translations_website` VALUES ('home','de','Startseite',0,1382961053);
 INSERT INTO `translations_website` VALUES ('home','en','Home',0,1382961053);
-INSERT INTO `translations_website` VALUES ('html5 video','de','','','');
-INSERT INTO `translations_website` VALUES ('html5 video','en','','','');
+INSERT INTO `translations_website` VALUES ('html5 video','de','',0,0);
+INSERT INTO `translations_website` VALUES ('html5 video','en','',0,0);
 INSERT INTO `translations_website` VALUES ('i accept the terms of use','de','',1368620808,1368620808);
 INSERT INTO `translations_website` VALUES ('i accept the terms of use','en','',1368620808,1368620808);
-INSERT INTO `translations_website` VALUES ('introduction','de','','','');
-INSERT INTO `translations_website` VALUES ('introduction','en','','','');
+INSERT INTO `translations_website` VALUES ('introduction','de','',0,0);
+INSERT INTO `translations_website` VALUES ('introduction','en','',0,0);
 INSERT INTO `translations_website` VALUES ('keyword','de','',0,0);
 INSERT INTO `translations_website` VALUES ('keyword','en','',0,0);
 INSERT INTO `translations_website` VALUES ('lastname','de','',1368610820,1368610820);
@@ -2634,16 +2642,16 @@ INSERT INTO `translations_website` VALUES ('lastname','en','',1368610820,1368610
 INSERT INTO `translations_website` VALUES ('mask','en','',1368606259,1368606259);
 INSERT INTO `translations_website` VALUES ('message','de','',1368620708,1368620708);
 INSERT INTO `translations_website` VALUES ('message','en','',1368620708,1368620708);
-INSERT INTO `translations_website` VALUES ('neuigkeiten','de','','','');
-INSERT INTO `translations_website` VALUES ('neuigkeiten','en','','','');
-INSERT INTO `translations_website` VALUES ('news','de','','','');
-INSERT INTO `translations_website` VALUES ('news','en','','','');
+INSERT INTO `translations_website` VALUES ('neuigkeiten','de','',0,0);
+INSERT INTO `translations_website` VALUES ('neuigkeiten','en','',0,0);
+INSERT INTO `translations_website` VALUES ('news','de','',0,0);
+INSERT INTO `translations_website` VALUES ('news','en','',0,0);
 INSERT INTO `translations_website` VALUES ('newsletter','de','',1368620340,1368620340);
 INSERT INTO `translations_website` VALUES ('newsletter','en','',1368620340,1368620340);
 INSERT INTO `translations_website` VALUES ('original dimensions of the image','en','',1368604779,1368604779);
 INSERT INTO `translations_website` VALUES ('overlay','en','',1368605562,1368605562);
-INSERT INTO `translations_website` VALUES ('properties','de','','','');
-INSERT INTO `translations_website` VALUES ('properties','en','','','');
+INSERT INTO `translations_website` VALUES ('properties','de','',0,0);
+INSERT INTO `translations_website` VALUES ('properties','en','',0,0);
 INSERT INTO `translations_website` VALUES ('resize','en','',1368603801,1368603801);
 INSERT INTO `translations_website` VALUES ('rotate','en','',1368603255,1368603255);
 INSERT INTO `translations_website` VALUES ('rounded corners','en','',1368605936,1368605936);
@@ -2660,10 +2668,10 @@ INSERT INTO `translations_website` VALUES ('total %s','de','',1368619656,1368619
 INSERT INTO `translations_website` VALUES ('total %s','en','',1368619656,1368619656);
 INSERT INTO `translations_website` VALUES ('total: %s','de','',1368619663,1368619663);
 INSERT INTO `translations_website` VALUES ('total: %s','en','',1368619663,1368619663);
-INSERT INTO `translations_website` VALUES ('website translations','de','','','');
-INSERT INTO `translations_website` VALUES ('website translations','en','','','');
-INSERT INTO `translations_website` VALUES ('website übersetzungen','de','','','');
-INSERT INTO `translations_website` VALUES ('website übersetzungen','en','','','');
+INSERT INTO `translations_website` VALUES ('website translations','de','',0,0);
+INSERT INTO `translations_website` VALUES ('website translations','en','',0,0);
+INSERT INTO `translations_website` VALUES ('website übersetzungen','de','',0,0);
+INSERT INTO `translations_website` VALUES ('website übersetzungen','en','',0,0);
 
 
 
