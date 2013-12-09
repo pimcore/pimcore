@@ -43,7 +43,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
 
     createGrid: function(response) {
         this.fields = ['id', 'name', 'description', 'type', 'unit', 'group', 'groupdescription','possiblevalues',
-                                                                                        'translator'];
+                                                        'translator', 'creationDate', 'modificationDate'];
 
         var readerFields = [];
         for (var i = 0; i < this.fields.length; i++) {
@@ -135,6 +135,34 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
         gridColumns.push({header: t("keyvalue_col_groupid"), width: 40, sortable: true, dataIndex: 'group'});
         gridColumns.push({header: t("keyvalue_col_groupdescription"), width: 200, sortable: false,
                                                             dataIndex: 'groupdescription'});
+
+        gridColumns.push(
+            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
+                hidden: true,
+                renderer: function(d) {
+                    if (d !== undefined) {
+                        var date = new Date(d * 1000);
+                        return date.format("Y-m-d H:i:s");
+                    } else {
+                        return "";
+                    }
+                }
+            }
+        );
+
+        gridColumns.push(
+            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false, width: 130,
+                hidden: true,
+                renderer: function(d) {
+                    if (d !== undefined) {
+                        var date = new Date(d * 1000);
+                        return date.format("Y-m-d H:i:s");
+                    } else {
+                        return "";
+                    }
+                }
+            }
+        );
 
         gridColumns.push({
             hideable: false,

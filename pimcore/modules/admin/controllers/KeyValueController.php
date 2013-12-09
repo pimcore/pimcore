@@ -71,7 +71,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
 
             $config->save();
 
-            $this->_helper->json(array("success" => true));
+            $this->_helper->json(array("success" => true, "data" => $config));
         } else {
 
             $start = 0;
@@ -136,11 +136,21 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                 if (!$name) {
                     $name = "EMPTY";
                 }
-                $data[] = array(
+                $item = array(
                     "id" => $config->getId(),
                     "name" => $name,
                     "description" => $config->getDescription()
                 );
+                if ($config->getCreationDate()) {
+                    $item["creationDate"] = $config->getCreationDate();
+                }
+
+                if ($config->getModificationDate()) {
+                    $item["modificationDate"] = $config->getModificationDate();
+                }
+
+
+                $data[] = $item;
             }
             $rootElement["data"] = $data;
             $rootElement["success"] = true;
@@ -169,7 +179,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
 
             $config->save();
 
-            $this->_helper->json(array("success" => true));
+            $this->_helper->json(array("success" => true, "data" => $config));
         } else {
 
             $start = 0;
@@ -278,7 +288,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                     }
                 }
 
-                $data[] = array(
+                $item = array(
                     "id" => $config->getId(),
                     "name" => $name,
                     "description" => $config->getDescription(),
@@ -290,6 +300,16 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                     "groupName" => $groupName,
                     "translator" => $config->getTranslator()
                 );
+
+                if ($config->getCreationDate()) {
+                    $item["creationDate"] = $config->getCreationDate();
+                }
+
+                if ($config->getModificationDate()) {
+                    $item["modificationDate"] = $config->getModificationDate();
+                }
+
+                $data[] = $item;
             }
             $rootElement["data"] = $data;
             $rootElement["success"] = true;
