@@ -91,7 +91,9 @@ pimcore.settings.glossary = Class.create({
             {name: 'site', allowBlank: true},
             {name: 'link', allowBlank: true},
             {name: 'abbr', allowBlank: true},
-            {name: 'acronym', allowBlank: true}
+            {name: 'acronym', allowBlank: true},
+            {name: 'creationDate', allowBlank: true},
+            {name: 'modificationDate', allowBlank: true}
         ]);
         var writer = new Ext.data.JsonWriter();
 
@@ -207,6 +209,28 @@ pimcore.settings.glossary = Class.create({
                     return store.getAt(pos).get("domain");
                 }
             }},
+            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
+                hidden: true,
+                renderer: function(d) {
+                    if (d !== undefined) {
+                        var date = new Date(d * 1000);
+                        return date.format("Y-m-d H:i:s");
+                    } else {
+                        return "";
+                    }
+                }
+            },
+            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
+                hidden: true,
+                renderer: function(d) {
+                    if (d !== undefined) {
+                        var date = new Date(d * 1000);
+                        return date.format("Y-m-d H:i:s");
+                    } else {
+                        return "";
+                    }
+                }
+            },
             {
                 xtype: 'actioncolumn',
                 width: 30,
