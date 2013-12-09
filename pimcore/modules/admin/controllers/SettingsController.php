@@ -716,7 +716,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             }
         }
         else {
-            // get list of routes
+            // get list of glossaries
 
             $list = new Glossary_List();
             $list->setLimit($this->getParam("limit"));
