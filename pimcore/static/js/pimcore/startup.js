@@ -161,7 +161,9 @@ Ext.onReady(function () {
         {name:'action', allowBlank:true},
         {name:'template', allowBlank:true},
         {name:'type', allowBlank:false},
-        {name:'priority', allowBlank:true}
+        {name:'priority', allowBlank:true},
+        {name: 'creationDate', allowBlank: true},
+        {name: 'modificationDate', allowBlank: true}
     ]);
     var writer = new Ext.data.JsonWriter();
     var store = new Ext.data.Store({
