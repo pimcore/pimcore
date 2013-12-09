@@ -79,6 +79,9 @@ class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
      */
     public function update() {
         try {
+            $ts = time();
+            $this->model->setModificationDate($ts);
+
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
@@ -106,6 +109,10 @@ class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
      */
     public function create() {
         $this->db->insert("redirects", array());
+
+        $ts = time();
+        $this->model->setModificationDate($ts);
+        $this->model->setCreationDate($ts);
 
         $this->model->setId($this->db->lastInsertId());
 

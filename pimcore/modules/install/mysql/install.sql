@@ -148,6 +148,8 @@ CREATE TABLE `documents_doctypes` (
   `template` varchar(255) DEFAULT NULL,
   `type` enum('page','snippet','email') DEFAULT NULL,
   `priority` int(3) DEFAULT '0',
+  `creationDate` bigint(20) unsigned DEFAULT NULL,
+  `modificationDate` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`)
 ) DEFAULT CHARSET=utf8;
@@ -266,6 +268,8 @@ CREATE TABLE `glossary` (
   `abbr` varchar(255) DEFAULT NULL,
   `acronym` varchar(255) DEFAULT NULL,
   `site` int(11) unsigned DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT NULL,
+  `modificationDate` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `language` (`language`),
   KEY `site` (`site`)
@@ -292,6 +296,8 @@ CREATE TABLE `keyvalue_groups` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL DEFAULT '',
     `description` VARCHAR(255),
+    `creationDate` bigint(20) unsigned DEFAULT NULL,
+    `modificationDate` bigint(20) unsigned DEFAULT NULL,
     PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;
 
@@ -304,6 +310,8 @@ CREATE TABLE `keyvalue_keys` (
   `unit` VARCHAR(255),
   `possiblevalues` TEXT,
   `group` INT,
+  `creationDate` bigint(20) unsigned DEFAULT NULL,
+  `modificationDate` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`group`) REFERENCES keyvalue_groups(`id`) ON DELETE SET NULL
 ) DEFAULT CHARSET=utf8;
@@ -372,6 +380,8 @@ CREATE TABLE `properties` (
   `type` enum('text','date','document','asset','object','bool','select') DEFAULT NULL,
   `data` text,
   `inheritable` tinyint(1) unsigned DEFAULT '1',
+  `creationDate` bigint(20) unsigned DEFAULT NULL,
+  `modificationDate` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`cid`,`ctype`,`name`),
   KEY `cpath` (`cpath`),
   KEY `inheritable` (`inheritable`),
@@ -390,6 +400,8 @@ CREATE TABLE `properties_predefined` (
   `config` text,
   `ctype` enum('document','asset','object') DEFAULT NULL,
   `inheritable` tinyint(1) unsigned DEFAULT '0',
+  `creationDate` bigint(20) unsigned DEFAULT NULL,
+  `modificationDate` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `id` (`id`),
@@ -423,6 +435,8 @@ CREATE TABLE `redirects` (
   `statusCode` varchar(3) DEFAULT NULL,
   `priority` int(2) DEFAULT '0',
   `expiry` bigint(20) DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT NULL,
+  `modificationDate` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`)
 ) DEFAULT CHARSET=utf8;
@@ -483,6 +497,8 @@ CREATE TABLE `sites` (
   `rootId` int(11) unsigned DEFAULT NULL,
   `errorDocument` varchar(255) DEFAULT NULL,
   `redirectToMainDomain` tinyint(1) DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT NULL,
+  `modificationDate` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `rootId` (`rootId`)
 ) DEFAULT CHARSET=utf8;
@@ -500,6 +516,8 @@ CREATE TABLE `staticroutes` (
   `defaults` varchar(255) default NULL,
   `siteId` int(11) DEFAULT NULL,
   `priority` int(3) DEFAULT '0',
+  `creationDate` bigint(20) unsigned DEFAULT NULL,
+  `modificationDate` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`),
   KEY `name` (`name`)

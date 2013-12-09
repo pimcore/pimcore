@@ -104,6 +104,9 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
      */
     public function update() {
         try {
+            $ts = time();
+            $this->model->setModificationDate($ts);
+
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
@@ -132,6 +135,10 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
      * @return boolean
      */
     public function create() {
+        $ts = time();
+        $this->model->setCreationDate($ts);
+        $this->model->setModificationDate($ts);
+
         $this->db->insert(self::TABLE_NAME_KEYS, array());
 
         $this->model->setId($this->db->lastInsertId());

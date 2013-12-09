@@ -69,6 +69,15 @@ class Document_DocType extends Pimcore_Model_Abstract {
      */
     public $priority = 0;
 
+    /**
+     * @var integer
+     */
+    public $creationDate;
+
+    /**
+     * @var integer
+     */
+    public $modificationDate;
 
     /**
      * Static helper to retrieve an instance of Document_DocType by the given ID
@@ -231,4 +240,38 @@ class Document_DocType extends Pimcore_Model_Abstract {
     {
         return $this->module;
     }
+
+    /**
+     * @param int $modificationDate
+     */
+    public function setModificationDate($modificationDate)
+    {
+        $this->modificationDate = $modificationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getModificationDate()
+    {
+        return $this->modificationDate;
+    }
+
+    /**
+     * @param int $creationDate
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+
 }

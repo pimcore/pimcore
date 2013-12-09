@@ -63,6 +63,17 @@ class Glossary extends Pimcore_Model_Abstract {
     public $site;
 
     /**
+     * @var integer
+     */
+    public $creationDate;
+
+    /**
+     * @var integer
+     */
+    public $modificationDate;
+
+
+    /**
      * @param integer $id
      * @return Glossary
      */
@@ -239,4 +250,38 @@ class Glossary extends Pimcore_Model_Abstract {
     {
         return $this->site;
     }
+
+    /**
+     * @param int $modificationDate
+     */
+    public function setModificationDate($modificationDate)
+    {
+        $this->modificationDate = $modificationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getModificationDate()
+    {
+        return $this->modificationDate;
+    }
+
+    /**
+     * @param int $creationDate
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+
 }

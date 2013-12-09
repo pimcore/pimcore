@@ -32,6 +32,16 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
      */
     public $description;
 
+    /**
+     * @var integer
+     */
+    public $creationDate;
+
+    /**
+     * @var integer
+     */
+    public $modificationDate;
+
 
     /**
      * @param integer $id
@@ -153,4 +163,38 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
             Pimcore_API_Plugin_Broker::getInstance()->postAddKeyValueGroupConfig($this);
         }
     }
+
+    /**
+     * @param int $modificationDate
+     */
+    public function setModificationDate($modificationDate)
+    {
+        $this->modificationDate = $modificationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getModificationDate()
+    {
+        return $this->modificationDate;
+    }
+
+    /**
+     * @param int $creationDate
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+
 }

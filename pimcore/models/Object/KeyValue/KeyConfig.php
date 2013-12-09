@@ -57,6 +57,16 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
     public $possiblevalues;
 
     /**
+     * @var integer
+     */
+    public $creationDate;
+
+    /**
+     * @var integer
+     */
+    public $modificationDate;
+
+    /**
      * @var
      */
     public $translator;
@@ -277,4 +287,38 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
             Pimcore_API_Plugin_Broker::getInstance()->postAddKeyValueKeyConfig($this);
         }
     }
+
+    /**
+     * @param int $creationDate
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    /**
+     * @param int $modificationDate
+     */
+    public function setModificationDate($modificationDate)
+    {
+        $this->modificationDate = $modificationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getModificationDate()
+    {
+        return $this->modificationDate;
+    }
+
+
 }

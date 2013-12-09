@@ -71,12 +71,15 @@ class Glossary_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
-     * Save changes to database, it's an good idea to use save() instead
+     * Save changes to database, it's a good idea to use save() instead
      *
      * @return void
      */
     public function update() {
         try {
+            $ts = time();
+            $this->model->setModificationDate($ts);
+
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
@@ -101,6 +104,10 @@ class Glossary_Resource extends Pimcore_Model_Resource_Abstract {
      * @return boolean
      */
     public function create() {
+        $ts = time();
+        $this->model->setModificationDate($ts);
+        $this->model->setCreationDate($ts);
+
         $this->db->insert("glossary", array());
 
         $this->model->setId($this->db->lastInsertId());

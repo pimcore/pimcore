@@ -94,6 +94,9 @@ class Site_Resource extends Pimcore_Model_Resource_Abstract {
      * @return boolean
      */
     public function create() {
+        $ts = time();
+        $this->model->setCreationDate($ts);
+        $this->model->setModificationDate($ts);
         $this->db->insert("sites", array("rootId" => $this->model->getRootId()));
         $this->model->setId($this->db->lastInsertId());
 
@@ -106,6 +109,9 @@ class Site_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function update() {
+        $ts = time();
+        $this->model->setModificationDate($ts);
+
         $site = get_object_vars($this->model);
 
         foreach ($site as $key => $value) {
