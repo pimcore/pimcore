@@ -66,50 +66,52 @@ class Pimcore_Config {
             }
 
             if (!$config = Pimcore_Model_Cache::load($cacheKey)) {
-
-                $websiteSettingFile = PIMCORE_CONFIGURATION_DIRECTORY . "/website.xml";
                 $settingsArray = array();
                 $cacheTags = array("website_config","system","config");
 
-                if(is_file($websiteSettingFile)) {
-                    $rawConfig = new Zend_Config_Xml($websiteSettingFile);
-                    $arrayData = $rawConfig->toArray();
+                $list = new WebsiteSetting_List();
+                $list = $list->load();
 
-                    foreach ($arrayData as $key => $value) {
-                        if(!$siteId && $value['siteId'] > 0){
-                            continue;
-                        }
 
-                        if($siteId && $value['siteId'] > 0 && $siteId != $value['siteId']){
-                            continue;
-                        }
 
-                        $s = null;
-                        if($value["type"] == "document") {
-                            $s = Document::getByPath($value["data"]);
-                        }
-                        else if($value["type"] == "asset") {
-                            $s = Asset::getByPath($value["data"]);
-                        }
-                        else if($value["type"] == "object") {
-                            $s = Object_Abstract::getByPath($value["data"]);
-                        }
-                        else if($value["type"] == "bool") {
-                            $s = (bool) $value["data"];
-                        }
-                        else if($value["type"] == "text") {
-                            $s = (string) $value["data"];
-                        }
+                foreach ($list as $item) {
+                    $key = $item->getName();
+                    $siteId = $item->getSiteId();
 
-                        if($s instanceof Element_Interface) {
-                            $cacheTags = $s->getCacheTags($cacheTags);
-                        }
+                    if(!$siteId && $siteId > 0){
+                        continue;
+                    }
 
-                        if(isset($s)) {
-                            $settingsArray[$key] = $s;
-                        }
+                    if($siteId && $siteId > 0 && $siteId != $siteId){
+                        continue;
+                    }
+
+                    $s = null;
+
+                    switch ($item->getType()) {
+                        case "document":
+                        case "asset":
+                        case "object":
+                            $s = Element_Service::getElementById($item->getType(), $item->getData());
+                            break;
+                        case "bool":
+                            $s = (bool) $item->getData();
+                            break;
+                        case "text":
+                            $s = (string) $item->getData();
+                            break;
+
+                    }
+
+                    if($s instanceof Element_Interface) {
+                        $cacheTags = $s->getCacheTags($cacheTags);
+                    }
+
+                    if(isset($s)) {
+                        $settingsArray[$key] = $s;
                     }
                 }
+
                 $config = new Zend_Config($settingsArray, true);
 
                 Pimcore_Model_Cache::save($config, $cacheKey, $cacheTags, null, 998);
@@ -174,7 +176,7 @@ class Pimcore_Config {
     public static function getModelClassMappingConfig () {
 
         $config = null;
-        
+
         if(Zend_Registry::isRegistered("pimcore_config_model_classmapping")) {
             $config = Zend_Registry::get("pimcore_config_model_classmapping");
         } else {

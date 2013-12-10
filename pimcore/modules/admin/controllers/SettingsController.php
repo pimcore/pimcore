@@ -824,6 +824,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json($sites);
     }
 
+    //TODO remove this once this is fully migrated
     public function websiteSaveAction() {
 
         $this->checkPermission("website_settings");
@@ -849,6 +850,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => true));
     }
 
+    //TODO remove this once this is fully migrated
     public function websiteLoadAction() {
 
         $this->checkPermission("website_settings");
@@ -1243,4 +1245,130 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->_helper->json(array("success" => true));
     }
+
+    public function websiteSettingsAction() {
+
+        try {
+            if ($this->getParam("data")) {
+
+                $this->checkPermission("website_settings");
+
+                $data = Zend_Json::decode($this->getParam("data"));
+
+                if(is_array($data)) {
+                    foreach ($data as &$value) {
+                        $value = trim($value);
+                    }
+                }
+
+                if ($this->getParam("xaction") == "destroy") {
+                    $setting = WebsiteSetting::getById($data);
+                    $setting->delete();
+
+                    $this->_helper->json(array("success" => true, "data" => array()));
+                }
+                else if ($this->getParam("xaction") == "update") {
+                    // save routes
+                    $setting = WebsiteSetting::getById($data["id"]);
+
+                    switch ($setting->getType()) {
+                        case "document":
+                        case "asset":
+                        case "object":
+                            if (isset($data["data"])) {
+                                $path = $data["data"];
+                                $element = Element_Service::getElementByPath($setting->getType(), $path);
+                                $data["data"] = $element ? $element->getId() : null;
+                            }
+                            break;
+                    }
+
+                    $setting->setValues($data);
+
+                    $setting->save();
+
+                    $data = $this->getWebsiteSettingForEditMode($setting);
+
+                    $this->_helper->json(array("data" => $data, "success" => true));
+                }
+                else if ($this->getParam("xaction") == "create") {
+
+                    unset($data["id"]);
+
+                    // save route
+                    $setting = new WebsiteSetting();
+                    $setting->setValues($data);
+
+                    $setting->save();
+
+                    $this->_helper->json(array("data" => $setting, "success" => true));
+                }
+            }
+            else {
+                // get list of routes
+
+                $list = new WebsiteSetting_List();
+
+                $list->setLimit($this->getParam("limit"));
+                $list->setOffset($this->getParam("start"));
+
+                if($this->getParam("sort")) {
+                    $list->setOrderKey($this->getParam("sort"));
+                    $list->setOrder($this->getParam("dir"));
+                } else {
+                    $list->setOrderKey("name");
+                    $list->setOrder("asc");
+                }
+
+                if($this->getParam("filter")) {
+                    $list->setCondition("`name` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
+                }
+
+                $totalCount = $list->getTotalCount();
+                $list = $list->load();
+
+                $settings = array();
+                foreach ($list as $item) {
+                    $resultItem = $this->getWebsiteSettingForEditMode($item);
+                    $settings[] = $resultItem;
+                }
+
+                $this->_helper->json(array("data" => $settings, "success" => true, "total" => $totalCount));
+            }
+        } catch (Exception $e) {
+            throw $e;
+            $this->_helper->json(false);
+        }
+
+        $this->_helper->json(false);
+    }
+
+    private function getWebsiteSettingForEditMode($item) {
+        $resultItem = array(
+            "id" => $item->getId(),
+            "name" => $item->getName(),
+            "type" => $item->getType(),
+            "siteId" => $item->getSiteId(),
+            "creationDate" => $item->getCreationDate(),
+            "modificationDate" => $item->getModificationDate()
+        );
+
+
+        switch ($item->getType()) {
+            case "document":
+            case "asset":
+            case "object":
+                $element = Element_Service::getElementById($item->getType(), $item->getData());
+                if ($element) {
+                    $resultItem["data"] = $element->getFullPath();
+                }
+                break;
+            default:
+                $resultItem["data"] = $item->getData("data");
+                break;
+        }
+        return $resultItem;
+    }
+
+
 }
