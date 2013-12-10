@@ -75,24 +75,24 @@ pimcore.settings.website = Class.create({
             root:'data'
         },
             ['name','type',{name: "data", type: "string", convert: function (v, rec) {
-                if (rec.type == "document" || rec.type == "asset" || rec.type == "object") {
-                    var type = rec.type;
-                    if (type == "document") {
-                        if (v && typeof v == "object") {
-                            return v.path + v.key;
-                        }
-                    }
-                    else if (type == "asset") {
-                        if (v && typeof v == "object") {
-                            return v.path + v.filename;
-                        }
-                    }
-                    else if (type == "object") {
-                        if (v && typeof v == "object") {
-                            return v.o_path + v.o_key;
-                        }
-                    }
-                }
+//                if (rec.type == "document" || rec.type == "asset" || rec.type == "object") {
+//                    var type = rec.type;
+//                    if (type == "document") {
+//                        if (v && typeof v == "object") {
+//                            return v.path + v.key;
+//                        }
+//                    }
+//                    else if (type == "asset") {
+//                        if (v && typeof v == "object") {
+//                            return v.path + v.filename;
+//                        }
+//                    }
+//                    else if (type == "object") {
+//                        if (v && typeof v == "object") {
+//                            return v.o_path + v.o_key;
+//                        }
+//                    }
+//                }
 
                 return v;
             }},
@@ -216,7 +216,8 @@ pimcore.settings.website = Class.create({
                     var store = pimcore.globalmanager.get("sites");
                     var pos = store.findExact("id", siteId);
                     if(pos >= 0) {
-                        return store.getAt(pos).get("domain");
+                        var val = store.getAt(pos).get("domain");
+                        return val;
                     }
                 }
             }
