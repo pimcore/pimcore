@@ -85,8 +85,14 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
     public function deeplinkAction () {
         // check for deeplink
-        if($_SERVER["QUERY_STRING"]) {
-            $this->view->tab = $_SERVER["QUERY_STRING"];
+        $queryString = $_SERVER["QUERY_STRING"];
+        if(preg_match("/(document|asset|object)_([0-9]+)_([a-z]+)/", $queryString, $deeplink)) {
+            if(strpos($queryString, "token")) {
+                $deeplink = $deeplink[0];
+                $this->redirect("/admin/login/login?deeplink=" . $deeplink . "&" . $queryString);
+            } else if($queryString) {
+                $this->view->tab = $queryString;
+            }
         }
     }
 
