@@ -1178,7 +1178,10 @@ class Asset extends Element_Abstract {
      * @return mixed
      */
     public function getCustomSetting($key) {
-        return $this->customSettings[$key];
+        if(is_array($this->customSettings) && array_key_exists($key, $this->customSettings)) {
+            return $this->customSettings[$key];
+        }
+        return null;
     }
 
     /**
