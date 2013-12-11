@@ -89,7 +89,10 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
     public function load($path) {
 
         // avoid timeouts
-        set_time_limit(250);
+        $maxExecTime = (int) ini_get("max_execution_time");
+        if($maxExecTime > 1 && $maxExecTime < 250) {
+            set_time_limit(250);
+        }
 
         if(!$this->isFileTypeSupported($path)) {
             $message = "Couldn't load document " . $path . " only PDF documents are currently supported";
