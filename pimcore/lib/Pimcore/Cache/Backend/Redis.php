@@ -15,12 +15,13 @@
 /**
  * Redis Cache Backend Class for Pimcore
  *
- * This Class uses {@link http://redis.io Redis} as Cache Backend. It requires the
- * {@link https://github.com/nicolasff/phpredis phpredis} module.
+ * <p>This Class uses {@link http://redis.io Redis} as Cache Backend. It requires the
+ * {@link https://github.com/nicolasff/phpredis phpredis} module.</p>
  *
- * All Keys are prefixed by option "prefix" which defaults to "pc". Therefore it's possible to
- * use a shared redis database.
+ * <p>All Keys are prefixed by option "prefix" which defaults to "pc". Therefore it's possible to
+ * use a shared redis database.</p>
  *
+ * <pre>
  * The Class uses these Redis Datastructures:
  * HASH $prefix:data:$id     - "d"      => (string) cached data
  *                           - "mtime"  => (int) Last Modified Timestamp
@@ -29,8 +30,9 @@
  * SET $prefix:tags:$id      - List of Tags associated with cache-id $id
  * SET $prefix:tagref:$tag   - List of cache $id's associated to $tag
  * SORTED SET $prefix:expiry - Sorted List of cache id's, sorted by the $id's expire time.
- *
- * Additionally a Key $prefix:datastructure_version is written.
+ * </pre>
+ * 
+ * <p>Additionally a Key $prefix:datastructure_version is written.</p>
  *
  * @author     Bruno Baketaric (bruno.baketaric@wob.ag)
  * @package    Pimcore_Cache
@@ -44,50 +46,49 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 	 * default Host
 	 */
 	const DEFAULT_HOST = '127.0.0.1';
-	
+
 	/**
 	 * default Port
 	 */
 	const DEFAULT_PORT =  6379;
-	
+
 	/**
 	 * default Database
 	 * 
 	 * DB's in Redis are identified by numbers!
 	 */
-	const DEFAULT_DBINDEX = 0;
-	
+	const DEFAULT_DBINDEX = 1;
+
 	/**
 	 * default Prefix
 	 *
 	 * All Keys geneated by this class are prefixed with this string: "pc" = Pimcore Cache
 	 */
 	const DEFAULT_PREFIX = 'pc';
-	
+
 	/**
 	 * Versioning of internal datastructures
 	 */
 	const DATASTRUCTURE_VERSION = 1;
-	
+
 	/**
-	 * Redis instance
+	 * @var Redis Redis instance
 	 */
 	protected $_conn;
-
 	/**
 	 * Available options
 	 *
 	 * =====> (string) host :
-     * can be a host, or the path to a unix domain socket
-     *
+	 * can be a host, or the path to a unix domain socket
+	 *
 	 * =====> (int) port :
-     * (optional) port
-     *
+	 * (optional) port
+	 *
 	 * =====> (int) dbindex :
-     * the id of the database to use
-     *
+	 * the id of the database to use
+	 *
 	 * =====> (string) prefix :
-     * the prefix for all keys used by this cache
+	 * the prefix for all keys used by this cache
 	 *
 	 * @var array available options
 	 */
@@ -98,22 +99,22 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 		,'prefix'     => self::DEFAULT_PREFIX
 	);
 
-    /**
+	/**
 	 * Constructor
 	 *
 	 * @throws Zend_Cache_Exception
-     * @return void
-     */
-    public function __construct(array $options)
-    {
+	 * @return void
+	 */
+	public function __construct(array $options)
+	{
 		if (!extension_loaded('redis')) {
 			Zend_Cache::throwException('The Redis extension must be loaded for using this backend !');
 		}
 		parent::__construct($options);
-		
+
 		// Merge the options passed in; overridding any default options
 		$this->_options = array_merge($this->_options, $options);
-		
+
 		/** @var Redis */
 		$this->_conn = new Redis();
 		if ('socket' === @filetype($this->_options['host'])) {
@@ -132,7 +133,17 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 		if ( (int) $this->_conn->get($this->_options['prefix'].':datastructure_version') !== self::DATASTRUCTURE_VERSION) {
 			Zend_Cache::throwException('Found different Datastructure Version in Redis Database!');
 		}
-    }
+	}
+	
+	/**
+	 * Destructor
+	 *
+	 * @return void
+	 */
+	public function __destruct() {
+		/** @var Redis */
+		$this->_conn->close(); // close redis connection
+	}
 	/**
 	 * Utility method to prefix keys
 	 *
@@ -158,14 +169,25 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 		}
 		return $ret.':'.$suffix;
 	}
-    /**
-     * Expires a record (mostly used for testing purposes)
-     * @param string $id
-     * @return void
-     */
-    public function ___expire($id)
+	/**
+	 * Utility method to get a unique, temporary key that doesn't already exist in the database
+	 *
+	 * @return string key
+	 */
+	protected function getTemporaryKey() {
+		do {
+			$tmpName = $this->_options['prefix'].':tmp:'.time().rand();
+		} while (true == $this->_conn->exists($tmpName));
+		return $tmpName;
+	}
+	/**
+	 * Expires a record (mostly used for testing purposes)
+	 * @param string $id
+	 * @return void
+	 */
+	public function ___expire($id)
 	{
-		$key = $this->doPrefix($id);
+		$key = $this->doPrefix($id, 'data');
 		// new "expire" to modified time - which is always in the past
 		$expire = $this->_conn->hGet($key,'mtime');
 		
@@ -179,15 +201,15 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 		);
 	}
 
-    /**
-     * Test if a cache is available for the given id and (if yes) return it (false else)
-     *
-     * @param  string  $id  Cache id
-     * @param  boolean $doNotTestCacheValidity If set to true, the cache validity won't be tested
-     * @return string|false cached datas
-     */
-    public function load($id, $doNotTestCacheValidity = false)
-    {
+	/**
+	 * Test if a cache is available for the given id and (if yes) return it (false else)
+	 *
+	 * @param  string  $id  Cache id
+	 * @param  boolean $doNotTestCacheValidity If set to true, the cache validity won't be tested
+	 * @return string|false cached datas
+	 */
+	public function load($id, $doNotTestCacheValidity = false)
+	{
 		try {
 			$tmp = $this->get($id);
 			if ($tmp) {
@@ -202,14 +224,14 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 		return false;
 	}
 
-    /**
-     * Test if a cache is available or not (for the given id)
-     *
-     * @param  string $id Cache id
-     * @return mixed|false (a cache is not available) or "last modified" timestamp (int) of the available cache record
-     */
-    public function test($id)
-    {
+	/**
+	 * Test if a cache is available or not (for the given id)
+	 *
+	 * @param  string $id Cache id
+	 * @return mixed|false (a cache is not available) or "last modified" timestamp (int) of the available cache record
+	 */
+	public function test($id)
+	{
 		try {
 			$tmp = $this->get($id);
 			if ($tmp) {
@@ -220,22 +242,22 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 		}
 		
 		return false;
-    }
+	}
 
-    /**
-     * Save some string datas into a cache record
-     *
-     * Note : $data is always "string" (serialization is done by the
-     * core not by the backend)
-     *
-     * @param  string $data             Datas to cache
-     * @param  string $id               Cache id
-     * @param  array  $tags             Array of strings, the cache record will be tagged by each string entry
-     * @param  int    $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
-     * @return boolean True if no problem
-     */
-    public function save($data, $id, $tags = array(), $specificLifetime = false)
-    {
+	/**
+	 * Save some string datas into a cache record
+	 *
+	 * Note : $data is always "string" (serialization is done by the
+	 * core not by the backend)
+	 *
+	 * @param  string $data             Datas to cache
+	 * @param  string $id               Cache id
+	 * @param  array  $tags             Array of strings, the cache record will be tagged by each string entry
+	 * @param  int    $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
+	 * @return boolean True if no problem
+	 */
+	public function save($data, $id, $tags = array(), $specificLifetime = false)
+	{
 		try {
 			$lifetime = $this->getLifetime($specificLifetime);
 			$result = $this->set($id, $data, $lifetime, $tags);
@@ -245,15 +267,15 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 		return $result;
 	}
 
-    /**
-     * Remove a cache record
-     *
-     * @param  string $id Cache id
-     * @return boolean True if no problem
-     * @todo this should be made atomic
-     */
-    public function remove($id)
-    {
+	/**
+	 * Remove a cache record
+	 *
+	 * @param  string $id Cache id
+	 * @return boolean True if no problem
+	 * @todo this should be made atomic
+	 */
+	public function remove($id)
+	{
 		$key = $this->doPrefix($id, 'data');
 		if ( $this->_conn->exists($key) ) {
 			$this->_conn->del($key); // delete the key itself
@@ -277,41 +299,40 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 				}
 			}
 		}
+		return true;
+	}
 
-        return true;
-    }
-
-    /**
-     * Clean some cache records (protected method used for recursive stuff)
-     *
-     * Available modes are :
-     * Zend_Cache::CLEANING_MODE_ALL (default)    => remove all cache entries ($tags is not used)
-     * Zend_Cache::CLEANING_MODE_OLD              => remove too old cache entries ($tags is not used)
-     * Zend_Cache::CLEANING_MODE_MATCHING_TAG     => remove cache entries matching all given tags
-     *                                               ($tags can be an array of strings or a single string)
-     * Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG => remove cache entries not {matching one of the given tags}
-     *                                               ($tags can be an array of strings or a single string)
-     * Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG => remove cache entries matching any given tags
-     *                                               ($tags can be an array of strings or a single string)
-     *
-     * @param  string $dir  Directory to clean
-     * @param  string $mode Clean mode
-     * @param  array  $tags Array of tags
-     * @throws Zend_Cache_Exception
-     * @return boolean True if no problem
-     */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
-    {
+	/**
+	 * Clean some cache records (protected method used for recursive stuff)
+	 *
+	 * Available modes are :
+	 * Zend_Cache::CLEANING_MODE_ALL (default)    => remove all cache entries ($tags is not used)
+	 * Zend_Cache::CLEANING_MODE_OLD              => remove too old cache entries ($tags is not used)
+	 * Zend_Cache::CLEANING_MODE_MATCHING_TAG     => remove cache entries matching all given tags
+	 *                                               ($tags can be an array of strings or a single string)
+	 * Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG => remove cache entries not {matching one of the given tags}
+	 *                                               ($tags can be an array of strings or a single string)
+	 * Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG => remove cache entries matching any given tags
+	 *                                               ($tags can be an array of strings or a single string)
+	 *
+	 * @param  string $dir  Directory to clean
+	 * @param  string $mode Clean mode
+	 * @param  array  $tags Array of tags
+	 * @throws Zend_Cache_Exception
+	 * @return boolean True if no problem
+	 */
+	public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
+	{
 		switch ($mode) {
-            case Zend_Cache::CLEANING_MODE_ALL:
+			case Zend_Cache::CLEANING_MODE_ALL:
 				$toDelete = $this->_conn->keys($this->_options['prefix'].':*');
 				foreach ($toDelete as $key) {
 					if ($key === $this->_options['prefix'].':datastructure_version') continue;
 					$this->_conn->del($key);
 				}
 				return true;
-                break;
-            case Zend_Cache::CLEANING_MODE_OLD:
+				break;
+			case Zend_Cache::CLEANING_MODE_OLD:
 				// $now = $this->_conn->time();
 				$now = time();
 				$toDelete = $this->_conn->zRangeByScore($this->_options['prefix'].':expiry','(0', $now);
@@ -319,163 +340,209 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 					$this->remove($id);
 				}
 				return true;
-                break;
-            case Zend_Cache::CLEANING_MODE_MATCHING_TAG:
+				break;
+			case Zend_Cache::CLEANING_MODE_MATCHING_TAG:
 				$toDelete = $this->getIdsMatchingTags($tags);
 				foreach ($toDelete as $id) {
 					$this->remove($id);
 				}
 				return true;
-                break;
-            case Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
+				break;
+			case Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
 				$toDelete = $this->getIdsNotMatchingTags($tags);
 				foreach ($toDelete as $id) {
 					$this->remove($id);
 				}
 				return true;
-                break;
-            case Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
+				break;
+			case Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
 				$toDelete = $this->getIdsMatchingAnyTags($tags);
 				foreach ($toDelete as $id) {
 					$this->remove($id);
 				}
 				return true;
-                break;
-            default:
-                Zend_Cache::throwException('Invalid mode for clean() method');
-                break;
-        }
-    }
+				break;
+			default:
+				Zend_Cache::throwException('Invalid mode for clean() method');
+				break;
+		}
+	}
 
-    /**
-     * Return true if the automatic cleaning is available for the backend
-     *
-     * @return boolean
-     */
-    public function isAutomaticCleaningAvailable()
-    {
+	/**
+	 * Return true if the automatic cleaning is available for the backend
+	 *
+	 * @return boolean
+	 */
+	public function isAutomaticCleaningAvailable()
+	{
 		return false;
-    }
+	}
 
-    /**
-     * Set the frontend directives
-     *
-     * @param  array $directives Assoc of directives
-     * @throws Zend_Cache_Exception
-     * @return void
-     */
-    public function setDirectives($directives)
-    {
+	/**
+	 * Set the frontend directives
+	 *
+	 * @param  array $directives Assoc of directives
+	 * @throws Zend_Cache_Exception
+	 * @return void
+	 */
+	public function setDirectives($directives)
+	{
 		parent::setDirectives($directives);
-        $lifetime = $this->getLifetime(false);
-        if ($lifetime === null) {
-            // #ZF-4614 : we tranform null to zero to get the maximal lifetime
-            parent::setDirectives(array('lifetime' => 0));
-        }
-        return $this;
-    }
+		$lifetime = $this->getLifetime(false);
+		if ($lifetime === null) {
+			// #ZF-4614 : we tranform null to zero to get the maximal lifetime
+			parent::setDirectives(array('lifetime' => 0));
+		}
+		return $this;
+	}
 
-    /**
-     * Return an array of stored cache ids
-     *
-     * @return array array of stored cache ids (string)
-     */
-    public function getIds()
-    {
+	/**
+	 * Return an array of stored cache ids
+	 *
+	 * @return array array of stored cache ids (string)
+	 */
+	public function getIds()
+	{
 		$all = $this->_conn->keys($this->_options['prefix'].':data:*');
 		$ret = array();
 		foreach ($all as $key) {
 			$ret[] = str_replace($this->_options['prefix'].':data:','',$key);
 		}
 		return $ret;
-    }
+	}
 
-    /**
-     * Return an array of stored tags
-     *
-     * @return array array of stored tags (string)
-     */
-    public function getTags()
-    {
+	/**
+	 * Return an array of stored tags
+	 *
+	 * @return array array of stored tags (string)
+	 */
+	public function getTags()
+	{
 		$all = $this->_conn->keys($this->_options['prefix'].':tags:*');
 		$ret = array();
 		foreach ($all as $key) {
 			$ret[] = str_replace($this->_options['prefix'].':tags:','',$key);
 		}
 		return $ret;
-    }
+	}
 
-    /**
-     * Return an array of stored cache ids which match given tags
-     *
-     * In case of multiple tags, a logical AND is made between tags
-     *
-     * @param array $tags array of tags
-     * @return array array of matching cache ids (string)
-     */
-    public function getIdsMatchingTags($tags = array())
-    {
-		$tagsPrefixed = array(); 
-		foreach ($tags as $tag) {
-			$tagsPrefixed[] = $this->doPrefix($tag, 'tagref');
+	/**
+	 * Return an array of stored cache ids which match given tags
+	 *
+	 * In case of multiple tags, a logical AND is made between tags
+	 *
+	 * @param array $tags array of tags
+	 * @return array array of matching cache ids (string)
+	 */
+	public function getIdsMatchingTags($tags = array())
+	{
+		$ret = array();
+		if (0 == count($tags)) return $ret; // don't do anything if no tags passed
+		
+		// generate a (quite) unique key for a temporary set
+		$tmpSetName = $this->getTemporaryKey();
+		
+		/* No need to create a set with all keys, since we have a logical AND.
+		   Instead create a new temporary set as copy using the first tag
+		*/
+		$initialSetName = $this->doPrefix(array_shift($tags), 'tagref');
+		$cardinality = $this->_conn->sUnionStore($tmpSetName, $initialSetName);
+		// if cardinality is (int) 0 or false, we can return immediately
+		if (0 == $cardinality) {
+			$this->_conn->del($tmpSetName);
+			return $ret;
 		}
-		$ret = $this->_conn->sInter(implode(',',$tagsPrefixed));
+		
+		// iteratively KEEP keys that match a passed tag and drop all other
+		foreach ($tags as $tag) {
+			$cardinality = $this->_conn->sInterStore($tmpSetName, $tmpSetName, $this->doPrefix($tag, 'tagref'));
+			if (0 == $cardinality) break; // stop iteration if no keys left
+		}
+		
+		// if we still have keys, cardinality is > 0
+		if ($cardinality > 0) {
+			$ret = $this->_conn->sMembers($tmpSetName);
+		}
+		
+		// remove temporary set
+		$this->_conn->del($tmpSetName);
 		
 		return $ret;
-    }
+	}
 
-    /**
-     * Return an array of stored cache ids which don't match given tags
-     *
-     * In case of multiple tags, a logical OR is made between tags
-     *
-     * @param array $tags array of tags
-     * @return array array of not matching cache ids (string)
-     */
-    public function getIdsNotMatchingTags($tags = array())
-    {
-		$tagsPrefixed = array(); 
-		foreach ($tags as $tag) {
-			$tagsPrefixed[] = $this->doPrefix($tag, 'tagref');
-		}
+	/**
+	 * Return an array of stored cache ids which don't match given tags
+	 *
+	 * In case of multiple tags, a logical OR is made between tags
+	 *
+	 * @param array $tags array of tags
+	 * @return array array of not matching cache ids (string)
+	 */
+	public function getIdsNotMatchingTags($tags = array())
+	{
+		$ret = array();
+		if (0 == count($tags)) return $ret; // don't do anything if no tags passed
+		
+		// generate a (quite) unique key for a temporary set
+		$tmpSetName = $this->getTemporaryKey();
+		
+		// create set with all keys in redis
 		$allKeys = $this->_conn->zRange($this->_options['prefix'].':expiry', 0, -1);
 		foreach ($allKeys as $key) {
-			$this->_conn->sAdd($this->_options['prefix'].':allKeys', $key);
+			$this->_conn->sAdd($tmpSetName, $key);
 		}
-		$ret = $this->_conn->sDiff($this->_options['prefix'].':allKeys,'.implode(',',$tagsPrefixed));
-		$this->_conn->del($this->_options['prefix'].':allKeys');
 		
-		return $ret;
-    }
-
-    /**
-     * Return an array of stored cache ids which match any given tags
-     *
-     * In case of multiple tags, a logical AND is made between tags
-     *
-     * @param array $tags array of tags
-     * @return array array of any matching cache ids (string)
-     */
-    public function getIdsMatchingAnyTags($tags = array())
-    {
-		$tagsPrefixed = array(); 
+		// iteratively remove keys that match a passed tag
 		foreach ($tags as $tag) {
-			$tagsPrefixed[] = $this->doPrefix($tag, 'tagref');
+			/*
+			 * If a nonexistent tag is passed, there will be no keys left (cardinality = 0).
+			 * The SQLite Adapter also returns a empty array in this case.
+			 * So there's no need to check for key existance prior to sDiffStore().
+			 */
+			$cardinality = $this->_conn->sDiffStore($tmpSetName, $tmpSetName, $this->doPrefix($tag, 'tagref'));
+			if (0 == $cardinality) break; // stop iteration if no keys left
 		}
-		$ret = $this->_conn->sUnion(implode(',',$tagsPrefixed));
 		
-		return $ret;
-    }
+		// if we still have keys, cardinality is > 0
+		if ($cardinality > 0) {
+			$ret = $this->_conn->sMembers($tmpSetName);
+		}
+		
+		// remove temporary set
+		$this->_conn->del($tmpSetName);
 
-    /**
-     * Get Filling percentage
-     *
-     * Returns 1 if no maxmemory set in redis.conf. Else the real filling percentage.
-     *
-     * @return int integer between 0 and 100
-     */
-    public function getFillingPercentage()
-    {
+		return $ret;
+	}
+
+	/**
+	 * Return an array of stored cache ids which match any given tags
+	 *
+	 * In case of multiple tags, a logical OR is made between tags
+	 *
+	 * @param array $tags array of tags
+	 * @return array array of any matching cache ids (string)
+	 */
+	public function getIdsMatchingAnyTags($tags = array())
+	{
+		$ret = array();
+		if (0 == count($tags)) return $ret; // don't do anything if no tags passed
+		
+		foreach ($tags as $tag) {
+			$ret = array_merge($ret, $this->_conn->smembers($this->doPrefix($tag, 'tagref')));
+		}
+		$ret = array_unique($ret);
+		return $ret;
+	}
+
+	/**
+	 * Get Filling percentage
+	 *
+	 * Returns 1 if no maxmemory set in redis.conf. Else the real filling percentage.
+	 *
+	 * @return int integer between 0 and 100
+	 */
+	public function getFillingPercentage()
+	{
 		$maxMem = $this->_conn->config('GET','maxmemory');
 		if (0 == (int) $maxMem['maxmemory']) {
 			return 1;
@@ -486,41 +553,41 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 					,0
 					,PHP_ROUND_HALF_UP
 				);
-    }
+	}
 
-    /**
-     * Return an array of metadatas for the given cache id
-     *
-     * The array must include these keys :
-     * - expire : the expire timestamp
-     * - tags : a string array of tags
-     * - mtime : timestamp of last modification time
-     *
-     * @param string $id cache id
-     * @return array array of metadatas (false if the cache id is not found)
-     */
-    public function getMetadatas($id)
-    {
+	/**
+	 * Return an array of metadatas for the given cache id
+	 *
+	 * The array must include these keys :
+	 * - expire : the expire timestamp
+	 * - tags : a string array of tags
+	 * - mtime : timestamp of last modification time
+	 *
+	 * @param string $id cache id
+	 * @return array array of metadatas (false if the cache id is not found)
+	 */
+	public function getMetadatas($id)
+	{
 		$data = $this->get($id);
 		if (false === $data) {
 			return false;
 		}
 		$data['tags'] = $this->_conn->sMembers( $this->doPrefix($id,'tags') );
-		
+
 		return array(
 			 'expire' => $data['expire'],
 			 'tags' => $data['tags'],
 			 'mtime' => $data['mtime']
 		 );
-    }
+	}
 
-    /**
-     * Give (if possible) an extra lifetime to the given cache id
-     *
-     * @param string $id cache id
-     * @param int $extraLifetime
-     * @return boolean true if ok
-     */
+	/**
+	 * Give (if possible) an extra lifetime to the given cache id
+	 *
+	 * @param string $id cache id
+	 * @param int $extraLifetime
+	 * @return boolean true if ok
+	 */
 	public function touch($id, $extraLifetime)
 	{
 		$data = $this->get($id);
@@ -528,16 +595,16 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 			return false;
 		}
 		$data['expire']+= $extraLifetime;
-		
+
 		$dataKey = $this->doPrefix($id, 'data');
-		
-		if ($this->_conn->exists($key)) {
-			$this->_conn->del($key);
+
+		if ($this->_conn->exists($dataKey)) {
+			$this->_conn->del($dataKey);
 		}
-		
+
 		// write hash "data"
-		$this->_conn->hMset($key, $h);
-		
+		$this->_conn->hMset($dataKey, $data);
+
 		// remove and re-add from Sorted set "expiry"
 		$this->_conn->zRem(
 			 $this->_options['prefix'].':expiry'
@@ -551,63 +618,59 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 		return true;
 	}
 
-    /**
-     * Return an associative array of capabilities (booleans) of the backend
-     *
-     * The array must include these keys :
-     * - automatic_cleaning (is automating cleaning necessary)
-     * - tags (are tags supported)
-     * - expired_read (is it possible to read expired cache records
-     *                 (for doNotTestCacheValidity option for example))
-     * - priority does the backend deal with priority when saving
-     * - infinite_lifetime (is infinite lifetime can work with this backend)
-     * - get_list (is it possible to get the list of cache ids and the complete list of tags)
-     *
-     * @return array associative of with capabilities
-     */
-    public function getCapabilities()
-    {
+	/**
+	 * Return an associative array of capabilities (booleans) of the backend
+	 *
+	 * The array must include these keys :
+	 * - automatic_cleaning (is automating cleaning necessary)
+	 * - tags (are tags supported)
+	 * - expired_read (is it possible to read expired cache records
+	 *                 (for doNotTestCacheValidity option for example))
+	 * - priority does the backend deal with priority when saving
+	 * - infinite_lifetime (is infinite lifetime can work with this backend)
+	 * - get_list (is it possible to get the list of cache ids and the complete list of tags)
+	 *
+	 * @return array associative of with capabilities
+	 */
+	public function getCapabilities()
+	{
 		return array(
-            'automatic_cleaning' => true,
-            'tags' => true,
-            'expired_read' => true,
-            'priority' => false,
-            'infinite_lifetime' => true,
-            'get_list' => true
-        );
-    }
+			'automatic_cleaning' => true,
+			'tags' => true,
+			'expired_read' => true,
+			'priority' => false,
+			'infinite_lifetime' => true,
+			'get_list' => true
+		);
+	}
 
-    /**
+	/**
 	 * set a Cache Item
 	 *
 	 * In case the item already exists, it's deleted in advance.
 	 *
-     * @param int $id
-     * @param array $data
-     * @param int $lifetime
-     * @param array $tags
-     * @return boolean
-     */
-    function set($id, $data, $lifetime, $tags)
-    {
+	 * @param int $id
+	 * @param array $data
+	 * @param int $lifetime
+	 * @param array $tags
+	 * @return boolean
+	 */
+	protected function set($id, $data, $lifetime, $tags)
+	{
 		// set the lifetime to 1 year if it is null
 		if(!$lifetime) {
 			$lifetime = (86400*365);
 		}
 		$h = array();
-		$h['d'] = $data; // data
-		// $redisTime = $this->_conn->time();
-		// $h['mtime'] = $redisTime[0]; // created/modified
+		$h['d'] = $data;
 		$h['mtime'] = time();
 		$h['l'] = $lifetime; // TTL
 		$h['expire'] = $h['mtime']+$h['l'];
 		
+		$this->remove($id); // remove
+		
 		$dataKey = $this->doPrefix($id, 'data');
-		
-		if ($this->_conn->exists($key)) {
-			$this->remove($key);
-		}
-		
+
 		// write hash "data"
 		$this->_conn->hMset($dataKey, $h); 
 		
@@ -618,34 +681,32 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 			$tagRefKey = $this->doPrefix($tag, 'tagref');
 			$this->_conn->sAdd($tagRefKey, $id);
 		}
-		
+
 		// write expiry
 		$this->_conn->zAdd(
 			 $this->_options['prefix'].':expiry'
 			,$h['expire']
 			,$id
 		);
+		return true;
+	}
 
-        return true;
-    }
-
-    /**
+	/**
 	 * Generic Method to get the data of a cached item
 	 *
-     * @param int $id
-     * @return array|false
-     */
-    function get($id)
-    {
+	 * @param int $id
+	 * @return array|false
+	 */
+	protected function get($id)
+	{
 		$ret = false;    
 		$key = $this->doPrefix($id, 'data');
 		if ($this->_conn->exists($key)) {
 			$ret = $this->_conn->hGetAll($key);
+			$ret['_id'] = $id;
+			$ret['created_at'] = $ret['mtime'];
 		}
-		$ret['_id'] = $id;
-		$ret['created_at'] = $ret['mtime'];
 		return $ret;
-    }
+	}
 
-}
-
+} // End Class
