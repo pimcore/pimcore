@@ -169,7 +169,7 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
      */
     public function setSiteId($siteId)
     {
-        $this->siteId = $siteId;
+        $this->siteId = (int) $siteId;
     }
 
     /**
@@ -177,7 +177,7 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
      */
     public function getSiteId()
     {
-        return $this->siteId;
+        return (int) $this->siteId;
     }
 
     /**

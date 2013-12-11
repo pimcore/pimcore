@@ -67,7 +67,7 @@ class Pimcore_Config {
 
             if (!$config = Pimcore_Model_Cache::load($cacheKey)) {
                 $settingsArray = array();
-                $cacheTags = array("website_config","system","config");
+                $cacheTags = array("website_config","system","config","output");
 
                 $list = new WebsiteSetting_List();
                 $list = $list->load();
