@@ -98,6 +98,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             },{
                 xtype: "button",
                 iconCls: "pimcore_icon_upload_single",
+                cls: "pimcore_inline_upload",
                 handler: this.uploadDialog.bind(this)
             }]
         };
