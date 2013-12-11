@@ -65,6 +65,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             },"->",{
                 xtype: "button",
                 iconCls: "pimcore_icon_upload_single",
+                cls: "pimcore_inline_upload",
                 handler: this.uploadDialog.bind(this)
             },{
                 xtype: "button",
@@ -294,6 +295,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
         menu.add(new Ext.menu.Item({
             text: t('upload'),
+            cls: "pimcore_inline_upload",
             iconCls: "pimcore_icon_upload_single",
             handler: function (item) {
                 item.parentMenu.destroy();

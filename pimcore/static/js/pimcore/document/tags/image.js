@@ -172,6 +172,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         menu.add(new Ext.menu.Item({
             text: t('upload'),
+            cls: "pimcore_inline_upload",
             iconCls: "pimcore_icon_upload_single",
             handler: function (item) {
                 item.parentMenu.destroy();

@@ -138,6 +138,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                     },
                     {
                         xtype: "button",
+                        cls: "pimcore_inline_upload",
                         iconCls: "pimcore_icon_upload_single",
                         handler: this.uploadDialog.bind(this)
                     }
@@ -264,6 +265,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
 
         menu.add(new Ext.menu.Item({
             text: t('upload'),
+            cls: "pimcore_inline_upload",
             iconCls: "pimcore_icon_upload_single",
             handler: function (item) {
                 item.parentMenu.destroy();

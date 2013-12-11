@@ -246,6 +246,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
         if((this.options["types"] && in_array("asset",this.options.types)) || !this.options["types"]) {
             menu.add(new Ext.menu.Item({
                 text: t('upload'),
+                cls: "pimcore_inline_upload",
                 iconCls: "pimcore_icon_upload_single",
                 handler: function (item) {
                     item.parentMenu.destroy();
