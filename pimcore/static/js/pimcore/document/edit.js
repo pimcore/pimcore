@@ -130,6 +130,7 @@ pimcore.document.edit = Class.create({
             var config = {
                 id: "document_content_" + this.document.id,
                 html: html,
+                disabled: true,
                 title: t('edit'),
                 autoScroll: true,
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
@@ -205,6 +206,8 @@ pimcore.document.edit = Class.create({
         catch (e) {
             console.log(e);
         }
+
+        this.getLayout().disable();
 
         if (disableSaveToSession === true) {
             Ext.get(this.iframeName).dom.src = this.getEditLink();
