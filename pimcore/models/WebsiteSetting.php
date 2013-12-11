@@ -121,7 +121,8 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
      */
     public function setCreationDate($creationDate)
     {
-        $this->creationDate = $creationDate;
+        $this->creationDate = (int) $creationDate;
+        return $this;
     }
 
     /**
@@ -138,6 +139,7 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
     public function setData($data)
     {
         $this->data = $data;
+        return $this;
     }
 
     /**
@@ -153,7 +155,8 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
      */
     public function setModificationDate($modificationDate)
     {
-        $this->modificationDate = $modificationDate;
+        $this->modificationDate = (int) $modificationDate;
+        return $this;
     }
 
     /**
@@ -170,6 +173,7 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
     public function setSiteId($siteId)
     {
         $this->siteId = (int) $siteId;
+        return $this;
     }
 
     /**
@@ -186,6 +190,7 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
     public function setType($type)
     {
         $this->type = $type;
+        return $this;
     }
 
     /**
@@ -200,13 +205,7 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
      * @return void
      */
     public function clearDependentCache() {
-        // this is mostly called in Staticroute_Resource not here
-//        try {
-//            Pimcore_Model_Cache::clearTag("website_setting");
-//        }
-//        catch (Exception $e) {
-//            Logger::crit($e);
-//        }
+
     }
 
 

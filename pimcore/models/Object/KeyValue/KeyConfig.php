@@ -293,7 +293,8 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      */
     public function setCreationDate($creationDate)
     {
-        $this->creationDate = $creationDate;
+        $this->creationDate = (int) $creationDate;
+        return $this;
     }
 
     /**
@@ -309,7 +310,8 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      */
     public function setModificationDate($modificationDate)
     {
-        $this->modificationDate = $modificationDate;
+        $this->modificationDate = (int) $modificationDate;
+        return $this;
     }
 
     /**

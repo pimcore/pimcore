@@ -246,7 +246,8 @@ class Document_DocType extends Pimcore_Model_Abstract {
      */
     public function setModificationDate($modificationDate)
     {
-        $this->modificationDate = $modificationDate;
+        $this->modificationDate = (int) $modificationDate;
+        return $this;
     }
 
     /**
@@ -262,7 +263,8 @@ class Document_DocType extends Pimcore_Model_Abstract {
      */
     public function setCreationDate($creationDate)
     {
-        $this->creationDate = $creationDate;
+        $this->creationDate = (int) $creationDate;
+        return $this;
     }
 
     /**
