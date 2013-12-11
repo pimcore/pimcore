@@ -60,14 +60,6 @@ pimcore.settings.website = Class.create({
 
         var proxy = new Ext.data.HttpProxy({
             url:'/admin/settings/website-settings'
-//            ,
-//            listeners : {
-//                exception : function(proxy, response, operation) {
-//                    alert('Got Exception....');
-//                    //StoreUtils.exception(proxy, response, operation);
-//                }
-//            }
-
         });
         var reader = new Ext.data.JsonReader({
             totalProperty:'total',
@@ -75,25 +67,6 @@ pimcore.settings.website = Class.create({
             root:'data'
         },
             ['name','type',{name: "data", type: "string", convert: function (v, rec) {
-//                if (rec.type == "document" || rec.type == "asset" || rec.type == "object") {
-//                    var type = rec.type;
-//                    if (type == "document") {
-//                        if (v && typeof v == "object") {
-//                            return v.path + v.key;
-//                        }
-//                    }
-//                    else if (type == "asset") {
-//                        if (v && typeof v == "object") {
-//                            return v.path + v.filename;
-//                        }
-//                    }
-//                    else if (type == "object") {
-//                        if (v && typeof v == "object") {
-//                            return v.o_path + v.o_key;
-//                        }
-//                    }
-//                }
-
                 return v;
             }},
             {name: 'siteId', allowBlank: true},
@@ -211,7 +184,7 @@ pimcore.settings.website = Class.create({
                         valueField: "id",
                         displayField: "domain",
                         triggerAction: "all"
-                        }),
+                }),
                 renderer: function (siteId) {
                     var store = pimcore.globalmanager.get("sites");
                     var pos = store.findExact("id", siteId);
@@ -335,7 +308,8 @@ pimcore.settings.website = Class.create({
                     style:"margin: 0 10px 0 0;"
                 },
                 this.filterField
-            ],
+            ]
+            ,
             viewConfig: {
                 listeners: {
                     rowupdated: this.updateRows.bind(this, "rowupdated"),
@@ -350,8 +324,6 @@ pimcore.settings.website = Class.create({
         this.grid.on("afterrender", function() {
             this.setAutoScroll(true);
         });
-
-
 
 
         return this.grid;

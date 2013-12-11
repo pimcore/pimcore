@@ -12,19 +12,20 @@ function sendQuery ($sql) {
     }
 }
 
-sendQuery("CREATE TABLE `versions` (
-`id` bigint(20) unsigned NOT NULL auto_increment,
-  `cid` int(11) unsigned default NULL,
-  `ctype` enum('document','asset','object') default NULL,
-  `userId` int(11) unsigned default NULL,
-  `note` text,
-  `date` bigint(1) unsigned default NULL,
-  `public` tinyint(1) unsigned NOT NULL default '0',
-  `serialized` tinyint(1) unsigned default '0',
-  PRIMARY KEY  (`id`),
-  KEY `cid` (`cid`),
-  KEY `ctype` (`ctype`)
-) DEFAULT CHARSET=utf8;");
+sendQuery("DROP TABLE IF EXISTS `website_settings`;");
+sendQuery("CREATE TABLE `website_settings` (
+	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL DEFAULT '',
+	`type` ENUM('text','document','asset','object','bool') NULL DEFAULT NULL,
+	`data` TEXT NULL,
+	`siteId` INT(11) UNSIGNED NULL DEFAULT NULL,
+	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	PRIMARY KEY (`id`),
+	INDEX `name` (`name`),
+	INDEX `siteId` (`siteId`)
+)
+DEFAULT CHARSET=utf8;");
 
 
 

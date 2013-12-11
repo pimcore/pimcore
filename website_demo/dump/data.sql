@@ -1023,7 +1023,20 @@ CREATE TABLE `versions` (
 ) ENGINE=InnoDB AUTO_INCREMENT=126 DEFAULT CHARSET=utf8;
 
 
-
+DROP TABLE IF EXISTS `website_settings`;
+CREATE TABLE `website_settings` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL DEFAULT '',
+  `type` ENUM('text','document','asset','object','bool') NULL DEFAULT NULL,
+  `data` TEXT NULL,
+  `siteId` INT(11) UNSIGNED NULL DEFAULT NULL,
+  `creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+  `modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  INDEX `name` (`name`),
+  INDEX `siteId` (`siteId`)
+)
+  DEFAULT CHARSET=utf8;
 
 
 INSERT INTO `assets` VALUES (1,0,'folder','','/','',1368522989,1368522989,1,1,'');
