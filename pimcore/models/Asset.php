@@ -514,6 +514,11 @@ class Asset extends Element_Abstract {
 
         }
 
+        // do not allow PHP files
+        if(preg_match("@\.ph(p[345]?|t|tml|ps)$@i", $this->getFilename())) {
+            $this->setFilename($this->getFilename() . ".txt");
+        }
+
         if(Asset_Service::pathExists($this->getFullPath())) {
             $duplicate = Asset::getByPath($this->getFullPath());
             if ($duplicate instanceof Asset  and $duplicate->getId() != $this->getId()) {

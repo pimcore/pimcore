@@ -56,7 +56,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $asset->setLocked($asset->isLocked());
 
         if ($asset instanceof Asset_Text) {
-            $asset->getData();
+            $asset->data = $asset->getData();
         }
 
         if ($asset instanceof Asset_Image) {
@@ -90,6 +90,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $asset->imageInfo = $imageInfo;
         }
 
+        $asset->setStream(null);
         if ($asset->isAllowed("view")) {
             $this->_helper->json($asset);
         }
