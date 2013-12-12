@@ -216,7 +216,7 @@
 
         <!-- Offertool -->
         <offertool class="OnlineShop_OfferTool_Impl_DefaultService">
-            <orderstorage offerClass="Object_OfferToolOffer" offerItemClass="Object_OfferToolOfferItem" parentFolderPath="/offertool/offers"/>
+            <orderstorage offerClass="Object_OfferToolOffer" offerItemClass="Object_OfferToolOfferItem" parentFolderPath="/offertool/offers/%Y/%m"/>
         </offertool>
 
     </onlineshop>
