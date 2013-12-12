@@ -6,8 +6,8 @@ class OnlineShop_OfferTool_Impl_DefaultService implements OnlineShop_OfferTool_I
 
         $this->offerClass = $offerClass;
         $this->offerItemClass = $offerItemClass;
-        $this->parentFolderPath = $parentFolderPath;
-        Object_Service::createFolderByPath( strftime($parentFolderPath, time()) );
+        $this->parentFolderPath = strftime($parentFolderPath, time());
+        Object_Service::createFolderByPath($this->parentFolderPath);
 
     }
 
