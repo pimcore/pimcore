@@ -195,6 +195,19 @@ interface OnlineShop_Framework_ICart {
     public function setCreationDate(Zend_Date $creationDate = null);
 
     /**
+     * @abstract
+     * @return Zend_Date
+     */
+    public function getModificationDate();
+
+    /**
+     * @abstract
+     * @param null|Zend_Date $modificationDate
+     * @return void
+     */
+    public function setModificationDate(Zend_Date $modificationDate = null);
+
+    /**
      * saves cart
      *
      * @abstract

@@ -512,12 +512,18 @@ abstract class OnlineShop_Framework_AbstractCart extends Pimcore_Model_Abstract 
     }
 
     /**
-     * @param $date
+     * @param Zend_Date $modificationDate
      */
-    public function setModificationDate($date) {
+    public function setModificationDate(Zend_Date $modificationDate = null) {
         $this->checkCartIsReadOnly();
 
-        $this->modificationDate = $date;
+        $this->modificationDate = $modificationDate;
+        if($modificationDate) {
+            $this->modificationDateTimestamp = $modificationDate->get(Zend_Date::TIMESTAMP);
+        } else {
+            $this->modificationDateTimestamp = null;
+        }
+
     }
 
     /**
@@ -527,6 +533,7 @@ abstract class OnlineShop_Framework_AbstractCart extends Pimcore_Model_Abstract 
         $this->checkCartIsReadOnly();
 
         $this->modificationDateTimestamp = $modificationDateTimestamp;
+        $this->modificationDate = null;
     }
 
     /**
@@ -602,6 +609,8 @@ abstract class OnlineShop_Framework_AbstractCart extends Pimcore_Model_Abstract 
      */
     protected function modified()
     {
+        $this->setModificationDateTimestamp( time() );
+
         // apply pricing rules
         OnlineShop_Framework_Factory::getInstance()->getPricingManager()->applyCartRules($this);
     }

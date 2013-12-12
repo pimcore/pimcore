@@ -40,6 +40,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
               `userid` int(20) NOT NULL,
               `name` varchar(250) COLLATE utf8_bin DEFAULT NULL,
               `creationDateTimestamp` int(10) NOT NULL,
+              `modificationDateTimestamp` int(10) NOT NULL,
               PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;"
         );

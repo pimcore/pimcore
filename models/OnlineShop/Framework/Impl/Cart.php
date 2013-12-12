@@ -58,6 +58,7 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
 
             try {
                 $cartClass = get_called_class();
+                /* @var OnlineShop_Framework_ICart $cart */
                 $cart = new $cartClass;
                 $cart->setIgnoreReadonly();
                 $cart->getResource()->getById($id);
@@ -74,7 +75,9 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
                         Logger::warn("product " . $item->getProductId() . " not found");
                     }
                 }
+                $mod = $cart->getModificationDate();
                 $cart->setItems($items);
+                $cart->setModificationDate( $mod );
 
                 $dataList = new OnlineShop_Framework_Impl_CartCheckoutData_List();
                 $dataList->setCondition("cartId = " . $db->quote($cart->getId()));
