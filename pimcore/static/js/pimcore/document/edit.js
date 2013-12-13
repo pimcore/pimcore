@@ -130,7 +130,6 @@ pimcore.document.edit = Class.create({
             var config = {
                 id: "document_content_" + this.document.id,
                 html: html,
-                disabled: true,
                 title: t('edit'),
                 autoScroll: true,
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
@@ -146,6 +145,23 @@ pimcore.document.edit = Class.create({
 
             this.layout = new Ext.Panel(config);
             this.layout.on("resize", this.onLayoutResize.bind(this));
+
+            this.layout.on("afterrender", function () {
+
+                // unfortunately we have to do this in jQuery, because Ext doesn'T offer this functionality
+                $("#" + this.iframeName).load(function () {
+                    // this is to hide the mask if edit/startup.js isn't executed (eg. in case an error is shown)
+                    // otherwise edit/startup.js will disable the loading mask
+                    if(!this["frame"]) {
+                        this.loadMask.hide();
+                        console.log("iframe");
+                    }
+                }.bind(this));
+
+                this.loadMask = new Ext.LoadMask(this.layout.body, {msg: t("please_wait")});
+                this.loadMask.enable();
+                this.loadMask.show();
+            }.bind(this));
         }
 
         return this.layout;
@@ -201,19 +217,23 @@ pimcore.document.edit = Class.create({
         this.reloadInProgress = true;
 
         try {
-            this.lastScrollposition = this.frame.Ext.getBody().getScroll();
+            if(this["frame"]) {
+                this.lastScrollposition = this.frame.Ext.getBody().getScroll();
+            }
         }
         catch (e) {
             console.log(e);
         }
 
-        this.getLayout().disable();
+        this.loadMask.show();
 
         if (disableSaveToSession === true) {
+            this.frame = null;
             Ext.get(this.iframeName).dom.src = this.getEditLink();
         }
         else {
             this.document.saveToSession(function () {
+                this.frame = null;
                 Ext.get(this.iframeName).dom.src = this.getEditLink();
             }.bind(this));
         }
