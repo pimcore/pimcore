@@ -539,7 +539,11 @@ class Object_Abstract extends Element_Abstract {
         $additionalTags = array();
         if(isset($updatedChildren) && is_array($updatedChildren)) {
             foreach ($updatedChildren as $objectId) {
-                $additionalTags[] = "object_" . $objectId;
+                $tag = "object_" . $objectId;
+                $additionalTags[] = $tag;
+
+                // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
+                Zend_Registry::set($tag, null);
             }
         }
         $this->clearDependentCache($additionalTags);

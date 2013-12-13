@@ -484,7 +484,11 @@ class Asset extends Element_Abstract {
         $additionalTags = array();
         if(isset($updatedChildren) && is_array($updatedChildren)) {
             foreach ($updatedChildren as $assetId) {
-                $additionalTags[] = "asset_" . $assetId;
+                $tag = "asset_" . $assetId;
+                $additionalTags[] = $tag;
+
+                // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
+                Zend_Registry::set($tag, null);
             }
         }
         $this->clearDependentCache($additionalTags);
