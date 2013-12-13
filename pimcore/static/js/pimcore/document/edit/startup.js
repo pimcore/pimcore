@@ -198,7 +198,7 @@ Ext.onReady(function () {
     }
 
     // enable the edit tab again
-    editWindow.getLayout().enable();
+    editWindow.loadMask.hide();
 });
 
 
