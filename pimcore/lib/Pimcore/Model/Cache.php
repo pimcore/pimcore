@@ -438,7 +438,6 @@ class Pimcore_Model_Cache {
 
         // reset
         self::$saveStack = array();
-        self::$clearedTagsStack = array();
     }
 
 
