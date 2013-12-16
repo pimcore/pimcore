@@ -45,14 +45,6 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
     }
 
     /**
-     * @return void
-     */
-    protected function clearTags () {
-        $this->getDb()->query("TRUNCATE TABLE `cache_tags`");
-        $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=MEMORY");
-    }
-
-    /**
      * @param string $tag
      * @return array
      */
@@ -98,15 +90,7 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
             $this->getDb()->commit();
         } catch (Exception $e) {
             Logger::error($e);
-            $this->getDb()->rollBack();
-
-            if(strpos(strtolower($e->getMessage()), "is full") !== false) {
-                // it seems that the MEMORY table is on the limit an full
-                // change the storage engine of the cache tags table to InnoDB
-                $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
-            } else {
-                throw $e;
-            }
+            $this->truncate();
         }
 
         return true;
@@ -126,7 +110,7 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
 
             $this->getDb()->commit();
         } catch (\Exception $e) {
-            $this->getDb()->rollBack();
+            $this->truncate();
         }
 
         return true;
@@ -150,8 +134,7 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
     public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array()) {
 
         if ($mode == Zend_Cache::CLEANING_MODE_ALL) {
-            $this->clearTags();
-            $this->getDb()->query("TRUNCATE TABLE `cache`");
+            $this->truncate();
         }
         if ($mode == Zend_Cache::CLEANING_MODE_OLD) {
             // not supported
@@ -171,14 +154,14 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
                         $this->getDb()->delete("cache", "id = " . $quotedId);
                         $quotedIds[] = $quotedId;
                     }
-                    //$this->getDb()->delete("cache_tags", "tag = '".$tag."'");
+
                     if(count($quotedIds) > 0) {
                         $this->getDb()->delete("cache_tags", "id IN (" . implode(",", $quotedIds) . ")");
                     }
 
                     $this->getDb()->commit();
                 } catch (\Exception $e) {
-                    $this->getDb()->rollBack();
+                    $this->truncate();
                     Logger::error($e);
                 }
             }
@@ -200,7 +183,12 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
         return true;
     }
     
-    
+    protected function truncate() {
+        $this->getDb()->query("TRUNCATE TABLE `cache`");
+        $this->getDb()->query("TRUNCATE TABLE `cache_tags`");
+        $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
+    }
+
     /**
      * @param  string $id
      * @return array tags for given id
