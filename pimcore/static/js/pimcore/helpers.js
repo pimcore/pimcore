@@ -403,15 +403,42 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
     if(type == "error"){
 
         if(errorText != null && errorText != undefined){
-            text = text + '<br /><br /><textarea style="width:300px; height:100px; font-size:11px;">'
-                + strip_tags(errorText) + "</textarea>";
+            text = text + '<br /><hr /><br />' +
+                '<pre style="font-size:11px;word-wrap: break-word;">'
+                    + strip_tags(errorText) +
+                "</pre>";
         }
-        Ext.MessageBox.show({
-            title:title,
-            msg: text,
-            buttons: Ext.Msg.OK ,
-            icon: Ext.MessageBox.ERROR
+
+        var errWin = new Ext.Window({
+            modal: true,
+            iconCls: "icon_notification_error",
+            title: title,
+            width: 700,
+            height: 500,
+            html: text,
+            bodyStyle: "padding: 10px; background:#fff;",
+            buttonAlign: "center",
+            shadow: false,
+            buttons: [{
+                text: "OK",
+                handler: function () {
+                    errWin.close();
+                }
+            }],
+            listeners: {
+                afterrender: function (el) {
+                    var myRobotId = "robot-" + Math.random();
+                    el.getEl().addClass("swing animated");
+                    el.getEl().insertHtml("afterBegin", '<div class="error-robot" id="' + myRobotId + '"><img src="/admin/misc/robohash" /></div><div class="error-bubble"></div> ');
+                    window.setTimeout(function () {
+                        Ext.get(myRobotId).animate({left: {from: "0px", to: "-300px"}}, 0.3, function () {
+                            Ext.get(Ext.query(".error-bubble")[0]).show();
+                        }, "easeOut", "run");
+                    }, 1000);
+                }
+            }
         });
+        errWin.show();
     } else {
         var notification = new Ext.ux.Notification({
             iconCls: 'icon_notification_' + type,

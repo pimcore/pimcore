@@ -602,6 +602,44 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         ));
     }
 
+    public function robohashAction() {
+        $seed = crc32($this->getParam("seed", rand(0,20000)));
+
+        $colors = array("blue","brown","green","grey","orange","pink","purple","red","white","yellow");
+        $partDirs = array("003#01Body", "004#02Face", "000#Mouth","001#Eyes","002#Accessory");
+
+        $im = null;
+
+        $color = $colors[array_rand($colors)];
+        $dir = PIMCORE_PATH . "/static/img/robohash/" . $color;
+
+        foreach ($partDirs as $key => $partDir) {
+            $partDir = $dir . "/" . $partDir;
+            $files = scandir($partDir);
+
+            srand($seed);
+            $id = rand(0,9);
+
+            foreach ($files as $file) {
+                if(preg_match("/^00" . $id . "#/", $file)) {
+                    $partIm = imagecreatefrompng($partDir . "/" . $file);
+                    break;
+                }
+            }
+
+            if($im) {
+                imagecopy($im, $partIm, 0,0,0,0,300,300);
+            } else {
+                $im = $partIm;
+                imagesavealpha($im, true);
+            }
+        }
+
+        header("Content-Type: image/png");
+        imagepng($im);
+        exit;
+    }
+
     public function testAction()
     {
 
