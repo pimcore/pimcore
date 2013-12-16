@@ -1,5 +1,8 @@
-The MIT License (MIT)
+The RoboHash images are available under the CC-BY-3.0 license.
+Artwork created by Zikri Kader
 
+
+The MIT License (MIT)
 Copyright (c) 2013 Colin Davis
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
