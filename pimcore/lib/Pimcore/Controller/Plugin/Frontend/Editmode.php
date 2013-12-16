@@ -159,7 +159,9 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             $editmodeHeadHtml .= "\n";
         }
 
-        $editmodeHeadHtml = '<script type="text/javascript">var jQueryPreviouslyLoaded = (typeof jQuery == "undefined") ? false : true;</script>' . "\n";
+        $editmodeHeadHtml .= "\n\n";
+
+        $editmodeHeadHtml .= '<script type="text/javascript">var jQueryPreviouslyLoaded = (typeof jQuery == "undefined") ? false : true;</script>' . "\n";
 
         // include script libraries
         foreach ($editmodeLibraries as $script) {
