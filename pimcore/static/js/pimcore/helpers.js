@@ -419,6 +419,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
             bodyStyle: "padding: 10px; background:#fff;",
             buttonAlign: "center",
             shadow: false,
+            closable: false,
             buttons: [{
                 text: "OK",
                 handler: function () {
