@@ -51,7 +51,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $this->resource = new Imagick();
 
             // transparency for EPS files
-            if(method_exists($this->resource, "setcolorspace")) {
+            if($this->isVectorGraphic() && method_exists($this->resource, "setcolorspace")) {
                 $this->resource->setBackgroundColor(new ImagickPixel('transparent')); //set .png transparent (print)
                 $this->resource->setcolorspace(Imagick::COLORSPACE_RGB);
             }
@@ -87,7 +87,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $format = "png";
         }
 
-        $this->setColorspace($colorProfile);
+        //if($colorProfile != "RGB") {
+            $this->setColorspace($colorProfile);
+        //}
 
         $this->resource->stripimage();
         $this->resource->setImageFormat($format);
@@ -153,19 +155,21 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 $this->resource->profileImage('icc', self::getCMYKColorProfile());
                 $this->resource->setImageColorspace(Imagick::COLORSPACE_CMYK);
             }
+        } else if ($this->resource->getImageColorspace() == Imagick::COLORSPACE_GRAY && $type == "RGB") {
+            $this->resource->setImageColorspace(Imagick::COLORSPACE_RGB);
+        } else if ($this->resource->getimagecolorspace() != Imagick::COLORSPACE_RGB && $type == "RGB") {
+            $this->resource->setImageColorspace(Imagick::COLORSPACE_RGB);
         }
 
         // this is a HACK to force grayscale images to be real RGB - truecolor, this is important if you want to use
         // thumbnails in PDF's because they do not support "real" grayscale JPEGs or PNGs
         // problem is described here: http://imagemagick.org/Usage/basics/#type
         // and here: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=6888#p31891
-        if($this->resource->getimagetype() == Imagick::IMGTYPE_GRAYSCALE) {
-            $draw = new ImagickDraw();
-            $draw->setFillColor("red");
-            $draw->setfillopacity(.001);
-            $draw->point(0,0);
-            $this->resource->drawImage($draw);
-        }
+        $draw = new ImagickDraw();
+        $draw->setFillColor("#ff0000");
+        $draw->setfillopacity(.01);
+        $draw->point($this->getWidth()-1,$this->getHeight()-1); // place it in the right bottom corner
+        $this->resource->drawImage($draw);
 
         return $this;
     }
