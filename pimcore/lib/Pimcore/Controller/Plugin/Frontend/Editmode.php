@@ -158,7 +158,9 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             $editmodeHeadHtml .= '<link rel="stylesheet" type="text/css" href="' . $sheet . '?_dc=' . Pimcore_Version::$revision . '" />';
             $editmodeHeadHtml .= "\n";
         }
-        
+
+        $editmodeHeadHtml = '<script type="text/javascript">var jQueryPreviouslyLoaded = (typeof jQuery == "undefined") ? false : true;</script>' . "\n";
+
         // include script libraries
         foreach ($editmodeLibraries as $script) {
             $editmodeHeadHtml .= '<script type="text/javascript" src="' . $script . '?_dc=' . Pimcore_Version::$revision . '"></script>';
@@ -193,6 +195,10 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
         $editmodeHeadHtml .= '<script type="text/javascript">
             var editableConfigurations = new Array();
             var pimcore_document_id = ' . $request->getParam("document")->getId() . ';
+
+            if(jQueryPreviouslyLoaded) {
+                jQuery.noConflict( true );
+            }
         </script>';
         
         $editmodeHeadHtml .= "\n\n<!-- /pimcore editmode -->\n\n\n";
