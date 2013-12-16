@@ -191,7 +191,8 @@ class Pimcore_Model_Cache {
             "frontendType" => "Core",
             "frontendConfig" => array(
                 "lifetime" => self::$defaultLifetime,
-                "automatic_serialization" => true
+                "automatic_serialization" => true,
+                "automatic_cleaning_factor" => 0
             ),
             "customFrontendNaming" => true,
             "backendType" => "Pimcore_Cache_Backend_MysqlTable",
