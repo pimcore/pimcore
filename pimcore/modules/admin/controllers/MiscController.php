@@ -617,6 +617,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
             $partDir = $dir . "/" . $partDir;
             $files = scandir($partDir);
 
+            srand($seed + $key);
             $id = rand(0,9);
 
             foreach ($files as $file) {
