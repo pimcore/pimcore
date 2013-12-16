@@ -161,6 +161,7 @@ class Pimcore_Model_Cache {
 
         self::$instance->setLifetime(self::$defaultLifetime);
         self::$instance->setOption("automatic_serialization", true);
+        self::$instance->setOption("automatic_cleaning_factor", 0);
 
         // init the write lock once (from other processes etc.)
         if(self::$writeLockTimestamp === null) {
