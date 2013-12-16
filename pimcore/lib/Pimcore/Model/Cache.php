@@ -696,4 +696,9 @@ class Pimcore_Model_Cache {
     {
         return self::$forceImmediateWrite;
     }
+
+    public static function maintenance() {
+        $cache = self::getInstance();
+        $cache->clean(Zend_Cache::CLEANING_MODE_OLD);
+    }
 }

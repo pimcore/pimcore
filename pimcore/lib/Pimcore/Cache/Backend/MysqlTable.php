@@ -137,8 +137,7 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
             $this->truncate();
         }
         if ($mode == Zend_Cache::CLEANING_MODE_OLD) {
-            // not supported
-            //$this->getDb()->delete("cache", "expire < " . time());
+            $this->getDb()->delete("cache", "expire < unix_timestamp() OR mtime < (unix_timestamp()-864000)");
         }
         if ($mode == Zend_Cache::CLEANING_MODE_MATCHING_TAG || $mode == Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG) {
             foreach ($tags as $tag) {
