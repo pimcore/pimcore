@@ -604,12 +604,12 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function robohashAction() {
         $seed = crc32($this->getParam("seed", rand(0,20000)));
-
         $colors = array("blue","brown","green","grey","orange","pink","purple","red","white","yellow");
         $partDirs = array("003#01Body", "004#02Face", "000#Mouth","001#Eyes","002#Accessory");
 
         $im = null;
 
+        srand($seed);
         $color = $colors[array_rand($colors)];
         $dir = PIMCORE_PATH . "/static/img/robohash/" . $color;
 
@@ -617,7 +617,6 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
             $partDir = $dir . "/" . $partDir;
             $files = scandir($partDir);
 
-            srand($seed);
             $id = rand(0,9);
 
             foreach ($files as $file) {
