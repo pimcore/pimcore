@@ -635,8 +635,21 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
             }
         }
 
+        if($this->getParam("width") && $this->getParam("height")) {
+            $w = $this->getParam("width");
+            $h = $this->getParam("height");
+            $imResized = imagecreatetruecolor($w, $h);
+            imagesavealpha($imResized, true);
+            imagealphablending($imResized, false);
+            $trans_colour = imagecolorallocatealpha($imResized, 255, 0, 0, 127);
+            imagefill($imResized, 0, 0, $trans_colour);
+            imagecopyresampled($imResized, $im, 0, 0, 0, 0, $w, $h, 300, 300);
+            $im = $imResized;
+        }
+
         header("Content-Type: image/png");
         imagepng($im);
+        imagedestroy($im);
         exit;
     }
 
