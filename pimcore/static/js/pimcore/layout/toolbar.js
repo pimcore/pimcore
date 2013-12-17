@@ -27,8 +27,9 @@ pimcore.layout.toolbar = Class.create({
             iconCls: "pimcore_icon_welcome",
             handler: function () {
             },
-            menu: [
-                {
+            menu: {
+                cls: "pimcore_navigation_flyout",
+                items: [{
                     text: t("welcome"),
                     iconCls: "pimcore_icon_welcome",
                     handler: function () {
@@ -39,8 +40,8 @@ pimcore.layout.toolbar = Class.create({
                             pimcore.globalmanager.add("layout_portal_welcome", new pimcore.layout.portal());
                         }
                     }
-                }
-            ]
+                }]
+            }
         });
 
         Ext.Ajax.request({
