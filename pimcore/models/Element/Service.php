@@ -558,6 +558,15 @@ class Element_Service extends Pimcore_Model_Abstract {
         $this->getResource()->cleanupBrokenViews();
     }
 
+    /** Callback for array_filter function.
+     * @param $var value
+     * @return bool true if value is accepted
+     */
+    private static function filterNullValues($var) {
+        return strlen($var) > 0;
+    }
+
+
 
     /**
      * Creates Object/Document/Asset folders by a path
@@ -579,7 +588,7 @@ class Element_Service extends Pimcore_Model_Abstract {
         $lastFolder = null;
         $pathsArray = array();
         $parts = explode('/', $path);
-        $parts = array_filter($parts);
+        $parts = array_filter($parts, "Element_Service::filterNullValues");
 
         $sanitizedPath = "/";
         foreach($parts as $part) {

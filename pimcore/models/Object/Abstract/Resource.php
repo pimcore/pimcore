@@ -91,7 +91,7 @@ class Object_Abstract_Resource extends Element_Resource {
         ));
         $this->model->setId($this->db->lastInsertId());
 
-        if (!$this->model->getKey()) {
+        if (is_null($this->model->geto_key())) {
             $this->model->setKey($this->db->lastInsertId());
         }
         //$this->model->save();

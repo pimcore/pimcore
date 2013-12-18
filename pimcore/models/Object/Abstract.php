@@ -195,7 +195,7 @@ class Object_Abstract extends Element_Abstract {
      * @return Object_Abstract
      */
     public static function getById($id) {
-        
+
         $id = intval($id);
 
         if ($id < 1) {
@@ -208,14 +208,14 @@ class Object_Abstract extends Element_Abstract {
         try {
             $object = Zend_Registry::get($cacheKey);
             if(!$object){
-                throw new Exception("Object_Abstract: object in registry is null");   
+                throw new Exception("Object_Abstract: object in registry is null");
             }
         }
         catch (Exception $e) {
 
             try {
                 if (!$object = Pimcore_Model_Cache::load($cacheKey)) {
-                    
+
                     $object = new Object_Abstract();
                     $typeInfo = $object->getResource()->getTypeById($id);
 
@@ -252,7 +252,7 @@ class Object_Abstract extends Element_Abstract {
 
         $selfType = get_class();
         $staticType = get_called_class();
-        
+
         // check for type
         if ($selfType != $staticType) {
             if (!$object instanceof $staticType) {
@@ -261,7 +261,7 @@ class Object_Abstract extends Element_Abstract {
                 }
             }
         }
-        
+
         if(!$object) {
             return null;
         }
@@ -385,7 +385,7 @@ class Object_Abstract extends Element_Abstract {
             $list->setOrder("asc");
             $list->setObjectTypes($objectTypes);
             $this->o_childs = $list->load();
-        } 
+        }
 
         return $this->o_childs;
     }
@@ -447,13 +447,13 @@ class Object_Abstract extends Element_Abstract {
         $this->getResource()->deleteAllPermissions();
 
         $this->getResource()->delete();
-        
+
         // empty object cache
         $this->clearDependentCache();
 
         //set object to registry
         Zend_Registry::set("object_" . $this->getId(), null);
-        
+
         Pimcore_API_Plugin_Broker::getInstance()->postDeleteObject($this);
     }
 
@@ -488,7 +488,7 @@ class Object_Abstract extends Element_Abstract {
                     throw new Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
                 }
 
-               $this->correctPath();
+                $this->correctPath();
 
                 if (!$isUpdate) {
                     $this->getResource()->create();
@@ -550,8 +550,8 @@ class Object_Abstract extends Element_Abstract {
 
         return $this;
     }
-    
-    
+
+
     public function correctPath () {
         // set path
         if($this->getId() != 1) { // not for the root node
@@ -581,18 +581,18 @@ class Object_Abstract extends Element_Abstract {
             }
         }
     }
-    
-    
+
+
     /**
      * @return void
      */
     protected function update() {
 
-        if(!$this->getKey() && $this->getId() != 1) {
+        if(is_null($this->getKey()) && $this->getId() != 1) {
             $this->delete();
             throw new Exception("Object requires key, object with id " . $this->getId() . " deleted");
         }
-        
+
         // set mod date
         $this->setModificationDate(time());
 
@@ -844,7 +844,7 @@ class Object_Abstract extends Element_Abstract {
         if(is_array($o_childs) and count($o_childs)>0){
             $this->o_hasChilds=true;
         } else {
-             $this->o_hasChilds=false;   
+            $this->o_hasChilds=false;
         }
         return $this;
     }
@@ -910,9 +910,9 @@ class Object_Abstract extends Element_Abstract {
      * @param boolean $inherited
      */
     public function setProperty($name, $type, $data, $inherited = false) {
-        
+
         $this->getProperties();
-        
+
         $property = new Property();
         $property->setType($type);
         $property->setCid($this->getId());
@@ -920,7 +920,7 @@ class Object_Abstract extends Element_Abstract {
         $property->setCtype("object");
         $property->setData($data);
         $property->setInherited($inherited);
-        
+
         $this->o_properties[$name] = $property;
         return $this;
     }
@@ -936,7 +936,7 @@ class Object_Abstract extends Element_Abstract {
     }
 
     /**
-     * 
+     *
      */
     public function __sleep() {
 
@@ -952,7 +952,7 @@ class Object_Abstract extends Element_Abstract {
             // this is if we want to cache the object
             $blockedVars = array("o_userPermissions","o_dependencies","o_childs","o_hasChilds","o_versions","o_class","scheduledTasks","o_properties","o_parent","o___loadedLazyFields","omitMandatoryCheck");
         }
-        
+
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
@@ -962,8 +962,8 @@ class Object_Abstract extends Element_Abstract {
 
         return $finalVars;
     }
-    
-    
+
+
     public function __wakeup() {
         if(isset($this->_fulldump)) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
@@ -980,11 +980,11 @@ class Object_Abstract extends Element_Abstract {
             $this->renewInheritedProperties();
         }
     }
-    
+
     public function removeInheritedProperties () {
-        
+
         $myProperties = $this->getProperties();
-        
+
         if($myProperties) {
             foreach ($this->getProperties() as $name => $property) {
                 if($property->getInherited()) {
@@ -992,10 +992,10 @@ class Object_Abstract extends Element_Abstract {
                 }
             }
         }
-        
+
         $this->setProperties($myProperties);
     }
-    
+
     public function renewInheritedProperties () {
         $this->removeInheritedProperties();
 
