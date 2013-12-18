@@ -109,7 +109,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             // do not initialize a site if it is a "special" admin request
             if (!Pimcore_Tool::isFrontentRequestByAdmin()) {
                 $domain = Pimcore_Tool::getHostname();
-                $site = Site::getByDomain($domain);
+                $site = Zend_Registry::isRegistered("pimcore_site") ? Zend_Registry::get("pimcore_site") : Site::getByDomain($domain);
                 $path = $site->getRootPath() . $path;
 
                 if($site->getRedirectToMainDomain() && $domain != $site->getMainDomain()) {
