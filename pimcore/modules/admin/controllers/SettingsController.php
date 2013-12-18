@@ -391,6 +391,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         // empty document cache
         Pimcore_Model_Cache::clearAll();
 
+        $db = Pimcore_Resource::get();
+        $db->query("truncate table cache_tags");
+        $db->query("truncate table cache");
+
         // empty cache directory
         $files = scandir(PIMCORE_CACHE_DIRECTORY);
         foreach ($files as $file) {

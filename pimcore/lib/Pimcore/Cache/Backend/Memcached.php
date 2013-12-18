@@ -146,19 +146,14 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
         $result = parent::save($data, $id, array(), $specificLifetime);
 
-        // hack may it works also without it
-        //$this->_memcache->delete($id);
-        // hack end
-
-        //$result = $this->_memcache->replace($id, array($data, time()), $flag, $lifetime);
-        //if( $result == false ) {
-        //    $result = $this->_memcache->set($id, array($data, time()), $flag, $lifetime);
-        //}
-        
-        
-        if (count($tags) > 0) {
-            $this->saveTags($id, $tags);
+        if($result) {
+            if (count($tags) > 0) {
+                $this->saveTags($id, $tags);
+            }
+        } else {
+            $this->remove($id);
         }
+
         return $result;
     }
 
@@ -170,14 +165,13 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
         $this->checkCacheConsistency();
 
+        $result = parent::remove($id);
 
         // using func_get_arg() to be compatible with the interface
         // when the 2ng argument is true, do not clean the cache tags
-        if(func_num_args() > 1 && func_get_arg(1) !== true) {
+        if($result && func_num_args() > 1 && func_get_arg(1) !== true) {
             $this->getDb()->delete("cache_tags", "id = '".$id."'");
         }
-
-        $result = parent::remove($id);
 
         // security check if the deletion fails
         if(!$result && $this->_memcache->get($id) !== false) {
@@ -220,10 +214,11 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
                 foreach ($items as $item) {
                     // We call delete directly here because the ID in the cache is already specific for this site
-                    $this->remove($item, true);
-                    $quotedIds[] = $this->getDb()->quote($item);
+                    if($this->remove($item, true)) {
+                        $quotedIds[] = $this->getDb()->quote($item);
+                    }
                 }
-                //$this->getDb()->delete("cache_tags", "tag = '".$tag."'");
+
                 if(count($quotedIds) > 0) {
                     $this->getDb()->delete("cache_tags", "id IN (" . implode(",", $quotedIds) . ")");
                 }

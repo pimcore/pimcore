@@ -91,6 +91,7 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
         } catch (Exception $e) {
             Logger::error($e);
             $this->truncate();
+            return false;
         }
 
         return true;
@@ -111,6 +112,7 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
             $this->getDb()->commit();
         } catch (\Exception $e) {
             $this->truncate();
+            return false;
         }
 
         return true;
