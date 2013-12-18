@@ -17,12 +17,12 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
     /**
      * @var string
      */
-    protected $paymenttype = 'SELECT';   # SELECT
+    protected $paymenttype = 'SELECT';
 
     /**
      * @var string
      */
-    protected $gatewayReferenceNumber;
+    protected $orderNumber;
 
 
     /**
@@ -165,12 +165,12 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
 
 
         // save
-        $this->gatewayReferenceNumber = $response['gatewayReferenceNumber'];
+        $this->orderNumber = $response['orderNumber'];
 
         $status = new OnlineShop_Framework_Impl_Checkout_Payment_Status(
-             base64_decode($response['internal_id']),
-             $this->gatewayReferenceNumber,
-             $this->isPaid() ? OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED : OnlineShop_Framework_AbstractOrder::ORDER_STATE_CANCELLED
+            base64_decode($response['internal_id']),
+            $this->orderNumber,
+            $this->isPaid() ? OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED : OnlineShop_Framework_AbstractOrder::ORDER_STATE_CANCELLED
         );
 
 
@@ -185,7 +185,7 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
      */
     public function isPaid()
     {
-        return $this->gatewayReferenceNumber !== NULL;
+        return $this->orderNumber !== NULL;
     }
 
 
@@ -194,7 +194,7 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
      */
     public function getPayReference()
     {
-        return $this->gatewayReferenceNumber;
+        return $this->orderNumber;
     }
 
 
@@ -204,7 +204,7 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
     protected function loadCheckoutData()
     {
         $data = json_decode($this->cart->getCheckoutData(self::PRIVATE_NAMESPACE), true);
-        $this->gatewayReferenceNumber = $data['gatewayReferenceNumber'];
+        $this->orderNumber = $data['orderNumber'];
         $this->errors = $data['Errors'];
     }
 
@@ -215,7 +215,7 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
     protected function saveCheckoutData()
     {
         $data = array(
-            'gatewayReferenceNumber' => $this->gatewayReferenceNumber,
+            'orderNumber' => $this->orderNumber,
             'Errors' => $this->errors
         );
 
