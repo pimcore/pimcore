@@ -68,7 +68,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         } else {
             //No Order found, create new one
 
-            $tempOrdernumber = uniqid("ord_");
+            $tempOrdernumber = $this->createOrderNumber();
 
             $order = $this->getNewOrderObject();
 
@@ -139,6 +139,13 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         $order->setItems($orderItems);
 
         return $order;
+    }
+
+    /**
+     * @return string
+     */
+    protected function createOrderNumber() {
+        return uniqid("ord_");
     }
 
     /**

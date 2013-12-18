@@ -47,6 +47,11 @@ interface OnlineShop_Framework_ICheckoutManager {
     public function startOrderPayment();
 
     /**
+     * @return OnlineShop_Framework_AbstractOrder
+     */
+    public function getOrder();
+
+    /**
      * @param OnlineShop_Framework_Impl_Checkout_Payment_Status $status
      * @return OnlineShop_Framework_AbstractOrder
      */

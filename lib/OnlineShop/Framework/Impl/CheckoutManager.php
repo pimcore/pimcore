@@ -118,6 +118,13 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         return $paymentInfo;
     }
 
+    /**
+     * @return OnlineShop_Framework_AbstractOrder
+     */
+    public function getOrder() {
+        return $this->getCommitOrderProcessor()->getOrCreateOrder($this->cart);
+    }
+
 
     /**
      * @return OnlineShop_Framework_AbstractOrder
