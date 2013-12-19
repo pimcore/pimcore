@@ -60,7 +60,10 @@ class Pimcore_ExtensionManager {
      */
     public static function isEnabled ($type, $id) {
         $config = self::getConfig();
-        return (bool) $config->$type->$id;
+        if($config->$type) {
+            return (bool) $config->$type->$id;
+        }
+        return false;
     }
 
     /**
