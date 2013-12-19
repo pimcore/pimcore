@@ -34,14 +34,16 @@ class Pimcore_Tool_Session {
      */
     public static function initSession() {
 
-        Zend_Session::setOptions(array(
-            "throw_startup_exceptions" => false,
-            "gc_maxlifetime" => 7200,
-            "name" => "pimcore_admin_sid",
-            "strict" => false,
-            "use_trans_sid" => false,
-            "use_only_cookies" => false
-        ));
+        if(!Zend_Session::isStarted()) {
+            Zend_Session::setOptions(array(
+                "throw_startup_exceptions" => false,
+                "gc_maxlifetime" => 7200,
+                "name" => "pimcore_admin_sid",
+                "strict" => false,
+                "use_trans_sid" => false,
+                "use_only_cookies" => false
+            ));
+        }
 
         try {
             try {
