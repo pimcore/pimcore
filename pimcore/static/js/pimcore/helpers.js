@@ -1030,8 +1030,10 @@ pimcore.helpers.forgetOpenTab = function (item) {
 
     var openTabs = pimcore.helpers.getOpenTab();
 
-    var pos = array_search(item, openTabs);
-    openTabs.splice(pos, 1);
+    if(in_array(item, openTabs)) {
+        var pos = array_search(item, openTabs);
+        openTabs.splice(pos, 1);
+    }
 
     // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
     localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs));
