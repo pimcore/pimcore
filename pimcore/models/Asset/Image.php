@@ -80,6 +80,16 @@ class Asset_Image extends Asset {
         }
     }
 
+    /**
+     * @param $name
+     */
+    public function clearThumbnail($name) {
+        $dir = $this->getImageThumbnailSavePath() . "/thumb__" . $name;
+        if(is_dir($dir)) {
+            recursiveDelete($dir);
+        }
+    }
+
      /**
      * Legacy method for backwards compatibility. Use getThumbnail($config)->getConfig() instead.
      * @param mixed $config
