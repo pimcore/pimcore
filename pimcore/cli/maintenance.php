@@ -21,6 +21,7 @@ try {
         'manager|m=s' => 'force a specific manager (valid options: procedural, daemon)',
         'ignore-maintenance-mode' => 'forces the script execution even when the maintenance mode is activated',
         'verbose|v' => 'show detailed information during the maintenance (for debug, ...)',
+        "force|f" => "run the jobs, regardless if they're locked or not",
         'help|h' => 'display this help'
     );
 
@@ -92,6 +93,7 @@ if($opts->getOption("job")) {
 // create manager
 $manager = Schedule_Manager_Factory::getManager("maintenance.pid", $forceType);
 $manager->setValidJobs($validJobs);
+$manager->setForce((bool) $opts->getOption("force"));
 
 // register scheduled tasks
 $manager->registerJob(new Schedule_Maintenance_Job("scheduledtasks", new Schedule_Task_Executor(), "execute"));

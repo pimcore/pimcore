@@ -478,7 +478,7 @@ class Version extends Pimcore_Model_Abstract {
             }
             $counter = 0;
 
-            Logger::debug("versions to check: " . count($versions) . " memory using: " . formatBytes(memory_get_usage()));
+            Logger::debug("versions to check: " . count($versions));
             if(is_array($versions) && !empty($versions)) {
                 $totalCount = count($versions);
                 foreach ($versions as $index => $id) {

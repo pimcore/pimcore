@@ -134,10 +134,7 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
                         Logger::info($elementId . "(object " . $count . ") Vcount " . count($versionIds));
                         $elementVersions = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . $elementType["steps"] . ",1000000", array($elementId, $elementType["elementType"]));
 
-
                         $versionIds = array_merge($versionIds, $elementVersions);
-
-                        Logger::info("memory usage: " . formatBytes(memory_get_usage()));
 
                         // call the garbage collector if memory consumption is > 100MB
                         if(memory_get_usage() > 100000000 && ($count % 100 == 0)) {

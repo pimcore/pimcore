@@ -24,6 +24,8 @@ class Schedule_Manager_Procedural {
 
     protected $_pidFileName;
 
+    protected $force = false;
+
     public function __construct($pidFileName){
         $this->_pidFileName = $pidFileName;
     }
@@ -43,7 +45,7 @@ class Schedule_Manager_Procedural {
             return false;
         }
 
-        if (!$job->isLocked() || $force) {
+        if (!$job->isLocked() || $force || $this->getForce()) {
             $this->jobs[] = $job;
             $job->lock();
 
@@ -84,5 +86,21 @@ class Schedule_Manager_Procedural {
             return $date;
         }
         return;
+    }
+
+    /**
+     * @param boolean $force
+     */
+    public function setForce($force)
+    {
+        $this->force = $force;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getForce()
+    {
+        return $this->force;
     }
 }
