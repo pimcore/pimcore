@@ -269,7 +269,7 @@ pimcore.settings.system = Class.create({
                                 valueField: 'language',
                                 forceSelection: true,
                                 typeAhead: true,
-                                width: 200
+                                width: 300
                             }, {
                                 xtype: "button",
                                 iconCls: "pimcore_icon_add",
