@@ -499,7 +499,6 @@ if($this->config->services->google->browserapikey) {
         debug: <?php echo Pimcore::inDebugMode() ? "true" : "false"; ?>,
         devmode: <?php echo PIMCORE_DEVMODE ? "true" : "false"; ?>,
         google_analytics_enabled: <?php echo Zend_Json::encode((bool) Pimcore_Google_Analytics::isConfigured()) ?>,
-        google_analytics_advanced: <?php echo Zend_Json::encode((bool) Pimcore_Google_Analytics::getSiteConfig()->advanced); ?>,
         google_webmastertools_enabled: <?php echo Zend_Json::encode((bool) Pimcore_Google_Webmastertools::isConfigured()) ?>,
         customviews: <?php echo Zend_Json::encode($this->customview_config) ?>,
         language: '<?php echo $this->language; ?>',

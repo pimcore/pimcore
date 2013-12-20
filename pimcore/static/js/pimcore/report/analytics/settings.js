@@ -125,6 +125,14 @@ pimcore.report.analytics.settings = Class.create({
                         width: 350,
                         id: "report_settings_analytics_additionalcode_" + id,
                         value: this.parent.getValue("analytics.sites." + key + ".additionalcode")
+                    }, {
+                        xtype: "textarea",
+                        fieldLabel: t("analytics_universal_configuration"),
+                        name: "universal_configuration_" + id,
+                        height: 100,
+                        width: 350,
+                        id: "report_settings_analytics_universal_configuration_" + id,
+                        value: this.parent.getValue("analytics.sites." + key + ".universal_configuration")
                     }]
                 },{
                     xtype: "fieldset",
@@ -182,12 +190,6 @@ pimcore.report.analytics.settings = Class.create({
                         name: "internalid_" + id,
                         id: "report_settings_analytics_internalid_" + id,
                         value: this.parent.getValue("analytics.sites." + key + ".internalid")
-                    },{
-                        xtype: "checkbox",
-                        fieldLabel: t("analytics_advanced_mode"),
-                        name: "advanced_" + id,
-                        id: "report_settings_analytics_advanced_" + id,
-                        checked: this.parent.getValue("analytics.sites." + key + ".advanced")
                     }]
                 }
             ]
@@ -220,7 +222,7 @@ pimcore.report.analytics.settings = Class.create({
                                                                                         .getValue(),
                 accountid: Ext.getCmp("report_settings_analytics_accountid_" + id).getValue(),
                 internalid: Ext.getCmp("report_settings_analytics_internalid_" + id).getValue(),
-                advanced: Ext.getCmp("report_settings_analytics_advanced_" + id).getValue()
+                universal_configuration: Ext.getCmp("report_settings_analytics_universal_configuration_" + id).getValue()
             };
         }, this);
 

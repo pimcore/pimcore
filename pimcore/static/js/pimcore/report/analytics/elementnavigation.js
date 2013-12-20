@@ -89,7 +89,7 @@ pimcore.report.analytics.elementnavigation = Class.create(pimcore.report.abstrac
         var path = "";
         var type = "";
         
-        if (this.type == "document_page" || this.type == "document_snippet") {
+        if (this.type == "document_page") {
             id = this.reference.id;
             path = this.reference.data.path + this.reference.data.key;
             type = "document";

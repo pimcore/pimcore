@@ -125,16 +125,9 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
 
         $filters = array();
 
-        if($config->advanced) {
-            if($this->getParam("id") && $this->getParam("type")) {
-                $url = "/pimcoreanalytics/" . $this->getParam("type") . "/" . $this->getParam("id");
-                $filters[] = "ga:pagePath==".$url;
-            }
-        }
-        else {
-            if($this->getParam("path")) {
-                $filters[] = "ga:pagePath==".$this->getParam("path");
-            }
+
+        if($this->getParam("path")) {
+            $filters[] = "ga:pagePath==".$this->getParam("path");
         }
 
         if($this->getParam("filters")) {
@@ -195,16 +188,9 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
             $endDate = date("Y-m-d",strtotime($this->getParam("dateTo")));
         }
 
-        if($config->advanced) {
-            if($this->getParam("id") && $this->getParam("type")) {
-                $url = "/pimcoreanalytics/" . $this->getParam("type") . "/" . $this->getParam("id");
-                $filters[] = "ga:pagePath==".$url;
-            }
-        }
-        else {
-            if($this->getParam("path")) {
-                $filters[] = "ga:pagePath==".$this->getParam("path");
-            }
+
+        if($this->getParam("path")) {
+            $filters[] = "ga:pagePath==".$this->getParam("path");
         }
 
 
@@ -273,16 +259,9 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
             $endDate = date("Y-m-d",strtotime($this->getParam("dateTo")));
         }
 
-        if($config->advanced) {
-            if($this->getParam("id") && $this->getParam("type")) {
-                $url = "/pimcoreanalytics/" . $this->getParam("type") . "/" . $this->getParam("id");
-                $filters[] = "ga:pagePath==".$url;
-            }
-        }
-        else {
-            if($this->getParam("path")) {
-                $filters[] = "ga:pagePath==".$this->getParam("path");
-            }
+
+        if($this->getParam("path")) {
+            $filters[] = "ga:pagePath==".$this->getParam("path");
         }
 
 
@@ -345,19 +324,9 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
             $limit = $this->getParam("limit");
         }
 
-
-        if($config->advanced) {
-            if($this->getParam("id") && $this->getParam("type")) {
-                $url = "/pimcoreanalytics/" . $this->getParam("type") . "/" . $this->getParam("id");
-                $filters[] = "ga:pagePath==".$url;
-            }
+        if($this->getParam("path")) {
+            $filters[] = "ga:pagePath==".$this->getParam("path");
         }
-        else {
-            if($this->getParam("path")) {
-                $filters[] = "ga:pagePath==".$this->getParam("path");
-            }
-        }
-
 
         $opts = array(
             "dimensions" => $dimension,
@@ -401,16 +370,9 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         }
 
         // all pageviews
-        if($config->advanced) {
-            if($this->getParam("id") && $this->getParam("type")) {
-                $url = "/pimcoreanalytics/" . $this->getParam("type") . "/" . $this->getParam("id");
-                $filters[] = "ga:pagePath==".$url;
-            }
-        }
-        else {
-            if($this->getParam("path")) {
-                $filters[] = "ga:pagePath==".$this->getParam("path");
-            }
+
+        if($this->getParam("path")) {
+            $filters[] = "ga:pagePath==".$this->getParam("path");
         }
 
 

@@ -51,19 +51,6 @@ class Pimcore_Google_Analytics {
         if(!$config || !$config->trackid) {
             return "";
         }
-        
-        
-        
-        $stack = array();
-        
-        if($config->advanced) {
-            foreach (self::$stack as $s) {
-            $stack[] = "_gaq.push(" . Zend_Json::encode($s) . ");";
-            }
-            
-            // remove dublicates
-            $stack = array_unique($stack);
-        }
 
         $code = "";
 
@@ -77,7 +64,7 @@ class Pimcore_Google_Analytics {
 
               " . $config->additionalcodebeforepageview . "
 
-              ga('create', '" . $config->trackid . "');
+              ga('create', '" . $config->trackid . "'" . ($config->universal_configuration ? ("," . $config->universal_configuration) : "") . ");
               if (typeof _gaqPageView != \"undefined\"){
                 ga('send', 'pageview', _gaqPageView);
               } else {
@@ -112,9 +99,6 @@ class Pimcore_Google_Analytics {
                 " . $typeSrc . "
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
               })();
-
-              " . implode("\n",$stack) . "
-
             </script>";
         }
 
@@ -123,28 +107,11 @@ class Pimcore_Google_Analytics {
     }
     
     public static function trackElement (Element_Interface $element) {
-        
-        $type = "";
-        if($element instanceof Document) {
-            $type = "document";
-        }
-        else if($element instanceof Asset) {
-            $type = "asset";
-        }
-        else if($element instanceof Object_Abstract) {
-            $type = "object";
-        }
-        else {
-            return;
-        }
-        
-        self::trackPageView('/pimcoreanalytics/' . $type . '/' . $element->getId());
-        
-        return true;
+        Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
     }
     
     public static function trackPageView ($path) {
-        self::$stack[] = array("_trackPageview",$path);
+        Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
     }
 
     public static function setDefaultPath($defaultPath)

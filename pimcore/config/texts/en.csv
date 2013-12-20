@@ -1,3 +1,4 @@
+"analytics_universal_configuration","Universal Analytics Configuration eg. {'cookieDomain': 'example.com'}"
 "default_error_page","Default error page"
 "error_page","Error Page"
 "main_domain","Main Domain"
@@ -652,7 +653,6 @@
 "email_log_resend","Send email"
 "email_log_resend_window_title","Resend email"
 "email_log_resend_window_msg","Please confirm that you want to send the email again to all recipients."
-"analytics_advanced_mode","Advanced Mode"
 "select_site","Select a site"
 "main_site","Main Site"
 "filename","Filename"

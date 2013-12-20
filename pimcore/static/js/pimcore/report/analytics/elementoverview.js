@@ -16,15 +16,9 @@ pimcore.registerNS("pimcore.report.analytics.elementoverview");
 pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract, {
 
     matchType: function (type) {
-        var types = ["document_page","document_snippet","global","object_concrete"];
+        var types = ["document_page","global"];
         if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)
                                                         && pimcore.settings.google_analytics_enabled) {
-            
-            // check for object_concrete||document_snippet, they are only available in advanced mode
-            if((type == "object_concrete" || type == "document_snippet")
-                                                        && !pimcore.settings.google_analytics_advanced) {
-                return false;
-            }
             return true;
         }
         return false;
@@ -225,15 +219,10 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
         var path = "";
         var id = "";
         var type = "";
-        if (this.type == "document_page" || this.type == "document_snippet") {
+        if (this.type == "document_page") {
             id = this.reference.id;
             path = this.reference.data.path + this.reference.data.key;
             type = "document";
-        }
-        if (this.type == "object_concrete") {
-            id = this.reference.id;
-            path = this.reference.data.o_path + this.reference.data.o_key;
-            type = "object";
         }
         
         this.chartStore = new Ext.data.JsonStore({
