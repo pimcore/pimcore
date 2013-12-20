@@ -257,7 +257,7 @@ pimcore.settings.system = Class.create({
                         }, {
                             xtype: "compositefield",
                             fieldLabel: t("add_language"),
-                            width: 300,
+                            width: 250,
                             items: [{
                                 xtype: "combo",
                                 id: "system.settings.general.languageSelection",
