@@ -112,9 +112,15 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
      * @param $elementTypes
      * @return array
      */
-    public function maintenanceGetOutdatedVersions ($elementTypes) {
+    public function maintenanceGetOutdatedVersions ($elementTypes, $ignoreIds = array()) {
 
+        $ignoreIdsList = implode(",", $ignoreIds);
+        if(!$ignoreIdsList) {
+            $ignoreIdsList = "0"; // set a default to avoid SQL errors (there's no version with ID 0)
+        }
         $versionIds = array();
+
+        Logger::debug("ignore ID's: " . $ignoreIdsList);
 
         if(!empty($elementTypes)) {
             $count = 0;
@@ -124,11 +130,11 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
                 if($elementType["days"] > 0) {
                     // by days
                     $deadline = time() - ($elementType["days"] * 86400);
-                    $tmpVersionIds = $this->db->fetchCol("SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public", array($elementType["elementType"], $deadline));
+                    $tmpVersionIds = $this->db->fetchCol("SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (" . $ignoreIdsList . ")", array($elementType["elementType"], $deadline));
                     $versionIds = array_merge($versionIds, $tmpVersionIds);
                 } else {
                     // by steps
-                    $elementIds = $this->db->fetchCol("SELECT cid,count(*) as amount FROM versions WHERE ctype = ? AND NOT public GROUP BY cid HAVING amount > ?", array($elementType["elementType"], $elementType["steps"]));
+                    $elementIds = $this->db->fetchCol("SELECT cid,count(*) as amount FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (" . $ignoreIdsList . ") GROUP BY cid HAVING amount > ?", array($elementType["elementType"], $elementType["steps"]));
                     foreach ($elementIds as $elementId) {
                         $count++;
                         Logger::info($elementId . "(object " . $count . ") Vcount " . count($versionIds));

@@ -471,8 +471,10 @@ class Version extends Pimcore_Model_Abstract {
             }
         }
 
+        $ignoredIds = array();
+
         while (true) {
-            $versions = $this->getResource()->maintenanceGetOutdatedVersions($elementTypes);
+            $versions = $this->getResource()->maintenanceGetOutdatedVersions($elementTypes, $ignoredIds);
             if (count($versions) ==  0) {
                 break;
             }
@@ -485,6 +487,7 @@ class Version extends Pimcore_Model_Abstract {
                     try {
                         $version = Version::getById($id);
                     } catch (Exception $e) {
+                        $ignoredIds[] = $id;
                         Logger::debug("Version with " . $id . " not found\n");
                         continue;
                     }
@@ -492,6 +495,7 @@ class Version extends Pimcore_Model_Abstract {
 
                     // do not delete public versions
                     if($version->getPublic()) {
+                        $ignoredIds[] = $version->getId();
                         continue;
                     }
 
@@ -514,6 +518,7 @@ class Version extends Pimcore_Model_Abstract {
                             Logger::debug("delete version: " . $version->getId() . " because it is outdated");
                             $version->delete();
                         } else {
+                            $ignoredIds[] = $version->getId();
                             Logger::debug("do not delete version (" . $version->getId() . ") because version's date is newer than the actual modification date of the element. Element-ID: " . $element->getId() . " Element-Type: " . Element_Service::getElementType($element));
                         }
                     } else {
