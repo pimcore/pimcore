@@ -148,8 +148,8 @@ CREATE TABLE `documents_doctypes` (
   `template` varchar(255) DEFAULT NULL,
   `type` enum('page','snippet','email') DEFAULT NULL,
   `priority` int(3) DEFAULT '0',
-  `creationDate` bigint(20) unsigned DEFAULT NULL,
-  `modificationDate` bigint(20) unsigned DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`)
 ) DEFAULT CHARSET=utf8;
@@ -268,8 +268,8 @@ CREATE TABLE `glossary` (
   `abbr` varchar(255) DEFAULT NULL,
   `acronym` varchar(255) DEFAULT NULL,
   `site` int(11) unsigned DEFAULT NULL,
-  `creationDate` bigint(20) unsigned DEFAULT NULL,
-  `modificationDate` bigint(20) unsigned DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `language` (`language`),
   KEY `site` (`site`)
@@ -296,8 +296,8 @@ CREATE TABLE `keyvalue_groups` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL DEFAULT '',
     `description` VARCHAR(255),
-    `creationDate` bigint(20) unsigned DEFAULT NULL,
-    `modificationDate` bigint(20) unsigned DEFAULT NULL,
+    `creationDate` bigint(20) unsigned DEFAULT '0',
+    `modificationDate` bigint(20) unsigned DEFAULT '0',
     PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;
 
@@ -310,10 +310,10 @@ CREATE TABLE `keyvalue_keys` (
   `unit` VARCHAR(255),
   `possiblevalues` TEXT,
   `group` INT,
-  `creationDate` bigint(20) unsigned DEFAULT NULL,
-  `modificationDate` bigint(20) unsigned DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`group`) REFERENCES keyvalue_groups(`id`) ON DELETE SET NULL
+  KEY `group` (`group`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `locks`;
@@ -398,8 +398,8 @@ CREATE TABLE `properties_predefined` (
   `config` text,
   `ctype` enum('document','asset','object') DEFAULT NULL,
   `inheritable` tinyint(1) unsigned DEFAULT '0',
-  `creationDate` bigint(20) unsigned DEFAULT NULL,
-  `modificationDate` bigint(20) unsigned DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `id` (`id`),
@@ -433,8 +433,8 @@ CREATE TABLE `redirects` (
   `statusCode` varchar(3) DEFAULT NULL,
   `priority` int(2) DEFAULT '0',
   `expiry` bigint(20) DEFAULT NULL,
-  `creationDate` bigint(20) unsigned DEFAULT NULL,
-  `modificationDate` bigint(20) unsigned DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`)
 ) DEFAULT CHARSET=utf8;
@@ -495,8 +495,8 @@ CREATE TABLE `sites` (
   `rootId` int(11) unsigned DEFAULT NULL,
   `errorDocument` varchar(255) DEFAULT NULL,
   `redirectToMainDomain` tinyint(1) DEFAULT NULL,
-  `creationDate` bigint(20) unsigned DEFAULT NULL,
-  `modificationDate` bigint(20) unsigned DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `rootId` (`rootId`)
 ) DEFAULT CHARSET=utf8;
@@ -514,8 +514,8 @@ CREATE TABLE `staticroutes` (
   `defaults` varchar(255) default NULL,
   `siteId` int(11) DEFAULT NULL,
   `priority` int(3) DEFAULT '0',
-  `creationDate` bigint(20) unsigned DEFAULT NULL,
-  `modificationDate` bigint(20) unsigned DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`),
   KEY `name` (`name`)
@@ -646,9 +646,9 @@ CREATE TABLE `users_permission_definitions` (
 
 DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
-  `cid` int(11) unsigned DEFAULT NULL,
+  `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `cpath` varchar(255) DEFAULT NULL,
-  `userId` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned NOT NULL DEFAULT '0',
   `list` tinyint(1) DEFAULT '0',
   `view` tinyint(1) DEFAULT '0',
   `publish` tinyint(1) DEFAULT '0',
@@ -665,9 +665,9 @@ CREATE TABLE `users_workspaces_asset` (
 
 DROP TABLE IF EXISTS `users_workspaces_document`;
 CREATE TABLE `users_workspaces_document` (
-  `cid` int(11) unsigned DEFAULT NULL,
+  `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `cpath` varchar(255) DEFAULT NULL,
-  `userId` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
   `save` tinyint(1) unsigned DEFAULT '0',
@@ -686,9 +686,9 @@ CREATE TABLE `users_workspaces_document` (
 
 DROP TABLE IF EXISTS `users_workspaces_object`;
 CREATE TABLE `users_workspaces_object` (
-  `cid` int(11) unsigned DEFAULT NULL,
+  `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `cpath` varchar(255) DEFAULT NULL,
-  `userId` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
   `save` tinyint(1) unsigned DEFAULT '0',
@@ -706,7 +706,7 @@ CREATE TABLE `users_workspaces_object` (
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `uuids`;
-CREATE TABLE IF NOT EXISTS `uuids` (
+CREATE TABLE `uuids` (
   `uuid` CHAR(36) NOT NULL,
   `itemId` BIGINT(20) UNSIGNED NOT NULL,
   `type` VARCHAR(25) NOT NULL,
@@ -733,11 +733,11 @@ DROP TABLE IF EXISTS `website_settings`;
 CREATE TABLE `website_settings` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(255) NOT NULL DEFAULT '',
-	`type` ENUM('text','document','asset','object','bool') NULL DEFAULT NULL,
-	`data` TEXT NULL,
-	`siteId` INT(11) UNSIGNED NULL DEFAULT NULL,
-	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
-	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	`type` ENUM('text','document','asset','object','bool') DEFAULT NULL,
+	`data` TEXT,
+	`siteId` INT(11) UNSIGNED DEFAULT NULL,
+	`creationDate` BIGINT(20) UNSIGNED DEFAULT '0',
+	`modificationDate` BIGINT(20) UNSIGNED DEFAULT '0',
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`),
 	INDEX `siteId` (`siteId`)
