@@ -53,7 +53,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             // transparency for EPS files
             if(method_exists($this->resource, "setcolorspace")) {
                 $this->resource->setBackgroundColor(new ImagickPixel('transparent')); //set .png transparent (print)
-                $this->resource->setcolorspace(Imagick::COLORSPACE_RGB);
+                $this->resource->setcolorspace(Imagick::COLORSPACE_SRGB);
             }
 
             if(!$this->resource->readImage($imagePath."[0]") || !filesize($imagePath)) {
@@ -129,7 +129,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $type = "RGB";
         }
 
-        if ($this->resource->getImageColorspace() == Imagick::COLORSPACE_CMYK && $type == "RGB") {
+        $imageColorspace = $this->resource->getImageColorspace();
+
+        if ($imageColorspace == Imagick::COLORSPACE_CMYK && $type == "RGB") {
             if(self::getCMYKColorProfile() && self::getRGBColorProfile()) {
                 $profiles = $this->resource->getImageProfiles('*', false);
                 // we're only interested if ICC profile(s) exist
@@ -142,7 +144,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 $this->resource->profileImage('icc', self::getRGBColorProfile());
                 $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB); // we have to use SRGB here, no clue why but it works
             }
-        } else if ($this->resource->getImageColorspace() == Imagick::COLORSPACE_RGB && $type == "CMYK") {
+        } else if (in_array($imageColorspace, array(Imagick::COLORSPACE_RGB, Imagick::COLORSPACE_SRGB)) && $type == "CMYK") {
             if(self::getCMYKColorProfile() && self::getRGBColorProfile()) {
                 $profiles = $this->resource->getImageProfiles('*', false);
                 // we're only interested if ICC profile(s) exist
@@ -155,12 +157,11 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 $this->resource->profileImage('icc', self::getCMYKColorProfile());
                 $this->resource->setImageColorspace(Imagick::COLORSPACE_CMYK);
             }
-        } else if ($this->resource->getImageColorspace() == Imagick::COLORSPACE_GRAY && $type == "RGB") {
-            $this->resource->setImageColorspace(Imagick::COLORSPACE_RGB);
-        } else if ($this->resource->getimagecolorspace() != Imagick::COLORSPACE_RGB && $type == "RGB") {
-            $this->resource->setImageColorspace(Imagick::COLORSPACE_RGB);
+        } else if ($imageColorspace == Imagick::COLORSPACE_GRAY && $type == "RGB") {
+            $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB);
+        } else if (!in_array($imageColorspace, array(Imagick::COLORSPACE_RGB, Imagick::COLORSPACE_SRGB)) && $type == "RGB") {
+            $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB);
         }
-
         // this is a HACK to force grayscale images to be real RGB - truecolor, this is important if you want to use
         // thumbnails in PDF's because they do not support "real" grayscale JPEGs or PNGs
         // problem is described here: http://imagemagick.org/Usage/basics/#type
