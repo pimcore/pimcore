@@ -48,7 +48,9 @@ class Pimcore_Image_Optimizer {
             } else if ($format == "jpeg") {
                 $optimizer = self::getJpegOptimizerCli();
                 if($optimizer) {
-                    // not implemented yet
+                    if($optimizer["type"] == "jpegoptim") {
+                        Pimcore_Tool_Console::exec($optimizer["path"] . " -o --strip-all --max=90 " . $path);
+                    }
                 }
             }
         }
@@ -93,9 +95,9 @@ class Pimcore_Image_Optimizer {
         }
 
         $paths = array(
-            "/usr/local/bin/pngquanty",
-            "/usr/bin/pngquantx",
-            "/bin/pngquantx",
+            "/usr/local/bin/jpegoptim",
+            "/usr/bin/jpegoptim",
+            "/bin/jpegoptim",
         );
 
         foreach ($paths as $path) {

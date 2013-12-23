@@ -92,9 +92,14 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $colorProfile = "RGB";
         }
 
+        $originalFilename = null;
         if(!$this->reinitializing) {
             if($this->getUseContentOptimizedFormat() && $colorProfile == "RGB") {
-                $format = "pjpeg";
+                $format = "jpeg";
+                $pixels = $this->getWidth() * $this->getHeight();
+                if($pixels > 10000) {
+                    $format = "pjpeg";
+                }
                 if($this->resource->getImageAlphaChannel()) {
                     $format = "png";
                 }
