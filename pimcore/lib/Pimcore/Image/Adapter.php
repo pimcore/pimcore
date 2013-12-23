@@ -30,6 +30,10 @@ abstract class Pimcore_Image_Adapter {
      */
     protected $tmpFiles = array();
 
+    /**
+     * @var bool
+     */
+    protected $useContentOptimizedFormat = false;
 
     /**
      * @param int $height
@@ -347,11 +351,13 @@ abstract class Pimcore_Image_Adapter {
 
 
     /**
-     * @abstract
-     * @param  $path
-     * @return Pimcore_Image_Adapter
+     * @param $path
+     * @param null $format
+     * @param null $quality
+     * @param null $colorProfile
+     * @return mixed
      */
-    public abstract function save ($path, $format = null, $quality = null);
+    public abstract function save ($path, $format = null, $quality = null, $colorProfile = null);
 
 
     /**
@@ -368,7 +374,7 @@ abstract class Pimcore_Image_Adapter {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_tmp_file.png";
         $this->tmpFiles[] = $tmpFile;
 
-        $this->save($tmpFile);
+        $this->save($tmpFile); // do not optimize image
         $this->destroy();
         $this->load($tmpFile);
     }
@@ -395,5 +401,21 @@ abstract class Pimcore_Image_Adapter {
      */
     public function setColorspace($type = "RGB") {
         return $this;
+    }
+
+    /**
+     * @param boolean $useContentOptimizedFormat
+     */
+    public function setUseContentOptimizedFormat($useContentOptimizedFormat)
+    {
+        $this->useContentOptimizedFormat = $useContentOptimizedFormat;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getUseContentOptimizedFormat()
+    {
+        return $this->useContentOptimizedFormat;
     }
 }

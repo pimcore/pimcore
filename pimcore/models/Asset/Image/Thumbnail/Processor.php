@@ -73,6 +73,7 @@ class Asset_Image_Thumbnail_Processor {
     public static function process ($asset, Asset_Image_Thumbnail_Config $config, $fileSystemPath = null, $deferred = false) {
 
         $format = strtolower($config->getFormat());
+        $contentOptimizedFormat = false;
         $modificationDate = 0;
 
         if(!$fileSystemPath) {
@@ -94,6 +95,7 @@ class Asset_Image_Thumbnail_Processor {
         // simple detection for source type if SOURCE is selected
         if($format == "source" || empty($format)) {
             $format = self::getAllowedFormat($fileExt, array("jpeg","gif","png"), "png");
+            $contentOptimizedFormat = true; // format can change depending of the content (alpha-channel, ...)
         }
 
         if($format == "print") {
@@ -154,6 +156,8 @@ class Asset_Image_Thumbnail_Processor {
             return "/pimcore/static/img/filetype-not-supported.png";
         }
 
+        $image->setUseContentOptimizedFormat($contentOptimizedFormat);
+
         $transformations = $config->getItems();
         if(is_array($transformations) && count($transformations) > 0) {
             foreach ($transformations as $transformation) {
@@ -190,6 +194,10 @@ class Asset_Image_Thumbnail_Processor {
         }
 
         $image->save($fsPath, $format, $config->getQuality());
+
+        //if($contentOptimizedFormat) {
+            Pimcore_Image_Optimizer::optimize($fsPath);
+        //}
 
         return $path;
     }

@@ -78,20 +78,40 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @param $path
      * @param null $format
      * @param null $quality
-     * @param string $colorProfile
-     * @return Pimcore_Image_Adapter|Pimcore_Image_Adapter_Imagick
+     * @param null $colorProfile
+     * @param bool $optimize
+     * @return $this|Pimcore_Image_Adapter
      */
-    public function save ($path, $format = null, $quality = null, $colorProfile = "RGB") {
+    public function save ($path, $format = null, $quality = null, $colorProfile = null) {
 
         if(!$format) {
             $format = "png";
         }
 
-        //if($colorProfile != "RGB") {
-            $this->setColorspace($colorProfile);
-        //}
+        if(!$colorProfile) {
+            $colorProfile = "RGB";
+        }
+
+        if($this->getUseContentOptimizedFormat() && $colorProfile == "RGB") {
+            $format = "pjpeg";
+            if($this->resource->getImageAlphaChannel()) {
+                $format = "png";
+            }
+        }
+
+        // check if the format is equal to the file extension
+        // if not, rename it, because otherwise Imagick chooses the format depending on the extension
+        $originalFilename = null;
+        $fileExtension = Pimcore_File::getFileExtension($path);
+        if($fileExtension != $format) {
+            $originalFilename = $path;
+            $path = preg_replace("/" . $fileExtension . "/", "auto." .$format, $path);
+        }
+
+        $this->setColorspace($colorProfile);
 
         $this->resource->stripimage();
+        $this->resource->profileImage('*', null);
         $this->resource->setImageFormat($format);
 
         if($quality) {
@@ -104,6 +124,11 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         }
         
         $this->resource->writeImage($path);
+
+        // rename the file back, so that the "cache" works as expected
+        if($originalFilename) {
+            rename($path, $originalFilename);
+        }
 
         return $this;
     }
