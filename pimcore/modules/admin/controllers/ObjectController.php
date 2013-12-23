@@ -873,7 +873,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $fd = $object->getClass()->getFieldDefinition($key);
                 if ($fd) {
                     if (method_exists($fd, "isRemoteOwner") and $fd->isRemoteOwner()) {
-                        $relations = $object->getRelationData($fd->getOwnerFieldName(), false, null);
+                        $remoteClass = Object_Class::getByName($fd->getOwnerClassName());
+                        $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
                         $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
                         $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
                         if (count($toAdd) > 0 or count($toDelete) > 0) {
