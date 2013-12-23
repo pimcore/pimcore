@@ -26,6 +26,11 @@ abstract class Pimcore_Image_Adapter {
     protected $height;
 
     /**
+     * @var bool
+     */
+    protected $reinitializing = false;
+
+    /**
      * @var array
      */
     protected $tmpFiles = array();
@@ -374,9 +379,11 @@ abstract class Pimcore_Image_Adapter {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_tmp_file.png";
         $this->tmpFiles[] = $tmpFile;
 
+        $this->reinitializing = true;
         $this->save($tmpFile); // do not optimize image
         $this->destroy();
         $this->load($tmpFile);
+        $this->reinitializing = false;
     }
 
     /**
