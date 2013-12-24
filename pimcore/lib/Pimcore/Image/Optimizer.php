@@ -48,12 +48,19 @@ class Pimcore_Image_Optimizer {
             } else if ($format == "jpeg") {
                 $optimizer = self::getJpegOptimizerCli();
                 if($optimizer) {
-                    if($optimizer["type"] == "jpegoptim") {
+                    if($optimizer["type"] == "imgmin") {
+                        $newFile = $path . ".xxxoptimized";
+                        Pimcore_Tool_Console::exec($optimizer["path"] . " " . $path . " " . $newFile);
+                        if(file_exists($newFile)) {
+                            unlink($path);
+                            rename($newFile, $path);
+                        }
+                    } else if($optimizer["type"] == "jpegoptim") {
                         $additionalParams = "";
                         if(filesize($path) > 10000) {
                             $additionalParams = " --all-progressive";
                         }
-                        Pimcore_Tool_Console::exec($optimizer["path"] . $additionalParams . " -o --strip-all --max=80 " . $path);
+                        Pimcore_Tool_Console::exec($optimizer["path"] . $additionalParams . " -o --strip-all --max=85 " . $path);
                     }
                 }
             }
@@ -99,6 +106,9 @@ class Pimcore_Image_Optimizer {
         }
 
         $paths = array(
+            "/usr/local/bin/imgmin",
+            "/usr/bin/imgmin",
+            "/bin/imgmin",
             "/usr/local/bin/jpegoptim",
             "/usr/bin/jpegoptim",
             "/bin/jpegoptim",
