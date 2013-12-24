@@ -562,6 +562,30 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => $libreofficeBin ? "ok" : "warning"
         );
 
+        // PNG optimizer
+        try {
+            $pngOptimizer = (bool) Pimcore_Image_Optimizer::getPngOptimizerCli();
+        } catch (Exception $e) {
+            $pngOptimizer = false;
+        }
+
+        $checksApps[] = array(
+            "name" => "PNG Optimizer (pngquant, pngcrush)",
+            "state" => $pngOptimizer ? "ok" : "warning"
+        );
+
+        // JPEG optimizer
+        try {
+            $jpgOptimizer = (bool) Pimcore_Image_Optimizer::getJpegOptimizerCli();
+        } catch (Exception $e) {
+            $jpgOptimizer = false;
+        }
+
+        $checksApps[] = array(
+            "name" => "JPEG Optimizer (imgmin, jpegoptim)",
+            "state" => $jpgOptimizer ? "ok" : "warning"
+        );
+
 
         $this->view->checksApps = $checksApps;
         $this->view->checksPHP = $checksPHP;
