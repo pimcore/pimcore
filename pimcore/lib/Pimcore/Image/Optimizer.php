@@ -49,7 +49,11 @@ class Pimcore_Image_Optimizer {
                 $optimizer = self::getJpegOptimizerCli();
                 if($optimizer) {
                     if($optimizer["type"] == "jpegoptim") {
-                        Pimcore_Tool_Console::exec($optimizer["path"] . " -o --strip-all --max=90 " . $path);
+                        $additionalParams = "";
+                        if(filesize($path) > 10000) {
+                            $additionalParams = " --all-progressive";
+                        }
+                        Pimcore_Tool_Console::exec($optimizer["path"] . $additionalParams . " -o --strip-all --max=80 " . $path);
                     }
                 }
             }
