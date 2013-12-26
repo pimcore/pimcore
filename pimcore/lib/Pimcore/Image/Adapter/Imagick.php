@@ -71,6 +71,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $this->setWidth($this->resource->getImageWidth());
         $this->setHeight($this->resource->getImageHeight());
 
+        $this->setModified(false);
+
         return $this;
     }
 
@@ -247,6 +249,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function resize ($width, $height) {
 
+        $this->preModify();
+
         // this is the check for vector formats because they need to have a resolution set
         // this does only work if "resize" is the first step in the image-pipeline
 
@@ -269,7 +273,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $this->setWidth($width);
         $this->setHeight($height);
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -282,13 +286,16 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter_Imagick
      */
     public function crop($x, $y, $width, $height) {
+
+        $this->preModify();
+
         $this->resource->cropImage($width, $height, $x, $y);
         $this->resource->setImagePage($width, $height, 0, 0);
 
         $this->setWidth($width);
         $this->setHeight($height);
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -303,6 +310,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function frame ($width, $height) {
 
+        $this->preModify();
+
         $this->contain($width, $height);
 
         $x = ($width - $this->getWidth()) / 2;
@@ -316,7 +325,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $this->setWidth($width);
         $this->setHeight($height);
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -327,11 +336,13 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function setBackgroundColor ($color) {
 
+        $this->preModify();
+
         $newImage = $this->createImage($this->getWidth(), $this->getHeight(), $color);
         $newImage->compositeImage($this->resource, Imagick::COMPOSITE_DEFAULT , 0, 0);
         $this->resource = $newImage;
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -357,11 +368,13 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function rotate ($angle) {
 
+        $this->preModify();
+
         $this->resource->rotateImage(new ImagickPixel('none'), $angle);
         $this->setWidth($this->resource->getimagewidth());
         $this->setHeight($this->resource->getimageheight());
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -374,9 +387,11 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function roundCorners ($x, $y) {
 
+        $this->preModify();
+
         $this->resource->roundCorners($x, $y);
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -387,6 +402,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter_Imagick
      */
     public function setBackgroundImage ($image) {
+
+        $this->preModify();
 
         $image = ltrim($image,"/");
         $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
@@ -399,7 +416,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $this->resource = $newImage;
         }
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -413,7 +430,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter_Imagick
      */
     public function  addOverlay ($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left') {
-                
+
+        $this->preModify();
+
         $image = ltrim($image,"/");
         $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
 
@@ -448,7 +467,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $this->resource->compositeImage($newImage, constant("Imagick::" . $composite), $x ,$y);
         }
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -460,6 +479,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function applyMask ($image) {
 
+        $this->preModify();
         $image = ltrim($image,"/");
         $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
 
@@ -471,7 +491,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $this->resource->compositeImage($newImage, Imagick::COMPOSITE_DSTIN, 0 ,0);
         }
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -482,8 +502,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function grayscale () {
 
+        $this->preModify();
         $this->resource->setImageType(imagick::IMGTYPE_GRAYSCALEMATTE);
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -493,8 +514,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function sepia () {
 
+        $this->preModify();
         $this->resource->sepiatoneimage(85);
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -516,9 +538,10 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function sharpen ($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05) {
 
+        $this->preModify();
         $this->resource->normalizeImage();
         $this->resource->unsharpMaskImage($radius, $sigma, $amount, $threshold);
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }

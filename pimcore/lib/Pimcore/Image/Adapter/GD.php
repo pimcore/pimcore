@@ -43,6 +43,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         $this->setWidth($width);
         $this->setHeight($height);
 
+        $this->setModified(false);
+
         return $this;
     }
 
@@ -77,6 +79,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
 
         // always create a PNG24
         if($format == "png") {
+            imagealphablending($this->resource, false);
             imagesavealpha($this->resource, true);
         }
 
@@ -106,9 +109,9 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
     protected function createImage ($width, $height) {
         $newImg = imagecreatetruecolor($width, $height);
 
+        imagealphablending($newImg, true);
         imagesavealpha($newImg, true);
-        imagealphablending($newImg, false);
-        $trans_colour = imagecolorallocatealpha($newImg, 255, 0, 0, 127);
+        $trans_colour = imagecolorallocatealpha($newImg, 0, 0, 0, 127);
         imagefill($newImg, 0, 0, $trans_colour);
 
         return $newImg;
@@ -121,6 +124,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      */
     public function resize ($width, $height) {
 
+        $this->preModify();
+
         $newImg = $this->createImage($width, $height);
         ImageCopyResampled($newImg, $this->resource, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
         $this->resource = $newImg;
@@ -128,7 +133,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         $this->setWidth($width);
         $this->setHeight($height);
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -141,6 +146,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter_GD
      */
     public function crop($x, $y, $width, $height) {
+
+        $this->preModify();
 
         $x = min($this->getWidth(), max(0, $x));
         $y = min($this->getHeight(), max(0, $y));
@@ -155,7 +162,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         $this->setWidth($width);
         $this->setHeight($height);
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -170,6 +177,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      */
     public function frame ($width, $height) {
 
+        $this->preModify();
+
         $this->contain($width, $height);
 
         $x = ($width - $this->getWidth()) / 2;
@@ -182,7 +191,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         $this->setWidth($width);
         $this->setHeight($height);
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -192,6 +201,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter
      */
     public function setBackgroundColor ($color) {
+
+        $this->preModify();
 
         list($r,$g,$b) = $this->colorhex2colorarray($color);
 
@@ -204,7 +215,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         imagecopy($newImg, $this->resource,0, 0, 0, 0, $this->getWidth(), $this->getHeight());
         $this->resource = $newImg;
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -213,9 +224,12 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter_GD
      */
     public function grayscale () {
+
+        $this->preModify();
+
         imagefilter($this->resource, IMG_FILTER_GRAYSCALE);
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
@@ -225,15 +239,19 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      */
     public function sepia () {
 
+        $this->preModify();
+
         imagefilter($this->resource, IMG_FILTER_GRAYSCALE);
         imagefilter($this->resource, IMG_FILTER_COLORIZE, 100, 50, 0);
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }
 
     public function  addOverlay ($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left') {
+
+        $this->preModify();
 
         $image = ltrim($image,"/");
         $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
@@ -266,7 +284,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
             imagecopyresampled($this->resource, $overlay, $x, $y, 0, 0, $oWidth, $oHeight, $oWidth, $oHeight);
         }
 
-        $this->reinitializeImage();
+        $this->postModify();
 
         return $this;
     }

@@ -41,6 +41,11 @@ abstract class Pimcore_Image_Adapter {
     protected $useContentOptimizedFormat = false;
 
     /**
+     * @var bool
+     */
+    protected $modified = false;
+
+    /**
      * @param int $height
      */
     public function setHeight($height)
@@ -372,6 +377,22 @@ abstract class Pimcore_Image_Adapter {
     protected abstract function destroy ();
 
     /**
+     *
+     */
+    public function preModify() {
+        if($this->getModified()) {
+            $this->reinitializeImage();
+        }
+    }
+
+    /**
+     *
+     */
+    public function postModify() {
+        $this->setModified(true);
+    }
+
+    /**
      * @return void
      */
     protected function reinitializeImage() {
@@ -384,6 +405,8 @@ abstract class Pimcore_Image_Adapter {
         $this->destroy();
         $this->load($tmpFile);
         $this->reinitializing = false;
+
+        $this->modified = false;
     }
 
     /**
@@ -424,5 +447,21 @@ abstract class Pimcore_Image_Adapter {
     public function getUseContentOptimizedFormat()
     {
         return $this->useContentOptimizedFormat;
+    }
+
+    /**
+     * @param boolean $modified
+     */
+    public function setModified($modified)
+    {
+        $this->modified = $modified;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getModified()
+    {
+        return $this->modified;
     }
 }
