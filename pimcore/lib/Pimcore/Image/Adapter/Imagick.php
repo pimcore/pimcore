@@ -88,25 +88,18 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         }
 
         if(!$colorProfile) {
-            $colorProfile = "RGB";
+            $colorProfile = Imagick::COLORSPACE_RGB;
+        } else {
+            $colorProfile = constant("Imagick::COLORSPACE_" . $colorProfile);
         }
 
         $originalFilename = null;
         if(!$this->reinitializing) {
-            if($this->getUseContentOptimizedFormat() && $colorProfile == "RGB") {
+            if($this->getUseContentOptimizedFormat() && $colorProfile == Imagick::COLORSPACE_RGB) {
                 $format = "jpeg";
                 if($this->resource->getImageAlphaChannel()) {
                     $format = "png";
                 }
-            }
-
-            // check if the format is equal to the file extension
-            // if not, rename it, because otherwise Imagick chooses the format depending on the extension
-            $originalFilename = null;
-            $fileExtension = Pimcore_File::getFileExtension($path);
-            if($fileExtension != $format) {
-                $originalFilename = $path;
-                $path = preg_replace("/" . $fileExtension . "/", "auto." .$format, $path);
             }
         }
 
@@ -124,16 +117,12 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         if($format == "tiff") {
             $this->resource->setCompression(Imagick::COMPRESSION_LZW);
         }
-        
-        $this->resource->writeImage($path);
 
-        // rename the file back, so that the "cache" works as expected
-        if(!$this->reinitializing && $originalFilename) {
-            rename($path, $originalFilename);
-        }
+        $this->resource->writeImage($format . ":" . $path);
 
         return $this;
     }
+
 
     /**
      * @return  void
@@ -142,6 +131,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         if($this->resource) {
             $this->resource->clear();
             $this->resource->destroy();
+            $this->resource = null;
         }
     }
 
