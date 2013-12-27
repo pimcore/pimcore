@@ -100,7 +100,7 @@ class Document_Tag_Link extends Document_Tag
     public function checkValidity()
     {
         $sane = true;
-        if ($this->data["internal"]) {
+        if (is_array($this->data) && $this->data["internal"]) {
             if ($this->data["internalType"] == "document") {
                 $doc = Document::getById($this->data["internalId"]);
                 if (!$doc) {
@@ -309,7 +309,7 @@ class Document_Tag_Link extends Document_Tag
 
         $dependencies = array();
 
-        if ($this->data["internal"]) {
+        if (is_array($this->data) && $this->data["internal"]) {
 
             if (intval($this->data["internalId"]) > 0) {
                 if ($this->data["internalType"] == "document") {
