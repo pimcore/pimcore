@@ -488,7 +488,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $newImage = new Imagick();
             $newImage->readimage($image);
             $newImage->resizeimage($this->getWidth(), $this->getHeight(), Imagick::FILTER_UNDEFINED, 1, false);
-            $this->resource->compositeImage($newImage, Imagick::COMPOSITE_DSTIN, 0 ,0);
+            $this->resource->compositeImage($newImage, Imagick::COMPOSITE_COPYOPACITY, 0 ,0, Imagick::CHANNEL_ALPHA);
         }
 
         $this->postModify();
