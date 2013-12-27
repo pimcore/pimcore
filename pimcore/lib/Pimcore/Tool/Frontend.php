@@ -105,4 +105,19 @@ class Pimcore_Tool_Frontend {
 
         return;
     }
+
+    /**
+     * @return array|bool
+     */
+    public static function isOutputCacheEnabled() {
+        $front = Zend_Controller_Front::getInstance();
+        $cachePlugin = $front->getPlugin("Pimcore_Controller_Plugin_Cache");
+        if($cachePlugin && $cachePlugin->isEnabled()) {
+            return array(
+                "enabled" => true,
+                "lifetime" => $cachePlugin->getLifetime()
+            );
+        }
+        return false;
+    }
 }

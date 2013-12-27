@@ -15,24 +15,59 @@
 
 class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
 
+    /**
+     * @var string
+     */
     protected $cacheKey;
+
+    /**
+     * @var bool
+     */
     protected $enabled = true;
+
+    /**
+     * @var null|int
+     */
     protected $lifetime = null;
+
+    /**
+     * @var bool
+     */
     protected $addExpireHeader = true;
 
+    /**
+     *
+     */
     public function disableExpireHeader() {
         $this->addExpireHeader = false;
     }
 
+    /**
+     *
+     */
     public function enableExpireHeader() {
         $this->addExpireHeader = true;
     }
 
+    /**
+     * @return bool
+     */
     public function disable() {
         $this->enabled = false;
         return true;
     }
 
+    /**
+     * @return bool
+     */
+    public function isEnabled() {
+        return $this->enabled;
+    }
+
+    /**
+     * @param Zend_Controller_Request_Abstract $request
+     * @return bool|void
+     */
     public function routeStartup(Zend_Controller_Request_Abstract $request) {
 
         $requestUri = $request->getRequestUri();
@@ -127,6 +162,9 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
         }
     }
 
+    /**
+     *
+     */
     public function dispatchLoopShutdown() {
         if ($this->enabled && $this->getResponse()->getHttpResponseCode() == 200 && !session_id()) {
             try {
@@ -155,12 +193,19 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
         }
     }
 
+    /**
+     * @param $lifetime
+     * @return $this
+     */
     public function setLifetime($lifetime)
     {
         $this->lifetime = $lifetime;
         return $this;
     }
 
+    /**
+     * @return int|null
+     */
     public function getLifetime()
     {
         return $this->lifetime;

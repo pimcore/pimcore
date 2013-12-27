@@ -124,6 +124,26 @@ class Pimcore_View extends Zend_View {
      */
     public function inc($include, $params = array()) {
 
+        // check if output-cache is enabled, if so, we're also using the cache here
+        $cacheKey = null;
+        if($cacheConfig = Pimcore_Tool_Frontend::isOutputCacheEnabled()) {
+
+            // cleanup params to avoid serializing Element_Interface objects
+            $cacheParams = $params;
+            $cacheParams["~~include-document"] = $include;
+            array_walk($cacheParams, function (&$value, $key) {
+                if($value instanceof Element_Interface) {
+                    $value = $value->getId();
+                }
+            });
+
+            $cacheKey = "inc_cache_" . md5(serialize($cacheParams));
+            if($content = Pimcore_Model_Cache::load($cacheKey)) {
+                return $content;
+            }
+        }
+
+
         $editmodeBackup = Zend_Registry::get("pimcore_editmode");
         Zend_Registry::set("pimcore_editmode", false);
 
@@ -187,6 +207,11 @@ class Pimcore_View extends Zend_View {
         }
 
         Zend_Registry::set("pimcore_editmode", $editmodeBackup);
+
+        // write contents to the cache, if output-cache is enabled
+        if($cacheConfig) {
+            Pimcore_Model_Cache::save($content, $cacheKey, array("output"), $cacheConfig["lifetime"]);
+        }
 
         return $content;
     }
