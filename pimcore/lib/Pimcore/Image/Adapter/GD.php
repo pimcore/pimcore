@@ -62,6 +62,13 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
             $format = "png";
         }
 
+        if(!$this->reinitializing && $this->getUseContentOptimizedFormat()) {
+            $format = "pjpeg";
+            if($this->hasAlphaChannel()) {
+                $format = "png";
+            }
+        }
+
         // progressive jpeg
         if($format == "pjpeg") {
             imageinterlace($this->resource, true);
@@ -79,7 +86,6 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
 
         // always create a PNG24
         if($format == "png") {
-            imagealphablending($this->resource, false);
             imagesavealpha($this->resource, true);
         }
 
@@ -92,6 +98,28 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         }
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function hasAlphaChannel() {
+
+        $width = imagesx($this->resource); // Get the width of the image
+        $height = imagesy($this->resource); // Get the height of the image
+
+        // We run the image pixel by pixel and as soon as we find a transparent pixel we stop and return true.
+        for($i = 0; $i < $width; $i++) {
+            for($j = 0; $j < $height; $j++) {
+                $rgba = imagecolorat($this->resource, $i, $j);
+                if(($rgba & 0x7F000000) >> 24) {
+                    return true;
+                }
+            }
+        }
+
+        // If we dont find any pixel the function will return false.
+        return false;
     }
 
     /**
@@ -109,8 +137,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
     protected function createImage ($width, $height) {
         $newImg = imagecreatetruecolor($width, $height);
 
-        imagealphablending($newImg, true);
         imagesavealpha($newImg, true);
+        imagealphablending($newImg, false);
         $trans_colour = imagecolorallocatealpha($newImg, 0, 0, 0, 127);
         imagefill($newImg, 0, 0, $trans_colour);
 
