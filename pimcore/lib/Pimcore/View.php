@@ -164,7 +164,8 @@ class Pimcore_View extends Zend_View {
                 $class = " pimcore_editable pimcore_tag_inc ";
 
     
-                // this is if the content if the include does already contain markup/html
+                // this is if the content that is included does already contain markup/html
+                // this is needed by the editmode to highlight included documents
                 if($html = str_get_html($content)) {
                     $childs = $html->find("*");
                     if(is_array($childs)) {
