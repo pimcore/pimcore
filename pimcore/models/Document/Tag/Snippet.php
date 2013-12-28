@@ -91,7 +91,33 @@ class Document_Tag_Snippet extends Document_Tag {
                     $params["document"] = $this->snippet;
 
                     if ($this->snippet->isPublished()) {
-                        return $this->getView()->action($this->snippet->getAction(), $this->snippet->getController(), $this->snippet->getModule(), $params);
+
+                        // check if output-cache is enabled, if so, we're also using the cache here
+                        $cacheKey = null;
+                        if($cacheConfig = Pimcore_Tool_Frontend::isOutputCacheEnabled()) {
+
+                            // cleanup params to avoid serializing Element_Interface objects
+                            $cacheParams = $params;
+                            array_walk($cacheParams, function (&$value, $key) {
+                                if($value instanceof Element_Interface) {
+                                    $value = $value->getId();
+                                }
+                            });
+
+                            $cacheKey = "tag_snippet__" . md5(serialize($cacheParams));
+                            if($content = Pimcore_Model_Cache::load($cacheKey)) {
+                                return $content;
+                            }
+                        }
+
+                        $content = $this->getView()->action($this->snippet->getAction(), $this->snippet->getController(), $this->snippet->getModule(), $params);
+
+                        // write contents to the cache, if output-cache is enabled
+                        if($cacheConfig) {
+                            Pimcore_Model_Cache::save($content, $cacheKey, array("output"), $cacheConfig["lifetime"]);
+                        }
+
+                        return $content;
                     }
                     return "";
                 }

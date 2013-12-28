@@ -653,6 +653,13 @@ class Pimcore_Model_Cache {
     }
 
     /**
+     * @param string $tag
+     */
+    public static function addClearedTag($tag) {
+        self::$clearedTagsStack[] = $tag;
+    }
+
+    /**
      * Disables the complete pimcore cache
      * @static
      * @return void

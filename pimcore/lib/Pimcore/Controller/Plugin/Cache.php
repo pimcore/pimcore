@@ -190,6 +190,10 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
                 Logger::error($e);
                 return;
             }
+        } else {
+            // output-cache was disabled, add "output" as cleared tag to ensure that no other "output" tagged elements
+            // like the inc and snippet cache get into the cache
+            Pimcore_Model_Cache::addClearedTag("output");
         }
     }
 

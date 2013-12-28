@@ -137,7 +137,7 @@ class Pimcore_View extends Zend_View {
                 }
             });
 
-            $cacheKey = "inc_cache_" . md5(serialize($cacheParams));
+            $cacheKey = "tag_inc__" . md5(serialize($cacheParams));
             if($content = Pimcore_Model_Cache::load($cacheKey)) {
                 return $content;
             }
