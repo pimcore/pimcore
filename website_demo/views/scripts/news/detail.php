@@ -1,3 +1,8 @@
+<?php
+    // set page meta-data
+    $this->headTitle()->set($this->news->getTitle());
+    $this->headMeta($this->news->getShortText(), "description");
+?>
 <section class="area-wysiwyg">
 
     <div class="page-header">

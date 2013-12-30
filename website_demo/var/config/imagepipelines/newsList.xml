@@ -4,15 +4,15 @@
     <item>
       <method>cover</method>
       <arguments>
-        <width>64</width>
-        <height>64</height>
+        <width>80</width>
+        <height>80</height>
         <positioning>center</positioning>
       </arguments>
     </item>
   </items>
   <name>newsList</name>
-  <description></description>
+  <description/>
   <format>SOURCE</format>
   <quality>90</quality>
-  <highResolution></highResolution>
+  <highResolution>0</highResolution>
 </zend-config>

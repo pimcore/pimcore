@@ -10,8 +10,8 @@
     </item>
   </items>
   <name>exampleFrame</name>
-  <description></description>
-  <format>PNG</format>
+  <description/>
+  <format>SOURCE</format>
   <quality>90</quality>
-  <highResolution></highResolution>
+  <highResolution>0</highResolution>
 </zend-config>

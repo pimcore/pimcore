@@ -9,8 +9,8 @@
     </item>
   </items>
   <name>galleryLightbox</name>
-  <description></description>
-  <format>PJPEG</format>
+  <description/>
+  <format>SOURCE</format>
   <quality>75</quality>
-  <highResolution></highResolution>
+  <highResolution>0</highResolution>
 </zend-config>

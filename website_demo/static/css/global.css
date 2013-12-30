@@ -118,6 +118,27 @@ section img {
     background: #2aabeb;
 }
 
+.blog .list img {
+    max-width: 100%;
+    height: auto;
+}
+
+.blog .filters .box {
+    padding: 10px;
+    margin-bottom: 30px;
+    background-color: #f7f5fa;
+    border-radius: 5px;
+}
+
+.blog .filters .box h4 {
+    margin: 0 0 10px 0;
+    padding: 0 0 5px 0;
+    border-bottom: 1px solid #5a5a5a;
+}
+
+.disqus {
+    margin-top: 30px;
+}
 
 /*
  * Side navigation

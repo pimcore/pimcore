@@ -22,7 +22,8 @@
         <div class="media-body">
             <h4 class="media-heading">
                 <a href="<?php echo $detailLink; ?>"><?php echo $news->getTitle(); ?></a>
-                <small><?php echo $news->getDate()->get(Zend_Date::DATE_SHORT); ?></small>
+                <br />
+                <small><i class="glyphicon glyphicon-calendar"></i> <?php echo $news->getDate()->get(Zend_Date::DATETIME_MEDIUM); ?></small>
             </h4>
             <?php echo $news->getShortText(); ?>
         </div>
