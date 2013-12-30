@@ -112,7 +112,7 @@ class AdvancedController extends Website_Controller_Action
 
                 // first we need to create a new object, and fill some system-related information
                 $person = new Object_Person();
-                $person->setParent(Object_Abstract::getByPath("/crm")); // we store all objects in /crm
+                $person->setParent(Object_Abstract::getByPath("/crm/inquiries")); // we store all objects in /crm
                 $person->setKey($filename); // the filename of the object
                 $person->setPublished(true); // yep, it should be published :)
 
@@ -169,5 +169,25 @@ class AdvancedController extends Website_Controller_Action
         Pimcore::collectGarbage();
 
         $this->view->doc = $doc;
+    }
+
+    public function assetThumbnailListAction() {
+
+        // try to get the tag where the parent folder is specified
+        $parentFolder = $this->document->getElement("parentFolder");
+        if($parentFolder) {
+            $parentFolder = $parentFolder->getElement();
+        }
+
+        if(!$parentFolder) {
+            // default is the home folder
+            $parentFolder = Asset::getById(1);
+        }
+
+        // get all children of the parent
+        $list = new Asset_List();
+        $list->setCondition("path like ?", $parentFolder->getFullpath() . "%");
+
+        $this->view->list = $list;
     }
 }
