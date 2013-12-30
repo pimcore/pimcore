@@ -45,7 +45,7 @@
                     $thumbnail = $image->getThumbnail($name);
                 ?>
                 <div class="img-container">
-                    <img src="<?= $thumbnail; ?>">
+                    <?= $thumbnail->getHTML() ?>
                 </div>
                 <h3><?= $this->translate($title); ?></h3>
                 <div>

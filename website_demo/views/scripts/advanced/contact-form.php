@@ -37,7 +37,7 @@
         <div class="form-group">
             <label class="col-lg-2 control-label"><?= $this->translate("Message"); ?></label>
             <div class="col-lg-10">
-                <textarea name="message" type="text" class="form-control" placeholder="" value="<?= $this->message; ?>"></textarea>
+                <textarea name="message" type="text" style="height: 300px" class="form-control" placeholder="" value="<?= $this->message; ?>"></textarea>
             </div>
         </div>
 

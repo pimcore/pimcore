@@ -15,7 +15,7 @@
         ?>
         <?php if($news->getImage_1()) { ?>
             <a class="pull-left" href="<?= $detailLink; ?>">
-                <img class="media-object" src="<?= $news->getImage_1()->getThumbnail("newsList"); ?>">
+                <?= $news->getImage_1()->getThumbnail("newsList")->getHTML(array("class" => "media-object")); ?>
             </a>
         <?php } ?>
 

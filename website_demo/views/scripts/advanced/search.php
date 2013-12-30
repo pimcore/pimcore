@@ -34,7 +34,9 @@
 
                     <?php if($item->getImage() instanceof Asset) { ?>
                         <a class="pull-left" href="<?= $item->getLink() ?>">
-                            <img class="media-object" src="<?= $item->getImage()->getThumbnail("newsList"); ?>">
+                            <?= $item->getImage()->getThumbnail("newsList")->getHTML(array(
+                                "class" => "media-object"
+                            )); ?>
                         </a>
                     <?php } else { ?>
                         <a class="pull-left" href="<?= $item->getLink() ?>">

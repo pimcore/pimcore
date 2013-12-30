@@ -24,7 +24,7 @@
             <?php if($image) { ?>
                 <div class="col-lg-3">
                     <a href="<?= $image->getThumbnail("galleryLightbox"); ?>" class="thumbnail">
-                        <img src="<?= $image->getThumbnail("galleryThumbnail"); ?>">
+                        <?= $image->getThumbnail("galleryThumbnail")->getHTML(); ?>
                     </a>
                 </div>
             <?php } ?>
