@@ -463,6 +463,7 @@ class Pimcore_Model_Cache {
             // only remove the lock if it was created by this process
             if($lock <= self::$writeLockTimestamp) {
                 self::remove("system_cache_write_lock");
+                self::$writeLockTimestamp = null;
             }
         }
     }
