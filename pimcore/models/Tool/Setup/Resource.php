@@ -63,6 +63,9 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
 		}
 				
 		Pimcore_Resource::reset();
+
+        // set the id of the system user to 0
+        $this->db->update("users",array("id" => 0), $this->db->quoteInto("name = ?", "system"));
 	}
 
     public function contents () {
