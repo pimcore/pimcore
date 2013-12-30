@@ -152,4 +152,22 @@ class AdvancedController extends Website_Controller_Action
         // assign the status to the view
         $this->view->success = $success;
     }
+
+    public function sitemapAction () {
+
+        set_time_limit(900);
+
+        $this->view->initial = false;
+
+        if($this->getParam("doc")) {
+            $doc = $this->getParam("doc");
+        } else {
+            $doc = $this->document->getProperty("mainNavStartNode");
+            $this->view->initial = true;
+        }
+
+        Pimcore::collectGarbage();
+
+        $this->view->doc = $doc;
+    }
 }
