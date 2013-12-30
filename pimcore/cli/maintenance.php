@@ -101,7 +101,7 @@ $manager->registerJob(new Schedule_Maintenance_Job("downloadmaxminddb", "Pimcore
 $manager->registerJob(new Schedule_Maintenance_Job("cleanupcache", "Pimcore_Model_Cache", "maintenance"));
 
 // call plugins
-$plugins = Pimcore_API_Plugin_Broker::getInstance()->getPlugins();
+$plugins = array_merge(Pimcore_API_Plugin_Broker::getInstance()->getPlugins(), Pimcore_API_Plugin_Broker::getInstance()->getModules());
 foreach ($plugins as $plugin) {
     $id = str_replace('\\', '_', get_class($plugin));
 
@@ -117,9 +117,7 @@ foreach ($plugins as $plugin) {
                     $jobRegistered = $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintenance"));
             }
     }
-
 }
-
 
 $manager->run();
 
