@@ -2,7 +2,7 @@
 
 <?php $this->template("/includes/content-headline.php"); ?>
 
-<?php echo $this->areablock("content"); ?>
+<?= $this->areablock("content"); ?>
 
 <hr />
 
@@ -20,7 +20,7 @@
 
                 <div class="media-body">
                     <h2 class="media-heading">
-                        <a href="<?php echo $detailLink; ?>"><?php echo $article->getTitle(); ?></a>
+                        <a href="<?= $detailLink; ?>"><?= $article->getTitle(); ?></a>
                     </h2>
 
                     <?php $this->template("blog/meta.php", array("article" => $article)); ?>
@@ -32,14 +32,14 @@
                         <br /><br />
                     <?php } ?>
 
-                    <?php echo $article->getText(); ?>
+                    <?= $article->getText(); ?>
                 </div>
             </div>
         <?php } ?>
 
 
         <!-- pagination start -->
-        <?php echo $this->paginationControl($this->articles, 'Sliding', 'includes/paging.php', array(
+        <?= $this->paginationControl($this->articles, 'Sliding', 'includes/paging.php', array(
            'urlprefix' => $this->document->getFullPath() . '?page=',
            'appendQueryString' => true
         )); ?>

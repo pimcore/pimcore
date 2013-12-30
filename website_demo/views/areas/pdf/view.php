@@ -2,7 +2,7 @@
 
     <?php $this->template("/includes/area-headlines.php"); ?>
 
-    <?php echo $this->pdf("pdf", array(
+    <?= $this->pdf("pdf", array(
 
     )); ?>
 

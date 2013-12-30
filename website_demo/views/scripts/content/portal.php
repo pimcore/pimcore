@@ -19,7 +19,7 @@
         }
         for($i=0; $i<$count; $i++) { ?>
             <div class="item<?php if(!$i) { ?> active<?php } ?>">
-                <?php echo $this->image("cImage_".$i, array())->frontend(); ?>
+                <?= $this->image("cImage_".$i, array())->frontend(); ?>
                 <div class="container">
                     <div class="carousel-caption">
                         <?php
@@ -34,9 +34,9 @@
                         }
                         ?>
 
-                        <h1><?php echo $this->input("cHeadline_".$i, array("width" => 900)); ?></h1>
-                        <div class="caption"><?php echo $this->textarea("cText_".$i, array("width" => 900)); ?></div>
-                        <div class="margin-bottom-10"><?php echo $this->link("cLink_".$i, array("class" => "btn btn-large btn-default")); ?></div>
+                        <h1><?= $this->input("cHeadline_".$i, array("width" => 900)); ?></h1>
+                        <div class="caption"><?= $this->textarea("cText_".$i, array("width" => 900)); ?></div>
+                        <div class="margin-bottom-10"><?= $this->link("cLink_".$i, array("class" => "btn btn-large btn-default")); ?></div>
                     </div>
                 </div>
             </div>
@@ -48,7 +48,7 @@
 
 <?php if($this->editmode) { ?>
     <div class="container" style="padding-bottom: 40px">
-        Number of Slides: <?php echo $this->select("carouselSlides", array(
+        Number of Slides: <?= $this->select("carouselSlides", array(
             "width" => 60,
             "reload" => true,
             "store" => array(array(1,1),array(2,2),array(3,3), array(4,4))
@@ -57,5 +57,5 @@
 <?php } ?>
 
 <div class="container">
-    <?php echo $this->areablock("content"); ?>
+    <?= $this->areablock("content"); ?>
 </div>

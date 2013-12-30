@@ -1,4 +1,4 @@
-<i class="glyphicon glyphicon-calendar"></i> <?php echo $this->article->getDate()->get(Zend_Date::DATETIME_MEDIUM); ?>
+<i class="glyphicon glyphicon-calendar"></i> <?= $this->article->getDate()->get(Zend_Date::DATETIME_MEDIUM); ?>
 &nbsp;
 <i class="glyphicon glyphicon-list"></i>
 <?php foreach ($this->article->getCategories() as $key => $category) { ?>

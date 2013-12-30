@@ -100,36 +100,36 @@
 
         <h3>Simple WYSIWYG</h3>
         You can drag'n drop assets, documents, ...
-        <?php echo $this->wysiwyg("myWysiwyg", array("height" => 130)); ?>
+        <?= $this->wysiwyg("myWysiwyg", array("height" => 130)); ?>
 
         <h3>Input &amp; Textarea</h3>
         <div class="input-textarea">
-            Type something: <?php echo $this->input("myInput", array("width" => 400)); ?>
+            Type something: <?= $this->input("myInput", array("width" => 400)); ?>
             ... styles are inherited ...
             <div class="content-myTextarea">
-                <?php echo $this->textarea("myTextarea", array("width" => 400, "height" => 60)); ?>
+                <?= $this->textarea("myTextarea", array("width" => 400, "height" => 60)); ?>
             </div>
         </div>
 
         <h3>Images in a block element</h3>
         Press the button:
         <?php while($this->block("myImageBlock")->loop()) { ?>
-            <?php echo $this->image("myImage", array("height" => 100)); ?>
+            <?= $this->image("myImage", array("height" => 100)); ?>
         <?php } ?>
 
         <h3>Relations</h3>
         You can drop a single document, an asset or an object...
-        <?php echo $this->href("myHref"); ?>
+        <?= $this->href("myHref"); ?>
         ... and now multiple items ...
-        <?php echo $this->multihref("myMultihref"); ?>
+        <?= $this->multihref("myMultihref"); ?>
 
         <h3>Simple types</h3>
-        Date: <?php echo $this->date("myDate"); ?>
-        Checkbox: <br /><?php echo $this->checkbox("myCheckbox"); ?>
+        Date: <?= $this->date("myDate"); ?>
+        Checkbox: <br /><?= $this->checkbox("myCheckbox"); ?>
         <br style="clear: both;" />
-        Link: <?php echo $this->link("myLink"); ?>
+        Link: <?= $this->link("myLink"); ?>
         <br />
-        Number: <?php echo $this->numeric("myNumber"); ?>
+        Number: <?= $this->numeric("myNumber"); ?>
 
         <h3>Selections</h3>
         <?= $this->select("mySelect",array(

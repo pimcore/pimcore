@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<?php echo $this->language; ?>">
+<html lang="<?= $this->language; ?>">
 <head>
     <meta charset="utf-8">
 
@@ -43,10 +43,10 @@
     <link rel="stylesheet" href="/website/static/lib/projekktor/theme/style.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="/website/static/lib/magnific/magnific.css" type="text/css" media="screen" />
 
-    <?php echo $this->headLink(); ?>
+    <?= $this->headLink(); ?>
 
     <?php if($this->editmode) { ?>
-        <link href="/website/static/css/editmode.css?_dc=<?php echo time(); ?>" rel="stylesheet">
+        <link href="/website/static/css/editmode.css?_dc=<?= time(); ?>" rel="stylesheet">
     <?php } ?>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -84,7 +84,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="<?php echo $mainNavStartNode; ?>">
+                    <a class="navbar-brand" href="<?= $mainNavStartNode; ?>">
                         <img src="/website/static/img/logo.png">
                     </a>
                 </div>
@@ -96,7 +96,7 @@
                     ?>
                 </div>
             </div>
-            <?php echo $this->inc("/shared/includes/languages"); ?>
+            <?= $this->inc("/shared/includes/languages"); ?>
         </div>
     </div>
 </div>
@@ -104,8 +104,8 @@
 <?php if(!$isPortal) { ?>
     <header class="jumbotron subhead">
         <div class="container">
-            <h2><?php echo $this->input("headTitle"); ?></h2>
-            <p class="lead"><?php echo $this->input("headDescription"); ?></p>
+            <h2><?= $this->input("headTitle"); ?></h2>
+            <p class="lead"><?= $this->input("headDescription"); ?></p>
         </div>
     </header>
     <?php
@@ -120,14 +120,14 @@
         ?>
         <style>
             .jumbotron {
-                background: <?php echo $c[1]; ?>; /* Old browsers */
-                background: -moz-linear-gradient(45deg, <?php echo $c[0]; ?> 0%, <?php echo $c[1]; ?> 100%); /* FF3.6+ */
-                background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, <?php echo $c[0]; ?>), color-stop(100%, <?php echo $c[1]; ?>)); /* Chrome,Safari4+ */
-                background: -webkit-linear-gradient(45deg, <?php echo $c[0]; ?> 0%, <?php echo $c[1]; ?> 100%); /* Chrome10+,Safari5.1+ */
-                background: -o-linear-gradient(45deg, <?php echo $c[0]; ?> 0%, <?php echo $c[1]; ?> 100%); /* Opera 11.10+ */
-                background: -ms-linear-gradient(45deg, <?php echo $c[0]; ?> 0%, <?php echo $c[1]; ?> 100%); /* IE10+ */
-                background: linear-gradient(45deg, <?php echo $c[0]; ?> 0%, <?php echo $c[1]; ?> 100%); /* W3C */
-                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='<?php echo $c[0]; ?>', endColorstr='<?php echo $c[1]; ?>', GradientType=1); /* IE6-9 fallback on horizontal gradient */
+                background: <?= $c[1]; ?>; /* Old browsers */
+                background: -moz-linear-gradient(45deg, <?= $c[0]; ?> 0%, <?= $c[1]; ?> 100%); /* FF3.6+ */
+                background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, <?= $c[0]; ?>), color-stop(100%, <?= $c[1]; ?>)); /* Chrome,Safari4+ */
+                background: -webkit-linear-gradient(45deg, <?= $c[0]; ?> 0%, <?= $c[1]; ?> 100%); /* Chrome10+,Safari5.1+ */
+                background: -o-linear-gradient(45deg, <?= $c[0]; ?> 0%, <?= $c[1]; ?> 100%); /* Opera 11.10+ */
+                background: -ms-linear-gradient(45deg, <?= $c[0]; ?> 0%, <?= $c[1]; ?> 100%); /* IE10+ */
+                background: linear-gradient(45deg, <?= $c[0]; ?> 0%, <?= $c[1]; ?> 100%); /* W3C */
+                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='<?= $c[0]; ?>', endColorstr='<?= $c[1]; ?>', GradientType=1); /* IE6-9 fallback on horizontal gradient */
             }
         </style>
     <?php } ?>
@@ -142,7 +142,7 @@
                             $startNode = $mainNavStartNode;
                         }
                     ?>
-                    <h3><?php echo $startNode->getProperty("navigation_name"); ?></h3>
+                    <h3><?= $startNode->getProperty("navigation_name"); ?></h3>
                     <?php
                         $leftNavigation = $this->pimcoreNavigation()->getNavigation($this->document, $startNode);
                         $this->navigation($leftNavigation);
@@ -152,11 +152,11 @@
                         ));
                     ?>
                 </div>
-                <?php echo $this->inc($this->document->getProperty("sidebar")); ?>
+                <?= $this->inc($this->document->getProperty("sidebar")); ?>
             </div>
         <?php } ?>
         <div class="col-md-<?php if(!$this->document->getProperty("leftNavHide")) { ?>9<?php } else { ?>12<?php } ?>">
-            <?php echo $this->layout()->content; ?>
+            <?= $this->layout()->content; ?>
 
             <div>
                 <a href="/"><?= $this->translate("Home"); ?></a> &gt;
@@ -168,7 +168,7 @@
         </div>
     </div>
 <?php } else { ?>
-    <?php echo $this->layout()->content; ?>
+    <?= $this->layout()->content; ?>
 <?php } ?>
 
 

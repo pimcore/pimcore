@@ -6,7 +6,7 @@
                 <?php if($this->editmode) { ?>
                     <div class="editmode-label">
                         <label>Type:</label>
-                        <?php echo $this->select("type_".$t, array(
+                        <?= $this->select("type_".$t, array(
                             "width" => 80,
                             "reload" => true,
                             "store" => array(array("direct","direct"),array("snippet","snippet"))

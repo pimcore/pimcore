@@ -2,7 +2,7 @@
 
 <?php $this->template("/includes/content-headline.php"); ?>
 
-<?php echo $this->areablock("content"); ?>
+<?= $this->areablock("content"); ?>
 
 <?php foreach ($this->news as $news) { ?>
     <div class="media">
@@ -14,25 +14,25 @@
             ), "news");
         ?>
         <?php if($news->getImage_1()) { ?>
-            <a class="pull-left" href="<?php echo $detailLink; ?>">
-                <img class="media-object" src="<?php echo $news->getImage_1()->getThumbnail("newsList"); ?>">
+            <a class="pull-left" href="<?= $detailLink; ?>">
+                <img class="media-object" src="<?= $news->getImage_1()->getThumbnail("newsList"); ?>">
             </a>
         <?php } ?>
 
         <div class="media-body">
             <h4 class="media-heading">
-                <a href="<?php echo $detailLink; ?>"><?php echo $news->getTitle(); ?></a>
+                <a href="<?= $detailLink; ?>"><?= $news->getTitle(); ?></a>
                 <br />
-                <small><i class="glyphicon glyphicon-calendar"></i> <?php echo $news->getDate()->get(Zend_Date::DATETIME_MEDIUM); ?></small>
+                <small><i class="glyphicon glyphicon-calendar"></i> <?= $news->getDate()->get(Zend_Date::DATETIME_MEDIUM); ?></small>
             </h4>
-            <?php echo $news->getShortText(); ?>
+            <?= $news->getShortText(); ?>
         </div>
     </div>
 <?php } ?>
 
 
 <!-- pagination start -->
-<?php echo $this->paginationControl($this->news, 'Sliding', 'includes/paging.php', array(
+<?= $this->paginationControl($this->news, 'Sliding', 'includes/paging.php', array(
    'urlprefix' => $this->document->getFullPath() . '?page=',
    'appendQueryString' => true
 )); ?>

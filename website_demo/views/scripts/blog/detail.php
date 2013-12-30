@@ -10,7 +10,7 @@
 <section class="area-wysiwyg">
 
     <div class="page-header">
-        <h1><?php echo $this->article->getTitle(); ?></h1>
+        <h1><?= $this->article->getTitle(); ?></h1>
     </div>
 
     <?php $this->template("blog/meta.php"); ?>
@@ -22,7 +22,7 @@
         <br /><br />
     <?php } ?>
 
-    <?php echo $this->article->getText(); ?>
+    <?= $this->article->getText(); ?>
 
 
     <div class="disqus">

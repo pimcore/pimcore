@@ -61,9 +61,9 @@
             <img src="/pimcore/static/img/loading-logo.png" />
         </div>
 
-        <h1><?php echo $this->input("headline"); ?></h1>
+        <h1><?= $this->input("headline"); ?></h1>
         <p>
-            <?php echo $this->wysiwyg("content"); ?>
+            <?= $this->wysiwyg("content"); ?>
         </p>
 
     </div>

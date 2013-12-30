@@ -11,25 +11,25 @@
             }
         ?>
 
-        <div class="col-md-7 pull-<?php echo ($position == "right") ? "left" : "right"; ?>">
+        <div class="col-md-7 pull-<?= ($position == "right") ? "left" : "right"; ?>">
             <h2 class="featurette-heading">
-                <?php echo $this->input("headline", array("width" => 400)); ?>
-                <span class="text-muted"><?php echo $this->input("subline", array("width" => 400)); ?></span>
+                <?= $this->input("headline", array("width" => 400)); ?>
+                <span class="text-muted"><?= $this->input("subline", array("width" => 400)); ?></span>
             </h2>
             <div class="lead">
-                <?php echo $this->wysiwyg("content", array("width" => 350, "height" => 200)); ?>
+                <?= $this->wysiwyg("content", array("width" => 350, "height" => 200)); ?>
             </div>
         </div>
 
-        <div class="col-md-5 pull-<?php echo $position; ?>">
+        <div class="col-md-5 pull-<?= $position; ?>">
             <?php if($this->editmode) { ?>
                 <div class="editmode-label">
                     <label>Orientation:</label>
-                    <?php echo $this->select("postition", array("store" => array(array("left","left"),array("right","right")))); ?>
+                    <?= $this->select("postition", array("store" => array(array("left","left"),array("right","right")))); ?>
                 </div>
                 <div class="editmode-label">
                     <label>Type:</label>
-                    <?php echo $this->select("type", array("reload" => true, "store" => array(array("video","video"),array("image","image")))); ?>
+                    <?= $this->select("type", array("reload" => true, "store" => array(array("video","video"),array("image","image")))); ?>
                 </div>
             <?php } ?>
 

@@ -5,6 +5,6 @@
 ?>
 
 <div class="page-header">
-    <h1><?php echo $this->input("headline"); ?></h1>
+    <h1><?= $this->input("headline"); ?></h1>
 </div>
 
