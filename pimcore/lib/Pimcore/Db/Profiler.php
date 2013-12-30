@@ -105,21 +105,10 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
         $logEntry = "Process: " . $this->getConnectionId() . " | DB Query (#" . $this->_totalQueries . "): " . (string)round($profile->getElapsedSecs(),5) . " | " . $profile->getQuery() . " | " . implode(",",$profile->getQueryParams());
         Logger::debug($logEntry);
 
-        if(!empty($_REQUEST["pimcore_dbprofile"])) {
-
-            $this->queries[] = array(
-                "time" => $profile->getElapsedSecs(),
-                "query" => $profile->getQuery() . " | " . implode(",",$profile->getQueryParams())
-            );
-
-            if(!is_resource($this->logFile)) {
-                $logFile = dirname(PIMCORE_LOG_DEBUG) . "/dbprofile-" . $_REQUEST["pimcore_dbprofile"] . ".log";
-                Pimcore_File::put($logFile,"");
-                $this->logFile = fopen($logFile, "a+");
-            }
-
-            fwrite($this->logFile, $logEntry . "\n");
-        }
+        $this->queries[] = array(
+            "time" => $profile->getElapsedSecs(),
+            "query" => $profile->getQuery() . " | " . implode(",",$profile->getQueryParams())
+        );
     }
 
     /**

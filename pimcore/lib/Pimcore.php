@@ -380,6 +380,26 @@ class Pimcore {
 
             }
         }
+
+        if(array_key_exists("pimcore_log", $_REQUEST) && self::inDebugMode()) {
+
+            if(empty($_REQUEST["pimcore_log"])) {
+                $requestLogName = date("Y-m-d_H-i-s");
+            } else {
+                $requestLogName = $_REQUEST["pimcore_log"];
+            }
+
+            $requestLogFile = dirname(PIMCORE_LOG_DEBUG) . "/request-" . $requestLogName . ".log";
+            if(!file_exists($requestLogFile)) {
+                Pimcore_File::put($requestLogFile,"");
+            }
+
+            $writerRequestLog = new Zend_Log_Writer_Stream($requestLogFile);
+            $loggerRequest = new Zend_Log($writerRequestLog);
+            Logger::addLogger($loggerRequest);
+
+            Logger::setVerbosePriorities();
+        }
     }
 
     /**

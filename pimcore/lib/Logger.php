@@ -56,6 +56,19 @@ class Logger {
     public static function enable() {
         self::$enabled = true;
     }
+
+    public static function setVerbosePriorities() {
+        self::setPriorities(array(
+            Zend_Log::DEBUG,
+            Zend_Log::INFO,
+            Zend_Log::NOTICE,
+            Zend_Log::WARN,
+            Zend_Log::ERR,
+            Zend_Log::CRIT,
+            Zend_Log::ALERT,
+            Zend_Log::EMERG
+        ));
+    }
 	
 	public static function log ($message,$code=Zend_Log::INFO) {
 		

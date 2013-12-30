@@ -69,7 +69,7 @@ class Pimcore_Resource_Mysql {
         $connectionId = $db->fetchOne("SELECT CONNECTION_ID()");
 
         // enable the db-profiler if the devmode is on and there is no custom profiler set (eg. in system.xml)
-        if(PIMCORE_DEVMODE && !$db->getProfiler()->getEnabled()) {
+        if((PIMCORE_DEVMODE && !$db->getProfiler()->getEnabled()) || (array_key_exists("pimcore_log", $_REQUEST) && Pimcore::inDebugMode())) {
             $profiler = new Pimcore_Db_Profiler('All DB Queries');
             $profiler->setEnabled(true);
             $profiler->setConnectionId($connectionId);
