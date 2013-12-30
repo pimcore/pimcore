@@ -3794,8 +3794,8 @@ INSERT INTO `tree_locks` VALUES (56,'document','self');
 
 
 
-INSERT INTO `users` VALUES (7,0,'user','system','','','','','',1,1,'','',0,0,0);
-INSERT INTO `users` VALUES (8,0,'user','admin','7f4ca4d63c375ea4bfa1bda6f39101b0','','','','en',1,1,'','',1,1,1);
+INSERT INTO `users` VALUES (0,0,'user','system','','','','','',1,1,'','',0,0,0);
+INSERT INTO `users` VALUES (1,0,'user','admin','7f4ca4d63c375ea4bfa1bda6f39101b0','','','','en',1,1,'','',1,1,1);
 
 
 
