@@ -1087,7 +1087,7 @@ CREATE TABLE `users` (
   KEY `parentId` (`parentId`),
   KEY `name` (`name`),
   KEY `password` (`password`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
