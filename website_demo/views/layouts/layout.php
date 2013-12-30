@@ -133,29 +133,7 @@
     <?php } ?>
 
     <div id="content" class="container">
-        <?php if(!$this->document->getProperty("leftNavHide")) { ?>
-            <div class="col-md-3 sidebar">
-                <div class="bs-sidebar hidden-print affix-top" role="complementary">
-                    <?php
-                        $startNode = $this->document->getProperty("leftNavStartNode");
-                        if(!$startNode) {
-                            $startNode = $mainNavStartNode;
-                        }
-                    ?>
-                    <h3><?= $startNode->getProperty("navigation_name"); ?></h3>
-                    <?php
-                        $leftNavigation = $this->pimcoreNavigation()->getNavigation($this->document, $startNode);
-                        $this->navigation($leftNavigation);
-                        echo $this->navigation()->menu($leftNavigation)->setUseTranslator(false)->renderMenu($leftNavigation, array(
-                            "ulClass" => "nav bs-sidenav",
-                            "expandSiblingNodesOfActiveBranch" => true
-                        ));
-                    ?>
-                </div>
-                <?= $this->inc($this->document->getProperty("sidebar")); ?>
-            </div>
-        <?php } ?>
-        <div class="col-md-<?php if(!$this->document->getProperty("leftNavHide")) { ?>9<?php } else { ?>12<?php } ?>">
+        <div class="col-md-<?php if(!$this->document->getProperty("leftNavHide")) { ?>9<?php } else { ?>12<?php } ?> col-md-push-3">
             <?= $this->layout()->content; ?>
 
             <div>
@@ -166,6 +144,29 @@
                 ?>
             </div>
         </div>
+
+        <?php if(!$this->document->getProperty("leftNavHide")) { ?>
+            <div class="col-md-3 col-md-pull-9 sidebar">
+                <div class="bs-sidebar hidden-print affix-top" role="complementary">
+                    <?php
+                        $startNode = $this->document->getProperty("leftNavStartNode");
+                        if(!$startNode) {
+                            $startNode = $mainNavStartNode;
+                        }
+                    ?>
+                    <h3><?= $startNode->getProperty("navigation_name"); ?></h3>
+                    <?php
+                    $leftNavigation = $this->pimcoreNavigation()->getNavigation($this->document, $startNode);
+                    $this->navigation($leftNavigation);
+                    echo $this->navigation()->menu($leftNavigation)->setUseTranslator(false)->renderMenu($leftNavigation, array(
+                        "ulClass" => "nav bs-sidenav",
+                        "expandSiblingNodesOfActiveBranch" => true
+                    ));
+                    ?>
+                </div>
+                <?= $this->inc($this->document->getProperty("sidebar")); ?>
+            </div>
+        <?php } ?>
     </div>
 <?php } else { ?>
     <?= $this->layout()->content; ?>

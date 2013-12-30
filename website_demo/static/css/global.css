@@ -204,6 +204,7 @@ section img {
     position: absolute;
     right: 15px;
     top: 15px;
+    display: none;
 }
 
 .languages a {
@@ -244,42 +245,12 @@ section img {
     padding: 0 10px;
 }
 
-/* Show and affix the side nav when space allows it */
-@media screen and (min-width: 992px) {
-    .bs-sidebar .nav > .active > ul {
-        display: block;
-    }
-    /* Widen the fixed sidebar */
-    .bs-sidebar.affix,
-    .bs-sidebar.affix-bottom {
-        width: 213px;
-    }
-    .bs-sidebar.affix {
-        position: fixed; /* Undo the static from mobile first approach */
-        top: 80px;
-    }
-    .bs-sidebar.affix-bottom {
-        position: absolute; /* Undo the static from mobile first approach */
-    }
-    .bs-sidebar.affix-bottom .bs-sidenav,
-    .bs-sidebar.affix .bs-sidenav {
-        margin-top: 0;
-        margin-bottom: 0;
-    }
-}
-@media screen and (min-width: 1200px) {
-    /* Widen the fixed sidebar again */
-    .bs-sidebar.affix-bottom,
-    .bs-sidebar.affix {
-        width: 263px;
-    }
+.dropdown-menu {
+    top: -2000px;
 }
 
 
 
-
-/* RESPONSIVE CSS
--------------------------------------------------- */
 
 @media (min-width: 768px) {
 
@@ -315,14 +286,48 @@ section img {
         font-size: 21px;
         line-height: 1.4;
     }
-}
 
-@media (min-width: 992px) {
-
-}
-
-@media (max-width: 767px) {
-    .languages {
-        display: none;
+    .dropdown-menu {
+        top: 100%;
     }
 }
+
+
+/* Show and affix the side nav when space allows it */
+@media screen and (min-width: 992px) {
+    .bs-sidebar .nav > .active > ul {
+        display: block;
+    }
+    /* Widen the fixed sidebar */
+    .bs-sidebar.affix,
+    .bs-sidebar.affix-bottom {
+        width: 213px;
+    }
+    .bs-sidebar.affix {
+        position: fixed; /* Undo the static from mobile first approach */
+        top: 80px;
+    }
+    .bs-sidebar.affix-bottom {
+        position: absolute; /* Undo the static from mobile first approach */
+    }
+    .bs-sidebar.affix-bottom .bs-sidenav,
+    .bs-sidebar.affix .bs-sidenav {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .languages {
+        display: block;
+    }
+}
+
+
+@media screen and (min-width: 1200px) {
+    /* Widen the fixed sidebar again */
+    .bs-sidebar.affix-bottom,
+    .bs-sidebar.affix {
+        width: 263px;
+    }
+}
+
+

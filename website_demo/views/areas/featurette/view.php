@@ -11,7 +11,7 @@
             }
         ?>
 
-        <div class="col-md-7 pull-<?= ($position == "right") ? "left" : "right"; ?>">
+        <div class="col-sm-7 col-sm-<?= ($position == "right") ? "push" : ""; ?>-5">
             <h2 class="featurette-heading">
                 <?= $this->input("headline", array("width" => 400)); ?>
                 <span class="text-muted"><?= $this->input("subline", array("width" => 400)); ?></span>
@@ -21,7 +21,7 @@
             </div>
         </div>
 
-        <div class="col-md-5 pull-<?= $position; ?>">
+        <div class="col-sm-5 col-sm-<?= ($position == "right") ? "pull" : ""; ?>-7">
             <?php if($this->editmode) { ?>
                 <div class="editmode-label">
                     <label>Orientation:</label>

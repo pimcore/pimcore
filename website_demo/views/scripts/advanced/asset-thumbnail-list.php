@@ -12,7 +12,7 @@
 <div class="row">
     <?php foreach ($this->list as $asset) { ?>
         <?php if(in_array($asset->getType(), ["video", "image", "document"])) { ?>
-            <div class="col-xs-6 col-md-3" style="padding-bottom: 10px">
+            <div class="col-xs-3" style="padding-bottom: 10px">
                 <?php if($asset instanceof Asset_Image) { ?>
                     <?= $asset->getThumbnail(array(
                         "width" => 180,
