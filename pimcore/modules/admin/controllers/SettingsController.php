@@ -828,6 +828,27 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json($sites);
     }
 
+    public function getAvailableCountriesAction() {
+        $countries = Zend_Locale::getTranslationList('territory');
+        asort($countries);
+
+        $options = array();
+
+        foreach ($countries as $short => $translation) {
+            if (strlen($short) == 2) {
+                $options[] = array(
+                    "key" => $translation . " (" . $short . ")" ,
+                    "value" => $short
+                );
+            }
+        }
+
+        $result = array("data" => $options, "success" => true, "total" => count($options));
+
+        $this->_helper->json($result);
+    }
+
+
     public function thumbnailAdapterCheckAction () {
         $instance = Pimcore_Image::getInstance();
         if($instance instanceof Pimcore_Image_Adapter_GD) {

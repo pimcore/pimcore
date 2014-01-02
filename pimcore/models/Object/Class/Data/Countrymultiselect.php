@@ -24,6 +24,11 @@ class Object_Class_Data_Countrymultiselect extends Object_Class_Data_Multiselect
      */
     public $fieldtype = "countrymultiselect";
 
+    /** Restrict selection to comma-separated list of countries.
+     * @var null
+     */
+    public $restrictTo = null;
+
 
     public function __construct() {
         $countries = Zend_Locale::getTranslationList('territory');
@@ -41,4 +46,30 @@ class Object_Class_Data_Countrymultiselect extends Object_Class_Data_Multiselect
 
         $this->setOptions($options);
     }
+
+    /**
+     * @param string $restrictTo
+     */
+    public function setRestrictTo($restrictTo)
+    {
+        $this->restrictTo = $restrictTo;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRestrictTo()
+    {
+        return $this->restrictTo;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions() {
+        return $this->options;
+    }
+
+
+
 }

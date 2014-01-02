@@ -25,15 +25,15 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig: function(field) {
         return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
-                renderer: function (key, value, metaData, record) {
-                            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                                metaData.css += " grid_value_inherited";
-                            }
+            renderer: function (key, value, metaData, record) {
+                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    metaData.css += " grid_value_inherited";
+                }
 
-                            if (value && value.length > 0) {
-                                return value.join(",");
-                            }
-                        }.bind(this, field.key)};
+                if (value && value.length > 0) {
+                    return value.join(",");
+                }
+            }.bind(this, field.key)};
     },
 
     getGridColumnFilter: function(field) {
@@ -58,9 +58,22 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         // generate store
         var store = [];
         var validValues = [];
+
+        var restrictTo = null;
+        if (this.fieldConfig.restrictTo) {
+            restrictTo = this.fieldConfig.restrictTo.split(",");
+        }
+
         for (var i = 0; i < this.fieldConfig.options.length; i++) {
-            store.push([this.fieldConfig.options[i].value, this.fieldConfig.options[i].key]);
-            validValues.push(this.fieldConfig.options[i].value);
+            var value = this.fieldConfig.options[i].value;
+            if (restrictTo) {
+                if (!in_array(value, restrictTo)) {
+                    continue;
+                }
+            }
+
+            store.push([value, this.fieldConfig.options[i].key]);
+            validValues.push(value);
         }
 
         var options = {

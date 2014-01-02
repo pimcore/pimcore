@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -24,8 +24,17 @@ class Object_Class_Data_Country extends Object_Class_Data_Select {
      */
     public $fieldtype = "country";
 
+    /** Restrict selection to comma-separated list of countries.
+     * @var null
+     */
+    public $restrictTo = null;
+
 
     public function __construct() {
+        $this->buildOptions();
+    }
+
+    private function buildOptions() {
         $countries = Zend_Locale::getTranslationList('territory');
         asort($countries);
         $options = array();
@@ -48,5 +57,23 @@ class Object_Class_Data_Country extends Object_Class_Data_Select {
     public function isDiffChangeAllowed() {
         return true;
     }
-   
+
+    /**
+     * @param string $restrictTo
+     */
+    public function setRestrictTo($restrictTo)
+    {
+        $this->restrictTo = $restrictTo;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRestrictTo()
+    {
+        return $this->restrictTo;
+    }
+
+
+
 }

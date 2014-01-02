@@ -72,10 +72,9 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             dataIndex: field.key,
             options: selectFilterFields
         };
-    },    
+    },
 
     getLayoutEdit: function () {
-
         // generate store
         var store = [];
         var validValues = [];
@@ -84,9 +83,20 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             store.push(["","(" + t("empty") + ")"]);
         }
 
+        var restrictTo = null;
+        if (this.fieldConfig.restrictTo) {
+            restrictTo = this.fieldConfig.restrictTo.split(",");
+        }
+
         for (var i = 0; i < this.fieldConfig.options.length; i++) {
-            store.push([this.fieldConfig.options[i].value, ts(this.fieldConfig.options[i].key)]);
-            validValues.push(this.fieldConfig.options[i].value);
+            var value = this.fieldConfig.options[i].value;
+            if (restrictTo) {
+                if (!in_array(value, restrictTo)) {
+                    continue;
+                }
+            }
+            store.push([value, ts(this.fieldConfig.options[i].key)]);
+            validValues.push(value);
         }
 
         var options = {

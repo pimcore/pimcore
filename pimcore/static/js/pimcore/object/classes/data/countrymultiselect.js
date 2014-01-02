@@ -62,6 +62,51 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
             }
         ]);
 
+        var countryProxy = new Ext.data.HttpProxy({
+            url:'/admin/settings/get-available-countries'
+        });
+        var countryReader = new Ext.data.JsonReader({
+            totalProperty:'total',
+            successProperty:'success',
+            root: "data",
+            fields: [
+                {name:'key'},
+                {name:'value'}
+            ]
+        });
+
+        var countryStore = new Ext.data.Store({
+            proxy:countryProxy,
+            reader:countryReader,
+            listeners: {
+                load: function() {
+                    if (this.datax.restrictTo) {
+                        this.possibleOptions.setValue(this.datax.restrictTo);
+                    }
+                }.bind(this)
+            }
+        });
+
+        var options = {
+            name: "restrictTo",
+            triggerAction: "all",
+            editable: false,
+            fieldLabel: t("restrict_selection_to"),
+            store: countryStore,
+            itemCls: "object_field",
+            height: 200,
+            width: 300,
+            valueField: 'value',
+            displayField: 'key'
+        };
+
+        this.possibleOptions = new Ext.ux.form.MultiSelect(options);
+
+        this.specificPanel.add(this.possibleOptions);
+        countryStore.load();
+
+
+
         return this.layout;
     },
 
