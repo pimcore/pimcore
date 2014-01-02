@@ -6,32 +6,55 @@
 <?= $this->areablock("content"); ?>
 
 <?php if($this->editmode) { ?>
+
+    <style type="text/css">
+        .alert {
+            margin-top: 60px;
+        }
+    </style>
+
     <div class="editable-roundup">
 
-        <h2>Checkbox</h2>
+        <div class="alert alert-info">
+            <h3>Checkbox</h3>
+        </div>
         <?= $this->checkbox("myCheckbox") ?>
 
         <div class="clearfix"></div>
 
-        <h2>Date</h2>
+        <div class="alert alert-info">
+            <h3>Date</h3>
+        </div>
         <?= $this->date("myDate"); ?>
 
-        <h2>Single Relation</h2>
+        <div class="alert alert-info">
+            <h3>Single Relation</h3>
+        </div>
         <?= $this->href("myHref"); ?>
 
-        <h2>Image</h2>
+        <div class="alert alert-info">
+            <h3>Image</h3>
+        </div>
         <?= $this->image("myImage"); ?>
 
-        <h2>Input</h2>
+        <div class="alert alert-info">
+            <h3>Input</h3>
+        </div>
         <?= $this->input("myInput"); ?>
 
-        <h2>Link</h2>
+        <div class="alert alert-info">
+            <h3>Link</h3>
+        </div>
         <?= $this->link("myLink"); ?>
 
-        <h2>Multiple Relations</h2>
+        <div class="alert alert-info">
+            <h3>Multiple Relations</h3>
+        </div>
         <?= $this->multihref("myMultiHref"); ?>
 
-        <h2>Multi-Select</h2>
+        <div class="alert alert-info">
+            <h3>Multi-Select</h3>
+        </div>
         <?= $this->multiselect("myMultiselect", array(
             "width" => 200,
             "height" => 100,
@@ -43,16 +66,22 @@
             )
         )) ?>
 
-        <h2>Numeric</h2>
+        <div class="alert alert-info">
+            <h3>Numeric</h3>
+        </div>
         <?= $this->numeric("myNumeric"); ?>
 
-        <h2>Renderlet (drop an asset folder)</h2>
+        <div class="alert alert-info">
+            <h3>Renderlet (drop an asset folder)</h3>
+        </div>
         <?= $this->renderlet("myRenderlet", array(
             "controller" => "content",
             "action" => "gallery-renderlet"
         )); ?>
 
-        <h2>Select</h2>
+        <div class="alert alert-info">
+            <h3>Select</h3>
+        </div>
         <?= $this->select("mySelect",array(
             "store" => array(
                 array("option1", "Option One"),
@@ -61,10 +90,16 @@
             )
         )); ?>
 
-        <h2>Snippet (drop a document snippet here)</h2>
+        <div class="alert alert-info">
+            <h3>Snippet</h3>
+            <p>drop a document snippet here</p>
+        </div>
         <?= $this->snippet("mySnippet") ?>
 
-        <h2>Table (of course you can create tables in the wysiwyg too)</h2>
+        <div class="alert alert-info">
+            <h3>Table</h3>
+            <p>of course you can create tables in the wysiwyg too</p>
+        </div>
         <?= $this->table("tableName",array(
            "width" => 700,
            "height" => 400,
@@ -78,17 +113,23 @@
            )
        )) ?>
 
-       <h2>Textarea</h2>
+        <div class="alert alert-info">
+            <h3>Textarea</h3>
+        </div>
        <?= $this->textarea("myTextarea") ?>
 
-       <h2>Video</h2>
+        <div class="alert alert-info">
+            <h3>Video</h3>
+        </div>
        <?= $this->video("myVideo", array(
             "html5" => true,
             "thumbnail" => "content",
             "height" => 380
        )); ?>
 
-        <h2>WYSIWYG</h2>
+        <div class="alert alert-info">
+            <h3>WYSIWYG</h3>
+        </div>
         <?= $this->wysiwyg("myWysiwyg"); ?>
     </div>
 <?php } ?>
