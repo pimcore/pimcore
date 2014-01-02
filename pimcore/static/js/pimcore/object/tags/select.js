@@ -23,6 +23,26 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
 
     },
 
+    getGridColumnConfig:function (field) {
+        var renderer = function (key, value, metaData, record) {
+            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                metaData.css += " grid_value_inherited";
+            }
+
+            for(var i=0; i<field.layout.options.length; i++) {
+                if(field.layout.options[i]["value"] == value) {
+                    return field.layout.options[i]["key"];
+                }
+            }
+
+            return value;
+
+        }.bind(this, field.key);
+
+        return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
+            editor:this.getGridColumnEditor(field)};
+    },
+
     getGridColumnEditor: function(field) {
         var store = new Ext.data.JsonStore({
             autoDestroy: true,
