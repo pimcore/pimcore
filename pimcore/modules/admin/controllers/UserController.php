@@ -437,6 +437,8 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             $id = $this->getUser()->getId();
         }
 
+        $userObj = User::getById($id);
+
         $user = PIMCORE_WEBSITE_VAR . "/user-image/user-" . $id . ".png";
         if(file_exists($user)) {
             $thumb = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/user-thumbnail-" . $id . ".png";
@@ -455,7 +457,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             readfile($thumb);
 
         } else {
-            header("Location: /admin/misc/robohash/?width=46&height=46&seed=" . $this->getUser()->getName() . "-" . $this->getRequest()->getHttpHost());
+            header("Location: /admin/misc/robohash/?width=46&height=46&seed=" . $userObj->getName() . "-" . $this->getRequest()->getHttpHost());
         }
 
         exit;
