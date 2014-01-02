@@ -23,6 +23,17 @@ class Pimcore_Controller_Plugin_ContentLog extends Zend_Controller_Plugin_Abstra
         }
 
         $req = $this->getRequest();
+
+        // only get and head requests
+        if(!$req->isGet() && !$req->isHead()) {
+            return;
+        }
+
+        if(count($req->getParams()) > 8) {
+            // too many parameters, seems to be dynamic, skip
+            return;
+        }
+
         $url = $req->getScheme() . '://' . $req->getHttpHost() . $req->getRequestUri();
 
         $excludePatterns = explode("\n", $config->excludePatterns);
@@ -62,7 +73,7 @@ class Pimcore_Controller_Plugin_ContentLog extends Zend_Controller_Plugin_Abstra
                 "id" => $id,
                 "site" => $site,
                 "url" => $url,
-                "content" => $content,
+                "content" => gzcompress($content, 9),
                 "type" => $type,
                 "typeReference" => $typeReference,
                 "lastUpdate" => time()

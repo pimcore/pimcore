@@ -60,6 +60,8 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
 
                 $blockedRobots = false;
 
+                $item["content"] = gzuncompress($item["content"]);
+
                 $html = str_get_html($item["content"]);
                 if($html) {
                     $record["links"] = count($html->find("a"));
@@ -107,28 +109,6 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
                     $html->clear();
                     unset($html);
                 }
-
-                /*
-                $html = $item["content"];
-                if (function_exists('tidy_parse_string')) {
-                    $tidy = tidy_parse_string($html, array(), 'UTF8');
-                    $tidy->cleanRepair();
-                    $html = $tidy->value;
-                }
-
-
-                $readability = new Pimcore_Tool_Text_Readability($html, $item["url"]);
-                $readability->debug = false;
-                $readability->convertLinksToFootnotes = true;
-                $result = $readability->init();
-                if ($result) {
-                    $content = $readability->getContent()->innerHTML;
-                    $content = strip_tags($content);
-                    $content = Pimcore_Tool_Text::removeLineBreaks($content);
-
-                    //echo "\n------------------\n" . $content . "\n------------------\n";
-                }
-                */
 
                 $urlParts = parse_url($item["url"]);
                 $record["host"] = $urlParts["host"];
