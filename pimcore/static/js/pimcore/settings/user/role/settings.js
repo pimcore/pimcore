@@ -40,9 +40,36 @@ pimcore.settings.user.role.settings = Class.create({
             items: [availPermsItems]
         });
 
+        this.typesSet = new Ext.form.FieldSet({
+            title:t("allowed_types_to_create") + " (" + t("defaults_to_all") + ")",
+            items:[{
+                xtype: "multiselect",
+                name: "docTypes",
+                triggerAction:"all",
+                editable:false,
+                fieldLabel:t("document_types"),
+                width:300,
+                displayField: "name",
+                valueField: "id",
+                store: pimcore.globalmanager.get("document_types_store"),
+                value: this.data.docTypes.join(",")
+            }, {
+                xtype: "multiselect",
+                name: "classes",
+                triggerAction:"all",
+                editable:false,
+                fieldLabel:t("classes"),
+                width:300,
+                displayField: "text",
+                valueField: "id",
+                store: pimcore.globalmanager.get("object_types_store"),
+                value: this.data.classes.join(",")
+            }]
+        });
+
         this.panel = new Ext.form.FormPanel({
             title: t("settings"),
-            items: [this.permissionsSet],
+            items: [this.permissionsSet, this.typesSet],
             bodyStyle: "padding:10px;",
             autoScroll: true
         });

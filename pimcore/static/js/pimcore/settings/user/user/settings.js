@@ -179,12 +179,14 @@ pimcore.settings.user.user.settings = Class.create({
                     //this.apiKeyDescription.show();
                     //this.apiPasswordHint.show();
                     this.roleField.hide();
+                    this.typesSet.hide();
                     this.userPanel.workspaces.disable();
                 } else {
                     //this.apiKeyField.hide();
                     //this.apiKeyDescription.hide();
                     //this.apiPasswordHint.hide();
                     this.roleField.show();
+                    this.typesSet.show();
                     this.userPanel.workspaces.enable();
                 }
             }.bind(this)
@@ -280,9 +282,38 @@ pimcore.settings.user.user.settings = Class.create({
             disabled:this.currentUser.admin
         });
 
+
+        this.typesSet = new Ext.form.FieldSet({
+            title:t("allowed_types_to_create") + " (" + t("defaults_to_all") + ")",
+            items:[{
+                xtype: "multiselect",
+                name: "docTypes",
+                triggerAction:"all",
+                editable:false,
+                fieldLabel:t("document_types"),
+                width:300,
+                displayField: "name",
+                valueField: "id",
+                store: pimcore.globalmanager.get("document_types_store"),
+                value: this.currentUser.docTypes.join(",")
+            }, {
+                xtype: "multiselect",
+                name: "classes",
+                triggerAction:"all",
+                editable:false,
+                fieldLabel:t("classes"),
+                width:300,
+                displayField: "text",
+                valueField: "id",
+                store: pimcore.globalmanager.get("object_types_store"),
+                value: this.currentUser.classes.join(",")
+            }],
+            disabled:this.currentUser.admin
+        });
+
         this.panel = new Ext.form.FormPanel({
             title:t("settings"),
-            items:[this.generalSet, this.permissionsSet],
+            items:[this.generalSet, this.permissionsSet, this.typesSet],
             bodyStyle:"padding:10px;",
             autoScroll:true
         });

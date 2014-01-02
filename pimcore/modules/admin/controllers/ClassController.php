@@ -56,6 +56,14 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $classesList->setOrder("asc");
         $classes = $classesList->load();
 
+        // filter classes
+        $tmpClasses = array();
+        foreach($classes as $class) {
+            if($this->getUser()->isAllowed($class->getId(), "class")) {
+                $tmpClasses[] = $class;
+            }
+        }
+        $classes = $tmpClasses;
 
         $classItems = array();
 

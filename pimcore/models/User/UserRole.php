@@ -37,6 +37,15 @@ class User_UserRole extends User_Abstract {
      */
     public $workspacesDocument = array();
 
+    /**
+     * @var array
+     */
+    public $classes = array();
+
+    /**
+     * @var array
+     */
+    public $docTypes = array();
 
     /**
      *
@@ -182,5 +191,52 @@ class User_UserRole extends User_Abstract {
     public function getWorkspacesObject()
     {
         return $this->workspacesObject;
+    }
+
+    /**
+     * @param array $classes
+     */
+    public function setClasses($classes)
+    {
+        if(is_string($classes)) {
+            $classes = explode(",", $classes);
+        }
+
+        if(empty($classes)) {
+            $classes = array();
+        }
+        $this->classes = $classes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getClasses()
+    {
+        return $this->classes;
+    }
+
+    /**
+     * @param array $docTypes
+     */
+    public function setDocTypes($docTypes)
+    {
+        if(is_string($docTypes)) {
+            $docTypes = explode(",", $docTypes);
+        }
+
+        if(empty($docTypes)) {
+            $docTypes = array();
+        }
+
+        $this->docTypes = $docTypes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDocTypes()
+    {
+        return $this->docTypes;
     }
 }

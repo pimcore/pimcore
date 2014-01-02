@@ -403,6 +403,8 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             "success" => true,
             "role" => $role,
             "permissions" => $role->generatePermissionList(),
+            "classes" => $role->getClasses(),
+            "docTypes" => $role->getDocTypes(),
             "availablePermissions" => $availableUserPermissions
         ));
     }

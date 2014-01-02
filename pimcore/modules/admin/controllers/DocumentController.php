@@ -504,7 +504,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
             $docTypes = array();
             foreach ($list->getDocTypes() as $type) {
-                $docTypes[] = $type;
+                if($this->getUser()->isAllowed($type->getId(), "docType")) {
+                    $docTypes[] = $type;
+                }
             }
 
             $this->_helper->json(array("data" => $docTypes, "success" => true, "total" => count($docTypes)));

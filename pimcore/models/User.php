@@ -236,19 +236,51 @@ class User extends User_UserRole {
      * @param String $key
      * @return boolean
      */
-    public function isAllowed($key) {
+    public function isAllowed($key, $type = "permission") {
 
-        if(!$this->getPermission($key)) {
-            // check roles
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if($type == "permission") {
+            if(!$this->getPermission($key)) {
+                // check roles
+                foreach ($this->getRoles() as $roleId) {
+                    $role = User_Role::getById($roleId);
+                    if($role->getPermission($key)) {
+                        return true;
+                    }
+                }
+            }
+
+            return $this->getPermission($key);
+        } else if ($type == "class") {
+            $classes = $this->getClasses();
             foreach ($this->getRoles() as $roleId) {
                 $role = User_Role::getById($roleId);
-                if($role->getPermission($key)) {
-                    return true;
-                }
+                $classes = array_merge($classes, $role->getClasses());
+            }
+
+            if(!empty($classes)) {
+                return in_array($key, $classes);
+            } else {
+                return true;
+            }
+        } else  if ($type == "docType") {
+            $docTypes = $this->getDocTypes();
+            foreach ($this->getRoles() as $roleId) {
+                $role = User_Role::getById($roleId);
+                $docTypes = array_merge($docTypes, $role->getDocTypes());
+            }
+
+            if(!empty($docTypes)) {
+                return in_array($key, $docTypes);
+            } else {
+                return true;
             }
         }
 
-        return $this->getPermission($key);
+        return false;
     }
 
     /**
