@@ -109,8 +109,8 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             if (!$this->getUser() instanceof User && !($this->getParam("module") == "admin" && $this->getParam("controller") == "login")) {
 
                 // put a detailed message into the debug.log
-                Logger::warn("Prevented access to " . $_SERVER["REQUEST_URI"] . " because there is no user in the session!");
-                Logger::warn(array(
+                Logger::error("Prevented access to " . $_SERVER["REQUEST_URI"] . " because there is no user in the session!");
+                Logger::error(array(
                     "server" => $_SERVER,
                     "get" => $_GET,
                     "post" => $_POST,

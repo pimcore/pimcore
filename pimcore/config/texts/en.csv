@@ -1093,7 +1093,7 @@
 "sa","Sa"
 "categories","Categories"
 "multihref","Multi-Href"
-"session_error_text","It seems there is a problem with your session. Would you like to stay on your own risk?"
+"session_error_text","It seems there is a problem with your session. We recomment to reload this page in order to be save, but you can try to save your changes first."
 "session_error","Session Error"
 "update_successful","Update successful!"
 "select_plugin_update","Select plugin update"
