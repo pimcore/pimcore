@@ -134,6 +134,8 @@ class Pimcore_View extends Zend_View {
             array_walk($cacheParams, function (&$value, $key) {
                 if($value instanceof Element_Interface) {
                     $value = $value->getId();
+                } else if (is_object($value) && method_exists($value, "__toString")) {
+                    $value = (string) $value;
                 }
             });
 
@@ -148,6 +150,11 @@ class Pimcore_View extends Zend_View {
         Zend_Registry::set("pimcore_editmode", false);
 
         $includeBak = $include;
+
+        // this is if $this->inc is called eg. with $this->href() as argument
+        if(!$include instanceof Document_PageSnippet && is_object($include) && method_exists($include, "__toString")) {
+            $include = (string) $include;
+        }
 
         if (is_string($include)) {
             try {
