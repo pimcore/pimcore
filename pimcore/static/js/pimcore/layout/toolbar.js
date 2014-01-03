@@ -25,8 +25,7 @@ pimcore.layout.toolbar = Class.create({
         this.dashboardMenu = new Ext.menu.Item({
             text: t("dashboards"),
             iconCls: "pimcore_icon_welcome",
-            handler: function () {
-            },
+            hideOnClick: false,
             menu: {
                 cls: "pimcore_navigation_flyout",
                 items: [{
