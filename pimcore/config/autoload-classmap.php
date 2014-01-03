@@ -68,6 +68,7 @@ return array (
   'Pimcore_Image_Matrixcode_Qrcode_Qrspecs' => $pdr . '/pimcore/lib/Pimcore/Image/Matrixcode/Qrcode/Qrspecs.php',
   'Pimcore_Image_Matrixcode_Exception' => $pdr . '/pimcore/lib/Pimcore/Image/Matrixcode/Exception.php',
   'Pimcore_Image_Matrixcode_Qrcode' => $pdr . '/pimcore/lib/Pimcore/Image/Matrixcode/Qrcode.php',
+  'Pimcore_Image_Optimizer' => $pdr . '/pimcore/lib/Pimcore/Image/Optimizer.php',
   'Pimcore_Image_Adapter_InkscapeImagick' => $pdr . '/pimcore/lib/Pimcore/Image/Adapter/InkscapeImagick.php',
   'Pimcore_Image_Adapter_GD' => $pdr . '/pimcore/lib/Pimcore/Image/Adapter/GD.php',
   'Pimcore_Image_Adapter_Imagick' => $pdr . '/pimcore/lib/Pimcore/Image/Adapter/Imagick.php',

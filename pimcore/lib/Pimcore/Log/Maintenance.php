@@ -92,7 +92,7 @@ class Pimcore_Log_Maintenance {
         }
 
         $logFile = PIMCORE_LOG_DIRECTORY . "/usagelog.log";
-        if(is_file($logFile) && filesize($logFile) > 5000000) {
+        if(is_file($logFile) && filesize($logFile) > 200000) {
             $data = gzencode(file_get_contents($logFile));
             $response = Pimcore_Tool::getHttpData("https://www.pimcore.org/usage-statistics/", array(), array("data" => $data));
             if(strpos($response, "true") !== false) {
