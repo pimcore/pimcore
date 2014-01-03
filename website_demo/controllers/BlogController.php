@@ -54,4 +54,20 @@ class BlogController extends Website_Controller_Action
         $this->view->article = $article;
     }
 
+    public function sidebarBoxAction() {
+
+        $items = (int) $this->getParam("items");
+        if(!$items) {
+            $items = 3;
+        }
+
+        // this is the alternative way of getting a list of objects
+        $blogList = Object_BlogArticle::getList([
+            "limit" => $items,
+            "order" => "DESC",
+            "orderKey" => "date"
+        ]);
+
+        $this->view->articles = $blogList;
+    }
 }
