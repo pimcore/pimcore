@@ -2,10 +2,10 @@
 
     <?php $this->template("/includes/area-headlines.php"); ?>
 
-    <?= $this->renderlet("gallery", array(
+    <?= $this->renderlet("gallery", [
         "controller" => "content",
         "action" => "gallery-renderlet"
-    )); ?>
+    ]); ?>
 
 </section>
 

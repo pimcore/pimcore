@@ -6,10 +6,10 @@ $backup = new Pimcore_Backup($backupFile);
 $initInfo = $backup->init();
 
 
-$stepMethodMapping = array(
+$stepMethodMapping = [
     "mysql-tables" => "mysqlTables",
     "mysql" => "mysqlData"
-);
+];
 
 
 if(empty($initInfo["errors"])) {
@@ -21,12 +21,12 @@ if(empty($initInfo["errors"])) {
         if(array_key_exists($step[0], $stepMethodMapping)) {
 
             // skip these tables
-            if(in_array($step[1]["name"], array("tracking_events", "cache", "cache_tags", "http_error_log", "versions", "edit_lock", "content_analysis", "content_index", "locks", "email_log"))) {
+            if(in_array($step[1]["name"], ["tracking_events", "cache", "cache_tags", "http_error_log", "versions", "edit_lock", "content_analysis", "content_index", "locks", "email_log"])) {
                 continue;
             }
 
             verboseMessage("execute: " . $step[0] . " | with the following parameters: " . implode(",",$step[1]));
-            $return = call_user_func_array(array($backup, $stepMethodMapping[$step[0]]), $step[1]);
+            $return = call_user_func_array([$backup, $stepMethodMapping[$step[0]]], $step[1]);
             if($return["filesize"]) {
                 verboseMessage("current filesize of the backup is: " . $return["filesize"]);
             }

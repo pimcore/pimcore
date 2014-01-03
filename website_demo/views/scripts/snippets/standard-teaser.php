@@ -20,10 +20,10 @@
 
 <div class="teaser">
 
-    <?= $this->image("image".$suffix, array(
+    <?= $this->image("image".$suffix, [
         "thumbnail" => "standardTeaser",
         "class" => $this->checkbox("circle".$suffix)->isChecked() ? "img-circle" : ""
-    )) ?>
+    ]) ?>
 
     <?php if($this->editmode) { ?>
         <div class="editmode-label">
@@ -35,11 +35,11 @@
     <h2><?= $this->input("headline".$suffix) ?></h2>
 
     <div>
-        <?= $this->wysiwyg("text".$suffix, array("height" => 100)); ?>
+        <?= $this->wysiwyg("text".$suffix, ["height" => 100]); ?>
     </div>
 
     <p>
-        <?= $this->link("link".$suffix, array("class" => "btn btn-default")); ?>
+        <?= $this->link("link".$suffix, ["class" => "btn btn-default"]); ?>
     </p>
 
     <?php

@@ -2,9 +2,7 @@
 
     <?php $this->template("/includes/area-headlines.php"); ?>
 
-    <?= $this->pdf("pdf", array(
-
-    )); ?>
+    <?= $this->pdf("pdf"); ?>
 
 </section>
 

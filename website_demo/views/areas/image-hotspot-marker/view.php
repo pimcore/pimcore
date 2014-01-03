@@ -1,9 +1,9 @@
 <section class="area-image">
 
     <div style="position: relative;">
-        <?= $this->image("image", array(
+        <?= $this->image("image", [
             "thumbnail" => "content"
-        )) ?>
+        ]) ?>
 
         <?php if(!$this->editmode) { ?>
             <?php // markers ?>

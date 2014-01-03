@@ -92,7 +92,7 @@
                     <?php
                         $mainNavigation = $this->pimcoreNavigation()->getNavigation($this->document, $mainNavStartNode);
                         $this->navigation($mainNavigation);
-                        echo $this->navigation()->menu()->setUseTranslator(false)->renderMenu($mainNavigation, array("maxDepth" => 1, "ulClass" => "nav navbar-nav"));
+                        echo $this->navigation()->menu()->setUseTranslator(false)->renderMenu($mainNavigation, ["maxDepth" => 1, "ulClass" => "nav navbar-nav"]);
                     ?>
                 </div>
             </div>
@@ -112,10 +112,10 @@
         $color = $this->document->getProperty("headerColor");
         if($color) { // orange is the default color
 
-            $colorMapping = array(
-                "blue" => array("#258dc1","#2aabeb"),
-                "green" => array("#278415","#1a9f00")
-            );
+            $colorMapping = [
+                "blue" => ["#258dc1","#2aabeb"],
+                "green" => ["#278415","#1a9f00"]
+            ];
             $c = $colorMapping[$color];
         ?>
         <style>
@@ -158,10 +158,10 @@
                     <?php
                     $leftNavigation = $this->pimcoreNavigation()->getNavigation($this->document, $startNode);
                     $this->navigation($leftNavigation);
-                    echo $this->navigation()->menu($leftNavigation)->setUseTranslator(false)->renderMenu($leftNavigation, array(
+                    echo $this->navigation()->menu($leftNavigation)->setUseTranslator(false)->renderMenu($leftNavigation, [
                         "ulClass" => "nav bs-sidenav",
                         "expandSiblingNodesOfActiveBranch" => true
-                    ));
+                    ]);
                     ?>
                 </div>
                 <?= $this->inc($this->document->getProperty("sidebar")); ?>

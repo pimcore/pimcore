@@ -9,9 +9,9 @@
         while ($block->loop()) { ?>
             <div class="col-md-3 col-xs-6">
                 <a href="<?= $this->image("image")->getThumbnail("galleryLightbox"); ?>" class="thumbnail">
-                    <?= $this->image("image", array(
+                    <?= $this->image("image", [
                         "thumbnail" => "galleryThumbnail"
-                    )); ?>
+                    ]); ?>
                 </a>
             </div>
         <?php } ?>

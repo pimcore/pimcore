@@ -55,16 +55,16 @@
         <div class="alert alert-info">
             <h3>Multi-Select</h3>
         </div>
-        <?= $this->multiselect("myMultiselect", array(
+        <?= $this->multiselect("myMultiselect", [
             "width" => 200,
             "height" => 100,
-            "store" => array(
-                array("value1", "Text 1"),
-                array("value2", "Text 2"),
-                array("value3", "Text 3"),
-                array("value4", "Text 4"),
-            )
-        )) ?>
+            "store" => [
+                ["value1", "Text 1"],
+                ["value2", "Text 2"],
+                ["value3", "Text 3"],
+                ["value4", "Text 4"],
+            ]
+        ]) ?>
 
         <div class="alert alert-info">
             <h3>Numeric</h3>
@@ -74,21 +74,21 @@
         <div class="alert alert-info">
             <h3>Renderlet (drop an asset folder)</h3>
         </div>
-        <?= $this->renderlet("myRenderlet", array(
+        <?= $this->renderlet("myRenderlet", [
             "controller" => "content",
             "action" => "gallery-renderlet"
-        )); ?>
+        ]); ?>
 
         <div class="alert alert-info">
             <h3>Select</h3>
         </div>
-        <?= $this->select("mySelect",array(
-            "store" => array(
-                array("option1", "Option One"),
-                array("option2", "Option Two"),
-                array("option3", "Option Three")
-            )
-        )); ?>
+        <?= $this->select("mySelect", [
+            "store" => [
+                ["option1", "Option One"],
+                ["option2", "Option Two"],
+                ["option3", "Option Three"]
+            ]
+        ]); ?>
 
         <div class="alert alert-info">
             <h3>Snippet</h3>
@@ -100,18 +100,18 @@
             <h3>Table</h3>
             <p>of course you can create tables in the wysiwyg too</p>
         </div>
-        <?= $this->table("tableName",array(
+        <?= $this->table("tableName", [
            "width" => 700,
            "height" => 400,
-           "defaults" => array(
+           "defaults" => [
                "cols" => 6,
                "rows" => 10,
-               "data" => array(
-                   array("Value 1", "Value 2", "Value 3"),
-                   array("this", "is", "test")
-               )
-           )
-       )) ?>
+               "data" => [
+                   ["Value 1", "Value 2", "Value 3"],
+                   ["this", "is", "test"]
+               ]
+           ]
+       ]) ?>
 
         <div class="alert alert-info">
             <h3>Textarea</h3>
@@ -121,11 +121,11 @@
         <div class="alert alert-info">
             <h3>Video</h3>
         </div>
-       <?= $this->video("myVideo", array(
+       <?= $this->video("myVideo", [
             "html5" => true,
             "thumbnail" => "content",
             "height" => 380
-       )); ?>
+       ]); ?>
 
         <div class="alert alert-info">
             <h3>WYSIWYG</h3>

@@ -12,8 +12,8 @@
     <?php if($this->doc->hasChilds()) { ?>
         <ul>
             <?php foreach ($this->doc->getChilds() as $child) { ?>
-                <?php if(in_array($child->getType(), array("page","link"))) { ?>
-                    <?= $this->action("sitemap", "advanced", null, array("doc" => $child)) ?>
+                <?php if(in_array($child->getType(), ["page","link"])) { ?>
+                    <?= $this->action("sitemap", "advanced", null, ["doc" => $child]) ?>
                 <?php } ?>
             <?php } ?>
         </ul>

@@ -100,21 +100,21 @@
 
         <h3>Simple WYSIWYG</h3>
         You can drag'n drop assets, documents, ...
-        <?= $this->wysiwyg("myWysiwyg", array("height" => 130)); ?>
+        <?= $this->wysiwyg("myWysiwyg", ["height" => 130]); ?>
 
         <h3>Input &amp; Textarea</h3>
         <div class="input-textarea">
-            Type something: <?= $this->input("myInput", array("width" => 400)); ?>
+            Type something: <?= $this->input("myInput", ["width" => 400]); ?>
             ... styles are inherited ...
             <div class="content-myTextarea">
-                <?= $this->textarea("myTextarea", array("width" => 400, "height" => 60)); ?>
+                <?= $this->textarea("myTextarea", ["width" => 400, "height" => 60]); ?>
             </div>
         </div>
 
         <h3>Images in a block element</h3>
         Press the button:
         <?php while($this->block("myImageBlock")->loop()) { ?>
-            <?= $this->image("myImage", array("height" => 100)); ?>
+            <?= $this->image("myImage", ["height" => 100]); ?>
         <?php } ?>
 
         <h3>Relations</h3>
@@ -132,23 +132,23 @@
         Number: <?= $this->numeric("myNumber"); ?>
 
         <h3>Selections</h3>
-        <?= $this->select("mySelect",array(
-            "store" => array(
-                array("option1", "Option One"),
-                array("option2", "Option Two"),
-                array("option3", "Option Three")
-            )
-        )); ?>
+        <?= $this->select("mySelect", [
+            "store" => [
+                ["option1", "Option One"],
+                ["option2", "Option Two"],
+                ["option3", "Option Three"]
+            ]
+        ]); ?>
         ... and multiple seletions ...
-        <?= $this->multiselect("multiselect", array(
+        <?= $this->multiselect("multiselect", [
             "width" => 200,
             "height" => 100,
-            "store" => array(
-                array("option1", "Option One"),
-                array("option2", "Option Two"),
-                array("option3", "Option Three")
-            )
-        )) ?>
+            "store" => [
+                ["option1", "Option One"],
+                ["option2", "Option Two"],
+                ["option3", "Option Three"]
+            ]
+        ]) ?>
 
         <br />
         <strong>... and much more!

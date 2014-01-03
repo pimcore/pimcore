@@ -6,7 +6,7 @@
 
 <?php if($this->editmode || !$this->wysiwyg("lead")->isEmpty()) { ?>
     <div class="lead">
-        <?= $this->wysiwyg("lead", array("height" => 100)); ?>
+        <?= $this->wysiwyg("lead", ["height" => 100]); ?>
     </div>
 <?php } ?>
 

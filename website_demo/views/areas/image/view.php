@@ -3,9 +3,9 @@
     <?php $this->template("/includes/area-headlines.php"); ?>
 
     <a href="<?= $this->image("image")->getThumbnail("galleryLightbox"); ?>" class="thumbnail">
-        <?= $this->image("image", array(
+        <?= $this->image("image", [
             "thumbnail" => "content"
-        )); ?>
+        ]); ?>
     </a>
 
 </section>

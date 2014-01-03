@@ -10,7 +10,7 @@ class BlogController extends Website_Controller_Action
         $blogList->setOrderKey("date");
         $blogList->setOrder("DESC");
 
-        $conditions = array();
+        $conditions = [];
 
         if($this->getParam("category")) {
             $conditions[] = "categories LIKE " . $blogList->quote("%," . (int) $this->getParam("category") . ",%");

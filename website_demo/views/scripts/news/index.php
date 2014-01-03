@@ -7,15 +7,15 @@
 <?php foreach ($this->news as $news) { ?>
     <div class="media">
         <?php
-            $detailLink = $this->url(array(
+            $detailLink = $this->url([
                 "id" => $news->getId(),
                 "text" => $news->getTitle(),
                 "prefix" => $this->document->getFullPath()
-            ), "news");
+            ], "news");
         ?>
         <?php if($news->getImage_1()) { ?>
             <a class="pull-left" href="<?= $detailLink; ?>">
-                <?= $news->getImage_1()->getThumbnail("newsList")->getHTML(array("class" => "media-object")); ?>
+                <?= $news->getImage_1()->getThumbnail("newsList")->getHTML(["class" => "media-object"]); ?>
             </a>
         <?php } ?>
 
@@ -32,8 +32,8 @@
 
 
 <!-- pagination start -->
-<?= $this->paginationControl($this->news, 'Sliding', 'includes/paging.php', array(
+<?= $this->paginationControl($this->news, 'Sliding', 'includes/paging.php', [
    'urlprefix' => $this->document->getFullPath() . '?page=',
    'appendQueryString' => true
-)); ?>
+]); ?>
 <!-- pagination end -->

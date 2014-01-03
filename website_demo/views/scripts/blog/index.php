@@ -11,11 +11,11 @@
         <?php foreach ($this->articles as $article) { ?>
             <div class="media">
                 <?php
-                    $detailLink = $this->url(array(
+                    $detailLink = $this->url([
                         "id" => $article->getId(),
                         "text" => $article->getTitle(),
                         "prefix" => $this->document->getFullPath()
-                    ), "blog", true);
+                    ], "blog", true);
                 ?>
 
                 <div class="media-body">
@@ -23,7 +23,7 @@
                         <a href="<?= $detailLink; ?>"><?= $article->getTitle(); ?></a>
                     </h2>
 
-                    <?php $this->template("blog/meta.php", array("article" => $article)); ?>
+                    <?php $this->template("blog/meta.php", ["article" => $article]); ?>
 
                     <hr />
 
@@ -39,10 +39,10 @@
 
 
         <!-- pagination start -->
-        <?= $this->paginationControl($this->articles, 'Sliding', 'includes/paging.php', array(
+        <?= $this->paginationControl($this->articles, 'Sliding', 'includes/paging.php', [
            'urlprefix' => $this->document->getFullPath() . '?page=',
            'appendQueryString' => true
-        )); ?>
+        ]); ?>
         <!-- pagination end -->
     </div>
     <div class="col-md-4 filters">

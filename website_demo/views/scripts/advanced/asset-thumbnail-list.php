@@ -14,17 +14,17 @@
         <?php if(in_array($asset->getType(), ["video", "image", "document"])) { ?>
             <div class="col-xs-3" style="padding-bottom: 10px">
                 <?php if($asset instanceof Asset_Image) { ?>
-                    <?= $asset->getThumbnail(array(
+                    <?= $asset->getThumbnail([
                         "width" => 180,
                         "height" => 180,
                         "cover" => true
-                    ))->getHTML(array("class" => "thumbnail")) ?>
+                    ])->getHTML(["class" => "thumbnail"]) ?>
                 <?php } else { ?>
-                    <img src="<?= $asset->getImageThumbnail(array(
+                    <img src="<?= $asset->getImageThumbnail([
                         "width" => 180,
                         "height" => 180,
                         "cover" => true
-                    )) ?>" class="thumbnail" width="180" height="180">
+                    ]) ?>" class="thumbnail" width="180" height="180">
                 <?php } ?>
             </div>
         <?php } ?>

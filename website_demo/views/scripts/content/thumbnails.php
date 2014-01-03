@@ -18,7 +18,7 @@
 
 <section class="thumbnail-examples">
     <?php
-        $thumbnails = array(
+        $thumbnails = [
             "Cover" => "exampleCover",
             "Contain" => "exampleContain",
             "Frame" => "exampleFrame",
@@ -33,7 +33,7 @@
             "Mask" => "exampleMask",
             "Combined 1" => "exampleCombined1",
             "Combined 2" => "exampleCombined2",
-        );
+        ];
     ?>
 
     <?php

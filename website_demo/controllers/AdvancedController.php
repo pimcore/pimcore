@@ -26,7 +26,7 @@ class AdvancedController extends Website_Controller_Action
     public function indexAction() {
 
         $list = new Document_List();
-        $list->setCondition("parentId = ?", array($this->document->getId()));
+        $list->setCondition("parentId = ?", [$this->document->getId()]);
         $list->load();
 
         $this->view->documents = $list;
@@ -56,7 +56,7 @@ class AdvancedController extends Website_Controller_Action
         }
 
         // do some validation & assign the parameters to the view
-        foreach (array("firstname", "lastname", "email") as $key) {
+        foreach (["firstname", "lastname", "email"] as $key) {
             if($this->getParam($key)) {
                 $this->view->$key = htmlentities(strip_tags($this->getParam($key)));
             }
@@ -75,9 +75,9 @@ class AdvancedController extends Website_Controller_Action
                 }
                 $perPage = 10;
 
-                $result = Pimcore_Google_Cse::search($this->getParam("q"), (($page - 1) * $perPage), null, array(
+                $result = Pimcore_Google_Cse::search($this->getParam("q"), (($page - 1) * $perPage), null, [
                     "cx" => "002859715628130885299:baocppu9mii"
-                ), $this->getParam("facet"));
+                ], $this->getParam("facet"));
 
                 $paginator = Zend_Paginator::factory($result);
                 $paginator->setCurrentPageNumber($page);
@@ -143,7 +143,7 @@ class AdvancedController extends Website_Controller_Action
         }
 
         // do some validation & assign the parameters to the view
-        foreach (array("firstname", "lastname", "email", "message", "terms") as $key) {
+        foreach (["firstname", "lastname", "email", "message", "terms"] as $key) {
             if($this->getParam($key)) {
                 $this->view->$key = htmlentities(strip_tags($this->getParam($key)));
             }
