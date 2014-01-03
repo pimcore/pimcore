@@ -20,7 +20,7 @@ CREATE TABLE `assets` (
   KEY `parentId` (`parentId`),
   KEY `filename` (`filename`),
   KEY `path` (`path`)
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8;
 
 
 
@@ -155,7 +155,7 @@ CREATE TABLE `documents` (
   KEY `key` (`key`),
   KEY `path` (`path`),
   KEY `published` (`published`)
-) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8;
 
 
 
@@ -275,7 +275,7 @@ CREATE TABLE `edit_lock` (
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
   KEY `cidtype` (`cid`,`ctype`)
-) ENGINE=InnoDB AUTO_INCREMENT=492 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=499 DEFAULT CHARSET=utf8;
 
 
 
@@ -1191,7 +1191,7 @@ CREATE TABLE `versions` (
   PRIMARY KEY (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`)
-) ENGINE=InnoDB AUTO_INCREMENT=257 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=271 DEFAULT CHARSET=utf8;
 
 
 
@@ -1265,6 +1265,8 @@ INSERT INTO `assets` VALUES (65,34,'image','objects-forms.png','/screenshots/','
 INSERT INTO `assets` VALUES (66,29,'document','example-excel.xlsx','/documents/','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',1378992590,1378992590,0,0,'a:0:{}');
 INSERT INTO `assets` VALUES (67,29,'document','example.docx','/documents/','application/vnd.openxmlformats-officedocument.wordprocessingml.document',1378992591,1378992591,0,0,'a:0:{}');
 INSERT INTO `assets` VALUES (68,29,'document','example.pptx','/documents/','application/vnd.openxmlformats-officedocument.presentationml.presentation',1378992592,1378992592,0,0,'a:0:{}');
+INSERT INTO `assets` VALUES (69,34,'image','e-commerce1.png','/screenshots/','image/png',1388740480,1388740490,14,14,'a:3:{s:10:\"imageWidth\";i:1252;s:11:\"imageHeight\";i:1009;s:25:\"imageDimensionsCalculated\";b:1;}');
+INSERT INTO `assets` VALUES (70,34,'image','pim1-png','/screenshots/','image/png',1388740572,1388740580,14,14,'a:3:{s:10:\"imageWidth\";i:1275;s:11:\"imageHeight\";i:799;s:25:\"imageDimensionsCalculated\";b:1;}');
 
 
 
@@ -1491,6 +1493,16 @@ INSERT INTO `dependencies` VALUES ('document',69,'document',5);
 INSERT INTO `dependencies` VALUES ('document',69,'document',40);
 INSERT INTO `dependencies` VALUES ('document',69,'document',57);
 INSERT INTO `dependencies` VALUES ('document',69,'document',60);
+INSERT INTO `dependencies` VALUES ('document',70,'document',5);
+INSERT INTO `dependencies` VALUES ('document',70,'document',40);
+INSERT INTO `dependencies` VALUES ('document',70,'document',60);
+INSERT INTO `dependencies` VALUES ('document',70,'document',69);
+INSERT INTO `dependencies` VALUES ('document',70,'asset',70);
+INSERT INTO `dependencies` VALUES ('document',71,'document',5);
+INSERT INTO `dependencies` VALUES ('document',71,'document',40);
+INSERT INTO `dependencies` VALUES ('document',71,'document',60);
+INSERT INTO `dependencies` VALUES ('document',71,'document',69);
+INSERT INTO `dependencies` VALUES ('document',71,'asset',69);
 INSERT INTO `dependencies` VALUES ('object',3,'document',19);
 INSERT INTO `dependencies` VALUES ('object',3,'document',24);
 INSERT INTO `dependencies` VALUES ('object',3,'asset',43);
@@ -1582,7 +1594,9 @@ INSERT INTO `documents` VALUES (65,63,'page','unsubscribe','/en/advanced-example
 INSERT INTO `documents` VALUES (66,63,'email','confirmation-email','/en/advanced-examples/newsletter/',3,1,1388409670,1388412587,'','');
 INSERT INTO `documents` VALUES (67,62,'email','example-mailing','/newsletters/',1,1,1388412605,1388412917,'','');
 INSERT INTO `documents` VALUES (68,5,'page','asset-thumbnail-list','/en/advanced-examples/',9,1,1388414727,1388414883,'','');
-INSERT INTO `documents` VALUES (69,5,'snippet','sidebar','/en/advanced-examples/',10,1,1388734403,1388738477,14,14);
+INSERT INTO `documents` VALUES (69,5,'snippet','sidebar','/en/advanced-examples/',12,1,1388734403,1388738477,14,14);
+INSERT INTO `documents` VALUES (70,5,'page','product-information-management','/en/advanced-examples/',11,1,1388740191,1388740585,14,14);
+INSERT INTO `documents` VALUES (71,5,'page','e-commerce','/en/advanced-examples/',10,1,1388740265,1388740613,14,14);
 
 
 
@@ -2369,6 +2383,26 @@ INSERT INTO `documents_elements` VALUES (68,'parentFolder','href','a:3:{s:2:\"id
 INSERT INTO `documents_elements` VALUES (69,'teasers','block','a:2:{i:0;s:1:\"1\";i:1;s:1:\"2\";}');
 INSERT INTO `documents_elements` VALUES (69,'teaserteasers1','snippet','16');
 INSERT INTO `documents_elements` VALUES (69,'teaserteasers2','snippet','17');
+INSERT INTO `documents_elements` VALUES (70,'content','areablock','a:2:{i:0;a:2:{s:3:\"key\";s:1:\"1\";s:4:\"type\";s:7:\"wysiwyg\";}i:1;a:2:{s:3:\"key\";s:1:\"2\";s:4:\"type\";s:5:\"image\";}}');
+INSERT INTO `documents_elements` VALUES (70,'contentcontent1','wysiwyg','<p>Please visit our&nbsp;<a href=\"http://pimcore.org/demo\">PIM, E-Commerce &amp; Asset Management demo</a> to see it in action.&nbsp;</p>\n');
+INSERT INTO `documents_elements` VALUES (70,'headDescription','input','');
+INSERT INTO `documents_elements` VALUES (70,'headline','input','Product Information Management');
+INSERT INTO `documents_elements` VALUES (70,'headlinecontent1','input','');
+INSERT INTO `documents_elements` VALUES (70,'headlinecontent2','input','');
+INSERT INTO `documents_elements` VALUES (70,'headTitle','input','');
+INSERT INTO `documents_elements` VALUES (70,'imagecontent2','image','a:9:{s:2:\"id\";i:70;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (70,'leadcontent1','wysiwyg','');
+INSERT INTO `documents_elements` VALUES (70,'leadcontent2','wysiwyg','');
+INSERT INTO `documents_elements` VALUES (71,'content','areablock','a:2:{i:0;a:2:{s:3:\"key\";s:1:\"1\";s:4:\"type\";s:7:\"wysiwyg\";}i:1;a:2:{s:3:\"key\";s:1:\"2\";s:4:\"type\";s:5:\"image\";}}');
+INSERT INTO `documents_elements` VALUES (71,'contentcontent1','wysiwyg','<p>Please visit our&nbsp;<a href=\"http://pimcore.org/demo\">PIM, E-Commerce &amp; Asset Management demo</a> to see it in action.&nbsp;</p>\n');
+INSERT INTO `documents_elements` VALUES (71,'headDescription','input','');
+INSERT INTO `documents_elements` VALUES (71,'headline','input','E-Commerce');
+INSERT INTO `documents_elements` VALUES (71,'headlinecontent1','input','');
+INSERT INTO `documents_elements` VALUES (71,'headlinecontent2','input','');
+INSERT INTO `documents_elements` VALUES (71,'headTitle','input','');
+INSERT INTO `documents_elements` VALUES (71,'imagecontent2','image','a:9:{s:2:\"id\";i:69;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
+INSERT INTO `documents_elements` VALUES (71,'leadcontent1','wysiwyg','');
+INSERT INTO `documents_elements` VALUES (71,'leadcontent2','wysiwyg','');
 
 
 
@@ -2428,6 +2462,8 @@ INSERT INTO `documents_page` VALUES (63,'','newsletter','subscribe','','Newslett
 INSERT INTO `documents_page` VALUES (64,'','newsletter','confirm','','','','','a:0:{}','',0,'','');
 INSERT INTO `documents_page` VALUES (65,'','newsletter','unsubscribe','','Unsubscribe','','','a:0:{}','',0,'','');
 INSERT INTO `documents_page` VALUES (68,'','advanced','asset-thumbnail-list','','Asset Thumbnail List','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (70,'','content','default','','Product Information Management','','','a:0:{}','','','','');
+INSERT INTO `documents_page` VALUES (71,'','content','default','','E-Commerce','','','a:0:{}','','','','');
 
 
 
@@ -2760,6 +2796,8 @@ INSERT INTO `properties` VALUES (63,'document','/en/advanced-examples/newsletter
 INSERT INTO `properties` VALUES (64,'document','/en/advanced-examples/newsletter/confirm','navigation_name','text','',1);
 INSERT INTO `properties` VALUES (65,'document','/en/advanced-examples/newsletter/unsubscribe','navigation_name','text','Unsubscribe',1);
 INSERT INTO `properties` VALUES (68,'document','/en/advanced-examples/asset-thumbnail-list','navigation_name','text','Asset Thumbnail List',1);
+INSERT INTO `properties` VALUES (70,'document','/en/advanced-examples/product-information-management','navigation_name','text','Product Information Management',0);
+INSERT INTO `properties` VALUES (71,'document','/en/advanced-examples/e-commerce','navigation_name','text','E-Commerce',1);
 
 
 
@@ -2936,6 +2974,10 @@ INSERT INTO `search_backend_data` VALUES (47,'/crm/newsletter/pimcore-byom.de~7a
 INSERT INTO `search_backend_data` VALUES (67,'/newsletters/example-mailing','document','email','email',1,1388412605,1388412917,12,12,'ID: 67  \nPath: /newsletters/example-mailing  \nContact Info Example Inc. Evergreen Terrace 123 XX 89234 Springfield +8998 487563 34234 info@example.inc Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. &nbsp; &nbsp; &nbsp; Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.&nbsp; &nbsp; &nbsp; &nbsp; Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. &nbsp; Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibulum volutpat pretium libero. Cras id dui. Aenean ut eros et nisl sagittis vestibulum. Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat, pede. Sed lectus. Donec mollis hendrerit risus. Phasellus nec sem in justo pellentesque facilisis. Etiam imperdiet imperdiet orci. Nunc nec neque. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi. Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Terms Privacy Unsubscribe ','');
 INSERT INTO `search_backend_data` VALUES (68,'/en/advanced-examples/asset-thumbnail-list','document','page','page',1,1388414727,1388414883,12,12,'ID: 68  \nPath: /en/advanced-examples/asset-thumbnail-list  \n Asset Thumbnail List Asset Thumbnail List ','navigation_name:Asset Thumbnail List ');
 INSERT INTO `search_backend_data` VALUES (69,'/en/advanced-examples/sidebar','document','snippet','snippet',1,1388734403,1388738477,14,14,'ID: 69  \nPath: /en/advanced-examples/sidebar  \n ','');
+INSERT INTO `search_backend_data` VALUES (70,'/en/advanced-examples/product-information-management','document','page','page',1,1388740191,1388740585,14,14,'ID: 70  \nPath: /en/advanced-examples/product-information-management  \n Please visit our&nbsp;PIM, E-Commerce &amp; Asset Management demo to see it in action.&nbsp; Product Information Management Product Information Management ','navigation_name:Product Information Management ');
+INSERT INTO `search_backend_data` VALUES (71,'/en/advanced-examples/e-commerce','document','page','page',1,1388740265,1388740613,14,14,'ID: 71  \nPath: /en/advanced-examples/e-commerce  \n E-Commerce Please visit our&nbsp;PIM, E-Commerce &amp; Asset Management demo to see it in action.&nbsp; E-Commerce ','navigation_name:E-Commerce ');
+INSERT INTO `search_backend_data` VALUES (69,'/screenshots/e-commerce1.png','asset','image','image',1,1388740480,1388740490,14,14,'ID: 69  \nPath: /screenshots/e-commerce1.png  \ne-commerce1.png','');
+INSERT INTO `search_backend_data` VALUES (70,'/screenshots/pim1-png','asset','image','image',1,1388740572,1388740580,14,14,'ID: 70  \nPath: /screenshots/pim1-png  \npim1-png','');
 
 
 
@@ -3067,6 +3109,8 @@ INSERT INTO `translations_website` VALUES ('download now (%s)','de','',136861972
 INSERT INTO `translations_website` VALUES ('download now (%s)','en','',1368619727,1368619727);
 INSERT INTO `translations_website` VALUES ('download source','de','Herunterladen (Quellen)',1368608508,1368608508);
 INSERT INTO `translations_website` VALUES ('download source','en','',1368608508,1368608508);
+INSERT INTO `translations_website` VALUES ('e-commerce','de','','','');
+INSERT INTO `translations_website` VALUES ('e-commerce','en','','','');
 INSERT INTO `translations_website` VALUES ('e-mail','de','',1368610820,1368610820);
 INSERT INTO `translations_website` VALUES ('e-mail','en','',1368610820,1368610820);
 INSERT INTO `translations_website` VALUES ('einfache beispiele','de','',0,0);
@@ -3116,6 +3160,10 @@ INSERT INTO `translations_website` VALUES ('newsletter','de','',1368620340,13686
 INSERT INTO `translations_website` VALUES ('newsletter','en','',1368620340,1368620340);
 INSERT INTO `translations_website` VALUES ('original dimensions of the image','en','',1368604779,1368604779);
 INSERT INTO `translations_website` VALUES ('overlay','en','',1368605562,1368605562);
+INSERT INTO `translations_website` VALUES ('product information management','de','','','');
+INSERT INTO `translations_website` VALUES ('product information management','en','','','');
+INSERT INTO `translations_website` VALUES ('product information managment','de','','','');
+INSERT INTO `translations_website` VALUES ('product information managment','en','','','');
 INSERT INTO `translations_website` VALUES ('properties','de','',0,0);
 INSERT INTO `translations_website` VALUES ('properties','en','',0,0);
 INSERT INTO `translations_website` VALUES ('recently in the blog','de','','','');
