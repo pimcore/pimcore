@@ -18,12 +18,13 @@
 
         <?php $facets = $this->result->getFacets(); ?>
         <?php if(!empty($facets)) { ?>
-            <div class="row" style="margin-top: 20px">
+            <div style="margin-top: 20px">
                 Facets:
                 <?php foreach ($facets as $label => $anchor) { ?>
-                    <a class="btn btn-default btn-xs" href="<?= $this->url(['facet' => $label, "page" => null]); ?>"><?= $anchor ?></a>
+                    <a class="btn btn-default btn-xs" href="<?= $this->url(array('facet' => $label, "page" => null)); ?>"><?= $anchor ?></a>
                 <?php } ?>
             </div>
+            <hr />
         <?php } ?>
 
         <?php foreach ($this->paginator as $item) { ?>
@@ -34,9 +35,9 @@
 
                     <?php if($item->getImage() instanceof Asset) { ?>
                         <a class="pull-left" href="<?= $item->getLink() ?>">
-                            <?= $item->getImage()->getThumbnail("newsList")->getHTML([
+                            <?= $item->getImage()->getThumbnail("newsList")->getHTML(array(
                                 "class" => "media-object"
-                            ]); ?>
+                            )); ?>
                         </a>
                     <?php } else { ?>
                         <a class="pull-left" href="<?= $item->getLink() ?>">
@@ -66,11 +67,11 @@
         <?php } ?>
         <?= $this->paginationControl($this->paginator, "Sliding", "includes/paging.php"); ?>
     <?php } else if ($this->getParam("q")) { ?>
-        <div>
+        <div class="alert alert-error" style="margin-top: 30px">
             Sorry, something seems to went wrong ...
         </div>
     <?php } else { ?>
-        <div>
+        <div class="alert alert-info" style="margin-top: 30px">
             Type your keyword and press search
         </div>
     <?php } ?>

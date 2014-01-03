@@ -133,7 +133,7 @@
     <?php } ?>
 
     <div id="content" class="container">
-        <div class="col-md-<?php if(!$this->document->getProperty("leftNavHide")) { ?>9<?php } else { ?>12<?php } ?> col-md-push-3">
+        <div class="col-md-<?php if(!$this->document->getProperty("leftNavHide")) { ?>9 col-md-push-3<?php } else { ?>12<?php } ?>">
             <?= $this->layout()->content; ?>
 
             <div>

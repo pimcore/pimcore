@@ -92,8 +92,8 @@
         <google>
             <client_id/>
             <email/>
-            <simpleapikey/>
-            <browserapikey/>
+            <simpleapikey>AIzaSyCo9Wj49hYJWW2WgOju4iMYNTvdcBxmyQ8</simpleapikey>
+            <browserapikey>AIzaSyBJX16kWAmUVEz1c1amzp2iKqAfumbcoQQ</browserapikey>
         </google>
     </services>
     <cache>
