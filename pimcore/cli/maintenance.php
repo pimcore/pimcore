@@ -63,7 +63,7 @@ if($opts->getOption("help")) {
 }
 
 if($opts->getOption("verbose")) {
-    $writer = new Zend_Log_Writer_Stream('php://output');
+    $writer = new Zend_Log_Writer_Stream('php://stdout');
     $logger = new Zend_Log($writer);
     Logger::addLogger($logger);
 
