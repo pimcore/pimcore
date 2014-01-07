@@ -562,6 +562,28 @@ class Pimcore_Mail extends Zend_Mail
             $this->setDocumentSettings();
         }
 
+        // filter email addresses
+        $blockedAddresses = array();
+        foreach ($this->getRecipients() as $recipient) {
+            if(Tool_Email_Blacklist::getByAddress($recipient)) {
+                $blockedAddresses[] = $recipient;
+            }
+        }
+        if(!empty($blockedAddresses)) {
+            foreach ($blockedAddresses as $blockedAddress) {
+                foreach (["To", "Cc", "Bcc"] as $type) {
+                    $tmp = $this->_headers[$type];
+                    foreach ($tmp as $key => &$value) {
+                        if(strpos($value, $blockedAddress) !== false) {
+                            unset($this->_headers[$type][$key]);
+                            unset($this->_recipients[$value]);
+                        }
+                    }
+                }
+            }
+        }
+
+
         $this->setSubject($this->getSubjectRendered());
 
         $bodyHtmlRendered = $this->getBodyHtmlRendered();

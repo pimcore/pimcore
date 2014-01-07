@@ -47,13 +47,13 @@ class Tool_Email_Blacklist extends Pimcore_Model_Abstract {
      * @param $id
      * @return Tool_Email_Blacklist
      */
-    public static function getByAddress ($id) {
+    public static function getByAddress ($addr) {
 
         try {
-            $note = new self();
-            $note->getResource()->getByAddress($id);
+            $address = new self();
+            $address->getResource()->getByAddress($addr);
 
-            return $note;
+            return $address;
         } catch (Exception $e) {
             return null;
         }
