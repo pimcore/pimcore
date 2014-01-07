@@ -10,52 +10,45 @@
  * http://www.pimcore.org/license
  *
  * @category   Pimcore
- * @package    Document
+ * @package    Element
  * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Email_Log_List extends Pimcore_Model_List_Abstract
-{
+class Tool_Email_Blacklist_List extends Pimcore_Model_List_Abstract {
 
     /**
-     * Contains the results of the list. They are all an instance of Document_Email
+     * Contains the results of the list. They are all an instance of Staticroute
      *
      * @var array
      */
-    public $emailLogs = array();
+    public $items = array();
 
     /**
      * Tests if the given key is an valid order key to sort the results
      *
      * @todo remove the dummy-always-true rule
-     * @param mixed $key
      * @return boolean
      */
-    public function isValidOrderKey($key)
-    {
+    public function isValidOrderKey($key) {
         return true;
     }
 
     /**
-     * Returns a list of EmailLog entries
-     *
-     * @return array
+     * @param array $notes
      */
-    public function getEmailLogs()
+    public function setItems($items)
     {
-        return $this->emailLogs;
+        $this->items = $items;
+        return $this;
     }
 
     /**
-     * Sets EmailLog entries
-     *
-     * @param array $emailLogs
-     * @return void
+     * @return array
      */
-    public function setEmailLogs($emailLogs)
+    public function getItems()
     {
-        $this->emailLogs = $emailLogs;
-        return $this;
+        return $this->items;
     }
+
 }

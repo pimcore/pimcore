@@ -319,6 +319,10 @@ pimcore.layout.toolbar = Class.create({
                         iconCls: "pimcore_icon_email",
                         handler: this.sentEmailsLog
                     },{
+                        text: t("email_blacklist"),
+                        iconCls: "pimcore_icon_email_blacklist",
+                        handler: this.emailBlacklist
+                    },{
                         text: t("bounce_mail_inbox"),
                         iconCls: "pimcore_icon_bouncemail",
                         handler: this.showBounceMailInbox
@@ -1543,8 +1547,16 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.get("sent_emails").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("sent_emails", new pimcore.settings.emaillog());
+            pimcore.globalmanager.add("sent_emails", new pimcore.settings.email.log());
         }
     },
 
+    emailBlacklist: function () {
+        try {
+            pimcore.globalmanager.get("email_blacklist").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("email_blacklist", new pimcore.settings.email.blacklist());
+        }
+    }
 });

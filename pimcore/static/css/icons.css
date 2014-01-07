@@ -1357,3 +1357,7 @@
 .pimcore_icon_video {
     background: url(/pimcore/static/img/icon/film.png) left center no-repeat !important;
 }
+
+.pimcore_icon_email_blacklist {
+    background: url(/pimcore/static/img/icon/email_stop.png) left center no-repeat !important;
+}

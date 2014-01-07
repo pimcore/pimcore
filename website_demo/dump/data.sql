@@ -278,6 +278,16 @@ CREATE TABLE `edit_lock` (
 ) ENGINE=InnoDB AUTO_INCREMENT=499 DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS `email_blacklist`;
+CREATE TABLE `email_blacklist` (
+  `address` varchar(255) NOT NULL DEFAULT '',
+  `newsletter` tinyint(1) DEFAULT NULL,
+  `all` tinyint(1) DEFAULT NULL,
+  `creationDate` int(11) unsigned DEFAULT NULL,
+  `modificationDate` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`address`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `email_log`;
 CREATE TABLE `email_log` (

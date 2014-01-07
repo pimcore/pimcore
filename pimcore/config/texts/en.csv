@@ -1,3 +1,5 @@
+"email_address","Email Address"
+"email_blacklist","Email Blacklist"
 "allowed_types_to_create","Allowed types to create"
 "defaults_to_all","Defaults to all"
 "analytics_universal_configuration","Universal Analytics Configuration eg. {'cookieDomain': 'example.com'}"

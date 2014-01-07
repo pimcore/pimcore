@@ -1,0 +1,148 @@
+<?php
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @category   Pimcore
+ * @package    Element
+ * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+ 
+class Tool_Email_Blacklist extends Pimcore_Model_Abstract {
+
+    /**
+     * @var int
+     */
+    public $address;
+
+    /**
+     * @var string
+     */
+    public $newsletter = false;
+
+    /**
+     * @var int
+     */
+    public $all = true;
+
+    /**
+     * @var int
+     */
+    public $creationDate;
+
+    /**
+     * @var int
+     */
+    public $modificationDate;
+
+    /**
+     * @static
+     * @param $id
+     * @return Tool_Email_Blacklist
+     */
+    public static function getByAddress ($id) {
+
+        try {
+            $note = new self();
+            $note->getResource()->getByAddress($id);
+
+            return $note;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param int $address
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param int $all
+     */
+    public function setAll($all)
+    {
+        $this->all = (bool) $all;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAll()
+    {
+        return $this->all;
+    }
+
+    /**
+     * @param string $newsletter
+     */
+    public function setNewsletter($newsletter)
+    {
+        $this->newsletter = (bool) $newsletter;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNewsletter()
+    {
+        return $this->newsletter;
+    }
+
+    /**
+     * @param int $creationDate
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate =  (int) $creationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreationDate()
+    {
+        if(!$this->creationDate) {
+            $this->creationDate = time();
+        }
+
+        return $this->creationDate;
+    }
+
+    /**
+     * @param int $modificationDate
+     */
+    public function setModificationDate($modificationDate)
+    {
+        $this->modificationDate = (int) $modificationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getModificationDate()
+    {
+        if(!$this->modificationDate) {
+            $this->modificationDate = time();
+        }
+        return $this->modificationDate;
+    }
+}

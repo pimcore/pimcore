@@ -113,7 +113,7 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
      */
     public function emailLogsAction()
     {
-        $list = new Document_Email_Log_List();
+        $list = new Tool_Email_Log_List();
         if ($this->getParam('documentId')) {
             $list->setCondition('documentId = ' . (int)$this->getParam('documentId'));
         }
@@ -167,7 +167,7 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
     public function showEmailLogAction()
     {
         $type = $this->getParam('type');
-        $emailLog = Document_Email_Log::getById($this->getParam('id'));
+        $emailLog = Tool_Email_Log::getById($this->getParam('id'));
 
         if ($this->getParam('type') == 'text') {
             $this->disableViewAutoRender();
@@ -191,6 +191,71 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         else {
             die('No Type specified');
         }
+    }
+
+    public function blacklistAction() {
+
+        if ($this->getParam("data")) {
+
+            $data = Zend_Json::decode($this->getParam("data"));
+
+            if(is_array($data)) {
+                foreach ($data as &$value) {
+                    $value = trim($value);
+                }
+            }
+
+            if ($this->getParam("xaction") == "destroy") {
+                $address = Tool_Email_Blacklist::getByAddress($data);
+                $address->delete();
+
+                $this->_helper->json(array("success" => true, "data" => array()));
+            }
+            else if ($this->getParam("xaction") == "update") {
+                $address = Tool_Email_Blacklist::getByAddress($data["address"]);
+                $address->setValues($data);
+                $address->save();
+
+                $this->_helper->json(array("data" => $address, "success" => true));
+            }
+            else if ($this->getParam("xaction") == "create") {
+
+                unset($data["id"]);
+
+                $address = new Tool_Email_Blacklist();
+                $address->setValues($data);
+                $address->save();
+
+                $this->_helper->json(array("data" => $address, "success" => true));
+            }
+        }
+        else {
+            // get list of routes
+
+            $list = new Tool_Email_Blacklist_List();
+
+            $list->setLimit($this->getParam("limit"));
+            $list->setOffset($this->getParam("start"));
+
+            if($this->getParam("sort")) {
+                $list->setOrderKey($this->getParam("sort"));
+                $list->setOrder($this->getParam("dir"));
+            }
+
+            if($this->getParam("filter")) {
+                $list->setCondition("`address` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
+            }
+
+            $data = $list->load();
+
+            $this->_helper->json(array(
+                "success" => true,
+                "data" => $data,
+                "total" => $list->getTotalCount()
+            ));
+        }
+
+        $this->_helper->json(false);
     }
 
     /**
@@ -270,8 +335,8 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
     public function deleteEmailLogAction()
     {
         $success = false;
-        $emailLog = Document_Email_Log::getById($this->getParam('id'));
-        if ($emailLog instanceof Document_Email_Log) {
+        $emailLog = Tool_Email_Log::getById($this->getParam('id'));
+        if ($emailLog instanceof Tool_Email_Log) {
             $emailLog->delete();
             $success = true;
         }
@@ -285,9 +350,9 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
      */
     public function resendEmailAction(){
         $success = false;
-        $emailLog = Document_Email_Log::getById($this->getParam('id'));
+        $emailLog = Tool_Email_Log::getById($this->getParam('id'));
 
-        if($emailLog instanceof Document_Email_Log){
+        if($emailLog instanceof Tool_Email_Log){
             $mail = new Pimcore_Mail();
             $mail->preventDebugInformationAppending();
 

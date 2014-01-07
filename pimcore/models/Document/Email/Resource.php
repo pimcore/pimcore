@@ -143,12 +143,6 @@ class Document_Email_Resource extends Document_PageSnippet_Resource {
             //deleting log files
             $this->db->delete("email_log", $this->db->quoteInto("documentId = ?", $this->model->getId()));
 
-            /*$mailLogs = new Document_Email_Log_List();
-            $mailLogs->setCondition(" documentId= " . $this->model->getId());
-            foreach($mailLogs->load() as $logEntry){
-                $logEntry->delete();
-            }*/
-
             parent::delete();
         }
         catch (Exception $e) {

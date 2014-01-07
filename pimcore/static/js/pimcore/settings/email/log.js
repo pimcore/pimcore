@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.settings.emaillog");
-pimcore.settings.emaillog = Class.create({
+pimcore.registerNS("pimcore.settings.email.log");
+pimcore.settings.email.log = Class.create({
 
     filterField: null,
 

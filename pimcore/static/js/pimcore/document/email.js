@@ -32,7 +32,7 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
 
         if (this.isAllowed("settings")) {
             this.settings = new pimcore.document.emails.settings(this);
-            this.logs     = new pimcore.settings.emaillog(this);
+            this.logs     = new pimcore.settings.email.log(this);
             this.scheduler = new pimcore.element.scheduler(this, "document");
             this.notes = new pimcore.element.notes(this, "document");
         }

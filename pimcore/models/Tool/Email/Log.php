@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Email_Log extends Pimcore_Model_Abstract
+class Tool_Email_Log extends Pimcore_Model_Abstract
 {
 
     /**
@@ -211,7 +211,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
             return null;
         }
 
-        $emailLog = new Document_Email_Log();
+        $emailLog = new Tool_Email_Log();
         $emailLog->getResource()->getById($id);
         $emailLog->setEmailLogExistsHtml();
         $emailLog->setEmailLogExistsText();

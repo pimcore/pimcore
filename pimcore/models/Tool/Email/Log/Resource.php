@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
+class Tool_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
 
     /**
      * Name of the db table
