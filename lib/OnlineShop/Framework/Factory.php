@@ -43,6 +43,11 @@ class OnlineShop_Framework_Factory {
     private $pricingManager;
 
     /**
+     * @var OnlineShop_OfferTool_IService
+     */
+    private $offerToolService;
+
+    /**
      * @var string[]
      */
     private $allTenants;
@@ -110,6 +115,7 @@ class OnlineShop_Framework_Factory {
         $this->configureCheckoutManager($config);
         $this->configurePricingManager($config);
 
+        $this->configureOfferToolService($config);
     }
 
     private function configureCartManager($config) {
@@ -236,6 +242,21 @@ class OnlineShop_Framework_Factory {
     }
 
 
+    private function configureOfferToolService($config) {
+        if(!empty($config->onlineshop->offertool->class)) {
+            if (!class_exists($config->onlineshop->offertool->class)) {
+                throw new OnlineShop_Framework_Exception_InvalidConfigException("OfferTool class " . $config->onlineshop->offertool->class . " not found.");
+            }
+            if (!class_exists($config->onlineshop->offertool->orderstorage->offerClass)) {
+                throw new OnlineShop_Framework_Exception_InvalidConfigException("OfferToolOffer class " . $config->onlineshop->offertool->orderstorage->offerClass . " not found.");
+            }
+            if (!class_exists($config->onlineshop->offertool->orderstorage->offerItemClass)) {
+                throw new OnlineShop_Framework_Exception_InvalidConfigException("OfferToolOfferItem class " . $config->onlineshop->offertool->orderstorage->offerItemClass . " not found.");
+            }
+        }
+    }
+
+
     public function getCartManager() {
         return $this->cartManager;
     }
@@ -336,7 +357,7 @@ class OnlineShop_Framework_Factory {
      * @return string[]
      */
     public function getAllTenants() {
-        if(empty($this->allTenants) && $this->config->onlineshop->productindex->tenants) {
+        if(empty($this->allTenants) && $this->config->onlineshop->productindex->tenants && $this->config->onlineshop->productindex->tenants instanceof Zend_Config) {
             foreach($this->config->onlineshop->productindex->tenants as $name => $tenant) {
                 $this->allTenants[$name] = $name;
             }
@@ -362,5 +383,21 @@ class OnlineShop_Framework_Factory {
     public function getPricingManager()
     {
         return $this->pricingManager;
+    }
+
+    /**
+     * @return OnlineShop_OfferTool_IService
+     */
+    public function getOfferToolService() {
+        if(empty($this->offerToolService)) {
+            $className = (string)$this->config->onlineshop->offertool->class;
+            $this->offerToolService = new $className(
+                (string) $this->config->onlineshop->offertool->orderstorage->offerClass,
+                (string) $this->config->onlineshop->offertool->orderstorage->offerItemClass,
+                (string) $this->config->onlineshop->offertool->orderstorage->parentFolderPath
+            );
+        }
+
+        return $this->offerToolService;
     }
 }
