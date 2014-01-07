@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.document.emails.logs");
-pimcore.document.emails.logs = Class.create({
+pimcore.registerNS("pimcore.settings.emaillog");
+pimcore.settings.emaillog = Class.create({
 
     filterField: null,
 
@@ -37,6 +37,23 @@ pimcore.document.emails.logs = Class.create({
             }
         });
 
+        if(!this.document) {
+            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            tabPanel.add(this.getLayout());
+            tabPanel.activate(this.getLayout());
+
+            pimcore.layout.refresh();
+
+            this.getLayout().on("destroy", function () {
+                pimcore.globalmanager.remove("sent_emails");
+            }.bind(this));
+        }
+    },
+
+    activate: function () {
+        // this is only for standalone mode (without document set)
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.activate(this.getLayout());
     },
 
     load: function () {
@@ -53,7 +70,7 @@ pimcore.document.emails.logs = Class.create({
                 border: false,
                 layout: "fit",
                 items: [this.grid],
-
+                closable: this.document ? false : true,
                 iconCls: "pimcore_icon_email_transfer",
                 listeners: {
                     activate: function() {
@@ -331,7 +348,7 @@ pimcore.document.emails.logs = Class.create({
             url: "/admin/email/email-logs/",
             baseParams: {
                 limit: itemsPerPage,
-                documentId: this.document.id
+                documentId: this.document ? this.document.id : null
             },
             fields: storeFields
         });
@@ -365,7 +382,7 @@ pimcore.document.emails.logs = Class.create({
                       style: "margin: 0 10px 0 0;"
                     },this.filterField
                   ],
-            bbar: [this.pagingtoolbar]
+            bbar: this.pagingtoolbar
         });
 
         return this.grid;

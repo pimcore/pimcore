@@ -124,13 +124,19 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         if($this->getParam('filter')){
             if ($this->getParam("filter")) {
                 $filterTerm = $list->quote("%".mb_strtolower($this->getParam("filter"))."%");
-                $list->setCondition("   (`from` LIKE " . $filterTerm . " OR
+
+                $condition = "(`from` LIKE " . $filterTerm . " OR
                                         `to` LIKE " . $filterTerm . " OR
                                         `cc` LIKE " . $filterTerm . " OR
                                         `bcc` LIKE " . $filterTerm . " OR
                                         `subject` LIKE " . $filterTerm . " OR
-                                        `params` LIKE " . $filterTerm . ") AND
-                                       documentId = " . (int)$this->getParam('documentId'));
+                                        `params` LIKE " . $filterTerm . ")";
+
+                if ($this->getParam('documentId')) {
+                    $condition .= "AND documentId = " . (int)$this->getParam('documentId');
+                }
+
+                $list->setCondition($condition);
             }
         }
 
