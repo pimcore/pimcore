@@ -479,7 +479,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function bounceMailInboxListAction() {
 
-        $this->checkPermission("bounce_mail_inbox");
+        $this->checkPermission("emails");
 
         $offset = ($this->getParam("start")) ? $this->getParam("start")+1 : 1;
         $limit = ($this->getParam("limit")) ? $this->getParam("limit") : 40;
@@ -522,7 +522,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function bounceMailInboxDetailAction() {
 
-        $this->checkPermission("bounce_mail_inbox");
+        $this->checkPermission("emails");
 
         $mail = $this->getBounceMailbox();
 

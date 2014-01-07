@@ -308,8 +308,6 @@ pimcore.layout.toolbar = Class.create({
         }
 
         if (user.isAllowed("emails")) {
-
-
             extrasItems.push({
                 text: t("email"),
                 iconCls: "pimcore_icon_email",

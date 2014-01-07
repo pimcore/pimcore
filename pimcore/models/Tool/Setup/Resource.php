@@ -155,7 +155,7 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
             array("key" => "targeting"),
             array("key" => "notes_events"),
             array("key" => "backup"),
-            array("key" => "bounce_mail_inbox"),
+            array("key" => "emails"),
             array("key" => "website_settings"),
             array("key" => "newsletter"),
         );
