@@ -167,7 +167,7 @@ class Pimcore_Placeholder
 
 
     /**
-     * Detects the Placeholders in a string and returns a array with the placeholder information
+     * Detects the Placeholders in a string and returns an array with the placeholder information
      *
      * @param string $contentString
      * @param null | array $params
@@ -217,7 +217,7 @@ class Pimcore_Placeholder
     }
 
     /**
-     * Helper to simply replace the placeholders with there value
+     * Helper to simply replace the placeholders with their value
      *
      * @param string | Document $mixed
      * @param array $params
