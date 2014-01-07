@@ -86,6 +86,8 @@ $setup->contents(array(
 // to be sure => reset the database
 Pimcore_Resource::reset();
 
+Pimcore_Model_Cache::disable();
+
 // add the tests, which still reside in the original development unit, not in pimcore_phpunit to the include path
 $includePaths = array(
     get_include_path()
