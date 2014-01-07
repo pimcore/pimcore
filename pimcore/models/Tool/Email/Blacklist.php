@@ -23,16 +23,6 @@ class Tool_Email_Blacklist extends Pimcore_Model_Abstract {
     public $address;
 
     /**
-     * @var string
-     */
-    public $newsletter = false;
-
-    /**
-     * @var int
-     */
-    public $all = true;
-
-    /**
      * @var int
      */
     public $creationDate;
@@ -73,38 +63,6 @@ class Tool_Email_Blacklist extends Pimcore_Model_Abstract {
     public function getAddress()
     {
         return $this->address;
-    }
-
-    /**
-     * @param int $all
-     */
-    public function setAll($all)
-    {
-        $this->all = (bool) $all;
-    }
-
-    /**
-     * @return int
-     */
-    public function getAll()
-    {
-        return $this->all;
-    }
-
-    /**
-     * @param string $newsletter
-     */
-    public function setNewsletter($newsletter)
-    {
-        $this->newsletter = (bool) $newsletter;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNewsletter()
-    {
-        return $this->newsletter;
     }
 
     /**

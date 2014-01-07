@@ -65,8 +65,6 @@ pimcore.settings.email.blacklist = Class.create({
             idProperty: "address"
         }, [
             {name:'address', allowBlank: false},
-            {name:'newsletter'},
-            {name:'all'},
             {name:'creationDate'},
             {name:'modificationDate'}
         ]);
@@ -144,25 +142,10 @@ pimcore.settings.email.blacklist = Class.create({
             }
         }));
 
-        var checkAll = new Ext.grid.CheckColumn({
-            header: t("all"),
-            dataIndex: "all",
-            width: 70
-        });
-
-        var checkNewsletter = new Ext.grid.CheckColumn({
-            header: t("newsletter"),
-            dataIndex: "newsletter",
-            width: 70
-        });
-
         var typesColumns = [
-            {header:t("email_address"), width:50, sortable:true, dataIndex:'address',
-                editor:new Ext.form.TextField({})},
-            checkNewsletter,
-            checkAll,
+            {header:t("email_address"), width:50, sortable:true, dataIndex:'address', editable: false},
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
-                hidden: true,
+                hidden: false,
                 renderer: function(d) {
                     if (d !== undefined) {
                         var date = new Date(d * 1000);
@@ -232,10 +215,15 @@ pimcore.settings.email.blacklist = Class.create({
 
 
     onAdd:function (btn, ev) {
-        var u = new this.grid.store.recordType({
-            name:""
-        });
+        Ext.MessageBox.prompt("", t("email_address"), function (button, value) {
+            if(button == "ok") {
+                var u = new this.grid.store.recordType();
+                u.set("address", value);
+                u.markDirty();
 
-        this.grid.store.insert(0, u);
+                this.grid.store.insert(0, u);
+            }
+
+        }.bind(this));
     }
 });
