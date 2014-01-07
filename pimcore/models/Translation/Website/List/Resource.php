@@ -17,7 +17,7 @@
 
 class Translation_Website_List_Resource extends Translation_Abstract_List_Resource {
     /**
-     * Loads a list of translations for the specicifies parameters, returns an array of Translation elements
+     * Loads a list of translations for the specified parameters, returns an array of Translation elements
      *
      * @return array
      */
