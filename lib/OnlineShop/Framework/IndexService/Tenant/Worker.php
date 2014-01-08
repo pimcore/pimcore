@@ -201,6 +201,10 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
             if(!empty($columnConfig->name)) {
                 $columnConfig = array($columnConfig);
             }
+            else if(empty($columnConfig))
+            {
+                $columnConfig = array();
+            }
             foreach($columnConfig as $column) {
                 try {
                     $value = null;
