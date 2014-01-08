@@ -45,6 +45,7 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         // set this headers to avoid problems with proxies, ...
         if($this->getResponse()->canSendHeaders()) {
             $this->getResponse()->setHeader("Cache-Control","no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0, max-age=0", true);
+            $this->getResponse()->setHeader("Cache-Control", "no-transform"); // this is for mod_pagespeed
             $this->getResponse()->setHeader("Pragma","no-cache", true);
             $this->getResponse()->setHeader("Expires", "Tue, 01 Jan 1980 00:00:00 GMT", true);
         }
