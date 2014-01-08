@@ -74,7 +74,7 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
         $excludePatterns = array();
 
         // only enable GET method
-        if (!$request->isGet()) {
+        if (!$request->isGet() || Pimcore::inDebugMode()) {
             return $this->disable();
         }
 

@@ -111,6 +111,9 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
             $user = Pimcore_Tool_Authentication::authenticateSession();
         }
 
+        if(Pimcore::inDebugMode()) {
+            $this->disableBrowserCache();
+        }
 
         if (!$this->document->isPublished()) {
             if (Pimcore_Tool::isFrontentRequestByAdmin()) {
