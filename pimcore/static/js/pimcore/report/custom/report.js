@@ -100,28 +100,28 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             },
             listeners: {
                 load: function() {
+                    var filterData = this.gridFilters.getFilterData();
+
                     if(this.chartStore) {
-                        var filterData = this.gridFilters.getFilterData();
                         this.chartStore.load({
                             params: {
                                 name: this.config["name"],
                                 filter: this.gridFilters.buildQuery(filterData).filter
                             }
                         });
+                    }
 
-                        for(var j = 0; j < this.drillDownStores.length; j++) {
-                            if(this.drillDownStores[j].notReload) {
-                                //to prevent reopening of combo box
-                                this.drillDownStores[j].notReload = false;
-                            } else {
-                                this.drillDownStores[j].load({
-                                    params: {
-                                        filter: this.gridFilters.buildQuery(filterData).filter
-                                    }
-                                });
-                            }
+                    for(var j = 0; j < this.drillDownStores.length; j++) {
+                        if(this.drillDownStores[j].notReload) {
+                            //to prevent reopening of combo box
+                            this.drillDownStores[j].notReload = false;
+                        } else {
+                            this.drillDownStores[j].load({
+                                params: {
+                                    filter: this.gridFilters.buildQuery(filterData).filter
+                                }
+                            });
                         }
-
                     }
 
                 }.bind(this)
