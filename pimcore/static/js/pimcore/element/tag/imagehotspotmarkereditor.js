@@ -23,7 +23,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
     },
 
     open: function (modal) {
-        var imageUrl = '/admin/asset/get-image-thumbnail/id/' + this.imageId + '/width/500/height/400/contain/true';
+        var imageUrl = '/admin/asset/get-image-thumbnail/id/' + this.imageId + '/width/1000/height/800/contain/true';
 
         if(typeof modal != "undefined") {
             this.modal = modal;
@@ -33,8 +33,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         this.hotspotMetaData = {};
 
         this.hotspotWindow = new Ext.Window({
-            width: 500,
-            height: 400,
+            width: 1000,
+            height: 800,
             modal: this.modal,
             closeAction: "close",
             resizable: false,
