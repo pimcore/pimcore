@@ -27,7 +27,7 @@ class Asset_Image extends Asset {
      */
     public function update() {
 
-        // only do this if the file exists and conains data
+        // only do this if the file exists and contains data
         if($this->getDataChanged() || !$this->getCustomSetting("imageDimensionsCalculated")) {
             try {
                 // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
