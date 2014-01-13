@@ -106,7 +106,8 @@ pimcore.object.klass = Class.create({
     getEditPanel: function () {
         if (!this.editPanel) {
             this.editPanel = new Ext.TabPanel({
-                region: "center"
+                region: "center",
+                enableTabScroll:true
             });
         }
 
