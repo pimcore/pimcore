@@ -313,7 +313,11 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      * @return string
      */
     public function getVersionPreview($data) {
-        return $data->getHtmlTable($this->rows, $this->cols);
+        if ($data) {
+            return $data->getHtmlTable($this->rows, $this->cols);
+        } else {
+            return null;
+        }
     }
 
     /**
