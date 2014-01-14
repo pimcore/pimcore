@@ -82,6 +82,18 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
             // custom views end
 
+            if (!$this->getUser()->isAdmin()) {
+
+                $userIds = $this->getUser()->getRoles();
+                $userIds[] = $this->getUser()->getId();
+                $condition .= " AND (
+                                                    (select list from users_workspaces_object where userId in (" . implode(',', $userIds) . ") and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_object where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )";
+            }
+
+
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
@@ -102,11 +114,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         if ($this->getParam("limit")) {
             $this->_helper->json(array(
-                "total" => $object->getChildAmount(array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_VARIANT)),
+                "total" => $object->getChildAmount(array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_VARIANT), $this->getUser()),
                 "nodes" => $objects
             ));
-        }
-        else {
+        } else {
             $this->_helper->json($objects);
         }
 
@@ -191,8 +202,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $tmpObject["qtipCfg"] = array(
                 "title" => "ID: " . $child->getId()
             );
-        }
-        else {
+        } else {
             $tmpObject["published"] = $child->isPublished();
             $tmpObject["className"] = $child->getClass()->getName();
             $tmpObject["qtipCfg"] = array(
@@ -214,16 +224,16 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         if ($tmpObject["type"] == "variant") {
             $tmpObject["iconCls"] = "pimcore_icon_tree_variant";
         } else {
-            if($child->getElementAdminStyle()->getElementIcon()) {
+            if ($child->getElementAdminStyle()->getElementIcon()) {
                 $tmpObject["icon"] = $child->getElementAdminStyle()->getElementIcon();
             }
 
-            if($child->getElementAdminStyle()->getElementIconClass()) {
+            if ($child->getElementAdminStyle()->getElementIconClass()) {
                 $tmpObject["iconCls"] = $child->getElementAdminStyle()->getElementIconClass();
             }
         }
 
-        if($child->getElementAdminStyle()->getElementCssClass()) {
+        if ($child->getElementAdminStyle()->getElementCssClass()) {
             $tmpObject["cls"] .= $child->getElementAdminStyle()->getElementCssClass() . " ";
         }
 
@@ -242,7 +252,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         return $tmpObject;
     }
 
-    public function getIdPathPagingInfoAction () {
+    public function getIdPathPagingInfoAction()
+    {
 
         $path = $this->getParam("path");
         $pathParts = explode("/", $path);
@@ -250,7 +261,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         $limit = $this->getParam("limit");
 
-        if(empty($limit)) {
+        if (empty($limit)) {
             $limit = 30;
         }
 
@@ -269,12 +280,12 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 "total" => $total
             );
 
-            if($total > $limit) {
+            if ($total > $limit) {
                 $idList = $list->loadIdList();
                 $position = array_search($object->getId(), $idList);
-                $info["position"] = $position+1;
+                $info["position"] = $position + 1;
 
-                $info["page"] = ceil($info["position"]/$limit);
+                $info["page"] = ceil($info["position"] / $limit);
                 $containsPaging = true;
             }
 
@@ -336,10 +347,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData["general"]["showVariants"] = $object->getClass()->getShowVariants();
             $objectData["general"]["fullpath"] = $object->getFullPath();
 
-            if($object->getElementAdminStyle()->getElementIcon()) {
+            if ($object->getElementAdminStyle()->getElementIcon()) {
                 $objectData["general"]["icon"] = $object->getElementAdminStyle()->getElementIcon();
             }
-            if($object->getElementAdminStyle()->getElementIconClass()) {
+            if ($object->getElementAdminStyle()->getElementIconClass()) {
                 $objectData["general"]["iconCls"] = $object->getElementAdminStyle()->getElementIconClass();
             }
 
@@ -352,8 +363,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData["childdata"]["data"]["classes"] = $object->getResource()->getClasses();
 
             $this->_helper->json($objectData);
-        }
-        else {
+        } else {
             Logger::debug("prevented getting object id [ " . $object->getId() . " ] because of missing permissions");
             $this->_helper->json(array("success" => false, "message" => "missing_permission"));
         }
@@ -364,7 +374,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     private $objectData;
     private $metaData;
 
-    private function getDataForObject(Object_Concrete $object, $objectFromVersion = false) {
+    private function getDataForObject(Object_Concrete $object, $objectFromVersion = false)
+    {
         foreach ($object->getClass()->getFieldDefinitions() as $key => $def) {
             $this->getDataForField($object, $key, $def, $objectFromVersion);
         }
@@ -378,7 +389,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
      * @param  $fielddefinition
      * @return void
      */
-    private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0) {
+    private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0)
+    {
         $parent = Object_Service::hasInheritableParentObject($object);
         $getter = "get" . ucfirst($key);
 
@@ -386,9 +398,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         // nonownerobjects should go in there anyway (regardless if it a version or not), so that the values can be loaded
         if (
             (!$objectFromVersion
-            && $fielddefinition instanceof Object_Class_Data_Relations_Abstract
-            && $fielddefinition->getLazyLoading()
-            && !$fielddefinition instanceof Object_Class_Data_ObjectsMetadata )
+                && $fielddefinition instanceof Object_Class_Data_Relations_Abstract
+                && $fielddefinition->getLazyLoading()
+                && !$fielddefinition instanceof Object_Class_Data_ObjectsMetadata)
             || $fielddefinition instanceof Object_Class_Data_Nonownerobjects
         ) {
 
@@ -396,14 +408,14 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             if ($fielddefinition->isRemoteOwner()) {
                 $refKey = $fielddefinition->getOwnerFieldName();
                 $refClass = Object_Class::getByName($fielddefinition->getOwnerClassName());
-                if($refClass) {
+                if ($refClass) {
                     $refId = $refClass->getId();
                 }
             } else {
                 $refKey = $key;
             }
             $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
-            if(empty($relations) && !empty($parent)) {
+            if (empty($relations) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
                 $data = array();
@@ -432,9 +444,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 // make sure that the localized field participates in the inheritance detection process
                 $isInheritedValue = $value["inherited"];
             }
-            if(((!$fielddefinition instanceof Object_Class_Data_Numeric && empty($value)) ||
-                ($fielddefinition instanceof Object_Class_Data_Numeric && $value === null))
-                && !empty($parent)) {
+            if (((!$fielddefinition instanceof Object_Class_Data_Numeric && empty($value)) ||
+                    ($fielddefinition instanceof Object_Class_Data_Numeric && $value === null))
+                && !empty($parent)
+            ) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
                 $isInheritedValue = $isInheritedValue || ($level != 0);
@@ -443,7 +456,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $this->objectData[$key] = $value;
                 $this->metaData[$key]['inherited'] = $isInheritedValue;
 
-                if($isInheritedValue && !empty($value) &&  !$this->isInheritableField($fielddefinition)) {
+                if ($isInheritedValue && !empty($value) && !$this->isInheritableField($fielddefinition)) {
                     $this->objectData[$key] = null;
                     $this->metaData[$key]['inherited'] = false;
                     $this->metaData[$key]['hasParentValue'] = true;
@@ -460,12 +473,13 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         }
     }
 
-    private function getParentValue($object, $key) {
+    private function getParentValue($object, $key)
+    {
         $parent = Object_Service::hasInheritableParentObject($object);
         $getter = "get" . ucfirst($key);
-        if($parent) {
+        if ($parent) {
             $value = $parent->$getter();
-            if($value) {
+            if ($value) {
                 $result = new stdClass();
                 $result->value = $value;
                 $result->id = $parent->getId();
@@ -476,8 +490,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         }
     }
 
-    private function isInheritableField(Object_Class_Data $fielddefinition) {
-        if($fielddefinition instanceof Object_Class_Data_Fieldcollections
+    private function isInheritableField(Object_Class_Data $fielddefinition)
+    {
+        if ($fielddefinition instanceof Object_Class_Data_Fieldcollections
 //            || $fielddefinition instanceof Object_Class_Data_Localizedfields
         ) {
             return false;
@@ -514,7 +529,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $objectData["general"] = array();
             $objectData["idPath"] = Element_Service::getIdPath($object);
-            $allowedKeys = array("o_published", "o_key", "o_id", "o_type","o_path", "o_modificationDate", "o_creationDate", "o_userOwner", "o_userModification");
+            $allowedKeys = array("o_published", "o_key", "o_id", "o_type", "o_path", "o_modificationDate", "o_creationDate", "o_userOwner", "o_userModification");
             foreach (get_object_vars($object) as $key => $value) {
                 if (strstr($key, "o_") && in_array($key, $allowedKeys)) {
                     $objectData["general"][$key] = $value;
@@ -529,17 +544,16 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData["classes"] = $object->getResource()->getClasses();
 
             // grid-config
-            $configFile= PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "-user_" . $this->getUser()->getId() . ".psf";
+            $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "-user_" . $this->getUser()->getId() . ".psf";
             if (is_file($configFile)) {
                 $gridConfig = Pimcore_Tool_Serialize::unserialize(file_get_contents($configFile));
-                if($gridConfig) {
+                if ($gridConfig) {
                     $objectData["selectedClass"] = $gridConfig["classId"];
                 }
             }
 
             $this->_helper->json($objectData);
-        }
-        else {
+        } else {
             Logger::debug("prevented getting folder id [ " . $object->getId() . " ] because of missing permissions");
             $this->_helper->json(array("success" => false, "message" => "missing_permission"));
         }
@@ -564,7 +578,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             if (!Object_Service::pathExists($intendedPath) || true) {
 
                 $object = new $className();
-                if($object instanceof Object_Concrete) {
+                if ($object instanceof Object_Concrete) {
                     $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
                 }
 
@@ -584,7 +598,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $object->setUserModification($this->getUser()->getId());
                 $object->setPublished(false);
 
-                if($this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_OBJECT || $this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_VARIANT) {
+                if ($this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_OBJECT || $this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_VARIANT) {
                     $object->setType($this->getParam("objecttype"));
                 }
 
@@ -612,8 +626,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 "type" => $object->getType(),
                 "message" => $message
             ));
-        }
-        else {
+        } else {
             $this->_helper->json(array(
                 "success" => $success,
                 "message" => $message
@@ -649,8 +662,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
             }
-        }
-        else {
+        } else {
             Logger::debug("prevented creating object id because of missing permissions");
         }
 
@@ -679,7 +691,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $this->_helper->json(array("success" => true, "deleted" => $deletedItems));
 
-        } else if($this->getParam("id")) {
+        } else if ($this->getParam("id")) {
             $object = Object_Abstract::getById($this->getParam("id"));
             if ($object->isAllowed("delete")) {
                 $object->delete();
@@ -699,15 +711,14 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         try {
             $object = Object_Abstract::getById($this->getParam("id"));
             $hasDependency = $object->getDependencies()->isRequired();
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             Logger::err("failed to access object with id: " . $this->getParam("id"));
         }
 
         $deleteJobs = array();
 
         // check for childs
-        if($object instanceof Object_Abstract) {
+        if ($object instanceof Object_Abstract) {
 
             $deleteJobs[] = array(array(
                 "url" => "/admin/recyclebin/add",
@@ -723,15 +734,15 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
 
             $childs = 0;
-            if($hasChilds) {
+            if ($hasChilds) {
                 // get amount of childs
                 $list = new Object_List();
                 $list->setCondition("o_path LIKE '" . $object->getFullPath() . "/%'");
                 $childs = $list->getTotalCount();
 
-                if($childs > 0) {
+                if ($childs > 0) {
                     $deleteObjectsPerRequest = 5;
-                    for($i=0; $i<ceil($childs/$deleteObjectsPerRequest); $i++) {
+                    for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
                         $deleteJobs[] = array(array(
                             "url" => "/admin/object/delete",
                             "params" => array(
@@ -769,15 +780,15 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $allowUpdate = true;
 
         $object = Object_Abstract::getById($this->getParam("id"));
-        if($object instanceof Object_Concrete) {
+        if ($object instanceof Object_Concrete) {
             $object->setOmitMandatoryCheck(true);
         }
 
         // this prevents the user from renaming, relocating (actions in the tree) if the newest version isn't the published one
         // the reason is that otherwise the content of the newer not published version will be overwritten
-        if($object instanceof Object_Concrete) {
+        if ($object instanceof Object_Concrete) {
             $latestVersion = $object->getLatestVersion();
-            if($latestVersion && $latestVersion->getData()->getModificationDate() != $object->getModificationDate()) {
+            if ($latestVersion && $latestVersion->getData()->getModificationDate() != $object->getModificationDate()) {
                 $this->_helper->json(array("success" => false, "message" => "You can't relocate if there's a newer not published version"));
             }
         }
@@ -788,10 +799,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         if ($object->isAllowed("settings")) {
 
 
-
             if ($values["key"] && $object->isAllowed("rename")) {
                 $object->setKey($values["key"]);
-            } else if ($values["key"]!= $object->getKey()){
+            } else if ($values["key"] != $object->getKey()) {
                 Logger::debug("prevented renaming object because of missing permissions ");
             }
 
@@ -801,7 +811,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 //check if parent is changed
                 if ($object->getParentId() != $parent->getId()) {
 
-                    if(!$parent->isAllowed("create")){
+                    if (!$parent->isAllowed("create")) {
                         throw new Exception("Prevented moving object - no create permission on new parent ");
                     }
 
@@ -833,11 +843,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     Logger::error($e);
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
-            }
-            else {
+            } else {
                 Logger::debug("prevented move of object, object with same path+key alredy exists in this location.");
             }
-        } else if ($object->isAllowed("rename") &&  $values["key"] ) {
+        } else if ($object->isAllowed("rename") && $values["key"]) {
             //just rename
             try {
                 $object->setKey($values["key"]);
@@ -895,8 +904,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             // do not allow all values to be set, will cause problems (eg. icon)
             if (is_array($general) && count($general) > 0) {
                 foreach ($general as $key => $value) {
-                    if(!in_array($key, array("o_id", "o_classId", "o_className", "o_type", "icon", "o_userOwner", "o_userModification"))) {
-                        $object->setValue($key,$value);
+                    if (!in_array($key, array("o_id", "o_classId", "o_className", "o_type", "icon", "o_userOwner", "o_userModification"))) {
+                        $object->setValue($key, $value);
                     }
                 }
             }
@@ -930,7 +939,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         }
 
         // unpublish and save version is possible without checking mandatory fields
-        if($this->getParam("task") == "unpublish" || $this->getParam("task") == "version") {
+        if ($this->getParam("task") == "unpublish" || $this->getParam("task") == "version") {
             $object->setOmitMandatoryCheck(true);
         }
 
@@ -945,8 +954,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
             }
 
-        }
-        else if ($this->getParam("task") == "session") {
+        } else if ($this->getParam("task") == "session") {
 
             //$object->_fulldump = true; // not working yet, donno why
 
@@ -956,8 +964,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }, "pimcore_objects");
 
             $this->_helper->json(array("success" => true));
-        }
-        else {
+        } else {
             if ($object->isAllowed("save")) {
                 try {
                     $object->saveVersion();
@@ -990,7 +997,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                 // grid config
                 $gridConfig = Zend_Json::decode($this->getParam("gridconfig"));
-                if($classId) {
+                if ($classId) {
                     $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "_" . $classId . "-user_" . $this->getUser()->getId() . ".psf";
                 } else {
                     $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "-user_" . $this->getUser()->getId() . ".psf";
@@ -1041,8 +1048,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                         $property->setInheritable($propertyData["inheritable"]);
 
                         $properties[$propertyName] = $property;
-                    }
-                    catch (Exception $e) {
+                    } catch (Exception $e) {
                         Logger::err("Can't add " . $propertyName . " to object " . $object->getFullPath());
                     }
                 }
@@ -1132,7 +1138,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     public function gridProxyAction()
     {
 
-        if($this->getParam("language")) {
+        if ($this->getParam("language")) {
             $this->setLanguage($this->getParam("language"), true);
         }
 
@@ -1145,12 +1151,12 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     // save
                     $object = Object_Abstract::getById($data["id"]);
 
-                    if(!$object->isAllowed("publish")) {
+                    if (!$object->isAllowed("publish")) {
                         throw new Exception("Permission denied. You don't have the rights to save this object.");
                     }
 
                     $objectData = array();
-                    foreach($data as $key => $value) {
+                    foreach ($data as $key => $value) {
                         $parts = explode("~", $key);
                         if (substr($key, 0, 1) == "~") {
                             $type = $parts[1];
@@ -1169,7 +1175,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                             $keyValuePairs->setPropertyWithId($keyid, $value, true);
                             $object->$setter($keyValuePairs);
-                        } else if(count($parts) > 1) {
+                        } else if (count($parts) > 1) {
                             $brickType = $parts[0];
                             $brickKey = $parts[1];
                             $brickField = Object_Service::getFieldForBrickType($object->getClass(), $brickType);
@@ -1179,7 +1185,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                             $valueSetter = "set" . ucfirst($brickKey);
 
                             $brick = $object->$fieldGetter()->$brickGetter();
-                            if(empty($brick)) {
+                            if (empty($brick)) {
                                 $classname = "Object_Objectbrick_Data_" . ucfirst($brickType);
                                 $brickSetter = "set" . ucfirst($brickType);
                                 $brick = new $classname($object);
@@ -1223,10 +1229,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $fields = array();
             $bricks = array();
-            if($this->getParam("fields")) {
+            if ($this->getParam("fields")) {
                 $fields = $this->getParam("fields");
 
-                foreach($fields as $f) {
+                foreach ($fields as $f) {
                     $parts = explode("~", $f);
                     $sub = substr($f, 0, 1);
                     if (substr($f, 0, 1) == "~") {
@@ -1234,7 +1240,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 //                        $field = $parts[2];
 //                        $keyid = $parts[3];
                         // key value, ignore for now
-                    } else if(count($parts) > 1) {
+                    } else if (count($parts) > 1) {
                         $bricks[$parts[0]] = $parts[0];
                     }
                 }
@@ -1249,7 +1255,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $sortParam = $this->getParam("sort");
             if (strlen($sortParam) > 0) {
-                if (!(substr($sortParam, 0, 1 ) == "~")) {
+                if (!(substr($sortParam, 0, 1) == "~")) {
                     if ($this->getParam("sort")) {
                         if (array_key_exists($this->getParam("sort"), $colMappings)) {
                             $orderKey = $colMappings[$this->getParam("sort")];
@@ -1267,10 +1273,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $listClass = "Object_" . ucfirst($className) . "_List";
 
             $conditionFilters = array();
-            if($this->getParam("only_direct_children") == "true") {
+            if ($this->getParam("only_direct_children") == "true") {
                 $conditionFilters[] = "o_parentId = " . $folder->getId();
             } else {
-                $conditionFilters[] = "(o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . str_replace("//","/",$folder->getFullPath() . "/") . "%')";
+                $conditionFilters[] = "(o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . str_replace("//", "/", $folder->getFullPath() . "/") . "%')";
             }
 
             // create filter condition
@@ -1282,8 +1288,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
 
             $list = new $listClass();
-            if(!empty($bricks)) {
-                foreach($bricks as $b) {
+            if (!empty($bricks)) {
+                foreach ($bricks as $b) {
                     $list->addObjectbrick($b);
                 }
             }
@@ -1307,7 +1313,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
     }
 
-    public function copyInfoAction() {
+    public function copyInfoAction()
+    {
 
         $transactionId = time();
         $pasteJobs = array();
@@ -1332,7 +1339,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 )
             ));
 
-            if($object->hasChilds(array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_VARIANT))) {
+            if ($object->hasChilds(array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_VARIANT))) {
                 // get amount of childs
                 $list = new Object_List();
                 $list->setCondition("o_path LIKE '" . $object->getFullPath() . "/%'");
@@ -1341,7 +1348,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $list->setObjectTypes(array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_VARIANT));
                 $childIds = $list->loadIdList();
 
-                if(count($childIds) > 0) {
+                if (count($childIds) > 0) {
                     foreach ($childIds as $id) {
                         $pasteJobs[] = array(array(
                             "url" => "/admin/object/copy",
@@ -1358,8 +1365,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
 
             // add id-rewrite steps
-            if($this->getParam("type") == "recursive-update-references") {
-                for($i=0; $i<(count($childIds)+1); $i++) {
+            if ($this->getParam("type") == "recursive-update-references") {
+                for ($i = 0; $i < (count($childIds) + 1); $i++) {
                     $pasteJobs[] = array(array(
                         "url" => "/admin/object/copy-rewrite-ids",
                         "params" => array(
@@ -1369,8 +1376,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     ));
                 }
             }
-        }
-        else if ($this->getParam("type") == "child" || $this->getParam("type") == "replace") {
+        } else if ($this->getParam("type") == "child" || $this->getParam("type") == "replace") {
             // the object itself is the last one
             $pasteJobs[] = array(array(
                 "url" => "/admin/object/copy",
@@ -1389,7 +1395,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         ));
     }
 
-    public function copyRewriteIdsAction () {
+    public function copyRewriteIdsAction()
+    {
 
         $transactionId = $this->getParam("transactionId");
 
@@ -1397,7 +1404,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             return $session->$transactionId;
         }, "pimcore_copy");
 
-        if(!array_key_exists("rewrite-stack",$idStore)) {
+        if (!array_key_exists("rewrite-stack", $idStore)) {
             $idStore["rewrite-stack"] = array_values($idStore["idMapping"]);
         }
 
@@ -1433,17 +1440,17 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $session = Pimcore_Tool_Session::get("pimcore_copy");
 
         $targetId = intval($this->getParam("targetId"));
-        if($this->getParam("targetParentId")) {
+        if ($this->getParam("targetParentId")) {
             $sourceParent = Object_Abstract::getById($this->getParam("sourceParentId"));
 
             // this is because the key can get the prefix "_copy" if the target does already exists
-            if($session->{$this->getParam("transactionId")}["parentId"]) {
+            if ($session->{$this->getParam("transactionId")}["parentId"]) {
                 $targetParent = Object_Abstract::getById($session->{$this->getParam("transactionId")}["parentId"]);
             } else {
                 $targetParent = Object_Abstract::getById($this->getParam("targetParentId"));
             }
 
-            $targetPath = preg_replace("@^".$sourceParent->getFullPath()."@", $targetParent."/", $source->getPath());
+            $targetPath = preg_replace("@^" . $sourceParent->getFullPath() . "@", $targetParent . "/", $source->getPath());
             $target = Object_Abstract::getByPath($targetPath);
         } else {
             $target = Object_Abstract::getById($targetId);
@@ -1456,15 +1463,14 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     if ($this->getParam("type") == "child") {
                         $newObject = $this->_objectService->copyAsChild($target, $source);
 
-                        $session->{$this->getParam("transactionId")}["idMapping"][(int) $source->getId()] = (int) $newObject->getId();
+                        $session->{$this->getParam("transactionId")}["idMapping"][(int)$source->getId()] = (int)$newObject->getId();
 
                         // this is because the key can get the prefix "_copy" if the target does already exists
-                        if($this->getParam("saveParentId")) {
+                        if ($this->getParam("saveParentId")) {
                             $session->{$this->getParam("transactionId")}["parentId"] = $newObject->getId();
                             Pimcore_Tool_Session::writeClose();
                         }
-                    }
-                    else if ($this->getParam("type") == "replace") {
+                    } else if ($this->getParam("type") == "replace") {
                         $this->_objectService->copyContents($target, $source);
                     }
 
@@ -1474,13 +1480,12 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     $success = false;
                     $message = $e->getMessage() . " in object " . $source->getFullPath() . " [id: " . $source->getId() . "]";
                 }
-            }
-            else {
+            } else {
                 Logger::error("could not execute copy/paste, source object with id [ $sourceId ] not found");
                 $this->_helper->json(array("success" => false, "message" => "source object not found"));
             }
         } else {
-            Logger::error("could not execute copy/paste because of missing permissions on target [ ".$targetId." ]");
+            Logger::error("could not execute copy/paste because of missing permissions on target [ " . $targetId . " ]");
             $this->_helper->json(array("error" => false, "message" => "missing_permission"));
         }
 
@@ -1488,14 +1493,15 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     }
 
 
-    public function previewAction () {
+    public function previewAction()
+    {
 
 
         $id = $this->getParam("id");
         $key = "object_" . $id;
 
         $session = Pimcore_Tool_Session::getReadOnly("pimcore_objects");
-        if($session->$key) {
+        if ($session->$key) {
             $object = $session->$key;
         } else {
             die("Preview not available, it seems that there's a problem with this object.");
@@ -1506,10 +1512,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         // replace named variables
         $vars = get_object_vars($object);
         foreach ($vars as $key => $value) {
-            if(!empty($value)) {
-                $url = str_replace("%".$key, urlencode($value), $url);
+            if (!empty($value)) {
+                $url = str_replace("%" . $key, urlencode($value), $url);
             } else {
-                if(strpos($url, "%".$key) !== false) {
+                if (strpos($url, "%" . $key) !== false) {
                     die("No preview available, please ensure that all fields which are required for the preview are filled correctly.");
                 }
             }

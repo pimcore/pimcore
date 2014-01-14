@@ -15,7 +15,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Abstract_Resource extends Element_Resource {
+class Object_Abstract_Resource extends Element_Resource
+{
 
     /**
      * Contains all valid columns in the database table
@@ -29,7 +30,8 @@ class Object_Abstract_Resource extends Element_Resource {
      *
      * @return void
      */
-    public function init() {
+    public function init()
+    {
         $this->validColumnsBase = $this->getValidTableColumns("objects");
     }
 
@@ -39,15 +41,15 @@ class Object_Abstract_Resource extends Element_Resource {
      * @param integer $id
      * @return void
      */
-    public function getById($id) {
+    public function getById($id)
+    {
         $data = $this->db->fetchRow("SELECT objects.*, tree_locks.locked as o_locked FROM objects
             LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
                 WHERE o_id = ?", $id);
 
         if ($data["o_id"]) {
             $this->assignVariablesToModel($data);
-        }
-        else {
+        } else {
             throw new Exception("Object with the ID " . $id . " doesn't exists");
         }
     }
@@ -58,7 +60,8 @@ class Object_Abstract_Resource extends Element_Resource {
      * @param string $path
      * @return void
      */
-    public function getByPath($path) {
+    public function getByPath($path)
+    {
 
         // check for root node
         $_path = $path != "/" ? dirname($path) : $path;
@@ -70,8 +73,7 @@ class Object_Abstract_Resource extends Element_Resource {
 
         if ($data["o_id"]) {
             $this->assignVariablesToModel($data);
-        }
-        else {
+        } else {
             throw new Exception("object doesn't exist");
         }
     }
@@ -82,7 +84,8 @@ class Object_Abstract_Resource extends Element_Resource {
      *
      * @return boolean
      */
-    public function create() {
+    public function create()
+    {
 
 
         $this->db->insert("objects", array(
@@ -102,7 +105,8 @@ class Object_Abstract_Resource extends Element_Resource {
      *
      * @return void
      */
-    public function update() {
+    public function update()
+    {
 
         $object = get_object_vars($this->model);
 
@@ -110,7 +114,7 @@ class Object_Abstract_Resource extends Element_Resource {
         foreach ($object as $key => $value) {
             if (in_array($key, $this->validColumnsBase)) {
                 if (is_bool($value)) {
-                    $value = (int) $value;
+                    $value = (int)$value;
                 }
                 $data[$key] = $value;
             }
@@ -120,7 +124,7 @@ class Object_Abstract_Resource extends Element_Resource {
 
         // tree_locks
         $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'object'");
-        if($this->model->getLocked()) {
+        if ($this->model->getLocked()) {
             $this->db->insert("tree_locks", array(
                 "id" => $this->model->getId(),
                 "type" => "object",
@@ -134,8 +138,9 @@ class Object_Abstract_Resource extends Element_Resource {
      *
      * @return void
      */
-    public function delete() {
-        $this->db->delete("objects", $this->db->quoteInto("o_id = ?", $this->model->getId() ));
+    public function delete()
+    {
+        $this->db->delete("objects", $this->db->quoteInto("o_id = ?", $this->model->getId()));
     }
 
     /**
@@ -144,19 +149,20 @@ class Object_Abstract_Resource extends Element_Resource {
      * @param string $oldPath
      * @return void
      */
-    public function updateChildsPaths($oldPath) {
+    public function updateChildsPaths($oldPath)
+    {
 
-        if($this->hasChilds()) {
+        if ($this->hasChilds()) {
             //get objects to empty their cache
             $objects = $this->db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", $oldPath . "%");
 
             $userId = "0";
-            if($user = Pimcore_Tool_Admin::getCurrentUser()) {
+            if ($user = Pimcore_Tool_Admin::getCurrentUser()) {
                 $userId = $user->getId();
             }
 
             //update object child paths
-            $this->db->query("update objects set o_path = replace(o_path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . "), o_modificationDate = '" . time() . "', o_userModification = '" . $userId . "' where o_path like " . $this->db->quote($oldPath . "/%") .";");
+            $this->db->query("update objects set o_path = replace(o_path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . "), o_modificationDate = '" . time() . "', o_userModification = '" . $userId . "' where o_path like " . $this->db->quote($oldPath . "/%") . ";");
 
             //update object child permission paths
             $this->db->query("update users_workspaces_object set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
@@ -175,20 +181,21 @@ class Object_Abstract_Resource extends Element_Resource {
      *
      * @return void
      */
-    public function deleteAllProperties() {
+    public function deleteAllProperties()
+    {
         $this->db->delete("properties", $this->db->quoteInto("cid = ? AND ctype = 'object'", $this->model->getId()));
     }
 
     /**
      * @return string retrieves the current full object path from DB
      */
-    public function getCurrentFullPath() {
+    public function getCurrentFullPath()
+    {
 
         $path = null;
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(o_path,`o_key`) as o_path FROM objects WHERE o_id = ?", $this->model->getId());
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             Logger::error("could not get current object path from DB");
         }
         return $path;
@@ -200,17 +207,18 @@ class Object_Abstract_Resource extends Element_Resource {
      *
      * @return void
      */
-    public function getProperties($onlyInherited = false) {
+    public function getProperties($onlyInherited = false)
+    {
 
         $properties = array();
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
-        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (".implode(",",$parentIds).") AND inheritable = 1) OR cid = ? )  AND ctype='object'", $this->model->getId());
+        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (" . implode(",", $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='object'", $this->model->getId());
 
         // because this should be faster than mysql
-        usort($propertiesRaw, function($left,$right) {
-           return strcmp($left["cpath"],$right["cpath"]);
+        usort($propertiesRaw, function ($left, $right) {
+            return strcmp($left["cpath"], $right["cpath"]);
         });
 
         foreach ($propertiesRaw as $propertyRaw) {
@@ -230,23 +238,22 @@ class Object_Abstract_Resource extends Element_Resource {
                 if ($propertyRaw["inheritable"]) {
                     $property->setInheritable(true);
                 }
-                
-                if($onlyInherited && !$property->getInherited()) {
+
+                if ($onlyInherited && !$property->getInherited()) {
                     continue;
                 }
-                
+
                 $properties[$propertyRaw["name"]] = $property;
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 Logger::error("can't add property " . $propertyRaw["name"] . " to object " . $this->model->getFullPath());
             }
         }
-        
+
         // if only inherited then only return it and dont call the setter in the model
-        if($onlyInherited) {
+        if ($onlyInherited) {
             return $properties;
         }
-        
+
         $this->model->setProperties($properties);
 
         return $properties;
@@ -256,7 +263,8 @@ class Object_Abstract_Resource extends Element_Resource {
      *
      * @return void
      */
-    public function deleteAllPermissions() {
+    public function deleteAllPermissions()
+    {
         $this->db->delete("users_workspaces_object", $this->db->quoteInto("cid = ?", $this->model->getId()));
     }
 
@@ -265,42 +273,59 @@ class Object_Abstract_Resource extends Element_Resource {
      *
      * @return boolean
      */
-    public function hasChilds($objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER)) {
+    public function hasChilds($objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER))
+    {
         $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getId());
-        return (bool) $c;
+        return (bool)$c;
     }
 
     /**
      * returns the amount of directly childs (not recursivly)
      *
+     * @param User $user
      * @return integer
      */
-    public function getChildAmount($objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER)) {
-        $c = $this->db->fetchOne("SELECT COUNT(*) AS count FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getId());
+    public function getChildAmount($objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER), $user = null)
+    {
+        if ($user and !$user->isAdmin()) {
+            $userIds = $user->getRoles();
+            $userIds[] = $user->getId();
+
+            $query = "SELECT COUNT(*) AS count FROM objects o WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')
+                              AND (select list as locate from users_workspaces_object where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(o.o_path,o.o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;";
+
+
+        } else {
+            $query = "SELECT COUNT(*) AS count FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')";
+        }
+
+        $c = $this->db->fetchOne($query, $this->model->getId());
         return $c;
     }
 
 
-    public function getTypeById($id) {
+    public function getTypeById($id)
+    {
 
         $t = $this->db->fetchRow("SELECT o_type,o_className,o_classId FROM objects WHERE o_id = ?", $id);
         return $t;
     }
-    
-    
-    public function isLocked () {
+
+
+    public function isLocked()
+    {
 
         // check for an locked element below this element
         $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN objects ON tree_locks.id = objects.o_id WHERE objects.o_path LIKE ? AND tree_locks.type = 'object' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getFullpath() . "/%");
 
-        if($belowLocks > 0) {
+        if ($belowLocks > 0) {
             return true;
         }
 
         $parentIds = $this->getParentIds();
-        $inhertitedLocks = $this->db->fetchOne("SELECT id FROM tree_locks WHERE id IN (".implode(",",$parentIds).") AND type='object' AND locked = 'propagate' LIMIT 1");
+        $inhertitedLocks = $this->db->fetchOne("SELECT id FROM tree_locks WHERE id IN (" . implode(",", $parentIds) . ") AND type='object' AND locked = 'propagate' LIMIT 1");
 
-        if($inhertitedLocks > 0) {
+        if ($inhertitedLocks > 0) {
             return true;
         }
 
@@ -308,10 +333,11 @@ class Object_Abstract_Resource extends Element_Resource {
         return false;
     }
 
-    public function getClasses() {
-        if($this->getChildAmount()) {
+    public function getClasses()
+    {
+        if ($this->getChildAmount()) {
             $path = $this->model->getFullPath();
-            if(!$this->model->getId() || $this->model->getId() == 1) {
+            if (!$this->model->getId() || $this->model->getId() == 1) {
                 $path = "";
             }
             $classIds = $this->db->fetchCol("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", $path . "/%");
@@ -329,14 +355,15 @@ class Object_Abstract_Resource extends Element_Resource {
 
     }
 
-    public function isAllowed($type, $user) {
+    public function isAllowed($type, $user)
+    {
 
         // collect properties via parent - ids
         $parentIds = array(1);
 
         $obj = $this->model->getParent();
-        if($obj) {
-            while($obj) {
+        if ($obj) {
+            while ($obj) {
                 $parentIds[] = $obj->getId();
                 $obj = $obj->getParent();
             }
@@ -347,22 +374,22 @@ class Object_Abstract_Resource extends Element_Resource {
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_object WHERE cid IN (".implode(",",$parentIds).") AND userId IN (" . implode(",",$userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
+            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_object WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
 
-            if($permissionsParent) {
+            if ($permissionsParent) {
                 return true;
             }
 
             // exception for list permission
-            if(empty($permissionsParent) && $type == "list") {
+            if (empty($permissionsParent) && $type == "list") {
                 // check for childs with permissions
                 $path = $this->model->getFullPath() . "/";
-                if($this->model->getId() == 1) {
+                if ($this->model->getId() == 1) {
                     $path = "/";
                 }
 
-                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_object WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $path."%");
-                if($permissionsChilds) {
+                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_object WHERE cpath LIKE ? AND userId IN (" . implode(",", $userIds) . ") LIMIT 1", $path . "%");
+                if ($permissionsChilds) {
                     return true;
                 }
             }

@@ -15,7 +15,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_Resource extends Element_Resource {
+class Asset_Resource extends Element_Resource
+{
 
     /**
      * List of valid columns in database table
@@ -30,7 +31,8 @@ class Asset_Resource extends Element_Resource {
      *
      * @return void
      */
-    public function init() {
+    public function init()
+    {
         $this->validColumns = $this->getValidTableColumns("assets");
     }
 
@@ -40,7 +42,8 @@ class Asset_Resource extends Element_Resource {
      * @param integer $id
      * @return void
      */
-    public function getById($id) {
+    public function getById($id)
+    {
         $data = $this->db->fetchRow("SELECT assets.*, tree_locks.locked FROM assets
             LEFT JOIN tree_locks ON assets.id = tree_locks.id AND tree_locks.type = 'asset'
                 WHERE assets.id = ?", $id);
@@ -58,7 +61,8 @@ class Asset_Resource extends Element_Resource {
      * @param string $path
      * @return void
      */
-    public function getByPath($path) {
+    public function getByPath($path)
+    {
 
         // check for root node
         $_path = $path != "/" ? dirname($path) : $path;
@@ -70,8 +74,7 @@ class Asset_Resource extends Element_Resource {
 
         if ($data["id"]) {
             $this->assignVariablesToModel($data);
-        }
-        else {
+        } else {
             throw new Exception("asset with path: " . $path . " doesn't exist");
         }
     }
@@ -81,7 +84,8 @@ class Asset_Resource extends Element_Resource {
      *
      * @return void
      */
-    public function create() {
+    public function create()
+    {
         try {
             $this->db->insert("assets", array(
                 "filename" => $this->model->getFilename(),
@@ -91,8 +95,7 @@ class Asset_Resource extends Element_Resource {
 
             $date = time();
             $this->model->setId($this->db->lastInsertId());
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             throw $e;
         }
 
@@ -103,7 +106,8 @@ class Asset_Resource extends Element_Resource {
      *
      * @return void
      */
-    public function update() {
+    public function update()
+    {
 
         try {
             $this->model->setModificationDate(time());
@@ -125,15 +129,14 @@ class Asset_Resource extends Element_Resource {
 
             // tree_locks
             $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'asset'");
-            if($this->model->getLocked()) {
+            if ($this->model->getLocked()) {
                 $this->db->insert("tree_locks", array(
                     "id" => $this->model->getId(),
                     "type" => "asset",
                     "locked" => $this->model->getLocked()
                 ));
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             throw $e;
         }
     }
@@ -143,26 +146,27 @@ class Asset_Resource extends Element_Resource {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         try {
             $this->db->delete("assets", $this->db->quoteInto("id = ?", $this->model->getId()));
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
-    public function updateChildsPaths($oldPath) {
+    public function updateChildsPaths($oldPath)
+    {
         //get assets to empty their cache
         $assets = $this->db->fetchCol("SELECT id FROM assets WHERE path LIKE " . $this->db->quote($oldPath . "%"));
 
         $userId = "0";
-        if($user = Pimcore_Tool_Admin::getCurrentUser()) {
+        if ($user = Pimcore_Tool_Admin::getCurrentUser()) {
             $userId = $user->getId();
         }
 
         //update assets child paths
-        $this->db->query("update assets set path = replace(path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . "), modificationDate = '" . time() . "', userModification = '" . $userId . "' where path like " . $this->db->quote($oldPath . "/%")  . ";");
+        $this->db->query("update assets set path = replace(path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . "), modificationDate = '" . time() . "', userModification = '" . $userId . "' where path like " . $this->db->quote($oldPath . "/%") . ";");
 
         //update assets child permission paths
         $this->db->query("update users_workspaces_asset set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
@@ -179,21 +183,22 @@ class Asset_Resource extends Element_Resource {
      *
      * @return void
      */
-    public function getProperties($onlyInherited = false) {
+    public function getProperties($onlyInherited = false)
+    {
 
         $properties = array();
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
-        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (".implode(",",$parentIds).") AND inheritable = 1) OR cid = ? )  AND ctype='asset'", $this->model->getId());
+        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (" . implode(",", $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='asset'", $this->model->getId());
 
         // because this should be faster than mysql
-        usort($propertiesRaw, function($left,$right) {
-           return strcmp($left["cpath"],$right["cpath"]);
+        usort($propertiesRaw, function ($left, $right) {
+            return strcmp($left["cpath"], $right["cpath"]);
         });
 
         foreach ($propertiesRaw as $propertyRaw) {
-            
+
             try {
                 $property = new Property();
                 $property->setType($propertyRaw["type"]);
@@ -209,23 +214,22 @@ class Asset_Resource extends Element_Resource {
                 if ($propertyRaw["inheritable"]) {
                     $property->setInheritable(true);
                 }
-                
-                if($onlyInherited && !$property->getInherited()) {
+
+                if ($onlyInherited && !$property->getInherited()) {
                     continue;
                 }
 
                 $properties[$propertyRaw["name"]] = $property;
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 Logger::error("can't add property " . $propertyRaw["name"] . " to asset " . $this->model->getFullPath());
             }
         }
-        
+
         // if only inherited then only return it and dont call the setter in the model
-        if($onlyInherited) {
+        if ($onlyInherited) {
             return $properties;
         }
-        
+
         $this->model->setProperties($properties);
 
         return $properties;
@@ -236,7 +240,8 @@ class Asset_Resource extends Element_Resource {
      *
      * @return void
      */
-    public function deleteAllProperties() {
+    public function deleteAllProperties()
+    {
         $this->db->delete("properties", $this->db->quoteInto("cid = ? AND ctype = 'asset'", $this->model->getId()));
     }
 
@@ -245,7 +250,8 @@ class Asset_Resource extends Element_Resource {
      *
      * @return array
      */
-    public function getVersions() {
+    public function getVersions()
+    {
         $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC", $this->model->getId());
 
         $versions = array();
@@ -261,7 +267,8 @@ class Asset_Resource extends Element_Resource {
     /**
      * @return void
      */
-    public function deleteAllPermissions() {
+    public function deleteAllPermissions()
+    {
         $this->db->delete("users_workspaces_asset", $this->db->quoteInto("cid = ?", $this->model->getId()));
     }
 
@@ -269,18 +276,19 @@ class Asset_Resource extends Element_Resource {
     /**
      * @return void
      */
-    public function deleteAllTasks() {
+    public function deleteAllTasks()
+    {
         $this->db->delete("schedule_tasks", $this->db->quoteInto("cid = ? AND ctype='asset'", $this->model->getId()));
     }
 
     /**
      * @return string retrieves the current full sset path from DB
      */
-    public function getCurrentFullPath() {
+    public function getCurrentFullPath()
+    {
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(path,filename) as path FROM assets WHERE id = ?", $this->model->getId());
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             Logger::error("could not get  current asset path from DB");
         }
 
@@ -293,39 +301,57 @@ class Asset_Resource extends Element_Resource {
      *
      * @return boolean
      */
-    public function hasChilds() {
+    public function hasChilds()
+    {
         $c = $this->db->fetchOne("SELECT id FROM assets WHERE parentId = ?", $this->model->getId());
-        return (bool) $c;
+        return (bool)$c;
     }
 
     /**
      * returns the amount of directly childs (not recursivly)
      *
+     * @param User $user
      * @return integer
      */
-    public function getChildAmount() {
-        $c = $this->db->fetchOne("SELECT COUNT(*) AS count FROM assets WHERE parentId = ?", $this->model->getId());
+    public function getChildAmount($user = null)
+    {
+        if ($user and !$user->isAdmin()) {
+                    $userIds = $user->getRoles();
+                    $userIds[] = $user->getId();
+
+                    $query = "select count(*) from assets a where parentId = ?
+                                    and (select list as locate from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(a.path,a.filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;";
+
+
+                } else {
+                    $query = "SELECT COUNT(*) AS count FROM assets WHERE parentId = ?";
+                }
+
+
+
+        $c = $this->db->fetchOne($query, $this->model->getId());
         return $c;
     }
-    
-    
-    public function isLocked () {
-        
+
+
+    public function isLocked()
+    {
+
         // check for an locked element below this element
         $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN assets ON tree_locks.id = assets.id WHERE assets.path LIKE ? AND tree_locks.type = 'asset' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getFullpath() . "/%");
 
-        if($belowLocks > 0) {
+        if ($belowLocks > 0) {
             return true;
         }
 
         $parentIds = $this->getParentIds();
-        $inhertitedLocks = $this->db->fetchOne("SELECT id FROM tree_locks WHERE id IN (".implode(",",$parentIds).") AND type='asset' AND locked = 'propagate' LIMIT 1");
-        
-        if($inhertitedLocks > 0) {
+        $inhertitedLocks = $this->db->fetchOne("SELECT id FROM tree_locks WHERE id IN (" . implode(",", $parentIds) . ") AND type='asset' AND locked = 'propagate' LIMIT 1");
+
+        if ($inhertitedLocks > 0) {
             return true;
         }
-        
-        
+
+
         return false;
     }
 
@@ -334,12 +360,13 @@ class Asset_Resource extends Element_Resource {
      * @param bool $force
      * @return array
      */
-    public function getLatestVersion($force = false) {
+    public function getLatestVersion($force = false)
+    {
 
-        if($this->model->getType() != "folder") {
+        if ($this->model->getType() != "folder") {
             $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
 
-            if(($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
+            if (($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
                 $version = Version::getById($versionData["id"]);
                 return $version;
             }
@@ -347,14 +374,15 @@ class Asset_Resource extends Element_Resource {
         return;
     }
 
-    public function isAllowed($type, $user) {
+    public function isAllowed($type, $user)
+    {
 
         // collect properties via parent - ids
         $parentIds = array(1);
 
         $obj = $this->model->getParent();
-        if($obj) {
-            while($obj) {
+        if ($obj) {
+            while ($obj) {
                 $parentIds[] = $obj->getId();
                 $obj = $obj->getParent();
             }
@@ -365,22 +393,22 @@ class Asset_Resource extends Element_Resource {
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_asset WHERE cid IN (".implode(",",$parentIds).") AND userId IN (" . implode(",",$userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
+            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_asset WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
 
-            if($permissionsParent) {
+            if ($permissionsParent) {
                 return true;
             }
 
             // exception for list permission
-            if(empty($permissionsParent) && $type == "list") {
+            if (empty($permissionsParent) && $type == "list") {
                 // check for childs with permissions
                 $path = $this->model->getFullPath() . "/";
-                if($this->model->getId() == 1) {
+                if ($this->model->getId() == 1) {
                     $path = "/";
                 }
 
-                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $path."%");
-                if($permissionsChilds) {
+                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN (" . implode(",", $userIds) . ") LIMIT 1", $path . "%");
+                if ($permissionsChilds) {
                     return true;
                 }
             }
