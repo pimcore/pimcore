@@ -568,6 +568,11 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                         continue;
                     }
 
+                    //needed when new brick is added but not saved yet - then validity check fails.
+                    if(!$item->getFieldname()) {
+                        $item->setFieldname($data->getFieldname());
+                    }
+
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         $key = $fd->getName();
                         $getter = "get" . ucfirst($key);
