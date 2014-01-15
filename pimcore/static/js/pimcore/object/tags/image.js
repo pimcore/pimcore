@@ -150,7 +150,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
     onNodeDrop: function (target, dd, e, data) {
 
-        this.empty();
+        this.empty(true);
 
         if (data.node.attributes.type == "image") {
             if(this.data != data.node.attributes.id) {

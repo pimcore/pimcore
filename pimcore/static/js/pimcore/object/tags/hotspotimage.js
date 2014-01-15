@@ -201,16 +201,19 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         }
     },
 
-    empty: function () {
+    empty: function (nodeDrop) {
         this.data = null;
 
-        this.hotspots = [];
-        this.marker = [];
-        this.crop = [];
+        if (!nodeDrop) {
+            this.hotspots = [];
+            this.marker = [];
+            this.crop = [];
+        }
         this.dirty = true;
         this.component.removeAll();
         this.createImagePanel();
     },
+
 
     getValue: function () {
         return {image: this.data, hotspots: this.hotspots, marker: this.marker, crop: this.crop};
