@@ -5360,10 +5360,13 @@ Ext.EventManager = function(){
         removeFromSpecialCache: function(o) {
             var i = 0,
                 len = specialElCache.length;
-                
-            for (; i < len; ++i) {
+
+            for (; i < len; ) {
                 if (specialElCache[i].el == o) {
-                    specialElCache.splice(i, 1); 
+                    specialElCache.splice(i, 1);
+                    len--;
+                } else {
+                    i++;
                 }
             }
         },
