@@ -328,10 +328,10 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
                 $env->setCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId(), $this->currentStep->getName());
             } else {
-                $this->currentStep = null;
+//                $this->currentStep = null;
                 $this->finished = true;
 
-                $env->setCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId(), null);
+//                $env->setCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId(), null);
             }
             $env->setCustomItem(self::FINISHED . "_" . $this->cart->getId(), $this->finished);
             $env->setCustomItem(self::COMMITTED . "_" . $this->cart->getId(), $this->committed);
