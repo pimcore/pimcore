@@ -20,10 +20,15 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         this.data = data;
         this.saveCallback = saveCallback;
         this.modal = true;
+
+        // we need some space for the surrounding araa (button, dialog frame, etc...)
+        this.width = Math.min(1000, window.innerWidth - 100);
+        this.height = Math.min(800, window.innerHeight - 100);
+
     },
 
     open: function (modal) {
-        var imageUrl = '/admin/asset/get-image-thumbnail/id/' + this.imageId + '/width/1000/height/800/contain/true';
+        var imageUrl = '/admin/asset/get-image-thumbnail/id/' + this.imageId + '/width/' + this.width + '/height/' + this.height + '/contain/true';
 
         if(typeof modal != "undefined") {
             this.modal = modal;
@@ -33,8 +38,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         this.hotspotMetaData = {};
 
         this.hotspotWindow = new Ext.Window({
-            width: 1000,
-            height: 800,
+            width: this.width + 100,
+            height: this.height + 100,
             modal: this.modal,
             closeAction: "close",
             resizable: false,
