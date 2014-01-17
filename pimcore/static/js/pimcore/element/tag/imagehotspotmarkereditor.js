@@ -28,7 +28,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
     },
 
     open: function (modal) {
-        var imageUrl = '/admin/asset/get-image-thumbnail/id/' + this.imageId + '/width/' + this.width + '/height/' + this.height + '/contain/true';
+        var imageUrl = '/admin/asset/get-image-thumbnail/id/' + this.imageId + '/width/' + this.width + '/height/'
+            + this.height + '/contain/true';
 
         if(typeof modal != "undefined") {
             this.modal = modal;
@@ -350,7 +351,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 iconCls: "pimcore_icon_apply",
                 handler: function (id) {
 
-                    var data = hotspotMetaDataWin.getComponent("form").getForm().getFieldValues();
+                    var form = hotspotMetaDataWin.getComponent("form").getForm();
+                    var data = form.getFieldValues();
                     var normalizedData = [];
 
                     // when only one item is in the form
@@ -364,11 +366,14 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
                     if(data && data["name"] && data["name"].length > 0) {
                         for(var i=0; i<data["name"].length; i++) {
-                            normalizedData.push({
+
+                            var listItem = {
                                 name: data["name"][i],
                                 value: data["value"][i],
                                 type: data["type"][i]
-                            });
+                            }
+
+                            normalizedData.push(listItem);
                         }
                     }
 
@@ -426,42 +431,38 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     fieldLabel: t("value"),
                     checked: data["value"]
                 };
-            } else if(type == "object") {
-                valueField = {
-                    xtype: "textfield",
+            } else if(type == "object" || type == "asset" || type == "document") {
+                var textField = new Ext.form.TextField({
                     cls: "pimcore_droptarget_input",
                     name: "value",
                     fieldLabel: t("value"),
                     value: data["value"],
-                    width: 400,
+                    width: 320,
                     listeners: {
-                        render: this.addDataDropTarget.bind(this, "object")
+                        render: this.addDataDropTarget.bind(this, type)
                     }
-                };
-            } else if(type == "asset") {
-                valueField = {
-                    xtype: "textfield",
-                    cls: "pimcore_droptarget_input",
-                    name: "value",
-                    fieldLabel: t("value"),
-                    value: data["value"],
-                    width: 400,
-                    listeners: {
-                        render: this.addDataDropTarget.bind(this, "asset")
-                    }
-                };
-            } else if(type == "document") {
-                valueField = {
-                    xtype: "textfield",
-                    cls: "pimcore_droptarget_input",
-                    name: "value",
-                    fieldLabel: t("value"),
-                    value: data["value"],
-                    width: 400,
-                    listeners: {
-                        render: this.addDataDropTarget.bind(this, "document")
-                    }
-                };
+                });
+
+                var items = [textField, {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_edit",
+                    handler: this.openElement.bind(this, textField, type)
+                },{
+                    xtype: "button",
+                    iconCls: "pimcore_icon_delete"
+                    ,
+                    handler: this.empty.bind(this, textField)
+                },{
+                    xtype: "button",
+                    iconCls: "pimcore_icon_search",
+                    handler: this.openSearchEditor.bind(this, textField, type)
+                }];
+
+                valueField = new Ext.form.CompositeField({
+                    items: items,
+                    itemCls: "object_field"
+                });
+
             } else {
                 // no valid type
                 return;
@@ -498,15 +499,28 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         hotspotMetaDataWin.show();
     },
 
+    empty: function (textfield) {
+        textfield.setValue("");
+
+    },
+
+    openElement: function (textfield, type) {
+        var value = textfield.getValue();
+        if (value) {
+            pimcore.helpers.openElement(value, type);
+        }
+    },
+
+
     addDataDropTarget: function (type, el) {
-        var drop = function (target, dd, e, data) {
+        var drop = function (el, target, dd, e, data) {
             if(data.node.attributes.elementType == type) {
                 target.dom.value = data.node.attributes.path;
                 return true;
             } else {
                 return false;
             }
-        }.bind(this);
+        }.bind(this, el);
 
         var over = function (target, dd, e, data) {
             if(data.node.attributes.elementType == type) {
@@ -530,6 +544,31 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 onNodeDrop : drop
             });
         }
+    },
+
+    openSearchEditor: function (textfield, type) {
+        var allowedTypes = [];
+        var allowedSpecific = {};
+        var allowedSubtypes = {};
+        var i;
+
+        allowedTypes.push(type);
+        if (type == "object") {
+            allowedSubtypes.object = ["object","folder","variant"];
+        }
+
+        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this, textfield), {
+            type: allowedTypes,
+            subtype: allowedSubtypes,
+            specific: allowedSpecific
+        });
+    },
+
+    addDataFromSelector: function (textfield, data) {
+        if (data) {
+            textfield.setValue(data.fullpath);
+        }
     }
+
 
 });
