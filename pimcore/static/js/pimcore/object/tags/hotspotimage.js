@@ -208,6 +208,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     clearData: function() {
         this.doClearData();
+        this.updateImage();
         pimcore.helpers.showNotification(t("success"), t("hotspots_cleared"), "success");
 
     },
