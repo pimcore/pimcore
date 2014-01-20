@@ -20,6 +20,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     marginTop: 10,
     marginLeft: 8,
+    fileinfo: null,
+    previewItems: [],
 
     initialize: function (data, fieldConfig) {
         this.hotspots = [];
@@ -161,8 +163,10 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     },
 
     updateImage: function () {
-
         // 5px padding (-10)
+        this.originalWidth = this.component.getInnerWidth();
+        this.originalHeight = this.component.getInnerHeight();
+
         var width = this.getBody().getWidth()-10;
         var height = this.getBody().getHeight()-10;
 
@@ -174,9 +178,29 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat"
         });
+
         this.getBody().repaint();
+
+        this.getFileInfo(path);
+
+        this.showPreview();
     },
 
+
+    getFileInfo: function(path) {
+        if (!this.fileinfo) {
+            Ext.Ajax.request({
+                url: path,
+                params: {
+                    fileinfo: 1
+                },
+                success: function (response) {
+                    this.fileinfo = Ext.decode(response.responseText);
+                    this.showPreview();
+                }.bind(this)
+            });
+        }
+    },
 
     openCropWindow: function () {
         var editor = new pimcore.element.tag.imagecropper(this.data, this.crop, function (data) {
@@ -200,6 +224,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 this.hotspots = data["hotspots"];
                 this.marker = data["marker"];
 
+                this.showPreview();
+
                 this.dirty = true;
             }.bind(this));
             editor.open(false);
@@ -222,6 +248,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     empty: function (nodeDrop) {
         this.data = null;
+        this.fileinfo = null;
 
         if (!nodeDrop) {
             this.doClearData();
@@ -233,5 +260,64 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     getValue: function () {
         return {image: this.data, hotspots: this.hotspots, marker: this.marker, crop: this.crop};
+    },
+
+    showPreview: function() {
+        if (this.fileinfo) {
+            var originalWidth = this.originalWidth;
+            var originalHeight = this.originalHeight;
+
+            var addX = (originalWidth - this.fileinfo.width) / 2;
+            var addY = (originalHeight - this.fileinfo.height) / 2;
+
+            for(i = 0; i < this.previewItems.length; i++) {
+                document.getElementById(this.previewItems[i]).remove();
+            }
+            this.previewItems = [];
+
+            for (i = 0; i < this.hotspots.length; i++) {
+                var hotspotId = "hotspotId-" + uniqid();
+                this.panel.body.insertHtml("beforeEnd", '<div id="' + hotspotId + '" class="pimcore_image_hotspot"></div>');
+                this.previewItems.push(hotspotId);
+
+
+                var hotspotEl = Ext.get(hotspotId);
+                var config = this.hotspots[i];
+
+                var top = config["top"]/100;
+                var left = config["left"]/100;
+                var width = ((config["width"] / 100) * this.fileinfo.width) / originalWidth;
+                var height = ((config["height"]/100) * this.fileinfo.height) / originalHeight;
+
+                left = ((left * this.fileinfo.width) + addX) / originalWidth;
+                top = ((top * this.fileinfo.height) + addY) / originalHeight;
+
+                hotspotEl.applyStyles({
+                    top: (originalHeight * top) + "px",
+                    left: (originalWidth * left) + "px",
+                    width: (originalWidth * width) + "px",
+                    height: (originalHeight * height) + "px"
+                });
+            }
+
+            for (i = 0; i < this.marker.length; i++) {
+                var markerId = "marker-" + uniqid();
+                this.panel.body.insertHtml("beforeEnd", '<div id="' + markerId + '" class="pimcore_image_marker"></div>');
+                this.previewItems.push(markerId);
+                var markerEl = Ext.get(markerId);
+
+                var config = this.marker[i];
+                var top = config["top"]/100;
+                var left = config["left"]/100;
+
+                left = ((left * this.fileinfo.width) + addX) / originalWidth;
+                top = ((top * this.fileinfo.height) + addY) / originalHeight;
+
+                markerEl.applyStyles({
+                    top: ((originalHeight * top) - 35) + "px",
+                    left: ((originalWidth * left) - 12)+ "px"
+                });
+            }
+        }
     }
 });

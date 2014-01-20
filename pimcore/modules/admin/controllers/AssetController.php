@@ -832,9 +832,9 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
         $this->removeViewRenderer();
     }
 
-    public function getImageThumbnailAction()
-    {
+    public function getImageThumbnailAction() {
 
+        $fileinfo = $this->getParam("fileinfo");
         $image = Asset_Image::getById(intval($this->getParam("id")));
         $thumbnail = null;
 
@@ -842,7 +842,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             $thumbnail = $image->getThumbnailConfig($this->getParam("thumbnail"));
         }
         if (!$thumbnail) {
-            if ($this->getParam("config")) {
+            if($this->getParam("config")) {
                 $thumbnail = $image->getThumbnailConfig(Zend_Json::decode($this->getParam("config")));
             } else {
                 $thumbnail = $image->getThumbnailConfig($this->getAllParams());
@@ -855,12 +855,12 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             $format = "png";
         }
 
-        if ($this->getParam("treepreview")) {
+        if($this->getParam("treepreview")) {
             $thumbnail = Asset_Image_Thumbnail_Config::getPreviewConfig();
         }
 
         if ($this->getParam("cropPercent")) {
-            $thumbnail->addItemAt(0, "cropPercent", array(
+            $thumbnail->addItemAt(0,"cropPercent", array(
                 "width" => $this->getParam("cropWidth"),
                 "height" => $this->getParam("cropHeight"),
                 "y" => $this->getParam("cropTop"),
@@ -871,14 +871,22 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             $thumbnail->setName("auto_" . $hash);
         }
 
-        if ($this->getParam("download")) {
+        if($this->getParam("download")) {
             header('Content-Disposition: attachment; filename="' . $image->getFilename() . '"');
         }
 
-        $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $image->getThumbnail($thumbnail);
+        $thumbnail = $image->getThumbnail($thumbnail);
+
+        if ($fileinfo) {
+            $this->_helper->json(array(
+                "width" => $thumbnail->getWidth(),
+                "height" => $thumbnail->getHeight()));
+        }
+
+        $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $thumbnail;
         $fileExtension = Pimcore_File::getFileExtension($thumbnailFile);
-        if (in_array($fileExtension, array("gif", "jpeg", "jpeg", "png", "pjpeg"))) {
-            header("Content-Type: image/" . $fileExtension, true);
+        if(in_array($fileExtension, array("gif","jpeg","jpeg","png","pjpeg"))) {
+            header("Content-Type: image/".$fileExtension, true);
         } else {
             header("Content-Type: " . $image->getMimetype(), true);
         }
@@ -886,7 +894,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
         header("Content-Length: " . filesize($thumbnailFile), true);
         $this->sendThumbnailCacheHeaders();
 
-        while (@ob_end_flush()) ;
+        while(@ob_end_flush());
         flush();
 
         readfile($thumbnailFile);
