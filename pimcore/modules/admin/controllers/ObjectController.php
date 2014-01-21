@@ -844,7 +844,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
             } else {
-                Logger::debug("prevented move of object, object with same path+key alredy exists in this location.");
+                Logger::debug("prevented move of object, object with same path+key already exists in this location.");
             }
         } else if ($object->isAllowed("rename") && $values["key"]) {
             //just rename
