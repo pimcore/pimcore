@@ -17,6 +17,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
     type: "localizedfields",
 
+    dropdownLayout: false,
+
+    availablePanels: [],
+
     initialize: function (data, fieldConfig) {
 
         this.data = {};
@@ -24,6 +28,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         this.inherited = false;
         this.languageElements = {};
         this.inheritedFields = {};
+
+        if (pimcore.settings.dropdownLanguageSelection) {
+            this.dropdownLayout = true;
+        }
 
         if (data) {
             if (data.data) {
@@ -64,76 +72,17 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
     getLayoutEdit: function () {
 
-        var panelConf = {
-            autoScroll: true,
-            monitorResize: true,
-            cls: "object_field",
-            activeTab: 0,
-            height: 10,
-            items: [],
-            deferredRender: true,
-            forceLayout: true,
-            hideMode: "offsets",
-            enableTabScroll:true
-        };
+        this.fieldConfig.datatype ="layout";
+        this.fieldConfig.fieldtype = "panel";
 
         var wrapperConfig = {
             border: false,
             layout: "fit"
         };
 
-
-        if(!this.fieldConfig.width) {
-            /*panelConf.listeners = {
-                afterrender: function () {
-                    this.component.ownerCt.doLayout();
-                    this.component.setWidth(this.component.ownerCt.getWidth()-45);
-                }.bind(this)
-            };*/
-        }
-
         if(this.fieldConfig.width) {
             wrapperConfig.width = this.fieldConfig.width;
         }
-
-        if(this.fieldConfig.height) {
-            panelConf.height = this.fieldConfig.height;
-            panelConf.autoHeight = false;
-        }
-
-        // this is because the tabpanel has a strange behavior with automatic height, this corrects the problem
-        panelConf.listeners = {
-            afterrender: function () {
-                this.tabPanelAdjustIntervalCounter = 0;
-                this.tabPanelAdjustInterval = window.setInterval(function () {
-
-                    this.tabPanelAdjustIntervalCounter++;
-                    if(this.tabPanelAdjustIntervalCounter > 20) {
-                        clearInterval(this.tabPanelAdjustInterval);
-                    }
-
-                    if(!this.fieldConfig.height && !this.fieldConfig.region) {
-                        try {
-                            var panelBodies = this.tabPanel.items.first().getEl().query(".x-panel-body");
-                            var panelBody = Ext.get(panelBodies[0]);
-                            panelBody.applyStyles("height: auto;");
-                            var height = panelBody.getHeight();
-                            // 100 is just a fixed value which seems to be ok(caused by title bar, tabs itself, ... )
-                            this.component.setHeight(height+100);
-
-                            //this.tabPanel.getEl().applyStyles("position:relative;");
-                            this.component.doLayout();
-                        } catch (e) {
-                            console.log(e);
-                        }
-                    }
-                }.bind(this), 100);
-            }.bind(this)
-        };
-
-        /*if(this.fieldConfig.layout) {
-            wrapperConfig.layout = this.fieldConfig.layout;
-        }*/
 
         if(this.fieldConfig.region) {
             wrapperConfig.region = this.fieldConfig.region;
@@ -143,35 +92,160 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             wrapperConfig.title = this.fieldConfig.title;
         }
 
+        var nrOfLanguages = pimcore.settings.websiteLanguages.length;
 
-        this.fieldConfig.datatype ="layout";
-        this.fieldConfig.fieldtype = "panel";
+        if (this.dropdownLayout) {
+            //TODO choose default language
+            var data = [];
+            for (var i = 0; i < nrOfLanguages; i++) {
+                var language = pimcore.settings.websiteLanguages[i];
+                data.push([language, pimcore.available_languages[language]]);
+            }
 
-        for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
+            var store = new Ext.data.ArrayStore({
+                    fields: ["key", "value"],
+                    data: data
+                }
+            );
 
-            this.currentLanguage = pimcore.settings.websiteLanguages[i];
-            this.languageElements[this.currentLanguage] = [];
+            var options = {
+                triggerAction: "all",
+                editable: true,
+                selectOnFocus: true,
+                queryMode: 'local',
+                typeAhead: true,
+                forceSelection: true,
+                store: store,
+                itemCls: "object_field",
+                mode: "local",
+                width: 300,
+                padding: 10,
+                displayField: "value",
+                valueField: "key",
+                value: pimcore.settings.websiteLanguages[0],
+                listeners:  {
+                    select:    function( combo, record, index ) {
+                        var oldLanguage = this.currentLanguage;
+                        var newLanguage = record.data.key;
+                        if (oldLanguage == newLanguage) {
+                            return;
+                        }
 
-            panelConf.items.push({
-                xtype: "panel",
-                layout: "pimcoreform",
-                border:false,
+                        this.availablePanels[oldLanguage].hide();
+                        this.availablePanels[newLanguage].show();
+                        this.currentLanguage = newLanguage;
+                        this.component.doLayout();
+                    }.bind(this)
+                }
+            };
+
+            this.countrySelect = new Ext.form.ComboBox(options);
+
+            wrapperConfig.items = []
+
+            //TODO choose default language, maybe user-specific ?
+            for (var i = nrOfLanguages - 1; i >= 0; i--) {
+                this.currentLanguage = pimcore.settings.websiteLanguages[i];
+                this.languageElements[this.currentLanguage] = [];
+
+
+                panelConf = {
+                    height: "auto",
+                    layout: "pimcoreform",
+                    border: true,
+                    padding: "10px",
+                    title: pimcore.available_languages[pimcore.settings.websiteLanguages[i]],
+                    items: this.getRecursiveLayout(this.fieldConfig).items,
+                    hidden: (i > 0)     //TODO default language
+                };
+
+                if(this.fieldConfig.height) {
+                    panelConf.height = this.fieldConfig.height;
+                    panelConf.autoHeight = false;
+                    panelConf.autoScroll = true;
+                }
+
+                this.tabPanel = new Ext.Panel(panelConf);
+
+                this.availablePanels[this.currentLanguage] = this.tabPanel;
+                wrapperConfig.items.push(this.tabPanel);
+
+                wrapperConfig.tbar = [new Ext.Toolbar.TextItem({
+                    text: t("language")
+                }), this.countrySelect];
+            }
+        } else {
+            var panelConf = {
                 autoScroll: true,
-                padding: "10px",
-                deferredRender: false,
+                monitorResize: true,
+                cls: "object_field",
+                activeTab: 0,
+                height: 10,
+                items: [],
+                deferredRender: true,
+                forceLayout: true,
                 hideMode: "offsets",
-                title: pimcore.available_languages[pimcore.settings.websiteLanguages[i]],
-                items: this.getRecursiveLayout(this.fieldConfig).items
-            });
+                enableTabScroll:true
+            };
 
+            if(this.fieldConfig.height) {
+                panelConf.height = this.fieldConfig.height;
+                panelConf.autoHeight = false;
+            }
+
+            // this is because the tabpanel has a strange behavior with automatic height, this corrects the problem
+            panelConf.listeners = {
+                afterrender: function () {
+                    this.tabPanelAdjustIntervalCounter = 0;
+                    this.tabPanelAdjustInterval = window.setInterval(function () {
+
+                        this.tabPanelAdjustIntervalCounter++;
+                        if(this.tabPanelAdjustIntervalCounter > 20) {
+                            clearInterval(this.tabPanelAdjustInterval);
+                        }
+
+                        if(!this.fieldConfig.height && !this.fieldConfig.region) {
+                            try {
+                                var panelBodies = this.tabPanel.items.first().getEl().query(".x-panel-body");
+                                var panelBody = Ext.get(panelBodies[0]);
+                                panelBody.applyStyles("height: auto;");
+                                var height = panelBody.getHeight();
+                                // 100 is just a fixed value which seems to be ok(caused by title bar, tabs itself, ... )
+                                this.component.setHeight(height+100);
+
+                                //this.tabPanel.getEl().applyStyles("position:relative;");
+                                this.component.doLayout();
+                            } catch (e) {
+                                console.log(e);
+                            }
+                        }
+                    }.bind(this), 100);
+                }.bind(this)
+            };
+
+            for (var i=0; i < nrOfLanguages; i++) {
+                this.currentLanguage = pimcore.settings.websiteLanguages[i];
+                this.languageElements[this.currentLanguage] = [];
+
+                panelConf.items.push({
+                    xtype: "panel",
+                    layout: "pimcoreform",
+                    border:false,
+                    autoScroll: true,
+                    padding: "10px",
+                    deferredRender: false,
+                    hideMode: "offsets",
+                    title: pimcore.available_languages[pimcore.settings.websiteLanguages[i]],
+                    items: this.getRecursiveLayout(this.fieldConfig).items
+                });
+            }
+
+            this.tabPanel = new Ext.TabPanel(panelConf);
+
+            wrapperConfig.items = [this.tabPanel];
         }
 
-        this.tabPanel = new Ext.TabPanel(panelConf);
-
-
-        wrapperConfig.items = [this.tabPanel];
         this.component = new Ext.Panel(wrapperConfig);
-
         return this.component;
     },
 
@@ -184,7 +258,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     },
 
     getDataForField: function (name) {
-
         try {
             if (this.data[this.currentLanguage]) {
                 if (this.data[this.currentLanguage][name]) {
@@ -229,14 +302,13 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         var currentLanguage;
 
         for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
-
             currentLanguage = pimcore.settings.websiteLanguages[i];
             localizedData[currentLanguage] = {};
 
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
                 if(this.languageElements[currentLanguage][s].isDirty()) {
                     localizedData[currentLanguage][this.languageElements[currentLanguage][s].getName()]
-                                                        = this.languageElements[currentLanguage][s].getValue();
+                        = this.languageElements[currentLanguage][s].getValue();
                 }
             }
         }
@@ -300,8 +372,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 if(this.languageElements[currentLanguage][s].isMandatory()) {
                     if(this.languageElements[currentLanguage][s].isInvalidMandatory()) {
                         invalidMandatoryFields.push(this.languageElements[currentLanguage][s].getTitle() + " - "
-                                                + currentLanguage.toUpperCase() + " ("
-                                                + this.languageElements[currentLanguage][s].getName() + ")");
+                            + currentLanguage.toUpperCase() + " ("
+                            + this.languageElements[currentLanguage][s].getName() + ")");
                         isInvalid = true;
                     }
                 }

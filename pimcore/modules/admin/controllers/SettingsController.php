@@ -224,6 +224,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "domain" => $values["general.domain"],
                 "redirect_to_maindomain" => $values["general.redirect_to_maindomain"],
                 "language" => $values["general.language"],
+                "dropdownLanguageSelection" => $values["general.dropdownLanguageSelection"],
                 "validLanguages" => implode(",", $filteredLanguages),
                 "fallbackLanguages" => $fallbackLanguages,
                 "theme" => $values["general.theme"],
@@ -497,7 +498,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             if($this->getParam("filter")) {
                 $list->setCondition("`name` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `pattern` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `reverse` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `controller` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `action` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
             }
-            
+
             $list->load();
 
             $routes = array();
@@ -620,7 +621,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             if($this->getParam("filter")) {
                 $list->setCondition("`source` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `target` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
             }
-            
+
 
             $list->load();
 
@@ -853,8 +854,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $instance = Pimcore_Image::getInstance();
         if($instance instanceof Pimcore_Image_Adapter_GD) {
             echo '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
-                 $this->view->translate("important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality") .
-                 '</span>';
+                $this->view->translate("important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality") .
+                '</span>';
         }
 
         exit;
@@ -963,8 +964,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         if(!Pimcore_Video::isAvailable()) {
             echo '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
-             $this->view->translate("php_cli_binary_and_or_ffmpeg_binary_setting_is_missing") .
-             '</span>';
+                $this->view->translate("php_cli_binary_and_or_ffmpeg_binary_setting_is_missing") .
+                '</span>';
         }
 
         exit;

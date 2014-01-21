@@ -254,50 +254,57 @@ pimcore.settings.system = Class.create({
                             width: 600,
                             value: t('valid_languages_frontend_description'),
                             cls: "pimcore_extra_label_bottom"
-                        }, {
-                            xtype: "compositefield",
-                            fieldLabel: t("add_language"),
-                            width: 400,
-                            items: [{
-                                xtype: "combo",
-                                id: "system.settings.general.languageSelection",
-                                triggerAction: 'all',
-                                resizable: true,
-                                mode: 'local',
-                                store: this.languagesStore,
-                                displayField: 'display',
-                                valueField: 'language',
-                                forceSelection: true,
-                                typeAhead: true,
-                                width: 300
+                        },
+                            {
+                                fieldLabel: t("dropdown_instead_tabs"),
+                                xtype: "checkbox",
+                                name: "general.dropdownLanguageSelection",
+                                checked: this.getValue("general.dropdownLanguageSelection")
+                            },
+                            {
+                                xtype: "compositefield",
+                                fieldLabel: t("add_language"),
+                                width: 400,
+                                items: [{
+                                    xtype: "combo",
+                                    id: "system.settings.general.languageSelection",
+                                    triggerAction: 'all',
+                                    resizable: true,
+                                    mode: 'local',
+                                    store: this.languagesStore,
+                                    displayField: 'display',
+                                    valueField: 'language',
+                                    forceSelection: true,
+                                    typeAhead: true,
+                                    width: 300
+                                }, {
+                                    xtype: "button",
+                                    iconCls: "pimcore_icon_add",
+                                    handler: function () {
+                                        this.addLanguage(Ext.get("system.settings.general.languageSelection").getValue());
+                                    }.bind(this)
+                                }]
                             }, {
-                                xtype: "button",
-                                iconCls: "pimcore_icon_add",
-                                handler: function () {
-                                    this.addLanguage(Ext.get("system.settings.general.languageSelection").getValue());
-                                }.bind(this)
+                                xtype: "hidden",
+                                id: "system.settings.general.validLanguages",
+                                name: 'general.validLanguages',
+                                value: this.getValue("general.validLanguages")
+                            }, {
+                                xtype: "container",
+                                width: 450,
+                                style: "margin-top: 20px;",
+                                id: "system.settings.general.languageConainer",
+                                items: [],
+                                listeners: {
+                                    beforerender: function () {
+                                        // add existing language entries
+                                        var locales = this.getValue("general.validLanguages").split(",");
+                                        if(locales && locales.length > 0) {
+                                            Ext.each(locales, this.addLanguage.bind(this));
+                                        }
+                                    }.bind(this)
+                                }
                             }]
-                        }, {
-                            xtype: "hidden",
-                            id: "system.settings.general.validLanguages",
-                            name: 'general.validLanguages',
-                            value: this.getValue("general.validLanguages")
-                        }, {
-                            xtype: "container",
-                            width: 450,
-                            style: "margin-top: 20px;",
-                            id: "system.settings.general.languageConainer",
-                            items: [],
-                            listeners: {
-                                beforerender: function () {
-                                    // add existing language entries
-                                    var locales = this.getValue("general.validLanguages").split(",");
-                                    if(locales && locales.length > 0) {
-                                        Ext.each(locales, this.addLanguage.bind(this));
-                                    }
-                                }.bind(this)
-                            }
-                        }]
                     },
                     {
                         xtype:'fieldset',
@@ -456,7 +463,7 @@ pimcore.settings.system = Class.create({
                                 name: "general.loglevel.emergency",
                                 checked: this.getValue("general.loglevel.emergency")
                             },
-                             {
+                            {
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
@@ -479,7 +486,7 @@ pimcore.settings.system = Class.create({
                             },
                             {
                                 fieldLabel: 'DEV-Mode (<span style="color:red;font-weight:bold;">'
-                                        + 'DON`T ACTIVATE IT!</span>)',
+                                    + 'DON`T ACTIVATE IT!</span>)',
                                 xtype: "checkbox",
                                 name: "general.devmode",
                                 checked: this.getValue("general.devmode")
@@ -1054,11 +1061,11 @@ pimcore.settings.system = Class.create({
                                 hideLabel: true,
                                 width: 600,
                                 value: this.data.config.google_private_key_exists ?
-                                                            t("google_api_private_key_installed")
-                                                            : ('<span style="color:red;">'
-                                                                + t("google_api_key_missing")
-                                                                + " <br />" + this.data.config.google_private_key_path
-                                                                + '</span>'),
+                                    t("google_api_private_key_installed")
+                                    : ('<span style="color:red;">'
+                                    + t("google_api_key_missing")
+                                    + " <br />" + this.data.config.google_private_key_path
+                                    + '</span>'),
                                 cls: "pimcore_extra_label"
                             },{
                                 xtype: "displayfield",
@@ -1491,7 +1498,7 @@ pimcore.settings.system = Class.create({
                         }.bind(this));
                     } else {
                         pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"),
-                                                                "error", t(res.message));
+                            "error", t(res.message));
                     }
                 } catch(e) {
                     pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"), "error");
