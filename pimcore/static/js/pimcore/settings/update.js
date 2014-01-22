@@ -195,7 +195,7 @@ pimcore.settings.update = Class.create({
                         border: false,
                         padding: "0 0 10px 0",
                         html: '<div class="pimcore_error"><b>Warning:</b> The following updates are <b>not tested</b>'
-                                    + 'and might be <b>corrupted</b>!</div>'
+                                    + ' and might be <b>corrupted</b>!</div>'
                     },
                     {
                         xtype: "combo",
