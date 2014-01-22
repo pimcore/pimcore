@@ -27,6 +27,17 @@ class User_Workspace_Object extends User_Workspace_Abstract {
      */
     public $unpublish = false;
 
+
+    /**
+     * @var string
+     */
+    public $lEdit = null;
+
+    /**
+     * @var string
+     */
+    public $lView = null;
+
     /**
      * @param boolean $save
      */
@@ -59,5 +70,37 @@ class User_Workspace_Object extends User_Workspace_Abstract {
     public function getUnpublish()
     {
         return $this->unpublish;
+    }
+
+    /**
+     * @param string $lEdit
+     */
+    public function setLEdit($lEdit)
+    {
+        $this->lEdit = $lEdit;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLEdit()
+    {
+        return $this->lEdit;
+    }
+
+    /**
+     * @param string $lView
+     */
+    public function setLView($lView)
+    {
+        $this->lView = $lView;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLView()
+    {
+        return $this->lView;
     }
 }
