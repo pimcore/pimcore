@@ -29,14 +29,15 @@ pimcore.settings.user.workspace.object = Class.create({
     getPanel: function () {
 
         var availableRights = ["list","view","save","publish","unpublish","delete","rename","create","settings",
-                                                                "versions","properties"];
+            "versions","properties"];
+
         var gridPlugins = [];
         var storeFields = ["path"];
 
         var typesColumns = [
             {header: t("path"), id: "path", width: 200, sortable: false, dataIndex: 'path',
-                                editor: new Ext.form.TextField({}),
-                                css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"}
+                editor: new Ext.form.TextField({}),
+                css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"}
         ];
 
         var check;
@@ -56,6 +57,46 @@ pimcore.settings.user.workspace.object = Class.create({
             storeFields.push({name:availableRights[i], type: 'bool'});
         }
 
+        storeFields.push({name: "lEdit", type: 'text'});
+        storeFields.push({name: "lView", type: 'text'});
+
+
+        //TODO while under development
+        if (pimcore.settings.devmode) {
+            typesColumns.push({
+                xtype: 'actioncolumn',
+                header: t('localized_view'),
+                width: 30,
+                items: [{
+                    tooltip: t('localized_view_tooltip'),
+                    icon: "/pimcore/static/img/icon/cog_edit.png",
+                    handler: function (grid, rowIndex) {
+                        var data = grid.getStore().getAt(rowIndex);
+                        var callback = this.applyLocalized.bind(this, data, "lView");
+                        var dialog = new pimcore.settings.user.workspace.language(callback, data.data.lView);
+                        dialog.show();
+                    }.bind(this)
+                }]
+            });
+
+            typesColumns.push({
+                xtype: 'actioncolumn',
+                header: t('localized_edit'),
+                width: 30,
+                items: [{
+                    tooltip: t('localized_edit_tooltip'),
+                    icon: "/pimcore/static/img/icon/cog_edit.png",
+                    handler: function (grid, rowIndex) {
+                        var data = grid.getStore().getAt(rowIndex);
+                        var callback = this.applyLocalized.bind(this, data, "lEdit");
+                        var dialog = new pimcore.settings.user.workspace.language(callback, data.data.lEdit);
+                        dialog.show();
+                    }.bind(this)
+                }]
+            });
+        }
+
+
         typesColumns.push({
             xtype: 'actioncolumn',
             width: 30,
@@ -70,12 +111,12 @@ pimcore.settings.user.workspace.object = Class.create({
         });
 
         this.store = new Ext.data.JsonStore({
-           autoDestroy: true,
-           root: 'workspacesObject',
-           idProperty: 'id',
-           fields: storeFields,
-           data: this.data
-       });
+            autoDestroy: true,
+            root: 'workspacesObject',
+            idProperty: 'id',
+            fields: storeFields,
+            data: this.data
+        });
 
         this.grid = new Ext.grid.EditorGridPanel({
             frame: false,
@@ -153,7 +194,8 @@ pimcore.settings.user.workspace.object = Class.create({
 
     onAdd: function (btn, ev) {
         var u = new this.grid.store.recordType({
-            path: ""
+            path: "",
+            lEdit: pimcore.settings.websiteLanguages.join(',')
         });
         this.grid.store.insert(0, u);
 
@@ -169,10 +211,16 @@ pimcore.settings.user.workspace.object = Class.create({
         for (var i = 0; i < records.length; i++) {
             var currentData = records[i];
             if (currentData) {
-                    values.push(currentData.data);
+                values.push(currentData.data);
             }
         }
 
         return values;
+    },
+
+    applyLocalized: function(rec, column, value) {
+        rec.set(column, value);
     }
+
+
 });
