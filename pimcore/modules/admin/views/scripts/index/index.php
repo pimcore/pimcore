@@ -196,6 +196,7 @@ $scripts = array(
     "pimcore/settings/user/workspace/asset.js",
     "pimcore/settings/user/workspace/document.js",
     "pimcore/settings/user/workspace/object.js",
+    "pimcore/settings/user/workspace/language.js",
     "pimcore/settings/user/role/settings.js",
     "pimcore/settings/profile/panel.js",
     "pimcore/settings/thumbnail/item.js",
