@@ -4,6 +4,8 @@ AddType video/mp4 .mp4
 AddType video/webm .webm
 AddType image/jpeg .pjpeg
 
+Options FollowSymLinks
+
 # rewrites
 RewriteEngine On
 
