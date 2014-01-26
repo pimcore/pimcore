@@ -162,7 +162,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     },
 
-    updateImage: function () {
+     updateImage: function () {
         // 5px padding (-10)
         this.originalWidth = this.component.getInnerWidth();
         this.originalHeight = this.component.getInnerHeight();

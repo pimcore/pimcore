@@ -239,7 +239,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
 
         $tmpObject["expanded"] = $child->hasNoChilds();
-        $tmpObject["permissions"] = $child->getUserPermissions($this->getUser());
+        $tmpObject[ "permissions"] = $child->getUserPermissions($this->getUser());
 
 
         if ($child->isLocked()) {

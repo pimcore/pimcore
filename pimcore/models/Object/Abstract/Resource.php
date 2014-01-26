@@ -355,6 +355,28 @@ class Object_Abstract_Resource extends Element_Resource
 
     }
 
+    public function getLocalizedPermissions($type, $user) {
+        // collect properties via parent - ids
+        $parentIds = array(1);
+
+        $obj = $this->model->getParent();
+        if ($obj) {
+            while ($obj) {
+                $parentIds[] = $obj->getId();
+                $obj = $obj->getParent();
+            }
+        }
+        $parentIds[] = $this->model->getId();
+
+        $userIds = $user->getRoles();
+        $userIds[] = $user->getId();
+
+
+        $permissions = $this->db->fetchAll("SELECT `" . $type . "` FROM users_workspaces_object WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
+        return $permissions;
+
+    }
+
     public function isAllowed($type, $user)
     {
 
