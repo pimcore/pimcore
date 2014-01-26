@@ -27,8 +27,9 @@ function ts(key) {
     var alreadyTranslated = pimcore.globalmanager.get("translations_admin_translated_values");
 
     // remove plus at the start and the end to avoid double translations
-    key = key.replace(/^[\+]+/,"");
-    key = key.replace(/[\+]+$/,"");
+    key = key.replace(/^[\+]+(.*)[\+]+$/, function(match, $1, offset, original) {
+        return $1;
+    });
 
     var originalKey = key;
     key = key.toLocaleLowerCase();
