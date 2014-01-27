@@ -70,6 +70,11 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public $height;
 
     /**
+     * @var integer
+     */
+    public $maxTabs;
+
+    /**
      * @var array
      */
     private $fieldDefinitionsCache;
@@ -807,5 +812,21 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         }
 
         return $data;
+    }
+
+    /**
+     * @param int $maxTabs
+     */
+    public function setMaxTabs($maxTabs)
+    {
+        $this->maxTabs = $maxTabs;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxTabs()
+    {
+        return $this->maxTabs;
     }
 }

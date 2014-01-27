@@ -32,7 +32,7 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
 
         initData.name = "localizedfields";
         treeNode.setText("localizedfields");
-        
+
         this.initData(initData);
         this.treeNode = treeNode;
     },
@@ -65,6 +65,7 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                     title: t("general_settings"),
                     bodyStyle: "padding: 10px;",
                     style: "margin: 10px 0 10px 0",
+                    labelWidth: 140,
                     items: [
                         {
                             xtype: "textfield",
@@ -109,6 +110,12 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                             fieldLabel: t("height"),
                             name: "height",
                             value: this.datax.height
+                        },
+                        {
+                            xtype: "spinnerfield",
+                            fieldLabel: t("maximum_tabs"),
+                            name: "maxTabs",
+                            value: this.datax.maxTabs
                         }
                     ]
                 }

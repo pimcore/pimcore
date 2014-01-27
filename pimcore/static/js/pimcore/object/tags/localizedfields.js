@@ -37,7 +37,12 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             this.frontendLanguages = fieldConfig.permissionView;
         }
 
-        if (pimcore.settings.dropdownLanguageSelection) {
+        var maxTabs = 15;
+        if (typeof fieldConfig.maxTabs == "number") {
+            maxTabs = fieldConfig.maxTabs;
+        }
+
+        if (this.frontendLanguages.length > maxTabs) {
             this.dropdownLayout = true;
         }
 
@@ -71,7 +76,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                             lang: currentLanguage,
                             key: dataKey
                         });
-                     }
+                    }
                 }
             }
         }
@@ -110,8 +115,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             }
 
             var store = new Ext.data.ArrayStore({
-                fields: ["key", "value"],
-                data: data
+                    fields: ["key", "value"],
+                    data: data
                 }
             );
 
@@ -185,7 +190,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 wrapperConfig.items.push(this.tabPanel);
 
                 wrapperConfig.tbar = [new Ext.Toolbar.TextItem({
-                        text: t("language")
+                    text: t("language")
                 }), this.countrySelect];
             }
         } else {
@@ -326,7 +331,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
                 if(this.languageElements[currentLanguage][s].isDirty()) {
                     localizedData[currentLanguage][this.languageElements[currentLanguage][s].getName()]
-                                                        = this.languageElements[currentLanguage][s].getValue();
+                        = this.languageElements[currentLanguage][s].getValue();
                 }
             }
         }
@@ -390,8 +395,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 if(this.languageElements[currentLanguage][s].isMandatory()) {
                     if(this.languageElements[currentLanguage][s].isInvalidMandatory()) {
                         invalidMandatoryFields.push(this.languageElements[currentLanguage][s].getTitle() + " - "
-                                                + currentLanguage.toUpperCase() + " ("
-                                                + this.languageElements[currentLanguage][s].getName() + ")");
+                            + currentLanguage.toUpperCase() + " ("
+                            + this.languageElements[currentLanguage][s].getName() + ")");
                         isInvalid = true;
                     }
                 }
