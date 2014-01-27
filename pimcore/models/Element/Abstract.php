@@ -19,7 +19,8 @@ abstract class Element_Abstract extends Pimcore_Model_Abstract implements Elemen
 
 
     /**
-     * Get specific property data or the property object itself ($asContainer=true) by it's name, if the property doesn't exists return null
+     * Get specific property data or the property object itself ($asContainer=true) by its name, if the
+     * property doesn't exists return null
      * @param string $name
      * @param bool $asContainer
      * @return mixed
