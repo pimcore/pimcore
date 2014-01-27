@@ -198,7 +198,7 @@ class User_UserRole extends User_Abstract {
      */
     public function setClasses($classes)
     {
-        if(is_string($classes)) {
+        if(strlen($classes)) {
             $classes = explode(",", $classes);
         }
 
