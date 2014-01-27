@@ -1168,6 +1168,8 @@ CREATE TABLE `users_workspaces_object` (
   `settings` tinyint(1) unsigned DEFAULT '0',
   `versions` tinyint(1) unsigned DEFAULT '0',
   `properties` tinyint(1) unsigned DEFAULT '0',
+  `lEdit` text,
+  `lView` text,
   PRIMARY KEY (`cid`,`userId`),
   KEY `cid` (`cid`),
   KEY `userId` (`userId`)
