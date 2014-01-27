@@ -21,7 +21,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         this.saveCallback = saveCallback;
         this.modal = true;
 
-        // we need some space for the surrounding area (button, dialog frame, etc...)
+        // we need some space for the surrounding araa (button, dialog frame, etc...)
         this.width = Math.min(1000, window.innerWidth - 100);
         this.height = Math.min(800, window.innerHeight - 100);
 
@@ -29,7 +29,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
     open: function (modal) {
         var imageUrl = '/admin/asset/get-image-thumbnail/id/' + this.imageId + '/width/' + this.width + '/height/'
-            + this.height + '/contain/true';
+                                                                            + this.height + '/contain/true';
 
         if(typeof modal != "undefined") {
             this.modal = modal;
