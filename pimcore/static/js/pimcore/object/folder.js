@@ -188,15 +188,14 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 handler: this.selectInTree.bind(this, "folder")
             });
 
-            var user = pimcore.globalmanager.get("user");
-            if (user.admin) {
-                buttons.push({
-                    text: t("show_metainfo"),
-                    scale: "medium",
-                    iconCls: "pimcore_icon_info_large",
-                    handler: this.showMetaInfo.bind(this)
-                });
-            }
+
+            buttons.push({
+                text: t("show_metainfo"),
+                scale: "medium",
+                iconCls: "pimcore_icon_info_large",
+                handler: this.showMetaInfo.bind(this)
+            });
+
 
             buttons.push("-");
             buttons.push({

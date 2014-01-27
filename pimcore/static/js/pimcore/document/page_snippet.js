@@ -248,15 +248,13 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 handler: this.selectInTree.bind(this)
             });
 
-            var user = pimcore.globalmanager.get("user");
-            if (user.admin) {
-                buttons.push({
-                    text: t("show_metainfo"),
-                    scale: "medium",
-                    iconCls: "pimcore_icon_info_large",
-                    handler: this.showMetaInfo.bind(this)
-                });
-            }
+            buttons.push({
+                text: t("show_metainfo"),
+                scale: "medium",
+                iconCls: "pimcore_icon_info_large",
+                handler: this.showMetaInfo.bind(this)
+            });
+
 
 
             if(typeof this.toolbarButtons.extras != "undefined") {
