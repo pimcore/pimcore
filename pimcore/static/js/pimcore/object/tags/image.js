@@ -29,6 +29,8 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
         return {header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
                     renderer: function (key, value, metaData, record) {
+                                    this.applyPermissionStyle(key, value, metaData, record);
+
                                     if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited
                                                                         == true) {
                                         metaData.css += " grid_value_inherited";

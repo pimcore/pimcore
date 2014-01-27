@@ -56,8 +56,29 @@ pimcore.object.tags.abstract = Class.create({
         return null;
     },
 
+    applyPermissionStyle: function (key, value, metaData, record) {
+        var metadata = record.data.metadata;
+
+        if (metadata.permission !== undefined) {
+            // evaluate permissions
+            if (metadata.permission[key] !== undefined) {
+                if (metadata.permission[key].noView) {
+                    metaData.css += " grid_value_noview";
+                }
+
+                if (metadata.permission[key].noEdit) {
+                    metaData.css += " grid_value_noedit";
+                }
+            }
+
+        }
+
+    },
+
     getGridColumnConfig:function (field) {
         var renderer = function (key, value, metaData, record) {
+            this.applyPermissionStyle(key, value, metaData, record);
+
             if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 metaData.css += " grid_value_inherited";
             }

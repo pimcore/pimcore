@@ -195,6 +195,7 @@ class Object_Service extends Element_Service {
      */
     public static function gridObjectData($object, $fields = null) {
 
+        $localizedPermissionsResolved = false;
         $data = Element_Service::gridElementData($object);
 
         if ($object instanceof Object_Concrete) {
@@ -285,10 +286,15 @@ class Object_Service extends Element_Service {
                         $brickGetter = "get".ucfirst($brickKey);
                     }
 
+                    $needLocalizedPermissions = false;
+
                     // if the definition is not set try to get the definition from localized fields
                     if(!$def) {
                         if($locFields = $object->getClass()->getFieldDefinition("localizedfields")) {
                             $def = $locFields->getFieldDefinition($key);
+                            if ($def) {
+                                $needLocalizedPermissions = true;
+                            }
                         }
                     }
 
@@ -305,7 +311,9 @@ class Object_Service extends Element_Service {
 
                             if(method_exists($def, "getDataForGrid")) {
                                 $tempData = $def->getDataForGrid($valueObject->value, $object);
+
                                 if($def instanceof Object_Class_Data_Localizedfields) {
+                                    $needLocalizedPermissions = true;
                                     foreach($tempData as $tempKey => $tempValue) {
                                         $data[$tempKey] = $tempValue;
                                     }
@@ -317,7 +325,41 @@ class Object_Service extends Element_Service {
                             }
 
                         }
+                    }
 
+
+                    if ($needLocalizedPermissions) {
+//                        if (!$localizedPermissionsResolved) {
+//                            $localizedPermissionsResolved = true;
+
+
+                            $user = Pimcore_Tool_Admin::getCurrentUser();
+
+                            if (!$user->isAdmin()) {
+                                /** @var  $locale Zend_Locale */
+                                $locale = Zend_Registry::get("Zend_Locale");
+                                $locale = $locale->getLanguage();
+
+                                $permissionTypes = array("View", "Edit");
+                                foreach ($permissionTypes as $permissionType) {
+                                    $languagesAllowed = self::getLanguagePermissions($object, $user, "l" . $permissionType);
+
+
+                                    if ($languagesAllowed) {
+                                        $languagesAllowed = array_keys($languagesAllowed);
+
+                                        if (!in_array($locale, $languagesAllowed)) {
+                                            $data["metadata"]["permission"][$key]["no" . $permissionType] = 1;
+                                            if ($permissionType == "View") {
+                                                $data[$key] = null;
+                                            }
+                                        }
+                                    } else {
+
+                                    }
+                                }
+                            }
+//                        }
 
                     }
                 }
@@ -326,6 +368,33 @@ class Object_Service extends Element_Service {
         }
         return $data;
     }
+
+    public static function getLanguagePermissions($object, $user, $type) {
+        $languageAllowed = null;
+
+        $permission = $object->getLocalizedPermissions($type, $user);
+        if (!is_null($permission)) {
+            // backwards compatibility. If all entries are null, then the workspace rule was set up with
+            // an older pimcore
+
+
+                $permission = $permission[$type];
+                if ($permission) {
+                    $permission = explode(",", $permission);
+                    if (is_null($languageAllowed)) {
+                        $languageAllowed = array();
+                    }
+
+                    foreach($permission as $language) {
+                        $languageAllowed[$language] = 1;
+                    }
+                }
+
+        }
+        return $languageAllowed;
+
+    }
+
 
     public static function getFieldForBrickType(Object_Class $class, $bricktype) {
         $fieldDefinitions = $class->getFieldDefinitions();

@@ -239,7 +239,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
 
         $tmpObject["expanded"] = $child->hasNoChilds();
-        $tmpObject[ "permissions"] = $child->getUserPermissions($this->getUser());
+        $tmpObject["permissions"] = $child->getUserPermissions($this->getUser());
 
 
         if ($child->isLocked()) {
@@ -291,7 +291,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $data[$parent->getId()] = $info;
 
-            $object = $parent;
+           $object = $parent;
         }
 
         $this->_helper->json($data);
@@ -361,6 +361,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $objectData["childdata"]["id"] = $object->getId();
             $objectData["childdata"]["data"]["classes"] = $object->getResource()->getClasses();
+
+            $objectData = $this->filterLocalizedFields($object, $objectData);
 
             $this->_helper->json($objectData);
         } else {
@@ -511,9 +513,59 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         }
     }
 
-    public function getFolderAction()
-    {
+    public function setLayoutPermission(&$layout, $allowedView, $allowedEdit) {
+        if ($layout->{"fieldtype"} == "localizedfields") {
+            if (is_array($allowedView) && count($allowedView) > 0) {
+                $layout->{"permissionView"} = array_keys($allowedView);
+            }
+            if (is_array($allowedEdit) && count($allowedEdit) > 0) {
+                $layout->{"permissionEdit"} = array_keys($allowedEdit);
+            }
+        } else {
+            if (method_exists($layout, "getChilds")) {
+                $children = $layout->getChilds();
+                if (is_array($children)) {
+                    foreach ($children as $child) {
+                        $this->setLayoutPermission($child, $allowedView, $allowedEdit);
+                    }
+                }
+            }
+        }
+    }
 
+
+    public function filterLocalizedFields(Object_Abstract $object, $objectData) {
+        if (!($object instanceof Object_Concrete)) {
+            return $objectData;
+        }
+
+        $user = Pimcore_Tool_Admin::getCurrentUser();
+        if ($user->getAdmin()) {
+            return $objectData;
+        }
+
+        $fieldDefinitions = $object->getClass()->getFieldDefinitions();
+        if ($fieldDefinitions) {
+            $languageAllowedView = Object_Service::getLanguagePermissions($object, $user, "lView");
+            $languageAllowedEdit = Object_Service::getLanguagePermissions($object, $user, "lEdit");
+
+            foreach ($fieldDefinitions as $key => $fd) {
+                if ($fd->getFieldtype() == "localizedfields") {
+
+                    foreach($objectData["data"][$key]["data"] as $language => $languageData) {
+                        if (!is_null($languageAllowedView) && !$languageAllowedView[$language]) {
+                            unset($objectData["data"][$key]["data"][$language]);
+                        }
+                    }
+                }
+            }
+            $this->setLayoutPermission($objectData["layout"], $languageAllowedView, $languageAllowedEdit);
+        }
+
+        return $objectData;
+    }
+
+    public function getFolderAction() {
         // check for lock
         if (Element_Editlock::isLocked($this->getParam("id"), "object")) {
             $this->_helper->json(array(
@@ -560,9 +612,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     }
 
 
-    public function addAction()
-    {
-
+    public function addAction() {
         $success = false;
 
         $className = "Object_" . ucfirst($this->getParam("className"));
@@ -634,8 +684,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         }
     }
 
-    public function addFolderAction()
-    {
+    public function addFolderAction() {
         $success = false;
 
         $parent = Object_Abstract::getById($this->getParam("parentId"));
@@ -669,10 +718,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $this->_helper->json(array("success" => $success));
     }
 
-    public function deleteAction()
-    {
+    public function deleteAction() {
         if ($this->getParam("type") == "childs") {
-
             $parentObject = Object_Abstract::getById($this->getParam("id"));
 
             $list = new Object_List();
@@ -717,7 +764,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         $deleteJobs = array();
 
-        // check for childs
+        // check for children
         if ($object instanceof Object_Abstract) {
 
             $deleteJobs[] = array(array(
@@ -824,8 +871,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                 //$object->setO_path($newPath);
                 $object->setParentId($values["parentId"]);
-
-
             }
 
             if (array_key_exists("locked", $values)) {
@@ -864,9 +909,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     }
 
 
-    public function saveAction()
-    {
-
+    public function saveAction() {
         $object = Object_Abstract::getById($this->getParam("id"));
 
         // set the latest available version for editmode
@@ -881,6 +924,22 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                 $fd = $object->getClass()->getFieldDefinition($key);
                 if ($fd) {
+                    if ($fd instanceof Object_Class_Data_Localizedfields) {
+                        $user = Pimcore_Tool_Admin::getCurrentUser();
+                        if (!$user->getAdmin()) {
+                            $allowedLanguages = $this->getLanguagePermissions($object, $user, "lEdit");
+                            if (!is_null($allowedLanguages)) {
+                                $allowedLanguages = array_keys($allowedLanguages);
+                                $submittedLanguages = array_keys($data[$key]);
+                                foreach ($submittedLanguages as $submittedLanguage) {
+                                    if (!in_array($submittedLanguage, $allowedLanguages)) {
+                                        unset($value[$submittedLanguage]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     if (method_exists($fd, "isRemoteOwner") and $fd->isRemoteOwner()) {
                         $remoteClass = Object_Class::getByName($fd->getOwnerClassName());
                         $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
@@ -1150,9 +1209,18 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                     // save
                     $object = Object_Abstract::getById($data["id"]);
+                    /** @var Object_Class $class */
+                    $class = $object->getClass();
 
                     if (!$object->isAllowed("publish")) {
                         throw new Exception("Permission denied. You don't have the rights to save this object.");
+                    }
+
+                    $user = Pimcore_Tool_Admin::getCurrentUser();
+                    if (!$user->isAdmin()) {
+                        $languagePermissions = $object->getLocalizedPermissions("lEdit", $user);
+                        $languagePermissions = explode(",", $languagePermissions["lEdit"]);
+
                     }
 
                     $objectData = array();
@@ -1194,6 +1262,24 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                             $brick->$valueSetter($value);
 
                         } else {
+                            if (!$user->isAdmin() && $languagePermissions) {
+                                $fd = $class->getFieldDefinition($key);
+                                if (!$fd) {
+                                    // try to get via localized fields
+                                    $localized = $class->getFieldDefinition("localizedfields");
+                                    if($localized instanceof Object_Class_Data_Localizedfields) {
+                                        $field = $localized->getFieldDefinition($key);
+                                        if ($field) {
+                                            $currentLocale = Zend_Registry::get("Zend_Locale");
+                                            $currentLocale = $currentLocale->getLanguage();
+                                            if (!in_array($currentLocale, $languagePermissions)) {
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             $objectData[$key] = $value;
                         }
                     }

@@ -665,6 +665,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 header:ts(field.label),
                 dataIndex:field.key,
                 renderer:function (key, value, metaData, record, rowIndex, colIndex, store) {
+                    this.applyPermissionStyle(key, value, metaData, record);
+
                     var multivalent = value instanceof  Array;
                     var inherited = record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited;
 

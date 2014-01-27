@@ -22,7 +22,7 @@ pimcore.user = Class.create({
 
     isAllowed: function (type) {
 
-        // @TODO: Should be removed when refacturing is finished
+        // @TODO: Should be removed when refactoring is finished
         if(this.admin) {
             return true;
         }

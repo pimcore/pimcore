@@ -21,6 +21,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
     availablePanels: [],
 
+    frontendLanguages: null,
+
     initialize: function (data, fieldConfig) {
 
         this.data = {};
@@ -28,6 +30,12 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         this.inherited = false;
         this.languageElements = {};
         this.inheritedFields = {};
+
+        if (pimcore.currentuser.admin || fieldConfig.permissionView === undefined) {
+            this.frontendLanguages = pimcore.settings.websiteLanguages;
+        } else {
+            this.frontendLanguages = fieldConfig.permissionView;
+        }
 
         if (pimcore.settings.dropdownLanguageSelection) {
             this.dropdownLayout = true;
@@ -49,9 +57,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         this.keysToWatch = [];
 
         if (this.inherited) {
-
-            for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
-                var currentLanguage = pimcore.settings.websiteLanguages[i];
+            for (var i=0; i < this.frontendLanguages.length; i++) {
+                var currentLanguage = this.frontendLanguages[i];
 
                 var metadataForLanguage = this.metaData[currentLanguage];
                 var dataKeys = Object.keys(metadataForLanguage);
@@ -64,7 +71,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                             lang: currentLanguage,
                             key: dataKey
                         });
-                    }
+                     }
                 }
             }
         }
@@ -92,19 +99,19 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             wrapperConfig.title = this.fieldConfig.title;
         }
 
-        var nrOfLanguages = pimcore.settings.websiteLanguages.length;
+        var nrOfLanguages = this.frontendLanguages.length;
 
         if (this.dropdownLayout) {
             //TODO choose default language
             var data = [];
             for (var i = 0; i < nrOfLanguages; i++) {
-                var language = pimcore.settings.websiteLanguages[i];
+                var language = this.frontendLanguages[i];
                 data.push([language, pimcore.available_languages[language]]);
             }
 
             var store = new Ext.data.ArrayStore({
-                    fields: ["key", "value"],
-                    data: data
+                fields: ["key", "value"],
+                data: data
                 }
             );
 
@@ -122,7 +129,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 padding: 10,
                 displayField: "value",
                 valueField: "key",
-                value: pimcore.settings.websiteLanguages[0],
+                value: this.frontendLanguages[0],
                 listeners:  {
                     select:    function( combo, record, index ) {
                         var oldLanguage = this.currentLanguage;
@@ -145,17 +152,21 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
             //TODO choose default language, maybe user-specific ?
             for (var i = nrOfLanguages - 1; i >= 0; i--) {
-                this.currentLanguage = pimcore.settings.websiteLanguages[i];
+                this.currentLanguage = this.frontendLanguages[i];
                 this.languageElements[this.currentLanguage] = [];
 
+                var editable =  (pimcore.currentuser.admin ||
+                    (this.fieldConfig.permissionEdit !== undefined && in_array(this.currentLanguage, this.fieldConfig.permissionEdit)));
+
+                var items =  this.getRecursiveLayout(this.fieldConfig, !editable).items;
 
                 panelConf = {
                     height: "auto",
                     layout: "pimcoreform",
                     border: true,
                     padding: "10px",
-                    title: pimcore.available_languages[pimcore.settings.websiteLanguages[i]],
-                    items: this.getRecursiveLayout(this.fieldConfig).items,
+                    title: pimcore.available_languages[this.frontendLanguages[i]],
+                    items: items,
                     hidden: (i > 0)     //TODO default language
                 };
 
@@ -163,7 +174,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     panelConf.height = this.fieldConfig.height;
                     panelConf.autoHeight = false;
                     panelConf.autoScroll = true;
+                } else {
+                    panelConf.autoHeight = true;
                 }
+
 
                 this.tabPanel = new Ext.Panel(panelConf);
 
@@ -171,7 +185,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 wrapperConfig.items.push(this.tabPanel);
 
                 wrapperConfig.tbar = [new Ext.Toolbar.TextItem({
-                    text: t("language")
+                        text: t("language")
                 }), this.countrySelect];
             }
         } else {
@@ -224,8 +238,11 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             };
 
             for (var i=0; i < nrOfLanguages; i++) {
-                this.currentLanguage = pimcore.settings.websiteLanguages[i];
+                this.currentLanguage = this.frontendLanguages[i];
                 this.languageElements[this.currentLanguage] = [];
+
+                var editable =  (pimcore.currentuser.admin
+                    || (this.fieldConfig.permissionEdit !== undefined && in_array(this.currentLanguage, this.fieldConfig.permissionEdit)));
 
                 panelConf.items.push({
                     xtype: "panel",
@@ -235,8 +252,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     padding: "10px",
                     deferredRender: false,
                     hideMode: "offsets",
-                    title: pimcore.available_languages[pimcore.settings.websiteLanguages[i]],
-                    items: this.getRecursiveLayout(this.fieldConfig).items
+                    title: pimcore.available_languages[this.frontendLanguages[i]],
+                    items: this.getRecursiveLayout(this.fieldConfig, !editable).items
                 });
             }
 
@@ -246,6 +263,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         }
 
         this.component = new Ext.Panel(wrapperConfig);
+        this.component.doLayout();
         return this.component;
     },
 
@@ -301,14 +319,14 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         var localizedData = {};
         var currentLanguage;
 
-        for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
-            currentLanguage = pimcore.settings.websiteLanguages[i];
+        for (var i=0; i < this.frontendLanguages.length; i++) {
+            currentLanguage = this.frontendLanguages[i];
             localizedData[currentLanguage] = {};
 
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
                 if(this.languageElements[currentLanguage][s].isDirty()) {
                     localizedData[currentLanguage][this.languageElements[currentLanguage][s].getName()]
-                        = this.languageElements[currentLanguage][s].getValue();
+                                                        = this.languageElements[currentLanguage][s].getValue();
                 }
             }
         }
@@ -326,9 +344,9 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
         var currentLanguage;
 
-        for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
+        for (var i=0; i < this.frontendLanguages.length; i++) {
 
-            currentLanguage = pimcore.settings.websiteLanguages[i];
+            currentLanguage = this.frontendLanguages[i];
 
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
                 if(this.languageElements[currentLanguage][s].isDirty()) {
@@ -344,9 +362,9 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
         var currentLanguage;
 
-        for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
+        for (var i=0; i < this.frontendLanguages; i++) {
 
-            currentLanguage = pimcore.settings.websiteLanguages[i];
+            currentLanguage = this.frontendLanguages[i];
 
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
                 if(this.languageElements[currentLanguage][s].isMandatory()) {
@@ -364,16 +382,16 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         var isInvalid = false;
         var invalidMandatoryFields = [];
 
-        for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
+        for (var i=0; i < this.frontendLanguages.length; i++) {
 
-            currentLanguage = pimcore.settings.websiteLanguages[i];
+            currentLanguage = this.frontendLanguages[i];
 
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
                 if(this.languageElements[currentLanguage][s].isMandatory()) {
                     if(this.languageElements[currentLanguage][s].isInvalidMandatory()) {
                         invalidMandatoryFields.push(this.languageElements[currentLanguage][s].getTitle() + " - "
-                            + currentLanguage.toUpperCase() + " ("
-                            + this.languageElements[currentLanguage][s].getName() + ")");
+                                                + currentLanguage.toUpperCase() + " ("
+                                                + this.languageElements[currentLanguage][s].getName() + ")");
                         isInvalid = true;
                     }
                 }
@@ -394,9 +412,9 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         }
 
         var foundUnmodifiedInheritedField = false;
-        for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
+        for (var i=0; i < this.frontendLanguages.length; i++) {
 
-            var currentLanguage = pimcore.settings.websiteLanguages[i];
+            var currentLanguage = this.frontendLanguages[i];
 
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
 

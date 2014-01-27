@@ -12,217 +12,75 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+pimcore.registerNS("pimcore.settings.user.workspace.language");
 
-pimcore.registerNS("pimcore.settings.user.workspace.object");
-pimcore.settings.user.workspace.object = Class.create({
+pimcore.settings.user.workspace.language = Class.create({
 
-    initialize: function (parent) {
-        this.parent = parent;
-
-        if(typeof this.parent.data["user"] != "undefined") {
-            this.data = this.parent.data.user;
-        } else if(typeof this.parent.data["role"] != "undefined") {
-            this.data = this.parent.data.role;
-        }
+    initialize: function (callback, data, path) {
+        this.callback = callback;
+        this.data = data;
+        this.path = path;
     },
 
-    getPanel: function () {
-
-        var availableRights = ["list","view","save","publish","unpublish","delete","rename","create","settings",
-            "versions","properties"];
-
-        var gridPlugins = [];
-        var storeFields = ["path"];
-
-        var typesColumns = [
-            {header: t("path"), id: "path", width: 200, sortable: false, dataIndex: 'path',
-                editor: new Ext.form.TextField({}),
-                css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"}
-        ];
-
-        var check;
-        for (var i=0; i<availableRights.length; i++) {
-
-            // columns
-            check = new Ext.grid.CheckColumn({
-                header: t(availableRights[i]),
-                dataIndex: availableRights[i],
-                width: 50
-            });
-
-            typesColumns.push(check);
-            gridPlugins.push(check);
-
-            // store fields
-            storeFields.push({name:availableRights[i], type: 'bool'});
-        }
-
-        storeFields.push({name: "lEdit", type: 'text'});
-        storeFields.push({name: "lView", type: 'text'});
-
-
-        //TODO while under development
-        if (pimcore.settings.devmode) {
-            typesColumns.push({
-                xtype: 'actioncolumn',
-                header: t('localized_view'),
-                width: 30,
-                items: [{
-                    tooltip: t('localized_view_tooltip'),
-                    icon: "/pimcore/static/img/icon/cog_edit.png",
-                    handler: function (grid, rowIndex) {
-                        var data = grid.getStore().getAt(rowIndex);
-                        var callback = this.applyLocalized.bind(this, data, "lView");
-                        var dialog = new pimcore.settings.user.workspace.language(callback, data.data.lView);
-                        dialog.show();
-                    }.bind(this)
-                }]
-            });
-
-            typesColumns.push({
-                xtype: 'actioncolumn',
-                header: t('localized_edit'),
-                width: 30,
-                items: [{
-                    tooltip: t('localized_edit_tooltip'),
-                    icon: "/pimcore/static/img/icon/cog_edit.png",
-                    handler: function (grid, rowIndex) {
-                        var data = grid.getStore().getAt(rowIndex);
-                        var callback = this.applyLocalized.bind(this, data, "lEdit");
-                        var dialog = new pimcore.settings.user.workspace.language(callback, data.data.lEdit);
-                        dialog.show();
-                    }.bind(this)
-                }]
-            });
-        }
-
-
-        typesColumns.push({
-            xtype: 'actioncolumn',
-            width: 30,
-            items: [{
-                tooltip: t('delete'),
-                icon: "/pimcore/static/img/icon/cross.png",
-                handler: function (grid, rowIndex) {
-                    grid.getStore().removeAt(rowIndex);
-                    this.updateRows();
-                }.bind(this)
-            }]
-        });
-
-        this.store = new Ext.data.JsonStore({
-            autoDestroy: true,
-            root: 'workspacesObject',
-            idProperty: 'id',
-            fields: storeFields,
-            data: this.data
-        });
-
-        this.grid = new Ext.grid.EditorGridPanel({
-            frame: false,
+    show: function() {
+        this.window = new Ext.Window({
+            layout:'fit',
+            width:500,
+            height:500,
             autoScroll: true,
-            store: this.store,
-            columns : typesColumns,
-            trackMouseOver: true,
-            columnLines: true,
-            stripeRows: true,
-            autoExpandColumn: "path",
-            autoHeight: true,
-            style: "margin-bottom:20px;",
-            tbar: [
-                {
-                    xtype: "tbtext",
-                    text: "<b>" + t("objects") + "</b>"
-                },
-                "-","-",
-                {
-                    iconCls: "pimcore_icon_add",
-                    text: t("add"),
-                    handler: this.onAdd.bind(this)
-                }
-            ],
-            viewConfig: {
-                forceFit: true,
-                listeners: {
-                    rowupdated: this.updateRows.bind(this),
-                    refresh: this.updateRows.bind(this)
-                }
-            }
+            closeAction:'close',
+            modal: true
         });
 
-        this.store.on("update", this.updateRows.bind(this));
-        this.grid.on("viewready", this.updateRows.bind(this));
 
+        var panelConfig = {
+            items: []
+        };
 
-        return this.grid;
-    },
-
-    updateRows: function () {
-
-        var rows = Ext.get(this.grid.getEl().dom).query(".x-grid3-row");
-
-        for (var i = 0; i < rows.length; i++) {
-
-            var dd = new Ext.dd.DropZone(rows[i], {
-                ddGroup: "element",
-
-                getTargetFromEvent: function(e) {
-                    return this.getEl();
-                },
-
-                onNodeOver : function(target, dd, e, data) {
-                    return Ext.dd.DropZone.prototype.dropAllowed;
-                },
-
-                onNodeDrop : function(myRowIndex, target, dd, e, data) {
-
-                    if(data.node.attributes.elementType != "object") {
-                        return false;
-                    }
-
-                    var rec = this.grid.getStore().getAt(myRowIndex);
-                    rec.set("path", data.node.attributes.path);
-
-                    this.updateRows();
-
-                    return true;
-                }.bind(this, i)
-            });
+        var data = [];
+        var nrOfLanguages = pimcore.settings.websiteLanguages.length;
+        for (var i = 0; i < nrOfLanguages; i++) {
+            var language = pimcore.settings.websiteLanguages[i];
+            data.push([language, pimcore.available_languages[language]]);
         }
 
-    },
 
-    onAdd: function (btn, ev) {
-        var u = new this.grid.store.recordType({
-            path: "",
-            lEdit: pimcore.settings.websiteLanguages.join(','),
-            lView: pimcore.settings.websiteLanguages.join(',')
+        var options = {
+            name: "languages",
+            triggerAction: "all",
+            editable: false,
+            store: data,
+            hideLabel: true,
+            width: 460,
+            height: 400,
+            value: this.data
+        };
 
+        this.box = new Ext.ux.form.MultiSelect(options);
+
+
+        panelConfig.items.push({
+            xtype: "form",
+            bodyStyle: "padding: 10px;",
+            items: [this.box],
+            title: this.path,
+            bbar: ["->",
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_apply",
+                    text: t('apply'),
+                    handler: this.applyData.bind(this)
+                }
+            ]
         });
-        this.grid.store.insert(0, u);
 
-        this.updateRows();
+        this.window.add(new Ext.Panel(panelConfig));
+        this.window.show();
     },
 
-    getValues: function () {
-
-        var values = [];
-        this.store.commitChanges();
-
-        var records = this.store.getRange();
-        for (var i = 0; i < records.length; i++) {
-            var currentData = records[i];
-            if (currentData) {
-                values.push(currentData.data);
-            }
-        }
-
-        return values;
-    },
-
-    applyLocalized: function(rec, column, value) {
-        rec.set(column, value);
+    applyData: function() {
+        var value = this.box.getValue();
+        this.window.close();
+        this.callback(value);
     }
-
-
 });

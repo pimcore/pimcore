@@ -89,7 +89,7 @@ Ext.onReady(function () {
         }
         
         if(in_array(name,editableNames)) {
-            Ext.MessageBox.alert("ERROR","Duplicate editable name: " + name);
+            Ext.MessageBox.alert("ERROR","Dublicate editable name: " + name);
         }
         editableNames.push(name);
 

@@ -36,6 +36,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     getGridColumnConfig: function(field) {
         return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
                 renderer: function (key, value, metaData, record) {
+                    this.applyPermissionStyle(key, value, metaData, record);
+
                     return t("not_supported");
                 }.bind(this, field.key)};
     },

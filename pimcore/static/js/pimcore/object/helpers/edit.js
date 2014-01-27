@@ -21,7 +21,7 @@
 pimcore.registerNS("pimcore.object.helpers.edit");
 pimcore.object.helpers.edit = {
 
-    getRecursiveLayout: function (l) {
+    getRecursiveLayout: function (l, noteditable) {
 
         var panelListenerConfig = {};
 
@@ -116,7 +116,7 @@ pimcore.object.helpers.edit = {
                 if (l.childs.length > 0) {
                     l.items = [];
                     for (var i = 0; i < l.childs.length; i++) {
-                        tmpItems = this.getRecursiveLayout(l.childs[i]);
+                        tmpItems = this.getRecursiveLayout(l.childs[i], noteditable);
                         if (tmpItems) {
                             l.items.push(tmpItems);
                         }
@@ -217,7 +217,7 @@ pimcore.object.helpers.edit = {
                     this.addFieldsToMask(field);
                 }
 
-                if (l.noteditable) {
+                if (l.noteditable || noteditable) {
                     dLayout = field.getLayoutShow();
                 }
                 else {

@@ -355,7 +355,7 @@ class Object_Abstract_Resource extends Element_Resource
 
     }
 
-    public function getLocalizedPermissions($type, $user) {
+    protected function collectParentIds() {
         // collect properties via parent - ids
         $parentIds = array(1);
 
@@ -367,30 +367,12 @@ class Object_Abstract_Resource extends Element_Resource
             }
         }
         $parentIds[] = $this->model->getId();
-
-        $userIds = $user->getRoles();
-        $userIds[] = $user->getId();
-
-
-        $permissions = $this->db->fetchAll("SELECT `" . $type . "` FROM users_workspaces_object WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
-        return $permissions;
-
+        return $parentIds;
     }
 
     public function isAllowed($type, $user)
     {
-
-        // collect properties via parent - ids
-        $parentIds = array(1);
-
-        $obj = $this->model->getParent();
-        if ($obj) {
-            while ($obj) {
-                $parentIds[] = $obj->getId();
-                $obj = $obj->getParent();
-            }
-        }
-        $parentIds[] = $this->model->getId();
+        $parentIds = $this->collectParentIds();
 
         $userIds = $user->getRoles();
         $userIds[] = $user->getId();
@@ -421,5 +403,22 @@ class Object_Abstract_Resource extends Element_Resource
 
         return false;
     }
+
+    public function getLocalizedPermissions($type, $user) {
+        $parentIds = $this->collectParentIds();
+
+        $userIds = $user->getRoles();
+        $userIds[] = $user->getId();
+
+        try {
+            $permissions = $this->db->fetchRow("SELECT `" . $type . "` FROM users_workspaces_object WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
+        } catch (Exception $e) {
+            Logger::warn("Unable to get permission " . $type . " for object " . $this->model->getId());
+        }
+
+        return $permissions;
+
+    }
+
 
 }
