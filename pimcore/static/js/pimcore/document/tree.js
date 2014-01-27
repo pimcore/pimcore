@@ -884,21 +884,20 @@ pimcore.document.tree = Class.create({
                             this.focus(true,500);
                         },
                         keyup: function (el) {
-                            pageForm.getComponent("title").setValue(el.getValue());
                             pageForm.getComponent("name").setValue(el.getValue());
                         }
                     }
                 },{
                     xtype: "textfield",
-                    itemId: "title",
-                    fieldLabel: t('title'),
-                    name: 'title',
-                    width: '200px'
-                },{
-                    xtype: "textfield",
                     itemId: "name",
                     fieldLabel: t('navigation'),
                     name: 'name',
+                    width: '200px'
+                },{
+                    xtype: "textfield",
+                    itemId: "title",
+                    fieldLabel: t('title'),
+                    name: 'title',
                     width: '200px'
                 }]
             });
