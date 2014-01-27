@@ -633,9 +633,13 @@ class Document extends Element_Abstract {
 
         // remove childs
         if ($this->hasChilds()) {
+            // delete also unpublished children
+            $unpublishedStatus = self::doHideUnpublished();
+            self::setHideUnpublished(false);
             foreach ($this->getChilds() as $child) {
                 $child->delete();
             }
+            self::setHideUnpublished($unpublishedStatus);
         }
 
         // remove all properties
