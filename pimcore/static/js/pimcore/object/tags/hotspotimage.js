@@ -145,7 +145,6 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     } else {
                         return Ext.dd.DropZone.prototype.dropNotAllowed;
                     }
-
                 },
 
                 onNodeDrop : this.onNodeDrop.bind(this)
@@ -219,6 +218,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         }.bind(this));
         editor.open(true);
     },
+
 
     openHotspotWindow: function() {
         if(this.data) {
@@ -300,6 +300,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     width: (originalWidth * width) + "px",
                     height: (originalHeight * height) + "px"
                 });
+
+                this.addHotspotInfo(hotspotEl, config);
             }
 
             for (i = 0; i < this.marker.length; i++) {
@@ -319,7 +321,21 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     top: ((originalHeight * top) - 35) + "px",
                     left: ((originalWidth * left) - 12)+ "px"
                 });
+
+                this.addHotspotInfo(markerEl, config);
             }
         }
+    },
+
+    addHotspotInfo: function(element, config) {
+        if(config["name"]) {
+            element.dom.setAttribute("title", config["name"]);
+        }
+
+        var functionCallback = function () {
+            this.openHotspotWindow();
+        }
+
+        element.addListener('click', functionCallback.bind(this), false);
     }
 });
