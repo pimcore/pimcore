@@ -36,8 +36,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
     }
 
 
-    public function gridGetColumnConfigAction()
-    {
+    public function gridGetColumnConfigAction() {
 
         if ($this->getParam("id")) {
             $class = Object_Class::getById($this->getParam("id"));
@@ -122,7 +121,6 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                 if ($field instanceof Object_Class_Data_Localizedfields) {
                     foreach ($field->getFieldDefinitions() as $fd) {
                         if (empty($types) || in_array($fd->getFieldType(), $types)) {
-                            $fd->setNoteditable(true);
                             $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $count);
                             if(!empty($fieldConfig)) {
                                 $availableFields[] = $fieldConfig;
