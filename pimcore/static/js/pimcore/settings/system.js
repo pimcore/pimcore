@@ -256,12 +256,6 @@ pimcore.settings.system = Class.create({
                             cls: "pimcore_extra_label_bottom"
                         },
                             {
-                                fieldLabel: t("dropdown_instead_tabs"),
-                                xtype: "checkbox",
-                                name: "general.dropdownLanguageSelection",
-                                checked: this.getValue("general.dropdownLanguageSelection")
-                            },
-                            {
                                 xtype: "compositefield",
                                 fieldLabel: t("add_language"),
                                 width: 400,

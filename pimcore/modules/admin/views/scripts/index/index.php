@@ -505,7 +505,6 @@ if($this->config->services->google->browserapikey) {
         customviews: <?php echo Zend_Json::encode($this->customview_config) ?>,
         language: '<?php echo $this->language; ?>',
         websiteLanguages: <?php echo Zend_Json::encode(explode(",",$this->config->general->validLanguages)); ?>,
-        dropdownLanguageSelection: <?php echo $this->config->general->dropdownLanguageSelection ? "true" : "false"; ?>,
         google_translate_api_key: "<?php echo $this->config->services->translate->apikey; ?>",
         google_maps_api_key: "<?php echo $googleMapsApiKey ?>",
         liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
