@@ -63,6 +63,10 @@ abstract class Document_PageSnippet extends Document {
      */
     public $contentMasterDocumentId;
 
+    /**
+     * @var array
+     */
+    protected $inheritedElements = array();
 
     /**
      * @see Document::update
@@ -330,6 +334,11 @@ abstract class Document_PageSnippet extends Document {
         if($this->hasElement($name)) {
             return $elements[$name];
         } else {
+
+            if(array_key_exists($name, $this->inheritedElements)) {
+               return $this->inheritedElements[$name];
+            }
+
             // check for content master document (inherit data)
             if($contentMasterDocument = $this->getContentMasterDocument()) {
                 if($contentMasterDocument instanceof Document_PageSnippet) {
@@ -337,6 +346,7 @@ abstract class Document_PageSnippet extends Document {
                     if($inheritedElement) {
                         $inheritedElement = clone $inheritedElement;
                         $inheritedElement->setInherited(true);
+                        $this->inheritedElements[$name] = $inheritedElement;
                         return $inheritedElement;
                     }
                 }
@@ -482,5 +492,24 @@ abstract class Document_PageSnippet extends Document {
                 $task->save();
             }
         }
+    }
+
+    /**
+     *
+     */
+    public function __sleep() {
+
+        $finalVars = array();
+        $parentVars = parent::__sleep();
+
+        $blockedVars = array("inheritedElements");
+
+        foreach ($parentVars as $key) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
+
+        return $finalVars;
     }
 }
