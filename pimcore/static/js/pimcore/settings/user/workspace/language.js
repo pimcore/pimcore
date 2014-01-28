@@ -52,7 +52,7 @@ pimcore.settings.user.workspace.language = Class.create({
             store: data,
             hideLabel: true,
             width: 460,
-            height: 400,
+            height: 390,
             value: this.data
         };
 
