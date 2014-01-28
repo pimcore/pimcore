@@ -326,7 +326,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
             $user = Pimcore_Tool_Admin::getCurrentUser();
 
             $languagesAllowed = null;
-            if (!$user->isAdmin()) {
+            if ($user && !$user->isAdmin()) {
                 $languagesAllowed = Object_Service::getLanguagePermissions($object, $user, "lEdit");
 
                 if ($languagesAllowed) {
