@@ -335,6 +335,7 @@ abstract class Document_PageSnippet extends Document {
                 if($contentMasterDocument instanceof Document_PageSnippet) {
                     $inheritedElement = $contentMasterDocument->getElement($name);
                     if($inheritedElement) {
+                        $inheritedElement = clone $inheritedElement;
                         $inheritedElement->setInherited(true);
                         return $inheritedElement;
                     }
