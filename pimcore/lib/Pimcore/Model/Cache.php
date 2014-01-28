@@ -449,7 +449,9 @@ class Pimcore_Model_Cache {
     public static function setWriteLock ($force = false) {
         if(!self::$writeLockTimestamp || $force) {
             self::$writeLockTimestamp = time();
-            self::save(self::$writeLockTimestamp, "system_cache_write_lock", array(), 30, 0, true);
+            if($cache = self::getInstance()) {
+                $cache->save(self::$writeLockTimestamp, "system_cache_write_lock", array(), 30);
+            }
         }
     }
 
@@ -458,12 +460,14 @@ class Pimcore_Model_Cache {
      */
     public static function removeWriteLock () {
         if(self::$writeLockTimestamp) {
-            $lock = self::load("system_cache_write_lock");
+            if($cache = self::getInstance()) {
+                $lock = $cache->load("system_cache_write_lock");
 
-            // only remove the lock if it was created by this process
-            if($lock <= self::$writeLockTimestamp) {
-                self::remove("system_cache_write_lock");
-                self::$writeLockTimestamp = null;
+                // only remove the lock if it was created by this process
+                if($lock <= self::$writeLockTimestamp) {
+                    $cache->remove("system_cache_write_lock");
+                    self::$writeLockTimestamp = null;
+                }
             }
         }
     }
@@ -477,14 +481,16 @@ class Pimcore_Model_Cache {
             return true;
         }
 
-        $lock = self::load("system_cache_write_lock");
+        if($cache = self::getInstance()) {
+            $lock = $cache->load("system_cache_write_lock");
 
-        // lock is valid for 30 secs
-        if($lock && $lock > (time()-30)) {
-            self::$writeLockTimestamp = $lock;
-            return true;
-        } else {
-            self::$writeLockTimestamp = 0;
+            // lock is valid for 30 secs
+            if($lock && $lock > (time()-30)) {
+                self::$writeLockTimestamp = $lock;
+                return true;
+            } else {
+                self::$writeLockTimestamp = 0;
+            }
         }
 
         return false;
@@ -495,10 +501,11 @@ class Pimcore_Model_Cache {
      */
     public static function remove($key) {
 
-        if (!self::$enabled) {
+        // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
+        /*if (!self::$enabled) {
             Logger::debug("Cache is not cleared because it is disabled");
             return;
-        }
+        }*/
 
         self::setWriteLock();
 
@@ -515,10 +522,11 @@ class Pimcore_Model_Cache {
      */
     public static function clearAll() {
 
-        if (!self::$enabled) {
+        // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
+        /*if (!self::$enabled) {
             Logger::debug("Cache is not cleared because it is disabled");
             return;
-        }
+        }*/
 
         self::setWriteLock();
 
@@ -551,10 +559,11 @@ class Pimcore_Model_Cache {
      */
     public static function clearTags($tags = array()) {
 
-        if (!self::$enabled) {
+        // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
+        /*if (!self::$enabled) {
             Logger::debug("Cache is not cleared because it is disabled");
             return;
-        }
+        }*/
 
         self::setWriteLock();
 
@@ -614,10 +623,11 @@ class Pimcore_Model_Cache {
      */
     public static function clearTagsOnShutdown() {
 
-        if (!self::$enabled) {
+        // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
+        /*if (!self::$enabled) {
             Logger::debug("Cache is not cleared because it is disabled");
             return;
-        }
+        }*/
 
         if(!empty(self::$_clearTagsOnShutdown)) {
             $tags = array_unique(self::$_clearTagsOnShutdown);
