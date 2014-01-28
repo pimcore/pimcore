@@ -252,22 +252,40 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
             $localeBak = null;
         }
 
+        $user = Pimcore_Tool_Admin::getCurrentUser();
+
+        $languagesAllowed = null;
+        if (!$user->isAdmin()) {
+            $languagesAllowed = Object_Service::getLanguagePermissions($object, $user, "lView");
+
+            if ($languagesAllowed) {
+                $languagesAllowed = array_keys($languagesAllowed);
+            }
+        }
+
         $validLanguages = Pimcore_Tool::getValidLanguages();
 
-        foreach ($validLanguages as $language) {
+        if ($validLanguages) {
 
-            foreach ($this->getFieldDefinitions() as $fd) {
-                Zend_Registry::set("Zend_Locale", new Zend_Locale($language));
+            foreach ($validLanguages as $language) {
 
-                $el = new Webservice_Data_Object_Element();
-                $el->name = $fd->getName();
-                $el->type = $fd->getFieldType();
-                $el->value = $fd->getForWebserviceExport($object);
-                if ($el->value ==  null && self::$dropNullValues) {
-                    continue;
+                foreach ($this->getFieldDefinitions() as $fd) {
+                    Zend_Registry::set("Zend_Locale", new Zend_Locale($language));
+
+                    if ($languagesAllowed && !in_array($language, $languagesAllowed)) {
+                        continue;
+                    }
+
+                    $el = new Webservice_Data_Object_Element();
+                    $el->name = $fd->getName();
+                    $el->type = $fd->getFieldType();
+                    $el->value = $fd->getForWebserviceExport($object);
+                    if ($el->value ==  null && self::$dropNullValues) {
+                        continue;
+                    }
+                    $el->language = $language;
+                    $wsData[] = $el;
                 }
-                $el->language = $language;
-                $wsData[] = $el;
             }
         }
         if ($localeBak) {
@@ -304,6 +322,18 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                 $localizedFields->setObject($object);
             }
 
+
+            $user = Pimcore_Tool_Admin::getCurrentUser();
+
+            $languagesAllowed = null;
+            if (!$user->isAdmin()) {
+                $languagesAllowed = Object_Service::getLanguagePermissions($object, $user, "lEdit");
+
+                if ($languagesAllowed) {
+                    $languagesAllowed = array_keys($languagesAllowed);
+                }
+            }
+
             foreach ($value as $field) {
                 if ($field instanceof stdClass) {
                     $field = Pimcore_Tool_Cast::castToClass("Webservice_Data_Object_Element", $field);
@@ -313,6 +343,12 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                     if (!in_array($field->language, $validLanguages)) {
                         continue;
                     }
+                }
+
+                if ($languagesAllowed && !in_array($field->language, $languagesAllowed)) {
+                    //TODO needs to be discussed. Maybe it is better to throw an exception instead of ignoring
+                    //the language
+                    continue;
                 }
 
                 if(!$field instanceof Webservice_Data_Object_Element){
