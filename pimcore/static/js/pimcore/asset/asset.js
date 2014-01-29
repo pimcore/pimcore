@@ -417,32 +417,42 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     showMetaInfo: function() {
 
-        new pimcore.element.metainfo([{
-            name: "path",
-            value: this.data.path + this.data.filename
-        }, {
-            name: "type",
-            value: this.data.type
-        }, {
-            name: "mimetype",
-            value: this.data.mimetype
-        }, {
-            name: "modificationdate",
-            type: "date",
-            value: this.data.modificationDate
-        }, {
-            name: "creationdate",
-            type: "date",
-            value: this.data.creationDate
-        }, {
-            name: "usermodification",
-            type: "user",
-            value: this.data.userModification
-        }, {
-            name: "userowner",
-            type: "user",
-            value: this.data.userOwner
-        }], "asset");
+        new pimcore.element.metainfo([
+            {
+                name: "id",
+                value: this.data.id
+            },
+            {
+                name: "path",
+                value: this.data.path + this.data.filename
+            }, {
+                name: "type",
+                value: this.data.type
+            }, {
+                name: "mimetype",
+                value: this.data.mimetype
+            }, {
+                name: "modificationdate",
+                type: "date",
+                value: this.data.modificationDate
+            }, {
+                name: "creationdate",
+                type: "date",
+                value: this.data.creationDate
+            }, {
+                name: "usermodification",
+                type: "user",
+                value: this.data.userModification
+            }, {
+                name: "userowner",
+                type: "user",
+                value: this.data.userOwner
+            },
+            {
+                name: "deeplink",
+                value: window.location.protocol + "//" + window.location.hostname + "/admin/login/deeplink?asset_" + this.data.id + "_" + this.data.type
+            }
+        ], "asset");
     }
 
 });

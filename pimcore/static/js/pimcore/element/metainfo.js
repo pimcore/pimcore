@@ -30,9 +30,10 @@ pimcore.element.metainfo = Class.create({
     getInputWindow: function () {
 
         if(!this.detailWindow) {
+            var height = this.data.length > 8 ? 400 : 300;
             this.detailWindow = new Ext.Window({
-                width: 600,
-                height: 300,
+                width: 800,
+                height: height,
                 iconCls: "pimcore_icon_info",
                 title: t('element_metainfo'),
                 layout: "fit",
@@ -70,7 +71,7 @@ pimcore.element.metainfo = Class.create({
                     fieldLabel: t(this.data[i]["name"]),
                     readOnly: true,
                     value: new Date(this.data[i]["value"] * 1000) + " (" + this.data[i]["value"] + ")",
-                    width: 400
+                    width: 600
                 });
             } else {
                 items.push({
@@ -78,7 +79,7 @@ pimcore.element.metainfo = Class.create({
                     fieldLabel: t(this.data[i]["name"]),
                     readOnly: true,
                     value: this.data[i]["value"],
-                    width: 400
+                    width: 600
                 });
             }
         }

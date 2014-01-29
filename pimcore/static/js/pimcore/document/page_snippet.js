@@ -125,10 +125,10 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 scale: "medium",
                 handler: this.unpublish.bind(this),
                 menu: [{
-                        text: t('save_close'),
-                        iconCls: "pimcore_icon_save",
-                        handler: this.unpublishClose.bind(this)
-                    }]
+                    text: t('save_close'),
+                    iconCls: "pimcore_icon_save",
+                    handler: this.unpublishClose.bind(this)
+                }]
             });
 
 
@@ -293,7 +293,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             this.newerVersionNotification = new Ext.Toolbar.TextItem({
                 xtype: 'tbtext',
                 text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;'
-                                                                        + t("this_is_a_newer_not_published_version"),
+                    + t("this_is_a_newer_not_published_version"),
                 scale: "medium",
                 hidden: true
             });
@@ -358,41 +358,51 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             if (this.edit && this.edit.layout.rendered) {
                 this.edit.reload(true);
             }
-            
+
             if (this.preview && this.preview.layout.rendered) {
                 this.preview.loadCurrentPreview();
             }
-        
+
         }.bind(this));
     },
 
     showMetaInfo: function() {
 
-        new pimcore.element.metainfo([{
-            name: "path",
-            value: this.data.path + this.data.key
-        }, {
-            name: "parentid",
-            value: this.data.parentId
-        }, {
-            name: "type",
-            value: this.data.type
-        }, {
-            name: "modificationdate",
-            type: "date",
-            value: this.data.modificationDate
-        }, {
-            name: "creationdate",
-            type: "date",
-            value: this.data.creationDate
-        }, {
-            name: "usermodification",
-            type: "user",
-            value: this.data.userModification
-        }, {
-            name: "userowner",
-            type: "user",
-            value: this.data.userOwner
-        }], "document");
+        new pimcore.element.metainfo([
+            {
+                name: "id",
+                value: this.data.id
+            },
+            {
+                name: "path",
+                value: this.data.path + this.data.key
+            }, {
+                name: "parentid",
+                value: this.data.parentId
+            }, {
+                name: "type",
+                value: this.data.type
+            }, {
+                name: "modificationdate",
+                type: "date",
+                value: this.data.modificationDate
+            }, {
+                name: "creationdate",
+                type: "date",
+                value: this.data.creationDate
+            }, {
+                name: "usermodification",
+                type: "user",
+                value: this.data.userModification
+            }, {
+                name: "userowner",
+                type: "user",
+                value: this.data.userOwner
+            },
+            {
+                name: "deeplink",
+                value: window.location.protocol + "//" + window.location.hostname + "/admin/login/deeplink?document_" + this.data.id + "_" + this.data.type
+            }
+        ], "document");
     }
 });

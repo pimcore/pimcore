@@ -623,28 +623,37 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     showMetaInfo: function() {
 
-        new pimcore.element.metainfo([{
-            name: "path",
-            value: this.data.general.fullpath
-        }, {
-            name: "classid",
-            value: this.data.general.o_classId
-        }, {
-            name: "modificationdate",
-            type: "date",
-            value: this.data.general.o_modificationDate
-        }, {
-            name: "creationdate",
-            type: "date",
-            value: this.data.general.o_creationDate
-        }, {
-            name: "usermodification",
-            type: "user",
-            value: this.data.general.o_userModification
-        }, {
-            name: "userowner",
-            type: "user",
-            value: this.data.general.o_userOwner
-        }], "object");
+        new pimcore.element.metainfo([
+            {
+                name: "id",
+                value: this.data.general.o_id
+            },
+            {
+                name: "path",
+                value: this.data.general.fullpath
+            }, {
+                name: "classid",
+                value: this.data.general.o_classId
+            }, {
+                name: "modificationdate",
+                type: "date",
+                value: this.data.general.o_modificationDate
+            }, {
+                name: "creationdate",
+                type: "date",
+                value: this.data.general.o_creationDate
+            }, {
+                name: "usermodification",
+                type: "user",
+                value: this.data.general.o_userModification
+            }, {
+                name: "userowner",
+                type: "user",
+                value: this.data.general.o_userOwner
+            },  {
+                name: "deeplink",
+                value: window.location.protocol + "//" + window.location.hostname + "/admin/login/deeplink?object_" + this.data.general.o_id + "_object"
+            }
+        ], "object");
     }
 });
