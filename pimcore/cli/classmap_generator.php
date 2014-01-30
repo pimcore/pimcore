@@ -58,24 +58,26 @@ $map = new stdClass();
 
 foreach ($paths as $path) {
 
-    // Get the ClassFileLocator, and pass it the library path
-    $l = new Zend_File_ClassFileLocator($path);
+    if(!empty($path)) {
+        // Get the ClassFileLocator, and pass it the library path
+        $l = new Zend_File_ClassFileLocator($path);
 
-    // Iterate over each element in the path, and create a map of
-    // classname => filename, where the filename is relative to the library path
-    //$map    = new stdClass;
-    //iterator_apply($l, 'createMap', array($l, $map));
+        // Iterate over each element in the path, and create a map of
+        // classname => filename, where the filename is relative to the library path
+        //$map    = new stdClass;
+        //iterator_apply($l, 'createMap', array($l, $map));
 
-    foreach ($l as $file) {
-        $namespace = empty($file->namespace) ? '' : $file->namespace . '\\';
-        $filename  = str_replace(PIMCORE_DOCUMENT_ROOT, "\$pdr . '", $file->getRealpath());
+        foreach ($l as $file) {
+            $namespace = empty($file->namespace) ? '' : $file->namespace . '\\';
+            $filename  = str_replace(PIMCORE_DOCUMENT_ROOT, "\$pdr . '", $file->getRealpath());
 
-        // Windows portability
-        $filename  = str_replace(array('/', '\\'), "/", $filename);
-        $map->{$namespace . $file->classname} = $filename;
+            // Windows portability
+            $filename  = str_replace(array('/', '\\'), "/", $filename);
+            $map->{$namespace . $file->classname} = $filename;
+        }
+
+        $globalMap = array_merge($globalMap, (array) $map);
     }
-
-    $globalMap = array_merge($globalMap, (array) $map);
 }
 
 // Create a file with the class/file map.
