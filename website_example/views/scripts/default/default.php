@@ -139,7 +139,7 @@
                 array("option3", "Option Three")
             )
         )); ?>
-        ... and multiple seletions ...
+        ... and multiple selections ...
         <?= $this->multiselect("multiselect", array(
             "width" => 200,
             "height" => 100,
