@@ -19,7 +19,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         parent::init();
 
         // check permissions
-        $notRestrictedActions = array("get-current-user", "update-current-user", "get-all-users", "get-available-permissions", "tree-get-childs-by-id", "get-minimal", "get-image");
+        $notRestrictedActions = array("get-current-user", "update-current-user", "get-all-users", "get-available-permissions", "tree-get-childs-by-id", "get-minimal", "get-image", "upload-current-user-image");
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
             $this->checkPermission("users");
         }
@@ -260,6 +260,22 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
         $this->_helper->json($minimalUserData);
     }
+
+    public function uploadCurrentUserImageAction() {
+
+        $user = $this->getUser();
+        if ($user != null) {
+            if ($user->getId() == $this->getParam("id")) {
+                $this->uploadImageAction();
+            } else {
+                Logger::warn("prevented save current user, because ids do not match. ");
+                $this->_helper->json(false);
+            }
+        } else {
+            $this->_helper->json(false);
+        }
+    }
+
 
     public function updateCurrentUserAction() {
 

@@ -92,6 +92,32 @@ pimcore.settings.profile.panel = Class.create({
             value:this.currentUser.lastname,
             width:300
         });
+
+        var date = new Date();
+        var image = "/admin/user/get-image?id=" + this.currentUser.id + "&_dc=" + date.getTime();
+        generalItems.push({
+            xtype: "fieldset",
+            title: t("image"),
+            items: [{
+                xtype: "container",
+                id: "pimcore_user_image_" + this.currentUser.id,
+                html: '<img src="' + image + '" />',
+                width: 45,
+                height: 45,
+                style: "float:left; margin-right: 10px;"
+            },{
+                xtype:"button",
+                text: t("upload"),
+                handler: function () {
+                    pimcore.helpers.uploadDialog("/admin/user/upload-current-user-image?id=" + this.currentUser.id, null, function () {
+                        var cont = Ext.getCmp("pimcore_user_image_" + this.currentUser.id);
+                        var date = new Date();
+                        cont.update('<img src="/admin/user/get-image?id=' + this.currentUser.id + '&_dc=' + date.getTime() + '" />');
+                    }.bind(this))
+                }.bind(this)
+            }]
+        });
+
         generalItems.push({
             xtype:"textfield",
             fieldLabel:t("email"),
