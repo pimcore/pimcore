@@ -83,14 +83,6 @@ class Pimcore_Tool_Console {
      */
     public static function exec ($cmd, $outputFile = null, $timeout = null) {
 
-        if(!$outputFile) {
-            if(self::getSystemEnvironment() == 'windows') {
-                $outputFile = "NUL";
-            } else {
-                $outputFile = "/dev/null";
-            }
-        }
-
         if($timeout && self::getTimeoutBinary()) {
             $cmd = self::getTimeoutBinary() . " -k 1m " . $timeout . "s " . $cmd;
         } else if($timeout) {
