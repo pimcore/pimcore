@@ -39,7 +39,9 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
      */
     protected function getDb () {
         if(!$this->db) {
-            $this->db = Pimcore_Resource::get();
+            // we're using a new mysql connection here to avoid problems with active (nested) transactions
+            Logger::debug("Initialize dedicated MySQL connection for the cache adapter");
+            $this->db = Pimcore_Resource::getConnection();
         }
         return $this->db;
     }
