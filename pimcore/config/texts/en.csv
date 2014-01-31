@@ -1385,7 +1385,7 @@
 "hotspotimage_enter_name_of_new_hotspot","Enter name of new Hotspot"
 "hotspotimage","Image with Hotspots"
 "hotspotimage_no_image","Please define an image first"
-"objectsMetadata_allowed_class","Allowed Classes"
+"objectsMetadata_allowed_class","Allowed Class"
 "objectsMetadata_visible_fields","Visible Fields"
 "objectsMetadata_type_number","Number"
 "objectsMetadata_type_text", "Text"
