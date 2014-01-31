@@ -113,8 +113,8 @@ class Object_Class extends Pimcore_Model_Abstract {
             "creationDate" => true
         )
     );
-    
-    
+
+
     /**
      * @param integer $id
      * @return Object_Class
@@ -276,7 +276,7 @@ class Object_Class extends Pimcore_Model_Abstract {
 
                 // collect lazyloaded fields
                 if (method_exists($def,"getLazyLoading") and $def->getLazyLoading()) {
-                        $lazyLoadedFields[] = $key;
+                    $lazyLoadedFields[] = $key;
                 }
             }
 
@@ -340,19 +340,19 @@ class Object_Class extends Pimcore_Model_Abstract {
         }
 
         $this->deletePhpClasses();
-        
+
         // empty object cache
         try {
             Pimcore_Model_Cache::clearTag("class_" . $this->getId());
         }
         catch (Exception $e) {}
-        
+
         // empty output cache
         try {
             Pimcore_Model_Cache::clearTag("output");
         }
         catch (Exception $e) {}
-        
+
         $this->getResource()->delete();
     }
 
@@ -516,7 +516,75 @@ class Object_Class extends Pimcore_Model_Abstract {
         $this->fieldDefinitions = array();
 
         $this->extractDataDefinitions($this->layoutDefinitions);
+        $this->decorateObjectsMetadata();
+
         return $this;
+    }
+
+
+    /**
+     *
+     */
+    private function decorateObjectsMetadata() {
+
+        $fieldDefintions = $this->getFieldDefinitions();
+        foreach ($fieldDefintions as $fd) {
+            if ($fd instanceof Object_Class_Data_ObjectsMetadata) {
+                $visibleFields = $fd->getVisibleFields();
+                if ($visibleFields) {
+
+                    $allowedClassId = $fd->getAllowedClassId();
+                    if (!$allowedClassId)  {
+                        continue;
+                    }
+                    $allowedClass = Object_Class::getById($allowedClassId);
+                    if (!$allowedClass) {
+                        continue;
+                    }
+
+                    $visibleFields = explode(',', $visibleFields);
+
+                    $visibleFieldTitles = array();
+
+                    foreach ($visibleFields as $visibleField) {
+                        $visibleFieldDefinition = $allowedClass->getFieldDefinition($visibleField);
+
+                        $visibleFieldTitle = null;
+                        if ($visibleFieldDefinition) {
+                            $visibleFieldTitle = $visibleFieldDefinition->getTitle();
+                        }
+
+                        if ($visibleFieldTitle) {
+                            $visibleFieldTitles[] = $visibleFieldTitle;
+                        } else {
+                            $visibleFieldTitles[] = $visibleField;
+                        }
+                    }
+                    $visibleFieldTitles = implode(',', $visibleFieldTitles);
+                    $this->decorateVisibleField($this->layoutDefinitions, $fd->getName(), $visibleFieldTitles);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param $layout
+     * @param $key
+     * @param $title
+     */
+    public function decorateVisibleField(&$layout, $key, $title) {
+        if ($layout instanceof Object_Class_Data_ObjectsMetadata) {
+            $layout->visibleFieldTitles = $title;
+        } else {
+            if (method_exists($layout, "getChilds")) {
+                $children = $layout->getChilds();
+                if (is_array($children)) {
+                    foreach ($children as $child) {
+                        $this->decorateVisibleField($child, $key, $title);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -620,7 +688,7 @@ class Object_Class extends Pimcore_Model_Abstract {
         $this->icon = $icon;
         return $this;
     }
-    
+
     /**
      * @return array
      */

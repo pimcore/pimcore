@@ -77,14 +77,15 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         var i;
 
         var visibleFields = this.fieldConfig.visibleFields.split(",");
+        var visibleFieldsTitles = this.fieldConfig.visibleFieldTitles.split(",");
 
         var columns = [];
         columns.push({header: 'ID', dataIndex: 'id', width: 50});
 
         for (i = 0; i < visibleFields.length; i++) {
             if(!empty(visibleFields[i])) {
-                columns.push({header: ts(visibleFields[i]), dataIndex: visibleFields[i], width: 100, editor: null,
-                                                                    renderer: renderer});
+                columns.push({header: ts(visibleFieldsTitles[i]), dataIndex: visibleFields[i], width: 100, editor: null,
+                    renderer: renderer});
             }
         }
 

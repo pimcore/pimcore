@@ -20,6 +20,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
     public $allowedClassId;
     public $visibleFields;
+    public $visibleFieldTitles;
     public $columns; 
 
 
