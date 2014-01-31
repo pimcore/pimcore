@@ -1075,6 +1075,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin
                                 ));
 
                                 if ($content) {
+                                    include_once("simple_html_dom.php");
                                     $html = str_get_html($content);
                                     if ($html) {
                                         $nodeConfig["links"] = count($html->find("a"));
