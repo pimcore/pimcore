@@ -369,6 +369,7 @@ class Pimcore_Tool {
 
         $config = Pimcore_Config::getSystemConfig();
         $clientConfig = $config->httpclient->toArray();
+        $clientConfig["adapter"] = $clientConfig["adapter"] ? $clientConfig["adapter"] : "Zend_Http_Client_Adapter_Socket";
         $clientConfig["maxredirects"] = $options["maxredirects"] ? $options["maxredirects"] : 2;
         $clientConfig["timeout"] = $options["timeout"] ? $options["timeout"] : 3600;
         $type = empty($type) ? "Zend_Http_Client" : $type;
