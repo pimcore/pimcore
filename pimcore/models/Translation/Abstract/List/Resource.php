@@ -99,10 +99,14 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
         if(is_array($keysToDelete) && !empty($keysToDelete)) {
             $preparedKeys = array();
             foreach ($keysToDelete as $value) {
-                $preparedKeys[] = $this->db->quote($value);
+                if(strpos($value, ":") === false) { // colon causes problems due to a ZF bug, so we exclude them
+                    $preparedKeys[] = $this->db->quote($value);
+                }
             }
 
-            $this->db->delete(static::getTableName(), "`key` IN (" . implode(",", $preparedKeys) . ")");
+            if(!empty($preparedKeys)) {
+                $this->db->delete(static::getTableName(), "`key` IN (" . implode(",", $preparedKeys) . ")");
+            }
         }
     }
 }
