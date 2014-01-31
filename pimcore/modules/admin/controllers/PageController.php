@@ -298,7 +298,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
             }
         }
 
-        $doc->save();
+        $this->saveToSession($doc);
 
         $this->_helper->json(array(
             "success" => true

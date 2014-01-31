@@ -50,7 +50,7 @@ pimcore.document.edit = Class.create({
                         id: this.document.id
                     },
                     success: function () {
-                        this.document.reload();
+                        this.reload(true);
                     }.bind(this)
                 });
             };
