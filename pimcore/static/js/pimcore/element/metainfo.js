@@ -65,23 +65,59 @@ pimcore.element.metainfo = Class.create({
 
         for (var i=0; i<this.data.length; i++) {
 
+            var item;
+
             if(this.data[i]["type"] == "date") {
-                items.push({
+                item = {
                     xtype: "textfield",
                     fieldLabel: t(this.data[i]["name"]),
                     readOnly: true,
                     value: new Date(this.data[i]["value"] * 1000) + " (" + this.data[i]["value"] + ")",
                     width: 600
-                });
+                }
+
+
             } else {
-                items.push({
-                    xtype: "textfield",
-                    fieldLabel: t(this.data[i]["name"]),
-                    readOnly: true,
-                    value: this.data[i]["value"],
-                    width: 600
-                });
+                var type = this.data[i]["type"]
+                var value = this.data[i]["value"];
+                var name = t(this.data[i]["name"]);
+                if (type == "user") {
+
+                    var htmlValue = value;
+
+                    var user = pimcore.globalmanager.get("user");
+                    if (user.admin) {
+                        var html = '<a href="#">' + value + " " + t("click_to_open") +  '</a>';
+                    }
+
+                    item = {
+                        xtype: "label",
+                        fieldLabel: name,
+                        readOnly: true,
+                        html: html,
+                        width: 600,
+                        listeners: {
+                            render: function(value, detailWindow, c){
+                                c.getEl().on('click', function(){
+                                    pimcore.helpers.showUser(value);
+                                    detailWindow.close();
+                                }, c);
+                            }.bind(this, value, this.detailWindow)
+                        }
+                    };
+
+                } else {
+
+                    item = {
+                        xtype: "textfield",
+                        fieldLabel: name,
+                        readOnly: true,
+                        value: value,
+                        width: 600
+                    };
+                }
             }
+            items.push(item);
         }
 
         var panel = new Ext.form.FormPanel({

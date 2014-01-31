@@ -405,7 +405,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
         if(errorText != null && errorText != undefined){
             text = text + '<br /><hr /><br />' +
                 '<pre style="font-size:11px;word-wrap: break-word;">'
-                    + strip_tags(errorText) +
+                + strip_tags(errorText) +
                 "</pre>";
         }
 
@@ -1474,8 +1474,8 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                             '.small { width: 130px; height: 130px; float: left; overflow: hidden; margin: 0 5px 5px 0; } ' +
                             '.small.complete img { min-width: 100%; max-height: 100%; } ' +
                             '/* firefox fix: remove loading/broken image icon */ @-moz-document url-prefix() { img:-moz-loading { visibility: hidden; } img:-moz-broken { -moz-force-broken-image-icon: 0;}} ' +
-                        '</style>' +
-                        imageHtml;
+                            '</style>' +
+                            imageHtml;
 
                     iframe.onload = function () {
                         this.contentWindow.document.body.innerHTML = imageHtml;
@@ -1488,13 +1488,32 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                     container.applyStyles(styles);
                 }
             }.bind(this, node));
-
             el.on("mouseleave", function () {
                 pimcore.helpers.treeNodeThumbnailPreviewHide();
             }.bind(this));
         }.bind(this, node), 200);
     }
 };
+
+
+pimcore.helpers.showUser = function(specificUser) {
+    var user = pimcore.globalmanager.get("user");
+    if (user.admin) {
+        var panel = null;
+        try {
+            panel = pimcore.globalmanager.get("users");
+            panel.activate();
+        }
+        catch (e) {
+            panel = new pimcore.settings.user.panel()
+            pimcore.globalmanager.add("users", panel);
+        }
+
+        if (specificUser) {
+            panel.openUser(specificUser);
+        }
+    }
+}
 
 pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
     var container = Ext.get("pimcore_tree_preview");

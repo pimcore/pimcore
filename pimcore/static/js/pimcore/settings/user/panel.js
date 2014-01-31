@@ -90,16 +90,21 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
         return this.tree;
     },
 
+    openUser: function(userId) {
+        var userPanelKey = "user_" + userId;
+        if(this.panels[userPanelKey]) {
+            this.panels[userPanelKey].activate();
+        } else {
+            var userPanel = new pimcore.settings.user.usertab(this, userId);
+            this.panels[userPanelKey] = userPanel;
+        }
+
+    },
+
     onTreeNodeClick: function (node) {
 
         if(!node.attributes.allowChildren && node.id > 0) {
-            var userPanelKey = "user_" + node.id;
-            if(this.panels[userPanelKey]) {
-                this.panels[userPanelKey].activate();
-            } else {
-                var userPanel = new pimcore.settings.user.usertab(this, node.id);
-                this.panels[userPanelKey] = userPanel;
-            }
+            this.openUser(node.id);
         }
     },
 
@@ -140,7 +145,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
             }
 
             if(typeof menu.items != "undefined" && typeof menu.items.items != "undefined"
-                                                                && menu.items.items.length > 0) {
+                && menu.items.items.length > 0) {
                 menu.show(this.ui.getAnchor());
             }
         }
@@ -152,11 +157,11 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
             if(data && data.success){
                 this.tree.getNodeById(parentId).reload();
             } else {
-                 pimcore.helpers.showNotification(t("error"), t("user_creation_error"), "error",t(data.message));
+                pimcore.helpers.showNotification(t("error"), t("user_creation_error"), "error",t(data.message));
             }
 
         } catch(e){
-             pimcore.helpers.showNotification(t("error"), t("user_creation_error"), "error");
+            pimcore.helpers.showNotification(t("error"), t("user_creation_error"), "error");
         }
     },
 
