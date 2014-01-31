@@ -144,7 +144,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
     /**
       * @static
       * @param $id - translation key
-      * @param bool $create - creates an empty translation entry if the key doesn't exists
+      * @param bool $create - creates an empty translation entry if the key doesn't exist
       * @param bool $returnIdIfEmpty - returns $id if no translation is available
       * @return Translation_Website
       */
