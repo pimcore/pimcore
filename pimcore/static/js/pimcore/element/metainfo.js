@@ -95,8 +95,10 @@ pimcore.element.metainfo = Class.create({
                         fieldLabel: name,
                         readOnly: true,
                         html: html,
-                        width: 600,
-                        listeners: {
+                        width: 600
+                    };
+                    if (user.admin) {
+                        item.listeners = {
                             render: function(value, detailWindow, c){
                                 c.getEl().on('click', function(){
                                     pimcore.helpers.showUser(value);
@@ -104,7 +106,7 @@ pimcore.element.metainfo = Class.create({
                                 }, c);
                             }.bind(this, value, this.detailWindow)
                         }
-                    };
+                    }
 
                 } else {
 
