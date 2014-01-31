@@ -148,51 +148,59 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
       * @param bool $returnIdIfEmpty - returns $id if no translation is available
       * @return Translation_Website
       */
-     public static function getByKey($id, $create = false, $returnIdIfEmpty = false)
-     {
-         $cacheKey = "translation_" . $id;
-         if(Zend_Registry::isRegistered($cacheKey)) {
+    public static function getByKey($id, $create = false, $returnIdIfEmpty = false)
+    {
+        $cacheKey = "translation_" . $id;
+        if(Zend_Registry::isRegistered($cacheKey)) {
             return Zend_Registry::get($cacheKey);
-         }
+        }
 
-         $translation = new static();
+        $translation = new static();
 
-         $idOriginal = $id;
-         $id = mb_strtolower($id);
+        $idOriginal = $id;
+        $id = mb_strtolower($id);
 
-         try {
-             $translation->getResource()->getByKey(self::getValidTranslationKey($id));
-         } catch (Exception $e) {
-             if (!$create) {
-                 throw new Exception($e->getMessage());
-             } else {
-                 $translation->setKey($id);
-                 $translation->setCreationDate(time());
-                 $translation->setModificationDate(time());
+        if($translation instanceof Translation_Admin) {
+            $languages = Pimcore_Tool_Admin::getLanguages();
+        } else {
+            $languages = Pimcore_Tool::getValidLanguages();
+        }
 
-                 $translations = array();
-                 foreach (Pimcore_Tool::getValidLanguages() as $lang) {
-                     $translations[$lang] = "";
-                 }
-                 $translation->setTranslations($translations);
-                 $translation->save();
-             }
+        try {
+            $translation->getResource()->getByKey(self::getValidTranslationKey($id));
+        } catch (Exception $e) {
+            if (!$create) {
+                throw new Exception($e->getMessage());
+            } else {
+                $translation->setKey($id);
+                $translation->setCreationDate(time());
+                $translation->setModificationDate(time());
 
-         }
+                $translations = array();
+                foreach ($languages as $lang) {
+                    $translations[$lang] = "";
+                }
+                $translation->setTranslations($translations);
+                $translation->save();
+            }
 
-         if ($returnIdIfEmpty) {
-             $translations = $translation->getTranslations();
-             foreach ($translations as $key => $value) {
-                 $translations[$key] = $value ? : $idOriginal;
-             }
-             $translation->setTranslations($translations);
-         }
+        }
 
-         // add to key cache
-         Zend_Registry::set($cacheKey, $translation);
+        if ($returnIdIfEmpty) {
+            $translations = $translation->getTranslations();
+            foreach ($languages as $language) {
+                if(!array_key_exists($language, $translations) || empty($translations[$language])) {
+                    $translations[$language] = $idOriginal;
+                }
+            }
+            $translation->setTranslations($translations);
+        }
 
-         return $translation;
-     }
+        // add to key cache
+        Zend_Registry::set($cacheKey, $translation);
+
+        return $translation;
+    }
 
      /**
       * Static Helper to get the translation of the current locale
