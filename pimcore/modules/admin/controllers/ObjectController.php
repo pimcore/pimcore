@@ -927,7 +927,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     if ($fd instanceof Object_Class_Data_Localizedfields) {
                         $user = Pimcore_Tool_Admin::getCurrentUser();
                         if (!$user->getAdmin()) {
-                            $allowedLanguages = $this->getLanguagePermissions($object, $user, "lEdit");
+                            $allowedLanguages = Object_Service::getLanguagePermissions($object, $user, "lEdit");
                             if (!is_null($allowedLanguages)) {
                                 $allowedLanguages = array_keys($allowedLanguages);
                                 $submittedLanguages = array_keys($data[$key]);
