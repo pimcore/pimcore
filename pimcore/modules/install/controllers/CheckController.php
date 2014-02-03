@@ -586,6 +586,18 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => $jpgOptimizer ? "ok" : "warning"
         );
 
+        // timeout binary
+        try {
+            $timeoutBin = (bool) Pimcore_Tool_Console::getTimeoutBinary();
+        } catch (Exception $e) {
+            $timeoutBin = false;
+        }
+
+        $checksApps[] = array(
+            "name" => "timeout - (GNU coreutils)",
+            "state" => $timeoutBin ? "ok" : "warning"
+        );
+
 
         $this->view->checksApps = $checksApps;
         $this->view->checksPHP = $checksPHP;
