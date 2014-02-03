@@ -142,7 +142,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         }
 
         $cmd = self::getFfmpegCli() . " -i " . realpath($this->file) . " -vcodec png -vframes 1 -ss " . $timeOffset . " " . str_replace("/", DIRECTORY_SEPARATOR, $file);
-        Pimcore_Tool_Console::exec($cmd);
+        Pimcore_Tool_Console::exec($cmd, null, 60);
     }
 
     public function getDuration () {
@@ -150,7 +150,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/video-info-" . uniqid() . ".out";
 
         $cmd = self::getFfmpegCli() . " -i " . realpath($this->file);
-        Pimcore_Tool_Console::exec($cmd, $tmpFile);
+        Pimcore_Tool_Console::exec($cmd, $tmpFile, null, 60);
 
         $contents = file_get_contents($tmpFile);
         unlink($tmpFile);

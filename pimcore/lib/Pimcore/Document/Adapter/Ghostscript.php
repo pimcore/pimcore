@@ -127,7 +127,7 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
      */
     public function getPageCount() {
 
-        $pages = Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -dNODISPLAY -q -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'");
+        $pages = Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -dNODISPLAY -q -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'", null, 120);
         $pages = trim($pages);
 
         if(!is_numeric($pages)) {
@@ -145,7 +145,7 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
     public function saveImage($path, $page = 1, $resolution = 200) {
 
         try {
-            Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -sDEVICE=png16m -dFirstPage=" . $page . " -dLastPage=" . $page . " -r" . $resolution . " -o " . $path . " " . $this->path);
+            Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -sDEVICE=png16m -dFirstPage=" . $page . " -dLastPage=" . $page . " -r" . $resolution . " -o " . $path . " " . $this->path, null, 240);
             return $this;
         } catch (Exception $e) {
             Logger::error($e);
@@ -163,7 +163,7 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
             }
 
             $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/pdf-text-extract-" . uniqid() . ".txt";
-            Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -dBATCH -dNOPAUSE -sDEVICE=txtwrite " . $pageRange . "-dTextFormat=2 -sOutputFile=" . $textFile . " " . $path);
+            Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -dBATCH -dNOPAUSE -sDEVICE=txtwrite " . $pageRange . "-dTextFormat=2 -sOutputFile=" . $textFile . " " . $path, null, 120);
 
             if(is_file($textFile)) {
                 $text =  file_get_contents($textFile);

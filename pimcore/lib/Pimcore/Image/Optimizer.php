@@ -28,7 +28,7 @@ class Pimcore_Image_Optimizer {
                 $optimizer = self::getPngOptimizerCli();
                 if($optimizer) {
                     if($optimizer["type"] == "pngquant") {
-                        Pimcore_Tool_Console::exec($optimizer["path"] . " --ext xxxoptimized.png " . $path);
+                        Pimcore_Tool_Console::exec($optimizer["path"] . " --ext xxxoptimized.png " . $path, null, 60);
                         $newFile = preg_replace("/\.png$/", "", $path);
                         $newFile .= "xxxoptimized.png";
 
@@ -38,7 +38,7 @@ class Pimcore_Image_Optimizer {
                         }
                     } else if ($optimizer["type"] == "pngcrush") {
                         $newFile = $path . ".xxxoptimized";
-                        Pimcore_Tool_Console::exec($optimizer["path"] . " " . $path . " " . $newFile);
+                        Pimcore_Tool_Console::exec($optimizer["path"] . " " . $path . " " . $newFile, null, 60);
                         if(file_exists($newFile)) {
                             unlink($path);
                             rename($newFile, $path);
@@ -50,7 +50,7 @@ class Pimcore_Image_Optimizer {
                 if($optimizer) {
                     if($optimizer["type"] == "imgmin") {
                         $newFile = $path . ".xxxoptimized";
-                        Pimcore_Tool_Console::exec($optimizer["path"] . " " . $path . " " . $newFile);
+                        Pimcore_Tool_Console::exec($optimizer["path"] . " " . $path . " " . $newFile, null, 60);
                         if(file_exists($newFile)) {
                             unlink($path);
                             rename($newFile, $path);
@@ -60,7 +60,7 @@ class Pimcore_Image_Optimizer {
                         if(filesize($path) > 10000) {
                             $additionalParams = " --all-progressive";
                         }
-                        Pimcore_Tool_Console::exec($optimizer["path"] . $additionalParams . " -o --strip-all --max=85 " . $path);
+                        Pimcore_Tool_Console::exec($optimizer["path"] . $additionalParams . " -o --strip-all --max=85 " . $path, null, 60);
                     }
                 }
             }

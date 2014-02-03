@@ -90,7 +90,7 @@ class Pimcore_Image_HtmlToImage {
             $command = self::getWkhtmltoimageBinary() . $arguments;
         }
 
-        Pimcore_Tool_Console::exec($command, PIMCORE_LOG_DIRECTORY . "/wkhtmltoimage.log", 20);
+        Pimcore_Tool_Console::exec($command, PIMCORE_LOG_DIRECTORY . "/wkhtmltoimage.log", 60);
 
         if(file_exists($outputFile) && filesize($outputFile) > 1000) {
             return true;
