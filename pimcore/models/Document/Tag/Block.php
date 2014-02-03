@@ -31,6 +31,10 @@ class Document_Tag_Block extends Document_Tag {
      */
     public $current = 0;
 
+    /**
+     * @var string[]
+     */
+    public $suffixes = array();
 
     /**
      * @see Document_Tag_Interface::getType
@@ -374,5 +378,25 @@ class Document_Tag_Block extends Document_Tag {
 
 
     }
-    
+
+
+    /**
+     * @return Document_Tag_Block_Item[]
+     */
+    public function getElements()
+    {
+        // init
+        $doc = Document_Page::getById( $this->getDocumentId() );
+
+        $suffixes = (array)$this->suffixes;
+        $suffixes[] = $this->getName();
+
+        $list = array();
+        foreach($this->getData() as $index)
+        {
+            $list[] = new Document_Tag_Block_Item($doc, $index, $suffixes);
+        }
+
+        return $list;
+    }
 }

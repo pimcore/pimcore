@@ -656,4 +656,26 @@ class Document_Tag_Areablock extends Document_Tag {
 
         return Pimcore_ExtensionManager::getBrickConfigs();
     }
+
+    /**
+     * @param $name
+     *
+     * @return Document_Tag_Areablock_Item[]
+     */
+    public function getElement($name)
+    {
+        // init
+        $doc = Document_Page::getById( $this->getDocumentId() );
+
+        $list = array();
+        foreach($this->getData() as $item)
+        {
+            if($item['type'] == $name)
+            {
+                $list[] = new Document_Tag_Areablock_Item($doc, $this->getName(), $item['key']);
+            }
+        }
+
+        return $list;
+    }
 }
