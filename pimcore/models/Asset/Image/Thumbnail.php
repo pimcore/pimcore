@@ -58,20 +58,26 @@ class Asset_Image_Thumbnail {
     protected $config;
 
     /**
+     * @var bool
+     */
+    protected $deferred = false;
+
+    /**
      * Generate a thumbnail image.
      * @param Image_Asset Original image
      * @param mixed $selector Name, array or object with the thumbnail configuration.
     */
-    public function __construct($asset, $config = null) {
+    public function __construct($asset, $config = null, $deferred = false) {
 
         $this->asset = $asset;
+        $this->deferred = $deferred;
         $this->config = $this->createConfig($config);
     }
 
     /**
      *
      */
-    public function generate() {
+    public function generate($deferredAllowed = false) {
         if(!$this->path) {
             // if no correct thumbnail config is given use the original image as thumbnail
             if(!$this->config) {
@@ -79,7 +85,8 @@ class Asset_Image_Thumbnail {
                 $this->path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
             } else {
                 try {
-                    $this->path = Asset_Image_Thumbnail_Processor::process($this->asset, $this->config);
+                    $deferred = ($deferredAllowed && $this->deferred) ? true : false;
+                    $this->path = Asset_Image_Thumbnail_Processor::process($this->asset, $this->config, null, $deferred);
                 } catch (Exception $e) {
                     $this->path = '/pimcore/static/img/filetype-not-supported.png';
                     Logger::error("Couldn't create thumbnail of image " . $this->asset->getFullPath());
@@ -96,15 +103,15 @@ class Asset_Image_Thumbnail {
      * @return string Public path to thumbnail image.
     */
     public function __toString() {
-        return $this->getPath();
+        return $this->getPath(true);
     }
 
     /**
      * Get the public path to the thumbnail image.
      * @return string Public path to thumbnail image.
     */
-    public function getPath() {
-        $this->generate();
+    public function getPath($deferredAllowed = false) {
+        $this->generate($deferredAllowed);
         return $this->path;
     }
 
@@ -173,11 +180,13 @@ class Asset_Image_Thumbnail {
 
         $attr = array();
 
-        if($this->getWidth()) {
-            $attr['width'] = 'width="'.$this->getWidth().'"';
-        }
-        if($this->getHeight()) {
-            $attr['height'] = 'height="'.$this->getHeight().'"';
+        if(!$this->deferred) {
+            if($this->getWidth()) {
+                $attr['width'] = 'width="'.$this->getWidth().'"';
+            }
+            if($this->getHeight()) {
+                $attr['height'] = 'height="'.$this->getHeight().'"';
+            }
         }
 
         foreach($attributes as $key => $value) {
@@ -187,11 +196,28 @@ class Asset_Image_Thumbnail {
             }
         }
 
-        $attr['src'] = 'src="'.$this->getPath().'"';
+        $path = $this->getPath(true);
+        $attr['src'] = 'src="'. $path .'"';
 
         //ALT-attribute is required in XHTML
         if(!isset($attr['alt'])) {
             $attr['alt'] = 'alt=""';
+        }
+
+        if(!isset($attr['srcset'])) {
+            $srcset = array(
+                $path . " 1x"
+            );
+
+            $configDpr = clone $this->getConfig();
+            foreach ([1.5, 2, 2.5] as $dpr) {
+                // add sources for devices with hight device-pixel-ratio into srcset attribute
+                // use deferred generation of thumbnails (on the fly)
+                $configDpr->setHighResolution($dpr);
+                $srcset[] = $this->getAsset()->getThumbnail($configDpr, true) . " " . $dpr . "x";
+            }
+
+            $attr['srcset'] = 'srcset="' . implode(", ", $srcset) . '"';
         }
 
         return '<img '.implode(' ', $attr).' />';
