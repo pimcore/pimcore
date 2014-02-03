@@ -221,7 +221,7 @@ class User_UserRole extends User_Abstract {
      */
     public function setDocTypes($docTypes)
     {
-        if(is_string($docTypes)) {
+        if(strlen($docTypes)) {
             $docTypes = explode(",", $docTypes);
         }
 
