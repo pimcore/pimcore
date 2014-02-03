@@ -739,7 +739,7 @@
 "save_only_scheduled_tasks","Save only scheduled tasks"
 "minify_javascript_algorithm","Javascript minification algorithm"
 "modified_assets","Modified Assets"
-"modification_statistic","Changes the last 31 days"
+"modification_statistic","Changes in the last 31 days"
 "minify_javascript","Minify Javascript"
 "minify_css","Minify CSS"
 "content","Content"
