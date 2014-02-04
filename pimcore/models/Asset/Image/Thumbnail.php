@@ -204,22 +204,6 @@ class Asset_Image_Thumbnail {
             $attr['alt'] = 'alt=""';
         }
 
-        if(!isset($attr['srcset'])) {
-            $srcset = array(
-                $path . " 1x"
-            );
-
-            $configDpr = clone $this->getConfig();
-            foreach ([1.5, 2, 2.5] as $dpr) {
-                // add sources for devices with hight device-pixel-ratio into srcset attribute
-                // use deferred generation of thumbnails (on the fly)
-                $configDpr->setHighResolution($dpr);
-                $srcset[] = $this->getAsset()->getThumbnail($configDpr, true) . " " . $dpr . "x";
-            }
-
-            $attr['srcset'] = 'srcset="' . implode(", ", $srcset) . '"';
-        }
-
         return '<img '.implode(' ', $attr).' />';
     }
 

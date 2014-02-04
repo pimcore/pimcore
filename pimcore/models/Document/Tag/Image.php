@@ -189,9 +189,6 @@ class Document_Tag_Image extends Document_Tag {
      */
     public function frontend() {
         if ($this->image instanceof Asset) {
-
-
-            $srcset = null;
             $thumbnailInUse = false;
             if ($this->options["thumbnail"] || $this->cropPercent) {
                 // create a thumbnail first
@@ -227,17 +224,6 @@ class Document_Tag_Image extends Document_Tag {
                     $width = $imagePath->getWidth();
                     $height = $imagePath->getHeight();
                     $thumbnailInUse = true;
-
-                    $srcset = array(
-                        $imagePath . " 1x"
-                    );
-
-                    foreach ([1.5, 2, 2.5] as $dpr) {
-                        // add sources for devices with hight device-pixel-ratio into srcset attribute
-                        // use deferred generation of thumbnails (on the fly)
-                        $thumbConfig->setHighResolution($dpr);
-                        $srcset[] = $this->image->getThumbnail($thumbConfig, true) . " " . $dpr . "x";
-                    }
                 }
             }
 
@@ -288,10 +274,6 @@ class Document_Tag_Image extends Document_Tag {
                     }
                     $attribs[] = $key . '="' . $value . '"';
                 }
-            }
-
-            if($srcset && !array_key_exists("srcset", $attribs)) {
-                $attribs[] = 'srcset="' . implode(", ", $srcset) . '"';
             }
 
             return '<img src="' . $imagePath . '" ' . implode(" ", $attribs) . ' />';
