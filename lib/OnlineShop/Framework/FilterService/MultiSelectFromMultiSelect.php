@@ -63,7 +63,11 @@ class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends Onli
 
 
         if(empty($value) && !$params['is_reload']) {
-            $value = explode(",", $preSelect);
+            if(is_array($preSelect)) {
+                $value = $preSelect;
+            } else {
+                $value = explode(",", $preSelect);
+            }
 
             foreach($value as $key => $v) {
                 if(!$v) {
