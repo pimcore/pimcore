@@ -480,4 +480,20 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
         exit;
     }
+
+    public function getTokenLoginLinkAction() {
+        if($this->getUser()->isAdmin()) {
+
+            $user = User::getById($this->getParam("id"));
+            if($user) {
+                $token = Pimcore_Tool_Authentication::generateToken($user->getName(), $user->getPassword());
+                $r = $this->getRequest();
+                $link = $r->getScheme() . "://" . $r->getHttpHost() . "/admin/login/login/?username=" . $user->getName() . "&token=" . $token;
+
+                $this->_helper->json(array(
+                    "link" => $link
+                ));
+            }
+        }
+    }
 }
