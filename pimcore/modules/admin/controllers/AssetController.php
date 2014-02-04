@@ -872,7 +872,9 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
         }
 
         if($this->getParam("download")) {
-            header('Content-Disposition: attachment; filename="' . $image->getFilename() . '"');
+            $downloadFilename = str_replace("." . Pimcore_File::getFileExtension($image->getFilename()), "." . $thumbnail->getFormat(), $image->getFilename());
+            $downloadFilename = strtolower($downloadFilename);
+            header('Content-Disposition: attachment; filename="' . $downloadFilename . '"');
         }
 
         $thumbnail = $image->getThumbnail($thumbnail);
