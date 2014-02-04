@@ -18,7 +18,11 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
     type: "indexFieldSelection",
 
     initialize: function (data, fieldConfig) {
-        this.data = data;
+        if(data) {
+            this.data = data;
+        } else {
+            this.data = {};
+        }
         this.fieldConfig = fieldConfig;
         
         this.store = new Ext.data.JsonStore({
@@ -93,13 +97,15 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
                         this.data.preSelect = "";
                     }
 
-                    this.preSelectStore.setBaseParam("field", record.data.key);
-                    var params = {field: record.data.key};
-                    if(this.tenantCombobox) {
-                        this.preSelectStore.setBaseParam("tenant", this.tenantCombobox.getValue());
-                        params.tenant = this.tenantCombobox.getValue();
+                    if(this.fieldConfig.multiPreSelect == 'remote_single' || this.fieldConfig.multiPreSelect == 'remote_multi') {
+                        this.preSelectStore.setBaseParam("field", record.data.key);
+                        var params = {field: record.data.key};
+                        if(this.tenantCombobox) {
+                            this.preSelectStore.setBaseParam("tenant", this.tenantCombobox.getValue());
+                            params.tenant = this.tenantCombobox.getValue();
+                        }
+                        this.preSelectStore.reload({params: params});
                     }
-                    this.preSelectStore.reload({params: params});
                 }.bind(this)
             },
             width: 300
