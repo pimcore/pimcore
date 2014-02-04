@@ -562,6 +562,8 @@ class Object_Class extends Pimcore_Model_Abstract {
                     }
                     $visibleFieldTitles = implode(',', $visibleFieldTitles);
                     $this->decorateVisibleField($this->layoutDefinitions, $fd->getName(), $visibleFieldTitles);
+                } else {
+                    $this->decorateVisibleField($this->layoutDefinitions, $fd->getName(), "");
                 }
             }
         }
