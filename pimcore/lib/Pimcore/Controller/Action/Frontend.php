@@ -287,6 +287,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                     $languages = Pimcore_Tool::getValidLanguages();
                     if($languages[0]) {
                         Logger::error("Using '" . $languages[0] . "' as a fallback, because the language '".$locale."' is not defined in system settings");
+                        $translate->addTranslation(array(), $languages[0]);
                         $translate->setLocale($languages[0]);
                     } else {
                         throw new Exception("You have not defined a language in the system settings (Website -> Frontend-Languages), please add at least one language.");
