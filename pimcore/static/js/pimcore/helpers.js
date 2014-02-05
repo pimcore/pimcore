@@ -74,7 +74,27 @@ pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
         shift:true,
         stopEvent:true
     });
+
+    var openWelcomePage = new ExtJS.KeyMap(bindEl, {
+        key:"w",
+        fn: top.pimcore.helpers.openWelcomePage.bind(this),
+        ctrl:true,
+        alt:false,
+        shift:true,
+        stopEvent:true
+    });
+
+
 };
+
+pimcore.helpers.openWelcomePage = function() {
+    try {
+        pimcore.globalmanager.get("layout_portal_welcome").activate();
+    }
+    catch (e) {
+        pimcore.globalmanager.add("layout_portal_welcome", new pimcore.layout.portal());
+    }
+}
 
 pimcore.helpers.openAsset = function (id, type, ignoreForHistory) {
 

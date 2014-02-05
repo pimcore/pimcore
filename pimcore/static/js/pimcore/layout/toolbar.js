@@ -31,16 +31,9 @@ pimcore.layout.toolbar = Class.create({
                 items: [{
                     text: t("welcome"),
                     iconCls: "pimcore_icon_welcome",
-                    handler: function () {
-                        try {
-                            pimcore.globalmanager.get("layout_portal_welcome").activate();
-                        }
-                        catch (e) {
-                            pimcore.globalmanager.add("layout_portal_welcome", new pimcore.layout.portal());
-                        }
-                    }
-                }]
-            }
+                    handler: pimcore.helpers.openWelcomePage.bind(this)
+                    }]
+                }
         });
 
         Ext.Ajax.request({
