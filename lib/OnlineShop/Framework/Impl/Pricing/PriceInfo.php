@@ -212,7 +212,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
      */
     public function __call($name, $arguments)
     {
-        return $this->priceInfo->$name($arguments);
+        return call_user_func_array(array($this->priceInfo, $name), $arguments);
     }
 
     /**
