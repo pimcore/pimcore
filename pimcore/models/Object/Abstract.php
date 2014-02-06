@@ -975,12 +975,14 @@ class Object_Abstract extends Element_Abstract {
                 $this->setKey($originalElement->getKey());
                 $this->setPath($originalElement->getPath());
             }
-
-            unset($this->_fulldump);
         }
 
         if(isset($this->_fulldump) && $this->o_properties !== null) {
             $this->renewInheritedProperties();
+        }
+
+        if(isset($this->_fulldump)) {
+            unset($this->_fulldump);
         }
     }
 

@@ -1396,12 +1396,14 @@ class Asset extends Element_Abstract {
                 $this->setFilename($originalElement->getFilename());
                 $this->setPath($originalElement->getPath());
             }
-
-            unset($this->_fulldump);
         }
 
         if(isset($this->_fulldump) && $this->properties !== null) {
             $this->renewInheritedProperties();
+        }
+
+        if(isset($this->_fulldump)) {
+            unset($this->_fulldump);
         }
     }
     

@@ -1063,12 +1063,14 @@ class Document extends Element_Abstract {
                 $this->setKey($originalElement->getKey());
                 $this->setPath($originalElement->getPath());
             }
-
-            unset($this->_fulldump);
         }
 
         if(isset($this->_fulldump) && $this->properties !== null) {
             $this->renewInheritedProperties();
+        }
+
+        if(isset($this->_fulldump)) {
+            unset($this->_fulldump);
         }
     }
 
