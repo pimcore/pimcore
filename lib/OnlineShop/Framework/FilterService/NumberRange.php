@@ -9,24 +9,25 @@ class OnlineShop_Framework_FilterService_NumberRange extends OnlineShop_Framewor
             $script = $this->script;
         }
         return $this->view->partial($script, array(
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$filterDefinition->getField()],
-            "values" => $productList->getGroupByValues($filterDefinition->getField(), true),
-            "definition" => $filterDefinition,
-            "fieldname" => $filterDefinition->getField()
-        ));
+                                                  "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+                                                  "label" => $filterDefinition->getLabel(),
+                                                  "currentValue" => $currentFilter[$this->getField($filterDefinition)],
+                                                  "values" => $productList->getGroupByValues($this->getField($filterDefinition), true),
+                                                  "definition" => $filterDefinition,
+                                                  "fieldname" => $this->getField($filterDefinition)
+                                             ));
     }
 
     public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false) {
-        $value = $params[$filterDefinition->getField()];
+        $field = $this->getField($filterDefinition);
+        $value = $params[$field];
 
         if(empty($value)) {
             $value['from'] = $filterDefinition->getPreSelectFrom();
             $value['to'] = $filterDefinition->getPreSelectTo();
         }
 
-        $currentFilter[$filterDefinition->getField()] = $value;
+        $currentFilter[$field] = $value;
 
         if(!empty($value)) {
             if(!empty($value['from'])) {
