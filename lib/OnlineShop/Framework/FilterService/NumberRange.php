@@ -33,18 +33,18 @@ class OnlineShop_Framework_FilterService_NumberRange extends OnlineShop_Framewor
             if(!empty($value['from'])) {
 
                 if($isPrecondition) {
-                    $productList->addCondition($filterDefinition->getField() . " >= " . $productList->quote($value['from']), "PRECONDITION_" . $filterDefinition->getField());
+                    $productList->addCondition($this->getField($filterDefinition) . " >= " . $productList->quote($value['from']), "PRECONDITION_" . $this->getField($filterDefinition));
                 } else {
-                    $productList->addCondition($filterDefinition->getField() . " >= " . $productList->quote($value['from']), $filterDefinition->getField());
+                    $productList->addCondition($this->getField($filterDefinition) . " >= " . $productList->quote($value['from']), $this->getField($filterDefinition));
                 }
 
             }
             if(!empty($value['to'])) {
 
                 if($isPrecondition) {
-                    $productList->addCondition($filterDefinition->getField() . " <= " . $productList->quote($value['to']), "PRECONDITION_" . $filterDefinition->getField());
+                    $productList->addCondition($this->getField($filterDefinition) . " <= " . $productList->quote($value['to']), "PRECONDITION_" . $this->getField($filterDefinition));
                 } else {
-                    $productList->addCondition($filterDefinition->getField() . " <= " . $productList->quote($value['to']), $filterDefinition->getField());
+                    $productList->addCondition($this->getField($filterDefinition) . " <= " . $productList->quote($value['to']), $this->getField($filterDefinition));
                 }
 
             }
