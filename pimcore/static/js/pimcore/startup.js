@@ -292,6 +292,13 @@ Ext.onReady(function () {
         id:'pimcore_statusbar',
         statusAlign:'right'
     });
+    pimcore.globalmanager.add("statusbar", statusbar);
+
+    // check for devmode
+    if (pimcore.settings.devmode) {
+        statusbar.add('<div class="pimcore_statusbar_devmode">DEV-MODE</div>');
+        statusbar.add("-");
+    }
 
     // check for debug
     if (pimcore.settings.debug) {
