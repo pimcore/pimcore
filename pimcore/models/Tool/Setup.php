@@ -47,16 +47,7 @@ class Tool_Setup extends Pimcore_Model_Abstract {
 					"language" => "en",
 					"validLanguages" => "en,de",
 					"debug" => "1",
-					"loglevel" => array(
-						"debug" => "1",
-						"info" => "1",
-						"notice" => "1",
-						"warning" => "1",
-						"error" => "1",
-						"critical" => "1",
-						"alert" => "1",
-						"emergency" => "1"
-					),
+					"debugloglevel" => "debug",
 					"custom_php_logfile" => "1"
 				),
 				"database" => array(

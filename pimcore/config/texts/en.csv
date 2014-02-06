@@ -1238,7 +1238,6 @@
 "log_messages_user_mail_description","Email recipient of messages for activated log levels. This must be an admin user with a email address. Please make sure that the email settings are provided correctly if you want to use email logging."
 "log_messages_user_mail_recipient","Log messages email recipient"
 "loglevels", "Log Levels"
-"loglevels_description","The levels checked will be logged to website/var/log/debug.log. The most critical errors are always logged, they should not be deactivated."
 "email_settings","Email Settings"
 "email_senderemail","Sender Email"
 "email_sendername","Sender Name"

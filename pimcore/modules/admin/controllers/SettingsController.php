@@ -237,16 +237,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "password" => $values["general.http_auth.password"]
                 ),
                 "custom_php_logfile" => $values["general.custom_php_logfile"],
-                "loglevel" => array(
-                    "debug" => $values["general.loglevel.debug"],
-                    "info" => $values["general.loglevel.info"],
-                    "notice" => $values["general.loglevel.notice"],
-                    "warning" => $values["general.loglevel.warning"],
-                    "error" => $values["general.loglevel.error"],
-                    "critical" => $oldValues["general"]["loglevel"]["critical"],
-                    "alert" => $oldValues["general"]["loglevel"]["alert"],
-                    "emergency" => $oldValues["general"]["loglevel"]["emergency"],
-                ),
+                "debugloglevel" => $values["general.debugloglevel"],
                 "debug_admin_translations" => $values["general.debug_admin_translations"],
                 "devmode" => $values["general.devmode"],
                 "logrecipient" => $values["general.logrecipient"],

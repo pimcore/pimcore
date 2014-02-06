@@ -376,6 +376,21 @@ pimcore.settings.system = Class.create({
                                 checked: this.getValue("general.custom_php_logfile")
                             },
                             {
+                                fieldLabel: "debug.log Log-Level",
+                                xtype: "combo",
+                                name: "general.debugloglevel",
+                                value: this.getValue("general.debugloglevel"),
+                                store: [
+                                    ["debug", "DEBUG"],
+                                    ["info", "INFO"],
+                                    ["notice", "NOTICE"],
+                                    ["warning", "WARNING"],
+                                    ["error", "ERROR"]
+                                ],
+                                mode: "local",
+                                triggerAction: "all"
+                            },
+                            {
                                 fieldLabel: t('log_messages_user_mail_recipient'),
                                 xtype: "combo",
                                 editable: false,
@@ -396,80 +411,6 @@ pimcore.settings.system = Class.create({
                                 hideLabel: true,
                                 width: 600,
                                 value: t('log_messages_user_mail_description'),
-                                cls: "pimcore_extra_label_bottom"
-                            },
-
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: "<b>" + t("loglevels") + "</b>"
-                            },
-
-                            {
-                                fieldLabel: "DEBUG",
-                                xtype: "checkbox",
-                                name: "general.loglevel.debug",
-                                checked: this.getValue("general.loglevel.debug")
-                            },
-                            {
-                                fieldLabel: "INFO",
-                                xtype: "checkbox",
-                                name: "general.loglevel.info",
-                                checked: this.getValue("general.loglevel.info")
-                            },
-                            {
-                                fieldLabel: "NOTICE",
-                                xtype: "checkbox",
-                                name: "general.loglevel.notice",
-                                checked: this.getValue("general.loglevel.notice")
-                            },
-                            {
-                                fieldLabel: "WARNING",
-                                xtype: "checkbox",
-                                name: "general.loglevel.warning",
-                                checked: this.getValue("general.loglevel.warning")
-                            },
-                            {
-                                fieldLabel: "ERROR",
-                                xtype: "checkbox",
-                                name: "general.loglevel.error",
-                                checked: this.getValue("general.loglevel.error")
-                            },
-                            {
-                                fieldLabel: "CRITICAL",
-                                xtype: "checkbox",
-                                disabled: true,
-                                name: "general.loglevel.critical",
-                                checked: this.getValue("general.loglevel.critical")
-                            },
-                            {
-                                fieldLabel: "ALERT",
-                                xtype: "checkbox",
-                                disabled: true,
-                                name: "general.loglevel.alert",
-                                checked: this.getValue("general.loglevel.alert")
-                            },
-                            {
-                                fieldLabel: 'EMERGENCY',
-                                xtype: "checkbox",
-                                disabled: true,
-                                name: "general.loglevel.emergency",
-                                checked: this.getValue("general.loglevel.emergency")
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t('loglevels_description'),
-                                cls: "pimcore_extra_label_bottom"
-                            },
-
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: "&nbsp;",
                                 cls: "pimcore_extra_label_bottom"
                             },
                             {

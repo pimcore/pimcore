@@ -316,13 +316,12 @@ class Pimcore {
 
         $prios = array();
 
-        if($conf && $conf->general->loglevel) {
-            $prioConf = $conf->general->loglevel->toArray();
-            if(is_array($prioConf)) {
-                foreach ($prioConf as $level => $state) {
-                    if($state) {
-                        $prios[] = $prioMapping[$level];
-                    }
+        if($conf && $conf->general->debugloglevel) {
+            $prioMapping = array_reverse($prioMapping);
+            foreach ($prioMapping as $level => $state) {
+                $prios[] = $prioMapping[$level];
+                if($level == $conf->general->debugloglevel) {
+                    break;
                 }
             }
         }

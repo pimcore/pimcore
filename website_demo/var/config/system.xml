@@ -22,16 +22,7 @@
             <password/>
         </http_auth>
         <custom_php_logfile>1</custom_php_logfile>
-        <loglevel>
-            <debug/>
-            <info/>
-            <notice/>
-            <warning/>
-            <error>1</error>
-            <critical>1</critical>
-            <alert>1</alert>
-            <emergency>1</emergency>
-        </loglevel>
+        <debugloglevel>error</debugloglevel>
         <debug_admin_translations/>
         <devmode/>
         <logrecipient/>
