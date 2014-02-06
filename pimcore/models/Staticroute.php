@@ -451,7 +451,7 @@ class Staticroute extends Pimcore_Model_Abstract {
         }
 
         // remove optional parts
-        $url = preg_replace("/\{[^\}]+%[^\}]+\}/","",$url);
+        $url = preg_replace("/\{([^\}]+)?%[^\}]+\}/","",$url);
         $url = str_replace(array("{","}"),"",$url);
 
         $url = @vsprintf($url,$o);
