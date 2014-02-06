@@ -69,14 +69,16 @@ abstract class Pimcore_Model_Abstract {
 
                     for ($i = 0; $i < $length; $i++) {
 
-                        // check for a specialized resource adapter for the current DBMS
-                        $tmpClassName = implode("_", $classParts) . "_Resource_" . ucfirst(Pimcore_Resource::getType());
+                        // check for a general DBMS resource adapter
+                        $tmpClassName = implode("_", $classParts) . "_Resource";
                         if($className = $this->determineResourceClass($tmpClassName)) {
                             break;
                         }
 
-                        // check for a general DBMS resource adapter
-                        $tmpClassName = implode("_", $classParts) . "_Resource";
+                        // this is just for compatibility anymore, this was before the standard way
+                        // but as there will not be a specialized implementation anymore eg. Oracle, PostgreSQL, ...
+                        // we can move that below the general resource adapter as a fallback
+                        $tmpClassName = implode("_", $classParts) . "_Resource_" . ucfirst(Pimcore_Resource::getType());
                         if($className = $this->determineResourceClass($tmpClassName)) {
                             break;
                         }
