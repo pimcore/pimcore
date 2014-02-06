@@ -17,7 +17,7 @@ include_once("startup.php");
 
 try {
     $optsConfig = array(
-        'job|j=s' => 'call just a specific job(s), use "," (comma) to execute more than one job (valid options: scheduledtasks, cleanupcache, logmaintenance, sanitycheck, cleanuplogfiles, versioncleanup, redirectcleanup, cleanupbrokenviews, contentanalysis, usagestatistics, downloadmaxminddb and plugin classes if you want to call a plugin maintenance)',
+        'job|j=s' => 'call just a specific job(s), use "," (comma) to execute more than one job (valid options: scheduledtasks, cleanupcache, logmaintenance, sanitycheck, cleanuplogfiles, versioncleanup, versioncompress, redirectcleanup, cleanupbrokenviews, contentanalysis, usagestatistics, downloadmaxminddb and plugin classes if you want to call a plugin maintenance)',
         'manager|m=s' => 'force a specific manager (valid options: procedural, daemon)',
         'ignore-maintenance-mode' => 'forces the script execution even when the maintenance mode is activated',
         'verbose|v' => 'show detailed information during the maintenance (for debug, ...)',
@@ -94,6 +94,7 @@ $manager->registerJob(new Schedule_Maintenance_Job("httperrorlog", new Pimcore_L
 $manager->registerJob(new Schedule_Maintenance_Job("usagestatistics", new Pimcore_Log_Maintenance(), "usageStatistics"));
 $manager->registerJob(new Schedule_Maintenance_Job("sanitycheck", "Element_Service", "runSanityCheck"));
 $manager->registerJob(new Schedule_Maintenance_Job("versioncleanup", new Version(), "maintenanceCleanUp"));
+$manager->registerJob(new Schedule_Maintenance_Job("versioncompress", new Version(), "maintenanceCompress"));
 $manager->registerJob(new Schedule_Maintenance_Job("redirectcleanup", "Redirect", "maintenanceCleanUp"));
 $manager->registerJob(new Schedule_Maintenance_Job("cleanupbrokenviews", "Pimcore_Resource", "cleanupBrokenViews"));
 $manager->registerJob(new Schedule_Maintenance_Job("contentanalysis", "Tool_ContentAnalysis", "run"));

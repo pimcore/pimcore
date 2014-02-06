@@ -190,13 +190,21 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function loadData() {
 
-        if(!is_file($this->getFilePath()) or !is_readable($this->getFilePath())){
+        $data = null;
+        $rawPath = $this->getFilePath();
+        $compressedPath = $this->getFilePath() . ".gz";
+
+        if(is_file($rawPath) && is_readable($rawPath)){
+            $data = file_get_contents($rawPath);
+        } else if(is_file($compressedPath) && is_readable($compressedPath)){
+            $data = gzdecode(file_get_contents($compressedPath));
+        }
+
+        if(!$data) {
             Logger::err("Version: cannot read version data from file system.");
             $this->delete();
             return;
         }
-
-        $data = file_get_contents($this->getFilePath());
 
         if ($this->getSerialized()) {
             $data = Pimcore_Tool_Serialize::unserialize($data);
@@ -441,7 +449,26 @@ class Version extends Pimcore_Model_Abstract {
         $this->public = (bool) $public;
         return $this;
     }
-    
+
+
+    public function maintenanceCompress() {
+
+        foreach(["asset","document","object"] as $ctype) {
+            $dir = PIMCORE_VERSION_DIRECTORY . "/" . $ctype . "/";
+
+            if ($dh = opendir($dir)) {
+                while (($file = readdir($dh)) !== false) {
+                    $path = $dir.$file;
+                    if(is_file($path) && !preg_match("/\.(gz|bin)$/", $file)) {
+                        Logger::error("filename:" . $file);
+                        gzcompressfile($path, 9);
+                        @unlink($path);
+                    }
+                }
+                closedir($dh);
+            }
+        }
+    }
 
     /**
      *
