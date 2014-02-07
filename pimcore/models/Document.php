@@ -194,7 +194,7 @@ class Document extends Element_Abstract {
             return self::getById($document->getId());
         }
         catch (Exception $e) {
-            Logger::warning($e->getMessage());
+            Logger::debug($e->getMessage());
         }
 
         return null;
