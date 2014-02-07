@@ -597,7 +597,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 $doc = Document::getById($id);
                 if (!$doc) {
                     $this->encoder->encode(array(  "success" => false,
-                        "msg" => "Documengt does not exist",
+                        "msg" => "Document does not exist",
                         "code" => self::ELEMENT_DOES_NOT_EXIST));
                     return;
                 }
