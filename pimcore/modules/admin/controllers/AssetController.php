@@ -249,7 +249,15 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             Pimcore_File::put($sourcePath, base64_decode($data));
         }
 
-        if (!$this->getParam("parentId") && $this->getParam("parentPath")) {
+        if($this->getParam("dir") && $this->getParam("parentId")) {
+            // this is for uploading folders with Drag&Drop
+            // param "dir" contains the relative path of the file
+            $parent = Asset::getById($this->getParam("parentId"));
+            $newPath = $parent->getFullPath() . "/" . trim($this->getParam("dir"), "/ ");
+
+            $newParent = Asset_Service::createFolderByPath($newPath);
+            $this->setParam("parentId", $newParent->getId());
+        } else if (!$this->getParam("parentId") && $this->getParam("parentPath")) {
             $parent = Asset::getByPath($this->getParam("parentPath"));
             if ($parent instanceof Asset_Folder) {
                 $this->setParam("parentId", $parent->getId());

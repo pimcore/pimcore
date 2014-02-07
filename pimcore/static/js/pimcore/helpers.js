@@ -1643,4 +1643,75 @@ pimcore.helpers.handleTabRightClick = function (tabPanel, el, index) {
     }
 };
 
+pimcore.helpers.uploadAssetFromFileObject = function (file, url, callback) {
+    var reader = new FileReader();
 
+    if(typeof callback != "function") {
+        callback = function () {};
+    }
+
+    // binary upload
+    if(typeof reader["readAsBinaryString"] == "function") {
+        reader.onload = function(e) {
+
+            var boundary = '------multipartformboundary' + (new Date()).getTime();
+            var dashdash = '--';
+            var crlf     = '\r\n';
+
+            var builder = '';
+
+            builder += dashdash;
+            builder += boundary;
+            builder += crlf;
+
+            var xhr = new XMLHttpRequest();
+
+            builder += 'Content-Disposition: form-data; name="Filedata"';
+            if (file.name) {
+                builder += '; filename="' + file.name + '"';
+            }
+            builder += crlf;
+
+            builder += 'Content-Type: ' + file.type;
+            builder += crlf;
+            builder += crlf;
+
+            builder += e.target.result;
+            builder += crlf;
+
+            builder += dashdash;
+            builder += boundary;
+            builder += crlf;
+
+            builder += dashdash;
+            builder += boundary;
+            builder += dashdash;
+            builder += crlf;
+
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader('content-type', 'multipart/form-data; boundary='
+                + boundary);
+            xhr.sendAsBinary(builder);
+            xhr.onload = callback;
+        };
+
+        reader.readAsBinaryString(file);
+    } else if(typeof reader["readAsDataURL"] == "function") {
+        // "text" base64 upload
+        reader.onload = function(e) {
+
+            Ext.Ajax.request({
+                url: url,
+                method: "post",
+                params: {
+                    type: "base64",
+                    filename: file.name,
+                    data: e.target.result
+                },
+                success: callback
+            });
+        };
+
+        reader.readAsDataURL(file);
+    }
+};
