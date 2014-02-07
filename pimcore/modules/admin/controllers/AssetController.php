@@ -458,7 +458,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                     }
                 }
 
-                // the object itself is the last one
+                // the asset itself is the last one
                 $deleteJobs[] = array(array(
                     "url" => "/admin/asset/delete",
                     "params" => array(
