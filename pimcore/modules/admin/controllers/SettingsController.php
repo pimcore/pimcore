@@ -1321,6 +1321,25 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         }
         return $resultItem;
     }
+    
+    public function getAvailableAlgorithmsAction () {
+        
+    	$options = array();
+		
+    	$algorithms = hash_algos();
+        foreach ($algorithms as $algorithm) {
 
+            $options[] = array(
+                "key" => $algorithm,
+                "value" => $algorithm
+            );
+            
+        }
+
+        $result = array("data" => $options, "success" => true, "total" => count($options));
+
+        $this->_helper->json($result);
+
+    }
 
 }

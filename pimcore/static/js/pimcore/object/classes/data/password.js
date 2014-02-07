@@ -25,7 +25,14 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
         fieldcollection: true,
         localizedfield: true
     },        
-
+	statics : {
+		CONFIG_DATA : [
+			['front', 'Front'],
+			['back', 'Back']
+		]
+	},
+	algorithmsStore: {},
+	
     initialize: function (treeNode, initData) {
         this.type = "password";
 
@@ -43,7 +50,7 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
     },
 
     getGroup: function () {
-            return "text";
+        return "text";
     },
 
     getIconClass: function () {
@@ -53,17 +60,91 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
     getLayout: function ($super) {
 
         $super();
-
+		
+        var algorithmsProxy = new Ext.data.HttpProxy({
+            url:'/admin/settings/get-available-algorithms'
+        });
+        
+        var algorithmsReader = new Ext.data.JsonReader({
+            totalProperty:'total',
+            successProperty:'success',
+            root: "data",
+            fields: [
+                {name:'key'},
+                {name:'value'}
+            ]
+        });
+        
+        this.algorithmsStore = new Ext.data.Store({
+            proxy:algorithmsProxy,
+            reader:algorithmsReader,
+            listeners: {
+	            load: function() {
+	                if (this.datax.restrictTo) {
+	                    this.possibleOptions.setValue(this.datax.restrictTo);
+	                }
+	            }.bind(this)
+            }
+        });
+        
+        
         this.specificPanel.removeAll();
         this.specificPanel.add([
             {
-                xtype: "spinnerfield",
+    			xtype: "spinnerfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
-            }
+    		},
+    		{
+				xtype: "combo",
+				width: 300,
+				fieldLabel: t("algorithm"),
+				itemId: "algorithm",
+				name: "algorithm",
+				value: this.datax.algorithm || 'md5',
+				triggerAction: 'all',
+				lazyRender:true,
+				mode: 'local',
+				store: this.algorithmsStore,
+				valueField: 'value',
+				displayField: 'key'
+			},
+			{
+				xtype: 'textfield',
+				fieldLabel: t("salt"),
+				width: 300,
+				itemId: "salt",
+				name: "salt",
+				value: this.datax.salt,
+				emptyText: ''
+			},
+			{
+				xtype: "combo",
+				width: 300,
+				fieldLabel: t("saltlocation"),
+				itemId: "saltlocation",
+				name: "saltlocation",
+				value: this.datax.saltlocation || 'back',
+				triggerAction: 'all',
+				lazyRender:true,
+				mode: 'local',
+				store: new Ext.data.ArrayStore({
+					id: 0,
+					fields: [
+						'value',
+						'key'
+					],
+					data: this.statics.CONFIG_DATA
+				}),
+				valueField: 'value',
+				displayField: 'key'
+			}
+    
         ]);
-
+		
+        this.algorithmsStore.load();
+        
         return this.layout;
     }
 

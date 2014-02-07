@@ -51,6 +51,21 @@ class Object_Class_Data_Password extends Object_Class_Data {
     public $phpdocType = "string";
 
     /**
+     * @var string
+     */
+    public $algorithm = "";
+    
+    /**
+     * @var string
+     */
+    public $salt = "";  
+      
+    /**
+     * @var string
+     */
+    public $saltlocation = "";
+    
+    /**
      * @return integer
      */
     public function getWidth() {
@@ -73,16 +88,23 @@ class Object_Class_Data_Password extends Object_Class_Data {
      * @return string
      */
     public function getDataForResource($data, $object = null) {
-
-
-        // is already a md5 string
-        if(strlen($data) == 32) {
+		
+        // is already a hashed string
+        if(strlen($data) >= 32) {
             return $data;
         } else if (empty($data)) {
             return null;
         }
-
-        $hashed = md5($data);
+	
+        if ($this->salt != ''){
+        	if ($this->saltlocation == 'back'){
+        		$data = $data . $this->salt;
+        	}else if ($this->saltlocation == 'front'){
+        		$data = $this->salt . $data;
+        	}
+        }
+        
+        $hashed = hash($this->algorithm, $data);
 
         // set the hashed password back to the object, to be sure that is not plain-text after the first save
         // this is especially to aviod plaintext passwords in the search-index see: PIMCORE-1406
