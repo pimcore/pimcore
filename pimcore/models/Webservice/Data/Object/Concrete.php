@@ -87,7 +87,7 @@ class Webservice_Data_Object_Concrete extends Webservice_Data_Object {
                         
                     } else {
                         if(!$disableMappingExceptions) {
-                            throw new Exception("Unable to reverse map element [ " . $element->name . " ] of type [ " . $element->type . " ]. Setter not found");
+                            throw new Exception("No element [ " . $element->name . " ] of type [ " . $element->type . " ] found in class definition " . $class);
                         }
                     }
                 } else {
