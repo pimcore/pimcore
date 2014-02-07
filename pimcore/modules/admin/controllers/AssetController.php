@@ -400,68 +400,78 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
     public function deleteInfoAction()
     {
         $hasDependency = false;
-
-        try {
-            $asset = Asset::getById($this->getParam("id"));
-            $hasDependency = $asset->getDependencies()->isRequired();
-        } catch (Exception $e) {
-            Logger::err("failed to access asset with id: " . $this->getParam("id"));
-        }
-
         $deleteJobs = array();
+        $recycleJobs = array();
 
-        // check for childs
-        if ($asset instanceof Asset) {
+        $totalChilds = 0;
 
-            $deleteJobs[] = array(array(
-                "url" => "/admin/recyclebin/add",
-                "params" => array(
-                    "type" => "asset",
-                    "id" => $asset->getId()
-                )
-            ));
+        $ids = $this->getParam("id");
+        $ids = explode(',', $ids);
 
-
-            $hasChilds = $asset->hasChilds();
-            if (!$hasDependency) {
-                $hasDependency = $hasChilds;
+        foreach ($ids as $id) {
+            try {
+                $asset = Asset::getById($this->getParam("id"));
+                $hasDependency = $asset->getDependencies()->isRequired();
+            } catch (Exception $e) {
+                Logger::err("failed to access asset with id: " . $this->getParam("id"));
             }
 
-            $childs = 0;
-            if ($hasChilds) {
-                // get amount of childs
-                $list = new Asset_List();
-                $list->setCondition("path LIKE '" . $asset->getFullPath() . "/%'");
-                $childs = $list->getTotalCount();
 
-                if ($childs > 0) {
-                    $deleteObjectsPerRequest = 5;
-                    for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
-                        $deleteJobs[] = array(array(
-                            "url" => "/admin/asset/delete",
-                            "params" => array(
-                                "step" => $i,
-                                "amount" => $deleteObjectsPerRequest,
-                                "type" => "childs",
-                                "id" => $asset->getId()
-                            )
-                        ));
+            // check for childs
+            if ($asset instanceof Asset) {
+
+                $recycleJobs[] = array(array(
+                    "url" => "/admin/recyclebin/add",
+                    "params" => array(
+                        "type" => "asset",
+                        "id" => $asset->getId()
+                    )
+                ));
+
+
+                $hasChilds = $asset->hasChilds();
+                if (!$hasDependency) {
+                    $hasDependency = $hasChilds;
+                }
+
+                $childs = 0;
+                if ($hasChilds) {
+                    // get amount of childs
+                    $list = new Asset_List();
+                    $list->setCondition("path LIKE '" . $asset->getFullPath() . "/%'");
+                    $childs = $list->getTotalCount();
+                    $totalChilds += $childs;
+
+                    if ($childs > 0) {
+                        $deleteObjectsPerRequest = 5;
+                        for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
+                            $deleteJobs[] = array(array(
+                                "url" => "/admin/asset/delete",
+                                "params" => array(
+                                    "step" => $i,
+                                    "amount" => $deleteObjectsPerRequest,
+                                    "type" => "childs",
+                                    "id" => $asset->getId()
+                                )
+                            ));
+                        }
                     }
                 }
-            }
 
-            // the object itself is the last one
-            $deleteJobs[] = array(array(
-                "url" => "/admin/asset/delete",
-                "params" => array(
-                    "id" => $asset->getId()
-                )
-            ));
+                // the object itself is the last one
+                $deleteJobs[] = array(array(
+                    "url" => "/admin/asset/delete",
+                    "params" => array(
+                        "id" => $asset->getId()
+                    )
+                ));
+            }
         }
 
+        $deleteJobs = array_merge($recycleJobs, $deleteJobs);
         $this->_helper->json(array(
             "hasDependencies" => $hasDependency,
-            "childs" => $childs,
+            "childs" => $totalChilds,
             "deletejobs" => $deleteJobs
         ));
     }
