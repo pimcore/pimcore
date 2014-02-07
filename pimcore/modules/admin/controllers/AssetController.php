@@ -1579,4 +1579,53 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
 
         $this->_helper->json(array("success" => $success));
     }
+
+    public function gridProxyAction() {
+
+        if ($this->getParam("data")) {
+            if ($this->getParam("xaction") == "update") {
+                //TODO probably not needed
+            }
+        } else {
+            // get list of objects
+            $folder = Asset::getById($this->getParam("folderId"));
+
+
+            $start = 0;
+            $limit = 20;
+            $orderKey = "id";
+            $order = "ASC";
+
+
+            if ($this->getParam("limit")) {
+                $limit = $this->getParam("limit");
+            }
+            if ($this->getParam("start")) {
+                $start = $this->getParam("start");
+            }
+
+            if ($this->getParam("dir")) {
+                $order = $this->getParam("dir");
+            }
+
+            $list = new Asset_List();
+            $list->setCondition("parentId = " . $folder->getId() . " AND type != 'folder'");
+            $list->setLimit($limit);
+            $list->setOffset($start);
+            $list->setOrder($order);
+            $list->setOrderKey($orderKey);
+
+            $list->load();
+
+            $assets = array();
+            foreach ($list->getAssets() as $asset) {
+
+                $assets[] = $asset;
+            }
+            $this->_helper->json(array("data" => $assets, "success" => true, "total" => $list->getTotalCount()));
+        }
+    }
+
+
+
 }
