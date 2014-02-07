@@ -64,6 +64,9 @@ class Document_Tag_Areablock extends Document_Tag {
      * @see Document_Tag_Interface::frontend
      */
     public function frontend() {
+        if (!is_array($this->indices)) {
+            $this->indices = array();
+        }
         reset($this->indices);
         while ($this->loop());
     }
@@ -250,6 +253,9 @@ class Document_Tag_Areablock extends Document_Tag {
      */
     public function setDataFromResource($data) {
         $this->indices = Pimcore_Tool_Serialize::unserialize($data);
+        if (!is_array($this->indices)) {
+            $this->indices = array();
+        }
         return $this;
     }
 
@@ -595,10 +601,22 @@ class Document_Tag_Areablock extends Document_Tag {
      * @return void
      */
     public function getFromWebserviceImport($wsElement, $idMapper = null){
-        if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-            throw new Exception("It's not possible to set areas via the webservice");
+        $data = $wsElement->value;
+        if(($data->indices === null or is_array($data->indices)) and ($data->current==null or is_numeric($data->current))
+                    and ($data->currentIndex==null or is_numeric($data->currentIndex))) {
+            $indices = $data["indices"];
+            if ($indices instanceof stdclass) {
+                $indices = (array) $indices;
+            }
+
+            $this->indices = $indices;
+            $this->current = $data->current;
+            $this->currentIndex = $data->currentIndex;
+        } else  {
+            throw new Exception("cannot get  values from web service import - invalid data");
         }
     }
+
 
 
     public function isCustomAreaPath(){
