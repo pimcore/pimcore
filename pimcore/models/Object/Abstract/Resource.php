@@ -143,6 +143,13 @@ class Object_Abstract_Resource extends Element_Resource
         $this->db->delete("objects", $this->db->quoteInto("o_id = ?", $this->model->getId()));
     }
 
+
+    public function updateWorkspaces() {
+        $this->db->update("users_workspaces_object", array(
+            "cpath" => $this->model->getFullPath()
+        ), "cid = " . $this->model->getId());
+    }
+
     /**
      * Updates the paths for children, children's properties and children's permissions in the database
      *

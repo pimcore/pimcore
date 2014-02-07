@@ -171,6 +171,12 @@ class Document_Resource extends Element_Resource
         }
     }
 
+    public function updateWorkspaces() {
+        $this->db->update("users_workspaces_document", array(
+            "cpath" => $this->model->getRealFullPath()
+        ), "cid = " . $this->model->getId());
+    }
+
     public function updateChildsPaths($oldPath)
     {
         //get documents to empty their cache

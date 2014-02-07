@@ -155,6 +155,12 @@ class Asset_Resource extends Element_Resource
         }
     }
 
+    public function updateWorkspaces() {
+        $this->db->update("users_workspaces_asset", array(
+            "cpath" => $this->model->getFullPath()
+        ), "cid = " . $this->model->getId());
+    }
+
     public function updateChildsPaths($oldPath)
     {
         //get assets to empty their cache

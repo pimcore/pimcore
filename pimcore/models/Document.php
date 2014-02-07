@@ -390,6 +390,7 @@ class Document extends Element_Abstract {
                 // if the old path is different from the new path, update all children
                 $updatedChildren = array();
                 if($oldPath && $oldPath != $this->getFullPath()) {
+                    $this->getResource()->updateWorkspaces();
                     $updatedChildren = $this->getResource()->updateChildsPaths($oldPath);
                 }
 
