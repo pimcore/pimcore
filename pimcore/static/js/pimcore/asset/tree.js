@@ -171,7 +171,7 @@ pimcore.asset.tree = Class.create({
                     for (var i=0; i<files.length; i++) {
                         file = files[i];
 
-                        if (window.FileList && file.name) {
+                        if (window.FileList && file.name && file.type) { // check for type (folder has no type)
 
                             this.activeUploads++;
 
@@ -260,6 +260,11 @@ pimcore.asset.tree = Class.create({
                                 reader.readAsDataURL(file);
                             }
                         }
+                    }
+
+                    // if no files are uploaded (doesn't match criteria, ...) close the progress win immediately
+                    if(!this.activeUploads) {
+                        win.close();
                     }
                 }.bind(this), true);
             }
