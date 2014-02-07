@@ -53,7 +53,7 @@ class Object_Class_Data_Password extends Object_Class_Data {
     /**
      * @var string
      */
-    public $algorithm = "";
+    public $algorithm = "md5";
     
     /**
      * @var string
@@ -79,6 +79,54 @@ class Object_Class_Data_Password extends Object_Class_Data {
     public function setWidth($width) {
         $this->width = $this->getAsIntegerCast($width);
         return $this;
+    }
+
+    /**
+     * @param string $algorithm
+     */
+    public function setAlgorithm($algorithm)
+    {
+        $this->algorithm = $algorithm;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlgorithm()
+    {
+        return $this->algorithm;
+    }
+
+    /**
+     * @param string $salt
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    /**
+     * @param string $saltlocation
+     */
+    public function setSaltlocation($saltlocation)
+    {
+        $this->saltlocation = $saltlocation;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSaltlocation()
+    {
+        return $this->saltlocation;
     }
 
     /**
