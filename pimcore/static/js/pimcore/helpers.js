@@ -1416,6 +1416,9 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
      }*/
 };
 
+pimcore.helpers.treeNodeThumbnailTimeout = null;
+pimcore.helpers.treeNodeThumbnailLastClose = 0;
+
 pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) {
     if(typeof node.attributes["thumbnail"] != "undefined" ||
         typeof node.attributes["thumbnails"] != "undefined") {
@@ -1460,6 +1463,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                     if(!container) {
                         container  = Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview"></div>');
                         container = Ext.get(container);
+                        container.addClass("hidden");
                     }
 
                     // check for an existing iframe
@@ -1504,8 +1508,18 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                     container.update(""); // remove all
                     container.clean(true);
                     container.dom.appendChild(iframe);
-                    container.removeClass("hidden");
                     container.applyStyles(styles);
+
+                    var date = new Date();
+                    if(pimcore.helpers.treeNodeThumbnailLastClose === 0 || (date.getTime() - pimcore.helpers.treeNodeThumbnailLastClose) > 300) {
+                        // open deferred
+                        pimcore.helpers.treeNodeThumbnailTimeout = window.setTimeout(function() {
+                            container.removeClass("hidden");
+                        }, 500);
+                    } else {
+                        // open immediately
+                        container.removeClass("hidden");
+                    }
                 }
             }.bind(this, node));
             el.on("mouseleave", function () {
@@ -1515,6 +1529,22 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
     }
 };
 
+pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
+
+    if(pimcore.helpers.treeNodeThumbnailTimeout) {
+        clearTimeout(pimcore.helpers.treeNodeThumbnailTimeout);
+        pimcore.helpers.treeNodeThumbnailTimeout = null;
+    }
+
+    var container = Ext.get("pimcore_tree_preview");
+    if(container) {
+        if(!container.hasClass("hidden")) {
+            var date = new Date();
+            pimcore.helpers.treeNodeThumbnailLastClose = date.getTime();
+        }
+        container.addClass("hidden");
+    }
+};
 
 pimcore.helpers.showUser = function(specificUser) {
     var user = pimcore.globalmanager.get("user");
@@ -1533,14 +1563,7 @@ pimcore.helpers.showUser = function(specificUser) {
             panel.openUser(specificUser);
         }
     }
-}
-
-pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
-    var container = Ext.get("pimcore_tree_preview");
-    if(container) {
-        container.addClass("hidden");
-    }
-}
+};
 
 pimcore.helpers.insertTextAtCursorPosition = function (text) {
 

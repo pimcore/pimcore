@@ -144,6 +144,7 @@ pimcore.document.tree = Class.create({
 
     onTreeNodeClick: function () {
         if(this.attributes.permissions.view) {
+            pimcore.helpers.treeNodeThumbnailPreviewHide();
             pimcore.helpers.openDocument(this.id, this.attributes.type);
         }
     },
