@@ -27,6 +27,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         this.properties = new pimcore.element.properties(this, "asset");
         this.dependencies = new pimcore.element.dependencies(this, "asset");
         this.notes = new pimcore.element.notes(this, "asset");
+        this.listfolder = new pimcore.asset.listfolder(this);
 
         this.getData();
     },
@@ -104,6 +105,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
         items.push(this.dataview);
 
+        items.push(this.listfolder.getLayout());
 
         if (this.isAllowed("properties")) {
             items.push(this.properties.getLayout());
@@ -111,9 +113,11 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
         items.push(this.dependencies.getLayout());
 
+
         if (this.isAllowed("settings")) {
             items.push(this.notes.getLayout());
         }
+
 
         this.tabbar = new Ext.TabPanel({
             tabPosition: "top",

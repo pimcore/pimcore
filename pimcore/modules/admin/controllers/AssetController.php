@@ -1616,8 +1616,53 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                 $order = $this->getParam("dir");
             }
 
+            $conditionFilters = array("path LIKE '" . $folder->getFullPath() . "/%' AND type != 'folder'");
+            $filterJson = $this->getParam("filter");
+            if ($filterJson) {
+
+
+                $filters = Zend_Json::decode($filterJson);
+                foreach ($filters as $filter) {
+
+                    $operator = "=";
+
+                    if($filter["type"] == "string") {
+                        $operator = "LIKE";
+                    } else if ($filter["type"] == "numeric") {
+                        if($filter["comparison"] == "lt") {
+                            $operator = "<";
+                        } else if($filter["comparison"] == "gt") {
+                            $operator = ">";
+                        } else if($filter["comparison"] == "eq") {
+                            $operator = "=";
+                        }
+                    } else if ($filter["type"] == "date") {
+                        if($filter["comparison"] == "lt") {
+                            $operator = "<";
+                        } else if($filter["comparison"] == "gt") {
+                            $operator = ">";
+                        } else if($filter["comparison"] == "eq") {
+                            $operator = "=";
+                        }
+                        $filter["value"] = strtotime($filter["value"]);
+                    } else if ($filter["type"] == "list") {
+                        $operator = "=";
+                    } else if ($filter["type"] == "boolean") {
+                        $operator = "=";
+                        $filter["value"] = (int) $filter["value"];
+                    }
+                    // system field
+                    $value = $filter["value"];
+                    if ($operator == "LIKE") {
+                        $value = "%" . $value . "%";
+                    }
+                    $conditionFilters[] =  "`" . $filter["field"] . "` " . $operator . " '" . $value . "' ";
+                }
+            }
+
             $list = new Asset_List();
-            $list->setCondition("parentId = " . $folder->getId() . " AND type != 'folder'");
+            $condition = implode(" AND ", $conditionFilters);
+            $list->setCondition($condition);
             $list->setLimit($limit);
             $list->setOffset($start);
             $list->setOrder($order);
@@ -1627,13 +1672,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
 
             $assets = array();
             foreach ($list->getAssets() as $asset) {
-
                 $assets[] = $asset;
             }
+
             $this->_helper->json(array("data" => $assets, "success" => true, "total" => $list->getTotalCount()));
         }
     }
-
-
-
 }
