@@ -905,7 +905,7 @@ pimcore.helpers.deleteObjectCheckDependencyComplete = function (id, callback, re
 
     try {
         var res = Ext.decode(response.responseText);
-        var message = t('delete_message');
+        var message = res.batchDelete ? t('delete_message_batch') : t('delete_message');
         if (res.hasDependencies) {
             var message = t('delete_message_dependencies');
         }
