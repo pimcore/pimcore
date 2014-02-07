@@ -69,7 +69,7 @@ class Element_Recyclebin_Item_Resource extends Pimcore_Model_Resource_Abstract {
             $this->model->setId($this->db->lastInsertId());
         }
         catch (Exception $e) {
-            Logger::érror($e);
+            Logger::error($e);
         }
 
         return true;
