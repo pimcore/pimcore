@@ -1490,3 +1490,7 @@
 "click_to_open","(click to open)"
 "delete_selected","Delete selected"
 "open_selected","Open selected"
+"password_settings","Pasword settings"
+"algorithm","Algorithm"
+"salt","Salt"
+"saltlocation","Salt location"
