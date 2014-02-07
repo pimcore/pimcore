@@ -87,7 +87,7 @@ pimcore.element.metainfo = Class.create({
 
                     var user = pimcore.globalmanager.get("user");
                     if (user.admin) {
-                        var html = '<a href="#">' + value + " " + t("click_to_open") +  '</a>';
+                        var html = value + " " + '<a href="#">' + t("click_to_open") +  '</a>';
                     }
 
                     item = {
