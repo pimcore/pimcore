@@ -22,7 +22,14 @@ CREATE TABLE `assets` (
   KEY `path` (`path`)
 ) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8;
 
-
+CREATE TABLE `assets_metadata` (
+  `cid` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `language` varchar(255) DEFAULT NULL,
+  `type` enum('input','textarea') DEFAULT NULL,
+  `data` text,
+  KEY `cid` (`cid`)
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `cache`;
 CREATE TABLE `cache` (

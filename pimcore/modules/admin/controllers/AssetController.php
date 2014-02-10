@@ -52,11 +52,12 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
         }
 
         $asset->setProperties(Element_Service::minimizePropertiesForEditmode($asset->getProperties()));
-        $asset->getVersions();
+        //$asset->getVersions();
         $asset->getScheduledTasks();
         $asset->idPath = Element_Service::getIdPath($asset);
         $asset->userPermissions = $asset->getUserPermissions();
         $asset->setLocked($asset->isLocked());
+        $asset->setParent(null);
 
         if ($asset instanceof Asset_Text) {
             $asset->data = $asset->getData();

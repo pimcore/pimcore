@@ -1256,10 +1256,30 @@ class Asset extends Element_Abstract {
     /**
      * @return array
      */
-    public function getMetadata($key = null, $language = null)
+    public function getMetadata($name = null, $language = null)
     {
-        if($key) {
+        if($name) {
+            if($language === null) {
+                if(Zend_Registry::isRegistered("Zend_Locale")) {
+                    $language = (string) Zend_Registry::get("Zend_Locale");
+                }
+            }
 
+            $data = null;
+            foreach ($this->metadata as $md) {
+                if($md["name"] && $name) {
+                    if($language == $md["language"]) {
+                        return $md["data"];
+                    }
+                    if(empty($md["language"])) {
+                        $data = $md;
+                    }
+                }
+            }
+
+            if($data) {
+                return $data["data"];
+            }
         }
         return $this->metadata;
     }

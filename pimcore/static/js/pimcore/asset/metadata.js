@@ -23,6 +23,24 @@ pimcore.asset.metadata = Class.create({
 
         if (this.grid == null) {
 
+            if(this.asset.data.metadata.length < 1) {
+                // default fields
+                if(this.asset.data.type == "image") {
+                    this.asset.data.metadata.push({
+                        name: "copyright",
+                        type: "input",
+                        language: "",
+                        value: ""
+                    });
+                    this.asset.data.metadata.push({
+                        name: "title",
+                        type: "input",
+                        language: "",
+                        value: ""
+                    });
+                }
+            }
+
             var customKey = new Ext.form.TextField({
                 name: 'key',
                 emptyText: t('key')
@@ -48,8 +66,6 @@ pimcore.asset.metadata = Class.create({
             for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
                 languagestore.push([pimcore.settings.websiteLanguages[i],pimcore.settings.websiteLanguages[i]]);
             }
-
-            console.log(this.asset.data);
 
             var store = new Ext.data.JsonStore({
                 fields: ['name', "type", "data", "language"],
