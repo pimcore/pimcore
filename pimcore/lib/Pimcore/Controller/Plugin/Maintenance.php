@@ -16,7 +16,6 @@
 class Pimcore_Controller_Plugin_Maintenance extends Zend_Controller_Plugin_Abstract {
 
     public function routeStartup(Zend_Controller_Request_Abstract $request) {
-
         $maintenance = false;
         $file = Pimcore_Tool_Admin::getMaintenanceModeFile();
 
@@ -31,9 +30,12 @@ class Pimcore_Controller_Plugin_Maintenance extends Zend_Controller_Plugin_Abstr
             }
         }
 
-        if($maintenance) {
-            header("HTTP/1.1 503 Service Temporarily Unavailable",503);
+        // do not activate the maintenance for the server itself
+        // this is to avoid problems with monitoring agents
+        $serverIps = array("127.0.0.1");
 
+        if($maintenance && !in_array(Pimcore_Tool::getClientIp(), $serverIps)) {
+            header("HTTP/1.1 503 Service Temporarily Unavailable",503);
             echo file_get_contents(PIMCORE_PATH . "/static/html/maintenance.html");
             exit;
         }
