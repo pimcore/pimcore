@@ -1267,7 +1267,7 @@ class Asset extends Element_Abstract {
 
             $data = null;
             foreach ($this->metadata as $md) {
-                if($md["name"] && $name) {
+                if($md["name"] == $name) {
                     if($language == $md["language"]) {
                         return $md["data"];
                     }
@@ -1280,6 +1280,7 @@ class Asset extends Element_Abstract {
             if($data) {
                 return $data["data"];
             }
+            return null;
         }
         return $this->metadata;
     }

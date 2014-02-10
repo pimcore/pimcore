@@ -240,6 +240,21 @@ class Document_Tag_Image extends Document_Tag {
                 }
             }
 
+            $altText = $this->alt;
+            if(empty($altText)) {
+                if($this->getImage()->getMetadata("title")) {
+                    $altText = $this->getImage()->getMetadata("title");
+                }
+            }
+
+            // get copyright from asset
+            if($this->getImage()->getMetadata("copyright")) {
+                if(!empty($altText)) {
+                    $altText .= " | ";
+                }
+                $altText .= ("© " . $this->getImage()->getMetadata("copyright"));
+            }
+
             // add attributes to image
             $allowedAttributes = array("alt", "align", "border", "height", "hspace", "ismap", "longdesc", "usemap",
                 "vspace", "width", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onmouseover",
@@ -250,8 +265,8 @@ class Document_Tag_Image extends Document_Tag {
                 "vspace", "width", "class", "dir", "id", "lang",  "title");
 
             $defaultAttributes = array(
-                "alt" => $this->alt,
-                "title" => $this->alt,
+                "alt" => $altText,
+                "title" => $altText,
                 "height" => $height,
                 "width" => $width
             );

@@ -189,6 +189,29 @@ class Asset_Image_Thumbnail {
             }
         }
 
+        $altText = "";
+        if(isset($attributes["alt"])) {
+            $altText = $attributes["alt"];
+        }
+        if(empty($altText)) {
+            if($this->getAsset()->getMetadata("title")) {
+                $altText = $this->getAsset()->getMetadata("title");
+            }
+        }
+
+        // get copyright from asset
+        if($this->getAsset()->getMetadata("copyright")) {
+            if(!empty($altText)) {
+                $altText .= " | ";
+            }
+            $altText .= ("© " . $this->getAsset()->getMetadata("copyright"));
+        }
+
+        $attributes["alt"] = $altText;
+        if(!isset($attributes["title"])) {
+            $attributes["title"] = $altText;
+        }
+
         foreach($attributes as $key => $value) {
             //only include attributes with characters a-z and dashes in their name.
             if(preg_match("/^[a-z-]+$/i", $key)) {
@@ -199,10 +222,6 @@ class Asset_Image_Thumbnail {
         $path = $this->getPath(true);
         $attr['src'] = 'src="'. $path .'"';
 
-        //ALT-attribute is required in XHTML
-        if(!isset($attr['alt'])) {
-            $attr['alt'] = 'alt=""';
-        }
 
         return '<img '.implode(' ', $attr).' />';
     }
