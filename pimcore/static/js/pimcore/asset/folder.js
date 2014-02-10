@@ -88,7 +88,6 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 emptyText: ' ',
                 listeners: {
                     "click": function (view, index, node, event) {
-
                         var data = node.getAttribute("id").split("_");
                         pimcore.helpers.openAsset(data[1], data[0]);
                     }
@@ -99,7 +98,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 store: store,
                 displayInfo: true,
                 displayMsg: '{0} - {1} / {2}',
-                emptyMsg: "No topics to display"
+                emptyMsg: t("no_assets_found")
             })
         });
 
