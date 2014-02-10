@@ -418,10 +418,14 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
 
         foreach ($ids as $id) {
             try {
-                $asset = Asset::getById($this->getParam("id"));
+                $asset = Asset::getById($id);
+                if (!$asset) {
+                    continue;
+                }
                 $hasDependency = $asset->getDependencies()->isRequired();
             } catch (Exception $e) {
-                Logger::err("failed to access asset with id: " . $this->getParam("id"));
+                Logger::err("failed to access asset with id: " . $id);
+                continue;
             }
 
 
@@ -480,7 +484,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
         $this->_helper->json(array(
             "hasDependencies" => $hasDependency,
             "childs" => $totalChilds,
-            "deletejobs" => $deleteJobs
+            "deletejobs" => $deleteJobs,
+            "batchDelete" => count($ids) > 1
         ));
     }
 
@@ -1616,7 +1621,21 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                 $order = $this->getParam("dir");
             }
 
-            $conditionFilters = array("path LIKE '" . $folder->getFullPath() . "/%' AND type != 'folder'");
+            if ($this->getParam("sort")) {
+                $orderKey = $this->getParam("sort");
+                if ($orderKey == "fullpath") {
+                    $orderKey = array("path" , "filename");
+                }
+            }
+
+            $conditionFilters = array();
+            if($this->getParam("only_direct_children") == "true") {
+                $conditionFilters[] = "parentId = " . $folder->getId();
+            } else {
+                $conditionFilters[] = "path LIKE '" . $folder->getFullPath() . "/%'";
+            }
+
+            $conditionFilters[] = "type != 'folder'";
             $filterJson = $this->getParam("filter");
             if ($filterJson) {
 
@@ -1672,7 +1691,20 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
 
             $assets = array();
             foreach ($list->getAssets() as $asset) {
-                $assets[] = $asset;
+
+                /** @var $asset Asset */
+                $filename = PIMCORE_ASSET_DIRECTORY . "/" . $asset->getFullPath();
+                $size = filesize($filename);
+
+                $assets[] = array(
+                    "id" => $asset->getid(),
+                    "type" => $asset->getType(),
+                    "fullpath" => $asset->getFullPath(),
+                    "creationDate" => $asset->getCreationDate(),
+                    "modificationDate" => $asset->getModificationDate(),
+                    "size" => formatBytes($size),
+                    "idPath" => $data["idPath"] = Element_Service::getIdPath($asset)
+                );
             }
 
             $this->_helper->json(array("data" => $assets, "success" => true, "total" => $list->getTotalCount()));

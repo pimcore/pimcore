@@ -648,7 +648,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $object->setUserModification($this->getUser()->getId());
                 $object->setPublished(false);
 
-                if ($this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_OBJECT || $this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_VARIANT) {
+                if ($this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_OBJECT
+                                || $this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_VARIANT) {
                     $object->setType($this->getParam("objecttype"));
                 }
 
@@ -662,7 +663,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             } else {
                 $message = "prevented creating object because object with same path+key already exists";
-                Logger::debug("prevented creating object because object with same path+key [ $intendedPath ] already exists");
+                Logger::debug($message);
             }
         } else {
             $message = "prevented adding object because of missing permissions";
@@ -764,9 +765,13 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             try {
                 $object = Object_Abstract::getById($id);
+                if (!$object) {
+                    continue;
+                }
                 $hasDependency |= $object->getDependencies()->isRequired();
             } catch (Exception $e) {
-                Logger::err("failed to access object with id: " . $this->getParam("id"));
+                Logger::err("failed to access object with id: " . $id);
+                continue;
             }
 
 
@@ -824,7 +829,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $this->_helper->json(array(
             "hasDependencies" => $hasDependency,
             "childs" => $totalChilds,
-            "deletejobs" => $deleteJobs
+            "deletejobs" => $deleteJobs,
+            "batchDelete" => count($ids) > 1
         ));
     }
 

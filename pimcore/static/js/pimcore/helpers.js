@@ -654,10 +654,11 @@ pimcore.helpers.deleteAssetCheckDependencyComplete = function (id, callback, res
 
     try {
         var res = Ext.decode(response.responseText);
-        var message = t('delete_message');
+        var message = res.batchDelete ? t('delete_message_batch') : t('delete_message');
         if (res.hasDependencies) {
-            message = t('delete_message_dependencies');
+            var message = t('delete_message_dependencies');
         }
+
         Ext.MessageBox.show({
             title:t('delete'),
             msg: message,
