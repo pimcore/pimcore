@@ -1117,7 +1117,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                     "id" => $asset->getId(),
                     "type" => $asset->getType(),
                     "filename" => $asset->getFilename(),
-                    "url" => "/admin/asset/get-" . $asset->getType() . "-thumbnail/id/" . $asset->getId() . "/treepreview/true"
+                    "url" => "/admin/asset/get-" . $asset->getType() . "-thumbnail/id/" . $asset->getId() . "/treepreview/true",
+                    "idPath" => $data["idPath"] = Element_Service::getIdPath($asset)
                 );
             }
         }
