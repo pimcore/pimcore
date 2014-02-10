@@ -462,7 +462,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
             return null;        
         } else  {
             $value = (array) $value;
-            if(key_exists("id",$value) and key_exists("type",$value)){
+            if(array_key_exists("id",$value) and array_key_exists("type",$value)){
                 $type = $value["type"];
                 $id = $value["id"];
 

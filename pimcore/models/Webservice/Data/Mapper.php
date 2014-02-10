@@ -57,7 +57,7 @@ abstract class Webservice_Data_Mapper {
                 if (!Pimcore_Tool::classExists($apiclass)) {
                     $apiclass = "Webservice_Data_" . $orgclass;
                     if (!Pimcore_Tool::classExists($apiclass)) {
-                        throw new Exception("Webservice_Data_Mapper: no SOAP API class found for [ " . $orgclass . " ]");
+                        throw new Exception("Webservice_Data_Mapper: no API class found for [ " . $orgclass . " ]");
                     }
                 }
             } else {
