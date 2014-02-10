@@ -286,6 +286,7 @@ $scripts = array(
     "pimcore/asset/folder.js",
     "pimcore/asset/listfolder.js",
     "pimcore/asset/versions.js",
+    "pimcore/asset/metadata.js",
     "pimcore/asset/tree.js",
 
     // object

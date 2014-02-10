@@ -50,6 +50,14 @@ class Asset_Resource extends Element_Resource
 
         if ($data["id"] > 0) {
             $this->assignVariablesToModel($data);
+
+            $metadataRaw = $this->db->fetchAll("SELECT * FROM assets_metadata WHERE cid = ?", array($data["id"]));
+            $metadata = array();
+            foreach ($metadataRaw as $md) {
+                unset($md["cid"]);
+                $metadata[] = $md;
+            }
+            $this->model->setMetadata($metadata);
         } else {
             throw new Exception("Asset with ID " . $id . " doesn't exists");
         }
@@ -126,6 +134,16 @@ class Asset_Resource extends Element_Resource
 
             // first try to insert a new record, this is because of the recyclebin restore
             $this->db->insertOrUpdate("assets", $data);
+
+            // metadata
+            $this->db->delete("assets_metadata", "cid = " . $this->model->getId());
+            $metadata = $this->model->getMetadata();
+            if(!empty($metadata)) {
+                foreach ($metadata as $metadata) {
+                    $metadata["cid"] = $this->model->getId();
+                    $this->db->insert("assets_metadata", $metadata);
+                }
+            }
 
             // tree_locks
             $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'asset'");

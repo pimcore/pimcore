@@ -1369,3 +1369,7 @@
 .pimcore_icon_email_blacklist {
     background: url(/pimcore/static/img/icon/email_stop.png) left center no-repeat !important;
 }
+
+.pimcore_icon_metadata {
+    background: url(/pimcore/static/img/icon/page_white_text.png) left center no-repeat !important;
+}

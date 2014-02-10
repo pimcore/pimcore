@@ -716,6 +716,12 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             if ($asset->isAllowed("publish")) {
 
 
+                // metadata
+                if($this->getParam("metadata")) {
+                    $metadata = Zend_Json::decode($this->getParam("metadata"));
+                    $asset->setMetadata($metadata);
+                }
+
                 // properties
                 if ($this->getParam("properties")) {
                     $properties = array();

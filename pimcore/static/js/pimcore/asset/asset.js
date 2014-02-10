@@ -314,6 +314,14 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         }
 
 
+        // meta-data
+        try {
+            parameters.metadata = Ext.encode(this.metadata.getValues());
+        }
+        catch (e2) {
+            //console.log(e);
+        }
+
         // properties
         try {
             parameters.properties = Ext.encode(this.properties.getValues());

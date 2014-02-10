@@ -118,6 +118,10 @@ class Asset extends Element_Abstract {
      */
     public $versions = null;
 
+    /**
+     * @var array
+     */
+    public $metadata = array();
 
     /**
      * enum('self','propagate') nullable
@@ -1239,6 +1243,25 @@ class Asset extends Element_Abstract {
     public function setMimetype($mimetype) {
         $this->mimetype = $mimetype;
         return $this;
+    }
+
+    /**
+     * @param array $metadata
+     */
+    public function setMetadata($metadata)
+    {
+        $this->metadata = $metadata;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetadata($key = null, $language = null)
+    {
+        if($key) {
+
+        }
+        return $this->metadata;
     }
 
     /**
