@@ -81,6 +81,27 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
         throw new Exception("No Ghostscript executable found, please configure the correct path in the system settings");
     }
 
+
+    /**
+     * @return mixed
+     * @throws Exception
+     */
+    public static function getPdftotextCli () {
+        $paths = array(
+            "/usr/local/bin/pdftotext",
+            "/usr/bin/pdftotext",
+            "/bin/pdftotext"
+        );
+
+        foreach ($paths as $path) {
+            if(@is_executable($path)) {
+                return $path;
+            }
+        }
+
+        throw new Exception("No pdftotext executable found, please configure the correct path in the system settings");
+    }
+
     /**
      * @param $path
      * @return $this
@@ -157,23 +178,32 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
         try {
 
             $path = $path ? $path : $this->path;
+            $pageRange = "";
 
-            if($page) {
-                $pageRange = "-dFirstPage=" . $page . " -dLastPage=" . $page . " ";
+            try {
+                // first try to use poppler's pdftotext, because this produces more accurate results than the txtwrite device from ghostscript
+                if($page) {
+                    $pageRange = "-f " . $page . " -l " . $page . " ";
+                }
+                $text = Pimcore_Tool_Console::exec(self::getPdftotextCli() . " " . $pageRange . $path . " -", null, 120);
+            } catch (\Exception $e) {
+                // pure ghostscript way
+                if($page) {
+                    $pageRange = "-dFirstPage=" . $page . " -dLastPage=" . $page . " ";
+                }
+                $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/pdf-text-extract-" . uniqid() . ".txt";
+                Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -dBATCH -dNOPAUSE -sDEVICE=txtwrite " . $pageRange . "-dTextFormat=2 -sOutputFile=" . $textFile . " " . $path, null, 120);
+
+                if(is_file($textFile)) {
+                    $text =  file_get_contents($textFile);
+
+                    // this is a little bit strange the default option -dTextFormat=3 from ghostscript should return utf-8 but it doesn't
+                    // so we use option 2 which returns UCS-2LE and convert it here back to UTF-8 which works fine
+                    $text = mb_convert_encoding($text, 'UTF-8', 'UCS-2LE');
+                    unlink($textFile);
+                }
             }
-
-            $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/pdf-text-extract-" . uniqid() . ".txt";
-            Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -dBATCH -dNOPAUSE -sDEVICE=txtwrite " . $pageRange . "-dTextFormat=2 -sOutputFile=" . $textFile . " " . $path, null, 120);
-
-            if(is_file($textFile)) {
-                $text =  file_get_contents($textFile);
-
-                // this is a little bit strange the default option -dTextFormat=3 from ghostscript should return utf-8 but it doesn't
-                // so we use option 2 which returns UCS-2LE and convert it here back to UTF-8 which works fine
-                $text = mb_convert_encoding($text, 'UTF-8', 'UCS-2LE');
-                unlink($textFile);
-                return $text;
-            }
+            return $text;
 
         } catch (Exception $e) {
             Logger::error($e);
