@@ -595,7 +595,7 @@ class Object_Concrete extends Object_Abstract {
         parent::__wakeup();
 
         // renew localized fields
-        // do not use the getter ($this->getLocalizedfields()) it somehow slows down the process around a sec
+        // do not use the getter ($this->getLocalizedfields()) as it somehow slows down the process around a sec
         // no clue why this happens
         if(property_exists($this, "localizedfields") && $this->localizedfields instanceof Object_Localizedfield) {
             $this->localizedfields->setObject($this);
