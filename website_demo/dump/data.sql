@@ -2447,7 +2447,7 @@ INSERT INTO `documents_hardlink` VALUES (33,3,1,1);
 
 
 
-INSERT INTO `documents_link` VALUES (32,'',0,'http://www.pimcore.org/','direct');
+INSERT INTO `documents_link` VALUES (32,NULL,0,'http://www.pimcore.org/','direct');
 INSERT INTO `documents_link` VALUES (40,'document',1,'','internal');
 
 
