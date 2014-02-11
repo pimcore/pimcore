@@ -27,13 +27,19 @@ pimcore.asset.metadata = Class.create({
                 // default fields
                 if(this.asset.data.type == "image") {
                     this.asset.data.metadata.push({
-                        name: "copyright",
+                        name: "title",
                         type: "input",
                         language: "",
                         value: ""
                     });
                     this.asset.data.metadata.push({
-                        name: "title",
+                        name: "alt",
+                        type: "input",
+                        language: "",
+                        value: ""
+                    });
+                    this.asset.data.metadata.push({
+                        name: "copyright",
                         type: "input",
                         language: "",
                         value: ""
@@ -59,6 +65,7 @@ pimcore.asset.metadata = Class.create({
                 triggerAction: 'all',
                 mode: "local",
                 listWidth: 200,
+                value: "input",
                 emptyText: t('type')
             });
 

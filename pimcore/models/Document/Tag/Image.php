@@ -241,9 +241,17 @@ class Document_Tag_Image extends Document_Tag {
             }
 
             $altText = $this->alt;
-            if(empty($altText)) {
+            $titleText = $this->alt;
+            if(empty($titleText)) {
                 if($this->getImage()->getMetadata("title")) {
-                    $altText = $this->getImage()->getMetadata("title");
+                    $titleText = $this->getImage()->getMetadata("title");
+                }
+            }
+            if(empty($altText)) {
+                if($this->getImage()->getMetadata("alt")) {
+                    $altText = $this->getImage()->getMetadata("alt");
+                } else {
+                    $altText = $titleText;
                 }
             }
 
@@ -252,7 +260,11 @@ class Document_Tag_Image extends Document_Tag {
                 if(!empty($altText)) {
                     $altText .= " | ";
                 }
+                if(!empty($titleText)) {
+                    $titleText .= " | ";
+                }
                 $altText .= ("© " . $this->getImage()->getMetadata("copyright"));
+                $titleText .= ("© " . $this->getImage()->getMetadata("copyright"));
             }
 
             // add attributes to image
@@ -266,10 +278,13 @@ class Document_Tag_Image extends Document_Tag {
 
             $defaultAttributes = array(
                 "alt" => $altText,
-                "title" => $altText,
                 "height" => $height,
                 "width" => $width
             );
+
+            if(!empty($titleText)) {
+                $defaultAttributes["title"] = $titleText;
+            }
 
             if (!is_array($this->options)) {
                 $this->options = array();

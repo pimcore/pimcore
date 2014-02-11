@@ -190,12 +190,25 @@ class Asset_Image_Thumbnail {
         }
 
         $altText = "";
+        $titleText = "";
         if(isset($attributes["alt"])) {
             $altText = $attributes["alt"];
         }
-        if(empty($altText)) {
+        if(isset($attributes["title"])) {
+            $titleText = $attributes["title"];
+        }
+
+        if(empty($titleText)) {
             if($this->getAsset()->getMetadata("title")) {
-                $altText = $this->getAsset()->getMetadata("title");
+                $titleText = $this->getAsset()->getMetadata("title");
+            }
+        }
+
+        if(empty($altText)) {
+            if($this->getAsset()->getMetadata("alt")) {
+                $altText = $this->getAsset()->getMetadata("alt");
+            } else {
+                $altText = $titleText;
             }
         }
 
@@ -204,12 +217,16 @@ class Asset_Image_Thumbnail {
             if(!empty($altText)) {
                 $altText .= " | ";
             }
+            if(!empty($titleText)) {
+                $titleText .= " | ";
+            }
             $altText .= ("© " . $this->getAsset()->getMetadata("copyright"));
+            $titleText .= ("© " . $this->getAsset()->getMetadata("copyright"));
         }
 
         $attributes["alt"] = $altText;
-        if(!isset($attributes["title"])) {
-            $attributes["title"] = $altText;
+        if(!empty($titleText)) {
+            $attributes["title"] = $titleText;
         }
 
         foreach($attributes as $key => $value) {
