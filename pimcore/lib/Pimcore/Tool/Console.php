@@ -91,9 +91,14 @@ class Pimcore_Tool_Console {
 
         if($outputFile) {
             $cmd = $cmd . " > ". $outputFile ." 2>&1";
+        } else {
+            // send stderr to /dev/null otherwise this goes to the apache error log and can fill it up pretty quickly
+            if(self::getSystemEnvironment() != 'windows') {
+                $cmd .= " 2> /dev/null";
+            }
         }
 
-        Logger::debug("Executing command `" . $cmd . "´ on the current shell");
+        Logger::debug("Executing command `" . $cmd . "` on the current shell");
         $return = shell_exec($cmd);
 
         return $return;
