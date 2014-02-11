@@ -22,6 +22,9 @@ CREATE TABLE `assets` (
   KEY `path` (`path`)
 ) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8;
 
+
+
+DROP TABLE IF EXISTS `assets_metadata`;
 CREATE TABLE `assets_metadata` (
   `cid` int(11) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
@@ -29,7 +32,9 @@ CREATE TABLE `assets_metadata` (
   `type` enum('input','textarea') DEFAULT NULL,
   `data` text,
   KEY `cid` (`cid`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 DROP TABLE IF EXISTS `cache`;
 CREATE TABLE `cache` (
@@ -285,6 +290,7 @@ CREATE TABLE `edit_lock` (
 ) ENGINE=InnoDB AUTO_INCREMENT=499 DEFAULT CHARSET=utf8;
 
 
+
 DROP TABLE IF EXISTS `email_blacklist`;
 CREATE TABLE `email_blacklist` (
   `address` varchar(255) NOT NULL DEFAULT '',
@@ -292,6 +298,7 @@ CREATE TABLE `email_blacklist` (
   `modificationDate` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`address`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 DROP TABLE IF EXISTS `email_log`;
@@ -1103,7 +1110,7 @@ CREATE TABLE `users` (
   KEY `parentId` (`parentId`),
   KEY `name` (`name`),
   KEY `password` (`password`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
 
 
@@ -1282,8 +1289,12 @@ INSERT INTO `assets` VALUES (65,34,'image','objects-forms.png','/screenshots/','
 INSERT INTO `assets` VALUES (66,29,'document','example-excel.xlsx','/documents/','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',1378992590,1378992590,0,0,'a:0:{}');
 INSERT INTO `assets` VALUES (67,29,'document','example.docx','/documents/','application/vnd.openxmlformats-officedocument.wordprocessingml.document',1378992591,1378992591,0,0,'a:0:{}');
 INSERT INTO `assets` VALUES (68,29,'document','example.pptx','/documents/','application/vnd.openxmlformats-officedocument.presentationml.presentation',1378992592,1378992592,0,0,'a:0:{}');
-INSERT INTO `assets` VALUES (69,34,'image','e-commerce1.png','/screenshots/','image/png',1388740480,1388740490,14,14,'a:3:{s:10:\"imageWidth\";i:1252;s:11:\"imageHeight\";i:1009;s:25:\"imageDimensionsCalculated\";b:1;}');
-INSERT INTO `assets` VALUES (70,34,'image','pim1-png','/screenshots/','image/png',1388740572,1388740580,14,14,'a:3:{s:10:\"imageWidth\";i:1275;s:11:\"imageHeight\";i:799;s:25:\"imageDimensionsCalculated\";b:1;}');
+INSERT INTO `assets` VALUES (69,34,'image','e-commerce1.png','/screenshots/','image/png',1388740480,1388740490,0,0,'a:3:{s:10:\"imageWidth\";i:1252;s:11:\"imageHeight\";i:1009;s:25:\"imageDimensionsCalculated\";b:1;}');
+INSERT INTO `assets` VALUES (70,34,'image','pim1-png','/screenshots/','image/png',1388740572,1388740580,0,0,'a:3:{s:10:\"imageWidth\";i:1275;s:11:\"imageHeight\";i:799;s:25:\"imageDimensionsCalculated\";b:1;}');
+
+
+
+
 
 
 
@@ -1545,10 +1556,10 @@ INSERT INTO `dependencies` VALUES ('object',40,'object',36);
 
 
 
-INSERT INTO `documents` VALUES (1,0,'page','','/',999999,1,1368522989,1388738445,1,14);
-INSERT INTO `documents` VALUES (3,40,'page','basic-examples','/en/',1,1,1368523212,1388738504,0,14);
+INSERT INTO `documents` VALUES (1,0,'page','','/',999999,1,1368522989,1388738445,1,0);
+INSERT INTO `documents` VALUES (3,40,'page','basic-examples','/en/',1,1,1368523212,1388738504,0,0);
 INSERT INTO `documents` VALUES (4,40,'page','introduction','/en/',0,1,1368523285,1382962961,0,0);
-INSERT INTO `documents` VALUES (5,40,'page','advanced-examples','/en/',2,1,1368523389,1388738496,0,14);
+INSERT INTO `documents` VALUES (5,40,'page','advanced-examples','/en/',2,1,1368523389,1388738496,0,0);
 INSERT INTO `documents` VALUES (6,40,'page','experiments','/en/',3,1,1368523410,1382956044,0,0);
 INSERT INTO `documents` VALUES (7,3,'page','html5-video','/en/basic-examples/',1,1,1368525394,1382956040,0,0);
 INSERT INTO `documents` VALUES (9,5,'page','creating-objects-using-forms','/en/advanced-examples/',1,1,1368525933,1382956042,0,0);
@@ -1568,7 +1579,7 @@ INSERT INTO `documents` VALUES (22,3,'page','website-translations','/en/basic-ex
 INSERT INTO `documents` VALUES (23,51,'page','website-uebersetzungen','/de/einfache-beispiele/',0,1,1368608357,1382958135,0,0);
 INSERT INTO `documents` VALUES (24,3,'page','content-page','/en/basic-examples/',0,1,1368609059,1382956040,0,0);
 INSERT INTO `documents` VALUES (25,3,'page','editable-roundup','/en/basic-examples/',7,1,1368609569,1382956040,0,0);
-INSERT INTO `documents` VALUES (26,3,'page','form','/en/basic-examples/',8,1,1368610663,1388733533,0,14);
+INSERT INTO `documents` VALUES (26,3,'page','form','/en/basic-examples/',8,1,1368610663,1388733533,0,0);
 INSERT INTO `documents` VALUES (27,3,'page','news','/en/basic-examples/',9,1,1368613137,1382956040,0,0);
 INSERT INTO `documents` VALUES (28,3,'page','properties','/en/basic-examples/',10,1,1368615986,1382956040,0,0);
 INSERT INTO `documents` VALUES (29,3,'page','tag-and-snippet-management','/en/basic-examples/',11,1,1368617118,1382956040,0,0);
@@ -1578,7 +1589,7 @@ INSERT INTO `documents` VALUES (32,3,'link','pimcore.org','/en/basic-examples/',
 INSERT INTO `documents` VALUES (33,34,'hardlink','basic-examples','/en/advanced-examples/hard-link/',0,1,1368626461,1382956042,0,0);
 INSERT INTO `documents` VALUES (34,5,'page','hard-link','/en/advanced-examples/',3,1,1368626655,1382956042,0,0);
 INSERT INTO `documents` VALUES (35,5,'page','image-with-hotspots-and-markers','/en/advanced-examples/',4,1,1368626888,1382956042,0,0);
-INSERT INTO `documents` VALUES (36,5,'page','search','/en/advanced-examples/',5,1,1368629524,1388733927,0,14);
+INSERT INTO `documents` VALUES (36,5,'page','search','/en/advanced-examples/',5,1,1368629524,1388733927,0,0);
 INSERT INTO `documents` VALUES (37,5,'page','contact-form','/en/advanced-examples/',6,1,1368630444,1382956042,0,0);
 INSERT INTO `documents` VALUES (38,37,'email','email','/en/advanced-examples/contact-form/',1,1,1368631410,1382956042,0,0);
 INSERT INTO `documents` VALUES (39,1,'page','error','/',3,1,1369854325,1369854422,0,0);
@@ -1599,21 +1610,21 @@ INSERT INTO `documents` VALUES (53,51,'page','neuigkeiten','/de/einfache-beispie
 INSERT INTO `documents` VALUES (54,1,'folder','shared','/',4,1,1382959757,1382959757,0,0);
 INSERT INTO `documents` VALUES (55,54,'folder','includes','/shared/',1,1,1382959767,1382959768,0,0);
 INSERT INTO `documents` VALUES (56,55,'snippet','languages','/shared/includes/',1,1,1382959774,1382959822,0,0);
-INSERT INTO `documents` VALUES (57,40,'snippet','sidebar','/en/',4,1,1382962826,1388735598,0,14);
+INSERT INTO `documents` VALUES (57,40,'snippet','sidebar','/en/',4,1,1382962826,1388735598,0,0);
 INSERT INTO `documents` VALUES (58,41,'snippet','sidebar','/de/',3,1,1382962891,1382962906,0,0);
-INSERT INTO `documents` VALUES (59,4,'snippet','sidebar','/en/introduction/',1,1,1382962940,1388738272,0,14);
+INSERT INTO `documents` VALUES (59,4,'snippet','sidebar','/en/introduction/',1,1,1382962940,1388738272,0,0);
 INSERT INTO `documents` VALUES (60,5,'page','blog','/en/advanced-examples/',0,1,1388391128,1388396165,7,7);
 INSERT INTO `documents` VALUES (61,5,'page','sitemap','/en/advanced-examples/',7,1,1388406334,1388406406,0,0);
-INSERT INTO `documents` VALUES (62,1,'folder','newsletters','/',5,1,1388409377,1388409377,'','');
-INSERT INTO `documents` VALUES (63,5,'page','newsletter','/en/advanced-examples/',8,1,1388409438,1388409571,'','');
-INSERT INTO `documents` VALUES (64,63,'page','confirm','/en/advanced-examples/newsletter/',1,1,1388409594,1388409641,'','');
-INSERT INTO `documents` VALUES (65,63,'page','unsubscribe','/en/advanced-examples/newsletter/',2,1,1388409614,1388412346,'','');
-INSERT INTO `documents` VALUES (66,63,'email','confirmation-email','/en/advanced-examples/newsletter/',3,1,1388409670,1388412587,'','');
-INSERT INTO `documents` VALUES (67,62,'email','example-mailing','/newsletters/',1,1,1388412605,1388412917,'','');
-INSERT INTO `documents` VALUES (68,5,'page','asset-thumbnail-list','/en/advanced-examples/',9,1,1388414727,1388414883,'','');
-INSERT INTO `documents` VALUES (69,5,'snippet','sidebar','/en/advanced-examples/',12,1,1388734403,1388738477,14,14);
-INSERT INTO `documents` VALUES (70,5,'page','product-information-management','/en/advanced-examples/',11,1,1388740191,1388740585,14,14);
-INSERT INTO `documents` VALUES (71,5,'page','e-commerce','/en/advanced-examples/',10,1,1388740265,1388740613,14,14);
+INSERT INTO `documents` VALUES (62,1,'folder','newsletters','/',5,1,1388409377,1388409377,0,0);
+INSERT INTO `documents` VALUES (63,5,'page','newsletter','/en/advanced-examples/',8,1,1388409438,1388409571,0,0);
+INSERT INTO `documents` VALUES (64,63,'page','confirm','/en/advanced-examples/newsletter/',1,1,1388409594,1388409641,0,0);
+INSERT INTO `documents` VALUES (65,63,'page','unsubscribe','/en/advanced-examples/newsletter/',2,1,1388409614,1388412346,0,0);
+INSERT INTO `documents` VALUES (66,63,'email','confirmation-email','/en/advanced-examples/newsletter/',3,1,1388409670,1388412587,0,0);
+INSERT INTO `documents` VALUES (67,62,'email','example-mailing','/newsletters/',1,1,1388412605,1388412917,0,0);
+INSERT INTO `documents` VALUES (68,5,'page','asset-thumbnail-list','/en/advanced-examples/',9,1,1388414727,1388414883,0,0);
+INSERT INTO `documents` VALUES (69,5,'snippet','sidebar','/en/advanced-examples/',12,1,1388734403,1388738477,0,0);
+INSERT INTO `documents` VALUES (70,5,'page','product-information-management','/en/advanced-examples/',11,1,1388740191,1388740585,0,0);
+INSERT INTO `documents` VALUES (71,5,'page','e-commerce','/en/advanced-examples/',10,1,1388740265,1388740613,0,0);
 
 
 
@@ -2479,8 +2490,8 @@ INSERT INTO `documents_page` VALUES (63,'','newsletter','subscribe','','Newslett
 INSERT INTO `documents_page` VALUES (64,'','newsletter','confirm','','','','','a:0:{}','',0,'','');
 INSERT INTO `documents_page` VALUES (65,'','newsletter','unsubscribe','','Unsubscribe','','','a:0:{}','',0,'','');
 INSERT INTO `documents_page` VALUES (68,'','advanced','asset-thumbnail-list','','Asset Thumbnail List','','','a:0:{}','',0,'','');
-INSERT INTO `documents_page` VALUES (70,'','content','default','','Product Information Management','','','a:0:{}','','','','');
-INSERT INTO `documents_page` VALUES (71,'','content','default','','E-Commerce','','','a:0:{}','','','','');
+INSERT INTO `documents_page` VALUES (70,'','content','default','','Product Information Management','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (71,'','content','default','','E-Commerce','','','a:0:{}','',0,'','');
 
 
 
@@ -2497,7 +2508,11 @@ INSERT INTO `documents_snippet` VALUES (56,'','default','default','/includes/lan
 INSERT INTO `documents_snippet` VALUES (57,'','default','default','/includes/sidebar.php',0);
 INSERT INTO `documents_snippet` VALUES (58,'','default','default','/includes/sidebar.php',0);
 INSERT INTO `documents_snippet` VALUES (59,'','default','default','/includes/sidebar.php',0);
-INSERT INTO `documents_snippet` VALUES (69,'','default','default','/includes/sidebar.php','');
+INSERT INTO `documents_snippet` VALUES (69,'','default','default','/includes/sidebar.php',0);
+
+
+
+
 
 
 
@@ -2734,9 +2749,9 @@ INSERT INTO `objects` VALUES (8,2,'object','in-enim-justo_4','/news/',0,1,136861
 INSERT INTO `objects` VALUES (9,2,'object','in-enim-justo_5','/news/',0,1,1368615197,1382958706,0,0,2,'news');
 INSERT INTO `objects` VALUES (10,1,'folder','crm','/',0,1,1368620607,1368620607,0,0,0,'');
 INSERT INTO `objects` VALUES (11,1,'folder','inquiries','/',0,1,1368620624,1368620624,0,0,0,'');
-INSERT INTO `objects` VALUES (28,42,'object','john-doe.com','/crm/inquiries/',0,1,1368630902,1388409139,0,'',4,'person');
+INSERT INTO `objects` VALUES (28,42,'object','john-doe.com','/crm/inquiries/',0,1,1368630902,1388409139,0,0,4,'person');
 INSERT INTO `objects` VALUES (29,11,'object','may-15-2013-5-15-02-pm~john-doe.com','/inquiries/',0,1,1368630902,1368630902,0,0,3,'inquiry');
-INSERT INTO `objects` VALUES (30,42,'object','jane-doe.com','/crm/inquiries/',0,1,1368630916,1388409137,0,'',4,'person');
+INSERT INTO `objects` VALUES (30,42,'object','jane-doe.com','/crm/inquiries/',0,1,1368630916,1388409137,0,0,4,'person');
 INSERT INTO `objects` VALUES (31,11,'object','may-15-2013-5-15-16-pm~jane-doe.com','/inquiries/',0,1,1368630916,1368630916,0,0,3,'inquiry');
 INSERT INTO `objects` VALUES (32,1,'folder','blog','/',0,1,1388389170,1388389170,7,7,0,'');
 INSERT INTO `objects` VALUES (33,32,'folder','categories','/blog/',0,1,1388389428,1388389428,7,7,0,'');
@@ -2747,8 +2762,8 @@ INSERT INTO `objects` VALUES (37,33,'object','nam-eget-dui','/blog/categories/',
 INSERT INTO `objects` VALUES (38,33,'object','etiam-rhoncus','/blog/categories/',0,1,1388389892,1388389900,7,7,6,'blogCategory');
 INSERT INTO `objects` VALUES (39,34,'object','lorem-ipsum-dolor-sit-amet','/blog/articles/',0,1,1388390090,1388393711,7,7,5,'blogArticle');
 INSERT INTO `objects` VALUES (40,34,'object','cum-sociis-natoque-penatibus-et-magnis','/blog/articles/',0,1,1388390120,1388393706,7,7,5,'blogArticle');
-INSERT INTO `objects` VALUES (41,10,'folder','newsletter','/crm/',0,1,1388408967,1388408967,'','',0,'');
-INSERT INTO `objects` VALUES (42,10,'folder','inquiries','/crm/',0,1,1388409135,1388409135,'','',0,'');
+INSERT INTO `objects` VALUES (41,10,'folder','newsletter','/crm/',0,1,1388408967,1388408967,0,0,0,'');
+INSERT INTO `objects` VALUES (42,10,'folder','inquiries','/crm/',0,1,1388409135,1388409135,0,0,0,'');
 INSERT INTO `objects` VALUES (47,41,'object','pimcore-byom.de~7a3','/crm/newsletter/',0,1,1388412533,1388412544,0,0,4,'person');
 
 
@@ -3108,8 +3123,8 @@ INSERT INTO `translations_website` VALUES ('check me out','en','',1368610820,136
 INSERT INTO `translations_website` VALUES ('combined 1','en','',1368606496,1368606496);
 INSERT INTO `translations_website` VALUES ('combined 2','en','',1368606637,1368606637);
 INSERT INTO `translations_website` VALUES ('combined 3','en','',1368606637,1368606637);
-INSERT INTO `translations_website` VALUES ('contact form','de','','','');
-INSERT INTO `translations_website` VALUES ('contact form','en','','','');
+INSERT INTO `translations_website` VALUES ('contact form','de','',0,0);
+INSERT INTO `translations_website` VALUES ('contact form','en','',0,0);
 INSERT INTO `translations_website` VALUES ('contain','en','',1368603255,1368603255);
 INSERT INTO `translations_website` VALUES ('contain &amp; overlay','en','',1368605819,1368605819);
 INSERT INTO `translations_website` VALUES ('content page','de','',0,0);
@@ -3126,8 +3141,8 @@ INSERT INTO `translations_website` VALUES ('download now (%s)','de','',136861972
 INSERT INTO `translations_website` VALUES ('download now (%s)','en','',1368619727,1368619727);
 INSERT INTO `translations_website` VALUES ('download source','de','Herunterladen (Quellen)',1368608508,1368608508);
 INSERT INTO `translations_website` VALUES ('download source','en','',1368608508,1368608508);
-INSERT INTO `translations_website` VALUES ('e-commerce','de','','','');
-INSERT INTO `translations_website` VALUES ('e-commerce','en','','','');
+INSERT INTO `translations_website` VALUES ('e-commerce','de','',0,0);
+INSERT INTO `translations_website` VALUES ('e-commerce','en','',0,0);
 INSERT INTO `translations_website` VALUES ('e-mail','de','',1368610820,1368610820);
 INSERT INTO `translations_website` VALUES ('e-mail','en','',1368610820,1368610820);
 INSERT INTO `translations_website` VALUES ('einfache beispiele','de','',0,0);
@@ -3149,8 +3164,8 @@ INSERT INTO `translations_website` VALUES ('gender','de','',1368622092,136862209
 INSERT INTO `translations_website` VALUES ('gender','en','',1368622092,1368622092);
 INSERT INTO `translations_website` VALUES ('get the original files for all css and javascript, along with a local copy of the docs by downloading the latest version directly from github.','de','Lade die originalen  CSS und Javascript Dateien zusammen mit einer lokalen Kopie der Dokumentation von github.com',1368608698,1368608698);
 INSERT INTO `translations_website` VALUES ('get the original files for all css and javascript, along with a local copy of the docs by downloading the latest version directly from github.','en','',1368608698,1368608698);
-INSERT INTO `translations_website` VALUES ('glossary','de','','','');
-INSERT INTO `translations_website` VALUES ('glossary','en','','','');
+INSERT INTO `translations_website` VALUES ('glossary','de','',0,0);
+INSERT INTO `translations_website` VALUES ('glossary','en','',0,0);
 INSERT INTO `translations_website` VALUES ('grayscale','en','',1368606077,1368606077);
 INSERT INTO `translations_website` VALUES ('home','de','Startseite',0,1382961053);
 INSERT INTO `translations_website` VALUES ('home','en','Home',0,1382961053);
@@ -3177,14 +3192,14 @@ INSERT INTO `translations_website` VALUES ('newsletter','de','',1368620340,13686
 INSERT INTO `translations_website` VALUES ('newsletter','en','',1368620340,1368620340);
 INSERT INTO `translations_website` VALUES ('original dimensions of the image','en','',1368604779,1368604779);
 INSERT INTO `translations_website` VALUES ('overlay','en','',1368605562,1368605562);
-INSERT INTO `translations_website` VALUES ('product information management','de','','','');
-INSERT INTO `translations_website` VALUES ('product information management','en','','','');
-INSERT INTO `translations_website` VALUES ('product information managment','de','','','');
-INSERT INTO `translations_website` VALUES ('product information managment','en','','','');
+INSERT INTO `translations_website` VALUES ('product information management','de','',0,0);
+INSERT INTO `translations_website` VALUES ('product information management','en','',0,0);
+INSERT INTO `translations_website` VALUES ('product information managment','de','',0,0);
+INSERT INTO `translations_website` VALUES ('product information managment','en','',0,0);
 INSERT INTO `translations_website` VALUES ('properties','de','',0,0);
 INSERT INTO `translations_website` VALUES ('properties','en','',0,0);
-INSERT INTO `translations_website` VALUES ('recently in the blog','de','','','');
-INSERT INTO `translations_website` VALUES ('recently in the blog','en','','','');
+INSERT INTO `translations_website` VALUES ('recently in the blog','de','',0,0);
+INSERT INTO `translations_website` VALUES ('recently in the blog','en','',0,0);
 INSERT INTO `translations_website` VALUES ('resize','en','',1368603801,1368603801);
 INSERT INTO `translations_website` VALUES ('rotate','en','',1368603255,1368603255);
 INSERT INTO `translations_website` VALUES ('rounded corners','en','',1368605936,1368605936);
@@ -3193,8 +3208,8 @@ INSERT INTO `translations_website` VALUES ('scale by width','en','',1368603959,1
 INSERT INTO `translations_website` VALUES ('search','de','',1368629830,1368629830);
 INSERT INTO `translations_website` VALUES ('search','en','',1368629830,1368629830);
 INSERT INTO `translations_website` VALUES ('sepia','en','',1368606075,1368606075);
-INSERT INTO `translations_website` VALUES ('simple form','de','','','');
-INSERT INTO `translations_website` VALUES ('simple form','en','','','');
+INSERT INTO `translations_website` VALUES ('simple form','de','',0,0);
+INSERT INTO `translations_website` VALUES ('simple form','en','',0,0);
 INSERT INTO `translations_website` VALUES ('sitemap','de','',0,0);
 INSERT INTO `translations_website` VALUES ('sitemap','en','',0,0);
 INSERT INTO `translations_website` VALUES ('sorry, something went wrong, please check the data in the form and try again!','de','',0,0);
@@ -3229,7 +3244,7 @@ INSERT INTO `tree_locks` VALUES (56,'document','self');
 
 
 INSERT INTO `users` VALUES (0,0,'user','system','','','','','',1,1,'','',0,0,0,'','');
-INSERT INTO `users` VALUES (14,0,'user','admin','7f4ca4d63c375ea4bfa1bda6f39101b0','','','','en',1,1,'','',1,1,1,'','');
+INSERT INTO `users` VALUES (16,0,'user','admin','7f4ca4d63c375ea4bfa1bda6f39101b0',NULL,NULL,NULL,'en',1,1,'','',1,1,1,'','');
 
 
 
