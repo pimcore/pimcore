@@ -431,7 +431,7 @@ class Asset_Resource extends Element_Resource
                     $path = "/";
                 }
 
-                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN (" . implode(",", $userIds) . ") LIMIT 1", $path . "%");
+                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN (" . implode(",", $userIds) . ") AND list = 1 LIMIT 1", $path . "%");
                 if ($permissionsChilds) {
                     return true;
                 }
