@@ -604,7 +604,15 @@ class Object_Class extends Pimcore_Model_Abstract {
         }
 
         if ($def instanceof Object_Class_Data) {
-            $this->setFieldDefinition($def->getName(), $def);
+            $existing = $this->getFieldDefinition($def->getName());
+            if($existing && method_exists($existing, "addReferencedField")) {
+                // this is especially for localized fields which get aggregated here into one field definition
+                // in the case that there are more than one localized fields in the class definition
+                // see also pimcore.object.edit.addToDataFields();
+                $existing->addReferencedField($def);
+            } else {
+                $this->setFieldDefinition($def->getName(), $def);
+            }
         }
     }
 

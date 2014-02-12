@@ -836,7 +836,8 @@ pimcore.object.classes.klass = Class.create({
                     fieldValidation = node.attributes.object.isValid();
                 }
 
-                if (fieldValidation && in_arrayi(data.name,this.usedFieldNames) == false) {
+                // check if the name is unique, localizedfields can be used more than once
+                if ((fieldValidation && in_arrayi(data.name,this.usedFieldNames) == false) || data.name == "localizedfields") {
 
                     if(data.datatype == "data") {
                         this.usedFieldNames.push(data.name);
