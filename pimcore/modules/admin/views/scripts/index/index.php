@@ -482,10 +482,7 @@ $modifiedPlugins = array(
 );
 
 // google maps API key
-$googleMapsApiKey = $this->config->services->google->simpleapikey;
-if($this->config->services->google->browserapikey) {
-    $googleMapsApiKey = $this->config->services->google->browserapikey;
-}
+$googleMapsApiKey = $this->config->services->google->browserapikey;
 
 ?>
 
