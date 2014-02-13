@@ -200,4 +200,44 @@ class Document_Hardlink extends Document
     public function hasChilds() {
         return count($this->getChilds()) > 0;
     }
+
+
+    /**
+     * @see Document::delete
+     * @return void
+     */
+    public function delete() {
+
+        // check for redirects pointing to this document, and delete them too
+        $redirects = new Redirect_List();
+        $redirects->setCondition("target = ?", $this->getId());
+        $redirects->load();
+
+        foreach($redirects->getRedirects() as $redirect) {
+            $redirect->delete();
+        }
+
+        parent::delete();
+    }
+
+    /**
+     *
+     */
+    protected function update() {
+
+        $oldPath = $this->getResource()->getCurrentFullPath();
+
+        parent::update();
+
+        $config = Pimcore_Config::getSystemConfig();
+        if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getFullPath()) {
+            // create redirect for old path
+            $redirect = new Redirect();
+            $redirect->setTarget($this->getId());
+            $redirect->setSource("@" . $oldPath . "/?@");
+            $redirect->setStatusCode(301);
+            $redirect->setExpiry(time() + 86400 * 60); // this entry is removed automatically after 60 days
+            $redirect->save();
+        }
+    }
 }
