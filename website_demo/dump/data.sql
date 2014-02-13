@@ -1290,7 +1290,7 @@ INSERT INTO `assets` VALUES (66,29,'document','example-excel.xlsx','/documents/'
 INSERT INTO `assets` VALUES (67,29,'document','example.docx','/documents/','application/vnd.openxmlformats-officedocument.wordprocessingml.document',1378992591,1378992591,0,0,'a:0:{}');
 INSERT INTO `assets` VALUES (68,29,'document','example.pptx','/documents/','application/vnd.openxmlformats-officedocument.presentationml.presentation',1378992592,1378992592,0,0,'a:0:{}');
 INSERT INTO `assets` VALUES (69,34,'image','e-commerce1.png','/screenshots/','image/png',1388740480,1388740490,0,0,'a:3:{s:10:\"imageWidth\";i:1252;s:11:\"imageHeight\";i:1009;s:25:\"imageDimensionsCalculated\";b:1;}');
-INSERT INTO `assets` VALUES (70,34,'image','pim1-png','/screenshots/','image/png',1388740572,1388740580,0,0,'a:3:{s:10:\"imageWidth\";i:1275;s:11:\"imageHeight\";i:799;s:25:\"imageDimensionsCalculated\";b:1;}');
+INSERT INTO `assets` VALUES (70,34,'image','pim1.png','/screenshots/','image/png',1388740572,1388740580,0,0,'a:3:{s:10:\"imageWidth\";i:1275;s:11:\"imageHeight\";i:799;s:25:\"imageDimensionsCalculated\";b:1;}');
 
 
 
@@ -3009,7 +3009,7 @@ INSERT INTO `search_backend_data` VALUES (69,'/en/advanced-examples/sidebar','do
 INSERT INTO `search_backend_data` VALUES (70,'/en/advanced-examples/product-information-management','document','page','page',1,1388740191,1388740585,14,14,'ID: 70  \nPath: /en/advanced-examples/product-information-management  \n Please visit our&nbsp;PIM, E-Commerce &amp; Asset Management demo to see it in action.&nbsp; Product Information Management Product Information Management ','navigation_name:Product Information Management ');
 INSERT INTO `search_backend_data` VALUES (71,'/en/advanced-examples/e-commerce','document','page','page',1,1388740265,1388740613,14,14,'ID: 71  \nPath: /en/advanced-examples/e-commerce  \n E-Commerce Please visit our&nbsp;PIM, E-Commerce &amp; Asset Management demo to see it in action.&nbsp; E-Commerce ','navigation_name:E-Commerce ');
 INSERT INTO `search_backend_data` VALUES (69,'/screenshots/e-commerce1.png','asset','image','image',1,1388740480,1388740490,14,14,'ID: 69  \nPath: /screenshots/e-commerce1.png  \ne-commerce1.png','');
-INSERT INTO `search_backend_data` VALUES (70,'/screenshots/pim1-png','asset','image','image',1,1388740572,1388740580,14,14,'ID: 70  \nPath: /screenshots/pim1-png  \npim1-png','');
+INSERT INTO `search_backend_data` VALUES (70,'/screenshots/pim1.png','asset','image','image',1,1388740572,1388740580,14,14,'ID: 70  \nPath: /screenshots/pim1.png  \npim1.png','');
 
 
 
