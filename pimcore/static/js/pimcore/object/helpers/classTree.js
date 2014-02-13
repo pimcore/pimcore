@@ -118,10 +118,13 @@ pimcore.object.helpers.classTree = Class.create({
         var nodeLabel = t(type);
 
         if (initData) {
-            if (initData.name) {
+            if (initData.title) {
+                nodeLabel = initData.title;
+            } else if (initData.name) {
                 nodeLabel = initData.name;
             }
         }
+
         var newNode = new Ext.tree.TreeNode({
             type: "layout",
             draggable: false,
