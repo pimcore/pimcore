@@ -88,8 +88,6 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $format = "png";
         }
 
-        $this->resource->flattenImages();
-
         $originalFilename = null;
         if(!$this->reinitializing) {
             if($this->getUseContentOptimizedFormat()) {
@@ -117,7 +115,6 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         return $this;
     }
-
 
     /**
      * @return  void
@@ -185,11 +182,15 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public static function getCMYKColorProfile()
     {
         if(!self::$CMYKColorProfile) {
-            if($path = Pimcore_Config::getSystemConfig()->assets->icc_cmyk_profile) {
-                if(file_exists($path)) {
-                    self::$CMYKColorProfile = file_get_contents($path);
-                }
+            $path = Pimcore_Config::getSystemConfig()->assets->icc_cmyk_profile;
+            if(!$path || !file_exists($path)) {
+                $path = __DIR__ . "/../icc-profiles/ISOcoated_v2_eci.icc"; // default profile
             }
+
+            if($path && file_exists($path)) {
+                self::$CMYKColorProfile = file_get_contents($path);
+            }
+
         }
 
         return self::$CMYKColorProfile;
@@ -209,10 +210,13 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public static function getRGBColorProfile()
     {
         if(!self::$RGBColorProfile) {
-            if($path = Pimcore_Config::getSystemConfig()->assets->icc_rgb_profile) {
-                if(file_exists($path)) {
-                    self::$RGBColorProfile = file_get_contents($path);
-                }
+            $path = Pimcore_Config::getSystemConfig()->assets->icc_rgb_profile;
+            if(!$path || !file_exists($path)) {
+                $path = __DIR__ . "/../icc-profiles/sRGB_IEC61966-2-1_black_scaled.icc"; // default profile
+            }
+
+            if(file_exists($path)) {
+                self::$RGBColorProfile = file_get_contents($path);
             }
         }
 
