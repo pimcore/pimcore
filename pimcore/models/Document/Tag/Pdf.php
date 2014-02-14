@@ -28,6 +28,16 @@ class Document_Tag_Pdf extends Document_Tag
     public $hotspots = array();
 
     /**
+     * @var array
+     */
+    public $texts = array();
+
+    /**
+     * @var array
+     */
+    public $chapters = array();
+
+    /**
      * @see Document_Tag_Interface::getType
      * @return string
      */
@@ -44,7 +54,9 @@ class Document_Tag_Pdf extends Document_Tag
     {
         return array(
             "id" => $this->id,
-            "hotspots" => $this->hotspots
+            "hotspots" => $this->hotspots,
+            "texts" => $this->texts,
+            "chapters" => $this->chapters
         );
     }
 
@@ -76,6 +88,8 @@ class Document_Tag_Pdf extends Document_Tag
         return array(
             "id" => $this->id,
             "hotspots" => $hotspots,
+            "texts" => $this->getTexts(),
+            "chapters" => $this->getChapters()
         );
     }
 
@@ -112,7 +126,9 @@ class Document_Tag_Pdf extends Document_Tag
         return array(
             "id" => $this->id,
             "pageCount" => $pages,
-            "hotspots" => empty($hotspots) ? null : $hotspots
+            "hotspots" => empty($hotspots) ? null : $hotspots,
+            "texts" => $this->texts,
+            "chapters" => $this->chapters
         );
     }
 
@@ -270,6 +286,8 @@ class Document_Tag_Pdf extends Document_Tag
 
         $this->id = $data["id"];
         $this->hotspots = $data["hotspots"];
+        $this->texts = $data["texts"];
+        $this->chapters = $data["chapters"];
 
         return $this;
     }
@@ -322,6 +340,8 @@ class Document_Tag_Pdf extends Document_Tag
 
                 $this->hotspots = $data["hotspots"];
             }
+            $this->texts = (array)$data['texts'];
+            $this->chapters = (array)$data['chapters'];
         }
         return $this;
     }
@@ -486,6 +506,28 @@ HTML;
                 $this->id = $data->id;
             }
         }
+    }
+
+    /**
+     * @param array $texts
+     */
+    public function setTexts($texts){
+        $this->texts = (array)$texts;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTexts(){
+        return (array)$this->texts;
+    }
+
+    public function setChapters($chapters){
+        $this->chapters = (array)$chapters;
+    }
+
+    public function getChapters(){
+        return $this->chapters;
     }
 
     /**

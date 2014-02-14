@@ -1718,4 +1718,13 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             $this->_helper->json(array("data" => $assets, "success" => true, "total" => $list->getTotalCount()));
         }
     }
+
+    public function getTextAction(){
+        $asset = Asset::getById($this->getParam('id'));
+        $page = $this->getParam('page');
+        if($asset instanceof Asset_Document){
+            $text = $asset->getText($page);
+        }
+        $this->_helper->json(array('success' => 'true','text' => $text));
+    }
 }
