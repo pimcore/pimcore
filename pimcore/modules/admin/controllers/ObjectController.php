@@ -881,6 +881,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                     if ($objectWithSamePath != null) {
                         $allowUpdate = false;
+                        $this->_helper->json(array("success" => false, "message" => "prevented creating object because object with same path+key already exists"));
                     }
                 }
 
