@@ -1715,4 +1715,89 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callback) {
 
         reader.readAsDataURL(file);
     }
+
+
+
 };
+
+
+
+pimcore.helpers.searchAndMove = function (parentId, callback) {
+    pimcore.helpers.itemselector(true, function (selection) {
+
+        var jobs = [];
+
+        if(selection && selection.length > 0) {
+            for(var i=0; i<selection.length; i++) {
+                jobs.push([{
+                    url: "/admin/object/update",
+                    params: {
+                        id: selection[i]["id"],
+                        values: Ext.encode({
+                            parentId: parentId
+                        })
+                    }
+                }]);
+            }
+        }
+
+        this.addChildProgressBar = new Ext.ProgressBar({
+            text: t('initializing')
+        });
+
+        this.addChildWindow = new Ext.Window({
+            layout:'fit',
+            width:500,
+            bodyStyle: "padding: 10px;",
+            closable:false,
+            plain: true,
+            modal: true,
+            items: [this.addChildProgressBar]
+        });
+
+        this.addChildWindow.show();
+
+        var pj = new pimcore.tool.paralleljobs({
+            success: function (callbackFunction) {
+
+                if(this.addChildWindow) {
+                    this.addChildWindow.close();
+                }
+
+                this.deleteProgressBar = null;
+                this.addChildWindow = null;
+
+                if(typeof callbackFunction == "function") {
+                    callbackFunction();
+                }
+
+                try {
+                    var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.object.id);
+                    node.reload();
+                } catch (e) {
+                    // node is not present
+                }
+            }.bind(this, callback),
+            update: function (currentStep, steps, percent) {
+                if(this.addChildProgressBar) {
+                    var status = currentStep / steps;
+                    this.addChildProgressBar.updateProgress(status, percent + "%");
+                }
+            }.bind(this),
+            failure: function (response) {
+                this.addChildWindow.close();
+                Ext.MessageBox.alert(t("error"), t(response));
+            }.bind(this),
+            jobs: jobs
+        });
+
+    }.bind(this), {
+        type: ["object"],
+        subtype: {
+            object: ["object", "folder"]
+        },
+        specific: {
+            classes: null
+        }
+    });
+}

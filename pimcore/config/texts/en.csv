@@ -1495,3 +1495,8 @@
 "algorithm","Algorithm"
 "salt","Salt"
 "saltlocation","Salt location"
+"add_metadata","Add Metadata"
+"pimcore_icon_edit_pdf_text","Edit text version"
+"pimcore_lable_text","Text"
+"chapter","Chapter"
+"search_and_move","Search & Move"

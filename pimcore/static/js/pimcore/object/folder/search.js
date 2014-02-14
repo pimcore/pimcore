@@ -210,9 +210,12 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 ,this.checkboxOnlyDirectChildren,t("only_children")
                 ,"-",this.sqlEditor
                 ,this.sqlButton,"-",{
-                    text: t("add_childs"),
-                    iconCls: "pimcore_icon_add_child",
-                    handler: this.addChilds.bind(this)
+                    text: t("search_and_move"),
+                    iconCls: "pimcore_icon_search_and_move",
+                    handler: pimcore.helpers.searchAndMove.bind(this, this.object.id,
+                        function() {
+                            this.store.reload();
+                        }.bind(this))
                 },"-",{
                     text: t("export_csv"),
                     iconCls: "pimcore_icon_export",
@@ -309,6 +312,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
     },
 
+
     getGridConfig: function($super) {
         var config = $super();
         config.onlyDirectChildren = this.onlyDirectChildren;
@@ -384,7 +388,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     pimcore.helpers.deleteObject(ids, function() {
                         this.getStore().reload();
                         pimcore.globalmanager.get("layout_object_tree").tree.getRootNode().reload();
-                      }.bind(this)
+                    }.bind(this)
                     );
                 }.bind(grid, data)
             }));
@@ -392,86 +396,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
         event.stopEvent();
         menu.showAt(event.getXY());
-    },
-
-
-
-    addChilds: function () {
-        pimcore.helpers.itemselector(true, function (selection) {
-
-            var jobs = [];
-
-            if(selection && selection.length > 0) {
-                for(var i=0; i<selection.length; i++) {
-                    jobs.push([{
-                        url: "/admin/object/update",
-                        params: {
-                            id: selection[i]["id"],
-                            values: Ext.encode({
-                                parentId: this.object.id
-                            })
-                        }
-                    }]);
-                }
-            }
-
-            this.addChildProgressBar = new Ext.ProgressBar({
-                text: t('initializing')
-            });
-
-            this.addChildWindow = new Ext.Window({
-                layout:'fit',
-                width:500,
-                bodyStyle: "padding: 10px;",
-                closable:false,
-                plain: true,
-                modal: true,
-                items: [this.addChildProgressBar]
-            });
-
-            this.addChildWindow.show();
-
-            var pj = new pimcore.tool.paralleljobs({
-                success: function () {
-
-                    if(this.addChildWindow) {
-                        this.addChildWindow.close();
-                    }
-
-                    this.deleteProgressBar = null;
-                    this.addChildWindow = null;
-
-                    this.store.reload();
-
-                    try {
-                        var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.object.id);
-                        node.reload();
-                    } catch (e) {
-                        // node is not present
-                    }
-                }.bind(this),
-                update: function (currentStep, steps, percent) {
-                    if(this.addChildProgressBar) {
-                        var status = currentStep / steps;
-                        this.addChildProgressBar.updateProgress(status, percent + "%");
-                    }
-                }.bind(this),
-                failure: function (message) {
-                    this.addChildWindow.close();
-                    Ext.MessageBox.alert(t("error"), message);
-                }.bind(this),
-                jobs: jobs
-            });
-
-        }.bind(this), {
-            type: ["object"],
-            subtype: {
-                object: ["object", "folder"]
-            },
-            specific: {
-                classes: null
-            }
-        });
     }
+
+
+
 
 });
