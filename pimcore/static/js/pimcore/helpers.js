@@ -1741,6 +1741,10 @@ pimcore.helpers.searchAndMove = function (parentId, callback) {
             }
         }
 
+        if (jobs.length == 0) {
+            return;
+        }
+
         this.addChildProgressBar = new Ext.ProgressBar({
             text: t('initializing')
         });
