@@ -83,7 +83,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         }
     },
 
-    getLayoutEdit: function () {
+    getLayoutEdit: function (showMode) {
 
         this.fieldConfig.datatype ="layout";
         this.fieldConfig.fieldtype = "panel";
@@ -161,7 +161,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 this.currentLanguage = this.frontendLanguages[i];
                 this.languageElements[this.currentLanguage] = [];
 
-                var editable =  (pimcore.currentuser.admin ||
+                var editable =  !showMode && (pimcore.currentuser.admin ||
                     this.fieldConfig.permissionEdit === undefined ||  this.fieldConfig.permissionEdit.length == 0 || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
 
                 var items =  this.getRecursiveLayout(this.fieldConfig, !editable).items;
@@ -275,9 +275,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
     getLayoutShow: function () {
 
-        this.component = this.getLayoutEdit();
-        this.component.disable();
-
+        this.component = this.getLayoutEdit(true);
         return this.component;
     },
 
