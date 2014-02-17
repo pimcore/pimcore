@@ -54,7 +54,7 @@ function ts(key) {
              pimcore.globalmanager.add("translations_admin_missing", missingTranslations);
         }
     }
-    if(pimcore.settings.debug_admin_translations){
+    if(top.pimcore.settings.debug_admin_translations){ // use top here, because it's also used in the editmode iframe
         return "+" + key + "+";
     } else {
         return originalKey;
