@@ -1381,3 +1381,7 @@
 .pimcore_icon_search_and_move {
     background: url(/pimcore/static/img/icon/database_copy.png) left center no-repeat !important;
 }
+
+.pimcore_icon_edit_pdf_text {
+    background: url(/pimcore/static/img/icon/page_white_text.png) left center no-repeat !important;
+}
