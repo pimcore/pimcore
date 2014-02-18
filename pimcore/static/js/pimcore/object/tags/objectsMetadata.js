@@ -228,6 +228,36 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             });
         }
 
+        var tbarItems = [
+            {
+                xtype: "tbspacer",
+                width: 20,
+                height: 16,
+                cls: "pimcore_icon_droptarget"
+            },
+            {
+                xtype: "tbtext",
+                text: "<b>" + this.fieldConfig.title + "</b>"
+            }];
+
+        if (!readOnly) {
+            tbarItems = tbarItems.concat([
+                "->",
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_delete",
+                    handler: this.empty.bind(this)
+                },
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_search",
+                    handler: this.openSearchEditor.bind(this)
+                },
+                this.getCreateControl()]);
+        }
+
+
+
 
         this.component = new Ext.grid.EditorGridPanel({
             store: this.store,
@@ -251,30 +281,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             tbar: {
-                items: [
-                    {
-                        xtype: "tbspacer",
-                        width: 20,
-                        height: 16,
-                        cls: "pimcore_icon_droptarget"
-                    },
-                    {
-                        xtype: "tbtext",
-                        text: "<b>" + this.fieldConfig.title + "</b>"
-                    },
-                    "->",
-                    {
-                        xtype: "button",
-                        iconCls: "pimcore_icon_delete",
-                        handler: this.empty.bind(this)
-                    },
-                    {
-                        xtype: "button",
-                        iconCls: "pimcore_icon_search",
-                        handler: this.openSearchEditor.bind(this)
-                    },
-                    this.getCreateControl()
-                ],
+                items: tbarItems,
                 ctCls: "pimcore_force_auto_width",
                 cls: "pimcore_force_auto_width"
             },
