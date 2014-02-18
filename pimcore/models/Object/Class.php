@@ -575,7 +575,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      * @param $title
      */
     public function decorateVisibleField(&$layout, $key, $title) {
-        if ($layout instanceof Object_Class_Data_ObjectsMetadata) {
+        if ($layout instanceof Object_Class_Data_ObjectsMetadata && $layout->getName() == $key) {
             $layout->visibleFieldTitles = $title;
         } else {
             if (method_exists($layout, "getChilds")) {
