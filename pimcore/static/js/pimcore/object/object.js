@@ -650,7 +650,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 name: "userowner",
                 type: "user",
                 value: this.data.general.o_userOwner
-            },  {
+            },
+            {
+                name: "published",
+                type: "user",
+                value: this.data.general.o_published
+            },
+            {
                 name: "deeplink",
                 value: window.location.protocol + "//" + window.location.hostname + "/admin/login/deeplink?object_" + this.data.general.o_id + "_object"
             }
