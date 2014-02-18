@@ -495,6 +495,15 @@ pimcore.document.tree = Class.create({
             }));
         }
 
+        if (this.attributes.permissions.create && !this.attributes.locked) {
+            menu.add(new Ext.menu.Item({
+                text: t('search_and_move'),
+                iconCls: "pimcore_icon_search_and_move",
+                handler: this.attributes.reference.searchAndMove.bind(this, this.id)
+            }));
+        }
+
+
         // site-mgnt
         var user = pimcore.globalmanager.get("user");
 
@@ -1190,6 +1199,13 @@ pimcore.document.tree = Class.create({
             }.bind(this, type)
         });
     },
+
+    searchAndMove: function(parentId) {
+        pimcore.helpers.searchAndMove(parentId, function() {
+            this.reload();
+        }.bind(this), "document");
+    },
+
 
     isKeyValid: function (key) {
 

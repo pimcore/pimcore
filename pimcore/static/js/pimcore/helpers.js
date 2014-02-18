@@ -1732,7 +1732,7 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
         }
     } else {
         config = {
-            type: ["asset"]
+            type: [type]
         }
     }
     pimcore.helpers.itemselector(true, function (selection) {
