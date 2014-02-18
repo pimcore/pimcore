@@ -75,8 +75,8 @@ abstract class OnlineShop_Framework_AbstractFilterDefinition extends Object_Conc
 
             $checkInheritanceKey = $key . "Inheritance";
             if ($this->{
-                'get' . $checkInheritanceKey
-                }() == "true"
+                    'get' . $checkInheritanceKey
+                    }() == "true"
             ) {
                 $parentValue = $this->getValueFromParent($key);
                 $data = $this->$key;
@@ -86,11 +86,15 @@ abstract class OnlineShop_Framework_AbstractFilterDefinition extends Object_Conc
                 if (!$data) {
                     return $parentValue;
                 } else {
-                    $value = new Object_Fieldcollection($data->getItems());
                     if (!empty($parentValue)) {
-                        foreach ($parentValue as $entry) {
-                            $value->add($entry);
+                        $value = new Object_Fieldcollection($parentValue->getItems());
+                        if (!empty($data)) {
+                            foreach ($data as $entry) {
+                                $value->add($entry);
+                            }
                         }
+                    } else {
+                        $value = new Object_Fieldcollection($data->getItems());
                     }
                     return $value;
                 }
