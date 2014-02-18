@@ -1715,28 +1715,49 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callback) {
 
         reader.readAsDataURL(file);
     }
-
-
-
 };
 
 
 
-pimcore.helpers.searchAndMove = function (parentId, callback) {
+pimcore.helpers.searchAndMove = function (parentId, callback, type) {
+    if (type == "object") {
+        config = {
+            type: ["object"],
+                subtype: {
+            object: ["object", "folder"]
+        },
+            specific: {
+                classes: null
+            }
+        }
+    } else {
+        config = {
+            type: ["asset"]
+        }
+    }
     pimcore.helpers.itemselector(true, function (selection) {
 
         var jobs = [];
 
         if(selection && selection.length > 0) {
             for(var i=0; i<selection.length; i++) {
-                jobs.push([{
-                    url: "/admin/object/update",
-                    params: {
+                var params;
+                if (type == "object") {
+                    params = {
                         id: selection[i]["id"],
                         values: Ext.encode({
                             parentId: parentId
                         })
-                    }
+                    };
+                } else {
+                    params = {
+                        id: selection[i]["id"],
+                        parentId: parentId
+                    };
+                }
+                jobs.push([{
+                    url: "/admin/" + type + "/update",
+                    params: params
                 }]);
             }
         }
@@ -1795,13 +1816,5 @@ pimcore.helpers.searchAndMove = function (parentId, callback) {
             jobs: jobs
         });
 
-    }.bind(this), {
-        type: ["object"],
-        subtype: {
-            object: ["object", "folder"]
-        },
-        specific: {
-            classes: null
-        }
-    });
+    }.bind(this), config);
 }

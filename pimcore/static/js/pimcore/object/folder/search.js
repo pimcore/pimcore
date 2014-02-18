@@ -230,7 +230,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     handler: pimcore.helpers.searchAndMove.bind(this, this.object.id,
                         function() {
                             this.store.reload();
-                        }.bind(this))
+                        }.bind(this), "object")
                 },"-",{
                     text: t("export_csv"),
                     iconCls: "pimcore_icon_export",

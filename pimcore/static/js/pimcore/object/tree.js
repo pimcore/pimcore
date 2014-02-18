@@ -1056,7 +1056,7 @@ pimcore.object.tree = Class.create({
     searchAndMove: function(parentId) {
         pimcore.helpers.searchAndMove(parentId, function() {
             this.reload();
-        }.bind(this));
+        }.bind(this), "object");
     },
 
     updateObject: function (id, values, callback) {
