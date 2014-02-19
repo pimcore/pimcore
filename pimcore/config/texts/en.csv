@@ -1362,6 +1362,7 @@
 "delete_message","Do you really want to delete this element?"
 "delete_message_batch","Do you really want to delete these elements?"
 "objectbricks","Objectbricks"
+"objectbricks_settings","Objectbricks Settings"
 "add_objectbrick","Add Objectbrick"
 "delete_objectbrick","Delete Objectbrick"
 "delete_objectbrick_text","Do you really want to delete the selected objectbrick?"
