@@ -1056,7 +1056,8 @@ class Asset extends Element_Abstract {
         if ($this->properties === null) {
             // try to get from cache
             $cacheKey = "asset_properties_" . $this->getId();
-            if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
+            $properties = Pimcore_Model_Cache::load($cacheKey);
+            if ($properties === false) {
                 $properties = $this->getResource()->getProperties();
                 $elementCacheTag = $this->getCacheTag();
                 $cacheTags = array("properties" => "properties", $elementCacheTag => $elementCacheTag);
