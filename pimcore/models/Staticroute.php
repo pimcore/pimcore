@@ -164,7 +164,7 @@ class Staticroute extends Pimcore_Model_Abstract {
         try {
             $route->getResource()->getByName($name, $siteId);
         } catch (Exception $e) {
-            Logger::error($e);
+            Logger::warn($e);
             return null;
         }
 
