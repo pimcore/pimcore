@@ -404,6 +404,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin
                     if ($documentWithSamePath != null) {
                         $allowUpdate = false;
                     }
+
+                    if($document->isLocked()) {
+                        $allowUpdate = false;
+                    }
                 }
             }
 
@@ -447,7 +451,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
             } else {
-                Logger::debug("Prevented moving document, because document with same path+key already exists.");
+                $msg = "Prevented moving document, because document with same path+key already exists or the document is locked. ID: " . $document->getId();
+                Logger::debug($msg);
+                $this->_helper->json(array("success" => false, "message" => $msg));
             }
         } else if ($document->isAllowed("rename") && $this->getParam("key")) {
             //just rename

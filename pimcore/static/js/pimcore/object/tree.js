@@ -567,7 +567,7 @@ pimcore.object.tree = Class.create({
             }));
         }
 
-        if (this.attributes.permissions.create && !this.attributes.locked) {
+        if (this.attributes.permissions.create) {
             menu.add(new Ext.menu.Item({
                 text: t('search_and_move'),
                 iconCls: "pimcore_icon_search_and_move",

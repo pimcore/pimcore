@@ -883,10 +883,13 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                         $allowUpdate = false;
                         $this->_helper->json(array("success" => false, "message" => "prevented creating object because object with same path+key already exists"));
                     }
-                }
 
-                //$object->setO_path($newPath);
-                $object->setParentId($values["parentId"]);
+                    if($object->isLocked()) {
+                        $this->_helper->json(array("success" => false, "message" => "prevented moving object, because it is locked: ID: " . $object->getId()));
+                    }
+
+                    $object->setParentId($values["parentId"]);
+                }
             }
 
             if (array_key_exists("locked", $values)) {

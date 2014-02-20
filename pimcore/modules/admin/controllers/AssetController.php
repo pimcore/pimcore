@@ -638,6 +638,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                     if ($assetWithSamePath != null) {
                         $allowUpdate = false;
                     }
+
+                    if($asset->isLocked()) {
+                        $allowUpdate = false;
+                    }
                 }
             }
 
@@ -663,8 +667,9 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
 
 
             } else {
-                Logger::debug("prevented moving asset, asset with same path+key already exists at target location ");
-                $this->_helper->json(array("success" => $success, "message" => "the_filename_is_already_in_use"));
+                $msg = "prevented moving asset, asset with same path+key already exists at target location or the asset is locked. ID: " . $asset->getId();
+                Logger::debug($msg);
+                $this->_helper->json(array("success" => $success, "message" => $msg));
             }
         } else if ($asset->isAllowed("rename") && $this->getParam("filename")) {
             //just rename
