@@ -295,6 +295,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             this.chapterStore = this.data["chapters"];
         }
 
+
         this.currentPage = null;
 
         for(var i=1; i<=this.data.pageCount; i++) {
@@ -335,7 +336,8 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
                 for(var i=startPage; i<(startPage+5); i++) {
                     el = Ext.get(this.getName() + "-page-" + i);
                     if(el) {
-                        el.parent().update('<img src="' + el.getAttribute("data-src") + '" height="150" />');
+                       // el.parent().update('<img src="' + el.getAttribute("data-src") + '" height="150" />');
+                        el.parent().update('<div class="pdf-image-wrapper"><img src="' + el.getAttribute("data-src") + '" height="150" /><div class="nr" style="font-size:35px; line-height:150px; position: absolute;top:0px;width: 100%;">' + i + '</div></div>');
                     }
                 }
             }
@@ -372,7 +374,6 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
 
     hotspotEditPage: function (page) {
         this.saveCurrentPage();
-
         this.currentPage = page;
 
         var pageContainer = this.metaDataWindow.getComponent("pageContainer");
@@ -403,13 +404,13 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
                         text: t("chapter"),
                         xtype: "tbtext",
                         style: "margin: 0 10px 0 0;",
-                        value: this.chapterStore[this.currentPage]
                     },
                     {
                         xtype: "textfield",
                         name: "chapter",
                         width: 200,
-                        style: "margin: 0 10px 0 0;"
+                        style: "margin: 0 10px 0 0;",
+                        value: this.chapterStore[page]
                     }
             ],
             listeners: {
@@ -476,7 +477,11 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
     },
 
     editTextVersion : function(config){
-        var text = this.data.texts[this.currentPage];
+
+        var text = null;
+        if (this.data.texts) {
+            text = this.data.texts[this.currentPage];
+        }
         if(!text){
             text = this.requestTextForCurrentPage();
         }
@@ -515,7 +520,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
                                 text: t("apply"),
                                 iconCls: "pimcore_icon_apply",
                                 handler: function () {
-                                    this.data.texts[this.currentPage] = this.textArea.getValue();
+                                    this.textStore[this.currentPage] = this.textArea.getValue();
                                     this.editTextVersionWindow.close();
                                 }.bind(this)
                             },
@@ -905,12 +910,22 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             if(this.hotspotStore[this.currentPage].length < 1) {
                 delete this.hotspotStore[this.currentPage];
             }
-
         }
+
     },
 
+
     getValue: function () {
+
         return this.data;
+//        var value = {};
+//        for (var i = 0; i < this.data.length; ++i) {
+//          if (this.data[i] != null) {
+//              value[i] = this.data[i];
+//          }
+//
+//        }
+//        return value;
     },
 
     getType: function () {
