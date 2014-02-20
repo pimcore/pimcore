@@ -52,8 +52,15 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
         <?php foreach(Pimcore_Tool::getValidLanguages() as $language) { ?>
             <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
                 <?php
-                    $v1 = $lfd->getVersionPreview($this->object1->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
-                    $v2 = $lfd->getVersionPreview($this->object2->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
+                    $v1 = "";
+                    $v2 = "";
+
+                    if($lfd->getVersionPreview($this->object1->getValueForFieldName($fieldName))) {
+                        $v1 = $lfd->getVersionPreview($this->object1->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
+                    }
+                    if($lfd->getVersionPreview($this->object2->getValueForFieldName($fieldName))) {
+                        $v2 = $lfd->getVersionPreview($this->object2->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
+                    }
                 ?>
                 <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
                     <td><?php echo $lfd->getTitle() ?> (<?php echo $language; ?>)</td>

@@ -46,7 +46,13 @@
                 <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
                     <td><?php echo $lfd->getTitle() ?> (<?php echo $language; ?>)</td>
                     <td><?php echo $lfd->getName() ?></td>
-                    <td><?php echo $lfd->getVersionPreview($this->object->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language)) ?></td>
+                    <td>
+                        <?php
+                            if($this->object->getValueForFieldName($fieldName)) {
+                                echo $lfd->getVersionPreview($this->object->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
+                            }
+                        ?>
+                    </td>
                 </tr>
             <?php
                 $c++;
