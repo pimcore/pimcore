@@ -110,8 +110,6 @@ pimcore.asset.tree = Class.create({
             }
         });
 
-        new Ext.tree.TreeSorter(this.tree, {folderSort:true});
-        
         this.tree.on("startdrag", this.onDragStart.bind(this));
         this.tree.on("enddrag", this.onDragEnd.bind(this));
         this.tree.on("render", function () {
@@ -465,7 +463,7 @@ pimcore.asset.tree = Class.create({
             }));
         }
 
-        if (this.attributes.permissions.create) {
+        if (this.attributes.permissions.create && !this.attributes.locked) {
             menu.add(new Ext.menu.Item({
                 text: t('search_and_move'),
                 iconCls: "pimcore_icon_search_and_move",

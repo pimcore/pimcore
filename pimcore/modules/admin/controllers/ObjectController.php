@@ -97,8 +97,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            $childsList->setOrderKey("o_key");
-            $childsList->setOrder("asc");
+            $childsList->setOrderKey("FIELD(o_type, 'folder') DESC, o_key ASC", false);
             $childsList->setObjectTypes($objectTypes);
 
             $childs = $childsList->load();

@@ -172,8 +172,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             }
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            $childsList->setOrderKey("filename");
-            $childsList->setOrder("asc");
+            $childsList->setOrderKey("FIELD(type, 'folder') DESC, filename ASC", false);
 
             $childs = $childsList->load();
 
