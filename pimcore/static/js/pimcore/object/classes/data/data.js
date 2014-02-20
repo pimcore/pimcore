@@ -85,7 +85,16 @@ pimcore.object.classes.data.data = Class.create({
                 autoCreate: {tag: 'input', type: 'text', maxlength: '70', autocomplete: 'off'},
                 enableKeyEvents: true,
                 value: this.datax.name,
-                disabled: !in_array("name",this.availableSettingsFields)
+                disabled: !in_array("name",this.availableSettingsFields),
+                listeners: {
+                    keyup: function (el) {
+                        // autofill title field if untouched and empty
+                        var title = el.ownerCt.getComponent("title");
+                        if(title["_autooverwrite"] === true) {
+                            el.ownerCt.getComponent("title").setValue(el.getValue());
+                        }
+                    }
+                }
             },
             {
                 xtype: "textfield",
@@ -94,7 +103,19 @@ pimcore.object.classes.data.data = Class.create({
                 itemId: "title",
                 width: 300,
                 value: this.datax.title,
-                disabled: !in_array("title",this.availableSettingsFields)
+                disabled: !in_array("title",this.availableSettingsFields),
+                itemId: "title",
+                enableKeyEvents: true,
+                listeners: {
+                    keyup: function (el) {
+                        el["_autooverwrite"] = false;
+                    },
+                    afterrender: function (el) {
+                        if(el.getValue().length < 1) {
+                            el["_autooverwrite"] = true;
+                        }
+                    }
+                }
             },
             {
                 xtype: "textarea",
