@@ -165,7 +165,7 @@ class Asset_Image_Thumbnail_Processor {
                     $arguments = array();
                     $mapping = self::$argumentMapping[$transformation["method"]];
 
-                    if(is_array($transformation["arguments"])) {
+                    if(is_array($transformation["arguments"]) && !in_array($transformation["method"], ["cropPercent"])) {
                         foreach ($transformation["arguments"] as $key => $value) {
                             $position = array_search($key, $mapping);
                             if($position !== false) {
@@ -180,6 +180,8 @@ class Asset_Image_Thumbnail_Processor {
                                 $arguments[$position] = $value;
                             }
                         }
+                    } else {
+                        $arguments = $transformation["arguments"];
                     }
 
                     ksort($arguments);
