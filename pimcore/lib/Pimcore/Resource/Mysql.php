@@ -66,6 +66,13 @@ class Pimcore_Resource_Mysql {
             Logger::warn($e);
         }
 
+        // try to set mysql mode
+        try {
+            $db->query("SET sql_mode = '';");
+        } catch (Exception $e) {
+            Logger::warn($e);
+        }
+
         $connectionId = $db->fetchOne("SELECT CONNECTION_ID()");
 
         // enable the db-profiler if the devmode is on and there is no custom profiler set (eg. in system.xml)
