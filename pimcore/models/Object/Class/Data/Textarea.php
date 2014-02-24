@@ -17,6 +17,8 @@
 
 class Object_Class_Data_Textarea extends Object_Class_Data {
 
+    use Object_Class_Data_Trait_Text;
+
     /**
      * Static type of this element
      *
@@ -138,22 +140,6 @@ class Object_Class_Data_Textarea extends Object_Class_Data {
         return $data;
     }
 
-    /**
-     * @see Object_Class_Data::getVersionPreview
-     * @param string $data
-     * @return string
-     */
-    public function getVersionPreview($data) {
-        return $data;
-    }
-
-    /** True if change is allowed in edit mode.
-     * @return bool
-     */
-    public function isDiffChangeAllowed() {
-        return true;
-    }
-
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
      * @param $data
@@ -173,13 +159,5 @@ class Object_Class_Data_Textarea extends Object_Class_Data {
         } else {
             return "";
         }
-    }
-
-    /**
-     * @param $data
-     * @return bool
-     */
-    public function isEmpty($data) {
-        return (strlen($data) < 1);
     }
 }
