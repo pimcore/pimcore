@@ -525,7 +525,24 @@ HTML;
      * @return array
      */
     public function getTexts(){
-        return $this->texts;
+        return (array)$this->texts;
+    }
+
+    public function getElement(){
+        $data = $this->getData();
+        return Asset::getById($data['id']);
+    }
+
+    public function getText($page){
+        $texts = $this->getTexts();
+        if($texts[$page]){
+            return $texts[$page];
+        }else{
+            $asset = $this->getElement();
+            if($asset instanceof Asset_Document){
+                return $asset->getText($page);
+            }
+        }
     }
 
     public function setChapters($chapters){
@@ -533,7 +550,7 @@ HTML;
     }
 
     public function getChapters(){
-        return $this->chapters;
+        return (array)$this->chapters;
     }
 
     /**
@@ -549,7 +566,13 @@ HTML;
      */
     public function getHotspots()
     {
-        return $this->hotspots;
+        return (array)$this->hotspots;
+    }
+
+
+    public function getHotspot($page){
+        $hotspots = $this->getHotspots();
+        return $hotspots[$page];
     }
 
     /**
