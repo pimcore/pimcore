@@ -13,18 +13,18 @@ class Website_Tool_Text
 		return $string;
 	}
 	
-	public static function cutStringRespectingWhitespace ($string,$length) {
-		if ( $length < strlen($string) )
-		{
-			$text = substr($string, 0, $length);
-			if ( false !== ($length = strrpos($text,' ')) )
-			{
-				$text = substr($text, 0, $length);
-			}
-			$string = $text."...";
-		}
-		return $string;
-	}
+    public static function cutStringRespectingWhitespace ($string,$length, $suffix = "...") {
+   		if ( $length < strlen($string) )
+   		{
+   			$text = substr($string, 0, $length);
+   			if ( false !== ($length = strrpos($text,' ')) )
+   			{
+   				$text = substr($text, 0, $length);
+   			}
+   			$string = $text . $suffix;
+   		}
+   		return $string;
+   	}
 
 
 	public static function toUrl($text) {
