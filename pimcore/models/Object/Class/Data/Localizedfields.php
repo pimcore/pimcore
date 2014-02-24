@@ -116,10 +116,10 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                 $key = $fd->getName();
                 $fdata = $fd->getDataForEditmode($values[$fd->getName()], $object);
 
-                if (empty($fieldData[$language][$key])) {
+                if (!isset($fieldData[$language][$key]) || $fd->isEmpty($fieldData[$language][$key])) {
                     // never override existing data
                     $fieldData[$language][$key] = $fdata;
-                    if (!empty($fdata)) {
+                    if (!$fd->isEmpty($fdata)) {
                         $metaData[$language][$key] = array("inherited" => $level > 1, "objectid" => $object->getId());
                     }
                 }
@@ -139,7 +139,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                     $fieldDefinitions = $this->getFieldDefinitions();
                     foreach ($fieldDefinitions as $fd) {
                         $key = $fd->getName();
-                        if (empty($fieldData[$language][$key])) {
+                        if ($fd->isEmpty($fieldData[$language][$key])) {
                             $foundEmptyValue = true;
                             $inherited = true;
                             $metaData[$language][$key] = array("inherited" => true, "objectid" => $parent->getId());

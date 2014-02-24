@@ -174,4 +174,12 @@ class Object_Class_Data_Textarea extends Object_Class_Data {
             return "";
         }
     }
+
+    /**
+     * @param $data
+     * @return bool
+     */
+    public function isEmpty($data) {
+        return (strlen($data) < 1);
+    }
 }

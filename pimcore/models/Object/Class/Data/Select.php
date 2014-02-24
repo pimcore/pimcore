@@ -198,4 +198,12 @@ class Object_Class_Data_Select extends Object_Class_Data {
             throw new Exception("Empty mandatory field [ " . $this->getName() . " ]");
         }
     }
+
+    /**
+     * @param $data
+     * @return bool
+     */
+    public function isEmpty($data) {
+        return (strlen($data) < 1);
+    }
 }

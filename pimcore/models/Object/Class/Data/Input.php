@@ -169,4 +169,11 @@ class Object_Class_Data_Input extends Object_Class_Data {
         return true;
     }
 
+    /**
+     * @param $data
+     * @return bool
+     */
+    public function isEmpty($data) {
+        return (strlen($data) < 1);
+    }
 }

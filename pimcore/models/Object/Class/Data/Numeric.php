@@ -203,41 +203,14 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
         return true;
     }
 
-
     /**
-     * Creates getter code which is used for generation of php file for object classes using this data type
-     * @param $class
-     * @return string
+     * @param $data
+     * @return bool
      */
-    public function getGetterCode($class)
-    {
-        $key = $this->getName();
-        $code = "";
-
-        $code .= '/**' . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
-        $code .= '*/' . "\n";
-        $code .= "public function get" . ucfirst($key) . " () {\n";
-
-        // adds a hook preGetValue which can be defined in an extended class
-        $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-        $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
-
-        if (method_exists($this, "preGetData")) {
-            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
-        } else {
-            $code .= "\t" . '$data = $this->' . $key . ";\n";
+    public function isEmpty($data) {
+        if($data === null) {
+            return true;
         }
-
-        // insert this line if inheritance from parent objects is allowed
-        if ($class->getAllowInherit()) {
-            $code .= "\t" . 'if($data === null && Object_Abstract::doGetInheritedValues()) { return $this->getValueFromParent("' . $key . '");}' . "\n";
-        }
-
-        $code .= "\t return " . '$data' . ";\n";
-        $code .= "}\n\n";
-
-        return $code;
+        return false;
     }
-
 }

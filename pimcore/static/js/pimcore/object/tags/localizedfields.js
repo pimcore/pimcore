@@ -282,10 +282,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     getDataForField: function (name) {
         try {
             if (this.data[this.currentLanguage]) {
-                if (this.data[this.currentLanguage][name]) {
+                if (typeof this.data[this.currentLanguage][name] !== undefined){
                     return this.data[this.currentLanguage][name];
-                } else if (typeof this.data[this.currentLanguage][name] !== undefined){
-                    return null;
                 }
             }
         } catch (e) {
