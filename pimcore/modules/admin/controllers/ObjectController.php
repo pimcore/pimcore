@@ -441,10 +441,22 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $fieldData = $object->$getter();
             $isInheritedValue = false;
             $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+
+            // following some exceptions for special data types (localizedfields, objectbricks)
             if ($value && ($fieldData instanceof Object_Localizedfield)) {
                 // make sure that the localized field participates in the inheritance detection process
                 $isInheritedValue = $value["inherited"];
             }
+            if ($fielddefinition instanceof Object_Class_Data_Objectbricks && is_array($value)) {
+                // make sure that the objectbricks participate in the inheritance detection process
+                foreach($value as $singleBrickData) {
+                    if($singleBrickData["inherited"]) {
+                        $isInheritedValue = true;
+                    }
+                }
+            }
+
+
             if ( $fielddefinition->isEmpty($value) && !empty($parent) ) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
