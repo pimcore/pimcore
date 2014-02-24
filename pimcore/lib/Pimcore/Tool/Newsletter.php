@@ -24,7 +24,7 @@ class Pimcore_Tool_Newsletter {
      * @param Tool_Newsletter_Config $newsletter
      * @param Object_Concrete $object
      */
-    public static function sendMail($newsletter, $object, $emailAddress = null) {
+    public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null) {
 
         $params = array(
             "gender" => $object->getGender(),
@@ -40,6 +40,10 @@ class Pimcore_Tool_Newsletter {
 
         if(Pimcore_Config::getSystemConfig()->newsletter->usespecific) {
             $mail->init("newsletter");
+        }
+
+        if(!Pimcore_Tool::getHostUrl() && $hostUrl) {
+            $mail->setHostUrl($hostUrl);
         }
 
         if($emailAddress) {

@@ -76,7 +76,7 @@ if($newsletter) {
                 $count++;
                 Logger::info("Sending newsletter " . $count . " / " . $elementsTotal. " [" . $newsletter->getName() . "]");
 
-                Pimcore_Tool_Newsletter::sendMail($newsletter, $object);
+                Pimcore_Tool_Newsletter::sendMail($newsletter, $object, null, $argv[2]);
 
                 $note = new Element_Note();
                 $note->setElement($object);

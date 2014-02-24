@@ -252,14 +252,20 @@ class Pimcore_Tool {
      */
     public static function getHostUrl()
         {
-            $protocol = strtolower($_SERVER["SERVER_PROTOCOL"]);
-            $protocol = substr($protocol, 0, strpos($protocol, "/"));
-            $protocol .= ($_SERVER["HTTPS"] == "on") ? "s" : "";
+            $protocol = "http";
+            $port = '';
 
-            if(!in_array($_SERVER["SERVER_PORT"],array(443,80))){
-                $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
+            if(isset($_SERVER["SERVER_PROTOCOL"])) {
+                $protocol = strtolower($_SERVER["SERVER_PROTOCOL"]);
+                $protocol = substr($protocol, 0, strpos($protocol, "/"));
+                $protocol .= ($_SERVER["HTTPS"] == "on") ? "s" : "";
             }
 
+            if(isset($_SERVER["SERVER_PORT"])) {
+                if(!in_array((int) $_SERVER["SERVER_PORT"],array(443,80))){
+                    $port = ":" . $_SERVER["SERVER_PORT"];
+                }
+            }
 
             $hostname = self::getHostname();
 
@@ -269,9 +275,7 @@ class Pimcore_Tool {
                 $hostname = $systemConfig['general']['domain'];
                 if (!$hostname) {
                     Logger::warn('Couldn\'t determine HTTP Host. No Domain set in "Settings" -> "System" -> "Website" -> "Domain"');
-                } else {
-                    $protocol   = 'http';
-                    $port       = '';
+                    return "";
                 }
             }
 
