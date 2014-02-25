@@ -231,6 +231,9 @@ class Document_Tag_Link extends Document_Tag
     public function setDataFromResource($data)
     {
         $this->data = Pimcore_Tool_Serialize::unserialize($data);
+        if(!is_array($this->data)) {
+            $this->data = array();
+        }
         return $this;
     }
 
@@ -241,6 +244,10 @@ class Document_Tag_Link extends Document_Tag
      */
     public function setDataFromEditmode($data)
     {
+
+        if(!is_array($data)) {
+            $data = array();
+        }
 
         if ($doc = Document::getByPath($data["path"])) {
 
