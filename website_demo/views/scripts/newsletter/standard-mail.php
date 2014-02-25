@@ -734,29 +734,146 @@ body.outlook p {
 </head>
 <body>
 <table class="body">
-<tr>
-<td class="center" align="center" valign="top">
-<center>
-
-
-<table class="row header">
     <tr>
-        <td class="center" align="center">
-            <center  style="background-color: #101010;">
+        <td class="center" align="center" valign="top">
+            <center>
+
+
+                <table class="row header">
+                    <tr>
+                        <td class="center" align="center">
+                            <center>
+
+                                <table class="container">
+                                    <tr>
+                                        <td class="wrapper last">
+
+                                            <table class="twelve columns">
+                                                <tr>
+                                                    <td class="six sub-columns">
+                                                        <img style="width: 180px;" src="http://demo.pimcore.org/website/static/img/logo-standard.png">
+                                                    </td>
+                                                    <td class="expander"></td>
+                                                </tr>
+                                            </table>
+
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </center>
+                        </td>
+                    </tr>
+                </table>
+                <br>
 
                 <table class="container">
                     <tr>
-                        <td class="wrapper last">
+                        <td>
 
-                            <table class="twelve columns">
+                            <!-- content start -->
+                            <table class="row">
                                 <tr>
-                                    <td class="six sub-columns">
-                                        <img style="width: 180px;" src="http://demo.pimcore.org/website/static/img/logo.png">
+                                    <td class="wrapper last">
+
+                                        <table class="twelve columns">
+                                            <tr>
+                                                <td>
+                                                    <?= $this->wysiwyg("content") ?>
+                                                </td>
+                                                <td class="expander"></td>
+                                            </tr>
+                                        </table>
+
                                     </td>
-                                    <td class="expander"></td>
                                 </tr>
                             </table>
 
+
+                            <table class="row footer">
+                                <tr>
+                                    <td class="wrapper">
+
+                                        <table class="six columns">
+                                            <tr>
+                                                <td class="left-text-pad">
+
+                                                    <h5>Connect With Us:</h5>
+
+                                                    <table class="tiny-button facebook">
+                                                        <tr>
+                                                            <td>
+                                                                <a href="#">Facebook</a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+
+                                                    <br>
+
+                                                    <table class="tiny-button twitter">
+                                                        <tr>
+                                                            <td>
+                                                                <a href="#">Twitter</a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+
+                                                    <br>
+
+                                                    <table class="tiny-button google-plus">
+                                                        <tr>
+                                                            <td>
+                                                                <a href="#">Google +</a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+
+                                                </td>
+                                                <td class="expander"></td>
+                                            </tr>
+                                        </table>
+
+                                    </td>
+                                    <td class="wrapper last">
+
+                                        <table class="six columns">
+                                            <tr>
+                                                <td class="last right-text-pad">
+                                                    <?= $this->wysiwyg("contactInfo") ?>
+                                                </td>
+                                                <td class="expander"></td>
+                                            </tr>
+                                        </table>
+
+                                    </td>
+                                </tr>
+                            </table>
+
+
+                            <table class="row">
+                                <tr>
+                                    <td class="wrapper last">
+
+                                        <table class="twelve columns">
+                                            <tr>
+                                                <td align="center">
+                                                    <center>
+                                                        <p style="text-align:center;">
+                                                            <?= $this->link("footerLink1") ?> |
+                                                            <?= $this->link("footerLink2") ?> |
+                                                            <?= $this->link("footerLink3") ?>
+                                                        </p>
+                                                    </center>
+                                                </td>
+                                                <td class="expander"></td>
+                                            </tr>
+                                        </table>
+
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- container end below -->
                         </td>
                     </tr>
                 </table>
@@ -764,123 +881,6 @@ body.outlook p {
             </center>
         </td>
     </tr>
-</table>
-<br>
-
-<table class="container">
-    <tr>
-        <td>
-
-            <!-- content start -->
-            <table class="row">
-                <tr>
-                    <td class="wrapper last">
-
-                        <table class="twelve columns">
-                            <tr>
-                                <td>
-                                    <?= $this->wysiwyg("content") ?>
-                                </td>
-                                <td class="expander"></td>
-                            </tr>
-                        </table>
-
-                    </td>
-                </tr>
-            </table>
-
-
-            <table class="row footer">
-                <tr>
-                    <td class="wrapper">
-
-                        <table class="six columns">
-                            <tr>
-                                <td class="left-text-pad">
-
-                                    <h5>Connect With Us:</h5>
-
-                                    <table class="tiny-button facebook">
-                                        <tr>
-                                            <td>
-                                                <a href="#">Facebook</a>
-                                            </td>
-                                        </tr>
-                                    </table>
-
-                                    <br>
-
-                                    <table class="tiny-button twitter">
-                                        <tr>
-                                            <td>
-                                                <a href="#">Twitter</a>
-                                            </td>
-                                        </tr>
-                                    </table>
-
-                                    <br>
-
-                                    <table class="tiny-button google-plus">
-                                        <tr>
-                                            <td>
-                                                <a href="#">Google +</a>
-                                            </td>
-                                        </tr>
-                                    </table>
-
-                                </td>
-                                <td class="expander"></td>
-                            </tr>
-                        </table>
-
-                    </td>
-                    <td class="wrapper last">
-
-                        <table class="six columns">
-                            <tr>
-                                <td class="last right-text-pad">
-                                    <?= $this->wysiwyg("contactInfo") ?>
-                                </td>
-                                <td class="expander"></td>
-                            </tr>
-                        </table>
-
-                    </td>
-                </tr>
-            </table>
-
-
-            <table class="row">
-                <tr>
-                    <td class="wrapper last">
-
-                        <table class="twelve columns">
-                            <tr>
-                                <td align="center">
-                                    <center>
-                                        <p style="text-align:center;">
-                                            <?= $this->link("footerLink1") ?> |
-                                            <?= $this->link("footerLink2") ?> |
-                                            <?= $this->link("footerLink3") ?>
-                                        </p>
-                                    </center>
-                                </td>
-                                <td class="expander"></td>
-                            </tr>
-                        </table>
-
-                    </td>
-                </tr>
-            </table>
-
-            <!-- container end below -->
-        </td>
-    </tr>
-</table>
-
-</center>
-</td>
-</tr>
 </table>
 </body>
 </html>
