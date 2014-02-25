@@ -1262,10 +1262,8 @@ pimcore.settings.system = Class.create({
                                 "check": function (el, checked) {
                                     if(checked) {
                                         Ext.getCmp("system.settings.newsletter.fieldset").show();
-                                        Ext.getCmp("system.settings.newsletter.bounce").show();
                                     } else {
                                         Ext.getCmp("system.settings.newsletter.fieldset").hide();
-                                        Ext.getCmp("system.settings.newsletter.bounce").hide();
                                     }
                                 }
                             }
