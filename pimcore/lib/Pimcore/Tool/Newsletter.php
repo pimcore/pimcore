@@ -193,9 +193,9 @@ class Pimcore_Tool_Newsletter {
      * @param Object_Concrete $object
      * @param Document_Email $mailDocument
      */
-    public function sendConfirmationMail($object, $mailDocument) {
+    public function sendConfirmationMail($object, $mailDocument, $params = array()) {
 
-        $params = array(
+        $defaultParameters = array(
             "gender" => $object->getGender(),
             'firstname' => $object->getFirstname(),
             'lastname' => $object->getLastname(),
@@ -203,6 +203,8 @@ class Pimcore_Tool_Newsletter {
             'token' => $object->getProperty("token"),
             "object" => $object
         );
+
+        $params = array_merge($defaultParameters, $params);
 
         $mail = new Pimcore_Mail();
         $mail->addTo($object->getEmail());
@@ -281,7 +283,7 @@ class Pimcore_Tool_Newsletter {
 
         $className = $this->getClassName();
         $objects = $className::getByEmail($email);
-        if($objects) {
+        if(count($objects)) {
             foreach($objects as $object) {
                 $this->unsubscribe($object);
             }
