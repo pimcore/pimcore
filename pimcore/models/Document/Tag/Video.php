@@ -63,6 +63,10 @@ class Document_Tag_Video extends Document_Tag
      */
     public function getTitle()
     {
+        if(!$this->title && $this->getVideoAsset()) {
+            // default title for microformats
+            return $this->getVideoAsset()->getFilename();
+        }
         return $this->title;
     }
 
@@ -80,6 +84,10 @@ class Document_Tag_Video extends Document_Tag
      */
     public function getDescription()
     {
+        if(!$this->description) {
+            // default description for microformats
+            return $this->getTitle();
+        }
         return $this->description;
     }
 
@@ -661,8 +669,8 @@ class Document_Tag_Video extends Document_Tag
         $code .= '<meta itemprop="name" content="' . $this->getTitle() . '" />' . "\n";
         $code .= '<meta itemprop="description" content="' . $this->getDescription() . '" />' . "\n";
         $code .= '<meta itemprop="duration" content="' . $durationString . '" />' . "\n";
-        $code .= '<meta itemprop="url" content="' . Pimcore_Tool::getHostUrl() . $_SERVER["REQUEST_URI"] . ($_SERVER["QUERY_STRING"] ? ("?" .$_SERVER["QUERY_STRING"]) : "") . '" />' . "\n";
-        $code .= '<meta itemprop="thumbnail" content="' . Pimcore_Tool::getHostUrl() . $thumbnail . '" />' . "\n";
+        $code .= '<meta itemprop="contentURL" content="' . Pimcore_Tool::getHostUrl() . $urls["mp4"] .  '" />' . "\n";
+        $code .= '<meta itemprop="thumbnailURL" content="' . Pimcore_Tool::getHostUrl() . $thumbnail . '" />' . "\n";
         $code .= '<video class="pimcore_video" width="' . $this->getWidth() . '" height="' . $this->getHeight() . '" poster="' . $thumbnail . '" controls="controls" preload="none">' . "\n";
 
         $urls = array_reverse($urls); // use webm as the preferred format
