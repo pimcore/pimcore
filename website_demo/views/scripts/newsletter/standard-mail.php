@@ -741,7 +741,7 @@ body.outlook p {
 
                 <table class="row header">
                     <tr>
-                        <td class="center" align="center">
+                        <td class="center" align="center" style="border-bottom: 1px solid #999; padding-bottom: 10px;">
                             <center>
 
                                 <table class="container">
@@ -751,7 +751,7 @@ body.outlook p {
                                             <table class="twelve columns">
                                                 <tr>
                                                     <td class="six sub-columns">
-                                                        <img style="width: 180px;" src="http://demo.pimcore.org/website/static/img/logo-standard.png">
+                                                        <img style="width: 180px;" width="180" src="http://demo.pimcore.org/website/static/img/logo-standard.png">
                                                     </td>
                                                     <td class="expander"></td>
                                                 </tr>
