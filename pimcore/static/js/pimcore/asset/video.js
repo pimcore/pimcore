@@ -115,7 +115,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                         width: 265,
                         handler: function () {
                             try {
-                                var time = window[this.previewFrameId].player.getTime();
+                                var time = window[this.previewFrameId].document.getElementById("video").currentTime;
                                 var date = new Date();
                                 Ext.getCmp("pimcore_asset_video_imagepreview_"
                                     + this.id).update('<img align="center" src="/admin/asset/get-video-thumbnail/id/'
@@ -170,18 +170,18 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
             });
 
             this.previewImagePanel.on("afterrender", function () {
-                this.checkFlowplayerInterval = window.setInterval(function () {
-                    if(window[this.previewFrameId].flowplayer) {
+                this.checkVideoplayerInterval = window.setInterval(function () {
+                    if(window[this.previewFrameId] && window[this.previewFrameId].document.getElementById("video")) {
                         this.previewImagePanel.body.setStyle({
                             display: "block"
                         });
-                        clearInterval(this.checkFlowplayerInterval);
+                        clearInterval(this.checkVideoplayerInterval);
                     }
                 }.bind(this), 1000);
             }.bind(this));
 
             this.previewImagePanel.on("beforedestroy", function () {
-                clearInterval(this.checkFlowplayerInterval);
+                clearInterval(this.checkVideoplayerInterval);
                 try {
                     delete window[this.previewFrameId];
                 } catch (e) {
