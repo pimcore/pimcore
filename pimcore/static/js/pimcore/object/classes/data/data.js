@@ -66,8 +66,10 @@ pimcore.object.classes.data.data = Class.create({
 
     getLayout: function () {
 
+        var niceName = (this.getTypeName() ? this.getTypeName() : t(this.getType()));
+
         this.specificPanel = new Ext.form.FormPanel({
-            title: t(this.getType() + "_settings"),
+            title: t("specific_settings") + " (" + niceName + ")",
             bodyStyle: "padding: 10px;",
             style: "margin: 10px 0 10px 0",
             layout: "pimcoreform",
@@ -186,7 +188,7 @@ pimcore.object.classes.data.data = Class.create({
             items: [
                 {
                     xtype: "form",
-                    title: t("general_settings") + " (" + (this.getTypeName() ? this.getTypeName() : t(this.getType())) + ")",
+                    title: t("general_settings") + " (" + niceName + ")",
                     bodyStyle: "padding: 10px;",
                     style: "margin: 10px 0 10px 0",
                     labelWidth: 140,
