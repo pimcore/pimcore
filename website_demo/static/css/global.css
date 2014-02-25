@@ -215,6 +215,7 @@ section img {
     display: inline-block;
     border: 2px solid #999;
     box-sizing: content-box;
+    -moz-box-sizing: content-box;
     font-size: 0;
 }
 
