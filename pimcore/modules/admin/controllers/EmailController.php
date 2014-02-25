@@ -387,4 +387,22 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         ));
     }
 
+    public function sendTestEmailAction() {
+
+        $mail = new Pimcore_Mail();
+        $mail->addTo($this->getParam("to"));
+        $mail->setSubject($this->getParam("subject"));
+
+        if($this->getParam("type") == "text") {
+            $mail->setBodyText($this->getParam("content"));
+        } else {
+            $mail->setBodyHtml($this->getParam("content"));
+        }
+
+        $mail->send();
+
+        $this->_helper->json(array(
+            "success" => true,
+        ));
+    }
 }

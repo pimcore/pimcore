@@ -1817,4 +1817,71 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
         });
 
     }.bind(this), config);
-}
+};
+
+
+pimcore.helpers.sendTestEmail = function () {
+
+    var win = new Ext.Window({
+        width: 800,
+        height: 600,
+        modal: true,
+        title: t("send_test_email"),
+        layout: "fit",
+        closeAction: "close",
+        items: [{
+            xtype: "form",
+            bodyStyle: "padding:10px;",
+            layout: "pimcoreform",
+            itemId: "form",
+            items: [{
+                xtype: "textfield",
+                name: "to",
+                fieldLabel: t("to"),
+                width: 650
+            }, {
+                xtype: "textfield",
+                name: "subject",
+                fieldLabel: t("subject"),
+                width: 650
+            }, {
+                xtype: "textarea",
+                name: "content",
+                fieldLabel: t("content"),
+                width: 650,
+                height: 450
+            }]
+        }],
+        buttons: [{
+            text: t("send_as_plain_text"),
+            iconCls: "pimcore_icon_text",
+            handler: function () {
+                send("text");
+            }
+        }, {
+            text: t("send_as_html_mime"),
+            iconCls: "pimcore_icon_html",
+            handler: function () {
+                send("html");
+            }
+        }]
+    });
+
+    var send = function (type) {
+
+        var params = win.getComponent("form").getForm().getFieldValues();
+        params["type"] = type;
+
+        Ext.Ajax.request({
+            url: "/admin/email/send-test-email",
+            params: params,
+            method: "post"
+        });
+
+        win.close();
+    }
+
+    win.show();
+
+};
+

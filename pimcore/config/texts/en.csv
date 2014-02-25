@@ -1,3 +1,7 @@
+"send_as_html_mime","Send as HTML/Mime"
+"send_as_plain_text","Send as plain text"
+"send_test_email","Send Test-Email"
+"global","Global"
 "specific_settings","Specific Settings"
 "metadata","Metadata"
 "login_as_this_user_description","The following link is a temporary link that allows you to login as this user in a different browser:"
