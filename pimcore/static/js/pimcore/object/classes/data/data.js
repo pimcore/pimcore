@@ -71,19 +71,7 @@ pimcore.object.classes.data.data = Class.create({
             bodyStyle: "padding: 10px;",
             style: "margin: 10px 0 10px 0",
             layout: "pimcoreform",
-            items: {},
-            listeners: {
-                afterrender: function (el) {
-                    // hide panel if there're no children
-                    // get all children
-                    var children = el.findBy(function () {
-                        return true;
-                    })
-                    if(children.length < 1) {
-                        el.hide();
-                    }
-                }
-            }
+            items: {}
         });
 
         var standardSettings = [
