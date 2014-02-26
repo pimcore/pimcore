@@ -563,7 +563,34 @@ class Document_Tag_Video extends Document_Tag
         if($thumbnail) {
             $code .= '<meta itemprop="thumbnailURL" content="' . Pimcore_Tool::getHostUrl() . $thumbnail . '" />' . "\n";
         }
-        $code .= '<video class="pimcore_video" width="' . $this->getWidth() . '" height="' . $this->getHeight() . '" poster="' . $thumbnail . '" controls="controls" preload="none">' . "\n";
+
+
+        // default attributes
+        $attributesString = "";
+        $attributes = array(
+            "width" => $this->getWidth(),
+            "height" => $this->getHeight(),
+            "poster" => $thumbnail,
+            "controls" => "controls",
+            "class" => "pimcore_video"
+        );
+
+        if(array_key_exists("attributes", $this->getOptions())) {
+            $attributes = array_merge($attributes, $this->getOptions()["attributes"]);
+        }
+
+        foreach($attributes as $key => $value) {
+            $attributesString .= " " . $key;
+            if(!empty($value)) {
+                $quoteChar = '"';
+                if(strpos($value, '"')) {
+                    $quoteChar = "'";
+                }
+                $attributesString .= '=' . $quoteChar . $value . $quoteChar;
+            }
+        }
+
+        $code .= '<video' . $attributesString . '>' . "\n";
 
         $urls = array_reverse($urls); // use webm as the preferred format
 

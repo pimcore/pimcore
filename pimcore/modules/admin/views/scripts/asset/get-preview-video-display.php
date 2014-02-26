@@ -38,8 +38,15 @@
 <body>
 
 
+<?php
+    $thumbnail = "";
+    if(Pimcore_Video::isAvailable()) {
+        $thumbnail = "/admin/asset/get-video-thumbnail/id/" . $this->asset->getId() . "/treepreview/true";
+    }
+?>
+
 <div id="videoContainer">
-    <video id="video" autoplay="autoplay" controls="controls" height="400">
+    <video id="video" controls="controls" height="400" poster="<?= $thumbnail ?>">
         <source src="<?= $this->thumbnail["formats"]["mp4"] ?>" type="video/mp4" />
         <source src="<?= $this->thumbnail["formats"]["webm"] ?>" type="video/webm" />
     </video>
