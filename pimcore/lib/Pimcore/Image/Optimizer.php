@@ -27,7 +27,7 @@ class Pimcore_Image_Optimizer {
             if($format == "png") {
                 $optimizer = self::getPngOptimizerCli();
                 if($optimizer) {
-                    if($optimizer["type"] == "pngquant") {
+                    /*if($optimizer["type"] == "pngquant") {
                         Pimcore_Tool_Console::exec($optimizer["path"] . " --ext xxxoptimized.png " . $path, null, 60);
                         $newFile = preg_replace("/\.png$/", "", $path);
                         $newFile .= "xxxoptimized.png";
@@ -36,7 +36,8 @@ class Pimcore_Image_Optimizer {
                             unlink($path);
                             rename($newFile, $path);
                         }
-                    } else if ($optimizer["type"] == "pngcrush") {
+                    } else */
+                    if ($optimizer["type"] == "pngcrush") {
                         $newFile = $path . ".xxxoptimized";
                         Pimcore_Tool_Console::exec($optimizer["path"] . " " . $path . " " . $newFile, null, 60);
                         if(file_exists($newFile)) {
@@ -77,9 +78,9 @@ class Pimcore_Image_Optimizer {
         }
 
         $paths = array(
-            "/usr/local/bin/pngquant",
+            /*"/usr/local/bin/pngquant",
             "/usr/bin/pngquant",
-            "/bin/pngquant",
+            "/bin/pngquant",*/
             "/usr/local/bin/pngcrush",
             "/usr/bin/pngcrush",
             "/bin/pngcrush",
