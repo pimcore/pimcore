@@ -741,14 +741,19 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         } else if ($this->getParam("id")) {
             $object = Object_Abstract::getById($this->getParam("id"));
-            if ($object && $object->isAllowed("delete")) {
-                $object->delete();
-
-                $this->_helper->json(array("success" => true));
+            if($object) {
+                if (!$object->isAllowed("delete")) {
+                    $this->_helper->json(array("success" => false, "message" => "missing_permission"));
+                } else {
+                    $object->delete();
+                }
             }
+
+            // return true, even when the object doesn't exist, this can be the case when using batch delete incl. children
+            $this->_helper->json(array("success" => true));
         }
 
-        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
+
     }
 
     public function deleteInfoAction() {
