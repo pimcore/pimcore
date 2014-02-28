@@ -317,10 +317,12 @@ function recursiveDelete ($directory, $empty = true) {
     } elseif(!is_readable($directory)) { 
         return false; 
     } else { 
-        $directoryHandle = opendir($directory); 
-        
-        while ($contents = readdir($directoryHandle)) { 
-            if($contents != '.' && $contents != '..') { 
+        $directoryHandle = opendir($directory);
+        $contents = ".";
+
+        while ($contents) {
+            $contents = readdir($directoryHandle);
+            if(strlen($contents) && $contents != '.' && $contents != '..') {
                 $path = $directory . "/" . $contents; 
                 
                 if(is_dir($path)) { 
