@@ -741,7 +741,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         } else if ($this->getParam("id")) {
             $object = Object_Abstract::getById($this->getParam("id"));
-            if ($object->isAllowed("delete")) {
+            if ($object && $object->isAllowed("delete")) {
                 $object->delete();
 
                 $this->_helper->json(array("success" => true));
