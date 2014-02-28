@@ -1393,7 +1393,9 @@ class Asset extends Element_Abstract {
      * @return string
      */
     public function getImageThumbnailSavePath() {
-        $path = PIMCORE_TEMPORARY_DIRECTORY . "/image-thumbnails/" . $this->getId();
+        // group the thumbnails because of limitations of some filesystems (eg. ext3 allows only 32k subfolders)
+        $group = floor($this->getId() / 10000) * 10000;
+        $path = PIMCORE_TEMPORARY_DIRECTORY . "/image-thumbnails/" . $group . "/" . $this->getId();
         return $path;
     }
 
@@ -1401,7 +1403,9 @@ class Asset extends Element_Abstract {
      * @return string
      */
     public function getVideoThumbnailSavePath() {
-        $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-thumbnails/" . $this->getId();
+        // group the thumbnails because of limitations of some filesystems (eg. ext3 allows only 32k subfolders)
+        $group = floor($this->getId() / 10000) * 10000;
+        $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-thumbnails/" . $group . "/" . $this->getId();
         return $path;
     }
 
