@@ -170,6 +170,8 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
      * @return 
      */
     public function getLocalizedValue ($name, $language = null, $ignoreFallbackLanguage = false) {
+
+        $fieldDefinition = $this->getObject()->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($name);
         $language = $this->getLanguage($language);
         $data = null;
         if($this->languageExists($language)) {
@@ -181,7 +183,7 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
 
         // check for inherited value
         $doGetInheritedValues = Object_Abstract::doGetInheritedValues();
-        if(!$data && $doGetInheritedValues) {
+        if($fieldDefinition->isEmpty($data) && $doGetInheritedValues) {
             $object = $this->getObject();
             $class = $object->getClass();
             $allowInherit = $class->getAllowInherit();
@@ -210,7 +212,7 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
         }
 
         // check for fallback value
-        if(!$data && !$ignoreFallbackLanguage && self::doGetFallbackValues()) {
+        if($fieldDefinition->isEmpty($data) && !$ignoreFallbackLanguage && self::doGetFallbackValues()) {
             foreach (Pimcore_Tool::getFallbackLanguagesFor($language) as $l) {
                 if($this->languageExists($l)) {
                     if(array_key_exists($name, $this->items[$l])) {
@@ -220,7 +222,6 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
             }
         }
 
-        $fieldDefinition = $this->getObject()->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($name);
         if($fieldDefinition && method_exists($fieldDefinition, "preGetData")) {
             $data =  $fieldDefinition->preGetData($this, array(
                 "data" => $data,

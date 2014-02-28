@@ -326,7 +326,6 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         
         var types = Object.keys(this.currentElements);
         for(var t=0; t < types.length; t++) {
-            var elementData = {};
             if(this.currentElements[types[t]]) {
                 var element = this.currentElements[types[t]];
                 if(element.action != "deleted") {
@@ -342,6 +341,26 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         }
 
         return this.dirty;
+    },
+
+    markInherited:function (metaData) {
+        // nothing to do, only sub-elements can be marked
+    },
+
+    dataIsNotInherited: function() {
+        var types = Object.keys(this.currentElements);
+        for(var t=0; t < types.length; t++) {
+            if(this.currentElements[types[t]]) {
+                var element = this.currentElements[types[t]];
+                if(element.action != "deleted") {
+                    for (var u=0; u<element.fields.length; u++) {
+                        if(element.fields[u].isDirty()) {
+                            element.fields[u].unmarkInherited();
+                        }
+                    }
+                }
+            }
+        }
     },
 
     isMandatory: function () {

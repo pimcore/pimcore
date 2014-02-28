@@ -35,20 +35,23 @@ class Admin_IndexController extends Pimcore_Controller_Action_Admin {
         $this->view->maintenance_enabled = Zend_Json::encode($maintenance_enabled);
 
         // configuration
-        $this->view->config = Pimcore_Config::getSystemConfig();
+        $sysConfig = Pimcore_Config::getSystemConfig();
+        $this->view->config = $sysConfig;
 
         //mail settings
         $mailIncomplete = false;
-        if($this->view->config->email) {
-            $emailSettings = $this->view->config->email->toArray();
-            if($emailSettings['method']=="sendmail" and !empty($emailSettings['sender']['email'])){
-                $mailIncomplete=true;
+        if($sysConfig->email) {
+            if(!$sysConfig->email->debug->emailaddresses) {
+                $mailIncomplete = true;
             }
-             if($emailSettings['method']=="smtp" and !empty($emailSettings['sender']['email']) and !empty($emailSettings['smtp']['host'])){
-                 $mailIncomplete=true;
+            if(!$sysConfig->email->sender->email){
+                $mailIncomplete = true;
+            }
+             if($sysConfig->email->method == "smtp" && !$sysConfig->email->smtp->host){
+                 $mailIncomplete = true;
              }
         }
-        $this->view->mail_settings_incomplete =  Zend_Json::encode($mailIncomplete);
+        $this->view->mail_settings_complete =  Zend_Json::encode(!$mailIncomplete);
 
 
 

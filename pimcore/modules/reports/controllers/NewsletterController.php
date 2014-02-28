@@ -180,7 +180,7 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
 
         $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
         if($letter) {
-            $cmd = Pimcore_Tool_Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "send-newsletter.php"). " " . $letter->getName();
+            $cmd = Pimcore_Tool_Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "send-newsletter.php"). " " . $letter->getName() . " " . Pimcore_Tool::getHostUrl();
             Pimcore_Tool_Console::execInBackground($cmd, PIMCORE_LOG_DIRECTORY . "/newsletter--" . $letter->getName() . ".log");
         }
 

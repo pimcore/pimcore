@@ -102,16 +102,6 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         var menu = new Ext.menu.Menu();
 
         if(this.datax.id) {
-
-            menu.add(new Ext.menu.TextItem( {
-                iconCls: "none",
-                disabled: true,
-                text: this.name
-            })
-            );
-
-            menu.add(new Ext.menu.Separator());
-
             menu.add(new Ext.menu.Item({
                 text: t('select_specific_area_of_image'),
                 iconCls: "pimcore_icon_image_region",

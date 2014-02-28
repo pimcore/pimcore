@@ -76,6 +76,12 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                             disabled: true
                         },
                         {
+                            xtype: "textfield",
+                            fieldLabel: t("title"),
+                            name: "title",
+                            value: this.datax.title
+                        },
+                        {
                             xtype: "combo",
                             fieldLabel: t("region"),
                             name: "region",
@@ -92,12 +98,6 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                             store: ["","fit"],
                             triggerAction: 'all',
                             editable: false
-                        },
-                        {
-                            xtype: "textfield",
-                            fieldLabel: t("title"),
-                            name: "title",
-                            value: this.datax.title
                         },
                         {
                             xtype: "spinnerfield",

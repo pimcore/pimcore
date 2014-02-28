@@ -24,7 +24,7 @@ class NewsletterController extends Website_Controller_Action {
                 // user and email document
                 // parameters available in the email: gender, firstname, lastname, email, token, object
                 // ==> see mailing framework
-                $newsletter->sendConfirmationMail($user, Document::getByPath("/en/advanced-examples/newsletter/confirmation-email")); // replace "3076" with the ID of the email document you want to use as confirmation email
+                $newsletter->sendConfirmationMail($user, Document::getByPath("/en/advanced-examples/newsletter/confirmation-email"), array("additional" => "parameters"));
 
                 // do some other stuff with the new user
                 $user->setDateRegister(Zend_Date::now());

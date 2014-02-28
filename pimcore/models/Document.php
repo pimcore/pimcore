@@ -194,7 +194,7 @@ class Document extends Element_Abstract {
             return self::getById($document->getId());
         }
         catch (Exception $e) {
-            Logger::warning($e->getMessage());
+            Logger::debug($e->getMessage());
         }
 
         return null;
@@ -958,7 +958,8 @@ class Document extends Element_Abstract {
         if ($this->properties === null) {
             // try to get from cache
             $cacheKey = "document_properties_" . $this->getId();
-            if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
+            $properties = Pimcore_Model_Cache::load($cacheKey);
+            if (!is_array($properties)) {
                 $properties = $this->getResource()->getProperties();
                 $elementCacheTag = $this->getCacheTag();
                 $cacheTags = array("properties" => "properties", $elementCacheTag => $elementCacheTag);

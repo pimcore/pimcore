@@ -31,9 +31,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         if (data) {
             this.data = data;
         }
-
         this.setupWrapper();
-
         this.options.name = id + "_editable";
         this.element = new Ext.Panel(this.options);
 
@@ -69,12 +67,12 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         if(this.data.id) {
 
             menu.add(new Ext.menu.Item({
-                text: t('add_hotspots'),
-                iconCls: "pimcore_icon_image_add_hotspot",
+                text: t('add_metadata'),
+                iconCls: "pimcore_icon_metadata",
                 handler: function (item) {
                     item.parentMenu.destroy();
 
-                    this.openHotspotWindow();
+                    this.openMetadataWindow();
                 }.bind(this)
             }));
 
@@ -113,7 +111,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             handler: function (item) {
                 item.parentMenu.destroy();
                 this.openSearchEditor();
-            }.bind(this) 
+            }.bind(this)
         }));
 
         menu.add(new Ext.menu.Item({
@@ -186,8 +184,8 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             }
         });
     },
-    
-    addDataFromSelector: function (item) {        
+
+    addDataFromSelector: function (item) {
         if(item) {
             this.resetData();
             this.data.id = item.id;
@@ -276,17 +274,27 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         this.updateCounter++;
     },
 
-    openHotspotWindow: function() {
+    openMetadataWindow: function() {
 
         var thumbUrl = "";
         var pages = [];
 
         this.hotspotStore = {};
         this.hotspotMetaData = {};
-
+        this.textStore = {};
+        this.chapterStore = {};
         if(this.data["hotspots"]) {
             this.hotspotStore = this.data["hotspots"];
         }
+
+        if(this.data["texts"]){
+            this.textStore = this.data["texts"];
+        }
+
+        if(this.data["chapters"]){
+            this.chapterStore = this.data["chapters"];
+        }
+
 
         this.currentPage = null;
 
@@ -309,7 +317,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             });
         }
 
-        var pagesContainer = new Ext.Panel({
+        this.pagesContainer = new Ext.Panel({
             width: 150,
             region: "west",
             autoScroll: true,
@@ -319,29 +327,30 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
 
         var loadingInterval = window.setInterval(function () {
 
-            if(!pagesContainer || !pagesContainer.body || !pagesContainer.body.dom) {
+            if(!this.pagesContainer || !this.pagesContainer.body || !this.pagesContainer.body.dom) {
                 clearInterval(loadingInterval);
             } else {
                 var el;
-                var scroll = pagesContainer.body.getScroll();
+                var scroll = this.pagesContainer.body.getScroll();
                 var startPage = Math.floor(scroll.top / 162); // 162 is the height of one thumbnail incl. border and margin
                 for(var i=startPage; i<(startPage+5); i++) {
                     el = Ext.get(this.getName() + "-page-" + i);
                     if(el) {
-                        el.parent().update('<img src="' + el.getAttribute("data-src") + '" height="150" />');
+                       // el.parent().update('<img src="' + el.getAttribute("data-src") + '" height="150" />');
+                        el.parent().update('<div class="pdf-image-wrapper"><img src="' + el.getAttribute("data-src") + '" height="150" /><div class="nr" style="font-size:35px; line-height:150px; position: absolute;top:0px;width: 100%;">' + i + '</div></div>');
                     }
                 }
             }
         }.bind(this), 1000);
 
-        this.hotspotWindow = new Ext.Window({
+        this.metaDataWindow = new Ext.Window({
             width: 700,
             height: 510,
             modal: true,
             closeAction: "close",
             resizable: false,
             layout: "border",
-            items: [pagesContainer, {
+            items: [this.pagesContainer, {
                 region: "center",
                 layout: "fit",
                 itemId: "pageContainer"
@@ -353,37 +362,57 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
                 handler: function () {
                     this.saveCurrentPage();
                     this.data["hotspots"] = this.hotspotStore;
-                    this.hotspotWindow.close();
+                    this.data["texts"] = this.textStore;
+                    this.data["chapters"] = this.chapterStore;
+                    this.metaDataWindow.close();
                 }.bind(this)
             }]
         });
 
-        this.hotspotWindow.show();
+        this.metaDataWindow.show();
     },
 
     hotspotEditPage: function (page) {
         this.saveCurrentPage();
-
         this.currentPage = page;
 
-        var pageContainer = this.hotspotWindow.getComponent("pageContainer");
+        var pageContainer = this.metaDataWindow.getComponent("pageContainer");
         pageContainer.removeAll();
 
         var thumbUrl = "/admin/asset/get-document-thumbnail/id/"
                         + this.data.id +
             "/width/400/height/400/contain/true/page/" + page;
-
         var page = new Ext.Panel({
             border: false,
             bodyStyle: "background: #e5e5e5; ",
             html: '<div style="margin:0 auto; position:relative; overflow: hidden;" ' +
                 'class="page"><img src="' + thumbUrl + '" /></div>',
             tbar: [{
-                xtype: "button",
-                text: t("add_hotspot"),
-                iconCls: "pimcore_icon_add_hotspot",
-                handler: this.addHotspot.bind(this)
-            }],
+                    xtype: "button",
+                    text: t("add_hotspot"),
+                    iconCls: "pimcore_icon_add_hotspot",
+                    handler: this.addHotspot.bind(this)
+                    },
+                    {
+                        xtype: "button",
+                        text: t("pimcore_icon_edit_pdf_text"),
+                        iconCls: "pimcore_icon_edit_pdf_text",
+                        handler: this.editTextVersion.bind(this)
+                    },
+                    "->",
+                    {
+                        text: t("chapter"),
+                        xtype: "tbtext",
+                        style: "margin: 0 10px 0 0;",
+                    },
+                    {
+                        xtype: "textfield",
+                        name: "chapter",
+                        width: 200,
+                        style: "margin: 0 10px 0 0;",
+                        value: this.chapterStore[page]
+                    }
+            ],
             listeners: {
                 afterrender: function (el) {
                     var el = el.body;
@@ -431,10 +460,87 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         pageContainer.doLayout();
     },
 
+    requestTextForCurrentPage : function(){
+        Ext.Ajax.request({
+            url: "/admin/asset/get-text/",
+            params: {
+                id: this.data.id,
+                page : this.currentPage
+            },
+            success: function(response) {
+                var res = Ext.decode(response.responseText);
+                if(res.success){
+                    this.textArea.setValue(res.text);
+                }
+            }.bind(this)
+        });
+    },
+
+    editTextVersion : function(config){
+
+        var text = null;
+        if (this.data.texts) {
+            text = this.data.texts[this.currentPage];
+        }
+        if(!text){
+            text = this.requestTextForCurrentPage();
+        }
+        this.textArea = new Ext.form.TextArea(
+        {
+           fieldLabel: t("pimcore_lable_text"),
+           name : "text",
+           width : 670,
+           height: 305,
+           value: text
+       });
+
+        var panel = new Ext.form.FormPanel({
+            labelWidth: 80,
+            bodyStyle: "padding: 10px;",
+            items: [
+                this.textArea
+            ]
+        });
+
+
+        this.editTextVersionWindow = new Ext.Window({
+                        width: 800,
+                        height: 400,
+                        iconCls: "pimcore_icon_edit_pdf_text",
+                        title: t('pimcore_icon_edit_pdf_text'),
+                        layout: "fit",
+                        closeAction:'close',
+                        plain: true,
+                        maximized: false,
+                        items : [panel],
+                        scrollable : false,
+                        modal: true,
+                        buttons: [
+                            {
+                                text: t("apply"),
+                                iconCls: "pimcore_icon_apply",
+                                handler: function () {
+                                    this.textStore[this.currentPage] = this.textArea.getValue();
+                                    this.editTextVersionWindow.close();
+                                }.bind(this)
+                            },
+                            {
+                                text: t("cancel"),
+                                iconCls: "pimcore_icon_delete",
+                                handler: function () {
+                                    this.editTextVersionWindow.close();
+                                }.bind(this)
+                            }
+                        ]
+                    });
+
+        this.editTextVersionWindow.show();
+    },
+
     addHotspot: function (config) {
         var hotspotId = "pdf-hotspot-" + uniqid();
 
-        var pageContainerDiv = Ext.get(this.hotspotWindow.getComponent("pageContainer").body.query(".page")[0]);
+        var pageContainerDiv = Ext.get(this.metaDataWindow.getComponent("pageContainer").body.query(".page")[0]);
         pageContainerDiv.insertHtml("beforeEnd", '<div id="' + hotspotId + '" class="pimcore_pdf_hotspot"></div>');
 
         var hotspotEl = Ext.get(hotspotId);
@@ -450,7 +556,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         });
 
         if(typeof config == "object" && config["top"]) {
-            var imgEl = Ext.get(this.hotspotWindow.getComponent("pageContainer").body.query("img")[0]);
+            var imgEl = Ext.get(this.metaDataWindow.getComponent("pageContainer").body.query("img")[0]);
             var originalWidth = imgEl.getWidth();
             var originalHeight = imgEl.getHeight();
 
@@ -770,13 +876,13 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
     },
 
     saveCurrentPage: function () {
-
         if(this.currentPage) {
-            var hotspots = this.hotspotWindow.getComponent("pageContainer").body.query(".pimcore_pdf_hotspot");
+            this.chapterStore[this.currentPage] = this.metaDataWindow.getComponent("pageContainer").getEl().query('[name="chapter"]')[0].value;
+            var hotspots = this.metaDataWindow.getComponent("pageContainer").body.query(".pimcore_pdf_hotspot");
             var hotspot = null;
             var metaData = null;
 
-            var imgEl = Ext.get(this.hotspotWindow.getComponent("pageContainer").body.query("img")[0]);
+            var imgEl = Ext.get(this.metaDataWindow.getComponent("pageContainer").body.query("img")[0]);
             var originalWidth = imgEl.getWidth();
             var originalHeight = imgEl.getHeight();
 
@@ -805,10 +911,21 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
                 delete this.hotspotStore[this.currentPage];
             }
         }
+
     },
 
+
     getValue: function () {
+
         return this.data;
+//        var value = {};
+//        for (var i = 0; i < this.data.length; ++i) {
+//          if (this.data[i] != null) {
+//              value[i] = this.data[i];
+//          }
+//
+//        }
+//        return value;
     },
 
     getType: function () {

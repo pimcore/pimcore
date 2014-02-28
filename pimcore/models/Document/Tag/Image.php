@@ -240,6 +240,33 @@ class Document_Tag_Image extends Document_Tag {
                 }
             }
 
+            $altText = $this->alt;
+            $titleText = $this->alt;
+            if(empty($titleText)) {
+                if($this->getImage()->getMetadata("title")) {
+                    $titleText = $this->getImage()->getMetadata("title");
+                }
+            }
+            if(empty($altText)) {
+                if($this->getImage()->getMetadata("alt")) {
+                    $altText = $this->getImage()->getMetadata("alt");
+                } else {
+                    $altText = $titleText;
+                }
+            }
+
+            // get copyright from asset
+            if($this->getImage()->getMetadata("copyright")) {
+                if(!empty($altText)) {
+                    $altText .= " | ";
+                }
+                if(!empty($titleText)) {
+                    $titleText .= " | ";
+                }
+                $altText .= ("© " . $this->getImage()->getMetadata("copyright"));
+                $titleText .= ("© " . $this->getImage()->getMetadata("copyright"));
+            }
+
             // add attributes to image
             $allowedAttributes = array("alt", "align", "border", "height", "hspace", "ismap", "longdesc", "usemap",
                 "vspace", "width", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onmouseover",
@@ -250,11 +277,14 @@ class Document_Tag_Image extends Document_Tag {
                 "vspace", "width", "class", "dir", "id", "lang",  "title");
 
             $defaultAttributes = array(
-                "alt" => $this->alt,
-                "title" => $this->alt,
+                "alt" => $altText,
                 "height" => $height,
                 "width" => $width
             );
+
+            if(!empty($titleText)) {
+                $defaultAttributes["title"] = $titleText;
+            }
 
             if (!is_array($this->options)) {
                 $this->options = array();
@@ -265,7 +295,7 @@ class Document_Tag_Image extends Document_Tag {
                 $customAttributes = $this->options["attributes"];
             }
 
-            $availableAttribs = array_merge($this->options, $customAttributes, $defaultAttributes);
+            $availableAttribs = array_merge($this->options, $defaultAttributes, $customAttributes);
 
             foreach ($availableAttribs as $key => $value) {
                 if ((is_string($value) || is_numeric($value)) && (in_array($key, $allowedAttributes) || array_key_exists($key, $customAttributes))) {

@@ -110,8 +110,6 @@ pimcore.asset.tree = Class.create({
             }
         });
 
-        new Ext.tree.TreeSorter(this.tree, {folderSort:true});
-        
         this.tree.on("startdrag", this.onDragStart.bind(this));
         this.tree.on("enddrag", this.onDragEnd.bind(this));
         this.tree.on("render", function () {
@@ -168,99 +166,83 @@ pimcore.asset.tree = Class.create({
                     });
                     win.show();
 
-                    for (var i=0; i<files.length; i++) {
-                        file = files[i];
 
-                        if (window.FileList && file.name) {
-
-                            this.activeUploads++;
-
-                            var reader = new FileReader();
-
-                            // binary upload
-                            if(typeof reader["readAsBinaryString"] == "function") {
-                                reader.onload = function(file, node, win, e) {
-
-                                    var boundary = '------multipartformboundary' + (new Date()).getTime();
-                                    var dashdash = '--';
-                                    var crlf     = '\r\n';
-
-                                    var builder = '';
-
-                                    builder += dashdash;
-                                    builder += boundary;
-                                    builder += crlf;
-
-                                    var xhr = new XMLHttpRequest();
-
-                                    builder += 'Content-Disposition: form-data; name="Filedata"';
-                                    if (file.name) {
-                                        builder += '; filename="' + file.name + '"';
-                                    }
-                                    builder += crlf;
-
-                                    builder += 'Content-Type: ' + file.type;
-                                    builder += crlf;
-                                    builder += crlf;
-
-
-
-                                    builder += e.target.result;
-                                    builder += crlf;
-
-                                    builder += dashdash;
-                                    builder += boundary;
-                                    builder += crlf;
-
-                                    builder += dashdash;
-                                    builder += boundary;
-                                    builder += dashdash;
-                                    builder += crlf;
-
-                                    xhr.open("POST", "/admin/asset/add-asset/?pimcore_admin_sid="
-                                                            + pimcore.settings.sessionId + "&parentId=" + node.id, true);
-                                    xhr.setRequestHeader('content-type', 'multipart/form-data; boundary='
-                                        + boundary);
-                                    xhr.sendAsBinary(builder);
-
-                                    xhr.onload = function () {
-                                        this.activeUploads--;
-                                        if(this.activeUploads < 1) {
-                                            win.close();
-                                            node.reload();
-                                        }
-                                    }.bind(this,node,win);
-
-                                }.bind(this, file, node, win);
-
-                                reader.readAsBinaryString(file);
-                            } else if(typeof reader["readAsDataURL"] == "function") {
-                                // "text" base64 upload
-                                reader.onload = function(file, node, win, e) {
-
-                                    Ext.Ajax.request({
-                                        url: "/admin/asset/add-asset/",
-                                        method: "post",
-                                        params: {
-                                            type: "base64",
-                                            parentId: node.id,
-                                            filename: file.name,
-                                            data: e.target.result
-                                        },
-                                        success: function () {
+                    // this is for browser that support folders (currently: Chrome)
+                    if(dt["items"]) {
+                        files = [];
+                        var traverseFileTree = function (item, path) {
+                            path = path || "";
+                            if (item.isFile) {
+                                // Get file
+                                item.file(function(file) {
+                                    this.activeUploads++;
+                                    pimcore.helpers.uploadAssetFromFileObject(file,
+                                        "/admin/asset/add-asset/?pimcore_admin_sid="
+                                            + pimcore.settings.sessionId + "&parentId=" + node.id + "&dir=" + path,
+                                        function () {
                                             this.activeUploads--;
                                             if(this.activeUploads < 1) {
                                                 win.close();
                                                 node.reload();
                                             }
-                                        }.bind(this,node,win)
-                                    });
-                                }.bind(this, file, node, win);
+                                        }.bind(this)
+                                    );
+                                }.bind(this));
+                            } else if (item.isDirectory) {
+                                // Get folder contents
+                                var dirReader = item.createReader();
+                                dirReader.readEntries(function(entries) {
+                                    for (var i=0; i<entries.length; i++) {
+                                        traverseFileTree(entries[i], path + item.name + "/");
+                                    }
+                                });
+                            }
+                        }.bind(this);
 
-                                reader.readAsDataURL(file);
+                        for (var i=0; i<dt.items.length; i++) {
+                            // webkitGetAsEntry is where the magic happens
+                            var item = dt.items[i].webkitGetAsEntry();
+                            if (item) {
+                                traverseFileTree(item);
                             }
                         }
+                    } else {
+                        // default filelist upload
+                        for (var i=0; i<files.length; i++) {
+                            file = files[i];
+
+                            if (window.FileList && file.name && file.type) { // check for type (folder has no type)
+                                this.activeUploads++;
+                                pimcore.helpers.uploadAssetFromFileObject(file,
+                                    "/admin/asset/add-asset/?pimcore_admin_sid="
+                                        + pimcore.settings.sessionId + "&parentId=" + node.id,
+                                    function () {
+                                        this.activeUploads--;
+                                        if(this.activeUploads < 1) {
+                                            win.close();
+                                            node.reload();
+                                        }
+                                    }.bind(this)
+                                );
+                            }
+                        }
+
+                        // if no files are uploaded (doesn't match criteria, ...) close the progress win immediately
+                        if(!this.activeUploads) {
+                            win.close();
+                        }
                     }
+
+                    // check in 5 sec. if there're active uploads
+                    // if not, close the progressbar
+                    // this is necessary since the folder upload is async, so we don't know if the progress is
+                    // necessary or not, not really perfect solution, but works as it should
+                    window.setTimeout(function () {
+                        if(!this.activeUploads) {
+                            win.close();
+                        }
+                    }.bind(this), 5000);
+
                 }.bind(this), true);
             }
         }.bind(this));
@@ -294,6 +276,7 @@ pimcore.asset.tree = Class.create({
 
     onTreeNodeClick: function () {
         if(this.attributes.permissions.view) {
+            pimcore.helpers.treeNodeThumbnailPreviewHide();
             pimcore.helpers.openAsset(this.id, this.attributes.type);
         }
     },
@@ -479,7 +462,15 @@ pimcore.asset.tree = Class.create({
                 handler: this.attributes.reference.deleteAsset.bind(this)
             }));
         }
-        
+
+        if (this.attributes.permissions.create && !this.attributes.locked) {
+            menu.add(new Ext.menu.Item({
+                text: t('search_and_move'),
+                iconCls: "pimcore_icon_search_and_move",
+                handler: this.attributes.reference.searchAndMove.bind(this, this.id)
+            }));
+        }
+
         if (this.id != 1) {
             var user = pimcore.globalmanager.get("user");
             if(user.admin) { // only admins are allowed to change locks in frontend
@@ -1087,6 +1078,13 @@ pimcore.asset.tree = Class.create({
             success: callback
         });
     },
+
+    searchAndMove: function(parentId) {
+        pimcore.helpers.searchAndMove(parentId, function() {
+            this.reload();
+        }.bind(this), "asset");
+    },
+
 
 
     deleteAsset : function () {

@@ -97,8 +97,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            $childsList->setOrderKey("o_key");
-            $childsList->setOrder("asc");
+            $childsList->setOrderKey("FIELD(o_type, 'folder') DESC, o_key ASC", false);
             $childsList->setObjectTypes($objectTypes);
 
             $childs = $childsList->load();
@@ -442,14 +441,23 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $fieldData = $object->$getter();
             $isInheritedValue = false;
             $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+
+            // following some exceptions for special data types (localizedfields, objectbricks)
             if ($value && ($fieldData instanceof Object_Localizedfield)) {
                 // make sure that the localized field participates in the inheritance detection process
                 $isInheritedValue = $value["inherited"];
             }
-            if (((!$fielddefinition instanceof Object_Class_Data_Numeric && empty($value)) ||
-                    ($fielddefinition instanceof Object_Class_Data_Numeric && $value === null))
-                && !empty($parent)
-            ) {
+            if ($fielddefinition instanceof Object_Class_Data_Objectbricks && is_array($value)) {
+                // make sure that the objectbricks participate in the inheritance detection process
+                foreach($value as $singleBrickData) {
+                    if($singleBrickData["inherited"]) {
+                        $isInheritedValue = true;
+                    }
+                }
+            }
+
+
+            if ( $fielddefinition->isEmpty($value) && !empty($parent) ) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
                 $isInheritedValue = $isInheritedValue || ($level != 0);
@@ -458,19 +466,11 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $this->objectData[$key] = $value;
                 $this->metaData[$key]['inherited'] = $isInheritedValue;
 
-                if ($isInheritedValue && !empty($value) && !$this->isInheritableField($fielddefinition)) {
+                if ($isInheritedValue && !$fielddefinition->isEmpty($value) && !$this->isInheritableField($fielddefinition)) {
                     $this->objectData[$key] = null;
                     $this->metaData[$key]['inherited'] = false;
                     $this->metaData[$key]['hasParentValue'] = true;
-                } else {
-                    // CF: I don't think this code is necessary at all - fact is, that it is buggy
-//                    $parentValue = $this->getParentValue($object, $key);
-//                    $this->metaData[$key]['hasParentValue'] = !empty($parentValue->value);
-//                    if(!empty($parentValue->value)) {
-//                        $this->metaData[$key]['objectid'] = $parentValue->id;
-//                    }
                 }
-
             }
         }
     }
@@ -648,7 +648,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $object->setUserModification($this->getUser()->getId());
                 $object->setPublished(false);
 
-                if ($this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_OBJECT || $this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_VARIANT) {
+                if ($this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_OBJECT
+                                || $this->getParam("objecttype") == Object_Abstract::OBJECT_TYPE_VARIANT) {
                     $object->setType($this->getParam("objecttype"));
                 }
 
@@ -662,7 +663,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             } else {
                 $message = "prevented creating object because object with same path+key already exists";
-                Logger::debug("prevented creating object because object with same path+key [ $intendedPath ] already exists");
+                Logger::debug($message);
             }
         } else {
             $message = "prevented adding object because of missing permissions";
@@ -764,9 +765,13 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             try {
                 $object = Object_Abstract::getById($id);
+                if (!$object) {
+                    continue;
+                }
                 $hasDependency |= $object->getDependencies()->isRequired();
             } catch (Exception $e) {
-                Logger::err("failed to access object with id: " . $this->getParam("id"));
+                Logger::err("failed to access object with id: " . $id);
+                continue;
             }
 
 
@@ -824,7 +829,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $this->_helper->json(array(
             "hasDependencies" => $hasDependency,
             "childs" => $totalChilds,
-            "deletejobs" => $deleteJobs
+            "deletejobs" => $deleteJobs,
+            "batchDelete" => count($ids) > 1
         ));
     }
 
@@ -875,11 +881,15 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                     if ($objectWithSamePath != null) {
                         $allowUpdate = false;
+                        $this->_helper->json(array("success" => false, "message" => "prevented creating object because object with same path+key already exists"));
                     }
-                }
 
-                //$object->setO_path($newPath);
-                $object->setParentId($values["parentId"]);
+                    if($object->isLocked()) {
+                        $this->_helper->json(array("success" => false, "message" => "prevented moving object, because it is locked: ID: " . $object->getId()));
+                    }
+
+                    $object->setParentId($values["parentId"]);
+                }
             }
 
             if (array_key_exists("locked", $values)) {

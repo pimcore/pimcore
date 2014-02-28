@@ -884,7 +884,8 @@ class Object_Abstract extends Element_Abstract {
         if ($this->o_properties === null) {
             // try to get from cache
             $cacheKey = "object_properties_" . $this->getId();
-            if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
+            $properties = Pimcore_Model_Cache::load($cacheKey);
+            if (!is_array($properties)) {
                 $properties = $this->getResource()->getProperties();
                 $elementCacheTag = $this->getCacheTag();
                 $cacheTags = array("properties" => "properties", $elementCacheTag => $elementCacheTag);

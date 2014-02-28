@@ -1007,7 +1007,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 foreach ($value as $subkey => $subvalue) {
                     if (is_array($subvalue)) {
                         $object = new stdClass();
-                        $tmp[] = self::map($object, $subvalue);
+                        $object = self::map($object, $subvalue);;
+                        $tmp[$subkey] = $object;
                     } else {
                         $tmp[$subkey] = $subvalue;
                     }

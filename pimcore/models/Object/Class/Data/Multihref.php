@@ -622,7 +622,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
             foreach ($value as $href) {
                 // cast is needed to make it work for both SOAP and REST
                 $href = (array) $href;
-                if (is_array($href) and key_exists("id", $href) and key_exists("type", $href)) {
+                if (is_array($href) and array_key_exists("id", $href) and array_key_exists("type", $href)) {
                     $type = $href["type"];
                     $id = $href["id"];
                     if ($idMapper) {

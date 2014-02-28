@@ -654,10 +654,11 @@ pimcore.helpers.deleteAssetCheckDependencyComplete = function (id, callback, res
 
     try {
         var res = Ext.decode(response.responseText);
-        var message = t('delete_message');
+        var message = res.batchDelete ? t('delete_message_batch') : t('delete_message');
         if (res.hasDependencies) {
-            message = t('delete_message_dependencies');
+            var message = t('delete_message_dependencies');
         }
+
         Ext.MessageBox.show({
             title:t('delete'),
             msg: message,
@@ -1416,6 +1417,9 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
      }*/
 };
 
+pimcore.helpers.treeNodeThumbnailTimeout = null;
+pimcore.helpers.treeNodeThumbnailLastClose = 0;
+
 pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) {
     if(typeof node.attributes["thumbnail"] != "undefined" ||
         typeof node.attributes["thumbnails"] != "undefined") {
@@ -1460,6 +1464,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                     if(!container) {
                         container  = Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview"></div>');
                         container = Ext.get(container);
+                        container.addClass("hidden");
                     }
 
                     // check for an existing iframe
@@ -1504,8 +1509,18 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                     container.update(""); // remove all
                     container.clean(true);
                     container.dom.appendChild(iframe);
-                    container.removeClass("hidden");
                     container.applyStyles(styles);
+
+                    var date = new Date();
+                    if(pimcore.helpers.treeNodeThumbnailLastClose === 0 || (date.getTime() - pimcore.helpers.treeNodeThumbnailLastClose) > 300) {
+                        // open deferred
+                        pimcore.helpers.treeNodeThumbnailTimeout = window.setTimeout(function() {
+                            container.removeClass("hidden");
+                        }, 500);
+                    } else {
+                        // open immediately
+                        container.removeClass("hidden");
+                    }
                 }
             }.bind(this, node));
             el.on("mouseleave", function () {
@@ -1515,6 +1530,22 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
     }
 };
 
+pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
+
+    if(pimcore.helpers.treeNodeThumbnailTimeout) {
+        clearTimeout(pimcore.helpers.treeNodeThumbnailTimeout);
+        pimcore.helpers.treeNodeThumbnailTimeout = null;
+    }
+
+    var container = Ext.get("pimcore_tree_preview");
+    if(container) {
+        if(!container.hasClass("hidden")) {
+            var date = new Date();
+            pimcore.helpers.treeNodeThumbnailLastClose = date.getTime();
+        }
+        container.addClass("hidden");
+    }
+};
 
 pimcore.helpers.showUser = function(specificUser) {
     var user = pimcore.globalmanager.get("user");
@@ -1533,14 +1564,7 @@ pimcore.helpers.showUser = function(specificUser) {
             panel.openUser(specificUser);
         }
     }
-}
-
-pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
-    var container = Ext.get("pimcore_tree_preview");
-    if(container) {
-        container.addClass("hidden");
-    }
-}
+};
 
 pimcore.helpers.insertTextAtCursorPosition = function (text) {
 
@@ -1620,4 +1644,244 @@ pimcore.helpers.handleTabRightClick = function (tabPanel, el, index) {
     }
 };
 
+pimcore.helpers.uploadAssetFromFileObject = function (file, url, callback) {
+    var reader = new FileReader();
+
+    if(typeof callback != "function") {
+        callback = function () {};
+    }
+
+    // binary upload
+    if(typeof reader["readAsBinaryString"] == "function") {
+        reader.onload = function(e) {
+
+            var boundary = '------multipartformboundary' + (new Date()).getTime();
+            var dashdash = '--';
+            var crlf     = '\r\n';
+
+            var builder = '';
+
+            builder += dashdash;
+            builder += boundary;
+            builder += crlf;
+
+            var xhr = new XMLHttpRequest();
+
+            builder += 'Content-Disposition: form-data; name="Filedata"';
+            if (file.name) {
+                builder += '; filename="' + file.name + '"';
+            }
+            builder += crlf;
+
+            builder += 'Content-Type: ' + file.type;
+            builder += crlf;
+            builder += crlf;
+
+            builder += e.target.result;
+            builder += crlf;
+
+            builder += dashdash;
+            builder += boundary;
+            builder += crlf;
+
+            builder += dashdash;
+            builder += boundary;
+            builder += dashdash;
+            builder += crlf;
+
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader('content-type', 'multipart/form-data; boundary='
+                + boundary);
+            xhr.sendAsBinary(builder);
+            xhr.onload = callback;
+        };
+
+        reader.readAsBinaryString(file);
+    } else if(typeof reader["readAsDataURL"] == "function") {
+        // "text" base64 upload
+        reader.onload = function(e) {
+
+            Ext.Ajax.request({
+                url: url,
+                method: "post",
+                params: {
+                    type: "base64",
+                    filename: file.name,
+                    data: e.target.result
+                },
+                success: callback
+            });
+        };
+
+        reader.readAsDataURL(file);
+    }
+};
+
+
+
+pimcore.helpers.searchAndMove = function (parentId, callback, type) {
+    if (type == "object") {
+        config = {
+            type: ["object"],
+                subtype: {
+            object: ["object", "folder"]
+        },
+            specific: {
+                classes: null
+            }
+        }
+    } else {
+        config = {
+            type: [type]
+        }
+    }
+    pimcore.helpers.itemselector(true, function (selection) {
+
+        var jobs = [];
+
+        if(selection && selection.length > 0) {
+            for(var i=0; i<selection.length; i++) {
+                var params;
+                if (type == "object") {
+                    params = {
+                        id: selection[i]["id"],
+                        values: Ext.encode({
+                            parentId: parentId
+                        })
+                    };
+                } else {
+                    params = {
+                        id: selection[i]["id"],
+                        parentId: parentId
+                    };
+                }
+                jobs.push([{
+                    url: "/admin/" + type + "/update",
+                    params: params
+                }]);
+            }
+        }
+
+        if (jobs.length == 0) {
+            return;
+        }
+
+        this.addChildProgressBar = new Ext.ProgressBar({
+            text: t('initializing')
+        });
+
+        this.addChildWindow = new Ext.Window({
+            layout:'fit',
+            width:500,
+            bodyStyle: "padding: 10px;",
+            closable:false,
+            plain: true,
+            modal: true,
+            items: [this.addChildProgressBar]
+        });
+
+        this.addChildWindow.show();
+
+        var pj = new pimcore.tool.paralleljobs({
+            success: function (callbackFunction) {
+
+                if(this.addChildWindow) {
+                    this.addChildWindow.close();
+                }
+
+                this.deleteProgressBar = null;
+                this.addChildWindow = null;
+
+                if(typeof callbackFunction == "function") {
+                    callbackFunction();
+                }
+
+                try {
+                    var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.object.id);
+                    node.reload();
+                } catch (e) {
+                    // node is not present
+                }
+            }.bind(this, callback),
+            update: function (currentStep, steps, percent) {
+                if(this.addChildProgressBar) {
+                    var status = currentStep / steps;
+                    this.addChildProgressBar.updateProgress(status, percent + "%");
+                }
+            }.bind(this),
+            failure: function (response) {
+                this.addChildWindow.close();
+                Ext.MessageBox.alert(t("error"), t(response));
+            }.bind(this),
+            jobs: jobs
+        });
+
+    }.bind(this), config);
+};
+
+
+pimcore.helpers.sendTestEmail = function () {
+
+    var win = new Ext.Window({
+        width: 800,
+        height: 600,
+        modal: true,
+        title: t("send_test_email"),
+        layout: "fit",
+        closeAction: "close",
+        items: [{
+            xtype: "form",
+            bodyStyle: "padding:10px;",
+            layout: "pimcoreform",
+            itemId: "form",
+            items: [{
+                xtype: "textfield",
+                name: "to",
+                fieldLabel: t("to"),
+                width: 650
+            }, {
+                xtype: "textfield",
+                name: "subject",
+                fieldLabel: t("subject"),
+                width: 650
+            }, {
+                xtype: "textarea",
+                name: "content",
+                fieldLabel: t("content"),
+                width: 650,
+                height: 450
+            }]
+        }],
+        buttons: [{
+            text: t("send_as_plain_text"),
+            iconCls: "pimcore_icon_text",
+            handler: function () {
+                send("text");
+            }
+        }, {
+            text: t("send_as_html_mime"),
+            iconCls: "pimcore_icon_html",
+            handler: function () {
+                send("html");
+            }
+        }]
+    });
+
+    var send = function (type) {
+
+        var params = win.getComponent("form").getForm().getFieldValues();
+        params["type"] = type;
+
+        Ext.Ajax.request({
+            url: "/admin/email/send-test-email",
+            params: params,
+            method: "post"
+        });
+
+        win.close();
+    }
+
+    win.show();
+
+};
 

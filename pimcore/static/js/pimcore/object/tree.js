@@ -427,12 +427,9 @@ pimcore.object.tree = Class.create({
                     objectMenu.importer.push(tmpMenuEntryImport);
                 }
             }
-        }
-        ;
-
+        };
 
         var isVariant = this.attributes.type == "variant";
-
 
         if (this.attributes.permissions.create) {
             if (!isVariant) {
@@ -567,6 +564,14 @@ pimcore.object.tree = Class.create({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",
                 handler: this.attributes.reference.remove.bind(this)
+            }));
+        }
+
+        if (this.attributes.permissions.create) {
+            menu.add(new Ext.menu.Item({
+                text: t('search_and_move'),
+                iconCls: "pimcore_icon_search_and_move",
+                handler: this.attributes.reference.searchAndMove.bind(this, this.id)
             }));
         }
 
@@ -1046,6 +1051,12 @@ pimcore.object.tree = Class.create({
             }.bind(this, task)
         });
 
+    },
+
+    searchAndMove: function(parentId) {
+        pimcore.helpers.searchAndMove(parentId, function() {
+            this.reload();
+        }.bind(this), "object");
     },
 
     updateObject: function (id, values, callback) {

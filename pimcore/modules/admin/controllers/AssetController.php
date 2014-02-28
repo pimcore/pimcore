@@ -52,11 +52,12 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
         }
 
         $asset->setProperties(Element_Service::minimizePropertiesForEditmode($asset->getProperties()));
-        $asset->getVersions();
+        //$asset->getVersions();
         $asset->getScheduledTasks();
         $asset->idPath = Element_Service::getIdPath($asset);
         $asset->userPermissions = $asset->getUserPermissions();
         $asset->setLocked($asset->isLocked());
+        $asset->setParent(null);
 
         if ($asset instanceof Asset_Text) {
             $asset->data = $asset->getData();
@@ -171,8 +172,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             }
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            $childsList->setOrderKey("filename");
-            $childsList->setOrder("asc");
+            $childsList->setOrderKey("FIELD(type, 'folder') DESC, filename ASC", false);
 
             $childs = $childsList->load();
 
@@ -249,7 +249,15 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             Pimcore_File::put($sourcePath, base64_decode($data));
         }
 
-        if (!$this->getParam("parentId") && $this->getParam("parentPath")) {
+        if($this->getParam("dir") && $this->getParam("parentId")) {
+            // this is for uploading folders with Drag&Drop
+            // param "dir" contains the relative path of the file
+            $parent = Asset::getById($this->getParam("parentId"));
+            $newPath = $parent->getFullPath() . "/" . trim($this->getParam("dir"), "/ ");
+
+            $newParent = Asset_Service::createFolderByPath($newPath);
+            $this->setParam("parentId", $newParent->getId());
+        } else if (!$this->getParam("parentId") && $this->getParam("parentPath")) {
             $parent = Asset::getByPath($this->getParam("parentPath"));
             if ($parent instanceof Asset_Folder) {
                 $this->setParam("parentId", $parent->getId());
@@ -400,69 +408,84 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
     public function deleteInfoAction()
     {
         $hasDependency = false;
-
-        try {
-            $asset = Asset::getById($this->getParam("id"));
-            $hasDependency = $asset->getDependencies()->isRequired();
-        } catch (Exception $e) {
-            Logger::err("failed to access asset with id: " . $this->getParam("id"));
-        }
-
         $deleteJobs = array();
+        $recycleJobs = array();
 
-        // check for childs
-        if ($asset instanceof Asset) {
+        $totalChilds = 0;
 
-            $deleteJobs[] = array(array(
-                "url" => "/admin/recyclebin/add",
-                "params" => array(
-                    "type" => "asset",
-                    "id" => $asset->getId()
-                )
-            ));
+        $ids = $this->getParam("id");
+        $ids = explode(',', $ids);
 
-
-            $hasChilds = $asset->hasChilds();
-            if (!$hasDependency) {
-                $hasDependency = $hasChilds;
+        foreach ($ids as $id) {
+            try {
+                $asset = Asset::getById($id);
+                if (!$asset) {
+                    continue;
+                }
+                $hasDependency = $asset->getDependencies()->isRequired();
+            } catch (Exception $e) {
+                Logger::err("failed to access asset with id: " . $id);
+                continue;
             }
 
-            $childs = 0;
-            if ($hasChilds) {
-                // get amount of childs
-                $list = new Asset_List();
-                $list->setCondition("path LIKE '" . $asset->getFullPath() . "/%'");
-                $childs = $list->getTotalCount();
 
-                if ($childs > 0) {
-                    $deleteObjectsPerRequest = 5;
-                    for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
-                        $deleteJobs[] = array(array(
-                            "url" => "/admin/asset/delete",
-                            "params" => array(
-                                "step" => $i,
-                                "amount" => $deleteObjectsPerRequest,
-                                "type" => "childs",
-                                "id" => $asset->getId()
-                            )
-                        ));
+            // check for childs
+            if ($asset instanceof Asset) {
+
+                $recycleJobs[] = array(array(
+                    "url" => "/admin/recyclebin/add",
+                    "params" => array(
+                        "type" => "asset",
+                        "id" => $asset->getId()
+                    )
+                ));
+
+
+                $hasChilds = $asset->hasChilds();
+                if (!$hasDependency) {
+                    $hasDependency = $hasChilds;
+                }
+
+                $childs = 0;
+                if ($hasChilds) {
+                    // get amount of childs
+                    $list = new Asset_List();
+                    $list->setCondition("path LIKE '" . $asset->getFullPath() . "/%'");
+                    $childs = $list->getTotalCount();
+                    $totalChilds += $childs;
+
+                    if ($childs > 0) {
+                        $deleteObjectsPerRequest = 5;
+                        for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
+                            $deleteJobs[] = array(array(
+                                "url" => "/admin/asset/delete",
+                                "params" => array(
+                                    "step" => $i,
+                                    "amount" => $deleteObjectsPerRequest,
+                                    "type" => "childs",
+                                    "id" => $asset->getId()
+                                )
+                            ));
+                        }
                     }
                 }
-            }
 
-            // the object itself is the last one
-            $deleteJobs[] = array(array(
-                "url" => "/admin/asset/delete",
-                "params" => array(
-                    "id" => $asset->getId()
-                )
-            ));
+                // the asset itself is the last one
+                $deleteJobs[] = array(array(
+                    "url" => "/admin/asset/delete",
+                    "params" => array(
+                        "id" => $asset->getId()
+                    )
+                ));
+            }
         }
 
+        $deleteJobs = array_merge($recycleJobs, $deleteJobs);
         $this->_helper->json(array(
             "hasDependencies" => $hasDependency,
-            "childs" => $childs,
-            "deletejobs" => $deleteJobs
+            "childs" => $totalChilds,
+            "deletejobs" => $deleteJobs,
+            "batchDelete" => count($ids) > 1
         ));
     }
 
@@ -614,6 +637,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                     if ($assetWithSamePath != null) {
                         $allowUpdate = false;
                     }
+
+                    if($asset->isLocked()) {
+                        $allowUpdate = false;
+                    }
                 }
             }
 
@@ -639,8 +666,9 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
 
 
             } else {
-                Logger::debug("prevented moving asset, asset with same path+key already exists at target location ");
-                $this->_helper->json(array("success" => $success, "message" => "the_filename_is_already_in_use"));
+                $msg = "prevented moving asset, asset with same path+key already exists at target location or the asset is locked. ID: " . $asset->getId();
+                Logger::debug($msg);
+                $this->_helper->json(array("success" => $success, "message" => $msg));
             }
         } else if ($asset->isAllowed("rename") && $this->getParam("filename")) {
             //just rename
@@ -692,6 +720,12 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             $asset = Asset::getById($this->getParam("id"));
             if ($asset->isAllowed("publish")) {
 
+
+                // metadata
+                if($this->getParam("metadata")) {
+                    $metadata = Zend_Json::decode($this->getParam("metadata"));
+                    $asset->setMetadata($metadata);
+                }
 
                 // properties
                 if ($this->getParam("properties")) {
@@ -1088,7 +1122,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                     "id" => $asset->getId(),
                     "type" => $asset->getType(),
                     "filename" => $asset->getFilename(),
-                    "url" => "/admin/asset/get-" . $asset->getType() . "-thumbnail/id/" . $asset->getId() . "/treepreview/true"
+                    "url" => "/admin/asset/get-" . $asset->getType() . "-thumbnail/id/" . $asset->getId() . "/treepreview/true",
+                    "idPath" => $data["idPath"] = Element_Service::getIdPath($asset)
                 );
             }
         }
@@ -1568,5 +1603,132 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
         }
 
         $this->_helper->json(array("success" => $success));
+    }
+
+    public function gridProxyAction() {
+
+        if ($this->getParam("data")) {
+            if ($this->getParam("xaction") == "update") {
+                //TODO probably not needed
+            }
+        } else {
+            // get list of objects
+            $folder = Asset::getById($this->getParam("folderId"));
+
+
+            $start = 0;
+            $limit = 20;
+            $orderKey = "id";
+            $order = "ASC";
+
+
+            if ($this->getParam("limit")) {
+                $limit = $this->getParam("limit");
+            }
+            if ($this->getParam("start")) {
+                $start = $this->getParam("start");
+            }
+
+            if ($this->getParam("dir")) {
+                $order = $this->getParam("dir");
+            }
+
+            if ($this->getParam("sort")) {
+                $orderKey = $this->getParam("sort");
+                if ($orderKey == "fullpath") {
+                    $orderKey = array("path" , "filename");
+                }
+            }
+
+            $conditionFilters = array();
+            if($this->getParam("only_direct_children") == "true") {
+                $conditionFilters[] = "parentId = " . $folder->getId();
+            } else {
+                $conditionFilters[] = "path LIKE '" . $folder->getFullPath() . "/%'";
+            }
+
+            $conditionFilters[] = "type != 'folder'";
+            $filterJson = $this->getParam("filter");
+            if ($filterJson) {
+
+
+                $filters = Zend_Json::decode($filterJson);
+                foreach ($filters as $filter) {
+
+                    $operator = "=";
+
+                    if($filter["type"] == "string") {
+                        $operator = "LIKE";
+                    } else if ($filter["type"] == "numeric") {
+                        if($filter["comparison"] == "lt") {
+                            $operator = "<";
+                        } else if($filter["comparison"] == "gt") {
+                            $operator = ">";
+                        } else if($filter["comparison"] == "eq") {
+                            $operator = "=";
+                        }
+                    } else if ($filter["type"] == "date") {
+                        if($filter["comparison"] == "lt") {
+                            $operator = "<";
+                        } else if($filter["comparison"] == "gt") {
+                            $operator = ">";
+                        } else if($filter["comparison"] == "eq") {
+                            $operator = "=";
+                        }
+                        $filter["value"] = strtotime($filter["value"]);
+                    } else if ($filter["type"] == "list") {
+                        $operator = "=";
+                    } else if ($filter["type"] == "boolean") {
+                        $operator = "=";
+                        $filter["value"] = (int) $filter["value"];
+                    }
+                    // system field
+                    $value = $filter["value"];
+                    if ($operator == "LIKE") {
+                        $value = "%" . $value . "%";
+                    }
+                    $conditionFilters[] =  "`" . $filter["field"] . "` " . $operator . " '" . $value . "' ";
+                }
+            }
+
+            $list = new Asset_List();
+            $condition = implode(" AND ", $conditionFilters);
+            $list->setCondition($condition);
+            $list->setLimit($limit);
+            $list->setOffset($start);
+            $list->setOrder($order);
+            $list->setOrderKey($orderKey);
+
+            $list->load();
+
+            $assets = array();
+            foreach ($list->getAssets() as $asset) {
+
+                /** @var $asset Asset */
+                $filename = PIMCORE_ASSET_DIRECTORY . "/" . $asset->getFullPath();
+                $size = filesize($filename);
+
+                $assets[] = array(
+                    "id" => $asset->getid(),
+                    "type" => $asset->getType(),
+                    "fullpath" => $asset->getFullPath(),
+                    "creationDate" => $asset->getCreationDate(),
+                    "modificationDate" => $asset->getModificationDate(),
+                    "size" => formatBytes($size),
+                    "idPath" => $data["idPath"] = Element_Service::getIdPath($asset)
+                );
+            }
+
+            $this->_helper->json(array("data" => $assets, "success" => true, "total" => $list->getTotalCount()));
+        }
+    }
+
+    public function getTextAction(){
+        $asset = Asset::getById($this->getParam('id'));
+        $page = $this->getParam('page');
+        if($asset instanceof Asset_Document){
+            $text = $asset->getText($page);
+        }
+        $this->_helper->json(array('success' => 'true','text' => $text));
     }
 }

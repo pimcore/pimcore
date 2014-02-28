@@ -17,6 +17,8 @@
 
 class Object_Class_Data_Textarea extends Object_Class_Data {
 
+    use Object_Class_Data_Trait_Text;
+
     /**
      * Static type of this element
      *
@@ -136,22 +138,6 @@ class Object_Class_Data_Textarea extends Object_Class_Data {
      */
     public function getDataFromEditmode($data, $object = null) {
         return $data;
-    }
-
-    /**
-     * @see Object_Class_Data::getVersionPreview
-     * @param string $data
-     * @return string
-     */
-    public function getVersionPreview($data) {
-        return $data;
-    }
-
-    /** True if change is allowed in edit mode.
-     * @return bool
-     */
-    public function isDiffChangeAllowed() {
-        return true;
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or

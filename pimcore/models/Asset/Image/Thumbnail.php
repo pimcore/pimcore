@@ -189,6 +189,46 @@ class Asset_Image_Thumbnail {
             }
         }
 
+        $altText = "";
+        $titleText = "";
+        if(isset($attributes["alt"])) {
+            $altText = $attributes["alt"];
+        }
+        if(isset($attributes["title"])) {
+            $titleText = $attributes["title"];
+        }
+
+        if(empty($titleText)) {
+            if($this->getAsset()->getMetadata("title")) {
+                $titleText = $this->getAsset()->getMetadata("title");
+            }
+        }
+
+        if(empty($altText)) {
+            if($this->getAsset()->getMetadata("alt")) {
+                $altText = $this->getAsset()->getMetadata("alt");
+            } else {
+                $altText = $titleText;
+            }
+        }
+
+        // get copyright from asset
+        if($this->getAsset()->getMetadata("copyright")) {
+            if(!empty($altText)) {
+                $altText .= " | ";
+            }
+            if(!empty($titleText)) {
+                $titleText .= " | ";
+            }
+            $altText .= ("© " . $this->getAsset()->getMetadata("copyright"));
+            $titleText .= ("© " . $this->getAsset()->getMetadata("copyright"));
+        }
+
+        $attributes["alt"] = $altText;
+        if(!empty($titleText)) {
+            $attributes["title"] = $titleText;
+        }
+
         foreach($attributes as $key => $value) {
             //only include attributes with characters a-z and dashes in their name.
             if(preg_match("/^[a-z-]+$/i", $key)) {
@@ -199,10 +239,6 @@ class Asset_Image_Thumbnail {
         $path = $this->getPath(true);
         $attr['src'] = 'src="'. $path .'"';
 
-        //ALT-attribute is required in XHTML
-        if(!isset($attr['alt'])) {
-            $attr['alt'] = 'alt=""';
-        }
 
         return '<img '.implode(' ', $attr).' />';
     }

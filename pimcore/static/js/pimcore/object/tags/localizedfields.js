@@ -30,6 +30,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         this.inherited = false;
         this.languageElements = {};
         this.inheritedFields = {};
+        this.referencedFields = [];
 
         if (pimcore.currentuser.admin || fieldConfig.permissionView === undefined) {
             this.frontendLanguages = pimcore.settings.websiteLanguages;
@@ -82,7 +83,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         }
     },
 
-    getLayoutEdit: function () {
+    getLayoutEdit: function (showMode) {
 
         this.fieldConfig.datatype ="layout";
         this.fieldConfig.fieldtype = "panel";
@@ -160,7 +161,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 this.currentLanguage = this.frontendLanguages[i];
                 this.languageElements[this.currentLanguage] = [];
 
-                var editable =  (pimcore.currentuser.admin ||
+                var editable =  !showMode && (pimcore.currentuser.admin ||
                     this.fieldConfig.permissionEdit === undefined ||  this.fieldConfig.permissionEdit.length == 0 || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
 
                 var items =  this.getRecursiveLayout(this.fieldConfig, !editable).items;
@@ -274,19 +275,15 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
     getLayoutShow: function () {
 
-        this.component = this.getLayoutEdit();
-        this.component.disable();
-
+        this.component = this.getLayoutEdit(true);
         return this.component;
     },
 
     getDataForField: function (name) {
         try {
             if (this.data[this.currentLanguage]) {
-                if (this.data[this.currentLanguage][name]) {
+                if (typeof this.data[this.currentLanguage][name] !== undefined){
                     return this.data[this.currentLanguage][name];
-                } else if (typeof this.data[this.currentLanguage][name] !== undefined){
-                    return null;
                 }
             }
         } catch (e) {
@@ -319,6 +316,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         this.object.edit.fieldsToMask.push(field);
     },
 
+    addReferencedField: function (field) {
+        this.referencedFields.push(field);
+    },
+
     getValue: function () {
 
         var localizedData = {};
@@ -335,6 +336,14 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 }
             }
         }
+
+        // also add the referenced localized fields
+        if(this.referencedFields.length > 0) {
+            for(var r=0; r<this.referencedFields.length; r++) {
+                localizedData = array_merge_recursive(localizedData, this.referencedFields[r].getValue());
+            }
+        }
+
         return localizedData;
     },
 
@@ -343,6 +352,16 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     },
 
     isDirty: function() {
+
+        // also check the referenced localized fields
+        if(this.referencedFields.length > 0) {
+            for(var r=0; r<this.referencedFields.length; r++) {
+                if(this.referencedFields[r].isDirty()) {
+                    return true;
+                }
+            }
+        }
+
         if(!this.isRendered()) {
             return false;
         }
@@ -365,6 +384,15 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
     isMandatory: function () {
 
+        // also check the referenced localized fields
+        if(this.referencedFields.length > 0) {
+            for(var r=0; r<this.referencedFields.length; r++) {
+                if(this.referencedFields[r].isMandatory()) {
+                    return true;
+                }
+            }
+        }
+
         var currentLanguage;
 
         for (var i=0; i < this.frontendLanguages; i++) {
@@ -382,6 +410,15 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     },
 
     isInvalidMandatory: function () {
+
+        // also check the referenced localized fields
+        if(this.referencedFields.length > 0) {
+            for(var r=0; r<this.referencedFields.length; r++) {
+                if(this.referencedFields[r].isInvalidMandatory()) {
+                    return true;
+                }
+            }
+        }
 
         var currentLanguage;
         var isInvalid = false;
@@ -412,6 +449,15 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     },
 
     dataIsNotInherited: function() {
+
+        // also check the referenced localized fields
+        if(this.referencedFields.length > 0) {
+            for(var r=0; r<this.referencedFields.length; r++) {
+                this.referencedFields[r].dataIsNotInherited();
+            }
+        }
+
+
         if (!this.inherited) {
             return true;
         }

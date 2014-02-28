@@ -17,6 +17,8 @@
 
 class Object_Class_Data_Input extends Object_Class_Data {
 
+    use Object_Class_Data_Trait_Text;
+
     /**
      * Static type of this element
      *
@@ -121,15 +123,6 @@ class Object_Class_Data_Input extends Object_Class_Data {
     public function getDataFromEditmode($data, $object = null) {
         return $this->getDataFromResource($data);
     }
-
-    /**
-     * @see Object_Class_Data::getVersionPreview
-     * @param string $data
-     * @return string
-     */
-    public function getVersionPreview($data) {
-        return $data;
-    }
     
     /**
      * @return integer
@@ -161,12 +154,4 @@ class Object_Class_Data_Input extends Object_Class_Data {
     public function getQueryColumnType() {
         return $this->queryColumnType . "(" . $this->getColumnLength() . ")";
     }
-
-    /** True if change is allowed in edit mode.
-     * @return bool
-     */
-    public function isDiffChangeAllowed() {
-        return true;
-    }
-
 }

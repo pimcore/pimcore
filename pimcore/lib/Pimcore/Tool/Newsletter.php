@@ -24,7 +24,7 @@ class Pimcore_Tool_Newsletter {
      * @param Tool_Newsletter_Config $newsletter
      * @param Object_Concrete $object
      */
-    public static function sendMail($newsletter, $object, $emailAddress = null) {
+    public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null) {
 
         $params = array(
             "gender" => $object->getGender(),
@@ -40,6 +40,10 @@ class Pimcore_Tool_Newsletter {
 
         if(Pimcore_Config::getSystemConfig()->newsletter->usespecific) {
             $mail->init("newsletter");
+        }
+
+        if(!Pimcore_Tool::getHostUrl() && $hostUrl) {
+            $mail->setHostUrl($hostUrl);
         }
 
         if($emailAddress) {
@@ -189,9 +193,9 @@ class Pimcore_Tool_Newsletter {
      * @param Object_Concrete $object
      * @param Document_Email $mailDocument
      */
-    public function sendConfirmationMail($object, $mailDocument) {
+    public function sendConfirmationMail($object, $mailDocument, $params = array()) {
 
-        $params = array(
+        $defaultParameters = array(
             "gender" => $object->getGender(),
             'firstname' => $object->getFirstname(),
             'lastname' => $object->getLastname(),
@@ -199,6 +203,8 @@ class Pimcore_Tool_Newsletter {
             'token' => $object->getProperty("token"),
             "object" => $object
         );
+
+        $params = array_merge($defaultParameters, $params);
 
         $mail = new Pimcore_Mail();
         $mail->addTo($object->getEmail());
@@ -277,7 +283,7 @@ class Pimcore_Tool_Newsletter {
 
         $className = $this->getClassName();
         $objects = $className::getByEmail($email);
-        if($objects) {
+        if(count($objects)) {
             foreach($objects as $object) {
                 $this->unsubscribe($object);
             }

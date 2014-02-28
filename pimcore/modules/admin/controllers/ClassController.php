@@ -107,7 +107,6 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
                 return $count;
             };
 
-
             // create groups
             $classGroups = array();
             $lastGroup = '';
@@ -118,8 +117,9 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
                 $nextClass = $classes[$i+1];
 
                 // check last group
-                $count = $getEqual($lastGroup, $currentClass->getName());
-                if($count <= $cnf['matchCount'])
+                $className = $currentClass->getName();
+                $count = $getEqual($lastGroup, $className);
+                if($count <= $cnf['matchCount'] || strlen($lastGroup) != $count)
                 {
                     // check new class to group with
                     if($nextClass === null)

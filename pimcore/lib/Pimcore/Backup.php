@@ -328,7 +328,13 @@ class Pimcore_Backup {
 
                 $cells = array();
                 foreach ($row as $cell) {
-                    $cells[] = $db->quote($cell);
+                    if(is_string($cell)) {
+                        $cell = $db->quote($cell);
+                    } else if ($cell === null) {
+                        $cell = "NULL";
+                    }
+
+                    $cells[] = $cell;
                 }
 
                 $dumpData .= "INSERT INTO `" . $name . "` VALUES (" . implode(",", $cells) . ");";

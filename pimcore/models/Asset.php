@@ -118,6 +118,10 @@ class Asset extends Element_Abstract {
      */
     public $versions = null;
 
+    /**
+     * @var array
+     */
+    public $metadata = array();
 
     /**
      * enum('self','propagate') nullable
@@ -1052,7 +1056,8 @@ class Asset extends Element_Abstract {
         if ($this->properties === null) {
             // try to get from cache
             $cacheKey = "asset_properties_" . $this->getId();
-            if (!$properties = Pimcore_Model_Cache::load($cacheKey)) {
+            $properties = Pimcore_Model_Cache::load($cacheKey);
+            if (!is_array($properties)) {
                 $properties = $this->getResource()->getProperties();
                 $elementCacheTag = $this->getCacheTag();
                 $cacheTags = array("properties" => "properties", $elementCacheTag => $elementCacheTag);
@@ -1239,6 +1244,46 @@ class Asset extends Element_Abstract {
     public function setMimetype($mimetype) {
         $this->mimetype = $mimetype;
         return $this;
+    }
+
+    /**
+     * @param array $metadata
+     */
+    public function setMetadata($metadata)
+    {
+        $this->metadata = $metadata;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetadata($name = null, $language = null)
+    {
+        if($name) {
+            if($language === null) {
+                if(Zend_Registry::isRegistered("Zend_Locale")) {
+                    $language = (string) Zend_Registry::get("Zend_Locale");
+                }
+            }
+
+            $data = null;
+            foreach ($this->metadata as $md) {
+                if($md["name"] == $name) {
+                    if($language == $md["language"]) {
+                        return $md["data"];
+                    }
+                    if(empty($md["language"])) {
+                        $data = $md;
+                    }
+                }
+            }
+
+            if($data) {
+                return $data["data"];
+            }
+            return null;
+        }
+        return $this->metadata;
     }
 
     /**

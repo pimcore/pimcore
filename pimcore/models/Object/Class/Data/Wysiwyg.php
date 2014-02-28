@@ -17,6 +17,8 @@
 
 class Object_Class_Data_Wysiwyg extends Object_Class_Data {
 
+    use Object_Class_Data_Trait_Text;
+
     /**
      * Static type of this element
      *
@@ -149,15 +151,6 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
     }
 
     /**
-     * @see Object_Class_Data::getVersionPreview
-     * @param string $data
-     * @return string
-     */
-    public function getVersionPreview($data) {
-        return $data;
-    }
-
-    /**
      * @param mixed $data
      */
     public function resolveDependencies($data) {
@@ -215,13 +208,6 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
         }
 
         return Pimcore_Tool_Text::wysiwygText($data);
-    }
-
-    /** True if change is allowed in edit mode.
-     * @return bool
-     */
-    public function isDiffChangeAllowed() {
-        return true;
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or

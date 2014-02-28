@@ -57,7 +57,16 @@ pimcore.object.edit = Class.create({
     },
 
     addToDataFields: function (field, name) {
-        this.dataFields[name] = field;
+        if(this.dataFields[name]) {
+            // this is especially for localized fields which get aggregated here into one field definition
+            // in the case that there are more than one localized fields in the class definition
+            // see also Object_Class::extractDataDefinitions();
+            if(typeof this.dataFields[name]["addReferencedField"]){
+                this.dataFields[name].addReferencedField(field);
+            }
+        } else {
+            this.dataFields[name] = field;
+        }
     },
 
     addFieldsToMask: function (field) {

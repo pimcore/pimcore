@@ -308,7 +308,7 @@ pimcore.layout.toolbar = Class.create({
                 menu: {
                     cls: "pimcore_navigation_flyout",
                     items: [{
-                        text: t("email_logs"),
+                        text: t("email_logs") + " (" + t("global") + ")",
                         iconCls: "pimcore_icon_email",
                         handler: this.sentEmailsLog
                     },{
@@ -319,6 +319,10 @@ pimcore.layout.toolbar = Class.create({
                         text: t("bounce_mail_inbox"),
                         iconCls: "pimcore_icon_bouncemail",
                         handler: this.showBounceMailInbox
+                    }, {
+                        text: t("send_test_email"),
+                        iconCls: "pimcore_icon_email",
+                        handler: this.sendTestEmail
                     }]
                 }
             });
@@ -1168,6 +1172,10 @@ pimcore.layout.toolbar = Class.create({
         catch (e) {
             pimcore.globalmanager.add("bouncemailinbox", new pimcore.settings.bouncemailinbox());
         }
+    },
+
+    sendTestEmail: function () {
+        pimcore.helpers.sendTestEmail();
     },
 
     showReports: function (reportClass, reportConfig) {

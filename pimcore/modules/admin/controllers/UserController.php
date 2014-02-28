@@ -29,6 +29,8 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
         $list = new User_List();
         $list->setCondition("parentId = ?", intval($this->getParam("node")));
+        $list->setOrder("ASC");
+        $list->setOrderKey("name");
         $list->load();
 
         $users = array();

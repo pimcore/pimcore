@@ -10,17 +10,25 @@
             height: 100%;
             overflow: hidden;
         }
-
-        #flashcontent {
-            height: 100%;
-        }
-
         /* end hide */
 
         body {
             height: 100%;
             margin: 0;
             padding: 0;
+            background: #000;
+        }
+
+        #videoContainer {
+            text-align: center;
+            position: absolute;
+            top:50%;
+            margin-top: -200px;
+            width: 100%;
+        }
+
+        video {
+
         }
 
     </style>
@@ -29,30 +37,19 @@
 
 <body>
 
-<div id="flashcontent"></div>
 
-<script type="text/javascript" src="/pimcore/static/js/lib/flowplayer/flowplayer.min.js"></script><script type="text/javascript" src="/pimcore/static/js/lib/array_merge.js"></script><script type="text/javascript" src="/pimcore/static/js/lib/array_merge_recursive.js"></script><div id="pimcore_video_myVideocontentblock2"><div id="video_4efc79ca37515"></div></div>
-    <script type="text/javascript">
-        var player = flowplayer("flashcontent", {
-            src: "/pimcore/static/js/lib/flowplayer/flowplayer.swf",
-            width: "100%",
-            height: "100%",
-            wmode: "transparent"
-        },{
-            "clip": {
-                "autoPlay":false,
-                scaling: "orig",
-                "url": <?php echo Zend_Json::encode($this->thumbnail["formats"]["mp4"]); ?>
-            },
-            "plugins": {
-                "controls": {
-                    "autoHide": {
-                        "enabled": false
-                    }
-                }
-            }
-        });
-    </script>
+<?php
+    $thumbnail = "";
+    if(Pimcore_Video::isAvailable()) {
+        $thumbnail = "/admin/asset/get-video-thumbnail/id/" . $this->asset->getId() . "/treepreview/true";
+    }
+?>
+
+<div id="videoContainer">
+    <video id="video" controls="controls" height="400" poster="<?= $thumbnail ?>">
+        <source src="<?= $this->thumbnail["formats"]["mp4"] ?>" type="video/mp4" />
+        <source src="<?= $this->thumbnail["formats"]["webm"] ?>" type="video/webm" />
+    </video>
 </div>
 
 

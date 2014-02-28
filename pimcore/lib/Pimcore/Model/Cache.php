@@ -264,7 +264,7 @@ class Pimcore_Model_Cache {
     
             return $data;
         }
-        return;
+        return false;
     }
 
     /**

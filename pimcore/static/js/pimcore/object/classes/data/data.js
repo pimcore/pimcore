@@ -66,8 +66,10 @@ pimcore.object.classes.data.data = Class.create({
 
     getLayout: function () {
 
+        var niceName = (this.getTypeName() ? this.getTypeName() : t(this.getType()));
+
         this.specificPanel = new Ext.form.FormPanel({
-            title: t(this.getType() + "_settings"),
+            title: t("specific_settings") + " (" + niceName + ")",
             bodyStyle: "padding: 10px;",
             style: "margin: 10px 0 10px 0",
             layout: "pimcoreform",
@@ -85,7 +87,16 @@ pimcore.object.classes.data.data = Class.create({
                 autoCreate: {tag: 'input', type: 'text', maxlength: '70', autocomplete: 'off'},
                 enableKeyEvents: true,
                 value: this.datax.name,
-                disabled: !in_array("name",this.availableSettingsFields)
+                disabled: !in_array("name",this.availableSettingsFields),
+                listeners: {
+                    keyup: function (el) {
+                        // autofill title field if untouched and empty
+                        var title = el.ownerCt.getComponent("title");
+                        if(title["_autooverwrite"] === true) {
+                            el.ownerCt.getComponent("title").setValue(el.getValue());
+                        }
+                    }
+                }
             },
             {
                 xtype: "textfield",
@@ -94,7 +105,19 @@ pimcore.object.classes.data.data = Class.create({
                 itemId: "title",
                 width: 300,
                 value: this.datax.title,
-                disabled: !in_array("title",this.availableSettingsFields)
+                disabled: !in_array("title",this.availableSettingsFields),
+                itemId: "title",
+                enableKeyEvents: true,
+                listeners: {
+                    keyup: function (el) {
+                        el["_autooverwrite"] = false;
+                    },
+                    afterrender: function (el) {
+                        if(el.getValue().length < 1) {
+                            el["_autooverwrite"] = true;
+                        }
+                    }
+                }
             },
             {
                 xtype: "textarea",
@@ -165,7 +188,7 @@ pimcore.object.classes.data.data = Class.create({
             items: [
                 {
                     xtype: "form",
-                    title: t("general_settings") + " (" + (this.getTypeName() ? this.getTypeName() : t(this.getType())) + ")",
+                    title: t("general_settings") + " (" + niceName + ")",
                     bodyStyle: "padding: 10px;",
                     style: "margin: 10px 0 10px 0",
                     labelWidth: 140,

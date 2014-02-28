@@ -34,6 +34,10 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
         $subtypes = explode(",", $this->getParam("subtype"));
         $classnames = explode(",", $this->getParam("class"));
 
+        if (is_array($classnames) and !empty($classnames[0])) {
+            $subtypes = array("object");
+        }
+
         $offset = intval($this->getParam("start"));
         $limit = intval($this->getParam("limit"));
 

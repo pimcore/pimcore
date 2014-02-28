@@ -184,13 +184,6 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => function_exists("pcntl_exec") ? "ok" : "warning"
         );
 
-        // soap
-        $checksPHP[] = array(
-            "name" => "Soap",
-            "link" => "http://www.php.net/soap",
-            "state" => class_exists("SoapClient") ? "ok" : "warning"
-        );
-
         // curl for google api sdk
         $checksPHP[] = array(
             "name" => "curl",

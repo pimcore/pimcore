@@ -498,72 +498,15 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
     }
 
 
-
-    public function getGetterCode ($class) {
-        // getter
-
-        $key = $this->getName();
-        $code = "";
-
-        $code .= '/**' . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
-        $code .= '*/' . "\n";
-        $code .= "public function get" . ucfirst($key) . " () {\n";
-
-        // adds a hook preGetValue which can be defined in an extended class
-        $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-        $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
-
-        if(method_exists($this,"preGetData")) {
-            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
-        } else {
-            $code .= "\t" . '$data = $this->' . $key . ";\n";
-        }
-
-        // insert this line if inheritance from parent objects is allowed
-        if ($class->getAllowInherit()) {
-            $code .= "\t" . 'if((!$data || $data->isEmpty()) && Object_Abstract::doGetInheritedValues()) { ' . "\n";
-            $code .= "\t\t" . '$parentData  = $this->getValueFromParent("' . $key . '");' . "\n";
-            $code .= "\t\t" . 'if($parentData) { return $parentData; }' . "\n";
-            $code .= "\t\t" . 'else { return $data; }' . "\n";
-            $code .= "\t" . '}' . "\n";
-        }
-
-        $code .= "\t return " . '$data' . ";\n";
-        $code .= "}\n\n";
-
-        return $code;
-    }
-
-    
     /**
-     * Creates getter code which is used for generation of php file for object brick classes using this data type
-     * @param $brickClass
-     * @return string
+     * @param $data
+     * @return bool
      */
-    public function getGetterCodeObjectbrick($brickClass)
-    {
-        $key = $this->getName();
-        $code = '/**' . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
-        $code .= '*/' . "\n";
-        $code .= "public function get" . ucfirst($key) . " () {\n";
-
-        if (method_exists($this, "preGetData")) {
-            $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
-        } else {
-            $code .= "\t" . '$data = $this->' . $key . ";\n";
+    public function isEmpty($data) {
+        if(!$data || $data->isEmpty()) {
+            return true;
         }
-
-        $code .= "\t" . 'if((!$data || $data->isEmpty()) && Object_Abstract::doGetInheritedValues($this->getObject())) {' . "\n";
-        $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
-        $code .= "\t" . '}' . "\n";
-
-
-        $code .= "\t return " . '$data' . ";\n";
-        $code .= "}\n\n";
-
-        return $code;
+        return false;
     }
 
     /** True if change is allowed in edit mode.

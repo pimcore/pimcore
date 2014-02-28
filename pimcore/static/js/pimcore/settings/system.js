@@ -444,7 +444,101 @@ pimcore.settings.system = Class.create({
                             autoHeight:true,
                             items: [
                                 {
-                                    fieldLabel: t("email_senderemail"),
+                                    xtype: 'textfield',
+                                    width: 400,
+                                    fieldLabel: t("email_debug_addresses") + "(CSV)" + ' <span style="color:red;">*</span>',
+                                    name: 'email.debug.emailAddresses',
+                                    value: this.getValue("email.debug.emailaddresses"),
+                                    emptyText: "john@doe.com,jane@doe.com"
+                                },
+                                {
+                                    fieldLabel: t("email_method") + ' <span style="color:red;">*</span>',
+                                    xtype: "combo",
+                                    name: "email.method",
+                                    value: this.getValue("email.method"),
+                                    store: [
+                                        ["sendmail", "sendmail"],
+                                        ["smtp","smtp"]
+                                    ],
+                                    listeners: {
+                                        select: this.emailMethodSelected.bind(this, "email")
+                                    },
+                                    mode: "local",
+                                    triggerAction: "all"
+                                },
+                                {
+                                    xtype: "fieldset",
+                                    title: "SMTP",
+                                    width: 600,
+                                    itemId: "emailSmtpSettings",
+                                    defaultType: 'textfield',
+                                    hidden: (this.getValue("email.method") == "smtp") ? false : true,
+                                    items: [{
+                                            fieldLabel: t("email_smtp_host") + ' <span style="color:red;">*</span>',
+                                            name: "email.smtp.host",
+                                            value: this.getValue("email.smtp.host")
+                                        },
+                                        {
+                                            fieldLabel: t("email_smtp_ssl"),
+                                            xtype: "combo",
+                                            width: 130,
+                                            name: "email.smtp.ssl",
+                                            value: this.getValue("email.smtp.ssl"),
+                                            store: [
+                                                ["", t('no_ssl')],
+                                                ["tls","TLS"],
+                                                ["ssl","SSL"]
+                                            ],
+                                            mode: "local",
+                                            triggerAction: "all"
+                                        },
+                                        {
+                                            fieldLabel: t("email_smtp_port"),
+                                            name: "email.smtp.port",
+                                            value: this.getValue("email.smtp.port")
+                                        },
+                                        {
+                                            fieldLabel: t("email_smtp_name"),
+                                            name: "email.smtp.name",
+                                            value: this.getValue("email.smtp.name")
+                                        },
+                                        {
+                                            fieldLabel: t("email_smtp_auth_method"),
+                                            xtype: "combo",
+                                            width: 130,
+                                            name: "email.smtp.auth.method",
+                                            value: this.getValue("email.smtp.auth.method"),
+                                            store: [
+                                                ["", t('no_authentication')],
+                                                ["login","LOGIN"],
+                                                ["plain","PLAIN"],
+                                                ["cram-md5", "CRAM-MD5"]
+                                            ],
+                                            mode: "local",
+                                            triggerAction: "all",
+                                            listeners: {
+                                                select: this.smtpAuthSelected.bind(this, "email")
+                                            }
+                                        },
+                                        {
+                                            fieldLabel: t("email_smtp_auth_username"),
+                                            name: "email.smtp.auth.username",
+                                            itemId: "email_username",
+                                            hidden: (this.getValue("email.smtp.auth.method").length > 1) ? false : true,
+                                            value: this.getValue("email.smtp.auth.username")
+                                        },
+                                        {
+                                            fieldLabel: t("email_smtp_auth_password"),
+                                            name: "email.smtp.auth.password",
+                                            inputType: "password",
+                                            itemId: "email_password",
+                                            hidden: (this.getValue("email.smtp.auth.method").length > 1) ? false : true,
+                                            value: this.getValue("email.smtp.auth.password")
+                                        }
+                                    ]
+                                },
+                                {
+                                    fieldLabel: t("email_senderemail") + ' <span style="color:red;">*</span>',
                                     name: "email.sender.email",
                                     value: this.getValue("email.sender.email")
                                 },
@@ -462,99 +556,6 @@ pimcore.settings.system = Class.create({
                                     fieldLabel: t("email_returnname"),
                                     name: "email.return.name",
                                     value: this.getValue("email.return.name")
-                                },
-                                {
-                                    fieldLabel: t("email_method"),
-                                    xtype: "combo",
-                                    name: "email.method",
-                                    value: this.getValue("email.method"),
-                                    store: [
-                                        ["sendmail", "sendmail"],
-                                        ["smtp","smtp"]
-                                    ],
-                                    listeners: {
-                                        select: this.emailMethodSelected.bind(this, "email")
-                                    },
-                                    mode: "local",
-                                    triggerAction: "all"
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_host"),
-                                    id: "system.settings.email.smtp.host",
-                                    name: "email.smtp.host",
-                                    disabled: this.getValue("email.method") != "smtp",
-                                    value: this.getValue("email.smtp.host")
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_ssl"),
-                                    xtype: "combo",
-                                    disabled: this.getValue("email.method") != "smtp",
-                                    name: "email.smtp.ssl",
-                                    id: "system.settings.email.smtp.ssl",
-                                    value: this.getValue("email.smtp.ssl"),
-                                    store: [
-                                        ["", t('no_ssl')],
-                                        ["tls","TLS"],
-                                        ["ssl","SSL"]
-                                    ],
-                                    mode: "local",
-                                    triggerAction: "all"
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_port"),
-                                    name: "email.smtp.port",
-                                    id: "system.settings.email.smtp.port",
-                                    disabled: this.getValue("email.method") != "smtp",
-                                    value: this.getValue("email.smtp.port")
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_name"),
-                                    name: "email.smtp.name",
-                                    id: "system.settings.email.smtp.name",
-                                    disabled: this.getValue("email.method") != "smtp",
-                                    value: this.getValue("email.smtp.name")
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_auth_method"),
-                                    xtype: "combo",
-                                    disabled: this.getValue("email.method") != "smtp",
-                                    name: "email.smtp.auth.method",
-                                    id: "system.settings.email.smtp.method",
-                                    value: this.getValue("email.smtp.auth.method"),
-                                    store: [
-                                        ["", t('no_authentication')],
-                                        ["login","LOGIN"],
-                                        ["plain","PLAIN"],
-                                        ["cram-md5", "CRAM-MD5"]
-                                    ],
-                                    mode: "local",
-                                    triggerAction: "all",
-                                    listeners: {
-                                        select: this.smtpAuthSelected.bind(this, "email")
-                                    }
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_auth_username"),
-                                    name: "email.smtp.auth.username",
-                                    id: "system.settings.email.smtp.auth.username",
-                                    disabled: this.getValue("email.smtp.auth.method") == "",
-                                    value: this.getValue("email.smtp.auth.username")
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_auth_password"),
-                                    name: "email.smtp.auth.password",
-                                    id: "system.settings.email.smtp.auth.password",
-                                    inputType: "password",
-                                    disabled: this.getValue("email.smtp.auth.method") == "",
-                                    value: this.getValue("email.smtp.auth.password")
-                                },
-                                {
-                                    xtype: 'textfield',
-                                    width: 400,
-                                    fieldLabel: t("email_debug_addresses") + "(CSV)",
-                                    name: 'email.debug.emailAddresses',
-                                    value: this.getValue("email.debug.emailaddresses"),
-                                    emptyText: "john@doe.com,jane@doe.com"
                                 }
                             ]
                         }, {
@@ -1261,10 +1262,8 @@ pimcore.settings.system = Class.create({
                                 "check": function (el, checked) {
                                     if(checked) {
                                         Ext.getCmp("system.settings.newsletter.fieldset").show();
-                                        Ext.getCmp("system.settings.newsletter.bounce").show();
                                     } else {
                                         Ext.getCmp("system.settings.newsletter.fieldset").hide();
-                                        Ext.getCmp("system.settings.newsletter.bounce").hide();
                                     }
                                 }
                             }
@@ -1280,7 +1279,93 @@ pimcore.settings.system = Class.create({
                             autoHeight:true,
                             items: [
                                 {
-                                    fieldLabel: t("email_senderemail"),
+                                    fieldLabel: t("email_method") + ' <span style="color:red;">*</span>',
+                                    xtype: "combo",
+                                    name: "newsletter.method",
+                                    value: this.getValue("newsletter.method"),
+                                    store: [
+                                        ["sendmail", "sendmail"],
+                                        ["smtp","smtp"]
+                                    ],
+                                    listeners: {
+                                        select: this.emailMethodSelected.bind(this, "newsletter")
+                                    },
+                                    mode: "local",
+                                    triggerAction: "all"
+                                },
+                                {
+                                    xtype: "fieldset",
+                                    title: "SMTP",
+                                    width: 600,
+                                    itemId: "newsletterSmtpSettings",
+                                    defaultType: 'textfield',
+                                    hidden: (this.getValue("newsletter.method") == "smtp") ? false : true,
+                                    items: [{
+                                            fieldLabel: t("email_smtp_host") + ' <span style="color:red;">*</span>',
+                                            name: "newsletter.smtp.host",
+                                            value: this.getValue("newsletter.smtp.host")
+                                        },
+                                        {
+                                            fieldLabel: t("email_smtp_ssl"),
+                                            xtype: "combo",
+                                            width: 130,
+                                            name: "newsletter.smtp.ssl",
+                                            value: this.getValue("newsletter.smtp.ssl"),
+                                            store: [
+                                                ["", t('no_ssl')],
+                                                ["tls","TLS"],
+                                                ["ssl","SSL"]
+                                            ],
+                                            mode: "local",
+                                            triggerAction: "all"
+                                        },
+                                        {
+                                            fieldLabel: t("email_smtp_port"),
+                                            name: "newsletter.smtp.port",
+                                            value: this.getValue("newsletter.smtp.port")
+                                        },
+                                        {
+                                            fieldLabel: t("email_smtp_name"),
+                                            name: "newsletter.smtp.name",
+                                            value: this.getValue("newsletter.smtp.name")
+                                        },
+                                        {
+                                            fieldLabel: t("email_smtp_auth_method"),
+                                            xtype: "combo",
+                                            width: 130,
+                                            name: "newsletter.smtp.auth.method",
+                                            value: this.getValue("newsletter.smtp.auth.method"),
+                                            store: [
+                                                ["", t('no_authentication')],
+                                                ["login","LOGIN"],
+                                                ["plain","PLAIN"],
+                                                ["cram-md5", "CRAM-MD5"]
+                                            ],
+                                            mode: "local",
+                                            triggerAction: "all",
+                                            listeners: {
+                                                select: this.smtpAuthSelected.bind(this, "newsletter")
+                                            }
+                                        },
+                                        {
+                                            fieldLabel: t("email_smtp_auth_username"),
+                                            name: "newsletter.smtp.auth.username",
+                                            itemId: "newsletter_username",
+                                            hidden: (this.getValue("newsletter.smtp.auth.method").length > 1) ? false : true,
+                                            value: this.getValue("newsletter.smtp.auth.username")
+                                        },
+                                        {
+                                            fieldLabel: t("email_smtp_auth_password"),
+                                            name: "newsletter.smtp.auth.password",
+                                            inputType: "password",
+                                            itemId: "newsletter_password",
+                                            hidden: (this.getValue("newsletter.smtp.auth.method").length > 1) ? false : true,
+                                            value: this.getValue("newsletter.smtp.auth.password")
+                                        }
+                                    ]
+                                },
+                                {
+                                    fieldLabel: t("email_senderemail") + ' <span style="color:red;">*</span>',
                                     name: "newsletter.sender.email",
                                     value: this.getValue("newsletter.sender.email")
                                 },
@@ -1298,91 +1383,6 @@ pimcore.settings.system = Class.create({
                                     fieldLabel: t("email_returnname"),
                                     name: "newsletter.return.name",
                                     value: this.getValue("newsletter.return.name")
-                                },
-                                {
-                                    fieldLabel: t("email_method"),
-                                    xtype: "combo",
-                                    name: "newsletter.method",
-                                    value: this.getValue("newsletter.method"),
-                                    store: [
-                                        ["sendmail", "sendmail"],
-                                        ["smtp","smtp"]
-                                    ],
-                                    listeners: {
-                                        select: this.emailMethodSelected.bind(this, "newsletter")
-                                    },
-                                    mode: "local",
-                                    triggerAction: "all"
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_host"),
-                                    id: "system.settings.newsletter.smtp.host",
-                                    name: "newsletter.smtp.host",
-                                    disabled: this.getValue("newsletter.method") != "smtp",
-                                    value: this.getValue("newsletter.smtp.host")
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_ssl"),
-                                    xtype: "combo",
-                                    disabled: this.getValue("newsletter.method") != "smtp",
-                                    name: "newsletter.smtp.ssl",
-                                    id: "system.settings.newsletter.smtp.ssl",
-                                    value: this.getValue("newsletter.smtp.ssl"),
-                                    store: [
-                                        ["", t('no_ssl')],
-                                        ["tls","TLS"],
-                                        ["ssl","SSL"]
-                                    ],
-                                    mode: "local",
-                                    triggerAction: "all"
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_port"),
-                                    name: "newsletter.smtp.port",
-                                    id: "system.settings.newsletter.smtp.port",
-                                    disabled: this.getValue("newsletter.method") != "smtp",
-                                    value: this.getValue("newsletter.smtp.port")
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_name"),
-                                    name: "newsletter.smtp.name",
-                                    id: "system.settings.newsletter.smtp.name",
-                                    disabled: this.getValue("newsletter.method") != "smtp",
-                                    value: this.getValue("newsletter.smtp.name")
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_auth_method"),
-                                    xtype: "combo",
-                                    disabled: this.getValue("newsletter.method") != "smtp",
-                                    name: "newsletter.smtp.auth.method",
-                                    id: "system.settings.newsletter.smtp.method",
-                                    value: this.getValue("newsletter.smtp.auth.method"),
-                                    store: [
-                                        ["", t('no_authentication')],
-                                        ["login","LOGIN"],
-                                        ["plain","PLAIN"],
-                                        ["cram-md5", "CRAM-MD5"]
-                                    ],
-                                    mode: "local",
-                                    triggerAction: "all",
-                                    listeners: {
-                                        select: this.smtpAuthSelected.bind(this, "newsletter")
-                                    }
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_auth_username"),
-                                    name: "newsletter.smtp.auth.username",
-                                    id: "system.settings.newsletter.smtp.auth.username",
-                                    disabled: this.getValue("newsletter.smtp.auth.method") == "",
-                                    value: this.getValue("newsletter.smtp.auth.username")
-                                },
-                                {
-                                    fieldLabel: t("email_smtp_auth_password"),
-                                    name: "newsletter.smtp.auth.password",
-                                    id: "system.settings.newsletter.smtp.auth.password",
-                                    inputType: "password",
-                                    disabled: this.getValue("newsletter.smtp.auth.method") == "",
-                                    value: this.getValue("newsletter.smtp.auth.password")
                                 }
                             ]
                         }]
@@ -1443,39 +1443,36 @@ pimcore.settings.system = Class.create({
     },
 
 
-    emailMethodSelected: function(type, combo, record, index) {
-        var disabled = true;
-        if (index == 1) {
-            disabled = false;
-        }
-        this.layout.getForm().findField("system.settings." + type + ".smtp.host").setDisabled(disabled);
-        this.layout.getForm().findField("system.settings." + type + ".smtp.port").setDisabled(disabled);
-        this.layout.getForm().findField("system.settings." + type + ".smtp.name").setDisabled(disabled);
-        this.layout.getForm().findField("system.settings." + type + ".smtp.method").setDisabled(disabled);
-        this.layout.getForm().findField("system.settings." + type + ".smtp.ssl").setDisabled(disabled);
+    emailMethodSelected: function(type, combo) {
 
-        if (disabled) {
-            this.layout.getForm().findField("system.settings." + type + ".smtp.host").setValue();
-            this.layout.getForm().findField("system.settings." + type + ".smtp.port").setValue();
-            this.layout.getForm().findField("system.settings." + type + ".smtp.name").setValue();
-            this.layout.getForm().findField("system.settings." + type + ".smtp.method").setValue();
-            this.layout.getForm().findField("system.settings." + type + ".smtp.ssl").setValue();
+        var smtpFieldSet = combo.ownerCt.getComponent(type + "SmtpSettings");
+
+        if (combo.getValue() == "smtp") {
+            smtpFieldSet.show();
+        } else {
+            smtpFieldSet.hide();
+            Ext.each(smtpFieldSet.findByType("textfield"), function (item) {
+                item.setValue("");
+            });
         }
-        this.smtpAuthSelected(null, null, null, true);
+
         pimcore.layout.refresh();
 
     },
 
-    smtpAuthSelected: function(type, combo, record, index, forceDisable) {
-        var disabled = true;
-        if (index != 0 && !forceDisable) {
-            disabled = false;
-        }
-        this.layout.getForm().findField("system.settings." + type + ".smtp.auth.username").setDisabled(disabled);
-        this.layout.getForm().findField("system.settings." + type + ".smtp.auth.password").setDisabled(disabled);
-        if (disabled) {
-            this.layout.getForm().findField("system.settings." + type + ".smtp.auth.username").setValue("");
-            this.layout.getForm().findField("system.settings." + type + ".smtp.auth.password").setValue("");
+    smtpAuthSelected: function(type, combo) {
+
+        var username = combo.ownerCt.getComponent(type + "_username");
+        var pass = combo.ownerCt.getComponent(type + "_password");
+
+        if (!combo.getValue()) {
+            username.hide();
+            pass.hide();
+            username.setValue("");
+            pass.setValue("");
+        } else {
+            username.show();
+            pass.show();
         }
     },
 

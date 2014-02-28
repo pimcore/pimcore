@@ -50,15 +50,14 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         try {
             $this->resource = new Imagick();
 
-            // transparency for EPS files
-            if(method_exists($this->resource, "setcolorspace")) {
-                $this->resource->setBackgroundColor(new ImagickPixel('transparent')); //set .png transparent (print)
-                $this->resource->setcolorspace(Imagick::COLORSPACE_SRGB);
-            }
+            $this->resource->setBackgroundColor(new ImagickPixel('transparent')); //set .png transparent (print)
+            $this->resource->setcolorspace(Imagick::COLORSPACE_SRGB);
 
             if(!$this->resource->readImage($imagePath."[0]") || !filesize($imagePath)) {
                 return false;
             }
+
+            $this->setColorspaceToRGB();
 
             $this->imagePath = $imagePath;
 
@@ -83,29 +82,21 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @param null $colorProfile
      * @return $this|mixed
      */
-    public function save ($path, $format = null, $quality = null, $colorProfile = null) {
+    public function save ($path, $format = null, $quality = null) {
 
         if(!$format) {
             $format = "png";
         }
 
-        if(!$colorProfile) {
-            $colorProfile = Imagick::COLORSPACE_RGB;
-        } else {
-            $colorProfile = constant("Imagick::COLORSPACE_" . $colorProfile);
-        }
-
         $originalFilename = null;
         if(!$this->reinitializing) {
-            if($this->getUseContentOptimizedFormat() && $colorProfile == Imagick::COLORSPACE_RGB) {
+            if($this->getUseContentOptimizedFormat()) {
                 $format = "jpeg";
                 if($this->resource->getImageAlphaChannel()) {
                     $format = "png";
                 }
             }
         }
-
-        $this->setColorspace($colorProfile);
 
         $this->resource->stripimage();
         $this->resource->profileImage('*', null);
@@ -125,7 +116,6 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         return $this;
     }
 
-
     /**
      * @return  void
      */
@@ -141,16 +131,11 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @param string $type
      * @return Pimcore_Image_Adapter|void
      */
-    public function setColorspace($type = "RGB") {
-
-        $type = strtoupper($type);
-        if(!in_array($type, array("RGB","CMYK"))) {
-            $type = "RGB";
-        }
+    public function setColorspaceToRGB() {
 
         $imageColorspace = $this->resource->getImageColorspace();
 
-        if ($imageColorspace == Imagick::COLORSPACE_CMYK && $type == "RGB") {
+        if ($imageColorspace == Imagick::COLORSPACE_CMYK) {
             if(self::getCMYKColorProfile() && self::getRGBColorProfile()) {
                 $profiles = $this->resource->getImageProfiles('*', false);
                 // we're only interested if ICC profile(s) exist
@@ -162,23 +147,12 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 // then we add an RGB profile
                 $this->resource->profileImage('icc', self::getRGBColorProfile());
                 $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB); // we have to use SRGB here, no clue why but it works
+            } else {
+                $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB);
             }
-        } else if (in_array($imageColorspace, array(Imagick::COLORSPACE_RGB, Imagick::COLORSPACE_SRGB)) && $type == "CMYK") {
-            if(self::getCMYKColorProfile() && self::getRGBColorProfile()) {
-                $profiles = $this->resource->getImageProfiles('*', false);
-                // we're only interested if ICC profile(s) exist
-                $has_icc_profile = (array_search('icc', $profiles) !== false);
-                // if it doesn't have a CMYK ICC profile, we add one
-                if ($has_icc_profile === false) {
-                    $this->resource->profileImage('icc', self::getRGBColorProfile());
-                }
-                // then we add an RGB profile
-                $this->resource->profileImage('icc', self::getCMYKColorProfile());
-                $this->resource->setImageColorspace(Imagick::COLORSPACE_CMYK);
-            }
-        } else if ($imageColorspace == Imagick::COLORSPACE_GRAY && $type == "RGB") {
+        } else if ($imageColorspace == Imagick::COLORSPACE_GRAY) {
             $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB);
-        } else if (!in_array($imageColorspace, array(Imagick::COLORSPACE_RGB, Imagick::COLORSPACE_SRGB)) && $type == "RGB") {
+        } else if (!in_array($imageColorspace, array(Imagick::COLORSPACE_RGB, Imagick::COLORSPACE_SRGB))) {
             $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB);
         }
         // this is a HACK to force grayscale images to be real RGB - truecolor, this is important if you want to use
@@ -208,11 +182,15 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public static function getCMYKColorProfile()
     {
         if(!self::$CMYKColorProfile) {
-            if($path = Pimcore_Config::getSystemConfig()->assets->icc_cmyk_profile) {
-                if(file_exists($path)) {
-                    self::$CMYKColorProfile = file_get_contents($path);
-                }
+            $path = Pimcore_Config::getSystemConfig()->assets->icc_cmyk_profile;
+            if(!$path || !file_exists($path)) {
+                $path = __DIR__ . "/../icc-profiles/ISOcoated_v2_eci.icc"; // default profile
             }
+
+            if($path && file_exists($path)) {
+                self::$CMYKColorProfile = file_get_contents($path);
+            }
+
         }
 
         return self::$CMYKColorProfile;
@@ -232,10 +210,13 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public static function getRGBColorProfile()
     {
         if(!self::$RGBColorProfile) {
-            if($path = Pimcore_Config::getSystemConfig()->assets->icc_rgb_profile) {
-                if(file_exists($path)) {
-                    self::$RGBColorProfile = file_get_contents($path);
-                }
+            $path = Pimcore_Config::getSystemConfig()->assets->icc_rgb_profile;
+            if(!$path || !file_exists($path)) {
+                $path = __DIR__ . "/../icc-profiles/sRGB_IEC61966-2-1_black_scaled.icc"; // default profile
+            }
+
+            if(file_exists($path)) {
+                self::$RGBColorProfile = file_get_contents($path);
             }
         }
 

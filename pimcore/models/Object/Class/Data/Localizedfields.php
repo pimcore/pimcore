@@ -75,6 +75,12 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public $maxTabs;
 
     /**
+     * contains further localized field definitions if there are more than one localized fields in on class
+     * @var array
+     */
+    protected $referencedFields = array();
+
+    /**
      * @var array
      */
     private $fieldDefinitionsCache;
@@ -110,10 +116,10 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                 $key = $fd->getName();
                 $fdata = $fd->getDataForEditmode($values[$fd->getName()], $object);
 
-                if (empty($fieldData[$language][$key])) {
+                if (!isset($fieldData[$language][$key]) || $fd->isEmpty($fieldData[$language][$key])) {
                     // never override existing data
                     $fieldData[$language][$key] = $fdata;
-                    if (!empty($fdata)) {
+                    if (!$fd->isEmpty($fdata)) {
                         $metaData[$language][$key] = array("inherited" => $level > 1, "objectid" => $object->getId());
                     }
                 }
@@ -133,7 +139,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                     $fieldDefinitions = $this->getFieldDefinitions();
                     foreach ($fieldDefinitions as $fd) {
                         $key = $fd->getName();
-                        if (empty($fieldData[$language][$key])) {
+                        if ($fd->isEmpty($fieldData[$language][$key])) {
                             $foundEmptyValue = true;
                             $inherited = true;
                             $metaData[$language][$key] = array("inherited" => true, "objectid" => $parent->getId());
@@ -413,6 +419,29 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     }
 
     /**
+     * @param array $referencedFields
+     */
+    public function setReferencedFields($referencedFields)
+    {
+        $this->referencedFields = $referencedFields;
+    }
+
+    /**
+     * @return array
+     */
+    public function getReferencedFields()
+    {
+        return $this->referencedFields;
+    }
+
+    /**
+     * @param $field
+     */
+    public function addReferencedField($field) {
+        $this->referencedFields[] = $field;
+    }
+
+    /**
      * @param mixed $data
      * @param array $blockedKeys
      * @return void
@@ -532,7 +561,14 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function getFieldDefinitions()
     {
         if(empty($this->fieldDefinitionsCache)) {
-            $this->fieldDefinitionsCache = $this->doGetFieldDefinitions();
+            $definitions = $this->doGetFieldDefinitions();
+            foreach($this->getReferencedFields() as $rf) {
+                if($rf instanceof Object_Class_Data_Localizedfields) {
+                    $definitions = array_merge($definitions, $this->doGetFieldDefinitions($rf->getChilds()));
+                }
+            }
+
+            $this->fieldDefinitionsCache = $definitions;
         }
 
         return $this->fieldDefinitionsCache;

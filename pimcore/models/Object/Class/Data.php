@@ -193,9 +193,7 @@ abstract class Object_Class_Data
      */
     public function getForCsvExport($object)
     {
-        $key = $this->getName();
-        $getter = "get" . ucfirst($key);
-        return $object->$getter();
+        return $this->getDataFromObjectParam($object);
     }
 
     /**
@@ -217,9 +215,7 @@ abstract class Object_Class_Data
      */
     public function getForWebserviceExport($object)
     {
-        $key = $this->getName();
-        $getter = "get" . ucfirst($key);
-        return $object->$getter();
+        return $this->getDataFromObjectParam($object);
     }
 
     /**
@@ -633,7 +629,7 @@ abstract class Object_Class_Data
 
         // insert this line if inheritance from parent objects is allowed
         if ($class->getAllowInherit()) {
-            $code .= "\t" . 'if(!$data && Object_Abstract::doGetInheritedValues()) { return $this->getValueFromParent("' . $key . '");}' . "\n";
+            $code .= "\t" . 'if(Object_Abstract::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) { return $this->getValueFromParent("' . $key . '");}' . "\n";
         }
 
         $code .= "\t return " . '$data' . ";\n";
@@ -690,7 +686,7 @@ abstract class Object_Class_Data
             $code .= "\t" . '$data = $this->' . $key . ";\n";
         }
 
-        $code .= "\t" . 'if(!$data && Object_Abstract::doGetInheritedValues($this->getObject())) {' . "\n";
+        $code .= "\t" . 'if(Object_Abstract::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
         $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
         $code .= "\t" . '}' . "\n";
 
@@ -841,12 +837,31 @@ abstract class Object_Class_Data
         return strlen($number) === 0 ? "" : (int)$number;
     }
 
+    /**
+     * @param $number
+     * @return float
+     */
     public function getAsFloatCast($number){
         return strlen($number) === 0 ? "" : (float)$number;
     }
 
+    /**
+     * @param $data
+     * @return string
+     */
     public function getVersionPreview($data) {
         return "no preview";
+    }
+
+    /**
+     * @param Object_Concrete $object
+     * @return bool
+     */
+    public function isEmpty($data) {
+        if(empty($data)) {
+            return true;
+        }
+        return false;
     }
 
     /** True if change is allowed in edit mode.

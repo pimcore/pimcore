@@ -489,7 +489,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
 
 
     public function getGetterCode ($class) {
-        // getter
+        // getter, no inheritance here, that's the only difference
 
         $key = $this->getName();
         $code = "";

@@ -29,6 +29,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         this.scheduler = new pimcore.element.scheduler(this, "asset");
         this.dependencies = new pimcore.element.dependencies(this, "asset");
         this.notes = new pimcore.element.notes(this, "asset");
+        this.metadata = new pimcore.asset.metadata(this);
 
         this.getData();
     },
@@ -41,6 +42,9 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
         if (this.isAllowed("save") || this.isAllowed("publish")) {
             items.push(this.getEditPanel());
+        }
+        if (this.isAllowed("publish")) {
+            items.push(this.metadata.getLayout());
         }
         if (this.isAllowed("properties")) {
             items.push(this.properties.getLayout());

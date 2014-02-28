@@ -354,6 +354,10 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
         } else if($element instanceof Asset) {
             $this->data = $element->getFilename();
 
+            foreach($element->getMetadata() as $md) {
+                $this->data .= " " . $md["name"] . ":" . $md["data"];
+            }
+
             if($element instanceof Asset_Document && Pimcore_Document::isAvailable()) {
                 if(Pimcore_Document::isFileTypeSupported($element->getFilename())) {
                     $this->data .= " " . $element->getText();

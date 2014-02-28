@@ -63,6 +63,10 @@ class Document_Tag_Video extends Document_Tag
      */
     public function getTitle()
     {
+        if(!$this->title && $this->getVideoAsset()) {
+            // default title for microformats
+            return $this->getVideoAsset()->getFilename();
+        }
         return $this->title;
     }
 
@@ -80,6 +84,10 @@ class Document_Tag_Video extends Document_Tag
      */
     public function getDescription()
     {
+        if(!$this->description) {
+            // default description for microformats
+            return $this->getTitle();
+        }
         return $this->description;
     }
 
@@ -137,7 +145,6 @@ class Document_Tag_Video extends Document_Tag
 
         if (!$this->id || !$this->type) {
             return $this->getEmptyCode();
-            //return $this->getFlowplayerCode();
         }
         else if ($this->type == "asset") {
             return $this->getAssetCode();
@@ -153,7 +160,6 @@ class Document_Tag_Video extends Document_Tag
         }
 
         return $this->getEmptyCode();
-        //return $this->getFlowplayerCode();
     }
 
 
@@ -309,14 +315,17 @@ class Document_Tag_Video extends Document_Tag
     public function getAssetCode()
     {
         $asset = Asset::getById($this->id);
+        $options = $this->getOptions();
 
-        // compatibility mode when FFMPEG is not present
-        if(!Pimcore_Video::isAvailable()) {
-            // try to load the assigned asset into the flowplayer
-            return $this->getFlowplayerCode(array("mp4" => (string) $asset));
+        // compatibility mode when FFMPEG is not present or no thumbnail config is given
+        if(!Pimcore_Video::isAvailable() || !$options["thumbnail"]) {
+            if($asset instanceof Asset && preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
+                return $this->getHtml5Code(array("mp4" => (string) $asset));
+            }
+
+            return $this->getErrorCode("Asset is not a video, or missing thumbnail configuration");
         }
 
-        $options = $this->getOptions();
         if ($asset instanceof Asset_Video && $options["thumbnail"]) {
             $thumbnail = $asset->getThumbnail($options["thumbnail"]);
             if ($thumbnail) {
@@ -339,11 +348,7 @@ class Document_Tag_Video extends Document_Tag
                 }
 
                 if ($thumbnail["status"] == "finished") {
-                    if($options["html5"]) {
-                        return $this->getHtml5Code($thumbnail["formats"], $image);
-                    } else {
-                        return $this->getFlowplayerCode($thumbnail["formats"], $image);
-                    }
+                    return $this->getHtml5Code($thumbnail["formats"], $image);
                 } else if ($thumbnail["status"] == "inprogress") {
                     // disable the output-cache if enabled
                     $front = Zend_Controller_Front::getInstance();
@@ -357,24 +362,12 @@ class Document_Tag_Video extends Document_Tag
             } else {
                 return $this->getErrorCode("The given thumbnail doesn't exist");
             }
-        } else {
-
-            // try to load the assigned asset into the flowplayer (backward compatibility only for f4v, flv, and mp4 files)
-            if($asset instanceof Asset && preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
-                // try to generate thumbnail with ffmpeg if installed
-                if(Pimcore_Video::isAvailable()) {
-                    $image = $asset->getImageThumbnail(array("width" => array_key_exists("width", $options) ? $options["width"] : 800));
-                }
-                return $this->getFlowplayerCode(array("mp4" => (string) $asset), $image);
-            }
-
-            return $this->getErrorCode("Asset is not a video, or missing thumbnail configuration");
         }
     }
 
     public function getUrlCode()
     {
-        return $this->getFlowplayerCode(array("mp4" => (string) $this->id));
+        return $this->getHtml5Code(array("mp4" => (string) $this->id));
     }
 
     public function getErrorCode($message = "") {
@@ -506,7 +499,6 @@ class Document_Tag_Video extends Document_Tag
     {
         if (!$this->id) {
             return $this->getEmptyCode();
-            //return $this->getFlowplayerCode();
         }
 
         $options = $this->getOptions();
@@ -520,7 +512,6 @@ class Document_Tag_Video extends Document_Tag
 
         if (!$vimeoId || strpos($parts["host"], "vimeo.com") === false) {
             return $this->getEmptyCode();
-            //return $this->getFlowplayerCode();
         }
 
         $width = "100%";
@@ -536,99 +527,6 @@ class Document_Tag_Video extends Document_Tag
         $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
             <iframe src="//player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
-
-        return $code;
-    }
-
-    public function getFlowplayerCode($urls = array(), $thumbnail = null)
-    {
-
-        $options = $this->getOptions();
-        $code = "";
-        $scriptPath = "/pimcore/static/js/lib/flowplayer/flowplayer.min.js";
-        $swfPath = "/pimcore/static/js/lib/flowplayer/flowplayer.swf";
-        $uid = "video_" . uniqid();
-        $config = array();
-
-        // configurations
-        if ($options["swfPath"]) {
-            $swfPath = $options["swfPath"];
-        }
-        if ($options["scriptPath"]) {
-            $scriptPath = $options["scriptPath"];
-        }
-
-        $preConfig = Zend_Json::encode(array("dummy" => true));
-        if ($options["config"]) {
-            if (is_string($options["config"])) {
-                // configuration is the name of the javascript variable which contains the configuration
-                $preConfig = $options["config"];
-            }
-            else if (is_array($options["config"])) {
-                // configuration is directly in php, so wh have to convert it to json
-                $preConfig = Zend_Json::encode($options["config"]);
-            }
-        }
-
-        $config["clip"]["url"] = $urls["mp4"];
-        if (empty($urls)) {
-            return $this->getEmptyCode();
-        }
-
-        if (!Document_Tag_Video::$playerJsEmbedded) {
-            $code .= '<script type="text/javascript" src="' . $scriptPath . '"></script>';
-            $code .= '<script type="text/javascript" src="/pimcore/static/js/lib/array_merge.js"></script>';
-            $code .= '<script type="text/javascript" src="/pimcore/static/js/lib/array_merge_recursive.js"></script>';
-            Document_Tag_Video::$playerJsEmbedded = true;
-
-            $code .= '
-
-                <style type="text/css">
-                    a.pimcore_video_flowplayer {
-                        display:block;
-                        text-align:center;
-                    }
-                </style>
-            ';
-        }
-
-        if (Pimcore_Video::isAvailable()) {
-            $code .= '
-                <style type="text/css">
-                    #' . $uid . ' .play {
-                        margin-top:' . (($this->getHeight()-83)/2) . 'px;
-                        border:0px;
-                        display:inline-block;
-                        width:83px;
-                        height:83px;
-                        background:url(/pimcore/static/js/lib/flowplayer/play_large.png);
-                    }
-                </style>
-            ';
-        }
-
-        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
-            <a id="' . $uid . '"
-            	href="'.$urls["mp4"].'"
-            	class="pimcore_video_flowplayer"
-            	style="background:url(' . $thumbnail . ') no-repeat center center; width:' . $this->getWidth() . 'px; height:' . $this->getHeight() . 'px;">
-            	' . (Pimcore_Video::isAvailable() ? '<span class="play"></span>' : "") .'
-            </a>
-        </div>';
-
-        Zend_Json::encode($config);
-
-        $code .= '
-            <script type="text/javascript">
-            	var player_config_' . $uid . ' = array_merge_recursive(' . $preConfig . ',' . Zend_Json::encode($config) . ');
-                
-                flowplayer("' . $uid . '", {
-            		src: "' . $swfPath . '",
-            		width: "' . $this->getWidth() . '",
-            		height: "' . $this->getHeight() . '"
-            	},player_config_' . $uid . ');
-            </script>
-        ';
 
         return $code;
     }
@@ -661,9 +559,38 @@ class Document_Tag_Video extends Document_Tag
         $code .= '<meta itemprop="name" content="' . $this->getTitle() . '" />' . "\n";
         $code .= '<meta itemprop="description" content="' . $this->getDescription() . '" />' . "\n";
         $code .= '<meta itemprop="duration" content="' . $durationString . '" />' . "\n";
-        $code .= '<meta itemprop="url" content="' . Pimcore_Tool::getHostUrl() . $_SERVER["REQUEST_URI"] . ($_SERVER["QUERY_STRING"] ? ("?" .$_SERVER["QUERY_STRING"]) : "") . '" />' . "\n";
-        $code .= '<meta itemprop="thumbnail" content="' . Pimcore_Tool::getHostUrl() . $thumbnail . '" />' . "\n";
-        $code .= '<video class="pimcore_video" width="' . $this->getWidth() . '" height="' . $this->getHeight() . '" poster="' . $thumbnail . '" controls="controls" preload="none">' . "\n";
+        $code .= '<meta itemprop="contentURL" content="' . Pimcore_Tool::getHostUrl() . $urls["mp4"] .  '" />' . "\n";
+        if($thumbnail) {
+            $code .= '<meta itemprop="thumbnailURL" content="' . Pimcore_Tool::getHostUrl() . $thumbnail . '" />' . "\n";
+        }
+
+
+        // default attributes
+        $attributesString = "";
+        $attributes = array(
+            "width" => $this->getWidth(),
+            "height" => $this->getHeight(),
+            "poster" => $thumbnail,
+            "controls" => "controls",
+            "class" => "pimcore_video"
+        );
+
+        if(array_key_exists("attributes", $this->getOptions())) {
+            $attributes = array_merge($attributes, $this->getOptions()["attributes"]);
+        }
+
+        foreach($attributes as $key => $value) {
+            $attributesString .= " " . $key;
+            if(!empty($value)) {
+                $quoteChar = '"';
+                if(strpos($value, '"')) {
+                    $quoteChar = "'";
+                }
+                $attributesString .= '=' . $quoteChar . $value . $quoteChar;
+            }
+        }
+
+        $code .= '<video' . $attributesString . '>' . "\n";
 
         $urls = array_reverse($urls); // use webm as the preferred format
 

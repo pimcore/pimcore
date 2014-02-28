@@ -278,6 +278,20 @@ class Pimcore_View extends Zend_View {
     }
 
     /**
+     * shorthand for $this->translate() view helper
+     */
+    public function t() {
+        return call_user_func_array(array($this, "translate"), func_get_args());
+    }
+
+    /**
+     * shorthand for $this->translateAdmin() view helper
+     */
+    public function ts() {
+        return call_user_func_array(array($this, "translateAdmin"), func_get_args());
+    }
+
+    /**
      * @throws Exception
      * @param $method
      * @param $arguments

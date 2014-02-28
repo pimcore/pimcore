@@ -144,6 +144,7 @@ pimcore.document.tree = Class.create({
 
     onTreeNodeClick: function () {
         if(this.attributes.permissions.view) {
+            pimcore.helpers.treeNodeThumbnailPreviewHide();
             pimcore.helpers.openDocument(this.id, this.attributes.type);
         }
     },
@@ -493,6 +494,15 @@ pimcore.document.tree = Class.create({
                 handler: this.attributes.reference.deleteDocument.bind(this)
             }));
         }
+
+        if (this.attributes.permissions.create) {
+            menu.add(new Ext.menu.Item({
+                text: t('search_and_move'),
+                iconCls: "pimcore_icon_search_and_move",
+                handler: this.attributes.reference.searchAndMove.bind(this, this.id)
+            }));
+        }
+
 
         // site-mgnt
         var user = pimcore.globalmanager.get("user");
@@ -905,7 +915,7 @@ pimcore.document.tree = Class.create({
             var submitFunction = function() {
                 var params = pageForm.getForm().getFieldValues();
                 messageBox.close();
-                if(params["key"].length > 1) {
+                if(params["key"].length >= 1) {
                     params["type"] = type;
                     params["docTypeId"] = docTypeId;
                     this.attributes.reference.addDocumentCreate(params, this);
@@ -1189,6 +1199,13 @@ pimcore.document.tree = Class.create({
             }.bind(this, type)
         });
     },
+
+    searchAndMove: function(parentId) {
+        pimcore.helpers.searchAndMove(parentId, function() {
+            this.reload();
+        }.bind(this), "document");
+    },
+
 
     isKeyValid: function (key) {
 

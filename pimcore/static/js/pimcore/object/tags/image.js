@@ -28,20 +28,20 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     getGridColumnConfig: function(field) {
 
         return {header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
-                    renderer: function (key, value, metaData, record) {
+            renderer: function (key, value, metaData, record) {
                                     this.applyPermissionStyle(key, value, metaData, record);
 
-                                    if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited
-                                                                        == true) {
-                                        metaData.css += " grid_value_inherited";
-                                    }
+                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited
+                    == true) {
+                    metaData.css += " grid_value_inherited";
+                }
 
-                                    if (value && value.id) {
-                                        return '<img src="/admin/asset/get-image-thumbnail/id/' + value.id
-                                            + '/width/88/height/88/frame/true" />';
-                                    }
-                                }.bind(this, field.key)};
-    },    
+                if (value && value.id) {
+                    return '<img src="/admin/asset/get-image-thumbnail/id/' + value.id
+                        + '/width/88/height/88/frame/true" />';
+                }
+            }.bind(this, field.key)};
+    },
 
     getLayoutEdit: function () {
 
@@ -61,29 +61,29 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 height: 16,
                 cls: "pimcore_icon_droptarget"
             },
-            {
-                xtype: "tbtext",
-                text: "<b>" + this.fieldConfig.title + "</b>"
-            },"->",{
-                xtype: "button",
-                iconCls: "pimcore_icon_upload_single",
+                {
+                    xtype: "tbtext",
+                    text: "<b>" + this.fieldConfig.title + "</b>"
+                },"->",{
+                    xtype: "button",
+                    iconCls: "pimcore_icon_upload_single",
                 cls: "pimcore_inline_upload",
-                handler: this.uploadDialog.bind(this)
-            },{
-                xtype: "button",
-                iconCls: "pimcore_icon_edit",
-                handler: this.openImage.bind(this)
-            }, {
-                xtype: "button",
-                iconCls: "pimcore_icon_delete",
-                handler: this.empty.bind(this)
-            },{
-                xtype: "button",
-                iconCls: "pimcore_icon_search",
-                handler: this.openSearchEditor.bind(this)
-            }],
+                    handler: this.uploadDialog.bind(this)
+                },{
+                    xtype: "button",
+                    iconCls: "pimcore_icon_edit",
+                    handler: this.openImage.bind(this)
+                }, {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_delete",
+                    handler: this.empty.bind(this)
+                },{
+                    xtype: "button",
+                    iconCls: "pimcore_icon_search",
+                    handler: this.openSearchEditor.bind(this)
+                }],
             cls: "object_field",
-            bodyCssClass: "pimcore_droptarget_image"
+            bodyCssClass: "pimcore_droptarget_image pimcore_image_container"
         };
 
         this.component = new Ext.Panel(conf);
@@ -136,7 +136,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             height: this.fieldConfig.height,
             title: this.fieldConfig.title,
             cls: "object_field",
-            bodyCssClass: "pimcore_nodrop_image"
+            bodyCssClass: "pimcore_droptarget_image pimcore_image_container"
         };
 
         this.component = new Ext.Panel(conf);
@@ -164,7 +164,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             return true;
         }
     },
-    
+
     openSearchEditor: function () {
         pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
             type: ["asset"],
@@ -190,7 +190,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             }
         }.bind(this));
     },
-    
+
     addDataFromSelector: function (item) {
 
         this.empty();
@@ -199,20 +199,20 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             if(this.data != item.id) {
                 this.dirty = true;
             }
-            
+
             this.data = item.id;
 
-            this.updateImage(); 
+            this.updateImage();
             return true;
         }
     },
-    
+
     openImage: function () {
         if(this.data) {
             pimcore.helpers.openAsset(this.data, "image");
         }
     },
-    
+
     updateImage: function () {
 
         // 5px padding (-10)
@@ -233,7 +233,8 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     getBody: function () {
         // get the id from the body element of the panel because there is no method to set body's html
         // (only in configure)
-        var bodyId = Ext.get(this.component.getEl().dom).query(".pimcore_droptarget_image,.pimcore_nodrop_image")[0].getAttribute("id");
+        var elements = Ext.get(this.component.getEl().dom).query(".pimcore_image_container");
+        var bodyId = elements[0].getAttribute("id");
         return Ext.get(bodyId);
     },
 
@@ -304,12 +305,12 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 this.uploadDialog();
             }.bind(this)
         }));
-        
+
         menu.showAt(e.getXY());
 
         e.stopEvent();
     },
-    
+
     empty: function () {
         this.data = null;
         this.getBody().setStyle({
@@ -318,7 +319,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         this.dirty = true;
         this.getBody().repaint();
     },
-    
+
     getValue: function () {
         return this.data;
     },
