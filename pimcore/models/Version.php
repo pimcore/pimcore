@@ -460,7 +460,7 @@ class Version extends Pimcore_Model_Abstract {
                 while (($file = readdir($dh)) !== false) {
                     $path = $dir.$file;
                     if(is_file($path) && !preg_match("/\.(gz|bin)$/", $file)) {
-                        Logger::error("filename:" . $file);
+                        Logger::debug("version ID compressed:" . $file);
                         gzcompressfile($path, 9);
                         @unlink($path);
                     }
