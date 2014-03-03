@@ -881,6 +881,11 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             } else {
                 $thumbnail = $image->getThumbnailConfig($this->getAllParams());
             }
+        } else {
+            // no high-res images in admin mode (editmode)
+            // this is mostly because of the document's image editable, which doesn't know anything about the thumbnail
+            // configuration, so the dimensions would be incorrect (double the size)
+            $thumbnail->setHighResolution(1);
         }
 
         $format = strtolower($thumbnail->getFormat());
