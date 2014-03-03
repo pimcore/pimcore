@@ -229,7 +229,8 @@ class Document_Tag_Video extends Document_Tag
         $html = parent::admin();
 
         // get frontendcode for preview
-        $html .= $this->frontend();
+        // put the video code inside the generic code
+        $html = str_replace("</div>", $this->frontend() . "</div>", $html);
 
         return $html;
     }

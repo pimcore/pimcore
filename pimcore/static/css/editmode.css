@@ -373,7 +373,6 @@
     position: relative;
 }
 .pimcore_tag_video.x-masked {
-    position: static;
     min-height: 50px;
 }
 
