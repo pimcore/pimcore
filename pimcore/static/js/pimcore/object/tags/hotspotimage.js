@@ -273,7 +273,9 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             var addY = (originalHeight - this.fileinfo.height) / 2;
 
             for(i = 0; i < this.previewItems.length; i++) {
-                document.getElementById(this.previewItems[i]).remove();
+                if(Ext.get(this.previewItems[i])) {
+                    Ext.get(this.previewItems[i]).remove();
+                }
             }
             this.previewItems = [];
 
