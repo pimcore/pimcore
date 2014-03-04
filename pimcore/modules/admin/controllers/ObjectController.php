@@ -457,7 +457,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
 
 
-            if ( $fielddefinition->isEmpty($value) && !empty($parent) ) {
+            if ( $fielddefinition->isEmpty($fieldData) && !empty($parent) ) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
                 $isInheritedValue = $isInheritedValue || ($level != 0);
