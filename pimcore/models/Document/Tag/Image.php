@@ -72,6 +72,13 @@ class Document_Tag_Image extends Document_Tag {
      * @var array
      */
     public $marker = array();
+    
+    /**
+     * Dropclass
+     *
+     * @var string
+     */
+    public $dropClass = array();
 
     /**
      * @see Document_Tag_Interface::getType
@@ -95,7 +102,8 @@ class Document_Tag_Image extends Document_Tag {
             "cropTop" => $this->cropTop,
             "cropLeft" => $this->cropLeft,
             "hotspots" => $this->hotspots,
-            "marker" => $this->marker
+            "marker" => $this->marker,
+            "dropClass" => $this->dropClass
         );
     }
 
@@ -134,7 +142,8 @@ class Document_Tag_Image extends Document_Tag {
             "cropTop" => $this->cropTop,
             "cropLeft" => $this->cropLeft,
             "hotspots" => $hotspots,
-            "marker" => $marker
+            "marker" => $marker,
+            "dropClass" => $this->dropClass
         );
     }
 
@@ -177,7 +186,8 @@ class Document_Tag_Image extends Document_Tag {
                 "cropTop" => $this->cropTop,
                 "cropLeft" => $this->cropLeft,
                 "hotspots" => $hotspots,
-                "marker" => $marker
+                "marker" => $marker,
+                "dropClass" => $this->dropClass
             );
         }
         return null;
@@ -358,7 +368,8 @@ class Document_Tag_Image extends Document_Tag {
         $this->cropLeft = $data["cropLeft"];
         $this->marker = $data["marker"];
         $this->hotspots = $data["hotspots"];
-
+        $this->dropClass = $data["dropClass"];
+        
         try {
             $this->image = Asset_Image::getById($this->id);
         }
@@ -410,6 +421,7 @@ class Document_Tag_Image extends Document_Tag {
         $this->cropLeft = $data["cropLeft"];
         $this->marker = $data["marker"];
         $this->hotspots = $data["hotspots"];
+        $this->dropClass = $data["dropClass"];
 
         $this->image = Asset_Image::getById($this->id);
         return $this;
@@ -742,6 +754,22 @@ class Document_Tag_Image extends Document_Tag {
     public function getMarker()
     {
         return $this->marker;
+    }
+    
+     /**
+     * @param string $dropClass
+     */
+    public function setDropClass($dropClass)
+    {
+        $this->dropClass = $dropClass;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDropClass()
+    {
+        return $this->dropClass;
     }
 
     /**

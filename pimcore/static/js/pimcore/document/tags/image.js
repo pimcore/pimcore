@@ -49,7 +49,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
             // register at global DnD manager
             dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
-
+            
             el.getEl().setStyle({
                 position: "relative"
             });
@@ -85,6 +85,17 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
 
             this.getBody().addClass("pimcore_tag_image_empty");
+			
+            // If dropClass is register extra drop targets
+            if (this.options.dropClass){
+	            var extra_drop_targets = Ext.query('.' + this.options.dropClass);
+
+				for (i = 0; i < extra_drop_targets.length; ++i) {
+					var drop_el = Ext.get(extra_drop_targets[i]);
+				    dndManager.addDropTarget(drop_el, this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+				    drop_el.on("contextmenu", this.onContextMenu.bind(this));
+				}
+            }
 
         }.bind(this));
 
