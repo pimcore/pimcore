@@ -64,23 +64,26 @@ class Pimcore_View extends Zend_View {
         }
     }
 
+    /**
+     * @param string $script
+     */
     public function includeTemplateFile($script){
-        $showTemplatePaths = Zend_Controller_Front::getInstance()->getRequest()->getParam('show_template_paths');
+        $showTemplatePaths = isset($_REQUEST["show_template_paths"]);
         if($showTemplatePaths && Pimcore::inDebugMode()){
-            echo '<!-- start template inclusion: ' . $script .' -->';
+            echo "\n<!-- start template inclusion: " . $script . " -->\n";
         }
         include($script);
         if($showTemplatePaths && Pimcore::inDebugMode()){
-            echo '<!-- finished template inclusion: ' . $script .' -->';
+            echo "\n<!-- finished template inclusion: " . $script . " -->\n";
         }
     }
 
     /**
-     * includes a template
-     *
      * @param $scriptPath
      * @param array $params
-     * @return void | string
+     * @param bool $resetPassedParams
+     * @param bool $capture
+     * @return string
      */
     public function template($scriptPath, $params = array(), $resetPassedParams = false, $capture = false) {
 
@@ -248,8 +251,8 @@ class Pimcore_View extends Zend_View {
     }
 
     /**
-     * @deprecated
      * @param $key
+     * @param null $default
      * @return mixed
      */
     public function _getParam($key, $default = null) {
