@@ -12,6 +12,7 @@ class OnlineShop_Framework_Impl_AttributePriceInfo extends OnlineShop_Framework_
 
 
     private $config;
+    private $priceClass = 'OnlineShop_Framework_Impl_Price';
 
     public function __construct($params) {
         if (is_array($params)) {
@@ -22,6 +23,9 @@ class OnlineShop_Framework_Impl_AttributePriceInfo extends OnlineShop_Framework_
                 $this->products = $params["products"];
                 $this->quantityScale = $params["quantityScale"];
                 $this->config = $params["config"];
+                if($this->config->priceclass) {
+                    $this->priceClass = $this->config->priceclass;
+                }
             } else {
                 $this->product = current($params);
             }
@@ -54,16 +58,16 @@ class OnlineShop_Framework_Impl_AttributePriceInfo extends OnlineShop_Framework_
                         $sum += $p->$getter();
                     }
                 }
-                return new OnlineShop_Framework_Impl_Price($sum, $this->getDefaultCurrency(), false);
+                return new $this->priceClass($sum, $this->getDefaultCurrency(), false);
 
             } else {
-                return new OnlineShop_Framework_Impl_Price($this->product->$getter(), $this->getDefaultCurrency(), false);
+                return new $this->priceClass($this->product->$getter(), $this->getDefaultCurrency(), false);
             }
         }
     }
 
     public function getTotalPrice() {
-        return new OnlineShop_Framework_Impl_Price($this->getPrice()->getAmount() * $this->getQuantity(), ($this->getPrice()->getCurrency()), false);
+        return new $this->priceClass($this->getPrice()->getAmount() * $this->getQuantity(), ($this->getPrice()->getCurrency()), false);
     }
 
     public function __call($name, $arguments) {
