@@ -67,6 +67,12 @@ class Pimcore {
             }
         }
 
+        if(self::inDebugMode() && $frontend) {
+            $whoops = new \Whoops\Run;
+            $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+            $whoops->register();
+        }
+
         $front->registerPlugin(new Pimcore_Controller_Plugin_ErrorHandler(), 1);
         $front->registerPlugin(new Pimcore_Controller_Plugin_Maintenance(), 2);
 
@@ -608,7 +614,7 @@ class Pimcore {
         $autoloader->registerNamespace('Webservice');
         $autoloader->registerNamespace('Search');
         $autoloader->registerNamespace('Tool');
-        $autoloader->registerNamespace('KeyValue');
+        $autoloader->registerNamespace('Whoops');
 
         Pimcore_Tool::registerClassModelMappingNamespaces();
     }
