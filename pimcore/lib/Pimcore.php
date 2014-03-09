@@ -76,6 +76,9 @@ class Pimcore {
             $whoops = new \Whoops\Run;
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
             $whoops->register();
+
+            // add event handler before Pimcore::shutdown() to ensure fatal errors are handled by Whoops
+            self::getEventManager()->attach("system.shutdown", array($whoops, "handleShutdown"), 10000);
         }
 
         $front->registerPlugin(new Pimcore_Controller_Plugin_ErrorHandler(), 1);
