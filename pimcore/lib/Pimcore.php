@@ -26,6 +26,11 @@ class Pimcore {
     private static $inShutdown = false;
 
     /**
+     * @var Zend_EventManager_EventManager
+     */
+    private static $eventManager;
+
+    /**
      * @static
      * @throws Exception|Zend_Controller_Router_Exception
      */
@@ -742,6 +747,16 @@ class Pimcore {
     }
 
     /**
+     * @return Zend_EventManager_EventManager
+     */
+    public static function getEventManager() {
+        if(!self::$eventManager) {
+            self::$eventManager = new Zend_EventManager_EventManager();
+        }
+        return self::$eventManager;
+    }
+
+    /**
      * Forces a garbage collection.
      * @static
      * @return void
@@ -936,14 +951,6 @@ class Pimcore {
 
         // disable logging - otherwise this will cause problems in the ongoing shutdown process (session write, __destruct(), ...)
         Logger::resetLoggers();
-    }
-
-    /**
-     * @static
-     *
-     */
-    public static function shutdownHandler () {
-        Pimcore_Event::fire("pimcore.shutdown");
     }
 }
 

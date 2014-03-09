@@ -109,8 +109,9 @@ if(@is_file($composerStartup)) {
 }
 
 // on pimcore shutdown
-register_shutdown_function("Pimcore::shutdownHandler");
+register_shutdown_function(function () {
+    Pimcore::getEventManager()->trigger("system.shutdown");
+});
 
-// register shutdown function
-Pimcore_Event::register("pimcore.shutdown", array("Pimcore", "shutdown"), array(), 999);
-
+// attach global shutdown event
+Pimcore::getEventManager()->attach("system.shutdown", array("Pimcore", "shutdown"), 9999);
