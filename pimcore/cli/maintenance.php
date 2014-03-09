@@ -101,24 +101,9 @@ $manager->registerJob(new Schedule_Maintenance_Job("contentanalysis", "Tool_Cont
 $manager->registerJob(new Schedule_Maintenance_Job("downloadmaxminddb", "Pimcore_Update", "updateMaxmindDb"));
 $manager->registerJob(new Schedule_Maintenance_Job("cleanupcache", "Pimcore_Model_Cache", "maintenance"));
 
-// call plugins
-$plugins = array_merge(Pimcore_API_Plugin_Broker::getInstance()->getPlugins(), Pimcore_API_Plugin_Broker::getInstance()->getModules());
-foreach ($plugins as $plugin) {
-    $id = str_replace('\\', '_', get_class($plugin));
 
-    $jobRegistered = null;
-
-    if(method_exists($plugin, "maintenanceForce")) {
-             $jobRegistered =  $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintenanceForce"), true);
-    } else {
-            if(method_exists($plugin, "maintainance")) {
-                    //legacy hack
-                    $jobRegistered = $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintainance"));
-            } else  if(method_exists($plugin, "maintenance")) {
-                    $jobRegistered = $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintenance"));
-            }
-    }
-}
+Pimcore::getEventManager()->trigger("system.maintenance", $manager);
 
 $manager->run();
 
+Logger::info("All maintenance-jobs finished!");

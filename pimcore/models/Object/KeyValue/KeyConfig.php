@@ -256,12 +256,12 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      * Deletes the key value key configuration
      */
     public function delete() {
-        Pimcore_API_Plugin_Broker::getInstance()->preDeleteKeyValueKeyConfig($this);
+        Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.preDelete", $this);
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
         }
         parent::delete();
-        Pimcore_API_Plugin_Broker::getInstance()->postDeleteKeyValueKeyConfig($this);
+        Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.postDelete", $this);
     }
 
     /**
@@ -274,17 +274,17 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
             $isUpdate = true;
-            Pimcore_API_Plugin_Broker::getInstance()->preUpdateKeyValueKeyConfig($this);
+            Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.preUpdate", $this);
         } else {
-            Pimcore_API_Plugin_Broker::getInstance()->preAddKeyValueKeyConfig($this);
+            Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.preAdd", $this);
         }
 
         parent::save();
 
         if ($isUpdate) {
-            Pimcore_API_Plugin_Broker::getInstance()->postUpdateKeyValueKeyConfig($this);
+            Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.postUpdate", $this);
         } else {
-            Pimcore_API_Plugin_Broker::getInstance()->postAddKeyValueKeyConfig($this);
+            Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.postAdd", $this);
         }
     }
 

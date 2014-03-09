@@ -137,9 +137,9 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
      * Deletes the key value group configuration
      */
     public function delete() {
-        Pimcore_API_Plugin_Broker::getInstance()->preDeleteKeyValueGroupConfig($this);
+        Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.preDelete", $this);
         parent::delete();
-        Pimcore_API_Plugin_Broker::getInstance()->postDeleteKeyValueGroupConfig($this);
+        Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.postDelete", $this);
     }
 
     /**
@@ -150,17 +150,17 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
 
         if ($this->getId()) {
             $isUpdate = true;
-            Pimcore_API_Plugin_Broker::getInstance()->preUpdateKeyValueGroupConfig($this);
+            Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.preUpdate", $this);
         } else {
-            Pimcore_API_Plugin_Broker::getInstance()->preAddKeyValueGroupConfig($this);
+            Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.preAdd", $this);
         }
 
         parent::save();
 
         if ($isUpdate) {
-            Pimcore_API_Plugin_Broker::getInstance()->postUpdateKeyValueGroupConfig($this);
+            Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.postUpdate", $this);
         } else {
-            Pimcore_API_Plugin_Broker::getInstance()->postAddKeyValueGroupConfig($this);
+            Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.postAdd", $this);
         }
     }
 

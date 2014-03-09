@@ -426,7 +426,7 @@ class Object_Abstract extends Element_Abstract {
      */
     public function delete() {
 
-        Pimcore_API_Plugin_Broker::getInstance()->preDeleteObject($this);
+        Pimcore::getEventManager()->trigger("object.preDelete", $this);
 
         // delete childs
         if ($this->hasChilds(array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT))) {
@@ -457,7 +457,7 @@ class Object_Abstract extends Element_Abstract {
         //set object to registry
         Zend_Registry::set("object_" . $this->getId(), null);
 
-        Pimcore_API_Plugin_Broker::getInstance()->postDeleteObject($this);
+        Pimcore::getEventManager()->trigger("object.postDelete", $this);
     }
 
 
@@ -469,9 +469,9 @@ class Object_Abstract extends Element_Abstract {
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            Pimcore_API_Plugin_Broker::getInstance()->preUpdateObject($this);
+            Pimcore::getEventManager()->trigger("object.preUpdate", $this);
         } else {
-            Pimcore_API_Plugin_Broker::getInstance()->preAddObject($this);
+            Pimcore::getEventManager()->trigger("object.preAdd", $this);
         }
 
         // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
@@ -535,9 +535,9 @@ class Object_Abstract extends Element_Abstract {
         }
 
         if ($isUpdate) {
-            Pimcore_API_Plugin_Broker::getInstance()->postUpdateObject($this);
+            Pimcore::getEventManager()->trigger("object.postUpdate", $this);
         } else {
-            Pimcore_API_Plugin_Broker::getInstance()->postAddObject($this);
+            Pimcore::getEventManager()->trigger("object.postAdd", $this);
         }
 
         $additionalTags = array();

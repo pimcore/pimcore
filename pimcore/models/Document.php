@@ -348,9 +348,9 @@ class Document extends Element_Abstract {
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            Pimcore_API_Plugin_Broker::getInstance()->preUpdateDocument($this);
+            Pimcore::getEventManager()->trigger("document.preUpdate", $this);
         } else {
-            Pimcore_API_Plugin_Broker::getInstance()->preAddDocument($this);
+            Pimcore::getEventManager()->trigger("document.preAdd", $this);
         }
 
         // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
@@ -415,9 +415,9 @@ class Document extends Element_Abstract {
         }
 
         if ($isUpdate) {
-            Pimcore_API_Plugin_Broker::getInstance()->postUpdateDocument($this);
+            Pimcore::getEventManager()->trigger("document.postUpdate", $this);
         } else {
-            Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
+            Pimcore::getEventManager()->trigger("document.postAdd", $this);
         }
 
         $additionalTags = array();
@@ -630,7 +630,7 @@ class Document extends Element_Abstract {
      */
     public function delete() {
 
-        Pimcore_API_Plugin_Broker::getInstance()->preDeleteDocument($this);
+        Pimcore::getEventManager()->trigger("document.preDelete", $this);
 
         // remove childs
         if ($this->hasChilds()) {
@@ -661,7 +661,7 @@ class Document extends Element_Abstract {
         //set object to registry
         Zend_Registry::set("document_" . $this->getId(), null);
 
-        Pimcore_API_Plugin_Broker::getInstance()->postDeleteDocument($this);
+        Pimcore::getEventManager()->trigger("document.postDelete", $this);
     }
 
     /**

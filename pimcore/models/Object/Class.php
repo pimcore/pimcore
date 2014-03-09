@@ -200,9 +200,10 @@ class Object_Class extends Pimcore_Model_Abstract {
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            Pimcore_API_Plugin_Broker::getInstance()->preUpdateObjectClass($this);
+            Pimcore::getEventManager()->trigger("object.class.preUpdate", $this);
+
         } else {
-            Pimcore_API_Plugin_Broker::getInstance()->preAddObjectClass($this);
+            Pimcore::getEventManager()->trigger("object.class.preAdd", $this);
         }
 
         $this->setModificationDate(time());

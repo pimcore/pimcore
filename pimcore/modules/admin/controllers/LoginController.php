@@ -146,8 +146,14 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         } catch (Exception $e) {
 
             //see if module or plugin authenticates user
-            $user = Pimcore_API_Plugin_Broker::getInstance()->authenticateUser($this->getParam("username"),$this->getParam("password"));
-            if($user instanceof User){
+            Pimcore::getEventManager()->trigger("admin.login.login.failed", $this, [
+                "username" => $this->getParam("username"),
+                "password" => $this->getParam("password")
+            ]);
+
+            $user = $this->getUser();
+
+            if($user instanceof User && $user->isActive() && $user->getId()) {
                 Pimcore_Tool_Session::useSession(function($adminSession) use ($user) {
                     $adminSession->user = $user;
                 });
@@ -166,9 +172,11 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
     public function logoutAction() {
 
-        Pimcore_Tool_Session::useSession(function($adminSession) {
+        $controller = $this;
+
+        Pimcore_Tool_Session::useSession(function($adminSession) use ($controller) {
             if ($adminSession->user instanceof User) {
-                Pimcore_API_Plugin_Broker::getInstance()->preLogoutUser($adminSession->user);
+                Pimcore::getEventManager()->trigger("admin.login.logout", $controller, ["user" => $adminSession->user]);
                 $adminSession->user = null;
             }
 

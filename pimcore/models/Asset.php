@@ -419,9 +419,9 @@ class Asset extends Element_Abstract {
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            Pimcore_API_Plugin_Broker::getInstance()->preUpdateAsset($this);
+            Pimcore::getEventManager()->trigger("asset.preUpdate", $this);
         } else {
-            Pimcore_API_Plugin_Broker::getInstance()->preAddAsset($this);
+            Pimcore::getEventManager()->trigger("asset.preAdd", $this);
         }
 
         // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
@@ -480,9 +480,9 @@ class Asset extends Element_Abstract {
         }
 
         if ($isUpdate) {
-            Pimcore_API_Plugin_Broker::getInstance()->postUpdateAsset($this);
+            Pimcore::getEventManager()->trigger("asset.postUpdate", $this);
         } else {
-            Pimcore_API_Plugin_Broker::getInstance()->postAddAsset($this);
+            Pimcore::getEventManager()->trigger("asset.postAdd", $this);
         }
 
 
@@ -727,7 +727,7 @@ class Asset extends Element_Abstract {
             throw new Exception("root-node cannot be deleted");
         }
 
-        Pimcore_API_Plugin_Broker::getInstance()->preDeleteAsset($this);
+        Pimcore::getEventManager()->trigger("asset.preDelete", $this);
 
         $this->closeStream();
 
@@ -780,7 +780,7 @@ class Asset extends Element_Abstract {
         //set object to registry
         Zend_Registry::set("asset_" . $this->getId(), null);
 
-        Pimcore_API_Plugin_Broker::getInstance()->postDeleteAsset($this);
+        Pimcore::getEventManager()->trigger("asset.postDelete", $this);
     }
 
     public function clearDependentCache($additionalTags = array()) {

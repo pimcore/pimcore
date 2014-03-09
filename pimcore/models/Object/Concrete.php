@@ -247,7 +247,7 @@ class Object_Concrete extends Object_Abstract {
 
         // hook should be also called if "save only new version" is selected
         if($directCall) {
-            Pimcore_API_Plugin_Broker::getInstance()->preUpdateObject($this);
+            Pimcore::getEventManager()->trigger("object.preUpdate", $this);
         }
 
         // scheduled tasks are saved always, they are not versioned!
@@ -272,7 +272,7 @@ class Object_Concrete extends Object_Abstract {
 
         // hook should be also called if "save only new version" is selected
         if($directCall) {
-            Pimcore_API_Plugin_Broker::getInstance()->postUpdateObject($this);
+            Pimcore::getEventManager()->trigger("object.postUpdate", $this);
         }
 
         return $version;

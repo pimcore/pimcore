@@ -225,8 +225,7 @@ class Pimcore {
 
         $front->setRouter($router);
 
-        Pimcore_API_Plugin_Broker::getInstance()->preDispatch();
-
+        self::getEventManager()->trigger("system.startup", $front);
 
         // throw exceptions also when in preview or in editmode (documents) to see it immediately when there's a problem with this page
         $throwExceptions = false;

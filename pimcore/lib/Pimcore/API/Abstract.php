@@ -13,376 +13,96 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_API_Abstract
-{
-
-
-    /**
-     * Hook called before pimcore starts dispatchloop
-     */
-    public function preDispatch()
-    {
-
-    }
-
-
+class Pimcore_API_Abstract {
     /**
      *
-     * Hook called before an asset was added
-     *
-     * @param Asset $asset
      */
-    public function preAddAsset(Asset $asset)
-    {
-
+    public function init() {
+        $this->registerLegacyEvents();
     }
 
     /**
      *
-     * Hook called after an asset was added
-     *
-     * @param Asset $asset
      */
-    public function postAddAsset(Asset $asset)
-    {
+    private function registerLegacyEvents() {
 
+        $mappings = [
+            "maintenance" => "system.maintenance",
+            "maintenanceForce" => "system.maintenanceForce",
+            "preDispatch" => "system.startup",
+            "authenticateUser" => "admin.login.login.failed",
+            "preLogoutUser" => "admin.login.logout",
+            "preAddAsset" => "asset.preAdd",
+            "postAddAsset" => "asset.postAdd",
+            "preDeleteAsset" => "asset.preDelete",
+            "postDeleteAsset" => "asset.postDelete",
+            "preUpdateAsset" => "asset.preUpdate",
+            "postUpdateAsset" => "asset.postUpdate",
+            "preAddDocument" => "document.preAdd",
+            "postAddDocument" => "document.postAdd",
+            "preDeleteDocument" => "document.preDelete",
+            "postDeleteDocument" => "document.postDelete",
+            "preUpdateDocument" => "document.preUpdate",
+            "postUpdateDocument" => "document.postUpdate",
+            "preAddObject" => "object.preAdd",
+            "postAddObject" => "object.postAdd",
+            "preDeleteObject" => "object.preDelete",
+            "postDeleteObject" => "object.postDelete",
+            "preUpdateObject" => "object.preUpdate",
+            "postUpdateObject" => "object.postUpdate",
+            "preAddKeyValueKeyConfig" => "object.keyValue.keyConfig.preAdd",
+            "postAddKeyValueKeyConfig" => "object.keyValue.keyConfig.postAdd",
+            "preDeleteKeyValueKeyConfig" => "object.keyValue.keyConfig.preDelete",
+            "postDeleteKeyValueKeyConfig" => "object.keyValue.keyConfig.postDelete",
+            "preUpdateKeyValueKeyConfig" => "object.keyValue.keyConfig.preUpdate",
+            "postUpdateKeyValueKeyConfig" => "object.keyValue.keyConfig.postUpdate",
+            "preAddKeyValueGroupConfig" => "object.keyValue.groupConfig.preAdd",
+            "postAddKeyValueGroupConfig" => "object.keyValue.groupConfig.postAdd",
+            "preDeleteKeyValueGroupConfig" => "object.keyValue.groupConfig.preDelete",
+            "postDeleteKeyValueGroupConfig" => "object.keyValue.groupConfig.postDelete",
+            "preUpdateKeyValueGroupConfig" => "object.keyValue.groupConfig.preUpdate",
+            "postUpdateKeyValueGroupConfig" => "object.keyValue.groupConfig.postUpdate",
+            "preAddObjectClass" => "object.class.preAdd",
+            "preUpdateObjectClass" => "object.class.preUpdate"
+        ];
+
+        $eventManager = Pimcore::getEventManager();
+        $plugin = $this;
+        $myMethods = get_class_methods($this);
+
+        foreach ($myMethods as $method) {
+            if(array_key_exists($method, $mappings)) {
+                $event = $mappings[$method];
+
+                if($method == "maintenanceForce") {
+                    $eventManager->attach("system.maintenance", function ($e) use ($plugin) {
+                        $e->getTarget()->registerJob(new Schedule_Maintenance_Job(get_class($plugin), $plugin, "maintenanceForce"), true);
+                    });
+                } else if (in_array($method, ["maintenance", "maintainance"])) {
+                    $eventManager->attach("system.maintenance", function ($e) use ($plugin, $method) {
+                        $e->getTarget()->registerJob(new Schedule_Maintenance_Job(get_class($plugin), $plugin, $method));
+                    });
+                } else if ($method == "authenticateUser") {
+                    $eventManager->attach($event, function ($e) use ($plugin, $method) {
+                        $user = $plugin->authenticateUser($e->getParam("username"), $e->getParam("password"));
+                        if($user) {
+                            $e->getTarget()->setUser($user);
+                        }
+                    });
+                } else if ($method == "preLogoutUser") {
+                    $eventManager->attach($event, function ($e) use ($plugin, $method) {
+                        $plugin->preLogoutUser($e->getParam("user"));
+                    });
+                } else if (preg_match("/(pre|post)(update|add|delete)/i", $method)) {
+                    // this is for Document/Asset/Object_Abstract/Object_Class/...
+                    $eventManager->attach($event, function ($e) use ($plugin, $method) {
+                        $plugin->$method($e->getTarget());
+                    });
+                } else {
+                    // for all events that don't have parameters or targets (eg. preDispatch/pimcore.startup)
+                    $eventManager->attach($event, array($plugin, $method));
+                }
+            }
+        }
     }
-
-    /**
-     * Hook called before an asset is deleted
-     *
-     * @param Asset $asset
-     */
-    public function preDeleteAsset(Asset $asset)
-    {
-
-    }
-
-    /**
-     * Hook called after an asset is deleted
-     *
-     * @param Asset $asset
-     */
-    public function postDeleteAsset(Asset $asset)
-    {
-
-    }
-
-    /**
-     * Hook called before an asset is updated
-     *
-     * @param Asset $asset
-     */
-    public function preUpdateAsset(Asset $asset)
-    {
-
-    }
-
-    /**
-     * Hook called after an asset is updated
-     *
-     * @param Asset $asset
-     */
-    public function postUpdateAsset(Asset $asset)
-    {
-
-    }
-
-
-    /**
-     *
-     * Hook called before a document was added
-     *
-     * @param Document $document
-     */
-    public function preAddDocument(Document $document)
-    {
-
-    }
-
-    /**
-     *
-     * Hook called after a document was added
-     *
-     * @param Document $document
-     */
-    public function postAddDocument(Document $document)
-    {
-
-    }
-
-    /**
-     * Hook called before a document is deleted
-     *
-     * @param Document $document
-     */
-    public function preDeleteDocument(Document $document)
-    {
-
-    }
-
-    /**
-     * Hook called after a document is deleted
-     *
-     * @param Document $document
-     */
-    public function postDeleteDocument(Document $document)
-    {
-
-    }
-
-    /**
-     * Hook called before a document is updated
-     *
-     * @param Document $document
-     */
-    public function preUpdateDocument(Document $document)
-    {
-
-    }
-
-    /**
-     * Hook called after  a document is updated
-     *
-     * @param Document $document
-     */
-    public function postUpdateDocument(Document $document)
-    {
-
-    }
-
-
-    /**
-     * Hook before an object was is added
-     *
-     * @param Object_Abstract $object
-     */
-    public function preAddObject(Object_Abstract $object)
-    {
-
-    }
-
-    /**
-     * Hook after an object was is added
-     *
-     * @param Object_Abstract $object
-     */
-    public function postAddObject(Object_Abstract $object)
-    {
-
-    }
-
-    /**
-     * Hook called before an object is deleted
-     *
-     * @param Object_Abstract $object
-     */
-    public function preDeleteObject(Object_Abstract $object)
-    {
-
-    }
-
-    /**
-     * Hook called after an object is deleted
-     *
-     * @param Object_Abstract $object
-     */
-    public function postDeleteObject(Object_Abstract $object)
-    {
-
-    }
-
-
-    /**
-     * Hook called before an object was updated
-     *
-     * @param Object_Abstract $object
-     */
-    public function preUpdateObject(Object_Abstract $object)
-    {
-
-    }
-
-    /**
-     * Hook called after an object was updated
-     *
-     * @param Object_Abstract $object
-     */
-    public function postUpdateObject(Object_Abstract $object)
-    {
-
-    }
-
-
-    /**
-     * Hook called when login in pimcore is about to fail. Must return
-     * a valid pimcore User for successful authentication or null for failure.
-     *
-     * @param string $username username provided in login credentials
-     * @param string $pasword password provided in login credentials
-     * @return User authenticated user or null if login shall fail
-     */
-    public function authenticateUser($username, $password)
-    {
-    }
-
-    /**
-     * Hook called when the user logs out
-     *
-     * @param User $user
-     */
-    public function preLogoutUser(User $user)
-    {
-    }
-
-    /**
-     * Hook called when maintenance script is called
-     */
-    public function maintenance()
-    {
-    }
-
-    /**
-     *
-     * Hook called before a key/value key config was added
-     *
-     * @param Object_KeyValue_KeyConfig $config
-     */
-    public function preAddKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
-    {
-
-    }
-
-    /**
-     *
-     * Hook called after a key/value key config was added
-     *
-     * @param Object_KeyValue_KeyConfig $config
-     */
-    public function postAddKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
-    {
-
-    }
-
-    /**
-     * Hook called before a key/value key config is deleted
-     *
-     * @param Object_KeyValue_KeyConfig $config
-     */
-    public function preDeleteKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
-    {
-
-    }
-
-    /**
-     * Hook called after a key/value key config is deleted
-     *
-     * @param Object_KeyValue_KeyConfig $config
-     */
-    public function postDeleteKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
-    {
-
-    }
-
-    /**
-     * Hook called before a key/value key config is updated
-     *
-     * @param Object_KeyValue_KeyConfig $config
-     */
-    public function preUpdateKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
-    {
-
-    }
-
-    /**
-     * Hook called after a key/value key config is updated
-     *
-     * @param Object_KeyValue_KeyConfig $config
-     */
-    public function postUpdateKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
-    {
-
-    }
-
-
-    /**
-     *
-     * Hook called before a key/value group config was added
-     *
-     * @param Object_KeyValue_GroupConfig $config
-     */
-    public function preAddKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
-    {
-
-    }
-
-    /**
-     *
-     * Hook called after a key/value group config was added
-     *
-     * @param Object_KeyValue_GroupConfig $config
-     */
-    public function postAddKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
-    {
-
-    }
-
-    /**
-     * Hook called before a key/value group config is deleted
-     *
-     * @param Object_KeyValue_GroupConfig $config
-     */
-    public function preDeleteKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
-    {
-
-    }
-
-    /**
-     * Hook called after a key/value group config is deleted
-     *
-     * @param Object_KeyValue_GroupConfig $config
-     */
-    public function postDeleteKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
-    {
-
-    }
-
-    /**
-     * Hook called before a key/value group config is updated
-     *
-     * @param Object_KeyValue_GroupConfig $config
-     */
-    public function preUpdateKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
-    {
-
-    }
-
-    /**
-     * Hook called after a key/value key config is updated
-     *
-     * @param Object_KeyValue_GroupConfig $config
-     */
-    public function postUpdateKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
-    {
-
-    }
-
-    /**
-     * Hook called before an object class was added
-     *
-     * @param Object_Class $class
-     */
-    public function preAddObjectClass(Object_Class $class){
-
-    }
-
-    /**
-     * Hook called before an object class is updated
-     *
-     * @param Object_Class $class
-     */
-    public function preUpdateObjectClass(Object_Class $class){
-
-    }
-
 }
