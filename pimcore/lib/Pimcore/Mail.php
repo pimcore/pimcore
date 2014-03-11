@@ -660,6 +660,13 @@ class Pimcore_Mail extends Zend_Mail
             }
             $this->clearRecipients();
             $this->addTo(self::$debugEmailAddresses);
+            $this->clearFrom();
+            list($primaryDebugEmailAddress) = self::$debugEmailAddresses;
+            $this->setFrom($primaryDebugEmailAddress);
+            if($this->getReplyTo());{
+                $this->clearReplyTo();
+                $this->setReplyTo($primaryDebugEmailAddress);
+            }
         }
     }
 
