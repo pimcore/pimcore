@@ -184,22 +184,24 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
             foreach($oldObject->classDefinitions as $cl) {
                 $this->oldClassDefinitions[$cl['classname']] = $cl['classname'];
                 $class = Object_Class::getById($cl['classname']);
-                $path = $this->getContainerClassFolder($class->getName());
-                @unlink($path . "/" . ucfirst($cl['fieldname'] . ".php"));
+                if($class) {
+                    $path = $this->getContainerClassFolder($class->getName());
+                    @unlink($path . "/" . ucfirst($cl['fieldname'] . ".php"));
 
 
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if($fieldDef instanceof Object_Class_Data_Objectbricks) {
-                        $allowedTypes = $fieldDef->getAllowedTypes();
-                        $idx = array_search($this->getKey(), $allowedTypes);
-                        if($idx !== false) {
-                            array_splice($allowedTypes, $idx, 1);
+                    foreach ($class->getFieldDefinitions() as $fieldDef) {
+                        if($fieldDef instanceof Object_Class_Data_Objectbricks) {
+                            $allowedTypes = $fieldDef->getAllowedTypes();
+                            $idx = array_search($this->getKey(), $allowedTypes);
+                            if($idx !== false) {
+                                array_splice($allowedTypes, $idx, 1);
+                            }
+                            $fieldDef->setAllowedTypes($allowedTypes);
                         }
-                        $fieldDef->setAllowedTypes($allowedTypes);
                     }
-                }
 
-                $class->save();
+                    $class->save();
+                }
 
             }
         }
@@ -227,20 +229,22 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         if(!empty($this->oldClassDefinitions)) {
             foreach($this->oldClassDefinitions as $cl) {
                 $class = Object_Class::getById($cl);
-                $this->getResource()->delete($class);
+                if($class) {
+                    $this->getResource()->delete($class);
 
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if($fieldDef instanceof Object_Class_Data_Objectbricks) {
-                        $allowedTypes = $fieldDef->getAllowedTypes();
-                        $idx = array_search($this->getKey(), $allowedTypes);
-                        if($idx !== false) {
-                            array_splice($allowedTypes, $idx, 1);
+                    foreach ($class->getFieldDefinitions() as $fieldDef) {
+                        if($fieldDef instanceof Object_Class_Data_Objectbricks) {
+                            $allowedTypes = $fieldDef->getAllowedTypes();
+                            $idx = array_search($this->getKey(), $allowedTypes);
+                            if($idx !== false) {
+                                array_splice($allowedTypes, $idx, 1);
+                            }
+                            $fieldDef->setAllowedTypes($allowedTypes);
                         }
-                        $fieldDef->setAllowedTypes($allowedTypes);
                     }
-                }
 
-                $class->save();
+                    $class->save();
+                }
             }
         }
 
