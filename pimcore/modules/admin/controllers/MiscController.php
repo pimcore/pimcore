@@ -541,7 +541,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     public function getAvailableControllersAction() {
 
         $controllers = array();
-        $controllerDir = PIMCORE_WEBSITE_PATH . "/controllers/";
+        $controllerDir = PIMCORE_WEBSITE_PATH . DIRECTORY_SEPARATOR . "controllers" . DIRECTORY_SEPARATOR;
         $controllerFiles = rscandir($controllerDir);
         foreach ($controllerFiles as $file) {
             $file = str_replace($controllerDir, "", $file);
@@ -587,12 +587,13 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     public function getAvailableTemplatesAction () {
 
         $templates = array();
-        $viewPath = PIMCORE_WEBSITE_PATH . "/views/scripts";
-        $files = rscandir($viewPath . "/");
+        $viewPath = PIMCORE_WEBSITE_PATH . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "scripts";
+        $files = rscandir($viewPath . DIRECTORY_SEPARATOR);
         foreach ($files as $file) {
             $dat = array();
             if(strpos($file, Pimcore_View::getViewScriptSuffix()) !== false) {
                 $dat["path"] = str_replace($viewPath, "", $file);
+                $dat["path"] = str_replace("\\", "/", $dat["path"]); // unix directory separator are compatible with windows, not the reverse
                 $templates[] = $dat;
             }
         }
