@@ -75,6 +75,9 @@ class Pimcore {
         if(self::inDebugMode() && $frontend) {
             $whoops = new \Whoops\Run;
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+            $jsonErrorHandler = new \Whoops\Handler\JsonResponseHandler;
+            $jsonErrorHandler->onlyForAjaxRequests(true);
+            $whoops->pushHandler($jsonErrorHandler);
             $whoops->register();
 
             // add event handler before Pimcore::shutdown() to ensure fatal errors are handled by Whoops
