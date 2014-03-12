@@ -59,15 +59,13 @@ class Document_Tag_Date extends Document_Tag {
      */
     public function frontend() {
 
-        Pimcore_Date::setOptions(array('format_type' => 'php'));
         if (!$this->options["output"]) {
             $this->options["output"] = Zend_Date::DATE_MEDIUM;
         }
 
         if ($this->date instanceof Zend_Date) {
-            return $this->date->toString($this->options["format"]);
+            return $this->date->toString($this->options["format"], "php");
         }
-
     }
     
     /**
