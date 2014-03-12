@@ -662,8 +662,8 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
 
         $content = html_entity_decode($content, null, "UTF-8");
 
-        if(!preg_match_all("/<([^>.]+)>([^<.]+)?/", $content, $matches)) {
-            // return original content if it doesn't contain HTML tags
+        if(!preg_match_all("/<([^>]+)>([^<]+)?/", $content, $matches)) {
+                // return original content if it doesn't contain HTML tags
             return '<![CDATA[' . $content . ']]>';
         }
 
