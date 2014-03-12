@@ -37,6 +37,12 @@ class Element_Note_List_Resource extends Pimcore_Model_List_Resource_Abstract {
         return $notes;
     }
 
+
+    public function loadIdList() {
+        $notesIds = $this->db->fetchCol("SELECT id FROM notes" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        return $notesIds;
+    }
+
     public function getTotalCount() {
 
         try {
