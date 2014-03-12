@@ -49,17 +49,23 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         try {
             $this->resource = new Imagick();
+            $this->imagePath = $imagePath;
 
             $this->resource->setBackgroundColor(new ImagickPixel('transparent')); //set .png transparent (print)
             $this->resource->setcolorspace(Imagick::COLORSPACE_SRGB);
+
+            if($this->isVectorGraphic($imagePath)) {
+                // set the resolution to 2000x2000 for known vector formats
+                // otherwise this will cause problems with eg. cropPercent in the image editable (select specific area)
+                // maybe there's a better solution but for now this fixes the problem
+                $this->resource->setResolution(2000, 2000);
+            }
 
             if(!$this->resource->readImage($imagePath."[0]") || !filesize($imagePath)) {
                 return false;
             }
 
             $this->setColorspaceToRGB();
-
-            $this->imagePath = $imagePath;
 
         } catch (Exception $e) {
             Logger::error($e);
@@ -527,17 +533,22 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         return $this;
     }
 
-    public function isVectorGraphic () {
+    public function isVectorGraphic ($imagePath = null) {
 
-        try {
-            $type = $this->resource->getimageformat();
-            $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","PSB","SVG","SVGZ");
+        if($imagePath) {
+            // use file-extension if filename is provided
+            return in_array(Pimcore_File::getFileExtension($imagePath), ["svg","svgz","eps","pdf","ps"]);
+        } else {
+            try {
+                $type = $this->resource->getimageformat();
+                $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","PSB","SVG","SVGZ");
 
-            if(in_array($type,$vectorTypes)) {
-                return true;
+                if(in_array($type,$vectorTypes)) {
+                    return true;
+                }
+            } catch (Exception $e) {
+                Logger::err($e);
             }
-        } catch (Exception $e) {
-            Logger::err($e);
         }
 
         return false;
