@@ -78,6 +78,7 @@ class Document_Service extends Element_Service {
         if ($useLayout) {
             if(!$layout = Zend_Layout::getMvcInstance()) {
                 $layout = Zend_Layout::startMvc();
+                $layout->setViewSuffix(Pimcore_View::getViewScriptSuffix());
                 if($layoutHelper = $view->getHelper("layout")) {
                     $layoutHelper->setLayout($layout);
                 }
