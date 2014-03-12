@@ -390,10 +390,10 @@ class Asset_Image_Thumbnail_Config {
         $hash = md5(Pimcore_Tool_Serialize::serialize($config));
         $pipe->setName("auto_" . $hash);
 
-        if($config["format"]) {
+        if(isset($config["format"])) {
             $pipe->setFormat($config["format"]);
         }
-        if($config["quality"]) {
+        if(isset($config["quality"])) {
             $pipe->setQuality($config["quality"]);
         }
         /*if ($config["cropPercent"]) {
@@ -407,34 +407,34 @@ class Asset_Image_Thumbnail_Config {
 
 
 
-        if ($config["cover"]) {
+        if (isset($config["cover"])) {
             $pipe->addItem("cover", array(
                 "width" => $config["width"],
                 "height" => $config["height"],
                 "positioning" => "center"
             ));
         }
-        else if ($config["contain"]) {
+        else if (isset($config["contain"])) {
             $pipe->addItem("contain", array(
                 "width" => $config["width"],
                 "height" => $config["height"]
             ));
         }
-        else if ($config["frame"]) {
+        else if (isset($config["frame"])) {
             $pipe->addItem("frame", array(
                 "width" => $config["width"],
                 "height" => $config["height"]
             ));
         }
-        else if ($config["aspectratio"]) {
+        else if (isset($config["aspectratio"])) {
 
-            if ($config["height"] > 0 && $config["width"] > 0) {
+            if (isset($config["height"]) && isset($config["width"]) && $config["height"] > 0 && $config["width"] > 0) {
                 $pipe->addItem("contain", array(
                     "width" => $config["width"],
                     "height" => $config["height"]
                 ));
             }
-            else if ($config["height"] > 0) {
+            else if (isset($config["height"]) && $config["height"] > 0) {
                 $pipe->addItem("scaleByHeight", array(
                     "height" => $config["height"]
                 ));
@@ -446,11 +446,11 @@ class Asset_Image_Thumbnail_Config {
             }
         }
         else {
-            if(empty($config["width"]) && !empty($config["height"])) {
+            if(isset($config["width"]) && !isset($config["height"])) {
                 $pipe->addItem("scaleByHeight", array(
                     "height" => $config["height"]
                 ));
-            } else if (!empty($config["width"]) && empty($config["height"])) {
+            } else if (!isset($config["width"]) && isset($config["height"])) {
                 $pipe->addItem("scaleByWidth", array(
                     "width" => $config["width"]
                 ));
@@ -462,7 +462,7 @@ class Asset_Image_Thumbnail_Config {
             }
         }
 
-        if($config["highResolution"]) {
+        if(isset($config["highResolution"])) {
             $pipe->setHighResolution($config["highResolution"]);
         }
 

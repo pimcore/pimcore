@@ -154,7 +154,10 @@ abstract class Pimcore_Placeholder_Abstract
      */
     public function getParam($key)
     {
-        return $this->params[$key];
+        if(array_key_exists($key, $this->params)) {
+            return $this->params[$key];
+        }
+        return null;
     }
 
     /**

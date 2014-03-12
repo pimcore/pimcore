@@ -50,7 +50,7 @@ class Pimcore_Helper_Mail
             $debugInformation .= '</td></tr>';
 
             foreach (array('To', 'Cc', 'Bcc') as $key) {
-                if (!empty($temporaryStorage[$key])) {
+                if (isset($temporaryStorage[$key]) && is_array($temporaryStorage[$key])) {
                     $debugInformation .= '<tr><td class="pimcore_label_column">' . $key . ': </td>';
                     $debugInformation .= '<td>' . self::formatDebugReceivers($temporaryStorage[$key]) . '</td></tr>';
                 }
@@ -61,7 +61,7 @@ class Pimcore_Helper_Mail
             //generating text debug info
             $debugInformation = "\r\n  \r\nDebug Information:  \r\n  \r\n";
             foreach (array('To', 'Cc', 'Bcc') as $key) {
-                if (!empty($temporaryStorage[$key])) {
+                if (isset($temporaryStorage[$key]) && is_array($temporaryStorage[$key])) {
                     $debugInformation .= "$key: " . self::formatDebugReceivers($temporaryStorage[$key]) . "\r\n";
                 }
             }
@@ -118,11 +118,13 @@ CSS;
     {
         $tmpString = '';
         foreach ($receivers as $entry) {
-            $tmpString .= $entry['email'];
-            if ($entry['name']) {
-                $tmpString .= " (" . $entry["name"] . ")";
+            if(isset($entry['email'])) {
+                $tmpString .= $entry['email'];
+                if (isset($entry['name'])) {
+                    $tmpString .= " (" . $entry["name"] . ")";
+                }
+                $tmpString .= ", ";
             }
-            $tmpString .= ", ";
         }
         $tmpString = substr($tmpString, 0, strrpos($tmpString, ','));
         return $tmpString;
@@ -174,7 +176,7 @@ CSS;
 
         $temporaryStorage = $mail->getTemporaryStorage();
         foreach (array('To', 'Cc', 'Bcc') as $key) {
-            if (!empty($temporaryStorage[$key])) {
+            if (isset($temporaryStorage[$key]) && is_array($temporaryStorage[$key])) {
                 if (method_exists($emailLog, 'set' . $key)) {
                     $emailLog->{"set$key"}(self::formatDebugReceivers($temporaryStorage[$key]));
                 }

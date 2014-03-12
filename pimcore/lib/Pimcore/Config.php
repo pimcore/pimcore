@@ -60,6 +60,7 @@ class Pimcore_Config {
         } else {
             $cacheKey = "website_config";
 
+			$siteId = null;
             if(Site::isSiteRequest()){
                 $siteId = Site::getCurrentSite()->getId();
                 $cacheKey = $cacheKey . "_site_" . $siteId;
