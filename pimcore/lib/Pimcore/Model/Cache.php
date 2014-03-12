@@ -327,13 +327,12 @@ class Pimcore_Model_Cache {
                     unset($data->_fulldump);
                 }
 
-                // get dependencies for this element, array_values() because the tags from Element_Interface came with keys eg. array("object_123" => "object_123")
-                $tags = array_values($data->getCacheTags($tags));
+                // get dependencies for this element
+                $tags = $data->getCacheTags($tags);
                 $type = get_class($data);
 
-                Logger::debug("prepared " . $type . " " . $data->getFullPath() . " for data cache with tags: " . implode(",", $tags));
+                Logger::debug("prepared " . $type . " " . $data->getId() . " for data cache with tags: " . implode(",", $tags));
             }
-
 
             // check for cleared tags, only item which are not cleared within the same session are stored to the cache
             if(is_array($tags)){
@@ -349,6 +348,9 @@ class Pimcore_Model_Cache {
 
             // always add the key as tag
             $tags[] = $key;
+
+            // array_values() because the tags from Element_Interface and some others are associative eg. array("object_123" => "object_123")
+            $tags = array_values($tags);
 
             if(is_object($data) && isset($data->____pimcore_cache_item__)) {
                 unset($data->____pimcore_cache_item__);
