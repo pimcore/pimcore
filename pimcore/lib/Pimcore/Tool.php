@@ -258,7 +258,7 @@ class Pimcore_Tool {
             if(isset($_SERVER["SERVER_PROTOCOL"])) {
                 $protocol = strtolower($_SERVER["SERVER_PROTOCOL"]);
                 $protocol = substr($protocol, 0, strpos($protocol, "/"));
-                $protocol .= ($_SERVER["HTTPS"] == "on") ? "s" : "";
+                $protocol .= (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") ? "s" : "";
             }
 
             if(isset($_SERVER["SERVER_PORT"])) {
