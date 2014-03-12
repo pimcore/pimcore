@@ -25,11 +25,11 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
         if (!data) {
             data = [
-                [" "]
+                [""]
             ];
             if (this.fieldConfig.cols) {
                 for (i = 0; i < (this.fieldConfig.cols - 1); i++) {
-                    data[0].push(" ");
+                    data[0].push("");
                 }
             }
             if (this.fieldConfig.rows) {
@@ -174,7 +174,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
     emptyStore: function() {
         this.dirty = true;
-        this.initStore([[" "]]);
+        this.initStore([[""]]);
     },
 
     initStore: function (data) {
@@ -204,7 +204,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         var currentData = this.getValue();
 
         for (var i = 0; i < currentData.length; i++) {
-            currentData[i].push(" ");
+            currentData[i].push("");
         }
 
         this.initStore(currentData);
@@ -215,7 +215,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         var initData = {};
 
         for (var o = 0; o < this.grid.getColumnModel().config.length; o++) {
-            initData["col_" + o] = " ";
+            initData["col_" + o] = "";
         }
 
         this.store.add(new this.store.recordType(initData, this.store.getCount() + 1));
