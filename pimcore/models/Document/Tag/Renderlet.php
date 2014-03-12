@@ -262,7 +262,7 @@ class Document_Tag_Renderlet extends Document_Tag {
                     $this->o = Asset::getById($id);
                     if(!$this->o instanceof Asset){
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure($this->getDocumentId(),$this->type, $this->id);
+                            $idMapper->recordMappingFailure("document", $this->getDocumentId(),$this->type, $this->id);
                         } else {
                             throw new Exception("cannot get values from web service import - referenced asset with id [ ".$this->id." ] is unknown");
                         }
@@ -271,7 +271,7 @@ class Document_Tag_Renderlet extends Document_Tag {
                     $this->o = Document::getById($id);
                     if(!$this->o instanceof Document){
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure($this->getDocumentId(),$this->type, $this->id);
+                            $idMapper->recordMappingFailure("document", $this->getDocumentId(),$this->type, $this->id);
                         } else {
                             throw new Exception("cannot get values from web service import - referenced document with id [ ".$this->id." ] is unknown");
                         }
@@ -280,7 +280,7 @@ class Document_Tag_Renderlet extends Document_Tag {
                     $this->o = Object_Abstract::getById($id);
                     if(!$this->o instanceof Object_Abstract){
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure($this->getDocumentId(),$this->type, $this->id);
+                            $idMapper->recordMappingFailure("document", $this->getDocumentId(),$this->type, $this->id);
                         } else {
                             throw new Exception("cannot get values from web service import - referenced object with id [ ".$this->id." ] is unknown");
                         }
