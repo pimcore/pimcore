@@ -72,18 +72,11 @@
 			var manageMessageTmp = new ManagerPostMessage;
 
 
-				var appString = 'lf/23/unpacked_js/spell.js';
-				var toolsString = 'lf/23/js/tools.js';
-
-				var parseUrl = function(){
-					var serverUrl = window.location.hash.replace( /^#server=/, '' );
-					return serverUrl;
-				};
-
-				var url_version = function() {
-					var frameNumber = window.location.hash.match( /\?.*$/ )[0].replace( /^\?/, '' );
-					return frameNumber;
-				};
+				var appString = (function(){
+					var spell = parent.CKEDITOR.config.wsc.DefaultParams.scriptPath;
+					var serverUrl = parent.CKEDITOR.config.wsc.DefaultParams.serviceHost;
+					return serverUrl + spell;
+				})();
 
 				function loadScript(src, callback) {
 				    var scriptTag = document.createElement("script");
@@ -112,11 +105,6 @@
 
 
 				window.onload = function(){
-
-					toolsString = parseUrl() + toolsString;
-
-					appString = parseUrl() + appString;
-
 					 loadScript(appString, function(){
 						manageMessageTmp.send({
 							'id': 'iframeOnload',
@@ -124,7 +112,6 @@
 						});
 					});
 				}
-
 			})(this);
 		</script>
 	</body>

@@ -1,10 +1,28 @@
 
 
-# CKEDITOR
-+ full distribution
+# CKEDITOR (use builder: http://ckeditor.com/builder);
+
++ select "full" distribution
+
+Add plugins:
 + plugin sourcedialog
 + plugin autogrow
 + plugin tableresize
+
+Remove plugins:
+- About CKEditor
+- Content Templates
+- File Browser
+- Flash Dialog
+- Form Elements
+- Insert Smiley
+- Magic Line
+- Maximize
+- New Page
+- Preview
+- Print
+- Save
+- SpellCheckAsYouType (SCAYT)
 
 
 # EXT JS

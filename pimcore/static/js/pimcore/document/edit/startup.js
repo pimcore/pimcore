@@ -41,6 +41,7 @@ if (typeof pimcore == "object") {
 
     pimcore.globalmanager = parent.pimcore.globalmanager;
     pimcore.helpers = parent.pimcore.helpers;
+    pimcore.settings = parent.pimcore.settings;
 }
 
 if (pimcore_document_id) {

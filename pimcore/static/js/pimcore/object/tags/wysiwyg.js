@@ -25,7 +25,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         this.fieldConfig = fieldConfig;
 
         if (intval(this.fieldConfig.width) < 1) {
-            this.fieldConfig.width = 400;
+            this.fieldConfig.width = 650;
         }
         if (intval(this.fieldConfig.height) < 1) {
             this.fieldConfig.height = 300;
@@ -146,22 +146,26 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             uiColor: "#f2f2f2",
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
-            resize_enabled: false
+            resize_enabled: false,
+            language: pimcore.settings["language"]
         };
 
 
         eConfig.toolbarGroups = [
-            { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
-            { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
-            { name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ] }, { name: 'forms' },
-            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
-            { name: 'links' },{ name: 'insert' }, { name: 'styles' }, { name: 'colors' }, { name: 'tools' },
-            { name: 'others' }, { name: 'about' }
+            { name: 'clipboard', groups: [ "sourcedialog", 'clipboard', 'undo', "find" ] },
+            { name: 'basicstyles', groups: [ 'basicstyles', 'list'] },
+            '/',
+            { name: 'paragraph', groups: [ 'align', 'indent'] },
+            { name: 'blocks' },
+            { name: 'links' },
+            { name: 'insert' },
+            "/",
+            { name: 'styles' },
+            { name: 'tools', groups: ['colors', "tools", 'cleanup', 'mode', "others"] }
         ];
 
         eConfig.extraPlugins = "close_object";
-        eConfig.removePlugins = 'about,placeholder,flash,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates,autogrow,divarea,magicline';
+        eConfig.removePlugins = 'autogrow,sourcearea';
         eConfig.allowedContent = true; // disables CKEditor ACF (will remove pimcore_* attributes from links, etc.)
 
         if (intval(this.fieldConfig.width) > 1) {
