@@ -251,6 +251,8 @@ class Document_Tag_Renderlet extends Document_Tag {
 
             $this->type = $data->type;
             $this->subtype = $data->subtype;
+            $this->id = $data->id;
+
             if (is_numeric($this->id)) {
                 if ($idMapper) {
                     $id = $idMapper->getMappedId($this->type, $this->id);
