@@ -296,4 +296,19 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
             "message" => $message
         ));
     }
+
+    public function unlockPropagateAction() {
+
+        $success = false;
+
+        $element = Element_Service::getElementById($this->getParam("type"), $this->getParam("id"));
+        if($element) {
+            $element->unlockPropagate();
+            $success = true;
+        }
+
+        $this->_helper->json(array(
+            "success" => $success
+        ));
+    }
 }

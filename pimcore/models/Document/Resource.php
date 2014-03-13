@@ -374,6 +374,15 @@ class Document_Resource extends Element_Resource
         }
     }
 
+    /**
+     *
+     */
+    public function unlockPropagate() {
+        $lockIds = $this->db->fetchCol("SELECT id from documents WHERE path LIKE " . $this->db->quote($this->model->getFullPath() . "/%") . " OR id = " . $this->model->getId());
+        $this->db->delete("tree_locks", "type = 'document' AND id IN (" . implode(",", $lockIds) . ")");
+        return $lockIds;
+    }
+
     public function isAllowed($type, $user)
     {
 

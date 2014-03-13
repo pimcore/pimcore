@@ -578,6 +578,26 @@ pimcore.document.tree = Class.create({
                     }
                 }
 
+                if(this.attributes["locked"]) {
+                    // add unlock and propagate to children functionality
+                    lockMenu.push({
+                        text: t('unlock_and_propagate_to_children'),
+                        iconCls: "pimcore_icon_lock_delete",
+                        handler: function () {
+                            Ext.Ajax.request({
+                                url: "/admin/element/unlock-propagate",
+                                params: {
+                                    id: this.id,
+                                    type: "document"
+                                },
+                                success: function () {
+                                    this.parentNode.reload();
+                                }.bind(this)
+                            });
+                        }.bind(this)
+                    });
+                }
+
                 menu.add(new Ext.menu.Item({
                     text: t('lock'),
                     iconCls: "pimcore_icon_lock",

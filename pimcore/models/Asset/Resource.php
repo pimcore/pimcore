@@ -380,6 +380,15 @@ class Asset_Resource extends Element_Resource
     }
 
     /**
+     *
+     */
+    public function unlockPropagate() {
+        $lockIds = $this->db->fetchCol("SELECT id from assets WHERE path LIKE " . $this->db->quote($this->model->getFullPath() . "/%") . " OR id = " . $this->model->getId());
+        $this->db->delete("tree_locks", "type = 'asset' AND id IN (" . implode(",", $lockIds) . ")");
+        return $lockIds;
+    }
+
+    /**
      * Get latest available version, using $force always returns a version no matter if it is the same as the published one
      * @param bool $force
      * @return array

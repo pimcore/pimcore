@@ -142,6 +142,22 @@ abstract class Element_Abstract extends Pimcore_Model_Abstract implements Elemen
     }
 
     /**
+     *
+     */
+    public function unlockPropagate() {
+        $type = Element_Service::getType($this);
+        $ids = $this->getResource()->unlockPropagate();
+
+        // invalidate cache items
+        foreach ($ids as $id) {
+            $element = Element_Service::getElementById($type, $id);
+            if($element) {
+                $element->clearDependentCache();
+            }
+        }
+    }
+
+    /**
      * Inverted hasChilds()
      *
      * @return boolean

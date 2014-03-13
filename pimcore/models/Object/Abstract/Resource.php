@@ -340,6 +340,15 @@ class Object_Abstract_Resource extends Element_Resource
         return false;
     }
 
+    /**
+     *
+     */
+    public function unlockPropagate() {
+        $lockIds = $this->db->fetchCol("SELECT o_id from objects WHERE o_path LIKE " . $this->db->quote($this->model->getFullPath() . "/%") . " OR o_id = " . $this->model->getId());
+        $this->db->delete("tree_locks", "type = 'object' AND id IN (" . implode(",", $lockIds) . ")");
+        return $lockIds;
+    }
+
     public function getClasses()
     {
         if ($this->getChildAmount()) {
