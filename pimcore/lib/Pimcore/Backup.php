@@ -212,16 +212,20 @@ class Pimcore_Backup {
         $files = $filesContainer[$step];
 
         $excludePatterns = array(
-            "/" . PIMCORE_FRONTEND_MODULE . "\/var\/backup\/.*/",
-            "/" . PIMCORE_FRONTEND_MODULE . "\/var\/cache\/.*/",
-            "/" . PIMCORE_FRONTEND_MODULE . "\/var\/log\/.*/",
-            "/" . PIMCORE_FRONTEND_MODULE . "\/var\/system\/.*/",
-            "/" . PIMCORE_FRONTEND_MODULE . "\/var\/tmp\/.*/",
-            "/" . PIMCORE_FRONTEND_MODULE . "\/var\/webdav\/.*/"
+            PIMCORE_FRONTEND_MODULE . "/var/backup/.*",
+            PIMCORE_FRONTEND_MODULE . "/var/cache/.*",
+            PIMCORE_FRONTEND_MODULE . "/var/log/.*",
+            PIMCORE_FRONTEND_MODULE . "/var/system/.*",
+            PIMCORE_FRONTEND_MODULE . "/var/tmp/.*",
+            PIMCORE_FRONTEND_MODULE . "/var/webdav/.*"
         );
 
         if(!empty($this->additionalExcludePatterns) && is_array($this->additionalExcludePatterns)) {
             $excludePatterns = array_merge($excludePatterns, $this->additionalExcludePatterns);
+        }
+
+        foreach($excludePatterns as &$excludePattern) {
+            $excludePattern = "@" . $excludePattern . "@";
         }
 
         clearstatcache();
@@ -231,7 +235,8 @@ class Pimcore_Backup {
                 if (file_exists($file) && is_readable($file)) {
 
                     $exclude = false;
-                    $relPath = str_replace(PIMCORE_DOCUMENT_ROOT . "/", "", $file);
+                    $relPath = str_replace(PIMCORE_DOCUMENT_ROOT . DIRECTORY_SEPARATOR, "", $file);
+                    $relPath = str_replace(DIRECTORY_SEPARATOR, "/", $relPath); // windows compatibility
 
                     foreach ($excludePatterns as $pattern) {
                         if (preg_match($pattern, $relPath)) {
