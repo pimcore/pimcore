@@ -212,10 +212,10 @@
     <?php if(!$this->editmode) { ?>
     $(document).ready(function() {
         // initialize projekktor, the HTML5 video player
-        projekktor(
-            'video',
-            {playerFlashMP4: "/website/static/lib/projekktor/jarisplayer.swf"}
-        );
+        projekktor('video', {
+            playerFlashMP4: "/website/static/lib/projekktor/jarisplayer.swf",
+            autoplay: false
+        });
 
         // lightbox (magnific)
         $('a.thumbnail').magnificPopup({
