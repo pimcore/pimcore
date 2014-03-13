@@ -604,7 +604,7 @@ class Document_Tag_Areablock extends Document_Tag {
         $data = $wsElement->value;
         if(($data->indices === null or is_array($data->indices)) and ($data->current==null or is_numeric($data->current))
                     and ($data->currentIndex==null or is_numeric($data->currentIndex))) {
-            $indices = $data->indices;
+            $indices = $data["indices"];
             if ($indices instanceof stdclass) {
                 $indices = (array) $indices;
             }

@@ -203,18 +203,14 @@ class Document_Tag_Snippet extends Document_Tag {
             $this->id = $data->id;
             if (is_numeric($this->id)) {
                 $this->snippet = Document_Snippet::getById($this->id);
-
                 if (!$this->snippet instanceof Document_Snippet) {
-                    if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                        $idMapper->recordMappingFailure("document", $this->getDocumentId(), "document", $this->id);
-                    } else {
-                        throw new Exception("cannot get values from web service import - referenced snippet with id [ " . $this->id . " ] is unknown");
-                    }
+                    throw new Exception("cannot get values from web service import - referenced snippet with id [ " . $this->id . " ] is unknown");
                 }
-
             } else {
                 throw new Exception("cannot get values from web service import - id is not valid");
             }
+
+
         }
     }
 
