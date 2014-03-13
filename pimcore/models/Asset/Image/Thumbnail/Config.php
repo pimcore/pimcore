@@ -446,11 +446,11 @@ class Asset_Image_Thumbnail_Config {
             }
         }
         else {
-            if(isset($config["width"]) && !isset($config["height"])) {
+            if(!isset($config["width"]) && isset($config["height"])) {
                 $pipe->addItem("scaleByHeight", array(
                     "height" => $config["height"]
                 ));
-            } else if (!isset($config["width"]) && isset($config["height"])) {
+            } else if (isset($config["width"]) && !isset($config["height"])) {
                 $pipe->addItem("scaleByWidth", array(
                     "width" => $config["width"]
                 ));
