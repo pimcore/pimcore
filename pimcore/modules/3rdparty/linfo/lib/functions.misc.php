@@ -60,7 +60,7 @@ function get_int_from_file($file) {
 
 	$int = trim($contents);
 
-	return (int) $int;
+	return $int;
 }
 
 // Convert bytes to stuff like KB MB GB TB etc
@@ -91,6 +91,8 @@ function seconds_convert($uptime) {
 	
 	// Method here heavily based on freebsd's uptime source
 	$uptime += $uptime > 60 ? 30 : 0;
+	$years = floor($uptime / 31556926);
+	$uptime %= 31556926;
 	$days = floor($uptime / 86400);
 	$uptime %= 86400;
 	$hours = floor($uptime / 3600);
@@ -100,6 +102,9 @@ function seconds_convert($uptime) {
 
 	// Send out formatted string
 	$return = array();
+
+	if ($years > 0)
+		$return[] = $years.' '.($years > 1 ? $lang['years'] : substr($lang['years'], 0, strlen($lang['years']) - 1));
 
 	if ($days > 0)
 		$return[] = $days.' '.$lang['days'];
@@ -217,4 +222,25 @@ function create_table($structure) {
 
 	// Give it
 	return $html;
+}
+
+// Get a variable from a file. Include it so it doesn't pollute 
+// the global namespace, and return what we want out of it, if it
+// actually exists. 
+function get_var_from_file ($file, $variable) {
+
+	// Let's not waste our time, now
+	if (!is_file($file))
+		return false;
+
+	// Snag that mother fucker!	
+	require_once $file;
+
+	// Double dollar sign means treat variable contents 
+	// as the name of a variable. 
+	if (isset($$variable))
+		return $$variable;
+
+	// We fucked up	
+	return false;	
 }

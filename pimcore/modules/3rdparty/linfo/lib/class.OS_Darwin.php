@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of Linfo (c) 2010 Joseph Gillotti.
+ * This file is part of Linfo (c) 2010, 2012 Joseph Gillotti.
  * 
  * Linfo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,15 @@ class OS_Darwin extends OS_BSD_Common{
 			'vm.loadavg',
 			'hw.model'
 		),false);
+
+		// And get this shit for when the above fails like a fucking douche
+		try {
+			$this->systemProfiler = $this->exec->exec('system_profiler', 'SPHardwareDataType SPSoftwareDataType SPPowerDataType');
+		}
+		catch(CallExtException $e) {
+			// Meh
+			$this->error->add('Linfo Mac OS 10', 'Error using system_profiler');
+		}
 	}
 	
 	// This function will likely be shared among all the info classes
@@ -70,6 +79,7 @@ class OS_Darwin extends OS_BSD_Common{
 			'HostName' => empty($this->settings['show']) ? '' : $this->getHostName(), 	# done
 			'Mounts' => empty($this->settings['show']) ? array() : $this->getMounts(), 	# done
 			'Network Devices' => empty($this->settings['show']) ? array() : $this->getNet(),# done (possibly missing nics)
+			'CPUArchitecture' => empty($this->settings['show']['cpu']) ? array() : $this->getCPUArchitecture(),
 			'UpTime' => empty($this->settings['show']) ? '' : $this->getUpTime(), 		# done
 			'Load' => empty($this->settings['show']) ? array() : $this->getLoad(), 		# done
 			'processStats' => empty($this->settings['show']['process_stats']) ? array() : $this->getProcessStats(), # lacks thread stats
@@ -89,14 +99,15 @@ class OS_Darwin extends OS_BSD_Common{
 			'contains' => array(
 				'hw_vendor' => false,
 				'drives_rw_stats' => false,
-				'drives_vendor' => false
+				'drives_vendor' => false,
+				'nic_type' => false
 			)
 		);
 	}
 
 	// Operating system
 	public function getOS() {
-		return 'Darwin (Mac OS X)';
+		return 'Darwin (' . (preg_match('/^\s+System Version: ([^\(]+)/m', $this->systemProfiler, $m) ? $m[1] : 'Mac OS X').')';
 	}
 
 	// Kernel version
@@ -106,7 +117,11 @@ class OS_Darwin extends OS_BSD_Common{
 
 	// Hostname
 	public function getHostname() {
-		return php_uname('n');
+		return preg_match('/^\s*Computer Name:\s+(.+)\s*$/m', $this->systemProfiler, $m) ? $m[1] : php_uname('n');
+	}
+
+	private function getCPUArchitecture() {
+		return php_uname('m');
 	}
 
 	// Get mounted file systems
@@ -288,12 +303,9 @@ class OS_Darwin extends OS_BSD_Common{
 		// Extract boot part of it
 		if (preg_match('/^\{ sec \= (\d+).+$/', $this->sysctl['kern.boottime'], $m) == 0)
 			return '';
-		
-		// Boot unix timestamp
-		$booted = $m[1];
 
 		// Get it textual, as in days/minutes/hours/etc
-		return seconds_convert(time() - $booted) . '; booted ' . date('m/d/y h:i A', $booted);
+		return seconds_convert(time() - $m[1]) . '; booted ' . date($this->settings['dates'], $m[1]);
 	}
 	
 	// Get system load
@@ -385,6 +397,14 @@ class OS_Darwin extends OS_BSD_Common{
 		if (!empty($this->settings['timer']))
 			$t = new LinfoTimerStart('CPUs');
 
+		// Was machdep a cunt to us? Likely on ppc macs
+		if (empty($this->sysctl['machdep.cpu.brand_string']) && preg_match('/^\s+Processor Name:\s+(.+)(?= \([\d\.]+\))/m', $this->systemProfiler, $m)) {
+			$this->sysctl['machdep.cpu.brand_string'] = $m[1];
+		}
+
+		if (empty($this->sysctl['machdep.cpu.vendor'])) 
+			$this->sysctl['machdep.cpu.vendor'] = false;
+
 		// Store them here
 		$cpus = array();
 		
@@ -432,6 +452,9 @@ class OS_Darwin extends OS_BSD_Common{
 
 	// Model of mac
 	private function getModel() {
+		if (preg_match('/^\s+Model Name:\s+(.+)/m', $this->systemProfiler, $m))
+			return $m[1];
+
 		if (preg_match('/^([a-zA-Z]+)/', $this->sysctl['hw.model'], $m))
 			return $m[1];
 		else
@@ -446,18 +469,9 @@ class OS_Darwin extends OS_BSD_Common{
 		
 		// Store any we find here
 		$batteries = array();
-		
-		// Use system profiler to get info
-		try {
-			$res = $this->exec->exec('system_profiler', ' SPPowerDataType');
-		}
-		catch(CallExtException $e) {
-			$this->error->add('Linfo Batteries', 'Error using `system_profiler SPPowerDataType` to get battery info');
-			return array();
-		}
 
 		// Lines
-		$lines = explode("\n", $res);
+		$lines = explode("\n", $this->systemProfiler);
 
 		// Hunt
 		$bat = array();

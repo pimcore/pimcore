@@ -1,6 +1,38 @@
 Linfo - PHP server health/information script
 
-Currently runs on: Linux; FreeBSD; NetBSD; OpenBSD; Minix (alpha); Darwin/Mac OSX (alpha); SunOS/Solaris(alpha); Windows
+Currently runs on:
+ - Linux
+ - FreeBSD
+ - NetBSD
+ - OpenBSD
+ - DragonflyBSD
+ - Darwin/Mac OSX (alpha)
+ - SunOS/Solaris(alpha)
+ - Minix (alpha/pointless)
+ - CYGWIN (useless proof of concept)
+ - Windows
+
+Stuff it reports (all 100% optional; see config file):
+ - CPU type/speed; Architecture
+ - Mount point usage
+ - Hard/optical/flash drives
+ - Hardware Devices
+ - Network devices and stats
+ - Uptime/date booted
+ - Hostname
+ - Memory usage (physical and swap, if possible)
+ - Temperatures/voltages/fan speeds
+ - RAID arrays
+ - Via official extensions:
+   - Truecrypt mounts
+   - DHCPD leases
+   - Samba status
+   - APC UPS status
+   - Transmission torrents status
+   - Soldat server status
+   - CUPS printer status
+   - IPMI
+   - more
 
 Etymology:
  - The name 'Linfo' was decided upon before I intended it to be cross platform.
@@ -12,17 +44,14 @@ Goals:
  - Be very fast; generation in under a second is most desired.
  - Call very few external programs (like df/load/uptime/etc), if any. (parse
    the file system for info, if possible)
- - Linux version not use external programs *at all* and rely exclusively on
+ - Linux version doesn't use external programs *at all* and rely exclusively on
    /proc and /sys and connecting to locally listening daemons. (except for extensions, listed below)
  - Don't go nuts with eye candy. Don't use ajax. Make viewing the info on
    text only browsers possible and easy.
- - Any javascript ever used must be *extremely* subtle and degrade gracefully
- - Don't bother finding Linux distro since it's irrelevant; the kernel and
-   other specs are what matters most
+ - Any javascript ever used must degrade gracefully
  - Don't give info that can be exploited and turned into a security risk, especially
    not names and command line arguments given to running programs.
  - Don't use blatantly slow methods such as preg_split(), especially not in loops
- - Prefer speed over code conciseness. Where possible, use for/while loops instead of foreach.
 
 Usable clients:
  - Any web browser should work, including text only ones
@@ -34,8 +63,11 @@ Global System requirements:
    and preg_match_all(). You most likely already have this.
  - note: PCRE is Linfo's only php requirement :)
 
+Windows system requirements:
+ - You need to have COM enabled - http://www.php.net/manual/en/class.com.php
+
 Linux system requirements:
- - /proc and /sys mounted appropriately, and readable by php
+ - /proc and /sys mounted appropriately, and readable by PHP
  - Tested with the 2.6 series of kernels. I'm not sure if it works with older ones.
 
 FreeBSD system requirements:
@@ -60,12 +92,14 @@ Installation/usage:
 For other forms of output, aside from usual HTML, append the following to the URL:
  - ?out=xml - XML output (requires SimpleXML extension)
  - ?out=json - JSON output
+ - ?out=jsonp&callback=functionName - JSON output with a function callback. (Look here: http://www.json-p.org/ )
  - ?out=php_array - PHP serialized associative array
  - ?out=html - Usual lightweight HTML (default)
- - ncurses - call ./linfo from the CLI. It will attempt to use http://php.net/manual/en/book.ncurses.php
+ - ncurses (very alpha) - call ./linfo from the CLI. It will attempt to use http://php.net/manual/en/book.ncurses.php 
 
-Known issues:
- - OS support other than Linux/Windows is relatively meager at times
+Troubleshooting:
+ - Try setting $settings['show_errors'] to true in the config file to yield 
+   useful error messages. 
 
 Linux system temps/voltages/etc requirments:
  - Have hddtemp listening or periodically writing to syslog, and/or
@@ -82,12 +116,13 @@ TODO:
  - Support for strange operating systems: Haiku/BeOS
  - More superfluous features/extensions
 
-Please send suggestions, patches (diff's), help requests, comments, complaints, beer, pizza, and hookers to:
+Please send suggestions, patches (diffs), translations, help requests, comments, complaints, beer, pizza, and hookers to:
  - joe@u13.net 
  - IRC - #linfo @ freenode
+ - Please email to joe@u13.net instead of contacting me over SourceForge.
 
 License: GNU General Public License
 Author/project leader: Joseph Robert Gillotti <joe@u13.net>
 Additional author(s): (See AUTHORS)
 URL: http://linfo.sourceforge.net/
-Favicon by: Lee Bradley
+Favicon and sexy colors by: Lee Bradley

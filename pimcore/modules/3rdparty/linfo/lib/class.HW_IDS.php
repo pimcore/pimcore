@@ -86,7 +86,7 @@ class HW_IDS {
 		}
 		else {
 			if (is_readable($this->_cache_file) &&
-			($loaded = @unserialize(getContents($this->_cache_file, false))) && is_array($loaded))
+			($loaded = @unserialize(getContents($this->_cache_file, false))) && is_array($loaded)) 
 				$this->_existing_cache_vals = $loaded;
 		}
 

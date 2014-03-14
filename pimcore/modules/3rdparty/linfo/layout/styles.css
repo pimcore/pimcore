@@ -8,7 +8,7 @@ table th, table td {
 	border-bottom: 1px solid #c3c3c3; padding: 4px; background-color: #eee;
 }
 table tr th, table tr.alt td { background-color: #ddd;}
-.infoTable { margin: 10px 5px 0px 5px; }
+.infoTable { margin: 10px 5px 0px 5px; clear: both; }
 .infoTable h2 {
 	margin: 0;
 	padding: 5px;
@@ -81,9 +81,8 @@ span.toggler {
 .infoTable span.toggler:hover {
 	color: white;
 }
-.header {
+#header {
 	padding: 5px 0px 0px 15px;
-	float: left;
 }
 .subtitle {
 	color: #999;

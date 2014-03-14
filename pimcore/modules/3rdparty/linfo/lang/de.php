@@ -26,7 +26,7 @@ defined('IN_INFO') or exit;
  */
 
 $lang = array(
-	'header' => 'System Health: %s',
+	'header' => 'Systeminformationen: %s',
 	'core' => 'Kern',
 	'os' => 'OS',
 	'kernel' => 'Kernel',
@@ -63,7 +63,7 @@ $lang = array(
 	'filesystem_mounts' => 'Eingehängte Datenträger',
 	'mount_point' => 'Einhängepunkte',
 	'filesystem' => 'Dateisystem',
-	'percent_used' => 'Prozent Belegt',
+	'percent_used' => 'Prozent belegt',
 	'raid_arrays' => 'RAID Arrays',
 	'level' => 'Level',
 	'status' => 'Status',
@@ -79,19 +79,22 @@ $lang = array(
 	'number' => 'Nummer',
 	'card' => 'Karte',
 	'message' => 'Nachricht',
+	'from_where' => 'Quelle',
 	'mount_options' => 'Einhängeoptionen',
 	'error_head' => 'Fehler beim Sammeln der Daten',
 	'timer' => 'Timer',
 	'area' => 'Bereich',
 	'time_taken' => 'Zum Holen benötigte Zeit',
-	'seconds' => 'Sekunden',
 	'days' => 'Tage',
-	'minutes' => 'Minuten',
 	'hours' => 'Stunden',
+	'minutes' => 'Minuten',
+	'seconds' => 'Sekunden',
 	'pid' => 'PID',
 	'service' => 'Dienst',
 	'services' => 'Dienste',
 	'memory_usage' => 'Speichernutzung',
 	'distro' => 'Distribution',
-	'cpu_arch' => 'Architecture'
+	'cpu_arch' => 'Architektur',
+	'model' => 'Modell',
+	'numLoggedIn' => 'Aktive Benutzer'
 );

@@ -38,8 +38,12 @@ function __autoload($class) {
 		exit('File for '.$file.' not found');
 	
 	// Make sure we have it
-	if (!class_exists($class))
-		exit('Class '.$class.' not found in '.$file);
+	if (!class_exists($class)) {
+		if ($class == 'COM')
+			exit('You need to enable PHP\'s COM extension');
+		else
+			exit('Class '.$class.' not found in '.$file);
+	}
 }
 
 
@@ -116,9 +120,8 @@ function runExtensions(&$info, $settings) {
 	$info['extensions'] = array();
 	
 	// Are there any extensions configured?
-	if(empty($settings['extensions'])) {
+	if(!array_key_exists('extensions', $settings) || count($settings['extensions']) == 0) 
 		return;
-	}
 
 	// Go through each enabled extension
 	foreach((array)$settings['extensions'] as $ext => $enabled) {

@@ -39,38 +39,31 @@ function showInfoHTML($info, $settings) {
 	$distro_icon = $info['OS'] == 'Linux' && is_array($info['Distro']) && $info['Distro']['name'] ? strtolower(str_replace(' ', '', $info['Distro']['name'])) : false;
 
 	// Start compressed output buffering
-	if (!isset($settings['compress_content']) || $settings['compress_content']) {
-		ob_start('ob_gzhandler');
-	}
+	if (!isset($settings['compress_content']) || $settings['compress_content']) 
+		ob_start(function_exists('ob_gzhandler') ? 'ob_gzhandler' : null);
 
 	// Proceed to letting it all out
-	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	echo '<!DOCTYPE html>
+<html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta charset="UTF-8">
 	<title>'.AppName.' - '.$info['HostName'].'</title>
-	<link href="'.WEB_PATH.'layout/favicon.ico" type="image/x-icon" rel="shortcut icon" />
-	<link href="'.WEB_PATH.'layout/styles.css" type="text/css" rel="stylesheet" />'.( $show_icons ? '
-	<link href="'.WEB_PATH.'layout/icons.css" type="text/css" rel="stylesheet" />' : ''
+	<link href="'.WEB_PATH.'layout/favicon.ico" type="image/x-icon" rel="shortcut icon">
+	<link href="'.WEB_PATH.'layout/styles.css" rel="stylesheet">'.( $show_icons ? '
+	<link href="'.WEB_PATH.'layout/icons.css" rel="stylesheet">' : ''
 	).'
-	<script src="'.WEB_PATH.'layout/scripts.min.js" type="text/javascript"></script>
-	<meta name="generator" content="'.AppName.' ('.VERSION.')" />
-	<meta name="author" content="Joseph Gillotti &amp; friends" />
+	<script src="'.WEB_PATH.'layout/scripts.min.js"></script>
+	<meta name="generator" content="'.AppName.' ('.VERSION.')">
+	<meta name="author" content="Joseph Gillotti &amp; friends">
 	<!--[if lt IE 8]>
-	<link href="'.WEB_PATH.'layout/old_ie.css" type="text/css" rel="stylesheet" />
+	<link href="'.WEB_PATH.'layout/old_ie.css" type="text/css" rel="stylesheet">
 	<![endif]-->
 </head>
 <body id="info">
-<div class="header">
+<div id="header">
 	<h1>'.$info['HostName'].'</h1>
 	<div class="subtitle">'.$lang['header'].'</div>
 </div>
-<!--<div class="time">
-	<h1>'.date('H:i:s').'</h1>
-	<div class="subtitle">'.date('Y-m-d, T').'</div>
-</div>-->
-<br clear="all" />
 <div class="col2">
 	<div class="col">
 		<div class="infoTable">
@@ -85,7 +78,7 @@ function showInfoHTML($info, $settings) {
 		$core[] = array($lang['os'], ($show_icons && (file_exists(LOCAL_PATH . 'layout/icons/os_'.$os_icon.'.gif') || file_exists(LOCAL_PATH . 'layout/icons/os_'.$os_icon.'.png')) ? '<span class="icon icon_os_'.$os_icon.'"></span>' : '') . $info['OS']);
 	
 	// Distribution? (with icon, if we have it)
-	if (!empty($settings['show']['distro']) && is_array($info['Distro']))
+	if (!empty($settings['show']['distro']) && array_key_exists('Distro', $info) && is_array($info['Distro']))
 		$core[] = array($lang['distro'], ($show_icons && $distro_icon && (file_exists(LOCAL_PATH . 'layout/icons/distro_'.$distro_icon.'.gif') || file_exists(LOCAL_PATH . 'layout/icons/distro_'.$distro_icon.'.png')) ? '<span class="icon icon_distro_'.$distro_icon.'"></span>' : '') . $info['Distro']['name'] . ($info['Distro']['version'] ? ' - '.$info['Distro']['version'] : ''));
 	
 	// Kernel
@@ -112,7 +105,7 @@ function showInfoHTML($info, $settings) {
 		$cpus = '';
 		foreach ((array) $info['CPU'] as $cpu) 
 			$cpus .=
-				(array_key_exists('Vendor', $cpu) ? $cpu['Vendor'] . ' - ' : '') .
+				(array_key_exists('Vendor', $cpu) && !empty($cpu['Vendor']) ? $cpu['Vendor'] . ' - ' : '') .
 				$cpu['Model'] .
 				(array_key_exists('MHz', $cpu) ?
 					($cpu['MHz'] < 1000 ? ' ('.$cpu['MHz'].' MHz)' : ' ('.round($cpu['MHz'] / 1000, 3).' GHz)') : '') .
@@ -149,6 +142,10 @@ function showInfoHTML($info, $settings) {
 		if ($info['processStats']['threads'] !== false)
 			$core[] = array($lang['threads'], number_format($info['processStats']['threads']));
 	}
+	
+	// Users with active shells
+	if (!empty($settings['show']['numLoggedIn']) && array_key_exists('numLoggedIn', $info))
+		$core[] = array($lang['numLoggedIn'], $info['numLoggedIn']);
 
 	// Show
 	for ($i = 0, $core_num = count($core); $i < $core_num; $i++) {
@@ -242,7 +239,7 @@ function showInfoHTML($info, $settings) {
 
 	// Network Devices?
 	if (!empty($settings['show']['network'])) {
-		$show_type = array_key_exists('nic_type', $info['contains']) ? ($info['contains']['nic_type'] === false ? false : true) : true;
+		$show_type = array_key_exists('nic_type', $info['contains']) ? $info['contains']['nic_type'] : true;
 		echo '
 		<div class="infoTable">
 			<h2>'.$lang['network_devices'].'</h2>
@@ -288,7 +285,17 @@ function showInfoHTML($info, $settings) {
 					<tr>
 						<td>'.$stat['path'].'</td>
 						<td>'.$stat['name'].'</td>
-						<td>'.$stat['temp'].' '.$stat['unit'].'</td>
+						<td>'.(
+							array_key_exists('bar', $stat) && $stat['bar'] && $stat['unit'] == '%' ?
+							'<div class="bar_chart">
+								<div class="bar_inner" style="width: '.$stat['temp'].'%;">
+									<div class="bar_text">
+										'.($stat['temp'] > -1 ? $stat['temp']: '?').'%
+									</div>
+								</div>
+							</div>
+							': 
+						$stat['temp'].' '.$stat['unit']).'</td>
 					</tr>
 					';
 					}
@@ -313,7 +320,17 @@ function showInfoHTML($info, $settings) {
 					<tr>
 						<td>'.$bat['device'].'</td>
 						<td>'.$bat['state'].'</td>
-						<td>'.$bat['percentage'].($bat['percentage'] < 0 ? ' <span class="caption">(wtf?)</span>' : '').'</td>
+						<td>
+						
+							<div class="bar_chart">
+								<div class="bar_inner" style="width: '.(int) $bat['percentage'].'%;">
+									<div class="bar_text">
+										'.($bat['percentage'] > -1 ? $bat['percentage']: '?').'
+									</div>
+								</div>
+							</div>
+						
+						</td>
 					</tr>
 					';
 		echo '
@@ -427,7 +444,7 @@ function showInfoHTML($info, $settings) {
 				</tr>';
 
 				// If we've got partitions for this drive, show them too
-				if (is_array($drive['partitions']) && count($drive['partitions']) > 0) {
+				if (array_key_exists('partitions', $drive) && is_array($drive['partitions']) && count($drive['partitions']) > 0) {
 					echo '
 				<tr>
 					<td colspan="6">';
@@ -552,10 +569,13 @@ function showInfoHTML($info, $settings) {
 					$total_size += $mount['size'];
 					$total_used += $mount['used'];
 					$total_free += $mount['free'];
-					if (!empty($mount['device'])) {
+					if (!empty($mount['device'])) 
 						$done_devices[] = $mount['device'];
-					}
 				}
+
+				// Possibly don't show this twice
+				else if (array_key_exists('duplicate_mounts', $settings['show']) && empty($settings['show']['duplicate_mounts']))
+					continue;
 
 				// If it's an NFS mount it's likely in the form of server:path (without a trailing slash), 
 				// but if the path is just / it likely just shows up as server:,
@@ -784,21 +804,21 @@ function showInfoHTML($info, $settings) {
 
 	echo '
 <div id="foot">
-	'.sprintf($lang['footer_app'], '<a href="http://linfo.sf.net"><em>'.AppName.' ('.VERSION.')</em></a>',  round(microtime(true) - TIME_START,2)).'<br />
-	<em>'.AppName.'</em> &copy; 2010 &ndash; 2011 Joseph Gillotti &amp; friends. Source code licensed under GPL.
+	'.sprintf($lang['footer_app'], '<a href="http://linfo.sf.net"><em>'.AppName.' ('.VERSION.')</em></a>',  round(microtime(true) - TIME_START,2)).'<br>
+	<em>'.AppName.'</em> &copy; 2010 &ndash; '.(date('Y') > 2011 ? date('Y') : 2011).'
+	Joseph Gillotti '.(date('m/d') == '06/03' ? ' (who turns '.(date('Y') - 1993).' today!)' : '').'&amp; friends. Source code licensed under GPL.
 </div>
 <div id="foot_time">
 	<br />
-	Generated on '.date('m/d/y h:i A').'
+	Generated on '.date($settings['dates']).'
 </div>
-<script type="text/javascript">Linfo.init()</script>
+<script>Linfo.init()</script>
 </body>
 </html>';
 
 	// End output buffering
-	if (!isset($settings['compress_content']) || $settings['compress_content']) {
+	if (!isset($settings['compress_content']) || $settings['compress_content']) 
 		ob_end_flush();
-	}
 }
 
 
@@ -832,7 +852,7 @@ function showInfoHTML($info, $settings) {
 			$cpus = '';
 			foreach ((array) $info['CPU'] as $cpu) 
 				$cpus .=
-					(array_key_exists('Vendor', $cpu) ? $cpu['Vendor'] . ' - ' : '') .
+					(array_key_exists('Vendor', $cpu) && empty($cpu['Vendor']) ? $cpu['Vendor'] . ' - ' : '') .
 					$cpu['Model'] .
 					(array_key_exists('MHz', $cpu) ?
 						($cpu['MHz'] < 1000 ? ' ('.$cpu['MHz'].' MHz)' : ' ('.round($cpu['MHz'] / 1000, 3).' GHz)') : '') .
@@ -1104,18 +1124,19 @@ function showInfoHTML($info, $settings) {
 		return;
 	}
 	
-	header("Content-Type: application/json");
+	header('Content-Type: application/json');
 
 	// Output buffering, along with compression (if supported)
-	if (!isset($settings['compress_content']) || $settings['compress_content']) {
-		ob_start('ob_gzhandler');
-	}
+	if (!isset($settings['compress_content']) || $settings['compress_content']) 
+		ob_start(function_exists('ob_gzhandler') ? 'ob_gzhandler' : null);
+	
 
-	// Give it
-	echo json_encode($info);
+	// Give it. Support JSON-P like functionality if the ?callback param looks like a valid javascript
+	// function name, including object traversal.
+	echo array_key_exists('callback', $_GET) && preg_match('/^[a-z0-9\_\.]+$/i', $_GET['callback']) ?
+		$_GET['callback'].'('.json_encode($info).')' : json_encode($info);
 
 	// Send it all out
-	if (!isset($settings['compress_content']) || $settings['compress_content']) {
+	if (!isset($settings['compress_content']) || $settings['compress_content']) 
 		ob_end_flush();
-	}
  }

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of Linfo (c) 2010-2011 Joseph Gillotti.
+ * This file is part of Linfo (c) 2010-2013 Joseph Gillotti.
  * 
  * Linfo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,17 +55,20 @@ if (isset($argc) && is_array($argv))
 
 // Version
 define('AppName', 'Linfo');
-define('VERSION', '1.8.1');
+define('VERSION', '1.9');
 
+// Anti hack, as in allow included files to ensure they were included
+define('IN_INFO', true);
 
+// Configure absolute path to local directory
+define('LOCAL_PATH', dirname(__FILE__) . '/');
 
 // Configure absolute path to stored info cache, for things that take a while
 // to find and don't change, like hardware devcies
 define('CACHE_PATH', PIMCORE_SYSTEM_TEMP_DIRECTORY . "/");
 
 // Configure absolute path to web directory
-$web_path = dirname($_SERVER['SCRIPT_NAME']);
-define('WEB_PATH', substr($web_path, -1) == '/' ? $web_path : $web_path.'/');
+define('WEB_PATH', substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '/')+1));
 
 // If configuration file does not exist but the sample does, say so
 if (!is_file(LOCAL_PATH . 'config.inc.php') && is_file(LOCAL_PATH . 'sample.config.inc.php'))
@@ -99,6 +102,9 @@ require_once LOCAL_PATH . 'lib/functions.display.php';
 require_once LOCAL_PATH . 'lib/class.LinfoTimer.php';
 require_once LOCAL_PATH . 'lib/interface.LinfoExtension.php';
 
+// Default timeformat
+$settings['dates'] = array_key_exists('dates', $settings) ? $settings['dates'] : 'm/d/y h:i A (T)';
+
 // Default to english translation if garbage is passed
 if (empty($settings['language']) || !preg_match('/^[a-z]{2}$/', $settings['language']))
 	$settings['language'] = 'en';
@@ -107,8 +113,23 @@ if (empty($settings['language']) || !preg_match('/^[a-z]{2}$/', $settings['langu
 if (!is_file(LOCAL_PATH . 'lang/'.$settings['language'].'.php'))
 	$settings['language'] = 'en';
 	
-// Load translation
-require_once LOCAL_PATH . 'lang/'.$settings['language'].'.php';
+// Load translation, defaulting to english of keys are missing (assuming
+// we're not using english anyway and the english translation indeed exists)
+if (is_file(LOCAL_PATH . 'lang/en.php') && $settings['language'] != 'en') 
+	$lang = array_merge(get_var_from_file(LOCAL_PATH . 'lang/en.php', 'lang'), 
+		get_var_from_file(LOCAL_PATH . 'lang/'.$settings['language'].'.php', 'lang'));
+
+// Otherwise snag desired translation, be it english or a non-english without english to fall back on	
+else	
+	require_once LOCAL_PATH . 'lang/'.$settings['language'].'.php';
+
+// Bullshit happens if date.timezone isn't set in php 5.3+
+if (!ini_get('date.timezone')) 
+	@ini_set('date.timezone', 'Etc/UTC');
+
+// Don't just blindly assume we have the ob_* functions...
+if (!function_exists('ob_start'))
+	$settings['compress_content'] = false;
 
 // Determine our OS
 $os = determineOS();
@@ -122,7 +143,7 @@ $getter = parseSystem($os, $settings);
 $info = $getter->getAll();
 
 // Store current timestamp for alternative output formats
-$info['timestamp'] = date("c");
+$info['timestamp'] = date('c');
 
 // Extensions
 runExtensions($info, $settings);
@@ -150,6 +171,7 @@ else {
 
 		// JSON
 		case 'json':
+		case 'jsonp':	// To use JSON-P, pass the GET arg - callback=function_name
 			showInfoJSON($info, $settings);
 		break;
 
@@ -176,31 +198,5 @@ else {
 		break;
 	}
 }
+
 // "This is where it ends, Commander"
-
-
-
-
-
-
-/*
-	Roses are red; violets are blue; vaginas are nice and
-	sometimes you are too! 
-
-	Once upton a time, there was a sex machine named Billie. Her
-	counterpart was named Linus. Her cunt was lined with sweet
-	oil to ease his passing, Linus so loved her cunt. At one
-	point, their liquid metal condom broke and they conceived a
-	child. They named it "pinpho" after the broken condom.
-
-	Out it came, not much more than a sandisk flash drive. They
-	inserted it where the sun shouldn't shine; it had a lone
-	ext2 partition consisting of a single file:
-	linfo_0.1.tar.gz.
-
-	Thus Linfo was born.
-
-						--
-						The book of Metal
-						cocks, 93:69
-*/

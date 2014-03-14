@@ -87,7 +87,11 @@ class OS_Windows {
 			'Wifi' => empty($this->settings['show']['wifi']) ? array(): $this->getWifi(),
 			'SoundCards' => empty($this->settings['show']['sound']) ? array(): $this->getSoundCards(),
 			'processStats' => empty($this->settings['show']['process_stats']) ? array() : $this->getProcessStats(),
-			'services' => empty($this->settings['show']['process_stats']) ? array() : $this->getServices()
+			'services' => empty($this->settings['show']['process_stats']) ? array() : $this->getServices(),
+
+			'contains' => array(
+				'drives_rw_stats' => false
+			)
 		);
 	}
 	
@@ -246,7 +250,7 @@ class OS_Windows {
 		);
 		$booted_ts = mktime($booted['hour'], $booted['minute'], $booted['second'], $booted['month'], $booted['day'], $booted['year']);
 		
-		return seconds_convert(time() - $booted_ts) . '; booted ' . date('m/d/y h:i A', $booted_ts);
+		return seconds_convert(time() - $booted_ts) . '; booted ' . date($this->settings['dates'], $booted_ts);
 	}
 	
 	/**

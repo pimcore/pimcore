@@ -82,7 +82,8 @@ class OS_Linux {
 			'Wifi' => empty($this->settings['show']['wifi']) ? array(): $this->getWifi(),
 			'SoundCards' => empty($this->settings['show']['sound']) ? array(): $this->getSoundCards(),
 			'processStats' => empty($this->settings['show']['process_stats']) ? array() : $this->getProcessStats(),
-			'services' => empty($this->settings['show']['process_stats']) ? array() : $this->getServices()
+			'services' => empty($this->settings['show']['process_stats']) ? array() : $this->getServices(),
+			'numLoggedIn' => empty($this->settings['show']['numLoggedIn']) ? array() : $this->getNumLoggedIn()
 		);
 	}
 
@@ -199,7 +200,7 @@ class OS_Linux {
 			$memVals[$memInfo[1]] = $memInfo[2];
 
 		// Get swapContents
-		@preg_match_all('/^(\S+)\s+(\S+)\s+(\d+)\s(\d+)[^$]*$/m', getContents($procFileSwap), $matches, PREG_SET_ORDER);
+		@preg_match_all('/^(\S+)\s+(\S+)\s+(\d+)\s(\d+)/m', getContents($procFileSwap), $matches, PREG_SET_ORDER);
 		foreach ((array)$matches as $swapDevice) {
 			
 			// Append each swap device
@@ -214,9 +215,9 @@ class OS_Linux {
 		// Get individual vals
 		$return['type'] = 'Physical';
 		$return['total'] = $memVals['MemTotal']*1024;
-		$return['free'] = $memVals['MemFree']*1024;
+		$return['free'] = $memVals['MemFree']*1024 + $memVals['Cached']*1024+ $memVals['Buffers']*1024;
 		$return['swapTotal'] = $memVals['SwapTotal']*1024;
-		$return['swapFree'] = $memVals['SwapFree']*1024;
+		$return['swapFree'] = $memVals['SwapFree']*1024 + $memVals['SwapCached']*1024;
 		$return['swapCached'] = $memVals['SwapCached']*1024;
 		$return['swapInfo'] = $swapVals;
 
@@ -255,34 +256,63 @@ class OS_Linux {
 		// Lines
 		$lines = explode("\n", $contents);
 
-		// Store CPU's here
+		// Store CPUs here
 		$cpus = array();
 
-		// Holder for current cpu info
+		// Holder for current CPU info
 		$cur_cpu = array();
 
 		// Go through lines in file
 		$num_lines = count($lines);
+		
+		// We use the key of the first line to separate CPUs
+		$first_line = substr($lines[0], 0, strpos($lines[0], ' '));
+		
 		for ($i = 0; $i < $num_lines; $i++) {
 			
 			// Approaching new CPU? Save current and start new info for this
-			if ($lines[$i] == '' && count($cur_cpu) > 0) {
+			if (strpos($lines[$i], $first_line) === 0 && count($cur_cpu) > 0) {
 				$cpus[] = $cur_cpu;
 				$cur_cpu = array();
-				continue;
+				
+				// Default to unknown
+				$cur_cpu['Model'] = 'Unknown';
 			}
 
 			// Info here
-			$m = explode(':', $lines[$i], 2);
-			$m[0] = trim($m[0]);
-			$m[1] = trim($m[1]);
+			$line = explode(':', $lines[$i], 2);
 
-			// Pointless?
-			if ($m[0] == '' || $m[1] == '')
+			if (!array_key_exists(1, $line))
 				continue;
 
-			// Save this one
-			$cur_cpu[$m[0]] = $m[1];
+			$key = trim($line[0]);
+			$value = trim($line[1]);
+
+			
+			// What we want are MHZ, Vendor, and Model.
+			switch ($key) {
+				
+				// CPU model
+				case 'model name':
+				case 'cpu':
+				case 'Processor':
+					$cur_cpu['Model'] = $value;
+				break;
+
+				// Speed in MHz
+				case 'cpu MHz':
+					$cur_cpu['MHz'] = $value;
+				break;
+
+				case 'Cpu0ClkTck': // Old sun boxes
+					$cur_cpu['MHz'] = hexdec($value) / 1000000;
+				break;
+
+				// Brand/vendor
+				case 'vendor_id':
+					$cur_cpu['Vendor'] = $value;
+				break;
+			}
 
 		}
 
@@ -290,58 +320,8 @@ class OS_Linux {
 		if (count($cur_cpu) > 0)
 			$cpus[] = $cur_cpu;
 
-		/*
-		 * What we want are MHZ, Vendor, and Model.
-		 */
-
-		// Store them here
-		$return = array();
-
-		// See if we have what we want
-		$num_cpus = count($cpus);
-		for ($i = 0; $i < $num_cpus; $i++) {
-			
-			// Save info for this one here temporarily
-			$curr = array();
-
-			// Default to unknown
-			$curr['Model'] = 'Unknown';
-
-			// Go through keys to find stuff like model, speed, brand
-			foreach ($cpus[$i] as $k => $v) {
-
-				// Deal with each section
-				switch ($k) {
-					
-					// CPU model
-					case 'model name':
-					case 'cpu':
-					case 'Processor':
-						$curr['Model'] = $v;
-					break;
-
-					// Speed in MHz
-					case 'cpu MHz':
-						$curr['MHz'] = $v;
-					break;
-
-					case 'Cpu0ClkTck': // Old sun boxes
-						$curr['MHz'] = hexdec($v) / 1000000;
-					break;
-
-					// Brand/vendor
-					case 'vendor_id':
-						$curr['Vendor'] = $v;
-					break;
-				}
-			}
-
-			// Save this one
-			$return[] = $curr;
-		}
-
 		// Return them
-		return $return;
+		return $cpus;
 	}
 
 	// Famously interesting uptime
@@ -381,7 +361,7 @@ class OS_Linux {
 		list(, $boot) = $boot;
 
 		// Return
-		return $uptime . '; booted '.date('m/d/y h:i A', $boot);
+		return $uptime . '; booted '.date($this->settings['dates'], $boot);
 	}
 
 	/**
@@ -592,6 +572,24 @@ class OS_Linux {
 				$return = array_merge($return, $hwmon_vals);
 		}
 
+		// Additional weird bullshit? In this case, laptop backlight percentage. lolwtf, right?
+		foreach ((array) @glob('/sys/{devices/virtual,class}/backlight/*/max_brightness', GLOB_NOSORT | GLOB_BRACE) as $bl) {
+			$dir = dirname($bl);
+			if (!is_file($dir.'/actual_brightness'))
+				continue;
+			$max = get_int_from_file($bl);
+			$cur = get_int_from_file($dir.'/actual_brightness');
+			if ($max < 0 || $cur < 0)
+				continue;
+			$return[] = array(
+				'name' => 'Backlight brightness',
+				'temp' => round($cur/$max, 2)*100,
+				'unit' => '%',
+				'path' => 'N/A',
+				'bar' => true
+			);
+		}
+
 		// Done
 		return $return;
 	}
@@ -692,6 +690,10 @@ class OS_Linux {
 			'/usr/share/usb.ids',		// opensuse
 			'/usr/share/hwdata/usb.ids',	// centos. maybe also redhat/fedora
 		));
+
+		// Did we not get them?
+		$pci_ids || $this->error->add('Linux Device Finder', 'Cannot find pci.ids; ensure pciutils is installed.');
+		$usb_ids || $this->error->add('Linux Device Finder', 'Cannot find usb.ids; ensure usbutils is installed.');
 
 		// Class that does it
 		$hw = new HW_IDS($usb_ids, $pci_ids);
@@ -928,15 +930,28 @@ class OS_Linux {
 		// Get vals for each battery
 		foreach ($bats as $b) {
 
+			$go_for_it = true;
+
+			// Fuck pointless cuntshit
+			foreach(array($b.'/manufacturer', $b.'/status', $b.'/charge_now') as $f)
+				if (!is_file($f))
+					$go_for_it = false; // Continue out of two nested loops
+
+			if (!$go_for_it) 
+				continue;
+
 			// Get these from the simple text files
 			$charge_full = get_int_from_file($b.'/charge_full');
 			$charge_now = get_int_from_file($b.'/charge_now');
+
+			// Alleged percentage
+			$percentage = $charge_now != 0 && $charge_full != 0 ? (round($charge_now / $charge_full, 4) * 100) : '?';
 
 			// Save result set
 			$return[] = array(
 				'charge_full' => $charge_full,
 				'charge_now' => $charge_now,
-				'percentage' => ($charge_now != 0 && $charge_full != 0 ? (round($charge_now / $charge_full, 4) * 100) : '?').'%',
+				'percentage' => (is_numeric($percentage) && $percentage > 100 ? 100 : $percentage ).'%',
 				'device' => getContents($b.'/manufacturer') . ' ' . getContents($b.'/model_name', 'Unknown'),
 				'state' => getContents($b.'/status', 'Unknown')
 			);
@@ -1119,6 +1134,10 @@ class OS_Linux {
 	 * @return array the services
 	 */
 	private function getServices() {
+		
+		// Time?
+		if (!empty($this->settings['timer']))
+			$t = new LinfoTimerStart('Services');
 
 		// We allowed?
 		if (!empty($settings['show']['services']) || !is_array($this->settings['services']) || count($this->settings['services']) == 0)
@@ -1144,14 +1163,31 @@ class OS_Linux {
 			
 		// Should we go ahead and do the PID search based on executables?
 		if ($do_process_search) {
+			// Precache all process cmdlines
+			for ($i = 0; $i < $num_paths; $i++)
+				$cmdline_cache[$i] = explode("\x00", getContents($potential_paths[$i]));
+			
 			// Go through the list of executables to search for
 			foreach ($this->settings['services']['executables'] as $service => $exec) {
 				// Go through pid file list. for loops are faster than foreach
 				for ($i = 0; $i < $num_paths; $i++) {
+					$cmdline = $cmdline_cache[$i];
+					$match = false;
+					if (is_array($exec)) {
+						$match = true;
+						foreach ($exec as $argn => $argv) {
+							if($cmdline[$argn] != $argv)
+								$match = false;
+						}
+					}
+					else if ($cmdline[0] == $exec) {
+						$match = true;
+					}
 					// If this one matches, stop here and save it
-					if (getContents($potential_paths[$i], false) == $exec) {
+					if ($match) {
 						// Get pid out of path to cmdline file
-						$pids[$service] = end(explode('/proc/', dirname($potential_paths[$i])));
+						$pids[$service] = substr($potential_paths[$i], 6 /*strlen('/proc/')*/,
+												strpos($potential_paths[$i], '/', 7)-6);
 						break;
 					}
 				}
@@ -1359,5 +1395,42 @@ class OS_Linux {
 	 */
 	private function getCPUArchitecture() {
 		return php_uname('m');
+	}
+
+	/**
+	 * getNumLoggedIn
+	 * 
+	 * @access private
+	 * @return number of logged in users with shells
+	 */
+	 private function getNumLoggedIn() {
+
+		// Snag command line of every process in system
+		$procs = glob('/proc/*/cmdline', GLOB_NOSORT);
+		
+		// Store unqiue users here
+		$users = array();
+
+		// Each process
+		foreach ($procs as $proc) {
+
+			// Does the process match a popular shell, such as bash, csh, etc?
+			if (preg_match('/(?:bash|csh|zsh|ksh)$/', getContents($proc, ''))) {
+
+				// Who the fuck owns it, anyway? 
+				$owner = fileowner(dirname($proc));
+
+				// Careful..
+				if (!is_numeric($owner))
+					continue;
+
+				// Have we not seen this user before?
+				if (!in_array($owner, $users))
+					$users[] = $owner;
+			}
+		}
+		
+		// Give number of unique users with shells running
+		return count($users);
 	}
 }

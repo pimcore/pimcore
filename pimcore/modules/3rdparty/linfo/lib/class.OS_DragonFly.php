@@ -219,7 +219,7 @@ class OS_DragonFly extends OS_BSD_Common{
 		$booted = $m[1];
 
 		// Get it textual, as in days/minutes/hours/etc
-		return seconds_convert(time() - $booted) . '; booted ' . date('m/d/y h:i A', $booted);
+		return seconds_convert(time() - $booted) . '; booted ' . date($this->settings['dates'], $booted);
 	}
 
 	// RAID Stats

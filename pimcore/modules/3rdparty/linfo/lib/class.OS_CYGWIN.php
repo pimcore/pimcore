@@ -194,34 +194,59 @@ class OS_CYGWIN {
 		// Lines
 		$lines = explode("\n", $contents);
 
-		// Store CPU's here
+		// Store CPUs here
 		$cpus = array();
 
-		// Holder for current cpu info
+		// Holder for current CPU info
 		$cur_cpu = array();
 
 		// Go through lines in file
 		$num_lines = count($lines);
+		
+		// We use the key of the first line to separate CPUs
+		$first_line = substr($lines[0], 0, strpos($lines[0], ' '));
+		
 		for ($i = 0; $i < $num_lines; $i++) {
 			
 			// Approaching new CPU? Save current and start new info for this
-			if ($lines[$i] == '' && count($cur_cpu) > 0) {
+			if (strpos($lines[$i], $first_line) === 0 && count($cur_cpu) > 0) {
 				$cpus[] = $cur_cpu;
 				$cur_cpu = array();
-				continue;
+				
+				// Default to unknown
+				$cur_cpu['Model'] = 'Unknown';
 			}
 
 			// Info here
-			$m = explode(':', $lines[$i], 2);
-			$m[0] = trim($m[0]);
-			$m[1] = trim($m[1]);
+			$line = explode(':', $lines[$i], 2);
+			$key = trim($line[0]);
+			$value = trim($line[1]);
 
-			// Pointless?
-			if ($m[0] == '' || $m[1] == '')
-				continue;
+			
+			// What we want are MHZ, Vendor, and Model.
+			switch ($key) {
+				
+				// CPU model
+				case 'model name':
+				case 'cpu':
+				case 'Processor':
+					$cur_cpu['Model'] = $value;
+				break;
 
-			// Save this one
-			$cur_cpu[$m[0]] = $m[1];
+				// Speed in MHz
+				case 'cpu MHz':
+					$cur_cpu['MHz'] = $value;
+				break;
+
+				case 'Cpu0ClkTck': // Old sun boxes
+					$cur_cpu['MHz'] = hexdec($value) / 1000000;
+				break;
+
+				// Brand/vendor
+				case 'vendor_id':
+					$cur_cpu['Vendor'] = $value;
+				break;
+			}
 
 		}
 
@@ -229,58 +254,8 @@ class OS_CYGWIN {
 		if (count($cur_cpu) > 0)
 			$cpus[] = $cur_cpu;
 
-		/*
-		 * What we want are MHZ, Vendor, and Model.
-		 */
-
-		// Store them here
-		$return = array();
-
-		// See if we have what we want
-		$num_cpus = count($cpus);
-		for ($i = 0; $i < $num_cpus; $i++) {
-			
-			// Save info for this one here temporarily
-			$curr = array();
-
-			// Default to unknown
-			$curr['Model'] = 'Unknown';
-
-			// Go through keys to find stuff like model, speed, brand
-			foreach ($cpus[$i] as $k => $v) {
-
-				// Deal with each section
-				switch ($k) {
-					
-					// CPU model
-					case 'model name':
-					case 'cpu':
-					case 'Processor':
-						$curr['Model'] = $v;
-					break;
-
-					// Speed in MHz
-					case 'cpu MHz':
-						$curr['MHz'] = $v;
-					break;
-
-					case 'Cpu0ClkTck': // Old sun boxes
-						$curr['MHz'] = hexdec($v) / 1000000;
-					break;
-
-					// Brand/vendor
-					case 'vendor_id':
-						$curr['Vendor'] = $v;
-					break;
-				}
-			}
-
-			// Save this one
-			$return[] = $curr;
-		}
-
 		// Return them
-		return $return;
+		return $cpus;
 	}
 
 	// Famously interesting uptime
@@ -320,7 +295,7 @@ class OS_CYGWIN {
 		list(, $boot) = $boot;
 
 		// Return
-		return $uptime . '; booted '.date('m/d/y h:i A', $boot);
+		return $uptime . '; booted '.date($this->settings['dates'], $boot);
 	}
 
 	/**
@@ -407,129 +382,6 @@ class OS_CYGWIN {
 
 		// Hold them here
 		$return = array();
-
-		// hddtemp?
-		if (array_key_exists('hddtemp', (array)$this->settings['temps']) && !empty($this->settings['temps']['hddtemp'])) {
-			try {
-				// Initiate class
-				$hddtemp = new GetHddTemp($this->settings);
-
-				// Set mode, as in either daemon or syslog
-				$hddtemp->setMode($this->settings['hddtemp']['mode']);
-
-				// If we're daemon, save host and port
-				if ($this->settings['hddtemp']['mode'] == 'daemon') {
-					$hddtemp->setAddress(
-						$this->settings['hddtemp']['address']['host'],
-						$this->settings['hddtemp']['address']['port']);
-				}
-
-				// Result after working it
-				$hddtemp_res = $hddtemp->work();
-
-				// If it's an array, it worked
-				if (is_array($hddtemp_res))
-					// Save result
-					$return = array_merge($return, $hddtemp_res);
-
-			}
-
-			// There was an issue
-			catch (GetHddTempException $e) {
-				$this->error->add('hddtemp parser', $e->getMessage());
-			}
-		}
-
-		// mbmon?
-		if (array_key_exists('mbmon', (array)$this->settings['temps']) && !empty($this->settings['temps']['mbmon'])) {
-			try {
-				// Initiate class
-				$mbmon = new GetMbMon;
-
-				// Set host and port
-				$mbmon->setAddress(
-					$this->settings['mbmon']['address']['host'],
-					$this->settings['mbmon']['address']['port']);
-
-				// Get result after working it
-				$mbmon_res = $mbmon->work();
-
-				// If it's an array, it worked
-				if (is_array($mbmon_res))
-					// Save result
-					$return = array_merge($return, $mbmon_res);
-			}
-			catch (GetMbMonException $e) {
-				$this->error->add('mbmon parser', $e->getMessage());
-			}
-		}
-
-		// sensord? (part of lm-sensors)
-		if (array_key_exists('sensord', (array)$this->settings['temps']) && !empty($this->settings['temps']['sensord'])) {
-			try {
-				// Iniatate class
-				$sensord = new GetSensord;
-
-				// Work it
-				$sensord_res = $sensord->work();
-
-				// If it's an array, it worked
-				if (is_array($sensord_res))
-					// Save result
-					$return = array_merge($return, $sensord_res);
-			}
-			catch (GetSensordException $e) {
-				$this->error->add('sensord parser', $e->getMessage());
-			}
-		}
-
-		// hwmon? (probably the fastest of what's here)
-		// too simple to be in its own class
-		if (array_key_exists('hwmon', (array)$this->settings['temps']) && !empty($this->settings['temps']['hwmon'])) {
-
-			// Store them here
-			$hwmon_vals = array();
-
-			// Wacky location
-			$hwmon_paths = (array) @glob('/sys/class/hwmon/hwmon*/*_label', GLOB_NOSORT);
-			$num_paths = count($hwmon_paths);
-			for ($i = 0; $i < $num_paths; $i++) {
-
-				// The path
-				$path = $hwmon_paths[$i];
-
-				// Get info here
-				$section = rtrim($path, 'label');
-				$filename = basename($path);
-				$label = getContents($path);
-				$value = getContents($section.'input');
-
-				// Determine units and possibly fix values
-				if (strpos($filename, 'fan') !== false)
-					$unit = 'RPM';
-				elseif (strpos($filename, 'temp') !== false) {
-					$unit = 'C';  // Always seems to be in celsius
-					$value = strlen($value) == 5 ? substr($value, 0, 2) : $value;  // Pointless extra 0's
-				}
-				elseif (preg_match('/^in\d_label$/', $filename)) {
-					$unit = 'v'; 
-				}
-				else 
-					$unit = ''; // Not sure if there's a temp
-
-				// Append values
-				$hwmon_vals[] = array(
-					'path' => 'N/A',
-					'name' => $label,
-					'temp' => $value,
-					'unit' => $unit
-				);
-			}
-			
-			// Save any if we have any
-			if (count($hwmon_vals) > 0)
-				$return = array_merge($return, $hwmon_vals);
-		}
 
 		// Done
 		return $return;
@@ -652,82 +504,6 @@ class OS_CYGWIN {
 		
 		// Store it here
 		$raidinfo = array();
-
-		// mdadm?
-		if (array_key_exists('mdadm', (array)$this->settings['raid']) && !empty($this->settings['raid']['mdadm'])) {
-
-			// Try getting contents
-			$mdadm_contents = getContents('/proc/mdstat', false);
-
-			// No?
-			if ($mdadm_contents === false)
-				$this->error->add('Linux softraid mdstat parser', '/proc/mdstat does not exist.');
-
-			// Parse
-			@preg_match_all('/(\S+)\s*:\s*(\w+)\s*raid(\d+)\s*([\w+\[\d+\] (\(\w\))?]+)\n\s+(\d+) blocks\s*(?:super \d\.\d\s*)?(level \d\, [\w\d]+ chunk\, algorithm \d\s*)?\[(\d\/\d)\] \[([U\_]+)\]/mi', (string) $mdadm_contents, $match, PREG_SET_ORDER);
-
-			// Store them here
-			$mdadm_arrays = array();
-
-			// Deal with entries
-			foreach ((array) $match as $array) {
-				
-				// Temporarily store drives here
-				$drives = array();
-
-				// Parse drives
-				foreach (explode(' ', $array[4]) as $drive) {
-
-					// Parse?
-					if(preg_match('/([\w\d]+)\[\d+\](\(\w\))?/', $drive, $match_drive) == 1) {
-
-						// Determine a status other than normal, like if it failed or is a spare
-						if (array_key_exists(2, $match_drive)) {
-							switch ($match_drive[2]) {
-								case '(S)':
-									$drive_state = 'spare';
-								break;
-								case '(F)':
-									$drive_state = 'failed';
-								break;
-								case null:
-									$drive_state = 'normal';
-								break;
-
-								// I'm not sure if there are status codes other than the above
-								default:
-									$drive_state = 'unknown';
-								break;
-							}
-						}
-						else
-							$drive_state = 'normal';
-
-						// Append this drive to the temp drives array
-						$drives[] = array(
-							'drive' => '/dev/'.$match_drive[1],
-							'state' => $drive_state
-						);
-					}
-				}
-
-				// Add record of this array to arrays list
-				$mdadm_arrays[] = array(
-					'device' => '/dev/'.$array[1],
-					'status' => $array[2],
-					'level' => $array[3],
-					'drives' => $drives,
-					'size' =>  byte_convert($array[5]*1024),
-					'algorithm' => $array[6],
-					'count' => $array[7],
-					'chart' => $array[8]
-				);
-			}
-
-			// Append MD arrays to main raidinfo if it's good
-			if (is_array($mdadm_arrays) && count($mdadm_arrays) > 0 )
-				$raidinfo = array_merge($raidinfo, $mdadm_arrays);
-		}
 
 		// Return info
 		return $raidinfo;
@@ -901,35 +677,6 @@ class OS_CYGWIN {
 		// Return these
 		$return = array();
 
-		// In here
-		$contents = getContents('/proc/net/wireless');
-
-		// Oi
-		if ($contents == false) {
-			$this->error->add('Linux WiFi info parser', '/proc/net/wireless does not exist');
-			return $return;
-		}
-
-		// Parse
-		@preg_match_all('/^ (\S+)\:\s*(\d+)\s*(\S+)\s*(\S+)\s*(\S+)\s*(\d+)\s*(\d+)\s*(\d+)\s*(\d+)\s*(\d+)\s*(\d+)\s*$/m', $contents, $match, PREG_SET_ORDER);
-		
-		// Match
-		foreach ($match as $wlan) {
-			$return[] = array(
-				'device' => $wlan[1],
-				'status' => $wlan[2],
-				'quality_link' => $wlan[3],
-				'quality_level' => $wlan[4],
-				'quality_noise' => $wlan[5],
-				'dis_nwid' => $wlan[6],
-				'dis_crypt' => $wlan[7],
-				'dis_frag' => $wlan[8],
-				'dis_retry' => $wlan[9],
-				'dis_misc' => $wlan[10],
-				'mis_beac' => $wlan[11]
-			);
-		}
-
 		// Done
 		return $return;
 	}
@@ -946,30 +693,7 @@ class OS_CYGWIN {
 		if (!empty($this->settings['timer']))
 			$t = new LinfoTimerStart('Sound cards');
 
-		// This should be it
-		$file = '/proc/asound/cards';
-
-		// eh?
-		if (!is_file($file)) {
-			$this->error->add('Linux sound card detector', '/proc/asound/cards does not exist');
-		}
-
-		// Get contents and parse
-		$contents = getContents($file);
-
-		// Parse
-		if (preg_match_all('/^\s*(\d+)\s\[[\s\w]+\]:\s(.+)$/m', $contents, $matches, PREG_SET_ORDER) == 0)
-			return array();
-
-		// eh?
 		$cards = array();
-
-		// Deal with results
-		foreach ($matches as $card)	
-			$cards[] = array(
-				'number' => $card[1],
-				'card' => $card[2],
-			);
 
 		// Give cards
 		return $cards;
@@ -1059,6 +783,10 @@ class OS_CYGWIN {
 	 * @return array the services
 	 */
 	private function getServices() {
+		
+		// Time?
+		if (!empty($this->settings['timer']))
+			$t = new LinfoTimerStart('Services');
 
 		// We allowed?
 		if (!empty($settings['show']['services']) || !is_array($this->settings['services']) || count($this->settings['services']) == 0)
@@ -1084,14 +812,31 @@ class OS_CYGWIN {
 			
 		// Should we go ahead and do the PID search based on executables?
 		if ($do_process_search) {
+			// Precache all process cmdlines
+			for ($i = 0; $i < $num_paths; $i++)
+				$cmdline_cache[$i] = explode("\x00", getContents($potential_paths[$i]));
+			
 			// Go through the list of executables to search for
 			foreach ($this->settings['services']['executables'] as $service => $exec) {
 				// Go through pid file list. for loops are faster than foreach
 				for ($i = 0; $i < $num_paths; $i++) {
+					$cmdline = $cmdline_cache[$i];
+					$match = false;
+					if (is_array($exec)) {
+						$match = true;
+						foreach ($exec as $argn => $argv) {
+							if($cmdline[$argn] != $argv)
+								$match = false;
+						}
+					}
+					else if ($cmdline[0] == $exec) {
+						$match = true;
+					}
 					// If this one matches, stop here and save it
-					if (getContents($potential_paths[$i], false) == $exec) {
+					if ($match) {
 						// Get pid out of path to cmdline file
-						$pids[$service] = end(explode('/proc/', dirname($potential_paths[$i])));
+						$pids[$service] = substr($potential_paths[$i], 6 /*strlen('/proc/')*/,
+												strpos($potential_paths[$i], '/', 7)-6);
 						break;
 					}
 				}
@@ -1186,111 +931,6 @@ class OS_CYGWIN {
 		return $statuses;
 	}
 	
-	/**
-	 * getDistro
-	 * 
-	 * @access private
-	 * @return array the distro,version or false
-	 */
-	private function getDistro() {
-		
-		// Time?
-		if (!empty($this->settings['timer']))
-			$t = new LinfoTimerStart('Determining Distrobution');
-
-		// Seems the best way of doing it, as opposed to calling 'lsb_release -a', parsing /etc/issue, or 
-		// just checking if distro specific version files exist without actually parsing them: 
-		// - Allows multiple files of the same name for different distros/versions of distros, provided each
-		// - uses different regular expression syntax.
-		// - Also permits files that contain only the distro release version and nothing else,
-		// - in which case passing false instead of a regex string snags the contents.
-		// - And even also supports empty files, and just uses said file to identify the distro and ignore version
-
-		// Store the distribution's files we check for, optional regex parsing string, and name of said distro here:
-		$distros = array(
-			
-			// This snags ubuntu and other distros which use the lsb method of identifying themselves
-			array('/etc/lsb-release','/^DISTRIB_ID=([^$]+)$\n^DISTRIB_RELEASE=([^$]+)$\n^DISTRIB_CODENAME=([^$]+)$\n/m', false),
-			
-			// These working snag versions
-			array('/etc/redhat-release', '/^CentOS release ([\d\.]+) \(([^)]+)\)$/', 'CentOS'),
-			array('/etc/redhat-release', '/^Red Hat.+release (\S+) \(([^)]+)\)$/', 'RedHat'),
-			array('/etc/fedora-release', '/^Fedora(?: Core)? release (\d+) \(([^)]+)\)$/', 'Fedora'),
-			array('/etc/gentoo-release', '([\d\.]+)$/', 'Gentoo'),
-			array('/etc/SuSE-release', '/^VERSION = ([\d\.]+)$/m', 'openSUSE'),
-			array('/etc/slackware-version', '/([\d\.]+)$/', 'Slackware'),
-
-			// These don't because they're empty 
-			array('/etc/arch-release', '', 'Arch'),
-
-			// I'm unaware of the structure of these files, so versions are not picked up
-			array('/etc/mklinux-release', '', 'MkLinux'),
-			array('/etc/tinysofa-release ', '', 'TinySofa'),
-			array('/etc/turbolinux-release ', '', 'TurboLinux'),
-			array('/etc/yellowdog-release ', '', 'YellowDog'),
-			array('/etc/annvix-release ', '', 'Annvix'),
-			array('/etc/arklinux-release ', '', 'Arklinux'),
-			array('/etc/aurox-release ', '', 'AuroxLinux'),
-			array('/etc/blackcat-release ', '', 'BlackCat'),
-			array('/etc/cobalt-release ', '', 'Cobalt'),
-			array('/etc/immunix-release ', '', 'Immunix'),
-			array('/etc/lfs-release ', '', 'Linux-From-Scratch'),
-			array('/etc/linuxppc-release ', '', 'Linux-PPC'),
-			array('/etc/mklinux-release ', '', 'MkLinux'),
-			array('/etc/nld-release ', '', 'NovellLinuxDesktop'),
-
-			// Leave this since debian derivitives might have it in addition to their own file
-			// If it's last it ensures nothing else has it and thus it should be normal debian
-			array('/etc/debian_version', false, 'Debian'),
-		);
-
-		// Hunt
-		foreach ($distros as $distro) {
-
-			// File we're checking for exists and is readable
-			if (file_exists($distro[0]) && is_readable($distro[0])) {
-
-				// Get it
-				$contents = $distro[1] !== '' ? getContents($distro[0], '') : '';
-
-				// Don't use regex, this is enough; say version is the file's contents
-				if ($distro[1] === false) {
-					return array(
-						'name' => $distro[2],
-						'version' => $contents == '' ? false : $contents
-					);
-				}
-				
-				// No fucking idea what the version is. Don't use the file's contents for anything
-				elseif($distro[1] === '') {
-					return array(
-						'name' => $distro[2],
-						'version' => false
-					);
-				}
-
-				// Get the distro out of the regex as well?
-				elseif($distro[2] === false && preg_match($distro[1], $contents, $m)) {
-					return array(
-						'name' => $m[1],
-						'version' => $m[2] . (isset($m[3]) ? ' ('.$m[3].')' : '')
-					);
-				}
-
-				// Our regex match it?
-				elseif(preg_match($distro[1], $contents, $m)) {
-					return array(
-						'name' => $distro[2],
-						'version' => $m[1] . (isset($m[2]) ? ' ('.$m[2].')' : '')
-					);
-				}
-			}
-		}
-
-		// Return lack of result if we didn't find it
-		return false;
-	}
-
 	/**
 	 * getCPUArchitecture
 	 * 
