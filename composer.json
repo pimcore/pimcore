@@ -1,4 +1,5 @@
 {
+    "version": "2.1.0",
     "name": "pimcore/pimcore",
     "description": "The premier Open-Source Multi-Channel Experience and Engagement Management Platform",
     "keywords": ["CMS", "PIM", "DAM", "Framework", "Marketing Automation","RAD"],
