@@ -48,7 +48,7 @@ class Search_Backend_Module extends Pimcore_API_Module_Abstract{
             $searchEntry->setDataFromElement($element);
             $searchEntry->save();
         } else {
-            $this->postAddElement($element);
+            $this->postAddElement($e);
         }
     }
 }
