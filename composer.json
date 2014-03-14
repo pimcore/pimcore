@@ -1,0 +1,19 @@
+{
+    "name": "pimcore/pimcore",
+    "description": "The premier Open-Source Multi-Channel Experience and Engagement Management Platform",
+    "keywords": ["CMS", "PIM", "DAM", "Framework", "Marketing Automation","RAD"],
+    "homepage": "http://www.pimcore.org/",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "pimcore Team",
+            "email": "info@pimcore.com",
+            "homepage": "http://www.pimcore.org/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    }
+}
