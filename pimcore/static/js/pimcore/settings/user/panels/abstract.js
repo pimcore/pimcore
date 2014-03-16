@@ -50,14 +50,25 @@ pimcore.settings.user.panels.abstract = Class.create({
     },
 
     remove: function () {
-        Ext.Ajax.request({
-            url: "/admin/user/delete",
-            params: {
-                id: this.id
-            }
-        });
 
-        this.remove();
+        Ext.MessageBox.show({
+            title:t('delete'),
+            msg: t("are_you_sure"),
+            buttons: Ext.Msg.OKCANCEL ,
+            icon: Ext.MessageBox.INFO ,
+            fn: function (button) {
+                if (button == "ok") {
+                    Ext.Ajax.request({
+                        url: "/admin/user/delete",
+                        params: {
+                            id: this.id
+                        }
+                    });
+
+                    this.remove();
+                }
+            }.bind(this)
+        });
     },
 
     add: function (type) {
