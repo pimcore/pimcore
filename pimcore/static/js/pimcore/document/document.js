@@ -126,7 +126,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         if (saveData) {
             // check for version notification
             if(this.newerVersionNotification) {
-                if(task == "publish") {
+                if(task == "publish" || task == "unpublish") {
                     this.newerVersionNotification.hide();
                 } else {
                     this.newerVersionNotification.show();

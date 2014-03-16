@@ -550,7 +550,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             // check for version notification
             if(this.newerVersionNotification) {
-                if(task == "publish") {
+                if(task == "publish" || task == "unpublish") {
                     this.newerVersionNotification.hide();
                 } else if(task != "session") {
                     this.newerVersionNotification.show();
