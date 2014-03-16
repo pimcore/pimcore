@@ -481,14 +481,23 @@ pimcore.helpers.handleCtrlS = function () {
 
     if (activeTab) {
         // for document
-        if (activeTab.initialConfig.document) {
-            activeTab.initialConfig.document.publish();
+        var el = activeTab.initialConfig;
+        if (el.document) {
+            if(el.document.data.published) {
+                el.document.publish();
+            } else {
+                el.document.unpublish();
+            }
         }
-        else if (activeTab.initialConfig.object) {
-            activeTab.initialConfig.object.publish();
+        else if (el.object) {
+            if(el.object.data.general.o_published) {
+                el.object.publish();
+            } else {
+                el.object.unpublish();
+            }
         }
-        else if (activeTab.initialConfig.asset) {
-            activeTab.initialConfig.asset.save();
+        else if (el.asset) {
+            el.asset.save();
         }
     }
 };
