@@ -86,6 +86,17 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
             this.getBody().addClass("pimcore_tag_image_empty");
 
+            // add additional drop targets
+            if (this.options["dropClass"]) {
+                var extra_drop_targets = Ext.query('.' + this.options.dropClass);
+
+                for (var i = 0; i < extra_drop_targets.length; ++i) {
+                    var drop_el = Ext.get(extra_drop_targets[i]);
+                    dndManager.addDropTarget(drop_el, this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+                    drop_el.on("contextmenu", this.onContextMenu.bind(this));
+                }
+            }
+
         }.bind(this));
 
         this.element.render(id);
