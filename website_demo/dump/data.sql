@@ -54,7 +54,7 @@ CREATE TABLE `cache_tags` (
   PRIMARY KEY (`id`,`tag`),
   KEY `id` (`id`),
   KEY `tag` (`tag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=MEMORY DEFAULT CHARSET=utf8;
 
 
 
