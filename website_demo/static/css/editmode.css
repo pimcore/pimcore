@@ -51,6 +51,11 @@
     text-align: center;
 }
 
+.gallery .carousel-inner .item img {
+    min-width: 100%;
+    height: auto;
+}
+
 /* bootstrap 3 ExtJS fixes */
 .x-form-field, .x-form-trigger, .x-form-item, .x-panel-body {
     -moz-box-sizing:content-box;

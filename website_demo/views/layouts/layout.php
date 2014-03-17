@@ -66,7 +66,7 @@
     </script>
 </head>
 
-<body>
+<body class="<?= $isPortal ? "portal-page" : "" ?>">
 
 <div class="navbar-wrapper">
     <?php

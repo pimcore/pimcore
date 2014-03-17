@@ -250,6 +250,10 @@ section img {
     top: -2000px;
 }
 
+.carousel-caption {
+    text-shadow: 0 0 5px #000;
+}
+
 .carousel-indicators.preview {
     bottom: -10px;
     width: 100%;
@@ -280,6 +284,15 @@ section img {
 .carousel-indicators.preview .active img {
     border: 2px solid #428BCA;
     opacity: 1;
+}
+
+.portal-page .gallery .carousel-inner > .item > img {
+    min-width: 100%;
+    height: auto;
+}
+
+.portal-page .area-standard-teaser-row {
+    padding-bottom: 30px;
 }
 
 @media (min-width: 768px) {

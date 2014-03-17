@@ -5,7 +5,7 @@
 -------------------------------------------------- */
 
 /* Carousel base class */
-.carousel {
+.carousel.header {
     margin-bottom: 60px;
 
     /* Negative margin to pull up carousel. 90px is roughly margins and height of navbar. */
@@ -13,23 +13,24 @@
     height: 400px;
 }
 
-.carousel-inner {
+.carousel.header .carousel-inner {
     position: absolute !important;
     top:0;
     left: 0;
 }
 
 /* Since positioning the image, we need to help out the caption */
-.carousel-caption {
+.carousel.header .carousel-caption {
     z-index: 10;
 }
 
 /* Declare heights because of positioning of img element */
-.carousel .item {
+.carousel.header .item {
     height: 400px;
     background-color: #777;
 }
-.carousel-inner > .item > img {
+
+.carousel.header .carousel-inner > .item > img {
     position: absolute;
     top: 0;
     left: 0;
