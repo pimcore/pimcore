@@ -250,8 +250,37 @@ section img {
     top: -2000px;
 }
 
+.carousel-indicators.preview {
+    bottom: -10px;
+    width: 100%;
+    margin-left: -50%;
+}
 
-
+/* Indicators list style */
+.carousel-indicators.preview li {
+    border: medium none;
+    border-radius: 0;
+    height: 54px;
+    margin-bottom: 5px;
+    margin-left: 0;
+    margin-right: 5px !important;
+    margin-top: 0;
+    width: 100px;
+}
+/* Indicators images style */
+.carousel-indicators.preview img {
+    border: 2px solid #FFFFFF;
+    float: left;
+    height: 54px;
+    left: 0;
+    width: 100px;
+    opacity: 0.7;
+}
+/* Indicators active image style */
+.carousel-indicators.preview .active img {
+    border: 2px solid #428BCA;
+    opacity: 1;
+}
 
 @media (min-width: 768px) {
 

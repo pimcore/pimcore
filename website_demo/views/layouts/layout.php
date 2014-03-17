@@ -209,6 +209,9 @@
         $(this).addClass("nav");
     });
 
+    // gallery carousel: do not auto-start
+    $('.gallery').carousel('pause');
+
     <?php if(!$this->editmode) { ?>
     $(document).ready(function() {
         // initialize projekktor, the HTML5 video player
