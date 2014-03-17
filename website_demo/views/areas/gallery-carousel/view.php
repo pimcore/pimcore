@@ -1,4 +1,4 @@
-<section class="area-gallery-single-images">
+<section class="area-gallery-carousel">
 
     <?php $this->template("/includes/area-headlines.php"); ?>
 
