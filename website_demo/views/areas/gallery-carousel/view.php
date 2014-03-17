@@ -1,7 +1,5 @@
 <section class="area-gallery-carousel">
 
-    <?php $this->template("/includes/area-headlines.php"); ?>
-
     <?php if($this->editmode) { ?>
         <div class="alert alert-info" style="height: 75px">
             <div class="col-xs-6">

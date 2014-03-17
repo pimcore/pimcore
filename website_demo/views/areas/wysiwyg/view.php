@@ -5,8 +5,6 @@
 
 <section class="area-wysiwyg">
 
-    <?php $this->template("/includes/area-headlines.php"); ?>
-
     <?php $this->glossary()->start(); ?>
         <?= $this->wysiwyg("content"); ?>
     <?php $this->glossary()->stop(); ?>

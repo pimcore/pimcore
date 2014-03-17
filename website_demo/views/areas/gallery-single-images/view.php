@@ -1,7 +1,5 @@
 <section class="area-gallery-single-images">
 
-    <?php $this->template("/includes/area-headlines.php"); ?>
-
     <div class="row">
         <?php
         $block = $this->block("gallery");
