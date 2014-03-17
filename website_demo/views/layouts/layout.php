@@ -36,7 +36,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Le styles -->
-    <link href="/website/static/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="/website/static/bootstrap/css/bootstrap.css" rel="stylesheet">
 
     <link href="/website/static/css/global.css" rel="stylesheet">
 
@@ -51,8 +51,8 @@
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script src="/website/static/bootstrap/assets/js/html5shiv.js"></script>
-    <script src="/website/static/bootstrap/assets/js/respond.min.js"></script>
+    <script src="/website/static/js/html5shiv.js"></script>
+    <script src="/website/static/js/respond.min.js"></script>
     <![endif]-->
 
     <script>
@@ -179,8 +179,8 @@
     echo $this->inc("/" . $this->language . "/shared/includes/footer");
 ?>
 
-<script src="/website/static/bootstrap/assets/js/jquery.js"></script>
-<script src="/website/static/bootstrap/dist/js/bootstrap.js"></script>
+<script src="/website/static/js/jquery-1.11.0.min.js"></script>
+<script src="/website/static/bootstrap/js/bootstrap.js"></script>
 
 
 
