@@ -128,8 +128,7 @@ $scripts = array(
                                 {
                                     xtype: "textfield",
                                     name: "mysql_database",
-                                    fieldLabel: "Database",
-                                    value: "_pimcore"
+                                    fieldLabel: "Database"
                                 },
                                 {
                                     xtype: "textfield",
