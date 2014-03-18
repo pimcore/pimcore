@@ -74,11 +74,55 @@ footer .links a {
 }
 
 
+
+/* CUSTOMIZE THE CAROUSEL for the header
+-------------------------------------------------- */
+
+/* Carousel base class */
+.carousel.header {
+    margin-bottom: 20px;
+
+    /* Negative margin to pull up carousel. 90px is roughly margins and height of navbar. */
+    margin-top: -90px;
+    height: 400px;
+}
+
+.carousel.header .carousel-inner {
+    position: absolute !important;
+    top:0;
+    left: 0;
+}
+
+/* Since positioning the image, we need to help out the caption */
+.carousel.header .carousel-caption {
+    z-index: 10;
+}
+
+/* Declare heights because of positioning of img element */
+.carousel.header .item {
+    height: 400px;
+    background-color: #777;
+}
+
+.carousel.header .carousel-inner > .item > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    height: 400px;
+}
+
+
+
 /* CONTENTS */
 
 
 #content section {
     margin-bottom: 50px;
+}
+
+.portal-page .container section {
+    margin-top: 30px;
 }
 
 section img {
@@ -291,9 +335,89 @@ section img {
     height: auto;
 }
 
-.portal-page .area-standard-teaser-row {
-    padding-bottom: 30px;
+
+.teaser-icon > .icon {
+    text-align: center;
+    position: relative;
 }
+
+.teaser-icon > .icon > .image {
+    position: relative;
+    z-index: 2;
+    margin: auto;
+    width: 88px;
+    height: 88px;
+    border: 8px solid white;
+    line-height: 88px;
+    border-radius: 50%;
+    background: #428bca;
+    vertical-align: middle;
+}
+
+.teaser-icon > .icon:hover > .image {
+    background: #333;
+}
+
+.teaser-icon > .icon > .image > i {
+    font-size: 36px !important;
+    color: #fff !important;
+}
+
+.teaser-icon > .icon:hover > .image > i {
+    color: white !important;
+}
+
+.teaser-icon > .icon > .info {
+    margin-top: -24px;
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid #e0e0e0;
+    padding: 15px 0 10px 0;
+}
+
+.teaser-icon > .icon:hover > .info {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: #e0e0e0;
+    color: white;
+}
+
+.teaser-icon > .icon > .info > h3.title {
+    font-size: 16px;
+    color: #222;
+    font-weight: 500;
+}
+
+.teaser-icon > .icon > .info > p {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5em;
+    margin: 20px;
+}
+
+.teaser-icon > .icon:hover > .info > h3.title, .teaser-icon > .icon:hover > .info > p, .teaser-icon > .icon:hover > .info > .more > a {
+    color: #222;
+}
+
+.teaser-icon > .icon > .info > .more a {
+    font-size: 12px;
+    color: #222;
+    line-height: 12px;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.teaser-icon > .icon:hover > .info > .more > a {
+    color: #fff;
+    padding: 6px 8px;
+    background-color: #428bca;
+}
+
+.teaser-icon .space {
+    height: 30px;
+}
+
+
+
+
 
 @media (min-width: 768px) {
 
