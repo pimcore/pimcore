@@ -16,5 +16,6 @@
     <headlines>1</headlines>
     <text-accordion>1</text-accordion>
     <horizontal-line>1</horizontal-line>
+    <icon-teaser-row>1</icon-teaser-row>
   </brick>
 </zend-config>
