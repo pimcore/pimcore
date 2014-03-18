@@ -137,6 +137,11 @@ section img {
     text-align: center;
 }
 
+.teaser img {
+    width: 100%;
+    height: auto;
+}
+
 .thumbnail-examples .row {
     margin-bottom: 20px;
     padding-bottom: 20px;
@@ -361,6 +366,8 @@ section img {
 .teaser-icon > .icon > .image > i {
     font-size: 36px !important;
     color: #fff !important;
+    top: 5px !important;
+    left:0;
 }
 
 .teaser-icon > .icon:hover > .image > i {
@@ -380,14 +387,7 @@ section img {
     color: white;
 }
 
-.teaser-icon > .icon > .info > h3.title {
-    font-size: 16px;
-    color: #222;
-    font-weight: 500;
-}
-
 .teaser-icon > .icon > .info > p {
-    font-size: 13px;
     color: #666;
     line-height: 1.5em;
     margin: 20px;
@@ -416,7 +416,33 @@ section img {
 }
 
 
+.tabbed-slider {
+    padding-bottom: 30px;
+}
 
+.tabbed-slider .nav a small {
+    display: block;
+}
+
+.tabbed-slider .nav {
+    background: #eee;
+}
+
+.tabbed-slider .nav-justified > li > a {
+    border-radius: 0px;
+}
+
+.tabbed-slider .carousel-inner .item {
+    height: 300px;
+    overflow: hidden;
+}
+
+.tabbed-slider .carousel-inner .item-0, .tabbed-slider .nav-pills .item-0.active a { background-color: #16a085; }
+.tabbed-slider .carousel-inner .item-1, .tabbed-slider .nav-pills .item-1.active a { background-color: #2980b9; }
+.tabbed-slider .carousel-inner .item-2, .tabbed-slider .nav-pills .item-2.active a { background-color: #e67e22; }
+.tabbed-slider .carousel-inner .item-3, .tabbed-slider .nav-pills .item-3.active a { background-color: #8e44ad; }
+.tabbed-slider .carousel-inner .item-4, .tabbed-slider .nav-pills .item-4.active a { background-color: #2980b9; }
+.tabbed-slider .carousel-inner .item-5, .tabbed-slider .nav-pills .item-5.active a { background-color: #e67e22; }
 
 
 @media (min-width: 768px) {

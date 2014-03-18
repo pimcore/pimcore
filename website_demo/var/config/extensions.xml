@@ -17,5 +17,6 @@
     <text-accordion>1</text-accordion>
     <horizontal-line>1</horizontal-line>
     <icon-teaser-row>1</icon-teaser-row>
+    <tabbed-slider-text>1</tabbed-slider-text>
   </brick>
 </zend-config>
