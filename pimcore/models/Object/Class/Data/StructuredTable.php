@@ -503,10 +503,11 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      * @return bool
      */
     public function isEmpty($data) {
-        if(!$data || $data->isEmpty()) {
+        if($data instanceof Object_Data_StructuredTable) {
+            return $data->isEmpty();
+        } else {
             return true;
         }
-        return false;
     }
 
     /** True if change is allowed in edit mode.
