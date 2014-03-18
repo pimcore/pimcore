@@ -1,10 +1,3 @@
-
-<?php $this->headLink([
-    "rel" => "stylesheet",
-    "href" => "/website/static/css/portal.css"
-]);
-?>
-
 <div id="myCarousel" class="carousel header slide" data-ride="carousel">
     <!-- Indicators -->
     <ol class="carousel-indicators">
