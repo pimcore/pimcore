@@ -135,6 +135,7 @@ section img {
 
 .teaser {
     text-align: center;
+    margin-bottom: 30px;
 }
 
 .teaser img {
@@ -446,6 +447,10 @@ section img {
 
 
 @media (min-width: 768px) {
+
+    .teaser {
+        margin-bottom: 0;
+    }
 
     /* Remove the edge padding needed for mobile */
     .marketing {
