@@ -515,79 +515,9 @@ class Object_Class extends Pimcore_Model_Abstract {
         $this->layoutDefinitions = $layoutDefinitions;
 
         $this->fieldDefinitions = array();
-
         $this->extractDataDefinitions($this->layoutDefinitions);
-        $this->decorateObjectsMetadata();
 
         return $this;
-    }
-
-
-    /**
-     *
-     */
-    private function decorateObjectsMetadata() {
-
-        $fieldDefintions = $this->getFieldDefinitions();
-        foreach ($fieldDefintions as $fd) {
-            if ($fd instanceof Object_Class_Data_ObjectsMetadata) {
-                $visibleFields = $fd->getVisibleFields();
-                if ($visibleFields) {
-
-                    $allowedClassId = $fd->getAllowedClassId();
-                    if (!$allowedClassId)  {
-                        continue;
-                    }
-                    $allowedClass = Object_Class::getById($allowedClassId);
-                    if (!$allowedClass) {
-                        continue;
-                    }
-
-                    $visibleFields = explode(',', $visibleFields);
-
-                    $visibleFieldTitles = array();
-
-                    foreach ($visibleFields as $visibleField) {
-                        $visibleFieldDefinition = $allowedClass->getFieldDefinition($visibleField);
-
-                        $visibleFieldTitle = null;
-                        if ($visibleFieldDefinition) {
-                            $visibleFieldTitle = $visibleFieldDefinition->getTitle();
-                        }
-
-                        if ($visibleFieldTitle) {
-                            $visibleFieldTitles[] = $visibleFieldTitle;
-                        } else {
-                            $visibleFieldTitles[] = $visibleField;
-                        }
-                    }
-                    $visibleFieldTitles = implode(',', $visibleFieldTitles);
-                    $this->decorateVisibleField($this->layoutDefinitions, $fd->getName(), $visibleFieldTitles);
-                } else {
-                    $this->decorateVisibleField($this->layoutDefinitions, $fd->getName(), "");
-                }
-            }
-        }
-    }
-
-    /**
-     * @param $layout
-     * @param $key
-     * @param $title
-     */
-    public function decorateVisibleField(&$layout, $key, $title) {
-        if ($layout instanceof Object_Class_Data_ObjectsMetadata && $layout->getName() == $key) {
-            $layout->visibleFieldTitles = $title;
-        } else {
-            if (method_exists($layout, "getChilds")) {
-                $children = $layout->getChilds();
-                if (is_array($children)) {
-                    foreach ($children as $child) {
-                        $this->decorateVisibleField($child, $key, $title);
-                    }
-                }
-            }
-        }
     }
 
     /**
