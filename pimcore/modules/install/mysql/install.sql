@@ -17,6 +17,7 @@ CREATE TABLE `assets` (
   KEY `path` (`path`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `assets_metadata`;
 CREATE TABLE `assets_metadata` (
   `cid` int(11) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
