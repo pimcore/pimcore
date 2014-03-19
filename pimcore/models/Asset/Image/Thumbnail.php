@@ -100,7 +100,18 @@ class Asset_Image_Thumbnail {
             }
         }
     }
-    
+
+    /**
+     *
+     */
+    public function reset() {
+        $this->path = null;
+        $this->width = null;
+        $this->height = null;
+        $this->realHeight = null;
+        $this->realWidth = null;
+    }
+
     /**
      * Get the public path to the thumbnail image.
      * This method is here for backwards compatility.
@@ -274,26 +285,31 @@ class Asset_Image_Thumbnail {
             self::$pictureElementInUse = true;
 
             $thumbConfig = $this->getConfig();
-
-            $html = '<picture ' . implode(" ", $dataAttribs) . ' data-default-src="' . $path . '">' . "\n";
+            $htmlId = "picture-" . uniqid();
+            $html = '<picture id="' . $htmlId . '" ' . implode(" ", $dataAttribs) . ' data-default-src="' . $path . '">' . "\n";
                 $mediaConfigs = $thumbConfig->getMedias();
                 array_splice($mediaConfigs, 0, 0, $thumbConfig->getItems());
 
                 foreach ($mediaConfigs as $mediaQuery => $config) {
 
+                    $mediaQueryCSS = "";
                     $srcSetValues = [];
                     foreach ([1,2] as $highRes) {
                         $thumbConfigRes = clone $thumbConfig;
                         $thumbConfigRes->selectMedia($mediaQuery);
                         $thumbConfigRes->setHighResolution($highRes);
-                        $srcSetValues[] = $image->getThumbnail($thumbConfigRes, true) . " " . $highRes . "x";
+                        $thumb = $image->getThumbnail($thumbConfigRes, true);
+                        $srcSetValues[] = $thumb . " " . $highRes . "x";
                     }
 
                     $html .= "\t" . '<source srcset="' . implode(", ", $srcSetValues) .'"';
                     if($mediaQuery) {
                         $html .= ' media="' . $mediaQuery . '"';
+                        $thumb->reset();
+                        $mediaQueryCSS = '<style type="text/css">@media screen and ' . $mediaQuery . ' { #' . $htmlId . ' > img {max-width:' . $thumb->getWidth() . 'px; max-height:' . $thumb->getHeight() . 'px;} }</style>';
                     }
                     $html .= ' />' . "\n";
+                    $html .= "\t" . $mediaQueryCSS . "\n";
                 }
 
                 $html .= "\t" . '<noscript>' . "\n\t\t" . $htmlImgTag . "\n\t" . '</noscript>' . "\n";
