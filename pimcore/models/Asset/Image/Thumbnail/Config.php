@@ -35,6 +35,11 @@ class Asset_Image_Thumbnail_Config {
     public $items = array();
 
     /**
+     * @var array
+     */
+    public $medias = array();
+
+    /**
      * @var string
      */
     public $name = "";
@@ -58,6 +63,11 @@ class Asset_Image_Thumbnail_Config {
      * @var float
      */
     public $highResolution;
+
+    /**
+     * @var string
+     */
+    public $filenameSuffix;
 
     /**
      * @param $config
@@ -151,9 +161,24 @@ class Asset_Image_Thumbnail_Config {
     public function save () {
 
         $arrayConfig = object2array($this);
+
         $items = $arrayConfig["items"];
         $arrayConfig["items"] = array("item" => $items);
-        
+
+        if(!empty($this->medias)) {
+            $medias = [];
+            foreach ($arrayConfig["medias"] as $name => $items) {
+                $medias[] = array(
+                    "name" => $name,
+                    "items" => array("item" => $items)
+                );
+            }
+            $arrayConfig["medias"] = array("media" => $medias);
+        } else {
+            // do not include the medias node if empty
+            unset($arrayConfig["medias"]);
+        }
+
         $config = new Zend_Config($arrayConfig);
         $writer = new Zend_Config_Writer_Xml(array(
             "config" => $config,
@@ -182,6 +207,28 @@ class Asset_Image_Thumbnail_Config {
             $configArray["items"] = array("item" => array());
         }
 
+        $medias = [];
+        if(array_key_exists("medias", $configArray) && !empty($configArray["medias"]) && is_array($configArray["medias"]["media"])) {
+
+            if(array_key_exists("name", $configArray["medias"]["media"])) {
+                $configArray["medias"]["media"] = array($configArray["medias"]["media"]);
+            }
+
+            foreach ($configArray["medias"]["media"] as $media) {
+                if(array_key_exists("items",$media) && is_array($media["items"]["item"])) {
+                    if(array_key_exists("method",$media["items"]["item"])) {
+                        $medias[$media["name"]] = array($media["items"]["item"]);
+                    } else {
+                        $medias[$media["name"]] = $media["items"]["item"];
+                    }
+                } else {
+                    $medias[$media["name"]] = array("item" => array());
+                }
+            }
+        }
+
+        $configArray["medias"] = $medias;
+
         foreach ($configArray as $key => $value) {
             $setter = "set" . ucfirst($key);
             if(method_exists($this, $setter)) {
@@ -209,15 +256,33 @@ class Asset_Image_Thumbnail_Config {
     }
 
     /**
+     * @param string $name
+     */
+    protected function createMediaIfNotExists($name) {
+        if(!array_key_exists($name, $this->medias)) {
+            $this->medias[$name] = [];
+        }
+    }
+
+    /**
      * @param  $name
      * @param  $parameters
      * @return bool
      */
-    public function addItem ($name, $parameters) {
-        $this->items[] = array(
+    public function addItem ($name, $parameters, $media = null) {
+
+        $item = array(
             "method" => $name,
             "arguments" => $parameters
         );
+
+        // default is added to $this->items for compatibility reasons
+        if(!$media || $media == "default") {
+            $this->items[] = $item;
+        } else {
+            $this->createMediaIfNotExists($media);
+            $this->medias[$media][] = $item;
+        }
 
         return true;
     }
@@ -227,9 +292,16 @@ class Asset_Image_Thumbnail_Config {
      * @param  $parameters
      * @return bool
      */
-    public function addItemAt ($position, $name, $parameters) {
+    public function addItemAt ($position, $name, $parameters, $media = null) {
 
-        array_splice($this->items, $position, 0, array(array(
+        if(!$media || $media == "default") {
+            $itemContainer = &$this->items;
+        } else {
+            $this->createMediaIfNotExists($media);
+            $itemContainer = &$this->medias[$media];
+        }
+
+        array_splice($itemContainer, $position, 0, array(array(
             "method" => $name,
             "arguments" => $parameters
         )));
@@ -242,7 +314,27 @@ class Asset_Image_Thumbnail_Config {
      * @return void
      */
     public function resetItems () {
-        $this->items = array();
+        $this->items = [];
+        $this->medias = [];
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function selectMedia($name) {
+        if(array_key_exists($name, $this->medias)) {
+            $this->setItems($this->medias[$name]);
+
+            $suffix = strtolower($name);
+            $suffix = preg_replace("/[^a-z\-0-9]/", "-", $suffix);
+            $suffix = trim($suffix, "-");
+            $suffix = preg_replace("/[\-]+/", "-", $suffix);
+
+            $this->setFilenameSuffix($suffix);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -346,6 +438,45 @@ class Asset_Image_Thumbnail_Config {
     public function getHighResolution()
     {
         return $this->highResolution;
+    }
+
+    /**
+     * @param array $medias
+     */
+    public function setMedias($medias)
+    {
+        $this->medias = $medias;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMedias()
+    {
+        return $this->medias;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMedias() {
+        return !empty($this->medias);
+    }
+
+    /**
+     * @param string $filenameSuffix
+     */
+    public function setFilenameSuffix($filenameSuffix)
+    {
+        $this->filenameSuffix = $filenameSuffix;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFilenameSuffix()
+    {
+        return $this->filenameSuffix;
     }
 
     /**

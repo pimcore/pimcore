@@ -178,7 +178,9 @@ class Asset_Image_Thumbnail {
     */
     public function getHTML($attributes = array()) {
 
+        $image = $this->getAsset();
         $attr = array();
+        $dataAttribs = []; // this is used for the html5 <picture> element
 
         if(!$this->deferred) {
             if($this->getWidth()) {
@@ -199,29 +201,29 @@ class Asset_Image_Thumbnail {
         }
 
         if(empty($titleText)) {
-            if($this->getAsset()->getMetadata("title")) {
-                $titleText = $this->getAsset()->getMetadata("title");
+            if($image->getMetadata("title")) {
+                $titleText = $image->getMetadata("title");
             }
         }
 
         if(empty($altText)) {
-            if($this->getAsset()->getMetadata("alt")) {
-                $altText = $this->getAsset()->getMetadata("alt");
+            if($image->getMetadata("alt")) {
+                $altText = $image->getMetadata("alt");
             } else {
                 $altText = $titleText;
             }
         }
 
         // get copyright from asset
-        if($this->getAsset()->getMetadata("copyright")) {
+        if($image->getMetadata("copyright")) {
             if(!empty($altText)) {
                 $altText .= " | ";
             }
             if(!empty($titleText)) {
                 $titleText .= " | ";
             }
-            $altText .= ("© " . $this->getAsset()->getMetadata("copyright"));
-            $titleText .= ("© " . $this->getAsset()->getMetadata("copyright"));
+            $altText .= ("© " . $image->getMetadata("copyright"));
+            $titleText .= ("© " . $image->getMetadata("copyright"));
         }
 
         $attributes["alt"] = $altText;
@@ -232,15 +234,63 @@ class Asset_Image_Thumbnail {
         foreach($attributes as $key => $value) {
             //only include attributes with characters a-z and dashes in their name.
             if(preg_match("/^[a-z-]+$/i", $key)) {
-                $attr[$key] = $key.'="'.htmlspecialchars($value).'"';
+                $attr[$key] = $key . '="' . htmlspecialchars($value) . '"';
+
+                // do not include all attributes as data-
+                if(!in_array($key, ["width","height"])) {
+                    $dataAttribs[$key] = "data-" . $key . '="' . htmlspecialchars($value) . '"';
+                }
             }
         }
 
         $path = $this->getPath(true);
         $attr['src'] = 'src="'. $path .'"';
 
+        // automatically add srcset
+        $srcSetValues = [];
+        foreach ([1,2] as $highRes) {
+            $thumbConfig = $this->getConfig();
+            $thumbConfig = clone $thumbConfig;
+            $thumbConfig->setHighResolution($highRes);
+            $srcSetValues[] = $image->getThumbnail($thumbConfig, true) . " " . $highRes . "x";
+        }
+        $attr['srcset'] = 'srcset="'. implode(", ", $srcSetValues) .'"';
 
-        return '<img '.implode(' ', $attr).' />';
+        // build html tag
+        $htmlImgTag = '<img '.implode(' ', $attr).' />';
+
+        if(!$this->getConfig()->hasMedias()) {
+            return $htmlImgTag;
+        } else {
+
+            $thumbConfig = $this->getConfig();
+
+            $html = '<picture ' . implode(" ", $dataAttribs) . ' data-default-src="' . $path . '">' . "\n";
+                $mediaConfigs = $thumbConfig->getMedias();
+                array_splice($mediaConfigs, 0, 0, $thumbConfig->getItems());
+
+                foreach ($mediaConfigs as $mediaQuery => $config) {
+
+                    $srcSetValues = [];
+                    foreach ([1,2] as $highRes) {
+                        $thumbConfigRes = clone $thumbConfig;
+                        $thumbConfigRes->selectMedia($mediaQuery);
+                        $thumbConfigRes->setHighResolution($highRes);
+                        $srcSetValues[] = $image->getThumbnail($thumbConfigRes, true) . " " . $highRes . "x";
+                    }
+
+                    $html .= "\t" . '<source srcset="' . implode(", ", $srcSetValues) .'"';
+                    if($mediaQuery) {
+                        $html .= ' media="' . $mediaQuery . '"';
+                    }
+                    $html .= ' />' . "\n";
+                }
+
+                $html .= "\t" . '<noscript>' . "\n\t\t" . $htmlImgTag . "\n\t" . '</noscript>' . "\n";
+            $html .= '</picture>';
+
+            return $html;
+        }
     }
 
     /**

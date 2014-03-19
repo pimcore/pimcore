@@ -120,14 +120,20 @@ class Asset_Image_Thumbnail_Processor {
             }
         }
 
-        // add high-resolution modifier suffix to the filename
-        $highResSuffix = "";
-        if($config->getHighResolution()) {
-            $highResSuffix = "@" . $config->getHighResolution() . "x";
-        }
+
 
         $thumbDir = $asset->getImageThumbnailSavePath() . "/thumb__" . $config->getName();
-        $filename = preg_replace("/\." . preg_quote(Pimcore_File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename()) . $highResSuffix . "." . $format;
+        $filename = preg_replace("/\." . preg_quote(Pimcore_File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename());
+        // add custom suffix if available
+        if($config->getFilenameSuffix()) {
+            $filename .= "~-~" . $config->getFilenameSuffix();
+        }
+        // add high-resolution modifier suffix to the filename
+        if($config->getHighResolution() > 1) {
+            $filename .= "@" . $config->getHighResolution() . "x";
+        }
+        $filename .= "." . $format;
+
         $fsPath = $thumbDir . "/" . $filename;
 
         if(!is_dir(dirname($fsPath))) {
@@ -139,7 +145,7 @@ class Asset_Image_Thumbnail_Processor {
         // the configuration is saved for later use in Pimcore_Controller_Plugin_Thumbnail::routeStartup()
         // so that it can be used also with dynamic configurations
         if($deferred) {
-            $configPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/thumb_" . $id . "__" . $config->getName() . "." . $format . ".deferred.config";
+            $configPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/thumb_" . $id . "__" . md5($path) . ".deferred.config";
             Pimcore_File::put($configPath, Pimcore_Tool_Serialize::serialize($config));
 
             return $path;

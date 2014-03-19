@@ -20,13 +20,19 @@ pimcore.settings.thumbnail.item = Class.create({
         this.parentPanel = parentPanel;
         this.data = data;
         this.currentIndex = 0;
+        this.medias = {};
 
         this.addLayout();
 
-        if(this.data.items && this.data.items.length > 0) {
-            for(var i=0; i<this.data.items.length; i++) {
-                this.addItem("item" + ucfirst(this.data.items[i].method), this.data.items[i].arguments);
-            }
+
+        // add default panel
+        this.addMediaPanel("default", this.data.items ,false, true);
+
+        // add medias
+        if(this.data["medias"]) {
+            Ext.iterate(this.data.medias, function (key, items) {
+                this.addMediaPanel(key, items ,true, false);
+            }.bind(this));
         }
     },
 
@@ -34,7 +40,6 @@ pimcore.settings.thumbnail.item = Class.create({
     addLayout: function () {
 
         this.editpanel = new Ext.Panel({
-            region: "center",
             bodyStyle: "padding: 20px;",
             autoScroll: true
         });
@@ -47,26 +52,9 @@ pimcore.settings.thumbnail.item = Class.create({
         });
 
 
-        var addMenu = [];
-        var itemTypes = Object.keys(pimcore.settings.thumbnail.items);
-        for(var i=0; i<itemTypes.length; i++) {
-            if(itemTypes[i].indexOf("item") == 0) {
-                addMenu.push({
-                    iconCls: "pimcore_icon_add",
-                    handler: this.addItem.bind(this, itemTypes[i]),
-                    text: pimcore.settings.thumbnail.items[itemTypes[i]](null, null,true)
-                });
-            }
-        }
-
-        this.itemContainer = new Ext.Panel({
-            title: t("transformations"),
-            style: "margin: 20px 0 0 0;",
-            tbar: [{
-                iconCls: "pimcore_icon_add",
-                menu: addMenu
-            }],
-            border: false
+        this.mediaPanel = new Ext.TabPanel({
+            autoHeight: true,
+            closable: true
         });
 
         this.settings = new Ext.form.FormPanel({
@@ -115,6 +103,17 @@ pimcore.settings.thumbnail.item = Class.create({
                 fieldLabel: t("high_resolution") + "<br /><small>(2x Retina, 3.2x Print, ...)</small>",
                 width: 60,
                 decimalPrecision: 1
+            }],
+            buttons: [{
+                text: t("add_media_query"),
+                iconCls: "pimcore_icon_add",
+                handler: function () {
+                    Ext.MessageBox.prompt("", t("please_enter_the_new_name") + "<br />" + t("example")  + ": (min-width: 1441px)", function (button, value) {
+                        if(button == "ok") {
+                            this.addMediaPanel(value, null ,true, true);
+                        }
+                    }.bind(this));
+                }.bind(this)
             }]
         });
 
@@ -125,7 +124,7 @@ pimcore.settings.thumbnail.item = Class.create({
             bodyStyle: "padding: 20px;",
             title: this.data.name,
             id: "pimcore_thumbnail_panel_" + this.data.name,
-            items: [this.settings, this.itemContainer],
+            items: [this.settings, this.mediaPanel],
             buttons: panelButtons
         });
 
@@ -136,28 +135,85 @@ pimcore.settings.thumbnail.item = Class.create({
         pimcore.layout.refresh();
     },
 
+    addMediaPanel: function (name, items, closable, activate) {
 
-    addItem: function (type, data) {
+        if(this.medias[name]) {
+            return;
+        }
 
-        var item = pimcore.settings.thumbnail.items[type](this, data);
-        this.itemContainer.add(item);
-        this.itemContainer.doLayout();
+        var addMenu = [];
+        var itemTypes = Object.keys(pimcore.settings.thumbnail.items);
+        for(var i=0; i<itemTypes.length; i++) {
+            if(itemTypes[i].indexOf("item") == 0) {
+                addMenu.push({
+                    iconCls: "pimcore_icon_add",
+                    handler: this.addItem.bind(this, name, itemTypes[i]),
+                    text: pimcore.settings.thumbnail.items[itemTypes[i]](null, null,true)
+                });
+            }
+        }
+
+        var itemContainer = new Ext.Panel({
+            title: (name == "default") ? t("default") : name,
+            tbar: [{
+                text: t("transformations"),
+                iconCls: "pimcore_icon_add",
+                menu: addMenu
+            }],
+            border: false,
+            closable: closable,
+            autoHeight: true,
+            listeners: {
+                close: function (name) {
+                    delete this.medias[name];
+                }.bind(this, name)
+            }
+        });
+
+        this.medias[name] = itemContainer;
+
+        if(items && items.length > 0) {
+            for(var i=0; i<items.length; i++) {
+                this.addItem(name, "item" + ucfirst(items[i].method), items[i].arguments);
+            }
+        }
+
+
+        this.mediaPanel.add(itemContainer);
+        this.mediaPanel.doLayout();
+
+        // activate the default panel
+        if(activate) {
+            this.mediaPanel.activate(itemContainer);
+        }
+
+        return itemContainer;
+    },
+
+    addItem: function (name, type, data) {
+
+        var item = pimcore.settings.thumbnail.items[type](this.medias[name], data);
+        this.medias[name].add(item);
+        this.medias[name].doLayout();
 
         this.currentIndex++;
     },
 
     getData: function () {
 
-        var itemsData = [];
+        var mediaData = {};
 
-        var items = this.itemContainer.items.getRange();
-        for (var i=0; i<items.length; i++) {
-            itemsData.push(items[i].getForm().getFieldValues());
-        }
+        Ext.iterate(this.medias, function (key, value) {
+            mediaData[key] = [];
+            var items = value.items.getRange();
+            for (var i=0; i<items.length; i++) {
+                mediaData[key].push(items[i].getForm().getFieldValues());
+            }
+        });
 
         return {
             settings: Ext.encode(this.settings.getForm().getFieldValues()),
-            items: Ext.encode(itemsData),
+            medias: Ext.encode(mediaData),
             name: this.data.name
         }
     },
@@ -210,7 +266,7 @@ pimcore.settings.thumbnail.items = {
             iconCls: "pimcore_icon_up",
             handler: function (blockId, parent) {
 
-                var container = parent.itemContainer;
+                var container = parent;
                 var blockElement = Ext.getCmp(blockId);
                 var index = pimcore.settings.thumbnail.items.detectBlockIndex(blockElement, container);
                 var tmpContainer = pimcore.viewport;
@@ -238,7 +294,7 @@ pimcore.settings.thumbnail.items = {
             iconCls: "pimcore_icon_down",
             handler: function (blockId, parent) {
 
-                var container = parent.itemContainer;
+                var container = parent;
                 var blockElement = Ext.getCmp(blockId);
                 var index = pimcore.settings.thumbnail.items.detectBlockIndex(blockElement, container);
                 var tmpContainer = pimcore.viewport;
@@ -260,7 +316,7 @@ pimcore.settings.thumbnail.items = {
         },"->",{
             iconCls: "pimcore_icon_delete",
             handler: function (index, parent) {
-                parent.itemContainer.remove(Ext.getCmp(index));
+                parent.remove(Ext.getCmp(index));
             }.bind(window, index, parent)
         }];
     },

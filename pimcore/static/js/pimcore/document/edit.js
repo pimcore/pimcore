@@ -154,7 +154,6 @@ pimcore.document.edit = Class.create({
                     // otherwise edit/startup.js will disable the loading mask
                     if(!this["frame"]) {
                         this.loadMask.hide();
-                        console.log("iframe");
                     }
                 }.bind(this));
 

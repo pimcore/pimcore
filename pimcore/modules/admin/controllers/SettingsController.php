@@ -923,7 +923,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $pipe = Asset_Image_Thumbnail_Config::getByName($this->getParam("name"));
         $settingsData = Zend_Json::decode($this->getParam("settings"));
-        $itemsData = Zend_Json::decode($this->getParam("items"));
+        $mediaData = Zend_Json::decode($this->getParam("medias"));
 
         foreach ($settingsData as $key => $value) {
             $setter = "set" . ucfirst($key);
@@ -934,12 +934,13 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $pipe->resetItems();
 
-        foreach ($itemsData as $item) {
+        foreach ($mediaData as $mediaName => $items) {
+            foreach ($items as $item) {
+                $type = $item["type"];
+                unset($item["type"]);
 
-            $type = $item["type"];
-            unset($item["type"]);
-
-            $pipe->addItem($type, $item);
+                $pipe->addItem($type, $item, $mediaName);
+            }
         }
 
         $pipe->save();
