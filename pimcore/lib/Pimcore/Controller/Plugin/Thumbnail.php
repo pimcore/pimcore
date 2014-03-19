@@ -84,4 +84,48 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
             }
         }
     }
+
+
+    public function dispatchLoopShutdown() {
+
+        if(!Asset_Image_Thumbnail::isPictureElementInUse()) {
+            return;
+        }
+
+        if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
+            return;
+        }
+
+
+        // analytics
+        $body = $this->getResponse()->getBody();
+
+        // search for the end <head> tag, and insert the google analytics code before
+        // this method is much faster than using simple_html_dom and uses less memory
+        $code = <<<CODE
+
+<script type="text/javascript" src="/pimcore/static/js/frontend/picturePolyfill.min.js" defer></script>
+<style type="text/css">
+    picture img[src*="@2x"] {
+        -webkit-transform-origin: 0 0;
+        -moz-transform-origin: 0 0;
+        -ms-transform-origin: 0 0;
+        transform-origin: 0 0;
+
+        -webkit-transform: scale(0.5);
+        -moz-transform: scale(0.5);
+        -ms-transform: scale(0.5);
+        transform: scale(0.5);
+    }
+</style>
+
+
+CODE;
+        $headEndPosition = stripos($body, "</head>");
+        if($headEndPosition !== false) {
+            $body = substr_replace($body, $code."</head>", $headEndPosition, 7);
+        }
+
+        $this->getResponse()->setBody($body);
+    }
 }

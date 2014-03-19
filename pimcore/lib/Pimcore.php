@@ -89,6 +89,7 @@ class Pimcore {
 
         // register general pimcore plugins for frontend
         if ($frontend) {
+            $front->registerPlugin(new Pimcore_Controller_Plugin_Thumbnail(), 795);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Less(), 799);
             $front->registerPlugin(new Pimcore_Controller_Plugin_AdminButton(), 806);
         }
@@ -96,7 +97,6 @@ class Pimcore {
         if (Pimcore_Tool::useFrontendOutputFilters(new Zend_Controller_Request_Http())) {
             $front->registerPlugin(new Pimcore_Controller_Plugin_QrCode(), 793);
             $front->registerPlugin(new Pimcore_Controller_Plugin_CommonFilesFilter(), 794);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_Thumbnail(), 795);
             $front->registerPlugin(new Pimcore_Controller_Plugin_WysiwygAttributes(), 796);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Webmastertools(), 797);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Analytics(), 798);

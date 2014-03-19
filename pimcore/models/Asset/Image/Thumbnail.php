@@ -63,6 +63,11 @@ class Asset_Image_Thumbnail {
     protected $deferred = false;
 
     /**
+     * @var bool
+     */
+    protected static $pictureElementInUse = false;
+
+    /**
      * Generate a thumbnail image.
      * @param Image_Asset Original image
      * @param mixed $selector Name, array or object with the thumbnail configuration.
@@ -262,6 +267,11 @@ class Asset_Image_Thumbnail {
         if(!$this->getConfig()->hasMedias()) {
             return $htmlImgTag;
         } else {
+            // output the <picture> - element
+
+            // set this variable to that Pimcore_Controller_Plugin_Thumbnail::dispatchLoopShutdown() knows that
+            // the picture polyfill script needs to be included
+            self::$pictureElementInUse = true;
 
             $thumbConfig = $this->getConfig();
 
@@ -361,5 +371,12 @@ class Asset_Image_Thumbnail {
                 $this->height = floor($this->height / $this->config->getHighResolution());
             }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isPictureElementInUse() {
+        return self::$pictureElementInUse;
     }
 }
