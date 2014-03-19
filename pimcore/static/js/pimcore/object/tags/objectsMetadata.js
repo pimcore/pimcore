@@ -21,14 +21,15 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
     initialize: function (data, fieldConfig) {
         this.data = [];
         this.fieldConfig = fieldConfig;
+        this.visibleFieldsLabels = data["visibleFieldsLabels"];
         var classStore = pimcore.globalmanager.get("object_types_store");
         var className = classStore.getById(fieldConfig.allowedClassId);
 
         var classNameText = (typeof(className) != 'undefined') ? className.data.text : '';
         this.fieldConfig.classes = [{classes: classNameText, id: fieldConfig.allowedClassId}];
 
-        if (data) {
-            this.data = data;
+        if (data["data"]) {
+            this.data = data["data"];
         }
 
         var fields = [];
@@ -83,8 +84,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         for (i = 0; i < visibleFields.length; i++) {
             if(!empty(visibleFields[i])) {
-                columns.push({header: ts(visibleFields[i]), dataIndex: visibleFields[i], width: 100, editor: null,
-                                                                    renderer: renderer});
+                columns.push({header: this.visibleFieldsLabels[visibleFields[i]], dataIndex: visibleFields[i], width: 100, editor: null});
             }
         }
 

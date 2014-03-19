@@ -134,7 +134,11 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
      * @return array
      */
     public function getDataForEditmode($data, $object = null) {
-        $return = array();
+        $return = array(
+            "visibleFieldsLabels" => [],
+            "data" => []
+        );
+
         $visibleFieldsArray = explode(",", $this->getVisibleFields());
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
@@ -158,16 +162,23 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
                             $value[$key] = $v;
                         }
+
+                        // add field label
+                        $field = $object->getClass()->getFieldDefinition($key);
+                        if($field) {
+                            $return["visibleFieldsLabels"][$key] = $field->getTitle();
+                        }
                     }
+
                     foreach($this->getColumns() as $c) {
                         $getter = "get" . ucfirst($c['key']);
                         $value[$c['key']] = $metaObject->$getter();
                     }
-                    $return[] = $value;
+                    $return["data"][] = $value;
                 }
             }
-            if (empty ($return)) {
-                $return = false;
+            if (empty ($return["data"])) {
+                $return["data"] = false;
             }
             return $return;
         }
