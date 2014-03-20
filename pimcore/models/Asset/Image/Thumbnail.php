@@ -292,7 +292,7 @@ class Asset_Image_Thumbnail {
 
                 foreach ($mediaConfigs as $mediaQuery => $config) {
 
-                    $mediaQueryCSS = "";
+                    //$mediaQueryCSS = "";
                     $srcSetValues = [];
                     foreach ([1,2] as $highRes) {
                         $thumbConfigRes = clone $thumbConfig;
