@@ -252,7 +252,7 @@
     });
     <?php } ?>
 </script>
-
+<script type="text/javascript" src="/website/static/js/srcset-polyfill.min.js"></script>
 
 </body>
 </html>

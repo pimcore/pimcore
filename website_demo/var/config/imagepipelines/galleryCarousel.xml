@@ -4,7 +4,7 @@
     <item>
       <method>cover</method>
       <arguments>
-        <width>870</width>
+        <width>1140</width>
         <height>400</height>
         <positioning>center</positioning>
       </arguments>
@@ -14,5 +14,5 @@
   <description/>
   <format>SOURCE</format>
   <quality>90</quality>
-  <highResolution>2</highResolution>
+  <highResolution></highResolution>
 </zend-config>
