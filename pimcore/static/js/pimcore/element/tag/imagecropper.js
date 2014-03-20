@@ -35,7 +35,7 @@ pimcore.element.tag.imagecropper = Class.create({
             modal: this.modal,
             closeAction: "close",
             resizable: false,
-            bodyStyle: "background: url(" + imageUrl + ") center center no-repeat;",
+            bodyStyle: "background: url(" + imageUrl + ") center center no-repeat;position:relative;",
             bbar: ["->", {
                 xtype: "button",
                 iconCls: "pimcore_icon_apply",
@@ -94,6 +94,46 @@ pimcore.element.tag.imagecropper = Class.create({
 
                         Ext.get("selectorImage").remove();
 
+                        var checkSize = function () {
+                            // this function checks if the selected area fits into the image
+                            var sel = Ext.get("selector");
+                            var originalWidth = this.editWindow.getInnerWidth();
+                            var originalHeight = this.editWindow.getInnerHeight();
+                            var skip = false;
+
+                            while(!skip) {
+                                skip = true;
+                                var dimensions = sel.getStyles("top","left","width","height");
+
+                                if(intval(dimensions.top) < 0) {
+                                    sel.setStyle("top", "0");
+                                    skip = false;
+                                }
+                                if(intval(dimensions.left) < 0) {
+                                    sel.setStyle("left", "0");
+                                    skip = false;
+                                }
+                                if((intval(dimensions.left) + intval(dimensions.width)) > originalWidth) {
+                                    if(intval(dimensions.left) < originalWidth || intval(dimensions.left) > originalWidth) {
+                                        sel.setStyle("left", (originalWidth-intval(dimensions.width)) + "px");
+                                    }
+                                    if(intval(dimensions.width) > originalWidth) {
+                                        sel.setStyle("width", (originalWidth) + "px");
+                                    }
+                                    skip = false;
+                                }
+                                if((intval(dimensions.top) + intval(dimensions.height)) > originalHeight) {
+                                    if(intval(dimensions.top) < originalHeight || intval(dimensions.top) > originalHeight) {
+                                        sel.setStyle("top", (originalHeight-intval(dimensions.height)) + "px");
+                                    }
+                                    if(intval(dimensions.height) > originalHeight) {
+                                        sel.setStyle("height", (originalHeight) + "px");
+                                    }
+                                    skip = false;
+                                }
+                            }
+                        };
+
                         this.resizer = new Ext.Resizable('selector', {
                             pinned:true,
                             minWidth:50,
@@ -103,8 +143,13 @@ pimcore.element.tag.imagecropper = Class.create({
                             handles: 'all',
                             draggable:true,
                             width: 100,
-                            height: 100
+                            height: 100,
+                            listeners: {
+                                resize: checkSize.bind(this)
+                            }
                         });
+
+                        this.resizer.dd.endDrag = checkSize.bind(this);
 
                         if(this.data && this.data["cropPercent"]) {
                             Ext.get("selector").applyStyles({
