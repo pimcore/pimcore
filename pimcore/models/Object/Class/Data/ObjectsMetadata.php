@@ -136,11 +136,26 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
     public function getDataForEditmode($data, $object = null) {
         $return = array(
             "visibleFieldsLabels" => [],
-            "data" => []
+            "data" => false
         );
 
         $visibleFieldsArray = explode(",", $this->getVisibleFields());
+
+        // add labels
+        $class = Object_Class::getById($this->getAllowedClassId());
+        foreach($visibleFieldsArray as $key) {
+            $field = $class->getFieldDefinition($key);
+            if($field) {
+                $return["visibleFieldsLabels"][$key] = $field->getTitle();
+            } else {
+                // shouldn't be necessary because this data-type is only allowed directly in objects, added just to be sure
+                $return["visibleFieldsLabels"][$key] = $key;
+            }
+        }
+
+        // add data
         if (is_array($data) && count($data) > 0) {
+            $return["data"] = [];
             foreach ($data as $metaObject) {
 
                 $object = $metaObject->getObject();
@@ -159,14 +174,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                                 }
 
                             }
-
                             $value[$key] = $v;
-                        }
-
-                        // add field label
-                        $field = $object->getClass()->getFieldDefinition($key);
-                        if($field) {
-                            $return["visibleFieldsLabels"][$key] = $field->getTitle();
                         }
                     }
 
@@ -180,10 +188,9 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
             if (empty ($return["data"])) {
                 $return["data"] = false;
             }
-            return $return;
         }
 
-        return false;
+        return $return;
     }
 
     /**
