@@ -68,6 +68,11 @@ class Asset_Image_Thumbnail {
     protected static $pictureElementInUse = false;
 
     /**
+     * @var bool
+     */
+    protected static $useSrcSet = false;
+
+    /**
      * Generate a thumbnail image.
      * @param Image_Asset Original image
      * @param mixed $selector Name, array or object with the thumbnail configuration.
@@ -262,20 +267,53 @@ class Asset_Image_Thumbnail {
         $path = $this->getPath(true);
         $attr['src'] = 'src="'. $path .'"';
 
-        // automatically add srcset
-        $srcSetValues = [];
-        foreach ([1,2] as $highRes) {
-            $thumbConfig = $this->getConfig();
-            $thumbConfig = clone $thumbConfig;
-            $thumbConfig->setHighResolution($highRes);
-            $srcSetValues[] = $image->getThumbnail($thumbConfig, true) . " " . $highRes . "x";
+        $thumbConfig = $this->getConfig();
+
+        if(!$this->getConfig()->hasMedias() || self::$useSrcSet) {
+            // automatically add srcset
+            $mediaConfigs = [];
+
+            // check for additional media configurations
+            if($this->getConfig()->hasMedias()) {
+                $mediaConfigs = $thumbConfig->getMedias();
+                // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
+                ksort($mediaConfigs);
+
+                // remove width and height attribute if we're using src-set
+                unset($attr["width"]);
+                unset($attr["height"]);
+            }
+            // add the default config at the end
+            $mediaConfigs[] = $thumbConfig->getItems();
+
+            // generate the srcset
+            $srcSetValues = [];
+            foreach ($mediaConfigs as $mediaQuery => $config) {
+                foreach ([1,2] as $highRes) {
+                    $thumbConfigRes = clone $thumbConfig;
+                    $thumbConfigRes->selectMedia($mediaQuery);
+                    $thumbConfigRes->setHighResolution($highRes);
+                    $thumb = $image->getThumbnail($thumbConfigRes, true);
+
+                    $srcsetEntry = (string) $thumb;
+                    if($mediaQuery) {
+                        // for now $mediaQuery contains already the right format, maybe this will change in the future
+                        // and needs more parsing here
+                        $srcsetEntry .= " " . $mediaQuery;
+                    }
+                    if($highRes > 1) {
+                        $srcsetEntry .= " " . $highRes . "x";
+                    }
+                    $srcSetValues[] = $srcsetEntry;
+                }
+            }
+            $attr['srcset'] = 'srcset="'. implode(", ", $srcSetValues) .'"';
         }
-        $attr['srcset'] = 'srcset="'. implode(", ", $srcSetValues) .'"';
 
         // build html tag
         $htmlImgTag = '<img '.implode(' ', $attr).' />';
 
-        if(!$this->getConfig()->hasMedias()) {
+        if(!$this->getConfig()->hasMedias() || self::$useSrcSet) {
             return $htmlImgTag;
         } else {
             // output the <picture> - element
@@ -284,15 +322,16 @@ class Asset_Image_Thumbnail {
             // the picture polyfill script needs to be included
             self::$pictureElementInUse = true;
 
-            $thumbConfig = $this->getConfig();
             $htmlId = "picture-" . uniqid();
             $html = '<picture id="' . $htmlId . '" ' . implode(" ", $dataAttribs) . ' data-default-src="' . $path . '">' . "\n";
                 $mediaConfigs = $thumbConfig->getMedias();
-                array_splice($mediaConfigs, 0, 0, $thumbConfig->getItems());
+
+                // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
+                ksort($mediaConfigs);
+                $mediaConfigs = array_reverse($mediaConfigs, true); // the sorting matters!
+                array_unshift($mediaConfigs, $thumbConfig->getItems()); // add the default config at the beginning
 
                 foreach ($mediaConfigs as $mediaQuery => $config) {
-
-                    //$mediaQueryCSS = "";
                     $srcSetValues = [];
                     foreach ([1,2] as $highRes) {
                         $thumbConfigRes = clone $thumbConfig;
@@ -304,12 +343,12 @@ class Asset_Image_Thumbnail {
 
                     $html .= "\t" . '<source srcset="' . implode(", ", $srcSetValues) .'"';
                     if($mediaQuery) {
-                        $html .= ' media="' . $mediaQuery . '"';
+                        // currently only max-width is supported, so we replace the width indicator (400w) out of the name
+                        $maxWidth = str_replace("w","",$mediaQuery);
+                        $html .= ' media="(max-width: ' . $maxWidth . 'px)"';
                         $thumb->reset();
-                        //$mediaQueryCSS = '<style type="text/css">@media screen and ' . $mediaQuery . ' { #' . $htmlId . ' > img {max-width:' . $thumb->getWidth() . 'px; max-height:' . $thumb->getHeight() . 'px;} }</style>';
                     }
                     $html .= ' />' . "\n";
-                    //$html .= "\t" . $mediaQueryCSS . "\n";
                 }
 
                 $html .= "\t" . '<noscript>' . "\n\t\t" . $htmlImgTag . "\n\t" . '</noscript>' . "\n";
@@ -387,6 +426,10 @@ class Asset_Image_Thumbnail {
                 $this->height = floor($this->height / $this->config->getHighResolution());
             }
         }
+    }
+
+    public static function useSrcset() {
+        self::$useSrcSet = true;
     }
 
     /**
