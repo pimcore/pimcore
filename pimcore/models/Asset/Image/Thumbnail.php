@@ -269,43 +269,14 @@ class Asset_Image_Thumbnail {
 
         $thumbConfig = $this->getConfig();
 
-        if(!$this->getConfig()->hasMedias() || self::$useSrcSet) {
-            // automatically add srcset
-            $mediaConfigs = [];
-
-            // check for additional media configurations
-            if($this->getConfig()->hasMedias()) {
-                $mediaConfigs = $thumbConfig->getMedias();
-                // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
-                ksort($mediaConfigs);
-
-                // remove width and height attribute if we're using src-set
-                unset($attr["width"]);
-                unset($attr["height"]);
-            }
-            // add the default config at the end
-            $mediaConfigs[] = $thumbConfig->getItems();
-
+        if(!$this->getConfig()->hasMedias()) {
             // generate the srcset
             $srcSetValues = [];
-            foreach ($mediaConfigs as $mediaQuery => $config) {
-                foreach ([1,2] as $highRes) {
-                    $thumbConfigRes = clone $thumbConfig;
-                    $thumbConfigRes->selectMedia($mediaQuery);
-                    $thumbConfigRes->setHighResolution($highRes);
-                    $thumb = $image->getThumbnail($thumbConfigRes, true);
-
-                    $srcsetEntry = (string) $thumb;
-                    if($mediaQuery) {
-                        // for now $mediaQuery contains already the right format, maybe this will change in the future
-                        // and needs more parsing here
-                        $srcsetEntry .= " " . $mediaQuery;
-                    }
-                    if($highRes > 1) {
-                        $srcsetEntry .= " " . $highRes . "x";
-                    }
-                    $srcSetValues[] = $srcsetEntry;
-                }
+            foreach ([1,2] as $highRes) {
+                $thumbConfigRes = clone $thumbConfig;
+                $thumbConfigRes->setHighResolution($highRes);
+                $srcsetEntry = $image->getThumbnail($thumbConfigRes, true) . " " . $highRes . "x";
+                $srcSetValues[] = $srcsetEntry;
             }
             $attr['srcset'] = 'srcset="'. implode(", ", $srcSetValues) .'"';
         }
@@ -313,7 +284,7 @@ class Asset_Image_Thumbnail {
         // build html tag
         $htmlImgTag = '<img '.implode(' ', $attr).' />';
 
-        if(!$this->getConfig()->hasMedias() || self::$useSrcSet) {
+        if(!$this->getConfig()->hasMedias()) {
             return $htmlImgTag;
         } else {
             // output the <picture> - element
@@ -322,8 +293,7 @@ class Asset_Image_Thumbnail {
             // the picture polyfill script needs to be included
             self::$pictureElementInUse = true;
 
-            $htmlId = "picture-" . uniqid();
-            $html = '<picture id="' . $htmlId . '" ' . implode(" ", $dataAttribs) . ' data-default-src="' . $path . '">' . "\n";
+            $html = '<picture ' . implode(" ", $dataAttribs) . ' data-default-src="' . $path . '">' . "\n";
                 $mediaConfigs = $thumbConfig->getMedias();
 
                 // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
@@ -352,7 +322,7 @@ class Asset_Image_Thumbnail {
                 }
 
                 $html .= "\t" . '<noscript>' . "\n\t\t" . $htmlImgTag . "\n\t" . '</noscript>' . "\n";
-            $html .= '</picture>';
+            $html .= '</picture>' . "\n";
 
             return $html;
         }
@@ -426,10 +396,6 @@ class Asset_Image_Thumbnail {
                 $this->height = floor($this->height / $this->config->getHighResolution());
             }
         }
-    }
-
-    public static function useSrcset() {
-        self::$useSrcSet = true;
     }
 
     /**

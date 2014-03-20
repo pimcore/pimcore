@@ -105,11 +105,12 @@ pimcore.settings.thumbnail.item = Class.create({
                 decimalPrecision: 1
             }],
             buttons: [{
-                text: t("add_media_query"),
+                text: t("add_media_query") + " (<b>" + t("experimental") + "</b>)",
                 iconCls: "pimcore_icon_add",
                 handler: function () {
-                    Ext.MessageBox.prompt("", t("please_enter_the_new_name") + "<br />" + t("example")  + ": (min-width: 1441px)", function (button, value) {
-                        if(button == "ok") {
+                    Ext.MessageBox.prompt("", t("please_enter_the_maximum_viewport_width_in_pixels_allowed_for_this_thumbnail"), function (button, value) {
+                        if(button == "ok" && is_numeric(value)) {
+                            value = value + "w"; // add the width indicator here, to be future-proof
                             this.addMediaPanel(value, null ,true, true);
                         }
                     }.bind(this));
@@ -153,8 +154,17 @@ pimcore.settings.thumbnail.item = Class.create({
             }
         }
 
+        var title = "";
+        if(name == "default") {
+            title = t("default");
+        } else {
+            // remove the width indicator (maybe there will be more complex syntax in the future)
+            var tmpName = name.replace("w","");
+            title = "max. width: " + tmpName + "px";
+        }
+
         var itemContainer = new Ext.Panel({
-            title: (name == "default") ? t("default") : name,
+            title: title,
             tbar: [{
                 text: t("transformations"),
                 iconCls: "pimcore_icon_add",
