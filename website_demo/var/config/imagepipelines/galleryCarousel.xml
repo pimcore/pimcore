@@ -10,9 +10,51 @@
       </arguments>
     </item>
   </items>
+  <medias>
+    <media>
+      <name>940w</name>
+      <items>
+        <item>
+          <method>cover</method>
+          <arguments>
+            <width>940</width>
+            <height>350</height>
+            <positioning>center</positioning>
+          </arguments>
+        </item>
+      </items>
+    </media>
+    <media>
+      <name>720w</name>
+      <items>
+        <item>
+          <method>cover</method>
+          <arguments>
+            <width>720</width>
+            <height>300</height>
+            <positioning>center</positioning>
+          </arguments>
+        </item>
+      </items>
+    </media>
+    <media>
+      <name>320w</name>
+      <items>
+        <item>
+          <method>cover</method>
+          <arguments>
+            <width>320</width>
+            <height>100</height>
+            <positioning>center</positioning>
+          </arguments>
+        </item>
+      </items>
+    </media>
+  </medias>
   <name>galleryCarousel</name>
   <description/>
   <format>SOURCE</format>
   <quality>90</quality>
-  <highResolution></highResolution>
+  <highResolution>0</highResolution>
+  <filenameSuffix/>
 </zend-config>
