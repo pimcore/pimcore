@@ -280,7 +280,7 @@ class Asset_Image_Thumbnail {
         } else {
             // output the <picture> - element
 
-            // set this variable to that Pimcore_Controller_Plugin_Thumbnail::dispatchLoopShutdown() knows that
+            // set this variable so that Pimcore_Controller_Plugin_Thumbnail::dispatchLoopShutdown() knows that
             // the picture polyfill script needs to be included
             self::$pictureElementInUse = true;
 
@@ -306,10 +306,10 @@ class Asset_Image_Thumbnail {
                     if($mediaQuery) {
                         $html .= ' media="' . $mediaQuery . '"';
                         $thumb->reset();
-                        $mediaQueryCSS = '<style type="text/css">@media screen and ' . $mediaQuery . ' { #' . $htmlId . ' > img {max-width:' . $thumb->getWidth() . 'px; max-height:' . $thumb->getHeight() . 'px;} }</style>';
+                        //$mediaQueryCSS = '<style type="text/css">@media screen and ' . $mediaQuery . ' { #' . $htmlId . ' > img {max-width:' . $thumb->getWidth() . 'px; max-height:' . $thumb->getHeight() . 'px;} }</style>';
                     }
                     $html .= ' />' . "\n";
-                    $html .= "\t" . $mediaQueryCSS . "\n";
+                    //$html .= "\t" . $mediaQueryCSS . "\n";
                 }
 
                 $html .= "\t" . '<noscript>' . "\n\t\t" . $htmlImgTag . "\n\t" . '</noscript>' . "\n";
