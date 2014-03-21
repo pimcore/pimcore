@@ -201,7 +201,7 @@ class Asset_Image_Thumbnail {
 
         $image = $this->getAsset();
         $attr = array();
-        $dataAttribs = []; // this is used for the html5 <picture> element
+        $pictureAttribs = []; // this is used for the html5 <picture> element
 
         if(!$this->deferred) {
             if($this->getWidth()) {
@@ -257,9 +257,14 @@ class Asset_Image_Thumbnail {
             if(preg_match("/^[a-z-]+$/i", $key)) {
                 $attr[$key] = $key . '="' . htmlspecialchars($value) . '"';
 
-                // do not include all attributes as data-
+                // do not include all attributes
                 if(!in_array($key, ["width","height"])) {
-                    $dataAttribs[$key] = "data-" . $key . '="' . htmlspecialchars($value) . '"';
+                    $pictureAttribs[$key] = $key . '="' . htmlspecialchars($value) . '"';
+
+                    // some attributes need to be added also as data- attribute, this is specific to picturePolyfill
+                    if(in_array($key, ["alt"])) {
+                        $pictureAttribs["data-" . $key] = "data-" . $key . '="' . htmlspecialchars($value) . '"';
+                    }
                 }
             }
         }
@@ -293,7 +298,7 @@ class Asset_Image_Thumbnail {
             // the picture polyfill script needs to be included
             self::$pictureElementInUse = true;
 
-            $html = '<picture ' . implode(" ", $dataAttribs) . ' data-default-src="' . $path . '">' . "\n";
+            $html = '<picture ' . implode(" ", $pictureAttribs) . ' data-default-src="' . $path . '">' . "\n";
                 $mediaConfigs = $thumbConfig->getMedias();
 
                 // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
