@@ -1,5 +1,9 @@
 <?php
 
+namespace Sabre\DAV\Property;
+
+use Sabre\DAV;
+
 /**
  * Response property
  *
@@ -7,13 +11,11 @@
  * This is used by the Server class to encode individual items within a multistatus
  * response.
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_DAV_Property_Response extends Sabre_DAV_Property implements Sabre_DAV_Property_IHref {
+class Response extends DAV\Property implements IHref {
 
     /**
      * Url for the response
@@ -68,11 +70,11 @@ class Sabre_DAV_Property_Response extends Sabre_DAV_Property implements Sabre_DA
     /**
      * serialize
      *
-     * @param Sabre_DAV_Server $server
-     * @param DOMElement $dom
+     * @param DAV\Server $server
+     * @param \DOMElement $dom
      * @return void
      */
-    public function serialize(Sabre_DAV_Server $server, DOMElement $dom) {
+    public function serialize(DAV\Server $server, \DOMElement $dom) {
 
         $document = $dom->ownerDocument;
         $properties = $this->responseProperties;
@@ -80,7 +82,7 @@ class Sabre_DAV_Property_Response extends Sabre_DAV_Property implements Sabre_DA
         $xresponse = $document->createElement('d:response');
         $dom->appendChild($xresponse);
 
-        $uri = Sabre_DAV_URLUtil::encodePath($this->href);
+        $uri = DAV\URLUtil::encodePath($this->href);
 
         // Adding the baseurl to the beginning of the url
         $uri = $server->getBaseUri() . $uri;
@@ -138,10 +140,10 @@ class Sabre_DAV_Property_Response extends Sabre_DAV_Property implements Sabre_DA
                 if (is_scalar($propertyValue)) {
                     $text = $document->createTextNode($propertyValue);
                     $currentProperty->appendChild($text);
-                } elseif ($propertyValue instanceof Sabre_DAV_Property) {
+                } elseif ($propertyValue instanceof DAV\PropertyInterface) {
                     $propertyValue->serialize($server,$currentProperty);
                 } elseif (!is_null($propertyValue)) {
-                    throw new Sabre_DAV_Exception('Unknown property value type: ' . gettype($propertyValue) . ' for property: ' . $propertyName);
+                    throw new DAV\Exception('Unknown property value type: ' . gettype($propertyValue) . ' for property: ' . $propertyName);
                 }
 
             }

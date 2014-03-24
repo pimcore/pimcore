@@ -1,31 +1,34 @@
 <?php
 
+namespace Sabre\DAV\Mount;
+
+use Sabre\DAV;
+
 /**
  * This plugin provides support for RFC4709: Mounting WebDAV servers
  *
  * Simply append ?mount to any collection to generate the davmount response.
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
+ * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_DAV_Mount_Plugin extends Sabre_DAV_ServerPlugin {
+class Plugin extends DAV\ServerPlugin {
 
     /**
      * Reference to Server class
      *
-     * @var Sabre_DAV_Server
+     * @var Sabre\DAV\Server
      */
-    private $server;
+    protected $server;
 
     /**
      * Initializes the plugin and registers event handles
      *
-     * @param Sabre_DAV_Server $server
+     * @param DAV\Server $server
      * @return void
      */
-    public function initialize(Sabre_DAV_Server $server) {
+    public function initialize(DAV\Server $server) {
 
         $this->server = $server;
         $this->server->subscribeEvent('beforeMethod',array($this,'beforeMethod'), 90);

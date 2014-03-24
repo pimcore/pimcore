@@ -1,18 +1,18 @@
 <?php
 
+namespace Sabre\DAV;
+
 /**
  * File class
  *
  * This is a helper class, that should aid in getting file classes setup.
  * Most of its methods are implemented, and throw permission denied exceptions
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-abstract class Sabre_DAV_File extends Sabre_DAV_Node implements Sabre_DAV_IFile {
+abstract class File extends Node implements IFile {
 
     /**
      * Updates the data
@@ -24,7 +24,7 @@ abstract class Sabre_DAV_File extends Sabre_DAV_Node implements Sabre_DAV_IFile 
      */
     public function put($data) {
 
-        throw new Sabre_DAV_Exception_Forbidden('Permission denied to change data');
+        throw new Exception\Forbidden('Permission denied to change data');
 
     }
 
@@ -37,7 +37,7 @@ abstract class Sabre_DAV_File extends Sabre_DAV_Node implements Sabre_DAV_IFile 
      */
     public function get() {
 
-        throw new Sabre_DAV_Exception_Forbidden('Permission denied to read this file');
+        throw new Exception\Forbidden('Permission denied to read this file');
 
     }
 

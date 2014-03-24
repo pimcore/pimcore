@@ -1,22 +1,24 @@
 <?php
 
+namespace Sabre\DAV\Exception;
+
+use Sabre\DAV;
+
 /**
  * Locked
  *
  * The 423 is thrown when a client tried to access a resource that was locked, without supplying a valid lock token
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/) 
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_DAV_Exception_Locked extends Sabre_DAV_Exception {
+class Locked extends DAV\Exception {
 
     /**
      * Lock information
      *
-     * @var Sabre_DAV_Locks_LockInfo
+     * @var Sabre\DAV\Locks\LockInfo
      */
     protected $lock;
 
@@ -26,9 +28,9 @@ class Sabre_DAV_Exception_Locked extends Sabre_DAV_Exception {
      * A LockInfo object should be passed if the user should be informed
      * which lock actually has the file locked.
      *
-     * @param Sabre_DAV_Locks_LockInfo $lock
+     * @param DAV\Locks\LockInfo $lock
      */
-    public function __construct(Sabre_DAV_Locks_LockInfo $lock = null) {
+    public function __construct(DAV\Locks\LockInfo $lock = null) {
 
         $this->lock = $lock;
 
@@ -48,17 +50,21 @@ class Sabre_DAV_Exception_Locked extends Sabre_DAV_Exception {
     /**
      * This method allows the exception to include additional information into the WebDAV error response
      *
-     * @param Sabre_DAV_Server $server
-     * @param DOMElement $errorNode
+     * @param DAV\Server $server
+     * @param \DOMElement $errorNode
      * @return void
      */
-    public function serialize(Sabre_DAV_Server $server,DOMElement $errorNode) {
+    public function serialize(DAV\Server $server,\DOMElement $errorNode) {
 
         if ($this->lock) {
             $error = $errorNode->ownerDocument->createElementNS('DAV:','d:lock-token-submitted');
             $errorNode->appendChild($error);
-            if (!is_object($this->lock)) var_dump($this->lock);
-            $error->appendChild($errorNode->ownerDocument->createElementNS('DAV:','d:href',$this->lock->uri));
+
+            $href = $errorNode->ownerDocument->createElementNS('DAV:','d:href');
+            $href->appendChild($errorNode->ownerDocument->createTextNode($this->lock->uri));
+            $error->appendChild(
+                $href
+            );
         }
 
     }

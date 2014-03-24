@@ -605,7 +605,7 @@ class Pimcore {
         $autoloader->registerNamespace('User');
         $autoloader->registerNamespace('Property');
         $autoloader->registerNamespace('Version');
-        $autoloader->registerNamespace('Sabre_');
+        $autoloader->registerNamespace('Sabre');
         $autoloader->registerNamespace('Site');
         $autoloader->registerNamespace('Services_');
         $autoloader->registerNamespace('HTTP_');

@@ -1,15 +1,15 @@
 <?php
 
+namespace Sabre\DAV;
+
 /**
  * XML utilities for WebDAV
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_DAV_XMLUtil {
+class XMLUtil {
 
     /**
      * Returns the 'clark notation' for an element.
@@ -26,10 +26,10 @@ class Sabre_DAV_XMLUtil {
      *
      * This function will return null if a nodetype other than an Element is passed.
      *
-     * @param DOMNode $dom
+     * @param \DOMNode $dom
      * @return string
      */
-    static function toClarkNotation(DOMNode $dom) {
+    static function toClarkNotation(\DOMNode $dom) {
 
         if ($dom->nodeType !== XML_ELEMENT_NODE) return null;
 
@@ -54,7 +54,7 @@ class Sabre_DAV_XMLUtil {
     static function parseClarkNotation($str) {
 
         if (!preg_match('/^{([^}]*)}(.*)$/',$str,$matches)) {
-            throw new InvalidArgumentException('\'' . $str . '\' is not a valid clark-notation formatted string');
+            throw new \InvalidArgumentException('\'' . $str . '\' is not a valid clark-notation formatted string');
         }
 
         return array(
@@ -85,17 +85,17 @@ class Sabre_DAV_XMLUtil {
     /**
      * This method provides a generic way to load a DOMDocument for WebDAV use.
      *
-     * This method throws a Sabre_DAV_Exception_BadRequest exception for any xml errors.
+     * This method throws a Sabre\DAV\Exception\BadRequest exception for any xml errors.
      * It does not preserve whitespace, and it converts the DAV: namespace to urn:DAV.
      *
      * @param string $xml
-     * @throws Sabre_DAV_Exception_BadRequest
+     * @throws Sabre\DAV\Exception\BadRequest
      * @return DOMDocument
      */
     static function loadDOMDocument($xml) {
 
         if (empty($xml))
-            throw new Sabre_DAV_Exception_BadRequest('Empty XML document sent');
+            throw new Exception\BadRequest('Empty XML document sent');
 
         // The BitKinex client sends xml documents as UTF-16. PHP 5.3.1 (and presumably lower)
         // does not support this, so we must intercept this and convert to UTF-8.
@@ -113,23 +113,28 @@ class Sabre_DAV_XMLUtil {
 
         // Retaining old error setting
         $oldErrorSetting =  libxml_use_internal_errors(true);
+        // Fixes an XXE vulnerability on PHP versions older than 5.3.23 or
+        // 5.4.13.
+        $oldEntityLoaderSetting = libxml_disable_entity_loader(true);
 
         // Clearing any previous errors
         libxml_clear_errors();
 
-        $dom = new DOMDocument();
-        $dom->loadXML(self::convertDAVNamespace($xml),LIBXML_NOWARNING | LIBXML_NOERROR);
+        $dom = new \DOMDocument();
 
         // We don't generally care about any whitespace
         $dom->preserveWhiteSpace = false;
 
+        $dom->loadXML(self::convertDAVNamespace($xml),LIBXML_NOWARNING | LIBXML_NOERROR);
+
         if ($error = libxml_get_last_error()) {
             libxml_clear_errors();
-            throw new Sabre_DAV_Exception_BadRequest('The request body had an invalid XML body. (message: ' . $error->message . ', errorcode: ' . $error->code . ', line: ' . $error->line . ')');
+            throw new Exception\BadRequest('The request body had an invalid XML body. (message: ' . $error->message . ', errorcode: ' . $error->code . ', line: ' . $error->line . ')');
         }
 
         // Restoring old mechanism for error handling
         if ($oldErrorSetting===false) libxml_use_internal_errors(false);
+        if ($oldEntityLoaderSetting===false) libxml_disable_entity_loader(true);
 
         return $dom;
 
@@ -153,23 +158,23 @@ class Sabre_DAV_XMLUtil {
      * When any of these properties are found, the unserialize() method will be
      * (statically) called. The result of this method is used as the value.
      *
-     * @param DOMElement $parentNode
+     * @param \DOMElement $parentNode
      * @param array $propertyMap
      * @return array
      */
-    static function parseProperties(DOMElement $parentNode, array $propertyMap = array()) {
+    static function parseProperties(\DOMElement $parentNode, array $propertyMap = array()) {
 
         $propList = array();
         foreach($parentNode->childNodes as $propNode) {
 
-            if (Sabre_DAV_XMLUtil::toClarkNotation($propNode)!=='{DAV:}prop') continue;
+            if (self::toClarkNotation($propNode)!=='{DAV:}prop') continue;
 
             foreach($propNode->childNodes as $propNodeData) {
 
                 /* If there are no elements in here, we actually get 1 text node, this special case is dedicated to netdrive */
                 if ($propNodeData->nodeType != XML_ELEMENT_NODE) continue;
 
-                $propertyName = Sabre_DAV_XMLUtil::toClarkNotation($propNodeData);
+                $propertyName = self::toClarkNotation($propNodeData);
                 if (isset($propertyMap[$propertyName])) {
                     $propList[$propertyName] = call_user_func(array($propertyMap[$propertyName],'unserialize'),$propNodeData);
                 } else {

@@ -93,7 +93,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             } else {
                 // try to authenticate with digest, but this is only allowed for WebDAV
                 if ($this->getParam("module") == "admin" && $this->getParam("controller") == "asset" && $this->getParam("action") == "webdav") {
-                    $user = Pimcore_Tool_Authentication::authenticateDigest();
+                    $user = Pimcore_Tool_Authentication::authenticateHttpBasic();
                     if($user instanceof User) {
                         $this->setUser($user);
 

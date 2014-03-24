@@ -1,33 +1,35 @@
 <?php
 
+namespace Sabre\DAV\Browser;
+
+use Sabre\DAV;
+
 /**
  * This is a simple plugin that will map any GET request for non-files to
  * PROPFIND allprops-requests.
  *
  * This should allow easy debugging of PROPFIND
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_DAV_Browser_MapGetToPropFind extends Sabre_DAV_ServerPlugin {
+class MapGetToPropFind extends DAV\ServerPlugin {
 
     /**
      * reference to server class
      *
-     * @var Sabre_DAV_Server
+     * @var Sabre\DAV\Server
      */
     protected $server;
 
     /**
      * Initializes the plugin and subscribes to events
      *
-     * @param Sabre_DAV_Server $server
+     * @param DAV\Server $server
      * @return void
      */
-    public function initialize(Sabre_DAV_Server $server) {
+    public function initialize(DAV\Server $server) {
 
         $this->server = $server;
         $this->server->subscribeEvent('beforeMethod',array($this,'httpGetInterceptor'));
@@ -45,7 +47,7 @@ class Sabre_DAV_Browser_MapGetToPropFind extends Sabre_DAV_ServerPlugin {
         if ($method!='GET') return true;
 
         $node = $this->server->tree->getNodeForPath($uri);
-        if ($node instanceof Sabre_DAV_IFile) return;
+        if ($node instanceof DAV\IFile) return;
 
         $this->server->invokeMethod('PROPFIND',$uri);
         return false;

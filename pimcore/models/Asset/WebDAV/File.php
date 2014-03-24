@@ -15,7 +15,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_WebDAV_File extends Sabre_DAV_File {
+use Sabre\DAV;
+
+class Asset_WebDAV_File extends DAV\File {
 
     /**
      * @var Asset
@@ -51,7 +53,7 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
             $this->asset->setFilename(Pimcore_File::getValidFilename($name));
             $this->asset->save();
         } else {
-            throw new Sabre_DAV_Exception_Forbidden();
+            throw new DAV\Exception\Forbidden();
         }
 
         return $this;
@@ -81,7 +83,7 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
 
             Asset_WebDAV_Service::saveDeleteLog($log);
         } else {
-            throw new Sabre_DAV_Exception_Forbidden();
+            throw new DAV\Exception\Forbidden();
         }
     }
 
@@ -110,7 +112,7 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
             $this->asset->setData($data);
             $this->asset->save();
         } else {
-            throw new Sabre_DAV_Exception_Forbidden();
+            throw new DAV\Exception\Forbidden();
         }
     }
 
@@ -123,7 +125,7 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
         if($this->asset->isAllowed("view")) {
             return fopen($this->asset->getFileSystemPath(), "r");
         } else {
-            throw new Sabre_DAV_Exception_Forbidden();
+            throw new DAV\Exception\Forbidden();
         }
     }
 

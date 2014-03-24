@@ -1,18 +1,20 @@
 <?php
 
+namespace Sabre\DAV\Exception;
+
+use Sabre\DAV;
+
 /**
  * NotAuthenticated
  *
  * This exception is thrown when the client did not provide valid
  * authentication credentials.
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/) 
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_DAV_Exception_NotAuthenticated extends Sabre_DAV_Exception {
+class NotAuthenticated extends DAV\Exception {
 
     /**
      * Returns the HTTP statuscode for this exception

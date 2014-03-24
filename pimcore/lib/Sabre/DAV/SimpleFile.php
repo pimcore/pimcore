@@ -1,5 +1,7 @@
 <?php
 
+namespace Sabre\DAV;
+
 /**
  * SimpleFile
  *
@@ -7,13 +9,11 @@
  * the directory structure. One usecase would be to add a 'readme.txt' to a
  * root of a webserver with some standard content.
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_DAV_SimpleFile extends Sabre_DAV_File {
+class SimpleFile extends File {
 
     /**
      * File contents

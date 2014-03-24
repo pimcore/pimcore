@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_WebDAV_Tree extends Sabre_DAV_ObjectTree {
+class Asset_WebDAV_Tree extends \Sabre\DAV\ObjectTree {
 
     /**
      * Moves a file/directory

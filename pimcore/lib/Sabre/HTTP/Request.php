@@ -1,5 +1,7 @@
 <?php
 
+namespace Sabre\HTTP;
+
 /**
  * HTTP Request information
  *
@@ -10,13 +12,11 @@
  * request per run it can operate as a singleton. For more information check out
  * the behaviour around 'defaultInputStream'.
  *
- * @package Sabre
- * @subpackage HTTP
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_HTTP_Request {
+class Request {
 
     /**
      * PHP's $_SERVER data
@@ -184,7 +184,7 @@ class Sabre_HTTP_Request {
      * This method returns a readable stream resource.
      * If the asString parameter is set to true, a string is sent instead.
      *
-     * @param bool asString
+     * @param bool $asString
      * @return resource
      */
     public function getBody($asString = false) {
@@ -261,6 +261,22 @@ class Sabre_HTTP_Request {
     public function getRawServerValue($field) {
 
         return isset($this->_SERVER[$field])?$this->_SERVER[$field]:null;
+
+    }
+
+    /**
+     * Returns the HTTP version specified within the request.
+     *
+     * @return string
+     */
+    public function getHTTPVersion() {
+
+        $protocol = $this->getRawServerValue('SERVER_PROTOCOL');
+        if ($protocol==='HTTP/1.0') {
+            return '1.0';
+        } else {
+            return '1.1';
+        }
 
     }
 

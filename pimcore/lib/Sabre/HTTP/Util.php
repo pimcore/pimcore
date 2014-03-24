@@ -1,16 +1,16 @@
 <?php
 
+namespace Sabre\HTTP;
+
 /**
  * HTTP utility methods
  *
- * @package Sabre
- * @subpackage HTTP
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @author Paul Voegler
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_HTTP_Util {
+class Util {
 
     /**
      * Parses a RFC2616-compatible date string
@@ -56,7 +56,7 @@ class Sabre_HTTP_Util {
         $realDate = strtotime($dateHeader);
         //strtotime can return -1 or false in case of error
         if ($realDate !== false && $realDate >= 0)
-            return new DateTime('@' . $realDate, new DateTimeZone('UTC'));
+            return new \DateTime('@' . $realDate, new \DateTimeZone('UTC'));
 
     }
 
@@ -66,15 +66,15 @@ class Sabre_HTTP_Util {
      * We're serializing it as the RFC 1123 date, which, for HTTP must be
      * specified as GMT.
      *
-     * @param DateTime $dateTime
+     * @param \DateTime $dateTime
      * @return string
      */
-    static function toHTTPDate(DateTime $dateTime) {
+    static function toHTTPDate(\DateTime $dateTime) {
 
         // We need to clone it, as we don't want to affect the existing
         // DateTime.
         $dateTime = clone $dateTime;
-        $dateTime->setTimeZone(new DateTimeZone('GMT'));
+        $dateTime->setTimeZone(new \DateTimeZone('GMT'));
         return $dateTime->format('D, d M Y H:i:s \G\M\T');
 
     }

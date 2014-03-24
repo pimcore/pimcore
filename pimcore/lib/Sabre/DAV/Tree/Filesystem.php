@@ -1,15 +1,23 @@
 <?php
 
+namespace Sabre\DAV\Tree;
+
+use Sabre\DAV;
+
 /**
- * Sabre_DAV_Tree_Filesystem
+ * FileSystem Tree
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * This class is an alternative to the standard ObjectTree. This tree can only
+ * use Sabre\DAV\FS\Directory and File classes, but as a result it allows for a few
+ * optimizations that otherwise wouldn't be possible.
+ *
+ * Specifically copying and moving are much, much faster.
+ *
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_DAV_Tree_Filesystem extends Sabre_DAV_Tree {
+class Filesystem extends DAV\Tree {
 
     /**
      * Base url on the filesystem.
@@ -35,16 +43,18 @@ class Sabre_DAV_Tree_Filesystem extends Sabre_DAV_Tree {
      * Returns a new node for the given path
      *
      * @param string $path
-     * @return Sabre_DAV_FS_Node
+     * @return DAV\FS\Node
      */
     public function getNodeForPath($path) {
 
         $realPath = $this->getRealPath($path);
-        if (!file_exists($realPath)) throw new Sabre_DAV_Exception_NotFound('File at location ' . $realPath . ' not found');
+        if (!file_exists($realPath)) { 
+            throw new DAV\Exception\NotFound('File at location ' . $realPath . ' not found');
+        }
         if (is_dir($realPath)) {
-            return new Sabre_DAV_FS_Directory($path);
+            return new DAV\FS\Directory($realPath);
         } else {
-            return new Sabre_DAV_FS_File($path);
+            return new DAV\FS\File($realPath);
         }
 
     }

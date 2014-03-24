@@ -1,18 +1,20 @@
 <?php
 
+namespace Sabre\DAV\Locks\Backend;
+
+use Sabre\DAV\Locks\LockInfo;
+
 /**
  * The Lock manager allows you to handle all file-locks centrally.
  *
  * This Lock Manager stores all its data in a database. You must pass a PDO
  * connection object in the constructor.
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_DAV_Locks_Backend_PDO extends Sabre_DAV_Locks_Backend_Abstract {
+class PDO extends AbstractBackend {
 
     /**
      * The PDO connection object
@@ -34,7 +36,7 @@ class Sabre_DAV_Locks_Backend_PDO extends Sabre_DAV_Locks_Backend_Abstract {
      * @param PDO $pdo
      * @param string $tableName
      */
-    public function __construct(PDO $pdo, $tableName = 'locks') {
+    public function __construct(\PDO $pdo, $tableName = 'locks') {
 
         $this->pdo = $pdo;
         $this->tableName = $tableName;
@@ -42,7 +44,7 @@ class Sabre_DAV_Locks_Backend_PDO extends Sabre_DAV_Locks_Backend_Abstract {
     }
 
     /**
-     * Returns a list of Sabre_DAV_Locks_LockInfo objects
+     * Returns a list of Sabre\DAV\Locks\LockInfo objects
      *
      * This method should return all the locks for a particular uri, including
      * locks that might be set on a parent uri.
@@ -95,7 +97,7 @@ class Sabre_DAV_Locks_Backend_PDO extends Sabre_DAV_Locks_Backend_Abstract {
         $lockList = array();
         foreach($result as $row) {
 
-            $lockInfo = new Sabre_DAV_Locks_LockInfo();
+            $lockInfo = new LockInfo();
             $lockInfo->owner = $row['owner'];
             $lockInfo->token = $row['token'];
             $lockInfo->timeout = $row['timeout'];
@@ -115,10 +117,10 @@ class Sabre_DAV_Locks_Backend_PDO extends Sabre_DAV_Locks_Backend_Abstract {
      * Locks a uri
      *
      * @param string $uri
-     * @param Sabre_DAV_Locks_LockInfo $lockInfo
+     * @param LockInfo $lockInfo
      * @return bool
      */
-    public function lock($uri,Sabre_DAV_Locks_LockInfo $lockInfo) {
+    public function lock($uri, LockInfo $lockInfo) {
 
         // We're making the lock timeout 30 minutes
         $lockInfo->timeout = 30*60;
@@ -149,10 +151,10 @@ class Sabre_DAV_Locks_Backend_PDO extends Sabre_DAV_Locks_Backend_Abstract {
      * Removes a lock from a uri
      *
      * @param string $uri
-     * @param Sabre_DAV_Locks_LockInfo $lockInfo
+     * @param LockInfo $lockInfo
      * @return bool
      */
-    public function unlock($uri,Sabre_DAV_Locks_LockInfo $lockInfo) {
+    public function unlock($uri, LockInfo $lockInfo) {
 
         $stmt = $this->pdo->prepare('DELETE FROM '.$this->tableName.' WHERE uri = ? AND token = ?');
         $stmt->execute(array($uri,$lockInfo->token));

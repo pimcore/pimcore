@@ -1,5 +1,9 @@
 <?php
 
+namespace Sabre\DAV\Browser;
+
+use Sabre\DAV;
+
 /**
  * GuessContentType plugin
  *
@@ -11,13 +15,11 @@
  * so this extension does what the rest of the world does, and guesses it based
  * on the file extension.
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/) 
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_DAV_Browser_GuessContentType extends Sabre_DAV_ServerPlugin {
+class GuessContentType extends DAV\ServerPlugin {
 
     /**
      * List of recognized file extensions
@@ -45,10 +47,10 @@ class Sabre_DAV_Browser_GuessContentType extends Sabre_DAV_ServerPlugin {
     /**
      * Initializes the plugin
      *
-     * @param Sabre_DAV_Server $server
+     * @param DAV\Server $server
      * @return void
      */
-    public function initialize(Sabre_DAV_Server $server) {
+    public function initialize(DAV\Server $server) {
 
         // Using a relatively low priority (200) to allow other extensions
         // to set the content-type first.
@@ -67,7 +69,7 @@ class Sabre_DAV_Browser_GuessContentType extends Sabre_DAV_ServerPlugin {
 
         if (array_key_exists('{DAV:}getcontenttype', $properties[404])) {
 
-            list(, $fileName) = Sabre_DAV_URLUtil::splitPath($path);
+            list(, $fileName) = DAV\URLUtil::splitPath($path);
             $contentType = $this->getContentType($fileName);
 
             if ($contentType) {

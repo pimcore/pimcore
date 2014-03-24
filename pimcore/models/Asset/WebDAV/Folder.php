@@ -15,7 +15,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_WebDAV_Folder extends Sabre_DAV_Directory {
+
+use Sabre\DAV;
+
+class Asset_WebDAV_Folder extends DAV\Collection {
 
     /**
      * @var Asset
@@ -76,7 +79,7 @@ class Asset_WebDAV_Folder extends Sabre_DAV_Directory {
             }
 
             if (!$asset = Asset::getByPath($parentPath . "/" . $name)) {
-                throw new Sabre_DAV_Exception_NotFound('File not found: ' . $name);
+                throw new DAV\Exception\NotFound('File not found: ' . $name);
             }
         }
         else if ($name instanceof Asset) {
@@ -91,7 +94,7 @@ class Asset_WebDAV_Folder extends Sabre_DAV_Directory {
                 return new Asset_WebDAV_File($asset);
             }
         }
-        throw new Sabre_DAV_Exception_NotFound('File not found: ' . $name);
+        throw new DAV\Exception\NotFound('File not found: ' . $name);
     }
 
     /**
@@ -121,7 +124,7 @@ class Asset_WebDAV_Folder extends Sabre_DAV_Directory {
                 "userOwner" => $user->getId()
             ));
         } else {
-            throw new Sabre_DAV_Exception_Forbidden();
+            throw new DAV\Exception\Forbidden();
         }
     }
 
@@ -142,7 +145,7 @@ class Asset_WebDAV_Folder extends Sabre_DAV_Directory {
                 "userOwner" => $user->getId()
             ));
         } else {
-            throw new Sabre_DAV_Exception_Forbidden();
+            throw new DAV\Exception\Forbidden();
         }
     }
 
@@ -153,7 +156,7 @@ class Asset_WebDAV_Folder extends Sabre_DAV_Directory {
         if($this->asset->isAllowed("delete")) {
             $this->asset->delete();
         } else {
-            throw new Sabre_DAV_Exception_Forbidden();
+            throw new DAV\Exception\Forbidden();
         }
     }
 
@@ -166,7 +169,7 @@ class Asset_WebDAV_Folder extends Sabre_DAV_Directory {
             $this->asset->setFilename(Pimcore_File::getValidFilename($name));
             $this->asset->save();
         } else {
-            throw new Sabre_DAV_Exception_Forbidden();
+            throw new DAV\Exception\Forbidden();
         }
 
         return $this;

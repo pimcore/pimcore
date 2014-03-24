@@ -1,17 +1,17 @@
 <?php
 
+namespace Sabre\DAV;
+
 /**
  * IProperties interface
  *
  * Implement this interface to support custom WebDAV properties requested and sent from clients.
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-interface Sabre_DAV_IProperties extends Sabre_DAV_INode {
+interface IProperties extends INode {
 
     /**
      * Updates properties on this node,
@@ -57,6 +57,10 @@ interface Sabre_DAV_IProperties extends Sabre_DAV_INode {
      * encoded in clark-notation {xmlnamespace}tagname
      *
      * If the array is empty, it means 'all properties' were requested.
+     *
+     * Note that it's fine to liberally give properties back, instead of
+     * conforming to the list of requested properties.
+     * The Server class will filter out the extra.
      *
      * @param array $properties
      * @return void

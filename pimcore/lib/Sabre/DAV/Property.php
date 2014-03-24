@@ -1,23 +1,29 @@
 <?php
 
+namespace Sabre\DAV;
+
 /**
  * Abstract property class
  *
  * Extend this class to create custom complex properties
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-abstract class Sabre_DAV_Property {
+abstract class Property implements PropertyInterface {
 
-    abstract function serialize(Sabre_DAV_Server $server, DOMElement $prop);
+    /**
+     * Unserializes the property.
+     *
+     * This static method should return a an instance of this object.
+     *
+     * @param \DOMElement $prop
+     * @return DAV\IProperty
+     */
+    static function unserialize(\DOMElement $prop) {
 
-    static function unserialize(DOMElement $prop) {
-
-        throw new Sabre_DAV_Exception('Unserialize has not been implemented for this class');
+        throw new Exception('Unserialize has not been implemented for this class');
 
     }
 

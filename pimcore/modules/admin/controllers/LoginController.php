@@ -36,7 +36,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
             } else {
                 if ($user->isActive()) {
                     if ($user->getEmail()) {
-                        $token = Pimcore_Tool_Authentication::generateToken($username, $user->getPassword(), MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB);
+                        $token = Pimcore_Tool_Authentication::generateToken($username, $user->getPassword());
                         $uri = $this->getRequest()->getScheme() . "://" . $this->getRequest()->getHttpHost() ;
                         $loginUrl = $uri . "/admin/login/login/?username=" . $username . "&token=" . $token . "&reset=true";
                         
@@ -72,11 +72,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         }
 
         if ($this->getParam("auth_failed")) {
-            if ($this->getParam("inactive")) {
-                $this->view->error = "error_user_inactive";
-            } else {
-                $this->view->error = "error_auth_failed";
-            }
+            $this->view->error = "error_auth_failed";
         }
         if ($this->getParam("session_expired")) {
             $this->view->error = "error_session_expired";
@@ -98,50 +94,31 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
     public function loginAction() {
 
-        $userInactive = false;
+        $user = null;
+
         try {
-            $user = User::getByName($this->getParam("username"));
+            if ($this->getParam("password")) {
+                $user = Pimcore_Tool_Authentication::authenticatePlaintext($this->getParam("username"), $this->getParam("password"));
+                if(!$user) {
+                    throw new \Exception("Invalid username or password");
+                }
+            } else if ($this->getParam("token")) {
 
-            if ($user instanceof User) {
-                if ($user->isActive()) {
-                    $authenticated = false;
+                $user = Pimcore_Tool_Authentication::authenticateToken($this->getParam("username"), $this->getParam("token"));
 
-                    if ($user->getPassword() == Pimcore_Tool_Authentication::getPasswordHash($this->getParam("username"), $this->getParam("password"))) {
-                        $authenticated = true;
-
-                    } else if ($this->getParam("token") and Pimcore_Tool_Authentication::tokenAuthentication($this->getParam("username"), $this->getParam("token"), MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB, false)) {
-                        $authenticated = true;
-
-                        // save the information to session when the user want's to reset the password
-                        // this is because otherwise the old password is required => see also PIMCORE-1468
-                        if($this->getParam("reset")) {
-                            Pimcore_Tool_Session::useSession(function($adminSession) {
-                                $adminSession->password_reset = true;
-                            });
-                        }
-                    }
-                    else {
-                        throw new Exception("User and Password doesn't match");
-                    }
-
-                    if ($authenticated) {
-                        Pimcore_Tool_Session::useSession(function($adminSession) use ($user) {
-                            $adminSession->user = $user;
-                        });
-                        if($this->_getParam('deeplink')){
-                            $this->redirect('/admin/login/deeplink/?' . $this->_getParam('deeplink'));
-                        }
-                    }
-
-                } else {
-                    $userInactive = true;
-                    throw new Exception("User is inactive");
-
+                if(!$user) {
+                    throw new \Exception("Invalid username or token");
                 }
 
-            }
-            else {
-                throw new Exception("User doesn't exist");
+                // save the information to session when the user want's to reset the password
+                // this is because otherwise the old password is required => see also PIMCORE-1468
+                if($this->getParam("reset")) {
+                    Pimcore_Tool_Session::useSession(function($adminSession) {
+                        $adminSession->password_reset = true;
+                    });
+                }
+            } else {
+                throw new \Exception("Invalid authentication method, must be either password or token");
             }
         } catch (Exception $e) {
 
@@ -153,21 +130,26 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
             $user = $this->getUser();
 
-            if($user instanceof User && $user->isActive() && $user->getId()) {
-                Pimcore_Tool_Session::useSession(function($adminSession) use ($user) {
-                    $adminSession->user = $user;
-                });
-                $this->redirect("/admin/?_dc=" . time());
-            } else {
+            if(!$user instanceof User) {
                 $this->writeLogFile($this->getParam("username"), $e->getMessage());
-                Logger::info("Login Exception" . $e);
-
-                $this->redirect("/admin/login/?auth_failed=true&inactive=" . $userInactive);
-                exit;
+                Logger::info("Login failed: " . $e);
             }
         }
 
-        $this->redirect("/admin/?_dc=" . time());
+        if ($user instanceof User && $user->getId() && $user->isActive() && $user->getPassword()) {
+            Pimcore_Tool_Session::useSession(function($adminSession) use ($user) {
+                $adminSession->user = $user;
+            });
+
+            if($this->_getParam('deeplink')){
+                $this->redirect('/admin/login/deeplink/?' . $this->_getParam('deeplink'));
+            } else {
+                $this->redirect("/admin/?_dc=" . time());
+            }
+        } else {
+            $this->redirect("/admin/login/?auth_failed=true");
+            exit;
+        }
     }
 
     public function logoutAction() {

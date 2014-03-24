@@ -80,7 +80,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             $user = $className::create(array(
                 "parentId" => intval($this->getParam("parentId")),
                 "name" => trim($this->getParam("name")),
-                "password" => md5(microtime()),
+                "password" => "",
                 "active" => $this->getParam("active")
             ));
 
@@ -305,9 +305,9 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                         });
 
                     } else {
-                        // the password have to match
-                        $oldPassword = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["old_password"]);
-                        if($oldPassword == $user->getPassword()) {
+                        // the password has to match
+                        $checkUser = Pimcore_Tool_Authentication::authenticatePlaintext($user->getName(), $values["old_password"]);
+                        if($checkUser) {
                             $oldPasswordCheck = true;
                         }
                     }

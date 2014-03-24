@@ -1,5 +1,9 @@
 <?php
 
+namespace Sabre\DAV\Locks\Backend;
+
+use Sabre\DAV\Locks\LockInfo;
+
 /**
  * The Lock manager allows you to handle all file-locks centrally.
  *
@@ -8,13 +12,11 @@
  * Note that this is not nearly as robust as a database, you are encouraged
  * to use the PDO backend instead.
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_DAV_Locks_Backend_File extends Sabre_DAV_Locks_Backend_Abstract {
+class File extends AbstractBackend {
 
     /**
      * The storage file
@@ -35,7 +37,7 @@ class Sabre_DAV_Locks_Backend_File extends Sabre_DAV_Locks_Backend_Abstract {
     }
 
     /**
-     * Returns a list of Sabre_DAV_Locks_LockInfo objects
+     * Returns a list of Sabre\DAV\Locks\LockInfo objects
      *
      * This method should return all the locks for a particular uri, including
      * locks that might be set on a parent uri.
@@ -80,10 +82,10 @@ class Sabre_DAV_Locks_Backend_File extends Sabre_DAV_Locks_Backend_Abstract {
      * Locks a uri
      *
      * @param string $uri
-     * @param Sabre_DAV_Locks_LockInfo $lockInfo
+     * @param LockInfo $lockInfo
      * @return bool
      */
-    public function lock($uri, Sabre_DAV_Locks_LockInfo $lockInfo) {
+    public function lock($uri, LockInfo $lockInfo) {
 
         // We're making the lock timeout 30 minutes
         $lockInfo->timeout = 1800;
@@ -110,10 +112,10 @@ class Sabre_DAV_Locks_Backend_File extends Sabre_DAV_Locks_Backend_Abstract {
      * Removes a lock from a uri
      *
      * @param string $uri
-     * @param Sabre_DAV_Locks_LockInfo $lockInfo
+     * @param LockInfo $lockInfo
      * @return bool
      */
-    public function unlock($uri, Sabre_DAV_Locks_LockInfo $lockInfo) {
+    public function unlock($uri, LockInfo $lockInfo) {
 
         $locks = $this->getData();
         foreach($locks as $k=>$lock) {

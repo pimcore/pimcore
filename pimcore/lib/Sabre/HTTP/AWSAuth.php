@@ -1,17 +1,17 @@
 <?php
 
+namespace Sabre\HTTP;
+
 /**
  * HTTP AWS Authentication handler
  *
  * Use this class to leverage amazon's AWS authentication header
  *
- * @package Sabre
- * @subpackage HTTP
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_HTTP_AWSAuth extends Sabre_HTTP_AbstractAuth {
+class AWSAuth extends AbstractAuth {
 
     /**
      * The signature supplied by the HTTP client
@@ -158,7 +158,7 @@ class Sabre_HTTP_AWSAuth extends Sabre_HTTP_AbstractAuth {
      */
     protected function validateRFC2616Date($dateHeader) {
 
-        $date = Sabre_HTTP_Util::parseHTTPDate($dateHeader);
+        $date = Util::parseHTTPDate($dateHeader);
 
         // Unknown format
         if (!$date) {
@@ -166,8 +166,8 @@ class Sabre_HTTP_AWSAuth extends Sabre_HTTP_AbstractAuth {
             return false;
         }
 
-        $min = new DateTime('-15 minutes');
-        $max = new DateTime('+15 minutes');
+        $min = new \DateTime('-15 minutes');
+        $max = new \DateTime('+15 minutes');
 
         // We allow 15 minutes around the current date/time
         if ($date > $max || $date < $min) {

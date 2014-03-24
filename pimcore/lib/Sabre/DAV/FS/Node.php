@@ -1,17 +1,19 @@
 <?php
 
+namespace Sabre\DAV\FS;
+
+use Sabre\DAV;
+
 /**
  * Base node-class
  *
  * The node class implements the method used by both the File and the Directory classes
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-abstract class Sabre_DAV_FS_Node implements Sabre_DAV_INode {
+abstract class Node implements DAV\INode {
 
     /**
      * The path to the current node
@@ -40,7 +42,7 @@ abstract class Sabre_DAV_FS_Node implements Sabre_DAV_INode {
      */
     public function getName() {
 
-        list(, $name)  = Sabre_DAV_URLUtil::splitPath($this->path);
+        list(, $name)  = DAV\URLUtil::splitPath($this->path);
         return $name;
 
     }
@@ -53,8 +55,8 @@ abstract class Sabre_DAV_FS_Node implements Sabre_DAV_INode {
      */
     public function setName($name) {
 
-        list($parentPath, ) = Sabre_DAV_URLUtil::splitPath($this->path);
-        list(, $newName) = Sabre_DAV_URLUtil::splitPath($name);
+        list($parentPath, ) = DAV\URLUtil::splitPath($this->path);
+        list(, $newName) = DAV\URLUtil::splitPath($name);
 
         $newPath = $parentPath . '/' . $newName;
         rename($this->path,$newPath);

@@ -1,5 +1,7 @@
 <?php
 
+namespace Sabre\DAV;
+
 /**
  * Temporary File Filter Plugin
  *
@@ -20,13 +22,11 @@
  * Additional patterns can be added, by adding on to the
  * temporaryFilePatterns property.
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_DAV_TemporaryFileFilterPlugin extends Sabre_DAV_ServerPlugin {
+class TemporaryFileFilterPlugin extends ServerPlugin {
 
     /**
      * This is the list of patterns we intercept.
@@ -45,19 +45,19 @@ class Sabre_DAV_TemporaryFileFilterPlugin extends Sabre_DAV_ServerPlugin {
     );
 
     /**
+     * A reference to the main Server class
+     *
+     * @var Sabre\DAV\Server
+     */
+    protected $server;
+
+    /**
      * This is the directory where this plugin
      * will store it's files.
      *
      * @var string
      */
     private $dataDir;
-
-    /**
-     * A reference to the main Server class
-     *
-     * @var Sabre_DAV_Server
-     */
-    private $server;
 
     /**
      * Creates the plugin.
@@ -80,12 +80,12 @@ class Sabre_DAV_TemporaryFileFilterPlugin extends Sabre_DAV_ServerPlugin {
      * Initialize the plugin
      *
      * This is called automatically be the Server class after this plugin is
-     * added with Sabre_DAV_Server::addPlugin()
+     * added with Sabre\DAV\Server::addPlugin()
      *
-     * @param Sabre_DAV_Server $server
+     * @param Server $server
      * @return void
      */
-    public function initialize(Sabre_DAV_Server $server) {
+    public function initialize(Server $server) {
 
         $this->server = $server;
         $server->subscribeEvent('beforeMethod',array($this,'beforeMethod'));
@@ -156,7 +156,7 @@ class Sabre_DAV_TemporaryFileFilterPlugin extends Sabre_DAV_ServerPlugin {
     protected function isTempFile($path) {
 
         // We're only interested in the basename.
-        list(, $tempPath) = Sabre_DAV_URLUtil::splitPath($path);
+        list(, $tempPath) = URLUtil::splitPath($path);
 
         foreach($this->temporaryFilePatterns as $tempFile) {
 
@@ -207,7 +207,7 @@ class Sabre_DAV_TemporaryFileFilterPlugin extends Sabre_DAV_ServerPlugin {
         $newFile = !file_exists($tempLocation);
 
         if (!$newFile && ($this->server->httpRequest->getHeader('If-None-Match'))) {
-             throw new Sabre_DAV_Exception_PreconditionFailed('The resource already exists, and an If-None-Match header was supplied');
+             throw new Exception\PreconditionFailed('The resource already exists, and an If-None-Match header was supplied');
         }
 
         file_put_contents($tempLocation,$this->server->httpRequest->getBody());
@@ -262,10 +262,10 @@ class Sabre_DAV_TemporaryFileFilterPlugin extends Sabre_DAV_ServerPlugin {
         $properties = array(
             'href' => $uri,
             200 => array(
-                '{DAV:}getlastmodified' => new Sabre_DAV_Property_GetLastModified(filemtime($tempLocation)),
+                '{DAV:}getlastmodified' => new Property\GetLastModified(filemtime($tempLocation)),
                 '{DAV:}getcontentlength' => filesize($tempLocation),
-                '{DAV:}resourcetype' => new Sabre_DAV_Property_ResourceType(null),
-                '{'.Sabre_DAV_Server::NS_SABREDAV.'}tempFile' => true,
+                '{DAV:}resourcetype' => new Property\ResourceType(null),
+                '{'.Server::NS_SABREDAV.'}tempFile' => true,
 
             ),
          );

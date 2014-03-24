@@ -1,5 +1,7 @@
 <?php
 
+namespace Sabre\DAV;
+
 /**
  * IQuota interface
  *
@@ -7,13 +9,11 @@
  * will check for quota information on any given node. If the information is not available it will
  * attempt to fetch the information from the root node.
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/)
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-interface Sabre_DAV_IQuota extends Sabre_DAV_ICollection {
+interface IQuota extends ICollection {
 
     /**
      * Returns the quota information

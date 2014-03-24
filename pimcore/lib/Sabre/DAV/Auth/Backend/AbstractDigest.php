@@ -1,5 +1,10 @@
 <?php
 
+namespace Sabre\DAV\Auth\Backend;
+
+use Sabre\HTTP;
+use Sabre\DAV;
+
 /**
  * HTTP Digest authentication backend class
  *
@@ -7,13 +12,11 @@
  * Most of the digest logic is handled, implementors just need to worry about
  * the getDigestHash method
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/) 
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-abstract class Sabre_DAV_Auth_Backend_AbstractDigest implements Sabre_DAV_Auth_IBackend {
+abstract class AbstractDigest implements BackendInterface {
 
     /**
      * This variable holds the currently logged in username.
@@ -39,14 +42,14 @@ abstract class Sabre_DAV_Auth_Backend_AbstractDigest implements Sabre_DAV_Auth_I
      * If authentication is successful, true must be returned.
      * If authentication fails, an exception must be thrown.
      *
-     * @param Sabre_DAV_Server $server
+     * @param DAV\Server $server
      * @param string $realm
-     * @throws Sabre_DAV_Exception_NotAuthenticated
+     * @throws DAV\Exception\NotAuthenticated
      * @return bool
      */
-    public function authenticate(Sabre_DAV_Server $server, $realm) {
+    public function authenticate(DAV\Server $server, $realm) {
 
-        $digest = new Sabre_HTTP_DigestAuth();
+        $digest = new HTTP\DigestAuth();
 
         // Hooking up request and response objects
         $digest->setHTTPRequest($server->httpRequest);
@@ -60,23 +63,23 @@ abstract class Sabre_DAV_Auth_Backend_AbstractDigest implements Sabre_DAV_Auth_I
         // No username was given
         if (!$username) {
             $digest->requireLogin();
-            throw new Sabre_DAV_Exception_NotAuthenticated('No digest authentication headers were found');
+            throw new DAV\Exception\NotAuthenticated('No digest authentication headers were found');
         }
 
         $hash = $this->getDigestHash($realm, $username);
         // If this was false, the user account didn't exist
         if ($hash===false || is_null($hash)) {
             $digest->requireLogin();
-            throw new Sabre_DAV_Exception_NotAuthenticated('The supplied username was not on file');
+            throw new DAV\Exception\NotAuthenticated('The supplied username was not on file');
         }
         if (!is_string($hash)) {
-            throw new Sabre_DAV_Exception('The returned value from getDigestHash must be a string or null');
+            throw new DAV\Exception('The returned value from getDigestHash must be a string or null');
         }
 
         // If this was false, the password or part of the hash was incorrect.
         if (!$digest->validateA1($hash)) {
             $digest->requireLogin();
-            throw new Sabre_DAV_Exception_NotAuthenticated('Incorrect username');
+            throw new DAV\Exception\NotAuthenticated('Incorrect username');
         }
 
         $this->currentUser = $username;

@@ -1,17 +1,17 @@
 <?php
 
+namespace Sabre\HTTP;
+
 /**
  * HTTP Authentication baseclass
  *
  * This class has the common functionality for BasicAuth and DigestAuth
  *
- * @package Sabre
- * @subpackage HTTP
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/) 
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-abstract class Sabre_HTTP_AbstractAuth {
+abstract class AbstractAuth {
 
     /**
      * The realm will be displayed in the dialog boxes
@@ -25,7 +25,7 @@ abstract class Sabre_HTTP_AbstractAuth {
     /**
      * HTTP response helper
      *
-     * @var Sabre_HTTP_Response
+     * @var Sabre\HTTP\Response
      */
     protected $httpResponse;
 
@@ -33,7 +33,7 @@ abstract class Sabre_HTTP_AbstractAuth {
     /**
      * HTTP request helper
      *
-     * @var Sabre_HTTP_Request
+     * @var Sabre\HTTP\Request
      */
     protected $httpRequest;
 
@@ -43,18 +43,18 @@ abstract class Sabre_HTTP_AbstractAuth {
      */
     public function __construct() {
 
-        $this->httpResponse = new Sabre_HTTP_Response();
-        $this->httpRequest = new Sabre_HTTP_Request();
+        $this->httpResponse = new Response();
+        $this->httpRequest = new Request();
 
     }
 
     /**
      * Sets an alternative HTTP response object
      *
-     * @param Sabre_HTTP_Response $response
+     * @param Response $response
      * @return void
      */
-    public function setHTTPResponse(Sabre_HTTP_Response $response) {
+    public function setHTTPResponse(Response $response) {
 
         $this->httpResponse = $response;
 
@@ -63,10 +63,10 @@ abstract class Sabre_HTTP_AbstractAuth {
     /**
      * Sets an alternative HTTP request object
      *
-     * @param Sabre_HTTP_Request $request
+     * @param Request $request
      * @return void
      */
-    public function setHTTPRequest(Sabre_HTTP_Request $request) {
+    public function setHTTPRequest(Request $request) {
 
         $this->httpRequest = $request;
 

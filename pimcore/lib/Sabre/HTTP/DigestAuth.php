@@ -1,5 +1,7 @@
 <?php
 
+namespace Sabre\HTTP;
+
 /**
  * HTTP Digest Authentication handler
  *
@@ -19,13 +21,11 @@
  *     requireLogin() method.
  *
  *
- * @package Sabre
- * @subpackage HTTP
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/) 
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
-class Sabre_HTTP_DigestAuth extends Sabre_HTTP_AbstractAuth {
+class DigestAuth extends AbstractAuth {
 
     /**
      * These constants are used in setQOP();
@@ -68,8 +68,8 @@ class Sabre_HTTP_DigestAuth extends Sabre_HTTP_AbstractAuth {
      * Sets the quality of protection value.
      *
      * Possible values are:
-     *   Sabre_HTTP_DigestAuth::QOP_AUTH
-     *   Sabre_HTTP_DigestAuth::QOP_AUTHINT
+     *   Sabre\HTTP\DigestAuth::QOP_AUTH
+     *   Sabre\HTTP\DigestAuth::QOP_AUTHINT
      *
      * Multiple values can be specified using logical OR.
      *

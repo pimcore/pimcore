@@ -5,12 +5,12 @@
  *
  * This is SabreDAV's base exception file, use this to implement your own exception.
  *
- * @package Sabre
- * @subpackage DAV
- * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
- * @author Evert Pot (http://www.rooftopsolutions.nl/) 
+ * @copyright Copyright (C) 2007-2014 fruux GmbH (https://fruux.com/).
+ * @author Evert Pot (http://evertpot.com/)
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
+
+namespace Sabre\DAV;
 
 /**
  * Main Exception class.
@@ -21,7 +21,7 @@
  * This class also allows you to generate custom xml data for your exceptions. This will be displayed
  * in the 'error' element in the failing response.
  */
-class Sabre_DAV_Exception extends Exception {
+class Exception extends \Exception {
 
     /**
      * Returns the HTTP statuscode for this exception
@@ -37,11 +37,11 @@ class Sabre_DAV_Exception extends Exception {
     /**
      * This method allows the exception to include additional information into the WebDAV error response
      *
-     * @param Sabre_DAV_Server $server
-     * @param DOMElement $errorNode
+     * @param Server $server
+     * @param \DOMElement $errorNode
      * @return void
      */
-    public function serialize(Sabre_DAV_Server $server,DOMElement $errorNode) {
+    public function serialize(Server $server,\DOMElement $errorNode) {
 
 
     }
@@ -51,10 +51,10 @@ class Sabre_DAV_Exception extends Exception {
      *
      * The headers must be returned as an array.
      *
-     * @param Sabre_DAV_Server $server
+     * @param Server $server
      * @return array
      */
-    public function getHTTPHeaders(Sabre_DAV_Server $server) {
+    public function getHTTPHeaders(Server $server) {
 
         return array();
 
