@@ -218,6 +218,7 @@
 	border: 1px solid #d0d0d0 !important;
 	/*background:url(/pimcore/static/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;*/
     background:url(/pimcore/static/img/icon/video-icon-big.png) center center no-repeat #f9fbfb !important;
+    cursor: pointer;
 }
 
 .pimcore_tag_checkbox {

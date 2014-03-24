@@ -34,6 +34,12 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
             handler: this.openEditor.bind(this)
         });
         button.render(Ext.get(Ext.query(".pimcore_video_edit_button", element.dom)[0]));
+
+        var emptyContainer = element.query(".pimcore_tag_video_empty")[0];
+        if(emptyContainer) {
+            emptyContainer = Ext.get(emptyContainer);
+            emptyContainer.on("click", this.openEditor.bind(this));
+        }
     },
 
     openEditor: function () {
