@@ -4,7 +4,7 @@
 include_once("password_compatibility.php");
 
 $db = Pimcore_Resource::get();
-$users = $db->fetchAll("SELECT id,password FROM users WHERE name != 'system'");
+$users = $db->fetchAll("SELECT id,password FROM users WHERE name != 'system' AND type = 'user' AND IFNULL(password, '') != ''");
 
 foreach ($users as $user) {
 
