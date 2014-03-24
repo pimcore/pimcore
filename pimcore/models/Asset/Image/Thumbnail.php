@@ -274,7 +274,7 @@ class Asset_Image_Thumbnail {
 
         $thumbConfig = $this->getConfig();
 
-        if(!$this->getConfig()->hasMedias()) {
+        if($this->getConfig() && !$this->getConfig()->hasMedias()) {
             // generate the srcset
             $srcSetValues = [];
             foreach ([1,2] as $highRes) {
@@ -289,7 +289,8 @@ class Asset_Image_Thumbnail {
         // build html tag
         $htmlImgTag = '<img '.implode(' ', $attr).' />';
 
-        if(!$this->getConfig()->hasMedias()) {
+        // $this->getConfig() can be empty, the original image is returned
+        if(!$this->getConfig() || !$this->getConfig()->hasMedias()) {
             return $htmlImgTag;
         } else {
             // output the <picture> - element
