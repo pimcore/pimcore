@@ -68,12 +68,14 @@ foreach ($paths as $path) {
         //iterator_apply($l, 'createMap', array($l, $map));
 
         foreach ($l as $file) {
-            $namespace = empty($file->namespace) ? '' : $file->namespace . '\\';
             $filename  = str_replace(PIMCORE_DOCUMENT_ROOT, "\$pdr . '", $file->getRealpath());
 
             // Windows portability
-            $filename  = str_replace(array('/', '\\'), "/", $filename);
-            $map->{$namespace . $file->classname} = $filename;
+            $filename  = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
+
+            foreach ($file->getClasses() as $class) {
+                $map->{$class} = $filename;
+            }
         }
 
         $globalMap = array_merge($globalMap, (array) $map);
