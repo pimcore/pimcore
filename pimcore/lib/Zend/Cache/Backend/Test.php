@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Test.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -34,7 +34,7 @@
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cache_Backend_Test extends Zend_Cache_Backend implements Zend_Cache_Backend_ExtendedInterface
@@ -124,6 +124,9 @@ class Zend_Cache_Backend_Test extends Zend_Cache_Backend implements Zend_Cache_B
           || $id == '8a02d218a5165c467e7a5747cc6bd4b6' || $id == '648aca1366211d17cbf48e65dc570bee'
           || $id == '4a923ef02d7f997ca14d56dfeae25ea7') {
             return serialize(array('foo', 'bar'));
+        }
+        if ( $id == 'f53c7d912cc523d9a65834c8286eceb9') {
+            return serialize(array('foobar'));
         }
         return 'foo';
     }

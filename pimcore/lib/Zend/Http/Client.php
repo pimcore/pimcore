@@ -16,8 +16,8 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage Client
- * @version    $Id: Client.php 24593 2012-01-05 20:35:02Z matthew $
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id$
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -60,7 +60,7 @@
  * @package    Zend_Http
  * @subpackage Client
  * @throws     Zend_Http_Client_Exception
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Http_Client
@@ -77,6 +77,7 @@ class Zend_Http_Client
     const OPTIONS = 'OPTIONS';
     const CONNECT = 'CONNECT';
     const MERGE   = 'MERGE';
+    const PATCH   = 'PATCH';
 
     /**
      * Supported HTTP Authentication methods
@@ -390,7 +391,8 @@ class Zend_Http_Client
             throw new Zend_Http_Client_Exception("'{$method}' is not a valid HTTP request method.");
         }
 
-        if (($method == self::POST || $method == self::PUT || $method == self::DELETE) && $this->enctype === null) {
+        if (($method == self::POST || $method == self::PUT || $method == self::DELETE || $method == self::PATCH)
+             && $this->enctype === null) {
             $this->setEncType(self::ENC_URLENCODED);
         }
 

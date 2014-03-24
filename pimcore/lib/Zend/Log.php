@@ -14,17 +14,17 @@
  *
  * @category   Zend
  * @package    Zend_Log
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Log.php 25131 2012-11-16 15:29:18Z rob $
+ * @version    $Id$
  */
 
 /**
  * @category   Zend
  * @package    Zend_Log
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Log.php 25131 2012-11-16 15:29:18Z rob $
+ * @version    $Id$
  */
 class Zend_Log
 {
@@ -136,7 +136,20 @@ class Zend_Log
             throw new Zend_Log_Exception('Configuration must be an array or instance of Zend_Config');
         }
 
-        $log = new self;
+        if (array_key_exists('className', $config)) {
+            $class = $config['className'];
+            unset($config['className']);
+        } else {
+            $class = __CLASS__;
+        }
+
+        $log = new $class;
+
+        if (!$log instanceof Zend_Log) {
+            /** @see Zend_Log_Exception */
+            // require_once 'Zend/Log/Exception.php';
+            throw new Zend_Log_Exception('Passed className does not belong to a descendant of Zend_Log');
+        }
 
         if (array_key_exists('timestampFormat', $config)) {
             if (null != $config['timestampFormat'] && '' != $config['timestampFormat']) {
@@ -304,7 +317,7 @@ class Zend_Log
             return $namespace . $className;
         }
 
-        // emtpy namespace given?
+        // empty namespace given?
         if (strlen($namespace) === 0) {
             return $className;
         }

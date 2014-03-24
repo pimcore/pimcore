@@ -14,9 +14,9 @@
  *
  * @category  Zend
  * @package   Zend_Navigation
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Page.php 25125 2012-11-16 15:12:06Z rob $
+ * @version    $Id$
  */
 
 /**
@@ -29,7 +29,7 @@
  *
  * @category  Zend
  * @package   Zend_Navigation
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Navigation_Page extends Zend_Navigation_Container

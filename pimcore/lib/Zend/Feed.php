@@ -15,11 +15,13 @@
  *
  * @category   Zend
  * @package    Zend_Feed
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Feed.php 25160 2012-12-18 15:17:16Z matthew $
+ * @version    $Id$
  */
 
+/** @see Zend_Xml_Security */
+// require_once 'Zend/Xml/Security.php';
 
 /**
  * Feed utility class
@@ -29,7 +31,7 @@
  *
  * @category   Zend
  * @package    Zend_Feed
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed
@@ -190,20 +192,15 @@ class Zend_Feed
      */
     public static function importString($string)
     {
-        // Load the feed as an XML DOMDocument object
-        $libxml_errflag       = libxml_use_internal_errors(true);
-        $libxml_entity_loader = libxml_disable_entity_loader(true);
-        $doc = new DOMDocument;
         if (trim($string) == '') {
             // require_once 'Zend/Feed/Exception.php';
             throw new Zend_Feed_Exception('Document/string being imported'
             . ' is an Empty string or comes from an empty HTTP response');
         }
-        $status = $doc->loadXML($string);
-        libxml_disable_entity_loader($libxml_entity_loader);
-        libxml_use_internal_errors($libxml_errflag);
+        $doc = new DOMDocument;
+        $doc = Zend_Xml_Security::scan($string, $doc);
 
-        if (!$status) {
+        if (!$doc) {
             // prevent the class to generate an undefined variable notice (ZF-2590)
             // Build error message
             $error = libxml_get_last_error();
@@ -320,7 +317,7 @@ class Zend_Feed
                 if (!mb_check_encoding($link, 'UTF-8')) {
                     $link = mb_convert_encoding($link, 'UTF-8');
                 }
-                $xml = @simplexml_load_string(rtrim($link, ' /') . ' />');
+                $xml = @Zend_Xml_Security::scan(rtrim($link, ' /') . ' />');
                 if ($xml === false) {
                     continue;
                 }

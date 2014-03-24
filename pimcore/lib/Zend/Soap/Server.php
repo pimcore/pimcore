@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage Server
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -24,6 +24,12 @@
  */
 // require_once 'Zend/Server/Interface.php';
 
+/** @see Zend_Xml_Security */
+// require_once 'Zend/Xml/Security.php';
+
+/** @see Zend_Xml_Exception */
+// require_once 'Zend/Xml/Exception.php';
+
 /**
  * Zend_Soap_Server
  *
@@ -31,9 +37,9 @@
  * @package    Zend_Soap
  * @subpackage Server
  * @uses       Zend_Server_Interface
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Server.php 25177 2012-12-22 20:54:18Z rob $
+ * @version    $Id$
  */
 class Zend_Soap_Server implements Zend_Server_Interface
 {
@@ -729,21 +735,18 @@ class Zend_Soap_Server implements Zend_Server_Interface
                 $xml = $request;
             }
 
-            libxml_disable_entity_loader(true);
             $dom = new DOMDocument();
-            if(strlen($xml) == 0 || !$dom->loadXML($xml)) {
-                // require_once 'Zend/Soap/Server/Exception.php';
-                throw new Zend_Soap_Server_Exception('Invalid XML');
-            }
-            foreach ($dom->childNodes as $child) {
-                if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
+            try {
+                if(strlen($xml) == 0 || (!$dom = Zend_Xml_Security::scan($xml, $dom))) {
                     // require_once 'Zend/Soap/Server/Exception.php';
-                    throw new Zend_Soap_Server_Exception(
-                        'Invalid XML: Detected use of illegal DOCTYPE'
-                    );
+                    throw new Zend_Soap_Server_Exception('Invalid XML');
                 }
+            } catch (Zend_Xml_Exception $e) {
+                // require_once 'Zend/Soap/Server/Exception.php';
+                throw new Zend_Soap_Server_Exception(
+                    $e->getMessage()
+                );
             }
-            libxml_disable_entity_loader(false);
         }
         $this->_request = $xml;
         return $this;

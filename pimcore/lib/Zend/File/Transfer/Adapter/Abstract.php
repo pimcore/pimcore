@@ -14,9 +14,9 @@
  *
  * @category  Zend
  * @package   Zend_File_Transfer
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
- * @version   $Id: Abstract.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version   $Id$
  */
 
 /**
@@ -24,7 +24,7 @@
  *
  * @category  Zend
  * @package   Zend_File_Transfer
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_File_Transfer_Adapter_Abstract
@@ -936,8 +936,8 @@ abstract class Zend_File_Transfer_Adapter_Abstract
     /**
      * Retrieves the filename of transferred files.
      *
-     * @param  string  $fileelement (Optional) Element to return the filename for
-     * @param  boolean $path        (Optional) Should the path also be returned ?
+     * @param  string|null   $file
+     * @param  boolean $path (Optional) Should the path also be returned ?
      * @return string|array
      */
     public function getFileName($file = null, $path = true)
@@ -1032,12 +1032,16 @@ abstract class Zend_File_Transfer_Adapter_Abstract
         $destination = rtrim($destination, "/\\");
         if (!is_dir($destination)) {
             // require_once 'Zend/File/Transfer/Exception.php';
-            throw new Zend_File_Transfer_Exception('The given destination is not a directory or does not exist');
+            throw new Zend_File_Transfer_Exception(
+                'The given destination is not a directory or does not exist'
+            );
         }
 
-        if (!is_writable($destination)) {
+        if (!$this->_isPathWriteable($destination)) {
             // require_once 'Zend/File/Transfer/Exception.php';
-            throw new Zend_File_Transfer_Exception('The given destination is not writeable');
+            throw new Zend_File_Transfer_Exception(
+                'The given destination is not writable'
+            );
         }
 
         if ($files === null) {
@@ -1063,6 +1067,7 @@ abstract class Zend_File_Transfer_Adapter_Abstract
      *
      * @param  null|string|array $files
      * @return null|string|array
+     * @throws Zend_File_Transfer_Exception
      */
     public function getDestination($files = null)
     {
@@ -1102,6 +1107,7 @@ abstract class Zend_File_Transfer_Adapter_Abstract
      *
      * @param  Zend_Translate|null $translator
      * @return Zend_File_Transfer_Abstract
+     * @throws Zend_File_Transfer_Exception
      */
     public function setTranslator($translator = null)
     {
@@ -1423,6 +1429,7 @@ abstract class Zend_File_Transfer_Adapter_Abstract
      * Tries to detect if we can read and write to the given path
      *
      * @param string $path
+     * @return bool
      */
     protected function _isPathWriteable($path)
     {

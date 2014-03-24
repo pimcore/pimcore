@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Form
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -26,9 +26,9 @@
  *
  * @category   Zend
  * @package    Zend_Form
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Form.php 25223 2013-01-17 14:44:54Z frosch $
+ * @version    $Id$
  */
 class Zend_Form implements Iterator, Countable, Zend_Validate_Interface
 {
@@ -3357,6 +3357,13 @@ class Zend_Form implements Iterator, Countable, Zend_Validate_Interface
                     } else {
                         $items[$order] = $key;
                     }
+                } elseif (isset($items[$order]) && $items[$order] !== $key) {
+                    throw new Zend_Form_Exception('Form elements ' .
+                        $items[$order] . ' and ' . $key .
+                        ' have the same order (' .
+                        $order . ') - ' .
+                        'this would result in only the last added element to be rendered'
+                    );
                 } else {
                     $items[$order] = $key;
                 }

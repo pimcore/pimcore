@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage FileParser
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: String.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /** Zend_Pdf_FileParserDataSource */
@@ -29,7 +29,7 @@
  *
  * @package    Zend_Pdf
  * @subpackage FileParser
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Pdf_FileParserDataSource_String extends Zend_Pdf_FileParserDataSource

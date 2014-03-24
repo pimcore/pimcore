@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Mail
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Mail.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -46,7 +46,7 @@
  *
  * @category   Zend
  * @package    Zend_Mail
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Mail extends Zend_Mime_Message
@@ -1264,7 +1264,7 @@ class Zend_Mail extends Zend_Mime_Message
             return $email;
         } else {
             $encodedName = $this->_encodeHeader($name);
-            if ($encodedName === $name  &&  strcspn($name, '()<>[]:;@\\,') != strlen($name)) {
+            if ($encodedName === $name  &&  strcspn($name, '()<>[]:;@\\,.') != strlen($name)) {
                 $format = '"%s" <%s>';
             } else {
                 $format = '%s <%s>';

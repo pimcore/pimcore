@@ -14,16 +14,16 @@
  *
  * @category   Zend
  * @package    Zend_Dojo
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: BuildLayer.php 25024 2012-07-30 15:08:15Z rob $
+ * @version    $Id$
  */
 
 /**
  * Dojo module layer and custom build profile generation support
  *
  * @package    Zend_Dojo
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Dojo_BuildLayer

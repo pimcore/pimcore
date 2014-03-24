@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Soap
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Wsdl.php 25033 2012-08-17 19:50:08Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -28,6 +28,9 @@
  * @see Zend_Soap_Wsdl_Strategy_Abstract
  */
 // require_once "Zend/Soap/Wsdl/Strategy/Abstract.php";
+
+/** @see Zend_Xml_Security */
+// require_once "Zend/Xml/Security.php";
 
 /**
  * Zend_Soap_Wsdl
@@ -96,23 +99,12 @@ class Zend_Soap_Wsdl
                     xmlns:xsd='http://www.w3.org/2001/XMLSchema'
                     xmlns:soap-enc='http://schemas.xmlsoap.org/soap/encoding/'
                     xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/'></definitions>";
-        libxml_disable_entity_loader(true);
         $this->_dom = new DOMDocument();
-        if (!$this->_dom->loadXML($wsdl)) {
+        if (!$this->_dom = Zend_Xml_Security::scan($wsdl, $this->_dom)) {
             // require_once 'Zend/Server/Exception.php';
             throw new Zend_Server_Exception('Unable to create DomDocument');
-        } else {
-            foreach ($this->_dom->childNodes as $child) {
-                if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
-                    // require_once 'Zend/Server/Exception.php';
-                    throw new Zend_Server_Exception(
-                        'Invalid XML: Detected use of illegal DOCTYPE'
-                    );
-                }
-            }
-            $this->_wsdl = $this->_dom->documentElement;
-        }
-        libxml_disable_entity_loader(false);
+        } 
+        $this->_wsdl = $this->_dom->documentElement;
 
         $this->setComplexTypeStrategy($strategy);
     }
@@ -135,10 +127,8 @@ class Zend_Soap_Wsdl
             // @todo: This is the worst hack ever, but its needed due to design and non BC issues of WSDL generation
             $xml = $this->_dom->saveXML();
             $xml = str_replace($oldUri, $uri, $xml);
-            libxml_disable_entity_loader(true);
             $this->_dom = new DOMDocument();
-            $this->_dom->loadXML($xml);
-            libxml_disable_entity_loader(false);
+            $this->_dom = Zend_Xml_Security::scan($xml, $this->_dom);
         }
 
         return $this;

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Feed_Pubsubhubbub
  * @subpackage Callback
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CallbackAbstract.php 24842 2012-05-31 18:31:28Z rob $
+ * @version    $Id$
  */
 
 /**
@@ -34,7 +34,7 @@
  * @category   Zend
  * @package    Zend_Feed_Pubsubhubbub
  * @subpackage Callback
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Feed_Pubsubhubbub_CallbackAbstract

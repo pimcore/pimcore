@@ -16,9 +16,9 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Audioscrobbler
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Audioscrobbler.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -27,12 +27,14 @@
  */
 // require_once 'Zend/Http/Client.php';
 
+/** @see Zend_Xml_Security */
+// require_once 'Zend/Xml/Security.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Audioscrobbler
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Audioscrobbler
@@ -182,7 +184,7 @@ class Zend_Service_Audioscrobbler
 
         set_error_handler(array($this, '_errorHandler'));
 
-        if (!$simpleXmlElementResponse = simplexml_load_string($responseBody)) {
+        if (!$simpleXmlElementResponse = Zend_Xml_Security::scan($responseBody)) {
             restore_error_handler();
             /**
              * @see Zend_Service_Exception
@@ -640,7 +642,7 @@ class Zend_Service_Audioscrobbler
      * @param  array   $errcontext
      * @return void
      */
-    protected function _errorHandler($errno, $errstr, $errfile, $errline, array $errcontext)
+    public function _errorHandler($errno, $errstr, $errfile, $errline, array $errcontext)
     {
         $this->_error = array(
             'errno'      => $errno,

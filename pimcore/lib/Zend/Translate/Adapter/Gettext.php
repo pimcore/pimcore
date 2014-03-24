@@ -14,8 +14,8 @@
  *
  * @category   Zend
  * @package    Zend_Translate
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Gettext.php 24593 2012-01-05 20:35:02Z matthew $
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id$
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -28,7 +28,7 @@
 /**
  * @category   Zend
  * @package    Zend_Translate
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Translate_Adapter_Gettext extends Zend_Translate_Adapter {
@@ -122,7 +122,7 @@ class Zend_Translate_Adapter_Gettext extends Zend_Translate_Adapter {
                 fseek($this->_file, $transtemp[$count * 2 + 2]);
                 $translate = fread($this->_file, $transtemp[$count * 2 + 1]);
                 $translate = explode("\0", $translate);
-                if ((count($original) > 1) && (count($translate) > 1)) {
+                if ((count($original) > 1)) {
                     $this->_data[$locale][$original[0]] = $translate;
                     array_shift($original);
                     foreach ($original as $orig) {

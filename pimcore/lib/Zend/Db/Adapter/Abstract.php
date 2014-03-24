@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Abstract.php 25229 2013-01-18 08:17:21Z frosch $
+ * @version    $Id$
  */
 
 
@@ -37,7 +37,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Db_Adapter_Abstract
@@ -1127,10 +1127,15 @@ abstract class Zend_Db_Adapter_Abstract
         if ($this->_allowSerialization == false) {
             /** @see Zend_Db_Adapter_Exception */
             // require_once 'Zend/Db/Adapter/Exception.php';
-            throw new Zend_Db_Adapter_Exception(get_class($this) ." is not allowed to be serialized");
+            throw new Zend_Db_Adapter_Exception(
+                get_class($this) . ' is not allowed to be serialized'
+            );
         }
-        $this->_connection = false;
-        return array_keys(array_diff_key(get_object_vars($this), array('_connection'=>false)));
+        $this->_connection = null;
+
+        return array_keys(
+            array_diff_key(get_object_vars($this), array('_connection' => null))
+        );
     }
 
     /**

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Rackspace
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -329,6 +329,11 @@ abstract class Zend_Service_Rackspace_Abstract
     {
         $client = $this->getHttpClient();
         $client->resetParameters(true);
+        if ($method == 'PUT' && empty($body)) {
+            // if left at NULL a PUT request will always have 
+            // Content-Type: x-url-form-encoded, which breaks copyObject()
+            $client->setEncType(''); 
+        }
         if (empty($headers[self::AUTHUSER_HEADER])) {
             $headers[self::AUTHTOKEN]= $this->getToken();
         } 

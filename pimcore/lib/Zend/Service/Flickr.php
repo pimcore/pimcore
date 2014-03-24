@@ -16,17 +16,19 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Flickr
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Flickr.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
+/** @see Zend_Xml_Security */
+// require_once 'Zend/Xml/Security.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Flickr
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Flickr
@@ -114,8 +116,7 @@ class Zend_Service_Flickr
         }
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
-
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         self::_checkErrors($dom);
 
         /**
@@ -178,8 +179,7 @@ class Zend_Service_Flickr
         }
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
-
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         self::_checkErrors($dom);
 
         /**
@@ -233,8 +233,7 @@ class Zend_Service_Flickr
         }
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
-
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         self::_checkErrors($dom);
 
         /**
@@ -283,7 +282,7 @@ class Zend_Service_Flickr
         }
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         self::_checkErrors($dom);
         $xpath = new DOMXPath($dom);
         return (string) $xpath->query('//user')->item(0)->getAttribute('id');
@@ -327,7 +326,7 @@ class Zend_Service_Flickr
         }
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         self::_checkErrors($dom);
         $xpath = new DOMXPath($dom);
         return (string) $xpath->query('//user')->item(0)->getAttribute('id');
@@ -360,7 +359,7 @@ class Zend_Service_Flickr
         $response = $restClient->restGet('/services/rest/', $options);
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         $xpath = new DOMXPath($dom);
         self::_checkErrors($dom);
         $retval = array();

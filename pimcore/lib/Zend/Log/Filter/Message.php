@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage Filter
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Message.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /** Zend_Log_Filter_Abstract */
@@ -27,9 +27,9 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage Filter
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Message.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 class Zend_Log_Filter_Message extends Zend_Log_Filter_Abstract
 {

@@ -16,17 +16,19 @@
  * @package    Zend_Service_Console
  * @subpackage Exception
  * @version    $Id$
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
+/** @see Zend_Xml_Security */
+// require_once 'Zend/Xml/Security.php';
 
 /**
  * Package commands
  * 
  * @category   Zend
  * @package    Zend_Service_WindowsAzure_CommandLine
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * 
  * @command-handler package
@@ -125,7 +127,7 @@ class Zend_Service_WindowsAzure_CommandLine_Package
 			// require_once 'Zend/Service/Console/Exception.php';
 			throw new Zend_Service_Console_Exception('Could not locate ServiceDefinition.csdef at ' . $serviceDefinitionFile . '.');
 		}
-		$serviceDefinition = simplexml_load_file($serviceDefinitionFile);
+		$serviceDefinition = Zend_Xml_Security::scanFile($serviceDefinitionFile);
 		$xmlRoles = array();
 		if ($serviceDefinition->WebRole) {
 			if (count($serviceDefinition->WebRole) > 1) {

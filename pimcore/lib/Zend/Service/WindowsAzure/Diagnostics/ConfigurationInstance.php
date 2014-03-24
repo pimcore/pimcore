@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage Diagnostics
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -30,11 +30,14 @@
  */
 // require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationDataSources.php';
 
+/** Zend_Xml_Security */
+// require_once 'Zend/Xml/Security.php';
+
 /**
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage Diagnostics
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  *
  * @property Zend_Service_WindowsAzure_Diagnostics_ConfigurationDataSources	DataSources	Data sources
@@ -60,7 +63,7 @@ class Zend_Service_WindowsAzure_Diagnostics_ConfigurationInstance
 	public function loadXml($configurationXml)
 	{
 		// Convert to SimpleXMLElement
-		$configurationXml = simplexml_load_string($configurationXml);
+		$configurationXml = Zend_Xml_Security::scan($configurationXml);
 	
 		// Assign general settings
 		$this->DataSources->OverallQuotaInMB = (int)$configurationXml->DataSources->OverallQuotaInMB;

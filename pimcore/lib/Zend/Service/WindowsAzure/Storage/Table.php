@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage Storage
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Table.php 24697 2012-03-23 13:11:04Z ezimuel $
+ * @version    $Id$
  */
 
 /**
@@ -49,7 +49,7 @@
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage Storage
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_WindowsAzure_Storage_Table

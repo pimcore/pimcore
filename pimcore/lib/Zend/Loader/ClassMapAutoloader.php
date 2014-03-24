@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Loader
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -27,7 +27,7 @@
  * Utilizes class-map files to lookup classfile locations.
  * 
  * @package    Zend_Loader
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  */
 class Zend_Loader_ClassMapAutoloader implements Zend_Loader_SplAutoloader

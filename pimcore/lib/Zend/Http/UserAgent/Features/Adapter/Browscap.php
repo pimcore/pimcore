@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage UserAgent
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -32,17 +32,17 @@
  *
  * @package    Zend_Http
  * @subpackage UserAgent
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Http_UserAgent_Features_Adapter_Browscap implements Zend_Http_UserAgent_Features_Adapter
+class Zend_Http_UserAgent_Features_Adapter_Browscap
+    implements Zend_Http_UserAgent_Features_Adapter
 {
     /**
      * Constructor
      *
      * Validate that we have browscap support available.
-     * 
-     * @return void
+     *
      * @throws Zend_Http_UserAgent_Features_Exception
      */
     public function __construct()
@@ -61,30 +61,37 @@ class Zend_Http_UserAgent_Features_Adapter_Browscap implements Zend_Http_UserAge
      * Get features from request
      *
      * @param  array $request $_SERVER variable
-     * @param  array $config ignored; included only to satisfy parent class
+     * @param  array $config  ignored; included only to satisfy parent class
      * @return array
      */
     public static function getFromRequest($request, array $config)
     {
         $browscap = get_browser($request['http_user_agent'], true);
         $features = array();
-        foreach ($browscap as $key => $value) {
-            // For a few keys, we need to munge a bit for the device object
-            switch ($key) {
-                case 'browser':
-                    $features['mobile_browser'] = $value;
-                    break;
-                case 'version':
-                    $features['mobile_browser_version'] = $value;
-                    break;
-                case 'platform':
-                    $features['device_os'] = $value;
-                    break;
-                default:
-                    $features[$key] = $value;
-                    break;
+
+        if (is_array($browscap)) {
+            foreach ($browscap as $key => $value) {
+                // For a few keys, we need to munge a bit for the device object
+                switch ($key) {
+                    case 'browser':
+                        $features['mobile_browser'] = $value;
+                        break;
+
+                    case 'version':
+                        $features['mobile_browser_version'] = $value;
+                        break;
+
+                    case 'platform':
+                        $features['device_os'] = $value;
+                        break;
+
+                    default:
+                        $features[$key] = $value;
+                        break;
+                }
             }
         }
+
         return $features;
     }
 }

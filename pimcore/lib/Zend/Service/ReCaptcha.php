@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage ReCaptcha
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -34,9 +34,9 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage ReCaptcha
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ReCaptcha.php 25153 2012-11-28 11:56:23Z cogo $
+ * @version    $Id$
  */
 class Zend_Service_ReCaptcha extends Zend_Service_Abstract
 {
@@ -103,8 +103,9 @@ class Zend_Service_ReCaptcha extends Zend_Service_Abstract
      * @var array
      */
     protected $_options = array(
-        'theme' => 'red',
-        'lang' => 'en',
+        'theme'               => 'red',
+        'lang'                => 'en',
+        'custom_translations' => array(),
     );
 
     /**

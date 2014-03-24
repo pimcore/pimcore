@@ -16,11 +16,13 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Technorati.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
+/** @see Zend_Xml_Security */
+// require_once 'Zend/Xml/Security.php';
 
 /**
  * Zend_Service_Technorati provides an easy, intuitive and object-oriented interface
@@ -32,7 +34,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Technorati
@@ -961,7 +963,7 @@ class Zend_Service_Technorati
     protected function _convertResponseAndCheckContent(Zend_Http_Response $response)
     {
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         self::_checkErrors($dom);
         return $dom;
     }

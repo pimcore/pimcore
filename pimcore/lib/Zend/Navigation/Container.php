@@ -14,9 +14,9 @@
  *
  * @category  Zend
  * @package   Zend_Navigation
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Container.php 25237 2013-01-22 08:32:38Z frosch $
+ * @version    $Id$
  */
 
 /**
@@ -26,7 +26,7 @@
  *
  * @category  Zend
  * @package   Zend_Navigation
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Navigation_Container implements RecursiveIterator, Countable

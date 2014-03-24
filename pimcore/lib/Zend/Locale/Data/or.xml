@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<!-- Copyright © 1991-2013 Unicode, Inc.
+CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
+For terms of use, see http://www.unicode.org/copyright.html
+-->
 <ldml>
 	<identity>
-		<version number="$Revision: 1.59 $"/>
-		<generation date="$Date: 2009/06/15 04:15:33 $"/>
+		<version number="$Revision: 9287 $"/>
+		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
 		<language type="or"/>
 	</identity>
 	<localeDisplayNames>
@@ -606,7 +611,6 @@
 			<script type="Phnx">ଫେନୋସିଆନ୍</script>
 			<script type="Plrd">ପୋଲାର୍ଡ ଫୋନେଟିକ୍</script>
 			<script type="Prti">ଇନସ୍କ୍ରୀପସାନଲ୍ ପାର୍ଥିଆନ୍</script>
-			<script type="Qaai">ବଂଶଗତ</script>
 			<script type="Rjng">ରେଜାଙ୍ଗ</script>
 			<script type="Roro">ରୋଙ୍ଗୋରୋଙ୍ଗୋ</script>
 			<script type="Runr">ରନିକ୍</script>
@@ -640,6 +644,7 @@
 			<script type="Xpeo">ପୁରୁଣା ଫରାସୀ</script>
 			<script type="Xsux">ସୁମେରୋ-ଆକ୍କାଡିଆନ୍ ସୁନିଫର୍ମ</script>
 			<script type="Yiii">ୟୀ</script>
+			<script type="Zinh">ବଂଶଗତ</script>
 			<script type="Zmth">ଗାଣିତିକ ନୋଟେସନ୍</script>
 			<script type="Zsym">ସିମ୍ବଲ୍</script>
 			<script type="Zxxx">ଅଲିଖିତ</script>
@@ -669,7 +674,6 @@
 			<territory type="054">ମେଲାନେସିଆ</territory>
 			<territory type="057">ମାଇକ୍ରୋନେସିଆନ୍ ଅଞ୍ଚଳ</territory>
 			<territory type="061">ପଲିନେସିଆ</territory>
-			<territory type="062">ଦକ୍ଷିଣ-ମଧ୍ୟ ଏସିଆ</territory>
 			<territory type="142">ଏସିଆ</territory>
 			<territory type="143">ମଧ୍ୟ ଏସିଆ</territory>
 			<territory type="145">ପଶ୍ଚିମ ଏସିଆ</territory>
@@ -677,10 +681,7 @@
 			<territory type="151">ପୂର୍ବ ୟୁରୋପ୍</territory>
 			<territory type="154">ଉତ୍ତର ୟୁରୋପ୍</territory>
 			<territory type="155">ପଶ୍ଚିମ ୟୁରୋପ୍</territory>
-			<territory type="172">କମନୱେଲ୍ଥ ଅଫ୍ ଇଣ୍ଡିପେଣ୍ଡେଣ୍ଟ ଷ୍ଟେଟସ୍</territory>
-			<territory type="200">ଚେକୋସ୍ଲୋଭିଆ</territory>
 			<territory type="419">ଲାଟିନ୍ ଆମେରିକା ଏବଂ କାରିବିଆନ୍</territory>
-			<territory type="830">ଚାନେଲ୍ ଆଇଲ୍ୟାଣ୍ଡ</territory>
 			<territory type="AD">ଆଣ୍ଡୋରା</territory>
 			<territory type="AE">ସଂଯୁକ୍ତ ଆରବ ଏମିରେଟସ୍</territory>
 			<territory type="AF">ଆଫାଗାନିସ୍ତାନ୍</territory>
@@ -731,7 +732,6 @@
 			<territory type="CN">ଚିନ୍</territory>
 			<territory type="CO">କୋଲମ୍ବିଆ</territory>
 			<territory type="CR">କୋଷ୍ଟା ରିକା</territory>
-			<territory type="CS">ସର୍ବିଆ ଏବଂ ମଣ୍ଟେନଗ୍ରୋ</territory>
 			<territory type="CU">କ୍ୱିବା</territory>
 			<territory type="CV">କେପ୍ ଭର୍ଦେ</territory>
 			<territory type="CX">ଖ୍ରୀଷ୍ଟମାସ ଆଇଲ୍ୟାଣ୍ଡ</territory>
@@ -750,6 +750,7 @@
 			<territory type="ER">ଇରିଟ୍ରିୟା</territory>
 			<territory type="ES">ସ୍ପେନ୍</territory>
 			<territory type="ET">ଇଥିଓପିଆ</territory>
+			<territory type="EU">ୟୁରୋପିଆନ୍ ୟୁନିଅନ୍</territory>
 			<territory type="FI">ଫିନଲ୍ୟାଣ୍ଡ</territory>
 			<territory type="FJ">ଫିଜି</territory>
 			<territory type="FK">ଫଲ୍କଲ୍ୟାଣ୍ଡ ଦ୍ବୀପପୁଞ୍ଜ</territory>
@@ -869,7 +870,6 @@
 			<territory type="PY">ପାରାଗୁଏ</territory>
 			<territory type="QA">କତାର୍</territory>
 			<territory type="QO">ଆଉଟଲେଇଂ ଓସେନିଆ</territory>
-			<territory type="QU">ୟୁରୋପିଆନ୍ ୟୁନିଅନ୍</territory>
 			<territory type="RE">ରିୟୁନିଅନ୍</territory>
 			<territory type="RO">ରୋମାନିଆ</territory>
 			<territory type="RS">ସର୍ବିଆ</territory>
@@ -890,6 +890,7 @@
 			<territory type="SN">ସେନେଗାଲ୍</territory>
 			<territory type="SO">ସୋମାଲିଆ</territory>
 			<territory type="SR">ସୁରିନାମ</territory>
+			<territory type="SS" draft="provisional">ଦକ୍ଷିନ ସୁଦାନ</territory>
 			<territory type="ST">ସାଓ ଟୋମେ ଏବଂ ପ୍ରିନସିପି</territory>
 			<territory type="SV">ଏଲ୍ ସାଲଭାଡୋର୍</territory>
 			<territory type="SY">ସିରିଆ</territory>
@@ -934,11 +935,45 @@
 		</territories>
 	</localeDisplayNames>
 	<characters>
-		<exemplarCharacters>[୦-୯ ଅ-ଋ ଏ ଐ ଓ-ନ ପ-ର ଲ ଳ ଶ-ହ {ଡ\u0B3C}ଡ଼ {ଢ\u0B3C}ଢ଼ ୟ ୱ ଵ ଂ ଃ ଁ ୍ ଼ ା-ୃ େ ୈ ୋ ୌ]</exemplarCharacters>
-		<exemplarCharacters type="auxiliary">[\u200C \u200D]</exemplarCharacters>
+		<exemplarCharacters>[\u0B3C ଅ ଆ ଇ ଈ ଉ ଊ ଋ ଏ ଐ ଓ ଔ \u0B01 ଂ ଃ କ ଖ ଗ ଘ ଙ ଚ ଛ ଜ ଝ ଞ ଟ ଠ ଡ {ଡ\u0B3C} ଢ {ଢ\u0B3C} ଣ ତ ଥ ଦ ଧ ନ ପ ଫ ବ ଭ ମ ଯ ୟ ର ଲ ଳ ଵ ୱ ଶ ଷ ସ ହ ା \u0B3F ୀ \u0B41 \u0B42 \u0B43 େ ୈ ୋ ୌ \u0B4D]</exemplarCharacters>
+		<exemplarCharacters type="auxiliary">[\u200C\u200D]</exemplarCharacters>
+		<exemplarCharacters type="index" draft="contributed">[ଅ ଆ ଇ ଈ ଉ ଊ ଋ ଏ ଐ ଓ ଔ କ ଖ ଗ ଘ ଙ ଚ ଛ ଜ ଝ ଞ ଟ ଠ ଡ ଢ ଣ ତ ଥ ଦ ଧ ନ ପ ଫ ବ ଭ ମ ଯ ର ଲ ଳ ଶ ଷ ସ ହ {କ\u0B4Dଷ}]</exemplarCharacters>
 	</characters>
 	<dates>
 		<calendars>
+			<calendar type="generic">
+				<dateFormats>
+					<dateFormatLength type="full">
+						<dateFormat>
+							<pattern>EEEE, d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="long">
+						<dateFormat>
+							<pattern>d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="medium">
+						<dateFormat>
+							<pattern>d MMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="short">
+						<dateFormat>
+							<pattern>d-M-y GGGGG</pattern>
+						</dateFormat>
+					</dateFormatLength>
+				</dateFormats>
+				<dateTimeFormats>
+					<availableFormats>
+						<dateFormatItem id="MMdd">dd-MM</dateFormatItem>
+						<dateFormatItem id="MMMMd">MMMM d</dateFormatItem>
+						<dateFormatItem id="yMM">MM-y G</dateFormatItem>
+						<dateFormatItem id="yMMMM">MMMM y G</dateFormatItem>
+						<dateFormatItem id="yQQQ">QQQ y G</dateFormatItem>
+					</availableFormats>
+				</dateTimeFormats>
+			</calendar>
 			<calendar type="gregorian">
 				<months>
 					<monthContext type="format">
@@ -1007,30 +1042,18 @@
 						</dayWidth>
 					</dayContext>
 				</days>
-				<quarters>
-					<quarterContext type="format">
-						<quarterWidth type="abbreviated">
-							<quarter type="1">Q1</quarter>
-							<quarter type="2">Q2</quarter>
-							<quarter type="3">Q3</quarter>
-							<quarter type="4">Q4</quarter>
-						</quarterWidth>
-						<quarterWidth type="wide">
-							<quarter type="1">Q1</quarter>
-							<quarter type="2">Q2</quarter>
-							<quarter type="3">Q3</quarter>
-							<quarter type="4">Q4</quarter>
-						</quarterWidth>
-					</quarterContext>
-				</quarters>
-				<am>am</am>
-				<pm>pm</pm>
-				<eras>
-					<eraAbbr>
-						<era type="0">BCE</era>
-						<era type="1">CE</era>
-					</eraAbbr>
-				</eras>
+				<dayPeriods>
+					<dayPeriodContext type="format">
+						<dayPeriodWidth type="narrow">
+							<dayPeriod type="am">am</dayPeriod>
+							<dayPeriod type="pm">pm</dayPeriod>
+						</dayPeriodWidth>
+						<dayPeriodWidth type="wide">
+							<dayPeriod type="am">am</dayPeriod>
+							<dayPeriod type="pm">pm</dayPeriod>
+						</dayPeriodWidth>
+					</dayPeriodContext>
+				</dayPeriods>
 				<dateFormats>
 					<dateFormatLength type="full">
 						<dateFormat>
@@ -1079,48 +1102,52 @@
 					<availableFormats>
 						<dateFormatItem id="MMdd">dd-MM</dateFormatItem>
 						<dateFormatItem id="MMMMd">MMMM d</dateFormatItem>
-						<dateFormatItem id="yyQ">Q yy</dateFormatItem>
-						<dateFormatItem id="yyyyMM">MM-yyyy</dateFormatItem>
-						<dateFormatItem id="yyyyMMMM">MMMM y</dateFormatItem>
+						<dateFormatItem id="yMM">MM-y</dateFormatItem>
+						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
+						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
 					</availableFormats>
 				</dateTimeFormats>
 			</calendar>
 		</calendars>
 		<timeZoneNames>
-			<hourFormat>+HH:mm;-HH:mm</hourFormat>
-			<gmtFormat>GMT{0}</gmtFormat>
-			<regionFormat>{0}</regionFormat>
 			<metazone type="Christmas">
 				<long>
 					<standard>ଖ୍ରୀଷ୍ଟମାସ ଆଇଲ୍ୟାଣ୍ଡ ସମୟ</standard>
 				</long>
 			</metazone>
+			<metazone type="India">
+				<short>
+					<standard>IST</standard>
+				</short>
+			</metazone>
 		</timeZoneNames>
 	</dates>
 	<numbers>
-		<defaultNumberingSystem>orya</defaultNumberingSystem>
-		<symbols>
+		<defaultNumberingSystem>latn</defaultNumberingSystem>
+		<otherNumberingSystems>
+			<native>orya</native>
+		</otherNumberingSystems>
+		<symbols numberSystem="latn">
 			<decimal>.</decimal>
 			<group>,</group>
-			<nativeZeroDigit>0</nativeZeroDigit>
 		</symbols>
-		<decimalFormats>
+		<decimalFormats numberSystem="latn">
 			<decimalFormatLength>
 				<decimalFormat>
 					<pattern>#,##,##0.###</pattern>
 				</decimalFormat>
 			</decimalFormatLength>
 		</decimalFormats>
-		<percentFormats>
+		<percentFormats numberSystem="latn">
 			<percentFormatLength>
 				<percentFormat>
 					<pattern>#,##,##0%</pattern>
 				</percentFormat>
 			</percentFormatLength>
 		</percentFormats>
-		<currencyFormats>
+		<currencyFormats numberSystem="latn">
 			<currencyFormatLength>
-				<currencyFormat>
+				<currencyFormat type="standard">
 					<pattern>¤ #,##,##0.00</pattern>
 				</currencyFormat>
 			</currencyFormatLength>

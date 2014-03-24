@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Amf
  * @subpackage Parse_Amf0
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Serializer.php 25179 2012-12-22 21:29:30Z rob $
+ * @version    $Id$
  */
 
 /** Zend_Amf_Constants */
@@ -32,7 +32,7 @@
  * @uses       Zend_Amf_Parse_Serializer
  * @package    Zend_Amf
  * @subpackage Parse_Amf0
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Amf_Parse_Amf0_Serializer extends Zend_Amf_Parse_Serializer

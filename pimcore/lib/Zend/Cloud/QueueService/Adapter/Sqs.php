@@ -13,7 +13,7 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage QueueService
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -28,7 +28,7 @@
  * @category   Zend
  * @package    Zend_Cloud
  * @subpackage QueueService
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cloud_QueueService_Adapter_Sqs
@@ -118,7 +118,7 @@ class Zend_Cloud_QueueService_Adapter_Sqs
         try {
             return $this->_sqs->delete($queueId);
         } catch(Zend_Service_Amazon_Exception $e) {
-            throw Zend_Cloud_QueueService_Exception('Error on queue deletion: '.$e->getMessage(), $e->getCode(), $e);
+            throw new Zend_Cloud_QueueService_Exception('Error on queue deletion: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 

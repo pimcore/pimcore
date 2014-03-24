@@ -14,27 +14,28 @@
  *
  * @category   Zend
  * @package    Zend_File
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
+// require_once 'Zend/File/PhpClassFile.php';
+
 /**
  * Locate files containing PHP classes, interfaces, or abstracts
- * 
+ *
  * @package    Zend_File
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
  */
 class Zend_File_ClassFileLocator extends FilterIterator
 {
     /**
      * Create an instance of the locator iterator
-     * 
-     * Expects either a directory, or a DirectoryIterator (or its recursive variant) 
+     *
+     * Expects either a directory, or a DirectoryIterator (or its recursive variant)
      * instance.
-     * 
-     * @param  string|DirectoryIterator $dirOrIterator 
-     * @return void
+     *
+     * @param  string|DirectoryIterator $dirOrIterator
      */
     public function __construct($dirOrIterator = '.')
     {
@@ -56,6 +57,7 @@ class Zend_File_ClassFileLocator extends FilterIterator
         }
 
         parent::__construct($iterator);
+        $this->setInfoClass('Zend_File_PhpClassFile');
 
         // Forward-compat with PHP 5.3
         if (version_compare(PHP_VERSION, '5.3.0', '<')) {
@@ -70,14 +72,13 @@ class Zend_File_ClassFileLocator extends FilterIterator
 
     /**
      * Filter for files containing PHP classes, interfaces, or abstracts
-     * 
+     *
      * @return bool
      */
     public function accept()
     {
         $file = $this->getInnerIterator()->current();
-
-        // If we somehow have something other than an SplFileInfo object, just 
+        // If we somehow have something other than an SplFileInfo object, just
         // return false
         if (!$file instanceof SplFileInfo) {
             return false;
@@ -96,29 +97,28 @@ class Zend_File_ClassFileLocator extends FilterIterator
         $contents = file_get_contents($file->getRealPath());
         $tokens   = token_get_all($contents);
         $count    = count($tokens);
-        $i        = 0;
-        while ($i < $count) {
+        $t_trait  = defined('T_TRAIT') ? T_TRAIT : -1; // For preserve PHP 5.3 compatibility
+        for ($i = 0; $i < $count; $i++) {
             $token = $tokens[$i];
-
             if (!is_array($token)) {
                 // single character token found; skip
                 $i++;
                 continue;
             }
-
-            list($id, $content, $line) = $token;
-
-            switch ($id) {
+            switch ($token[0]) {
                 case T_NAMESPACE:
                     // Namespace found; grab it for later
                     $namespace = '';
-                    $done      = false;
-                    do {
-                        ++$i;
+                    for ($i++; $i < $count; $i++) {
                         $token = $tokens[$i];
                         if (is_string($token)) {
                             if (';' === $token) {
-                                $done = true;
+                                $saveNamespace = false;
+                                break;
+                            }
+                            if ('{' === $token) {
+                                $saveNamespace = true;
+                                break;
                             }
                             continue;
                         }
@@ -129,44 +129,49 @@ class Zend_File_ClassFileLocator extends FilterIterator
                                 $namespace .= $content;
                                 break;
                         }
-                    } while (!$done && $i < $count);
-
-                    // Set the namespace of this file in the object
-                    $file->namespace = $namespace;
+                    }
+                    if ($saveNamespace) {
+                        $savedNamespace = $namespace;
+                    }
                     break;
+                case $t_trait:
                 case T_CLASS:
                 case T_INTERFACE:
-                    // Abstract class, class, or interface found
+                    // Abstract class, class, interface or trait found
 
                     // Get the classname
-                    $class = '';
-                    do {
-                        ++$i;
+                    for ($i++; $i < $count; $i++) {
                         $token = $tokens[$i];
                         if (is_string($token)) {
                             continue;
                         }
                         list($type, $content, $line) = $token;
-                        switch ($type) {
-                            case T_STRING:
-                                $class = $content;
-                                break;
-                        }
-                    } while (empty($class) && $i < $count);
-
-                    // If a classname was found, set it in the object, and 
+                        if (T_STRING == $type) {
+                    // If a classname was found, set it in the object, and
                     // return boolean true (found)
-                    if (!empty($class)) {
-                        $file->classname = $class;
-                        return true;
+                            if (!isset($namespace) || null === $namespace) {
+                                if (isset($saveNamespace) && $saveNamespace) {
+                                    $namespace = $savedNamespace;
+                                } else {
+                                    $namespace = null;
+                    }
+
+                            }
+                            $class = (null === $namespace) ? $content : $namespace . '\\' . $content;
+                            $file->addClass($class);
+                            $namespace = null;
+                    break;
+                        }
                     }
                     break;
                 default:
                     break;
             }
-            ++$i;
         }
-
+        $classes = $file->getClasses();
+        if (!empty($classes)) {
+            return true;
+        }
         // No class-type tokens found; return false
         return false;
     }

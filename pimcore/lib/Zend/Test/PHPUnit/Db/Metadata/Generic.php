@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Generic.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -37,7 +37,7 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Test_PHPUnit_Db_Metadata_Generic implements PHPUnit_Extensions_Database_DB_IMetaData
@@ -163,5 +163,25 @@ class Zend_Test_PHPUnit_Db_Metadata_Generic implements PHPUnit_Extensions_Databa
     public function allowsCascading()
     {
         return false;
+    }
+
+    /**
+     * Disables primary keys if rdbms does not allow setting them otherwise
+     *
+     * @param string $tableName
+     */
+    public function disablePrimaryKeys($tableName)
+    {
+        // Implemented only to match new DBUnit interface
+    }
+
+    /**
+     * Reenables primary keys after they have been disabled
+     *
+     * @param string $tableName
+     */
+    public function enablePrimaryKeys($tableName)
+    {
+        // Implemented only to match new DBUnit interface
     }
 }

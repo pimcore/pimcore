@@ -14,9 +14,9 @@
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
- * @version   $Id: Extension.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version   $Id$
  */
 
 /**
@@ -29,7 +29,7 @@
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_File_Extension extends Zend_Validate_Abstract
@@ -196,6 +196,12 @@ class Zend_Validate_File_Extension extends Zend_Validate_Abstract
             $info['extension'] = substr($file['name'], strrpos($file['name'], '.') + 1);
         } else {
             $info = pathinfo($value);
+            if (!array_key_exists('extension', $info)) {
+                // From the manual at http://php.net/pathinfo:
+                // "If the path does not have an extension, no extension element
+                // will be returned (see second example below)."
+                return false;
+            }
         }
 
         $extensions = $this->getExtension();

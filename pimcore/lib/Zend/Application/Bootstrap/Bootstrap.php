@@ -15,10 +15,15 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Bootstrap
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Bootstrap.php 25073 2012-11-06 19:31:53Z rob $
+ * @version    $Id$
  */
+
+/**
+ * @see Zend_Application_Bootstrap_BootstrapAbstract
+ */
+// require_once 'Zend/Application/Bootstrap/BootstrapAbstract.php';
 
 /**
  * Concrete base class for bootstrap classes
@@ -29,7 +34,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Bootstrap
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Application_Bootstrap_Bootstrap
@@ -53,7 +58,6 @@ class Zend_Application_Bootstrap_Bootstrap
      * Ensure FrontController resource is registered
      *
      * @param  Zend_Application|Zend_Application_Bootstrap_Bootstrapper $application
-     * @return void
      */
     public function __construct($application)
     {
@@ -120,7 +124,7 @@ class Zend_Application_Bootstrap_Bootstrap
     public function getResourceLoader()
     {
         if ((null === $this->_resourceLoader)
-            && (false != ($namespace = $this->getAppNamespace()))
+            && (false !== ($namespace = $this->getAppNamespace()))
         ) {
             $r    = new ReflectionClass($this);
             $path = $r->getFileName();

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Loader
  * @subpackage PluginLoader
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PluginLoader.php 24877 2012-06-04 14:04:53Z adamlundrigan $
+ * @version    $Id$
  */
 
 /** Zend_Loader_PluginLoader_Interface */
@@ -32,7 +32,7 @@
  * @category   Zend
  * @package    Zend_Loader
  * @subpackage PluginLoader
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
@@ -128,7 +128,13 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
         }
 
         $nsSeparator = (false !== strpos($prefix, '\\'))?'\\':'_';
-        return rtrim($prefix, $nsSeparator) . $nsSeparator;
+        $prefix = rtrim($prefix, $nsSeparator) . $nsSeparator;
+        //if $nsSeprator == "\" and the prefix ends in "_\" remove trailing \
+        //https://github.com/zendframework/zf1/issues/152
+        if(($nsSeparator == "\\") && (substr($prefix,-2) == "_\\")) {
+            $prefix = substr($prefix, 0, -1);
+        }
+        return $prefix;
     }
 
     /**
