@@ -664,8 +664,13 @@ pimcore.helpers.deleteAssetCheckDependencyComplete = function (id, callback, res
     try {
         var res = Ext.decode(response.responseText);
         var message = res.batchDelete ? t('delete_message_batch') : t('delete_message');
+
         if (res.hasDependencies) {
-            var message = t('delete_message_dependencies');
+            message += "<br />" + t('delete_message_dependencies');
+        }
+
+        if(res["childs"] > 100) {
+            message += "<br /><br /><b>" + t("too_many_children_for_recyclebin") + "</b>";
         }
 
         Ext.MessageBox.show({
@@ -791,9 +796,15 @@ pimcore.helpers.deleteDocumentCheckDependencyComplete = function (id, callback, 
     try {
         var res = Ext.decode(response.responseText);
         var message = t('delete_message');
+
         if (res.hasDependencies) {
-            message = t('delete_message_dependencies');
+            message += "<br />" + t('delete_message_dependencies');
         }
+
+        if(res["childs"] > 100) {
+            message += "<br /><br /><b>" + t("too_many_children_for_recyclebin") + "</b>";
+        }
+
         Ext.MessageBox.show({
             title:t('delete'),
             msg: message,
@@ -917,8 +928,13 @@ pimcore.helpers.deleteObjectCheckDependencyComplete = function (id, callback, re
         var res = Ext.decode(response.responseText);
         var message = res.batchDelete ? t('delete_message_batch') : t('delete_message');
         if (res.hasDependencies) {
-            var message = t('delete_message_dependencies');
+            message += "<br />" + t('delete_message_dependencies');
         }
+
+        if(res["childs"] > 100) {
+            message += "<br /><br /><b>" + t("too_many_children_for_recyclebin") + "</b>";
+        }
+
         Ext.MessageBox.show({
             title:t('delete'),
             msg: message,

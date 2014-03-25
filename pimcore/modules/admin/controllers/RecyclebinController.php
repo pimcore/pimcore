@@ -78,7 +78,16 @@ class Admin_RecyclebinController extends Pimcore_Controller_Action_Admin {
         $element = Element_Service::getElementById($this->getParam("type"), $this->getParam("id"));
 
         if($element) {
-            Element_Recyclebin_Item::create($element, $this->getUser());
+
+            $type = Element_Service::getElementType($element);
+            $listClass = ucfirst($type) . "_List";
+            $list = new $listClass();
+            $list->setCondition(($type == "object") ?: "o_" . "path LIKE '" . $element->getFullPath() . "/%'");
+            $children = $list->getTotalCount();
+
+            if($children <= 100) {
+                Element_Recyclebin_Item::create($element, $this->getUser());
+            }
 
             $this->_helper->json(array("success" => true));
         } else {
