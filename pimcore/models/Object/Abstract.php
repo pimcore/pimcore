@@ -581,7 +581,7 @@ class Object_Abstract extends Element_Abstract {
         if(Object_Service::pathExists($this->getFullPath())) {
             $duplicate = Object_Abstract::getByPath($this->getFullPath());
             if($duplicate instanceof Object_Abstract and $duplicate->getId() != $this->getId()){
-                throw new Exception("Duplicate full path [ ".$this->getFullPath()." ] - cannot create object");
+                throw new Exception("Duplicate full path [ ".$this->getFullPath()." ] - cannot save object");
             }
         }
     }

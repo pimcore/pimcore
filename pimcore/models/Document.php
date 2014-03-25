@@ -459,7 +459,7 @@ class Document extends Element_Abstract {
         if(Document_Service::pathExists($this->getRealFullPath())) {
             $duplicate = Document::getByPath($this->getRealFullPath());
             if ($duplicate instanceof Document  and $duplicate->getId() != $this->getId()) {
-                throw new Exception("Duplicate full path [ " . $this->getRealFullPath() . " ] - cannot create document");
+                throw new Exception("Duplicate full path [ " . $this->getRealFullPath() . " ] - cannot save document");
             }
         }
 
