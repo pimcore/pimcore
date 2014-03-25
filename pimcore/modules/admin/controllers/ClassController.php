@@ -67,8 +67,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         $classItems = array();
 
-        if($this->getParam('grouped') == 0)
-        {
+        if(!$this->getParam('grouped')) {
             // list output
             foreach ($classes as $classItem) {
                 $classItems[] = array(
@@ -81,9 +80,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
                     ),
                 );
             }
-        }
-        else
-        {
+        } else {
             // group classes
             $cnf['matchCount'] = 3;     // min chars to group
 
@@ -93,8 +90,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
              *
              * @return int
              */
-            $getEqual
-                = function($str1, $str2) {
+            $getEqual = function($str1, $str2) {
                 $count = 0;
                 for($c = 0; $c < strlen($str1); $c++)
                 {
@@ -154,48 +150,49 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
             // create json output
             $classItems = array();
-            foreach ($classGroups as $name => $classes)
-            {
-                // basic setup
-                $class = array(
-                    "id" => $classes[0]->getId(),
-                    "text" => $name,
-                    "leaf" => true,
-                    "children" => array()
-                );
+            foreach ($classGroups as $name => $classes) {
+                if(isset($classes[0]) && $classes[0] instanceof Object_Class) {
+                    // basic setup
+                    $class = array(
+                        "id" => $classes[0]->getId(),
+                        "text" => $name,
+                        "leaf" => true,
+                        "children" => array()
+                    );
 
-                // add childs?
-                if(count($classes) === 1)
-                {
-                    // no group
-                    $class['id'] = $classes[0]->getId();
-                    $class['text'] = $classes[0]->getName();
-                    $class['icon'] = $classes[0]->getIcon() ? $classes[0]->getIcon() : '/pimcore/static/img/icon/database_gear.png';
-                    $class['propertyVisibility'] = $classes[0]->getPropertyVisibility();
-                    $class['qtipCfg']['title'] = "ID: " . $classes[0]->getId();
-                }
-                else
-                {
-                    // group classes
-                    $class['id'] = "folder_" . $class['id'];
-                    $class['leaf'] = false;
-                    $class['expandable'] = true;
-                    $class['allowChildren'] = true;
-                    $class['iconCls'] = 'pimcore_icon_folder';
-                    foreach($classes as $classItem)
+                    // add childs?
+                    if(count($classes) === 1)
                     {
-                        $child = array(
-                            "id" => $classItem->getId(),
-                            "text" => $classItem->getName(),
-                            "leaf" => true,
-                            "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static/img/icon/database_gear.png',
-                            "propertyVisibility" => $classItem->getPropertyVisibility(),
-                            "qtipCfg" => array(
-                                "title" => "ID: " . $classItem->getId()
-                            ),
-                        );
+                        // no group
+                        $class['id'] = $classes[0]->getId();
+                        $class['text'] = $classes[0]->getName();
+                        $class['icon'] = $classes[0]->getIcon() ? $classes[0]->getIcon() : '/pimcore/static/img/icon/database_gear.png';
+                        $class['propertyVisibility'] = $classes[0]->getPropertyVisibility();
+                        $class['qtipCfg']['title'] = "ID: " . $classes[0]->getId();
+                    }
+                    else
+                    {
+                        // group classes
+                        $class['id'] = "folder_" . $class['id'];
+                        $class['leaf'] = false;
+                        $class['expandable'] = true;
+                        $class['allowChildren'] = true;
+                        $class['iconCls'] = 'pimcore_icon_folder';
+                        foreach($classes as $classItem)
+                        {
+                            $child = array(
+                                "id" => $classItem->getId(),
+                                "text" => $classItem->getName(),
+                                "leaf" => true,
+                                "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static/img/icon/database_gear.png',
+                                "propertyVisibility" => $classItem->getPropertyVisibility(),
+                                "qtipCfg" => array(
+                                    "title" => "ID: " . $classItem->getId()
+                                ),
+                            );
 
-                        $class['children'][] = $child;
+                            $class['children'][] = $child;
+                        }
                     }
                 }
 
