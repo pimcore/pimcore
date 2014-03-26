@@ -171,7 +171,7 @@ class Pimcore_Tool_Newsletter {
         }
 
         // generate token
-        $token = base64_encode(serialize(array(
+        $token = base64_encode(Zend_Json::encode(array(
             "salt" => md5(microtime()),
             "email" => $object->getEmail(),
             "id" => $object->getId()
@@ -218,7 +218,7 @@ class Pimcore_Tool_Newsletter {
      * @return Object_Contrete
      */
     public function getObjectByToken($token) {
-        $data = unserialize(base64_decode($token));
+        $data = Zend_Json::decode(base64_decode($token));
         if($data) {
             if($object = Object_Abstract::getById($data["id"])) {
 
