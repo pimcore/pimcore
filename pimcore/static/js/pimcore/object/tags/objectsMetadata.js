@@ -128,14 +128,6 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     displayField: 'label'
                 });
             } else if(this.fieldConfig.columns[i].type == "bool") {
-                if(!readOnly) {
-                    columns.push(new Ext.grid.CheckColumn({
-                        header: ts(this.fieldConfig.columns[i].label),
-                        dataIndex: this.fieldConfig.columns[i].key,
-                        width: width
-                    }));
-                    continue;
-                }
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     metaData.css += ' x-grid3-check-col-td';
                     if(!value || value == "0") {
@@ -144,6 +136,18 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     return String.format('<div class="x-grid3-check-col{0}"'
                         + 'style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
                 };
+                editor = new Ext.form.Checkbox({});
+
+
+                if(readOnly) {
+                    columns.push(new Ext.grid.CheckColumn({
+                        header: ts(this.fieldConfig.columns[i].label),
+                        dataIndex: this.fieldConfig.columns[i].key,
+                        width: width,
+                        renderer: renderer
+                    }));
+                    continue;
+                }
 
             }
 
