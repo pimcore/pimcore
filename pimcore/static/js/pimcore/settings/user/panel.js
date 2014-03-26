@@ -105,6 +105,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
 
         var resultTpl = new Ext.XTemplate(
             '<tpl for="."><div class="search-item" style="padding: 3px 10px 3px 10px; border: 1px solid #fff; border-bottom: 1px solid #eeeeee; color: #555;">',
+            '<img style="float:left; padding-right: 10px; max-height:30px;" src="/admin/user/get-image?id={id}" />',
             '<h3>{name} - {firstname} {lastname}</h3>',
             '{email} <b>ID: </b> {id}',
             '</div></tpl>'
