@@ -58,7 +58,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                 containerScroll: true,
                 border: true,
                 split:true,
-                width: 150,
+                width: 180,
                 minSize: 100,
                 maxSize: 350,
                 root: {
@@ -78,7 +78,12 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                         allowChildren: true,
                         isTarget: true
                     }
-                })
+                }),
+                tbar: ["->", {
+                    text: t("search"),
+                    iconCls: "pimcore_icon_search",
+                    handler: this.openSearchPanel.bind(this)
+                }]
             });
 
 
@@ -88,6 +93,64 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
         }
 
         return this.tree;
+    },
+
+    openSearchPanel: function () {
+
+        var store = new Ext.data.JsonStore({
+            url: '/admin/user/search',
+            root: 'users',
+            fields: ["id", 'name', "email", "firstname", "lastname"]
+        });
+
+        var resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item" style="padding: 3px 10px 3px 10px; border: 1px solid #fff; border-bottom: 1px solid #eeeeee; color: #555;">',
+            '<h3>{name} - {firstname} {lastname}</h3>',
+            '{email} <b>ID: </b> {id}',
+            '</div></tpl>'
+        );
+
+        var win = new Ext.Window({
+            title: t("search"),
+            iconCls: "pimcore_icon_search",
+            width: 320,
+            height: 110,
+            modal: true,
+            bodyStyle:"padding:10px",
+            items: [{
+                xtype: "combo",
+                store: store,
+                displayField:'name',
+                valueField: "id",
+                typeAhead: false,
+                loadingText: 'Searching...',
+                width: 285,
+                minChars: 1,
+                queryDelay: 100,
+                hideTrigger:true,
+                tpl: resultTpl,
+                itemSelector: 'div.search-item',
+                triggerAction: "all",
+                listeners: {
+                    select: function(combo, record, index){
+                        this.openUser(record.get("id"));
+                        win.close();
+                    }.bind(this),
+                    afterrender: function () {
+                        this.focus(true,500);
+                    }
+                }
+            }],
+            buttons: [{
+                text: t("close"),
+                iconCls: "pimcore_icon_delete",
+                handler: function () {
+                    win.close();
+                }
+            }]
+        });
+
+        win.show();
     },
 
     openUser: function(userId) {

@@ -36,7 +36,9 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $users = array();
         if(is_array($list->getUsers())){
             foreach ($list->getUsers() as $user) {
-                $users[] = $this->getTreeNodeConfig($user);
+                if($user->getId() && $user->getName() != "system") {
+                    $users[] = $this->getTreeNodeConfig($user);
+                }
             }
         }
         $this->_helper->json($users);
@@ -497,5 +499,35 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                 ));
             }
         }
+    }
+
+    public function searchAction() {
+
+        $q = "%" . $this->getParam("query") . "%";
+
+        $list = new User_List();
+        $list->setCondition("name LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ? OR id = ?", [$q, $q, $q, $q, $q]);
+        $list->setOrder("ASC");
+        $list->setOrderKey("name");
+        $list->load();
+
+        $users = array();
+        if(is_array($list->getUsers())){
+            foreach ($list->getUsers() as $user) {
+                if($user->getId() && $user->getName() != "system") {
+                    $users[] = [
+                        "id" => $user->getId(),
+                        "name" => $user->getName(),
+                        "email" => $user->getEmail(),
+                        "firstname" => $user->getFirstname(),
+                        "lastname" => $user->getLastname(),
+                    ];
+                }
+            }
+        }
+        $this->_helper->json([
+            "success" => true,
+            "users" => $users
+        ]);
     }
 }
