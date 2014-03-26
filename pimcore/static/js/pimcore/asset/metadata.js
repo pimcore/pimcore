@@ -64,7 +64,8 @@ pimcore.asset.metadata = Class.create({
                 editable: false,
                 triggerAction: 'all',
                 mode: "local",
-                listWidth: 200,
+                width: 120,
+                listWidth: 120,
                 value: "input",
                 emptyText: t('type')
             });
@@ -73,6 +74,18 @@ pimcore.asset.metadata = Class.create({
             for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
                 languagestore.push([pimcore.settings.websiteLanguages[i],pimcore.settings.websiteLanguages[i]]);
             }
+
+            var customLanguage = new Ext.form.ComboBox({
+                fieldLabel: t('language'),
+                name: "language",
+                store: languagestore,
+                editable: false,
+                triggerAction: 'all',
+                mode: "local",
+                width: 100,
+                listWidth: 100,
+                emptyText: t('language')
+            });
 
             var store = new Ext.data.JsonStore({
                 fields: ['name', "type", "data", "language"],
@@ -90,9 +103,9 @@ pimcore.asset.metadata = Class.create({
                 tbar: [{
                     xtype: "tbtext",
                     text: t('add') + " &nbsp;&nbsp;"
-                },customKey, customType, {
+                },customKey, customType, customLanguage, {
                     xtype: "button",
-                    handler: this.addSetFromUserDefined.bind(this, customKey, customType),
+                    handler: this.addSetFromUserDefined.bind(this, customKey, customType, customLanguage),
                     iconCls: "pimcore_icon_add"
                 }],
                 clicksToEdit: 1,
@@ -158,8 +171,8 @@ pimcore.asset.metadata = Class.create({
         return this.grid;
     },
 
-    addSetFromUserDefined: function (customKey, customType) {
-        this.add(customKey.getValue(), customType.getValue(), false);
+    addSetFromUserDefined: function (customKey, customType, customLanguage) {
+        this.add(customKey.getValue(), customType.getValue(), false, customLanguage.getValue());
     },
 
     add: function (key, type, value, language) {
@@ -181,6 +194,21 @@ pimcore.asset.metadata = Class.create({
 
         if(!language) {
             language = "";
+        }
+
+        // check for duplicate name
+        var dublicateIndex = store.findBy(function (record, id) {
+            if (record.data.name.toLowerCase() == key.toLowerCase()) {
+                if(record.data.language.toLowerCase() == language.toLowerCase()) {
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        if (dublicateIndex >= 0) {
+            Ext.MessageBox.alert(t("error"), t("name_already_in_use"));
+            return;
         }
 
         var newRecord = new store.recordType({
