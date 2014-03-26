@@ -331,6 +331,11 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                     $el = Element_Service::getElementById($element["type"], $element["id"]);
                     $listClass = ucfirst($element["type"]) . "_List";
                     $list = new $listClass();
+                    $list->setUnpublished(true);
+                    if($el instanceof Object_Abstract) {
+                        // inlcude variants
+                        $list->setObjectTypes(array(Object_Abstract::OBJECT_TYPE_VARIANT, Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER));
+                    }
                     $list->setCondition(($el instanceof Object_Abstract ? "o_" : "") . "path LIKE ?", array($el->getFullPath() . ($el->getFullPath() != "/" ? "/" : "") . "%"));
                     $idList = $list->loadIdList();
 
