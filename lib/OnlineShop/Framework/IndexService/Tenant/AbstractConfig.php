@@ -34,6 +34,13 @@ abstract class OnlineShop_Framework_IndexService_Tenant_AbstractConfig {
         return $this->searchColumnConfig;
     }
 
+    /**
+     * @return bool
+     */
+    public function isActive(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+        return true;
+    }
+
 
     /**
      * returns table name of product index
