@@ -180,10 +180,23 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             this.ckeditor = CKEDITOR.replace(this.editableDivId, eConfig);
             this.ckeditor.pimcore_tag_instance = this;
 
+            // disable URL field in image dialog
+            this.ckeditor.on("dialogShow", function (e) {
+                var urlField = e.data.getElement().findOne("input");
+                if(urlField && urlField.getValue()) {
+                    if(urlField.getValue().indexOf("/image-thumbnails/") > 1) {
+                        urlField.getParent().getParent().getParent().hide();
+                    }
+                } else if (urlField) {
+                    urlField.getParent().getParent().getParent().show();
+                }
+            });
+
             // HACK - clean all pasted html
             this.ckeditor.on('paste', function(evt) {
                 evt.data.dataValue = '<!--class="Mso"-->' + evt.data.dataValue;
             }, null, null, 1);
+
         } catch (e) {
             console.log(e);
         }
