@@ -124,15 +124,6 @@ Ext.onReady(function () {
             item.setAttribute("rel", "stylesheet");
         });
 
-        // handler for Esc
-        var mapEsc = new Ext.KeyMap(document, {
-            key: [27],
-            fn: function () {
-                closeCKeditors();
-            },
-            stopEvent: true
-        });
-
         // register the global key bindings
         pimcore.helpers.registerKeyBindings(document, Ext);
 
