@@ -1,7 +1,7 @@
 {
     "name": "pimcore/pimcore",
     "description": "The premier Open-Source Multi-Channel Experience and Engagement Management Platform",
-    "keywords": ["CMS","PIM","DAM","Framework","RAD","Product Information Management"],
+    "keywords": ["CMS","PIM","DAM","E-Commerce","RAD","Product Information Management"],
     "homepage": "http://www.pimcore.org/",
     "type": "project",
     "license": "BSD-3-Clause",
