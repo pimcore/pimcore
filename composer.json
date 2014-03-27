@@ -4,6 +4,11 @@
     "keywords": ["CMS", "PIM", "DAM", "Framework", "Marketing Automation","RAD"],
     "homepage": "http://www.pimcore.org/",
     "type": "project",
+    "extra": {
+        "installer-paths": {
+            "./": ["pimcore/pimcore"]
+        }
+    },
     "license": "BSD-3-Clause",
     "authors": [
         {
