@@ -160,22 +160,27 @@
   </exec>
  </target>
 
- <!--<target name="phpdox"
+
+    <target name="move-no-phpdox">
+        <move file="${basedir}/build/phpdox.xml.dist" tofile="${basedir}/phpdox.xml.dist"/>
+    </target>
+
+<target name="phpdox"
          description="Generate API documentation using phpDox">
     <exec executable="phpdoc">
          <arg value="-t"/>
         <arg value="phpdox"/>
     </exec>
- </target>-->
+ </target>
 
 <target name="move-website">
     <move file="${basedir}/website_example" tofile="${basedir}/website"/>
     <move file="${basedir}/plugins_example" tofile="${basedir}/plugins"/>
 </target>
 
-    <target name="move-no-coverage">
-        <move file="${basedir}/build/phpunit-no-coverage.xml.dist" tofile="${basedir}/build/phpunit.xml.dist"/>
-    </target>
+<target name="move-no-coverage">
+    <move file="${basedir}/build/phpunit-no-coverage.xml.dist" tofile="${basedir}/phpunit.xml.dist"/>
+</target>
 
 
 <target name="prepare-dirs" description="Creates website directories">
