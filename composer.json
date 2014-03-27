@@ -15,7 +15,6 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "phpunit/phpunit": "3.7.*",
         "pimcore/core-installer-plugin": "dev-master"
     }
 }
