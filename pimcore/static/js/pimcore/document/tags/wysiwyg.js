@@ -95,7 +95,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             }
 
             eConfig.language = pimcore.settings["language"];
-            eConfig.removePlugins = 'bgcolor' + removePluginsAdd;
+            eConfig.removePlugins = 'bgcolor,autogrow,' + removePluginsAdd;
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
@@ -271,6 +271,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         return "wysiwyg";
     }
 });
+
+CKEDITOR.disableAutoInline = true;
 
 // IE Hack see: http://dev.ckeditor.com/ticket/9958
 // problem is that every button in a CKEDITOR window fires the onbeforeunload event

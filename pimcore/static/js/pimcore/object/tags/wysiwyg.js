@@ -137,6 +137,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
 
         eConfig.allowedContent = true; // disables CKEditor ACF (will remove pimcore_* attributes from links, etc.)
+        eConfig.removePlugins = "tableresize,autogrow";
 
         if (intval(this.fieldConfig.width) > 1) {
             eConfig.width = this.fieldConfig.width;
@@ -295,6 +296,8 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         return false;
     }
 });
+
+CKEDITOR.disableAutoInline = true;
 
 // IE Hack see: http://dev.ckeditor.com/ticket/9958
 // problem is that every button in a CKEDITOR window fires the onbeforeunload event
