@@ -23,17 +23,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             this.data = data;
         }
         this.fieldConfig = fieldConfig;
-
-        if (intval(this.fieldConfig.width) < 1) {
-            this.fieldConfig.width = 650;
-        }
-        if (intval(this.fieldConfig.height) < 1) {
-            this.fieldConfig.height = 300;
-        }
-
         this.editableDivId = "object_wysiwyg_" + uniqid();
-        this.previewIframeId = "object_wysiwyg_iframe_" + uniqid();
-        
     },
 
     getGridColumnEditor: function(field) {
@@ -61,89 +51,65 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnFilter: function(field) {
         return {type: 'string', dataIndex: field.key};
-    },    
-
-    getLayoutEdit: function () {
-        this.getLayout();
-        this.disableEditing = false;
-        this.component.on("afterrender", this.getPreview.bind(this));
-        return this.component;
     },
 
     getLayout: function () {
+
+        var html = '<div class="pimcore_tag_wysiwyg" id="' + this.editableDivId + '" contenteditable="true">' + this.data + '</div>';
         var pConf = {
+            iconCls: "pimcore_icon_droptarget",
             title: this.fieldConfig.title,
-            width: this.fieldConfig.width,
-            html: '<div style="position:relative;" id="' + this.editableDivId + '"></div>',
+            html: html,
             cls: "object_field"
         };
+
+        if(this.fieldConfig.width) {
+            pConf["width"] = this.fieldConfig.width;
+        }
+
+        if(this.fieldConfig.height) {
+            pConf["height"] = this.fieldConfig.height;
+            pConf["autoScroll"] = true;
+        } else {
+            pConf["autoHeight"] = true;
+        }
 
         this.component = new Ext.Panel(pConf);
     },
 
-    getPreview: function() {
-
-        var iframe = document.createElement("iframe");
-        iframe.setAttribute("frameborder", "0");
-        iframe.setAttribute("id", this.previewIframeId);
-        iframe.setAttribute("scrolling", "no");
-        iframe.setAttribute("marginheight", "0");
-        iframe.setAttribute("marginwidth", "0");
-        //iframe.src = "about:blank";
-
-        iframe.onload = this.initializePreview.bind(this);
-
-        Ext.get(this.editableDivId).update("");
-        Ext.get(this.editableDivId).clean(true);
-        Ext.get(this.editableDivId).dom.appendChild(iframe);
-
-
-        // set dimensions of iframe
-        if (this.fieldConfig.height) {
-            Ext.get(this.previewIframeId).setStyle({
-                height: this.fieldConfig.height + "px"
-            });
-        }
-        if (this.fieldConfig.width) {
-            Ext.get(this.previewIframeId).setStyle({
-                width: this.fieldConfig.width + "px"
-            });
-        }
-    },
-
-    initializePreview: function () {
-
-        if(!Ext.get(this.previewIframeId)) {
-            return;
-        }
-
-        var uriPrefix = window.location.protocol + "//" + window.location.host;
-
-        var document = Ext.get(this.previewIframeId).dom.contentWindow.document;
-        var iframeContent = this.data;
-        iframeContent += '<link href="' + uriPrefix + '/pimcore/static/js/lib/ckeditor/contents.css" ' +
-            'rel="stylesheet" type="text/css" />';
-        iframeContent += "&nbsp;"
-
-        document.body.innerHTML = iframeContent;
-        document.body.setAttribute("style", "min-height: " + Math.round(this.fieldConfig.height*0.8) + "px; cursor: pointer;");
-
-        if(this.disableEditing == false) {
-            Ext.get(document.body).on("click", this.initCkEditor.bind(this));
-        }
-    },
-
     getLayoutShow: function () {
         this.getLayout();
-        this.disableEditing = true;
-        this.component.on("afterrender", this.getPreview.bind(this));
+        return this.component;
+    },
+
+    getLayoutEdit: function () {
+        this.getLayout();
+        this.component.on("afterrender", this.initCkEditor.bind(this));
+        this.component.on("beforedestroy", function() {
+            this.ckeditor.destroy();
+            this.ckeditor = null;
+        }.bind(this));
         return this.component;
     },
 
     initCkEditor: function () {
 
+        // add drop zone
+        var dd = new Ext.dd.DropZone(Ext.get(this.editableDivId), {
+            ddGroup: "element",
+
+            getTargetFromEvent: function(e) {
+                return this.getEl();
+            },
+
+            onNodeOver : function(target, dd, e, data) {
+                return Ext.dd.DropZone.prototype.dropAllowed;
+            },
+
+            onNodeDrop : this.onNodeDrop.bind(this)
+        });
+
         var eConfig = {
-            uiColor: "#f2f2f2",
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             resize_enabled: false,
@@ -164,8 +130,6 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             { name: 'tools', groups: ['colors', "tools", 'cleanup', 'mode', "others"] }
         ];
 
-        eConfig.extraPlugins = "close_object";
-        eConfig.removePlugins = 'autogrow,sourcearea';
         eConfig.allowedContent = true; // disables CKEditor ACF (will remove pimcore_* attributes from links, etc.)
 
         if (intval(this.fieldConfig.width) > 1) {
@@ -176,8 +140,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
 
         try {
-            Ext.get(this.editableDivId).update(this.data);
-            this.ckeditor = CKEDITOR.replace(this.editableDivId, eConfig);
+            this.ckeditor = CKEDITOR.inline(this.editableDivId, eConfig);
             this.ckeditor.pimcore_tag_instance = this;
 
             // disable URL field in image dialog
@@ -202,66 +165,13 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
     },
 
-    mask: function () {
-        try {
-            var pan = this.component.el;
-
-            if (pan) {
-                pan.setStyle({
-                    position: "relative"
-                });
-
-                var maskEl = pan.createChild({
-                    tag: "div",
-                    id: Ext.id()
-                });
-                
-                maskEl = Ext.get(maskEl.id);
-                
-                maskEl.addClass("pimcore_wysiwyg_mask");
-                maskEl.setStyle({
-                    top: 0,
-                    left: 0,
-                    zIndex: 10000,
-                    width: pan.getWidth() + "px",
-                    height: pan.getHeight() + "px",
-                    position: "absolute"
-                });
-
-                this.maskEl = maskEl.dom;
-
-                // add drop zone
-                var dd = new Ext.dd.DropZone(this.maskEl, {
-                    ddGroup: "element",
-
-                    getTargetFromEvent: function(e) {
-                        return this.getEl();
-                    },
-
-                    onNodeOver : function(target, dd, e, data) {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
-                    },
-
-                    onNodeDrop : this.onNodeDrop.bind(this)
-                });
-            }
-        }
-        catch (e) {
-            console.log(e);
-        }
-    },
-
-    unmask: function () {
-        if (this.maskEl) {
-            Ext.get(this.maskEl).remove();
-        }
-    },
-
     onNodeDrop: function (target, dd, e, data) {
 
         if (!this.ckeditor) {
             return;
         }
+
+        this.ckeditor.focus();
 
         var wrappedText = data.node.attributes.text;
         var textIsSelected = false;
@@ -378,40 +288,15 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             return this.ckeditor.checkDirty();
         }
         return false;
-//        return this.ckeditor.IsDirty();
-    },
-
-    close: function () {
-        try {
-            if(this.ckeditor) {
-                this.data = this.ckeditor.getData();
-                this.ckeditor.destroy();
-                this.ckeditor = null;
-                this.dirty = true;
-
-                this.getPreview();
-            }
-        } catch (e) {
-            console.log(e);
-        }
     }
 });
 
-
-
-// add close button plugin
-var ckeditor_close_objectplugin_button ='close_object';
-CKEDITOR.plugins.add(ckeditor_close_objectplugin_button,{
-    init:function(editor){
-        editor.addCommand(ckeditor_close_objectplugin_button, {
-            exec:function(editor){
-                window.setTimeout(editor.pimcore_tag_instance.close.bind(editor.pimcore_tag_instance), 10);
-            }
-        });
-        editor.ui.addButton("close_object",{
-            label:t('close'),
-            icon: "/pimcore/static/img/icon/cross.png",
-            command: ckeditor_close_objectplugin_button
-        });
-    }
+// IE Hack see: http://dev.ckeditor.com/ticket/9958
+// problem is that every button in a CKEDITOR window fires the onbeforeunload event
+CKEDITOR.on('instanceReady', function (event) {
+    event.editor.on('dialogShow', function (dialogShowEvent) {
+        if (CKEDITOR.env.ie) {
+            $(dialogShowEvent.data._.element.$).find('a[href*="void(0)"]').removeAttr('href');
+        }
+    });
 });

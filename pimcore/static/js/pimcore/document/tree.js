@@ -133,13 +133,11 @@ pimcore.document.tree = Class.create({
     },
 
     onDragStart : function (tree, node, id) {
-        pimcore.helpers.dndMaskFrames();
         pimcore.helpers.treeNodeThumbnailPreviewHide();
     },
 
     onDragEnd : function () {
-
-        pimcore.helpers.dndUnmaskFrames();
+        // nothing to do
     },
 
     onTreeNodeClick: function () {

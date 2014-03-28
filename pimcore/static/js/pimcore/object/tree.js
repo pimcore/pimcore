@@ -135,11 +135,11 @@ pimcore.object.tree = Class.create({
     },
 
     onDragStart: function () {
-        pimcore.helpers.dndMaskFrames();
+        // nothing to do
     },
 
     onDragEnd: function () {
-        pimcore.helpers.dndUnmaskFrames();
+        // nothing to do
     },
 
     onTreeNodeClick: function () {

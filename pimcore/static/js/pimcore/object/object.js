@@ -405,18 +405,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.tabPanel.activate(tabId);
     },
 
-    maskFrames: function () {
-        if (this.edit) {
-            this.edit.maskFrames();
-        }
-    },
-
-    unmaskFrames: function () {
-        if (this.edit) {
-            this.edit.unmaskFrames();
-        }
-    },
-
     getSaveData : function (only, omitMandatoryCheck) {
         var data = {};
 

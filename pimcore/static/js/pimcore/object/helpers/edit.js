@@ -212,11 +212,6 @@ pimcore.object.helpers.edit = {
 
                 this.addToDataFields(field, l.name);
 
-                // WYSIWYG is a frame that must be masked
-                if (l.fieldtype == "wysiwyg") {
-                    this.addFieldsToMask(field);
-                }
-
                 if (l.noteditable || noteditable) {
                     dLayout = field.getLayoutShow();
                 }

@@ -282,55 +282,6 @@ pimcore.document.edit = Class.create({
             console.log(e); 
             console.log("there is no frame to mask");
         }
-
-        // mask fields
-        this.fieldsToMask = [];
-        try {
-            if (this.frame && this.frame.editables) {
-                var editables = this.frame.editables;
-
-                for (i = 0; i < editables.length; i++) {
-                    try {
-                        if (typeof editables[i].mask == "function") {
-                            editables[i].mask();
-                            this.fieldsToMask.push(editables[i]);
-                        }
-                    } catch (e2) {
-                        console.log(e2);
-                    }
-                }
-            }
-        } catch (e3) {
-            console.log(e3);
-        }
-    },
-
-    unmaskFrames: function () {
-
-        // unmask frames
-        try {
-            if (typeof this.frame.Ext != "object") {
-                return;
-            }
-
-            // remove the masks from iframes
-            var masks = this.frame.Ext.query(".pimcore_iframe_mask");
-            for (var i = 0; i < masks.length; i++) {
-                Ext.get(masks[i]).remove();
-            }
-        } catch (e) {
-            console.log(e);
-            console.log("there is no frame to unmask");
-        }
-
-        // unmask editables
-        try {
-            for (var i = 0; i < this.fieldsToMask.length; i++) {
-                this.fieldsToMask[i].unmask();
-            }
-        } catch (e2) {
-            console.log(e2);
-        }
     },
 
     getValues: function () {

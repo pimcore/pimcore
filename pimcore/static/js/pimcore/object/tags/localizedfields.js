@@ -312,10 +312,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         this.languageElements[this.currentLanguage].push(field);
     },
 
-    addFieldsToMask: function (field) {
-        this.object.edit.fieldsToMask.push(field);
-    },
-
     addReferencedField: function (field) {
         this.referencedFields.push(field);
     },

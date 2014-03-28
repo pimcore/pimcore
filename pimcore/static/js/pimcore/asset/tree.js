@@ -266,12 +266,11 @@ pimcore.asset.tree = Class.create({
     },
 
     onDragStart : function () {
-        pimcore.helpers.dndMaskFrames();
         pimcore.helpers.treeNodeThumbnailPreviewHide();
     },
 
     onDragEnd : function () {
-        pimcore.helpers.dndUnmaskFrames();
+        // nothing to do
     },
 
     onTreeNodeClick: function () {

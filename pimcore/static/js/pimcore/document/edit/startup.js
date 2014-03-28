@@ -189,6 +189,9 @@ Ext.onReady(function () {
 
     }
 
+    // put a mask over all iframe, because they would break the dnd functionality
+    editWindow.maskFrames();
+
     // enable the edit tab again
     editWindow.loadMask.hide();
 });

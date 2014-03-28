@@ -101,18 +101,6 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         this.removeFromSession();
     },
 
-    maskFrames: function () {
-        if (this.edit) {
-            this.edit.maskFrames();
-        }
-    },
-
-    unmaskFrames: function () {
-        if (this.edit) {
-            this.edit.unmaskFrames();
-        }
-    },
-
     getLayoutToolbar : function () {
 
         if (!this.toolbar) {

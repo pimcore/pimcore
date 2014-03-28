@@ -269,10 +269,6 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         this.dataFields.push(field);
     },
 
-    addFieldsToMask: function (field) {
-        this.object.edit.fieldsToMask.push(field);
-    },
-    
     getLayoutShow: function () {
 
         this.component = this.getLayoutEdit();

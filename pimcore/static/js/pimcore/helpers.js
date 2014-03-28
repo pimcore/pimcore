@@ -339,47 +339,6 @@ pimcore.helpers.openSeemode = function () {
     }
 };
 
-pimcore.helpers.dndMaskFrames = function () {
-    var tabpanel = Ext.getCmp("pimcore_panel_tabs");
-    var activeTab = tabpanel.getActiveTab();
-
-    if (activeTab) {
-        // check for opened document
-        if (activeTab.initialConfig.document) {
-            if (typeof activeTab.initialConfig.document.maskFrames == "function") {
-                activeTab.initialConfig.document.maskFrames();
-            }
-        }
-        // check for opened object
-        if (activeTab.initialConfig.object) {
-            if (typeof activeTab.initialConfig.object.maskFrames == "function") {
-                activeTab.initialConfig.object.maskFrames();
-            }
-        }
-    }
-};
-
-pimcore.helpers.dndUnmaskFrames = function () {
-    var tabpanel = Ext.getCmp("pimcore_panel_tabs");
-    var activeTab = tabpanel.getActiveTab();
-
-    if (activeTab) {
-        // check for opened document
-        if (activeTab.initialConfig.document) {
-            if (typeof activeTab.initialConfig.document.unmaskFrames == "function") {
-                activeTab.initialConfig.document.unmaskFrames();
-            }
-        }
-        // check for opened object
-        if (activeTab.initialConfig.object) {
-            if (typeof activeTab.initialConfig.object.unmaskFrames == "function") {
-                activeTab.initialConfig.object.unmaskFrames();
-            }
-        }
-    }
-
-};
-
 pimcore.helpers.isValidFilename = function (value) {
     var result = value.match(/[a-zA-Z0-9_.\-~]+/);
     if (result == value) {

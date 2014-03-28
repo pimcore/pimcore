@@ -18,8 +18,6 @@ pimcore.object.edit = Class.create({
     initialize: function(object) {
         this.object = object;
         this.dataFields = {};
-
-        this.fieldsToMask = [];
     },
 
     getLayout: function (conf) {
@@ -66,39 +64,6 @@ pimcore.object.edit = Class.create({
             }
         } else {
             this.dataFields[name] = field;
-        }
-    },
-
-    addFieldsToMask: function (field) {
-        this.fieldsToMask.push(field);
-    },
-
-    unmaskFrames: function () {
-
-        // unmask wysiwyg editors
-        for (var i = 0; i < this.fieldsToMask.length; i++) {
-            this.fieldsToMask[i].unmask();
-        }
-    },
-
-    maskFrames: function () {
-        // this is for dnd over iframes, with this method it's not nessercery to register the dnd manager in each
-        // iframe (wysiwyg)
-
-        // mask wysiwyg editors
-        for (var i = 0; i < this.fieldsToMask.length; i++) {
-            this.fieldsToMask[i].mask();
-        }
-    },
-
-    disableFieldMasks: function () {
-        this.fieldsToMaskBackup = this.fieldsToMask;
-        this.fieldsToMask = [];
-    },
-
-    enableFieldMasks: function () {
-        if(this.fieldsToMaskBackup) {
-            this.fieldsToMask = this.fieldsToMaskBackup;
         }
     },
 
