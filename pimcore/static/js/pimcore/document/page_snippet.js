@@ -290,7 +290,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
             // check for newer version than the published
             if (this.data.versions.length > 0) {
-                if (this.data.modificationDate != this.data.versions[0].date) {
+                if (this.data.modificationDate < this.data.versions[0].date) {
                     this.newerVersionNotification.show();
                 }
             }
