@@ -58,6 +58,11 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
     public $phpdocType = "string";
 
     /**
+     * @var string
+     */
+    public $toolbarConfig = "";
+
+    /**
      * @return integer
      */
     public function getWidth() {
@@ -89,6 +94,25 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
         return $this;
     }
 
+    /**
+     * @param string $toolbarConfig
+     */
+    public function setToolbarConfig($toolbarConfig)
+    {
+        if(is_string($toolbarConfig)) {
+            $this->toolbarConfig = $toolbarConfig;
+        } else {
+            $this->toolbarConfig = "";
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getToolbarConfig()
+    {
+        return $this->toolbarConfig;
+    }
 
     /**
      * @see Object_Class_Data::getDataForResource

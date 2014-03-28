@@ -86,8 +86,10 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         this.getLayout();
         this.component.on("afterrender", this.initCkEditor.bind(this));
         this.component.on("beforedestroy", function() {
-            this.ckeditor.destroy();
-            this.ckeditor = null;
+            if(this.ckeditor) {
+                this.ckeditor.destroy();
+                this.ckeditor = null;
+            }
         }.bind(this));
         return this.component;
     },
@@ -130,6 +132,10 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             { name: 'tools', groups: ['colors', "tools", 'cleanup', 'mode', "others"] }
         ];
 
+        if(this.fieldConfig.toolbarConfig) {
+            eConfig.toolbarGroups = Ext.decode("[" + this.fieldConfig.toolbarConfig + "]")
+        }
+
         eConfig.allowedContent = true; // disables CKEditor ACF (will remove pimcore_* attributes from links, etc.)
 
         if (intval(this.fieldConfig.width) > 1) {
@@ -141,7 +147,6 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
         try {
             this.ckeditor = CKEDITOR.inline(this.editableDivId, eConfig);
-            this.ckeditor.pimcore_tag_instance = this;
 
             // disable URL field in image dialog
             this.ckeditor.on("dialogShow", function (e) {
