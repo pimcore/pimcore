@@ -95,7 +95,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             }
 
             eConfig.language = pimcore.settings["language"];
-            eConfig.removePlugins = 'bgcolor,autogrow,' + removePluginsAdd;
+            eConfig.removePlugins = 'bgcolor,' + removePluginsAdd;
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;

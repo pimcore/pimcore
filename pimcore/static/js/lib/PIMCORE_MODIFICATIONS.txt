@@ -6,7 +6,6 @@
 
 Add plugins:
 + plugin sourcedialog
-+ plugin autogrow
 + plugin tableresize
 
 Remove plugins:
