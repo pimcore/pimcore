@@ -130,32 +130,6 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
         $this->renderScript("/admin-button/feature-bug.php");
     }
 
-    public function promoteAction () {
-        if($this->getParam("submit")) {
-
-            $conf = Pimcore_Config::getSystemConfig();
-            $email = $conf->general->contactemail;
-            $this->view->contactEmail = $email;
-
-            $urlParts = parse_url($this->getParam("url"));
-            $subject = "Promotion Enquiry for ";
-            $subject .=  $urlParts["host"];
-
-            $mail = Pimcore_Tool::getMail($email, $subject, "UTF-8");
-            $mail->setIgnoreDebugMode(true);
-
-            $bodyText = "Host: " . $urlParts["host"] . "\n\n";
-            $bodyText .= "URL: " . $this->getParam("url") . "\n\n";
-            $bodyText .= "Ad-Type: " . $this->getParam("type") . "\n";
-            $bodyText .= "Budget: " . $this->getParam("budget") . "\n";
-            $bodyText .= "Duration: " . $this->getParam("duration") . "\n\n";
-            $bodyText .= "Notes: \n" . $this->getParam("notes") . "\n";
-
-            $mail->setBodyText($bodyText);
-            $mail->send();
-        }
-    }
-
     public function personaAction() {
 
         $list = new Tool_Targeting_Persona_List();

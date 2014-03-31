@@ -40,12 +40,6 @@ class Pimcore_Controller_Plugin_AdminButton extends Zend_Controller_Plugin_Abstr
                         $documentId = $document->getId();
                     }
 
-                    $config = Pimcore_Config::getSystemConfig();
-                    $contactEnabled = false;
-                    if($config->general->contactemail) {
-                        $contactEnabled = true;
-                    }
-
                     if(!$documentId) {
                         $documentId = "null";
                     }
@@ -60,7 +54,7 @@ class Pimcore_Controller_Plugin_AdminButton extends Zend_Controller_Plugin_Abstr
                     $code .= '<script type="text/javascript">
                         try {
                             var pimcore = pimcore || {};
-                            pimcore["admin"] = {documentId: ' . $documentId . ', contactEnabled: ' . Zend_Json::encode($contactEnabled) .'};
+                            pimcore["admin"] = {documentId: ' . $documentId . '};
                             pimcore["personas"] = ' . Zend_Json::encode($personas) .';
                         } catch (e) {}
                     </script>';

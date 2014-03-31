@@ -39,7 +39,10 @@
                 <input type="hidden" name="markers" />
                 <input type="hidden" name="screenshot" value="<?php echo $this->image; ?>" />
 
-                <input type="submit" name="submit" value="<?php echo $this->translate("submit"); ?>" />
+                <?php if($this->contactEmail) { ?>
+                    <input type="submit" name="email" value="<?php echo $this->translate("send_email_to_project_manager"); ?>" />
+                <?php } ?>
+                <input type="submit" name="pdf" value="<?= $this->translate("download_as_pdf"); ?>" />
             </form>
 
             <script type="text/javascript" src="/pimcore/static/js/lib/jquery.min.js"></script>

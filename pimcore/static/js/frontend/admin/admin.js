@@ -101,31 +101,21 @@
                     menu.appendChild(editButton);
                 }
 
-                if(pimcore["admin"]["contactEnabled"]) {
-                    var featureButton = document.createElement("li");
-                    featureButton.className = "button feature";
-                    featureButton.innerHTML = 'Feature Request';
-                    featureButton.onclick = function () {
-                        openWindow(800,500, "/admin/admin-button/feature-request?url=" + encodeURIComponent(window.location.href));
-                    };
-                    menu.appendChild(featureButton);
+                var featureButton = document.createElement("li");
+                featureButton.className = "button feature";
+                featureButton.innerHTML = 'Feature Request';
+                featureButton.onclick = function () {
+                    openWindow(800,500, "/admin/admin-button/feature-request?url=" + encodeURIComponent(window.location.href));
+                };
+                menu.appendChild(featureButton);
 
-                    var bugButton = document.createElement("li");
-                    bugButton.className = "button bug";
-                    bugButton.innerHTML = 'Bug Report';
-                    bugButton.onclick = function () {
-                        openWindow(800,500, "/admin/admin-button/bug-report?url=" + encodeURIComponent(window.location.href));
-                    };
-                    menu.appendChild(bugButton);
-
-                    var promoteButton = document.createElement("li");
-                    promoteButton.className = "button promote";
-                    promoteButton.innerHTML = 'Promote';
-                    promoteButton.onclick = function () {
-                        openWindow(800,500, "/admin/admin-button/promote?url=" + encodeURIComponent(window.location.href));
-                    };
-                    menu.appendChild(promoteButton);
-                }
+                var bugButton = document.createElement("li");
+                bugButton.className = "button bug";
+                bugButton.innerHTML = 'Bug Report';
+                bugButton.onclick = function () {
+                    openWindow(800,500, "/admin/admin-button/bug-report?url=" + encodeURIComponent(window.location.href));
+                };
+                menu.appendChild(bugButton);
 
                 if(window.pimcore && window.pimcore["personas"]) {
                     var personaButton = document.createElement("li");
