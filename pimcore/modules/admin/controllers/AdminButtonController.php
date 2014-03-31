@@ -59,8 +59,9 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
             $bodyText = "URL: " . $this->getParam("url") . "\n\n";
             $bodyText .= "Description: \n\n" . $this->getParam("description");
 
-            $markers = Zend_Json::decode($this->getParam("markers"));
             $image = null;
+            if(Pimcore_Image_HtmlToImage::isSupported()) {
+                $markers = Zend_Json::decode($this->getParam("markers"));
 
                 $screenFile = PIMCORE_DOCUMENT_ROOT . $this->getParam("screenshot");
 
@@ -103,6 +104,7 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
 
                 $image = file_get_contents($screenFile);
                 unlink($screenFile);
+            }
 
             if($image) {
                 $bodyText .= "\n\n\nsee attached file: screen.jpg";
