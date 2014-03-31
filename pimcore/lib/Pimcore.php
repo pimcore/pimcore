@@ -72,7 +72,7 @@ class Pimcore {
             }
         }
 
-        if(self::inDebugMode() && $frontend) {
+        if(self::inDebugMode() && $frontend && !defined("HHVM_VERSION")) {
             $whoops = new \Whoops\Run;
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
             $jsonErrorHandler = new \Whoops\Handler\JsonResponseHandler;

@@ -1,0 +1,26 @@
+
+
+# Zend Framework
+
+- strip all require once
+http://framework.zend.com/manual/1.10/en/performance.classloading.html#performance.classloading.striprequires.sed
+
+after stripping open the class/method:
+
+Zend_Loader_ClassMapAutoloader::autoload()
+and remove the comment in front of the require_once()
+
+
+- Zend_Stdlib_SplPriorityQueue::__construct()
+replace with:
+
+public function __construct()
+{
+    $this->isPhp53 = version_compare(PHP_VERSION, '5.3', '>=');
+    if(defined("HHVM_VERSION")) {
+        parent::__construct();
+    }
+}
+
+
+

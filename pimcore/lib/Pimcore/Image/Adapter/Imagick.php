@@ -48,32 +48,35 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         }
 
         try {
-            $this->resource = new Imagick();
+            $i = new Imagick();
             $this->imagePath = $imagePath;
 
-            $this->resource->setBackgroundColor(new ImagickPixel('transparent')); //set .png transparent (print)
-            $this->resource->setcolorspace(Imagick::COLORSPACE_SRGB);
+            $i->setBackgroundColor(new ImagickPixel('transparent')); //set .png transparent (print)
+            $i->setcolorspace(Imagick::COLORSPACE_SRGB);
 
             if($this->isVectorGraphic($imagePath)) {
                 // set the resolution to 2000x2000 for known vector formats
                 // otherwise this will cause problems with eg. cropPercent in the image editable (select specific area)
                 // maybe there's a better solution but for now this fixes the problem
-                $this->resource->setResolution(2000, 2000);
+                $i->setResolution(2000, 2000);
             }
 
-            if(!$this->resource->readImage($imagePath."[0]") || !filesize($imagePath)) {
+            if(!$i->readImage($imagePath) || !filesize($imagePath)) {
                 return false;
             }
+
+            $this->resource = $i; // this is because of HHVM which has problems with $this->resource->readImage();
 
             $this->setColorspaceToRGB();
 
         } catch (Exception $e) {
+            Logger::error("Unable to load image: " . $imagePath);
             Logger::error($e);
             return false;
         }
 
         // set dimensions
-        $this->setWidth($this->resource->getImageWidth());
+        $this->setWidth($i->getImageWidth());
         $this->setHeight($this->resource->getImageHeight());
 
         $this->setModified(false);
@@ -94,30 +97,36 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $format = "png";
         }
 
+        $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
+
         $originalFilename = null;
         if(!$this->reinitializing) {
             if($this->getUseContentOptimizedFormat()) {
                 $format = "jpeg";
-                if($this->resource->getImageAlphaChannel()) {
+                if($i->getImageAlphaChannel()) {
                     $format = "png";
                 }
             }
         }
 
-        $this->resource->stripimage();
-        $this->resource->profileImage('*', null);
-        $this->resource->setImageFormat($format);
+        $i->stripimage();
+        $i->profileImage('*', null);
+        $i->setImageFormat($format);
 
         if($quality) {
-            $this->resource->setCompressionQuality((int) $quality);
-            $this->resource->setImageCompressionQuality((int) $quality);
+            $i->setCompressionQuality((int) $quality);
+            $i->setImageCompressionQuality((int) $quality);
         }
 
         if($format == "tiff") {
-            $this->resource->setCompression(Imagick::COMPRESSION_LZW);
+            $i->setCompression(Imagick::COMPRESSION_LZW);
         }
 
-        $this->resource->writeImage($format . ":" . $path);
+        if(defined("HHVM_VERSION")) {
+            $i->writeImage($path);
+        } else {
+            $i->writeImage($format . ":" . $path);
+        }
 
         return $this;
     }
