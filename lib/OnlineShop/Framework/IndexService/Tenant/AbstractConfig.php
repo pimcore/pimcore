@@ -44,7 +44,7 @@ abstract class OnlineShop_Framework_IndexService_Tenant_AbstractConfig {
 
     /**
      * returns table name of product index
-     *
+     *h
      * @return string
      */
     public abstract function getTablename();

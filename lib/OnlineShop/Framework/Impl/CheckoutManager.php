@@ -231,7 +231,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
                     _gaq.push(['_addItem',
                         '" . $order->getOrdernumber() . "', // order ID - required
                         '" . $item->getProductNumber() . "', // SKU/code - required
-                        '" . $item->getProductName() . "', // product name
+                        '" . str_replace(array("\n"), array(" "), $item->getProductName()) . "', // product name
                         '" . $category . "',   // category or variation
                         '" . $item->getTotalPrice() / $item->getAmount() . "', // unit price - required
                         '" . $item->getAmount() . "'      // quantity - required
@@ -288,7 +288,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
                 $code .= "
                     ga('ecommerce:addItem', {
                       'id': '" . $order->getOrdernumber() . "',                      // Transaction ID. Required.
-                      'name': '" . $item->getProductName() . "',                      // Product name. Required.
+                      'name': '" . str_replace(array("\n"), array(" "), $item->getProductName()) . "',                      // Product name. Required.
                       'sku': '" . $item->getProductNumber() . "',                     // SKU/code.
                       'category': '" . $category . "',                                // Category or variation.
                       'price': '" . $item->getTotalPrice() / $item->getAmount() . "', // Unit price.
