@@ -20,7 +20,9 @@
 
         </h1>
 
-        <?php if(!$this->getParam("submit")) { ?>
+        <?php if(!$this->contactEmail) { ?>
+            <b style="color: red;">Please enter a contact address in: <i>Settings -> System -> General -> Contact E-Mail</i> to use this feature.</b>
+        <?php } else if(!$this->getParam("submit")) { ?>
             <form action="" method="post">
                 <label><?php echo $this->translate("description"); ?></label>
                 <textarea name="description"></textarea>
@@ -39,10 +41,7 @@
                 <input type="hidden" name="markers" />
                 <input type="hidden" name="screenshot" value="<?php echo $this->image; ?>" />
 
-                <?php if($this->contactEmail) { ?>
-                    <input type="submit" name="email" value="<?php echo $this->translate("send_email_to_project_manager"); ?>" />
-                <?php } ?>
-                <input type="submit" name="pdf" value="<?= $this->translate("download_as_pdf"); ?>" />
+                <input type="submit" name="submit" value="<?php echo $this->translate("submit"); ?>" />
             </form>
 
             <script type="text/javascript" src="/pimcore/static/js/lib/jquery.min.js"></script>
