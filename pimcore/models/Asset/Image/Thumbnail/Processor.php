@@ -188,10 +188,6 @@ class Asset_Image_Thumbnail_Processor {
                         }
                     }
 
-                    if(!is_array($arguments)) {
-                        $arguments = array();
-                    }
-
                     ksort($arguments);
                     if(count($mapping) == count($arguments)) {
                         call_user_func_array(array($image,$transformation["method"]),$arguments);
