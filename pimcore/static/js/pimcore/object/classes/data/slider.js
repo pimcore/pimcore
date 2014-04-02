@@ -74,26 +74,30 @@ pimcore.object.classes.data.slider = Class.create(pimcore.object.classes.data.da
                 xtype: "spinnerfield",
                 fieldLabel: t("min_value"),
                 name: "minValue",
-                value: this.datax.minValue
+                value: this.datax.minValue,
+                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "spinnerfield",
                 fieldLabel: t("max_value"),
                 name: "maxValue",
-                value: this.datax.maxValue
+                value: this.datax.maxValue,
+                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "spinnerfield",
                 fieldLabel: t("increment"),
                 name: "increment",
-                value: this.datax.increment
+                value: this.datax.increment,
+                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "spinnerfield",
                 fieldLabel: t("decimalPrecision"),
                 name: "decimalPrecision",
                 decimalPrecision: 0,
-                value: this.datax.decimalPrecision
+                value: this.datax.decimalPrecision,
+                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "checkbox",

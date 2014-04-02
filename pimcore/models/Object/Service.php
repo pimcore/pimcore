@@ -203,6 +203,14 @@ class Object_Service extends Element_Service {
             $data["idPath"] = Element_Service::getIdPath($object);
             $data['inheritedFields'] = array();
 
+            $user = Pimcore_Tool_Admin::getCurrentUser();
+
+//TODO keep this for later!
+//            if (!$user->isAdmin()) {
+//                $permissionSet = $object->getPermissions(null, $user);
+//                $fieldPermissions = self::getFieldPermissions($object, $permissionSet);
+//            }
+
             if(empty($fields)) {
                 $fields = array_keys($object->getclass()->getFieldDefinitions());
             }
@@ -225,7 +233,6 @@ class Object_Service extends Element_Service {
                             $keyValuePairs = $object->$getter();
                             if ($keyValuePairs) {
                                 // get with inheritance
-
                                 $props = $keyValuePairs->getProperties();
 
                                 foreach ($props as $pair) {
@@ -323,44 +330,31 @@ class Object_Service extends Element_Service {
                             } else {
                                 $data[$dataKey] = $valueObject->value;
                             }
-
                         }
                     }
 
-
                     if ($needLocalizedPermissions) {
-//                        if (!$localizedPermissionsResolved) {
-//                            $localizedPermissionsResolved = true;
+                        if (!$user->isAdmin()) {
+                            /** @var  $locale Zend_Locale */
+                            $locale = (string) Zend_Registry::get("Zend_Locale");
 
+                            $permissionTypes = array("View", "Edit");
+                            foreach ($permissionTypes as $permissionType) {
+                                //TODO, this needs refactoring! Ideally, call it only once!
+                                $languagesAllowed = self::getLanguagePermissions($object, $user, "l" . $permissionType);
 
-                            $user = Pimcore_Tool_Admin::getCurrentUser();
+                                if ($languagesAllowed) {
+                                    $languagesAllowed = array_keys($languagesAllowed);
 
-                            if (!$user->isAdmin()) {
-                                /** @var  $locale Zend_Locale */
-                                $locale = Zend_Registry::get("Zend_Locale");
-                                $locale = $locale->getLanguage();
-
-                                $permissionTypes = array("View", "Edit");
-                                foreach ($permissionTypes as $permissionType) {
-                                    $languagesAllowed = self::getLanguagePermissions($object, $user, "l" . $permissionType);
-
-
-                                    if ($languagesAllowed) {
-                                        $languagesAllowed = array_keys($languagesAllowed);
-
-                                        if (!in_array($locale, $languagesAllowed)) {
-                                            $data["metadata"]["permission"][$key]["no" . $permissionType] = 1;
-                                            if ($permissionType == "View") {
-                                                $data[$key] = null;
-                                            }
+                                    if (!in_array($locale, $languagesAllowed)) {
+                                        $data["metadata"]["permission"][$key]["no" . $permissionType] = 1;
+                                        if ($permissionType == "View") {
+                                            $data[$key] = null;
                                         }
-                                    } else {
-
                                     }
                                 }
                             }
-//                        }
-
+                        }
                     }
                 }
 
@@ -372,28 +366,63 @@ class Object_Service extends Element_Service {
     public static function getLanguagePermissions($object, $user, $type) {
         $languageAllowed = null;
 
-        $permission = $object->getLocalizedPermissions($type, $user);
+        $permission = $object->getPermissions($type, $user);
+
         if (!is_null($permission)) {
             // backwards compatibility. If all entries are null, then the workspace rule was set up with
             // an older pimcore
 
-
-                $permission = $permission[$type];
-                if ($permission) {
-                    $permission = explode(",", $permission);
-                    if (is_null($languageAllowed)) {
-                        $languageAllowed = array();
-                    }
-
-                    foreach($permission as $language) {
-                        $languageAllowed[$language] = 1;
-                    }
+            $permission = $permission[$type];
+            if ($permission) {
+                $permission = explode(",", $permission);
+                if (is_null($languageAllowed)) {
+                    $languageAllowed = array();
                 }
 
+                foreach($permission as $language) {
+                    $languageAllowed[$language] = 1;
+                }
+            }
         }
-        return $languageAllowed;
 
+        return $languageAllowed;
     }
+
+
+    public static function getLayoutPermissions($object, $permissionSet) {
+        $layoutPermissions = null;
+        $classId = $object->getClassId();
+
+        if (!is_null($permissionSet)) {
+            // backwards compatibility. If all entries are null, then the workspace rule was set up with
+            // an older pimcore
+
+              $permission = $permissionSet["layouts"];
+              if ($permission) {
+                    $permission = explode(",", $permission);
+                    if (is_null($layoutPermissions)) {
+                        $layoutPermissions = array();
+                    }
+
+                    foreach($permission as $p) {
+                        $setting = explode("_", $p);
+                        $c = $setting[0];
+
+                        if ($c == $classId) {
+                            $l = $setting[1];
+
+                            if (is_null($layoutPermissions)) {
+                                $layoutPermissions = array();
+                            }
+                            $layoutPermissions[$l] = $l;
+                        }
+                    }
+                }
+        }
+
+        return $layoutPermissions;
+    }
+
 
 
     public static function getFieldForBrickType(Object_Class $class, $bricktype) {
@@ -690,5 +719,188 @@ class Object_Service extends Element_Service {
         $object->setProperties($properties);
 
         return $object;
+    }
+
+    public static function getValidLayouts(Object_Concrete $object) {
+        $user = Pimcore_Tool_Admin::getCurrentUser();
+
+        $resultList = array();
+        $isMasterAllowed = $user->getAdmin();
+
+        $permissionSet = $object->getPermissions("layouts", $user);
+        $layoutPermissions = self::getLayoutPermissions($object, $permissionSet);
+        if (!$layoutPermissions || isset($layoutPermissions[0])) {
+            $isMasterAllowed = true;
+        }
+
+        if ($user->getAdmin()) {
+            $superLayout = new Object_Class_CustomLayout();
+            $superLayout->setId(-1);
+            $superLayout->setName("Super");
+            $resultList[-1] = $superLayout;
+        }
+
+        if ($isMasterAllowed) {
+            $master = new Object_Class_CustomLayout();
+            $master->setId(0);
+            $master->setName("Master");
+            $resultList[0] = $master;
+        }
+
+        $classId = $object->getClassId();
+        $list = new Object_Class_CustomLayout_List();
+        $list->setOrderKey("name");
+        $condition = "classId = " . $list->quote($classId);
+        if (count($layoutPermissions) && !$isMasterAllowed) {
+            $layoutIds = array_values($layoutPermissions);
+            $condition .= " AND id IN (" . implode(",", $layoutIds) . ")";
+        }
+        $list->setCondition($condition);
+        $list = $list->load();
+
+        if ((!count($resultList) && !count($list)) || (count($resultList) == 1 && !count($list)))  {
+            return array();
+        }
+
+        foreach ($list as $customLayout) {
+            $resultList[$customLayout->getId()] = $customLayout;
+        }
+
+//        $list = array_merge($adminLayouts, $list);
+
+        return $resultList;
+    }
+
+    public static function getFieldPermissions(Object_Concrete $object, $permissionSet) {
+        $result = array();
+
+        $layoutPermissions = self::getLayoutPermissions($object, $permissionSet);
+        if ($layoutPermissions) {
+            Logger::error($layoutPermissions);
+            // check if the master layout is included
+            foreach($layoutPermissions as $customLayoutId) {
+                if ($customLayoutId == 0) {
+                    return null;
+                }
+            }
+
+            foreach($layoutPermissions as $customLayoutId) {
+                $customLayout = Object_Class_CustomLayout::getById($customLayoutId);
+                if (!$customLayout) {
+                    continue;
+                }
+
+                $layoutDefinition = $customLayout->getLayoutDefinitions();
+                $dummyClass = new Object_Class();
+                $dummyClass->setLayoutDefinitions($layoutDefinition);
+                $fieldDefinitions = $dummyClass->getFieldDefinitions();
+                if ($fieldDefinitions["localizedfields"]) {
+                    // there are localized fields, extract the field info
+                    $targetList = self::extractLocalizedFieldDefinitions($layoutDefinition, array(), false);
+                }
+                $fieldDefinitions = array_merge($fieldDefinitions, $targetList);
+                foreach($fieldDefinitions as $fd) {
+                    $visible = !$fd->getInvisible();
+                    $editable = !$fd->getNotEditable();
+                    $result[$fd->getName()]["visible"] |= $visible;
+                    $result[$fd->getName()]["editable"] |= $editable;
+                }
+                Logger::debug("hu");
+
+            }
+        }
+        return $result;
+    }
+
+    public static function extractLocalizedFieldDefinitions($layout, $targetList, $insideLocalizedField) {
+        if ($insideLocalizedField && $layout instanceof Object_Class_Data and !$layout instanceof Object_Class_Data_Localizedfields) {
+            $targetList[$layout->getName()] = $layout;
+        }
+
+        if (method_exists($layout, "getChilds")) {
+            $children = $layout->getChilds();
+            $insideLocalizedField |= ($layout instanceof Object_Class_Data_Localizedfields);
+            if (is_array($children)) {
+                foreach ($children as $child) {
+                    $targetList = self::extractLocalizedFieldDefinitions($child, $targetList, $insideLocalizedField);
+                }
+            }
+        }
+        return $targetList;
+    }
+
+
+
+    public static function getSuperLayout(Object_Concrete $object) {
+        $masterLayout = $object->getClass()->getLayoutDefinitions();
+        $superLayout = unserialize(serialize($masterLayout));
+
+        self::createSuperLayout($superLayout);
+        return $superLayout;
+
+    }
+
+
+
+    public static function createSuperLayout(&$layout) {
+        if ($layout instanceof Object_Class_Data) {
+            $layout->setInvisible(false);
+            $layout->setNoteditable(false);
+        }
+
+        if (method_exists($layout, "getChilds")) {
+            $children = $layout->getChilds();
+            if (is_array($children)) {
+                foreach ($children as $child) {
+                    self::createSuperLayout($child);
+                }
+            }
+        }
+    }
+
+
+    public static function synchronizeCustomLayoutFieldWithMaster($masterDefinition, &$layout) {
+
+        if ($layout instanceof Object_Class_Data) {
+            $fieldname = $layout->name;
+            if (!$masterDefinition[$fieldname]) {
+                return false;
+            } else {
+                if ($layout->getFieldtype() != $masterDefinition[$fieldname]->getFieldType()) {
+                    $layout->adoptMasterDefinition($masterDefinition[$fieldname]);
+                } else {
+                    $layout->synchronizeWithMasterDefinition($masterDefinition[$fieldname]);
+                }
+            }
+        }
+
+        if (method_exists($layout, "getChilds")) {
+            $children = $layout->getChilds();
+            if (is_array($children)) {
+                $count = count($children);
+                for ($i = $count  -1; $i >= 0; $i--) {
+                    $child = $children[$i];
+                    if (!self::synchronizeCustomLayoutFieldWithMaster($masterDefinition, $child)) {
+                        unset($children[$i]);
+                    }
+                    $layout->setChilds($children);
+                }
+            }
+        }
+        return true;
+    }
+
+    public static function synchronizeCustomLayout(Object_Class_CustomLayout $customLayout) {
+        $classId = $customLayout->getClassId();
+        $class = Object_Class::getById($classId);
+        if ($class->getModificationDate() > $customLayout->getModificationDate()) {
+            $masterDefinition = $class->getFieldDefinitions();
+            $customLayoutDefinition = $customLayout->getLayoutDefinitions();
+            $targetList = self::extractLocalizedFieldDefinitions($class->getLayoutDefinitions(), array(), false);
+            $masterDefinition = array_merge($masterDefinition, $targetList);
+
+            self::synchronizeCustomLayoutFieldWithMaster($masterDefinition, $customLayoutDefinition);
+            $customLayout->save();
+        }
     }
 }

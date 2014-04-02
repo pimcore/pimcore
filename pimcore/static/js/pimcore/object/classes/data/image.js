@@ -64,6 +64,7 @@ pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.dat
                 name: "uploadPath",
                 cls: "input_drop_target",
                 value: this.datax.uploadPath,
+                disabled: this.isInCustomLayoutEditor(),
                 width: 250,
                 xtype: "textfield",
                 listeners: {

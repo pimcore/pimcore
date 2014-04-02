@@ -80,7 +80,9 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
                     ),
                 );
             }
-        } else {
+        }
+        else
+        {
             // group classes
             $cnf['matchCount'] = 3;     // min chars to group
 
@@ -90,7 +92,8 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
              *
              * @return int
              */
-            $getEqual = function($str1, $str2) {
+            $getEqual
+                = function($str1, $str2) {
                 $count = 0;
                 for($c = 0; $c < strlen($str1); $c++)
                 {
@@ -152,48 +155,48 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
             $classItems = array();
             foreach ($classGroups as $name => $classes) {
                 if(isset($classes[0]) && $classes[0] instanceof Object_Class) {
-                    // basic setup
-                    $class = array(
-                        "id" => $classes[0]->getId(),
-                        "text" => $name,
-                        "leaf" => true,
-                        "children" => array()
-                    );
+                // basic setup
+                $class = array(
+                    "id" => $classes[0]->getId(),
+                    "text" => $name,
+                    "leaf" => true,
+                    "children" => array()
+                );
 
-                    // add childs?
-                    if(count($classes) === 1)
+                // add childs?
+                if(count($classes) === 1)
+                {
+                    // no group
+                    $class['id'] = $classes[0]->getId();
+                    $class['text'] = $classes[0]->getName();
+                    $class['icon'] = $classes[0]->getIcon() ? $classes[0]->getIcon() : '/pimcore/static/img/icon/database_gear.png';
+                    $class['propertyVisibility'] = $classes[0]->getPropertyVisibility();
+                    $class['qtipCfg']['title'] = "ID: " . $classes[0]->getId();
+                }
+                else
+                {
+                    // group classes
+                    $class['id'] = "folder_" . $class['id'];
+                    $class['leaf'] = false;
+                    $class['expandable'] = true;
+                    $class['allowChildren'] = true;
+                    $class['iconCls'] = 'pimcore_icon_folder';
+                    foreach($classes as $classItem)
                     {
-                        // no group
-                        $class['id'] = $classes[0]->getId();
-                        $class['text'] = $classes[0]->getName();
-                        $class['icon'] = $classes[0]->getIcon() ? $classes[0]->getIcon() : '/pimcore/static/img/icon/database_gear.png';
-                        $class['propertyVisibility'] = $classes[0]->getPropertyVisibility();
-                        $class['qtipCfg']['title'] = "ID: " . $classes[0]->getId();
-                    }
-                    else
-                    {
-                        // group classes
-                        $class['id'] = "folder_" . $class['id'];
-                        $class['leaf'] = false;
-                        $class['expandable'] = true;
-                        $class['allowChildren'] = true;
-                        $class['iconCls'] = 'pimcore_icon_folder';
-                        foreach($classes as $classItem)
-                        {
-                            $child = array(
-                                "id" => $classItem->getId(),
-                                "text" => $classItem->getName(),
-                                "leaf" => true,
-                                "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static/img/icon/database_gear.png',
-                                "propertyVisibility" => $classItem->getPropertyVisibility(),
-                                "qtipCfg" => array(
-                                    "title" => "ID: " . $classItem->getId()
-                                ),
-                            );
+                        $child = array(
+                            "id" => $classItem->getId(),
+                            "text" => $classItem->getName(),
+                            "leaf" => true,
+                            "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static/img/icon/database_gear.png',
+                            "propertyVisibility" => $classItem->getPropertyVisibility(),
+                            "qtipCfg" => array(
+                                "title" => "ID: " . $classItem->getId()
+                            ),
+                        );
 
-                            $class['children'][] = $child;
-                        }
+                        $class['children'][] = $child;
                     }
+                  }
                 }
 
                 // add
@@ -213,6 +216,12 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json($class);
     }
 
+    public function getCustomLayoutAction() {
+        $customLayout = Object_Class_CustomLayout::getById(intval($this->getParam("id")));
+
+        $this->_helper->json($customLayout);
+    }
+
     public function addAction() {
         $class = Object_Class::create(array('name' => $this->correctClassname($this->getParam("name")),
                                             'userOwner' => $this->user->getId())
@@ -223,11 +232,53 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => true, "id" => $class->getId()));
     }
 
+    public function addCustomLayoutAction() {
+        $customLayout = Object_Class_CustomLayout::create(array('name' => $this->correctClassname($this->getParam("name")),
+                'userOwner' => $this->user->getId(),
+                "classId" => $this->getParam("classId"))
+        );
+
+        $customLayout->save();
+
+        $this->_helper->json(array("success" => true, "id" => $customLayout->getId()));
+    }
+
+
+
     public function deleteAction() {
         $class = Object_Class::getById(intval($this->getParam("id")));
         $class->delete();
 
         $this->removeViewRenderer();
+    }
+
+    public function deleteCustomLayoutAction() {
+        $customLayout = Object_Class_CustomLayout::getById(intval($this->getParam("id")));
+        if ($customLayout) {
+            $customLayout->delete();
+        }
+
+        $this->_helper->json(array("success" => true));
+    }
+
+    public function saveCustomLayoutAction() {
+        $customLayout = Object_Class_CustomLayout::getById($this->getParam("id"));
+        $class = Object_Class::getById($customLayout->getClassId());
+
+        $configuration = Zend_Json::decode($this->getParam("configuration"));
+        $values = Zend_Json::decode($this->getParam("values"));
+
+        $configuration["datatype"] = "layout";
+        $configuration["fieldtype"] = "panel";
+        $configuration["name"] = "pimcore_root";
+
+        $layout = Object_Class_Service::generateLayoutTreeFromArray($configuration);
+        $customLayout->setLayoutDefinitions($layout);
+        $customLayout->setName($values["name"]);
+        $customLayout->setDescription($values["description"]);
+        $customLayout->save();
+
+        $this->_helper->json(array("success" => true));
     }
 
     public function saveAction() {
@@ -322,6 +373,62 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $this->getResponse()->setHeader("Content-Type", "text/html");
     }
 
+    public function getCustomLayoutDefinitionsAction() {
+        $classId = $this->getParam("classId");
+        $list = new Object_Class_CustomLayout_List();
+
+        $list->setCondition("classId = " . $list->quote($classId));
+        $list = $list->load();
+        $result = array();
+        foreach ($list as $item) {
+            $result[] = array(
+                "id" => $item->getId(),
+                "name" => $item->getName()
+            );
+        }
+
+        $this->_helper->json(array("success" => true, "data" => $result));
+    }
+
+    public function getAllLayoutsAction() {
+        // get all classes
+        $resultList = array();
+        $mapping = array();
+
+        $customLayouts = new Object_Class_CustomLayout_List();
+        $customLayouts->setOrder("ASC");
+        $customLayouts->setOrderKey("name");
+        $customLayouts = $customLayouts->load();
+        foreach ($customLayouts as $layout) {
+            $mapping[$layout->getClassId()][] = $layout;
+        }
+
+        $classList = new Object_Class_List();
+        $classList->setOrder("ASC");
+        $classList->setOrderKey("name");
+        $classList = $classList->load();
+
+        foreach ($classList as $class) {
+            $resultList[] = array(
+                "type" => "master",
+                "id" => $class->getId() . "_" . 0,
+                "name" => $class->getName()
+            );
+
+            $classMapping = $mapping[$class->getId()];
+            if ($classMapping) {
+                foreach($classMapping as $layout) {
+                    $resultList[] = array(
+                        "type" => "custom",
+                        "id" => $class->getId() . "_" . $layout->getId(),
+                        "name" => $class->getName() . " - " . $layout->getName()
+                    );
+                }
+            }
+        }
+
+        $this->_helper->json(array("data" => $resultList));
+    }
 
     public function exportClassAction() {
 

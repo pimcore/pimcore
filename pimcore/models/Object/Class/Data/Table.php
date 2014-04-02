@@ -352,4 +352,13 @@ class Object_Class_Data_Table extends Object_Class_Data {
         return $value;
     }
 
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->cols = $masterDefinition->cols;
+        $this->rows = $masterDefinition->rows;
+        $this->data = $masterDefinition->data;
+    }
+
 }

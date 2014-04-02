@@ -12,34 +12,40 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.settings.user.workspace.language");
+pimcore.registerNS("pimcore.settings.user.workspace.customlayouts");
 
-pimcore.settings.user.workspace.language = Class.create({
+pimcore.settings.user.workspace.customlayouts = Class.create({
 
-    initialize: function (type, data) {
+    initialize: function (type, data, allLayouts) {
         this.type = type;
         this.data = data;
+        this.allLayouts = allLayouts;
+
     },
 
     getLayout: function() {
-        var data = [];
-        var nrOfLanguages = pimcore.settings.websiteLanguages.length;
-        for (var i = 0; i < nrOfLanguages; i++) {
-            var language = pimcore.settings.websiteLanguages[i];
-            data.push([language, pimcore.available_languages[language]]);
+        var store = [];
+        var i;
+        for (i = 0; i < this.allLayouts.length; i++) {
+            var name = this.allLayouts[i].name;
+            if (this.allLayouts[i].type == "master") {
+                name = "<b>" + name + "</b>";
+            } else {
+                name = "&nbsp;&nbsp;&nbsp;" + name;
+            }
+            store.push([this.allLayouts[i].id, name]);
         }
 
-
         var options = {
-            name: "languages",
             triggerAction: "all",
             editable: false,
-            store: data,
+            store: store,
+            valueField: "id",
+            displayField: "name",
             hideLabel: true,
-            width: 350,
-            height: 480,
+            width: 330,
+            height: 470,
             value: this.data
-
         };
 
         this.box = new Ext.ux.form.MultiSelect(options);
@@ -47,7 +53,8 @@ pimcore.settings.user.workspace.language = Class.create({
         this.window = new Ext.Panel({
             xtype: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.box]
+            items: [this.box],
+            autoScroll: true
         });
 
         return this.window;

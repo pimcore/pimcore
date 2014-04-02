@@ -282,4 +282,13 @@ class Object_Class_Data_Password extends Object_Class_Data {
         return $result;
     }
 
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->algorithm = $masterDefinition->algorithm;
+        $this->salt = $masterDefinition->salt;
+        $this->saltlcoation = $masterDefinition->saltlcoation;
+    }
+
 }

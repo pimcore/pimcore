@@ -962,4 +962,28 @@ abstract class Object_Class_Data
         return $data;
     }
 
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        // implement in child classes
+    }
+
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function adoptMasterDefinition(Object_Class_Data $masterDefinition) {
+        $vars = get_object_vars($this);
+        $protectedFields = array("noteditable", "invisible");
+        foreach ($vars as $name => $value) {
+            if (!in_array($name, $protectedFields)) {
+                unset($this->$name);
+            }
+        }
+        foreach ($masterDefinition as $name => $value) {
+            if (!in_array($name, $protectedFields)) {
+                $this->$name = $value;
+            }
+        }
+    }
 }

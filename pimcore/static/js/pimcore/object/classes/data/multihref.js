@@ -155,7 +155,9 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         xtype: "checkbox",
                         fieldLabel: t("lazy_loading"),
                         name: "lazyLoading",
-                        checked: this.datax.lazyLoading
+                        checked: this.datax.lazyLoading,
+                        disabled: this.isInCustomLayoutEditor()
+
                     },
                     {
                         xtype: "displayfield",
@@ -179,6 +181,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                 collapsible: false,
                 autoHeight:true,
                 labelWidth: 100,
+                disabled: this.isInCustomLayoutEditor(),
                 items :[
                     {
                         xtype: "checkbox",
@@ -216,6 +219,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                 collapsible: false,
                 autoHeight:true,
                 labelWidth: 100,
+                disabled: this.isInCustomLayoutEditor(),
                 items :[
                     {
                         xtype: "checkbox",
@@ -287,6 +291,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                 collapsible: false,
                 autoHeight:true,
                 labelWidth: 100,
+                disabled: this.isInCustomLayoutEditor(),
                 items :[
                     {
                         xtype: "checkbox",

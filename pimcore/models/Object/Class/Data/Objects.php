@@ -587,4 +587,12 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         $data = $this->rewriteIdsService($data, $idMapping);
         return $data;
     }
+
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->maxItems = $masterDefinition->maxItems;
+        $this->relationType = $masterDefinition->relationType;
+    }
 }

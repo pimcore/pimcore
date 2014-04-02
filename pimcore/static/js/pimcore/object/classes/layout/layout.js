@@ -189,6 +189,14 @@ pimcore.object.classes.layout.layout = Class.create({
 
         this.datax.fieldtype = this.getType();
         this.datax.datatype = "layout";
+    },
+
+    setInCustomLayoutEditor: function(inCustomLayoutEditor) {
+        this.inCustomLayoutEditor = inCustomLayoutEditor;
+    },
+
+    isInCustomLayoutEditor: function() {
+        return this.inCustomLayoutEditor;
     }
 
 });

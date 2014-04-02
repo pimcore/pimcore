@@ -633,4 +633,14 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
 
         return $data;
     }
+
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->allowedTypes = $masterDefinition->allowedTypes;
+        $this->lazyLoading = $masterDefinition->lazyLoading;
+        $this->maxItems = $masterDefinition->maxItems;
+    }
+
 }

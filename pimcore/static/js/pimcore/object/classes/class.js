@@ -59,6 +59,15 @@ pimcore.object.classes.klass = Class.create({
                 leaf: true,
                 isTarget: true,
                 listeners: this.getTreeNodeListeners()
+            },
+            tbar: {
+                items: [
+                    {
+                        text: t("configure_custom_layouts"),
+                        iconCls: "pimcore_icon_class_add",
+                        handler: this.configureCustomLayouts.bind(this)
+                    }
+                ]
             }
         });
 
@@ -123,6 +132,10 @@ pimcore.object.classes.klass = Class.create({
         this.parentPanel.getEditPanel().activate(this.panel);
 
         pimcore.layout.refresh();
+    },
+
+    configureCustomLayouts: function() {
+        var dialog = new pimcore.object.helpers.customLayoutEditor(this.data);
     },
 
     getId: function(){

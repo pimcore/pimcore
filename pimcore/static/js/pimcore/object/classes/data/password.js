@@ -108,7 +108,8 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
 				mode: 'local',
 				store: this.algorithmsStore,
 				valueField: 'value',
-				displayField: 'key'
+				displayField: 'key',
+                disabled: this.isInCustomLayoutEditor()
 			},
 			{
 				xtype: 'textfield',
@@ -117,7 +118,8 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
 				itemId: "salt",
 				name: "salt",
 				value: this.datax.salt,
-				emptyText: ''
+				emptyText: '',
+                disabled: this.isInCustomLayoutEditor()
 			},
 			{
 				xtype: "combo",
@@ -138,7 +140,8 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
 					data: this.statics.CONFIG_DATA
 				}),
 				valueField: 'value',
-				displayField: 'key'
+				displayField: 'key',
+                disabled: this.isInCustomLayoutEditor()
 			}
     
         ]);

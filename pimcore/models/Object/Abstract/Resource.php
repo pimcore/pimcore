@@ -420,21 +420,23 @@ class Object_Abstract_Resource extends Element_Resource
         return false;
     }
 
-    public function getLocalizedPermissions($type, $user) {
+    public function getPermissions($type, $user, $quote = true) {
         $parentIds = $this->collectParentIds();
 
         $userIds = $user->getRoles();
         $userIds[] = $user->getId();
 
         try {
-            $permissions = $this->db->fetchRow("SELECT `" . $type . "` FROM users_workspaces_object WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
+            if ($type && $quote) {
+                $type = "`" . $type . "`";
+            } else {
+                $type = "*";
+            }
+            $permissions = $this->db->fetchRow("SELECT " . $type . " FROM users_workspaces_object WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
         } catch (Exception $e) {
             Logger::warn("Unable to get permission " . $type . " for object " . $this->model->getId());
         }
 
         return $permissions;
-
     }
-
-
 }

@@ -87,7 +87,7 @@ pimcore.object.classes.data.data = Class.create({
                 autoCreate: {tag: 'input', type: 'text', maxlength: '70', autocomplete: 'off'},
                 enableKeyEvents: true,
                 value: this.datax.name,
-                disabled: !in_array("name",this.availableSettingsFields),
+                disabled: !in_array("name",this.availableSettingsFields) || this.inCustomLayoutEditor,
                 listeners: {
                     keyup: function (el) {
                         // autofill title field if untouched and empty
@@ -149,28 +149,34 @@ pimcore.object.classes.data.data = Class.create({
                 name: "invisible",
                 checked: this.datax.invisible,
                 disabled: !in_array("invisible",this.availableSettingsFields)
-            },
-            {
+            }
+        ];
+
+        if (!this.inCustomLayoutEditor) {
+            standardSettings.push(            {
                 xtype: "checkbox",
                 fieldLabel: t("visible_in_gridview"),
                 name: "visibleGridView",
                 checked: this.datax.visibleGridView,
                 disabled: !in_array("visibleGridView",this.availableSettingsFields)
-            },
-            {
+            });
+
+            standardSettings.push({
                 xtype: "checkbox",
                 fieldLabel: t("visible_in_searchresult"),
                 name: "visibleSearch",
                 checked: this.datax.visibleSearch,
                 disabled: !in_array("visibleSearch",this.availableSettingsFields)
-            },{
+            });
+
+            standardSettings.push({
                 xtype: "checkbox",
                 fieldLabel: t("index"),
                 name: "index",
                 checked: this.datax.index,
                 disabled: !in_array("index",this.availableSettingsFields)
-            }
-        ];
+            });
+        }
 
         var layoutSettings = [
             {
@@ -277,5 +283,15 @@ pimcore.object.classes.data.data = Class.create({
 
         this.datax.fieldtype = this.getType();
         this.datax.datatype = "data";
+    },
+
+    setInCustomLayoutEditor: function(inCustomLayoutEditor) {
+        this.inCustomLayoutEditor = inCustomLayoutEditor;
+    },
+
+    isInCustomLayoutEditor: function() {
+        return this.inCustomLayoutEditor;
     }
+
+
 });

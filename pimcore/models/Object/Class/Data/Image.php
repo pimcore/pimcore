@@ -344,4 +344,11 @@ class Object_Class_Data_Image extends Object_Class_Data {
         }
         return $data;
     }
+
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->uploadPath = $masterDefinition->uploadPath;
+    }
 }

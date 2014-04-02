@@ -72,6 +72,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     this.valueStore.insert(0, u);
                 }.bind(this)
             }],
+            disabled: this.isInCustomLayoutEditor(),
             style: "margin-top: 10px",
             store: this.valueStore,
             selModel:new Ext.grid.RowSelectionModel({singleSelect:true}),

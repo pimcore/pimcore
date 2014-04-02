@@ -59,34 +59,26 @@ pimcore.settings.user.workspace.object = Class.create({
 
         storeFields.push({name: "lEdit", type: 'text'});
         storeFields.push({name: "lView", type: 'text'});
+        storeFields.push({name: "layouts", type: 'text'});
 
         typesColumns.push({
             xtype: 'actioncolumn',
-            header: t('localized_view'),
+            header: t('special_settings'),
             width: 30,
             items: [{
-                tooltip: t('localized_view_tooltip'),
+                tooltip: t('special_settings_tooltip'),
                 icon: "/pimcore/static/img/icon/cog_edit.png",
                 handler: function (grid, rowIndex) {
                     var data = grid.getStore().getAt(rowIndex);
-                    var callback = this.applyLocalized.bind(this, data, "lView");
-                    var dialog = new pimcore.settings.user.workspace.language(callback, data.data.lView, data.data.path);
-                    dialog.show();
-                }.bind(this)
-            }]
-        });
+                    var callback = this.applySpecialConfigs.bind(this, data, "special");
+                    var specialData = {
+                        lView: data.data.lView,
+                        lEdit: data.data.lEdit,
+                        layouts: data.data.layouts,
+                        path: data.data.path
+                    }
 
-        typesColumns.push({
-            xtype: 'actioncolumn',
-            header: t('localized_edit'),
-            width: 30,
-            items: [{
-                tooltip: t('localized_edit_tooltip'),
-                icon: "/pimcore/static/img/icon/cog_edit.png",
-                handler: function (grid, rowIndex) {
-                    var data = grid.getStore().getAt(rowIndex);
-                    var callback = this.applyLocalized.bind(this, data, "lEdit");
-                    var dialog = new pimcore.settings.user.workspace.language(callback, data.data.lEdit, data.data.path);
+                    var dialog = new pimcore.settings.user.workspace.special(callback, specialData, data.data.path);
                     dialog.show();
                 }.bind(this)
             }]
@@ -214,9 +206,10 @@ pimcore.settings.user.workspace.object = Class.create({
         return values;
     },
 
-    applyLocalized: function(rec, column, value) {
-        rec.set(column, value);
+    applySpecialConfigs: function(rec, column, value) {
+        rec.set("lView", value["lView"]);
+        rec.set("lEdit", value["lEdit"]);
+        rec.set("layouts", value["layouts"]);
     }
-
 
 });

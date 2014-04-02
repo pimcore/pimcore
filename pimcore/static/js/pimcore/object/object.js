@@ -15,8 +15,10 @@
 pimcore.registerNS("pimcore.object.object");
 pimcore.object.object = Class.create(pimcore.object.abstract, {
 
-    initialize: function(id) {
+    initialize: function(id, options) {
         pimcore.plugin.broker.fireEvent("preOpenObject", this, "object");
+
+        this.options = options;
 
         this.addLoadingPanel();
 
@@ -36,9 +38,16 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     getData: function () {
+        var params = {id: this.id};
+        if (this.options !== undefined) {
+            if (this.options.layoutId) {
+                params.layoutId = this.options.layoutId;
+            }
+        }
+
         Ext.Ajax.request({
             url: "/admin/object/get/",
-            params: {id: this.id},
+            params: params,
             success: this.getDataComplete.bind(this)
         });
     },
@@ -291,12 +300,30 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 handler: this.unpublish.bind(this)
             });
 
-            this.toolbarButtons.reload = new Ext.Button({
+            var reloadConfig = {
                 text: t('reload'),
                 iconCls: "pimcore_icon_reload_medium",
                 scale: "medium",
-                handler: this.reload.bind(this)
-            });
+                handler: this.reload.bind(this, this.data.currentLayoutId)
+            }
+
+            if (this.data.validLayouts && this.data.validLayouts.length > 0) {
+                var menu = [];
+                var i = 0;
+                for (i = 0; i < this.data.validLayouts.length; i++) {
+                    menu.push(
+                        {
+                            text: ts(this.data.validLayouts[i].name),
+                            iconCls: "pimcore_icon_reload",
+                            handler: this.reload.bind(this, this.data.validLayouts[i].id)
+                        });
+                    reloadConfig.menu = menu;
+                }
+
+                this.toolbarButtons.reload = new Ext.SplitButton(reloadConfig);
+            } else {
+                this.toolbarButtons.reload = new Ext.Button(reloadConfig);
+            }
 
             this.toolbarButtons.remove = new Ext.Button({
                 text: t("delete"),
@@ -601,9 +628,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         return this.data.userPermissions[key];
     },
 
-    reload: function () {
+    reload: function (layoutId) {
+        var options = {};
+        if (layoutId) {
+            options.layoutId = layoutId;
+        }
         window.setTimeout(function (id) {
-            pimcore.helpers.openObject(id, "object");
+            pimcore.helpers.openObject(id, "object", options);
         }.bind(window, this.id), 500);
 
         pimcore.helpers.closeObject(this.id);

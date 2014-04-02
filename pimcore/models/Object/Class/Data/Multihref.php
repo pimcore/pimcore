@@ -804,4 +804,18 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         $data = $this->rewriteIdsService($data, $idMapping);
         return $data;
     }
+
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->maxItems = $masterDefinition->maxItems;
+        $this->assetUploadPath = $masterDefinition->assetUploadPath;
+        $this->relationType = $masterDefinition->relationType;
+        $this->objectsAllowed = $masterDefinition->objectsAllowed;
+        $this->assetsAllowed = $masterDefinition->assetsAllowed;
+        $this->assetTypes = $masterDefinition->assetTypes;
+        $this->documentsAllowed = $masterDefinition->documentsAllowed;
+        $this->documentTypes = $masterDefinition->documentTypes;
+    }
 }

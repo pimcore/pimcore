@@ -354,6 +354,14 @@ class Object_Class extends Pimcore_Model_Abstract {
         }
         catch (Exception $e) {}
 
+        $customLayouts = new Object_Class_CustomLayout_List();
+        $customLayouts->setCondition("classId = " . $this->getId());
+        $customLayouts = $customLayouts->load();
+
+        foreach ($customLayouts as $customLayout) {
+            $customLayout->delete();
+        }
+
         $this->getResource()->delete();
     }
 

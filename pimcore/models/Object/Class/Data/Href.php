@@ -580,4 +580,12 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         }
         return $data;
     }
+
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->assetUploadPath = $masterDefinition->assetUploadPath;
+        $this->relationType = $masterDefinition->relationType;
+    }
 }

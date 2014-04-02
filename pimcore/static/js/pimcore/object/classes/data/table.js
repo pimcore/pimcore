@@ -72,13 +72,15 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
                 xtype: "spinnerfield",
                 fieldLabel: t("rows"),
                 name: "rows",
-                value: this.datax.rows
+                value: this.datax.rows,
+                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "spinnerfield",
                 fieldLabel: t("cols"),
                 name: "cols",
-                value: this.datax.cols
+                value: this.datax.cols,
+                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "textarea",
@@ -86,7 +88,8 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
                 name: "data",
                 width: 300,
                 height: 300,
-                value: this.datax.data
+                value: this.datax.data,
+                disabled: this.isInCustomLayoutEditor()
             }
         ]);
 

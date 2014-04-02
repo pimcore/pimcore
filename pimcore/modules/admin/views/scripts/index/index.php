@@ -196,7 +196,9 @@ $scripts = array(
     "pimcore/settings/user/workspace/asset.js",
     "pimcore/settings/user/workspace/document.js",
     "pimcore/settings/user/workspace/object.js",
+    "pimcore/settings/user/workspace/customlayouts.js",
     "pimcore/settings/user/workspace/language.js",
+    "pimcore/settings/user/workspace/special.js",
     "pimcore/settings/user/role/settings.js",
     "pimcore/settings/profile/panel.js",
     "pimcore/settings/thumbnail/item.js",
@@ -255,6 +257,7 @@ $scripts = array(
     "pimcore/object/helpers/gridConfigDialog.js",
     "pimcore/object/helpers/classTree.js",
     "pimcore/object/helpers/gridTabAbstract.js",
+    "pimcore/object/helpers/customLayoutEditor.js",
     "pimcore/element/selector/object.js",
 
     // documents

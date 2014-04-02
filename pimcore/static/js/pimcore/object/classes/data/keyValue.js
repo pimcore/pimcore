@@ -161,6 +161,7 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
                 name: "multivalent",
                 value: multivalent,
                 checked: multivalent,
+                disabled: this.isInCustomLayoutEditor(),
                 fieldLabel: t("keyvalue_data_multivalent"),
                 width: 300
             }

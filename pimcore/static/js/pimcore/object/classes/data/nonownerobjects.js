@@ -85,6 +85,7 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
             fieldLabel: t('owner_class'),
             name: 'ownerClassName',
             value: this.datax.ownerClassName,
+            disabled: this.isInCustomLayoutEditor(),
             forceSelection:true,
             listeners: {
                 change: function(field, classNamevalue, oldValue) {
@@ -104,6 +105,7 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
             },
             root: "availableFields",
             fields: ['key', 'label'],
+            disabled: this.isInCustomLayoutEditor(),
             autoLoad: false,
             forceSelection:true
         });
@@ -119,6 +121,7 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
             valueField: 'key' ,
             lastQuery: '',
             name: 'ownerFieldName',
+            disabled: this.isInCustomLayoutEditor(),
             listeners: {
                 focus: function(){
                     if (this.datax.ownerClassName != null) {

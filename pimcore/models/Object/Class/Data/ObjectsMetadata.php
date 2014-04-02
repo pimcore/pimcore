@@ -632,4 +632,14 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
         return $data;
     }
+
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->allowedClassId = $masterDefinition->allowedClassId;
+        $this->visibleFields = $masterDefinition->visibleFields;
+        $this->columns = $masterDefinition->columns;
+    }
+
 }

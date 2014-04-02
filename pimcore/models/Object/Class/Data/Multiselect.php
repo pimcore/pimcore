@@ -283,4 +283,12 @@ class Object_Class_Data_Multiselect extends Object_Class_Data {
             return "";
         }
     }
+
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->options = $masterDefinition->options;
+    }
+
 }

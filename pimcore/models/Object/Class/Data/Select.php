@@ -206,4 +206,12 @@ class Object_Class_Data_Select extends Object_Class_Data {
     public function isEmpty($data) {
         return (strlen($data) < 1);
     }
+
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->options = $masterDefinition->options;
+    }
+
 }

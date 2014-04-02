@@ -140,6 +140,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         xtype: "checkbox",
                         fieldLabel: t("lazy_loading"),
                         name: "lazyLoading",
+                        disabled: this.isInCustomLayoutEditor(),
                         checked: this.datax.lazyLoading
                     },
                     {
@@ -163,6 +164,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                 title: t('document_restrictions'),
                 collapsible: false,
                 autoHeight:true,
+                disabled: this.isInCustomLayoutEditor(),
                 labelWidth: 100,
                 items :[
                     {
@@ -198,6 +200,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
             {
                 xtype:'fieldset',
                 title: t('asset_restrictions'),
+                disabled: this.isInCustomLayoutEditor(),
                 collapsible: false,
                 autoHeight:true,
                 labelWidth: 100,
@@ -269,6 +272,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
             {
                 xtype:'fieldset',
                 title: t('object_restrictions') ,
+                disabled: this.isInCustomLayoutEditor(),
                 collapsible: false,
                 autoHeight:true,
                 labelWidth: 100,

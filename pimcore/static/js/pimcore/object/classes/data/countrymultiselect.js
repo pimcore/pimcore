@@ -99,6 +99,9 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
             valueField: 'value',
             displayField: 'key'
         };
+        if (this.isInCustomLayoutEditor()) {
+            options.disabled = true;
+        }
 
         this.possibleOptions = new Ext.ux.form.MultiSelect(options);
 

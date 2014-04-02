@@ -112,6 +112,7 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
                 name:"useCurrentDate",
                 value:this.datax.defaultValue,
                 checked:this.datax.useCurrentDate,
+                disabled: this.isInCustomLayoutEditor(),
                 listeners:{
                     check:this.toggleDefaultDate.bind(this)
                 }

@@ -532,4 +532,14 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
         return $defaultData;
     }
 
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->labelWidth = $masterDefinition->labelWidth;
+        $this->labelFirstCell = $masterDefinition->labelFirstCell;
+        $this->cols = $masterDefinition->cols;
+        $this->rows = $masterDefinition->rows;
+    }
+
 }

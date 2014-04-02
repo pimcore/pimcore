@@ -363,6 +363,37 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $objectData = $this->filterLocalizedFields($object, $objectData);
 
+            $currentLayoutId = $this->getParam("layoutId");
+
+            $validLayouts = Object_Service::getValidLayouts($object);
+            $objectData["validLayouts"] = array( );
+
+            foreach ($validLayouts as $validLayout) {
+                $objectData["validLayouts"][] = array("id" => $validLayout->getId(), "name" => $validLayout->getName());
+            }
+
+            $user = Pimcore_Tool_Admin::getCurrentUser();
+            if ($currentLayoutId == 0 && !$user->isAdmin()) {
+                $first = reset($validLayouts);
+                $currentLayoutId = $first->getId();
+            }
+
+            if ($currentLayoutId > 0) {
+                // check if user has sufficient rights
+                if ($validLayouts && $validLayouts[$currentLayoutId]) {
+                    $customLayout = Object_Class_CustomLayout::getById($currentLayoutId);
+                    $customLayoutDefinition = $customLayout->getLayoutDefinitions();
+                    $objectData["layout"] = $customLayoutDefinition;
+                } else {
+                    $currentLayoutId = 0;
+                }
+            } else if ($currentLayoutId == -1 && $user->isAdmin()) {
+                $layout = Object_Service::getSuperLayout($object);
+                $objectData["layout"] = $layout;
+            }
+
+            $objectData["currentLayoutId"] = $currentLayoutId;
+
             $this->_helper->json($objectData);
         } else {
             Logger::debug("prevented getting object id [ " . $object->getId() . " ] because of missing permissions");
@@ -1242,7 +1273,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                     $user = Pimcore_Tool_Admin::getCurrentUser();
                     if (!$user->isAdmin()) {
-                        $languagePermissions = $object->getLocalizedPermissions("lEdit", $user);
+                        $languagePermissions = $object->getPermissions("lEdit", $user);
                         $languagePermissions = explode(",", $languagePermissions["lEdit"]);
 
                     }
@@ -1294,8 +1325,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                                     if($localized instanceof Object_Class_Data_Localizedfields) {
                                         $field = $localized->getFieldDefinition($key);
                                         if ($field) {
-                                            $currentLocale = Zend_Registry::get("Zend_Locale");
-                                            $currentLocale = $currentLocale->getLanguage();
+                                            $currentLocale = (string) Zend_Registry::get("Zend_Locale");
                                             if (!in_array($currentLocale, $languagePermissions)) {
                                                 continue;
                                             }

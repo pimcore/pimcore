@@ -73,13 +73,15 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 xtype: "spinnerfield",
                 fieldLabel: t("maximum_items"),
                 name: "maxItems",
-                value: this.datax.maxItems
+                value: this.datax.maxItems,
+                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "checkbox",
                 fieldLabel: t("lazy_loading"),
                 name: "lazyLoading",
-                checked: this.datax.lazyLoading
+                checked: this.datax.lazyLoading,
+                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "displayfield",

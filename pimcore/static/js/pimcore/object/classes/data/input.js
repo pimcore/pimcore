@@ -57,13 +57,18 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
-            },{
-                xtype: "spinnerfield",
-                fieldLabel: t("columnlength"),
-                name: "columnLength",
-                value: this.datax.columnLength
             }
         ]);
+
+        if (!this.isInCustomLayoutEditor()) {
+            this.specificPanel.add([{
+                    xtype: "spinnerfield",
+                    fieldLabel: t("columnlength"),
+                    name: "columnLength",
+                    value: this.datax.columnLength
+                }
+            ]);
+        }
 
         return this.layout;
     }

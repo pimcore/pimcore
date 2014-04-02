@@ -78,6 +78,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             }],
             style: "margin-top: 10px",
             store: this.valueStore,
+            disabled: this.isInCustomLayoutEditor(),
             selModel:new Ext.grid.RowSelectionModel({singleSelect:true}),
             columnLines: true,
             columns: [

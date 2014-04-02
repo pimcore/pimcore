@@ -75,13 +75,15 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
                 xtype: "spinnerfield",
                 fieldLabel: t("maximum_items"),
                 name: "maxItems",
-                value: this.datax.maxItems
+                value: this.datax.maxItems,
+                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "checkbox",
                 fieldLabel: t("lazy_loading"),
                 name: "lazyLoading",
-                checked: this.datax.lazyLoading
+                checked: this.datax.lazyLoading,
+                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "displayfield",
@@ -130,7 +132,8 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
             displayField: "text",
             valueField: "text",
             store: classesStore,
-            width: 300
+            width: 300,
+            disabled: this.isInCustomLayoutEditor()
         }));
 
         return this.layout;

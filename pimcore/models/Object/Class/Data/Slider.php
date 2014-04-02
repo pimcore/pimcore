@@ -286,4 +286,15 @@ class Object_Class_Data_Slider extends Object_Class_Data {
         return true;
     }
 
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->minValue = $masterDefinition->minValue;
+        $this->maxValue = $masterDefinition->maxValue;
+        $this->vertical = $masterDefinition->vertical;
+        $this->increment = $masterDefinition->increment;
+        $this->decimalPrecision = $masterDefinition->decimalPrecision;
+    }
+
 }

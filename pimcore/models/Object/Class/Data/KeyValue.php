@@ -501,4 +501,11 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
         return $this->metaVisible;
     }
 
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->multivalent = $masterDefinition->multivalent;
+    }
+
 }

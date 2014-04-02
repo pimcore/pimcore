@@ -211,4 +211,12 @@ class Object_Class_Data_Checkbox extends Object_Class_Data
     public function isDiffChangeAllowed() {
         return true;
     }
+
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->defaultValue = $masterDefinition->defaultValue;
+    }
+
 }

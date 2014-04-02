@@ -96,7 +96,7 @@ pimcore.helpers.openWelcomePage = function() {
     }
 }
 
-pimcore.helpers.openAsset = function (id, type, ignoreForHistory) {
+pimcore.helpers.openAsset = function (id, type, options) {
 
     if (pimcore.globalmanager.exists("asset_" + id) == false) {
 
@@ -111,9 +111,11 @@ pimcore.helpers.openAsset = function (id, type, ignoreForHistory) {
 
         pimcore.helpers.rememberOpenTab("asset_" + id + "_" + type);
 
-        if (ignoreForHistory) {
-            var element = pimcore.globalmanager.get("asset_" + id);
-            element.setAddToHistory(false);
+        if (options != undefined) {
+            if (options.ignoreForHistory) {
+                var element = pimcore.globalmanager.get("asset_" + id);
+                element.setAddToHistory(false);
+            }
         }
 
     }
@@ -132,16 +134,18 @@ pimcore.helpers.closeAsset = function (id) {
     pimcore.globalmanager.remove("asset_" + id);
 };
 
-pimcore.helpers.openDocument = function (id, type, ignoreForHistory) {
+pimcore.helpers.openDocument = function (id, type, options) {
     if (pimcore.globalmanager.exists("document_" + id) == false) {
         if (pimcore.document[type]) {
             pimcore.helpers.addTreeNodeLoadingIndicator("document", id);
             pimcore.globalmanager.add("document_" + id, new pimcore.document[type](id));
             pimcore.helpers.rememberOpenTab("document_" + id + "_" + type);
 
-            if (ignoreForHistory) {
-                var element = pimcore.globalmanager.get("document_" + id);
-                element.setAddToHistory(false);
+            if (options !== undefined) {
+                if (options.ignoreForHistory) {
+                    var element = pimcore.globalmanager.get("document_" + id);
+                    element.setAddToHistory(false);
+                }
             }
         }
     }
@@ -161,7 +165,7 @@ pimcore.helpers.closeDocument = function (id) {
     pimcore.globalmanager.remove("document_" + id);
 };
 
-pimcore.helpers.openObject = function (id, type, ignoreForHistory) {
+pimcore.helpers.openObject = function (id, type, options) {
     if (pimcore.globalmanager.exists("object_" + id) == false) {
         pimcore.helpers.addTreeNodeLoadingIndicator("object", id);
 
@@ -169,12 +173,14 @@ pimcore.helpers.openObject = function (id, type, ignoreForHistory) {
             type = "object";
         }
 
-        pimcore.globalmanager.add("object_" + id, new pimcore.object[type](id));
+        pimcore.globalmanager.add("object_" + id, new pimcore.object[type](id, options));
         pimcore.helpers.rememberOpenTab("object_" + id + "_" + type);
 
-        if (ignoreForHistory) {
-            var element = pimcore.globalmanager.get("object_" + id);
-            element.setAddToHistory(false);
+        if (options !== undefined) {
+            if (options.ignoreForHistory) {
+                var element = pimcore.globalmanager.get("object_" + id);
+                element.setAddToHistory(false);
+            }
         }
     }
     else {
@@ -1055,11 +1061,11 @@ pimcore.helpers.openMemorizedTabs = function () {
                 window.setTimeout(function (parts) {
                     if(parts[1] && parts[2]) {
                         if(parts[0] == "asset") {
-                            pimcore.helpers.openAsset(parts[1], parts[2], true);
+                            pimcore.helpers.openAsset(parts[1], parts[2], { ignoreForHistory: true});
                         } else if(parts[0] == "document") {
-                            pimcore.helpers.openDocument(parts[1], parts[2], true);
+                            pimcore.helpers.openDocument(parts[1], parts[2], { ignoreForHistory: true});
                         } else if(parts[0] == "object") {
-                            pimcore.helpers.openObject(parts[1], parts[2], true);
+                            pimcore.helpers.openObject(parts[1], parts[2], { ignoreForHistory: true});
                         }
                     }
                 }.bind(this, parts), 200);

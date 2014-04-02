@@ -39,6 +39,11 @@ class User_Workspace_Object extends User_Workspace_Abstract {
     public $lView = null;
 
     /**
+     * @var string
+     */
+    public $layouts = null;
+
+    /**
      * @param boolean $save
      */
     public function setSave($save)
@@ -103,4 +108,22 @@ class User_Workspace_Object extends User_Workspace_Abstract {
     {
         return $this->lView;
     }
+
+    /**
+     * @param string $layouts
+     */
+    public function setLayouts($layouts)
+    {
+        $this->layouts = $layouts;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLayouts()
+    {
+        return $this->layouts;
+    }
+
+
 }

@@ -779,4 +779,11 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
         return $data;
     }
+
+    /**
+     * @param Object_Class_Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Object_Class_Data $masterDefinition) {
+        $this->allowedTypes = $masterDefinition->allowedTypes;
+    }
 }

@@ -23,6 +23,11 @@ pimcore.object.edit = Class.create({
     getLayout: function (conf) {
 
         if (this.layout == null) {
+            var items = [];
+            if (conf) {
+                items = [this.getRecursiveLayout(conf).items];
+            }
+
             this.layout = new Ext.Panel({
                 title: t('edit'),
                 bodyStyle:'background-color: #fff;',
@@ -34,7 +39,7 @@ pimcore.object.edit = Class.create({
                     forceLayout: true
                 },
                 iconCls: "pimcore_icon_tab_edit",
-                items: [this.getRecursiveLayout(conf).items],
+                items: items,
                 listeners: {
                     afterrender: function () {
                         pimcore.layout.refresh();
