@@ -112,31 +112,36 @@ class Pimcore_Tool {
      */
     public static function getSupportedLocales() {
 
-        // we use the locale here, because Zend_Translate only supports locales not "languages"
-        $languages = Zend_Locale::getLocaleList();
-        $languageOptions = array();
-        foreach ($languages as $code => $active) {
-            if($active) {
-                $translation = Zend_Locale::getTranslation($code, "language");
-                if(!$translation) {
-                    $tmpLocale = new Zend_Locale($code);
-                    $lt = Zend_Locale::getTranslation($tmpLocale->getLanguage(), "language");
-                    $tt = Zend_Locale::getTranslation($tmpLocale->getRegion(), "territory");
+        $cacheKey = "system_supported_locales";
+        if(!$languageOptions = Pimcore_Model_Cache::load($cacheKey)) {
+            // we use the locale here, because Zend_Translate only supports locales not "languages"
+            $languages = Zend_Locale::getLocaleList();
+            $languageOptions = array();
+            foreach ($languages as $code => $active) {
+                if($active) {
+                    $translation = Zend_Locale::getTranslation($code, "language");
+                    if(!$translation) {
+                        $tmpLocale = new Zend_Locale($code);
+                        $lt = Zend_Locale::getTranslation($tmpLocale->getLanguage(), "language");
+                        $tt = Zend_Locale::getTranslation($tmpLocale->getRegion(), "territory");
 
-                    if($lt && $tt) {
-                        $translation = $lt ." (" . $tt . ")";
+                        if($lt && $tt) {
+                            $translation = $lt ." (" . $tt . ")";
+                        }
                     }
-                }
 
-                if(!$translation) {
-                    $translation = $code;
-                }
+                    if(!$translation) {
+                        $translation = $code;
+                    }
 
-                $languageOptions[$code] = $translation;
+                    $languageOptions[$code] = $translation;
+                }
             }
-        }
 
-        asort($languageOptions);
+            asort($languageOptions);
+
+            Pimcore_Model_Cache::save($languageOptions, $cacheKey, ["system"]);
+        }
 
         return $languageOptions;
     }
