@@ -92,6 +92,7 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
             $this->getDb()->commit();
         } catch (Exception $e) {
             Logger::error($e);
+            $this->getDb()->rollBack();
             $this->truncate();
             return false;
         }
@@ -113,6 +114,7 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
 
             $this->getDb()->commit();
         } catch (\Exception $e) {
+            $this->getDb()->rollBack();
             $this->truncate();
             return false;
         }
@@ -164,6 +166,7 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
 
                     $this->getDb()->commit();
                 } catch (\Exception $e) {
+                    $this->getDb()->rollBack();
                     $this->truncate();
                     Logger::error($e);
                 }
