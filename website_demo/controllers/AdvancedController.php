@@ -35,8 +35,21 @@ class AdvancedController extends Website_Controller_Action
     public function contactFormAction() {
         $success = false;
 
+        if($this->getParam("provider")) {
+            $adapter = Pimcore_Tool_HybridAuth::authenticate($this->getParam("provider"));
+            if($adapter) {
+                $user_data = $adapter->getUserProfile();
+                if($user_data) {
+                    $this->setParam("firstname", $user_data->firstName);
+                    $this->setParam("lastname", $user_data->lastName);
+                    $this->setParam("email", $user_data->email);
+                    $this->setParam("gender", $user_data->gender);
+                }
+            }
+        }
+
         // getting parameters is very easy ... just call $this->getParam("yorParamKey"); regardless if's POST or GET
-        if($this->getParam("firstname") && $this->getParam("lastname") && $this->getParam("email")) {
+        if($this->getParam("firstname") && $this->getParam("lastname") && $this->getParam("email") && $this->getParam("message")) {
             $success = true;
 
             $mail = new Pimcore_Mail();
@@ -56,7 +69,7 @@ class AdvancedController extends Website_Controller_Action
         }
 
         // do some validation & assign the parameters to the view
-        foreach (["firstname", "lastname", "email"] as $key) {
+        foreach (["firstname", "lastname", "email", "message", "gender"] as $key) {
             if($this->getParam($key)) {
                 $this->view->$key = htmlentities(strip_tags($this->getParam($key)));
             }
