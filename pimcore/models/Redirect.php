@@ -227,7 +227,7 @@ class Redirect extends Pimcore_Model_Abstract {
      */
     public function setExpiry($expiry)
     {
-        if(is_string($expiry)) {
+        if(is_string($expiry) && !is_numeric($expiry)) {
             $expiry = strtotime($expiry);
         }
         $this->expiry = $expiry;
