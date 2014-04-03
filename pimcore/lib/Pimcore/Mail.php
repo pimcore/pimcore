@@ -558,10 +558,6 @@ class Pimcore_Mail extends Zend_Mail
      */
     public function send($transport = null)
     {
-        if ($this->getDocument()) {
-            $this->setDocumentSettings();
-        }
-
         // filter email addresses
         $blockedAddresses = array();
         foreach ($this->getRecipients() as $recipient) {
@@ -582,7 +578,6 @@ class Pimcore_Mail extends Zend_Mail
                 }
             }
         }
-
 
         $this->setSubject($this->getSubjectRendered());
 
@@ -787,6 +782,7 @@ class Pimcore_Mail extends Zend_Mail
     {
         if ($document instanceof Document) { //document passed
             $this->document = $document;
+            $this->setDocumentSettings();
         } elseif ((int)$document > 0) { //id of document passed
             $this->setDocument(Document::getById($document));
         } elseif (is_string($document) && $document != "") { //path of document passed
