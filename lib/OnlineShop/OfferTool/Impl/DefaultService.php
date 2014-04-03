@@ -116,6 +116,8 @@ class OnlineShop_OfferTool_Impl_DefaultService implements OnlineShop_OfferTool_I
             $price = $item->getTotalPrice()->getAmount();
         }
 
+        $price = $this->priceTransformationHook($price);
+
         $offerItem->setOriginalTotalPrice($price);
         $offerItem->setFinalTotalPrice($price);
 
@@ -153,6 +155,8 @@ class OnlineShop_OfferTool_Impl_DefaultService implements OnlineShop_OfferTool_I
             $price = $cartItem->getTotalPrice()->getAmount();
         }
 
+        $price = $this->priceTransformationHook($price);
+
         if($price != $offerItem->getOriginalTotalPrice()) {
             $offerItem->setOriginalTotalPrice($price);
             $offerItem->setFinalTotalPrice($price);
@@ -181,6 +185,17 @@ class OnlineShop_OfferTool_Impl_DefaultService implements OnlineShop_OfferTool_I
 
         $offerItem->save();
         return $offerItem;
+    }
+
+    /**
+     * transforms price before set to the offer tool item.
+     * can be used e.g. for adding vat, ...
+     *
+     * @param $price
+     * @return mixed
+     */
+    protected function priceTransformationHook($price) {
+        return $price;
     }
 
     protected function setCurrentCustomer(OnlineShop_OfferTool_AbstractOfferItem $offer) {
@@ -256,6 +271,7 @@ class OnlineShop_OfferTool_Impl_DefaultService implements OnlineShop_OfferTool_I
             $discount = $offer->getDiscount();
         }
 
+        $offer->setTotalPriceBeforeDiscount($totalPrice);
         $offer->setTotalPrice($totalPrice - $discount);
         return $offer;
     }
