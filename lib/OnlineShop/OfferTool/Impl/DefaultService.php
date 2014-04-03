@@ -198,7 +198,7 @@ class OnlineShop_OfferTool_Impl_DefaultService implements OnlineShop_OfferTool_I
         return $price;
     }
 
-    protected function setCurrentCustomer(OnlineShop_OfferTool_AbstractOfferItem $offer) {
+    protected function setCurrentCustomer(OnlineShop_OfferTool_AbstractOffer $offer) {
         $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
 
         if(@class_exists("Object_Customer")) {
