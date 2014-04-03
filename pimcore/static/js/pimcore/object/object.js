@@ -311,9 +311,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 var menu = [];
                 var i = 0;
                 for (i = 0; i < this.data.validLayouts.length; i++) {
+                    var menuLabel = ts(this.data.validLayouts[i].name);
+                    if (Number(this.data.currentLayoutId) == this.data.validLayouts[i].id) {
+                        menuLabel = "<b>" + menuLabel + "</b>";
+                    }
                     menu.push(
                         {
-                            text: ts(this.data.validLayouts[i].name),
+                            text: menuLabel,
                             iconCls: "pimcore_icon_reload",
                             handler: this.reload.bind(this, this.data.validLayouts[i].id)
                         });
