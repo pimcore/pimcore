@@ -133,6 +133,19 @@ CREATE TABLE `content_index` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+CREATE TABLE `custom_layouts` (
+	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`classId` INT(11) UNSIGNED NOT NULL,
+	`name` VARCHAR(255) NULL DEFAULT NULL,
+	`description` TEXT NULL,
+	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+	`userOwner` INT(11) UNSIGNED NULL DEFAULT NULL,
+	`userModification` INT(11) UNSIGNED NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `name` (`name`, `classId`)
+) DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `dependencies`;
 CREATE TABLE `dependencies` (
@@ -1184,6 +1197,7 @@ CREATE TABLE `users_workspaces_object` (
   `properties` tinyint(1) unsigned DEFAULT '0',
   `lEdit` text,
   `lView` text,
+  `layouts` text,
   PRIMARY KEY (`cid`,`userId`),
   KEY `cid` (`cid`),
   KEY `userId` (`userId`)
