@@ -79,6 +79,9 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutShow: function () {
         this.getLayout();
+        this.component.on("afterrender", function() {
+            Ext.get(this.editableDivId).dom.setAttribute("contenteditable", "false");
+        }.bind(this));
         return this.component;
     },
 
