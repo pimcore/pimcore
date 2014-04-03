@@ -23,6 +23,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     layoutConfigurationMode: true,
 
+    currentLayoutId: 0,
+
     initialize: function (klass) {
 
         this.klass = klass;
@@ -30,30 +32,32 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         this.classTreeHelper = this;
         this.showFieldName = true;
 
+        this.saveButton = new Ext.Button(
+            {
+                text: t("save"),
+                iconCls: "pimcore_icon_apply",
+                disabled: true,
+                handler: function () {
+                    this.save();
+                }.bind(this)
+            }
+        );
+
         this.configPanel = new Ext.Panel({
             layout: "border",
             items: [this.getLayoutSelection(), this.getSelectionPanel(), this.getResultPanel(), this.getEditPanel()],
             bbar: [
                 "->",
                 {
-                    xtype: "button",
-                    text: t("save"),
-                    iconCls: "pimcore_icon_apply",
-                    handler: function () {
-                        this.save();
-                    }.bind(this)
-                },
-                {
                 xtype: 'button',
                 text: t('cancel'),
-                icon: '/pimcore/static/img/icon/cancel.png',
+                iconCls: 'pimcore_icon_delete',
                 handler: function () {
                             this.window.close();
                         }.bind(this)
-                }
-        ]
-
-
+                },
+                this.saveButton
+            ]
         });
 
         this.window = new Ext.Window({
@@ -96,7 +100,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 else {
                     node.getUI().addClass("tree_node_error");
 
-
                     var invalidFieldsText = null;
 
                     if(node.attributes.object.invalidFieldNames){
@@ -124,7 +127,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     getData: function () {
-
         this.getDataSuccess = true;
 
         this.usedFieldNames = [];
@@ -144,19 +146,21 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             fields: ['id', 'name'],
             autoLoad: true,
             root: "data",
-            forceSelection:true
+            forceSelection:true,
+            listeners: {
+                load: function() {
+                    this.layoutChangeCombo.setValue(this.currentLayoutId);
+                }.bind(this)
+            }
         });
 
         this.layoutChangeCombo = new Ext.form.ComboBox({
-            allowBlank: false,
             triggerAction: "all",
             selectOnFocus: true,
             forceSelection: true,
-
             store: this.layoutComboStore,
             displayField: 'name',
             valueField: 'id' ,
-            name: 'fieldname',
             disableKeyFilter: "true",
             valueNotFoundText: "",
             editable: false,
@@ -172,16 +176,19 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                         params: {
                             id: layoutId
                         },
-                        success: this.initLayoutFields.bind(this, tree, true)
+                        success: function(response) {
+                            this.initLayoutFields(true, response);
+                            this.resultPanel.enable();
+                            this.saveButton.enable();
+                        }.bind(this)
+
                     });
                 }.bind(this)
             }
         });
 
-
         var compositeConfig = {
             xtype: "compositefield",
-            hideLabel: false,
             fieldLabel: t("layout"),
             items: [this.layoutChangeCombo,
                 {
@@ -261,8 +268,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         if (this.currentNode) {
             if (this.currentNode != "root") {
                 this.currentNode.applyData();
-            }
-            else {
+            } else {
                 // save root node data
                 if (this.rootPanel) {
                     var items = this.rootPanel.findBy(function() {
@@ -299,7 +305,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     onTreeNodeContextmenu: function (node) {
         node.select();
-
 
         var menu = new Ext.menu.Menu();
 
@@ -340,7 +345,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                             handler: node.attributes.reference.addLayoutChild.bind(node, layouts[i], null, true)
                         });
                     }
-
                 }
             }
 
@@ -385,9 +389,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     getResultPanel: function () {
         if (!this.resultPanel) {
-
-            var items = [];
-
             this.resultPanel = this.getClassTree("/admin/class/get", this.klass.id);
         }
 
@@ -396,7 +397,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     getEditPanel: function () {
         if (!this.editPanel) {
-
             this.editPanel = new Ext.Panel({
                 region: "east",
                 bodyStyle: "padding: 20px;",
@@ -441,18 +441,16 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     getClassTree: function(url, id) {
-
         var tree = new Ext.tree.TreePanel({
             width: 200,
             title: t('class_definitions'),
-            xtype: "treepanel",
             region: "west",
             enableDrag: true,
             enableDrop: false,
             ddGroup: "columnconfigelement",
             autoScroll: true,
             split: true,
-//            rootVisible: true,
+            disabled: true,
             reference: this,
             root: {
                 id: "0",
@@ -467,13 +465,13 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             params: {
                 id: id
             },
-            success: this.initLayoutFields.bind(this, tree, false)
+            success: this.initLayoutFields.bind(this, false)
         });
 
         return tree;
     },
 
-    initLayoutFields: function (tree, isCustom, response) {
+    initLayoutFields: function (isCustom, response) {
         var data = Ext.decode(response.responseText);
         this.data = data;
 
@@ -501,9 +499,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             this.resultPanel.setRootNode(rootNode);
         }
 
-
         var baseNode = rootNode;
-
 
         if (data.layoutDefinitions) {
             if (data.layoutDefinitions.childs) {
@@ -520,10 +516,9 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     baseNode.appendChild(this.recursiveAddNode(child, baseNode, attributePrefix, isCustom));
                 }
                 rootNode.expand();
-                baseNode.expand();;
+                baseNode.expand();
             }
         }
-
     },
 
     recursiveAddNode: function (con, scope, attributePrefix, addListener) {
@@ -594,7 +589,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             // localizedfields can be a drop target
             if(type == "localizedfields") {
                 isLeaf = false;
-//                draggable = false;
             }
 
             var key = initData.name;
@@ -697,9 +691,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     saveOnComplete: function (response) {
-
-
-
         try {
             var res = Ext.decode(response.responseText);
             if(res.success) {
@@ -735,8 +726,14 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
                     var data = Ext.decode(response.responseText);
                     if(data && data.success) {
+                        this.editPanel.removeAll();
+                        this.resultPanel.enable();
+                        this.saveButton.enable();
+
                         this.layoutComboStore.reload();
+                        this.currentLayoutId = data.id;
                         this.layoutChangeCombo.setValue(data.id);
+                        this.initLayoutFields(true, response);
                     } else {
                         Ext.Msg.alert(t('error'), t('custom_layout_save_error'));
                     }
@@ -750,6 +747,16 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             Ext.Msg.alert(t('add_class'), t('invalid_class_name'));
         }
     },
+
+
+    clearSelectionPanel: function() {
+        this.selectionPanel.setRootNode(new Ext.tree.TreeNode(
+            {
+                hidden: true
+            }
+        ));
+    },
+
 
     deleteLayout: function () {
         var id = this.layoutChangeCombo.getValue();
@@ -765,9 +772,13 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     });
 
                     this.layoutComboStore.reload();
-                    this.layoutChangeCombo.setValue(null);
+                    this.currentLayoutId = 0;
+                    this.layoutChangeCombo.setValue(this.currentLayoutId);
 
                     this.editPanel.removeAll();
+                    this.clearSelectionPanel();
+                    this.resultPanel.disable();
+                    this.saveButton.disable();
                     this.rootPanel = null;
                 }
             }.bind(this));

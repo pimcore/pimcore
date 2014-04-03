@@ -133,7 +133,7 @@ pimcore.object.classes.data.data = Class.create({
                 fieldLabel: t("mandatoryfield"),
                 name: "mandatory",
                 checked: this.datax.mandatory,
-                disabled: !in_array("mandatory",this.availableSettingsFields)
+                disabled: !in_array("mandatory",this.availableSettingsFields) || this.isInCustomLayoutEditor()
             },
             {
                 xtype: "checkbox",
