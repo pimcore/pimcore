@@ -240,7 +240,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         $customLayout->save();
 
-        $this->_helper->json(array("success" => true, "id" => $customLayout->getId()));
+        $this->_helper->json(array("success" => true, "id" => $customLayout->getId(), "name" => $customLayout->getName()));
     }
 
 
