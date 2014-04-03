@@ -124,7 +124,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                 displayField:'name',
                 valueField: "id",
                 typeAhead: false,
-                loadingText: 'Searching...',
+                loadingText: t('searching'),
                 width: 285,
                 minChars: 1,
                 queryDelay: 100,
