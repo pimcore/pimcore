@@ -62,6 +62,7 @@ pimcore.object.classes.klass = Class.create({
             },
             tbar: {
                 items: [
+                      "->",
                     {
                         text: t("configure_custom_layouts"),
                         iconCls: "pimcore_icon_class_add",

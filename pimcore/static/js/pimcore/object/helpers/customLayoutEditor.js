@@ -32,7 +32,27 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
         this.configPanel = new Ext.Panel({
             layout: "border",
-            items: [this.getLayoutSelection(), this.getSelectionPanel(), this.getResultPanel(), this.getEditPanel(), this.getButtonPanel()]
+            items: [this.getLayoutSelection(), this.getSelectionPanel(), this.getResultPanel(), this.getEditPanel()],
+            bbar: [
+                "->",
+                {
+                    xtype: "button",
+                    text: t("save"),
+                    iconCls: "pimcore_icon_apply",
+                    handler: function () {
+                        this.save();
+                    }.bind(this)
+                },
+                {
+                xtype: 'button',
+                text: t('cancel'),
+                icon: '/pimcore/static/img/icon/cancel.png',
+                handler: function () {
+                            this.window.close();
+                        }.bind(this)
+                }
+        ]
+
 
         });
 
@@ -192,29 +212,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
         return this.languagePanel;
     },
-
-    getButtonPanel: function () {
-        if(!this.buttonPanel) {
-            this.buttonPanel = new Ext.form.FormPanel({
-                layout: "pimcoreform",
-                region: "south",
-                bodyStyle: "padding: 5px;",
-                height: 35,
-                items: [{
-                        xtype: "button",
-                        text: t("save"),
-                        iconCls: "pimcore_icon_apply",
-                        handler: function () {
-                            this.save();
-                        }.bind(this)
-                    }
-                ]
-            });
-        }
-
-        return this.buttonPanel;
-    },
-
 
     getSelectionPanel: function () {
         if(!this.selectionPanel) {
