@@ -11,11 +11,17 @@ if(Pimcore_Document::isAvailable() && Pimcore_Document::isFileTypeSupported($thi
     }
 }
 
-if($pdfPath) {
-    include("document-preview/pdfjs.php");
-} else if (strpos($this->asset->getFilename(), ".pdf") !== false) {
+if (strpos($this->asset->getFilename(), ".pdf") !== false) {
     $pdfPath = $this->asset->getFullpath();
-    include("document-preview/pdfjs.php");
+}
+
+if($pdfPath) {
+    if($this->getParam("native-viewer")) {
+        header("Location: " . $pdfPath, true, 301);
+        exit;
+    } else {
+        include("document-preview/pdfjs.php");
+    }
 } else {
     include("document-preview/google-docs.php");
 }

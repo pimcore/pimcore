@@ -76,12 +76,17 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
     getEditPanel: function () {
 
         if (!this.editPanel) {
+            var frameUrl = '/admin/asset/get-preview-document/id/' + this.id + '/';
+
+            //check for native/plugin PDF viewer
+            if(this.hasNativePDFViewer()) {
+                frameUrl += "?native-viewer=true"
+            }
 
             this.editPanel = new Ext.Panel({
                 title: t("preview"),
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
-                html: '<iframe src="/admin/asset/get-preview-document/id/' + this.id
-                                        + '/" frameborder="0" id="asset_document_edit_' + this.id + '"></iframe>',
+                html: '<iframe src="' + frameUrl + '" frameborder="0" id="asset_document_edit_' + this.id + '"></iframe>',
                 iconCls: "pimcore_icon_tab_edit"
             });
             this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
@@ -93,6 +98,32 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
         }
 
         return this.editPanel;
+    },
+
+    hasNativePDFViewer: function() {
+
+        var getActiveXObject = function(name) {
+            try { return new ActiveXObject(name); } catch(e) {}
+        };
+
+        var getNavigatorPlugin = function(name) {
+            for(key in navigator.plugins) {
+                var plugin = navigator.plugins[key];
+                if(plugin.name == name) return plugin;
+            }
+        };
+
+        var getPDFPlugin = function() {
+            return this.plugin = this.plugin || function() {
+                if(typeof window["ActiveXObject"] != "undefined") {
+                    return getActiveXObject('AcroPDF.PDF') || getActiveXObject('PDF.PdfCtrl');
+                } else {
+                    return getNavigatorPlugin('Adobe Acrobat') || getNavigatorPlugin('Chrome PDF Viewer') || getNavigatorPlugin('WebKit built-in PDF');
+                }
+            }();
+        };
+
+        return !!getPDFPlugin();
     }
 });
 
