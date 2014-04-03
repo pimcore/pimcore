@@ -736,7 +736,7 @@ class Object_Service extends Element_Service {
         if ($user->getAdmin()) {
             $superLayout = new Object_Class_CustomLayout();
             $superLayout->setId(-1);
-            $superLayout->setName("Super");
+            $superLayout->setName("Master (Admin Mode)");
             $resultList[-1] = $superLayout;
         }
 
