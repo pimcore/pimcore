@@ -24,7 +24,7 @@ try {
         'overwrite|o' => 'overwrite existing backup with the same filename, default: true',
         'cleanup|c=s' => 'in days, backups in the target directory which are older than the given days will be deleted, default 7, use false to disable it',
         'verbose|v' => 'show detailed information during the backup',
-        'mysql-tables=s' => 'a comma seperated list of mysql tables to backup e.g "translations_website,translations_admin" ',
+        'mysql-tables=s' => 'a comma separated list of mysql tables to backup e.g "translations_website,translations_admin" ',
         'only-mysql-related-tasks' => 'executes only mysql related tasks.',
         'help|h' => 'display this help'
     ));

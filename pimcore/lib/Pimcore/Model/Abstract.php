@@ -193,7 +193,7 @@ abstract class Pimcore_Model_Abstract {
     public function __sleep() {
 
         $finalVars = array();
-        $blockedVars = array("resource","_fulldump"); // _fulldump is a temp var wich is used to trigger a full serialized dump in __sleep eg. in Document, Object_Abstract
+        $blockedVars = array("resource","_fulldump"); // _fulldump is a temp var which is used to trigger a full serialized dump in __sleep eg. in Document, Object_Abstract
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
             if (!in_array($key, $blockedVars)) {
