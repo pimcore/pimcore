@@ -126,7 +126,7 @@ pimcore.settings.translations = Class.create({
             store: this.store,
             displayInfo: true,
             displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("no_objects_found")
+            emptyMsg: t("no_items_found")
         });
 
         // add per-page selection
