@@ -19,7 +19,6 @@ pimcore.settings.user.usertab = Class.create({
     initialize: function (parentPanel, id) {
         this.parentPanel = parentPanel;
         this.id = id;
-        this.data;
 
         Ext.Ajax.request({
             url: "/admin/user/get",
