@@ -601,17 +601,59 @@ class Asset_Image_Thumbnail_Config {
     }
 
 
-    public function getEstimatedDimensions() {
+    public function getEstimatedDimensions($originalWidth = null, $originalHeight = null) {
+
 
         $dimensions = array();
         $transformations = $this->getItems();
         if(is_array($transformations) && count($transformations) > 0) {
-            foreach ($transformations as $transformation) {
-                if(!empty($transformation)) {
-                    if(is_array($transformation["arguments"])) {
-                        foreach ($transformation["arguments"] as $key => $value) {
-                            if($key == "width" || $key == "height") {
-                                $dimensions[$key] = $value;
+            if($originalWidth && $originalHeight) {
+                // this is the more accurate method than the other below
+                $dimensions["width"] = $originalWidth;
+                $dimensions["height"] = $originalHeight;
+
+                foreach ($transformations as $transformation) {
+                    if(!empty($transformation)) {
+                        $arg = $transformation["arguments"];
+                        if(in_array($transformation["method"], ["resize","cover","frame", "crop"])) {
+                            $dimensions["width"] = $arg["width"];
+                            $dimensions["height"] = $arg["height"];
+                        } else if ($transformation["method"] == "scaleByWidth") {
+                            if($arg["width"] <= $dimensions["width"]) {
+                                $dimensions["height"] = round(($arg["width"] / $dimensions["width"]) * $dimensions["height"], 0);
+                                $dimensions["width"] = $arg["width"];
+                            }
+                        } else if ($transformation["method"] == "scaleByHeight") {
+                            if($arg["height"] < $dimensions["height"]) {
+                                $dimensions["width"] = round(($arg["height"] / $dimensions["height"]) * $dimensions["width"], 0);
+                                $dimensions["height"] = $arg["height"];
+                            }
+                        } else if ($transformation["method"] == "contain") {
+                            $x = $dimensions["width"] / $arg["width"];
+                            $y = $dimensions["height"] / $arg["height"];
+                            if ($x <= 1 && $y <= 1) {
+                                continue;
+                            } else if ($x > $y) {
+                                $dimensions["height"] = round(($arg["width"] / $dimensions["width"]) * $dimensions["height"], 0);
+                                $dimensions["width"] = $arg["width"];
+                            } else {
+                                $dimensions["width"] = round(($arg["height"] / $dimensions["height"]) * $dimensions["width"], 0);
+                                $dimensions["height"] = $arg["height"];
+                            }
+                        } else if ($transformation["method"] == "cropPercent") {
+                            $dimensions["width"] = ceil($dimensions["width"] * ($arg["width"] / 100));
+                            $dimensions["height"] = ceil($dimensions["height"] * ($arg["height"] / 100));
+                        }
+                    }
+                }
+            } else {
+                foreach ($transformations as $transformation) {
+                    if(!empty($transformation)) {
+                        if(is_array($transformation["arguments"]) && in_array($transformation["method"], ["resize","scaleByWidth","scaleByHeight","cover","frame"]) ) {
+                            foreach ($transformation["arguments"] as $key => $value) {
+                                if($key == "width" || $key == "height") {
+                                    $dimensions[$key] = $value;
+                                }
                             }
                         }
                     }

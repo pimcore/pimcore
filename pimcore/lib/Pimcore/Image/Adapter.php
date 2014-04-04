@@ -315,15 +315,21 @@ abstract class Pimcore_Image_Adapter {
      * @param $y
      * @return Pimcore_Image_Adapter
      */
-    public function  cropPercent ($width, $height, $x, $y) {
+    public function cropPercent ($width, $height, $x, $y) {
+
+        if($this->isVectorGraphic()) {
+            // rasterize before cropping
+            $dimensions = $this->getVectorRasterDimensions();
+            $this->resize($dimensions["width"], $dimensions["height"]);
+        }
 
         $originalWidth = $this->getWidth();
         $originalHeight = $this->getHeight();
 
-        $widthPixel = $originalWidth * ($width / 100);
-        $heightPixel = $originalHeight * ($height / 100);
-        $xPixel = $originalWidth * ($x / 100);
-        $yPixel = $originalHeight * ($y / 100);
+        $widthPixel = ceil($originalWidth * ($width / 100));
+        $heightPixel = ceil($originalHeight * ($height / 100));
+        $xPixel = ceil($originalWidth * ($x / 100));
+        $yPixel = ceil($originalHeight * ($y / 100));
 
         return $this->crop($xPixel, $yPixel, $widthPixel, $heightPixel);
     }
@@ -357,7 +363,7 @@ abstract class Pimcore_Image_Adapter {
      * @param  $imagePath
      * @return Pimcore_Image_Adapter
      */
-    public abstract function load ($imagePath);
+    public abstract function load ($imagePath, $options = []);
 
 
     /**
@@ -424,6 +430,19 @@ abstract class Pimcore_Image_Adapter {
         return false;
     }
 
+    /**
+     * @return array
+     */
+    public function getVectorRasterDimensions() {
+
+        $targetWidth = 5000;
+        $factor = $targetWidth / $this->getWidth();
+
+        return [
+            "width" => $this->getWidth() * $factor,
+            "height" => $this->getHeight() * $factor
+        ];
+    }
 
     /**
      * @param $type

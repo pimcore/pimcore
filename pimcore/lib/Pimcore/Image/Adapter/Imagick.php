@@ -40,7 +40,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @param $imagePath
      * @return bool|Pimcore_Image_Adapter|Pimcore_Image_Adapter_Imagick
      */
-    public function load ($imagePath) {
+    public function load ($imagePath, $options = []) {
 
         if($this->resource) {
             unset($this->resource);
@@ -51,14 +51,14 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $i = new Imagick();
             $this->imagePath = $imagePath;
 
-            $i->setBackgroundColor(new ImagickPixel('transparent')); //set .png transparent (print)
             $i->setcolorspace(Imagick::COLORSPACE_SRGB);
+            $i->setBackgroundColor(new ImagickPixel('transparent')); //set .png transparent (print)
 
-            if($this->isVectorGraphic($imagePath)) {
+            if(isset($options["resolution"])) {
                 // set the resolution to 2000x2000 for known vector formats
                 // otherwise this will cause problems with eg. cropPercent in the image editable (select specific area)
                 // maybe there's a better solution but for now this fixes the problem
-                $i->setResolution(2000, 2000);
+                $i->setResolution($options["resolution"]["x"], $options["resolution"]["y"]);
             }
 
             if(!$i->readImage($imagePath) || !filesize($imagePath)) {
@@ -76,8 +76,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         }
 
         // set dimensions
-        $this->setWidth($i->getImageWidth());
-        $this->setHeight($this->resource->getImageHeight());
+        $dimensions = $this->getDimensions();
+        $this->setWidth($dimensions["width"]);
+        $this->setHeight($dimensions["height"]);
 
         $this->setModified(false);
 
@@ -253,8 +254,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         if($this->isVectorGraphic()) {
             // the resolution has to be set before loading the image, that's why we have to destroy the instance and load it again
             $res = $this->resource->getImageResolution();
-            $x_ratio = $res['x'] / $this->resource->getImageWidth();
-            $y_ratio = $res['y'] / $this->resource->getImageHeight();
+            $x_ratio = $res['x'] / $this->getWidth();
+            $y_ratio = $res['y'] / $this->getHeight();
             $this->resource->removeImage();
 
             $this->resource->setResolution($width * $x_ratio, $height * $y_ratio);
@@ -550,7 +551,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         } else {
             try {
                 $type = $this->resource->getimageformat();
-                $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","PSB","SVG","SVGZ");
+                $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","SVG","SVGZ");
 
                 if(in_array($type,$vectorTypes)) {
                     return true;
@@ -561,5 +562,58 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         }
 
         return false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDimensions() {
+
+        if($vectorDimensions = $this->getVectorFormatEmbeddedRasterDimensions()) {
+            return $vectorDimensions;
+        }
+
+        return [
+            "width" => $this->resource->getImageWidth(),
+            "height" => $this->resource->getImageHeight()
+        ];
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getVectorFormatEmbeddedRasterDimensions() {
+        if(in_array($this->resource->getimageformat(), ["EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3"])) {
+            // we need a special handling for PhotoShop EPS
+            $i = 0;
+
+            ini_set("auto_detect_line_endings", true); // we need to turn this on, as the damn f****** Mac has different line endings in EPS files, Prost Mahlzeit!
+
+            $epsFile = fopen($this->imagePath, 'r');
+            while (($eps_line = fgets($epsFile)) && ($i < 100)) {
+                if(preg_match("/%ImageData: ([0-9]+) ([0-9]+)/i", $eps_line,$matches)) {
+                    return [
+                        "width" => $matches[1],
+                        "height" => $matches[2]
+                    ];
+                    break;
+                }
+                $i++;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getVectorRasterDimensions() {
+
+        if($vectorDimensions = $this->getVectorFormatEmbeddedRasterDimensions()) {
+            return $vectorDimensions;
+        }
+
+        return parent::getVectorRasterDimensions();
     }
 }

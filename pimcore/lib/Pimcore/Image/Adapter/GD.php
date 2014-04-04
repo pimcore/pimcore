@@ -31,7 +31,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      * @param $imagePath
      * @return bool|Pimcore_Image_Adapter_GD
      */
-    public function load ($imagePath) {
+    public function load ($imagePath, $options = []) {
 
         $this->path = $imagePath;
         if(!$this->resource = @imagecreatefromstring(file_get_contents($this->path))) {
