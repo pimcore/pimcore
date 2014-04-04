@@ -412,20 +412,21 @@ pimcore.settings.targeting.rules.item = Class.create({
 
 
             // apply specials :-)
-            if(ident == 0)
+            if(ident == 0) {
                 item.applyStyles({
                     "margin-top": "10px"
                 });
-            else if(ident == lastIdent)
+            } else if(ident == lastIdent) {
                 item.applyStyles({
                     "margin-top": "0px",
                     "margin-bottom": "0px",
                     "padding": "1px"
                 });
-            else
+            } else {
                 item.applyStyles({
                     "margin-top": "5px"
                 });
+            }
 
 
             // remeber current ident
