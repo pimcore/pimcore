@@ -845,7 +845,8 @@
         if(pushData["personas"] && pushData["personas"].length > 0) {
             for(var ev=0; ev<pushData["personas"].length; ev++) {
                 user["personas"].push(pushData["personas"][ev]);
-                util.log("persona ID " + pushData["personas"][ev] + " is assigned to the current document -> put it onto the stack");
+                util.log("persona ID " + pushData["personas"][ev]
+                    + " is assigned to the current document -> put it onto the stack");
             }
         }
     } catch (e9) {

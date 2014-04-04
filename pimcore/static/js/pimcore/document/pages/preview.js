@@ -1064,7 +1064,7 @@ pimcore.document.pages.preview = Class.create({
                                 this.editorModifications[hierarchy] = {
                                     initial: cssData,
                                     css: css
-                                }
+                                };
                             } else {
                                 if(css != this.editorModifications[hierarchy]["css"]) {
                                     this.editorUnFrameElement();

@@ -7,26 +7,29 @@ Function.prototype.bind = function (context) {
         while (length--)
             array[arrayLength + length] = args[length];
         return array;
-    }
+    };
 
     var merge = function (array, args) {
         array = slice.call(array, 0);
         return update(array, args);
-    }
+    };
 
     var slice = Array.prototype.slice;
 
-    if (arguments.length < 2 && typeof arguments[0] == "undefined")
+    if (arguments.length < 2 && typeof arguments[0] == "undefined") {
         return this;
+    }
     var __method = this, args = slice.call(arguments, 1);
     return function() {
         var a = merge(args, arguments);
         return __method.apply(context, a);
-    }
+    };
 };
 
 (function(win, doc){
-	if(win.addEventListener)return;		//No need to polyfill
+	if(win.addEventListener) {
+        return;
+    }		//No need to polyfill
 
 	function docHijack(p){var old = doc[p];doc[p] = function(v){return addListen(old(v))}}
 	function addEvent(on, fn, self){
@@ -285,7 +288,7 @@ pimcore.pdf.prototype.closeFullScreen = function (page) {
 
 pimcore.pdf.prototype.download = function () {
     window.open(this.data.pdf);
-}
+};
 
 pimcore.pdf.prototype.toPage = function (page) {
 

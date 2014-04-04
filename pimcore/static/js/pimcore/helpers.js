@@ -1019,7 +1019,7 @@ pimcore.helpers.getOpenTab = function () {
 
 pimcore.helpers.clearOpenTab = function () {
     localStorage.setItem("pimcore_opentabs", JSON.stringify([]));
-}
+};
 
 pimcore.helpers.rememberOpenTab = function (item) {
     var openTabs = pimcore.helpers.getOpenTab();
@@ -1057,7 +1057,7 @@ pimcore.helpers.openMemorizedTabs = function () {
     for(var i=0; i<openTabs.length; i++) {
         if(!empty(openTabs[i])) {
             if(!in_array(openTabs[i], openedTabs)) {
-                parts = openTabs[i].split("_");
+                var parts = openTabs[i].split("_");
                 window.setTimeout(function (parts) {
                     if(parts[1] && parts[2]) {
                         if(parts[0] == "asset") {
@@ -1429,14 +1429,16 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                 if(thumbnails && thumbnails.length) {
                     imageHtml += '<div class="thumbnails">';
                     for(var i=0; i<thumbnails.length; i++) {
-                        imageHtml += '<div class="thumb small"><img src="' + uriPrefix + thumbnails[i] + '" onload="this.parentNode.className += \' complete\';" /></div>';
+                        imageHtml += '<div class="thumb small"><img src="' + uriPrefix + thumbnails[i]
+                            + '" onload="this.parentNode.className += \' complete\';" /></div>';
                     }
                     imageHtml += '</div>';
                 }
 
                 var thumbnail = node.attributes.thumbnail;
                 if(thumbnail) {
-                    imageHtml = '<div class="thumb big"><img src="' + uriPrefix + thumbnail + '" onload="this.parentNode.className += \' complete\';" /></div>';
+                    imageHtml = '<div class="thumb big"><img src="' + uriPrefix + thumbnail
+                                    + '" onload="this.parentNode.className += \' complete\';" /></div>';
                 }
 
                 if(imageHtml) {
@@ -1546,7 +1548,7 @@ pimcore.helpers.showUser = function(specificUser) {
             panel.activate();
         }
         catch (e) {
-            panel = new pimcore.settings.user.panel()
+            panel = new pimcore.settings.user.panel();
             pimcore.globalmanager.add("users", panel);
         }
 
@@ -1719,7 +1721,7 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
             specific: {
                 classes: null
             }
-        }
+        };
     } else {
         config = {
             type: [type]
