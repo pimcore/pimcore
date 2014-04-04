@@ -705,6 +705,7 @@
 "paste_recursive_as_childs","Paste as child (recursive)"
 "view_original","View Original"
 "feed","Feed"
+"no_items_found","No items found"
 "no_objects_found","No objects found"
 "no_assets_found","No assets found"
 "no_documents_found","No documents found"
