@@ -23,19 +23,19 @@
         <div class="form-group">
             <label class="col-lg-2 control-label"><?= $this->translate("Firstname"); ?></label>
             <div class="col-lg-10">
-                <input name="firstname" type="text" class="form-control" placeholder="" value="<?php echo $this->getParam("firstname"); ?>">
+                <input name="firstname" type="text" class="form-control" placeholder="" value="<?= $this->getParam("firstname"); ?>">
             </div>
         </div>
         <div class="form-group">
             <label class="col-lg-2 control-label"><?= $this->translate("Lastname"); ?></label>
             <div class="col-lg-10">
-                <input name="lastname" type="text" class="form-control" placeholder="" value="<?php echo $this->getParam("lastname"); ?>">
+                <input name="lastname" type="text" class="form-control" placeholder="" value="<?= $this->getParam("lastname"); ?>">
             </div>
         </div>
         <div class="form-group">
             <label class="col-lg-2 control-label"><?= $this->translate("E-Mail"); ?></label>
             <div class="col-lg-10">
-                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?php echo $this->getParam("email"); ?>">
+                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?= $this->getParam("email"); ?>">
             </div>
         </div>
 
