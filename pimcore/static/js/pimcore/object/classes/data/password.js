@@ -91,61 +91,61 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
         this.specificPanel.removeAll();
         this.specificPanel.add([
             {
-    			xtype: "spinnerfield",
+                xtype: "spinnerfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
-    		},
-    		{
-				xtype: "combo",
-				width: 300,
-				fieldLabel: t("algorithm"),
-				itemId: "algorithm",
-				name: "algorithm",
-				value: this.datax.algorithm || 'md5',
-				triggerAction: 'all',
-				lazyRender:true,
-				mode: 'local',
-				store: this.algorithmsStore,
-				valueField: 'value',
-				displayField: 'key',
+            },
+            {
+                xtype: "combo",
+                width: 300,
+                fieldLabel: t("algorithm"),
+                itemId: "algorithm",
+                name: "algorithm",
+                value: this.datax.algorithm || 'md5',
+                triggerAction: 'all',
+                lazyRender:true,
+                mode: 'local',
+                store: this.algorithmsStore,
+                valueField: 'value',
+                displayField: 'key',
                 disabled: this.isInCustomLayoutEditor()
-			},
-			{
-				xtype: 'textfield',
-				fieldLabel: t("salt"),
-				width: 300,
-				itemId: "salt",
-				name: "salt",
-				value: this.datax.salt,
-				emptyText: '',
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: t("salt"),
+                width: 300,
+                itemId: "salt",
+                name: "salt",
+                value: this.datax.salt,
+                emptyText: '',
                 disabled: this.isInCustomLayoutEditor()
-			},
-			{
-				xtype: "combo",
-				width: 300,
-				fieldLabel: t("saltlocation"),
-				itemId: "saltlocation",
-				name: "saltlocation",
-				value: this.datax.saltlocation || 'back',
-				triggerAction: 'all',
-				lazyRender:true,
-				mode: 'local',
-				store: new Ext.data.ArrayStore({
-					id: 0,
-					fields: [
-						'value',
-						'key'
-					],
-					data: this.statics.CONFIG_DATA
-				}),
-				valueField: 'value',
-				displayField: 'key',
+            },
+            {
+                xtype: "combo",
+                width: 300,
+                fieldLabel: t("saltlocation"),
+                itemId: "saltlocation",
+                name: "saltlocation",
+                value: this.datax.saltlocation || 'back',
+                triggerAction: 'all',
+                lazyRender:true,
+                mode: 'local',
+                store: new Ext.data.ArrayStore({
+                    id: 0,
+                    fields: [
+                        'value',
+                        'key'
+                    ],
+                    data: this.statics.CONFIG_DATA
+                }),
+                valueField: 'value',
+                displayField: 'key',
                 disabled: this.isInCustomLayoutEditor()
-			}
-    
+            }
+
         ]);
-		
+
         this.algorithmsStore.load();
         
         return this.layout;

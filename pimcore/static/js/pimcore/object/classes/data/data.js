@@ -106,7 +106,6 @@ pimcore.object.classes.data.data = Class.create({
                 width: 300,
                 value: this.datax.title,
                 disabled: !in_array("title",this.availableSettingsFields),
-                itemId: "title",
                 enableKeyEvents: true,
                 listeners: {
                     keyup: function (el) {
