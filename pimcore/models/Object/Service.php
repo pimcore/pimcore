@@ -805,8 +805,6 @@ class Object_Service extends Element_Service {
                     $result[$fd->getName()]["visible"] |= $visible;
                     $result[$fd->getName()]["editable"] |= $editable;
                 }
-                Logger::debug("hu");
-
             }
         }
         return $result;
