@@ -30,8 +30,6 @@ pimcore.settings.website = Class.create({
     getTabPanel:function () {
 
         if (!this.panel) {
-
-
             this.panel = new Ext.Panel({
                 id:"pimcore_website_settings",
                 title: t('website_settings'),
@@ -261,7 +259,7 @@ pimcore.settings.website = Class.create({
             ]
         });
 
-        var customKey = new Ext.form.TextField({
+        this.customKeyField = new Ext.form.TextField({
             name: 'key',
             emptyText: t('key')
         });
@@ -295,10 +293,10 @@ pimcore.settings.website = Class.create({
                     xtype: "tbtext",
                     text: t('add_setting') + " "
                 },
-                customKey, customType,
+                this.customKeyField, customType,
                 {
                     xtype: "button",
-                    handler: this.addSetFromUserDefined.bind(this, customKey, customType),
+                    handler: this.addSetFromUserDefined.bind(this, this.customKeyField, customType),
                     iconCls: "pimcore_icon_add"
                 },
                 '->',
@@ -325,10 +323,8 @@ pimcore.settings.website = Class.create({
             this.setAutoScroll(true);
         });
 
-
         return this.grid;
     },
-
 
     getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
 
@@ -388,7 +384,6 @@ pimcore.settings.website = Class.create({
                 var data = this.grid.getStore().getAt(storeIndex).data;
 
                 if (data.type == "document" || data.type == "asset" || data.type == "object") {
-
 
                     // add dnd support
                     var dd = new Ext.dd.DropZone(rows[i], {
@@ -459,6 +454,7 @@ pimcore.settings.website = Class.create({
             Ext.MessageBox.alert(t("error"), t("name_is_not_allowed"));
         }
         this.add(customKey.getValue(), customType.getValue(), false, false, false, true);
+        this.customKeyField.setValue(null);
     },
 
 
