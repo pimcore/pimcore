@@ -429,7 +429,7 @@ pimcore.settings.targeting.rules.item = Class.create({
             }
 
 
-            // remeber current ident
+            // remember current ident
             lastIdent = ident;
 
 
