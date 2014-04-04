@@ -170,7 +170,8 @@ pimcore.settings.user.workspace.special = Class.create({
     },
 
     openLayoutEditor:function() {
-        this.currentNode = new pimcore.settings.user.workspace.customlayouts("layouts", this.data["layouts"], this.allLayouts);
+        this.currentNode = new pimcore.settings.user.workspace.customlayouts("layouts",
+                                                                this.data["layouts"], this.allLayouts);
         this.editPanel.add(this.currentNode.getLayout());
         this.editPanel.doLayout();
 

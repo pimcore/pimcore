@@ -76,7 +76,7 @@ pimcore.settings.user.workspace.object = Class.create({
                         lEdit: data.data.lEdit,
                         layouts: data.data.layouts,
                         path: data.data.path
-                    }
+                    };
 
                     var dialog = new pimcore.settings.user.workspace.special(callback, specialData, data.data.path);
                     dialog.show();
