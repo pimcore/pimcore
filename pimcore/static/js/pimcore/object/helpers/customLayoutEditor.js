@@ -89,7 +89,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 }
 
                 // check if the name is unique, localizedfields can be used more than once
-                if ((fieldValidation && in_arrayi(data.name,this.usedFieldNames) == false) || data.name == "localizedfields") {
+                if ((fieldValidation && in_arrayi(data.name,this.usedFieldNames) == false)
+                                                                || data.name == "localizedfields") {
 
                     if(data.datatype == "data") {
                         this.usedFieldNames.push(data.name);
@@ -106,7 +107,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                         invalidFieldsText = t("reserved_field_names_error")
                             +(implode(',',node.attributes.object.forbiddenNames));
                     }
-                    pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error", invalidFieldsText);
+                    pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error",
+                                                                                            invalidFieldsText);
 
                     this.getDataSuccess = false;
                     return false;
@@ -239,7 +241,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 listeners:{
                     beforenodedrop: function(e) {
                         if(e.source.tree.el != e.target.ownerTree.el) {
-                            if(e.dropNode.attributes.type != "layout" && this.selectionPanel.getRootNode().findChild("key", e.dropNode.attributes.key)) {
+                            if(e.dropNode.attributes.type != "layout"
+                                    && this.selectionPanel.getRootNode().findChild("key", e.dropNode.attributes.key)) {
                                  e.cancel= true;
                             } else {
                                 var n = e.dropNode; // the node that was dropped
@@ -300,7 +303,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             }
         }
 
-        return copy
+        return copy;
     },
 
     onTreeNodeContextmenu: function (node) {
