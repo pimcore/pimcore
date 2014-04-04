@@ -122,6 +122,10 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         this.hotspotWindow.on("afterrender", function ( ){
             this.hotspotWindowInterval = window.setInterval(function () {
                 var el = Ext.get("hotspotImage");
+                if(!el) {
+                    clearInterval(this.hotspotWindowInterval);
+                    return;
+                }
                 var imageWidth = el.getWidth();
                 var imageHeight = el.getHeight();
                 var i;
