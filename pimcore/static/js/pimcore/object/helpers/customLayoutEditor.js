@@ -182,6 +182,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                             this.initLayoutFields(true, response);
                             this.resultPanel.enable();
                             this.saveButton.enable();
+                            this.currentLayoutId = layoutId;
                         }.bind(this)
 
                     });
