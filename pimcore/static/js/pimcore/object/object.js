@@ -307,7 +307,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 handler: this.reload.bind(this, this.data.currentLayoutId)
             }
 
-            if (this.data.validLayouts && this.data.validLayouts.length > 0) {
+            if (this.data["validLayouts"] && this.data.validLayouts.length > 0) {
                 var menu = [];
                 var i = 0;
                 for (i = 0; i < this.data.validLayouts.length; i++) {
