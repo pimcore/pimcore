@@ -142,6 +142,10 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         eConfig.allowedContent = true; // disables CKEditor ACF (will remove pimcore_* attributes from links, etc.)
         eConfig.removePlugins = "tableresize";
 
+        if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
+            eConfig = mergeObject(pimcore.object.tags.wysiwyg.defaultEditorConfig,eConfig);
+        }
+
         if (intval(this.fieldConfig.width) > 1) {
             eConfig.width = this.fieldConfig.width;
         }
