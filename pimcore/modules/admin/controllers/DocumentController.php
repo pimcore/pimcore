@@ -1179,6 +1179,13 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin
                 }
             }
 
+            if($type == "hardlink" || $type == "folder") {
+                // remove navigation settings
+                foreach (["name", "title", "target", "exclude", "class", "anchor", "parameters", "relation", "accesskey", "tabindex"] as $propertyName) {
+                    $new->removeProperty("navigation_" . $propertyName);
+                }
+            }
+
             $new->setType($type);
             $new->save();
         }
