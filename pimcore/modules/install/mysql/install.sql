@@ -336,18 +336,20 @@ CREATE TABLE `keyvalue_groups` (
 
 DROP TABLE IF EXISTS `keyvalue_keys`;
 CREATE TABLE `keyvalue_keys` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NOT NULL DEFAULT '',
-  `description` TEXT,
-  `type` enum('bool','number','select','text') DEFAULT NULL,
-  `unit` VARCHAR(255),
-  `possiblevalues` TEXT,
-  `group` INT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `description` text,
+  `type` enum('bool','number','select','text','translated') DEFAULT NULL,
+  `unit` varchar(255) DEFAULT NULL,
+  `possiblevalues` text,
+  `group` int(11) DEFAULT NULL,
   `creationDate` bigint(20) unsigned DEFAULT '0',
   `modificationDate` bigint(20) unsigned DEFAULT '0',
+  `translator` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `group` (`group`)
-) DEFAULT CHARSET=utf8;
+  CONSTRAINT `keyvalue_keys_ibfk_1` FOREIGN KEY (`group`) REFERENCES `keyvalue_groups` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `locks`;
 CREATE TABLE `locks` (
