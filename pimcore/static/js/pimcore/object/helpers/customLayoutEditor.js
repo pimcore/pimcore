@@ -586,54 +586,49 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     addDataChild: function (type, initData, attributePrefix, showFieldname, addListener) {
 
-        if(/*type != "objectbricks" && */ !initData.invisible) {
-            var isLeaf = true;
-            var draggable = true;
+        var isLeaf = true;
+        var draggable = true;
 
-            // localizedfields can be a drop target
-            if(type == "localizedfields") {
-                isLeaf = false;
-            }
-
-            var key = initData.name;
-            if(attributePrefix) {
-                key = attributePrefix + "~" + key;
-            }
-
-            var text = ts(initData.title);
-            if(showFieldname) {
-                text = text + " (" + key.replace("~", ".") + ")";
-            }
-            var newNode = new Ext.tree.TreeNode({
-                text: text,
-                key: key,
-                type: "data",
-                reference: this.attributes.reference,
-                layout: initData,
-                leaf: isLeaf,
-                draggable: draggable,
-                dataType: type,
-                iconCls: "pimcore_icon_" + type
-            });
-
-            newNode.attributes.object = new pimcore.object.classes.data[type](newNode, initData);
-
-            if (addListener) {
-                newNode.addListener("click", this.attributes.reference.onTreeNodeClick);
-            }
-
-            this.appendChild(newNode);
-
-            if(this.rendered) {
-                this.renderIndent();
-                this.expand();
-            }
-
-            return newNode;
-        } else {
-            return null;
+        // localizedfields can be a drop target
+        if(type == "localizedfields") {
+            isLeaf = false;
         }
 
+        var key = initData.name;
+        if(attributePrefix) {
+            key = attributePrefix + "~" + key;
+        }
+
+        var text = ts(initData.title);
+        if(showFieldname) {
+            text = text + " (" + key.replace("~", ".") + ")";
+        }
+        var newNode = new Ext.tree.TreeNode({
+            text: text,
+            key: key,
+            type: "data",
+            reference: this.attributes.reference,
+            layout: initData,
+            leaf: isLeaf,
+            draggable: draggable,
+            dataType: type,
+            iconCls: "pimcore_icon_" + type
+        });
+
+        newNode.attributes.object = new pimcore.object.classes.data[type](newNode, initData);
+
+        if (addListener) {
+            newNode.addListener("click", this.attributes.reference.onTreeNodeClick);
+        }
+
+        this.appendChild(newNode);
+
+        if(this.rendered) {
+            this.renderIndent();
+            this.expand();
+        }
+
+        return newNode;
     },
 
     onTreeNodeClick: function () {
