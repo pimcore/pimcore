@@ -46,6 +46,10 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnEditor: function(field) {
+        if(field.layout.noteditable) {
+            return null;
+        }
+
         var store = new Ext.data.JsonStore({
             autoDestroy: true,
             root: 'options',
