@@ -381,9 +381,14 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $list = $list->load();
         $result = array();
         foreach ($list as $item) {
+            $name = $item->getName();
+            if (PIMCORE_DEVMODE) {
+                $name .=  " (ID: " . $item->getId() . ")";
+            }
+
             $result[] = array(
                 "id" => $item->getId(),
-                "name" => $item->getName()
+                "name" => $name
             );
         }
 
