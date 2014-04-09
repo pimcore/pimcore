@@ -347,7 +347,7 @@ CREATE TABLE `keyvalue_keys` (
   `modificationDate` bigint(20) unsigned DEFAULT '0',
   `translator` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `group` (`group`)
+  KEY `group` (`group`),
   CONSTRAINT `keyvalue_keys_ibfk_1` FOREIGN KEY (`group`) REFERENCES `keyvalue_groups` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
