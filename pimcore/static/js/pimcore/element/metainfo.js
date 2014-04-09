@@ -74,11 +74,9 @@ pimcore.element.metainfo = Class.create({
                     readOnly: true,
                     value: new Date(this.data[i]["value"] * 1000) + " (" + this.data[i]["value"] + ")",
                     width: 600
-                }
-
-
+                };
             } else {
-                var type = this.data[i]["type"]
+                var type = this.data[i]["type"];
                 var value = this.data[i]["value"];
                 var name = t(this.data[i]["name"]);
                 if (type == "user") {
@@ -87,14 +85,14 @@ pimcore.element.metainfo = Class.create({
 
                     var user = pimcore.globalmanager.get("user");
                     if (user.admin) {
-                        var html = value + " " + '<a href="#">' + t("click_to_open") +  '</a>';
+                        htmlValue = value + " " + '<a href="#">' + t("click_to_open") +  '</a>';
                     }
 
                     item = {
                         xtype: "label",
                         fieldLabel: name,
                         readOnly: true,
-                        html: html,
+                        html: htmlValue,
                         width: 600
                     };
                     if (user.admin) {
@@ -105,7 +103,7 @@ pimcore.element.metainfo = Class.create({
                                     detailWindow.close();
                                 }, c);
                             }.bind(this, value, this.detailWindow)
-                        }
+                        };
                     }
 
                 } else {

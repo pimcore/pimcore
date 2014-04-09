@@ -176,7 +176,7 @@ pimcore.element.notes = Class.create({
                                 this.showDetailedData(grid, rowIndex, event);
                             }.bind(this)
                         }]
-                    },
+                    }
                 ],
                 columnLines: true,
                 bbar: this.pagingtoolbar,
