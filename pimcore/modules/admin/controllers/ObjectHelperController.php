@@ -49,7 +49,15 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
             $gridType = $this->getParam("gridtype");
         }
 
-        $fields = $class->getFieldDefinitions();
+        $objectId = $this->getParam("objectId");
+
+        if ($objectId) {
+            $fields = Object_Service::getCustomGridFieldDefinitions($class->getId(), $objectId);
+        }
+
+        if (!$fields) {
+            $fields = $class->getFieldDefinitions();
+        }
 
         $types = array();
         if ($this->getParam("types")) {
@@ -58,7 +66,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
 
         // grid config
         $gridConfig = array();
-        if ($this->getParam("objectId")) {
+        if ($objectId) {
 
             $configFiles["configFileClassUser"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->getParam("objectId") . "_" . $class->getId() . "-user_" . $this->getUser()->getId() . ".psf";
             $configFiles["configFileUser"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->getParam("objectId") . "-user_" . $this->getUser()->getId() . ".psf";

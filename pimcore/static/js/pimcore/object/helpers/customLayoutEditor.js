@@ -49,12 +49,12 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             bbar: [
                 "->",
                 {
-                xtype: 'button',
-                text: t('cancel'),
-                iconCls: 'pimcore_icon_delete',
-                handler: function () {
-                            this.window.close();
-                        }.bind(this)
+                    xtype: 'button',
+                    text: t('cancel'),
+                    iconCls: 'pimcore_icon_delete',
+                    handler: function () {
+                        this.window.close();
+                    }.bind(this)
                 },
                 this.saveButton
             ]
@@ -90,7 +90,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
                 // check if the name is unique, localizedfields can be used more than once
                 if ((fieldValidation && in_arrayi(data.name,this.usedFieldNames) == false)
-                                                                || data.name == "localizedfields") {
+                    || data.name == "localizedfields") {
 
                     if(data.datatype == "data") {
                         this.usedFieldNames.push(data.name);
@@ -108,7 +108,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                             +(implode(',',node.attributes.object.forbiddenNames));
                     }
                     pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error",
-                                                                                            invalidFieldsText);
+                        invalidFieldsText);
 
                     this.getDataSuccess = false;
                     return false;
@@ -243,8 +243,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     beforenodedrop: function(e) {
                         if(e.source.tree.el != e.target.ownerTree.el) {
                             if(e.dropNode.attributes.type != "layout"
-                                    && this.selectionPanel.getRootNode().findChild("key", e.dropNode.attributes.key)) {
-                                 e.cancel= true;
+                                && this.selectionPanel.getRootNode().findChild("key", e.dropNode.attributes.key)) {
+                                e.cancel= true;
                             } else {
                                 var n = e.dropNode; // the node that was dropped
 
@@ -366,8 +366,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         dataMenu.push({
             text: pimcore.object.classes.data.localizedfields.prototype.getTypeName(),
             iconCls: pimcore.object.classes.data.localizedfields.prototype.getIconClass(),
-            handler: node.attributes.reference.addDataChild.bind(node, "localizedfields", {name: "localizedfields"},
-                                                                null, true, true)
+            handler: node.attributes.reference.addDataChild.bind(node, "localizedfields", {name: "localizedfields"}, null, true, true)
         });
 
         menu.add(new Ext.menu.Item({
@@ -418,28 +417,28 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     getRootPanel: function() {
 
-            this.rootPanel = new Ext.form.FormPanel({
-                title: t("basic_configuration"),
-                bodyStyle: "padding: 10px;",
-                layout: "pimcoreform",
-                labelWidth: 200,
-                items: [
-                    {
-                        xtype: "textfield",
-                        fieldLabel: t("name"),
-                        name: "name",
-                        width: 300,
-                        value: this.data.name
-                    },
-                    {
-                        xtype: "textarea",
-                        fieldLabel: t("description"),
-                        name: "description",
-                        width: 300,
-                        value: this.data.description
-                    }
-                ]
-            });
+        this.rootPanel = new Ext.form.FormPanel({
+            title: t("basic_configuration"),
+            bodyStyle: "padding: 10px;",
+            layout: "pimcoreform",
+            labelWidth: 200,
+            items: [
+                {
+                    xtype: "textfield",
+                    fieldLabel: t("name"),
+                    name: "name",
+                    width: 300,
+                    value: this.data.name
+                },
+                {
+                    xtype: "textarea",
+                    fieldLabel: t("description"),
+                    name: "description",
+                    width: 300,
+                    value: this.data.description
+                }
+            ]
+        });
         return this.rootPanel;
 
 
@@ -764,7 +763,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         if (id > 0) {
             Ext.Msg.confirm(t('delete'), t('delete_message'), function(btn){
                 if (btn == 'yes'){
-                                    Ext.Ajax.request({
+                    Ext.Ajax.request({
                         url: "/admin/class/delete-custom-layout",
                         params: {
                             id: id

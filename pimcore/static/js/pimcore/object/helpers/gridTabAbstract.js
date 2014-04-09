@@ -45,7 +45,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
                 if(filterData[i].data.value && typeof filterData[i].data.value == "object") {
                     filterStringConfig.push(filterData[i].field + " " + operator + " ("
-                                    + filterData[i].data.value.join(" OR ") + ")");
+                        + filterData[i].data.value.join(" OR ") + ")");
                 } else {
                     filterStringConfig.push(filterData[i].field + " " + operator + " " + filterData[i].data.value);
                 }
@@ -333,6 +333,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         var columnConfig = {
             language: this.gridLanguage,
             classid: this.classId,
+            objectId: this.object.id,
             selectedGridColumns: visibleColumns
         };
         var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data) {

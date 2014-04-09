@@ -24,7 +24,7 @@ pimcore.object.helpers.classTree = Class.create({
     },
 
 
-    getClassTree: function(url, id) {
+    getClassTree: function(url, classId, objectId) {
 
         var tree = new Ext.tree.TreePanel({
             title: t('class_definitions'),
@@ -48,7 +48,8 @@ pimcore.object.helpers.classTree = Class.create({
         Ext.Ajax.request({
             url: url, //"/admin/class/get",
             params: {
-                id: id // this.config.classid
+                id: classId, // this.config.classid,
+                oid: objectId
             },
             success: this.initLayoutFields.bind(this, tree)
         });

@@ -395,6 +395,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setChilds($childs)
     {
         $this->childs = $childs;
+        $this->fieldDefinitionsCache = null;
         return $this;
     }
 
@@ -416,6 +417,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function addChild($child)
     {
         $this->childs[] = $child;
+        $this->fieldDefinitionsCache = null;
     }
 
     /**

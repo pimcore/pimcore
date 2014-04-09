@@ -83,7 +83,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         var storedata = [];
         for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
             storedata.push([pimcore.settings.websiteLanguages[i],
-                            pimcore.available_languages[pimcore.settings.websiteLanguages[i]]]);
+                pimcore.available_languages[pimcore.settings.websiteLanguages[i]]]);
         }
 
         this.languageField = new Ext.form.ComboBox({
@@ -174,7 +174,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     beforenodedrop: function(e) {
                         if(e.source.tree.el != e.target.ownerTree.el) {
                             if(this.selectionPanel.getRootNode().findChild("key", e.dropNode.attributes.key)) {
-                                 e.cancel= true;
+                                e.cancel= true;
                             } else {
                                 var n = e.dropNode; // the node that was dropped
                                 var copy = new Ext.tree.TreeNode( // copy it
@@ -233,20 +233,20 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
             this.brickKeys = [];
             this.resultPanel = this.getClassTree("/admin/class/get-class-definition-for-column-config",
-                                                    this.config.classid);
+                this.config.classid, this.config.objectId);
         }
 
         return this.resultPanel;
     },
 
-    getClassTree: function(url, id) {
+    getClassTree: function(url, classId, objectId) {
 
         var classTreeHelper = new pimcore.object.helpers.classTree(true);
-        var tree = classTreeHelper.getClassTree(url, id);
+        var tree = classTreeHelper.getClassTree(url, classId, objectId);
 
         tree.addListener("dblclick", function(node) {
             if(!node.attributes.root && node.attributes.type != "layout"
-                            && node.attributes.dataType != 'localizedfields') {
+                && node.attributes.dataType != 'localizedfields') {
                 var copy = new Ext.tree.TreeNode( // copy it
                     Ext.apply({}, node.attributes)
                 );
