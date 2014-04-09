@@ -366,7 +366,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         dataMenu.push({
             text: pimcore.object.classes.data.localizedfields.prototype.getTypeName(),
             iconCls: pimcore.object.classes.data.localizedfields.prototype.getIconClass(),
-            handler: node.attributes.reference.addDataChild.bind(node, "localizedfields", {name: "localizedfields"}, null, true, true)
+            handler: node.attributes.reference.addDataChild.bind(node, "localizedfields", {name: "localizedfields"},
+                                                                                    null, true, true)
         });
 
         menu.add(new Ext.menu.Item({
