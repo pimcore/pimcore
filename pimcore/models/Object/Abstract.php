@@ -490,6 +490,9 @@ class Object_Abstract extends Element_Abstract {
                 if(!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1){
                     throw new Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
                 }
+                if(!in_array($this->getType(), self::$types)) {
+                    throw new \Exception("invalid object type given: [" . $this->getType() . "]");
+                }
 
                 $this->correctPath();
 
