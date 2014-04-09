@@ -998,6 +998,8 @@ class Object_Service extends Element_Service {
             $name = $layout->getName();
             if (!$fieldDefinitions[$name] || $fieldDefinitions[$name]->getInvisible()) {
                 return false;
+            } else {
+                $layout->setNoteditable($layout->getNoteditable() | $fieldDefinitions[$name]->getNoteditable());
             }
         }
 
