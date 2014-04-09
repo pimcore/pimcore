@@ -338,7 +338,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
         var functionCallback = function () {
             this.openHotspotWindow();
-        }
+        };
 
         element.addListener('click', functionCallback.bind(this), false);
     }
