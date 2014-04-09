@@ -109,11 +109,13 @@ pimcore.settings.profile.panel = Class.create({
                 xtype:"button",
                 text: t("upload"),
                 handler: function () {
-                    pimcore.helpers.uploadDialog("/admin/user/upload-current-user-image?id=" + this.currentUser.id, null, function () {
+                    pimcore.helpers.uploadDialog("/admin/user/upload-current-user-image?id="
+                                    + this.currentUser.id, null, function () {
                         var cont = Ext.getCmp("pimcore_user_image_" + this.currentUser.id);
                         var date = new Date();
-                        cont.update('<img src="/admin/user/get-image?id=' + this.currentUser.id + '&_dc=' + date.getTime() + '" />');
-                    }.bind(this))
+                        cont.update('<img src="/admin/user/get-image?id=' + this.currentUser.id + '&_dc='
+                                    + date.getTime() + '" />');
+                    }.bind(this));
                 }.bind(this)
             }]
         });
