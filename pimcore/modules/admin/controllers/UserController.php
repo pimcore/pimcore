@@ -288,6 +288,8 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             if ($user->getId() == $this->getParam("id")) {
                 $values = Zend_Json::decode($this->getParam("data"));
 
+                unset($values["name"]);
+                unset($values["id"]);
                 unset($values["admin"]);
                 unset($values["permissions"]);
                 unset($values["roles"]);
