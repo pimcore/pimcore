@@ -35,6 +35,10 @@ if(!$user instanceof User) {
     die("Authentication failed!");
 }
 
+if(!$user->isAdmin()) {
+    die("Permission denied");
+}
+
 @ini_set("display_errors", "Off");
 
 // we have to load all classes since the autoloader doesn't work in pimcore environment

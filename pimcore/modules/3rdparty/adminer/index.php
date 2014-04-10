@@ -31,7 +31,7 @@ if(!$user instanceof User) {
 
 if(!$user->isAllowed("database"))
 {
-	die("Permission error!");
+	die("Permission denied!");
 }
 
 $conf = Pimcore_Config::getSystemConfig()->database->params;

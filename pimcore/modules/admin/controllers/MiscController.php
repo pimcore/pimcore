@@ -428,6 +428,10 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function phpinfoAction()
     {
+        if(!$this->getUser()->isAdmin()) {
+            throw new \Exception("Permission denied");
+        }
+
         phpinfo();
         exit;
     }
