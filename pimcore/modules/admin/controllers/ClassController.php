@@ -409,14 +409,16 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $classList = $classList->load();
 
         foreach ($classList as $class) {
-            $resultList[] = array(
-                "type" => "master",
-                "id" => $class->getId() . "_" . 0,
-                "name" => $class->getName()
-            );
+
 
             $classMapping = $mapping[$class->getId()];
             if ($classMapping) {
+                $resultList[] = array(
+                    "type" => "master",
+                    "id" => $class->getId() . "_" . 0,
+                    "name" => $class->getName()
+                );
+
                 foreach($classMapping as $layout) {
                     $resultList[] = array(
                         "type" => "custom",
