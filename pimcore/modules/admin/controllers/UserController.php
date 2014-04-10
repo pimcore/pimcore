@@ -437,6 +437,9 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     public function getImageAction() {
 
         if($this->getParam("id")) {
+            if($this->getUser()->getId() != $this->getParam("id")) {
+                $this->checkPermission("users");
+            }
             $id = $this->getParam("id");
         } else {
             $id = $this->getUser()->getId();
