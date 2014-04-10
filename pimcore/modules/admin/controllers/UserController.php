@@ -19,7 +19,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         parent::init();
 
         // check permissions
-        $notRestrictedActions = array("get-current-user", "update-current-user", "get-all-users", "get-available-permissions", "tree-get-childs-by-id", "get-minimal", "get-image", "upload-current-user-image");
+        $notRestrictedActions = array("get-current-user", "update-current-user", "get-available-permissions", "get-minimal", "get-image", "upload-current-user-image");
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
             $this->checkPermission("users");
         }
@@ -159,25 +159,6 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $user->save();
 
         $this->_helper->json(array("success" => true));
-    }
-
-    public function getAllUsersAction() {
-        $list = new User_List();
-        $list->load();
-
-        $users = $list->getUsers();
-        if (!empty($users)) {
-            foreach ($users as $user) {
-                if($user instanceof User) {
-                    $user->password = null;
-                    $userList[] = $user;
-                }
-            }
-        }
-
-        $this->_helper->json(array(
-            "users" => $userList
-        ));
     }
 
     public function getAction() {
