@@ -387,7 +387,9 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             $deletedItems = array();
             foreach ($assets as $asset) {
                 $deletedItems[] = $asset->getFullPath();
-                $asset->delete();
+                if ($asset->isAllowed("delete")) {
+                    $asset->delete();
+                }
             }
 
             $this->_helper->json(array("success" => true, "deleted" => $deletedItems));
