@@ -1047,7 +1047,7 @@ class Object_Service extends Element_Service {
 
 
         $mergedFieldDefinition = self::getCustomGridFieldDefinitions($class->getId(), $objectId);
-        if ($mergedFieldDefinition) {
+        if (is_array($mergedFieldDefinition)) {
             if ($mergedFieldDefinition["localizedfields"]) {
                 $childs = $mergedFieldDefinition["localizedfields"]->getFieldDefinitions();
                 if (is_array($childs)) {
