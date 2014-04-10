@@ -367,33 +367,33 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $validLayouts = Object_Service::getValidLayouts($object);
             if(!empty($validLayouts)) {
-            $objectData["validLayouts"] = array( );
+                $objectData["validLayouts"] = array( );
 
-            foreach ($validLayouts as $validLayout) {
-                $objectData["validLayouts"][] = array("id" => $validLayout->getId(), "name" => $validLayout->getName());
-            }
-
-            $user = Pimcore_Tool_Admin::getCurrentUser();
-            if ($currentLayoutId == 0 && !$user->isAdmin()) {
-                $first = reset($validLayouts);
-                $currentLayoutId = $first->getId();
-            }
-
-            if ($currentLayoutId > 0) {
-                // check if user has sufficient rights
-                if ($validLayouts && $validLayouts[$currentLayoutId]) {
-                    $customLayout = Object_Class_CustomLayout::getById($currentLayoutId);
-                    $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-                    $objectData["layout"] = $customLayoutDefinition;
-                } else {
-                    $currentLayoutId = 0;
+                foreach ($validLayouts as $validLayout) {
+                    $objectData["validLayouts"][] = array("id" => $validLayout->getId(), "name" => $validLayout->getName());
                 }
-            } else if ($currentLayoutId == -1 && $user->isAdmin()) {
-                $layout = Object_Service::getSuperLayoutDefinition($object);
-                $objectData["layout"] = $layout;
-            }
 
-            $objectData["currentLayoutId"] = $currentLayoutId;
+                $user = Pimcore_Tool_Admin::getCurrentUser();
+                if ($currentLayoutId == 0 && !$user->isAdmin()) {
+                    $first = reset($validLayouts);
+                    $currentLayoutId = $first->getId();
+                }
+
+                if ($currentLayoutId > 0) {
+                    // check if user has sufficient rights
+                    if ($validLayouts && $validLayouts[$currentLayoutId]) {
+                        $customLayout = Object_Class_CustomLayout::getById($currentLayoutId);
+                        $customLayoutDefinition = $customLayout->getLayoutDefinitions();
+                        $objectData["layout"] = $customLayoutDefinition;
+                    } else {
+                        $currentLayoutId = 0;
+                    }
+                } else if ($currentLayoutId == -1 && $user->isAdmin()) {
+                    $layout = Object_Service::getSuperLayoutDefinition($object);
+                    $objectData["layout"] = $layout;
+                }
+
+                $objectData["currentLayoutId"] = $currentLayoutId;
             }
 
             $this->_helper->json($objectData);

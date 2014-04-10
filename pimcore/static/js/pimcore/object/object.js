@@ -313,10 +313,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 handler: this.reload.bind(this, this.data.currentLayoutId)
             }
 
-            if (this.data["validLayouts"] && this.data.validLayouts.length > 0) {
+            if (this.data["validLayouts"] && this.data.validLayouts.length > 1) {
                 var menu = [];
-                var i = 0;
-                for (i = 0; i < this.data.validLayouts.length; i++) {
+                for (var i = 0; i < this.data.validLayouts.length; i++) {
                     var menuLabel = ts(this.data.validLayouts[i].name);
                     if (Number(this.data.currentLayoutId) == this.data.validLayouts[i].id) {
                         menuLabel = "<b>" + menuLabel + "</b>";
@@ -329,7 +328,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         });
                     reloadConfig.menu = menu;
                 }
-
                 this.toolbarButtons.reload = new Ext.SplitButton(reloadConfig);
             } else {
                 this.toolbarButtons.reload = new Ext.Button(reloadConfig);
