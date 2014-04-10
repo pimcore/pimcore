@@ -219,9 +219,15 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             items.push(reportLayout);
         }
 
-        if (this.isAllowed("settings")) {
-            items.push(this.notes.getLayout());
+
+
+        var user = pimcore.globalmanager.get("user");
+        if (user.admin || (this.isAllowed("settings") && in_array("notes_events", user.permissions))) {
+            if (this.isAllowed("settings")) {
+                items.push(this.notes.getLayout());
+            }
         }
+
 
         if(this.data.childdata.data.classes.length > 0) {
             this.search = new pimcore.object.search(this.data.childdata);
