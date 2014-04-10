@@ -1222,31 +1222,60 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
     public function previewVersionAction()
     {
-        $version = Version::getById($this->getParam("id"));
+        $id = intval($this->getParam("id"));
+        $version = Version::getById($id);
         $object = $version->loadData();
 
-        $this->view->object = $object;
+        if($object) {
+            if ($object->isAllowed("versions")) {
+                $this->view->object = $object;
+            } else {
+                throw new \Exception("Permission denied, version id [" . $id . "]");
+            }
+        } else {
+            throw new \Exception("Version with id [" . $id . "] doesn't exist");
+        }
     }
 
     public function diffVersionsAction()
     {
-        $version1 = Version::getById($this->getParam("from"));
+
+        $id1 = intval($this->getParam("from"));
+        $id2 = intval($this->getParam("to"));
+
+        $version1 = Version::getById($id1);
         $object1 = $version1->loadData();
 
-        $version2 = Version::getById($this->getParam("to"));
+        $version2 = Version::getById($id2);
         $object2 = $version2->loadData();
 
-        $this->view->object1 = $object1;
-        $this->view->object2 = $object2;
+        if($object1 && $object2) {
+            if ($object1->isAllowed("versions") && $object2->isAllowed("versions")) {
+                $this->view->object1 = $object1;
+                $this->view->object2 = $object2;
+            } else {
+                throw new \Exception("Permission denied, version ids [" . $id1 . ", " . $id2 . "]");
+            }
+        } else {
+            throw new \Exception("Version with ids [" . $id1 . ", " . $id2 . "] doesn't exist");
+        }
     }
 
     public function getVersionsAction()
     {
-        if ($this->getParam("id")) {
-            $object = Object_Abstract::getById($this->getParam("id"));
-            $versions = $object->getVersions();
-
-            $this->_helper->json(array("versions" => $versions));
+        $id = intval($this->getParam("id"));
+        if ($id) {
+            $object = Object_Abstract::getById($id);
+            if($object) {
+                if ($object->isAllowed("versions")) {
+                    $versions = $object->getVersions();
+                    $this->_helper->json(array("success" => true, "versions" => $versions));
+                } else {
+                    throw new \Exception("Permission denied, object id [" . $id . "]");
+                }
+            } else {
+                throw new \Exception("Object with id [" . $id . "] doesn't exist");
+            }
         }
     }
 
