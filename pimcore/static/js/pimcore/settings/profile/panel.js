@@ -62,12 +62,26 @@ pimcore.settings.profile.panel = Class.create({
             width:300
         });
 
+        passwordCheck = function (el) {
+            if(/^(?=.*\d)(?=.*[a-zA-Z]).{6,100}$/.test(el.getValue())) {
+                el.getEl().addClass("password_valid");
+                el.getEl().removeClass("password_invalid");
+            } else {
+                el.getEl().addClass("password_invalid");
+                el.getEl().removeClass("password_valid");
+            }
+        };
+
         generalItems.push({
             xtype:"textfield",
             fieldLabel:t("new_password"),
             name:"new_password",
             inputType:"password",
-            width:300
+            width:300,
+            enableKeyEvents: true,
+            listeners: {
+                keyup: passwordCheck
+            }
         });
         generalItems.push({
             xtype:"textfield",
@@ -75,7 +89,11 @@ pimcore.settings.profile.panel = Class.create({
             name:"retype_password",
             inputType:"password",
             width:300,
-            style:"margin-bottom: 20px;"
+            style:"margin-bottom: 20px;",
+            enableKeyEvents: true,
+            listeners: {
+                keyup: passwordCheck
+            }
         });
 
         generalItems.push({
@@ -186,6 +204,13 @@ pimcore.settings.profile.panel = Class.create({
 
     saveCurrentUser:function () {
         var values = this.userPanel.getForm().getFieldValues();
+        if(values["new_password"]) {
+            if(!/^(?=.*\d)(?=.*[a-zA-Z]).{6,100}$/.test(values["new_password"]) || values["new_password"] != values["retype_password"]) {
+                delete values["new_password"];
+                delete values["retype_password"];
+                Ext.MessageBox.alert(t('error'), t("password_was_not_changed"));
+            }
+        }
 
         Ext.Ajax.request({
             url:"/admin/user/update-current-user",
