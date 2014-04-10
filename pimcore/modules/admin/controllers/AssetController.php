@@ -826,22 +826,33 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
 
     public function showVersionAction()
     {
-
-        $version = Version::getById($this->getParam("id"));
+        $id = intval($this->getParam("id"));
+        $version = Version::getById($id);
         $asset = $version->loadData();
 
-        $this->view->asset = $asset;
-
-        $this->render("show-version-" . $asset->getType());
+        if($asset->isAllowed("versions")) {
+            $this->view->asset = $asset;
+            $this->render("show-version-" . $asset->getType());
+        } else {
+            throw new \Exception("Permission denied, version id [" . $id . "]");
+        }
     }
 
     public function getVersionsAction()
     {
-        if ($this->getParam("id")) {
-            $asset = Asset::getById($this->getParam("id"));
-            $versions = $asset->getVersions();
-
-            $this->_helper->json(array("versions" => $versions));
+        $id = intval($this->getParam("id"));
+        if ($id) {
+            $asset = Asset::getById($id);
+            if($asset) {
+                if($asset->isAllowed("versions")) {
+                    $versions = $asset->getVersions();
+                    $this->_helper->json(array("versions" => $versions));
+                } else {
+                    throw new \Exception("Permission denied, asset id [" . $id . "]");
+                }
+            } else {
+                throw new \Exception("Asset with id [" . $id . "] doesn't exist");
+            }
         }
     }
 
