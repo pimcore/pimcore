@@ -344,7 +344,6 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
         $this->db->delete("object_query_" . $this->model->getClassId(), $this->db->quoteInto("oo_id = ?", $this->model->getId()));
         $this->db->delete("object_store_" . $this->model->getClassId(), $this->db->quoteInto("oo_id = ?", $this->model->getId()));
         $this->db->delete("object_relations_" . $this->model->getClassId(), $this->db->quoteInto("src_id = ?", $this->model->getId()));
-        $this->db->delete("object_relations_" . $this->model->getClassId(), $this->db->quoteInto("dest_id = ?", $this->model->getId()));
 
         // delete fields wich have their own delete algorithm
         foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
