@@ -588,7 +588,12 @@ class Asset extends Element_Abstract {
                 $this->setMimetype($mimetype);
 
                 // set type
-                $this->setTypeFromMapping();
+                $typeChanged = false;
+                $type = self::getTypeFromMimeMapping($mimetype, $this->getFilename());
+                if($type != $this->getType()) {
+                    $this->setType($type);
+                    $typeChanged = true;
+                }
             }
 
             // scheduled tasks are saved in $this->saveVersion();
@@ -629,6 +634,14 @@ class Asset extends Element_Abstract {
 
         //set object to registry
         Zend_Registry::set("asset_" . $this->getId(), $this);
+        if(get_class($this) == "Asset" || $typeChanged) {
+            // get concrete type of asset
+            // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
+            // the type (image, document, ...) depends on the mime-type
+            Zend_Registry::set("asset_" . $this->getId(), null);
+            $asset = self::getById($this->getId());
+            Zend_Registry::set("asset_" . $this->getId(), $asset);
+        }
 
         // lastly create a new version if necessary
         // this has to be after the registry update and the DB update, otherwise this would cause problem in the
@@ -676,16 +689,6 @@ class Asset extends Element_Abstract {
         }
 
         return $version;
-    }
-
-    /**
-     * detects the pimcore internal asset type based on the mime-type and file extension
-     *
-     * @return void
-     */
-    public function setTypeFromMapping () {
-        $this->setType(self::getTypeFromMimeMapping($this->getMimetype(), $this->getFilename()));
-        return $this;
     }
 
     /**
@@ -817,14 +820,6 @@ class Asset extends Element_Abstract {
     }
 
     public function clearDependentCache($additionalTags = array()) {
-
-        // get concrete type of asset
-        // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
-        // the type (image, document, ...) depends on the mime-type
-        Zend_Registry::set("asset_" . $this->getId(), null);
-        $asset = self::getById($this->getId());
-        Zend_Registry::set("asset_" . $this->getId(), $asset);
-
 
         try {
             $tags = array("asset_" . $this->getId(), "properties", "output");
