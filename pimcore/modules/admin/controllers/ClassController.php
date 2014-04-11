@@ -219,7 +219,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     public function getCustomLayoutAction() {
         $customLayout = Object_Class_CustomLayout::getById(intval($this->getParam("id")));
 
-        $this->_helper->json($customLayout);
+        $this->_helper->json(array("success" => true, "data" => $customLayout));
     }
 
     public function addAction() {
@@ -240,7 +240,8 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         $customLayout->save();
 
-        $this->_helper->json(array("success" => true, "id" => $customLayout->getId(), "name" => $customLayout->getName()));
+        $this->_helper->json(array("success" => true, "id" => $customLayout->getId(), "name" => $customLayout->getName(),
+                            "data" => $customLayout));
     }
 
 

@@ -478,6 +478,9 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     initLayoutFields: function (isCustom, response) {
         var data = Ext.decode(response.responseText);
+        if (isCustom) {
+            data = data.data;
+        }
         this.data = data;
 
         var rootNode;
