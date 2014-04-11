@@ -225,7 +225,10 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setPrettyUrl($prettyUrl)
     {
-        $this->prettyUrl = rtrim($prettyUrl, " /");
+        $this->prettyUrl = "/" . trim($prettyUrl, " /");
+        if(strlen($this->prettyUrl) < 2) {
+            $this->prettyUrl = null;
+        }
         return $this;
     }
 
