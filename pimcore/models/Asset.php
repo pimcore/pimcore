@@ -497,6 +497,7 @@ class Asset extends Element_Abstract {
             }
         }
         $this->clearDependentCache($additionalTags);
+        $this->setDataChanged(false);
 
         return $this;
     }
