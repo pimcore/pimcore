@@ -88,8 +88,7 @@ abstract class Document_PageSnippet extends Document {
             }
         }
 
-        // update scheduled tasks
-        $this->saveScheduledTasks();
+        // scheduled tasks are saved in $this->saveVersion();
 
         // load data which must be requested
         $this->getProperties();

@@ -565,9 +565,7 @@ class Asset extends Element_Abstract {
         }
 
         if ($this->getType() != "folder") {
-
             if($this->getDataChanged()) {
-
                 $src = $this->getStream();
                 $streamMeta = stream_get_meta_data($src);
                 if($destinationPath != $streamMeta["uri"]) {
@@ -592,20 +590,7 @@ class Asset extends Element_Abstract {
                 $this->setTypeFromMapping();
             }
 
-            // update scheduled tasks
-            $this->saveScheduledTasks();
-
-            // only create a new version if there is at least 1 allowed
-            if(Pimcore_Config::getSystemConfig()->assets->versions->steps
-                || Pimcore_Config::getSystemConfig()->assets->versions->days) {
-                $version = new Version();
-                $version->setCid($this->getId());
-                $version->setCtype("asset");
-                $version->setDate($this->getModificationDate());
-                $version->setUserId($this->getUserModification());
-                $version->setData($this);
-                $version->save();
-            }
+            // scheduled tasks are saved in $this->saveVersion();
         }
 
 
@@ -644,7 +629,52 @@ class Asset extends Element_Abstract {
         //set object to registry
         Zend_Registry::set("asset_" . $this->getId(), $this);
 
+        // lastly create a new version if necessary
+        // this has to be after the registry update and the DB update, otherwise this would cause problem in the
+        // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
+        if($this->getType() != "folder") {
+            $this->saveVersion(false, false);
+        }
+
         $this->closeStream();
+    }
+
+    public function saveVersion($setModificationDate = true, $callPluginHook = true) {
+
+        // hook should be also called if "save only new version" is selected
+        if($callPluginHook) {
+            Pimcore::getEventManager()->trigger("asset.preUpdate", $this);
+        }
+
+        // set date
+        if ($setModificationDate) {
+            $this->setModificationDate(time());
+        }
+
+        // scheduled tasks are saved always, they are not versioned!
+        $this->saveScheduledTasks();
+
+        // create version
+        $version = null;
+
+        // only create a new version if there is at least 1 allowed
+        if(Pimcore_Config::getSystemConfig()->assets->versions->steps
+            || Pimcore_Config::getSystemConfig()->assets->versions->days) {
+            $version = new Version();
+            $version->setCid($this->getId());
+            $version->setCtype("asset");
+            $version->setDate($this->getModificationDate());
+            $version->setUserId($this->getUserModification());
+            $version->setData($this);
+            $version->save();
+        }
+
+        // hook should be also called if "save only new version" is selected
+        if($callPluginHook) {
+            Pimcore::getEventManager()->trigger("asset.postUpdate", $this);
+        }
+
+        return $version;
     }
 
     /**
