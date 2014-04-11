@@ -1497,3 +1497,4 @@
 "localized_fields","Localized Fields"
 "custom_layout_save_error","Layout could not not be saved"
 "searching","Searching..."
+"custom_layout_changed","Layout was changed in the meantime. Please reload the layout and try again"

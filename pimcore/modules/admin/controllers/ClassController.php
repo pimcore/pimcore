@@ -261,12 +261,19 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => true));
     }
 
+
     public function saveCustomLayoutAction() {
         $customLayout = Object_Class_CustomLayout::getById($this->getParam("id"));
         $class = Object_Class::getById($customLayout->getClassId());
 
         $configuration = Zend_Json::decode($this->getParam("configuration"));
         $values = Zend_Json::decode($this->getParam("values"));
+
+        $modificationDate = intval($values["modificationDate"]);
+        if ($modificationDate < $customLayout->getModificationDate()) {
+            $this->_helper->json(array("success" => false, "msg" => "custom_layout_changed"));
+        }
+
 
         $configuration["datatype"] = "layout";
         $configuration["fieldtype"] = "panel";
@@ -278,7 +285,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $customLayout->setDescription($values["description"]);
         $customLayout->save();
 
-        $this->_helper->json(array("success" => true, "id" => $customLayout->getId()));
+        $this->_helper->json(array("success" => true, "id" => $customLayout->getId(), "data" => $customLayout));
     }
 
     public function saveAction() {
