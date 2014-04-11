@@ -853,6 +853,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function __sleep() {
         $vars = get_object_vars($this);
         unset($vars['fieldDefinitionsCache']);
+        unset($vars['referencedFields']);
         return array_keys($vars);
     }
 

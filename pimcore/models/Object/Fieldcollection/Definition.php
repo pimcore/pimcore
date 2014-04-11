@@ -105,7 +105,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
      * @param Object_Class_Data $data
      * @return void
      */
-    public function setFieldDefinition($key, $data) {
+    public function addFieldDefinition($key, $data) {
         $this->fieldDefinitions[$key] = $data;
         return $this;
     }
@@ -136,7 +136,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         }
 
         if ($def instanceof Object_Class_Data) {
-            $this->setFieldDefinition($def->getName(), $def);
+            $this->addFieldDefinition($def->getName(), $def);
         }
     }
     

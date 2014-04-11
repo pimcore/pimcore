@@ -77,7 +77,7 @@ class Object_Class extends Pimcore_Model_Abstract {
     /**
      * @var array
      */
-    public $fieldDefinitions;
+    public $fieldDefinitions = array();
 
     /**
      * @var array
@@ -475,6 +475,9 @@ class Object_Class extends Pimcore_Model_Abstract {
      * @return Object_Class_Data[]
      */
     public function getFieldDefinitions() {
+        if(empty($this->fieldDefinitions) && !empty($this->layoutDefinitions)) {
+            $this->extractDataDefinitions($this->getLayoutDefinitions());
+        }
         return $this->fieldDefinitions;
     }
 
@@ -499,7 +502,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      * @param Object_Class_Data $data
      * @return void
      */
-    public function setFieldDefinition($key, $data) {
+    public function addFieldDefinition($key, $data) {
         $this->fieldDefinitions[$key] = $data;
         return $this;
     }
@@ -507,7 +510,13 @@ class Object_Class extends Pimcore_Model_Abstract {
     /**
      * @return Object_Data
      */
-    public function getFieldDefinition($key) {
+    public function getFieldDefinition($key, $load = true) {
+        if($load) {
+            //this will extract the field definitions from the layoutDefinitions
+            // since getFieldDefinition() is also called in extractDataDefinitions() we have to add the parameter $load
+            // so that we don't get into a loop here
+            $this->getFieldDefinitions();
+        }
 
         if (array_key_exists($key, $this->fieldDefinitions)) {
             return $this->fieldDefinitions[$key];
@@ -521,8 +530,6 @@ class Object_Class extends Pimcore_Model_Abstract {
      */
     public function setLayoutDefinitions($layoutDefinitions) {
         $this->layoutDefinitions = $layoutDefinitions;
-
-        $this->fieldDefinitions = array();
         $this->extractDataDefinitions($this->layoutDefinitions);
 
         return $this;
@@ -543,14 +550,14 @@ class Object_Class extends Pimcore_Model_Abstract {
         }
 
         if ($def instanceof Object_Class_Data) {
-            $existing = $this->getFieldDefinition($def->getName());
+            $existing = $this->getFieldDefinition($def->getName(), false);
             if($existing && method_exists($existing, "addReferencedField")) {
                 // this is especially for localized fields which get aggregated here into one field definition
                 // in the case that there are more than one localized fields in the class definition
                 // see also pimcore.object.edit.addToDataFields();
                 $existing->addReferencedField($def);
             } else {
-                $this->setFieldDefinition($def->getName(), $def);
+                $this->addFieldDefinition($def->getName(), $def);
             }
         }
     }
@@ -705,6 +712,9 @@ class Object_Class extends Pimcore_Model_Abstract {
         return $this->showVariants;
     }
 
-
-
+    public function __sleep() {
+        $vars = get_object_vars($this);
+        unset($vars['fieldDefinitions']);
+        return array_keys($vars);
+    }
 }
