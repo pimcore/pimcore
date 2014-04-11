@@ -84,7 +84,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         else
         {
             // group classes
-            $cnf['matchCount'] = 3;     // min chars to group
+            $cnf['matchCount'] = 3; // min chars to group
 
             /**
              * @param string $str1

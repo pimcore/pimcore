@@ -382,7 +382,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",
                 handler: function(node) {
-                    // node.attributes.reference.selectionPanel.getRootNode().removeChild(node, true);
+                    // node.attributes.reference.selectionPanel.getRootNode().removeChild( node, true);
                     node.remove(true);
                 }.bind(this, node)
             }));
