@@ -529,7 +529,7 @@ class Document_Tag_Areablock extends Document_Tag {
                 foreach ($groupingareas as $area) {
                     $uncatAreas[] = $area;
                 }
-                $n = "uncategorized";
+                $n = "Uncategorized";
                 if($this->view){
                     $n= $this->view->translateAdmin($n);
                 }
