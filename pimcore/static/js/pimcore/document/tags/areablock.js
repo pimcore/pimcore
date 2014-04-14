@@ -673,7 +673,9 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     createToolBar: function () {
         var buttons = [];
+        var button;
         var bricksInThisArea = [];
+        var groupsInThisArea = {};
         var areaBlockToolbarSettings = this.options["areablock_toolbar"];
         var itemCount = 0;
 
@@ -684,25 +686,50 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         if(typeof this.options.group != "undefined") {
             var groupMenu;
+            var groupItemCount = 0;
+            var isExistingGroup;
             var groups = Object.keys(this.options.group);
+
             for (var g=0; g<groups.length; g++) {
+                groupMenu = null;
+                isExistingGroup = false;
                 if(groups[g].length > 0) {
-                    groupMenu = {
-                        xtype: "button",
-                        text: groups[g],
-                        iconCls: "pimcore_icon_area",
-                        hideOnClick: false,
-                        width: areaBlockToolbarSettings.buttonWidth,
-                        menu: []
-                    };
+
+                    if(pimcore.document.tags[this.toolbarGlobalVar] != false) {
+                        if(pimcore.document.tags[this.toolbarGlobalVar]["groups"][groups[g]]) {
+                            groupMenu = pimcore.document.tags[this.toolbarGlobalVar]["groups"][groups[g]];
+                            isExistingGroup = true;
+                        }
+                    }
+
+                    if(!groupMenu) {
+                        groupMenu = new Ext.Button({
+                            xtype: "button",
+                            text: groups[g],
+                            iconCls: "pimcore_icon_area",
+                            hideOnClick: false,
+                            width: areaBlockToolbarSettings.buttonWidth,
+                            menu: []
+                        });
+                    }
+
+                    groupsInThisArea[groups[g]] = groupMenu;
 
                     for (var i=0; i<this.options.types.length; i++) {
                         if(in_array(this.options.types[i].type,this.options.group[groups[g]])) {
                             itemCount++;
-                            groupMenu.menu.push(this.getToolBarButton(this.options.types[i], itemCount, "menu"));
+                            button = this.getToolBarButton(this.options.types[i], itemCount, "menu");
+                            if(button) {
+                                bricksInThisArea.push(groups[g] + " - " + this.options.types[i].type);
+                                groupMenu.menu.add(button);
+                                groupItemCount++;
+                            }
                         }
                     }
-                    buttons.push(groupMenu);
+
+                    if(!isExistingGroup && groupItemCount > 0) {
+                        buttons.push(groupMenu);
+                    }
                 }
             }
         } else {
@@ -710,17 +737,11 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 var brick = this.options.types[i];
                 itemCount++;
 
-                if(pimcore.document.tags[this.toolbarGlobalVar] != false) {
-                    if(!in_array(brick.type, pimcore.document.tags[this.toolbarGlobalVar].bricks)) {
-                        bricksInThisArea.push(brick.type);
-                    } else {
-                        continue;
-                    }
-                } else {
+                button = this.getToolBarButton(brick, itemCount);
+                if(button) {
                     bricksInThisArea.push(brick.type);
+                    buttons.push(button);
                 }
-
-                buttons.push(this.getToolBarButton(brick, itemCount));
             }
         }
 
@@ -759,6 +780,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
             pimcore.document.tags[this.toolbarGlobalVar] = {
                 toolbar: toolbar,
+                groups: groupsInThisArea,
                 bricks: bricksInThisArea,
                 areablocks: [this],
                 itemCount: buttons.length
@@ -767,6 +789,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             pimcore.document.tags[this.toolbarGlobalVar].toolbar.add(buttons);
             pimcore.document.tags[this.toolbarGlobalVar].bricks =
                                     array_merge(pimcore.document.tags[this.toolbarGlobalVar].bricks, bricksInThisArea);
+            pimcore.document.tags[this.toolbarGlobalVar].groups =
+                                    array_merge(pimcore.document.tags[this.toolbarGlobalVar].groups, groupsInThisArea);
             pimcore.document.tags[this.toolbarGlobalVar].itemCount += buttons.length;
             pimcore.document.tags[this.toolbarGlobalVar].areablocks.push(this);
             pimcore.document.tags[this.toolbarGlobalVar].toolbar.doLayout();
@@ -775,6 +799,12 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     },
 
     getToolBarButton: function (brick, itemCount, type) {
+
+        if(pimcore.document.tags[this.toolbarGlobalVar] != false) {
+            if(in_array(brick.type, pimcore.document.tags[this.toolbarGlobalVar].bricks)) {
+                return;
+            }
+        }
 
         var areaBlockToolbarSettings = this.options["areablock_toolbar"];
         var maxButtonCharacters = areaBlockToolbarSettings.buttonMaxCharacters;
