@@ -34,4 +34,12 @@ $front->addModuleDirectory(PIMCORE_DOCUMENT_ROOT . "/customModuleDirectory");
 
 //init the autoloader
 Pimcore::initAutoloader();
+
+
+// add some custom events
+Pimcore::getEventManager()->attach("object.postUpdate", function ($event) {
+    $object = $event->getTarget();
+    // do something ...
+});
+
 */
