@@ -7,8 +7,9 @@ class Example_Plugin  extends Pimcore_API_Plugin_Abstract implements Pimcore_API
         // register your events here
 
         // using anonymous function
-        Pimcore::getEventManager()->attach("document.postAdd", function ($document) {
+        Pimcore::getEventManager()->attach("document.postAdd", function ($event) {
             // do something
+            $document = $event->getTarget();
         });
 
         // using methods
@@ -21,8 +22,9 @@ class Example_Plugin  extends Pimcore_API_Plugin_Abstract implements Pimcore_API
 
     }
 
-    public function handleDocument ($document) {
+    public function handleDocument ($event) {
         // do something
+        $document = $event->getTarget();
     }
 
 	public static function install (){
