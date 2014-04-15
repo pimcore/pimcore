@@ -537,12 +537,6 @@ class Object_Abstract extends Element_Abstract {
             }
         }
 
-        if ($isUpdate) {
-            Pimcore::getEventManager()->trigger("object.postUpdate", $this);
-        } else {
-            Pimcore::getEventManager()->trigger("object.postAdd", $this);
-        }
-
         $additionalTags = array();
         if(isset($updatedChildren) && is_array($updatedChildren)) {
             foreach ($updatedChildren as $objectId) {
@@ -554,6 +548,12 @@ class Object_Abstract extends Element_Abstract {
             }
         }
         $this->clearDependentCache($additionalTags);
+
+        if ($isUpdate) {
+            Pimcore::getEventManager()->trigger("object.postUpdate", $this);
+        } else {
+            Pimcore::getEventManager()->trigger("object.postAdd", $this);
+        }
 
         return $this;
     }

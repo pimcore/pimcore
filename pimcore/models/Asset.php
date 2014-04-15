@@ -479,13 +479,6 @@ class Asset extends Element_Abstract {
             }
         }
 
-        if ($isUpdate) {
-            Pimcore::getEventManager()->trigger("asset.postUpdate", $this);
-        } else {
-            Pimcore::getEventManager()->trigger("asset.postAdd", $this);
-        }
-
-
         $additionalTags = array();
         if(isset($updatedChildren) && is_array($updatedChildren)) {
             foreach ($updatedChildren as $assetId) {
@@ -498,6 +491,12 @@ class Asset extends Element_Abstract {
         }
         $this->clearDependentCache($additionalTags);
         $this->setDataChanged(false);
+
+        if ($isUpdate) {
+            Pimcore::getEventManager()->trigger("asset.postUpdate", $this);
+        } else {
+            Pimcore::getEventManager()->trigger("asset.postAdd", $this);
+        }
 
         return $this;
     }
