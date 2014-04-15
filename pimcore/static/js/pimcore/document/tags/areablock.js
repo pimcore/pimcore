@@ -688,6 +688,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             var groupMenu;
             var groupItemCount = 0;
             var isExistingGroup;
+            var brickKey;
             var groups = Object.keys(this.options.group);
 
             for (var g=0; g<groups.length; g++) {
@@ -718,9 +719,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     for (var i=0; i<this.options.types.length; i++) {
                         if(in_array(this.options.types[i].type,this.options.group[groups[g]])) {
                             itemCount++;
-                            button = this.getToolBarButton(this.options.types[i], itemCount, "menu");
+                            brickKey = groups[g] + " - " + this.options.types[i].type;
+                            button = this.getToolBarButton(this.options.types[i], brickKey, itemCount, "menu");
                             if(button) {
-                                bricksInThisArea.push(groups[g] + " - " + this.options.types[i].type);
+                                bricksInThisArea.push(brickKey);
                                 groupMenu.menu.add(button);
                                 groupItemCount++;
                             }
@@ -737,9 +739,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 var brick = this.options.types[i];
                 itemCount++;
 
-                button = this.getToolBarButton(brick, itemCount);
+                brickKey = brick.type;
+                button = this.getToolBarButton(brick, brickKey, itemCount);
                 if(button) {
-                    bricksInThisArea.push(brick.type);
+                    bricksInThisArea.push(brickKey);
                     buttons.push(button);
                 }
             }
@@ -798,10 +801,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     },
 
-    getToolBarButton: function (brick, itemCount, type) {
+    getToolBarButton: function (brick, key, itemCount, type) {
 
         if(pimcore.document.tags[this.toolbarGlobalVar] != false) {
-            if(in_array(brick.type, pimcore.document.tags[this.toolbarGlobalVar].bricks)) {
+            if(in_array(key, pimcore.document.tags[this.toolbarGlobalVar].bricks)) {
                 return;
             }
         }

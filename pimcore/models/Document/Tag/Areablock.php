@@ -531,7 +531,7 @@ class Document_Tag_Areablock extends Document_Tag {
                 }
                 $n = "Uncategorized";
                 if($this->view){
-                    $n= $this->view->translateAdmin($n);
+                    $n = $this->view->translateAdmin($n);
                 }
                 $groups[$n] = $uncatAreas;
             }
