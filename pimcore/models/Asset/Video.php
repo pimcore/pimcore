@@ -149,7 +149,7 @@ class Asset_Video extends Asset {
         }
 
         $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
-        $thumbnail->setName($thumbnail->getName()."-".$timeOffset);
+        $thumbnail->setFilenameSuffix("time-" . $timeOffset);
 
         $converter = Pimcore_Video::getInstance();
         $converter->load($this->getFileSystemPath());
