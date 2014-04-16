@@ -70,7 +70,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         this.tabPanel.activate(tabId);
     },
 
-    save : function (task, only) {
+    save : function (task, only, callback) {
 
         if(this.tab.disabled) {
             return;
@@ -125,6 +125,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     }
 
                     this.tab.enable();
+
+                    if(typeof callback == "function") {
+                        callback();
+                    }
                 }.bind(this),
                 failure: function () {
                     this.tab.enable();
@@ -151,12 +155,13 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     },
 
     publishClose: function(){
-        this.publish();
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.remove(this.tab);
+        this.publish(null, function () {
+            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            tabPanel.remove(this.tab);
+        }.bind(this));
     },
 
-    publish: function (only) {
+    publish: function (only, callback) {
         this.data.published = true;
 
         // toogle buttons
@@ -174,7 +179,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         }
 
 
-        this.save("publish", only);
+        this.save("publish", only, callback);
     },
 
     unpublish: function () {

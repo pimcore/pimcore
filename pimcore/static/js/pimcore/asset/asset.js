@@ -300,7 +300,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         return parameters;
     },
 
-    save : function (only) {
+    save : function (only, callback) {
 
         if(this.tab.disabled) {
             return;
@@ -331,6 +331,10 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 }
 
                 this.tab.enable();
+
+                if(typeof callback == "function") {
+                    callback();
+                }
             }.bind(this),
             failure: function () {
                 this.tab.enable();
@@ -340,9 +344,10 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
     },
 
     saveClose: function(){
-        this.save();
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.remove(this.tab);
+        this.save(null, function () {
+            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            tabPanel.remove(this.tab);
+        }.bind(this));
     },
 
     remove: function () {

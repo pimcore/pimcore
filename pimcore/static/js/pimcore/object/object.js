@@ -498,16 +498,16 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     publishClose: function(){
-        if(this.publish()) {
+        this.publish(null, function () {
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.remove(this.tab);
-        }
+        }.bind(this))
     },
 
 
-    publish: function (only) {
+    publish: function (only, callback) {
         this.data.general.o_published = true;
-        var state = this.save("publish", only);
+        var state = this.save("publish", only, callback);
 
         if(state) {
             // toogle buttons
@@ -607,11 +607,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         }
                     }
 
+                    this.tab.enable();
+
                     if(typeof callback == "function") {
                         callback();
                     }
-
-                    this.tab.enable();
                 }.bind(this),
                 failure: function () {
                     this.tab.enable();
