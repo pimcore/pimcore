@@ -84,7 +84,15 @@ class Pimcore_Tool_Console {
     public static function exec ($cmd, $outputFile = null, $timeout = null) {
 
         if($timeout && self::getTimeoutBinary()) {
-            $cmd = self::getTimeoutBinary() . " -k 1m " . $timeout . "s " . $cmd;
+
+            // check if --kill-after flag is supported in timeout
+            $killafter = "";
+            $out = self::exec(self::getTimeoutBinary() . " --help");
+            if(strpos($out, "--kill-after")) {
+                $killafter = " -k 1m";
+            }
+
+            $cmd = self::getTimeoutBinary() . $killafter . " " . $timeout . "s " . $cmd;
         } else if($timeout) {
             Logger::warn("timeout binary not found, executing command without timeout");
         }
