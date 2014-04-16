@@ -17,12 +17,11 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
 
     initialize: function(id) {
 
+        this.id = intval(id);
         this.setType("email");
+        this.addLoadingPanel();
 
         pimcore.plugin.broker.fireEvent("preOpenDocument", this, this.getType());
-
-        this.addLoadingPanel();
-        this.id = intval(id);
         this.getData();
     },
 

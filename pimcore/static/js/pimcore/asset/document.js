@@ -17,13 +17,11 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
 
     initialize: function(id) {
 
+        this.id = intval(id);
         this.setType("document");
-
-        pimcore.plugin.broker.fireEvent("preOpenAsset", this, "document");
-
         this.addLoadingPanel();
 
-        this.id = intval(id);
+        pimcore.plugin.broker.fireEvent("preOpenAsset", this, "document");
 
         this.properties = new pimcore.element.properties(this, "asset");
         this.versions = new pimcore.asset.versions(this);

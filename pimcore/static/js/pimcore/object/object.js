@@ -18,14 +18,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     initialize: function(id, options) {
         pimcore.plugin.broker.fireEvent("preOpenObject", this, "object");
 
-        this.options = options;
-
+        this.id = intval(id);
         this.addLoadingPanel();
 
-        this.id = intval(id);
+        this.options = options;
 
         this.edit = new pimcore.object.edit(this);
-
         this.preview = new pimcore.object.preview(this);
         this.properties = new pimcore.element.properties(this, "object");
         this.versions = new pimcore.object.versions(this);

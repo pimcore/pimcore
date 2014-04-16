@@ -17,12 +17,11 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
 
     initialize: function(id) {
 
+        this.id = intval(id);
         this.setType("folder");
+        this.addLoadingPanel();
 
         pimcore.plugin.broker.fireEvent("preOpenDocument", this, "folder");
-
-        this.addLoadingPanel();
-        this.id = intval(id);
         this.getData();
     },
 

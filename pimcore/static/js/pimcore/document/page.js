@@ -17,12 +17,11 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
 
     initialize: function(id) {
 
+        this.id = intval(id);
         this.setType("page");
+        this.addLoadingPanel();
 
         pimcore.plugin.broker.fireEvent("preOpenDocument", this, "page");
-
-        this.addLoadingPanel();
-        this.id = intval(id);
         this.getData();
 
     },

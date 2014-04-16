@@ -19,10 +19,10 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     initialize: function(id) {
 
-        pimcore.plugin.broker.fireEvent("preOpenObject", this, "folder");
-
-        this.addLoadingPanel();
         this.id = intval(id);
+        this.addLoadingPanel();
+
+        pimcore.plugin.broker.fireEvent("preOpenObject", this, "folder");
         this.getData();
     },
 

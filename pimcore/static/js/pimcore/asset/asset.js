@@ -55,50 +55,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         }
     },
 
-    addLoadingPanel : function () {
-
-        // DEPRECATED loadingpanel not active
-        return;
-
-// commented this out as JSLINT would complain
-//        window.setTimeout(this.checkLoadingStatus.bind(this), 5000);
-//
-//        this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
-//
-//        this.loadingPanel = new Ext.Panel({
-//            title: t("loading"),
-//            closable:false,
-//            html: "",
-//            iconCls: "pimcore_icon_loading"
-//        });
-//
-//        this.tabPanel.add(this.loadingPanel);
-    },
-
-    removeLoadingPanel: function () {
-
-        pimcore.helpers.removeTreeNodeLoadingIndicator("asset", this.id);
-
-        // DEPRECIATED loadingpanel not active
-        return;
-// commented this out, otherwise JSLint would complain
-//        if (this.loadingPanel) {
-//            this.tabPanel.remove(this.loadingPanel);
-//        }
-//        this.loadingPanel = null;
-    },
-
-    checkLoadingStatus: function () {
-
-        // DEPRECIATED loadingpanel not active
-        return;
-// // commented this out, otherwise JSLint would complain
-//        if (this.loadingPanel) {
-//            // loadingpanel is active close the whole asset
-//            pimcore.helpers.closeAsset(this.id);
-//        }
-    },
-
     addTab: function () {
 
         var tabTitle = this.data.filename;

@@ -19,6 +19,18 @@ pimcore.element.abstract = Class.create({
 
     addToHistory: true,
 
+    // startup / opening functions
+    addLoadingPanel : function () {
+        var type = pimcore.helpers.getElementTypeByObject(this);
+        pimcore.helpers.addTreeNodeLoadingIndicator(type, this.id);
+    },
+
+    removeLoadingPanel: function () {
+        var type = pimcore.helpers.getElementTypeByObject(this);
+        pimcore.helpers.removeTreeNodeLoadingIndicator(type, this.id);
+    },
+
+
     // CHANGE DETECTOR
     startChangeDetector: function () {
         if(!this.changeDetectorInterval) {

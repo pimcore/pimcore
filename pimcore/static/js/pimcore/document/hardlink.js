@@ -17,12 +17,11 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
     initialize: function(id) {
 
+        this.id = intval(id);
         this.setType("hardlink");
+        this.addLoadingPanel();
 
         pimcore.plugin.broker.fireEvent("preOpenDocument", this, "link");
-
-        this.addLoadingPanel();
-        this.id = intval(id);
         this.getData();
     },
 

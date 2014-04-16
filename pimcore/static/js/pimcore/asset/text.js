@@ -17,12 +17,11 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
 
     initialize: function(id) {
 
+        this.id = intval(id);
         this.setType("text");
+        this.addLoadingPanel();
 
         pimcore.plugin.broker.fireEvent("preOpenAsset", this, "text");
-
-        this.addLoadingPanel();
-        this.id = intval(id);
 
         this.properties = new pimcore.element.properties(this, "asset");
         this.versions = new pimcore.asset.versions(this);

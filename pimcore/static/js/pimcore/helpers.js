@@ -100,8 +100,6 @@ pimcore.helpers.openAsset = function (id, type, options) {
 
     if (pimcore.globalmanager.exists("asset_" + id) == false) {
 
-        pimcore.helpers.addTreeNodeLoadingIndicator("asset", id);
-
         if (!pimcore.asset[type]) {
             pimcore.globalmanager.add("asset_" + id, new pimcore.asset.unknown(id));
         }
@@ -137,7 +135,6 @@ pimcore.helpers.closeAsset = function (id) {
 pimcore.helpers.openDocument = function (id, type, options) {
     if (pimcore.globalmanager.exists("document_" + id) == false) {
         if (pimcore.document[type]) {
-            pimcore.helpers.addTreeNodeLoadingIndicator("document", id);
             pimcore.globalmanager.add("document_" + id, new pimcore.document[type](id));
             pimcore.helpers.rememberOpenTab("document_" + id + "_" + type);
 
@@ -167,7 +164,6 @@ pimcore.helpers.closeDocument = function (id) {
 
 pimcore.helpers.openObject = function (id, type, options) {
     if (pimcore.globalmanager.exists("object_" + id) == false) {
-        pimcore.helpers.addTreeNodeLoadingIndicator("object", id);
 
         if(type != "folder" && type != "variant" && type != "object") {
             type = "object";
@@ -294,6 +290,17 @@ pimcore.helpers.openElement = function (id, type, subtype) {
     }
 };
 
+pimcore.helpers.getElementTypeByObject = function (object) {
+    var type = null;
+    if(object instanceof pimcore.document.document) {
+        type = "document";
+    } else if (object instanceof  pimcore.asset.asset) {
+        type = "asset";
+    } else if (object instanceof pimcore.object.abstract) {
+        type = "object";
+    }
+    return type;
+};
 
 pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
     // display loading indicator on treenode

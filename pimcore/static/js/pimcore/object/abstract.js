@@ -15,26 +15,6 @@
 pimcore.registerNS("pimcore.object.abstract");
 pimcore.object.abstract = Class.create(pimcore.element.abstract, {
 
-
-    addLoadingPanel : function () {
-
-        // DEPRECIATED loadingpanel not active
-        return;
-    },
-
-
-    removeLoadingPanel: function () {
-        pimcore.helpers.removeTreeNodeLoadingIndicator("object", this.id);
-    },
-
-
-    checkLoadingStatus: function () {
-
-        // DEPRECIATED loadingpanel not active
-        return;
-    },
-
-
     selectInTree: function (type) {
 
         if(type != "variant") {
