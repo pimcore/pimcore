@@ -602,7 +602,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                             pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
                         }
                         // reload versions
-                        if (this.versions) {
+                        if (this.isAllowed("versions")) {
                             if (typeof this.versions.reload == "function") {
                                 this.versions.reload();
                             }

@@ -368,7 +368,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     pimcore.helpers.showNotification(t("error"), t("error_saving_asset"), "error");
                 }
                 // reload versions
-                if (this.versions) {
+                if (this.isAllowed("versions")) {
                     if (typeof this.versions.reload == "function") {
                         this.versions.reload();
                     }
