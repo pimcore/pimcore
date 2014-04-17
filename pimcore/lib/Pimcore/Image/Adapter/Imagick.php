@@ -95,7 +95,13 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public function save ($path, $format = null, $quality = null) {
 
         if(!$format) {
-            $format = "png";
+            $format = "png24";
+        }
+
+        if($format == "png") {
+            // we need to force imagich to create png24 images, otherwise this can cause some strange effects
+            // when used with gray-scale images
+            $format = "png24";
         }
 
         $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
@@ -105,7 +111,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             if($this->getUseContentOptimizedFormat()) {
                 $format = "jpeg";
                 if($i->getImageAlphaChannel()) {
-                    $format = "png";
+                    $format = "png24";
                 }
             }
         }
