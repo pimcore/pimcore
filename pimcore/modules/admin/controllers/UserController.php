@@ -492,7 +492,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $q = "%" . $this->getParam("query") . "%";
 
         $list = new User_List();
-        $list->setCondition("name LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ? OR id = ?", [$q, $q, $q, $q, $q]);
+        $list->setCondition("name LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ? OR id = ?", [$q, $q, $q, $q, intval($this->getParam("query"))]);
         $list->setOrder("ASC");
         $list->setOrderKey("name");
         $list->load();
