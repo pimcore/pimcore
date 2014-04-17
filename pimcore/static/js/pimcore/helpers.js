@@ -507,7 +507,7 @@ pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
     if(data.editlock.user) {
         lockDetails += "<b>" + t("user") + ":</b> " + data.editlock.user.name + "<br />";
     }
-    lockDetails += "<b>" + t("since") + ": </b>" + Ext.util.Format.date(lockDate);
+    lockDetails += "<b>" + t("since") + ": </b>" + Ext.util.Format.date(lockDate, "Y-m-d H:i");
     lockDetails += "<br /><br />" + t("element_lock_question");
 
     Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails,
