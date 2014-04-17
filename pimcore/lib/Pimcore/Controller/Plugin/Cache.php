@@ -36,6 +36,11 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
     protected $addExpireHeader = true;
 
     /**
+     * @var string|null
+     */
+    protected $disableReason;
+
+    /**
      *
      */
     public function disableExpireHeader() {
@@ -52,7 +57,12 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
     /**
      * @return bool
      */
-    public function disable() {
+    public function disable($reason = null) {
+
+        if($reason) {
+            $this->disableReason = $reason;
+        }
+
         $this->enabled = false;
         return true;
     }
@@ -74,7 +84,7 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
         $excludePatterns = array();
 
         // only enable GET method
-        if (!$request->isGet() || Pimcore::inDebugMode()) {
+        if (!$request->isGet()) {
             return $this->disable();
         }
 
@@ -86,6 +96,10 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
 
                 if (!$conf->enabled) {
                     return $this->disable();
+                }
+
+                if(Pimcore::inDebugMode()) {
+                    return $this->disable("in debug mode");
                 }
 
                 if ($conf->lifetime) {
@@ -104,27 +118,26 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
 
                     foreach ($cookies as $cookie) {
                         if (!empty($cookie) && isset($_COOKIE[trim($cookie)])) {
-                            return $this->disable();
+                            return $this->disable("exclude cookie in system-settings matches");
                         }
                     }
                 }
 
                 // output-cache is always disabled when logged in at the admin ui
                 if(isset($_COOKIE["pimcore_admin_sid"])) {
-                    return $this->disable();
+                    return $this->disable("backend user is logged in");
                 }
-            }
-            else {
+            } else {
                 return $this->disable();
             }
-        }
-        catch (Exception $e) {
-            return $this->disable();
+        } catch (Exception $e) {
+            Logger::error($e);
+            return $this->disable("ERROR: Exception (see debug.log)");
         }
 
         foreach ($excludePatterns as $pattern) {
             if (@preg_match($pattern, $requestUri)) {
-                return $this->disable();
+                return $this->disable("exclude path pattern in system-settings matches");
             }
         }
 
@@ -140,8 +153,8 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
         $this->cacheKey = "output_" . md5(Pimcore_Tool::getHostname() . $requestUri) . $appendKey;
 
         if ($cacheItem = Pimcore_Model_Cache::load($this->cacheKey, true)) {
-            header("X-Pimcore-Cache-Tag: " . $this->cacheKey, true, 200);
-            header("X-Pimcore-Cache-Date: " . $cacheItem["date"]);
+            header("X-Pimcore-Output-Cache-Tag: " . $this->cacheKey, true, 200);
+            header("X-Pimcore-Output-Cache-Date: " . $cacheItem["date"]);
             
             foreach ($cacheItem["rawHeaders"] as $header) {
                 header($header);
@@ -166,7 +179,16 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
      *
      */
     public function dispatchLoopShutdown() {
-        if ($this->enabled && $this->getResponse()->getHttpResponseCode() == 200 && !session_id()) {
+
+        if($this->enabled && session_id()) {
+            $this->disable("session in use");
+        }
+
+        if($this->disableReason) {
+            $this->getResponse()->setHeader("X-Pimcore-Output-Cache-Disable-Reason", $this->disableReason, true);
+        }
+
+        if ($this->enabled && $this->getResponse()->getHttpResponseCode() == 200) {
             try {
 
                 if($this->lifetime && $this->addExpireHeader) {
