@@ -253,7 +253,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
             buttons.push("-");
             buttons.push({
-                text: this.data.path + this.data.key,
+                text: t("open"),
                 iconCls: "pimcore_icon_cursor_medium",
                 scale: "medium",
                 handler: function () {
