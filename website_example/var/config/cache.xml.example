@@ -10,13 +10,6 @@
         </options>
     </frontend>-->
     <!--<backend>
-        <type>File</type>
-        <options>
-            <cache_file_perm>0755</cache_file_perm>
-            <cache_dir>/home/pimcore/www/website/var/cache</cache_dir>
-        </options>
-    </backend>-->
-    <!--<backend>
         <type>Pimcore_Cache_Backend_Memcached</type>
         <custom>true</custom>
         <options>
