@@ -9,12 +9,39 @@
             <automatic_serialization>true</automatic_serialization>
         </options>
     </frontend>-->
+
+    <!-- memcached single server (recommended for single instances) -->
     <!--<backend>
         <type>Pimcore_Cache_Backend_Memcached</type>
         <custom>true</custom>
         <options>
             <servers>
                 <host>localhost</host>
+                <port>11211</port>
+                <persistent>true</persistent>
+                <compatibility>true</compatibility>
+            </servers>
+        </options>
+    </backend>-->
+    <!-- memcached multi server (recommended for clusters) -->
+    <!--<backend>
+        <type>Pimcore_Cache_Backend_Memcached</type>
+        <custom>true</custom>
+        <options>
+            <servers>
+                <host>memcache1.your-host.com</host>
+                <port>11211</port>
+                <persistent>true</persistent>
+                <compatibility>true</compatibility>
+            </servers>
+            <servers>
+                <host>memcache2.your-host.com</host>
+                <port>11211</port>
+                <persistent>true</persistent>
+                <compatibility>true</compatibility>
+            </servers>
+            <servers>
+                <host>memcache3.your-host.com</host>
                 <port>11211</port>
                 <persistent>true</persistent>
                 <compatibility>true</compatibility>
