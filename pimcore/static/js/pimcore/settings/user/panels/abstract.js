@@ -71,7 +71,11 @@ pimcore.settings.user.panels.abstract = Class.create({
         });
     },
 
-    add: function (type) {
+    add: function (type, rid) {
+        var pid = this.id;
+        if (rid) {
+            pid = this.parentNode.id;
+        }
         Ext.MessageBox.prompt(t('add'), t('please_enter_the_name'), function (button, value, object) {
             if(button=='ok' && value != ''){
                 Ext.Ajax.request({
@@ -80,9 +84,10 @@ pimcore.settings.user.panels.abstract = Class.create({
                         parentId: this.id,
                         type: type,
                         name: value,
-                        active: 1
+                        active: 1,
+                        rid: rid
                     },
-                    success: this.attributes.reference.addComplete.bind(this.attributes.reference, this.id)
+                    success: this.attributes.reference.addComplete.bind(this.attributes.reference, pid)
                 });
             }
         }.bind(this));

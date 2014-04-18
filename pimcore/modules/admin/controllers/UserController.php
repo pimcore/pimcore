@@ -78,7 +78,8 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     public function addAction() {
 
         try {
-            $className = User_Service::getClassNameForType($this->getParam("type"));
+            $type = $this->getParam("type");;
+            $className = User_Service::getClassNameForType($type);
             $user = $className::create(array(
                 "parentId" => intval($this->getParam("parentId")),
                 "name" => trim($this->getParam("name")),
@@ -86,6 +87,57 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                 "active" => $this->getParam("active")
             ));
 
+            if ($this->getParam("rid")) {
+
+                $rid = $this->getParam("rid");
+                $rObject = $className::getById($rid);
+                if ($rObject) {
+                    if ($type == "user" || $type == "role") {
+                        $user->setParentId($rObject->getParentId());
+                        if ($rObject->getClasses()) {
+                            $user->setClasses(implode(',', $rObject->getClasses()));
+                        }
+                        if ($rObject->getDocTypes()) {
+                            $user->setDocTypes(implode(',', $rObject->getDocTypes()));
+                        }
+
+                        $keys = array("asset", "document", "object");
+                        foreach ($keys as $key) {
+                            $getter = "getWorkspaces" . ucfirst($key);
+                            $setter = "setWorkspaces" . ucfirst($key);
+                            $workspaces = $rObject->$getter();
+                            $clonedWorkspaces = array();
+                            if (is_array($workspaces)) {
+                                foreach($workspaces as $workspace) {
+                                    $vars = get_object_vars($workspace);
+                                    $workspaceClass = "User_Workspace_" . ucfirst($key);
+                                    $newWorkspace = new $workspaceClass();
+                                    foreach ($vars as $varKey => $varValue) {
+                                        $newWorkspace->$varKey = $varValue;
+                                    }
+                                    $newWorkspace->setUserId($user->getId());
+                                    $clonedWorkspaces[] = $newWorkspace;
+                                }
+                            }
+
+                            $user->$setter($clonedWorkspaces);
+                        }
+
+                        $user->setPermissions($rObject->getPermissions());
+
+                        if ($type == "user") {
+                            $user->setAdmin($rObject->getAdmin());
+                            $user->setActive($rObject->getActive());
+                            $user->setRoles($rObject->getRoles());
+                            $user->setWelcomeScreen($rObject->getWelcomescreen());
+                            $user->setMemorizeTabs($rObject->getMemorizeTabs());
+                            $user->setCloseWarning($rObject->getCloseWarning());
+                        }
+
+                        $user->save();
+                    }
+                }
+            }
             $this->_helper->json(array(
                 "success" => true,
                 "id" => $user->getId()

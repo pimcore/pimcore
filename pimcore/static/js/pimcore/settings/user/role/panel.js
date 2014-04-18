@@ -114,14 +114,22 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
                     text: t('add_folder'),
                     iconCls: "pimcore_icon_folder_add",
                     listeners: {
-                        "click": this.attributes.reference.add.bind(this, "rolefolder")
+                        "click": this.attributes.reference.add.bind(this, "rolefolder", 0)
                     }
                 }));
                 menu.add(new Ext.menu.Item({
                     text: t('add_role'),
                     iconCls: "pimcore_icon_role_add",
                     listeners: {
-                        "click": this.attributes.reference.add.bind(this, "role")
+                        "click": this.attributes.reference.add.bind(this, "role", 0)
+                    }
+                }));
+            } else if (this.attributes.elementType == "role") {
+                menu.add(new Ext.menu.Item({
+                    text: t('clone_role'),
+                    iconCls: "pimcore_icon_role_add",
+                    listeners: {
+                        "click": this.attributes.reference.add.bind(this, "role", this.attributes.id)
                     }
                 }));
             }

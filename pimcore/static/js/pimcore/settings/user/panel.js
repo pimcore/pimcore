@@ -185,14 +185,22 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                     text: t('add_folder'),
                     iconCls: "pimcore_icon_folder_add",
                     listeners: {
-                        "click": this.attributes.reference.add.bind(this, "userfolder")
+                        "click": this.attributes.reference.add.bind(this, "userfolder", 0)
                     }
                 }));
                 menu.add(new Ext.menu.Item({
                     text: t('add_user'),
                     iconCls: "pimcore_icon_user_add",
                     listeners: {
-                        "click": this.attributes.reference.add.bind(this, "user")
+                        "click": this.attributes.reference.add.bind(this, "user", 0)
+                    }
+                }));
+            } else if (this.attributes.elementType == "user") {
+                menu.add(new Ext.menu.Item({
+                    text: t('clone_user'),
+                    iconCls: "pimcore_icon_user_add",
+                    listeners: {
+                        "click": this.attributes.reference.add.bind(this, "user", this.attributes.id)
                     }
                 }));
             }
