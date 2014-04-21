@@ -303,7 +303,7 @@ class Asset_Image_Thumbnail {
                 $mediaConfigs = $thumbConfig->getMedias();
 
                 // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
-                ksort($mediaConfigs);
+                ksort($mediaConfigs, SORT_NUMERIC);
                 $mediaConfigs = array_reverse($mediaConfigs, true); // the sorting matters!
                 array_unshift($mediaConfigs, $thumbConfig->getItems()); // add the default config at the beginning
 
