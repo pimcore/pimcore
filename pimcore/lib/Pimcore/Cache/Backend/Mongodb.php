@@ -65,7 +65,7 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
         // Merge the options passed in; overridding any default options
         $this->_options = array_merge($this->_options, $options);
 
-        $this->_conn       = new Mongo('mongodb://' . $this->_options['host'] . ':' . $this->_options['port'], array());
+        $this->_conn       = new MongoClient('mongodb://' . $this->_options['host'] . ':' . $this->_options['port'], array());
         $this->_db         = $this->_conn->selectDB($this->_options['dbname']);
         $this->_collection = $this->_db->selectCollection($this->_options['collection']);
 
