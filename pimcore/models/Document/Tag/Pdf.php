@@ -553,6 +553,11 @@ HTML;
         return (array)$this->chapters;
     }
 
+    public function getChapter($page){
+        $chapters = $this->getChapters();
+        return $chapters[$page];
+    }
+
     /**
      * @param array $hotspots
      */
