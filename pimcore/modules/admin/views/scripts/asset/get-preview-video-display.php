@@ -48,7 +48,6 @@
 <div id="videoContainer">
     <video id="video" controls="controls" height="400" poster="<?= $thumbnail ?>">
         <source src="<?= $this->thumbnail["formats"]["mp4"] ?>" type="video/mp4" />
-        <source src="<?= $this->thumbnail["formats"]["webm"] ?>" type="video/webm" />
     </video>
 </div>
 
