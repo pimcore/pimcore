@@ -14,6 +14,47 @@
  */
 
 class Pimcore_API_Abstract {
+
+    protected static $legacyMappings = [
+        "maintenance" => "system.maintenance",
+        "maintenanceForce" => "system.maintenanceForce",
+        "preDispatch" => "system.startup",
+        "authenticateUser" => "admin.login.login.failed",
+        "preLogoutUser" => "admin.login.logout",
+        "preAddAsset" => "asset.preAdd",
+        "postAddAsset" => "asset.postAdd",
+        "preDeleteAsset" => "asset.preDelete",
+        "postDeleteAsset" => "asset.postDelete",
+        "preUpdateAsset" => "asset.preUpdate",
+        "postUpdateAsset" => "asset.postUpdate",
+        "preAddDocument" => "document.preAdd",
+        "postAddDocument" => "document.postAdd",
+        "preDeleteDocument" => "document.preDelete",
+        "postDeleteDocument" => "document.postDelete",
+        "preUpdateDocument" => "document.preUpdate",
+        "postUpdateDocument" => "document.postUpdate",
+        "preAddObject" => "object.preAdd",
+        "postAddObject" => "object.postAdd",
+        "preDeleteObject" => "object.preDelete",
+        "postDeleteObject" => "object.postDelete",
+        "preUpdateObject" => "object.preUpdate",
+        "postUpdateObject" => "object.postUpdate",
+        "preAddKeyValueKeyConfig" => "object.keyValue.keyConfig.preAdd",
+        "postAddKeyValueKeyConfig" => "object.keyValue.keyConfig.postAdd",
+        "preDeleteKeyValueKeyConfig" => "object.keyValue.keyConfig.preDelete",
+        "postDeleteKeyValueKeyConfig" => "object.keyValue.keyConfig.postDelete",
+        "preUpdateKeyValueKeyConfig" => "object.keyValue.keyConfig.preUpdate",
+        "postUpdateKeyValueKeyConfig" => "object.keyValue.keyConfig.postUpdate",
+        "preAddKeyValueGroupConfig" => "object.keyValue.groupConfig.preAdd",
+        "postAddKeyValueGroupConfig" => "object.keyValue.groupConfig.postAdd",
+        "preDeleteKeyValueGroupConfig" => "object.keyValue.groupConfig.preDelete",
+        "postDeleteKeyValueGroupConfig" => "object.keyValue.groupConfig.postDelete",
+        "preUpdateKeyValueGroupConfig" => "object.keyValue.groupConfig.preUpdate",
+        "postUpdateKeyValueGroupConfig" => "object.keyValue.groupConfig.postUpdate",
+        "preAddObjectClass" => "object.class.preAdd",
+        "preUpdateObjectClass" => "object.class.preUpdate"
+    ];
+
     /**
      *
      */
@@ -26,45 +67,7 @@ class Pimcore_API_Abstract {
      */
     private function registerLegacyEvents() {
 
-        $mappings = [
-            "maintenance" => "system.maintenance",
-            "maintenanceForce" => "system.maintenanceForce",
-            "preDispatch" => "system.startup",
-            "authenticateUser" => "admin.login.login.failed",
-            "preLogoutUser" => "admin.login.logout",
-            "preAddAsset" => "asset.preAdd",
-            "postAddAsset" => "asset.postAdd",
-            "preDeleteAsset" => "asset.preDelete",
-            "postDeleteAsset" => "asset.postDelete",
-            "preUpdateAsset" => "asset.preUpdate",
-            "postUpdateAsset" => "asset.postUpdate",
-            "preAddDocument" => "document.preAdd",
-            "postAddDocument" => "document.postAdd",
-            "preDeleteDocument" => "document.preDelete",
-            "postDeleteDocument" => "document.postDelete",
-            "preUpdateDocument" => "document.preUpdate",
-            "postUpdateDocument" => "document.postUpdate",
-            "preAddObject" => "object.preAdd",
-            "postAddObject" => "object.postAdd",
-            "preDeleteObject" => "object.preDelete",
-            "postDeleteObject" => "object.postDelete",
-            "preUpdateObject" => "object.preUpdate",
-            "postUpdateObject" => "object.postUpdate",
-            "preAddKeyValueKeyConfig" => "object.keyValue.keyConfig.preAdd",
-            "postAddKeyValueKeyConfig" => "object.keyValue.keyConfig.postAdd",
-            "preDeleteKeyValueKeyConfig" => "object.keyValue.keyConfig.preDelete",
-            "postDeleteKeyValueKeyConfig" => "object.keyValue.keyConfig.postDelete",
-            "preUpdateKeyValueKeyConfig" => "object.keyValue.keyConfig.preUpdate",
-            "postUpdateKeyValueKeyConfig" => "object.keyValue.keyConfig.postUpdate",
-            "preAddKeyValueGroupConfig" => "object.keyValue.groupConfig.preAdd",
-            "postAddKeyValueGroupConfig" => "object.keyValue.groupConfig.postAdd",
-            "preDeleteKeyValueGroupConfig" => "object.keyValue.groupConfig.preDelete",
-            "postDeleteKeyValueGroupConfig" => "object.keyValue.groupConfig.postDelete",
-            "preUpdateKeyValueGroupConfig" => "object.keyValue.groupConfig.preUpdate",
-            "postUpdateKeyValueGroupConfig" => "object.keyValue.groupConfig.postUpdate",
-            "preAddObjectClass" => "object.class.preAdd",
-            "preUpdateObjectClass" => "object.class.preUpdate"
-        ];
+        $mappings = self::$legacyMappings;
 
         $eventManager = Pimcore::getEventManager();
         $plugin = $this;

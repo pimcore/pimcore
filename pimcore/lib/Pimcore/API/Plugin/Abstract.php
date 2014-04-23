@@ -27,26 +27,26 @@ class Pimcore_API_Plugin_Abstract extends Pimcore_API_Abstract {
         return null;
     }
 
-    protected static function getDb() {
-        $db = Pimcore_Resource::get();
-        return $db;
-    }
-
-    function getJsPaths() {
-        return $this->jsPaths;
-    }
-
-
-    function getCssPaths() {
-        return $this->cssPaths;
-    }
-
-    function __construct($jsPaths = null, $cssPaths = null) {
+    public function __construct($jsPaths = null, $cssPaths = null) {
         if (!empty($jsPaths))
             $this->jsPaths = $jsPaths;
         if (!empty($cssPaths))
             $this->cssPaths = $cssPaths;
 
+    }
+
+    protected static function getDb() {
+        $db = Pimcore_Resource::get();
+        return $db;
+    }
+
+    public function getJsPaths() {
+        return $this->jsPaths;
+    }
+
+
+    public function getCssPaths() {
+        return $this->cssPaths;
     }
 
     public static function getJsClassName() {
@@ -84,5 +84,21 @@ class Pimcore_API_Plugin_Abstract extends Pimcore_API_Abstract {
         return null;
     }
 
+    /**
+     * @param $method
+     * @param $args
+     * @throws Exception
+     */
+    public function __call($method, $args) {
+        $legacyMethods = array_keys(self::$legacyMappings);
+        $legacyMethods = array_map(function($v) {
+            return strtolower($v);
+        }, $legacyMethods);
 
+        if(in_array(strtolower($method), $legacyMethods)) {
+            return;
+        }
+
+        throw new \Exception("Call to undefined method '" . $method . "' on Pimcore_API_Plugin_Abstract");
+    }
 }
