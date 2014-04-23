@@ -70,6 +70,14 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
     /**
      * @return bool
      */
+    public function enable() {
+        $this->enabled = true;
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
     public function isEnabled() {
         return $this->enabled;
     }
