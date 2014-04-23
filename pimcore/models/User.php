@@ -385,8 +385,8 @@ class User extends User_UserRole {
      */
     public function setApiKey($apiKey)
     {
-        if(!empty($apiKey) && strlen($apiKey) < 64) {
-            throw new \Exception("API-Key has to be at least 64 characters long");
+        if(!empty($apiKey) && strlen($apiKey) < 32) {
+            throw new \Exception("API-Key has to be at least 32 characters long");
         }
         $this->apiKey = $apiKey;
     }
