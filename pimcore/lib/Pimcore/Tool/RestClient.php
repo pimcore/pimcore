@@ -130,14 +130,15 @@ class Pimcore_Tool_RestClient
             $user = User::getByName("$username");
 
             if (!$user) {
+                $apikey = md5(time()) . md5($username);
                 $user = User::create(array(
                     "parentId" => 0,
                     "username" => "rest",
                     "password" => Pimcore_Tool_Authentication::getPasswordHash($username, $username),
-                    "active" => true
+                    "active" => true,
+                    "apiKey" => $apikey,
+                    "admin" => true
                 ));
-                $user->setAdmin(true);
-                $user->save();
             }
             $apikey = $user->getApiKey();
             $this->setApiKey($apikey);

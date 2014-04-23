@@ -67,20 +67,6 @@ pimcore.settings.user.user.settings = Class.create({
             }
         });
 
-        this.apiPasswordHint = new Ext.form.DisplayField({
-            xtype:"displayfield",
-            hideLabel:true,
-            width:600,
-            value:t("user_apikey_change_warning"),
-            cls:"pimcore_extra_label_bottom",
-            hidden:true
-        });
-        generalItems.push(this.apiPasswordHint);
-
-        if (this.wsenabled) {
-            this.apiPasswordHint.show();
-        }
-
         var date = new Date();
         var image = "/admin/user/get-image?id=" + this.currentUser.id + "&_dc=" + date.getTime();
 
@@ -226,17 +212,28 @@ pimcore.settings.user.user.settings = Class.create({
             cls:"pimcore_extra_label_bottom"
         });
 
-        this.apiKeyField = new Ext.form.DisplayField({
-            xtype:"displayfield",
+        this.apiKeyField = new Ext.form.TextField({
+            xtype: "textfield",
             fieldLabel:t("apikey"),
-            name:"apikey",
-            value:this.currentUser.password,
-            width:300,
+            name:"apiKey",
+            style: "font-family: courier;",
+            value:this.currentUser.apiKey,
+            width: 460
+        });
+
+        this.apiKeyFieldContainer = new Ext.form.CompositeField({
+            items: [this.apiKeyField, {
+                xtype: "button",
+                test: t("Generate"),
+                iconCls: "pimcore_icon_menu_clear_cache",
+                handler: function (e) {
+                    this.apiKeyField.setValue(md5(uniqid()) + md5(uniqid()));
+                }.bind(this)
+            }],
             hidden: !this.wsenabled
         });
 
         this.apiKeyDescription = new Ext.form.DisplayField({
-            xtype:"displayfield",
             hideLabel:true,
             width:600,
             value:t("user_apikey_description"),
@@ -244,7 +241,7 @@ pimcore.settings.user.user.settings = Class.create({
             hidden: !this.wsenabled
         });
 
-        adminItems.push(this.apiKeyField);
+        adminItems.push(this.apiKeyFieldContainer);
         adminItems.push(this.apiKeyDescription);
 
         adminItems.push({

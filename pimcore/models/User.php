@@ -78,6 +78,11 @@ class User extends User_UserRole {
      */
     public $memorizeTabs = true;
 
+    /**
+     * @var string|null
+     */
+    public $apiKey;
+
 
     /**
      * @return string
@@ -375,15 +380,25 @@ class User extends User_UserRole {
     }
 
     /**
-     * @return string | null
+     * @param $apiKey
+     * @throws Exception
      */
-
-    public function getApiKey(){
-        if($this->getActive()){
-            return $this->getPassword();
-        }else{
-            Logger::warn("Couldn't get API key of user (ID: ". $this->getId().") because the user is not active.");
+    public function setApiKey($apiKey)
+    {
+        if(!empty($apiKey) && strlen($apiKey) < 64) {
+            throw new \Exception("API-Key has to be at least 64 characters long");
         }
+        $this->apiKey = $apiKey;
     }
 
+    /**
+     * @return null|string
+     */
+    public function getApiKey()
+    {
+        if(empty($this->apiKey)) {
+            return null;
+        }
+        return $this->apiKey;
+    }
 }

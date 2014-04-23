@@ -17,6 +17,11 @@ class Pimcore_Controller_Action_Webservice extends Pimcore_Controller_Action {
 
     public function init() {
 
+        $conf = Pimcore_Config::getSystemConfig();
+        if(!$conf->webservice->enabled) {
+            throw new \Exception("Webservice API isn't enabled");
+        }
+
         if(!$this->getParam("apikey") && $_COOKIE["pimcore_admin_sid"]){
             $user = Pimcore_Tool_Authentication::authenticateSession();
             if(!$user instanceof User) {
@@ -28,11 +33,11 @@ class Pimcore_Controller_Action_Webservice extends Pimcore_Controller_Action {
             $apikey = $this->getParam("apikey");
 
             $userList = new User_List();
-            $userList->setCondition("password = ? AND type = ?", array($apikey, "user"));
+            $userList->setCondition("apiKey = ? AND type = ? AND active = 1", array($apikey, "user"));
             $users = $userList->load();
 
             if(!is_array($users) or count($users)!==1){
-                throw new Exception("API key error");
+                throw new Exception("API key error.");
             }
 
             if(!$users[0]->getApiKey()){
