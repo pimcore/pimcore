@@ -1028,7 +1028,7 @@ pimcore.helpers.clearOpenTab = function () {
     localStorage.setItem("pimcore_opentabs", JSON.stringify([]));
 };
 
-pimcore.helpers.rememberOpenTab = function (item) {
+pimcore.helpers.rememberOpenTab = function (item, forceOpenTab) {
     var openTabs = pimcore.helpers.getOpenTab();
 
     if(!in_array(item, openTabs)) {
@@ -1042,6 +1042,9 @@ pimcore.helpers.rememberOpenTab = function (item) {
 
     // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
     localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs));
+    if (forceOpenTab) {
+        localStorage.setItem("pimcore_opentabs_forceopenonce", true);
+    }
 };
 
 pimcore.helpers.forgetOpenTab = function (item) {
@@ -1056,6 +1059,14 @@ pimcore.helpers.forgetOpenTab = function (item) {
     // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
     localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs));
 };
+
+pimcore.helpers.forceOpenMemorizedTabsOnce = function() {
+    if (localStorage.getItem("pimcore_opentabs_forceopenonce")) {
+        localStorage.removeItem("pimcore_opentabs_forceopenonce");
+        return true;
+    }
+    return false;
+}
 
 pimcore.helpers.openMemorizedTabs = function () {
     var openTabs = pimcore.helpers.getOpenTab();

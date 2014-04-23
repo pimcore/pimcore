@@ -433,7 +433,7 @@ Ext.onReady(function () {
 
         // add sidebar panels
 
-        if (user.memorizeTabs) {
+        if (user.memorizeTabs || pimcore.helpers.forceOpenMemorizedTabsOnce()) {
             // open previous opened tabs after the trees are ready
             pimcore.layout.treepanelmanager.addOnReadyCallback(function () {
                 window.setTimeout(function () {
