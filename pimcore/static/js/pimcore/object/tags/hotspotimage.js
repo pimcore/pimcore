@@ -68,6 +68,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         var conf = {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
+            cls: "object_field",
             tbar: [{
                 xtype: "tbspacer",
                 width: 20,
