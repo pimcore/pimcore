@@ -112,7 +112,8 @@ class Pimcore_Tool {
      */
     public static function getSupportedLocales() {
 
-        $cacheKey = "system_supported_locales";
+        $locale = Zend_Locale::findLocale();
+        $cacheKey = "system_supported_locales_" . strtolower((string) $locale);
         if(!$languageOptions = Pimcore_Model_Cache::load($cacheKey)) {
             // we use the locale here, because Zend_Translate only supports locales not "languages"
             $languages = Zend_Locale::getLocaleList();
