@@ -423,7 +423,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         if($document) {
             if(!$ignoreHardlinks) {
                 if($document instanceof Document_Hardlink) {
-                    if($hardLinkedDocument = Document_Hardlink_Service::getChildByPath($document, $path)) {
+                    if($hardLinkedDocument = Document_Hardlink_Service::getNearestChildByPath($document, $path)) {
                         $document = $hardLinkedDocument;
                     } else {
                         $document = Document_Hardlink_Service::wrap($document);
