@@ -121,6 +121,12 @@ pimcore.object.fieldcollection = Class.create({
     },
 
     openFieldcollection: function (id) {
+
+        if(Ext.getCmp("pimcore_fieldcollection_editor_panel_" + id)) {
+            this.getEditPanel().activate(Ext.getCmp("pimcore_class_editor_panel_" + id));
+            return;
+        }
+
         Ext.Ajax.request({
             url: "/admin/class/fieldcollection-get",
             params: {

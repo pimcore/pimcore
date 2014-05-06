@@ -66,6 +66,7 @@ pimcore.object.classes.klass = Class.create({
                     {
                         text: t("configure_custom_layouts"),
                         iconCls: "pimcore_icon_class_add",
+                        hidden: (this instanceof pimcore.object.fieldcollections.field) || (this instanceof pimcore.object.objectbricks.field),
                         handler: this.configureCustomLayouts.bind(this)
                     }
                 ]
