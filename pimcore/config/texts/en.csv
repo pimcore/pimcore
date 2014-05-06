@@ -1423,6 +1423,7 @@
 "keyvalue_tag_col_group","Group"
 "keyvalue_tag_col_groupDesc","Group Description"
 "keyvalue_tag_col_value","Value (click to edit...)"
+"keyvalue_tag_col_unit","Unit"
 "keyvalue_tag_col_metadata","Metadata"
 "keyvalue_col_groupdescription","Group"
 "keyvalue_col_groupid","GID"
