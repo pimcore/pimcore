@@ -98,7 +98,7 @@ class Site extends Pimcore_Model_Abstract {
     public static function getByDomain($domain) {
         
         // cached because this is called in the route (Pimcore_Controller_Router_Route_Frontend)
-        $cacheKey = "site_domain_".str_replace(array(".","-",":"),"_",$domain);
+        $cacheKey = "site_domain_". md5($domain);
         if (!$site = Pimcore_Model_Cache::load($cacheKey)) {
             $site = new self();
             
