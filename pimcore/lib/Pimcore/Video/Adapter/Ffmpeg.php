@@ -269,16 +269,22 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     }
 
     public function setVideoBitrate($videoBitrate) {
+        $videoBitrate = intval($videoBitrate);
         parent::setVideoBitrate($videoBitrate);
 
-        $this->addArgument("videoBitrate", "-vb " . $videoBitrate . "k");
+        if($videoBitrate) {
+            $this->addArgument("videoBitrate", "-vb " . $videoBitrate . "k");
+        }
         return $this;
     }
 
     public function setAudioBitrate($audioBitrate) {
+        $audioBitrate = intval($audioBitrate);
         parent::setAudioBitrate($audioBitrate);
 
-        $this->addArgument("audioBitrate", "-ab " . $audioBitrate . "k");
+        if($audioBitrate) {
+            $this->addArgument("audioBitrate", "-ab " . $audioBitrate . "k");
+        }
         return $this;
     }
 
