@@ -269,10 +269,18 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
     }
 
     public function initTranslation() {
-        
+
+        $translate = null;
         if(Zend_Registry::isRegistered("Zend_Translate")) {
-            $translate = Zend_Registry::get("Zend_Translate");
-        } else {
+            $t = Zend_Registry::get("Zend_Translate");
+            // this check is necessary for the case that a document is rendered within an admin request
+            // example: send test newsletter
+            if($t instanceof Pimcore_Translate) {
+                $translate = $t;
+            }
+        }
+
+        if(!$translate) {
             // setup Zend_Translate
             try {
                 $locale = Zend_Registry::get("Zend_Locale");
