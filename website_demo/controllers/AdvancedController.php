@@ -26,7 +26,7 @@ class AdvancedController extends Website_Controller_Action
     public function indexAction() {
 
         $list = new Document_List();
-        $list->setCondition("parentId = ?", [$this->document->getId()]);
+        $list->setCondition("parentId = ? AND type IN ('link','page')", [$this->document->getId()]);
         $list->load();
 
         $this->view->documents = $list;
