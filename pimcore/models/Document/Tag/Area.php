@@ -279,4 +279,20 @@ class Document_Tag_Area extends Document_Tag {
     public function getBrickConfigs() {
         return Pimcore_ExtensionManager::getBrickConfigs();
     }
+
+    /**
+     * @param $name
+     *
+     * @return Document_Tag
+     */
+    public function getElement($name)
+    {
+        // init
+        $doc = Document_Page::getById( $this->getDocumentId() );
+        $id = sprintf('%s%s%d', $name, $this->getName(), 1);
+        $element = $doc->getElement( $id );
+        $element->suffixes = array( $this->getName() );
+
+        return $element;
+    }
 }
