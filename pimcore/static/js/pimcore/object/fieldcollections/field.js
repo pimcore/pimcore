@@ -31,6 +31,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
+            id: "pimcore_fieldcollection_editor_panel_" + this.getId(),
             layout: "pimcoreform",
             items: [{
                 xtype: "textfield",

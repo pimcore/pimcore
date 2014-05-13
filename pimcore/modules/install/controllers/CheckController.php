@@ -563,7 +563,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
         }
 
         $checksApps[] = array(
-            "name" => "PNG Optimizer (pngquant, pngcrush)",
+            "name" => "PNG Optimizer (pngcrush)",
             "state" => $pngOptimizer ? "ok" : "warning"
         );
 
@@ -591,6 +591,17 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => $timeoutBin ? "ok" : "warning"
         );
 
+        // pdftotext binary
+        try {
+            $pdftotextBin = (bool) Pimcore_Document_Adapter_Ghostscript::getPdftotextCli();
+        } catch (Exception $e) {
+            $pdftotextBin = false;
+        }
+
+        $checksApps[] = array(
+            "name" => "pdftotext - (part of poppler-utils)",
+            "state" => $pdftotextBin ? "ok" : "warning"
+        );
 
         $this->view->checksApps = $checksApps;
         $this->view->checksPHP = $checksPHP;

@@ -96,7 +96,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
                                                                             editor: new Ext.form.ComboBox({
             triggerAction: 'all',
             editable: false,
-            store: ["text","number","bool","select","translated"]
+            store: ["text","number","bool","select","translated","translatedSelect", "range"]
 
         })});
 
@@ -115,7 +115,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
                         var type = data.data.type;
                         var possiblevalues = data.data.possiblevalues;
 
-                        if (type == 'select') {
+                        if (type == 'select' || type == 'translatedSelect') {
                             var specialConfigWindow = new pimcore.object.keyvalue.specialconfigwindow(
                                 Ext.util.JSON.decode(possiblevalues), data.id, this);
                             specialConfigWindow.show();

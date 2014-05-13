@@ -287,6 +287,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
             }
 
 
+            $property["unit"] = $keyConfig->getUnit();
             $property["keyName"] = $keyConfig->getName();
             $property["keyDesc"] = $keyConfig->getDescription();
             $result[] = $property;

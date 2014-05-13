@@ -382,13 +382,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: t("parent_id") + " " + this.data.general.o_parentId,
-                scale: "medium"
-            });
-
-            buttons.push("-");
-            buttons.push({
-                xtype: 'tbtext',
                 text: ts(this.data.general.o_className),
                 scale: "medium"
             });
@@ -657,8 +650,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 name: "path",
                 value: this.data.general.fullpath
             }, {
+                name: "parentid",
+                value: this.data.general.o_parentId
+            }, {
                 name: "classid",
                 value: this.data.general.o_classId
+            }, {
+                name: "class",
+                value: this.data.general.o_className
             }, {
                 name: "modificationdate",
                 type: "date",
@@ -675,11 +674,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 name: "userowner",
                 type: "user",
                 value: this.data.general.o_userOwner
-            },
-            {
-                name: "published",
-                type: "user",
-                value: this.data.general.o_published
             },
             {
                 name: "deeplink",

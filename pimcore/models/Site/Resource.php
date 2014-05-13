@@ -71,7 +71,34 @@ class Site_Resource extends Pimcore_Model_Resource_Abstract {
     public function getByDomain($domain) {
         $data = $this->db->fetchRow("SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?", array($domain, "%\"" . $domain . "\"%"));
         if (!$data["id"]) {
-            throw new Exception("there is no site for the requested domain");
+
+            // check for wildcards
+            // @TODO: refactor this to be more clear
+            $sitesRaw = $this->db->fetchAll("SELECT id,domains FROM sites");
+            $wildcardDomains = [];
+            foreach($sitesRaw as $site) {
+                if(!empty($site["domains"]) && strpos($site["domains"], "*")) {
+                    $siteDomains = unserialize($site["domains"]);
+                    if(is_array($siteDomains) && count($siteDomains) > 0) {
+                        foreach($siteDomains as $siteDomain) {
+                            if(strpos($siteDomain, "*") !==  false) {
+                                $wildcardDomains[$siteDomain] = $site["id"];
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            foreach($wildcardDomains as $wildcardDomain => $siteId) {
+                if(preg_match("#^" . $wildcardDomain . "$#", $domain)) {
+                    $data = $this->db->fetchRow("SELECT * FROM sites WHERE id = ?", array($siteId));
+                }
+            }
+
+            if (!$data["id"]) {
+                throw new Exception("there is no site for the requested domain");
+            }
         }
         $this->assignVariablesToModel($data);
     }

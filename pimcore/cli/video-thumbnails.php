@@ -19,7 +19,7 @@ try {
     $opts = new Zend_Console_Getopt(array(
         'verbose|v' => 'show detailed information (for debug, ...)',
         'help|h' => 'display this help',
-        "parent|p=i" => "only create thumbnails of images in this folder (ID)",
+        "parent|p=i" => "only create thumbnails of videos in this folder (ID)",
         "thumbnails|t=s" => "only create specified thumbnails (comma separated eg.: thumb1,thumb2)",
         "system|s" => "create system thumbnails (used for tree-preview, ...)"
     ));

@@ -89,4 +89,43 @@ class Document_Hardlink_Service {
         }
         return null;
     }
+
+
+    public static function getNearestChildByPath(Document_Hardlink $hardlink, $path) {
+
+        if($hardlink->getChildsFromSource() && $hardlink->getSourceDocument()) {
+            $hardlinkRealPath = preg_replace("@^" . preg_quote($hardlink->getRealFullPath()) . "@", $hardlink->getSourceDocument()->getRealFullPath(), $path);
+            $pathes = array();
+
+            $pathes[] = "/";
+            $pathParts = explode("/", $hardlinkRealPath);
+            $tmpPathes = array();
+            foreach ($pathParts as $pathPart) {
+                $tmpPathes[] = $pathPart;
+                $t = implode("/", $tmpPathes);
+                if (!empty($t)) {
+                    $pathes[] = $t;
+                }
+            }
+
+            $pathes = array_reverse($pathes);
+
+            foreach ($pathes as $p) {
+                $hardLinkedDocument = Document::getByPath($p);
+                if($hardLinkedDocument instanceof Document) {
+                    $hardLinkedDocument = Document_Hardlink_Service::wrap($hardLinkedDocument);
+                    $hardLinkedDocument->setHardLinkSource($hardlink);
+
+                    $_path = $path != "/" ? $_path = dirname($p) : $p;
+                    $_path = str_replace("\\", "/", $_path); // windows patch
+                    $_path .= $_path != "/" ? "/" : "";
+
+                    $_path = preg_replace("@^" . preg_quote($hardlink->getSourceDocument()->getRealFullPath()) . "@", $hardlink->getRealFullPath(), $_path);
+
+                    $hardLinkedDocument->setPath($_path);
+                    return $hardLinkedDocument;
+                }
+            }
+        }
+    }
 }

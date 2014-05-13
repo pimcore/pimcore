@@ -794,6 +794,7 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                     $html = preg_replace("@</?(img|meta|div|section|aside|article|body|bdi|bdo|canvas|embed|footer|head|header|html)([^>]+)?>@", "", $html);
                     $html = preg_replace('/<!--(.*)-->/Uis', '', $html);
 
+                    include_once("simple_html_dom.php");
                     $dom = str_get_html($html);
                     if($dom) {
 
