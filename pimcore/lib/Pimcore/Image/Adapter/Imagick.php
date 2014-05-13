@@ -264,8 +264,18 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $y_ratio = $res['y'] / $this->getHeight();
             $this->resource->removeImage();
 
-            $this->resource->setResolution($width * $x_ratio, $height * $y_ratio);
+            $newRes = ["x" => $width * $x_ratio, "y" => $height * $y_ratio];
+
+            // only use the calculated resolution if we need a higher one that the one we got from the metadata (getImageResolution)
+            // this is because sometimes the quality is much better when using the "native" resulution from the metadata
+            if($newRes["x"] > $res["x"] && $newRes["y"] > $newRes["y"]) {
+                $this->resource->setResolution($newRes["x"], $newRes["y"]);
+            } else {
+                $this->resource->setResolution($res["x"], $res["y"]);
+            }
+
             $this->resource->readImage($this->imagePath);
+            $this->setColorspaceToRGB();
         }
 
         $width  = (int)$width;
