@@ -1701,7 +1701,13 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                     if ($operator == "LIKE") {
                         $value = "%" . $value . "%";
                     }
-                    $conditionFilters[] =  "`" . $filter["field"] . "` " . $operator . " '" . $value . "' ";
+
+                    $field = "`" . $filter["field"] . "` ";
+                    if($filter["field"] == "fullpath") {
+                        $field = "CONCAT(path,filename)";
+                    }
+
+                    $conditionFilters[] =  $field . $operator . " '" . $value . "' ";
                 }
             }
 
