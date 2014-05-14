@@ -190,8 +190,8 @@ pimcore.asset.listfolder = Class.create({
                     this.store.load();
                 }.bind(this),
                 rowdblclick: function(grid, rowIndex, e) {
-                    var data = this.store.getAt(rowIndex).data;
-                    pimcore.helpers.openAsset(data.id);
+                    var data = this.store.getAt(rowIndex);
+                    pimcore.helpers.openAsset(data.get("id"), data.get("type"));
 
                 }.bind(this)
             },
