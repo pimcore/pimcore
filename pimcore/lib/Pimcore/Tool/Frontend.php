@@ -59,7 +59,7 @@ class Pimcore_Tool_Frontend {
         $inSite = true;
 
         if ($site && $site->getRootDocument() instanceof Document_Page) {
-            if(!preg_match("@^" . $site->getRootDocument()->getRealFullPath() . "@", $document->getRealFullPath())) {
+            if(!preg_match("@^" . $site->getRootDocument()->getRealFullPath() . "/@", $document->getRealFullPath())) {
                 $inSite = false;
             }
         }
