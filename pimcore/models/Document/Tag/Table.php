@@ -59,7 +59,7 @@ class Document_Tag_Table extends Document_Tag {
                     $html .= $col;
                     $html .= '</td>';
                 }
-                $html .= '<tr>';
+                $html .= '</tr>';
             }
             $html .= '</table>';
         }
