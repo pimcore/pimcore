@@ -150,7 +150,7 @@ class Asset_Video extends Asset {
 
         // fallback
         if(!$timeOffset) {
-            $timeOffset = 5;
+            $timeOffset = ceil($this->getDuration() / 3);
         }
 
         $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
