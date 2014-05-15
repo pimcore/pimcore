@@ -229,7 +229,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: this.data.id,
+                text: t("id") + " " + this.data.id,
                 scale: "medium"
             });
 
