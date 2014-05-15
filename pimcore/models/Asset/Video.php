@@ -133,19 +133,24 @@ class Asset_Video extends Asset {
 
         $cs = $this->getCustomSetting("image_thumbnail_time");
         $im = $this->getCustomSetting("image_thumbnail_asset");
-        if(!$timeOffset && !$imageAsset && $cs) {
+
+        if($im || $imageAsset) {
+            if($im) {
+                $imageAsset = Asset::getById($im);
+            }
+
+            if($imageAsset instanceof Asset_Image) {
+                return $imageAsset->getThumbnail($thumbnailName);
+            }
+        }
+
+        if(!$timeOffset && $cs) {
             $timeOffset = $cs;
-        } else if (!$timeOffset && !$imageAsset && $im) {
-            $imageAsset = Asset::getById($im);
         }
 
         // fallback
-        if(!$timeOffset && !$imageAsset) {
+        if(!$timeOffset) {
             $timeOffset = 5;
-        }
-
-        if($imageAsset instanceof Asset_Image) {
-            return $imageAsset->getThumbnail($thumbnailName);
         }
 
         $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
