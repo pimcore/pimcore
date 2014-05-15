@@ -106,7 +106,7 @@ class Asset_Image extends Asset {
      * @param mixed$config
      * @return Asset_Image_Thumbnail
      */
-    public function getThumbnail($config, $deferred = false) {
+    public function getThumbnail($config = null, $deferred = false) {
 
        return new Asset_Image_Thumbnail($this, $config, $deferred);
     }

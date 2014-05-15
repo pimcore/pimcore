@@ -153,9 +153,6 @@ class Asset_Video extends Asset {
             $timeOffset = ceil($this->getDuration() / 3);
         }
 
-        $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
-        $thumbnail->setFilenameSuffix("time-" . $timeOffset);
-
         $converter = Pimcore_Video::getInstance();
         $converter->load($this->getFileSystemPath());
         $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-image-cache/video_" . $this->getId() . "__thumbnail_" .  $timeOffset . ".png";
@@ -167,7 +164,11 @@ class Asset_Video extends Asset {
             $converter->saveImage($path, $timeOffset);
         }
 
+        $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
+
         if($thumbnail) {
+            $thumbnail->setFilenameSuffix("time-" . $timeOffset);
+
             try {
                 $path = Asset_Image_Thumbnail_Processor::process($this, $thumbnail, $path);
             } catch (Exception $e) {
@@ -177,13 +178,60 @@ class Asset_Video extends Asset {
             }
         }
 
-        // if no thumbnail config is given return the original image
-        if(empty($path)) {
-            $fsPath = $this->getFileSystemPath();
-            $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
-        }
+        $path = preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", $path);
 
         return $path;
+    }
+
+    /**
+     * how many frames, delay in seconds between frames, pimcore thumbnail configuration
+     *
+     * @param int $frames
+     * @param int $delay
+     * @param null $thumbnail
+     * @return string
+     */
+    public function getPreviewAnimatedGif($frames = 10, $delay = 100, $thumbnail = null) {
+
+        if(!$frames) {
+            $frames = 10;
+        }
+        if(!$delay) {
+            $delay = 100;
+        }
+
+        $duration = $this->getDuration();
+        $sampleRate = floor($duration / $frames);
+
+        $thumbnails = [];
+        $delays = [];
+
+        for($i=0; $i<=$frames; $i++) {
+            $frameImage = $this->getImageThumbnail($thumbnail, $i*$sampleRate);
+            $frameImage = PIMCORE_DOCUMENT_ROOT . $frameImage;
+
+            // convert to GIF
+            $gifPath = preg_replace("#\." . Pimcore_File::getFileExtension($frameImage) . "$#", ".gif", $frameImage);
+            if(!is_file($gifPath)) {
+                $imageConverter = Pimcore_Image::getInstance();
+                $imageConverter->load($frameImage);
+                $imageConverter->save($gifPath, "GIF");
+            }
+
+            $thumbnails[] = $gifPath;
+            $delays[] = $delay;
+        }
+
+        $animator = new Pimcore_Image_GifAnimator($thumbnails, $delays, 0, 2, 255, 255, 255, "url");
+        $animGifContent = $animator->GetAnimation();
+
+        $thumbnailUniqueId = md5(serialize([$thumbnail, $frames, $delay]));
+        $animGifPath = PIMCORE_TEMPORARY_DIRECTORY . "/video-image-cache/video_" . $this->getId() . "_" . $thumbnailUniqueId . ".gif";
+        Pimcore_File::put($animGifPath, $animGifContent);
+
+        $animGifPath = preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", $animGifPath);
+
+        return $animGifPath;
     }
 
     /**

@@ -345,7 +345,11 @@ class Document_Tag_Video extends Document_Tag
                 if($this->poster && ($poster = Asset::getById($this->poster))) {
                     $image = $poster->getThumbnail($imageThumbnailConf);
                 } else {
-                    $image = $asset->getImageThumbnail($imageThumbnailConf);
+                    if($asset->getCustomSetting("image_thumbnail_asset")) {
+                        $image = $asset->getImageThumbnail($imageThumbnailConf);
+                    } else {
+                        $image = $asset->getPreviewAnimatedGif(null, null, $imageThumbnailConf);
+                    }
                 }
 
                 if ($thumbnail["status"] == "finished") {
