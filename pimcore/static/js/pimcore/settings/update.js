@@ -21,10 +21,10 @@ pimcore.settings.update = Class.create({
         
         Ext.MessageBox.confirm("CONFIRMATION",
                       'You are about to update the system. <br />'
-                    + 'Please do not update this pimcore installation unless your are not sure what you are doing.<br/>'
+                    + 'Please do not update this pimcore installation unless your are sure what you are doing.<br/>'
                     + '<b style="color:red;"><u>Updates should be performed only by developers!</u></b><br />'
                     + 'Please read the '
-                    + '<a href="http://www.pimcore.org/wiki/display/PIMCORE/Upgrade+Notes" target="_blank">'
+                    + ' <a href="http://www.pimcore.org/wiki/display/PIMCORE/Upgrade+Notes" target="_blank">'
                     + 'upgrade notes</a> before you start the update.<br /><br />Are you sure?',
                                 function (buttonValue) {
                                     if (buttonValue == "yes") {
