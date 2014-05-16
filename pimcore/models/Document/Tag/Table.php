@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -59,7 +59,7 @@ class Document_Tag_Table extends Document_Tag {
                     $html .= $col;
                     $html .= '</td>';
                 }
-                $html .= '<tr>';
+                $html .= '</tr>';
             }
             $html .= '</table>';
         }

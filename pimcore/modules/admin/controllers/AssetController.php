@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license dsf sdaf asdf asdf
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -1701,7 +1701,13 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                     if ($operator == "LIKE") {
                         $value = "%" . $value . "%";
                     }
-                    $conditionFilters[] =  "`" . $filter["field"] . "` " . $operator . " '" . $value . "' ";
+
+                    $field = "`" . $filter["field"] . "` ";
+                    if($filter["field"] == "fullpath") {
+                        $field = "CONCAT(path,filename)";
+                    }
+
+                    $conditionFilters[] =  $field . $operator . " '" . $value . "' ";
                 }
             }
 
