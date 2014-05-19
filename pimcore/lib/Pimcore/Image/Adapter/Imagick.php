@@ -97,6 +97,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         if(!$format) {
             $format = "png32";
         }
+        $format = strtolower($format);
 
         if($format == "png") {
             // we need to force imagich to create png32 images, otherwise this can cause some strange effects
