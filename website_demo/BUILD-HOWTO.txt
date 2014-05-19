@@ -25,3 +25,4 @@
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 
 # remove the dumped data from the table cache_tags (right after the create table statement)
+
