@@ -422,7 +422,14 @@ class User extends User_UserRole {
     /**
      * @return string
      */
-    public function getImage() {
+    public function getImage($width = null, $height = null) {
+
+        if(!$width) {
+            $width = 46;
+        }
+        if(!$height) {
+            $height = 46;
+        }
 
         $id = $this->getId();
         $user = PIMCORE_WEBSITE_VAR . "/user-image/user-" . $id . ".png";
@@ -431,7 +438,7 @@ class User extends User_UserRole {
             if(!file_exists($thumb)) {
                 $image = Pimcore_Image::getInstance();
                 $image->load($user);
-                $image->cover(46,46);
+                $image->cover($width,$height);
                 $image->save($thumb, "png");
             }
 
@@ -441,8 +448,8 @@ class User extends User_UserRole {
         $seed = $this->getName() . "-" . Pimcore_Tool::getHostUrl();
         $hash = Pimcore_Tool_Misc::roboHash([
             "seed" => $seed,
-            "width" => 46,
-            "height" => 46
+            "width" => $width,
+            "height" => $height
         ]);
 
         return $hash;
