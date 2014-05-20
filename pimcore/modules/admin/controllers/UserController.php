@@ -465,17 +465,19 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     }
 
     public function uploadImageAction() {
-        $userImageDir = PIMCORE_WEBSITE_VAR . "/user-image";
-        if(!is_dir($userImageDir)) {
-            Pimcore_File::mkdir($userImageDir);
+
+        if($this->getParam("id")) {
+            if($this->getUser()->getId() != $this->getParam("id")) {
+                $this->checkPermission("users");
+            }
+            $id = $this->getParam("id");
+        } else {
+            $id = $this->getUser()->getId();
         }
 
-        $destFile = $userImageDir . "/user-" . $this->getParam("id") . ".png";
-        $thumb = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/user-thumbnail-" . $this->getParam("id") . ".png";
-        @unlink($destFile);
-        @unlink($thumb);
-        copy($_FILES["Filedata"]["tmp_name"], $destFile);
-        chmod($destFile, Pimcore_File::getDefaultMode());
+        $userObj = User::getById($id);
+        $userObj->setImage($_FILES["Filedata"]["tmp_name"]);
+
 
         $this->_helper->json(array(
             "success" => true
@@ -498,28 +500,13 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         }
 
         $userObj = User::getById($id);
+        $thumb = $userObj->getImage();
 
-        $user = PIMCORE_WEBSITE_VAR . "/user-image/user-" . $id . ".png";
-        if(file_exists($user)) {
-            $thumb = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/user-thumbnail-" . $id . ".png";
-            if(!file_exists($thumb)) {
-                $image = Pimcore_Image::getInstance();
-                $image->load($user);
-                $image->cover(46,46);
-                $image->save($thumb, "png");
-            }
+        header("Content-type: image/png", true);
 
-            header("Content-type: image/png", true);
-
-            while(@ob_end_flush());
-            flush();
-
-            readfile($thumb);
-
-        } else {
-            header("Location: /admin/misc/robohash/?width=46&height=46&seed=" . $userObj->getName() . "-" . $this->getRequest()->getHttpHost());
-        }
-
+        while(@ob_end_flush());
+        flush();
+        readfile($thumb);
         exit;
     }
 
