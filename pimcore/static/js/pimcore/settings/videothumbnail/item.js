@@ -112,13 +112,13 @@ pimcore.settings.videothumbnail.item = Class.create({
                         var ab = "";
 
                         if(sel == "average") {
-                            vb = 200;
-                            ab = 128;
-                        } else if (sel == "good") {
                             vb = 400;
                             ab = 128;
-                        } else if (sel == "best") {
+                        } else if (sel == "good") {
                             vb = 600;
+                            ab = 128;
+                        } else if (sel == "best") {
+                            vb = 800;
                             ab = 196;
                         }
 
