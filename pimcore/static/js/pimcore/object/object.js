@@ -465,7 +465,15 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }
 
         try {
-            data.general = Ext.encode(this.data.general);
+            data.general = Ext.apply({}, this.data.general);
+            // object shouldn't be relocated, renamed, or anything else that is evil
+            delete data.general["o_parentId"];
+            delete data.general["o_type"];
+            delete data.general["o_key"];
+            delete data.general["o_locked"];
+            delete data.general["o_classId"];
+
+            data.general = Ext.encode(data.general);
         }
         catch (e3) {
             //console.log(e3);
