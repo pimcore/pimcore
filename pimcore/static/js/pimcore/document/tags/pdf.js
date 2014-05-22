@@ -555,7 +555,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             height: "50px"
         });
 
-        if(typeof config == "object" && config["top"]) {
+        if(typeof config == "object") {
             var imgEl = Ext.get(this.metaDataWindow.getComponent("pageContainer").body.query("img")[0]);
             var originalWidth = imgEl.getWidth();
             var originalHeight = imgEl.getHeight();
