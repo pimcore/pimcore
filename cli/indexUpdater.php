@@ -14,6 +14,14 @@ $products = array();
 $updater = OnlineShop_Framework_Factory::getInstance()->getIndexService();
 $updater->createOrUpdateTable();
 
+if(!Zend_Registry::isRegistered('Zend_Locale')) {
+    $config = OnlineShop_Framework_Factory::getInstance()->getConfig();
+
+    if($locale = (string)$config->onlineshop->environment->config->config->defaultlocale) {
+        Zend_Registry::set('Zend_Locale', new Zend_Locale($locale));
+    }
+}
+
 while($count > 0) {
     echo "=========================\n";
     echo "Page: " . $page ."\n";
