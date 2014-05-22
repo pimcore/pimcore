@@ -41,7 +41,8 @@ class Pimcore_Tool_Session {
                 "name" => "pimcore_admin_sid",
                 "strict" => false,
                 "use_trans_sid" => false,
-                "use_only_cookies" => false
+                "use_only_cookies" => false,
+                "cookie_httponly" => true
             ));
         }
 
