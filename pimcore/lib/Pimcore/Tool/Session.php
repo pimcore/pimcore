@@ -120,4 +120,8 @@ class Pimcore_Tool_Session {
         }
     }
 
+    public static function regenerateId() {
+        Zend_Session::regenerateId();
+    }
+
 }

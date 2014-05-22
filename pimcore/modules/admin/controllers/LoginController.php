@@ -139,6 +139,8 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         if ($user instanceof User && $user->getId() && $user->isActive() && $user->getPassword()) {
             Pimcore_Tool_Session::useSession(function($adminSession) use ($user) {
                 $adminSession->user = $user;
+
+                Pimcore_Tool_Session::regenerateId();
             });
 
             if($this->_getParam('deeplink')){
