@@ -235,6 +235,16 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         return $this->translator;
     }
 
+    protected function protectCSRF() {
+        $csrfToken = Pimcore_Tool_Session::useSession(function($adminSession) {
+            return $adminSession->csrfToken;
+        });
+
+        if($csrfToken != $_SERVER["HTTP_X_PIMCORE_CSRF_TOKEN"]) {
+            die("Detected CSRF Attack! Do not do evil things with pimcore ... ;-)");
+        }
+    }
+
     /**
      * @param $permission
      * @throws Exception

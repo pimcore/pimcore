@@ -77,6 +77,8 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
     public function addAction() {
 
+        $this->protectCSRF();
+
         try {
             $type = $this->getParam("type");;
             $className = User_Service::getClassNameForType($type);
@@ -157,6 +159,8 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     }
 
     public function updateAction() {
+
+        $this->protectCSRF();
 
         $user = User_Abstract::getById(intval($this->getParam("id")));
 
@@ -315,6 +319,8 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
 
     public function updateCurrentUserAction() {
+
+        $this->protectCSRF();
 
         $user = $this->getUser();
         if ($user != null) {

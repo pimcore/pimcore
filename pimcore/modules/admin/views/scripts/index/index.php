@@ -495,6 +495,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
     pimcore.settings = {
         upload_max_filesize: <?php echo $this->upload_max_filesize; ?>,
         sessionId: "<?php echo htmlentities($_COOKIE["pimcore_admin_sid"], ENT_QUOTES, 'UTF-8') ?>",
+        csrfToken: "<?= $this->csrfToken ?>",
         version: "<?php echo Pimcore_Version::getVersion() ?>",
         build: "<?php echo Pimcore_Version::$revision ?>",
         maintenance_active: <?php echo $this->maintenance_enabled; ?>,
