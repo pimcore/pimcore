@@ -201,7 +201,7 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
 
             var addProperty = false;
             var unchanged = false;
-            if(systemValues[name]) {
+            if(typeof systemValues[name] != "undefined") {
 
                 var record;
                 var recordIndex = this.propertyGrid.getStore().findBy(function (name,rec, id) {
