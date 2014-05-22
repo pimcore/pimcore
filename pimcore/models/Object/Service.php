@@ -857,7 +857,7 @@ class Object_Service extends Element_Service {
     public static function synchronizeCustomLayout(Object_Class_CustomLayout $customLayout) {
         $classId = $customLayout->getClassId();
         $class = Object_Class::getById($classId);
-        if ($class->getModificationDate() > $customLayout->getModificationDate()) {
+        if ($class && ($class->getModificationDate() > $customLayout->getModificationDate())) {
             $masterDefinition = $class->getFieldDefinitions();
             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
             $targetList = self::extractLocalizedFieldDefinitions($class->getLayoutDefinitions(), array(), false);
