@@ -349,7 +349,16 @@ CREATE TABLE `keyvalue_keys` (
   PRIMARY KEY (`id`),
   KEY `group` (`group`),
   CONSTRAINT `keyvalue_keys_ibfk_1` FOREIGN KEY (`group`) REFERENCES `keyvalue_groups` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `keyvalue_translator_configuration`;
+CREATE TABLE `keyvalue_translator_configuration` (
+  `id` INT(10) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(200) NULL DEFAULT NULL,
+  `translator` VARCHAR(200) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `locks`;
 CREATE TABLE `locks` (

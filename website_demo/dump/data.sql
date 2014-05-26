@@ -399,6 +399,14 @@ CREATE TABLE `keyvalue_keys` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS `keyvalue_translator_configuration`;
+CREATE TABLE `keyvalue_translator_configuration` (
+  `id` INT(10) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(200) NULL DEFAULT NULL,
+  `translator` VARCHAR(200) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `locks`;
 CREATE TABLE `locks` (
