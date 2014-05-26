@@ -114,7 +114,7 @@ CSS;
      * @param array $receivers
      * @return string
      */
-    protected function formatDebugReceivers(Array $receivers)
+    protected static function formatDebugReceivers(Array $receivers)
     {
         $tmpString = '';
         foreach ($receivers as $entry) {
