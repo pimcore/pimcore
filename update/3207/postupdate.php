@@ -12,5 +12,5 @@ try{
     ) DEFAULT CHARSET=utf8;");
 
 } catch (\Exception $e) {
-
+    echo $e->getMessage();
 }
