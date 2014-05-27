@@ -54,26 +54,7 @@ class Pimcore_Google_Analytics {
 
         $code = "";
 
-        if($config->universalcode) {
-            $code .= "
-            <script>
-              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-              })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-              " . $config->additionalcodebeforepageview . "
-
-              ga('create', '" . $config->trackid . "'" . ($config->universal_configuration ? ("," . $config->universal_configuration) : "") . ");
-              if (typeof _gaqPageView != \"undefined\"){
-                ga('send', 'pageview', _gaqPageView);
-              } else {
-                ga('send', 'pageview');
-              }
-
-              " . $config->additionalcode . "
-            </script>";
-        } else {
+        if($config->asynchronouscode || $config->retargetingcode) {
             $typeSrc = "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';";
             if($config->retargetingcode) {
                 $typeSrc = "ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';";
@@ -82,6 +63,7 @@ class Pimcore_Google_Analytics {
             $code .= "
             <script type=\"text/javascript\">
 
+              " . $config->additionalcodebeforeinit . "
               var _gaq = _gaq || [];
               _gaq.push(['_setAccount', '" . $config->trackid . "']);
               _gaq.push (['_gat._anonymizeIp']);
@@ -99,6 +81,26 @@ class Pimcore_Google_Analytics {
                 " . $typeSrc . "
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
               })();
+            </script>";
+        } else {
+            $code .= "
+            <script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+              " . $config->additionalcodebeforeinit . "
+
+              ga('create', '" . $config->trackid . "'" . ($config->universal_configuration ? ("," . $config->universal_configuration) : "") . ");
+              " . $config->additionalcodebeforepageview . "
+              if (typeof _gaqPageView != \"undefined\"){
+                ga('send', 'pageview', _gaqPageView);
+              } else {
+                ga('send', 'pageview');
+              }
+
+              " . $config->additionalcode . "
             </script>";
         }
 
