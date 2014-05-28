@@ -206,6 +206,16 @@ class Pimcore {
                     $router->addRoute('webservice', $routeWebservice);
             }
 
+            // check if this request routes into a plugin, if so check if the plugin is enabled
+            if (preg_match("@^/plugin/([^/]+)/.*@", $_SERVER["REQUEST_URI"], $matches)) {
+                $pluginName = $matches[1];
+                if(!Pimcore_ExtensionManager::isEnabled("plugin", $pluginName)) {
+                    while (@ob_end_flush());
+                    die("Plugin is disabled. To use this plugin please enable it in the extension manager!");
+                    exit;
+                }
+            }
+
             // force the main (default) domain for "admin" requests
             if($conf->general->domain && $conf->general->domain != Pimcore_Tool::getHostname()) {
                 $url = (($_SERVER['HTTPS'] == "on") ? "https" : "http") . "://" . $conf->general->domain . $_SERVER["REQUEST_URI"];
