@@ -557,7 +557,7 @@ class Asset_Image_Thumbnail_Config {
                 "height" => $config["height"]
             ));
         }
-        else if (isset($config["aspectratio"])) {
+        else if (isset($config["aspectratio"]) && $config["aspectratio"]) {
 
             if (isset($config["height"]) && isset($config["width"]) && $config["height"] > 0 && $config["width"] > 0) {
                 $pipe->addItem("contain", array(
