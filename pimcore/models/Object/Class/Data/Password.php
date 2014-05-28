@@ -34,14 +34,14 @@ class Object_Class_Data_Password extends Object_Class_Data {
      *
      * @var string
      */
-    public $queryColumnType = "varchar(32)";
+    public $queryColumnType = "varchar(255)";
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "varchar(32)";
+    public $columnType = "varchar(255)";
 
     /**
      * Type for the generated phpdoc
