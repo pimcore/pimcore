@@ -13,7 +13,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin_Abstract {
+class
+Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin_Abstract {
     protected $controller;
 
     public function __construct(Pimcore_Controller_Action_Frontend $controller) {
@@ -35,9 +36,6 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             "/pimcore/static/js/lib/ext-plugins/ux/Spinner.js",
             "/pimcore/static/js/lib/ext-plugins/ux/SpinnerField.js",
             "/pimcore/static/js/lib/ext-plugins/ux/MultiSelect.js",
-            "/pimcore/static/js/lib/ext-plugins/ux/Portal.js",
-            "/pimcore/static/js/lib/ext-plugins/ux/PortalColumn.js",
-            "/pimcore/static/js/lib/ext-plugins/ux/Portlet.js",
             "/pimcore/static/js/lib/ext-plugins/GridRowOrder/roworder.js",
             "/pimcore/static/js/lib/ckeditor/ckeditor.js",
             "/pimcore/static/js/pimcore/libfixes.js"
@@ -83,7 +81,6 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             "/pimcore/static/css/editmode.css",
             "/pimcore/static/js/lib/ext-plugins/ux/css/Spinner.css",
             "/pimcore/static/js/lib/ext-plugins/ux/css/MultiSelect.css",
-            "/pimcore/static/js/lib/ext-plugins/ux/css/Portal.css",
             "/pimcore/static/css/ext-admin-overwrite.css"
         );
 
