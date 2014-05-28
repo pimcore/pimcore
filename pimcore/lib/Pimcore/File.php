@@ -111,6 +111,11 @@ class Pimcore_File {
      * @return int
      */
     public static function put ($path, $data) {
+
+        if(!is_dir(dirname($path))) {
+            self::mkdir(dirname($path));
+        }
+
         $return = file_put_contents($path, $data);
         @chmod($path, self::$defaultMode);
         return $return;
