@@ -236,6 +236,10 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
                 $return = $this->frontend();
             }
         } catch (Exception $e) {
+            if(Pimcore::inDebugMode()){
+                // the __toString method isn't allowed to throw exceptions
+                $return = '<b style="color:#f00">__toString not possible - ' . $e->getMessage().'</b><br/>'.$e->getTraceAsString();
+            }
             Logger::error("to string not possible - " . $e->getMessage());
         }
 
