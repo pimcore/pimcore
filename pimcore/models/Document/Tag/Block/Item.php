@@ -60,7 +60,10 @@ class Document_Tag_Block_Item
         $id = $root;
 
         $element = $this->doc->getElement( $id );
-        $element->suffixes = $this->suffixes;
+        if($element)
+        {
+            $element->suffixes = $this->suffixes;
+        }
 
         return $element;
     }
@@ -70,7 +73,7 @@ class Document_Tag_Block_Item
      * @param $func
      * @param $args
      *
-     * @return Document_Tag_*|null
+     * @return Document_Tag|null
      */
     public function __call($func, $args)
     {
@@ -80,6 +83,10 @@ class Document_Tag_Block_Item
         if(!strcasecmp(get_class($element), $class))
         {
             return $element;
+        }
+        else if($element === NULL)
+        {
+            return new $class;
         }
     }
 }
