@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -21,14 +21,20 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
     initialize: function (data, fieldConfig) {
         this.data = [];
         this.fieldConfig = fieldConfig;
-        this.visibleFieldsLabels = data["visibleFieldsLabels"];
+
+        if (data && data["visibleFieldsLabels"]) {
+            this.visibleFieldsLabels = data["visibleFieldsLabels"];
+        } else {
+            this.visibleFieldsLabels = [];
+        }
+
         var classStore = pimcore.globalmanager.get("object_types_store");
         var className = classStore.getById(fieldConfig.allowedClassId);
 
         var classNameText = (typeof(className) != 'undefined') ? className.data.text : '';
         this.fieldConfig.classes = [{classes: classNameText, id: fieldConfig.allowedClassId}];
 
-        if (data["data"]) {
+        if (data && data["data"]) {
             this.data = data["data"];
         }
 

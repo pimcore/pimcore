@@ -89,7 +89,12 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                 if ($source instanceof Object_Concrete && $destination instanceof Object_Concrete) {
                     $className = Pimcore_Tool::getModelClassMapping('Object_Data_ObjectMetadata');
                     $metaData = new $className($this->getName(), $this->getColumnKeys(), $destination);
-                    $metaData->load($source, $destination, $this->getName());
+
+                    $ownertype = $object["ownertype"] ? $object["ownertype"] : "";
+                    $ownername = $object["ownername"] ? $object["ownername"] : "";
+                    $position = $object["position"] ? $object["position"] : "0";
+
+                    $metaData->load($source, $destination, $this->getName(), $ownertype, $ownername, $position);
                     $objects[] = $metaData;
                 }
             }
@@ -287,7 +292,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         }
     }
 
-     /**
+    /**
      * converts object data to a simple string value or CSV Export
      * @abstract
      * @param Object_Abstract $object
@@ -360,16 +365,16 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         $dependencies = array();
 
         if (is_array($data) && count($data) > 0) {
-			foreach ($data as $metaObject) {
+            foreach ($data as $metaObject) {
                 $o = $metaObject->getObject();
-				if ($o instanceof Object_Abstract) {
-					$dependencies["object_" . $o->getId()] = array(
-						"id" => $o->getId(),
-						"type" => "object"
-					);
-				}
-			}
-		}
+                if ($o instanceof Object_Abstract) {
+                    $dependencies["object_" . $o->getId()] = array(
+                        "id" => $o->getId(),
+                        "type" => "object"
+                    );
+                }
+            }
+        }
         return $dependencies;
     }
 
@@ -407,7 +412,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
     public function getFromWebserviceImport ($value, $object = null, $idMapper = null) {
         $objects = array();
         if(empty($value)){
-           return null;
+            return null;
         } else if(is_array($value)){
             foreach($value as $key => $item){
                 $item = (array) $item;
@@ -455,7 +460,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
      */
     public function save($object, $params = array()) {
 
-        $objectsMetadata = $this->getDataFromObjectParam($object);
+        $objectsMetadata = $this->getDataFromObjectParam($object, $params);
 
         $classId = null;
         $objectId = null;
@@ -470,19 +475,44 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
             $objectId = $object->getObject()->getId();
         }
 
-        $classId = $object->getClassId();
+        if ($object instanceof Object_Localizedfield) {
+            $classId = $object->getClass()->getId();
+        } else if ($object instanceof Object_Objectbrick_Data_Abstract || $object instanceof Object_Fieldcollection_Data_Abstract) {
+            $classId = $object->getObject()->getClassId();
+        } else {
+            $classId = $object->getClassId();
+        }
+
         $table = "object_metadata_" . $classId;
         $db = Pimcore_Resource::get();
 
         //if(!empty($objectsMetadata)) {
-            //$objectsMetadata[0]->getResource()->createOrUpdateTable($class);
+        //$objectsMetadata[0]->getResource()->createOrUpdateTable($class);
         //}
 
-        $db->delete($table, $db->quoteInto("o_id = ?", $objectId) . " AND " . $db->quoteInto("fieldname = ?", $this->getName()));
+
+        $this->enrichRelation($object, $params, $classId, $relation);
+
+        $position = $relation["position"] ? $relation["position"] : "0";
+
+        $sql = $db->quoteInto("o_id = ?", $objectId) . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
+            . " AND " . $db->quoteInto("position = ?", $position);
+
+
+
+        $db->delete($table, $sql);
 
         if(!empty($objectsMetadata)) {
+
+            if ($object instanceof Object_Localizedfield || $object instanceof Object_Objectbrick_Data_Abstract
+                || $object instanceof Object_Fieldcollection_Data_Abstract) {
+                $objectConcrete = $object->getObject();
+            } else {
+                $objectConcrete = $object;
+            }
+
             foreach($objectsMetadata as $meta) {
-                $meta->save($object);
+                $meta->save($objectConcrete, $relation["ownertype"], $relation["ownername"], $position);
             }
         }
 
@@ -642,4 +672,20 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         $this->columns = $masterDefinition->columns;
     }
 
+
+    /**
+     * @param Object_Concrete $object
+     * @return bool
+     */
+    public function isEmpty($data) {
+        if(empty($data)) {
+            return true;
+        }
+
+        if (!is_null($data) && empty($data["data"])) {
+            return true;
+        }
+
+        return false;
+    }
 }

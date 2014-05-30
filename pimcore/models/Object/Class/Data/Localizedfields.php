@@ -499,6 +499,13 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         $localizedFields = new Object_Localizedfield();
         $localizedFields->setClass($class);
         $localizedFields->createUpdateTable();
+
+        foreach ($this->getFieldDefinitions() as $fd) {
+            if (method_exists($fd, "classSaved")) {
+                $fd->classSaved($class);
+            }
+
+        }
     }
 
     public function preGetData($object, $params = array())

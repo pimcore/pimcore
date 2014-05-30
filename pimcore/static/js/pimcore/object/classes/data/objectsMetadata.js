@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -21,9 +21,9 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
      */
     allowIn: {
         object: true,
-        objectbrick: false,
-        fieldcollection: false,
-        localizedfield: false
+        objectbrick: true,
+        fieldcollection: true,
+        localizedfield: true
     },
 
     initialize: function (treeNode, initData) {
@@ -33,7 +33,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
 
         // overwrite default settings
         this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
-                                                                "visibleGridView","visibleSearch","style"];
+            "visibleGridView","visibleSearch","style"];
 
         this.treeNode = treeNode;
     },
@@ -165,13 +165,13 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
         return this.layout;
     },
 
-    
+
     getGrid: function (title, data, hasType) {
 
         var fields = [
-           'position',
-           'key',
-           'label'
+            'position',
+            'key',
+            'label'
         ];
 
         if(hasType) {
@@ -202,12 +202,12 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 var regresult = value.match(/[a-zA-Z0-9_]+/);
 
                 if (value.length > 1 && regresult == value
-                        && in_array(value.toLowerCase(), ["id","key","path","type","index","classname",
-                            "creationdate","userowner","value","class","list","fullpath","childs","values","cachetag",
-                            "cachetags","parent","published","valuefromparent","userpermissions","dependencies",
-                            "modificationdate","usermodification","byid","bypath","data","versions","properties",
-                            "permissions","permissionsforuser","childamount","apipluginbroker","resource",
-                            "parentClass","definition","locked","language"]) == false) {
+                    && in_array(value.toLowerCase(), ["id","key","path","type","index","classname",
+                    "creationdate","userowner","value","class","list","fullpath","childs","values","cachetag",
+                    "cachetags","parent","published","valuefromparent","userpermissions","dependencies",
+                    "modificationdate","usermodification","byid","bypath","data","versions","properties",
+                    "permissions","permissionsforuser","childamount","apipluginbroker","resource",
+                    "parentClass","definition","locked","language"]) == false) {
                     return true;
                 } else {
                     return t("objectsMetadata_invalid_key");
@@ -218,7 +218,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
 
         var typesColumns = [
             {header: t("position"), width: 10, sortable: true, dataIndex: 'position',
-                                                                            editor: new Ext.form.NumberField({})},
+                editor: new Ext.form.NumberField({})},
             {header: t("key"), width: 40, sortable: true, dataIndex: 'key', editor: keyTextField},
             {header: t("label"), width: 60, sortable: true, dataIndex: 'label', editor: new Ext.form.TextField({})}
         ];
@@ -243,20 +243,20 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                         'label'
                     ],
                     data: [['number', types.number], ['text', types.text], ['select', types.select],
-                                                                                        ['bool', types.bool]]
+                        ['bool', types.bool]]
                 }),
                 valueField: 'value',
                 displayField: 'label'
             });
 
             typesColumns.push({header: t("type"), width: 30, sortable: true, dataIndex: 'type', editor: typeComboBox,
-                                                            renderer: function(value) {
-                return types[value];
-            }});
+                renderer: function(value) {
+                    return types[value];
+                }});
             typesColumns.push({header: t("value"), width: 100, sortable: true, dataIndex: 'value',
-                                                            editor: new Ext.form.TextField({})});
+                editor: new Ext.form.TextField({})});
             typesColumns.push({header: t("width"), width: 10, sortable: true, dataIndex: 'width',
-                                                            editor: new Ext.form.NumberField({})});
+                editor: new Ext.form.NumberField({})});
 
 
         }
