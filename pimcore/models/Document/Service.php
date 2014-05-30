@@ -445,4 +445,31 @@ class Document_Service extends Element_Service {
         return $document;
     }
 
+    /**
+     * @param $url
+     * @return Document
+     */
+    public static function getByUrl($url) {
+        $urlParts = parse_url($url);
+        if($urlParts["path"]) {
+            $document = Document::getByPath($urlParts["path"]);
+
+            // search for a page in a site
+            if(!$document) {
+                $sitesList = new Site_List();
+                $sitesObjects = $sitesList->load();
+
+                foreach ($sitesObjects as $site) {
+                    if ($site->getRootDocument() && (in_array($urlParts["host"],$site->getDomains()) || $site->getMainDomain() == $urlParts["host"])) {
+                        if($document = Document::getByPath($site->getRootDocument() . $urlParts["path"])) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $document;
+    }
+
 }
