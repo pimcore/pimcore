@@ -1067,4 +1067,32 @@ class Object_Service extends Element_Service {
 
     }
 
+    public static function getUniqueKey($item,$nr = 0){
+        $list = new Object_List();
+        $list->setUnpublished(true);
+        $key = Pimcore_File::getValidFilename($item->getKey());
+        if(!$key){
+            throw new Exception("No item key set.");
+        }
+        if($nr){
+            $key = $key . '_' . $nr;
+        }
+
+        $parent = $item->getParent();
+        if(!$parent){
+            throw new Exception("You have to set a parent Object to determine a unique Key");
+        }
+
+        if(!$item->getId()){
+            $list->setCondition('o_parentId = ? AND `o_key` = ? ',array($parent->getId(),$key));
+        }else{
+            $list->setCondition('o_parentId = ? AND `o_key` = ? AND o_id != ? ',array($parent->getId(),$key,$item->getId()));
+        }
+        $check = $list->loadIdList();
+        if(!empty($check)){
+            $nr++;
+            $key = self::getUniqueKey($item,$nr);
+        }
+        return $key;
+    }
 }
