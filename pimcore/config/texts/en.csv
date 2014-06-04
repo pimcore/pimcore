@@ -1285,7 +1285,7 @@
 "nonownerobject_warning","The current object is not the owner of these relations, making changes here might make saving the object slow"
 "element_implicit_edit_question","Would you still like to implicitly  modify it with this action?"
 "element_is_open","Referenced element is already open"
-"element_open_message","The desired element already open for editing."
+"element_open_message","The desired element is already open for editing."
 "nonownerobjects","Objects (Non Owner)"
 "nonownerobjects_self_selection","In non owner objects a  relation to myself is not possible, please use original field instead of non owner field."
 "warning","Warning"
