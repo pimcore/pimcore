@@ -262,7 +262,16 @@ pimcore.object.tree = Class.create({
                 count++;
             }
 
-            if (str1[count - 1] == " ") {
+            if(count > 0) {
+                lastSpace = str1.search(/ [^ ]*$/);
+
+                if((lastSpace > 0) && (lastSpace < count)) {
+                    count = lastSpace;
+                }
+            }
+
+
+            if (str1[count] == " " || (typeof str1[count] == 'undefined')) {
                 return count;
             } else {
                 return 0;
