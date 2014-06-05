@@ -87,5 +87,46 @@ pimcore.element.selector.abstract = Class.create({
             }
             return null;
         }
+    },
+
+    getPagingToolbar: function(label) {
+        var pagingToolbar = new Ext.PagingToolbar({
+            pageSize: 50,
+            store: this.store,
+            displayInfo: true,
+            displayMsg: '{0} - {1} / {2}',
+            emptyMsg: label
+        });
+
+        // add per-page selection
+        pagingToolbar.add("-");
+
+        pagingToolbar.add(new Ext.Toolbar.TextItem({
+            text: t("items_per_page")
+        }));
+
+        pagingToolbar.add(new Ext.form.ComboBox({
+            store: [
+                [10, "10"],
+                [20, "20"],
+                [40, "40"],
+                [60, "60"],
+                [80, "80"],
+                [100, "100"],
+                [999999, t("all")]
+            ],
+            mode: "local",
+            width: 50,
+            value: 20,
+            triggerAction: "all",
+            listeners: {
+                select: function (box, rec, index) {
+                    this.pagingtoolbar.pageSize = intval(rec.data.field1);
+                    this.pagingtoolbar.moveFirst();
+                }.bind(this)
+            }
+        }));
+
+        return pagingToolbar;
     }
 });

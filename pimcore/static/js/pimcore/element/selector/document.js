@@ -180,14 +180,8 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
     
     getResultPanel: function () {
         if (!this.resultPanel) {
-        
-            this.pagingtoolbar = new Ext.PagingToolbar({
-                pageSize: 50,
-                store: this.store,
-                displayInfo: true,
-                displayMsg: '{0} - {1} / {2}',
-                emptyMsg: t("no_documents_found")
-            });
+
+            this.pagingtoolbar = this.getPagingToolbar(t("no_documents_found"));
 
             this.resultPanel = new Ext.grid.GridPanel({
                 region: "center",

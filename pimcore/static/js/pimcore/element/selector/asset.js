@@ -177,15 +177,8 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
     
     getResultPanel: function () {
         if (!this.resultPanel) {
-        
-            this.pagingtoolbar = new Ext.PagingToolbar({
-                pageSize: 50,
-                store: this.store,
-                displayInfo: true,
-                displayMsg: '{0} - {1} / {2}',
-                emptyMsg: t("no_assets_found")
-            });
-        
+            this.pagingtoolbar = this.getPagingToolbar(t("no_assets_found"));
+
             this.resultPanel = new Ext.grid.GridPanel({
                 region: "center",
                 store: this.store,

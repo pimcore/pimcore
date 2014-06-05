@@ -309,15 +309,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
     
     getGridPanel: function (columns, gridfilters, selectedClass) {
-        
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 50,
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("no_objects_found")
-        });
 
+        this.pagingtoolbar = this.getPagingToolbar(t("no_objects_found"));
         this.gridPanel = new Ext.grid.GridPanel({
             store: this.store,
             border: false,
