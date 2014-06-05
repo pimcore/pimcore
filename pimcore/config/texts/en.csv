@@ -1506,3 +1506,4 @@
 "custom_layout_changed","Layout was changed in the meantime. Please reload the layout and try again"
 "clone_user","Clone User"
 "clone_role","Clone Role"
+"add_selected","Add selected items"

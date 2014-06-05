@@ -309,6 +309,15 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
     
     getGridPanel: function (columns, gridfilters, selectedClass) {
+        var sm;
+
+        if(this.parent.multiselect) {
+            this.selectionColumn = new Ext.grid.CheckboxSelectionModel();
+            columns.unshift(this.selectionColumn);
+            sm  = this.selectionColumn;
+        } else {
+            sm = new Ext.grid.RowSelectionModel({singleSelect:true});
+        }
 
         this.pagingtoolbar = this.getPagingToolbar(t("no_objects_found"));
         this.gridPanel = new Ext.grid.GridPanel({
@@ -322,7 +331,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             viewConfig: {
                 forceFit: false
             },
-            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+            sm: sm,
             bbar: this.pagingtoolbar,
             listeners: {
                 rowdblclick: function (grid, rowIndex, ev) {
@@ -358,6 +367,10 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 grid.getView().hmenu.add(columnConfig);
             }
         }.bind(this));
+
+        if(this.parent.multiselect) {
+            this.gridPanel.on("rowcontextmenu", this.onRowContextmenu.bind(this));
+        }
         
         this.resultPanel.removeAll();
         this.resultPanel.add(this.gridPanel);

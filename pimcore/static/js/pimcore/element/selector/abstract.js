@@ -128,5 +128,32 @@ pimcore.element.selector.abstract = Class.create({
         }));
 
         return pagingToolbar;
+    },
+
+    onRowContextmenu: function (grid, rowIndex, event) {
+
+        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( {
+            backgroundColor: '#fff' }, 400);
+
+        var menu = new Ext.menu.Menu();
+        var data = grid.getStore().getAt(rowIndex);
+        var selectedRows = grid.getSelectionModel().getSelections();
+
+
+        menu.add(new Ext.menu.Item({
+            text: t('add_selected'),
+            iconCls: "pimcore_icon_add",
+            handler: function (data) {
+                var selectedRows = grid.getSelectionModel().getSelections();
+                for (var i = 0; i < selectedRows.length; i++) {
+                    this.addToSelection(selectedRows[i].data);
+                }
+
+            }.bind(this, data)
+        }));
+
+        event.stopEvent();
+        menu.showAt(event.getXY());
     }
+
 });
