@@ -42,8 +42,10 @@ class Object_Data_Hotspotimage {
     public function __construct($image, $hotspots, $marker = array(), $crop = array()) {
         if($image instanceof Asset_Image) {
             $this->image = $image;
-        } else {
+        } else if (is_numeric($image)){
             $this->image = Asset_Image::getById($image);
+        } else {
+            Logger::error("Object data hotspot is populated with wrong data (not Asset_Image): " . gettype($image));
         }
 
         if(is_array($hotspots)) {
