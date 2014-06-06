@@ -51,6 +51,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             $this->_helper->json(array("success" => false, "message" => "asset doesn't exist"));
         }
 
+        $asset->setMetadata(Asset_Service::expandMetadata($asset->getMetadata()));
         $asset->setProperties(Element_Service::minimizePropertiesForEditmode($asset->getProperties()));
         //$asset->getVersions();
         $asset->getScheduledTasks();
@@ -722,6 +723,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                 // metadata
                 if($this->getParam("metadata")) {
                     $metadata = Zend_Json::decode($this->getParam("metadata"));
+                    $metadata = Asset_Service::minimizeMetadata($metadata);
                     $asset->setMetadata($metadata);
                 }
 

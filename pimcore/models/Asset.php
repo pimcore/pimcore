@@ -253,7 +253,7 @@ class Asset extends Element_Abstract {
                 return null;
             }
         }
-        
+
         if(!$asset) {
             return null;
         }
@@ -701,7 +701,7 @@ class Asset extends Element_Abstract {
         return $path;
     }
 
-    
+
     /**
      * @return array
      */
@@ -1281,6 +1281,31 @@ class Asset extends Element_Abstract {
         $this->metadata = $metadata;
     }
 
+
+    public function addMetadata($name, $type, $data = null, $language = null) {
+        if ($name && $type) {
+            $metadata = $this->metadata;
+
+            $tmp = array();
+            if (!is_array($this->metadata)) {
+                $this->metadata = array();
+            }
+
+            foreach ($this->metadata as $item) {
+                if ($item["name"] != $name || $language != $item["language"]) {
+                    $tmp[] = $item;
+                }
+            }
+            $tmp[] = array(
+                "name" => $name,
+                "type" => $type,
+                "data" => $data,
+                "language" => $language
+            );
+            $this->metadata = $tmp;
+        }
+    }
+
     /**
      * @return array
      */
@@ -1464,7 +1489,7 @@ class Asset extends Element_Abstract {
 
         return $finalVars;
     }
-    
+
     public function __wakeup() {
         if(isset($this->_fulldump)) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
@@ -1483,11 +1508,11 @@ class Asset extends Element_Abstract {
             unset($this->_fulldump);
         }
     }
-    
+
     public function removeInheritedProperties () {
-        
+
         $myProperties = $this->getProperties();
-        
+
         if($myProperties) {
             foreach ($this->getProperties() as $name => $property) {
                 if($property->getInherited()) {
@@ -1495,10 +1520,10 @@ class Asset extends Element_Abstract {
                 }
             }
         }
-        
+
         $this->setProperties($myProperties);
     }
-    
+
     public function renewInheritedProperties () {
         $this->removeInheritedProperties();
 

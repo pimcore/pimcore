@@ -59,7 +59,11 @@ pimcore.asset.metadata = Class.create({
                 displayField:'name',
                 store: [
                     ["input", t("input")],
-                    ["textarea", t("textarea")]
+                    ["textarea", t("textarea")],
+                    ["document", "Document"],
+                    ["asset", "Asset"],
+                    ["object", "Object"],
+                    ["date", "Date"]
                 ],
                 editable: false,
                 triggerAction: 'all',
@@ -88,7 +92,18 @@ pimcore.asset.metadata = Class.create({
             });
 
             var store = new Ext.data.JsonStore({
-                fields: ['name', "type", "data", "language"],
+                fields: ['name', "type", {
+                    name: "data",
+                    convert: function (v, r) {
+                        if (r.type == "date") {
+                            var d = new Date(intval(v) * 1000);
+//
+//                            var ret = d.format("Y-m-d H:i");
+                            return d;
+                        }
+                        return v;
+                    }
+                }, "language"],
                 data: this.asset.data.metadata
             });
 
@@ -112,7 +127,23 @@ pimcore.asset.metadata = Class.create({
                 autoExpandColumn: "value_col",
                 columnLines: true,
                 stripeRows: true,
+                rowupdated: this.updateRows.bind(this, "rowupdated"),
+                refresh: this.updateRows.bind(this, "refresh"),
+                view: new Ext.grid.GridView({
+                    listeners: {
+                        rowupdated: this.updateRows.bind(this, "rowupdated"),
+                        refresh: this.updateRows.bind(this, "refresh")
+                    }
+                }),
                 columns: [
+                    {
+                        header: t("type"),
+                        dataIndex: 'type',
+                        editable: false,
+                        width: 40,
+                        renderer: this.getTypeRenderer.bind(this),
+                        sortable: true
+                    },
                     {
                         header: t("name"),
                         dataIndex: 'name',
@@ -141,16 +172,27 @@ pimcore.asset.metadata = Class.create({
                         dataIndex: 'data',
                         getCellEditor: this.getCellEditor.bind(this),
                         editable: true,
-                        renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                            var data = store.getAt(rowIndex).data;
-                            var type = data.type;
-
-                            if (type == "textarea") {
-                                return nl2br(value);
+                        renderer: this.getCellRenderer.bind(this)
+                    },
+                    {
+                        xtype: 'actioncolumn',
+                        width: 30,
+                        items: [{
+                            tooltip: t('open'),
+                            icon: "/pimcore/static/img/icon/pencil_go.png",
+                            handler: function (grid, rowIndex) {
+                                var pData = grid.getStore().getAt(rowIndex).data;
+                                if (pData.data) {
+                                    pimcore.helpers.openElement(pData.data, pData.type);
+                                }
+                            }.bind(this),
+                            getClass: function(v, meta, rec) {  // Or return a class from a function
+                                if(rec.get('type') != "object" && rec.get('type') != "document"
+                                    && rec.get('type') != "asset") {
+                                    return "pimcore_hidden";
+                                }
                             }
-
-                            return value;
-                        }
+                        }]
                     },
                     {
                         xtype: 'actioncolumn',
@@ -166,10 +208,107 @@ pimcore.asset.metadata = Class.create({
                 ]
             });
 
+            this.grid.on("viewready", this.updateRows.bind(this));
+            store.on("update", this.updateRows.bind(this));
         }
 
         return this.grid;
     },
+
+
+    updateRows: function (event) {
+        var rows = Ext.get(this.grid.getEl().dom).query(".x-grid3-row");
+
+        for (var i = 0; i < rows.length; i++) {
+
+            try {
+                var propertyName = Ext.get(rows[i]).query(".x-grid3-cell-first div div")[0].getAttribute("name");
+                var storeIndex = this.grid.getStore().findExact("name", propertyName);
+
+                var data = this.grid.getStore().getAt(storeIndex).data;
+
+                if(in_array(data.name, this.disallowedKeys)) {
+                    Ext.get(rows[i]).addClass("pimcore_properties_hidden_row");
+                }
+
+                console.log(data.name + " " + data.type);
+
+                if (data.type == "document" || data.type == "asset" || data.type == "object") {
+
+                    // add dnd support
+                    var dd = new Ext.dd.DropZone(rows[i], {
+                        ddGroup: "element",
+
+                        getTargetFromEvent: function(e) {
+                            return this.getEl();
+                        },
+
+                        onNodeOver : function(dataRow, target, dd, e, data) {
+                            if(dataRow.type == data.node.attributes.elementType) {
+                                return Ext.dd.DropZone.prototype.dropAllowed;
+                            }
+                            return Ext.dd.DropZone.prototype.dropNotAllowed;
+                        }.bind(this, data),
+
+                        onNodeDrop : function(myRowIndex, target, dd, e, data) {
+
+                            var rec = this.grid.getStore().getAt(myRowIndex);
+
+                            if(data.node.attributes.elementType != rec.get("type")) {
+                                return false;
+                            }
+
+                            rec.set("data", data.node.attributes.path);
+
+                            this.updateRows();
+
+                            return true;
+                        }.bind(this, storeIndex)
+                    });
+
+                }
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+    },
+
+
+
+    getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
+
+        if (value == "input") {
+            value = "text";
+        }
+        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) '
+            + 'center center no-repeat; height: 16px;" name="' + record.data.name + '">&nbsp;</div>';
+    },
+
+
+    getCellRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
+
+        var data = store.getAt(rowIndex).data;
+        var type = data.type;
+
+        if (type == "textarea") {
+            return nl2br(value);
+        } else if (type == "document" || type == "asset" || type == "object") {
+            if (value) {
+                return '<div class="pimcore_property_droptarget">' + value + '</div>';
+            } else {
+                return '<div class="pimcore_property_droptarget">&nbsp;</div>';
+            }
+        } else if (type == "date") {
+            if (value) {
+                return value.format("Y-m-d");
+            }
+        }
+
+        return value;
+    },
+
+
 
     addSetFromUserDefined: function (customKey, customType, customLanguage) {
         this.add(customKey.getValue(), customType.getValue(), false, customLanguage.getValue());
@@ -234,6 +373,18 @@ pimcore.asset.metadata = Class.create({
             property = new Ext.form.TextField();
         } else if (type == "textarea") {
             property = new Ext.form.TextArea();
+        } else if (type == "document" || type == "asset" || type == "object") {
+
+            property = new Ext.form.TextField({
+                disabled: true,
+                propertyGrid: this.grid,
+                myRowIndex: rowIndex,
+                style: {
+                    visibility: "hidden"
+                }
+            });
+        } else if (type == "date") {
+            property = new Ext.form.DateField();
         }
 
         return new Ext.grid.GridEditor(property);
@@ -254,8 +405,12 @@ pimcore.asset.metadata = Class.create({
         for (var i = 0; i < records.length; i++) {
             var currentData = records[i];
             if (currentData) {
+                var data = currentData.data.data;
+                if (currentData.data.type == "date") {
+                    data = data.valueOf() / 1000;
+                };
                 values.push({
-                    data: currentData.data.data,
+                    data: data,
                     type: currentData.data.type,
                     name: currentData.data.name,
                     language: currentData.data.language
