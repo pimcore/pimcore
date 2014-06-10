@@ -75,6 +75,11 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public $maxTabs;
 
     /**
+     * @var integer
+     */
+    public $labelWidth;
+
+    /**
      * contains further localized field definitions if there are more than one localized fields in on class
      * @var array
      */
@@ -911,4 +916,22 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     {
         return $this->maxTabs;
     }
+
+    /**
+     * @param int $labelWidth
+     */
+    public function setLabelWidth($labelWidth)
+    {
+        $this->labelWidth = $labelWidth;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLabelWidth()
+    {
+        return $this->labelWidth;
+    }
+
+
 }

@@ -176,12 +176,17 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     hidden: (i > 0)     //TODO default language
                 };
 
+
                 if(this.fieldConfig.height) {
                     panelConf.height = this.fieldConfig.height;
                     panelConf.autoHeight = false;
                     panelConf.autoScroll = true;
                 } else {
                     panelConf.autoHeight = true;
+                }
+
+                if (this.fieldConfig.labelWidth) {
+                    panelConf.labelWidth = this.fieldConfig.labelWidth;
                 }
 
                 this.tabPanel = new Ext.Panel(panelConf);
@@ -249,7 +254,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 var editable =  (pimcore.currentuser.admin ||
                     this.fieldConfig.permissionEdit === undefined ||  this.fieldConfig.permissionEdit.length == 0 || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
 
-                panelConf.items.push({
+                var item = {
                     xtype: "panel",
                     layout: "pimcoreform",
                     border:false,
@@ -259,8 +264,16 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     hideMode: "offsets",
                     title: pimcore.available_languages[this.frontendLanguages[i]],
                     items: this.getRecursiveLayout(this.fieldConfig, !editable).items
-                });
+                };
+
+                if (this.fieldConfig.labelWidth) {
+                    item.labelWidth = this.fieldConfig.labelWidth;
+                }
+
+                panelConf.items.push(item);
             }
+
+
 
             this.tabPanel = new Ext.TabPanel(panelConf);
 

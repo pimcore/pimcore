@@ -122,6 +122,21 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
             ]
         });
 
+        this.layout.add({
+            xtype: "form",
+            labelWidth: 140,
+            bodyStyle: "padding: 10px;",
+            style: "margin: 10px 0 10px 0",
+            items: [
+                {
+                    xtype: "spinnerfield",
+                    name: "labelWidth",
+                    fieldLabel: t("label_width"),
+                    value: this.datax.labelWidth
+                }
+            ]
+        });
+
 
         this.layout.on("render", this.layoutRendered.bind(this));
 
