@@ -305,7 +305,10 @@ class Asset extends Element_Abstract {
                 unlink($tmpFile);
             } else {
                 $mimeType = Pimcore_Tool_Mime::detect($data["sourcePath"], $data["filename"]);
-                $data["stream"] = fopen($data["sourcePath"], "r+");
+                if (is_file($data["sourcePath"])) {
+                    $data["stream"] = fopen($data["sourcePath"], "r+");
+                }
+
                 unset($data["sourcePath"]);
             }
 
@@ -373,6 +376,10 @@ class Asset extends Element_Abstract {
      * @return int|string
      */
     public static function getTypeFromMimeMapping ($mimeType, $filename) {
+
+        if ($mimeType == "directory") {
+            return "folder";
+        }
 
         $type = "unknown";
 
