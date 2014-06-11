@@ -17,10 +17,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
     type: "localizedfields",
 
-    dropdownLayout: false,
-
-    availablePanels: [],
-
     frontendLanguages: null,
 
     initialize: function (data, fieldConfig) {
@@ -31,6 +27,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         this.languageElements = {};
         this.inheritedFields = {};
         this.referencedFields = [];
+        this.availablePanels = [];
+        this.dropdownLayout = false;
 
         if (pimcore.currentuser.admin || fieldConfig.permissionView === undefined) {
             this.frontendLanguages = pimcore.settings.websiteLanguages;
@@ -268,7 +266,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
                 if (this.fieldConfig.labelWidth) {
                     item.labelWidth = this.fieldConfig.labelWidth;
-                }
+            }
 
                 panelConf.items.push(item);
             }
