@@ -216,7 +216,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             layout: "pimcoreform",
             autoHeight: true,
             border: false,
-            title: type,
+            title: ts(type),
             items: this.getRecursiveLayout(this.layoutDefinitions[type]).items
         });
 
