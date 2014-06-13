@@ -228,14 +228,14 @@ class Asset_Service extends Element_Service {
                 case "document":
                 case "asset":
                 case "object":
-                {
-                    $element = Element_Service::getElementByPath($type, $item["data"]);
-                    if ($element) {
-                        $item["data"] = $element->getId();
-                    } else {
-                        $item["data"] = "";
+                    {
+                        $element = Element_Service::getElementByPath($type, $item["data"]);
+                        if ($element) {
+                            $item["data"] = $element->getId();
+                        } else {
+                            $item["data"] = "";
+                        }
                     }
-                }
 
                     break;
                 default:

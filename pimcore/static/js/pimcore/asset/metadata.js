@@ -97,8 +97,6 @@ pimcore.asset.metadata = Class.create({
                     convert: function (v, r) {
                         if (r.type == "date") {
                             var d = new Date(intval(v) * 1000);
-//
-//                            var ret = d.format("Y-m-d H:i");
                             return d;
                         }
                         return v;
@@ -122,7 +120,23 @@ pimcore.asset.metadata = Class.create({
                     xtype: "button",
                     handler: this.addSetFromUserDefined.bind(this, customKey, customType, customLanguage),
                     iconCls: "pimcore_icon_add"
-                }],
+                }
+                ,{
+                    xtype: "tbspacer",
+                    width: 20
+                },"-",{
+                    xtype: "tbspacer",
+                    width: 20
+                },{
+                    xtype: "tbtext",
+                    text: t('add_predefined_metadata_definitions') + " "
+                },
+                {
+                    xtype: "button",
+                    handler: this.addSetFromUserDefined.bind(this),
+                    iconCls: "pimcore_icon_add"
+                }
+                ],
                 clicksToEdit: 1,
                 autoExpandColumn: "value_col",
                 columnLines: true,
@@ -215,7 +229,6 @@ pimcore.asset.metadata = Class.create({
         return this.grid;
     },
 
-
     updateRows: function (event) {
         var rows = Ext.get(this.grid.getEl().dom).query(".x-grid3-row");
 
@@ -230,8 +243,6 @@ pimcore.asset.metadata = Class.create({
                 if(in_array(data.name, this.disallowedKeys)) {
                     Ext.get(rows[i]).addClass("pimcore_properties_hidden_row");
                 }
-
-                console.log(data.name + " " + data.type);
 
                 if (data.type == "document" || data.type == "asset" || data.type == "object") {
 
@@ -420,5 +431,75 @@ pimcore.asset.metadata = Class.create({
 
 
         return values;
+    },
+
+    addSetFromUserDefined: function() {
+
+        Ext.Ajax.request({
+            url: "/admin/settings/get-predefined-metadata",
+            params: {
+                type: "asset",
+                subType: this.asset.type
+            },
+            success: this.doAddSet.bind(this)
+
+        });
+
+    },
+
+    doAddSet: function(response) {
+        var data = Ext.decode(response.responseText);
+        data = data.data;
+        var store = this.grid.getStore();
+        var added = false;
+
+        var i;
+        for (i = 0; i < data.length; i++) {
+            var item = data[i];
+            var key = item.name;
+            var language = item.language;
+            if (!key) {
+                key = "";
+            }
+            if (!language) {
+                language = "";
+            }
+
+            if (!item.type){
+                continue;
+            }
+
+            var dublicateIndex = store.findBy(function (record, id) {
+                if (record.data.name.toLowerCase() == key.toLowerCase()) {
+                    if(record.data.language.toLowerCase() == language.toLowerCase()) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+
+            if (dublicateIndex < 0) {
+
+                var value = item.data;
+                if (item.type == "date" && value) {
+                    value = new Date(intval(value) * 1000);
+                }
+                var newRecord = new store.recordType({
+                    name: key,
+                    data: value,
+                    type: item.type,
+                    language: language
+                });
+
+                store.add(newRecord);
+                added = true;
+            }
+
+        }
+
+        if (added) {
+            this.grid.getView().refresh();
+        }
+
     }
 });

@@ -1507,3 +1507,8 @@
 "clone_user","Clone User"
 "clone_role","Clone Role"
 "add_selected","Add selected items"
+"predefined_metadata_definitions","Predefined Metadata Definitions"
+"new_definition","New Definition"
+"target_subtype","Target Type",
+"add_predefined_metadata_definitions","Add predefined defintions"
+"rule_violation","Rule Violation"

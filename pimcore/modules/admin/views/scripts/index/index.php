@@ -210,6 +210,7 @@ $scripts = array(
     "pimcore/settings/translation/admin.js",
     "pimcore/settings/translation/xliff.js",
     "pimcore/settings/translation/word.js",
+    "pimcore/settings/metadata/predefined.js",
     "pimcore/settings/properties/predefined.js",
     "pimcore/settings/docTypes.js",
     "pimcore/settings/system.js",
