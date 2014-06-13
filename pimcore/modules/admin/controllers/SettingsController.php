@@ -103,8 +103,15 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $type = $this->getParam("type");
         $subType = $this->getParam("subType");
         $list = Metadata_Predefined_List::getByTargetType($type, $subType);
+        $result = array();
+        foreach ($list as $item) {
+            /** @var $item Metadata_Predefined */
+            $item->expand();
+            $result[] = $item;
+        }
 
-        $this->_helper->json(array("data" => $list, "success" => true));
+
+        $this->_helper->json(array("data" => $result, "success" => true));
 
     }
 
