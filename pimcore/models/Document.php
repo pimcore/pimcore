@@ -720,12 +720,16 @@ class Document extends Element_Abstract {
             $front = Zend_Controller_Front::getInstance();
             $scheme = ($front->getRequest()->isSecure() ? "https" : "http") . "://";
             if($site = Pimcore_Tool_Frontend::getSiteForDocument($this)) {
-                // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /
-                if ($site->getRootDocument()->getId() == $this->getId()) {
-                    return $scheme . $site->getMainDomain() . "/";
+                if($site->getMainDomain()) {
+                    // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /
+                    if ($site->getRootDocument()->getId() == $this->getId()) {
+                        return $scheme . $site->getMainDomain() . "/";
+                    }
+                    return $scheme . $site->getMainDomain() . preg_replace("@^" . $site->getRootPath() . "/@", "/", $this->getRealFullPath());
                 }
-                return $scheme . $site->getMainDomain() . preg_replace("@^" . $site->getRootPath() . "/@", "/", $this->getRealFullPath());
-            } else if ($config->general->domain) {
+            }
+
+            if ($config->general->domain) {
                 return $scheme . $config->general->domain . $this->getRealFullPath();
             }
         }
