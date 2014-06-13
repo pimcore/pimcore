@@ -43,7 +43,7 @@ CREATE TABLE `assets_metadata_predefined` (
   `language` varchar(255) DEFAULT NULL,
   `type` enum('input','textarea','asset','document','object','date') DEFAULT NULL,
   `data` text,
-  `targetSubtype` enum("image", "text", "audio", "video", "document", "archive", "unknown") DEFAULT NULL,
+  `targetSubtype` enum('image', 'text', 'audio', 'video', 'document', 'archive', 'unknown') DEFAULT NULL,
   `creationDate` bigint(20) unsigned DEFAULT '0',
   `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -51,7 +51,7 @@ CREATE TABLE `assets_metadata_predefined` (
   KEY `id` (`id`),
   KEY `type` (`type`),
   KEY `language` (`language`),
-  KEY `subtype` (`subtype`)
+  KEY `targetSubtype` (`targetSubtype`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `cache`;
