@@ -272,18 +272,13 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
                     $db->insert("object_relations_" . $classId, $relation);
                 } catch (Exception $e) {
                     Logger::error("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"]
-                        . " (fieldname: " . $this->getName() . ") already exist -> try to update");
+                        . " (fieldname: " . $this->getName() . ") already exist -> please check immediately!");
                     Logger::error($e);
 
                     // try it again with an update if the insert fails, shouldn't be the case, but it seems that
                     // sometimes the insert throws an exception
 
-                    // build condition
-                    $condition = array();
-                    foreach ($relation as $key => $value) {
-                        $condition[] = $db->quoteInto($db->quoteIdentifier($key) . " = ?", $value);
-                    }
-                    $db->update("object_relations_" . $classId, $relation, implode(" AND ", $condition));
+                    throw $e;
                 }
             }
         }
