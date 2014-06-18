@@ -311,7 +311,7 @@
     top: 10px;
     width: 22px;
     height: 22px;
-    z-index: 10;
+    z-index: 10001;
 }
 
 .pimcore_image_marker {
