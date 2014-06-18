@@ -202,7 +202,9 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
                             if (method_exists($parent, $method)) {
                                 $localizedFields = $parent->getLocalizedFields();
                                 if ($localizedFields instanceof Object_Localizedfield) {
-                                    $data = $localizedFields->getLocalizedValue($name, $language, true);
+                                    if($localizedFields->object->getId() != $this->object->getId()) {
+                                        $data = $localizedFields->getLocalizedValue($name, $language, true);
+                                    }
                                 }
                             }
                         }
