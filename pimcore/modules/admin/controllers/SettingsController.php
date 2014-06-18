@@ -102,7 +102,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     public function getPredefinedMetadataAction() {
         $type = $this->getParam("type");
         $subType = $this->getParam("subType");
-        $list = Metadata_Predefined_List::getByTargetType($type, $subType);
+        $list = Metadata_Predefined_List::getByTargetType($type, array($subType));
         $result = array();
         foreach ($list as $item) {
             /** @var $item Metadata_Predefined */

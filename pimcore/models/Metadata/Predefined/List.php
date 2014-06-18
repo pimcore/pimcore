@@ -49,13 +49,27 @@ class Metadata_Predefined_List extends Pimcore_Model_List_Abstract {
         return $this;
     }
 
-    public static function getByTargetType($type, $subType) {
+    public static function getByTargetType($type, $subTypes) {
         if ($type != "asset") {
             throw new Exception("other types than assets are currently not supported");
         }
         $db = Pimcore_Resource::get();
         $list = new self();
-        $list->setCondition("targetSubtype = " . $db->quote($subType));
+
+        if ($subTypes && !is_array($subTypes)) {
+            $subTypes = array($subTypes);
+        }
+
+        if (is_array($subTypes)) {
+            $types = array();
+            $db = Pimcore_Resource::get();
+            foreach ($subTypes as $item) {
+                $types[] = $db->quote($item);
+            }
+
+            $condition = "targetSubtype IN (" . implode(',',$types) . ")" ;
+            $list->setCondition($condition);
+        }
         $list = $list->load();
         return $list;
     }
