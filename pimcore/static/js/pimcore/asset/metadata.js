@@ -133,7 +133,7 @@ pimcore.asset.metadata = Class.create({
                 },
                 {
                     xtype: "button",
-                    handler: this.addSetFromUserDefined.bind(this),
+                    handler: this.addSetFromPredefinedDefined.bind(this),
                     iconCls: "pimcore_icon_add"
                 }
                 ],
@@ -433,7 +433,7 @@ pimcore.asset.metadata = Class.create({
         return values;
     },
 
-    addSetFromUserDefined: function() {
+    addSetFromPredefinedDefined: function() {
 
         Ext.Ajax.request({
             url: "/admin/settings/get-predefined-metadata",

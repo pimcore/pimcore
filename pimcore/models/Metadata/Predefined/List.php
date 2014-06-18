@@ -53,7 +53,7 @@ class Metadata_Predefined_List extends Pimcore_Model_List_Abstract {
         if ($type != "asset") {
             throw new Exception("other types than assets are currently not supported");
         }
-        $db = Pimcore_Resource::get();
+
         $list = new self();
 
         if ($subTypes && !is_array($subTypes)) {
