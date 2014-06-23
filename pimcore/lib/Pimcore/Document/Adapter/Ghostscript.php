@@ -87,6 +87,17 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
      * @throws Exception
      */
     public static function getPdftotextCli () {
+
+        // check the system-config for a path
+        $configPath = Pimcore_Config::getSystemConfig()->assets->pdftotext;
+        if($configPath) {
+            if(@is_executable($configPath)) {
+                return $configPath;
+            } else {
+                Logger::critical("Binary: " . $configPath . " is not executable");
+            }
+        }
+
         $paths = array(
             "/usr/local/bin/pdftotext",
             "/usr/bin/pdftotext",

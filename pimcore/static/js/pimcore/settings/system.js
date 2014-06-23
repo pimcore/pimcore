@@ -943,8 +943,27 @@ pimcore.settings.system = Class.create({
                                 name: 'assets.libreoffice',
                                 value: this.getValue("assets.libreoffice"),
                                 width: 300
-                            },
-                            {
+                            },{
+                                fieldLabel: t('absolute_path_to_pngcrush'),
+                                name: 'assets.pngcrush',
+                                value: this.getValue("assets.pngcrush"),
+                                width: 300
+                            },{
+                                fieldLabel: t('absolute_path_to_imgmin'),
+                                name: 'assets.imgmin',
+                                value: this.getValue("assets.imgmin"),
+                                width: 300
+                            },{
+                                fieldLabel: t('absolute_path_to_jpegoptim'),
+                                name: 'assets.jpegoptim',
+                                value: this.getValue("assets.jpegoptim"),
+                                width: 300
+                            },{
+                                fieldLabel: t('absolute_path_to_pdftotext'),
+                                name: 'assets.pdftotext',
+                                value: this.getValue("assets.pdftotext"),
+                                width: 300
+                            },{
                                 fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (imagick)",
                                 name: 'assets.icc_rgb_profile',
                                 value: this.getValue("assets.icc_rgb_profile"),

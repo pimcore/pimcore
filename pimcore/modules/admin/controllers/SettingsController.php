@@ -379,6 +379,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "ffmpeg" => $values["assets.ffmpeg"],
                 "ghostscript" => $values["assets.ghostscript"],
                 "libreoffice" => $values["assets.libreoffice"],
+                "pngcrush" => $values["assets.pngcrush"],
+                "imgmin" => $values["assets.imgmin"],
+                "jpegoptim" => $values["assets.jpegoptim"],
+                "pdftotext" => $values["assets.pdftotext"],
                 "icc_rgb_profile" => $values["assets.icc_rgb_profile"],
                 "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"]
             ),
