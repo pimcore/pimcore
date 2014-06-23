@@ -585,7 +585,6 @@ pimcore.document.pages.settings = Class.create({
                                     autoWidth: true,
                                     handler: function () {
                                         var masterPath = Ext.getCmp("contentMasterDocumentPath_" + this.page.id).getValue();
-                                        console.log(masterPath);
                                         pimcore.helpers.openDocumentByPath(masterPath);
                                     }.bind(this)
                                 }]

@@ -1308,20 +1308,7 @@ pimcore.helpers.openElementByIdDialog = function (type) {
 };
 
 pimcore.helpers.openDocumentByPath = function (path) {
-    Ext.Ajax.request({
-        url: "/admin/document/open-by-url/",
-        params: {
-            url: path
-        },
-        success: function (response) {
-            var res = Ext.decode(response.responseText);
-            if(res.success) {
-                pimcore.helpers.openDocument(res.id, res.type);
-            } else {
-                Ext.MessageBox.alert(t("error"), t("no_matching_document_found_for") + ": " + value);
-            }
-        }.bind(this)
-    });
+    pimcore.helpers.openElement(path, "document");
 };
 
 pimcore.helpers.openDocumentByPathDialog = function () {
