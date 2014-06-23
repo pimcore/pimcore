@@ -246,6 +246,9 @@ class Pimcore_Tool {
      * @return string
      */
     public static function getHostname() {
+        if(isset($_SERVER["HTTP_X_FORWARDED_HOST"]) && !empty($_SERVER["HTTP_X_FORWARDED_HOST"])) {
+            return $_SERVER["HTTP_X_FORWARDED_HOST"];
+        }
         return $_SERVER["HTTP_HOST"];
     }
 
