@@ -643,4 +643,33 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         $this->maxItems = $masterDefinition->maxItems;
     }
 
+    /**
+     * This method is called in Object_Class::save() and is used to create the database table for the localized data
+     * @return void
+     */
+    public function classSaved($class)
+    {
+
+        if (is_array($this->allowedTypes)) {
+            foreach ($this->allowedTypes as $allowedType) {
+                $definition = Object_Fieldcollection_Definition::getByKey($allowedType);
+                if ($definition) {
+                    $fieldDefinition = $definition->getFieldDefinitions();
+
+                    foreach ($fieldDefinition as $fd) {
+                        if (method_exists($fd, "classSaved")) {
+                            $fd->classSaved($class);
+                        }
+
+                    }
+                }
+            }
+        }
+
+
+
+
+
+    }
+
 }
