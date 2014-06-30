@@ -199,7 +199,7 @@ class Asset_Image_Thumbnail_Processor {
             }
         }
 
-        $image->save($fsPath, $format, $config->getQuality(), $config->getColorspace());
+        $image->save($fsPath, $format, $config->getQuality());
 
         if($contentOptimizedFormat) {
             Pimcore_Image_Optimizer::optimize($fsPath);
