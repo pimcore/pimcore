@@ -111,7 +111,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         if(!$this->reinitializing) {
             if($this->getUseContentOptimizedFormat()) {
                 $format = "jpeg";
-                if($i->getImageAlphaChannel()) {
+                if($this->hasAlphaChannel()) {
                     $format = "png32";
                 }
             }
@@ -148,6 +148,29 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $this->resource->destroy();
             $this->resource = null;
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function hasAlphaChannel() {
+
+        $width = $this->resource->getImageWidth(); // Get the width of the image
+        $height = $this->resource->getImageHeight(); // Get the height of the image
+
+        // We run the image pixel by pixel and as soon as we find a transparent pixel we stop and return true.
+        for($i = 0; $i < $width; $i++) {
+            for($j = 0; $j < $height; $j++) {
+                $pixel = $this->resource->getImagePixelColor($i, $j);
+                $color = $pixel->getColor(true); // get the real alpha not just 1/0
+                if($color["a"] < 1) { // if there's an alpha pixel, return true
+                    return true;
+                }
+            }
+        }
+
+        // If we dont find any pixel the function will return false.
+        return false;
     }
 
     /**
