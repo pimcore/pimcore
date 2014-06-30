@@ -108,8 +108,10 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
 
 
-        if(!$colorProfile) {
-            $colorProfile = 'RGB';
+        if($colorProfile == "CMYK") {
+            $colorProfile = Imagick::COLORSPACE_CMYK;
+        } else {
+            $colorProfile = Imagick::COLORSPACE_SRGB;
         }
 
 
