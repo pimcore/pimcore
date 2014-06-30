@@ -48,6 +48,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         var visibleFields = this.fieldConfig.visibleFields.split(",");
 
         fields.push("id");
+        fields.push("inheritedFields");
+        fields.push("metadata");
 
         var i;
 
@@ -59,8 +61,10 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             fields.push(this.fieldConfig.columns[i].key);
         }
 
+
         this.store = new Ext.data.JsonStore({
             data: this.data,
+            idProperty: 'id',
             listeners: {
                 add:function() {
                     this.dataChanged = true;
@@ -77,6 +81,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             },
             fields: fields
         });
+
     },
 
 
@@ -96,7 +101,24 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         for (i = 0; i < visibleFields.length; i++) {
             if(!empty(visibleFields[i])) {
-                columns.push({header: this.visibleFieldsLabels[visibleFields[i]], dataIndex: visibleFields[i], width: 100, editor: null});
+                var layout = this.visibleFieldsData[visibleFields[i]];
+                var field = {
+                    key: visibleFields[i],
+                    label: this.visibleFieldsLabels[visibleFields[i]],
+                    layout: layout,
+                    position: i,
+                    type: layout.fieldtype
+                };
+
+                var fc = pimcore.object.tags[field.type].prototype.getGridColumnConfig(field);
+
+                fc.width = 100;
+                fc.hidden = false;
+                fc.layout = field;
+                fc.editor = null;
+                fc.sortable = false;
+
+                columns.push(fc);
             }
         }
 

@@ -156,8 +156,23 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                 $return["visibleFieldsLabels"][$key] = $field->getTitle();
                 $return["visibleFieldsData"][$key] = $field;
             } else {
+                $fieldFound = false;
+                if($localizedfields = $class->getFieldDefinitions()['localizedfields']) {
+                    if($field = $localizedfields->getFieldDefinition($key)) {
+                        $return["visibleFieldsLabels"][$key] = $field->getTitle();
+                        $return["visibleFieldsData"][$key] = $field;
+                        $fieldFound = true;
+                    }
+                }
                 // shouldn't be necessary because this data-type is only allowed directly in objects, added just to be sure
-                $return["visibleFieldsLabels"][$key] = $key;
+                if(!$fieldFound) {
+                    $return["visibleFieldsLabels"][$key] = $key;
+                    $return["visibleFieldsData"][$key] = [
+                        'fieldtype' => 'input',
+                        'name' => $key
+                    ];
+                }
+
             }
         }
 
