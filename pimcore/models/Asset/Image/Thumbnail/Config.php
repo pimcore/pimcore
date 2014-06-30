@@ -70,6 +70,11 @@ class Asset_Image_Thumbnail_Config {
     public $filenameSuffix;
 
     /**
+     * @var string
+     */
+    public $colorspace;
+
+    /**
      * @param $config
      * @return Asset_Image_Thumbnail_Config|bool
      */
@@ -527,6 +532,9 @@ class Asset_Image_Thumbnail_Config {
         if(isset($config["quality"])) {
             $pipe->setQuality($config["quality"]);
         }
+        if(isset($config["colorspace"])) {
+            $pipe->setColorspace($config["colorspace"]);
+        }
         /*if ($config["cropPercent"]) {
             $pipe->addItem("cropPercent", array(
                 "width" => $config["cropWidth"],
@@ -662,5 +670,21 @@ class Asset_Image_Thumbnail_Config {
         }
 
         return $dimensions;
+    }
+
+    /**
+     * @param string $colorspace
+     */
+    public function setColorspace($colorspace)
+    {
+        $this->colorspace = $colorspace;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColorspace()
+    {
+        return $this->colorspace;
     }
 }

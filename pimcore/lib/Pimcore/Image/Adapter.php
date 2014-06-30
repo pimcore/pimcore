@@ -370,9 +370,10 @@ abstract class Pimcore_Image_Adapter {
      * @param $path
      * @param null $format
      * @param null $quality
+     * @param null $colorProfile
      * @return mixed
      */
-    public abstract function save ($path, $format = null, $quality = null);
+    public abstract function save ($path, $format = null, $quality = null, $colorProfile = null);
 
 
     /**

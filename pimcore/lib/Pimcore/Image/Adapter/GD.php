@@ -52,9 +52,10 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      * @param $path
      * @param null $format
      * @param null $quality
+     * @param null $colorProfile
      * @return $this|mixed
      */
-    public function save ($path, $format = null, $quality = null) {
+    public function save ($path, $format = null, $quality = null, $colorProfile = null) {
 
         $format = strtolower($format);
         if(!$format) {
