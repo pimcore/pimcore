@@ -21,13 +21,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         if($object) {
             $result['success'] = true;
             $fields = $this->getParam("fields");
-            foreach($fields as $f) {
-                $result['fields']['id'] = $object->getId();
-                $getter = "get" . ucfirst($f);
-                if(method_exists($object, $getter)) {
-                    $result['fields'][$f] = (string) $object->$getter();
-                }
-            }
+            $result['fields'] = Object_Service::gridObjectData($object, $fields);
 
         } else {
             $result['success'] = false;

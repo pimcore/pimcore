@@ -99,6 +99,8 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                 }
             }
         }
+
+
         //must return array - otherwise this means data is not loaded
         return $objects;
     }
@@ -152,11 +154,15 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
             $field = $class->getFieldDefinition($key);
             if($field) {
                 $return["visibleFieldsLabels"][$key] = $field->getTitle();
+                $return["visibleFieldsData"][$key] = $field;
             } else {
                 // shouldn't be necessary because this data-type is only allowed directly in objects, added just to be sure
                 $return["visibleFieldsLabels"][$key] = $key;
             }
         }
+
+        $gridFields = (array)$visibleFieldsArray;
+
 
         // add data
         if (is_array($data) && count($data) > 0) {
@@ -166,28 +172,12 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                 $object = $metaObject->getObject();
                 if ($object instanceof Object_Concrete) {
 
-                    $value = array("id" => $object->getId());
-                    foreach($visibleFieldsArray as $key) {
-                        $getter = "get" . ucfirst($key);
-                        if(method_exists($object, $getter)) {
-                            $v = $object->$getter();
-                            if(is_object($v)) {
-                                if($v instanceof Zend_Date) {
-                                    $v = $v->get(Zend_Date::DATE_LONG);
-                                } else {
-                                    $v = (string)$v;
-                                }
-
-                            }
-                            $value[$key] = $v;
-                        }
-                    }
-
+                    $columnData = Object_Service::gridObjectData($object, $gridFields);
                     foreach($this->getColumns() as $c) {
                         $getter = "get" . ucfirst($c['key']);
-                        $value[$c['key']] = $metaObject->$getter();
+                        $columnData[$c['key']] = $metaObject->$getter();
                     }
-                    $return["data"][] = $value;
+                    $return["data"][] = $columnData;
                 }
             }
             if (empty ($return["data"])) {

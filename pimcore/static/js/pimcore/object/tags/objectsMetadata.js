@@ -28,6 +28,12 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             this.visibleFieldsLabels = [];
         }
 
+        if (data && data["visibleFieldsData"]) {
+            this.visibleFieldsData = data["visibleFieldsData"];
+        } else {
+            this.visibleFieldsData = [];
+        }
+
         var classStore = pimcore.globalmanager.get("object_types_store");
         var className = classStore.getById(fieldConfig.allowedClassId);
 
@@ -393,20 +399,20 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             for (var i = 0; i < items.length; i++) {
                 var fields = this.fieldConfig.visibleFields.split(",");
                 if (!this.objectAlreadyExists(items[i].id)) {
-                    this.loadObjectData(items[i].id, fields);
+                    this.loadObjectData(items[i], fields);
                 }
             }
         }
     },
 
-    loadObjectData: function(id, fields) {
+    loadObjectData: function(item, fields) {
 
-        this.store.add(new this.store.recordType({id: id}, id));
+        this.store.add(new this.store.recordType(item, item.id));
 
         Ext.Ajax.request({
             url: "/admin/object-helper/load-object-data",
             params: {
-                id: id,
+                id: item.id,
                 'fields[]': fields
             },
             success: function (response) {
@@ -414,7 +420,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 var key;
 
                 if(rdata.success) {
-                    var rec = this.store.getById(id);
+                    var rec = this.store.getById(item.id);
                     for(key in rdata.fields) {
                         rec.set(key, rdata.fields[key]);
                     }
