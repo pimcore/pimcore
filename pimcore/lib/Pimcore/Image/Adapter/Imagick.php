@@ -67,7 +67,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
             $this->resource = $i; // this is because of HHVM which has problems with $this->resource->readImage();
 
-//            $this->setColorspaceToRGB();
+            $this->setColorspaceToRGB();
 
         } catch (Exception $e) {
             Logger::error("Unable to load image: " . $imagePath);
@@ -92,7 +92,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @param null $colorProfile
      * @return $this|mixed
      */
-    public function save ($path, $format = null, $quality = null, $colorProfile = null) {
+    public function save ($path, $format = null, $quality = null) {
 
         if(!$format) {
             $format = "png32";
@@ -107,27 +107,15 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
 
-
-        if($colorProfile == "CMYK") {
-            $colorProfile = Imagick::COLORSPACE_CMYK;
-        } else {
-            $colorProfile = Imagick::COLORSPACE_SRGB;
-        }
-
-
-
         $originalFilename = null;
         if(!$this->reinitializing) {
-            if($this->getUseContentOptimizedFormat() && Imagick::COLORSPACE_RGB == constant("Imagick::COLORSPACE_" . $colorProfile)) {
+            if($this->getUseContentOptimizedFormat()) {
                 $format = "jpeg";
                 if($i->getImageAlphaChannel()) {
                     $format = "png32";
                 }
             }
         }
-
-        $this->setColorspace($colorProfile);
-
 
         $i->stripimage();
         $i->profileImage('*', null);
@@ -161,68 +149,6 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $this->resource = null;
         }
     }
-
-
-    /**
-     * neu
-     * @param string $type
-     * @return Pimcore_Image_Adapter|void
-     */
-    public function setColorspace($type = "RGB") {
-
-        $type = strtoupper($type);
-        if(!in_array($type, array("RGB","CMYK"))) {
-            $type = "RGB";
-        }
-
-        $imageColorspace = $this->resource->getImageColorspace();
-
-        if ($imageColorspace == Imagick::COLORSPACE_CMYK && $type == "RGB") {
-            if(self::getCMYKColorProfile() && self::getRGBColorProfile()) {
-                $profiles = $this->resource->getImageProfiles('*', false);
-                // we're only interested if ICC profile(s) exist
-                $has_icc_profile = (array_search('icc', $profiles) !== false);
-                // if it doesn't have a CMYK ICC profile, we add one
-                if ($has_icc_profile === false) {
-                    $this->resource->profileImage('icc', self::getCMYKColorProfile());
-                }
-                // then we add an RGB profile
-                $this->resource->profileImage('icc', self::getRGBColorProfile());
-                $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB); // we have to use SRGB here, no clue why but it works
-            } else {
-                $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB);
-            }
-        } else if (in_array($imageColorspace, array(Imagick::COLORSPACE_RGB, Imagick::COLORSPACE_SRGB)) && $type == "CMYK") {
-            if(self::getCMYKColorProfile() && self::getRGBColorProfile()) {
-                $profiles = $this->resource->getImageProfiles('*', false);
-                // we're only interested if ICC profile(s) exist
-                $has_icc_profile = (array_search('icc', $profiles) !== false);
-                // if it doesn't have a CMYK ICC profile, we add one
-                if ($has_icc_profile === false) {
-                    $this->resource->profileImage('icc', self::getRGBColorProfile());
-                }
-                // then we add an RGB profile
-                $this->resource->profileImage('icc', self::getCMYKColorProfile());
-                $this->resource->setImageColorspace(Imagick::COLORSPACE_CMYK);
-            }
-        } else if ($imageColorspace == Imagick::COLORSPACE_GRAY && $type == "RGB") {
-            $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB);
-        } else if (!in_array($imageColorspace, array(Imagick::COLORSPACE_RGB, Imagick::COLORSPACE_SRGB)) && $type == "RGB") {
-            $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB);
-        }
-        // this is a HACK to force grayscale images to be real RGB - truecolor, this is important if you want to use
-        // thumbnails in PDF's because they do not support "real" grayscale JPEGs or PNGs
-        // problem is described here: http://imagemagick.org/Usage/basics/#type
-        // and here: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=6888#p31891
-        $draw = new ImagickDraw();
-        $draw->setFillColor("#ff0000");
-        $draw->setfillopacity(.01);
-        $draw->point($this->getWidth()-1,$this->getHeight()-1); // place it in the right bottom corner
-        $this->resource->drawImage($draw);
-
-        return $this;
-    }
-
 
     /**
      * @param string $type
