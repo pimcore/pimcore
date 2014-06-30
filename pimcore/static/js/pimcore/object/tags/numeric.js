@@ -18,8 +18,11 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
     type:"numeric",
 
     initialize:function (data, fieldConfig) {
+
+        this.defaultValue = null;
         if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
             data = fieldConfig.defaultValue;
+            this.defaultValue = data;
         }
 
         this.data = data;
@@ -99,10 +102,10 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
     getValue:function () {
         if (this.isRendered()) {
             return this.component.getValue().toString();
-        } else if (this.fieldConfig.defaultValue) {
-            return this.fieldConfig.defaultValue;
+        } else if (this.defaultValue) {
+            return this.defaultValue;
         }
-        return null;
+        return this.data;
     },
 
     getName:function () {
@@ -125,21 +128,14 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
 
     isDirty:function () {
         var dirty = false;
+
+        if(this.defaultValue) {
+            return true;
+        }
+
         if (this.component && typeof this.component.isDirty == "function") {
-
-            if (!this.component.rendered) {
-                if (!this.fieldConfig.defaultValue) {
-                    return false;
-                } else {
-                    return true;
-                }
-
-            } else {
+            if (this.component.rendered) {
                 dirty = this.component.isDirty();
-
-                if (!dirty && (this.fieldConfig.defaultValue)) {
-                    dirty = true;
-                }
 
                 // once a field is dirty it should be always dirty (not an ExtJS behavior)
                 if (this.component["__pimcore_dirty"]) {
@@ -153,6 +149,6 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        throw "isDirty() is not implemented";
+        return false;
     }
 });
