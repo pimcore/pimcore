@@ -92,7 +92,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @param null $colorProfile
      * @return $this|mixed
      */
-    public function save ($path, $format = null, $quality = null) {
+    public function save ($path, $format = null, $quality = null, $colorProfile = null) {
 
         if(!$format) {
             $format = "png32";
