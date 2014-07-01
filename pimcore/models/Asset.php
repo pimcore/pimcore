@@ -470,7 +470,12 @@ class Asset extends Element_Abstract {
 
                 break; // transaction was successfully completed, so we cancel the loop here -> no restart required
             } catch (Exception $e) {
-                $this->rollBack();
+                try {
+                    $this->rollBack();
+                } catch (\Exception $er) {
+                    // PDO adapter throws exceptions if rollback fails
+                    Logger::error($er);
+                }
 
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
                 if($retries < ($maxRetries-1)) {
