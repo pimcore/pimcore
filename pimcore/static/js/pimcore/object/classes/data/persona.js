@@ -21,8 +21,8 @@ pimcore.object.classes.data.persona = Class.create(pimcore.object.classes.data.d
      */
     allowIn: {
         object: true, 
-        objectbrick: false,
-        fieldcollection: false,
+        objectbrick: true,
+        fieldcollection: true,
         localizedfield: false
     },        
 

@@ -21,8 +21,8 @@ pimcore.object.classes.data.gender = Class.create(pimcore.object.classes.data.da
      */
     allowIn: {
         object: true,
-        objectbrick: false,
-        fieldcollection: false,
+        objectbrick: true,
+        fieldcollection: true,
         localizedfield: false
     },
 

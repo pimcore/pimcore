@@ -21,8 +21,8 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
      */
     allowIn: {
         object: true,
-        objectbrick: false,
-        fieldcollection: false,
+        objectbrick: true,
+        fieldcollection: true,
         localizedfield: false
     },
 

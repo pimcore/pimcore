@@ -21,8 +21,8 @@ pimcore.object.classes.data.firstname = Class.create(pimcore.object.classes.data
      */
     allowIn: {
         object: true,
-        objectbrick: false,
-        fieldcollection: false,
+        objectbrick: true,
+        fieldcollection: true,
         localizedfield: false
     },
 
