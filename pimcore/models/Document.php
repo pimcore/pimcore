@@ -861,6 +861,7 @@ class Document extends Element_Abstract {
      */
     public function setParentId($parentId) {
         $this->parentId = (int) $parentId;
+        $this->parent = Document::getById($parentId);
         return $this;
     }
 

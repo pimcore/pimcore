@@ -954,6 +954,7 @@ class Asset extends Element_Abstract {
      */
     public function setParentId($parentId) {
         $this->parentId = (int) $parentId;
+        $this->parent = Asset::getById($parentId);
         return $this;
     }
 

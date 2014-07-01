@@ -768,12 +768,7 @@ class Object_Abstract extends Element_Abstract {
      */
     public function setParentId($o_parentId) {
         $this->o_parentId = (int) $o_parentId;
-
-        try {
-            $this->o_parent = Object_Abstract::getById($o_parentId);
-        }
-        catch (Exception $e) {
-        }
+        $this->o_parent = Object_Abstract::getById($o_parentId);
         return $this;
     }
 
