@@ -363,8 +363,13 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                                     type: data.node.attributes.className
                                 };
 
+                                var initData = data.node.attributes;
+                                initData.type = initData.className;
+                                initData.metadata = '';
+                                initData.inheritedFields = {};
+
                                 if (!this.objectAlreadyExists(initData.id)) {
-                                    this.loadObjectData(initData.id, this.fieldConfig.visibleFields.split(","));
+                                    this.loadObjectData(initData, this.fieldConfig.visibleFields.split(","));
                                     return true;
                                 }
                             }
@@ -388,7 +393,6 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
     },
 
     dndAllowed: function(data) {
-
         // check if data is a treenode, if not allow drop because of the reordering
         if (!this.sourceIsTreeNode(data)) {
             if(data["grid"] && data["grid"] == this.component) {
@@ -407,6 +411,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         var classStore = pimcore.globalmanager.get("object_types_store");
         var classId = classStore.getAt(classStore.findExact("text", classname));
         var isAllowedClass = false;
+
         if(classId) {
             if (this.fieldConfig.allowedClassId == classId.id) {
                 isAllowedClass = true;
