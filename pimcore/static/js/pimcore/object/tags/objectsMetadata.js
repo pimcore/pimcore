@@ -357,12 +357,6 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                                     this.store.insert(rowIndex, [rec]);
                                 }
                             } else {
-                                var initData = {
-                                    id: data.node.attributes.id,
-                                    path: data.node.attributes.path,
-                                    type: data.node.attributes.className
-                                };
-
                                 var initData = data.node.attributes;
                                 initData.type = initData.className;
                                 initData.metadata = '';
