@@ -70,7 +70,24 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
             input.width = this.fieldConfig.width;
         }
 
-        input.decimalPrecision = 20;
+        if (this.fieldConfig["unsigned"]) {
+            input.minValue = 0;
+        }
+
+        if (this.fieldConfig["minValue"]) {
+            input.minValue = this.fieldConfig.minValue;
+        }
+        if (this.fieldConfig["maxValue"]) {
+            input.maxValue = this.fieldConfig.maxValue;
+        }
+
+        if (this.fieldConfig["integer"]) {
+            input.decimalPrecision = 0;
+        } else if (this.fieldConfig["decimalPrecision"]) {
+            input.decimalPrecision = this.fieldConfig["decimalPrecision"];
+        } else {
+            input.decimalPrecision = 20;
+        }
 
         this.component = new Ext.ux.form.SpinnerField(input);
         return this.component;

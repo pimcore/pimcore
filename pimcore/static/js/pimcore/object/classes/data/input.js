@@ -68,6 +68,62 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                     value: this.datax.columnLength
                 }
             ]);
+
+
+            var regexSet;
+            var checkRegex = function () {
+                var testStringEl = regexSet.getComponent("regexTestString");
+                var regex = regexSet.getComponent("regex").getValue();
+                var testString = testStringEl.getValue();
+
+                try {
+                    var regexp = new RegExp(regex);
+                    if(regexp.test(testString)) {
+                        testStringEl.getEl().applyStyles({
+                            background: "green",
+                            color: "white"
+                        });
+                    } else {
+                        testStringEl.getEl().applyStyles({
+                            background: "red",
+                            color: "white"
+                        });
+                    }
+                } catch(e) {
+                    console.log(e);
+                }
+            };
+
+            regexSet = new Ext.form.FieldSet({
+                xtype: "fieldset",
+                style: "margin-top:10px;",
+                title: t("regex_validation"),
+                items: [{
+                    xtype: "textfield",
+                    fieldLabel: t("regex"),
+                    itemId: "regex",
+                    name: "regex",
+                    value: this.datax["regex"],
+                    enableKeyEvents: true,
+                    listeners: {
+                        keyup: checkRegex
+                    }
+                }, {
+                    xtype: "displayfield",
+                    hideLabel:true,
+                    html:'<span class="object_field_setting_warning">' + t('object_regex_info')+' (Delimiter: #)</span>'
+                }, {
+                    xtype: "textfield",
+                    fieldLabel: t("test_string"),
+                    itemId: "regexTestString",
+                    enableKeyEvents: true,
+                    listeners: {
+                        keyup: checkRegex
+                    }
+                }]
+            });
+
+            this.specificPanel.add(regexSet);
         }
 
         return this.layout;

@@ -56,6 +56,31 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
     public $phpdocType = "float";
 
     /**
+     * @var bool
+     */
+    public $integer = false;
+
+    /**
+     * @var bool
+     */
+    public $unsigned = false;
+
+    /**
+     * @var float
+     */
+    public $minValue;
+
+    /**
+     * @var float
+     */
+    public $maxValue;
+
+    /**
+     * @var int
+     */
+    public $decimalPrecision;
+
+    /**
      * @return integer
      */
     public function getWidth() {
@@ -89,6 +114,116 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
             $this->defaultValue = $defaultValue;
         }
         return $this;
+    }
+
+    /**
+     * @param boolean $integer
+     */
+    public function setInteger($integer)
+    {
+        $this->integer = $integer;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getInteger()
+    {
+        return $this->integer;
+    }
+
+    /**
+     * @param float $maxValue
+     */
+    public function setMaxValue($maxValue)
+    {
+        $this->maxValue = $maxValue;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMaxValue()
+    {
+        return $this->maxValue;
+    }
+
+    /**
+     * @param float $minValue
+     */
+    public function setMinValue($minValue)
+    {
+        $this->minValue = $minValue;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMinValue()
+    {
+        return $this->minValue;
+    }
+
+    /**
+     * @param boolean $unsigned
+     */
+    public function setUnsigned($unsigned)
+    {
+        $this->unsigned = $unsigned;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getUnsigned()
+    {
+        return $this->unsigned;
+    }
+
+    /**
+     * @param int $decimalPrecision
+     */
+    public function setDecimalPrecision($decimalPrecision)
+    {
+        $this->decimalPrecision = $decimalPrecision;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDecimalPrecision()
+    {
+        return $this->decimalPrecision;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColumnType() {
+        if($this->getInteger()) {
+            return "int(11)";
+        }
+
+        if($this->getDecimalPrecision()) {
+            return "decimal(64, " . intval($this->getDecimalPrecision()) . ")";
+        }
+
+        return parent::getColumnType();
+    }
+
+    /**
+     * @return string
+     */
+    public function getQueryColumnType() {
+        if($this->getInteger()) {
+            return "int(11)";
+        }
+
+        if($this->getDecimalPrecision()) {
+            return "decimal(64, " . intval($this->getDecimalPrecision()) . ")";
+        }
+
+        return parent::getQueryColumnType();
     }
 
     /**
@@ -171,6 +306,22 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
 
         if(!empty($data) and !is_numeric($data)){
             throw new Exception("invalid numeric data");
+        }
+
+        if($this->getInteger() && strpos((string) $data, ".") !== false) {
+            throw new \Exception("Value in field [ ".$this->getName()." ] is not an integer");
+        }
+
+        if($this->getMinValue() && $this->getMinValue() > $data) {
+            throw new \Exception("Value in field [ ".$this->getName()." ] is not at least " . $this->getMinValue());
+        }
+
+        if($this->getMaxValue() && $data > $this->getMaxValue()) {
+            throw new \Exception("Value in field [ ".$this->getName()." ] is bigger than " . $this->getMaxValue());
+        }
+
+        if($this->getUnsigned() && $data < 0) {
+            throw new \Exception("Value in field [ ".$this->getName()." ] is not unsigned (bigger than 0)");
         }
     }
 

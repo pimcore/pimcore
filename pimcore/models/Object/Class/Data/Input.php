@@ -60,6 +60,11 @@ class Object_Class_Data_Input extends Object_Class_Data {
     public $phpdocType = "string";
 
     /**
+     * @var string
+     */
+    public $regex = "";
+
+    /**
      * @return integer
      */
     public function getWidth() {
@@ -140,6 +145,22 @@ class Object_Class_Data_Input extends Object_Class_Data {
         }
         return $this;
     }
+
+    /**
+     * @param string $regex
+     */
+    public function setRegex($regex)
+    {
+        $this->regex = $regex;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRegex()
+    {
+        return $this->regex;
+    }
     
     /**
      * @return string
@@ -153,6 +174,23 @@ class Object_Class_Data_Input extends Object_Class_Data {
      */
     public function getQueryColumnType() {
         return $this->queryColumnType . "(" . $this->getColumnLength() . ")";
+    }
+
+    /**
+     * Checks if data is valid for current data field
+     *
+     * @param mixed $data
+     * @param boolean $omitMandatoryCheck
+     * @throws Exception
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false){
+        if($this->getRegex()) {
+            if(!preg_match("#" . $this->getRegex() . "#", $data)) {
+                throw new Exception("Value in field [ " . $this->getName() . " ] doesn't match input validation '" . $this->getRegex() . "'");
+            }
+        }
+
+        parent::checkValidity($data, $omitMandatoryCheck);
     }
 
     /**

@@ -63,10 +63,50 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                 fieldLabel: t("default_value"),
                 name: "defaultValue",
                 value: this.datax.defaultValue
-            },
-            new Ext.form.DisplayField({hideLabel:true,html:'<span class="object_field_setting_warning">'
-                                                                    +t('default_value_warning')+'</span>'})
+            }, {
+                xtype: "displayfield",
+                hideLabel:true,
+                style: "margin-bottom: 10px",
+                html:'<span class="object_field_setting_warning">' +t('default_value_warning')+'</span>'
+            }
         ]);
+
+        if (!this.isInCustomLayoutEditor()) {
+            this.specificPanel.add([
+                {
+                    xtype: "spinnerfield",
+                    fieldLabel: t("decimal_precision"),
+                    name: "decimalPrecision",
+                    maxValue: 65,
+                    value: this.datax.decimalPrecision
+                }, {
+                    xtype: "displayfield",
+                    hideLabel:true,
+                    style: "margin-bottom: 10px",
+                    html: t('if_specified_decimal_mysql_type_is_used_automatically')
+                }, {
+                    xtype: "checkbox",
+                    fieldLabel: t("integer"),
+                    name: "integer",
+                    checked: this.datax.integer
+                }, {
+                    xtype: "checkbox",
+                    fieldLabel: t("only_unsigned"),
+                    name: "unsigned",
+                    checked: this.datax["unsigned"]
+                }, {
+                    xtype: "spinnerfield",
+                    fieldLabel: t("min_value"),
+                    name: "minValue",
+                    value: this.datax.minValue
+                },{
+                    xtype: "spinnerfield",
+                    fieldLabel: t("max_value"),
+                    name: "maxValue",
+                    value: this.datax.maxValue
+                }
+            ]);
+        }
 
         return this.layout;
     }

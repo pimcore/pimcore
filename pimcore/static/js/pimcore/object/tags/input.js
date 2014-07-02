@@ -70,6 +70,10 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
             input.autoCreate = {tag: 'input', type: 'text', maxlength: this.fieldConfig.columnLength};
         }
 
+        if(this.fieldConfig["regex"]) {
+            input.regex = new RegExp(this.fieldConfig.regex);
+        }
+
         this.component = new Ext.form.TextField(input);
 
         return this.component;
