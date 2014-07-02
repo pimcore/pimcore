@@ -357,10 +357,11 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                                     this.store.insert(rowIndex, [rec]);
                                 }
                             } else {
-                                var initData = data.node.attributes;
-                                initData.type = initData.className;
-                                initData.metadata = '';
-                                initData.inheritedFields = {};
+                                var initData = {
+                                    id: data.node.attributes.id,
+                                    metadata: '',
+                                    inheritedFields: {}
+                                };
 
                                 if (!this.objectAlreadyExists(initData.id)) {
                                     this.loadObjectData(initData, this.fieldConfig.visibleFields.split(","));
