@@ -71,6 +71,11 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      */
     public $translator;
 
+    /**
+     * @var
+     */
+    public $mandatory;
+
     /** Sets the translator id.
      * @param $translator
      */
@@ -321,6 +326,24 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
     {
         return $this->modificationDate;
     }
+
+    /**
+     * @param mixed $mandatory
+     */
+    public function setMandatory($mandatory)
+    {
+        $this->mandatory = $mandatory;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMandatory()
+    {
+        return $this->mandatory;
+    }
+
+
 
 
 }

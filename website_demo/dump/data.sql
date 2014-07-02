@@ -411,6 +411,7 @@ CREATE TABLE `keyvalue_keys` (
   `creationDate` bigint(20) unsigned DEFAULT '0',
   `modificationDate` bigint(20) unsigned DEFAULT '0',
   `translator` int(11) DEFAULT NULL,
+	`mandatory` TINYINT(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `group` (`group`),
   CONSTRAINT `keyvalue_keys_ibfk_1` FOREIGN KEY (`group`) REFERENCES `keyvalue_groups` (`id`) ON DELETE SET NULL

@@ -290,6 +290,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
             $property["unit"] = $keyConfig->getUnit();
             $property["keyName"] = $keyConfig->getName();
             $property["keyDesc"] = $keyConfig->getDescription();
+            $property["mandatory"] = $keyConfig->getMandatory();
             $result[] = $property;
         }
         return $result;
@@ -308,8 +309,22 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
         $pairs = array();
         foreach ($data as $pair) {
 //            $key = $pair["key"];
+            if ($pair["mandatory"]) {
+                $value = $pair["value"];
+                if ($pair["type"] == "number") {
+                    if (is_null($value) || $value === "") {
+                        throw new Exception("Mandatory key " . $pair["key"]);
+                    }
+                } else if ($pair["type"] == "text" || $pair["type"] == "translated" || $pair["type"] == "select") {
+                    if (!strlen((string) $value)) {
+                        throw new Exception("Mandatory key " . $pair["key"]);
+                    }
+                }
+            }
+
             $pairs[] = $pair;
         }
+
 
 
         $keyValue = new Object_Data_KeyValue();

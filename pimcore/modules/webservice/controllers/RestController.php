@@ -126,8 +126,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                     $object = Object_Abstract::getById($id);
                     if (!$object) {
                         $this->encoder->encode(array(  "success" => false,
-                                                       "msg" => "Object does not exist",
-                                                       "code" => self::ELEMENT_DOES_NOT_EXIST));
+                            "msg" => "Object does not exist",
+                            "code" => self::ELEMENT_DOES_NOT_EXIST));
                         return;
                     }
 
@@ -543,6 +543,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 $keys = array();
 
                 foreach ($items as $item) {
+                    /** @var  $item Object_KeyValue_KeyConfig */
                     $key= array();
                     $key['id'] = $item->getId();
                     $key['name'] = $item->getName();
@@ -559,6 +560,11 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                     if ($item->getPossibleValues()) {
                         $key['possiblevalues'] = $item->getPossibleValues();
                     }
+
+                    if ($item->getMandatory()) {
+                        $key["mandatory"] = 1;
+                    }
+
                     $keys[] = $key;
                 }
                 $definition["keys"] = $keys;
@@ -1163,10 +1169,10 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             array(
                 '$1', '', '', '', '</$1>' . "\n", '<', ' ', ' ', ' ', '', ' ',
                 '<h2>PHP Configuration</h2>'."\n".'<tr><td>PHP Version</td><td>$2</td></tr>'.
-                    "\n".'<tr><td>PHP Egg</td><td>$1</td></tr>',
+                "\n".'<tr><td>PHP Egg</td><td>$1</td></tr>',
                 '<tr><td>PHP Credits Egg</td><td>$1</td></tr>',
                 '<tr><td>Zend Engine</td><td>$2</td></tr>' . "\n" .
-                    '<tr><td>Zend Egg</td><td>$1</td></tr>', ' ', '%S%', '%E%'
+                '<tr><td>Zend Egg</td><td>$1</td></tr>', ' ', '%S%', '%E%'
             ),
             ob_get_clean()
         );

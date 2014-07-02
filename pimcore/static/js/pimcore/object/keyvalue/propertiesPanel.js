@@ -43,7 +43,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
 
     createGrid: function(response) {
         this.fields = ['id', 'name', 'description', 'type', 'unit', 'group', 'groupdescription','possiblevalues',
-                                                        'translator', 'creationDate', 'modificationDate'];
+            'translator', 'mandatory','creationDate', 'modificationDate'];
 
         var readerFields = [];
         for (var i = 0; i < this.fields.length; i++) {
@@ -91,14 +91,21 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
         gridColumns.push({header: "ID", width: 40, sortable: true, dataIndex: 'id'});
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name'});
         gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description',
-                                                                            editor: new Ext.form.TextField({})});
+            editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("type"), width: 100, sortable: true, dataIndex: 'type',
-                                                                            editor: new Ext.form.ComboBox({
-            triggerAction: 'all',
-            editable: false,
-            store: ["text","number","bool","select","translated","translatedSelect", "range"]
+            editor: new Ext.form.ComboBox({
+                triggerAction: 'all',
+                editable: false,
+                store: ["text","number","bool","select","translated","translatedSelect", "range"]
 
-        })});
+            })});
+
+
+        var mandatory = new Ext.grid.CheckColumn({
+            header: t("mandatory"),
+            dataIndex: "mandatory",
+            width: 50
+        });
 
         gridColumns.push({
             hideable: false,
@@ -131,10 +138,12 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
         });
 
         gridColumns.push({header: t("keyvalue_unit"), width: 100, sortable: true, dataIndex: 'unit',
-                                                            editor: new Ext.form.TextField({})});
+            editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("keyvalue_col_groupid"), width: 40, sortable: true, dataIndex: 'group'});
         gridColumns.push({header: t("keyvalue_col_groupdescription"), width: 200, sortable: false,
-                                                            dataIndex: 'groupdescription'});
+            dataIndex: 'groupdescription'});
+
+        gridColumns.push(mandatory);
 
         gridColumns.push(
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
@@ -192,17 +201,17 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
                     tooltip: t('remove'),
                     icon: "/pimcore/static/img/icon/cross.png",
                     handler: function (grid, rowIndex) {
-                          var data = grid.getStore().getAt(rowIndex);
-                          var id = data.data.id;
+                        var data = grid.getStore().getAt(rowIndex);
+                        var id = data.data.id;
 
-                          Ext.Ajax.request({
-                                url: "/admin/key-value/deleteproperty",
-                                params: {
-                                    id: id
-                                },
-                                success: function (response) {
-                                    this.store.reload();
-                                }.bind(this)});
+                        Ext.Ajax.request({
+                            url: "/admin/key-value/deleteproperty",
+                            params: {
+                                id: id
+                            },
+                            success: function (response) {
+                                this.store.reload();
+                            }.bind(this)});
                     }.bind(this)
                 }
             ]
@@ -219,9 +228,9 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
         });
 
         var configuredFilters = [{
-                type: "string",
-                dataIndex: "name"
-            },
+            type: "string",
+            dataIndex: "name"
+        },
             {
                 type: "string",
                 dataIndex: "description"
@@ -295,12 +304,12 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
     applyDetailedConfig: function(keyid, value) {
         var data = this.store.getById(keyid);
         data.set("possiblevalues",  Ext.util.JSON.encode(value));
-       //  this.store.save();
+        //  this.store.save();
     },
 
     onAdd: function () {
         Ext.MessageBox.prompt(t('keyvalue_mbx_enterkey_title'), t('keyvalue_mbx_enterkey_prompt'),
-                                                                this.addFieldComplete.bind(this), null, null, "");
+            this.addFieldComplete.bind(this), null, null, "");
     },
 
     addFieldComplete: function (button, value, object) {
@@ -432,8 +441,8 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
             layout: "fit"
         });
 
-       this.getGridPanel();
-       return this.resultPanel;
+        this.getGridPanel();
+        return this.resultPanel;
     },
 
     getData: function () {
