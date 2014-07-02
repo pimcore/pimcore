@@ -128,7 +128,10 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         var options = {
             name: this.fieldConfig.name,
             triggerAction: "all",
-            editable: false,
+            editable: true,
+            typeAhead: true,
+            forceSelection: true,
+            selectOnFocus: true,
             fieldLabel: this.fieldConfig.title,
             store: store,
             itemCls: "object_field",
