@@ -42,6 +42,15 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function load ($imagePath, $options = []) {
 
+        // support image URLs
+        if(preg_match("@^https?://@", $imagePath)) {
+            $tmpFilename = "imagick_auto_download_" . md5($imagePath) . "." . Pimcore_File::getFileExtension($imagePath);
+            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
+
+            Pimcore_File::put($tmpFilePath, Pimcore_Tool::getHttpData($imagePath));
+            $imagePath = $tmpFilePath;
+        }
+
         if($this->resource) {
             unset($this->resource);
             $this->resource = null;
