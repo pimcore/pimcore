@@ -1243,7 +1243,9 @@ class Asset extends Element_Abstract {
      * @param string $name
      */
     public function removeCustomSetting($key) {
-        unset($this->customSettings[$key]);
+        if(is_array($this->customSettings) && array_key_exists($key, $this->customSettings)) {
+            unset($this->customSettings[$key]);
+        }
     }
 
     /**
@@ -1264,6 +1266,10 @@ class Asset extends Element_Abstract {
 
         if ($customSettings instanceof stdClass) {
             $customSettings = (array) $customSettings;
+        }
+
+        if(!is_array($customSettings)) {
+            $customSettings = array();
         }
 
         $this->customSettings = $customSettings;
