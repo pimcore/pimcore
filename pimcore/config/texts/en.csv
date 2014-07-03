@@ -1,3 +1,4 @@
+"disable_whoops_error_handler","Disable Whoops error handler"
 "decimal_precision","Decimal precision"
 "if_specified_decimal_mysql_type_is_used_automatically","If specified, DECIMAL(65,X) MySQL type is used automatically"
 "only_unsigned","only unsigned"
