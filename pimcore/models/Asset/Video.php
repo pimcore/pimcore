@@ -26,6 +26,16 @@ class Asset_Video extends Asset {
      * @return void
      */
     protected function update() {
+
+        // only do this if the file exists and contains data
+        if($this->getDataChanged() || !$this->getCustomSetting("duration")) {
+            try {
+                $this->setCustomSetting("duration", $this->getDurationFromBackend());
+            } catch (\Exception $e) {
+                Logger::err("Unable to get duration of video: " . $this->getId());
+            }
+        }
+
         $this->clearThumbnails();
         parent::update();
     }
@@ -243,15 +253,26 @@ class Asset_Video extends Asset {
         return $animGifPath;
     }
 
+    protected function getDurationFromBackend() {
+        if(Pimcore_Video::isAvailable()) {
+            $converter = Pimcore_Video::getInstance();
+            $converter->load($this->getFileSystemPath());
+            return $converter->getDuration();
+        }
+        return null;
+    }
+
     /**
      * @return mixed
      */
     public function getDuration () {
-        if(Pimcore_Video::isAvailable()) {
-            $converter = Pimcore_Video::getInstance();
-            $converter->load($this->getFileSystemPath());
-
-            return $converter->getDuration();
+        $duration = $this->getCustomSetting("duration");
+        if(!$duration) {
+            $duration = $this->getDurationFromBackend();
+            $this->setCustomSetting("duration", $duration);
+            $this->save(); // auto save
         }
+
+        return $duration;
     }
 }
