@@ -103,6 +103,7 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                     fieldLabel: t("regex"),
                     itemId: "regex",
                     name: "regex",
+                    width: 400,
                     value: this.datax["regex"],
                     enableKeyEvents: true,
                     listeners: {
@@ -116,6 +117,7 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                     xtype: "textfield",
                     fieldLabel: t("test_string"),
                     itemId: "regexTestString",
+                    width: 400,
                     enableKeyEvents: true,
                     listeners: {
                         keyup: checkRegex
