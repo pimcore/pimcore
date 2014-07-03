@@ -52,8 +52,7 @@ Class Pimcore_Image_GifAnimator {
         $GIF_red, $GIF_grn, $GIF_blu, $GIF_mod
     ) {
         if ( ! is_array ( $GIF_src ) && ! is_array ( $GIF_tim ) ) {
-            printf	( "%s: %s", $this->VER, $this->ERR [ 'ERR00' ] );
-            exit	( 0 );
+            throw new \Exception( "%s: %s", $this->VER, $this->ERR [ 'ERR00' ] );
         }
         $this->LOP = ( $GIF_lop > -1 ) ? $GIF_lop : 0;
         $this->DIS = ( $GIF_dis > -1 ) ? ( ( $GIF_dis < 3 ) ? $GIF_dis : 3 ) : 2;
@@ -68,19 +67,16 @@ Class Pimcore_Image_GifAnimator {
                 $this->BUF [ ] = $GIF_src [ $i ];
             }
             else {
-                printf	( "%s: %s ( %s )!", $this->VER, $this->ERR [ 'ERR02' ], $GIF_mod );
-                exit	( 0 );
+                throw new \Exception($this->ERR [ 'ERR02' ] );
             }
             if ( substr ( $this->BUF [ $i ], 0, 6 ) != "GIF87a" && substr ( $this->BUF [ $i ], 0, 6 ) != "GIF89a" ) {
-                printf	( "%s: %d %s", $this->VER, $i, $this->ERR [ 'ERR01' ] );
-                exit	( 0 );
+                throw new \Exception( $this->ERR [ 'ERR01' ] );
             }
             for ( $j = ( 13 + 3 * ( 2 << ( ord ( $this->BUF [ $i ] { 10 } ) & 0x07 ) ) ), $k = TRUE; $k; $j++ ) {
                 switch ( $this->BUF [ $i ] { $j } ) {
                     case "!":
                         if ( ( substr ( $this->BUF [ $i ], ( $j + 3 ), 8 ) ) == "NETSCAPE" ) {
-                            printf	( "%s: %s ( %s source )!", $this->VER, $this->ERR [ 'ERR03' ], ( $i + 1 ) );
-                            exit	( 0 );
+                            throw new \Exception( $this->ERR [ 'ERR03' ] );
                         }
                         break;
                     case ";":

@@ -224,8 +224,13 @@ class Asset_Video extends Asset {
                 $delays[] = $delay;
             }
 
-            $animator = new Pimcore_Image_GifAnimator($thumbnails, $delays, 0, 2, 255, 255, 255, "url");
-            $animGifContent = $animator->GetAnimation();
+            try {
+                $animator = new Pimcore_Image_GifAnimator($thumbnails, $delays, 0, 2, 255, 255, 255, "url");
+                $animGifContent = $animator->GetAnimation();
+            } catch (\Exception $e) {
+                Logger::error($e);
+                $animGifPath = $thumbnails[0];
+            }
 
             Pimcore_File::put($animGifPath, $animGifContent);
         }
