@@ -608,6 +608,7 @@ class Document_Tag_Video extends Document_Tag
                 foreach ($urls as $type => $url) {
                     $code .= '<source type="video/' . $type . '" src="' . $url . '" />' . "\n";
                 }
+
             $code .= '</video>' . "\n";
             $code .= '</div>' . "\n";
         }
