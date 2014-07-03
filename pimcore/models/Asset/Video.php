@@ -220,8 +220,11 @@ class Asset_Video extends Asset {
                 $frameImage = $this->getImageThumbnail($thumbnailConfig, $i*$sampleRate);
                 $frameImage = PIMCORE_DOCUMENT_ROOT . $frameImage;
 
-                $thumbnails[] = $frameImage;
-                $delays[] = $delay;
+                if(preg_match("/\.gif$/", $frameImage) && filesize($frameImage) > 10) {
+                    // check if the image is correct and not a "not supported" placeholder
+                    $thumbnails[] = $frameImage;
+                    $delays[] = $delay;
+                }
             }
 
             try {
@@ -229,7 +232,7 @@ class Asset_Video extends Asset {
                 $animGifContent = $animator->GetAnimation();
             } catch (\Exception $e) {
                 Logger::error($e);
-                $animGifPath = $thumbnails[0];
+                $animGifContent = file_get_contents($thumbnails[0]);
             }
 
             Pimcore_File::put($animGifPath, $animGifContent);
