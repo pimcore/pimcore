@@ -53,7 +53,11 @@ pimcore.plugin.broker = {
 
         for (var i = 0; i < size; i++) {
             plugin = this.plugins[i];
-            this.executePlugin(plugin, e, args);
+            try {
+                this.executePlugin(plugin, e, args);
+            } catch (e) {
+                console.error(e);
+            }
         }
     }
 };
