@@ -369,7 +369,7 @@ class Document_Tag_Video extends Document_Tag
                     return $this->getErrorCode("The video conversion failed, please see the debug.log for more details.");
                 }
             } else {
-                return $this->getErrorCode("The given thumbnail doesn't exist");
+                return $this->getErrorCode("The given thumbnail doesn't exist: '" . $options["thumbnail"] . "'");
             }
         }
     }
@@ -605,9 +605,9 @@ class Document_Tag_Video extends Document_Tag
 
             $urls = array_reverse($urls); // use webm as the preferred format
 
-                foreach ($urls as $type => $url) {
-                    $code .= '<source type="video/' . $type . '" src="' . $url . '" />' . "\n";
-                }
+            foreach ($urls as $type => $url) {
+                $code .= '<source type="video/' . $type . '" src="' . $url . '" />' . "\n";
+            }
 
             $code .= '</video>' . "\n";
             $code .= '</div>' . "\n";
@@ -707,8 +707,8 @@ class Document_Tag_Video extends Document_Tag
                 $this->type = $data->type;
 
             } else if (in_array($data->type,array("vimeo","youtube","url"))) {
-                  $this->id = $data->id;
-                  $this->type = $data->type;
+                $this->id = $data->id;
+                $this->type = $data->type;
             } else {
                 throw new Exception("cannot get values from web service import - type must be asset,youtube,url or vimeo ");
             }
