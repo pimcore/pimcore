@@ -270,7 +270,10 @@ class Asset_Video extends Asset {
         if(!$duration) {
             $duration = $this->getDurationFromBackend();
             $this->setCustomSetting("duration", $duration);
+
+            Version::disable();
             $this->save(); // auto save
+            Version::enable();
         }
 
         return $duration;
