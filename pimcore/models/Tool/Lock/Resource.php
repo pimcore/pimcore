@@ -45,6 +45,7 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
             return false;
         } else if(is_array($lock) && array_key_exists("id", $lock) && $lock["date"] < (time()-$expire)) {
             if($expire > 0){
+                Logger::debug("Lock '" . $key . "' expired (expiry time: " . $expire . ", lock date: " . $lock["date"] . " / current time: " . time() . ")");
                 $this->release($key);
                 return false;
             }
