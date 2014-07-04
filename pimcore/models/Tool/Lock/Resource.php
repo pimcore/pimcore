@@ -55,6 +55,9 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     public function acquire ($key, $expire = 120, $refreshInterval = 1) {
+
+        Logger::debug("Acquiring key: '" . $key . "' expiry: " . $expire);
+
         if(!is_numeric($refreshInterval)) {
             $refreshInterval = 1;
         }
@@ -67,10 +70,16 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     public function release ($key) {
+
+        Logger::debug("Releasing: '" . $key . "'");
+
         $this->db->delete("locks", "id = " . $this->db->quote($key));
     }
 
     public function lock ($key) {
+
+        Logger::debug("Locking: '" . $key . "'");
+
         $this->db->insertOrUpdate("locks", array(
             "id" => $key,
             "date" => time()
