@@ -40,7 +40,7 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
 
         $lock = $this->db->fetchRow("SELECT * FROM locks WHERE id = ?", $key);
 
-        // a lock is only valid for 2 minutes
+        // a lock is only valid for a certain time (default: 2 minutes)
         if(!$lock) {
             return false;
         } else if(is_array($lock) && array_key_exists("id", $lock) && $lock["date"] < (time()-$expire)) {

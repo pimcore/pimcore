@@ -52,6 +52,9 @@ class Tool_Lock extends Pimcore_Model_Abstract {
      * @param string $key
      */
     public static function acquire ($key, $expire = 120, $refreshInterval = 1) {
+
+        Logger::debug("Acquiring: " . $key);
+
         $instance = self::getInstance();
         $instance->getResource()->acquire($key, $expire, $refreshInterval);
 
@@ -62,6 +65,9 @@ class Tool_Lock extends Pimcore_Model_Abstract {
      * @param string $key
      */
     public static function release ($key) {
+
+        Logger::debug("Releasing: " . $key);
+
         $instance = self::getInstance();
         $instance->getResource()->release($key);
 
@@ -73,6 +79,9 @@ class Tool_Lock extends Pimcore_Model_Abstract {
      * @return bool
      */
     public static function lock ($key) {
+
+        Logger::debug("Locking: " . $key);
+
         $instance = self::getInstance();
         return $instance->getResource()->lock($key);
     }
@@ -102,8 +111,6 @@ class Tool_Lock extends Pimcore_Model_Abstract {
      */
     public static function releaseAll() {
         $locks = self::$acquiredLocks;
-
-        Logger::debug($locks);
 
         foreach($locks as $key) {
             self::release($key);

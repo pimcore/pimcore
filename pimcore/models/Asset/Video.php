@@ -171,7 +171,15 @@ class Asset_Video extends Asset {
         }
 
         if(!is_file($path)) {
-            $converter->saveImage($path, $timeOffset);
+            $lockKey = "video_image_thumbnail_" . $this->getId() . "_" . $timeOffset;
+            Tool_Lock::acquire($lockKey);
+
+            // after we got the lock, check again if the image exists in the meantime - if not - generate it
+            if(!is_file($path)) {
+                $converter->saveImage($path, $timeOffset);
+            }
+
+            Tool_Lock::release($lockKey);
         }
 
         $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
