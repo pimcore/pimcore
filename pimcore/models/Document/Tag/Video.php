@@ -348,7 +348,7 @@ class Document_Tag_Video extends Document_Tag
                     if($asset->getCustomSetting("image_thumbnail_asset")) {
                         $image = $asset->getImageThumbnail($imageThumbnailConf);
                     } else {
-                        if ($thumbnail["status"] == "finished") {
+                        if ($thumbnail["status"] == "finished" && (array_key_exists("animatedGifPreview", $options) && $options["animatedGifPreview"] !== false)) {
                             $image = $asset->getPreviewAnimatedGif(null, null, $imageThumbnailConf);
                         } else {
                             $image = $asset->getImageThumbnail($imageThumbnailConf);
