@@ -15,16 +15,18 @@
 
 class Pimcore_Controller_Action_Helper_Json extends Zend_Controller_Action_Helper_Json {
 
-    public function direct($data, $sendNow = true, $keepLayouts = false) {
+    public function direct($data, $sendNow = true, $keepLayouts = false, $encodeData = true) {
 
-        $data = $this->filterCycles($data);
+        if($encodeData) {
+            $data = $this->filterCycles($data);
+        }
 
         // hack for FCGI because ZF doesn't care of duplicate headers
         $this->getResponse()->clearHeader("Content-Type");
 
         $this->suppressExit = !$sendNow;
 
-        $d = $this->sendJson($data, $keepLayouts);
+        $d = $this->sendJson($data, $keepLayouts, $encodeData);
         return $d;
     }
 
