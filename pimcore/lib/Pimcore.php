@@ -640,6 +640,7 @@ class Pimcore {
         $autoloader->registerNamespace('Search');
         $autoloader->registerNamespace('Tool');
         $autoloader->registerNamespace('Whoops');
+        $autoloader->registerNamespace('Google');
 
         Pimcore_Tool::registerClassModelMappingNamespaces();
     }

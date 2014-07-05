@@ -29,7 +29,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
             die("Google Analytics is not configured");
         }
 
-        $this->service = new Google_AnalyticsService($client);
+        $this->service = new Google_Service_Analytics($client);
     }
 
     public function deeplinkAction () {

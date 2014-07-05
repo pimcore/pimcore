@@ -108,7 +108,7 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
             throw new Exception("Google Analytics is not configured");
         }
 
-        $service = new Google_AnalyticsService($client);
+        $service = new Google_Service_Analytics($client);
 
         if(!$configuration->profileId) {
             throw new Exception("no profileId given");

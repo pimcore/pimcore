@@ -66,15 +66,13 @@ class Pimcore_Google_Api {
         }
 
         $config = self::getConfig();
-        self::loadClientLibrary();
-
         $client = new Google_Client(array(
             "ioFileCache_directory" => PIMCORE_CACHE_DIRECTORY
         ));
         $client->setApplicationName("pimcore CMF");
 
         $key = file_get_contents(self::getPrivateKeyPath());
-        $client->setAssertionCredentials(new Google_AssertionCredentials(
+        $client->setAssertionCredentials(new Google_Auth_AssertionCredentials(
             $config->email,
             array('https://www.googleapis.com/auth/analytics.readonly',"https://www.google.com/webmasters/tools/feeds/"),
             $key)
@@ -107,8 +105,6 @@ class Pimcore_Google_Api {
         if(!self::isSimpleConfigured()) {
             return false;
         }
-
-        self::loadClientLibrary();
 
         $client = new Google_Client(array(
             "ioFileCache_directory" => PIMCORE_CACHE_DIRECTORY
@@ -165,17 +161,5 @@ class Pimcore_Google_Api {
         }
 
         return $result;
-    }
-
-    /**
-     * load the client libs dynamically, otherwise just the initialization will raise an exception
-     * see: http://www.pimcore.org/issues/browse/PIMCORE-1641
-     * @static
-     */
-    private static function loadClientLibrary() {
-        include_once("googleApiClient/Google_Client.php");
-        include_once("googleApiClient/contrib/Google_AnalyticsService.php");
-        include_once("googleApiClient/contrib/Google_SiteVerificationService.php");
-        include_once("googleApiClient/contrib/Google_CustomsearchService.php");
     }
 }
