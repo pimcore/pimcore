@@ -195,7 +195,7 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
     {
         switch ($mode) {
             case Zend_Cache::CLEANING_MODE_ALL:
-                return $this->_collection->remove();
+                return $this->_conn->dropDB($this->_options['dbname']);
                 break;
             case Zend_Cache::CLEANING_MODE_OLD:
                 return $this->_collection->remove(array('expire' => array('$lt' => time())));
