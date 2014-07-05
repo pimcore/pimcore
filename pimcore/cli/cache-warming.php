@@ -19,10 +19,10 @@ include_once("startup.php");
 try {
     $opts = new Zend_Console_Getopt(array(
         'types|t=s' => 'perform warming only for this types of elements (comma separated), valid arguments: document,asset,object (default: all types)',
-        "documentTypes|dt=s" => "only for these types of documents (comma seperated), valid arguments: page,snippet,folder,link (default: all types)",
-        "assetTypes|at=s" => "only for these types of assets (comma seperated), valid arguments: folder,image,text,audio,video,document,archive,unknown (default: all types)",
-        "objectTypes|ot=s" => "only for these types of objects (comma seperated), valid arguments: object,folder,variant (default: all types)",
-        "classes|c=s" => "this is only for objects! filter by class (comma seperated), valid arguments: class-names of your classes defined in pimcore",
+        "documentTypes|dt=s" => "only for these types of documents (comma separated), valid arguments: page,snippet,folder,link (default: all types)",
+        "assetTypes|at=s" => "only for these types of assets (comma separated), valid arguments: folder,image,text,audio,video,document,archive,unknown (default: all types)",
+        "objectTypes|ot=s" => "only for these types of objects (comma separated), valid arguments: object,folder,variant (default: all types)",
+        "classes|c=s" => "this is only for objects! filter by class (comma separated), valid arguments: class-names of your classes defined in pimcore",
         "maintenanceMode|m" => "enable maintenance mode during cache warming",
         'verbose|v' => 'show detailed information during the maintenance (for debug, ...)',
         'help|h' => 'display this help'
