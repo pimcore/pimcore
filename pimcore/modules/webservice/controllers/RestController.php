@@ -417,8 +417,9 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 if ($asset instanceof Asset_Folder) {
                     $object = $this->service->getAssetFolderById($id);
                 } else {
-                    $object = $this->service->getAssetFileById($id);
                     $light = $this->getParam("light");
+                    $options = array("LIGHT" => $light ? 1 : 0);
+                    $object = $this->service->getAssetFileById($id, $options);
                     $algo = "sha1";
 
                     $thumbnailConfig = $this->getParam("thumbnail");

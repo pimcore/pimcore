@@ -666,12 +666,12 @@ class Webservice_Service
      * @param int $id
      * @return Webservice_Data_Asset_File_Out
      */
-    public function getAssetFileById($id)
+    public function getAssetFileById($id, $options = null)
     {
         try {
             $asset = Asset::getById($id);
             if ($asset instanceof Asset) {
-                $apiAsset = Webservice_Data_Mapper::map($asset, "Webservice_Data_Asset_File_Out", "out");
+                $apiAsset = Webservice_Data_Mapper::map($asset, "Webservice_Data_Asset_File_Out", "out", $options);
                 return $apiAsset;
             }
 

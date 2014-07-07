@@ -23,8 +23,13 @@ class Webservice_Data_Asset_File extends Webservice_Data_Asset {
     public $data;
     
     
-    public function map ($object) {
-        parent::map($object);
+    public function map ($object, $options = null) {
+        parent::map($object, $options);
+        if (is_array($options)) {
+            if ($options["LIGHT"]) {
+                return;
+            }
+        }
         $this->data = base64_encode($object->getData());
     }
 

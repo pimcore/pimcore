@@ -77,14 +77,14 @@ abstract class Webservice_Data_Mapper {
      * @param  string $class
      * @return array
      */
-    public static function map($object, $apiclass, $type) {
+    public static function map($object, $apiclass, $type, $options = null) {
         if($object instanceof Zend_Date){
             $object=$object->toString();
         } else if (is_object($object)) {
             if (Pimcore_Tool::classExists($apiclass)) {
                 $new = new $apiclass();
                 if (method_exists($new, "map")) {
-                    $new->map($object);
+                    $new->map($object, $options);
                     $object = $new;
                 }
             } else {

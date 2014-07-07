@@ -17,7 +17,7 @@
 
 abstract class Webservice_Data {
 
-    public function map($object) {
+    public function map($object, $options = null) {
         $keys = get_object_vars($this);
         $blockedKeys = array("childs");
         foreach ($keys as $key => $value) {
