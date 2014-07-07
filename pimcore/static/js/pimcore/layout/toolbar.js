@@ -526,7 +526,7 @@ pimcore.layout.toolbar = Class.create({
 
         if (user.isAllowed("predefined_properties")) {
             settingsItems.push({
-                text: t("predefined_metadata_definitions"),
+                text: t("predefined_asset_metadata"),
                 iconCls: "pimcore_icon_metadata",
                 handler: this.editPredefinedMetadata
             });

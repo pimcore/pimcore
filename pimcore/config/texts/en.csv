@@ -1520,7 +1520,7 @@
 "clone_user","Clone User"
 "clone_role","Clone Role"
 "add_selected","Add selected items"
-"predefined_metadata_definitions","Predefined Metadata Definitions"
+"predefined_asset_metadata","Predefined Asset Metadata"
 "new_definition","New Definition"
 "target_subtype","Target Type",
 "add_predefined_metadata_definitions","Add predefined defintions"

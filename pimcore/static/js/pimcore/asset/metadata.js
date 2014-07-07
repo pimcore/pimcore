@@ -127,12 +127,10 @@ pimcore.asset.metadata = Class.create({
                 },"-",{
                     xtype: "tbspacer",
                     width: 20
-                },{
-                    xtype: "tbtext",
-                    text: t('add_predefined_metadata_definitions') + " "
                 },
                 {
                     xtype: "button",
+                    text: t('add_predefined_metadata_definitions'),
                     handler: this.addSetFromPredefinedDefined.bind(this),
                     iconCls: "pimcore_icon_add"
                 }
