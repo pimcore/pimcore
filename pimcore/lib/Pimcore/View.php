@@ -135,26 +135,34 @@ class Pimcore_View extends Zend_View {
      * @param array $params
      * @return string
      */
-    public function inc($include, $params = array()) {
+    public function inc($include, $params = array(), $cacheEnabled = true) {
+
+        if(!is_array($params)) {
+            $params = [];
+        }
 
         // check if output-cache is enabled, if so, we're also using the cache here
         $cacheKey = null;
-        if($cacheConfig = Pimcore_Tool_Frontend::isOutputCacheEnabled()) {
+        $cacheConfig = false;
 
-            // cleanup params to avoid serializing Element_Interface objects
-            $cacheParams = $params;
-            $cacheParams["~~include-document"] = $include;
-            array_walk($cacheParams, function (&$value, $key) {
-                if($value instanceof Element_Interface) {
-                    $value = $value->getId();
-                } else if (is_object($value) && method_exists($value, "__toString")) {
-                    $value = (string) $value;
+        if($cacheEnabled) {
+            if($cacheConfig = Pimcore_Tool_Frontend::isOutputCacheEnabled()) {
+
+                // cleanup params to avoid serializing Element_Interface objects
+                $cacheParams = $params;
+                $cacheParams["~~include-document"] = $include;
+                array_walk($cacheParams, function (&$value, $key) {
+                    if($value instanceof Element_Interface) {
+                        $value = $value->getId();
+                    } else if (is_object($value) && method_exists($value, "__toString")) {
+                        $value = (string) $value;
+                    }
+                });
+
+                $cacheKey = "tag_inc__" . md5(serialize($cacheParams));
+                if($content = Pimcore_Model_Cache::load($cacheKey)) {
+                    return $content;
                 }
-            });
-
-            $cacheKey = "tag_inc__" . md5(serialize($cacheParams));
-            if($content = Pimcore_Model_Cache::load($cacheKey)) {
-                return $content;
             }
         }
 
