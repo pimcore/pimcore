@@ -72,6 +72,25 @@ class Document_Tag_Areablock extends Document_Tag {
     }
 
     /**
+     * @param $index
+     */
+    public function renderIndex($index) {
+        $this->start();
+
+        $this->currentIndex = $this->indices[$index];
+        $this->current = $index;
+
+        $this->blockConstruct();
+        $this->blockStart();
+
+        $this->content();
+
+        $this->blockDestruct();
+        $this->blockEnd();
+        $this->end();
+    }
+
+    /**
      *
      */
     public function loop () {
@@ -141,6 +160,7 @@ class Document_Tag_Areablock extends Document_Tag {
         $info = null;
         try {
             $info = new Document_Tag_Area_Info();
+            $info->setName($this->getName());
             $info->setId($this->currentIndex["type"]);
             $info->setIndex($this->current);
             $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getPathForBrick($this->currentIndex["type"])));
