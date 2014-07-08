@@ -62,11 +62,18 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
             $refreshInterval = 1;
         }
 
-        while($this->isLocked($key, $expire)) {
-            sleep($refreshInterval);
-        }
+        while(true) {
+            while($this->isLocked($key, $expire)) {
+                sleep($refreshInterval);
+            }
 
-        $this->lock($key);
+            try {
+                $this->lock($key, false);
+                return true;
+            } catch (\Exception $e) {
+                Logger::debug($e);
+            }
+        }
     }
 
     public function release ($key) {
@@ -76,11 +83,13 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
         $this->db->delete("locks", "id = " . $this->db->quote($key));
     }
 
-    public function lock ($key) {
+    public function lock ($key, $force = true) {
 
         Logger::debug("Locking: '" . $key . "'");
 
-        $this->db->insertOrUpdate("locks", array(
+        $updateMethod = $force ? "insertOrUpdate" : "insert";
+
+        $this->db->$updateMethod("locks", array(
             "id" => $key,
             "date" => time()
         ));
