@@ -514,7 +514,7 @@ class Document_Tag_Areablock extends Document_Tag {
             foreach ($options["group"] as $name => $areas) {
 
                 $n = $name;
-                if($this->view){
+                if($this->view && $this->editmode){
                     $n = $this->view->translateAdmin($name);
                 }
                 $groups[$n] = $areas;
@@ -530,7 +530,7 @@ class Document_Tag_Areablock extends Document_Tag {
                     $uncatAreas[] = $area;
                 }
                 $n = "Uncategorized";
-                if($this->view){
+                if($this->view && $this->editmode){
                     $n = $this->view->translateAdmin($n);
                 }
                 $groups[$n] = $uncatAreas;
