@@ -47,6 +47,16 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      */
     public $maxItems;
 
+    /**
+     * @var boolean
+     */
+    public $disallowAddRemove;
+
+    /**
+     * @var boolean
+     */
+    public $disallowReorder;
+
 
     /**
      * @return boolean
@@ -665,11 +675,38 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                 }
             }
         }
+    }
 
+    /**
+     * @param boolean $disallowAddRemove
+     */
+    public function setDisallowAddRemove($disallowAddRemove)
+    {
+        $this->disallowAddRemove = $disallowAddRemove;
+    }
 
+    /**
+     * @return boolean
+     */
+    public function getDisallowAddRemove()
+    {
+        return $this->disallowAddRemove;
+    }
 
+    /**
+     * @param boolean $disallowReorder
+     */
+    public function setDisallowReorder($disallowReorder)
+    {
+        $this->disallowReorder = $disallowReorder;
+    }
 
-
+    /**
+     * @return boolean
+     */
+    public function getDisallowReorder()
+    {
+        return $this->disallowReorder;
     }
 
 }

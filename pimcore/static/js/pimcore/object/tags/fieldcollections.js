@@ -121,12 +121,14 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         
         if(collectionMenu.length == 1) {
             items.push({
+                disabled: this.fieldConfig.disallowAddRemove,
                 cls: "pimcore_block_button_plus",
                 iconCls: "pimcore_icon_plus",
                 handler: collectionMenu[0].handler
             });
         } else if (collectionMenu.length > 1) {
             items.push({
+                disabled: this.fieldConfig.disallowAddRemove,
                 cls: "pimcore_block_button_plus",
                 iconCls: "pimcore_icon_plus",
                 menu: collectionMenu
@@ -142,6 +144,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         
         if(blockElement) {
             items.push({
+                disabled: this.fieldConfig.disallowAddRemove,
                 cls: "pimcore_block_button_minus",
                 iconCls: "pimcore_icon_minus",
                 listeners: {
@@ -150,6 +153,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             });
             
             items.push({
+                disabled: this.fieldConfig.disallowReorder,
                 cls: "pimcore_block_button_up",
                 iconCls: "pimcore_icon_up",
                 listeners: {
@@ -158,6 +162,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             });
             
             items.push({
+                disabled: this.fieldConfig.disallowReorder,
                 cls: "pimcore_block_button_down",
                 iconCls: "pimcore_icon_down",
                 listeners: {

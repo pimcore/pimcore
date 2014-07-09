@@ -92,7 +92,20 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
                 fieldLabel: t("maximum_items"),
                 name: "maxItems",
                 value: this.datax.maxItems
+            },
+            {
+                xtype: "checkbox",
+                fieldLabel: t("disallow_addremove"),
+                name: "disallowAddRemove",
+                checked: this.datax.disallowAddRemove
+            },
+            {
+                xtype: "checkbox",
+                fieldLabel: t("disallow_reorder"),
+                name: "disallowReorder",
+                checked: this.datax.disallowReorder
             }
+
         ]);
 
         this.specificPanel.doLayout();
