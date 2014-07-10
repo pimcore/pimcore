@@ -96,6 +96,16 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
             return $this->disable();
         }
 
+        // disable the output-cache if browser wants the most recent version
+        // unfortunately only Chrome + Firefox
+        if(isset($_SERVER["HTTP_CACHE_CONTROL"]) && $_SERVER["HTTP_CACHE_CONTROL"] == "no-cache") {
+            return $this->disable("HTTP Header Cache-Control: no-cache was sent");
+        }
+
+        if(isset($_SERVER["HTTP_PRAGMA"]) && $_SERVER["HTTP_PRAGMA"] == "no-cache") {
+            return $this->disable("HTTP Header Pragma: no-cache was sent");
+        }
+
         try {
             $conf = Pimcore_Config::getSystemConfig();
             if ($conf->cache) {
