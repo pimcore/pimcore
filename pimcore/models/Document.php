@@ -570,6 +570,8 @@ class Document extends Element_Abstract {
         $this->childs=$childs;
         if(is_array($childs) and count($childs>0)){
             $this->hasChilds=true;
+        } else if ($childs === null) {
+            $this->hasChilds = null;
         } else {
             $this->hasChilds=false;
         }

@@ -55,6 +55,9 @@ class Document_Hardlink_Service {
         $old_serialized_prefix  = "O:".strlen(get_class($doc));
         $old_serialized_prefix .= ":\"".get_class($doc)."\":";
 
+        // unset eventually existing children, because of performance reasons when serializing the document
+        $doc->setChilds(null);
+
         $old_serialized_object = Pimcore_Tool_Serialize::serialize($doc);
         $new_serialized_object = 'O:'.strlen($to_class).':"'.$to_class . '":';
         $new_serialized_object .= substr($old_serialized_object,strlen($old_serialized_prefix));
