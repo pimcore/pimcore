@@ -107,10 +107,19 @@ class Asset_Image_Thumbnail_Config {
      * @return Asset_Image_Thumbnail_Config
      */
     public static function getByName ($name) {
-        $pipe = new self();
-        $pipe->setName($name);
-        if(!is_readable($pipe->getConfigFile()) || !$pipe->load()) {
-            throw new Exception("thumbnail definition : " . $name . " does not exist");
+
+        $cacheKey = "imagethumb_" . crc32($name);
+
+        if(Zend_Registry::isRegistered($cacheKey)) {
+            $pipe = Zend_Registry::get($cacheKey);
+        } else {
+            $pipe = new self();
+            $pipe->setName($name);
+            if(!is_readable($pipe->getConfigFile()) || !$pipe->load()) {
+                throw new Exception("thumbnail definition : " . $name . " does not exist");
+            }
+
+            Zend_Registry::set($cacheKey, $pipe);
         }
 
         return $pipe;
