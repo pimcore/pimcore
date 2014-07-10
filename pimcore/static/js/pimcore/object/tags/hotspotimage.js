@@ -216,7 +216,10 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             this.dirty = true;
 
             this.updateImage();
-        }.bind(this));
+        }.bind(this), {
+            ratioX: this.fieldConfig.ratioX,
+            ratioY: this.fieldConfig.ratioY
+        });
         editor.open(true);
     },
 

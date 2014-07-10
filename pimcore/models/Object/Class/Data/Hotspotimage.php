@@ -47,6 +47,48 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
 
 
     /**
+     * @var int
+     */
+    public $ratioX;
+
+    /**
+     * @var int
+     */
+    public $ratioY;
+
+    /**
+     * @param int $ratioX
+     */
+    public function setRatioX($ratioX)
+    {
+        $this->ratioX = $ratioX;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRatioX()
+    {
+        return $this->ratioX;
+    }
+
+    /**
+     * @param int $ratioY
+     */
+    public function setRatioY($ratioY)
+    {
+        $this->ratioY = $ratioY;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRatioY()
+    {
+        return $this->ratioY;
+    }
+
+    /**
      * @see Object_Class_Data::getDataForResource
      * @param Object_Data_Hotspotimage $data
      * @param null|Object_Abstract $object

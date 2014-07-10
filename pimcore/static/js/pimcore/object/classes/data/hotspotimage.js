@@ -44,5 +44,30 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
 
     getIconClass: function () {
         return "pimcore_icon_hotspotimage";
+    },
+
+    getLayout: function ($super) {
+
+        $super();
+
+        this.specificPanel.add({
+            xtype: "fieldset",
+            title: t("crop"),
+            style: "margin-top: 10px;",
+            items: [{
+                xtype: "spinnerfield",
+                fieldLabel: t("ratio") + " X",
+                name: "ratioX",
+                value: this.datax.ratioX
+            },
+            {
+                xtype: "spinnerfield",
+                fieldLabel: t("ratio") + " Y",
+                name: "ratioY",
+                value: this.datax.ratioY
+            }]
+        });
+
+        return this.layout;
     }
 });
