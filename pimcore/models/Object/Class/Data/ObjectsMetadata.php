@@ -647,23 +647,6 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         $this->columns = $masterDefinition->columns;
     }
 
-
-    /**
-     * @param Object_Concrete $object
-     * @return bool
-     */
-    public function isEmpty($data) {
-        if(empty($data)) {
-            return true;
-        }
-
-        if (!is_null($data) && empty($data["data"])) {
-            return true;
-        }
-
-        return false;
-    }
-
     /**
      *
      */
