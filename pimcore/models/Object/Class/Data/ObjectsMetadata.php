@@ -690,10 +690,16 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                 $this->visibleFieldDefinitions[$field]["name"] = $field;
                 $this->visibleFieldDefinitions[$field]["title"] = $t->translate($field);
                 $this->visibleFieldDefinitions[$field]["fieldtype"] = "input";
+
             } else {
                 $this->visibleFieldDefinitions[$field]["name"] = $fd->getName();
                 $this->visibleFieldDefinitions[$field]["title"] = $fd->getTitle();
                 $this->visibleFieldDefinitions[$field]["fieldtype"] = $fd->getFieldType();
+                $this->visibleFieldDefinitions[$field]["noteditable"] = true;
+
+                if ($fd instanceof Object_Class_Data_Select) {
+                    $this->visibleFieldDefinitions[$field]["options"] = $fd->getOptions();
+                }
             }
         }
     }
