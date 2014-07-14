@@ -686,10 +686,24 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         $visibleFields = explode(',', $this->visibleFields);
         foreach ($visibleFields as $field) {
             $fd = $class->getFieldDefinition($field);
+
             if (!$fd) {
-                $this->visibleFieldDefinitions[$field]["name"] = $field;
-                $this->visibleFieldDefinitions[$field]["title"] = $t->translate($field);
-                $this->visibleFieldDefinitions[$field]["fieldtype"] = "input";
+                $fieldFound = false;
+                if($localizedfields = $class->getFieldDefinitions()['localizedfields']) {
+                    if($fd = $localizedfields->getFieldDefinition($field)) {
+                        $this->visibleFieldDefinitions[$field]["name"] = $fd->getName();
+                        $this->visibleFieldDefinitions[$field]["title"] = $fd->getTitle();
+                        $this->visibleFieldDefinitions[$field]["fieldtype"] = $fd->getFieldType();
+
+                        $fieldFound = true;
+                    }
+                }
+
+                if (!$fieldFound) {
+                    $this->visibleFieldDefinitions[$field]["name"] = $field;
+                    $this->visibleFieldDefinitions[$field]["title"] = $t->translate($field);
+                    $this->visibleFieldDefinitions[$field]["fieldtype"] = "input";
+                }
 
             } else {
                 $this->visibleFieldDefinitions[$field]["name"] = $fd->getName();
