@@ -395,6 +395,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                 $objectData["currentLayoutId"] = $currentLayoutId;
             }
+            Object_Service::enrichLayoutDefinition($objectData["layout"]);
 
             $this->_helper->json($objectData);
         } else {

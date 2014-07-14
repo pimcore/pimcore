@@ -1095,4 +1095,24 @@ class Object_Service extends Element_Service {
         }
         return $key;
     }
+
+
+    /** Enriches the layout definition before it is returned to the admin interface.
+     * @param $layout
+     */
+    public static function enrichLayoutDefinition(&$layout) {
+        if (method_exists($layout, "enrichLayoutDefinition")) {
+            $layout->enrichLayoutDefinition();
+        }
+
+        if (method_exists($layout, "getChilds")) {
+            $children = $layout->getChilds();
+            if (is_array($children)) {
+                foreach ($children as $child) {
+                    self::enrichLayoutDefinition($child);
+                }
+            }
+        }
+    }
+
 }

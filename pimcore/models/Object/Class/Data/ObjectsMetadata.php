@@ -142,42 +142,12 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
      */
     public function getDataForEditmode($data, $object = null) {
         $return = array(
-            "visibleFieldsLabels" => [],
             "data" => false
         );
 
         $visibleFieldsArray = explode(",", $this->getVisibleFields());
 
-        // add labels
-        $class = Object_Class::getById($this->getAllowedClassId());
-        foreach($visibleFieldsArray as $key) {
-            $field = $class->getFieldDefinition($key);
-            if($field) {
-                $return["visibleFieldsLabels"][$key] = $field->getTitle();
-                $return["visibleFieldsData"][$key] = $field;
-            } else {
-                $fieldFound = false;
-                if($localizedfields = $class->getFieldDefinitions()['localizedfields']) {
-                    if($field = $localizedfields->getFieldDefinition($key)) {
-                        $return["visibleFieldsLabels"][$key] = $field->getTitle();
-                        $return["visibleFieldsData"][$key] = $field;
-                        $fieldFound = true;
-                    }
-                }
-                // shouldn't be necessary because this data-type is only allowed directly in objects, added just to be sure
-                if(!$fieldFound) {
-                    $return["visibleFieldsLabels"][$key] = $key;
-                    $return["visibleFieldsData"][$key] = [
-                        'fieldtype' => 'input',
-                        'name' => $key
-                    ];
-                }
-
-            }
-        }
-
         $gridFields = (array)$visibleFieldsArray;
-
 
         // add data
         if (is_array($data) && count($data) > 0) {
@@ -677,5 +647,55 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         $this->columns = $masterDefinition->columns;
     }
 
+
+    /**
+     * @param Object_Concrete $object
+     * @return bool
+     */
+    public function isEmpty($data) {
+        if(empty($data)) {
+            return true;
+        }
+
+        if (!is_null($data) && empty($data["data"])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     *
+     */
+    public function enrichLayoutDefinition() {
+        $classId = $this->allowedClassId;
+        $class = Object_Class::getById($classId);
+
+        if (!$classId) {
+            return;
+        }
+
+        if (!$this->visibleFields) {
+            return;
+        }
+
+        $this->visibleFieldDefinitions = array();
+
+        $t = Zend_Registry::get("Zend_Translate");
+
+        $visibleFields = explode(',', $this->visibleFields);
+        foreach ($visibleFields as $field) {
+            $fd = $class->getFieldDefinition($field);
+            if (!$fd) {
+                $this->visibleFieldDefinitions[$field]["name"] = $field;
+                $this->visibleFieldDefinitions[$field]["title"] = $t->translate($field);
+                $this->visibleFieldDefinitions[$field]["fieldtype"] = "input";
+            } else {
+                $this->visibleFieldDefinitions[$field]["name"] = $fd->getName();
+                $this->visibleFieldDefinitions[$field]["title"] = $fd->getTitle();
+                $this->visibleFieldDefinitions[$field]["fieldtype"] = $fd->getFieldType();
+            }
+        }
+    }
 
 }

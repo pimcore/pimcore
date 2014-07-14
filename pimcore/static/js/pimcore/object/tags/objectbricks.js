@@ -30,7 +30,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         this.layoutDefinitions = {};
         this.dataFields = [];
         this.layoutIds = [];
-        
+
         if (data) {
             this.data = data;
         }
@@ -54,15 +54,15 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 field_name: this.getName()
             }
         });
-        
+
         this.fieldstore.load();
 
     },
 
     getLayoutEdit: function () {
-        
+
         this.loadFieldDefinitions();
-        
+
         var panelConf = {
             autoHeight: true,
             border: false,
@@ -83,9 +83,9 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
         return this.component;
     },
-    
+
     initData: function () {
-        
+
         this.component.insert(0, this.getControls());
         if(this.data.length > 0) {
             for (var i=0; i<this.data.length; i++) {
@@ -95,12 +95,12 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 }
             }
         }
-        
+
         pimcore.layout.refresh();
     },
-    
+
     getControls: function (blockElement) {
-        
+
         var collectionMenu = [];
 
         this.fieldstore.each(function (blockElement, rec) {
@@ -114,9 +114,9 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             }
 
         }.bind(this, blockElement));
-        
+
         var items = [];
-        
+
         if(collectionMenu.length == 1) {
             items.push({
                 cls: "pimcore_block_button_plus",
@@ -135,11 +135,11 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 text: t("no_further_objectbricks_allowed")
             });
         }
-        
+
         var toolbar = new Ext.Toolbar({
             items: items
         });
-        
+
         return toolbar;
     },
 
@@ -163,16 +163,16 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             items: items
         });
 
-        return toolbar; 
+        return toolbar;
     },
-    
+
     addBlock: function (blockElement, type) {
-        
+
         var index = 0;
 
         this.addBlockElement(index, type);
     },
-    
+
     removeBlock: function (blockElement) {
 
         Ext.MessageBox.confirm(t('delete_objectbrick'), t('delete_objectbrick_text'), function(blockElement, answer) {
@@ -191,7 +191,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             }
         }.bind(this, blockElement), this);
     },
-    
+
 
     addBlockElement: function (index, type, blockData, ignoreChange) {
         if(!type){
@@ -204,7 +204,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         this.dataFields = [];
         this.currentData = {};
         this.currentMetaData = {};
-        
+
         if(blockData) {
             this.currentData = blockData.data;
             this.currentMetaData = blockData.metaData;
@@ -229,8 +229,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         if(control) {
             blockElement.insert(0, control);
         }
-        
-        blockElement.key = type; 
+
+        blockElement.key = type;
         blockElement.fieldtype = type;
         this.tabpanel.add(blockElement);
 //        console.log(this.getControls());
@@ -242,10 +242,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
         this.currentElements[type] = null;
         this.currentElements[type] = {
-                            container: blockElement,
-                            fields: this.dataFields,
-                            type: type
-                        };
+            container: blockElement,
+            fields: this.dataFields,
+            type: type
+        };
 
         if(!ignoreChange) {
             this.dirty = true;
@@ -278,7 +278,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     },
 
     getValue: function () {
-        
+
         var data = [];
         var element;
         var elementData = {};
@@ -319,7 +319,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         if(!this.isRendered()) {
             return false;
         }
-        
+
         var types = Object.keys(this.currentElements);
         for(var t=0; t < types.length; t++) {
             if(this.currentElements[types[t]]) {
@@ -393,7 +393,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                         if(element.fields[u].isMandatory()) {
                             if(element.fields[u].isInvalidMandatory()) {
                                 invalidMandatoryFields.push(element.fields[u].getTitle()
-                                                        + " (" + element.fields[u].getName() + "|" + types[t] + ")");
+                                    + " (" + element.fields[u].getName() + "|" + types[t] + ")");
                                 isInvalid = true;
                             }
                         }

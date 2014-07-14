@@ -241,7 +241,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $customLayout->save();
 
         $this->_helper->json(array("success" => true, "id" => $customLayout->getId(), "name" => $customLayout->getName(),
-                            "data" => $customLayout));
+            "data" => $customLayout));
     }
 
 
@@ -739,18 +739,20 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
             $classId = $this->getParam("class_id");
             $fieldname = $this->getParam("field_name");
             foreach ($list as $type) {
+                /** @var  $type Object_Objectbrick_Definition */
                 $clsDefs = $type->getClassDefinitions();
                 if(!empty($clsDefs)) {
                     foreach($clsDefs as $cd) {
-
                         if($cd["classname"] == $classId && $cd["fieldname"] == $fieldname) {
                             $filteredList[] = $type;
                             continue;
                         }
-
                     }
-
                 }
+
+                $layout = $type->getLayoutDefinitions();
+                Object_Service::enrichLayoutDefinition($layout);
+                $type->setLayoutDefinitions($layout);
             }
 
             $list = $filteredList;
