@@ -60,9 +60,10 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $i = new Imagick();
             $this->imagePath = $imagePath;
 
-            if(method_exists($i, "setcolorspace"))
+            if(method_exists($i, "setcolorspace")) {
                 $i->setcolorspace(Imagick::COLORSPACE_SRGB);
-                
+            }
+
             $i->setBackgroundColor(new ImagickPixel('transparent')); //set .png transparent (print)
 
             if(isset($options["resolution"])) {
