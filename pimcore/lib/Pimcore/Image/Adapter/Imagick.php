@@ -304,7 +304,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
             // only use the calculated resolution if we need a higher one that the one we got from the metadata (getImageResolution)
             // this is because sometimes the quality is much better when using the "native" resulution from the metadata
-            if($newRes["x"] > $res["x"] && $newRes["y"] > $newRes["y"]) {
+            if($newRes["x"] > $res["x"] && $newRes["y"] > $res["y"]) {
                 $this->resource->setResolution($newRes["x"], $newRes["y"]);
             } else {
                 $this->resource->setResolution($res["x"], $res["y"]);
