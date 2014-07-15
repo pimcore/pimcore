@@ -142,12 +142,12 @@ class Pimcore_Image_Optimizer {
         }
 
         $paths = array(
-            "/usr/local/bin/imgmin",
-            "/usr/bin/imgmin",
-            "/bin/imgmin",
             "/usr/local/bin/jpegoptim",
             "/usr/bin/jpegoptim",
             "/bin/jpegoptim",
+            "/usr/local/bin/imgmin",
+            "/usr/bin/imgmin",
+            "/bin/imgmin",
         );
 
         foreach ($paths as $path) {
