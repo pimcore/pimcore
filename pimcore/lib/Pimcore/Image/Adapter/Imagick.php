@@ -148,6 +148,15 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $i->writeImage($format . ":" . $path);
         }
 
+        // force progressive JPEG if filesize >= 10k
+        // better compression, smaller filesize, especially for web optimization
+        if($format == "jpeg") {
+            if(filesize($path) >= 10240) {
+                $i->setinterlacescheme(Imagick::INTERLACE_PLANE);
+                $i->writeImage($path);
+            }
+        }
+
         return $this;
     }
 
