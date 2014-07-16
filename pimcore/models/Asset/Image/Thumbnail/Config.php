@@ -112,6 +112,7 @@ class Asset_Image_Thumbnail_Config {
 
         if(Zend_Registry::isRegistered($cacheKey)) {
             $pipe = Zend_Registry::get($cacheKey);
+            $pipe->setName($name); // set the name again because in documents there's an automated prefixing logic
         } else {
             $pipe = new self();
             $pipe->setName($name);

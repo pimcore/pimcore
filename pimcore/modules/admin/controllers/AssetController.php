@@ -1031,6 +1031,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
 
         $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $document->getImageThumbnail($thumbnail, $page);
 
+        clearstatcache();
+
         $format = "png";
         header("Content-type: image/" . $format, true);
         header("Content-Length: " . filesize($thumbnailFile), true);
