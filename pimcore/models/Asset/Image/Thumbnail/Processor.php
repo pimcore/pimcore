@@ -205,6 +205,8 @@ class Asset_Image_Thumbnail_Processor {
             Pimcore_Image_Optimizer::optimize($fsPath);
         }
 
+        clearstatcache();
+
         return $path;
     }
 }
