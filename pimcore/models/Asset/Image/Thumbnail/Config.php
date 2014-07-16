@@ -679,7 +679,7 @@ class Asset_Image_Thumbnail_Config {
      */
     public function setColorspace($colorspace)
     {
-        $this->colorspace = $colorspace;
+        // no functionality, just for compatibility reasons
     }
 
     /**
@@ -687,6 +687,6 @@ class Asset_Image_Thumbnail_Config {
      */
     public function getColorspace()
     {
-        return $this->colorspace;
+        // no functionality, just for compatibility reasons
     }
 }
