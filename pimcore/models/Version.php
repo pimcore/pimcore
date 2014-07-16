@@ -459,7 +459,9 @@ class Version extends Pimcore_Model_Abstract {
             if ($dh = opendir($dir)) {
                 while (($file = readdir($dh)) !== false) {
                     $path = $dir.$file;
-                    if(is_file($path) && !preg_match("/\.(gz|bin)$/", $file)) {
+
+                    // only compress versions older than 30 days, to reduce the load compressing just temporary versions
+                    if(is_file($path) && filemtime($path) < (time() - 86400*30) && !preg_match("/\.(gz|bin)$/", $file)) {
                         Logger::debug("version ID compressed:" . $file);
                         gzcompressfile($path, 9);
                         @unlink($path);
