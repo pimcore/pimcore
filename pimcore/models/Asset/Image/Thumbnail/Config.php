@@ -672,4 +672,21 @@ class Asset_Image_Thumbnail_Config {
 
         return $dimensions;
     }
+
+
+    /**
+     * @param string $colorspace
+     */
+    public function setColorspace($colorspace)
+    {
+        $this->colorspace = $colorspace;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColorspace()
+    {
+        return $this->colorspace;
+    }
 }
