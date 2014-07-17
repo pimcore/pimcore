@@ -78,6 +78,12 @@ pimcore.object.classes.klass = Class.create({
         var panelButtons = [];
 
         panelButtons.push({
+            text: t('reload_definition'),
+            handler: this.onRefresh.bind(this),
+            iconCls: "pimcore_icon_reload"
+        });
+
+        panelButtons.push({
             text: t("import"),
             iconCls: "pimcore_icon_class_import",
             handler: this.upload.bind(this)
@@ -959,5 +965,10 @@ pimcore.object.classes.klass = Class.create({
 
     saveOnError: function () {
         pimcore.helpers.showNotification(t("error"), t("class_save_error"), "error");
+    },
+
+    onRefresh: function() {
+        this.parentPanel.getEditPanel().remove(this.panel);
+        this.parentPanel.openClass(this.data.id);
     }
 });
