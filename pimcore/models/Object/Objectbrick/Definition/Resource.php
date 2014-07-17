@@ -38,9 +38,6 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
         $tableStore = $this->getTableName($class, false);
         $tableQuery = $this->getTableName($class, true);
 
-        Object_Class_Service::updateTableDefinitions($this->tableDefinitions, (array($tableStore, $tableQuery)));
-
-
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $tableStore . "` (
 		  `o_id` int(11) NOT NULL default '0',
           `fieldname` varchar(255) default NULL,
@@ -56,6 +53,8 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
           INDEX `o_id` (`o_id`),
           INDEX `fieldname` (`fieldname`)
 		) DEFAULT CHARSET=utf8;");
+
+        Object_Class_Service::updateTableDefinitions($this->tableDefinitions, (array($tableStore, $tableQuery)));
 
         $existingColumnsStore = $this->getValidTableColumns($tableStore, false); // no caching of table definition
         $columnsToRemoveStore = $existingColumnsStore;
