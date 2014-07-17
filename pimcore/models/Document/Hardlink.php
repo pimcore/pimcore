@@ -208,6 +208,9 @@ class Document_Hardlink extends Document
      */
     public function delete() {
 
+        // hardlinks cannot have direct children in "real" world, so we have to empty them before we delete it
+        $this->childs = [];
+
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect_List();
         $redirects->setCondition("target = ?", $this->getId());
@@ -218,6 +221,10 @@ class Document_Hardlink extends Document
         }
 
         parent::delete();
+
+        // we re-enable the children functionality by setting them to NULL, if requested they'll be loaded again
+        // -> see $this->getChilds() , doesn't make sense when deleting an item but who knows, ... ;-)
+        $this->childs = null;
     }
 
     /**
