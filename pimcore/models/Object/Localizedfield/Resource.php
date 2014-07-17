@@ -17,6 +17,9 @@
 
 class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
+
+    protected $tableDefinitions = null;
+
     public function getTableName () {
         return "object_localized_data_" . $this->model->getClass()->getId();
     }
@@ -24,7 +27,6 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
     public function getQueryTableName () {
         return "object_localized_query_" . $this->model->getClass()->getId();
     }
-
 
     public function save () {
         $this->delete(false);
@@ -246,6 +248,8 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
         $table = $this->getTableName();
 
+        Object_Class_Service::updateTableDefinitions($this->tableDefinitions, (array($table)));
+
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
 		  `ooo_id` int(11) NOT NULL default '0',
 		  `language` varchar(10) NOT NULL DEFAULT '',
@@ -289,6 +293,8 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         foreach ($validLanguages as &$language) {
             $queryTable = $this->getQueryTableName();
             $queryTable .= "_" . $language;
+
+            Object_Class_Service::updateTableDefinitions($this->tableDefinitions, array($queryTable));
 
             $this->db->query("CREATE TABLE IF NOT EXISTS `" . $queryTable . "` (
                   `ooo_id` int(11) NOT NULL default '0',
@@ -337,6 +343,8 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         $this->createLocalizedViews();
+
+        $this->tableDefinitions = null;
     }
 
 
@@ -393,9 +401,12 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $this->db->query('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
             $this->resetValidTableColumnsCache($table);
         } else {
-            $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            if (!Object_Class_Service::skipColumn($this->tableDefinitions, $table, $colName, $type, $default, $null)) {
+                $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            }
         }
     }
+
 
     private function removeUnusedColumns ($table, $columnsToRemove, $protectedColumns) {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {

@@ -16,15 +16,15 @@
  */
 
 class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Definition_Resource {
-    
+
     public function getTableName (Object_Class $class, $query = false) {
         if($query) {
-             return "object_brick_query_" . $this->model->getKey() . "_" . $class->getId();
+            return "object_brick_query_" . $this->model->getKey() . "_" . $class->getId();
         } else {
             return "object_brick_store_" . $this->model->getKey() . "_" . $class->getId();
         }
     }
-    
+
     public function delete (Object_Class $class) {
         $table = $this->getTableName($class, false);
         $this->db->query("DROP TABLE IF EXISTS `" . $table . "`");
@@ -32,12 +32,15 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
         $table = $this->getTableName($class, true);
         $this->db->query("DROP TABLE IF EXISTS `" . $table . "`");
     }
-    
+
     public function createUpdateTable (Object_Class $class) {
 
         $tableStore = $this->getTableName($class, false);
         $tableQuery = $this->getTableName($class, true);
-        
+
+        Object_Class_Service::updateTableDefinitions($this->tableDefinitions, (array($tableStore, $tableQuery)));
+
+
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $tableStore . "` (
 		  `o_id` int(11) NOT NULL default '0',
           `fieldname` varchar(255) default NULL,
@@ -61,9 +64,9 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
 
         $protectedColumnsStore = array("o_id", "fieldname");
         $protectedColumnsQuery = array("o_id", "fieldname");
-        
+
         foreach ($this->model->getFieldDefinitions() as $value) {
-            
+
             $key = $value->getName();
 
 
@@ -101,7 +104,7 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
             $this->addIndexToField($value, $tableQuery);
 
         }
-        
+
         $this->removeUnusedColumns($tableStore, $columnsToRemoveStore, $protectedColumnsStore);
         $this->removeUnusedColumns($tableQuery, $columnsToRemoveQuery, $protectedColumnsQuery);
     }

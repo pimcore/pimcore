@@ -172,8 +172,8 @@ class Object_Class_Service  {
                     $item->setValues($array, array("childs"));
 
                     if(is_array($array) && is_array($array["childs"]) && $array["childs"]["datatype"]){
-                         $childO = self::generateLayoutTreeFromArray($array["childs"]);
-                            $item->addChild($childO);
+                        $childO = self::generateLayoutTreeFromArray($array["childs"]);
+                        $item->addChild($childO);
                     } else if (is_array($array["childs"]) && count($array["childs"]) > 0) {
                         foreach ($array["childs"] as $child) {
                             $childO = self::generateLayoutTreeFromArray($child);
@@ -189,5 +189,52 @@ class Object_Class_Service  {
         }
         return false;
     }
+
+
+    public static function updateTableDefinitions(&$tableDefinitions, $tableNames) {
+        if (!is_array($tableDefinitions)) {
+            $tableDefinitions = array();
+        }
+
+        $db = Pimcore_Resource::get();
+        $tmp = array();
+        foreach ($tableNames as $tableName) {
+            $tmp[$tableName] = $db->fetchAll("show columns from " . $tableName);
+        }
+
+        foreach ($tmp as $tableName => $columns) {
+            foreach($columns as $column) {
+                $column["Type"] = strtolower($column["Type"]);
+                if (strtolower($column["Null"]) == "yes") {
+                    $column["Null"] = "null";
+                }
+//                $fieldName = strtolower($column["Field"]);
+                $fieldName = $column["Field"];
+                $tableDefinitions[$tableName][$fieldName] = $column;
+            }
+        }
+    }
+
+    public static function skipColumn($tableDefinitions, $table, $colName, $type, $default, $null) {
+        $tableDefinition = $tableDefinitions[$table];
+        if ($tableDefinition) {
+//            $colName = strtolower($colName);
+            $colDefinition = $tableDefinition[$colName];
+            if ($colDefinition) {
+                if (!strlen($default) && strtolower($null) === "null") {
+                    $default = null;
+                }
+
+                if (  $colDefinition["Type"] == $type && strtolower($colDefinition["Null"]) == strtolower($null)
+                                            && $colDefinition["Default"] == $default) {
+                    return true;
+                }
+
+            }
+        }
+
+        return false;
+    }
+
 
 }

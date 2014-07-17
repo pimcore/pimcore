@@ -16,21 +16,23 @@
  */
 
 class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_Abstract {
-    
+
+    protected $tableDefinitions = null;
+
     public function getTableName (Object_Class $class) {
         return "object_collection_" . $this->model->getKey() . "_" . $class->getId();
     }
-    
+
     public function delete (Object_Class $class) {
-        
+
         $table = $this->getTableName($class);
         $this->db->query("DROP TABLE IF EXISTS `" . $table . "`");
     }
-    
+
     public function createUpdateTable (Object_Class $class) {
-        
+
         $table = $this->getTableName($class);
-        
+
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
 		  `o_id` int(11) NOT NULL default '0',
 		  `index` int(11) default '0',
@@ -40,17 +42,19 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
           INDEX `index` (`index`),
           INDEX `fieldname` (`fieldname`)
 		) DEFAULT CHARSET=utf8;");
-        
+
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;
         $protectedColums = array("o_id", "index","fieldname");
-        
-        foreach ($this->model->getFieldDefinitions() as $value) {
-            
-            $key = $value->getName();
-            
 
-    
+        Object_Class_Service::updateTableDefinitions($this->tableDefinitions, (array($table)));
+
+        foreach ($this->model->getFieldDefinitions() as $value) {
+
+            $key = $value->getName();
+
+
+
             if (is_array($value->getColumnType())) {
                 // if a datafield requires more than one field
                 foreach ($value->getColumnType() as $fkey => $fvalue) {
@@ -58,7 +62,7 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
                     $protectedColums[] = $key . "__" . $fkey;
                 }
             }
-            else {    
+            else {
                 if ($value->getColumnType()) {
                     $this->addModifyColumn($table, $key, $value->getColumnType(), "", "NULL");
                     $protectedColums[] = $key;
@@ -66,14 +70,16 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
             }
             $this->addIndexToField($value,$table);
         }
-        
-        $this->removeUnusedColumns($table, $columnsToRemove, $protectedColums);
-    }
-    
 
-    
+        $this->removeUnusedColumns($table, $columnsToRemove, $protectedColums);
+        $this->tableDefinitions = null;
+
+    }
+
+
+
     protected function addIndexToField ($field, $table) {
-        
+
         if ($field->getIndex()) {
             if (is_array($field->getColumnType())) {
                 // multicolumn field
@@ -82,7 +88,7 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
                     try {
                         $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
                     } catch (Exception $e) {}
-                }            
+                }
             } else {
                 // single -column field
                 $columnName = $field->getName();
@@ -98,7 +104,7 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
                     try {
                         $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
                     } catch (Exception $e) {}
-                }            
+                }
             } else {
                 // single -column field
                 $columnName = $field->getName();
@@ -108,9 +114,9 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
             }
         }
     }
-    
+
     protected function addModifyColumn ($table, $colName, $type, $default, $null) {
-        
+
         $existingColumns = $this->getValidTableColumns($table, false);
 
         $existingColName = null;
@@ -124,11 +130,13 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
             $this->db->query('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
             $this->resetValidTableColumnsCache($table);
         } else {
-            $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
-        }
 
+            if (!Object_Class_Service::skipColumn($this->tableDefinitions, $table, $colName, $type, $default, $null)) {
+                $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            }
+        }
     }
-    
+
     protected function removeUnusedColumns ($table, $columnsToRemove, $protectedColumns) {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
             foreach ($columnsToRemove as $value) {

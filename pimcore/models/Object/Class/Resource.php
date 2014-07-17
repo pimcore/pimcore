@@ -23,7 +23,9 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
     protected $model;
 
     protected $_sqlChangeLog = array();
-    
+
+    protected $tableDefinitions = null;
+
     /**
      * Contains all valid columns in the database table
      *
@@ -55,7 +57,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
 
         if($classRaw["id"]) {
             $this->assignVariablesToModel($classRaw);
-        
+
             $this->model->setPropertyVisibility(Pimcore_Tool_Serialize::unserialize($classRaw["propertyVisibility"]));
             $this->model->setLayoutDefinitions($this->getLayoutData());
         } else {
@@ -83,7 +85,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             throw new Exception("Class with name " . $name . " doesn't exist");
         }
     }
-    
+
     /**
      * Save object to database
      *
@@ -134,13 +136,13 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
 
         $this->db->update("classes", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
 
-         // save definition as a serialized file
+        // save definition as a serialized file
         $definitionFile = PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf";
         if(!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
             throw new Exception("Cannot write definition file in: " . $definitionFile . " please check write permission on this directory.");
         }
         Pimcore_File::put($definitionFile, Pimcore_Tool_Serialize::serialize($this->model->layoutDefinitions));
-                    
+
         $objectTable = "object_query_" . $this->model->getId();
         $objectDatastoreTable = "object_store_" . $this->model->getId();
         $objectDatastoreTableRelation = "object_relations_" . $this->model->getId();
@@ -194,10 +196,12 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         $columnsToRemove = $existingColumns;
         $datastoreColumnsToRemove = $existingDatastoreColumns;
 
+        Object_Class_Service::updateTableDefinitions($this->tableDefinitions, array($objectTable, $objectDatastoreTable));
+
         // add non existing columns in the table
         if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
             foreach ($this->model->getFieldDefinitions() as $key => $value) {
-                
+
 
 
                 // if a datafield requires more than one column in the query table
@@ -207,7 +211,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
                         $protectedColums[] = $key . "__" . $fkey;
                     }
                 }
-                
+
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
                 if(!$value->isRelationType() && is_array($value->getColumnType())) {
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
@@ -215,26 +219,26 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
                         $protectedDatastoreColumns[] = $key . "__" . $fkey;
                     }
                 }
-                
+
                 // everything else
 //                if (!is_array($value->getQueryColumnType()) && !is_array($value->getColumnType())) {
-                    if (!is_array($value->getQueryColumnType()) && $value->getQueryColumnType()) {
-                        $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), "", "NULL");
-                        $protectedColums[] = $key;
-                    }
-                    if (!is_array($value->getColumnType()) && $value->getColumnType() && !$value->isRelationType()) {
-                        $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), "", "NULL");
-                        $protectedDatastoreColumns[] = $key;
-                    }
+                if (!is_array($value->getQueryColumnType()) && $value->getQueryColumnType()) {
+                    $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), "", "NULL");
+                    $protectedColums[] = $key;
+                }
+                if (!is_array($value->getColumnType()) && $value->getColumnType() && !$value->isRelationType()) {
+                    $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), "", "NULL");
+                    $protectedDatastoreColumns[] = $key;
+                }
 //                }
-                
+
                 // add indices
                 $this->addIndexToField($value, $objectTable);
                 $this->addIndexToField($value, $objectDatastoreTable);
             }
         }
-        
-        // remove unused columns in the table        
+
+        // remove unused columns in the table
         $this->removeUnusedColumns($objectTable, $columnsToRemove, $protectedColums);
         $this->removeUnusedColumns($objectDatastoreTable, $datastoreColumnsToRemove, $protectedDatastoreColumns, true);
 
@@ -246,15 +250,18 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         catch (Exception $e) {
             Logger::debug($e);
         }
+
+        $this->tableDefinitions = null;
+
     }
-    
+
     private function removeUnusedColumns ($table, $columnsToRemove, $protectedColumns, $emptyRelations = false) {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
             foreach ($columnsToRemove as $value) {
                 //if (!in_array($value, $protectedColumns)) {
                 if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
                     $this->db->query('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
-                    
+
                     if($emptyRelations) {
                         $tableRelation = "object_relations_" . $this->model->getId();
                         $this->db->delete($tableRelation, "fieldname = " . $this->db->quote($value) . " AND ownertype = 'object'");
@@ -267,9 +274,9 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
 
-    
+
     private function addModifyColumn ($table, $colName, $type, $default, $null) {
-        
+
         $existingColumns = $this->getValidTableColumns($table, false);
         $existingColName = null;
 
@@ -283,12 +290,15 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             $this->db->query('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
             $this->resetValidTableColumnsCache($table);
         } else {
-            $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            if (!Object_Class_Service::skipColumn($this->tableDefinitions, $table, $colName, $type, $default, $null)) {
+                $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            }
         }
     }
-    
+
+
     private function addIndexToField ($field, $table) {
-        
+
         if ($field->getIndex()) {
             if (is_array($field->getQueryColumnType())) {
                 // multicolumn field
@@ -297,7 +307,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
                     try {
                         $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
                     } catch (Exception $e) {}
-                }            
+                }
             } else {
                 // single -column field
                 $columnName = $field->getName();
@@ -313,7 +323,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
                     try {
                         $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
                     } catch (Exception $e) {}
-                }            
+                }
             } else {
                 // single -column field
                 $columnName = $field->getName();
@@ -323,7 +333,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             }
         }
     }
-    
+
     //@TODO exclude in Object_Class_Data
     private function isRelationType($fieldtype) {
         if ($fieldtype == 'multihref' || $fieldtype == 'objects' || $fieldtype == 'href')
@@ -360,14 +370,14 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         $objectDatastoreTableRelation = "object_relations_" . $this->model->getId();
         $objectMetadataTable = "object_metadata_" . $this->model->getId();
 
-        
+
         $this->db->query('DROP TABLE `' . $objectTable . '`');
         $this->db->query('DROP TABLE `' . $objectDatastoreTable . '`');
         $this->db->query('DROP TABLE `' . $objectDatastoreTableRelation . '`');
         $this->db->query('DROP TABLE IF EXISTS `' . $objectMetadataTable . '`');
 
         $this->db->query('DROP VIEW `object_' . $this->model->getId() . '`');
-        
+
         // delete data
         $this->db->delete("objects", $this->db->quoteInto("o_classId = ?", $this->model->getId()));
 
@@ -399,7 +409,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             $brickTable = current($table);
             $this->db->query("DROP TABLE `".$brickTable."`");
         }
-        
+
         @unlink(PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf");
     }
 
