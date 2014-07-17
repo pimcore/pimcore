@@ -28,8 +28,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         var classNameText = (typeof(className) != 'undefined') ? className.data.text : '';
         this.fieldConfig.classes = [{classes: classNameText, id: fieldConfig.allowedClassId}];
 
-        if (data && data["data"]) {
-            this.data = data["data"];
+        if (data) {
+            this.data = data;
         }
 
         var fields = [];

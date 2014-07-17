@@ -141,9 +141,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
      * @return array
      */
     public function getDataForEditmode($data, $object = null) {
-        $return = array(
-            "data" => false
-        );
+        $return = array();
 
         $visibleFieldsArray = explode(",", $this->getVisibleFields());
 
@@ -151,7 +149,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
         // add data
         if (is_array($data) && count($data) > 0) {
-            $return["data"] = [];
+
             foreach ($data as $metaObject) {
 
                 $object = $metaObject->getObject();
@@ -162,12 +160,10 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                         $getter = "get" . ucfirst($c['key']);
                         $columnData[$c['key']] = $metaObject->$getter();
                     }
-                    $return["data"][] = $columnData;
+                    $return[] = $columnData;
                 }
             }
-            if (empty ($return["data"])) {
-                $return["data"] = false;
-            }
+
         }
 
         return $return;
