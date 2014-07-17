@@ -145,7 +145,7 @@ pimcore.object.fieldcollection = Class.create({
             delete this.fieldPanel;
         }*/
 
-        var fieldPanel = new pimcore.object.fieldcollections.field(data, this);
+        var fieldPanel = new pimcore.object.fieldcollections.field(data, this, this.openFieldcollection.bind(this, data.key));
         pimcore.layout.refresh();
         
     },

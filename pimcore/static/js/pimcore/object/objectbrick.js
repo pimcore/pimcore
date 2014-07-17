@@ -115,7 +115,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
             delete this.fieldPanel;
         }*/
 
-        var fieldPanel = new pimcore.object.objectbricks.field(data, this);
+        var fieldPanel = new pimcore.object.objectbricks.field(data, this, this.openBrick.bind(this, data.key));
         pimcore.layout.refresh();
         
     },

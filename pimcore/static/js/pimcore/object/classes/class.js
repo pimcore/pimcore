@@ -22,12 +22,13 @@ pimcore.object.classes.klass = Class.create({
 
 
 
-    initialize: function (data, parentPanel) {
+    initialize: function (data, parentPanel, reopen) {
         this.parentPanel = parentPanel;
         this.data = data;
 
         this.addLayout();
         this.initLayoutFields();
+        this.reopen = reopen;
     },
 
     getUploadUrl: function(){
@@ -969,6 +970,6 @@ pimcore.object.classes.klass = Class.create({
 
     onRefresh: function() {
         this.parentPanel.getEditPanel().remove(this.panel);
-        this.parentPanel.openClass(this.data.id);
+        this.reopen();
     }
 });

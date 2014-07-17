@@ -157,7 +157,7 @@ pimcore.object.klass = Class.create({
             delete this.classPanel;
         }*/
 
-        var classPanel = new pimcore.object.classes.klass(data, this);
+        var classPanel = new pimcore.object.classes.klass(data, this, this.openClass.bind(this, data.id));
         pimcore.layout.refresh();
     },
 
