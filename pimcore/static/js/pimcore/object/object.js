@@ -356,12 +356,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             buttons.push(this.toolbarButtons.reload);
 
-            buttons.push({
-                text: t('show_in_tree'),
-                iconCls: "pimcore_icon_download_showintree",
-                scale: "medium",
-                handler: this.selectInTree.bind(this, this.data.general.o_type)
-            });
+            if(this.data.general.o_type != "variant" || this.data.general.showVariants) {
+                buttons.push({
+                    text: t('show_in_tree'),
+                    iconCls: "pimcore_icon_download_showintree",
+                    scale: "medium",
+                    handler: this.selectInTree.bind(this, this.data.general.o_type)
+                });
+            }
 
 
             buttons.push({
