@@ -381,6 +381,35 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $this->getResponse()->setHeader("Content-Type", "text/html");
     }
 
+
+    public function importCustomLayoutDefinitionAction() {
+
+        $success = false;
+        $json = file_get_contents($_FILES["Filedata"]["tmp_name"]);
+        $importData = Zend_Json::decode($json);
+
+
+        $customLayoutId = $this->getParam("id");
+        $customLayout = Object_Class_CustomLayout::getById($customLayoutId);
+        if ($customLayout) {
+            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+            $customLayout->setLayoutDefinitions($layout);
+            $customLayout->setDescription($importData["description"]);
+            $customLayout->save();
+            $success = true;
+        }
+
+        $this->removeViewRenderer();
+
+        $this->_helper->json(array(
+            "success" => $success
+        ), false);
+
+        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+        // Ext.form.Action.Submit and mark the submission as failed
+        $this->getResponse()->setHeader("Content-Type", "text/html");
+    }
+
     public function getCustomLayoutDefinitionsAction() {
         $classId = $this->getParam("classId");
         $list = new Object_Class_CustomLayout_List();
@@ -457,6 +486,43 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         }
 
     }
+
+
+    public function exportCustomLayoutDefinitionAction() {
+
+        $this->removeViewRenderer();
+        $id = $this->getParam("id");
+
+        if ($id) {
+            $customLayout = Object_Class_CustomLayout::getById($id);
+            if ($customLayout) {
+                $name = $customLayout->getName();
+                unset($customLayout->id);
+                unset($customLayout->classId);
+                unset($customLayout->name);
+                unset($customLayout->creationDate);
+                unset($customLayout->modificationDate);
+                unset($customLayout->userOwner);
+                unset($customLayout->userModification);
+                unset($customLayout->fieldDefinitions);
+
+                header("Content-type: application/json");
+                header("Content-Disposition: attachment; filename=\"custom_definition_" . $name . "_export.json\"");
+                $json = json_encode($customLayout);
+                $json = Zend_Json::prettyPrint($json);
+                echo $json;
+                die();
+            }
+        }
+
+
+        $errorMessage = ": Custom Layout with id [ " . $id . " not found. ]";
+        Logger::error($errorMessage);
+        echo $errorMessage;
+
+
+    }
+
 
 
     /**
