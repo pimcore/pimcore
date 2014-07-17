@@ -17,7 +17,7 @@ pimcore.object.abstract = Class.create(pimcore.element.abstract, {
 
     selectInTree: function (type) {
 
-        if(type != "variant") {
+        if(type != "variant" || this.data.general.showVariants) {
             try {
                 Ext.getCmp("pimcore_panel_tree_objects").expand();
                 var tree = pimcore.globalmanager.get("layout_object_tree");
