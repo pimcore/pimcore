@@ -176,6 +176,7 @@ class Pimcore_Tool_Newsletter {
             "email" => $object->getEmail(),
             "id" => $object->getId()
         )));
+        $token = str_replace("=", "~", $token); // base64 can contain = which isn't safe in URL's
         $object->setProperty("token", "text", $token);
 
         if(!$onlyCreateVersion) {
@@ -218,6 +219,9 @@ class Pimcore_Tool_Newsletter {
      * @return Object_Contrete
      */
     public function getObjectByToken($token) {
+
+        $token = str_replace("~", "=", $token); // base64 can contain = which isn't safe in URL's
+
         $data = Zend_Json::decode(base64_decode($token));
         if($data) {
             if($object = Object_Abstract::getById($data["id"])) {
