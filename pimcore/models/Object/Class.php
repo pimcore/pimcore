@@ -224,6 +224,8 @@ class Object_Class extends Pimcore_Model_Abstract {
         $cd = '<?php ';
 
         $cd .= "\n\n";
+        $cd .= "/** Generated at " . date('c') . " */";
+        $cd .= "\n\n";
         $cd .= "class Object_" . ucfirst($this->getName()) . " extends " . $extendClass . " {";
         $cd .= "\n\n";
 

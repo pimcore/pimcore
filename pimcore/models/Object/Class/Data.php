@@ -619,7 +619,9 @@ abstract class Object_Class_Data
 
         // adds a hook preGetValue which can be defined in an extended class
         $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-        $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
+        $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { ' . "\n";
+        $code .= "\t\t" . 'return $preValue;' . "\n";
+        $code .= "\t" . '}' . "\n";
 
         if (method_exists($this, "preGetData")) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
@@ -629,10 +631,12 @@ abstract class Object_Class_Data
 
         // insert this line if inheritance from parent objects is allowed
         if ($class->getAllowInherit()) {
-            $code .= "\t" . 'if(Object_Abstract::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) { return $this->getValueFromParent("' . $key . '");}' . "\n";
+            $code .= "\t" . 'if(Object_Abstract::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+            $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t" . '}' . "\n";
         }
 
-        $code .= "\t return " . '$data' . ";\n";
+        $code .= "\treturn " . '$data' . ";\n";
         $code .= "}\n\n";
 
         return $code;
@@ -650,7 +654,7 @@ abstract class Object_Class_Data
 
         $code .= '/**' . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= "* @return void\n";
+        $code .= "* @return Object_" . ucfirst($class->getName()) . "\n";
         $code .= '*/' . "\n";
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
 
