@@ -802,7 +802,8 @@ abstract class Object_Class_Data
     public function getGetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
-        $code = '/**' . "\n";
+        $code  = '/**' . "\n";
+        $code .= '* Get ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . ' ($language = null) {' . "\n";
@@ -828,9 +829,10 @@ abstract class Object_Class_Data
     {
         $key = $this->getName();
 
-        $code = '/**' . "\n";
+        $code  = '/**' . "\n";
+        $code .= '* Set ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= "* @return void\n";
+        $code .= "* @return Object_" . ucfirst($class->getName()) . "\n";
         $code .= '*/' . "\n";
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ', $language = null) {' . "\n";
 
