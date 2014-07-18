@@ -67,6 +67,14 @@ class Object_Concrete extends Object_Abstract {
      */
     protected $omitMandatoryCheck = false;
 
+    /**
+     * returns the class ID of the current object class
+     * @return int
+     */
+    public static function classId() {
+        $v = get_class_vars(get_called_class());
+        return $v["o_classId"];
+    }
 
     /**
      *
