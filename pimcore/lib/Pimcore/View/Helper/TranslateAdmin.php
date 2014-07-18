@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pimcore
  *
@@ -12,17 +13,18 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
-
-class Pimcore_View_Helper_TranslateAdmin extends Zend_View_Helper_Translate {
+class Pimcore_View_Helper_TranslateAdmin extends Zend_View_Helper_Translate
+{
 
     protected $translator;
 
-    public function translateAdmin($key = "") {
+    public function translateAdmin($key = "")
+    {
         if ($key) {
-            $locale = $_REQUEST["systemLocale"];
+            $locale = isset($_REQUEST["systemLocale"]) ? $_REQUEST["systemLocale"] : null;
 
-            if(!$locale){
-                if(Zend_Registry::isRegistered("Zend_Locale")) {
+            if (!$locale) {
+                if (Zend_Registry::isRegistered("Zend_Locale")) {
                     $locale = Zend_Registry::get("Zend_Locale");
                 } else {
                     $locale = new Zend_Locale("en");
@@ -30,7 +32,7 @@ class Pimcore_View_Helper_TranslateAdmin extends Zend_View_Helper_Translate {
             }
 
             if ($locale) {
-                if(!$this->getTranslator()) {
+                if (!$this->getTranslator()) {
                     $translate = new Pimcore_Translate_Admin($locale);
                     $this->setTranslator($translate);
                 }
