@@ -248,8 +248,6 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
         $table = $this->getTableName();
 
-        Object_Class_Service::updateTableDefinitions($this->tableDefinitions, (array($table)));
-
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
 		  `ooo_id` int(11) NOT NULL default '0',
 		  `language` varchar(10) NOT NULL DEFAULT '',
@@ -261,6 +259,8 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;
         $protectedColumns = array("ooo_id", "language");
+
+        Object_Class_Service::updateTableDefinitions($this->tableDefinitions, (array($table)));
 
         foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $value) {
 
@@ -294,8 +294,6 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $queryTable = $this->getQueryTableName();
             $queryTable .= "_" . $language;
 
-            Object_Class_Service::updateTableDefinitions($this->tableDefinitions, array($queryTable));
-
             $this->db->query("CREATE TABLE IF NOT EXISTS `" . $queryTable . "` (
                   `ooo_id` int(11) NOT NULL default '0',
                   `language` varchar(10) NOT NULL DEFAULT '',
@@ -309,6 +307,8 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
             $existingColumns = $this->getValidTableColumns($queryTable, false); // no caching of table definition
             $columnsToRemove = $existingColumns;
+
+            Object_Class_Service::updateTableDefinitions($this->tableDefinitions, array($queryTable));
 
             $fieldDefinitions = $this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions();
 

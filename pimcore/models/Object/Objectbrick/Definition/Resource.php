@@ -54,8 +54,6 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
           INDEX `fieldname` (`fieldname`)
 		) DEFAULT CHARSET=utf8;");
 
-        Object_Class_Service::updateTableDefinitions($this->tableDefinitions, (array($tableStore, $tableQuery)));
-
         $existingColumnsStore = $this->getValidTableColumns($tableStore, false); // no caching of table definition
         $columnsToRemoveStore = $existingColumnsStore;
         $existingColumnsQuery = $this->getValidTableColumns($tableQuery, false); // no caching of table definition
@@ -63,6 +61,8 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
 
         $protectedColumnsStore = array("o_id", "fieldname");
         $protectedColumnsQuery = array("o_id", "fieldname");
+
+        Object_Class_Service::updateTableDefinitions($this->tableDefinitions, (array($tableStore, $tableQuery)));
 
         foreach ($this->model->getFieldDefinitions() as $value) {
 
