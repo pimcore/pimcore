@@ -207,7 +207,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
 
 
     /**
-     * Retourns only the properties which should be serialized
+     * Returns only the properties which should be serialized
      *
      * @return void
      */
@@ -295,7 +295,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
 
 
     /**
-     * Receives a standard class object from webservice import and fill the current tag's data
+     * Receives a standard class object from webservice import and fills the current tag's data
      *
      * @abstract
      * @param  Webservice_Data_Document_Element $wsElement
