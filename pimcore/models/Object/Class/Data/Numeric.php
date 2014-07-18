@@ -101,7 +101,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      */
     public function getDefaultValue() {
         if($this->defaultValue !== null) {
-            return (double) $this->defaultValue;
+            return $this->toNumeric($this->defaultValue);
         }
     }
 
@@ -201,7 +201,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      */
     public function getColumnType() {
         if($this->getInteger()) {
-            return "int(11)";
+            return "bigint(20)";
         }
 
         if($this->getDecimalPrecision()) {
@@ -216,7 +216,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      */
     public function getQueryColumnType() {
         if($this->getInteger()) {
-            return "int(11)";
+            return "bigint(20)";
         }
 
         if($this->getDecimalPrecision()) {
@@ -235,7 +235,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
     public function getDataForResource($data, $object = null) {
 
         if(is_numeric($data)) {
-           return (float) $data; 
+           return $data;
         }
         return null;
     }
@@ -247,7 +247,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      */
     public function getDataFromResource($data) {
         if(is_numeric($data)) {
-            return (float) $data;
+            return $this->toNumeric($data);
         }
         return $data;
     }
@@ -309,15 +309,22 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
         }
 
         if(!$omitMandatoryCheck ) {
+
+            $data = $this->toNumeric($data);
+
+            if($data >= PHP_INT_MAX) {
+                throw new \Exception("value exceeds PHP_INT_MAX please use an input data type instead of numeric!");
+            }
+
             if($this->getInteger() && strpos((string) $data, ".") !== false) {
                 throw new \Exception("Value in field [ ".$this->getName()." ] is not an integer");
             }
 
-            if($this->getMinValue() && $this->getMinValue() > $data) {
+            if(strlen($this->getMinValue()) && $this->getMinValue() > $data) {
                 throw new \Exception("Value in field [ ".$this->getName()." ] is not at least " . $this->getMinValue());
             }
 
-            if($this->getMaxValue() && $data > $this->getMaxValue()) {
+            if(strlen($this->getMaxValue()) && $data > $this->getMaxValue()) {
                 throw new \Exception("Value in field [ ".$this->getName()." ] is bigger than " . $this->getMaxValue());
             }
 
@@ -342,10 +349,10 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
     /**
      * fills object field data values from CSV Import String
      * @param string $importValue
-     * @return double
+     * @return float
      */
     public function getFromCsvImport($importValue) {
-        $value = (double) str_replace(",",".",$importValue);
+        $value = $this->toNumeric(str_replace(",",".",$importValue));
         return $value;
     }
 
@@ -365,5 +372,16 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param $value
+     * @return float|int
+     */
+    protected function toNumeric($value) {
+        if(strpos((string) $value, ".") === false) {
+            return (int) $value;
+        }
+        return (float) $value;
     }
 }

@@ -74,10 +74,11 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
             input.minValue = 0;
         }
 
-        if (this.fieldConfig["minValue"]) {
+        if (is_numeric(this.fieldConfig["minValue"])) {
             input.minValue = this.fieldConfig.minValue;
         }
-        if (this.fieldConfig["maxValue"]) {
+
+        if (is_numeric(this.fieldConfig["maxValue"])) {
             input.maxValue = this.fieldConfig.maxValue;
         }
 
