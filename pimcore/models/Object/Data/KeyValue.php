@@ -85,7 +85,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         $newProperties = array();
         foreach ($arr as $key => $pair) {
 
-            if (!$pair["inherited"]) {
+            if (!isset($pair["inherited"]) || !$pair["inherited"]) {
                 $newProperties[] = $pair;
             }
         }

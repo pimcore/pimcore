@@ -140,7 +140,7 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
         $result = $db->fetchAll($sql);
         $model->setProperties($result);
 
-        Logger::debug("result=" . $result);
+        Logger::debug("result=" . Zend_Json::encode($result));
     }
 
 }
