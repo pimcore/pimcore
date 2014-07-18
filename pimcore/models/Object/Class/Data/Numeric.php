@@ -308,20 +308,22 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
             throw new Exception("invalid numeric data");
         }
 
-        if($this->getInteger() && strpos((string) $data, ".") !== false) {
-            throw new \Exception("Value in field [ ".$this->getName()." ] is not an integer");
-        }
+        if(!$omitMandatoryCheck ) {
+            if($this->getInteger() && strpos((string) $data, ".") !== false) {
+                throw new \Exception("Value in field [ ".$this->getName()." ] is not an integer");
+            }
 
-        if($this->getMinValue() && $this->getMinValue() > $data) {
-            throw new \Exception("Value in field [ ".$this->getName()." ] is not at least " . $this->getMinValue());
-        }
+            if($this->getMinValue() && $this->getMinValue() > $data) {
+                throw new \Exception("Value in field [ ".$this->getName()." ] is not at least " . $this->getMinValue());
+            }
 
-        if($this->getMaxValue() && $data > $this->getMaxValue()) {
-            throw new \Exception("Value in field [ ".$this->getName()." ] is bigger than " . $this->getMaxValue());
-        }
+            if($this->getMaxValue() && $data > $this->getMaxValue()) {
+                throw new \Exception("Value in field [ ".$this->getName()." ] is bigger than " . $this->getMaxValue());
+            }
 
-        if($this->getUnsigned() && $data < 0) {
-            throw new \Exception("Value in field [ ".$this->getName()." ] is not unsigned (bigger than 0)");
+            if($this->getUnsigned() && $data < 0) {
+                throw new \Exception("Value in field [ ".$this->getName()." ] is not unsigned (bigger than 0)");
+            }
         }
     }
 
