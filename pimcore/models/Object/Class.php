@@ -229,15 +229,6 @@ class Object_Class extends Pimcore_Model_Abstract {
 
         $cd .= "/**\n";
 
-        if ($_SERVER["REMOTE_ADDR"]) {
-            $cd .= "* IP:          " . $_SERVER["REMOTE_ADDR"] . "\n";
-        }
-
-        $cd .= "*/\n";
-        $cd .= "\n\n";
-
-        $cd .= "/**\n";
-
         if ($this->getDescription()) {
             $description = str_replace(array("/**", "*/", "//"), "", $this->getDescription());
             $description = str_replace("\n", "\n* ", $description);
