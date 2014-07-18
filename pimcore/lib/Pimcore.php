@@ -31,6 +31,12 @@ class Pimcore {
     private static $eventManager;
 
     /**
+     * @var array items to be excluded from garbage collection
+     */
+    private static $globallyProtectedItems;
+
+
+    /**
      * @static
      * @throws Exception|Zend_Controller_Router_Exception
      */
@@ -777,6 +783,38 @@ class Pimcore {
         return self::$eventManager;
     }
 
+    /** Add $keepItems to the list of items which are protected from garbage collection.
+     * @param $keepItems
+     */
+    public static function addToGloballyProtectedItems($keepItems) {
+        if (is_string($keepItems)) {
+            $keepItems = array($keepItems);
+        }
+        if (!is_array(self::$globallyProtectedItems) && $keepItems) {
+            self::$globallyProtectedItems = array();
+        }
+        self::$globallyProtectedItems = array_merge(self::$globallyProtectedItems, $keepItems);
+    }
+
+
+    /** Items to be deleted.
+     * @param $deleteItems
+     */
+    public static function removeFromGloballyProtectedItems($deleteItems) {
+        if (is_string($deleteItems)) {
+            $deleteItems = array($deleteItems);
+        }
+
+        if (is_array($deleteItems) && is_array(self::$globallyProtectedItems)) {
+            foreach ($deleteItems as $item) {
+                $key = array_search($item,self::$globallyProtectedItems);
+                if($key!==false){
+                    unset(self::$globallyProtectedItems[$key]);
+                }
+            }
+        }
+    }
+
     /**
      * Forces a garbage collection.
      * @static
@@ -807,6 +845,10 @@ class Pimcore {
 
         if(is_array($keepItems) && count($keepItems) > 0) {
             $protectedItems = array_merge($protectedItems, $keepItems);
+        }
+
+        if (is_array(self::$globallyProtectedItems) && count(self::$globallyProtectedItems)) {
+            $protectedItems = array_merge($protectedItems, self::$globallyProtectedItems);
         }
 
         $registryBackup = array();
