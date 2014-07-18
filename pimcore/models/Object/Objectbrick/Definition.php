@@ -128,6 +128,19 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         $cd = '<?php ';
 
         $cd .= "\n\n";
+        $cd .= "/** Generated at " . date('c') . " */";
+        $cd .= "\n\n";
+
+        $cd .= "/**\n";
+        $cd .= "*";
+
+        if ($_SERVER["REMOTE_ADDR"]) {
+            $cd .= "* IP:          " . $_SERVER["REMOTE_ADDR"] . "\n";
+        }
+
+        $cd .= "*/\n";
+        $cd .= "\n\n";
+
         $cd .= "class Object_Objectbrick_Data_" . ucfirst($this->getKey()) . " extends " . $extendClass . "  {";
         $cd .= "\n\n";
 
