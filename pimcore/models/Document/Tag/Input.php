@@ -54,7 +54,7 @@ class Document_Tag_Input extends Document_Tag
         $options = $this->getOptions();
 
         $text = $this->text;
-        if ($options["htmlspecialchars"] !== false) {
+        if (isset($options["htmlspecialchars"]) AND $options["htmlspecialchars"] !== false) {
             $text = htmlspecialchars($this->text);
         }
 
