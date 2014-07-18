@@ -132,7 +132,6 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         $cd .= "\n\n";
 
         $cd .= "/**\n";
-        $cd .= "*";
 
         if ($_SERVER["REMOTE_ADDR"]) {
             $cd .= "* IP:          " . $_SERVER["REMOTE_ADDR"] . "\n";

@@ -681,7 +681,9 @@ abstract class Object_Class_Data
     public function getGetterCodeObjectbrick($brickClass)
     {
         $key = $this->getName();
-        $code = '/**' . "\n";
+        $code = "";
+        $code .= '/**' . "\n";
+        $code .= '* Set ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . " () {\n";
@@ -712,9 +714,11 @@ abstract class Object_Class_Data
     {
         $key = $this->getName();
 
-        $code = '/**' . "\n";
+        $code = "";
+        $code .= '/**' . "\n";
+        $code .= '* Set ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= "* @return void\n";
+        $code .= "* @return Object_" . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
 
@@ -741,7 +745,9 @@ abstract class Object_Class_Data
         $key = $this->getName();
         $code = "";
 
+        $code = "";
         $code .= '/**' . "\n";
+        $code .= '* Get ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . " () {\n";
@@ -769,8 +775,9 @@ abstract class Object_Class_Data
         $code = "";
 
         $code .= '/**' . "\n";
+        $code .= '* Get ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= "* @return void\n";
+        $code .= "* @return Object_" . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
 
