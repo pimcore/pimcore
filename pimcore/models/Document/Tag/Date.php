@@ -59,7 +59,7 @@ class Document_Tag_Date extends Document_Tag {
      */
     public function frontend() {
 
-        if (!$this->options["output"]) {
+        if (!isset($this->options["output"]) || !$this->options["output"]) {
             $this->options["output"] = Zend_Date::DATE_MEDIUM;
         }
 

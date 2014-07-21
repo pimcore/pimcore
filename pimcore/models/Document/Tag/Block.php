@@ -91,7 +91,7 @@ class Document_Tag_Block extends Document_Tag {
      * @return void
      */
     public function setDefault() {
-        if (empty($this->indices) && $this->options["default"]) {
+        if (empty($this->indices) && isset($this->options["default"]) && $this->options["default"]) {
             for ($i = 0; $i < intval($this->options["default"]); $i++) {
                 $this->indices[$i] = $i + 1;
             }

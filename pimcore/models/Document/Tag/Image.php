@@ -194,7 +194,7 @@ class Document_Tag_Image extends Document_Tag {
         }
 
         if ($this->image instanceof Asset) {
-            if ($this->options["thumbnail"] || $this->cropPercent) {
+            if ((isset($this->options["thumbnail"]) && $this->options["thumbnail"]) || $this->cropPercent) {
                 // create a thumbnail first
                 $autoName = false;
 

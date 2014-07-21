@@ -110,7 +110,7 @@ class Document_Tag_Renderlet extends Document_Tag {
             $blockparams = array("action", "controller", "module", "template");
 
             $params = array(
-                "template" => $this->options["template"],
+                "template" => isset($this->options["template"]) ? $this->options["template"] : null,
                 "object" => $this->o,
                 "element" => $this->o,
                 "document" => $document,
@@ -129,7 +129,10 @@ class Document_Tag_Renderlet extends Document_Tag {
 
             if ($this->getView() != null) {
                 try {
-                    return $this->getView()->action($this->options["action"], $this->options["controller"], $this->options["module"], $params);
+                    return $this->getView()->action($this->options["action"],
+                        $this->options["controller"],
+                        isset($this->options["module"]) ? $this->options["module"] : null,
+                        $params);
                 } catch (Exception $e) {
                     if(Pimcore::inDebugMode()) {
                         return "ERROR: " . $e->getMessage() . " (for details see debug.log)";

@@ -470,7 +470,7 @@ class Document_Tag_Areablock extends Document_Tag {
         $availableAreas = array();
         $availableAreasSort = array();
 
-        if(!is_array($options["allowed"])) {
+        if(!isset($options["allowed"]) || !is_array($options["allowed"])) {
             $options["allowed"] = array();
         }
 
@@ -524,7 +524,7 @@ class Document_Tag_Areablock extends Document_Tag {
 
         $options["types"] = $availableAreas;
 
-        if(is_array($options["group"])) {
+        if(isset($options["group"]) && is_array($options["group"])) {
             $groupingareas = array();
             foreach ($availableAreas as $area) {
                 $groupingareas[$area["type"]] = $area["type"];
