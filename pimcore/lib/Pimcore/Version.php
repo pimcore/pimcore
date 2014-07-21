@@ -17,18 +17,18 @@ class Pimcore_Version {
 
     public static $version = "2.2.2";
 
-    public static $revision = 3249;
+    public static $revision = 3250;
 
     public static $svnInfo = array (
   'Path' => 'trunk',
   'URL' => 'http',
   'Repository Root' => 'http',
   'Repository UUID' => '1f8fe7d8-47f0-464c-8d0a-336f4953ab05',
-  'Revision' => '5102',
+  'Revision' => '5106',
   'Node Kind' => 'directory',
   'Last Changed Author' => 'brusch',
-  'Last Changed Rev' => '5102',
-  'Last Changed Date' => '2014-07-21 09',
+  'Last Changed Rev' => '5106',
+  'Last Changed Date' => '2014-07-21 12',
 );
 
     public static function getVersion() {
