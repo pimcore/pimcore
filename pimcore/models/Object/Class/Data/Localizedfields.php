@@ -851,6 +851,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         }
 
         $localizedFields = new Object_Localizedfield($localData);
+        $localizedFields->setObject( $object );
         return $localizedFields;
     }
 
