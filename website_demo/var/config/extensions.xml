@@ -18,5 +18,6 @@
     <horizontal-line>1</horizontal-line>
     <icon-teaser-row>1</icon-teaser-row>
     <tabbed-slider-text>1</tabbed-slider-text>
+    <wysiwyg-with-images>1</wysiwyg-with-images>
   </brick>
 </zend-config>
