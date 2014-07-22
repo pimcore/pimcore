@@ -306,7 +306,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
     },
 
     onDelete: function (store, title) {
-        if(store.getCount() > 1) {
+        if(store.getCount() > 0) {
             var rec = this.grids[title].getSelectionModel().getSelected();
             if (!rec) {
                 return false;
