@@ -274,6 +274,13 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         this.updateCounter++;
     },
 
+    hasMetaData : function(page){
+        if(this.hotspotStore[page] || this.chapterStore[page] || this.textStore[page]){
+            return true;
+        }else{
+            return false;
+        }
+    },
     openMetadataWindow: function() {
 
         var thumbUrl = "";
@@ -302,10 +309,11 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             thumbUrl = "/admin/asset/get-document-thumbnail/id/"
                 + this.data.id + "/width/400/height/400/contain/true/page/" + i;
 
+
             pages.push({
                 style: "margin-bottom: 10px; text-align: center; cursor:pointer; ",
                 bodyStyle: "min-height: 150px;",
-                html: '<span id="' + this.getName() + '-page-' + i + '" style="font-size:35px; line-height: 150px;" data-src="' + thumbUrl + '">' + i + '</span>', // blank gif image
+                html: '<span id="' + this.getName() + '-page-' + i + '" style="font-size:35px; line-height: 150px;" data-src="' + thumbUrl + '">' + i + '</span>' , // blank gif image
                 listeners: {
                     afterrender: function (page, el) {
                         // unfortunately the panel element has no click event, so we have to add it to the image
@@ -325,6 +333,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             items: pages
         });
 
+
         var loadingInterval = window.setInterval(function () {
 
             if(!this.pagesContainer || !this.pagesContainer.body || !this.pagesContainer.body.dom) {
@@ -337,7 +346,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
                     el = Ext.get(this.getName() + "-page-" + i);
                     if(el) {
                        // el.parent().update('<img src="' + el.getAttribute("data-src") + '" height="150" />');
-                        el.parent().update('<div class="pdf-image-wrapper"><img src="' + el.getAttribute("data-src") + '" height="150" /><div class="nr" style="font-size:35px; line-height:150px; position: absolute;top:0px;width: 100%;">' + i + '</div></div>');
+                        el.parent().update('<div class="pdf-image-wrapper"><img src="' + el.getAttribute("data-src") + '" height="150" /><div class="nr ' + (this.hasMetaData(i) ? 'hasMetadata'  : '') +'" style="font-size:35px; line-height:150px; position: absolute;top:0px;width: 100%;">' + i + '</div></div>');
                     }
                 }
             }
@@ -877,7 +886,13 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
 
     saveCurrentPage: function () {
         if(this.currentPage) {
-            this.chapterStore[this.currentPage] = this.metaDataWindow.getComponent("pageContainer").getEl().query('[name="chapter"]')[0].value;
+            var chapterText = this.metaDataWindow.getComponent("pageContainer").getEl().query('[name="chapter"]')[0].value;
+            if(!chapterText){
+                            delete this.chapterStore[this.currentPage];
+                        }else{
+                            this.chapterStore[this.currentPage] = chapterText;
+                        }
+
             var hotspots = this.metaDataWindow.getComponent("pageContainer").body.query(".pimcore_pdf_hotspot");
             var hotspot = null;
             var metaData = null;
@@ -910,13 +925,21 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             if(this.hotspotStore[this.currentPage].length < 1) {
                 delete this.hotspotStore[this.currentPage];
             }
+
+            var metaData = this.hasMetaData(this.currentPage);
+
+            Ext.each(this.pagesContainer.body.query('.nr'), function(value) {
+                if(parseInt($(value).text()) == this.currentPage){
+                    metaData ? $(value).addClass('hasMetadata') : $(value).removeClass('hasMetadata');
+               }
+            }.bind(this));
+
         }
 
     },
 
 
     getValue: function () {
-
         return this.data;
 //        var value = {};
 //        for (var i = 0; i < this.data.length; ++i) {
