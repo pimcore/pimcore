@@ -297,6 +297,7 @@ $scripts = array(
     "pimcore/object/helpers/edit.js",
     "pimcore/object/classes/class.js",
     "pimcore/object/class.js",
+    "pimcore/object/bulk-export.js",
     "pimcore/object/classes/data/data.js",
     "pimcore/object/classes/data/date.js",
     "pimcore/object/classes/data/datetime.js",

@@ -1531,3 +1531,4 @@
 "disallow_addremove","Disallow Add/Remove"
 "disallow_reorder","Dissallow Reordering"
 "reload_definition","Reload Definition"
+"bulk_export","Bulk Export"

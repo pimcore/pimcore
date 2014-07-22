@@ -32,8 +32,8 @@ pimcore.layout.toolbar = Class.create({
                     text: t("welcome"),
                     iconCls: "pimcore_icon_welcome",
                     handler: pimcore.helpers.openWelcomePage.bind(this)
-                    }]
-                }
+                }]
+            }
         });
 
         Ext.Ajax.request({
@@ -636,6 +636,13 @@ pimcore.layout.toolbar = Class.create({
                     iconCls: "pimcore_icon_custom_views",
                     handler: this.editCustomViews
                 });
+
+                objectMenu.menu.items.push({
+                    text: t("bulk_export"),
+                    iconCls: "pimcore_icon_export",
+                    handler: this.bulkExport
+                });
+
 
                 settingsItems.push(objectMenu);
             }
@@ -1574,5 +1581,10 @@ pimcore.layout.toolbar = Class.create({
         catch (e) {
             pimcore.globalmanager.add("email_blacklist", new pimcore.settings.email.blacklist());
         }
+    },
+
+    bulkExport: function() {
+        var exporter = new pimcore.object.bulkexport();
+        exporter.export();
     }
 });

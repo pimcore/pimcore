@@ -827,4 +827,51 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     }
 
 
+    public function bulkExportAction() {
+
+        $result = array();
+        $this->removeViewRenderer();
+
+        $fieldCollections = new Object_Fieldcollection_Definition_List();
+        $fieldCollections = $fieldCollections->load();
+
+        foreach ($fieldCollections as $fieldCollection) {
+            $key = $fieldCollection->key;
+            $fieldCollectionJson = json_decode(Object_Class_Service::generateFieldCollectionJson($fieldCollection));
+            $fieldCollectionJson->key = $key;
+            $result["fieldcollection"][] = $fieldCollectionJson;
+        }
+
+
+        $classes = new Object_Class_List();
+        $classes->setOrder("ASC");
+        $classes->setOrderKey("id");
+        $classes = $classes->load();
+
+        foreach ($classes as $class) {
+            $data = Webservice_Data_Mapper::map($class, "Webservice_Data_Class_Out", "out");
+            unset($data->fieldDefinitions);
+            $result["class"][] = $data;
+        }
+
+        $objectBricks = new Object_Objectbrick_Definition_List();
+        $objectBricks = $objectBricks->load();
+
+        foreach ($objectBricks as $objectBrick) {
+            $key = $objectBrick->key;
+            $objectBrickJson = json_decode(Object_Class_Service::generateObjectBrickJson($objectBrick));
+            $objectBrickJson->key = $key;
+            $result["objectbrick"][] = $objectBrickJson;
+        }
+
+
+
+        header("Content-type: application/json");
+        header("Content-Disposition: attachment; filename=\"bulk_export.json\"");
+        $result = json_encode($result);
+        echo $result;
+    }
+
+
+
 }
