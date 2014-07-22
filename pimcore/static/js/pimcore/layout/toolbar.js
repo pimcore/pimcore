@@ -637,10 +637,17 @@ pimcore.layout.toolbar = Class.create({
                     handler: this.editCustomViews
                 });
 
+
                 objectMenu.menu.items.push({
                     text: t("bulk_export"),
                     iconCls: "pimcore_icon_export",
                     handler: this.bulkExport
+                });
+
+                objectMenu.menu.items.push({
+                    text: t("bulk_import"),
+                    iconCls: "pimcore_icon_import",
+                    handler: this.bulkImport
                 });
 
 
@@ -1581,6 +1588,11 @@ pimcore.layout.toolbar = Class.create({
         catch (e) {
             pimcore.globalmanager.add("email_blacklist", new pimcore.settings.email.blacklist());
         }
+    },
+
+    bulkImport: function() {
+        var importer = new pimcore.object.bulkimport;
+        importer.upload();
     },
 
     bulkExport: function() {

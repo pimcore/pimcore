@@ -826,7 +826,111 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("objectbricks" => $list));
     }
 
+    /**
+     * See http://www.pimcore.org/issues/browse/PIMCORE-2358
+     * Add option to export/import all class definitions/brick definitions etc. at once
+     */
+    public function bulkImportAction() {
 
+        $result = array();
+
+        $tmpName = $_FILES["Filedata"]["tmp_name"];
+        $json = file_get_contents($tmpName);
+
+        $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/bulk-import.tmp";
+        file_put_contents($tmpName, $json);
+
+        $json = json_decode($json, true);
+
+        foreach($json as $groupName => $group) {
+            foreach($group as $groupItem) {
+                if ($groupName == "class") {
+                    $name = $groupItem["name"];
+                    $icon = "database_gear";
+                } else {
+                    if ($groupName == "objectbrick") {
+                        $icon = "bricks";
+                    } else if ($groupName == "fieldcollection") {
+                        $icon = "table_multiple";
+                    }
+                    $name = $groupItem["key"];
+                }
+                $result[] = array("icon" => $icon, "checked" => true, "type" => $groupName, "name" => $name);
+            }
+
+        }
+
+        $this->_helper->json(array("success" => true, "filename" => $tmpName, "data" => $result), false);
+        $this->getResponse()->setHeader("Content-Type", "text/html");
+    }
+
+    /**
+     * See http://www.pimcore.org/issues/browse/PIMCORE-2358
+     * Add option to export/import all class definitions/brick definitions etc. at once
+     */
+    public function bulkCommitAction() {
+        $filename = $this->getParam("filename");
+        $data = json_decode($this->getParam("data"), true);
+
+        $json = @file_get_contents($filename);
+        $json = json_decode($json, true);
+
+        $type = $data["type"];
+        $name = $data["name"];
+        $list = $json[$type];
+
+        foreach($list as $item) {
+            unset($item["creationDate"]);
+            unset($item["modificationDate"]);
+            unset($item["userOwner"]);
+            unset($item["userModification"]);
+
+
+            unset($item["id"]);
+
+            if ($type == "class" && $item["name"] == $name) {
+
+                $class = Object_Class::getByName($name);
+                if (!$class) {
+                    $class = new Object_Class();
+                    $class->setName($name);
+
+                }
+                $success = Object_Class_Service::importClassDefinitionFromJson($class, json_encode($item));
+                $this->_helper->json(array("success" => $success !== false));
+
+            } else if ($type == "objectbrick" && $item["key"] == $name) {
+                try {
+                    $brick = Object_Objectbrick_Definition::getByKey($name);
+                } catch (Exception $e) {
+                    $brick = new Object_Objectbrick_Definition();
+                    $brick->setKey($name);
+                }
+
+                $success = Object_Class_Service::importObjectBrickFromJson($brick, json_encode($item));
+                $this->_helper->json(array("success" => $success !== false));
+
+            } else if ($type == "fieldcollection" && $item["key"] == $name) {
+                try {
+                    $fieldCollection = Object_Fieldcollection_Definition::getByKey($name);
+                } catch (Exception $e) {
+                    $fieldCollection = new Object_Fieldcollection_Definition();
+                    $fieldCollection->setKey($name);
+                }
+                $success = Object_Class_Service::importFieldCollectionFromJson($fieldCollection, json_encode($item));
+                $this->_helper->json(array("success" => $success !== false));
+
+            }
+        }
+
+
+        $this->_helper->json(array("success" => true));
+    }
+
+    /**
+     * See http://www.pimcore.org/issues/browse/PIMCORE-2358
+     * Add option to export/import all class definitions/brick definitions etc. at once
+     */
     public function bulkExportAction() {
 
         $result = array();
@@ -864,14 +968,11 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
             $result["objectbrick"][] = $objectBrickJson;
         }
 
-
-
         header("Content-type: application/json");
         header("Content-Disposition: attachment; filename=\"bulk_export.json\"");
         $result = json_encode($result);
         echo $result;
     }
-
 
 
 }

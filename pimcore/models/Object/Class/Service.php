@@ -55,6 +55,9 @@ class Object_Class_Service  {
 
         // set layout-definition
         $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+        if ($layout === false) {
+            return false;
+        }
         $class->setLayoutDefinitions($layout);
 
         // set properties of class
@@ -105,7 +108,7 @@ class Object_Class_Service  {
     }
 
     /**
-     * @param $fieldCollection
+     * @param $objectBrick
      * @return string
      */
     public static function generateObjectBrickJson($objectBrick){
@@ -177,7 +180,11 @@ class Object_Class_Service  {
                     } else if (is_array($array["childs"]) && count($array["childs"]) > 0) {
                         foreach ($array["childs"] as $child) {
                             $childO = self::generateLayoutTreeFromArray($child);
-                            $item->addChild($childO);
+                            if ($childO !== false) {
+                                $item->addChild($childO);
+                            } else {
+                                return false;
+                            }
                         }
                     }
                 } else {
@@ -226,7 +233,7 @@ class Object_Class_Service  {
                 }
 
                 if (  $colDefinition["Type"] == $type && strtolower($colDefinition["Null"]) == strtolower($null)
-                                            && $colDefinition["Default"] == $default) {
+                    && $colDefinition["Default"] == $default) {
                     return true;
                 }
 
