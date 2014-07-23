@@ -87,7 +87,7 @@ class Pimcore_Tool {
         $languages = array();
 
         $conf = Pimcore_Config::getSystemConfig();
-        if($conf->general->fallbackLanguages && $conf->general->fallbackLanguages->$language) {
+        if(isset($conf->general->fallbackLanguages) && isset($conf->general->fallbackLanguages->$language)) {
             $languages = explode(",", $conf->general->fallbackLanguages->$language);
             foreach ($languages as $l) {
                 if(self::isValidLanguage($l)) {
@@ -157,7 +157,7 @@ class Pimcore_Tool {
 
         if($config) {
             // system default
-            $routeingDefaults = array(
+            $routingDefaults = array(
                 "controller" => "default",
                 "action" => "default",
                 "module" => PIMCORE_FRONTEND_MODULE
@@ -166,13 +166,13 @@ class Pimcore_Tool {
             // get configured settings for defaults
             $systemRoutingDefaults = $config->documents->toArray();
 
-            foreach ($routeingDefaults as $key => $value) {
+            foreach ($routingDefaults as $key => $value) {
                 if ($systemRoutingDefaults["default_" . $key]) {
-                    $routeingDefaults[$key] = $systemRoutingDefaults["default_" . $key];
+                    $routingDefaults[$key] = $systemRoutingDefaults["default_" . $key];
                 }
             }
 
-            return $routeingDefaults;
+            return $routingDefaults;
         } else {
             return array();
         }

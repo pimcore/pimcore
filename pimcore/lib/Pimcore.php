@@ -223,7 +223,7 @@ class Pimcore {
             }
 
             // force the main (default) domain for "admin" requests
-            if($conf->general->domain && $conf->general->domain != Pimcore_Tool::getHostname()) {
+            if(isset($conf->general->domain) && $conf->general->domain != Pimcore_Tool::getHostname()) {
                 $url = (($_SERVER['HTTPS'] == "on") ? "https" : "http") . "://" . $conf->general->domain . $_SERVER["REQUEST_URI"];
                 header("HTTP/1.1 301 Moved Permanently");
                 header("Location: " . $url, true, 301);
@@ -233,8 +233,12 @@ class Pimcore {
 
         // check if webdav is configured and add router
         if ($conf instanceof Zend_Config) {
-            if ($conf->assets->webdav->hostname) {
-                $routeWebdav = new Zend_Controller_Router_Route_Hostname(
+            if (
+                isset($conf->assets) &&
+                isset($conf->assets->webdav) &&
+                isset($conf->assets->webdav->hostname)
+            ) {
+                $routeWebdev = new Zend_Controller_Router_Route_Hostname(
                     $conf->assets->webdav->hostname,
                     array(
                         "module" => "admin",
@@ -325,7 +329,7 @@ class Pimcore {
 
         if($conf) {
             // redirect php error_log to /website/var/log/php.log
-            if($conf->general->custom_php_logfile) {
+            if(isset($conf->general->custom_php_logfile)) {
                 $phpLog = PIMCORE_LOG_DIRECTORY . "/php.log";
                 if(is_writable($phpLog)) {
                     ini_set("error_log", $phpLog);
@@ -353,7 +357,7 @@ class Pimcore {
 
         $prios = array();
 
-        if($conf && $conf->general->debugloglevel) {
+        if($conf && isset($conf->general->debugloglevel)) {
             $prioMapping = array_reverse($prioMapping);
             foreach ($prioMapping as $level => $state) {
                 $prios[] = $prioMapping[$level];
@@ -388,7 +392,7 @@ class Pimcore {
             $conf = Pimcore_Config::getSystemConfig();
             if($conf) {
                 //email logger
-                if(!empty($conf->general->logrecipient)) {
+                if(isset($conf->general->logrecipient) && !empty($conf->general->logrecipient)) {
                     $user = User::getById($conf->general->logrecipient);
                     if($user instanceof User && $user->isAdmin()) {
                         $email = $user->getEmail();
@@ -473,7 +477,7 @@ class Pimcore {
     }
 
     /**
-     * initialisze system modules and register them with the broker
+     * initialize system modules and register them with the broker
      *
      * @static
      * @return void
@@ -484,7 +488,7 @@ class Pimcore {
         $broker->registerModule("Search_Backend_Module");
 
         $conf = Pimcore_Config::getSystemConfig();
-        if($conf->general->instanceIdentifier) {
+        if(isset($conf->general->instanceIdentifier)) {
             $broker->registerModule("Tool_UUID_Module");
         }
     }
@@ -663,7 +667,7 @@ class Pimcore {
 
             // set timezone
             if ($conf instanceof Zend_Config) {
-                if ($conf->general->timezone) {
+                if (isset($conf->general->timezone)) {
                     date_default_timezone_set($conf->general->timezone);
                 }
             }
@@ -912,7 +916,7 @@ class Pimcore {
         header("Connection: close\r\n");
 
         // check for supported content-encodings
-        if(strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false) {
+        if(isset($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false) {
             $contentEncoding = "gzip";
         }
 
@@ -958,7 +962,7 @@ class Pimcore {
                 }
             }
 
-            // gzip the contents and send connection close tthat the process can run in the background to finish
+            // gzip the contents and send connection close that the process can run in the background to finish
             // some tasks like writing the cache ...
             // using mb_strlen() because of PIMCORE-1509
             if($gzipIt) {

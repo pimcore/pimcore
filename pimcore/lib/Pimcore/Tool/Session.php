@@ -87,7 +87,7 @@ class Pimcore_Tool_Session {
             Zend_Session::start();
         }
 
-        if(!$readOnly) { // we don't force the session to start in read-only mode
+        if(!$readOnly && session_status() == PHP_SESSION_NONE) { // we don't force the session to start in read-only mode
             @session_start();
         }
 

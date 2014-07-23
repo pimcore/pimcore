@@ -25,7 +25,7 @@ class Pimcore_Controller_Plugin_Less extends Zend_Controller_Plugin_Abstract {
 
         $this->conf = Pimcore_Config::getSystemConfig();
 
-        if($request->getParam('disable_less_compiler') || $_COOKIE["disable_less_compiler"]){
+        if($request->getParam('disable_less_compiler') || isset($_COOKIE["disable_less_compiler"])){
             return $this->disable();
         }
 

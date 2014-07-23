@@ -18,7 +18,7 @@ class Pimcore_Controller_Plugin_ContentLog extends Zend_Controller_Plugin_Abstra
     public function dispatchLoopShutdown() {
 
         $config = Pimcore_Config::getReportConfig()->contentanalysis;
-        if(!$config->enabled) {
+        if(!isset($config->enabled) || !$config->enabled) {
             return;
         }
 
