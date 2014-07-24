@@ -896,7 +896,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
                     $class->setName($name);
 
                 }
-                $success = Object_Class_Service::importClassDefinitionFromJson($class, json_encode($item));
+                $success = Object_Class_Service::importClassDefinitionFromJson($class, json_encode($item), true);
                 $this->_helper->json(array("success" => $success !== false));
 
             } else if ($type == "objectbrick" && $item["key"] == $name) {
@@ -907,7 +907,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
                     $brick->setKey($name);
                 }
 
-                $success = Object_Class_Service::importObjectBrickFromJson($brick, json_encode($item));
+                $success = Object_Class_Service::importObjectBrickFromJson($brick, json_encode($item), true);
                 $this->_helper->json(array("success" => $success !== false));
 
             } else if ($type == "fieldcollection" && $item["key"] == $name) {
@@ -917,7 +917,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
                     $fieldCollection = new Object_Fieldcollection_Definition();
                     $fieldCollection->setKey($name);
                 }
-                $success = Object_Class_Service::importFieldCollectionFromJson($fieldCollection, json_encode($item));
+                $success = Object_Class_Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
                 $this->_helper->json(array("success" => $success !== false));
 
             }

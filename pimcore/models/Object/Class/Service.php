@@ -43,7 +43,7 @@ class Object_Class_Service  {
      * @param $json
      * @return bool
      */
-    public static function importClassDefinitionFromJson($class, $json) {
+    public static function importClassDefinitionFromJson($class, $json, $throwException = false) {
 
         $userId = 0;
         $user = Pimcore_Tool_Admin::getCurrentUser();
@@ -54,7 +54,7 @@ class Object_Class_Service  {
         $importData = Zend_Json::decode($json);
 
         // set layout-definition
-        $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+        $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"], $throwException);
         if ($layout === false) {
             return false;
         }
@@ -95,11 +95,11 @@ class Object_Class_Service  {
      * @param $json
      * @return bool
      */
-    public static function importFieldCollectionFromJson($fieldCollection, $json) {
+    public static function importFieldCollectionFromJson($fieldCollection, $json, $throwException = false) {
 
         $importData = Zend_Json::decode($json);
 
-        $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+        $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"], $throwException);
         $fieldCollection->setLayoutDefinitions($layout);
         $fieldCollection->setParentClass($importData["parentClass"]);
         $fieldCollection->save();
@@ -137,7 +137,7 @@ class Object_Class_Service  {
      * @param $json
      * @return bool
      */
-    public static function importObjectBrickFromJson($objectBrick, $json) {
+    public static function importObjectBrickFromJson($objectBrick, $json, $throwException = false) {
 
         $importData = Zend_Json::decode($json);
 
@@ -153,7 +153,7 @@ class Object_Class_Service  {
             }
         }
 
-        $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+        $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"], $throwException);
         $objectBrick->setLayoutDefinitions($layout);
         $objectBrick->setClassDefinitions($importData["classDefinitions"]);
         $objectBrick->setParentClass($importData["parentClass"]);
@@ -162,7 +162,7 @@ class Object_Class_Service  {
         return true;
     }
 
-    public static function generateLayoutTreeFromArray($array) {
+    public static function generateLayoutTreeFromArray($array, $throwException = false) {
 
         if (is_array($array) && count($array) > 0) {
 
@@ -175,14 +175,17 @@ class Object_Class_Service  {
                     $item->setValues($array, array("childs"));
 
                     if(is_array($array) && is_array($array["childs"]) && $array["childs"]["datatype"]){
-                        $childO = self::generateLayoutTreeFromArray($array["childs"]);
+                        $childO = self::generateLayoutTreeFromArray($array["childs"], $throwException);
                         $item->addChild($childO);
                     } else if (is_array($array["childs"]) && count($array["childs"]) > 0) {
                         foreach ($array["childs"] as $child) {
-                            $childO = self::generateLayoutTreeFromArray($child);
+                            $childO = self::generateLayoutTreeFromArray($child, $throwException);
                             if ($childO !== false) {
                                 $item->addChild($childO);
                             } else {
+                                if ($throwException) {
+                                    throw new Exception("Could not add child " . var_export($child, true));
+                                }
                                 return false;
                             }
                         }
@@ -194,8 +197,12 @@ class Object_Class_Service  {
                 return $item;
             }
         }
+        if ($throwException) {
+            throw new Exception("Could not add child " . var_export($array, true));
+        }
         return false;
     }
+
 
 
     public static function updateTableDefinitions(&$tableDefinitions, $tableNames) {
