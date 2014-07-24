@@ -647,7 +647,7 @@ pimcore.layout.toolbar = Class.create({
                 objectMenu.menu.items.push({
                     text: t("bulk_import"),
                     iconCls: "pimcore_icon_import",
-                    handler: this.bulkImport
+                    handler: this.bulkImport.bind(this)
                 });
 
 
@@ -1590,7 +1590,18 @@ pimcore.layout.toolbar = Class.create({
         }
     },
 
+
     bulkImport: function() {
+
+        Ext.Msg.confirm(t('warning'), t('warning_bulk_import'), function(btn){
+            if (btn == 'yes'){
+                this.doBulkImport();
+            }
+        }.bind(this));
+   },
+
+
+    doBulkImport: function() {
         var importer = new pimcore.object.bulkimport;
         importer.upload();
     },
