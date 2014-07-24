@@ -32,7 +32,7 @@ class Asset_Document extends Asset {
             try {
                 $pageCount = $this->readPageCount($tmpFile);
                 if($pageCount !== null && $pageCount > 0) {
-                    $this->setProperty("document_page_count", "text", $pageCount);
+                    $this->setCustomSetting("document_page_count", $pageCount);
                 }
             } catch (\Exception $e) {
 
@@ -68,7 +68,7 @@ class Asset_Document extends Asset {
     }
 
     public function getPageCount() {
-        if(!$pageCount = $this->getProperty("document_page_count")) {
+        if(!$pageCount = $this->getCustomSetting("document_page_count")) {
             $pageCount = $this->readPageCount();
         }
         return $pageCount;
