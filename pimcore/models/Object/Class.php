@@ -274,7 +274,7 @@ class Object_Class extends Pimcore_Model_Abstract {
         $cd .= '*/' . "\n";
         $cd .= 'public static function create($values = array()) {';
         $cd .= "\n";
-        $cd .= "\t" . '$object = new self();' . "\n";
+        $cd .= "\t" . '$object = new static();' . "\n";
         $cd .= "\t" . '$object->setValues($values);' . "\n";
         $cd .= "\t" . 'return $object;' . "\n";
         $cd .= "}";

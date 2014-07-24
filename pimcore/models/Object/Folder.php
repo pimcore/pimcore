@@ -27,7 +27,7 @@ class Object_Folder extends Object_Abstract {
      * @return Object_Folder
      */
     public static function create($values) {
-        $object = new self();
+        $object = new static();
         $object->setValues($values);
 
         $object->save();
