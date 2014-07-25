@@ -225,17 +225,18 @@ pimcore.object.klass = Class.create({
                     url: "/admin/class/delete",
                     params: {
                         id: this.id
+                    },
+                    success: function () {
+                        // refresh the object tree
+                        pimcore.globalmanager.get("layout_object_tree").tree.getRootNode().reload();
+
+                        // update object type store
+                        pimcore.globalmanager.get("object_types_store").reload();
                     }
                 });
 
                 this.attributes.reference.getEditPanel().removeAll();
                 this.remove();
-
-                // refresh the object tree
-                pimcore.globalmanager.get("layout_object_tree").tree.getRootNode().reload();
-
-                // update object type store
-                pimcore.globalmanager.get("object_types_store").reload();
             }
         }.bind(this));
     },
