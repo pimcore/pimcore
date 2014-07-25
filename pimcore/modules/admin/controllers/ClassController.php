@@ -844,9 +844,18 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         foreach($json as $groupName => $group) {
             foreach($group as $groupItem) {
+                $displayName = null;
+
                 if ($groupName == "class") {
                     $name = $groupItem["name"];
                     $icon = "database_gear";
+                } else if ($groupName == "customlayout") {
+                    $className = $groupItem["className"];
+
+                    $layoutData = array("className" => $className, "name" => $groupItem["name"]);
+                    $name = serialize($layoutData);
+                    $displayName = $className . " / " . $groupItem["name"];
+                    $icon = "database_lightning";
                 } else {
                     if ($groupName == "objectbrick") {
                         $icon = "bricks";
@@ -854,8 +863,13 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
                         $icon = "table_multiple";
                     }
                     $name = $groupItem["key"];
+
                 }
-                $result[] = array("icon" => $icon, "checked" => true, "type" => $groupName, "name" => $name);
+
+                if (!$displayName) {
+                    $displayName = $name;
+                }
+                $result[] = array("icon" => $icon, "checked" => true, "type" => $groupName, "name" => $name, "displayName" => $displayName);
             }
 
         }
@@ -920,6 +934,42 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
                 $success = Object_Class_Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
                 $this->_helper->json(array("success" => $success !== false));
 
+            } else if ($type == "customlayout") {
+                $layoutData = unserialize($data["name"]);
+                $className = $layoutData["className"];
+                $layoutName = $layoutData["name"];
+
+                if ($item["name"] == $layoutName && $item["className"] == $className) {
+                    $class = Object_Class::getByName($className);
+                    if (!$class) {
+                        throw new Exception("Class does not exist");
+                    }
+
+                    $classId = $class->getId();
+
+
+                    $layoutList = new Object_Class_CustomLayout_List();
+                    $db = Pimcore_Resource::get();
+                    $layoutList->setCondition("name = " . $db->quote($layoutName) . " AND classId = " . $classId);
+                    $layoutList = $layoutList->load();
+
+                    $layoutDefinition = null;
+                    if ($layoutList) {
+                        $layoutDefinition = $layoutList[0];
+                    }
+
+                    if (!$layoutDefinition) {
+                        $layoutDefinition = new Object_Class_CustomLayout();
+                        $layoutDefinition->setName($layoutName);
+                        $layoutDefinition->setClassId($classId);
+                    }
+
+                    $layoutDefinition->setDescription($item["description"]);
+                    $layoutDef = Object_Class_Service::generateLayoutTreeFromArray($item["layoutDefinitions"]);
+                    $layoutDefinition->setLayoutDefinitions($layoutDef);
+                    $layoutDefinition->save();
+                }
+
             }
         }
 
@@ -968,11 +1018,24 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
             $result["objectbrick"][] = $objectBrickJson;
         }
 
+        $customLayouts = new Object_Class_CustomLayout_List();
+        $customLayouts = $customLayouts->load();
+        foreach ($customLayouts as $customLayout) {
+            /** @var  $customLayout Object_Class_CustomLayout */
+            $classId = $customLayout->getClassId();
+            $class = Object_Class::getById($classId);
+            $customLayout->className = $class->getName();
+            $result["customlayout"][] = $customLayout;
+        }
+
+
         header("Content-type: application/json");
         header("Content-Disposition: attachment; filename=\"bulk_export.json\"");
         $result = json_encode($result);
         echo $result;
     }
+
+
 
 
 }

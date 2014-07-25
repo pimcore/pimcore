@@ -57,7 +57,8 @@ pimcore.object.bulkimport = Class.create({
                         {name: "icon", allowBlank: true},
                         {name: "checked", allowBlank: true},
                         {name: "type", allowBlank: true},
-                        {name: "name", allowBlank: true}
+                        {name: "name", allowBlank: true},
+                        {name: "displayName", allowBlank: true}
                     ]
                 }),
                 groupField: 'type'
@@ -116,7 +117,7 @@ pimcore.object.bulkimport = Class.create({
                     },
                     {
                         header: t('name'),
-                        dataIndex: 'name',
+                        dataIndex: 'displayName',
                         id: "bulk_import_defintion_name",
                         editable: false,
 //                        hidden: true,
@@ -179,7 +180,8 @@ pimcore.object.bulkimport = Class.create({
             this.values.push({
                 checked: currentData.data.checked,
                 type: currentData.data.type,
-                name: currentData.data.name
+                name: currentData.data.name,
+                displayName: currentData.data.displayName
             });
         }
 
@@ -228,7 +230,7 @@ pimcore.object.bulkimport = Class.create({
                 });
             }
 
-            this.batchProgressBar.updateText(t('saving') + ' ' + t(this.values[idx].type) + " " + t("definition") + " " + ts(this.values[idx].name) + " (" + (idx + 1) + "/" + this.values.length + ")");
+            this.batchProgressBar.updateText(t('saving') + ' ' + t(this.values[idx].type) + " " + t("definition") + " " + ts(this.values[idx].displayName) + " (" + (idx + 1) + "/" + this.values.length + ")");
 
             Ext.Ajax.request({
                 url: "/admin/class/bulk-commit",
@@ -250,7 +252,7 @@ pimcore.object.bulkimport = Class.create({
                             pimcore.helpers.showNotification(t("success"), t("definitions_saved"));
                         }
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("definition_save_error") + " " + this.values[idx].name);
+                        pimcore.helpers.showNotification(t("error"), t("definition_save_error") + " " + this.values[idx].displayName);
                     }
 
                     this.batchProgressWin.close();
@@ -259,7 +261,7 @@ pimcore.object.bulkimport = Class.create({
                 failure: function(transport) {
                     this.batchProgressWin.close();
                     var response = Ext.decode(transport.responseText);
-                    pimcore.helpers.showNotification(t("error"), t("definition_save_error") + " " + this.values[idx].name);
+                    pimcore.helpers.showNotification(t("error"), t("definition_save_error") + " " + this.values[idx].displayName);
                 }.bind(this)
             });
         }
@@ -271,8 +273,10 @@ pimcore.object.bulkimport = Class.create({
                 return 0;
             case "class":
                 return 1;
-            case "objectbrick":
+            case "customlayout":
                 return 2;
+            case "objectbrick":
+                return 3;
         }
         return 0;
     },
