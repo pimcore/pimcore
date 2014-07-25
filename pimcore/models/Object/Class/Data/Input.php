@@ -184,7 +184,7 @@ class Object_Class_Data_Input extends Object_Class_Data {
      * @throws Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false){
-        if(!$omitMandatoryCheck && $this->getRegex()) {
+        if(!$omitMandatoryCheck && $this->getRegex() && strlen($data) > 0) {
             if(!preg_match("#" . $this->getRegex() . "#", $data)) {
                 throw new Exception("Value in field [ " . $this->getName() . " ] doesn't match input validation '" . $this->getRegex() . "'");
             }
