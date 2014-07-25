@@ -49,7 +49,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
 
 
         if($client) {
-            $search = new Google_CustomsearchService($client);
+            $search = new Google_Service_Customsearch($client);
 
             // determine language
             $language = "";
@@ -154,6 +154,8 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
      * @param $googleResponse
      */
     public function readGoogleResponse($googleResponse) {
+
+        $googleResponse = $googleResponse["modelData"];
         $this->setRaw($googleResponse);
 
         // available factes
