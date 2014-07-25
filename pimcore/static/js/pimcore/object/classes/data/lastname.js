@@ -80,6 +80,19 @@ pimcore.object.classes.data.lastname = Class.create(pimcore.object.classes.data.
         ]);
 
         return this.layout;
+    },
+
+    applySpecialData: function(source) {
+    if (source.datax) {
+        if (!this.datax) {
+            this.datax =  {};
+        }
+        Ext.apply(this.datax,
+            {
+                width: source.datax.width,
+                columnLength: source.datax.columnLength
+            });
     }
+}
 
 });

@@ -164,5 +164,18 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
         });
 
         this.datax.options = options;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    options: source.datax.options,
+                    width: source.datax.width
+                });
+        }
     }
 });

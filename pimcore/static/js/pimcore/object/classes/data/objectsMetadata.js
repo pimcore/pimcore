@@ -326,6 +326,27 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
         }
 
         return this.datax;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    width: source.datax.width,
+                    height: source.datax.height,
+                    maxItems: source.datax.maxItems,
+                    relationType: source.datax.relationType,
+                    allowedClassId: source.datax.allowedClassId,
+                    visibleFields: source.datax.visibleFields,
+                    columns: source.datax.columns,
+                    remoteOwner: source.datax.remoteOwner,
+                    lazyLoading: source.datax.lazyLoading,
+                    classes: source.datax.classes
+                });
+        }
     }
 
 });

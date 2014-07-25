@@ -63,6 +63,19 @@ pimcore.object.classes.data.checkbox = Class.create(pimcore.object.classes.data.
         ]);
 
         return this.layout;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    defaultValue: source.datax.defaultValue
+
+                });
+        }
     }
 
 });

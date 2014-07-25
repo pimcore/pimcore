@@ -178,5 +178,26 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
         data.name = "keyvaluepairs";
 
         return data;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    keyWidth: source.datax.keyWidth,
+                    valueWidth: source.datax.valueWidth,
+                    descWidth: source.datax.descWidth,
+                    height: source.datax.height,
+                    maxheight: source.datax.maxheight,
+                    groupWidth: source.datax.groupWidth,
+                    groupDescWidth: source.datax.groupDescWidth,
+                    multivalent: source.datax.multivalent,
+                    metawidth: source.datax.metawidth,
+                    metaVisible: source.datax.metaVisible,
+                });
+        }
     }
 });

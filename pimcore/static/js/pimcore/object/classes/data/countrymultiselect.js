@@ -116,6 +116,18 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
     applyData: function ($super) {
         $super();
         delete this.datax.options;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    restrictTo: source.datax.restrictTo
+                });
+        }
     }
 
 });

@@ -313,6 +313,28 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
 
 
         return this.layout;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    width: source.datax.width,
+                    assetUploadPath: source.datax.assetUploadPath,
+                    relationType: source.datax.relationType,
+                    remoteOwner: source.datax.remoteOwner,
+                    lazyLoading: source.datax.lazyLoading,
+                    classes: source.datax.classes,
+                    objectsAllowed: source.datax.objectsAllowed,
+                    assetsAllowed: source.datax.assetsAllowed,
+                    assetTypes: source.datax.assetTypes,
+                    documentsAllowed: source.datax.documentsAllowed,
+                    documentTypes: source.datax.documentTypes
+                });
+        }
     }
 
 });

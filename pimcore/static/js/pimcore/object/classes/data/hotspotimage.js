@@ -69,5 +69,21 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
         });
 
         return this.layout;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    width: source.datax.width,
+                    height: source.datax.height,
+                    uploadPath: source.datax.uploadPath,
+                    ratioX: source.datax.ratioX,
+                    ratioY: source.datax.ratioY
+                });
+        }
     }
 });

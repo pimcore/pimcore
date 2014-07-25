@@ -109,6 +109,22 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
         ]);
 
         this.specificPanel.doLayout();
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    allowedTypes: source.datax.allowedTypes,
+                    lazyLoading: source.datax.lazyLoading,
+                    maxItems: source.datax.maxItems,
+                    disallowAddRemove: source.datax.disallowAddRemove,
+                    disallowReorder: source.datax.disallowReorder
+                });
+        }
     }
 
 });

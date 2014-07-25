@@ -143,6 +143,18 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
         }));
 
         return this.layout;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    remoteOwner: source.datax.remoteOwner
+                });
+        }
     }
 
 

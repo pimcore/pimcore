@@ -149,6 +149,21 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
         this.algorithmsStore.load();
         
         return this.layout;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    width: source.datax.width,
+                    algorithm: source.datax.algorithm,
+                    salt: source.datax.salt,
+                    saltlocation: source.datax.saltlocation
+                });
+        }
     }
 
 });

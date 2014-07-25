@@ -63,6 +63,19 @@ pimcore.object.classes.data.video = Class.create(pimcore.object.classes.data.dat
         ]);
 
         return this.layout;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    width: source.datax.width,
+                    height: source.datax.height
+                });
+        }
     }
 
 });

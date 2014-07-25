@@ -173,5 +173,19 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
         });
 
         this.datax.options = options;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    options: source.datax.options,
+                    width: source.datax.width,
+                    height: source.datax.height
+                });
+        }
     }
 });

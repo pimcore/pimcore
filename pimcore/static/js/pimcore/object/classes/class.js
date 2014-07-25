@@ -812,6 +812,8 @@ pimcore.object.classes.klass = Class.create({
             }
         }
 
+        newNode.attributes.object.applySpecialData(this.attributes.object);
+
         this.parentNode.insertBefore(newNode, this);
         var parentNode = this.parentNode;
         if (removeExisting) {

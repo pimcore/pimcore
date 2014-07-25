@@ -290,7 +290,12 @@ pimcore.object.classes.data.data = Class.create({
 
     isInCustomLayoutEditor: function() {
         return this.inCustomLayoutEditor;
+    },
+
+    applySpecialData: function(source) {
+
     }
+
 
 
 });

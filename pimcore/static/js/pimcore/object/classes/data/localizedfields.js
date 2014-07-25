@@ -149,5 +149,22 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
         data.name = "localizedfields";
 
         return data;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    region: source.datax.region,
+                    layout: source.datax.layout,
+                    width: source.datax.width,
+                    height: source.datax.height,
+                    maxTabs: source.datax.maxTabs,
+                    labelWidth: source.datax.labelWidth
+                });
+        }
     }
 });

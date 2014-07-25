@@ -45,4 +45,5 @@ pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data
     getIconClass: function () {
         return "pimcore_icon_time";
     }
+
 });

@@ -137,6 +137,24 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
         }));
 
         return this.layout;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    width: source.datax.width,
+                    height: source.datax.height,
+                    maxItems: source.datax.maxItems,
+                    relationType: source.datax.relationType,
+                    remoteOwner: source.datax.remoteOwner,
+                    lazyLoading: source.datax.lazyLoading,
+                    classes: source.datax.classes
+                });
+        }
     }
 
 });

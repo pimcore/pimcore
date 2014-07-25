@@ -97,5 +97,17 @@ pimcore.object.classes.data.country = Class.create(pimcore.object.classes.data.d
         countryStore.load();
 
         return this.layout;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    restrictTo: source.datax.restrictTo
+                });
+        }
     }
 });

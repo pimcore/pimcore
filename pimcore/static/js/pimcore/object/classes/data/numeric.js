@@ -109,6 +109,24 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
         }
 
         return this.layout;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    width: source.datax.width,
+                    defaultValue: source.datax.defaultValue,
+                    integer: source.datax.integer,
+                    unsigned: source.datax.unsigned,
+                    minValue: source.datax.minValue,
+                    maxValue: source.datax.maxValue,
+                    decimalPrecision: source.datax.decimalPrecision
+                });
+        }
     }
 
 });

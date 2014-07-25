@@ -72,6 +72,20 @@ pimcore.object.classes.data.personamultiselect = Class.create(pimcore.object.cla
     applyData: function ($super) {
         $super();
         delete this.datax.options;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    options: source.datax.options,
+                    width: source.datax.width,
+                    height: source.datax.height
+                });
+        }
     }
 
 });

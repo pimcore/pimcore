@@ -72,6 +72,18 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
         }
 
         return true;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    allowedTypes: source.datax.allowedTypes
+                });
+        }
     }
     
 });

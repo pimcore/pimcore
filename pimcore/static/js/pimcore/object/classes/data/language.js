@@ -62,5 +62,17 @@ pimcore.object.classes.data.language = Class.create(pimcore.object.classes.data.
         ]);
 
         return this.layout;
+    },
+
+    applySpecialData: function(source) {
+    if (source.datax) {
+        if (!this.datax) {
+            this.datax =  {};
+        }
+        Ext.apply(this.datax,
+            {
+                onlySystemLanguages: source.datax.onlySystemLanguages
+            });
     }
+}
 });
