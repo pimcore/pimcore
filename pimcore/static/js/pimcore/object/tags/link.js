@@ -110,171 +110,11 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
     },
 
     openEditor: function () {
-
-
-        this.fieldPath = new Ext.form.TextField({
-            fieldLabel: t("path"),
-            value: this.data.path,
-            name: "path",
-            width: 320,
-            cls: "pimcore_droptarget_input",
-            enableKeyEvents: true,
-            listeners: {
-                keyup: function (el) {
-                    if(el.getValue().match(/^www\./)) {
-                        el.setValue("http://" + el.getValue());
-                    }
-                }
-            }
+        this.window = pimcore.helpers.editmode.openLinkPanel(this.data, {
+            empty: this.empty.bind(this),
+            cancel: this.cancel.bind(this),
+            save: this.save.bind(this)
         });
-
-
-        this.fieldPath.on("render", function (el) {
-            // add drop zone
-            new Ext.dd.DropZone(el.getEl(), {
-                reference: this,
-                ddGroup: "element",
-                getTargetFromEvent: function(e) {
-                    return this.reference.fieldPath.getEl();
-                },
-
-                onNodeOver : function(target, dd, e, data) {
-                    return Ext.dd.DropZone.prototype.dropAllowed;
-
-                }.bind(this),
-
-                onNodeDrop : function (target, dd, e, data) {
-                    if (data.node.attributes.elementType == "asset" || data.node.attributes.elementType == "document") {
-                        this.fieldPath.setValue(data.node.attributes.path);
-                        return true;
-                    }
-                    return false;
-                }.bind(this)
-            });
-        }.bind(this));
-
-
-        this.form = new Ext.FormPanel({
-            items: [
-                {
-                    xtype:'tabpanel',
-                    activeTab: 0,
-                    deferredRender: false,
-                    defaults:{autoHeight:true, bodyStyle:'padding:10px'},
-                    border: false,
-                    items: [
-                        {
-                            title:t('basic'),
-                            layout:'form',
-                            border: false,
-                            defaultType: 'textfield',
-                            items: [
-                                {
-                                    fieldLabel: t('text'),
-                                    name: 'text',
-                                    value: this.data.text
-                                },
-                                {
-                                    xtype: "compositefield",
-                                    items: [this.fieldPath, {
-                                        xtype: "button",
-                                        iconCls: "pimcore_icon_search",
-                                        handler: this.openSearchEditor.bind(this)
-                                    }]
-                                },
-                                {
-                                    xtype:'fieldset',
-                                    title: t('properties'),
-                                    collapsible: false,
-                                    autoHeight:true,
-                                    defaultType: 'textfield',
-                                    items :[
-                                        {
-                                            xtype: "combo",
-                                            fieldLabel: t('target'),
-                                            name: 'target',
-                                            triggerAction: 'all',
-                                            editable: true,
-                                            store: ["","_blank","_self","_top","_parent"],
-                                            value: this.data.target
-                                        },
-                                        {
-                                            fieldLabel: t('parameters'),
-                                            name: 'parameters',
-                                            value: this.data.parameters
-                                        },
-                                        {
-                                            fieldLabel: t('anchor'),
-                                            name: 'anchor',
-                                            value: this.data.anchor
-                                        },
-                                        {
-                                            fieldLabel: t('title'),
-                                            name: 'title',
-                                            value: this.data.title
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
-                            title:t('advanced'),
-                            layout:'form',
-                            defaultType: 'textfield',
-                            border: false,
-                            items: [
-                                {
-                                    fieldLabel: t('accesskey'),
-                                    name: 'accesskey',
-                                    value: this.data.accesskey
-                                },
-                                {
-                                    fieldLabel: t('relation'),
-                                    name: 'rel',
-                                    value: this.data.rel
-                                },
-                                {
-                                    fieldLabel: t('tabindex'),
-                                    name: 'tabindex',
-                                    value: this.data.tabindex
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ],
-            buttons: [
-                {
-                    text: t("empty"),
-                    listeners:  {
-                        "click": this.empty.bind(this)
-                    }
-                },
-                {
-                    text: t("cancel"),
-                    listeners:  {
-                        "click": this.cancel.bind(this)
-                    }
-                },
-                {
-                    text: t("save"),
-                    listeners: {
-                        "click": this.save.bind(this)
-                    },
-                    icon: "/pimcore/static/img/icon/tick.png"
-                }
-            ]
-        });
-
-
-        this.window = new Ext.Window({
-            width: 500,
-            height: 330,
-            title: "Edit link",
-            items: [this.form],
-            layout: "fit"
-        });
-        this.window.show();
     },
 
     openSearchEditor: function () {
@@ -283,15 +123,8 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
         });
     },
 
-    addDataFromSelector: function (item) {
-        if (item) {
-            this.fieldPath.setValue(item.fullpath);
-            return true;
-        }
-    },
-
     save: function () {
-        var values = this.form.getForm().getFieldValues();
+        var values = this.window.getComponent("form").getForm().getFieldValues();
         if(Ext.encode(values) != Ext.encode(this.data)) {
             this.dirty = true; 
         }

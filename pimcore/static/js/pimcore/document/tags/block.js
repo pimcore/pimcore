@@ -48,7 +48,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                         value: 1,
                         mode: "local",
                         triggerAction: "all",
-                        width: 40,
+                        width: 55,
                         listeners: {
                             /*"focus": function (el) {
                                 Ext.get(el).addClass("pimcore_tag_block_force_show_buttons");
@@ -170,7 +170,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
             mode: "local",
             triggerAction: "all",
             value: 1,
-            width: 40
+            width: 55
         });
         amountBox.render(amountEl);
 

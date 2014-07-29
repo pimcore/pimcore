@@ -406,7 +406,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     },
 
     openEditWindow: function() {
-        var editor = new pimcore.element.tag.imagecropper(this.datax.id, this.datax, function (data) {
+        var editor = pimcore.helpers.openImageCropper(this.datax.id, this.datax, function (data) {
             this.datax.cropWidth = data.cropWidth;
             this.datax.cropHeight = data.cropHeight;
             this.datax.cropTop = data.cropTop;
@@ -419,7 +419,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     },
 
     openHotspotWindow: function() {
-        var editor = new pimcore.element.tag.imagehotspotmarkereditor(this.datax.id, this.datax, function (data) {
+        var editor = pimcore.helpers.openImageHotspotMarkerEditor(this.datax.id, this.datax, function (data) {
             this.datax["hotspots"] = data["hotspots"];
             this.datax["marker"] = data["marker"];
         }.bind(this));

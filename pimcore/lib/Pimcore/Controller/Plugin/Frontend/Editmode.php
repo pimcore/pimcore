@@ -75,13 +75,13 @@ Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin_Abstr
         $conf = Pimcore_Config::getSystemConfig();
 
         $editmodeStylesheets = array(
-            "/pimcore/static/js/lib/ext/resources/css/ext-all.css",
+            /*"/pimcore/static/js/lib/ext/resources/css/ext-all.css",
             "/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css",
-            "/pimcore/static/css/icons.css",
-            "/pimcore/static/css/editmode.css",
             "/pimcore/static/js/lib/ext-plugins/ux/css/Spinner.css",
             "/pimcore/static/js/lib/ext-plugins/ux/css/MultiSelect.css",
-            "/pimcore/static/css/ext-admin-overwrite.css"
+            "/pimcore/static/css/ext-admin-overwrite.css",*/
+            "/pimcore/static/css/icons.css",
+            "/pimcore/static/css/editmode.css?asd=" . time(),
         );
 
         //add plugin editmode JS and CSS

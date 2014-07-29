@@ -312,7 +312,7 @@ class Document_Tag_Areablock extends Document_Tag {
         return array(
             "areablock_toolbar" => array(
                 "title" => "",
-                "width" => 160,
+                "width" => 172,
                 "x" => 20,
                 "y" => 50,
                 "xAlign" => "left",

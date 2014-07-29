@@ -97,7 +97,7 @@
 }
 
 .pimcore_block_amount {
-    width: 40px;
+    /*width: 40px;*/
 }
 
 .pimcore_block_type,
@@ -208,8 +208,7 @@
 .pimcore_tag_link .pimcore_edit_link_button {
 	position: absolute;
 	right: 0;
-	top: 0;
-	width: 16px;
+	top: -3px;
 }
 
 .pimcore_tag_snippet_empty {
@@ -255,6 +254,14 @@
     border-collapse: separate;
     margin: 0;
     table-layout: auto;
+}
+
+.pimcore_tag_renderlet {
+    position: relative;
+}
+
+.pimcore_tag_snippet {
+    position: relative;
 }
 
 .pimcore_tag_snippet .x-panel-body {
@@ -334,4 +341,450 @@
 
 .hasMetadata {
     color: #db1d09;
+}
+
+.pimcore_tag_multihref .x-panel {
+    border:1px solid #000;
+}
+
+.pimcore_tag_multihref .x-grid3-resize-marker, .pimcore_tag_multihref .x-grid3-resize-proxy {
+    display: none;
+}
+
+
+
+
+
+
+
+
+
+/* ext component styles */
+
+*[class^="x-"], *[class*=" x-"], *[class^="ux-"], *[class*=" ux-"] {
+    box-sizing: border-box;
+    font-family: Arial , Tahoma, Verdana, sans-serif;
+    font-size: 11px;
+    padding: 0;
+    margin: 0;
+}
+
+*[class*="x-"] em {
+    font-style: normal;
+}
+
+.x-unselectable, .x-unselectable * {
+    user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: -moz-none;
+    -webkit-user-select: none;
+}
+
+.x-btn {
+    cursor: pointer;
+    color: #fff;
+    border-collapse: collapse;
+    padding: 0;
+    margin: 0;
+
+    border-radius: 2px;
+    text-decoration: none;
+    display: inline-block;
+    color: #FFFFFF;
+    background-color: #363636;
+}
+
+.x-btn-over {
+    background-color: #222;
+}
+
+.x-btn th, .x-btn td, .x-btn tbody, .x-btn tr {
+    padding: 0;
+}
+
+.x-btn td {
+    display: none;
+}
+
+.x-btn .x-btn-mc {
+    display: block;
+}
+
+.x-btn-text {
+    display: inline-block;
+    border:0;
+    margin: 0;
+
+    background-color: transparent;
+    background-position: 3px center !important;
+    background-repeat: no-repeat !important;
+
+    padding: 0 0 0 22px;
+    min-height: 21px;
+    min-width: 22px;
+    outline: 0 none;
+    white-space: nowrap;
+    overflow: visible;
+    cursor: pointer;
+}
+
+.x-btn .x-btn-arrow {
+    padding-right: 10px;
+    position: relative;
+}
+
+.x-btn .x-btn-arrow:after {
+    position: absolute;
+    top: 6px;
+    left: 22px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 3px 0 3px;
+    border-color: #ffffff transparent transparent transparent;
+    content: "";
+}
+
+.x-btn-text-icon {
+    padding-right: 5px;
+}
+
+.x-btn-text-icon .x-btn-text {
+    padding-left: 25px;
+}
+
+.x-menu {
+
+}
+
+.x-menu-list {
+    padding: 5px;
+    list-style: none;
+    background: #000;
+    color: #fff;
+    border-radius: 2px;
+    margin: 2px 0 0 0;
+    height: auto !important;
+}
+
+.x-menu-list-item {
+    display: block;
+    outline: 0 none;
+    padding: 2px 0 2px 0;
+    margin: 2px 0 2px 0;
+    border-radius: 2px;
+    background: #363636;
+}
+
+.x-menu-item {
+    color:#fff;
+    padding: 2px;
+    outline: 0 none;
+}
+
+.x-menu-item-active {
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+}
+
+.x-menu-item:link, .x-menu-item:visited, .x-menu-item:focus, .x-menu-item:active, .x-menu-item:hover {
+    outline: 0 none;
+    text-decoration: none;
+    color: #fff;
+}
+
+.x-menu-item-active .x-menu-item, .x-menu-item:hover {
+    text-decoration: none;
+    color: #000;
+}
+
+.x-menu-item-text {
+
+}
+
+.x-menu-item-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+}
+
+.x-tip {
+    background: #000;
+    color: #fff;
+    padding: 5px;
+    border-radius: 2px;
+    width: auto !important;
+    box-shadow: 0px 0px 20px 5px #fff;
+
+    /*display: block !important;
+    visibility: visible !important;*/
+}
+
+.x-tip-anchor {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    position: absolute !important;
+
+    display: block !important;
+    /*
+    visibility: visible !important;*/
+}
+
+.x-tip-anchor-top {
+    top: -5px;
+    left: 5px;
+    border-width: 0 6px 6px 6px;
+    border-color: transparent transparent #000 transparent;
+}
+
+.x-tip-anchor-right {
+    right: -5px !important;
+    top: 3px !important;
+    border-width: 6px 0 6px 6px;
+    border-color: transparent transparent transparent #000;
+}
+
+.x-tip-anchor-bottom {
+    bottom: -5px;
+    left: 5px;
+    border-width: 6px 6px 0 6px;
+    border-color:  #000 transparent transparent transparent;
+}
+
+.x-tip-anchor-left {
+    left: -5px;
+    top: 5px;
+    border-width: 6px 6px 6px 0;
+    border-color: transparent #000 transparent transparent;
+}
+
+.x-window {
+    background: #000;
+    padding: 5px;
+    border-radius: 2px;
+    border:1px solid #fff;
+}
+
+.x-window-header {
+    height: 15px;
+}
+
+.x-window-draggable {
+    cursor: move;
+}
+
+.x-tool-toggle {
+    cursor: pointer;
+    float: right;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 6px 6px 6px;
+    border-color: transparent transparent #fff transparent;
+}
+
+.x-window .x-dlg-focus {
+    display: none;
+}
+
+.x-panel-ghost {
+    z-index:12000;
+    overflow:hidden;
+    position:absolute;
+    left:0;top:0;
+    opacity:.65;
+    -moz-opacity:.65;
+    filter:alpha(opacity=65);
+    background-color:#f2f2f2;
+}
+
+.x-panel-ghost ul {
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    font-size:0;
+    line-height:0;
+    border:1px solid #d0d0d0;
+    border-top:0 none;
+    display:block;
+}
+
+.x-panel-ghost * {
+    cursor:move !important;
+}
+
+.x-panel-ghost .x-window-tl {
+    border-bottom:1px solid;
+}
+
+.x-form-text {
+    border: 1px solid #C1C1C1;
+}
+
+.x-form-field-wrap {
+    position: relative;
+}
+
+.x-form-field-wrap .x-form-trigger {
+    width: 22px;
+    height: 21px;
+    border: 0;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    background: #000 no-repeat center center;
+    border-bottom-right-radius: 2px;
+    border-top-right-radius: 2px;
+}
+
+.x-form-field-wrap .x-form-date-trigger {
+    background-image: url(/pimcore/static/img/icon/calendar.png);
+}
+
+.x-form-field-wrap .x-form-arrow-trigger {
+    background-image: url(/pimcore/static/img/icon/bullet_arrow_down.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.x-form-field-wrap .x-form-spinner-trigger {
+    background-image: url(/pimcore/static/img/icon/arrow_ns.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 15px;
+}
+
+.x-form-field {
+    font-size: 12px;
+    line-height: 14px;
+}
+
+.x-form-text {
+    padding: 3px 3px 2px 3px;
+}
+
+
+
+.x-date-menu .x-menu-item {
+    padding:1px 24px 1px 4px;
+    white-space: nowrap;
+}
+
+.x-date-menu .x-menu-item .x-menu-item-icon {
+    width:10px;
+    height:10px;
+    margin-right:5px;
+    background-position:center -4px !important;
+}
+
+.x-date-menu .x-menu-list{
+    padding: 0;
+}
+
+.x-date-menu {
+    padding:0 !important;
+}
+
+.ext-ie .x-date-menu{
+    height: 199px;
+}
+
+.ext-strict .ext-ie .x-date-menu, .ext-border-box .ext-ie8 .x-date-menu{
+    height: 197px;
+}
+
+.x-panel-tbar {
+    background: #000;
+}
+
+.x-toolbar {
+    color: #fff;
+    padding: 3px 5px 3px 5px;
+}
+
+.x-toolbar td {
+    vertical-align: middle;
+}
+
+.x-toolbar-left {
+    width: 100%;
+}
+
+.x-toolbar .x-btn {
+    margin-left: 3px;
+    vertical-align: middle;
+}
+
+.x-grid3-row {
+    padding: 2px 0 2px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.x-grid3-row-last {
+    border:0;
+}
+
+.x-grid3-header {
+    background: #EDEDED;
+}
+
+.x-grid3-header {
+    padding: 2px 5px;
+}
+
+.x-grid3-scroller {
+    padding: 2px 5px;
+}
+
+.x-action-col-cell {
+    cursor: pointer;
+}
+
+.x-fieldset {
+    border:1px solid #000;
+}
+
+.ux-mselect {
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+.x-list-body {
+
+}
+
+.x-list-body dl {
+    border-bottom: 1px solid #ccc;
+    padding: 3px 5px;
+    cursor: pointer;
+    margin: 0;
+}
+
+.x-list-body .ux-mselect-selected {
+    background: #EDEDED;
+}
+
+.x-combo-list {
+    background: #000;
+    padding: 5px;
+    height: auto !important;
+}
+
+.x-combo-list .x-combo-list-inner {
+    width: auto !important;
+}
+
+.x-combo-list .x-combo-list-item {
+    padding: 5px;
+    color:#fff;
+}
+
+.x-combo-list .x-combo-selected {
+    color:#000;
+    background:#fff;
+    border-radius: 2px;
+    cursor: pointer;
 }
