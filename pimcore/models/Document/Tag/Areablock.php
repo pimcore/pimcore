@@ -316,7 +316,7 @@ class Document_Tag_Areablock extends Document_Tag {
                 "x" => 20,
                 "y" => 50,
                 "xAlign" => "left",
-                "buttonWidth" => 148,
+                "buttonWidth" => 154,
                 "buttonMaxCharacters" => 20
             )
         );

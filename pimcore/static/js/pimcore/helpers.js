@@ -1897,7 +1897,7 @@ pimcore.helpers.openImageHotspotMarkerEditor = function (imageId, data, saveCall
 
 pimcore.helpers.editmode = {};
 
-pimcore.helpers.editmode.openLinkPanel = function (data, callback) {
+pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
     var fieldPath = new Ext.form.TextField({
         fieldLabel: t('path'),
@@ -2089,6 +2089,193 @@ pimcore.helpers.editmode.openLinkPanel = function (data, callback) {
         title: t("edit_link"),
         items: [form],
         layout: "fit"
+    });
+    window.show();
+
+    return window;
+};
+
+
+pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
+
+    var form = null;
+    var fieldPath = new Ext.form.TextField({
+        fieldLabel: t('path'),
+        value: data.path,
+        name: "path",
+        width: 320,
+        cls: "pimcore_droptarget_input",
+        enableKeyEvents: true,
+        listeners: {
+            keyup: function (el) {
+                if(el.getValue().indexOf("you") >= 0 && el.getValue().indexOf("http") >= 0) {
+                    form.getComponent("type").setValue("youtube");
+                } else if (el.getValue().indexOf("vim") >= 0 && el.getValue().indexOf("http") >= 0) {
+                    form.getComponent("type").setValue("vimeo");
+                }
+            }.bind(this)
+        }
+    });
+
+    var poster = new Ext.form.TextField({
+        fieldLabel: t('poster_image'),
+        value: data.poster,
+        name: "poster",
+        width: 320,
+        cls: "pimcore_droptarget_input",
+        enableKeyEvents: true,
+        listeners: {
+            keyup: function (el) {
+                //el.setValue(data.poster)
+            }.bind(this)
+        }
+    });
+
+    var initDD = function (el) {
+        // register at global DnD manager
+        new Ext.dd.DropZone(el.getEl(), {
+            reference: this,
+            ddGroup: "element",
+            getTargetFromEvent: function(e) {
+                return el.getEl();
+            },
+
+            onNodeOver : function(target, dd, e, data) {
+                if (target && target.getAttribute("name") == "poster") {
+                    if (data.node.attributes.elementType == "asset" && data.node.attributes.type == "image") {
+                        return Ext.dd.DropZone.prototype.dropAllowed;
+                    }
+                } else {
+                    if (data.node.attributes.elementType == "asset" && data.node.attributes.type == "video") {
+                        return Ext.dd.DropZone.prototype.dropAllowed;
+                    }
+                }
+                return Ext.dd.DropZone.prototype.dropNotAllowed;
+            }.bind(this),
+
+            onNodeDrop : function (target, dd, e, data) {
+                if(target) {
+                    if(target.getAttribute("name") == "path") {
+                        if (data.node.attributes.elementType == "asset" && data.node.attributes.type == "video") {
+                            fieldPath.setValue(data.node.attributes.path);
+                            form.getComponent("type").setValue("asset");
+                            return true;
+                        }
+                    } else if (target.getAttribute("name") == "poster") {
+                        if (data.node.attributes.elementType == "asset" && data.node.attributes.type == "image") {
+                            poster.setValue(data.node.attributes.path);
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }.bind(this)
+        });
+    };
+
+    fieldPath.on("render", initDD);
+    poster.on("render", initDD);
+
+    var searchButton = new Ext.Button({
+        iconCls: "pimcore_icon_search",
+        handler: function () {
+            pimcore.helpers.itemselector(false, function (item) {
+                if (item) {
+                    fieldPath.setValue(item.fullpath);
+                    return true;
+                }
+            }, {
+                type: ["asset"],
+                subtype: {
+                    asset: ["video"]
+                }
+            });
+        }
+    });
+
+    var updateType = function (type) {
+        searchButton.enable();
+        var labelEl = form.getComponent("pathContainer").label;
+        labelEl.update(t("path"));
+
+        if(type != "asset") {
+            searchButton.disable();
+        }
+        if(type == "youtube") {
+            labelEl.update("URL / ID");
+        }
+        if(type == "vimeo") {
+            labelEl.update("URL");
+        }
+    };
+
+    form = new Ext.FormPanel({
+        itemId: "form",
+        bodyStyle: "padding:10px;",
+        items: [{
+            xtype: "combo",
+            itemId: "type",
+            fieldLabel: t('type'),
+            name: 'type',
+            triggerAction: 'all',
+            editable: true,
+            mode: "local",
+            store: ["asset","youtube","vimeo"],
+            value: data.type,
+            listeners: {
+                select: function (combo) {
+                    var type = combo.getValue();
+                    updateType(type);
+                }.bind(this)
+            }
+        }, {
+            xtype: "compositefield",
+            itemId: "pathContainer",
+            items: [fieldPath, searchButton]
+        }, poster,{
+            xtype: "textfield",
+            name: "title",
+            fieldLabel: t('title'),
+            width: 320,
+            value: data.title
+        },{
+            xtype: "textarea",
+            name: "description",
+            fieldLabel: t('description'),
+            width: 320,
+            height: 50,
+            value: data.description
+        }],
+        buttons: [
+            {
+                text: t("cancel"),
+                listeners:  {
+                    "click": callback["cancel"]
+                }
+            },
+            {
+                text: t("save"),
+                listeners: {
+                    "click": callback["save"]
+                },
+                icon: "/pimcore/static/img/icon/tick.png"
+            }
+        ]
+    });
+
+
+    var window = new Ext.Window({
+        width: 500,
+        height: 250,
+        title: t("video"),
+        items: [form],
+        layout: "fit",
+        listeners: {
+            afterrender: function () {
+                updateType(data.type);
+            }.bind(this)
+        }
     });
     window.show();
 

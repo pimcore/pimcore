@@ -343,14 +343,13 @@
     color: #db1d09;
 }
 
-.pimcore_tag_multihref .x-panel {
+.pimcore_tag_multihref .x-panel, .pimcore_tag_table .x-panel  {
     border:1px solid #000;
 }
 
-.pimcore_tag_multihref .x-grid3-resize-marker, .pimcore_tag_multihref .x-grid3-resize-proxy {
-    display: none;
+.pimcore_tag_select {
+    display: inline-block;
 }
-
 
 
 
@@ -367,6 +366,7 @@
     font-size: 11px;
     padding: 0;
     margin: 0;
+    outline: 0 none;
 }
 
 *[class*="x-"] em {
@@ -385,7 +385,7 @@
     cursor: pointer;
     color: #fff;
     border-collapse: collapse;
-    padding: 0;
+    padding: 0 3px 0 3px;
     margin: 0;
 
     border-radius: 2px;
@@ -393,6 +393,7 @@
     display: inline-block;
     color: #FFFFFF;
     background-color: #363636;
+    display: inline-block;
 }
 
 .x-btn-over {
@@ -415,18 +416,27 @@
     display: inline-block;
     border:0;
     margin: 0;
+    color:#fff;
 
     background-color: transparent;
-    background-position: 3px center !important;
+    background-position: left center !important;
     background-repeat: no-repeat !important;
 
-    padding: 0 0 0 22px;
+    padding: 0 0 0 0;
     min-height: 21px;
-    min-width: 22px;
+    min-width: 16px;
     outline: 0 none;
     white-space: nowrap;
     overflow: visible;
     cursor: pointer;
+}
+
+.x-btn-icon .x-btn-text {
+    padding-left: 0;
+}
+
+.x-btn-noicon {
+
 }
 
 .x-btn .x-btn-arrow {
@@ -436,8 +446,8 @@
 
 .x-btn .x-btn-arrow:after {
     position: absolute;
-    top: 6px;
-    left: 22px;
+    top: 4px;
+    right: 2px;
     width: 0;
     height: 0;
     border-style: solid;
@@ -471,16 +481,18 @@
 .x-menu-list-item {
     display: block;
     outline: 0 none;
-    padding: 2px 0 2px 0;
+    padding: 4px 0 2px 0;
     margin: 2px 0 2px 0;
     border-radius: 2px;
     background: #363636;
+    min-height: 21px;
 }
 
 .x-menu-item {
     color:#fff;
-    padding: 2px;
+    padding: 2px 5px 2px 25px;
     outline: 0 none;
+    position: relative;
 }
 
 .x-menu-item-active {
@@ -505,6 +517,9 @@
 }
 
 .x-menu-item-icon {
+    position: absolute;
+    left:3px;
+    top:0;
     width: 16px;
     height: 16px;
     margin-right: 5px;
@@ -620,12 +635,17 @@
     border-bottom:1px solid;
 }
 
+.x-panel.x-panel-noborder {
+    border:0;
+}
+
 .x-form-text {
     border: 1px solid #C1C1C1;
 }
 
 .x-form-field-wrap {
     position: relative;
+    clear: both;
 }
 
 .x-form-field-wrap .x-form-trigger {
@@ -719,7 +739,6 @@
 }
 
 .x-grid3-row {
-    padding: 2px 0 2px 0;
     border-bottom: 1px solid #ccc;
 }
 
@@ -729,14 +748,61 @@
 
 .x-grid3-header {
     background: #EDEDED;
+    border-bottom: 1px solid #ccc;
 }
 
 .x-grid3-header {
-    padding: 2px 5px;
+    padding: 0;
 }
 
 .x-grid3-scroller {
-    padding: 2px 5px;
+    padding: 0;
+}
+
+.x-grid3-body {
+    border-bottom: 1px solid #ccc;
+}
+
+.x-grid3-resize-marker, .x-grid3-resize-proxy {
+    display: none;
+}
+
+.x-grid3-cell {
+    border-right: 1px solid #ccc;
+
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: ignore;
+}
+
+
+.x-grid3-cell-inner, .x-grid3-hd-inner {
+    height: 25px;
+    padding: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.x-grid3-hd-row td, .x-grid3-row td, .x-grid3-summary-row td {
+    outline:0;
+}
+
+.x-grid3-cell-selected {
+    background-color: #DEDEDE;
+}
+
+.x-grid3-row-selected {
+    background-color: #DEDEDE;
+}
+
+.x-grid3-row-over {
+    background-color: #EDEDED;
+}
+
+.x-grid-editor .x-form-text {
+    height: 25px !important;
+    padding: 5px;
 }
 
 .x-action-col-cell {
@@ -763,6 +829,10 @@
     margin: 0;
 }
 
+.ux-form-multiselect .x-fieldset {
+    box-sizing: content-box;
+}
+
 .x-list-body .ux-mselect-selected {
     background: #EDEDED;
 }
@@ -787,4 +857,70 @@
     background:#fff;
     border-radius: 2px;
     cursor: pointer;
+}
+
+.x-date-inner {
+    border-collapse: collapse;
+}
+
+.x-date-inner td, .x-date-inner th {
+    width: 25px;
+    text-align: center;
+    border: 1px solid #fff;
+    padding: 2px;
+}
+
+.x-date-inner th {
+    background-color: #ccc;
+    color: #000;
+}
+
+.x-date-inner td a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.x-date-right, .x-date-left {
+    width: 16px;
+}
+
+.x-date-right a, .x-date-left a {
+    width: 16px;
+    display: inline-block;
+}
+
+.x-date-right a {
+    background: url(/pimcore/static/img/icon/bullet_right.png) center center no-repeat;
+}
+
+.x-date-left a {
+    background: url(/pimcore/static/img/icon/bullet_left.png) center center no-repeat;
+}
+
+.x-date-mp {
+    padding: 3px;
+    height: auto !important;
+}
+
+.x-date-mp-month, .x-date-mp-year {
+    text-align: center;
+    border:1px solid #363636;
+}
+
+.x-date-mp-sel {
+    background:#000;
+}
+
+.x-date-mp a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.x-date-mp-ok, .x-date-mp-cancel {
+    color: #000;
+    padding: 3px;
+    background: #fff;
+    border-radius: 2px;
+    border: 0;
+    margin-right: 3px;
 }

@@ -824,7 +824,7 @@
 }
 
 .pimcore_tag_table_empty {
-    background: url(/pimcore/static/img/icon/bin_closed.png) !important;
+    background: url(/pimcore/static/img/icon/bin_closed.png) left center no-repeat !important;
 }
 
 
