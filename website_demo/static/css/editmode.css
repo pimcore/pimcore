@@ -91,3 +91,8 @@
 .x-panel label {
     margin:0;
 }
+
+.carousel-caption .pimcore_tag_image {
+    position: absolute;
+    top: 0px;
+}
