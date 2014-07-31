@@ -62,6 +62,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         dndManager.addDropTarget(Ext.get(id), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
 
         this.startCKeditor();
+
+        this.checkValue();
     },
 
     startCKeditor: function () {
@@ -111,7 +113,9 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
             }.bind(this));
 
-            // disable URL field in image dialog
+            this.ckeditor.on('change', this.checkValue.bind(this));
+
+                // disable URL field in image dialog
             this.ckeditor.on("dialogShow", function (e) {
                 var urlField = e.data.getElement().findOne("input");
                 if(urlField && urlField.getValue()) {
@@ -228,6 +232,17 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             return true;
         }
 
+    },
+
+    checkValue: function () {
+
+        var value = this.getValue();
+
+        if(trim(strip_tags(value)).length < 1) {
+            Ext.get(this.textarea).addClass("empty");
+        } else {
+            Ext.get(this.textarea).removeClass("empty");
+        }
     },
 
     onNodeOver: function(target, dd, e, data) {

@@ -25,33 +25,77 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
             data = "";
         }
 
-        options.value = data;
-        options.name = id + "_editable";
+        data = str_replace("\n","<br>", data);
 
-        if(!options.width) {
-            options.width = Ext.get(id).getWidth()-2;
+        this.element = Ext.get(id);
+        this.element.dom.setAttribute("contenteditable", true);
+        this.element.update(data);
+        this.checkValue();
+
+        this.element.on("keyup", this.checkValue.bind(this));
+        this.element.on("keydown", function (e, t, o) {
+
+            if(e.getCharCode() == 13) {
+                var selection = window.getSelection(),
+                    range = selection.getRangeAt(0),
+                    br = document.createElement("br");
+                range.deleteContents();
+                range.insertNode(br);
+                range.setStartAfter(br);
+                range.setEndAfter(br);
+                range.collapse(false);
+                selection.removeAllRanges();
+                selection.addRange(range);
+
+                e.stopEvent();
+            }
+        });
+
+        if(options["width"] || options["height"]) {
+            this.element.applyStyles({
+                display: "inline-block",
+                overflow: "auto"
+            });
+        }
+        if(options["width"]) {
+            this.element.applyStyles({
+                width: options["width"] + "px"
+            })
+        }
+        if(options["height"]) {
+            this.element.applyStyles({
+                height: options["height"] + "px"
+            })
+        }
+    },
+
+    checkValue: function () {
+
+        // ensure that the last node is always an <br>
+        if (!this.element.dom.lastChild || this.element.dom.lastChild.nodeName.toLowerCase() != "br") {
+            this.element.dom.appendChild(document.createElement("br"));
         }
 
-        this.element = new Ext.form.TextArea(options);
-        this.element.render(id);
+        var value = this.element.dom.innerHTML;
+        var origValue = value;
+        value = strip_tags(value, "<br>");
 
-        if(options["autoStyle"] !== false) {
-            var styles = Ext.get(id).parent().getStyles("font-size","font-family","font-style","font-weight","font-stretch","font-variant","color","line-height","text-shadow","text-align","text-decoration","text-transform","direction");
-            styles["background"] = "none";
-            if(!options["height"]) {
-                styles["height"] = "auto";
-            }
-            this.element.getEl().applyStyles(styles);
+        if(value != origValue) {
+            this.element.update(value);
+        }
 
-            // necessary for IE9
-            window.setTimeout(function () {
-                this.element.getEl().repaint();
-            }.bind(this), 300);
+        if(trim(strip_tags(value)).length < 1) {
+            this.element.addClass("empty");
+        } else {
+            this.element.removeClass("empty");
         }
     },
 
     getValue: function () {
-        return this.element.getValue();
+        var value = this.element.dom.innerHTML;
+        value = value.replace(/<br>/g,"\n");
+        value = trim(value);
+        return value;
     },
 
     getType: function () {

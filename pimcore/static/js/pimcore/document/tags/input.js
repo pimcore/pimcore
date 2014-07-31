@@ -24,39 +24,54 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
         if (!data) {
             data = "";
         }
-        
-        if(!options.width) {
-            options.width = Ext.get(id).getWidth()-2;
+
+        this.element = Ext.get(id);
+        this.element.dom.setAttribute("contenteditable", true);
+        this.element.update(data);
+        this.checkValue();
+
+        this.element.on("keyup", this.checkValue.bind(this));
+        this.element.on("keydown", function (e, t, o) {
+            // do not allow certain keys, like enter, ...
+            if(in_array(e.getCharCode(), [13])) {
+                e.stopEvent();
+            }
+        });
+
+        if(options["width"]) {
+            this.element.applyStyles({
+                display: "inline-block",
+                width: options["width"] + "px",
+                overflow: "auto",
+                "white-space": "nowrap"
+            });
+        }
+        if(options["nowrap"]) {
+            this.element.applyStyles({
+                "white-space": "nowrap",
+                overflow: "auto"
+            });
+        }
+    },
+
+    checkValue: function () {
+        var value = this.getValue();
+        var origValue = value;
+        value = strip_tags(value);
+
+        if(value != origValue) {
+            this.element.update(value);
         }
 
-        options.value = data;
-        options.name = id + "_editable";
-        this.element = new Ext.form.TextField(options);
-        this.element.render(id);
-
-        if(options["autoStyle"] !== false) {
-            var styles = Ext.get(id).parent().getStyles("font-size","font-family","font-style","font-weight",
-                                "font-stretch","font-variant","color","line-height","text-shadow","text-align",
-                                "text-decoration","text-transform","direction","white-space","word-spacing");
-            styles["background"] = "none";
-            if(!options["height"]) {
-                styles["height"] = "auto";
-            }
-            if(styles["font-size"] == "0px") {
-                delete styles["font-size"];
-            }
-
-            this.element.getEl().applyStyles(styles);
-
-            // necessary for IE9
-            window.setTimeout(function () {
-                this.element.getEl().repaint();
-            }.bind(this), 300);
+        if(trim(value).length < 1) {
+            this.element.addClass("empty");
+        } else {
+            this.element.removeClass("empty");
         }
     },
 
     getValue: function () {
-        return this.element.getValue();
+        return this.element.dom.innerHTML;
     },
 
     getType: function () {

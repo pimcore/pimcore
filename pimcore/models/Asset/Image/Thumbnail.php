@@ -289,6 +289,11 @@ class Asset_Image_Thumbnail {
         // build html tag
         $htmlImgTag = '<img '.implode(' ', $attr).' />';
 
+        $attrCleanedForPicture = $attr;
+        unset($attrCleanedForPicture["width"]);
+        unset($attrCleanedForPicture["height"]);
+        $htmlImgTagForpicture = '<img '.implode(' ', $attrCleanedForPicture).' />';
+
         // $this->getConfig() can be empty, the original image is returned
         if(!$this->getConfig() || !$this->getConfig()->hasMedias()) {
             return $htmlImgTag;
@@ -327,7 +332,8 @@ class Asset_Image_Thumbnail {
                     $html .= ' />' . "\n";
                 }
 
-                $html .= "\t" . '<noscript>' . "\n\t\t" . $htmlImgTag . "\n\t" . '</noscript>' . "\n";
+                //$html .= "\t" . '<noscript>' . "\n\t\t" . $htmlImgTag . "\n\t" . '</noscript>' . "\n";
+                $html .= $htmlImgTagForpicture . "\n";
             $html .= '</picture>' . "\n";
 
             return $html;

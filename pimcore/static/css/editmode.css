@@ -143,16 +143,6 @@
     background: #6ec563;
 }
 
-.pimcore_wysiwyg.pimcore_wysiwyg_inactive {
-	border: 1px solid #d0d0d0;
-	cursor:pointer;
-}
-
-.pimcore_wysiwyg {
-    border: 1px solid transparent;
-}
-
-
 .pimcore_wysiwyg_mask {
 	position: absolute;
 	z-index: 10001;
@@ -168,32 +158,6 @@
 .pimcore_tag_wysiwyg {
     position:relative;
 }
-
-.pimcore_tag_wysiwyg strong {
-    font-weight: bold !important;
-    font-style: inherit;
-}
-
-.pimcore_tag_wysiwyg em {
-    font-style: italic !important;
-    font-weight: inherit;
-}
-
-.pimcore_tag_wysiwyg ul, .pimcore_tag_wysiwyg ol {
-    list-style: inherit;
-    margin:inherit;
-    padding-left: 30px;
-}
-
-.pimcore_tag_wysiwyg ol {
-    list-style: decimal;
-}
-
-.pimcore_tag_wysiwyg ul {
-    list-style: disc;
-}
-
-
 
 .pimcore_iframe_mask {
 	position: absolute;
@@ -346,7 +310,23 @@
     display: inline-block;
 }
 
+/* text fields: hover, focus, ... states */
+.pimcore_tag_input, .pimcore_tag_wysiwyg, .pimcore_tag_textarea, .pimcore_tag_textarea:focus .pimcore_wysiwyg:focus {
+    outline:0 auto;
+    overflow-y: visible;
+}
 
+.pimcore_tag_input.empty, .pimcore_wysiwyg.empty, .pimcore_tag_textarea.empty {
+    box-shadow: 0 0 5px 2px #E8E8E8;
+}
+
+.pimcore_tag_input:hover, .pimcore_wysiwyg:hover, .pimcore_tag_textarea:hover {
+    box-shadow: 0 0 5px 2px #BABABA;
+}
+
+.pimcore_tag_input:focus, .pimcore_wysiwyg:focus, .pimcore_tag_textarea:focus {
+    box-shadow: none;
+}
 
 
 
@@ -930,4 +910,33 @@
     padding: 5px;
 }
 
+.x-masked-relative {
+    position: relative !important;
+}
 
+.x-masked select, .x-masked object, .x-masked embed {
+    visibility: hidden;
+}
+
+.x-masked {
+    /* reset the css that is set to x-*  above for all ext elements */
+    font:inherit;
+    box-sizing: inherit;
+    padding: inherit;
+    margin: inherit;
+    outline: inherit;
+
+    overflow: hidden !important;
+}
+
+.ext-el-mask {
+    position: absolute;
+    background: #ccc;
+    opacity: .5;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    zoom: 1;
+}

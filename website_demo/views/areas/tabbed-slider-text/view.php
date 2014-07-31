@@ -37,8 +37,8 @@
                         ]); ?>
                     <?php } ?>
                     <div class="carousel-caption">
-                        <h1><?= $this->input("headline_" . $i, ["width" => 300]) ?></h1>
-                        <p><?= $this->textarea("description_" . $i, ["width" => 300, "nl2br" => true]) ?></p>
+                        <h1><?= $this->input("headline_" . $i) ?></h1>
+                        <p><?= $this->textarea("description_" . $i, ["nl2br" => true]) ?></p>
                     </div>
                 </div>
             <?php } ?>
@@ -48,8 +48,8 @@
             <?php for($i=0; $i<$slides; $i++) { ?>
                 <li data-target="#<?= $id ?>" data-slide-to="<?= $i ?>" class="<?= ($i==0 ? "active" : "") ?> item-<?= $i ?>">
                     <a href="#">
-                        <?= $this->input("pill-title_" . $i, ["width" => 150]) ?>
-                        <small><?= $this->input("pill-small_" . $i, ["width" => 150]) ?></small>
+                        <?= $this->input("pill-title_" . $i) ?>
+                        <small><?= $this->input("pill-small_" . $i) ?></small>
                     </a></li>
             <?php } ?>
         </ul>

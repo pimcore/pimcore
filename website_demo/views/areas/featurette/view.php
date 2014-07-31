@@ -12,11 +12,11 @@
 
             <div class="col-sm-7 col-sm-<?= ($position == "right") ? "push" : ""; ?>-5">
                 <h2 class="featurette-heading">
-                    <?= $this->input("headline", ["width" => 400]); ?>
-                    <span class="text-muted"><?= $this->input("subline", ["width" => 400]); ?></span>
+                    <?= $this->input("headline"); ?>
+                    <span class="text-muted"><?= $this->input("subline"); ?></span>
                 </h2>
                 <div class="lead">
-                    <?= $this->wysiwyg("content", ["width" => 350, "height" => 200]); ?>
+                    <?= $this->wysiwyg("content", ["height" => 200]); ?>
                 </div>
             </div>
 

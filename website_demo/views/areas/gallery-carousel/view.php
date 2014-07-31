@@ -26,7 +26,7 @@
 
         <style type="text/css">
             .gallery .item {
-                min-height: 377px;
+                min-height: 200px;
             }
         </style>
     <?php } ?>
