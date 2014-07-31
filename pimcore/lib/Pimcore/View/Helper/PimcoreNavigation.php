@@ -80,6 +80,15 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
         return $this->_pageClass;
     }
 
+
+    /**
+     * @param Document $parentDocument
+     * @return Document[]
+     */
+    protected function getChilds($parentDocument) {
+        return $parentDocument->getChilds();
+    }
+
     /**
      * @param  Document $parentDocument
      * @param  Pimcore_Navigation_Page_Uri $parentPage
@@ -89,7 +98,7 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
     {
         $pages = array();
 
-        $childs = $parentDocument->getChilds();
+        $childs = $this->getChilds($parentDocument);
         if (is_array($childs)) {
             foreach ($childs as $child) {
                 $classes = "";
