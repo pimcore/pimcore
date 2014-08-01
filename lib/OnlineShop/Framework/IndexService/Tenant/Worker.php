@@ -372,9 +372,11 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
             $this->filterGroups['category'] = array("categoryIds");
 
 
-            foreach($this->columnConfig->column as $column) {
-                if($column->filtergroup) {
-                    $this->filterGroups[(string)$column->filtergroup][] = (string)$column->name;
+            if($this->columnConfig) {
+                foreach($this->columnConfig->column as $column) {
+                    if($column->filtergroup) {
+                        $this->filterGroups[(string)$column->filtergroup][] = (string)$column->name;
+                    }
                 }
             }
         }
