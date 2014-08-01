@@ -909,6 +909,13 @@ class Pimcore {
             return $data;
         }
 
+        // cleanup headers, ensure all headers are unique
+        // this is necessary since eg. session_start() sends Set-Cookie headers again and again, which causes problems with e.g. varnish and other HTTP clients
+        foreach(headers_list() as $header) {
+            header($header, true);
+        }
+
+        // force closing the connection at the client, this enables to do certain tasks (writing the cache) in the "background"
         header("Connection: close\r\n");
 
         // check for supported content-encodings

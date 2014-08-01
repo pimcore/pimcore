@@ -42,19 +42,19 @@ class Pimcore_Tool_Authentication {
      * @return User
      */
     public static function authenticateSession () {
-        return Pimcore_Tool_Session::useSession(function($adminSession) {
-            $user = $adminSession->user;
-            if ($user instanceof User) {
-                // renew user
-                $user = User::getById($user->getId());
 
-                if(Pimcore_Tool_Authentication::isValidUser($user)) {
-                    return $user;
-                }
+        $session = Pimcore_Tool_Session::getReadOnly();
+        $user = $session->user;
+        if ($user instanceof User) {
+            // renew user
+            $user = User::getById($user->getId());
+
+            if(Pimcore_Tool_Authentication::isValidUser($user)) {
+                return $user;
             }
+        }
 
-            return null;
-        });
+        return null;
     }
 
     /**
