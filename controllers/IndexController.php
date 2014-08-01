@@ -69,7 +69,7 @@ class OnlineShop_IndexController extends Pimcore_Controller_Action_Admin {
 
             $indexColumns = array();
             foreach($filtergroups as $filtergroup) {
-                $indexColumns = array_merge($indexColumns, $indexService->getIndexColumnsByFilterGroup($filtergroup));
+                $indexColumns = array_merge($indexColumns, $indexService->getIndexColumnsByFilterGroup($filtergroup, $this->getParam("tenant")));
             }
 
         } else {
