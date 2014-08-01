@@ -62,23 +62,25 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
         if(!empty($columnConfig->name)) {
             $columnConfig = array($columnConfig);
         }
-        foreach($columnConfig as $column) {
-            if(!array_key_exists($column->name, $columns)) {
+        if($columnConfig) {
+            foreach($columnConfig as $column) {
+                if(!array_key_exists($column->name, $columns)) {
 
-                $doAdd = true;
-                if(!empty($column->interpreter)) {
-                    $interpreter = $column->interpreter;
-                    $interpreterObject = new $interpreter();
-                    if($interpreterObject instanceof OnlineShop_Framework_IndexService_RelationInterpreter) {
-                        $doAdd = false;
+                    $doAdd = true;
+                    if(!empty($column->interpreter)) {
+                        $interpreter = $column->interpreter;
+                        $interpreterObject = new $interpreter();
+                        if($interpreterObject instanceof OnlineShop_Framework_IndexService_RelationInterpreter) {
+                            $doAdd = false;
+                        }
+                    }
+
+                    if($doAdd) {
+                        $columnsToAdd[$column->name] = $column->type;
                     }
                 }
-
-                if($doAdd) {
-                    $columnsToAdd[$column->name] = $column->type;
-                }
+                unset($columnsToDelete[$column->name]);
             }
-            unset($columnsToDelete[$column->name]);
         }
         foreach($columnsToDelete as $c) {
             if(!in_array($c, $systemColumns)) {
