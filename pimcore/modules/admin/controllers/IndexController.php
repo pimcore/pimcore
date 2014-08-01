@@ -95,7 +95,7 @@ class Admin_IndexController extends Pimcore_Controller_Action_Admin {
         // csrf token
         $user = $this->getUser();
         $this->view->csrfToken = Pimcore_Tool_Session::useSession(function($adminSession) use ($user) {
-            if(!isset($adminSession->csrfToken) && $adminSession->csrfToken) {
+            if(!isset($adminSession->csrfToken) && !$adminSession->csrfToken) {
                 $adminSession->csrfToken = sha1(microtime() . $user->getName() . uniqid());
             }
             return $adminSession->csrfToken;
