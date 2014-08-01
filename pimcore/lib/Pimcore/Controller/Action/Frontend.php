@@ -45,15 +45,14 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         // log exceptions if handled by error_handler
         $this->checkForErrors();
 
-       // general definitions
-        Pimcore::unsetAdminMode();
-        Document::setHideUnpublished(true);
-        Object_Abstract::setHideUnpublished(true);
-        Object_Abstract::setGetInheritedValues(true);
-        Object_Localizedfield::setGetFallbackValues(true);
-
-        // contains the logged in user if necessary
-        $user = null;
+        // general definitions
+        if(self::$isInitial) {
+            Pimcore::unsetAdminMode();
+            Document::setHideUnpublished(true);
+            Object_Abstract::setHideUnpublished(true);
+            Object_Abstract::setGetInheritedValues(true);
+            Object_Localizedfield::setGetFallbackValues(true);
+        }
 
         // assign variables
         $this->view->controller = $this; 
@@ -89,153 +88,156 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         else {
             $this->setDocument($document);
 
-            // append meta-data to the headMeta() view helper,  if it is a document-request
-            if(!Staticroute::getCurrentRoute() && ($this->getDocument() instanceof Document_Page)) {
-                if(is_array($this->getDocument()->getMetaData())) {
-                    foreach ($this->getDocument()->getMetaData() as $meta) {
-                        // only name
-                        if(!empty($meta["idName"]) && !empty($meta["idValue"]) && !empty($meta["contentValue"])) {
-                            $method = "append" . ucfirst($meta["idName"]);
-                            $this->view->headMeta()->$method($meta["idValue"], $meta["contentValue"]);
+            // register global locale if the document has the system property "language"
+            if($this->getDocument()->getProperty("language")) {
+                $this->setLocale($this->getDocument()->getProperty("language"));
+            }
+
+            if(self::$isInitial) {
+                // append meta-data to the headMeta() view helper,  if it is a document-request
+                if(!Staticroute::getCurrentRoute() && ($this->getDocument() instanceof Document_Page)) {
+                    if(is_array($this->getDocument()->getMetaData())) {
+                        foreach ($this->getDocument()->getMetaData() as $meta) {
+                            // only name
+                            if(!empty($meta["idName"]) && !empty($meta["idValue"]) && !empty($meta["contentValue"])) {
+                                $method = "append" . ucfirst($meta["idName"]);
+                                $this->view->headMeta()->$method($meta["idValue"], $meta["contentValue"]);
+                            }
                         }
                     }
                 }
             }
         }
 
+        // this is only executed once per request (first request)
+        if(self::$isInitial) {
 
-        if (Pimcore_Tool::isFrontentRequestByAdmin()) {
-            $this->disableBrowserCache();
+            // contains the logged in user if necessary
+            $user = null;
 
-            // start admin session & get logged in user
-            $user = Pimcore_Tool_Authentication::authenticateSession();
-        }
+            // default is to set the editmode to false, is enabled later if necessary
+            Zend_Registry::set("pimcore_editmode", false);
 
-        if(Pimcore::inDebugMode()) {
-            $this->disableBrowserCache();
-        }
-
-        if (!$this->document->isPublished()) {
             if (Pimcore_Tool::isFrontentRequestByAdmin()) {
-                if (!$user) {
+                $this->disableBrowserCache();
+
+                // start admin session & get logged in user
+                $user = Pimcore_Tool_Authentication::authenticateSession();
+            }
+
+            if(Pimcore::inDebugMode()) {
+                $this->disableBrowserCache();
+            }
+
+            if (!$this->document->isPublished()) {
+                if (Pimcore_Tool::isFrontentRequestByAdmin()) {
+                    if (!$user) {
+                        throw new Zend_Controller_Router_Exception("access denied for " . $this->document->getFullPath());
+                    }
+                }
+                else {
                     throw new Zend_Controller_Router_Exception("access denied for " . $this->document->getFullPath());
                 }
             }
-            else {
-                throw new Zend_Controller_Router_Exception("access denied for " . $this->document->getFullPath());
-            }
-        }
 
-        // register global locale if the document has the system property "language"
-        if($this->document->getProperty("language")) {
-            $this->setLocale($this->document->getProperty("language"));
-        }
+            // logged in users only
+            if ($user) {
 
-        // for editmode
-        if ($user) {
-            if ($this->getParam("pimcore_editmode") and !Zend_Registry::isRegistered("pimcore_editmode")) {
-                Zend_Registry::set("pimcore_editmode", true);
-                
-                // check if there is the document in the session
-                $docKey = "document_" . $this->getDocument()->getId();
-                $docSession = Pimcore_Tool_Session::getReadOnly("pimcore_documents");
+                // document editmode
+                if ($this->getParam("pimcore_editmode")) {
+                    Zend_Registry::set("pimcore_editmode", true);
 
-                if ($docSession->$docKey) {
-                    // if there is a document in the session use it
-                    $this->setDocument($docSession->$docKey);
-                } else {
-                    // set the latest available version for editmode if there is no doc in the session
-                    $latestVersion = $this->getDocument()->getLatestVersion();
-                    if($latestVersion) {
-                        $latestDoc = $latestVersion->loadData();
-                        if($latestDoc instanceof Document_PageSnippet) {
-                            $this->setDocument($latestDoc);
+                    // check if there is the document in the session
+                    $docKey = "document_" . $this->getDocument()->getId();
+                    $docSession = Pimcore_Tool_Session::getReadOnly("pimcore_documents");
+
+                    if ($docSession->$docKey) {
+                        // if there is a document in the session use it
+                        $this->setDocument($docSession->$docKey);
+                    } else {
+                        // set the latest available version for editmode if there is no doc in the session
+                        $latestVersion = $this->getDocument()->getLatestVersion();
+                        if($latestVersion) {
+                            $latestDoc = $latestVersion->loadData();
+                            if($latestDoc instanceof Document_PageSnippet) {
+                                $this->setDocument($latestDoc);
+                            }
                         }
+                    }
+
+                    // register editmode plugin
+                    $front = Zend_Controller_Front::getInstance();
+                    $front->registerPlugin(new Pimcore_Controller_Plugin_Frontend_Editmode($this), 1000);
+                }
+
+                // document preview
+                if ($this->getParam("pimcore_preview")) {
+                    // get document from session
+                    $docKey = "document_" . $this->getParam("document")->getId();
+                    $docSession = Pimcore_Tool_Session::getReadOnly("pimcore_documents");
+
+                    if ($docSession->$docKey) {
+                        $this->setDocument($docSession->$docKey);
                     }
                 }
 
-                // register editmode plugin
-                $front = Zend_Controller_Front::getInstance();
-                $front->registerPlugin(new Pimcore_Controller_Plugin_Frontend_Editmode($this), 1000);
-            }
-            else {
-                Zend_Registry::set("pimcore_editmode", false);
-            }
-        }
-        else {
-            Zend_Registry::set("pimcore_editmode", false);
-        }
+                // object preview
+                if ($this->getParam("pimcore_object_preview")) {
+                    $key = "object_" . $this->getParam("pimcore_object_preview");
 
-        // for preview
-        if ($user) {
-            // document preview
-            if ($this->getParam("pimcore_preview")) {
-                // get document from session
-                $docKey = "document_" . $this->getParam("document")->getId();
-                $docSession = Pimcore_Tool_Session::getReadOnly("pimcore_documents");
+                    $session = Pimcore_Tool_Session::getReadOnly("pimcore_objects");
+                    if($session->$key) {
+                        $object = $session->$key;
+                        // add the object to the registry so every call to Object_Abstract::getById() will return this object instead of the real one
+                        Zend_Registry::set("object_" . $object->getId(), $object);
+                    }
+                }
 
-                if ($docSession->$docKey) {
-                    $this->setDocument($docSession->$docKey);
+                // for version preview
+                if ($this->getParam("pimcore_version")) {
+                    // only get version data at the first call || because of embedded Snippets ...
+                    if(!Zend_Registry::isRegistered("pimcore_version_active")) {
+                        $version = Version::getById($this->getParam("pimcore_version"));
+                        $this->setDocument($version->getData());
+
+                        Zend_Registry::set("pimcore_version_active", true);
+                    }
                 }
             }
 
-            // object preview
-            if ($this->getParam("pimcore_object_preview")) {
-                $key = "object_" . $this->getParam("pimcore_object_preview");
 
-                $session = Pimcore_Tool_Session::getReadOnly("pimcore_objects");
-                if($session->$key) {
-                    $object = $session->$key;
-                    // add the object to the registry so every call to Object_Abstract::getById() will return this object instead of the real one
-                    Zend_Registry::set("object_" . $object->getId(), $object);
+            // for public versions
+            if ($this->getParam("v")) {
+                try {
+                    $version = Version::getById($this->getParam("v"));
+                    if ($version->getPublic()) {
+                        $this->setDocument($version->getData());
+                    }
+                }
+                catch (Exception $e) {
+                }
+            }
+
+            // check for persona
+            if($this->getDocument() instanceof Document_Page) {
+                $this->getDocument()->setUsePersona(null); // reset because of preview and editmode (saved in session)
+                if($this->getParam("_ptp") && self::$isInitial) {
+                    $this->getDocument()->setUsePersona($this->getParam("_ptp"));
+                }
+            }
+
+            // check if document is a wrapped hardlink, if this is the case send a rel=canonical header to the source document
+            if($this->getDocument() instanceof Document_Hardlink_Wrapper_Interface) {
+                // get the cononical (source) document
+                $hardlinkCanonicalSourceDocument = Document::getById($this->getDocument()->getId());
+                $request = $this->getRequest();
+
+                if(Pimcore_Tool_Frontend::isDocumentInCurrentSite($hardlinkCanonicalSourceDocument)) {
+                    $this->getResponse()->setHeader("Link", '<' . $request->getScheme() . "://" . $request->getHttpHost() . $hardlinkCanonicalSourceDocument->getFullPath() . '>; rel="canonical"');
                 }
             }
         }
 
-        // for version preview
-        if ($this->getParam("pimcore_version")) {
-            if ($user) {
-
-                // only get version data at the first call || because of embedded Snippets ...
-                if(!Zend_Registry::isRegistered("pimcore_version_active")) {
-                    $version = Version::getById($this->getParam("pimcore_version"));
-                    $this->setDocument($version->getData());
-
-                    Zend_Registry::set("pimcore_version_active", true);
-                }
-            }
-        }
-
-        // for public versions
-        if ($this->getParam("v")) {
-            try {
-                $version = Version::getById($this->getParam("v"));
-                if ($version->getPublic()) {
-                    $this->setDocument($version->getData());
-                }
-            }
-            catch (Exception $e) {
-            }
-        }
-
-        // check for persona
-        if($this->getDocument() instanceof Document_Page) {
-            $this->getDocument()->setUsePersona(null); // reset because of preview and editmode (saved in session)
-            if($this->getParam("_ptp") && self::$isInitial) {
-                $this->getDocument()->setUsePersona($this->getParam("_ptp"));
-            }
-        }
-
-        // check if document is a wrapped hardlink, if this is the case send a rel=canonical header to the source document
-        if($this->getDocument() instanceof Document_Hardlink_Wrapper_Interface) {
-            // get the cononical (source) document
-            $hardlinkCanonicalSourceDocument = Document::getById($this->getDocument()->getId());
-            $request = $this->getRequest();
-
-            if(Pimcore_Tool_Frontend::isDocumentInCurrentSite($hardlinkCanonicalSourceDocument)) {
-                $this->getResponse()->setHeader("Link", '<' . $request->getScheme() . "://" . $request->getHttpHost() . $hardlinkCanonicalSourceDocument->getFullPath() . '>; rel="canonical"');
-            }
-        }
 
         // set some parameters
         $this->editmode = Zend_Registry::get("pimcore_editmode");
