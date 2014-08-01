@@ -317,7 +317,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
             $logger->addWriter(new Zend_Log_Writer_Stream($logfilename));
 
             foreach($prioMapping as $key => $mapping) {
-                if(!array_key_exists($key, $prios)) {
+                if(!array_key_exists($mapping, $prios)) {
                     $logger->addFilter(new Zend_Log_Filter_Priority($mapping, "!="));
                 }
             }
