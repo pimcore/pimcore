@@ -295,16 +295,23 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
 
             $prios = array();
             $conf = Pimcore_Config::getSystemConfig();
-            if($conf->general->loglevel) {
-                $prioConf = $conf->general->loglevel->toArray();
-                if(is_array($prioConf)) {
-                    foreach ($prioConf as $level => $state) {
-                        if($state) {
-                            $prios[$level] = $prioMapping[$level];
-                        }
+            $conf = Pimcore_Config::getSystemConfig();
+            if($conf && $conf->general->debugloglevel) {
+                $prioMapping = array_reverse($prioMapping);
+                foreach ($prioMapping as $level => $state) {
+                    $prios[] = $prioMapping[$level];
+                    if($level == $conf->general->debugloglevel) {
+                        break;
                     }
                 }
             }
+            else {
+                // log everything if config isn't loaded (eg. at the installer)
+                foreach ($prioMapping as $p) {
+                    $prios[] = $p;
+                }
+            }
+
 
             $logger = new Zend_Log();
             $logger->addWriter(new Zend_Log_Writer_Stream($logfilename));
