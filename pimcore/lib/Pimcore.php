@@ -327,6 +327,9 @@ class Pimcore {
             // redirect php error_log to /website/var/log/php.log
             if($conf->general->custom_php_logfile) {
                 $phpLog = PIMCORE_LOG_DIRECTORY . "/php.log";
+                if(!file_exists($phpLog)) {
+                    touch($phpLog);
+                }
                 if(is_writable($phpLog)) {
                     ini_set("error_log", $phpLog);
                     ini_set("log_errors", "1");
