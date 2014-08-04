@@ -525,7 +525,7 @@ class Object_Abstract extends Element_Abstract {
                     $this->rollBack();
                 } catch (\Exception $er) {
                     // PDO adapter throws exceptions if rollback fails
-                    Logger::error($er);
+                    Logger::info($er);
                 }
 
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
