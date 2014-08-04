@@ -24,3 +24,4 @@ Run the pimcore installation by accessing the URL where you uploaded the pimcore
 
 Copyright [pimcore](http://www.pimcore.org) GmbH under a modified [BSD license](LICENSE.txt).  
 For licencing details please visit http://www.pimcore.org/license
+
