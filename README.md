@@ -5,7 +5,6 @@ MULTI-CHANNEL EXPERIENCE AND ENGAGEMENT MANAGEMENT PLATFORM
 
 
 ![Editing Interface](website_demo/static/screenshots/1.png)
-![Editing Interface](website_demo/static/screenshots/2.png)
 
 * Homepage: [http://www.pimcore.org/](http://www.pimcore.org/) - Learn more about pimcore
 * Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
