@@ -74,6 +74,19 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
                 autoLoad: true,
                 url: '/plugin/OnlineShop/index/get-all-tenants',
                 root: 'data',
+                listeners: {
+                    load: function(store) {
+                        if(this.data) {
+                            if(this.tenantCombobox.rendered) {
+                                this.tenantCombobox.setValue(this.data.tenant);
+                            } else {
+                                this.tenantCombobox.addListener("afterRender", function() {
+                                    this.tenantCombobox.setValue(this.data.tenant);
+                                }.bind(this));
+                            }
+                        }
+                    }.bind(this)
+                },
                 fields: ['key', 'name']
             });
         }
