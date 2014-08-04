@@ -226,7 +226,6 @@ $scripts = array(
     "pimcore/settings/fileexplorer/file.js",
     "pimcore/settings/fileexplorer/explorer.js",
     "pimcore/settings/maintenance.js",
-    "pimcore/settings/liveconnect.js",
     "pimcore/settings/robotstxt.js",
     "pimcore/settings/httpErrorLog.js",
     "pimcore/settings/bouncemailinbox.js",
@@ -452,8 +451,6 @@ $scripts = array(
     "pimcore/extensionmanager/settings.js",
     "pimcore/extensionmanager/xmlEditor.js",
     "pimcore/extensionmanager/admin.js",
-    "pimcore/extensionmanager/download.js",
-    "pimcore/extensionmanager/share.js",
 
     // layout
     "pimcore/layout/portal.js",
@@ -513,7 +510,6 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
         websiteLanguages: <?php echo Zend_Json::encode(explode(",",$this->config->general->validLanguages)); ?>,
         google_translate_api_key: "<?php echo $this->config->services->translate->apikey; ?>",
         google_maps_api_key: "<?php echo $googleMapsApiKey ?>",
-        liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
         showCloseConfirmation: true,
         debug_admin_translations: <?php echo Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
         document_generatepreviews: <?php echo Zend_Json::encode((bool) $this->config->documents->generatepreview) ?>,

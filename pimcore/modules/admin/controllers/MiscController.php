@@ -15,15 +15,6 @@
 
 class Admin_MiscController extends Pimcore_Controller_Action_Admin
 {
-
-    public function liveconnectAction()
-    {
-
-        $token = $this->getParam("token");
-        Pimcore_Liveconnect::setToken($token);
-        $this->view->token = $token;
-    }
-
     public function jsonTranslationsAdminAction()
     {
         $this->getResponse()->setHeader("Content-Type", "text/javascript", true);

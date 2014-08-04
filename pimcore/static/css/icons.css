@@ -244,14 +244,6 @@
     background: url(/pimcore/static/img/icon/plugin_edit.png) left center no-repeat !important;
 }
 
-.pimcore_icon_extensionmanager_download {
-    background: url(/pimcore/static/img/icon/plugin_add.png) left center no-repeat !important;
-}
-
-.pimcore_icon_extensionmanager_share {
-    background: url(/pimcore/static/img/icon/plugin_go.png) left center no-repeat !important;
-}
-
 .pimcore_icon_menu_plugin_download {
     background: url(/pimcore/static/img/icon/plugin_go.png) no-repeat !important;
 }

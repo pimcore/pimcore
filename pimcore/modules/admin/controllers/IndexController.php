@@ -88,9 +88,6 @@ class Admin_IndexController extends Pimcore_Controller_Action_Admin {
         
         $this->view->upload_max_filesize = $upload_mb;
 
-        // live connect
-        $liveconnectToken = Pimcore_Liveconnect::getToken();
-        $this->view->liveconnectToken = $liveconnectToken;
 
         // csrf token
         $user = $this->getUser();
