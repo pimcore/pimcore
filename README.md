@@ -1,6 +1,6 @@
 # pimcore
 
-THE PREMIER OPEN-SOURCE
+THE PREMIER OPEN-SOURCE  
 MULTI-CHANNEL EXPERIENCE AND ENGAGEMENT MANAGEMENT PLATFORM
 
 * Homepage: [http://www.pimcore.org/](http://www.pimcore.org/) - Learn more about pimcore
@@ -19,5 +19,5 @@ Run the pimcore installation by accessing the URL where you uploaded the pimcore
 
 ## Copyright and license
 
-Copyright [pimcore](http://www.pimcore.org) GmbH under a modified [BSD license](LICENSE.txt).
+Copyright [pimcore](http://www.pimcore.org) GmbH under a modified [BSD license](LICENSE.txt).  
 For licencing details please visit http://www.pimcore.org/license
