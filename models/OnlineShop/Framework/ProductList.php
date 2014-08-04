@@ -392,7 +392,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
                         $condition .= " AND ";
                     }
 
-                    $condition .= "o_id IN (SELECT DISTINCT src FROM " . $this->getCurrentTenantConfig()->getRelationTablename() . " WHERE " . $cond . ")";
+                    $condition .= "a.o_id IN (SELECT DISTINCT src FROM " . $this->getCurrentTenantConfig()->getRelationTablename() . " WHERE " . $cond . ")";
                 }
             }
         }
