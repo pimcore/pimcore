@@ -284,13 +284,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
                                 var copy = this.recursiveCloneNode(n);
                                 e.dropNode = copy; // assign the copy as the new dropNode
-
-                                if (e.dropNode.attributes.dataType == "keyValue") {
-
-                                    var ccd = new pimcore.object.keyvalue.columnConfigDialog();
-                                    ccd.getConfigDialog(copy, this.selectionPanel);
-                                    return;
-                                }
                             }
                         }
                     }.bind(this),
