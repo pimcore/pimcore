@@ -269,6 +269,10 @@
 
 .pimcore_areablock_toolbar:hover {
     opacity: .9;
+    transition: all .2s ease-in 0; /* explorer 10 */
+    -webkit-transition: all .2s ease-in 0; /* chrome & safari */
+    -moz-transition: all .2s ease-in 0; /* firefox */
+    -o-transition: all .2s ease-in 0; /* opera */
 }
 
 .pimcore_tag_video {
