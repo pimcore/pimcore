@@ -112,11 +112,11 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
 
     save: function () {
 
-        // close window
-        this.window.close();
-
         var values = this.window.getComponent("form").getForm().getFieldValues();
         this.data = values;
+
+        // close window
+        this.window.close();
 
         // set text
         Ext.get(this.id).query(".pimcore_tag_link_text")[0].innerHTML = this.getLinkContent();
