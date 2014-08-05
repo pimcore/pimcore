@@ -263,6 +263,13 @@
     text-align: left;
 }
 
+.pimcore_areablock_toolbar {
+    opacity: .3;
+}
+
+.pimcore_areablock_toolbar:hover {
+    opacity: .9;
+}
 
 .pimcore_tag_video {
     position: relative;
