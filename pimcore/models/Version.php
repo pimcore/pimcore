@@ -179,6 +179,9 @@ class Version extends Pimcore_Model_Abstract {
         if(is_file($this->getFilePath())) {
             @unlink($this->getFilePath());
         }
+        if(is_file($this->getBinaryFilePath())) {
+            @unlink($this->getBinaryFilePath());
+        }
 
         $this->getResource()->delete();
     }
