@@ -1927,7 +1927,6 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
             onNodeOver : function(target, dd, e, data) {
                 return Ext.dd.DropZone.prototype.dropAllowed;
-
             }.bind(this),
 
             onNodeDrop : function (target, dd, e, data) {
@@ -2090,6 +2089,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         items: [form],
         layout: "fit"
     });
+
     window.show();
 
     return window;

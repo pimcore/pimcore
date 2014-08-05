@@ -113,7 +113,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
     save: function () {
 
         // close window
-        this.window.hide();
+        this.window.close();
 
         var values = this.window.getComponent("form").getForm().getFieldValues();
         this.data = values;
@@ -133,7 +133,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
     empty: function () {
 
         // close window
-        this.window.hide();
+        this.window.close();
 
         this.data = this.defaultData;
 
@@ -142,7 +142,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
     },
 
     cancel: function () {
-        this.window.hide();
+        this.window.close();
     },
 
     getValue: function () {
