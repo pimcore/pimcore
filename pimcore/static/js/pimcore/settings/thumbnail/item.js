@@ -593,6 +593,11 @@ pimcore.settings.thumbnail.items = {
                             "topcenter","bottomcenter"],
                 width: 150
             },{
+                xtype: "checkbox",
+                name: "doNotScaleUp",
+                checked: data["doNotScaleUp"],
+                fieldLabel: t("do_not_scale_up")
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "cover"

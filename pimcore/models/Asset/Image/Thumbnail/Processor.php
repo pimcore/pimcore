@@ -23,7 +23,7 @@ class Asset_Image_Thumbnail_Processor {
         "scaleByWidth" => array("width"),
         "scaleByHeight" => array("height"),
         "contain" => array("width","height"),
-        "cover" => array("width","height","positioning"),
+        "cover" => array("width","height","positioning","doNotScaleUp"),
         "frame" => array("width","height"),
         "rotate" => array("angle"),
         "crop" => array("x","y","width","height"),
