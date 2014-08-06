@@ -544,7 +544,6 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      * @param null $object
      * @return null|Pimcore_Date
      */
-
     public function getDiffDataFromEditmode($data, $object = null) {
         if ($data) {
             $tabledata = $data[0]["data"];
@@ -556,9 +555,9 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
             $result = array();
             foreach ($tabledata as $in) {
                 $out = array();
-                $out["id"] = $in[0];
-                $out["path"] = $in[1];
-                $out["type"] = $in[2];
+                $out["id"] = $in["id"];
+                $out["path"] = $in["fullpath"];
+                $out["type"] = $in["type"];
                 $result[] = $out;
             }
 
