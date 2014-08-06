@@ -772,7 +772,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                     $asset->setScheduledTasks($tasks);
                 }
 
-                if ($this->getParam("data")) {
+                if ($this->hasParam("data")) {
                     $asset->setData($this->getParam("data"));
                 }
 
