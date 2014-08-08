@@ -123,7 +123,13 @@ class Asset_Image_Thumbnail_Config {
             Zend_Registry::set($cacheKey, $pipe);
         }
 
-        return $pipe;
+        // only return clones of configs, this is necessary since we cache the configs in the registry (see above)
+        // sometimes, e.g. when using the cropping tools, the thumbnail configuration is modified on-the-fly, since
+        // pass-by-reference this modifications would then go to the cache/registry (singleton), by cloning the config
+        // we can bypass this problem in an elegant way without parsing the XML config again and again
+        $clone = clone $pipe;
+
+        return $clone;
     }
 
     /**
