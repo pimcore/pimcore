@@ -133,7 +133,7 @@ class Object_Data_Hotspotimage {
             ));
 
             $hash = md5(Pimcore_Tool_Serialize::serialize($thumbConfig->getItems()));
-            $thumbConfig->setName("auto_" . $hash);
+            $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);
         }
 
         $imagePath = $this->getImage()->getThumbnail($thumbConfig);

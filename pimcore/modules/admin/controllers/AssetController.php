@@ -918,7 +918,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             ));
 
             $hash = md5(Pimcore_Tool_Serialize::serialize($this->getAllParams()));
-            $thumbnail->setName("auto_" . $hash);
+            $thumbnail->setName($thumbnail->getName() . "_auto_" . $hash);
         }
 
         if($this->getParam("download")) {

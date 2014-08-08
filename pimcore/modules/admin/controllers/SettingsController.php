@@ -189,7 +189,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         function delete ($dir, $thumbnail, &$matches = array()) {
             $dirs = glob($dir . '/*', GLOB_ONLYDIR);
             foreach ($dirs as $dir) {
-                if(preg_match("@/thumb__" . $thumbnail . "$@", $dir)) {
+                if(preg_match("@/thumb__" . $thumbnail . "$@", $dir) || preg_match("@/thumb__" . $thumbnail . "_auto", $dir)) {
                     recursiveDelete($dir);
                 }
                 delete($dir, $thumbnail, $matches);

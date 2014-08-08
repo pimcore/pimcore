@@ -230,7 +230,7 @@ class Document_Tag_Image extends Document_Tag {
                 // autogenerate a name for the thumbnail because it's different from the original
                 if($autoName) {
                     $hash = md5(Pimcore_Tool_Serialize::serialize($thumbConfig->getItems()));
-                    $thumbConfig->setName("auto_" . $hash);
+                    $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);
                 }
 
                 $imagePath = $this->image->getThumbnail($thumbConfig);
@@ -491,7 +491,7 @@ class Document_Tag_Image extends Document_Tag {
                     "x" => $this->cropLeft
                 ));
                 $hash = md5(Pimcore_Tool_Serialize::serialize($thumbConfig->getItems()));
-                $thumbConfig->setName("auto_" . $hash);
+                $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);
             }
 
             return $this->image->getThumbnail($thumbConfig);
