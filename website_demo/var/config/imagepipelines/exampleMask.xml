@@ -7,6 +7,7 @@
         <width>275</width>
         <height>150</height>
         <positioning>center</positioning>
+        <doNotScaleUp>1</doNotScaleUp>
       </arguments>
     </item>
     <item>
@@ -17,8 +18,8 @@
     </item>
   </items>
   <name>exampleMask</name>
-  <description></description>
+  <description/>
   <format>SOURCE</format>
   <quality>90</quality>
-  <highResolution></highResolution>
+  <highResolution>0</highResolution>
 </zend-config>

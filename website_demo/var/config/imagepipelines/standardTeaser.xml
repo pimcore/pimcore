@@ -7,12 +7,13 @@
         <width>360</width>
         <height>200</height>
         <positioning>center</positioning>
+        <doNotScaleUp>1</doNotScaleUp>
       </arguments>
     </item>
   </items>
   <name>standardTeaser</name>
-  <description></description>
+  <description/>
   <format>SOURCE</format>
   <quality>90</quality>
-  <highResolution></highResolution>
+  <highResolution>0</highResolution>
 </zend-config>
