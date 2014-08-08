@@ -384,7 +384,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
     public function postDispatch() {
         parent::postDispatch();
 
-        if ($this->parentBlockCurrent && !$this->getParam("disableBlockClearing")) {
+        if (isset($this->parentBlockCurrent) && $this->parentBlockCurrent && !$this->getParam("disableBlockClearing")) {
             $this->forceRender();
 
             Zend_Registry::set("pimcore_tag_block_current", $this->parentBlockCurrent);
