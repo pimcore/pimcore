@@ -524,16 +524,17 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             $tmpAsset["permissions"]["create"] = $asset->isAllowed("create");
 
             $folderThumbs = array();
-            foreach ($asset->getChilds() as $child) {
+            $children = new Asset_List();
+            $children->setCondition("path LIKE ?", [$asset->getFullPath() . "/%"]);
+            $children->setLimit(35);
+
+            foreach ($children as $child) {
                 if ($thumbnailUrl = $this->getThumbnailUrl($child)) {
                     $folderThumbs[] = $thumbnailUrl;
                 }
             }
 
             if (!empty($folderThumbs)) {
-                if (count($folderThumbs) > 35) {
-                    $folderThumbs = array_splice($folderThumbs, 0, 35);
-                }
                 $tmpAsset["thumbnails"] = $folderThumbs;
             }
         } else {
