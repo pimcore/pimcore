@@ -98,7 +98,7 @@ pimcore.edithelpers.frameElement = function (el, body) {
         left: (offsets[0] - borderWidth) + "px",
         width: (width + borderWidth*2) + "px",
         height: borderWidth + "px",
-        backgroundColor: "#a3bae9",
+        backgroundColor: "#BABABA",
         zIndex: 10000
     });
 
@@ -111,7 +111,7 @@ pimcore.edithelpers.frameElement = function (el, body) {
         left: (offsets[0] - borderWidth) + "px",
         width: (width + borderWidth*2) + "px",
         height: borderWidth + "px",
-        backgroundColor: "#a3bae9",
+        backgroundColor: "#BABABA",
         zIndex: 10000
     });
 
@@ -124,7 +124,7 @@ pimcore.edithelpers.frameElement = function (el, body) {
         left: (offsets[0] - borderWidth) + "px",
         width: borderWidth + "px",
         height: (height + borderWidth*2) + "px",
-        backgroundColor: "#a3bae9",
+        backgroundColor: "#BABABA",
         zIndex: 10000
     });
 
@@ -137,7 +137,7 @@ pimcore.edithelpers.frameElement = function (el, body) {
         left: (offsets[0] + width ) + "px",
         width: borderWidth + "px",
         height: (height + borderWidth*2) + "px",
-        backgroundColor: "#a3bae9",
+        backgroundColor: "#BABABA",
         zIndex: 10000
     });
 
