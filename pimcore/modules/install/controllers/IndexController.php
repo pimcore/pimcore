@@ -86,6 +86,18 @@ class Install_IndexController extends Pimcore_Controller_Action {
 
             $setup = new Tool_Setup();
 
+            // check if /website folder already exists, if not, look for /website_demo & /website_example
+            // /website_install is just for testing in dev environment
+            if(!is_dir(PIMCORE_WEBSITE_PATH)) {
+                foreach(["website_install", "website_demo", "website_example"] as $websiteDir) {
+                    $dir = PIMCORE_DOCUMENT_ROOT . "/" . $websiteDir;
+                    if(is_dir($dir)) {
+                        rename($dir, PIMCORE_WEBSITE_PATH);
+                        break;
+                    }
+                }
+            }
+
             $setup->config(array(
                 "database" => array(
                     "adapter" => $this->getParam("mysql_adapter"),
