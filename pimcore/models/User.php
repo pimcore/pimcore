@@ -416,7 +416,7 @@ class User extends User_UserRole {
         @unlink($destFile);
         @unlink($thumb);
         copy($path, $destFile);
-        chmod($destFile, Pimcore_File::getDefaultMode());
+        @chmod($destFile, Pimcore_File::getDefaultMode());
     }
 
     /**

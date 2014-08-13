@@ -168,7 +168,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
         $saveBinaryData($this->getElement(), $saveBinaryData, $this);
 
-        chmod($this->getStoreageFile(), Pimcore_File::getDefaultMode());
+        @chmod($this->getStoreageFile(), Pimcore_File::getDefaultMode());
     }
 
     /**

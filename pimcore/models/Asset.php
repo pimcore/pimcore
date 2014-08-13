@@ -586,7 +586,7 @@ class Asset extends Element_Abstract {
                     fclose($dest);
                 }
 
-                chmod($destinationPath, Pimcore_File::getDefaultMode());
+                @chmod($destinationPath, Pimcore_File::getDefaultMode());
 
                 // check file exists
                 if (!is_file($destinationPath)) {
@@ -1209,7 +1209,7 @@ class Asset extends Element_Abstract {
         stream_copy_to_stream($src, $dest);
         fclose($dest);
 
-        chmod($destinationPath, Pimcore_File::getDefaultMode());
+        @chmod($destinationPath, Pimcore_File::getDefaultMode());
 
         if($fullPath) {
             return $destinationPath;

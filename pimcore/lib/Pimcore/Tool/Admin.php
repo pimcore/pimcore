@@ -158,7 +158,7 @@ class Pimcore_Tool_Admin {
               "filename" => self::getMaintenanceModeFile()
         ));
         $writer->write();
-        chmod(self::getMaintenanceModeFile(), 0777); // so it can be removed also via FTP, ...
+        @chmod(self::getMaintenanceModeFile(), 0777); // so it can be removed also via FTP, ...
     }
 
     /**
