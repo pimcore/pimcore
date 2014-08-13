@@ -170,7 +170,8 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
 
         $this->cacheKey = "output_" . md5(Pimcore_Tool::getHostname() . $requestUri) . $appendKey;
 
-        if ($cacheItem = Pimcore_Model_Cache::load($this->cacheKey, true)) {
+        $cacheItem = Pimcore_Model_Cache::load($this->cacheKey, true);
+        if (is_array($cacheItem) && !empty($cacheItem)) {
             header("X-Pimcore-Output-Cache-Tag: " . $this->cacheKey, true, 200);
             header("X-Pimcore-Output-Cache-Date: " . $cacheItem["date"]);
             
