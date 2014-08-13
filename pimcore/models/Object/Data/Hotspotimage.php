@@ -136,8 +136,7 @@ class Object_Data_Hotspotimage {
             $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);
         }
 
-        $imagePath = $this->getImage()->getThumbnail($thumbConfig);
-        return $imagePath;
+        return $this->getImage()->getThumbnail($thumbConfig);
     }
 
     public function __toString() {
