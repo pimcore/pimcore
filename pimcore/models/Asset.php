@@ -461,9 +461,7 @@ class Asset extends Element_Abstract {
                 // if the old path is different from the new path, update all children
                 $updatedChildren = array();
                 if($oldPath && $oldPath != $this->getFullPath()) {
-                    if(!@rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath())) {
-                        throw new \Exception("unable to rename asset " . $this->getId() . " on the filesystem");
-                    }
+                    @rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath());
                     $this->getResource()->updateWorkspaces();
                     $updatedChildren = $this->getResource()->updateChildsPaths($oldPath);
                 }
