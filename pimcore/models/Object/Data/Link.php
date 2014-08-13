@@ -76,6 +76,16 @@ class Object_Data_Link {
      * @var string
      */
     public $tabindex;
+
+    /**
+     * @var string
+     */
+    public $class;
+
+    /**
+     * @var string
+     */
+    public $attributes;
     
     
     public function getText() {
@@ -188,7 +198,38 @@ class Object_Data_Link {
         $this->tabindex = $tabindex;
         return $this;
     }
-    
+
+    /**
+     * @param string $attributes
+     */
+    public function setAttributes($attributes)
+    {
+        $this->attributes = $attributes;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * @param string $class
+     */
+    public function setClass($class)
+    {
+        $this->class = $class;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
     
     public function setPath ($path) {
         if (!empty($path)) {
@@ -289,12 +330,16 @@ class Object_Data_Link {
     
     public function getHtml() {
 
-        $attributes = array("rel", "tabindex", "accesskey", "title","target");
+        $attributes = array("rel", "tabindex", "accesskey", "title","target","class");
         $attribs = array();
         foreach ($attributes as $a) {
             $attribs[] = $a . '="' . $this->$a . '"';
         }
-        
+
+        if($this->getAttributes()) {
+            $attribs[] = $this->getAttributes();
+        }
+
         if(empty($this->text)) {
             return "";
         }
