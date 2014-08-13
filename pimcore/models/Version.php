@@ -458,6 +458,7 @@ class Version extends Pimcore_Model_Abstract {
 
         $perIteration = 100;
         $alreadyCompressedCounter = 0;
+        $overallCounter = 0;
 
         $list = new Version_List();
         $list->setCondition("date < " . (time() - 86400*30));
@@ -477,6 +478,9 @@ class Version extends Pimcore_Model_Abstract {
             $versions = $list->load();
 
             foreach($versions as $version) {
+
+                $overallCounter++;
+
                 if(file_exists($version->getFilePath())) {
                     gzcompressfile($version->getFilePath(), 9);
                     @unlink($version->getFilePath());
@@ -486,6 +490,11 @@ class Version extends Pimcore_Model_Abstract {
                     Logger::debug("version compressed:" . $version->getFilePath());
                 } else {
                     $alreadyCompressedCounter++;
+                }
+
+                if($overallCounter % 10 == 0) {
+                    Logger::debug("Waiting 5 secs to not kill the server...");
+                    sleep(5);
                 }
             }
 
