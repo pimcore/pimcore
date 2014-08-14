@@ -189,12 +189,7 @@ class Asset_Image_Thumbnail_Processor {
                     }
 
                     ksort($arguments);
-                    if(count($mapping) == count($arguments)) {
-                        call_user_func_array(array($image,$transformation["method"]),$arguments);
-                    } else {
-                        $message = "Image Transform failed: cannot call method `" . $transformation["method"] . "´ with arguments `" . implode(",",$arguments) . "´ because there are too few arguments";
-                        Logger::error($message);
-                    }
+                    call_user_func_array(array($image,$transformation["method"]),$arguments);
                 }
             }
         }
