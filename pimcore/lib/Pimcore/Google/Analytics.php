@@ -120,7 +120,7 @@ class Pimcore_Google_Analytics {
               if (typeof _gaqPageView != \"undefined\"){
                 ga('send', 'pageview', _gaqPageView);
               } else {
-                ga('send', 'pageview');
+                ga('send', 'pageview'" . (self::$defaultPath ? (",'" . self::$defaultPath . "'") : "") . ");
               }
 
               " . $codeBeforeEnd . "
