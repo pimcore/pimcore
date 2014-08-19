@@ -186,7 +186,7 @@ pimcore.object.klass = Class.create({
 
     addClassComplete: function (button, value, object) {
 
-        var regresult = value.match(/[a-zA-Z]+/);
+        var regresult = value.match(/[a-zA-Z][a-zA-Z0-9]+/);
 
         if (button == "ok" && value.length > 2 && regresult == value
                                                 && !in_array(value.toLowerCase(), this.forbiddennames)) {

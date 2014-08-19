@@ -918,7 +918,7 @@ pimcore.object.classes.klass = Class.create({
 
         this.saveCurrentNode();
 
-        var regresult = this.data["name"].match(/[a-zA-Z]+/);
+        var regresult = this.data["name"].match(/[a-zA-Z][a-zA-Z0-9]+/);
 
         if (this.data["name"].length > 2 && regresult == this.data["name"] && !in_array(this.data["name"].toLowerCase(),
             this.parentPanel.forbiddennames)) {

@@ -348,19 +348,10 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
 
     protected function correctClassname($name) {
-        $tmpFilename = $name;
-        $validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        $filenameParts = array();
-
-        for ($i = 0; $i < strlen($tmpFilename); $i++) {
-            if (strpos($validChars, $tmpFilename[$i]) !== false) {
-                $filenameParts[] = $tmpFilename[$i];
-            }
-        }
-
-        return implode("", $filenameParts);
+        $name = preg_replace('/[^a-zA-Z0-9]+/', '', $name);
+        $name = preg_replace("/^[0-9]+/", "", $name);
+        return $name;
     }
-
 
 
     public function importClassAction() {
