@@ -19,7 +19,7 @@ class Pimcore_Tool {
     /**
      * @static
      * @param string $key
-     * @return void
+     * @return bool
      */
     public static function isValidKey($key){
         return (bool) preg_match("/^[a-z0-9_~\.\-]+$/", $key);

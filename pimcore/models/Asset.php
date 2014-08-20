@@ -578,7 +578,9 @@ class Asset extends Element_Abstract {
 
         $dirPath = dirname($destinationPath);
         if (!is_dir($dirPath)) {
-            Pimcore_File::mkdir($dirPath);
+            if(!Pimcore_File::mkdir($dirPath)) {
+                throw new \Exception("Unable to create directory: ". $dirPath . " for asset :" . $this->getId());
+            }
         }
 
         if ($this->getType() != "folder") {
@@ -587,8 +589,14 @@ class Asset extends Element_Abstract {
                 $streamMeta = stream_get_meta_data($src);
                 if($destinationPath != $streamMeta["uri"]) {
                     $dest = fopen($destinationPath, "w+");
-                    stream_copy_to_stream($src, $dest);
-                    fclose($dest);
+                    if($dest) {
+                        stream_copy_to_stream($src, $dest);
+                        if(!fclose($dest)) {
+                            throw new \Exception("Unable to close file handle " . $destinationPath . " for asset " . $this->getId());
+                        }
+                    } else {
+                        throw new \Exception("Unable to open file: " . $destinationPath . " for asset " . $this->getId());
+                    }
                 }
 
                 @chmod($destinationPath, Pimcore_File::getDefaultMode());
