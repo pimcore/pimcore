@@ -121,7 +121,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
                 $webmCodec = "libvpx";
                 $codecs = Pimcore_Tool_Console::exec(self::getFfmpegCli() . " -codecs");
                 if(stripos($codecs, "vp9")) {
-                    $webmCodec = "libvpx-vp9";
+                    //$webmCodec = "libvpx-vp9"; // disabled until better support in ffmpeg and browsers
                 }
 
                 $arguments = "-strict experimental -f webm -vcodec " . $webmCodec . " -acodec libvorbis -ar 44000 -g 100 " . $arguments;
