@@ -66,9 +66,11 @@ class Pimcore_Google_Api {
         }
 
         $config = self::getConfig();
-        $client = new Google_Client(array(
-            "ioFileCache_directory" => PIMCORE_CACHE_DIRECTORY
-        ));
+
+        $clientConfig = new Google_Config();
+        $clientConfig->setClassConfig("Google_Cache_File", "directory", PIMCORE_CACHE_DIRECTORY);
+
+        $client = new Google_Client($clientConfig);
         $client->setApplicationName("pimcore CMF");
 
         $key = file_get_contents(self::getPrivateKeyPath());
@@ -106,9 +108,10 @@ class Pimcore_Google_Api {
             return false;
         }
 
-        $client = new Google_Client(array(
-            "ioFileCache_directory" => PIMCORE_CACHE_DIRECTORY
-        ));
+        $clientConfig = new Google_Config();
+        $clientConfig->setClassConfig("Google_Cache_File", "directory", PIMCORE_CACHE_DIRECTORY);
+
+        $client = new Google_Client($clientConfig);
         $client->setApplicationName("pimcore CMF");
         $client->setDeveloperKey(Pimcore_Config::getSystemConfig()->services->google->simpleapikey);
 
