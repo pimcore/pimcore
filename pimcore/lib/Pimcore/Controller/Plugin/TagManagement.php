@@ -61,8 +61,10 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
                 continue;
             }
 
+            $requestPath = rtrim($this->getRequest()->getPathInfo(),"/");
+
             if( ($method == strtolower($this->getRequest()->getMethod()) || empty($method)) &&
-                (empty($pattern) || @preg_match($pattern, $this->getRequest()->getRequestUri())) &&
+                (empty($pattern) || @preg_match($pattern, $requestPath)) &&
                 (empty($textPattern) || strpos($body,$textPattern) !== false)
             ) {
 
