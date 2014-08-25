@@ -209,6 +209,12 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         $currentPaymentInformation->setPaymentReference($status->getPaymentReference());
         $currentPaymentInformation->setPaymentState($status->getStatus());
 
+        $currentPaymentInformation->setMessage($status->getMessage());
+        $currentPaymentInformation->setPaymentStateProvider($status->getPaymentState());
+        $currentPaymentInformation->setPaymentType($status->getPaymentType());
+        $currentPaymentInformation->setAnonymousPan($status->getAnonymousPan());
+        $currentPaymentInformation->setAuthenticated($status->getAuthenticated());
+
         $order->save();
 
         return $order;

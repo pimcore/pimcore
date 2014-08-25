@@ -144,6 +144,7 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
      */
     public function handleResponse($response)
     {
+
         // init
         $return = false;    // return false on errors
         $this->errors = array();
@@ -170,7 +171,12 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
         $status = new OnlineShop_Framework_Impl_Checkout_Payment_Status(
             base64_decode($response['internal_id']),
             $this->orderNumber,
-            $this->isPaid() ? OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED : OnlineShop_Framework_AbstractOrder::ORDER_STATE_CANCELLED
+            $this->isPaid() ? OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED : OnlineShop_Framework_AbstractOrder::ORDER_STATE_CANCELLED,
+            $response['paymentState'],
+            $response['message'],
+            $response['paymentType'],
+            $response['anonymousPan'],
+            $response['authenticated']
         );
 
 
