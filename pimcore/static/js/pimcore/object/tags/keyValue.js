@@ -581,32 +581,45 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                         items : [{
                             xtype: 'compositefield',
                             fieldLabel: ts('Range'),
-                            width: 280,
-                            style: 'padding:10px;',
+                            width: 300,
+                            style: 'padding:10px; line-height: 20px;',
                             items: [
                                 new Ext.form.Label({text: ts('Start')}),
                                 {
-                                    xtype       : 'numberfield',
-                                    emptyText   : '0',
+                                    xtype       : 'textfield',
                                     width       : 70,
                                     value       : rangeObject.start,
                                     enableKeyEvents : true,
                                     listeners : {
                                         change : function(el, e) {
-                                            rangeObject.start = el.value;
+                                            rangeObject.start = el.getValue();
+                                        }
+                                    },
+                                    validator: function(val) {
+                                        if (!Ext.isEmpty(val)) {
+                                            return true;
+                                        } else {
+                                            return "Value cannot be empty";
                                         }
                                     }
 
                                 },
                                 new Ext.form.Label({text: ts('End')}),
                                 {
-                                    xtype       : 'numberfield',
-                                    emptyText   : '0',
+                                    xtype       : 'textfield',
                                     width       : 70,
                                     value       : rangeObject.end,
+                                    enableKeyEvents : true,
                                     listeners : {
                                         change : function(el, e) {
-                                            rangeObject.end = el.value;
+                                            rangeObject.end = el.getValue();
+                                        }
+                                    },
+                                    validator: function(val) {
+                                        if (!Ext.isEmpty(val)) {
+                                            return true;
+                                        } else {
+                                            return "Value cannot be empty";
                                         }
                                     }
                                 },
@@ -776,7 +789,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
     isInvalid: function(record) {
 
         if (record.data.mandatory) {
-            if (record.data.type == "text" || record.data.type == "translated" || record.data.type == "select") {
+
+            if (record.data.type == "text" || record.data.type == "translated" || record.data.type == "select" || record.data.type == "translatedSelect") {
                 if (!record.data.value) {
                     return true;
                 }
@@ -784,6 +798,15 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 var type = typeof(record.data.value);
                 if (type !=  "number" && !(type == "string" && record.data.value.length > 0)) {
                     return true;
+                }
+            } else if (record.data.type == "range") {
+                if (!record.data.value) {
+                    return true;
+                } else {
+                    var rangeObject = Ext.util.JSON.decode(record.data.value);
+                    if (typeof rangeObject == "object" && (rangeObject.start == undefined || rangeObject.end == undefined || rangeObject.start == '' || rangeObject.end == '')) {
+                        return true;
+                    }
                 }
             }
         }
