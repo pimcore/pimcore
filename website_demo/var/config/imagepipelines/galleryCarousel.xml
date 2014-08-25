@@ -7,6 +7,7 @@
         <width>1140</width>
         <height>400</height>
         <positioning>center</positioning>
+        <doNotScaleUp>1</doNotScaleUp>
       </arguments>
     </item>
   </items>
@@ -56,5 +57,4 @@
   <format>SOURCE</format>
   <quality>90</quality>
   <highResolution>0</highResolution>
-  <filenameSuffix/>
 </zend-config>

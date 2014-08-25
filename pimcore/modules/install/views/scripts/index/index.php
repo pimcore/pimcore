@@ -172,7 +172,9 @@ $scripts = array(
                     text: "<b>Install Now!</b>",
                     icon: "/pimcore/static/img/icon/accept.png",
                     disabled: installdisabled,
-                    handler: function () {
+                    handler: function (btn) {
+
+                        btn.disable();
 
                         Ext.getCmp("install_errors").update("Installing ...");
 
@@ -189,10 +191,12 @@ $scripts = array(
                                 }
                                 catch (e) {
                                     Ext.getCmp("install_errors").update(transport.responseText);
+                                    btn.enable();
                                 }
                             },
                             failure: function (transport) {
                                 Ext.getCmp("install_errors").update("Failed: " + transport.responseText);
+                                btn.enable();
                             }
                         });
                     }

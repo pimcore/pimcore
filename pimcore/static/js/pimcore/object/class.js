@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -157,7 +157,7 @@ pimcore.object.klass = Class.create({
             delete this.classPanel;
         }*/
 
-        var classPanel = new pimcore.object.classes.klass(data, this);
+        var classPanel = new pimcore.object.classes.klass(data, this, this.openClass.bind(this, data.id));
         pimcore.layout.refresh();
     },
 
@@ -186,7 +186,7 @@ pimcore.object.klass = Class.create({
 
     addClassComplete: function (button, value, object) {
 
-        var regresult = value.match(/[a-zA-Z]+/);
+        var regresult = value.match(/[a-zA-Z][a-zA-Z0-9]+/);
 
         if (button == "ok" && value.length > 2 && regresult == value
                                                 && !in_array(value.toLowerCase(), this.forbiddennames)) {
@@ -225,17 +225,18 @@ pimcore.object.klass = Class.create({
                     url: "/admin/class/delete",
                     params: {
                         id: this.id
+                    },
+                    success: function () {
+                        // refresh the object tree
+                        pimcore.globalmanager.get("layout_object_tree").tree.getRootNode().reload();
+
+                        // update object type store
+                        pimcore.globalmanager.get("object_types_store").reload();
                     }
                 });
 
                 this.attributes.reference.getEditPanel().removeAll();
                 this.remove();
-
-                // refresh the object tree
-                pimcore.globalmanager.get("layout_object_tree").tree.getRootNode().reload();
-
-                // update object type store
-                pimcore.globalmanager.get("object_types_store").reload();
             }
         }.bind(this));
     },

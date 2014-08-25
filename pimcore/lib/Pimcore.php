@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -29,6 +29,12 @@ class Pimcore {
      * @var Zend_EventManager_EventManager
      */
     private static $eventManager;
+
+    /**
+     * @var array items to be excluded from garbage collection
+     */
+    private static $globallyProtectedItems;
+
 
     /**
      * @static
@@ -72,7 +78,7 @@ class Pimcore {
             }
         }
 
-        if(self::inDebugMode() && $frontend && !defined("HHVM_VERSION")) {
+        if(self::inDebugMode() && $frontend && !$conf->general->disable_whoops && !defined("HHVM_VERSION")) {
             $whoops = new \Whoops\Run;
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
             $jsonErrorHandler = new \Whoops\Handler\JsonResponseHandler;
@@ -206,6 +212,16 @@ class Pimcore {
                     $router->addRoute('webservice', $routeWebservice);
             }
 
+            // check if this request routes into a plugin, if so check if the plugin is enabled
+            if (preg_match("@^/plugin/([^/]+)/.*@", $_SERVER["REQUEST_URI"], $matches)) {
+                $pluginName = $matches[1];
+                if(!Pimcore_ExtensionManager::isEnabled("plugin", $pluginName)) {
+                    while (@ob_end_flush());
+                    die("Plugin is disabled. To use this plugin please enable it in the extension manager!");
+                    exit;
+                }
+            }
+
             // force the main (default) domain for "admin" requests
             if($conf->general->domain && $conf->general->domain != Pimcore_Tool::getHostname()) {
                 $url = (($_SERVER['HTTPS'] == "on") ? "https" : "http") . "://" . $conf->general->domain . $_SERVER["REQUEST_URI"];
@@ -311,6 +327,9 @@ class Pimcore {
             // redirect php error_log to /website/var/log/php.log
             if($conf->general->custom_php_logfile) {
                 $phpLog = PIMCORE_LOG_DIRECTORY . "/php.log";
+                if(!file_exists($phpLog)) {
+                    touch($phpLog);
+                }
                 if(is_writable($phpLog)) {
                     ini_set("error_log", $phpLog);
                     ini_set("log_errors", "1");
@@ -630,6 +649,7 @@ class Pimcore {
         $autoloader->registerNamespace('Search');
         $autoloader->registerNamespace('Tool');
         $autoloader->registerNamespace('Whoops');
+        $autoloader->registerNamespace('Google');
 
         Pimcore_Tool::registerClassModelMappingNamespaces();
     }
@@ -766,6 +786,38 @@ class Pimcore {
         return self::$eventManager;
     }
 
+    /** Add $keepItems to the list of items which are protected from garbage collection.
+     * @param $keepItems
+     */
+    public static function addToGloballyProtectedItems($keepItems) {
+        if (is_string($keepItems)) {
+            $keepItems = array($keepItems);
+        }
+        if (!is_array(self::$globallyProtectedItems) && $keepItems) {
+            self::$globallyProtectedItems = array();
+        }
+        self::$globallyProtectedItems = array_merge(self::$globallyProtectedItems, $keepItems);
+    }
+
+
+    /** Items to be deleted.
+     * @param $deleteItems
+     */
+    public static function removeFromGloballyProtectedItems($deleteItems) {
+        if (is_string($deleteItems)) {
+            $deleteItems = array($deleteItems);
+        }
+
+        if (is_array($deleteItems) && is_array(self::$globallyProtectedItems)) {
+            foreach ($deleteItems as $item) {
+                $key = array_search($item,self::$globallyProtectedItems);
+                if($key!==false){
+                    unset(self::$globallyProtectedItems[$key]);
+                }
+            }
+        }
+    }
+
     /**
      * Forces a garbage collection.
      * @static
@@ -796,6 +848,10 @@ class Pimcore {
 
         if(is_array($keepItems) && count($keepItems) > 0) {
             $protectedItems = array_merge($protectedItems, $keepItems);
+        }
+
+        if (is_array(self::$globallyProtectedItems) && count(self::$globallyProtectedItems)) {
+            $protectedItems = array_merge($protectedItems, self::$globallyProtectedItems);
         }
 
         $registryBackup = array();
@@ -856,6 +912,13 @@ class Pimcore {
             return $data;
         }
 
+        // cleanup headers, ensure all headers are unique
+        // this is necessary since eg. session_start() sends Set-Cookie headers again and again, which causes problems with e.g. varnish and other HTTP clients
+        foreach(headers_list() as $header) {
+            header($header, true);
+        }
+
+        // force closing the connection at the client, this enables to do certain tasks (writing the cache) in the "background"
         header("Connection: close\r\n");
 
         // check for supported content-encodings

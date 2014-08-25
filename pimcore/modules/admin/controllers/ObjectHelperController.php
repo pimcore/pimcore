@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -21,13 +21,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         if($object) {
             $result['success'] = true;
             $fields = $this->getParam("fields");
-            foreach($fields as $f) {
-                $result['fields']['id'] = $object->getId();
-                $getter = "get" . ucfirst($f);
-                if(method_exists($object, $getter)) {
-                    $result['fields'][$f] = (string) $object->$getter();
-                }
-            }
+            $result['fields'] = Object_Service::gridObjectData($object, $fields);
 
         } else {
             $result['success'] = false;

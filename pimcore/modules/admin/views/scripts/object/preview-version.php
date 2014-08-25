@@ -21,7 +21,7 @@
     <tr class="system">
         <td>Date</td>
         <td>o_modificationDate</td>
-        <td><?php echo date('Y-m-d H:m:s', $this->object->getModificationDate()); ?></td>
+        <td><?php echo date('Y-m-d H:i:s', $this->object->getModificationDate()); ?></td>
     </tr>
     <tr class="system">
         <td>Path</td>

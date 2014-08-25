@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -412,6 +412,11 @@ pimcore.settings.system = Class.create({
                                 width: 600,
                                 value: t('log_messages_user_mail_description'),
                                 cls: "pimcore_extra_label_bottom"
+                            },{
+                                fieldLabel: t("disable_whoops_error_handler"),
+                                xtype: "checkbox",
+                                name: "general.disable_whoops",
+                                checked: this.getValue("general.disable_whoops")
                             },
                             {
                                 fieldLabel: t("debug_admin_translations"),
@@ -943,8 +948,27 @@ pimcore.settings.system = Class.create({
                                 name: 'assets.libreoffice',
                                 value: this.getValue("assets.libreoffice"),
                                 width: 300
-                            },
-                            {
+                            },{
+                                fieldLabel: t('absolute_path_to_pngcrush'),
+                                name: 'assets.pngcrush',
+                                value: this.getValue("assets.pngcrush"),
+                                width: 300
+                            },{
+                                fieldLabel: t('absolute_path_to_imgmin'),
+                                name: 'assets.imgmin',
+                                value: this.getValue("assets.imgmin"),
+                                width: 300
+                            },{
+                                fieldLabel: t('absolute_path_to_jpegoptim'),
+                                name: 'assets.jpegoptim',
+                                value: this.getValue("assets.jpegoptim"),
+                                width: 300
+                            },{
+                                fieldLabel: t('absolute_path_to_pdftotext'),
+                                name: 'assets.pdftotext',
+                                value: this.getValue("assets.pdftotext"),
+                                width: 300
+                            },{
                                 fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (imagick)",
                                 name: 'assets.icc_rgb_profile',
                                 value: this.getValue("assets.icc_rgb_profile"),

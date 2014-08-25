@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -309,15 +309,17 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
     
     getGridPanel: function (columns, gridfilters, selectedClass) {
-        
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 50,
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("no_objects_found")
-        });
+        var sm;
 
+        if(this.parent.multiselect) {
+            this.selectionColumn = new Ext.grid.CheckboxSelectionModel();
+            columns.unshift(this.selectionColumn);
+            sm  = this.selectionColumn;
+        } else {
+            sm = new Ext.grid.RowSelectionModel({singleSelect:true});
+        }
+
+        this.pagingtoolbar = this.getPagingToolbar(t("no_objects_found"));
         this.gridPanel = new Ext.grid.GridPanel({
             store: this.store,
             border: false,
@@ -329,7 +331,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             viewConfig: {
                 forceFit: false
             },
-            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+            sm: sm,
             bbar: this.pagingtoolbar,
             listeners: {
                 rowdblclick: function (grid, rowIndex, ev) {
@@ -365,6 +367,10 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 grid.getView().hmenu.add(columnConfig);
             }
         }.bind(this));
+
+        if(this.parent.multiselect) {
+            this.gridPanel.on("rowcontextmenu", this.onRowContextmenu.bind(this));
+        }
         
         this.resultPanel.removeAll();
         this.resultPanel.add(this.gridPanel);

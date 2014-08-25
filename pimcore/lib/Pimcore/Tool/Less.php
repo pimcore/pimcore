@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -118,7 +118,7 @@ class Pimcore_Tool_Less {
 
                 if(!is_file($stylesheetPath)) {
                     file_put_contents($stylesheetPath, $content);
-                    chmod($stylesheetPath, 0766);
+                    @chmod($stylesheetPath, 0766);
                 }
 
                 $head->innertext = $head->innertext . "\n" . '<link rel="stylesheet" media="' . $media . '" type="text/css" href="' . str_replace(PIMCORE_DOCUMENT_ROOT,"",$stylesheetPath) . '" />'."\n";

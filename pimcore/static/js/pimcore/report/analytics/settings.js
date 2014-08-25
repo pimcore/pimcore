@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -98,34 +98,6 @@ pimcore.report.analytics.settings = Class.create({
                     collapsed: true,
                     title: t("code_settings"),
                     items: [{
-                        xtype: "checkbox",
-                        fieldLabel: t("universal_analytics_code"),
-                        name: "universalcode_" + id,
-                        id: "report_settings_analytics_universalcode_" + id,
-                        checked: this.parent.getValue("analytics.sites." + key + ".universalcode")
-                    },{
-                        xtype: "checkbox",
-                        fieldLabel: t("analytics_retargeting_code"),
-                        name: "retargetingcode_" + id,
-                        id: "report_settings_analytics_retargetingcode_" + id,
-                        checked: this.parent.getValue("analytics.sites." + key + ".retargetingcode")
-                    },{
-                        xtype: "textarea",
-                        fieldLabel: t("analytics_additional_code_before_pageview"),
-                        name: "additionalcodebeforepageview" + id,
-                        height: 100,
-                        width: 350,
-                        id: "report_settings_analytics_additionalcodebeforepageview_" + id,
-                        value: this.parent.getValue("analytics.sites." + key + ".additionalcodebeforepageview")
-                    },{
-                        xtype: "textarea",
-                        fieldLabel: t("analytics_additional_code"),
-                        name: "additionalcode_" + id,
-                        height: 100,
-                        width: 350,
-                        id: "report_settings_analytics_additionalcode_" + id,
-                        value: this.parent.getValue("analytics.sites." + key + ".additionalcode")
-                    }, {
                         xtype: "textarea",
                         fieldLabel: t("analytics_universal_configuration"),
                         name: "universal_configuration_" + id,
@@ -133,6 +105,42 @@ pimcore.report.analytics.settings = Class.create({
                         width: 350,
                         id: "report_settings_analytics_universal_configuration_" + id,
                         value: this.parent.getValue("analytics.sites." + key + ".universal_configuration")
+                    },{
+                        xtype: "textarea",
+                        fieldLabel: t("code_before_init"),
+                        name: "additionalcodebeforeinit" + id,
+                        height: 100,
+                        width: 350,
+                        id: "report_settings_analytics_additionalcodebeforeinit_" + id,
+                        value: this.parent.getValue("analytics.sites." + key + ".additionalcodebeforeinit")
+                    },{
+                        xtype: "textarea",
+                        fieldLabel: t("code_before_pageview"),
+                        name: "additionalcodebeforepageview" + id,
+                        height: 100,
+                        width: 350,
+                        id: "report_settings_analytics_additionalcodebeforepageview_" + id,
+                        value: this.parent.getValue("analytics.sites." + key + ".additionalcodebeforepageview")
+                    },{
+                        xtype: "textarea",
+                        fieldLabel: t("code_after_pageview"),
+                        name: "additionalcode_" + id,
+                        height: 100,
+                        width: 350,
+                        id: "report_settings_analytics_additionalcode_" + id,
+                        value: this.parent.getValue("analytics.sites." + key + ".additionalcode")
+                    },{
+                        xtype: "checkbox",
+                        fieldLabel: t("analytics_asynchronous_code"),
+                        name: "asynchronouscode_" + id,
+                        id: "report_settings_analytics_asynchronouscode_" + id,
+                        checked: this.parent.getValue("analytics.sites." + key + ".asynchronouscode")
+                    },{
+                        xtype: "checkbox",
+                        fieldLabel: t("analytics_retargeting_code"),
+                        name: "retargetingcode_" + id,
+                        id: "report_settings_analytics_retargetingcode_" + id,
+                        checked: this.parent.getValue("analytics.sites." + key + ".retargetingcode")
                     }]
                 },{
                     xtype: "fieldset",
@@ -215,11 +223,11 @@ pimcore.report.analytics.settings = Class.create({
             sitesData[key] = {
                 profile: Ext.getCmp("report_settings_analytics_profile_" + id).getValue(),
                 trackid: Ext.getCmp("report_settings_analytics_trackid_" + id).getValue(),
+                asynchronouscode: Ext.getCmp("report_settings_analytics_asynchronouscode_" + id).getValue(),
                 retargetingcode: Ext.getCmp("report_settings_analytics_retargetingcode_" + id).getValue(),
-                universalcode: Ext.getCmp("report_settings_analytics_universalcode_" + id).getValue(),
                 additionalcode: Ext.getCmp("report_settings_analytics_additionalcode_" + id).getValue(),
-                additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_" + id)
-                                                                                        .getValue(),
+                additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_" + id).getValue(),
+                additionalcodebeforeinit: Ext.getCmp("report_settings_analytics_additionalcodebeforeinit_" + id).getValue(),
                 accountid: Ext.getCmp("report_settings_analytics_accountid_" + id).getValue(),
                 internalid: Ext.getCmp("report_settings_analytics_internalid_" + id).getValue(),
                 universal_configuration: Ext.getCmp("report_settings_analytics_universal_configuration_" + id).getValue()

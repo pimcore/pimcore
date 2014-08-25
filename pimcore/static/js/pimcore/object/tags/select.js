@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -128,7 +128,10 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         var options = {
             name: this.fieldConfig.name,
             triggerAction: "all",
-            editable: false,
+            editable: true,
+            typeAhead: true,
+            forceSelection: true,
+            selectOnFocus: true,
             fieldLabel: this.fieldConfig.title,
             store: store,
             itemCls: "object_field",

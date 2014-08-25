@@ -14,7 +14,8 @@
                 ?>
                 <?= $this->select("slides",[
                     "store" => $selectStore,
-                    "reload" => true
+                    "reload" => true,
+                    "width" => 60
                 ]); ?>
             </div>
             <div class="col-xs-6">
@@ -25,7 +26,7 @@
 
         <style type="text/css">
             .gallery .item {
-                min-height: 377px;
+                min-height: 200px;
             }
         </style>
     <?php } ?>

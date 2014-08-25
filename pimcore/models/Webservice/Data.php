@@ -11,13 +11,13 @@
  *
  * @category   Pimcore
  * @package    Webservice
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
 abstract class Webservice_Data {
 
-    public function map($object) {
+    public function map($object, $options = null) {
         $keys = get_object_vars($this);
         $blockedKeys = array("childs");
         foreach ($keys as $key => $value) {

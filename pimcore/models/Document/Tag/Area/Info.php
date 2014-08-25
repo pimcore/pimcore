@@ -11,11 +11,16 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
 class Document_Tag_Area_Info {
+
+    /**
+     * @var string
+     */
+    public $name;
 
     /**
      * @var Zend_Config
@@ -104,6 +109,22 @@ class Document_Tag_Area_Info {
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 }
     

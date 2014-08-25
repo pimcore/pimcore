@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -42,19 +42,19 @@ class Pimcore_Tool_Authentication {
      * @return User
      */
     public static function authenticateSession () {
-        return Pimcore_Tool_Session::useSession(function($adminSession) {
-            $user = $adminSession->user;
-            if ($user instanceof User) {
-                // renew user
-                $user = User::getById($user->getId());
 
-                if(Pimcore_Tool_Authentication::isValidUser($user)) {
-                    return $user;
-                }
+        $session = Pimcore_Tool_Session::getReadOnly();
+        $user = $session->user;
+        if ($user instanceof User) {
+            // renew user
+            $user = User::getById($user->getId());
+
+            if(Pimcore_Tool_Authentication::isValidUser($user)) {
+                return $user;
             }
+        }
 
-            return null;
-        });
+        return null;
     }
 
     /**

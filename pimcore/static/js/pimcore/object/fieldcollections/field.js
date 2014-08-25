@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -31,6 +31,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
+            id: "pimcore_fieldcollection_editor_panel_" + this.getId(),
             layout: "pimcoreform",
             items: [{
                 xtype: "textfield",

@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -176,6 +176,7 @@ class Pimcore_Tool_Newsletter {
             "email" => $object->getEmail(),
             "id" => $object->getId()
         )));
+        $token = str_replace("=", "~", $token); // base64 can contain = which isn't safe in URL's
         $object->setProperty("token", "text", $token);
 
         if(!$onlyCreateVersion) {
@@ -218,6 +219,10 @@ class Pimcore_Tool_Newsletter {
      * @return Object_Contrete
      */
     public function getObjectByToken($token) {
+
+        $originalToken = $token;
+        $token = str_replace("~", "=", $token); // base64 can contain = which isn't safe in URL's
+
         $data = Zend_Json::decode(base64_decode($token));
         if($data) {
             if($object = Object_Abstract::getById($data["id"])) {
@@ -226,7 +231,7 @@ class Pimcore_Tool_Newsletter {
                     $object = $version->getData();
                 }
 
-                if($object->getProperty("token") == $token) {
+                if($object->getProperty("token") == $originalToken) {
                     if($object->getEmail() == $data["email"]) {
                         return $object;
                     }

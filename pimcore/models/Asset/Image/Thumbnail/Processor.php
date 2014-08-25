@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Asset
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
@@ -23,7 +23,7 @@ class Asset_Image_Thumbnail_Processor {
         "scaleByWidth" => array("width"),
         "scaleByHeight" => array("height"),
         "contain" => array("width","height"),
-        "cover" => array("width","height","positioning"),
+        "cover" => array("width","height","positioning","doNotScaleUp"),
         "frame" => array("width","height"),
         "rotate" => array("angle"),
         "crop" => array("x","y","width","height"),
@@ -189,12 +189,7 @@ class Asset_Image_Thumbnail_Processor {
                     }
 
                     ksort($arguments);
-                    if(count($mapping) == count($arguments)) {
-                        call_user_func_array(array($image,$transformation["method"]),$arguments);
-                    } else {
-                        $message = "Image Transform failed: cannot call method `" . $transformation["method"] . "´ with arguments `" . implode(",",$arguments) . "´ because there are too few arguments";
-                        Logger::error($message);
-                    }
+                    call_user_func_array(array($image,$transformation["method"]),$arguments);
                 }
             }
         }
@@ -204,6 +199,8 @@ class Asset_Image_Thumbnail_Processor {
         if($contentOptimizedFormat) {
             Pimcore_Image_Optimizer::optimize($fsPath);
         }
+
+        clearstatcache();
 
         return $path;
     }

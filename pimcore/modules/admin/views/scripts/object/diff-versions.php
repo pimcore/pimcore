@@ -24,8 +24,8 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
     <tr class="system">
         <td>Date</td>
         <td>o_modificationDate</td>
-        <td><?php echo date('Y-m-d H:m:s', $this->object1->getModificationDate()); ?></td>
-        <td><?php echo date('Y-m-d H:m:s', $this->object2->getModificationDate()); ?></td>
+        <td><?php echo date('Y-m-d H:i:s', $this->object1->getModificationDate()); ?></td>
+        <td><?php echo date('Y-m-d H:i:s', $this->object2->getModificationDate()); ?></td>
     </tr>
     <tr class="system">
         <td>Path</td>

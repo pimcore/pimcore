@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object_Class
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -118,7 +118,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
                 if ($o instanceof Object_Concrete) {
                     $objects[] = $o;
                 }
-            } 
+            }
         }
         //must return array - otherwise this means data is not loaded
         return $objects;
@@ -134,7 +134,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
 
         //return null when data is not set
         if(!$data) return null;
-        
+
         $ids = array();
 
         if (is_array($data) && count($data) > 0) {
@@ -183,7 +183,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      * @return array
      */
     public function getDataFromEditmode($data, $object = null) {
-        
+
         //if not set, return null
         if($data === null or $data === FALSE){ return null; }
 
@@ -195,7 +195,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
                 if($o) {
                     $objects[]=$o;
                 }
-            }   
+            }
         }
         //must return array if data shall be set
         return $objects;
@@ -280,7 +280,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
                 if(empty($o)) {
                     continue;
                 }
-                
+
                 $allowClass = $this->allowObjectRelation($o);
                 if (!$allowClass or !($o instanceof Object_Concrete)) {
                     if(!$allowClass && $o instanceof Object_Concrete){
@@ -294,7 +294,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         }
     }
 
-     /**
+    /**
      * converts object data to a simple string value or CSV Export
      * @abstract
      * @param Object_Abstract $object
@@ -358,24 +358,24 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      * @param mixed $data
      */
     public function resolveDependencies ($data) {
-        
+
         $dependencies = array();
-        
+
         if (is_array($data) && count($data) > 0) {
-			foreach ($data as $o) {
-				if ($o instanceof Object_Abstract) {
-					$dependencies["object_" . $o->getId()] = array(
-						"id" => $o->getId(),
-						"type" => "object"
-					);
-				}
-			}
-		}
+            foreach ($data as $o) {
+                if ($o instanceof Object_Abstract) {
+                    $dependencies["object_" . $o->getId()] = array(
+                        "id" => $o->getId(),
+                        "type" => "object"
+                    );
+                }
+            }
+        }
         return $dependencies;
     }
-    
-    
-    
+
+
+
     public function getForWebserviceExport ($object) {
         $data = $this->getDataFromObjectParam($object);
         if (is_array($data)) {
@@ -401,7 +401,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function getFromWebserviceImport ($value, $object = null, $idMapper = null) {
         $relatedObjects = array();
         if(empty($value)){
-           return null;  
+            return null;
         } else if(is_array($value)){
             foreach($value as $key => $item){
                 $item = (array) $item;
@@ -544,7 +544,6 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      * @param null $object
      * @return null|Pimcore_Date
      */
-
     public function getDiffDataFromEditmode($data, $object = null) {
         if ($data) {
             $tabledata = $data[0]["data"];
@@ -556,9 +555,9 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
             $result = array();
             foreach ($tabledata as $in) {
                 $out = array();
-                $out["id"] = $in[0];
-                $out["path"] = $in[1];
-                $out["type"] = $in[2];
+                $out["id"] = $in["id"];
+                $out["path"] = $in["fullpath"];
+                $out["type"] = $in["type"];
                 $result[] = $out;
             }
 
@@ -595,4 +594,13 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         $this->maxItems = $masterDefinition->maxItems;
         $this->relationType = $masterDefinition->relationType;
     }
+
+
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     */
+    public function enrichLayoutDefinition() {
+
+    }
+
 }

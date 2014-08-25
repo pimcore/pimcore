@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -173,5 +173,19 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
         });
 
         this.datax.options = options;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    options: source.datax.options,
+                    width: source.datax.width,
+                    height: source.datax.height
+                });
+        }
     }
 });

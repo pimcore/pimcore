@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -233,6 +233,16 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
 
     public function getTranslator() {
         return $this->translator;
+    }
+
+    protected function protectCSRF() {
+        $csrfToken = Pimcore_Tool_Session::useSession(function($adminSession) {
+            return $adminSession->csrfToken;
+        });
+
+        if($csrfToken != $_SERVER["HTTP_X_PIMCORE_CSRF_TOKEN"]) {
+            die("Detected CSRF Attack! Do not do evil things with pimcore ... ;-)");
+        }
     }
 
     /**

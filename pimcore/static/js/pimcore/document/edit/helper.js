@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -98,7 +98,7 @@ pimcore.edithelpers.frameElement = function (el, body) {
         left: (offsets[0] - borderWidth) + "px",
         width: (width + borderWidth*2) + "px",
         height: borderWidth + "px",
-        backgroundColor: "#a3bae9",
+        backgroundColor: "#BABABA",
         zIndex: 10000
     });
 
@@ -111,7 +111,7 @@ pimcore.edithelpers.frameElement = function (el, body) {
         left: (offsets[0] - borderWidth) + "px",
         width: (width + borderWidth*2) + "px",
         height: borderWidth + "px",
-        backgroundColor: "#a3bae9",
+        backgroundColor: "#BABABA",
         zIndex: 10000
     });
 
@@ -124,7 +124,7 @@ pimcore.edithelpers.frameElement = function (el, body) {
         left: (offsets[0] - borderWidth) + "px",
         width: borderWidth + "px",
         height: (height + borderWidth*2) + "px",
-        backgroundColor: "#a3bae9",
+        backgroundColor: "#BABABA",
         zIndex: 10000
     });
 
@@ -137,7 +137,7 @@ pimcore.edithelpers.frameElement = function (el, body) {
         left: (offsets[0] + width ) + "px",
         width: borderWidth + "px",
         height: (height + borderWidth*2) + "px",
-        backgroundColor: "#a3bae9",
+        backgroundColor: "#BABABA",
         zIndex: 10000
     });
 

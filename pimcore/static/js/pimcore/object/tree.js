@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -262,7 +262,16 @@ pimcore.object.tree = Class.create({
                 count++;
             }
 
-            if (str1[count - 1] == " ") {
+            if(count > 0) {
+                lastSpace = str1.search(/ [^ ]*$/);
+
+                if((lastSpace > 0) && (lastSpace < count)) {
+                    count = lastSpace;
+                }
+            }
+
+
+            if (str1[count] == " " || (typeof str1[count] == 'undefined')) {
                 return count;
             } else {
                 return 0;

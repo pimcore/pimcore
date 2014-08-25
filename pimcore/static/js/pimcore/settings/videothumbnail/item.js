@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -99,14 +99,44 @@ pimcore.settings.videothumbnail.item = Class.create({
                 width: 300,
                 height: 100
             }, {
+                xtype: "combo",
+                name: "present",
+                fieldLabel: t("select_presetting"),
+                triggerAction: "all",
+                mode: "local",
+                store: [["average",t("average")],["good", t("good")],["best",t("best")]],
+                listeners: {
+                    select: function (el) {
+                        var sel = el.getValue();
+                        var vb = "";
+                        var ab = "";
+
+                        if(sel == "average") {
+                            vb = 400;
+                            ab = 128;
+                        } else if (sel == "good") {
+                            vb = 600;
+                            ab = 128;
+                        } else if (sel == "best") {
+                            vb = 800;
+                            ab = 196;
+                        }
+
+                        this.panel.getComponent("videoBitrate").setValue(vb);
+                        this.panel.getComponent("audioBitrate").setValue(ab);
+                    }.bind(this)
+                }
+            }, {
                 xtype: "spinnerfield",
                 name: "videoBitrate",
+                itemId: "videoBitrate",
                 value: this.data.videoBitrate,
                 fieldLabel: t("video_bitrate"),
                 width: 150
             }, {
                 xtype: "spinnerfield",
                 name: "audioBitrate",
+                itemId: "audioBitrate",
                 value: this.data.audioBitrate,
                 fieldLabel: t("audio_bitrate"),
                 width: 150

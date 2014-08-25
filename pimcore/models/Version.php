@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Version
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -178,6 +178,9 @@ class Version extends Pimcore_Model_Abstract {
 
         if(is_file($this->getFilePath())) {
             @unlink($this->getFilePath());
+        }
+        if(is_file($this->getBinaryFilePath())) {
+            @unlink($this->getBinaryFilePath());
         }
 
         $this->getResource()->delete();
@@ -453,19 +456,57 @@ class Version extends Pimcore_Model_Abstract {
 
     public function maintenanceCompress() {
 
-        foreach(["asset","document","object"] as $ctype) {
-            $dir = PIMCORE_VERSION_DIRECTORY . "/" . $ctype . "/";
+        $perIteration = 100;
+        $alreadyCompressedCounter = 0;
+        $overallCounter = 0;
 
-            if ($dh = opendir($dir)) {
-                while (($file = readdir($dh)) !== false) {
-                    $path = $dir.$file;
-                    if(is_file($path) && !preg_match("/\.(gz|bin)$/", $file)) {
-                        Logger::debug("version ID compressed:" . $file);
-                        gzcompressfile($path, 9);
-                        @unlink($path);
-                    }
+        $list = new Version_List();
+        $list->setCondition("date < " . (time() - 86400*30));
+        $list->setOrderKey("date");
+        $list->setOrder("DESC");
+        $list->setLimit($perIteration);
+
+        $total = $list->getTotalCount();
+        $iterations = ceil($total/$perIteration);
+
+        for($i=0; $i<$iterations; $i++) {
+
+            Logger::debug("iteration " . ($i+1) . " of " . $iterations);
+
+            $list->setOffset($i*$perIteration);
+
+            $versions = $list->load();
+
+            foreach($versions as $version) {
+
+                $overallCounter++;
+
+                if(file_exists($version->getFilePath())) {
+                    gzcompressfile($version->getFilePath(), 9);
+                    @unlink($version->getFilePath());
+
+                    $alreadyCompressedCounter = 0;
+
+                    Logger::debug("version compressed:" . $version->getFilePath());
+                } else {
+                    $alreadyCompressedCounter++;
                 }
-                closedir($dh);
+
+                if($overallCounter % 10 == 0) {
+                    Logger::debug("Waiting 5 secs to not kill the server...");
+                    sleep(5);
+                }
+            }
+
+            Pimcore::collectGarbage();
+
+            // check here how many already compressed versions we've found so far, if over 100 skip here
+            // this is necessary to keep the load on the system low
+            // is would be very unusual that older versions are not already compressed, so we assume that only new
+            // versions need to be compressed, that's not perfect but a compromise we can (hopefully) live with.
+            if($alreadyCompressedCounter > 100) {
+                Logger::debug("Over " . $alreadyCompressedCounter . " versions were already compresssed before, it doesn't seem that there are sill uncompressed versions in the past, skip...");
+                return;
             }
         }
     }

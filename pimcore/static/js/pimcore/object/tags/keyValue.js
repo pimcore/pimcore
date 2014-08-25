@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -36,6 +36,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         fields.push("possiblevalues");
         fields.push("inherited");
         fields.push("source");
+        fields.push("mandatory");
         fields.push("altSource");
         fields.push("altValue");
         if (fieldConfig.metaVisible) {
@@ -97,11 +98,12 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             }
 
             if (add) {
-            this.store.add(new this.store.recordType(pair));
-        }
+                this.store.add(new this.store.recordType(pair));
+            }
         }
 
         this.store.sort("description", "ASC");
+        this.updateMandatoryKeys();
 
         this.store.on("add", function() {
             this.dataChanged = true;
@@ -280,6 +282,14 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             } else if (col == "metadata") {
                 editable = true;
                 cellEditor = this.getCellEditor.bind(this, col);
+            } else if (col == "keyName") {
+                renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+                    if (record.data.mandatory) {
+                        value = value + ' <span style="color:red;">*</span>';
+                    }
+                    return value;
+                }
+
             }
 
             gridWidth += colWidth;
@@ -342,7 +352,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                                             var pair = store.getAt(i).data;
                                             if (pair.key == key && !pair.inherited) {
                                                 nonInheritedFound = true;
-                                }
+                                            }
                                         }
 
                                         if (!nonInheritedFound) {
@@ -352,7 +362,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                                                 if (pair.key == key && pair.inherited) {
                                                     var newpair = JSON.parse(JSON.stringify(pair));
                                                     this.store.add(new this.store.recordType(newpair));
-                            }
+                                                }
                                             }
                                         }
                                     }
@@ -491,6 +501,13 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 metaData.css += " grid_value_inherited";
             }
         } else {
+            if (colIndex == 3) {
+                metaData.css += " grid_value_noedit";
+            }
+            if (this.isInvalid(record)) {
+                metaData.css += " keyvalue_mandatory_violation";
+            }
+
             if (type == "translated") {
                 if (data.translated) {
                     return data.translated;
@@ -705,11 +722,11 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     var record = this.store.getAt(x);
 
                     if (!this.fieldConfig.multivalent) {
-                    if (record.data.key == keyDef.id) {
-                        addKey = false;
-                        break;
+                        if (record.data.key == keyDef.id) {
+                            addKey = false;
+                            break;
+                        }
                     }
-                }
                 }
 
                 if (addKey) {
@@ -722,6 +739,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     colData.group = keyDef.groupName;
                     colData.groupDesc = keyDef.groupdescription;
                     colData.unit = keyDef.unit;
+                    colData.mandatory = keyDef.mandatory;
                     this.store.add(new this.store.recordType(colData));
 
                     if (this.fieldConfig.multivalent) {
@@ -731,13 +749,67 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                             var p = this.store.getAt(k).data;
                             if (p.key == keyDef.id && p.inherited) {
                                 this.store.removeAt(k);
+                            }
+                        }
+                    }
                 }
             }
+
+            this.updateMandatoryKeys();
         }
-                }
+    },
+
+    updateMandatoryKeys: function() {
+        this.mandatoryKeyExists = false;
+        var totalCount = this.store.data.length;
+
+        for (var i = 0; i < totalCount; i++) {
+            var record = this.store.getAt(i);
+            if (record.data.mandatory) {
+                this.mandatoryKeyExists = true;
+                break;
             }
         }
     },
+
+
+    isInvalid: function(record) {
+
+        if (record.data.mandatory) {
+            if (record.data.type == "text" || record.data.type == "translated" || record.data.type == "select") {
+                if (!record.data.value) {
+                    return true;
+                }
+            } else if (record.data.type == "number") {
+                var type = typeof(record.data.value);
+                if (type !=  "number" && !(type == "string" && record.data.value.length > 0)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    },
+
+    isInvalidMandatory:function () {
+
+        var totalCount = this.store.data.length;
+
+        for (var i = 0; i < totalCount; i++) {
+            var record = this.store.getAt(i);
+            if (this.isInvalid(record)) {
+                return true;
+            }
+
+        }
+
+        return false;
+    },
+
+
+    isMandatory:function () {
+        return this.mandatoryKeyExists;
+    },
+
 
     getGridColumnConfig:function (field) {
         var renderer;

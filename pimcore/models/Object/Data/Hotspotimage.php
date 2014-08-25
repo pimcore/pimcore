@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -39,10 +39,10 @@ class Object_Data_Hotspotimage {
     public $crop;
 
 
-    public function __construct($image, $hotspots, $marker = array(), $crop = array()) {
+    public function __construct($image = null, $hotspots = [], $marker = array(), $crop = array()) {
         if($image instanceof Asset_Image) {
             $this->image = $image;
-        } else {
+        } else if (is_numeric($image)){
             $this->image = Asset_Image::getById($image);
         }
 
@@ -133,11 +133,10 @@ class Object_Data_Hotspotimage {
             ));
 
             $hash = md5(Pimcore_Tool_Serialize::serialize($thumbConfig->getItems()));
-            $thumbConfig->setName("auto_" . $hash);
+            $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);
         }
 
-        $imagePath = $this->getImage()->getThumbnail($thumbConfig);
-        return $imagePath;
+        return $this->getImage()->getThumbnail($thumbConfig);
     }
 
     public function __toString() {

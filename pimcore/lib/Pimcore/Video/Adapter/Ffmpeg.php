@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
@@ -98,7 +98,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         if($this->getDestinationFile()) {
 
             if(is_file($this->getConversionLogFile())) {
-                @unlink($this->getConversionLogFile());
+                $this->deleteConversionLogFile();
             }
             if(is_file($this->getDestinationFile())) {
                 @unlink($this->getDestinationFile());
@@ -117,7 +117,14 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
                 // todo set the -x264opts flag correctly and get profiles working as they should.
                 $arguments = "-strict experimental -f mp4 -vcodec libx264 -acodec aac -g 100 -pix_fmt yuv420p -movflags faststart " . $arguments;
             } else if($this->getFormat() == "webm") {
-                $arguments = "-f webm -vcodec libvpx -acodec libvorbis -ar 44000 -g 100 " . $arguments;
+                // check for vp9 support
+                $webmCodec = "libvpx";
+                $codecs = Pimcore_Tool_Console::exec(self::getFfmpegCli() . " -codecs");
+                if(stripos($codecs, "vp9")) {
+                    //$webmCodec = "libvpx-vp9"; // disabled until better support in ffmpeg and browsers
+                }
+
+                $arguments = "-strict experimental -f webm -vcodec " . $webmCodec . " -acodec libvorbis -ar 44000 -g 100 " . $arguments;
             } else {
                 throw new Exception("Unsupported video output format: " . $this->getFormat());
             }
@@ -163,6 +170,13 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
      */
     public function destroy() {
         Logger::debug("FFMPEG finished, last message was: \n" . file_get_contents($this->getConversionLogFile()));
+        $this->deleteConversionLogFile();
+    }
+
+    /**
+     *
+     */
+    public function deleteConversionLogFile() {
         @unlink($this->getConversionLogFile());
     }
 
@@ -203,10 +217,14 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         // check if the conversion failed
         if(stripos($log, "Invalid data found when processing") !== false
            || stripos($log, "incorrect parameters") !== false
-           || stripos($log, "error") !== false) {
+           || stripos($log, "error") !== false
+           || stripos($log, "unable") !== false) {
 
             Logger::critical("Problem converting video: " . $this->file . " to format " . $this->getFormat());
             Logger::critical($log);
+
+            // create a copy of the conversion log, so that it will persist
+            copy($this->getConversionLogFile() , str_replace(".log", ".error.log", $this->getConversionLogFile()));
 
             return "error";
         }
@@ -231,7 +249,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         clearstatcache(); // clear stat cache otherwise filemtime always returns the same timestamp
         if((time() - filemtime($this->getConversionLogFile())) > 10) {
             $percent = 100;
-            @unlink($this->getConversionLogFile());
+            $this->deleteConversionLogFile();
         }
 
         if(!$percent) {
@@ -261,7 +279,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     }
 
     protected function getConversionLogFile () {
-        return PIMCORE_LOG_DIRECTORY . "/ffmpeg-" . $this->getProcessId() . ".log";
+        return PIMCORE_LOG_DIRECTORY . "/ffmpeg-" . $this->getProcessId() . "-" . $this->getFormat() . ".log";
     }
 
     public function addArgument($key, $value) {
@@ -269,16 +287,22 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     }
 
     public function setVideoBitrate($videoBitrate) {
+        $videoBitrate = intval($videoBitrate);
         parent::setVideoBitrate($videoBitrate);
 
-        $this->addArgument("videoBitrate", "-vb " . $videoBitrate . "k");
+        if($videoBitrate) {
+            $this->addArgument("videoBitrate", "-vb " . $videoBitrate . "k");
+        }
         return $this;
     }
 
     public function setAudioBitrate($audioBitrate) {
+        $audioBitrate = intval($audioBitrate);
         parent::setAudioBitrate($audioBitrate);
 
-        $this->addArgument("audioBitrate", "-ab " . $audioBitrate . "k");
+        if($audioBitrate) {
+            $this->addArgument("audioBitrate", "-ab " . $audioBitrate . "k");
+        }
         return $this;
     }
 

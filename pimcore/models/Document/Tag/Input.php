@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -54,7 +54,7 @@ class Document_Tag_Input extends Document_Tag
         $options = $this->getOptions();
 
         $text = $this->text;
-        if ($options["htmlspecialchars"] !== false) {
+        if (isset($options["htmlspecialchars"]) AND $options["htmlspecialchars"] !== false) {
             $text = htmlspecialchars($this->text);
         }
 

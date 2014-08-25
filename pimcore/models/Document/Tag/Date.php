@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -59,7 +59,7 @@ class Document_Tag_Date extends Document_Tag {
      */
     public function frontend() {
 
-        if (!$this->options["output"]) {
+        if (!isset($this->options["output"]) || !$this->options["output"]) {
             $this->options["output"] = Zend_Date::DATE_MEDIUM;
         }
 

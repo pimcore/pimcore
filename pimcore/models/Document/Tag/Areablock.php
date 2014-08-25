@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -69,6 +69,25 @@ class Document_Tag_Areablock extends Document_Tag {
         }
         reset($this->indices);
         while ($this->loop());
+    }
+
+    /**
+     * @param $index
+     */
+    public function renderIndex($index) {
+        $this->start();
+
+        $this->currentIndex = $this->indices[$index];
+        $this->current = $index;
+
+        $this->blockConstruct();
+        $this->blockStart();
+
+        $this->content();
+
+        $this->blockDestruct();
+        $this->blockEnd();
+        $this->end();
     }
 
     /**
@@ -141,6 +160,7 @@ class Document_Tag_Areablock extends Document_Tag {
         $info = null;
         try {
             $info = new Document_Tag_Area_Info();
+            $info->setName($this->getName());
             $info->setId($this->currentIndex["type"]);
             $info->setIndex($this->current);
             $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getPathForBrick($this->currentIndex["type"])));
@@ -292,11 +312,11 @@ class Document_Tag_Areablock extends Document_Tag {
         return array(
             "areablock_toolbar" => array(
                 "title" => "",
-                "width" => 160,
+                "width" => 172,
                 "x" => 20,
                 "y" => 50,
                 "xAlign" => "left",
-                "buttonWidth" => 148,
+                "buttonWidth" => 154,
                 "buttonMaxCharacters" => 20
             )
         );
@@ -450,7 +470,7 @@ class Document_Tag_Areablock extends Document_Tag {
         $availableAreas = array();
         $availableAreasSort = array();
 
-        if(!is_array($options["allowed"])) {
+        if(!isset($options["allowed"]) || !is_array($options["allowed"])) {
             $options["allowed"] = array();
         }
 
@@ -504,7 +524,7 @@ class Document_Tag_Areablock extends Document_Tag {
 
         $options["types"] = $availableAreas;
 
-        if(is_array($options["group"])) {
+        if(isset($options["group"]) && is_array($options["group"])) {
             $groupingareas = array();
             foreach ($availableAreas as $area) {
                 $groupingareas[$area["type"]] = $area["type"];
@@ -514,7 +534,7 @@ class Document_Tag_Areablock extends Document_Tag {
             foreach ($options["group"] as $name => $areas) {
 
                 $n = $name;
-                if($this->view){
+                if($this->view && $this->editmode){
                     $n = $this->view->translateAdmin($name);
                 }
                 $groups[$n] = $areas;
@@ -530,7 +550,7 @@ class Document_Tag_Areablock extends Document_Tag {
                     $uncatAreas[] = $area;
                 }
                 $n = "Uncategorized";
-                if($this->view){
+                if($this->view && $this->editmode){
                     $n = $this->view->translateAdmin($n);
                 }
                 $groups[$n] = $uncatAreas;

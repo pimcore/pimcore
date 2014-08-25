@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object_Fieldcollection
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -203,6 +203,18 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         $cd = '<?php ';
 
         $cd .= "\n\n";
+        $cd .= "/** Generated at " . date('c') . " */";
+        $cd .= "\n\n";
+
+        $cd .= "/**\n";
+
+        if ($_SERVER["REMOTE_ADDR"]) {
+            $cd .= "* IP:          " . $_SERVER["REMOTE_ADDR"] . "\n";
+        }
+
+        $cd .= "*/\n";
+        $cd .= "\n\n";
+
         $cd .= "class Object_Fieldcollection_Data_" . ucfirst($this->getKey()) . " extends " . $extendClass . "  {";
         $cd .= "\n\n";
 

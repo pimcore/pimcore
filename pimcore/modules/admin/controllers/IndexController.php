@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -88,8 +88,14 @@ class Admin_IndexController extends Pimcore_Controller_Action_Admin {
         
         $this->view->upload_max_filesize = $upload_mb;
 
-        // live connect
-        $liveconnectToken = Pimcore_Liveconnect::getToken();
-        $this->view->liveconnectToken = $liveconnectToken;
+
+        // csrf token
+        $user = $this->getUser();
+        $this->view->csrfToken = Pimcore_Tool_Session::useSession(function($adminSession) use ($user) {
+            if(!isset($adminSession->csrfToken) && !$adminSession->csrfToken) {
+                $adminSession->csrfToken = sha1(microtime() . $user->getName() . uniqid());
+            }
+            return $adminSession->csrfToken;
+        });
     }
 }

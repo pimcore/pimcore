@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -468,8 +468,14 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     },
 
     getMenuConfigForBrick: function (brick, scope, element) {
+
+        var menuText = "<b>" + brick.name + "</b>";
+        if(brick.description) {
+            menuText += " | " + brick.description;
+        }
+
         var tmpEntry = {
-            text: "<b>" + brick.name + "</b> | " + brick.description,
+            text: menuText,
             iconCls: "pimcore_icon_area",
             listeners: {
                 "click": this.addBlock.bind(scope, element, brick.type)
@@ -826,7 +832,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         var button = {
             xtype: "button",
-            tooltip: "<b>" + brick.name + "</b><br />" + brick.description,
             icon: brick.icon,
             text: brick.name.length > maxButtonCharacters ? brick.name.substr(0,maxButtonCharacters) + "..."
                 : brick.name,
@@ -878,6 +883,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 }.bind(this, brick)
             }
         };
+
+        if(brick.description) {
+            button["tooltip"] = brick.description;
+        }
 
         if(type == "menu") {
             delete button["width"];

@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -242,14 +242,6 @@
 
 .pimcore_icon_extensionmanager_admin {
     background: url(/pimcore/static/img/icon/plugin_edit.png) left center no-repeat !important;
-}
-
-.pimcore_icon_extensionmanager_download {
-    background: url(/pimcore/static/img/icon/plugin_add.png) left center no-repeat !important;
-}
-
-.pimcore_icon_extensionmanager_share {
-    background: url(/pimcore/static/img/icon/plugin_go.png) left center no-repeat !important;
 }
 
 .pimcore_icon_menu_plugin_download {
@@ -824,7 +816,7 @@
 }
 
 .pimcore_tag_table_empty {
-    background: url(/pimcore/static/img/icon/bin_closed.png) !important;
+    background: url(/pimcore/static/img/icon/bin_closed.png) left center no-repeat !important;
 }
 
 

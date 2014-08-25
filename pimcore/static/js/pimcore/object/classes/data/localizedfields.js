@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -122,6 +122,21 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
             ]
         });
 
+        this.layout.add({
+            xtype: "form",
+            labelWidth: 140,
+            bodyStyle: "padding: 10px;",
+            style: "margin: 10px 0 10px 0",
+            items: [
+                {
+                    xtype: "spinnerfield",
+                    name: "labelWidth",
+                    fieldLabel: t("label_width"),
+                    value: this.datax.labelWidth
+                }
+            ]
+        });
+
 
         this.layout.on("render", this.layoutRendered.bind(this));
 
@@ -134,5 +149,22 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
         data.name = "localizedfields";
 
         return data;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    region: source.datax.region,
+                    layout: source.datax.layout,
+                    width: source.datax.width,
+                    height: source.datax.height,
+                    maxTabs: source.datax.maxTabs,
+                    labelWidth: source.datax.labelWidth
+                });
+        }
     }
 });

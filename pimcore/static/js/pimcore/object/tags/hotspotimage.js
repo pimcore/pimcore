@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -216,7 +216,10 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             this.dirty = true;
 
             this.updateImage();
-        }.bind(this));
+        }.bind(this), {
+            ratioX: this.fieldConfig.ratioX,
+            ratioY: this.fieldConfig.ratioY
+        });
         editor.open(true);
     },
 

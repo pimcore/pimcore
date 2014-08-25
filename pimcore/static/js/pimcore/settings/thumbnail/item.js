@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -593,6 +593,11 @@ pimcore.settings.thumbnail.items = {
                             "topcenter","bottomcenter"],
                 width: 150
             },{
+                xtype: "checkbox",
+                name: "doNotScaleUp",
+                checked: data["doNotScaleUp"],
+                fieldLabel: t("do_not_scale_up")
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "cover"

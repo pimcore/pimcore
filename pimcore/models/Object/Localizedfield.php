@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -202,7 +202,9 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
                             if (method_exists($parent, $method)) {
                                 $localizedFields = $parent->getLocalizedFields();
                                 if ($localizedFields instanceof Object_Localizedfield) {
-                                    $data = $localizedFields->getLocalizedValue($name, $language, true);
+                                    if($localizedFields->object->getId() != $this->object->getId()) {
+                                        $data = $localizedFields->getLocalizedValue($name, $language, true);
+                                    }
                                 }
                             }
                         }

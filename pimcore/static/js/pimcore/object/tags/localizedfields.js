@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -16,10 +16,6 @@ pimcore.registerNS("pimcore.object.tags.localizedfields");
 pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract, {
 
     type: "localizedfields",
-
-    dropdownLayout: false,
-
-    availablePanels: [],
 
     frontendLanguages: null,
 
@@ -31,6 +27,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         this.languageElements = {};
         this.inheritedFields = {};
         this.referencedFields = [];
+        this.availablePanels = [];
+        this.dropdownLayout = false;
 
         if (pimcore.currentuser.admin || fieldConfig.permissionView === undefined) {
             this.frontendLanguages = pimcore.settings.websiteLanguages;
@@ -176,12 +174,17 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     hidden: (i > 0)     //TODO default language
                 };
 
+
                 if(this.fieldConfig.height) {
                     panelConf.height = this.fieldConfig.height;
                     panelConf.autoHeight = false;
                     panelConf.autoScroll = true;
                 } else {
                     panelConf.autoHeight = true;
+                }
+
+                if (this.fieldConfig.labelWidth) {
+                    panelConf.labelWidth = this.fieldConfig.labelWidth;
                 }
 
                 this.tabPanel = new Ext.Panel(panelConf);
@@ -249,7 +252,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 var editable =  (pimcore.currentuser.admin ||
                     this.fieldConfig.permissionEdit === undefined ||  this.fieldConfig.permissionEdit.length == 0 || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
 
-                panelConf.items.push({
+                var item = {
                     xtype: "panel",
                     layout: "pimcoreform",
                     border:false,
@@ -259,8 +262,16 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     hideMode: "offsets",
                     title: pimcore.available_languages[this.frontendLanguages[i]],
                     items: this.getRecursiveLayout(this.fieldConfig, !editable).items
-                });
+                };
+
+                if (this.fieldConfig.labelWidth) {
+                    item.labelWidth = this.fieldConfig.labelWidth;
             }
+
+                panelConf.items.push(item);
+            }
+
+
 
             this.tabPanel = new Ext.TabPanel(panelConf);
 

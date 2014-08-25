@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -298,7 +298,8 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                     "group" => $config->getGroup(),
                     "groupdescription" => $groupDescription,
                     "groupName" => $groupName,
-                    "translator" => $config->getTranslator()
+                    "translator" => $config->getTranslator(),
+                    "mandatory" => $config->getMandatory()
                 );
 
                 if ($config->getCreationDate()) {

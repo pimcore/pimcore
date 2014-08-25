@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -87,5 +87,73 @@ pimcore.element.selector.abstract = Class.create({
             }
             return null;
         }
+    },
+
+    getPagingToolbar: function(label) {
+        var pagingToolbar = new Ext.PagingToolbar({
+            pageSize: 50,
+            store: this.store,
+            displayInfo: true,
+            displayMsg: '{0} - {1} / {2}',
+            emptyMsg: label
+        });
+
+        // add per-page selection
+        pagingToolbar.add("-");
+
+        pagingToolbar.add(new Ext.Toolbar.TextItem({
+            text: t("items_per_page")
+        }));
+
+        pagingToolbar.add(new Ext.form.ComboBox({
+            store: [
+                [10, "10"],
+                [20, "20"],
+                [40, "40"],
+                [60, "60"],
+                [80, "80"],
+                [100, "100"],
+                [999999, t("all")]
+            ],
+            mode: "local",
+            width: 50,
+            value: 20,
+            triggerAction: "all",
+            listeners: {
+                select: function (box, rec, index) {
+                    this.pagingtoolbar.pageSize = intval(rec.data.field1);
+                    this.pagingtoolbar.moveFirst();
+                }.bind(this)
+            }
+        }));
+
+        return pagingToolbar;
+    },
+
+    onRowContextmenu: function (grid, rowIndex, event) {
+
+        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( {
+            backgroundColor: '#fff' }, 400);
+
+        var menu = new Ext.menu.Menu();
+        var data = grid.getStore().getAt(rowIndex);
+        var selectedRows = grid.getSelectionModel().getSelections();
+
+
+        menu.add(new Ext.menu.Item({
+            text: t('add_selected'),
+            iconCls: "pimcore_icon_add",
+            handler: function (data) {
+                var selectedRows = grid.getSelectionModel().getSelections();
+                for (var i = 0; i < selectedRows.length; i++) {
+                    this.addToSelection(selectedRows[i].data);
+                }
+
+            }.bind(this, data)
+        }));
+
+        event.stopEvent();
+        menu.showAt(event.getXY());
     }
+
 });

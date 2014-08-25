@@ -9,21 +9,12 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
 class Admin_MiscController extends Pimcore_Controller_Action_Admin
 {
-
-    public function liveconnectAction()
-    {
-
-        $token = $this->getParam("token");
-        Pimcore_Liveconnect::setToken($token);
-        $this->view->token = $token;
-    }
-
     public function jsonTranslationsAdminAction()
     {
         $this->getResponse()->setHeader("Content-Type", "text/javascript", true);
@@ -608,53 +599,15 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     }
 
     public function robohashAction() {
-        $seed = crc32($this->getParam("seed", rand(0,20000)));
-        $colors = array("blue","brown","green","grey","orange","pink","purple","red","white","yellow");
-        $partDirs = array("003#01Body", "004#02Face", "000#Mouth","001#Eyes","002#Accessory");
 
-        $im = null;
-
-        srand($seed);
-        $color = $colors[array_rand($colors)];
-        $dir = PIMCORE_PATH . "/static/img/robohash/" . $color;
-
-        foreach ($partDirs as $key => $partDir) {
-            $partDir = $dir . "/" . $partDir;
-            $files = scandir($partDir);
-
-            srand($seed + $key);
-            $id = rand(0,9);
-
-            foreach ($files as $file) {
-                if(preg_match("/^00" . $id . "#/", $file)) {
-                    $partIm = imagecreatefrompng($partDir . "/" . $file);
-                    break;
-                }
-            }
-
-            if($im) {
-                imagecopy($im, $partIm, 0,0,0,0,300,300);
-            } else {
-                $im = $partIm;
-                imagesavealpha($im, true);
-            }
-        }
-
-        if($this->getParam("width") && $this->getParam("height")) {
-            $w = $this->getParam("width");
-            $h = $this->getParam("height");
-            $imResized = imagecreatetruecolor($w, $h);
-            imagesavealpha($imResized, true);
-            imagealphablending($imResized, false);
-            $trans_colour = imagecolorallocatealpha($imResized, 255, 0, 0, 127);
-            imagefill($imResized, 0, 0, $trans_colour);
-            imagecopyresampled($imResized, $im, 0, 0, 0, 0, $w, $h, 300, 300);
-            $im = $imResized;
-        }
+        $hash = Pimcore_Tool_Misc::roboHash([
+            "seed" => $this->getParam("seed", rand(0,20000)),
+            "width" => $this->getParam("width"),
+            "height" => $this->getParam("height")
+        ]);
 
         header("Content-Type: image/png");
-        imagepng($im);
-        imagedestroy($im);
+        echo readfile($hash);
         exit;
     }
 

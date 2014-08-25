@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
@@ -142,7 +142,7 @@ class Pimcore_Document_Adapter_LibreOffice extends Pimcore_Document_Adapter_Ghos
 
             // a list of all available filters is here:
             // http://cgit.freedesktop.org/libreoffice/core/tree/filter/source/config/fragments/filters
-            $cmd = self::getLibreOfficeCli() . " --headless --nologo --nofirststartwizard --norestore --server --convert-to pdf:writer_web_pdf_Export --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path;
+            $cmd = self::getLibreOfficeCli() . " --headless --nologo --nofirststartwizard --norestore --convert-to pdf:writer_web_pdf_Export --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path;
             $out = Pimcore_Tool_Console::exec($cmd, PIMCORE_LOG_DIRECTORY . "/libreoffice-pdf-convert.log", 240);
 
             Logger::debug("LibreOffice Output was: " . $out);
@@ -174,7 +174,7 @@ class Pimcore_Document_Adapter_LibreOffice extends Pimcore_Document_Adapter_Ghos
             return parent::getText($page, $this->getPdf($path));
         } else {
             // if we want to get the text of the whole document, we can use libreoffices text export feature
-            $cmd = self::getLibreOfficeCli() . " --headless --nologo --nofirststartwizard --norestore --server --convert-to txt:Text --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path;
+            $cmd = self::getLibreOfficeCli() . " --headless --nologo --nofirststartwizard --norestore --convert-to txt:Text --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path;
             $out = Pimcore_Tool_Console::exec($cmd, null, 240);
 
             Logger::debug("LibreOffice Output was: " . $out);

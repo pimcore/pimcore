@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    User
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -400,5 +400,58 @@ class User extends User_UserRole {
             return null;
         }
         return $this->apiKey;
+    }
+
+    /**
+     * @param $path
+     */
+    public function setImage($path) {
+        $userImageDir = PIMCORE_WEBSITE_VAR . "/user-image";
+        if(!is_dir($userImageDir)) {
+            Pimcore_File::mkdir($userImageDir);
+        }
+
+        $destFile = $userImageDir . "/user-" . $this->getId() . ".png";
+        $thumb = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/user-thumbnail-" . $this->getId() . ".png";
+        @unlink($destFile);
+        @unlink($thumb);
+        copy($path, $destFile);
+        @chmod($destFile, Pimcore_File::getDefaultMode());
+    }
+
+    /**
+     * @return string
+     */
+    public function getImage($width = null, $height = null) {
+
+        if(!$width) {
+            $width = 46;
+        }
+        if(!$height) {
+            $height = 46;
+        }
+
+        $id = $this->getId();
+        $user = PIMCORE_WEBSITE_VAR . "/user-image/user-" . $id . ".png";
+        if(file_exists($user)) {
+            $thumb = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/user-thumbnail-" . $id . ".png";
+            if(!file_exists($thumb)) {
+                $image = Pimcore_Image::getInstance();
+                $image->load($user);
+                $image->cover($width,$height);
+                $image->save($thumb, "png");
+            }
+
+            return $thumb;
+        }
+
+        $seed = $this->getName() . "-" . Pimcore_Tool::getHostUrl();
+        $hash = Pimcore_Tool_Misc::roboHash([
+            "seed" => $seed,
+            "width" => $width,
+            "height" => $height
+        ]);
+
+        return $hash;
     }
 }

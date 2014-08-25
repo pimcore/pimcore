@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  *
  */
@@ -398,7 +398,12 @@ class Document extends Element_Abstract {
 
                 break; // transaction was successfully completed, so we cancel the loop here -> no restart required
             } catch (Exception $e) {
-                $this->rollBack();
+                try {
+                    $this->rollBack();
+                } catch (\Exception $er) {
+                    // PDO adapter throws exceptions if rollback fails
+                    Logger::error($er);
+                }
 
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
                 if($retries < ($maxRetries-1)) {
@@ -565,6 +570,8 @@ class Document extends Element_Abstract {
         $this->childs=$childs;
         if(is_array($childs) and count($childs>0)){
             $this->hasChilds=true;
+        } else if ($childs === null) {
+            $this->hasChilds = null;
         } else {
             $this->hasChilds=false;
         }
@@ -720,12 +727,16 @@ class Document extends Element_Abstract {
             $front = Zend_Controller_Front::getInstance();
             $scheme = ($front->getRequest()->isSecure() ? "https" : "http") . "://";
             if($site = Pimcore_Tool_Frontend::getSiteForDocument($this)) {
-                // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /
-                if ($site->getRootDocument()->getId() == $this->getId()) {
-                    return $scheme . $site->getMainDomain() . "/";
+                if($site->getMainDomain()) {
+                    // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /
+                    if ($site->getRootDocument()->getId() == $this->getId()) {
+                        return $scheme . $site->getMainDomain() . "/";
+                    }
+                    return $scheme . $site->getMainDomain() . preg_replace("@^" . $site->getRootPath() . "/@", "/", $this->getRealFullPath());
                 }
-                return $scheme . $site->getMainDomain() . preg_replace("@^" . $site->getRootPath() . "/@", "/", $this->getRealFullPath());
-            } else if ($config->general->domain) {
+            }
+
+            if ($config->general->domain) {
                 return $scheme . $config->general->domain . $this->getRealFullPath();
             }
         }
@@ -852,6 +863,7 @@ class Document extends Element_Abstract {
      */
     public function setParentId($parentId) {
         $this->parentId = (int) $parentId;
+        $this->parent = Document::getById($parentId);
         return $this;
     }
 

@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -22,12 +22,13 @@ pimcore.object.classes.klass = Class.create({
 
 
 
-    initialize: function (data, parentPanel) {
+    initialize: function (data, parentPanel, reopen) {
         this.parentPanel = parentPanel;
         this.data = data;
 
         this.addLayout();
         this.initLayoutFields();
+        this.reopen = reopen;
     },
 
     getUploadUrl: function(){
@@ -66,6 +67,7 @@ pimcore.object.classes.klass = Class.create({
                     {
                         text: t("configure_custom_layouts"),
                         iconCls: "pimcore_icon_class_add",
+                        hidden: (this instanceof pimcore.object.fieldcollections.field) || (this instanceof pimcore.object.objectbricks.field),
                         handler: this.configureCustomLayouts.bind(this)
                     }
                 ]
@@ -75,6 +77,12 @@ pimcore.object.classes.klass = Class.create({
         var displayId = this.data.key ? this.data.key : this.data.id; // because the field-collections use that also
 
         var panelButtons = [];
+
+        panelButtons.push({
+            text: t('reload_definition'),
+            handler: this.onRefresh.bind(this),
+            iconCls: "pimcore_icon_reload"
+        });
 
         panelButtons.push({
             text: t("import"),
@@ -804,6 +812,8 @@ pimcore.object.classes.klass = Class.create({
             }
         }
 
+        newNode.attributes.object.applySpecialData(this.attributes.object);
+
         this.parentNode.insertBefore(newNode, this);
         var parentNode = this.parentNode;
         if (removeExisting) {
@@ -908,7 +918,7 @@ pimcore.object.classes.klass = Class.create({
 
         this.saveCurrentNode();
 
-        var regresult = this.data["name"].match(/[a-zA-Z]+/);
+        var regresult = this.data["name"].match(/[a-zA-Z][a-zA-Z0-9]+/);
 
         if (this.data["name"].length > 2 && regresult == this.data["name"] && !in_array(this.data["name"].toLowerCase(),
             this.parentPanel.forbiddennames)) {
@@ -958,5 +968,10 @@ pimcore.object.classes.klass = Class.create({
 
     saveOnError: function () {
         pimcore.helpers.showNotification(t("error"), t("class_save_error"), "error");
+    },
+
+    onRefresh: function() {
+        this.parentPanel.getEditPanel().remove(this.panel);
+        this.reopen();
     }
 });

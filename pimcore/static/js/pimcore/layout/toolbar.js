@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -32,8 +32,8 @@ pimcore.layout.toolbar = Class.create({
                     text: t("welcome"),
                     iconCls: "pimcore_icon_welcome",
                     handler: pimcore.helpers.openWelcomePage.bind(this)
-                    }]
-                }
+                }]
+            }
         });
 
         Ext.Ajax.request({
@@ -260,23 +260,7 @@ pimcore.layout.toolbar = Class.create({
             extrasItems.push({
                 text: t("extensions"),
                 iconCls: "pimcore_icon_extensionmanager",
-                hideOnClick: false,
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    items: [{
-                        text: t("manage_extensions"),
-                        iconCls: "pimcore_icon_extensionmanager_admin",
-                        handler: this.extensionAdmin
-                    },{
-                        text: t("download_extension"),
-                        iconCls: "pimcore_icon_extensionmanager_download",
-                        handler: this.extensionDownload
-                    },{
-                        text: t("share_extension"),
-                        iconCls: "pimcore_icon_extensionmanager_share",
-                        handler: this.extensionShare
-                    }]
-                }
+                handler: this.extensionAdmin
             });
         }
 
@@ -524,6 +508,14 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        if (user.isAllowed("predefined_properties")) {
+            settingsItems.push({
+                text: t("predefined_asset_metadata"),
+                iconCls: "pimcore_icon_metadata",
+                handler: this.editPredefinedMetadata
+            });
+        }
+
         if (user.isAllowed("system_settings")) {
             settingsItems.push({
                 text: t("system"),
@@ -628,6 +620,20 @@ pimcore.layout.toolbar = Class.create({
                     iconCls: "pimcore_icon_custom_views",
                     handler: this.editCustomViews
                 });
+
+
+                objectMenu.menu.items.push({
+                    text: t("bulk_export"),
+                    iconCls: "pimcore_icon_export",
+                    handler: this.bulkExport
+                });
+
+                objectMenu.menu.items.push({
+                    text: t("bulk_import"),
+                    iconCls: "pimcore_icon_import",
+                    handler: this.bulkImport.bind(this)
+                });
+
 
                 settingsItems.push(objectMenu);
             }
@@ -1007,6 +1013,19 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.add("predefined_properties", new pimcore.settings.properties.predefined());
         }
     },
+
+
+    editPredefinedMetadata: function () {
+
+        try {
+            pimcore.globalmanager.get("predefined_metadata").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("predefined_metadata", new pimcore.settings.metadata.predefined());
+        }
+    },
+
+
 
     backup: function () {
         var backup = new pimcore.settings.backup();
@@ -1427,30 +1446,12 @@ pimcore.layout.toolbar = Class.create({
         new pimcore.settings.maintenance();
     },
 
-    extensionShare: function () {
-        try {
-            pimcore.globalmanager.get("extensionmanager_share").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("extensionmanager_share", new pimcore.extensionmanager.share());
-        }
-    },
-
     extensionAdmin: function () {
         try {
             pimcore.globalmanager.get("extensionmanager_admin").activate();
         }
         catch (e) {
             pimcore.globalmanager.add("extensionmanager_admin", new pimcore.extensionmanager.admin());
-        }
-    },
-
-    extensionDownload: function () {
-        try {
-            pimcore.globalmanager.get("extensionmanager_download").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("extensionmanager_download", new pimcore.extensionmanager.download());
         }
     },
 
@@ -1553,5 +1554,26 @@ pimcore.layout.toolbar = Class.create({
         catch (e) {
             pimcore.globalmanager.add("email_blacklist", new pimcore.settings.email.blacklist());
         }
+    },
+
+
+    bulkImport: function() {
+
+        Ext.Msg.confirm(t('warning'), t('warning_bulk_import'), function(btn){
+            if (btn == 'yes'){
+                this.doBulkImport();
+            }
+        }.bind(this));
+   },
+
+
+    doBulkImport: function() {
+        var importer = new pimcore.object.bulkimport;
+        importer.upload();
+    },
+
+    bulkExport: function() {
+        var exporter = new pimcore.object.bulkexport();
+        exporter.export();
     }
 });

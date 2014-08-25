@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Asset
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -215,4 +215,68 @@ class Asset_Service extends Element_Service {
 
         return $asset;
     }
+
+    public static function minimizeMetadata($metadata) {
+        if (!is_array($metadata)) {
+            return $metadata;
+        }
+
+        $result = array();
+        foreach ($metadata as $item) {
+            $type = $item["type"];
+            switch ($type) {
+                case "document":
+                case "asset":
+                case "object":
+                    {
+                        $element = Element_Service::getElementByPath($type, $item["data"]);
+                        if ($element) {
+                            $item["data"] = $element->getId();
+                        } else {
+                            $item["data"] = "";
+                        }
+                    }
+
+                    break;
+                default:
+                    //nothing to do
+            }
+            $result[] = $item;
+        }
+        return $result;
+    }
+
+    public static function expandMetadata($metadata) {
+        if (!is_array($metadata)) {
+            return $metadata;
+        }
+
+        $result = array();
+        foreach ($metadata as $item) {
+            $type = $item["type"];
+            switch ($type) {
+                case "document":
+                case "asset":
+                case "object":
+                {
+                    if (is_numeric($item["data"])) {
+                        $element = Element_Service::getElementById($type, $item["data"]);
+                    }
+                    if ($element) {
+                        $item["data"] = $element->getFullPath();
+                    } else {
+                        $item["data"] = "";
+                    }
+                }
+
+                    break;
+                default:
+                    //nothing to do
+            }
+            $result[] = $item;
+        }
+        return $result;
+    }
+
+
 }

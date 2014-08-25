@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
@@ -171,14 +171,16 @@ abstract class Pimcore_Image_Adapter {
      * @param string $orientation
      * @return Pimcore_Image_Adapter
      */
-    public function cover ($width, $height, $orientation = "center") {
+    public function cover ($width, $height, $orientation = "center", $doNotScaleUp = true) {
+
+        $scaleUp = $doNotScaleUp ? false : true;
 
         $ratio = $this->getWidth() / $this->getHeight();
 
         if (($width / $height) > $ratio) {
-           $this->scaleByWidth($width, true);
+           $this->scaleByWidth($width, $scaleUp);
         } else {
-           $this->scaleByHeight($height, true);
+           $this->scaleByHeight($height, $scaleUp);
         }
 
         if($orientation == "center") {

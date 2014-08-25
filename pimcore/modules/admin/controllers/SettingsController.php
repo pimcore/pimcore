@@ -9,11 +9,111 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
 class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
+
+
+    public function metadataAction() {
+
+        if ($this->getParam("data")) {
+            $this->checkPermission("predefined_properties");
+
+            if ($this->getParam("xaction") == "destroy") {
+
+                $id = Zend_Json::decode($this->getParam("data"));
+
+                $metadata = Metadata_Predefined::getById($id);
+                $metadata->delete();
+
+                $this->_helper->json(array("success" => true, "data" => array()));
+            }
+            else if ($this->getParam("xaction") == "update") {
+
+                $data = Zend_Json::decode($this->getParam("data"));
+
+                // save type
+                $metadata = Metadata_Predefined::getById($data["id"]);
+
+                $metadata->setValues($data);
+
+                $existingItem = Metadata_Predefined_List::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage());
+                if ($existingItem && $existingItem->getId() != $metadata->getId()) {
+                    $this->_helper->json(array("message" => "rule_violation", "success" => false));
+                }
+
+                $metadata->minimize();
+                $metadata->save();
+                $metadata->expand();
+
+                $this->_helper->json(array("data" => $metadata, "success" => true));
+            }
+            else if ($this->getParam("xaction") == "create") {
+                $data = Zend_Json::decode($this->getParam("data"));
+                unset($data["id"]);
+
+                // save type
+                $metadata = Metadata_Predefined::create();
+
+                $metadata->setValues($data);
+
+                $existingItem = Metadata_Predefined_List::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage());
+                if ($existingItem) {
+                    $this->_helper->json(array("message" => "rule_violation", "success" => false));
+                }
+
+                $metadata->save();
+
+                $this->_helper->json(array("data" => $metadata, "success" => true));
+            }
+        }
+        else {
+            // get list of types
+
+            $list = new Metadata_Predefined_List();
+            $list->setLimit($this->getParam("limit"));
+            $list->setOffset($this->getParam("start"));
+
+            if($this->getParam("sort")) {
+                $list->setOrderKey($this->getParam("sort"));
+                $list->setOrder($this->getParam("dir"));
+            }
+
+            if($this->getParam("filter")) {
+                $list->setCondition("`name` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `description` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
+            }
+
+            $list->load();
+
+            $properties = array();
+            if (is_array($list->getDefinitions())) {
+                foreach ($list->getDefinitions() as $metadata) {
+                    $metadata->expand();
+                    $properties[] = $metadata;
+                }
+            }
+
+            $this->_helper->json(array("data" => $properties, "success" => true, "total" => $list->getTotalCount()));
+        }
+    }
+
+    public function getPredefinedMetadataAction() {
+        $type = $this->getParam("type");
+        $subType = $this->getParam("subType");
+        $list = Metadata_Predefined_List::getByTargetType($type, array($subType));
+        $result = array();
+        foreach ($list as $item) {
+            /** @var $item Metadata_Predefined */
+            $item->expand();
+            $result[] = $item;
+        }
+
+
+        $this->_helper->json(array("data" => $result, "success" => true));
+
+    }
 
     public function propertiesAction() {
 
@@ -89,7 +189,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         function delete ($dir, $thumbnail, &$matches = array()) {
             $dirs = glob($dir . '/*', GLOB_ONLYDIR);
             foreach ($dirs as $dir) {
-                if(preg_match("@/thumb__" . $thumbnail . "$@", $dir)) {
+                if(preg_match("@/thumb__" . $thumbnail . "$@", $dir) || preg_match("@/thumb__" . $thumbnail . "_auto", $dir)) {
                     recursiveDelete($dir);
                 }
                 delete($dir, $thumbnail, $matches);
@@ -238,6 +338,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 ),
                 "custom_php_logfile" => $values["general.custom_php_logfile"],
                 "debugloglevel" => $values["general.debugloglevel"],
+                "disable_whoops" => $values["general.disable_whoops"],
                 "debug_admin_translations" => $values["general.debug_admin_translations"],
                 "devmode" => $values["general.devmode"],
                 "logrecipient" => $values["general.logrecipient"],
@@ -279,6 +380,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "ffmpeg" => $values["assets.ffmpeg"],
                 "ghostscript" => $values["assets.ghostscript"],
                 "libreoffice" => $values["assets.libreoffice"],
+                "pngcrush" => $values["assets.pngcrush"],
+                "imgmin" => $values["assets.imgmin"],
+                "jpegoptim" => $values["assets.jpegoptim"],
+                "pdftotext" => $values["assets.pdftotext"],
                 "icc_rgb_profile" => $values["assets.icc_rgb_profile"],
                 "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"]
             ),

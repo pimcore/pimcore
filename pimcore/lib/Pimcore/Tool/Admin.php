@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -158,7 +158,7 @@ class Pimcore_Tool_Admin {
               "filename" => self::getMaintenanceModeFile()
         ));
         $writer->write();
-        chmod(self::getMaintenanceModeFile(), 0777); // so it can be removed also via FTP, ...
+        @chmod(self::getMaintenanceModeFile(), 0777); // so it can be removed also via FTP, ...
     }
 
     /**

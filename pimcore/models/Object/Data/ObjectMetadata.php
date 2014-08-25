@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -56,12 +56,12 @@ class Object_Data_ObjectMetadata extends Pimcore_Model_Abstract {
 
     }
 
-    public function save($object) {
-        $this->getResource()->save($object);
+    public function save($object, $ownertype = "object", $ownername, $position) {
+        $this->getResource()->save($object, $ownertype, $ownername, $position);
     }
 
-    public function load(Object_Concrete $source, $destination, $fieldname) {
-        return $this->getResource()->load($source, $destination, $fieldname);
+    public function load(Object_Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position) {
+        return $this->getResource()->load($source, $destination, $fieldname, $ownertype, $ownername, $position);
     }
 
 

@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -73,8 +73,24 @@ class Pimcore_Image_Optimizer {
      */
     public static function getPngOptimizerCli () {
 
+        // check if we have a cached path for this process
         if(array_key_exists("pngOptimizer", self::$optimizerBinaries)) {
             return self::$optimizerBinaries["pngOptimizer"];
+        }
+
+        // check the system-config for a path
+        $configPath = Pimcore_Config::getSystemConfig()->assets->pngcrush;
+        if($configPath) {
+            if(@is_executable($configPath)) {
+                self::$optimizerBinaries["pngOptimizer"] = array(
+                    "path" => $configPath,
+                    "type" => "pngcrush"
+                );
+
+                return $configPath;
+            } else {
+                Logger::critical("Binary: " . $configPath . " is not executable");
+            }
         }
 
         $paths = array(
@@ -102,17 +118,36 @@ class Pimcore_Image_Optimizer {
     }
 
     public static function getJpegOptimizerCli() {
+
+        // check if we have a cached path for this process
         if(array_key_exists("jpegOptimizer", self::$optimizerBinaries)) {
             return self::$optimizerBinaries["jpegOptimizer"];
         }
 
+        // check the system-config for a path
+        foreach (["imgmin","jpegoptim"] as $type) {
+            $configPath = Pimcore_Config::getSystemConfig()->assets->$type;
+            if($configPath) {
+                if(@is_executable($configPath)) {
+                    self::$optimizerBinaries["pngOptimizer"] = array(
+                        "path" => $configPath,
+                        "type" => $type
+                    );
+
+                    return $configPath;
+                } else {
+                    Logger::critical("Binary: " . $configPath . " is not executable");
+                }
+            }
+        }
+
         $paths = array(
-            "/usr/local/bin/imgmin",
-            "/usr/bin/imgmin",
-            "/bin/imgmin",
             "/usr/local/bin/jpegoptim",
             "/usr/bin/jpegoptim",
             "/bin/jpegoptim",
+            "/usr/local/bin/imgmin",
+            "/usr/bin/imgmin",
+            "/bin/imgmin",
         );
 
         foreach ($paths as $path) {

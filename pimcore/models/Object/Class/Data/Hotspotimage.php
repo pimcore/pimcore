@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object_Class
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -45,6 +45,48 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
      */
     public $phpdocType = "Object_Data_Hotspotimage";
 
+
+    /**
+     * @var int
+     */
+    public $ratioX;
+
+    /**
+     * @var int
+     */
+    public $ratioY;
+
+    /**
+     * @param int $ratioX
+     */
+    public function setRatioX($ratioX)
+    {
+        $this->ratioX = $ratioX;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRatioX()
+    {
+        return $this->ratioX;
+    }
+
+    /**
+     * @param int $ratioY
+     */
+    public function setRatioY($ratioY)
+    {
+        $this->ratioY = $ratioY;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRatioY()
+    {
+        return $this->ratioY;
+    }
 
     /**
      * @see Object_Class_Data::getDataForResource

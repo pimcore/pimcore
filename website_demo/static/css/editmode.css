@@ -4,7 +4,6 @@
 }
 
 .editmode-label label {
-    float: left;
     padding-right: 5px;
 }
 
@@ -71,24 +70,12 @@
     visibility: hidden;
 }
 
-.glyphicon-selection {
+.glyphicon-selection .x-combo-list-item {
     font-family: 'Glyphicons Halflings' !important;
     font-size: 25px !important;
 }
 
-/* bootstrap 3 ExtJS fixes */
-.x-form-field, .x-form-trigger, .x-form-item, .x-panel-body {
-    -moz-box-sizing:content-box;
-    box-sizing: content-box;
-    -webkit-box-sizing: content-box;
-}
-
-.x-fieldset legend {
-    border:0;
-    margin:0;
-    width: auto;
-}
-
-.x-panel label {
-    margin:0;
+.carousel-caption .pimcore_tag_image {
+    position: absolute;
+    top: 0px;
 }

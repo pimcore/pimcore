@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object_Objectbrick
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -22,7 +22,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
      */
     public $classDefinitions = array();
 
-     /**
+    /**
      * @var array
      */
     private $oldClassDefinitions = array();
@@ -74,7 +74,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         if($brick) {
             return $brick;
         }
-        
+
         throw new Exception("Object-Brick with key: " . $key . " does not exist.");
     }
 
@@ -128,6 +128,18 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         $cd = '<?php ';
 
         $cd .= "\n\n";
+        $cd .= "/** Generated at " . date('c') . " */";
+        $cd .= "\n\n";
+
+        $cd .= "/**\n";
+
+        if ($_SERVER["REMOTE_ADDR"]) {
+            $cd .= "* IP:          " . $_SERVER["REMOTE_ADDR"] . "\n";
+        }
+
+        $cd .= "*/\n";
+        $cd .= "\n\n";
+
         $cd .= "class Object_Objectbrick_Data_" . ucfirst($this->getKey()) . " extends " . $extendClass . "  {";
         $cd .= "\n\n";
 
@@ -146,13 +158,13 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
                 /**
                  * @var $def Object_Class_Data
-                */
+                 */
                 $cd .= $def->getGetterCodeObjectbrick($this);
                 $cd .= $def->getSetterCodeObjectbrick($this);
             }
         }
 
-        $cd .= "}\n"; 
+        $cd .= "}\n";
         $cd .= "\n";
 
         $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
@@ -164,7 +176,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         Pimcore_File::put($fieldClassFile,$cd);
 
         $this->createContainerClasses();
-        $this->updateDatabase(); 
+        $this->updateDatabase();
     }
 
 
@@ -212,7 +224,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
      */
     private function updateDatabase() {
 
-        $processedClasses = array(); 
+        $processedClasses = array();
         if(!empty($this->classDefinitions)) {
             foreach($this->classDefinitions as $cl) {
                 unset($this->oldClassDefinitions[$cl['classname']]);
@@ -263,6 +275,9 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                 $class = Object_Class::getById($cl['classname']);
 
                 $fd = $class->getFieldDefinition($cl['fieldname']);
+                if (!$fd) {
+                    throw new Exception("Coult not resolve field definition for " . $cl['fieldname']);
+                }
                 $allowedTypes = $fd->getAllowedTypes();
                 if(!in_array($this->key, $allowedTypes)) {
                     $allowedTypes[] = $this->key;
@@ -311,7 +326,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                     $cd .= 'public $' . $brickKey . " = null;\n\n";
 
                     $cd .= '/**' . "\n";
-                    $cd .= '* @return Object_Objectbrick_Data_' . $brickKey . "\n"; 
+                    $cd .= '* @return Object_Objectbrick_Data_' . $brickKey . "\n";
                     $cd .= '*/' . "\n";
                     $cd .= "public function get" . ucfirst($brickKey) . "() { \n";
 
@@ -376,12 +391,12 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
     public function delete () {
         $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
         $fieldFile = $fieldCollectionFolder . "/" . $this->getKey() . ".psf";
-        
+
         @unlink($fieldFile);
-        
+
         $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
         $fieldClass = $fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php";
-        
+
         @unlink($fieldClass);
 
 
@@ -433,7 +448,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                 }
             }
         }
-        
+
     }
 
 }

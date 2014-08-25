@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -70,6 +70,11 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      * @var
      */
     public $translator;
+
+    /**
+     * @var
+     */
+    public $mandatory;
 
     /** Sets the translator id.
      * @param $translator
@@ -321,6 +326,24 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
     {
         return $this->modificationDate;
     }
+
+    /**
+     * @param mixed $mandatory
+     */
+    public function setMandatory($mandatory)
+    {
+        $this->mandatory = $mandatory;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMandatory()
+    {
+        return $this->mandatory;
+    }
+
+
 
 
 }

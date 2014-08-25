@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -20,9 +20,13 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
     initialize:function (data, fieldConfig) {
 
         if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
-            data = fieldConfig.defaultValue;
+            this.defaultValue = fieldConfig.defaultValue;
         } else if ((typeof data === "undefined" || data === null) && fieldConfig.useCurrentDate) {
-            data = (new Date().getTime()) / 1000;
+            this.defaultValue = (new Date().getTime()) / 1000;
+        }
+
+        if(this.defaultValue) {
+            data = this.defaultValue;
         }
 
         this.data = data;
@@ -96,6 +100,7 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
     },
 
     getValue:function () {
+
         if (this.datefield.getValue()) {
             var dateString = this.datefield.getValue().format("Y-m-d");
 
@@ -126,20 +131,14 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
 
     isDirty:function () {
         var dirty = false;
+
+        if(this.defaultValue) {
+            return true;
+        }
+
         if (this.component && typeof this.component.isDirty == "function") {
-
-            if (!this.component.rendered) {
-                if (!this.fieldConfig.defaultValue && !this.fieldConfig.useCurrentDate) {
-                    return false;
-                } else {
-                    return true;
-                }
-            } else {
+            if (this.component.rendered) {
                 dirty = this.component.isDirty();
-
-                if (!dirty && (this.fieldConfig.defaultValue || this.fieldConfig.useCurrentDate)) {
-                    dirty = true;
-                }
 
                 // once a field is dirty it should be always dirty (not an ExtJS behavior)
                 if (this.component["__pimcore_dirty"]) {
@@ -153,6 +152,6 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        throw "isDirty() is not implemented";
+        return false;
     }
 });

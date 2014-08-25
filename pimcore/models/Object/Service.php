@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -857,7 +857,7 @@ class Object_Service extends Element_Service {
     public static function synchronizeCustomLayout(Object_Class_CustomLayout $customLayout) {
         $classId = $customLayout->getClassId();
         $class = Object_Class::getById($classId);
-        if ($class->getModificationDate() > $customLayout->getModificationDate()) {
+        if ($class && ($class->getModificationDate() > $customLayout->getModificationDate())) {
             $masterDefinition = $class->getFieldDefinitions();
             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
             $targetList = self::extractLocalizedFieldDefinitions($class->getLayoutDefinitions(), array(), false);
@@ -1065,6 +1065,54 @@ class Object_Service extends Element_Service {
 
         return $result;
 
+    }
+
+    public static function getUniqueKey($item,$nr = 0){
+        $list = new Object_List();
+        $list->setUnpublished(true);
+        $key = Pimcore_File::getValidFilename($item->getKey());
+        if(!$key){
+            throw new Exception("No item key set.");
+        }
+        if($nr){
+            $key = $key . '_' . $nr;
+        }
+
+        $parent = $item->getParent();
+        if(!$parent){
+            throw new Exception("You have to set a parent Object to determine a unique Key");
+        }
+
+        if(!$item->getId()){
+            $list->setCondition('o_parentId = ? AND `o_key` = ? ',array($parent->getId(),$key));
+        }else{
+            $list->setCondition('o_parentId = ? AND `o_key` = ? AND o_id != ? ',array($parent->getId(),$key,$item->getId()));
+        }
+        $check = $list->loadIdList();
+        if(!empty($check)){
+            $nr++;
+            $key = self::getUniqueKey($item,$nr);
+        }
+        return $key;
+    }
+
+
+    /** Enriches the layout definition before it is returned to the admin interface.
+     * @param $layout
+     */
+    public static function enrichLayoutDefinition(&$layout) {
+        if (method_exists($layout, "enrichLayoutDefinition")) {
+            $layout->enrichLayoutDefinition();
+        }
+
+        if (method_exists($layout, "getChilds")) {
+            $children = $layout->getChilds();
+            if (is_array($children)) {
+                foreach ($children as $child) {
+                    self::enrichLayoutDefinition($child);
+                }
+            }
+        }
     }
 
 }

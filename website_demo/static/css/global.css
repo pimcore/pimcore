@@ -388,7 +388,7 @@ section img {
     color: white;
 }
 
-.teaser-icon > .icon > .info > p {
+.teaser-icon > .icon > .info > p, .teaser-icon > .icon > .info > div {
     color: #666;
     line-height: 1.5em;
     margin: 20px;

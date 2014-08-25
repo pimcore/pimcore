@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license dsf sdaf asdf asdf
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -790,10 +790,18 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                     }
 
 
+                    // we need to set the parameter "pimcore_admin" here to be able to render unpublished documents
+                    $reqBak = $_REQUEST;
+                    $_REQUEST["pimcore_admin"] = true;
+
                     $html = Document_Service::render($element, array(), false);
+
+                    $_REQUEST = $reqBak; // set the request back to original
+
                     $html = preg_replace("@</?(img|meta|div|section|aside|article|body|bdi|bdo|canvas|embed|footer|head|header|html)([^>]+)?>@", "", $html);
                     $html = preg_replace('/<!--(.*)-->/Uis', '', $html);
 
+                    include_once("simple_html_dom.php");
                     $dom = str_get_html($html);
                     if($dom) {
 

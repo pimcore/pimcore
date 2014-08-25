@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -74,10 +74,10 @@ set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 include(dirname(__FILE__) . "/helper.php");
 
 // setup zend framework and pimcore
-require_once "Pimcore.php";
-require_once "Logger.php";
-require_once "Zend/Loader.php";
-require_once "Zend/Loader/Autoloader.php";
+require_once PIMCORE_DOCUMENT_ROOT . "/pimcore/lib/Pimcore.php";
+require_once PIMCORE_DOCUMENT_ROOT . "/pimcore/lib/Logger.php";
+require_once PIMCORE_DOCUMENT_ROOT . "/pimcore/lib/Zend/Loader.php";
+require_once PIMCORE_DOCUMENT_ROOT . "/pimcore/lib/Zend/Loader/Autoloader.php";
 
 $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->suppressNotFoundWarnings(false);

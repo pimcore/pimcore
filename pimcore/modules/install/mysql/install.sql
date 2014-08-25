@@ -22,9 +22,28 @@ CREATE TABLE `assets_metadata` (
   `cid` int(11) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   `language` varchar(255) DEFAULT NULL,
-  `type` enum('input','textarea') DEFAULT NULL,
+  `type` ENUM('input','textarea','asset','document','object','date') DEFAULT NULL,
   `data` text,
   KEY `cid` (`cid`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `assets_metadata_predefined`;
+CREATE TABLE `assets_metadata_predefined` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `description` text,
+  `language` varchar(255) DEFAULT NULL,
+  `type` enum('input','textarea','asset','document','object','date') DEFAULT NULL,
+  `data` text,
+  `targetSubtype` enum('image', 'text', 'audio', 'video', 'document', 'archive', 'unknown') DEFAULT NULL,
+  `creationDate` bigint(20) unsigned DEFAULT '0',
+  `modificationDate` bigint(20) unsigned DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`),
+  KEY `id` (`id`),
+  KEY `type` (`type`),
+  KEY `language` (`language`),
+  KEY `targetSubtype` (`targetSubtype`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `cache`;
@@ -346,10 +365,20 @@ CREATE TABLE `keyvalue_keys` (
   `creationDate` bigint(20) unsigned DEFAULT '0',
   `modificationDate` bigint(20) unsigned DEFAULT '0',
   `translator` int(11) DEFAULT NULL,
+	`mandatory` TINYINT(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `group` (`group`),
   CONSTRAINT `keyvalue_keys_ibfk_1` FOREIGN KEY (`group`) REFERENCES `keyvalue_groups` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `keyvalue_translator_configuration`;
+CREATE TABLE `keyvalue_translator_configuration` (
+  `id` INT(10) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(200) NULL DEFAULT NULL,
+  `translator` VARCHAR(200) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `locks`;
 CREATE TABLE `locks` (
@@ -686,7 +715,7 @@ DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `cpath` varchar(255) DEFAULT NULL,
-  `userId` int(11) unsigned NOT NULL DEFAULT '0',
+  `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) DEFAULT '0',
   `view` tinyint(1) DEFAULT '0',
   `publish` tinyint(1) DEFAULT '0',
@@ -705,7 +734,7 @@ DROP TABLE IF EXISTS `users_workspaces_document`;
 CREATE TABLE `users_workspaces_document` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `cpath` varchar(255) DEFAULT NULL,
-  `userId` int(11) unsigned NOT NULL DEFAULT '0',
+  `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
   `save` tinyint(1) unsigned DEFAULT '0',
@@ -726,7 +755,7 @@ DROP TABLE IF EXISTS `users_workspaces_object`;
 CREATE TABLE `users_workspaces_object` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `cpath` varchar(255) DEFAULT NULL,
-  `userId` int(11) unsigned NOT NULL DEFAULT '0',
+  `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
   `save` tinyint(1) unsigned DEFAULT '0',

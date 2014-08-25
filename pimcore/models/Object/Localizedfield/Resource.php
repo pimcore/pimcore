@@ -11,11 +11,14 @@
  *
  * @category   Pimcore
  * @package    Object
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
 class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
+
+
+    protected $tableDefinitions = null;
 
     public function getTableName () {
         return "object_localized_data_" . $this->model->getClass()->getId();
@@ -24,7 +27,6 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
     public function getQueryTableName () {
         return "object_localized_query_" . $this->model->getClass()->getId();
     }
-
 
     public function save () {
         $this->delete(false);
@@ -258,6 +260,8 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         $columnsToRemove = $existingColumns;
         $protectedColumns = array("ooo_id", "language");
 
+        Object_Class_Service::updateTableDefinitions($this->tableDefinitions, (array($table)));
+
         foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $value) {
 
             if($value->getColumnType()) {
@@ -304,6 +308,8 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $existingColumns = $this->getValidTableColumns($queryTable, false); // no caching of table definition
             $columnsToRemove = $existingColumns;
 
+            Object_Class_Service::updateTableDefinitions($this->tableDefinitions, array($queryTable));
+
             $fieldDefinitions = $this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions();
 
             // add non existing columns in the table
@@ -337,6 +343,8 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         $this->createLocalizedViews();
+
+        $this->tableDefinitions = null;
     }
 
 
@@ -393,9 +401,12 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $this->db->query('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
             $this->resetValidTableColumnsCache($table);
         } else {
-            $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            if (!Object_Class_Service::skipColumn($this->tableDefinitions, $table, $colName, $type, $default, $null)) {
+                $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            }
         }
     }
+
 
     private function removeUnusedColumns ($table, $columnsToRemove, $protectedColumns) {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {

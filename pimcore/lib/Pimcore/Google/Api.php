@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -66,15 +66,15 @@ class Pimcore_Google_Api {
         }
 
         $config = self::getConfig();
-        self::loadClientLibrary();
 
-        $client = new Google_Client(array(
-            "ioFileCache_directory" => PIMCORE_CACHE_DIRECTORY
-        ));
+        $clientConfig = new Google_Config();
+        $clientConfig->setClassConfig("Google_Cache_File", "directory", PIMCORE_CACHE_DIRECTORY);
+
+        $client = new Google_Client($clientConfig);
         $client->setApplicationName("pimcore CMF");
 
         $key = file_get_contents(self::getPrivateKeyPath());
-        $client->setAssertionCredentials(new Google_AssertionCredentials(
+        $client->setAssertionCredentials(new Google_Auth_AssertionCredentials(
             $config->email,
             array('https://www.googleapis.com/auth/analytics.readonly',"https://www.google.com/webmasters/tools/feeds/"),
             $key)
@@ -108,11 +108,10 @@ class Pimcore_Google_Api {
             return false;
         }
 
-        self::loadClientLibrary();
+        $clientConfig = new Google_Config();
+        $clientConfig->setClassConfig("Google_Cache_File", "directory", PIMCORE_CACHE_DIRECTORY);
 
-        $client = new Google_Client(array(
-            "ioFileCache_directory" => PIMCORE_CACHE_DIRECTORY
-        ));
+        $client = new Google_Client($clientConfig);
         $client->setApplicationName("pimcore CMF");
         $client->setDeveloperKey(Pimcore_Config::getSystemConfig()->services->google->simpleapikey);
 
@@ -165,17 +164,5 @@ class Pimcore_Google_Api {
         }
 
         return $result;
-    }
-
-    /**
-     * load the client libs dynamically, otherwise just the initialization will raise an exception
-     * see: http://www.pimcore.org/issues/browse/PIMCORE-1641
-     * @static
-     */
-    private static function loadClientLibrary() {
-        include_once("googleApiClient/Google_Client.php");
-        include_once("googleApiClient/contrib/Google_AnalyticsService.php");
-        include_once("googleApiClient/contrib/Google_SiteVerificationService.php");
-        include_once("googleApiClient/contrib/Google_CustomsearchService.php");
     }
 }

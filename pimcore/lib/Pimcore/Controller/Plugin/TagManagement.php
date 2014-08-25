@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -61,8 +61,10 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
                 continue;
             }
 
+            $requestPath = rtrim($this->getRequest()->getPathInfo(),"/");
+
             if( ($method == strtolower($this->getRequest()->getMethod()) || empty($method)) &&
-                (empty($pattern) || @preg_match($pattern, $this->getRequest()->getRequestUri())) &&
+                (empty($pattern) || @preg_match($pattern, $requestPath)) &&
                 (empty($textPattern) || strpos($body,$textPattern) !== false)
             ) {
 

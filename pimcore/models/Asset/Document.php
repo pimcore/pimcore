@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Asset
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -32,7 +32,7 @@ class Asset_Document extends Asset {
             try {
                 $pageCount = $this->readPageCount($tmpFile);
                 if($pageCount !== null && $pageCount > 0) {
-                    $this->setProperty("document_page_count", "text", $pageCount);
+                    $this->setCustomSetting("document_page_count", $pageCount);
                 }
             } catch (\Exception $e) {
 
@@ -68,7 +68,7 @@ class Asset_Document extends Asset {
     }
 
     public function getPageCount() {
-        if(!$pageCount = $this->getProperty("document_page_count")) {
+        if(!$pageCount = $this->getCustomSetting("document_page_count")) {
             $pageCount = $this->readPageCount();
         }
         return $pageCount;
@@ -122,8 +122,13 @@ class Asset_Document extends Asset {
 
     public function getText($page = null) {
         if(Pimcore_Document::isAvailable() && Pimcore_Document::isFileTypeSupported($this->getFilename())) {
-            $document = Pimcore_Document::getInstance();
-            return $document->getText($page, $this->getFileSystemPath());
+            $cacheKey = "asset_document_text_" . $this->getId() . "_" . ($page ? $page : "all");
+            if(!$text = Pimcore_Model_Cache::load($cacheKey)) {
+                $document = Pimcore_Document::getInstance();
+                $text = $document->getText($page, $this->getFileSystemPath());
+                Pimcore_Model_Cache::save($text, $cacheKey, $this->getCacheTags(), null, 99, true); // force cache write
+            }
+            return $text;
         } else {
             Logger::error("Couldn't get text out of document " . $this->getFullPath() . " no document adapter is available");
         }

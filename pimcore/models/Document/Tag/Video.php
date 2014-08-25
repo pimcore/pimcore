@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -140,14 +140,14 @@ class Document_Tag_Video extends Document_Tag
      * @see Document_Tag_Interface::frontend
      * @return string
      */
-    public function frontend()
+    public function frontend($inAdmin = false)
     {
 
         if (!$this->id || !$this->type) {
             return $this->getEmptyCode();
         }
         else if ($this->type == "asset") {
-            return $this->getAssetCode();
+            return $this->getAssetCode($inAdmin);
         }
         else if ($this->type == "youtube") {
             return $this->getYoutubeCode();
@@ -230,7 +230,7 @@ class Document_Tag_Video extends Document_Tag
 
         // get frontendcode for preview
         // put the video code inside the generic code
-        $html = str_replace("</div>", $this->frontend() . "</div>", $html);
+        $html = str_replace("</div>", $this->frontend(true) . "</div>", $html);
 
         return $html;
     }
@@ -313,7 +313,7 @@ class Document_Tag_Video extends Document_Tag
     }
 
 
-    public function getAssetCode()
+    public function getAssetCode($inAdmin = false)
     {
         $asset = Asset::getById($this->id);
         $options = $this->getOptions();
@@ -345,7 +345,22 @@ class Document_Tag_Video extends Document_Tag
                 if($this->poster && ($poster = Asset::getById($this->poster))) {
                     $image = $poster->getThumbnail($imageThumbnailConf);
                 } else {
-                    $image = $asset->getImageThumbnail($imageThumbnailConf);
+                    if($asset->getCustomSetting("image_thumbnail_asset")) {
+                        $image = $asset->getImageThumbnail($imageThumbnailConf);
+                    } else {
+                        if ($thumbnail["status"] == "finished" && (array_key_exists("animatedGifPreview", $options) && $options["animatedGifPreview"] !== false)) {
+                            $image = $asset->getPreviewAnimatedGif(null, null, $imageThumbnailConf);
+                        } else {
+                            $image = $asset->getImageThumbnail($imageThumbnailConf);
+                        }
+                    }
+                }
+
+                if($inAdmin && isset($options["editmodeImagePreview"]) && $options["editmodeImagePreview"]) {
+                    $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">';
+                    $code .= '<img width="' . $this->getWidth() . '" src="' . $image . '" />';
+                    $code .= '</div';
+                    return $code;
                 }
 
                 if ($thumbnail["status"] == "finished") {
@@ -361,7 +376,7 @@ class Document_Tag_Video extends Document_Tag
                     return $this->getErrorCode("The video conversion failed, please see the debug.log for more details.");
                 }
             } else {
-                return $this->getErrorCode("The given thumbnail doesn't exist");
+                return $this->getErrorCode("The given thumbnail doesn't exist: '" . $options["thumbnail"] . "'");
             }
         }
     }
@@ -534,72 +549,76 @@ class Document_Tag_Video extends Document_Tag
 
     public function getHtml5Code($urls = array(), $thumbnail = null)
     {
+        $code = "";
         $video = $this->getVideoAsset();
-        $duration = ceil($video->getDuration());
+        if($video) {
+            $duration = ceil($video->getDuration());
 
-        $durationParts = array("T");
+            $durationParts = array("T");
 
-        // hours
-        if($duration/3600 >= 1) {
-            $hours = floor($duration/3600);
-            $durationParts[] = $hours . "H";
-            $duration = $duration - $hours * 3600;
-        }
-
-        // minutes
-        if($duration/60 >= 1) {
-            $minutes = floor($duration/60);
-            $durationParts[] = $minutes . "M";
-            $duration = $duration - $minutes * 60;
-        }
-
-        $durationParts[] = $duration . "S";
-        $durationString = implode("",$durationParts);
-
-        $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video" itemprop="video" itemscope itemtype="http://schema.org/VideoObject">' . "\n";
-        $code .= '<meta itemprop="name" content="' . $this->getTitle() . '" />' . "\n";
-        $code .= '<meta itemprop="description" content="' . $this->getDescription() . '" />' . "\n";
-        $code .= '<meta itemprop="duration" content="' . $durationString . '" />' . "\n";
-        $code .= '<meta itemprop="contentURL" content="' . Pimcore_Tool::getHostUrl() . $urls["mp4"] .  '" />' . "\n";
-        if($thumbnail) {
-            $code .= '<meta itemprop="thumbnailURL" content="' . Pimcore_Tool::getHostUrl() . $thumbnail . '" />' . "\n";
-        }
-
-
-        // default attributes
-        $attributesString = "";
-        $attributes = array(
-            "width" => $this->getWidth(),
-            "height" => $this->getHeight(),
-            "poster" => $thumbnail,
-            "controls" => "controls",
-            "class" => "pimcore_video"
-        );
-
-        if(array_key_exists("attributes", $this->getOptions())) {
-            $attributes = array_merge($attributes, $this->getOptions()["attributes"]);
-        }
-
-        foreach($attributes as $key => $value) {
-            $attributesString .= " " . $key;
-            if(!empty($value)) {
-                $quoteChar = '"';
-                if(strpos($value, '"')) {
-                    $quoteChar = "'";
-                }
-                $attributesString .= '=' . $quoteChar . $value . $quoteChar;
+            // hours
+            if($duration/3600 >= 1) {
+                $hours = floor($duration/3600);
+                $durationParts[] = $hours . "H";
+                $duration = $duration - $hours * 3600;
             }
-        }
 
-        $code .= '<video' . $attributesString . '>' . "\n";
+            // minutes
+            if($duration/60 >= 1) {
+                $minutes = floor($duration/60);
+                $durationParts[] = $minutes . "M";
+                $duration = $duration - $minutes * 60;
+            }
 
-        $urls = array_reverse($urls); // use webm as the preferred format
+            $durationParts[] = $duration . "S";
+            $durationString = implode("",$durationParts);
+
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video" itemprop="video" itemscope itemtype="http://schema.org/VideoObject">' . "\n";
+            $code .= '<meta itemprop="name" content="' . $this->getTitle() . '" />' . "\n";
+            $code .= '<meta itemprop="description" content="' . $this->getDescription() . '" />' . "\n";
+            $code .= '<meta itemprop="duration" content="' . $durationString . '" />' . "\n";
+            $code .= '<meta itemprop="contentURL" content="' . Pimcore_Tool::getHostUrl() . $urls["mp4"] .  '" />' . "\n";
+            if($thumbnail) {
+                $code .= '<meta itemprop="thumbnailURL" content="' . Pimcore_Tool::getHostUrl() . $thumbnail . '" />' . "\n";
+            }
+
+
+            // default attributes
+            $attributesString = "";
+            $attributes = array(
+                "width" => $this->getWidth(),
+                "height" => $this->getHeight(),
+                "poster" => $thumbnail,
+                "controls" => "controls",
+                "class" => "pimcore_video"
+            );
+
+            if(array_key_exists("attributes", $this->getOptions())) {
+                $attributes = array_merge($attributes, $this->getOptions()["attributes"]);
+            }
+
+            foreach($attributes as $key => $value) {
+                $attributesString .= " " . $key;
+                if(!empty($value)) {
+                    $quoteChar = '"';
+                    if(strpos($value, '"')) {
+                        $quoteChar = "'";
+                    }
+                    $attributesString .= '=' . $quoteChar . $value . $quoteChar;
+                }
+            }
+
+            $code .= '<video' . $attributesString . '>' . "\n";
+
+            $urls = array_reverse($urls); // use webm as the preferred format
 
             foreach ($urls as $type => $url) {
                 $code .= '<source type="video/' . $type . '" src="' . $url . '" />' . "\n";
             }
-        $code .= '</video>' . "\n";
-        $code .= '</div>' . "\n";
+
+            $code .= '</video>' . "\n";
+            $code .= '</div>' . "\n";
+        }
 
         return $code;
     }
@@ -695,8 +714,8 @@ class Document_Tag_Video extends Document_Tag
                 $this->type = $data->type;
 
             } else if (in_array($data->type,array("vimeo","youtube","url"))) {
-                  $this->id = $data->id;
-                  $this->type = $data->type;
+                $this->id = $data->id;
+                $this->type = $data->type;
             } else {
                 throw new Exception("cannot get values from web service import - type must be asset,youtube,url or vimeo ");
             }

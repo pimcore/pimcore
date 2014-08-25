@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -261,7 +261,14 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
 
         try {
-            data.general = Ext.encode(this.data.general);
+            data.general = Ext.apply({}, this.data.general);
+            // object shouldn't be relocated, renamed, or anything else that is evil
+            delete data.general["o_parentId"];
+            delete data.general["o_type"];
+            delete data.general["o_key"];
+            delete data.general["o_locked"];
+
+            data.general = Ext.encode(data.general);
         }
         catch (e2) {
             //console.log(e2);

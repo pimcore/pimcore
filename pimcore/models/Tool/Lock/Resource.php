@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Tool
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -40,11 +40,12 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
 
         $lock = $this->db->fetchRow("SELECT * FROM locks WHERE id = ?", $key);
 
-        // a lock is only valid for 2 minutes
+        // a lock is only valid for a certain time (default: 2 minutes)
         if(!$lock) {
             return false;
         } else if(is_array($lock) && array_key_exists("id", $lock) && $lock["date"] < (time()-$expire)) {
             if($expire > 0){
+                Logger::debug("Lock '" . $key . "' expired (expiry time: " . $expire . ", lock date: " . $lock["date"] . " / current time: " . time() . ")");
                 $this->release($key);
                 return false;
             }
@@ -54,23 +55,41 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     public function acquire ($key, $expire = 120, $refreshInterval = 1) {
+
+        Logger::debug("Acquiring key: '" . $key . "' expiry: " . $expire);
+
         if(!is_numeric($refreshInterval)) {
             $refreshInterval = 1;
         }
 
-        while($this->isLocked($key, $expire)) {
-            sleep($refreshInterval);
-        }
+        while(true) {
+            while($this->isLocked($key, $expire)) {
+                sleep($refreshInterval);
+            }
 
-        $this->lock($key);
+            try {
+                $this->lock($key, false);
+                return true;
+            } catch (\Exception $e) {
+                Logger::debug($e);
+            }
+        }
     }
 
     public function release ($key) {
+
+        Logger::debug("Releasing: '" . $key . "'");
+
         $this->db->delete("locks", "id = " . $this->db->quote($key));
     }
 
-    public function lock ($key) {
-        $this->db->insertOrUpdate("locks", array(
+    public function lock ($key, $force = true) {
+
+        Logger::debug("Locking: '" . $key . "'");
+
+        $updateMethod = $force ? "insertOrUpdate" : "insert";
+
+        $this->db->$updateMethod("locks", array(
             "id" => $key,
             "date" => time()
         ));

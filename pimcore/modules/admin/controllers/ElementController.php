@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
@@ -51,25 +51,7 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
             $el = Element_Service::getElementById($type, (int) $idOrPath);
         } else {
             if ($type == "document") {
-                $urlParts = parse_url($idOrPath);
-                if($urlParts["path"]) {
-                    $document = Document::getByPath($urlParts["path"]);
-
-                    // search for a page in a site
-                    if(!$document) {
-                        $sitesList = new Site_List();
-                        $sitesObjects = $sitesList->load();
-
-                        foreach ($sitesObjects as $site) {
-                            if ($site->getRootDocument() && (in_array($urlParts["host"],$site->getDomains()) || $site->getMainDomain() == $urlParts["host"])) {
-                                if($document = Document::getByPath($site->getRootDocument() . $urlParts["path"])) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                $el = $document;
+                $el = Document_Service::getByUrl($idOrPath);
             } else {
                 $el = Element_Service::getElementByPath($type, $idOrPath);
             }

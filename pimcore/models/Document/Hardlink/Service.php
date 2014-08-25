@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -54,6 +54,9 @@ class Document_Hardlink_Service {
 
         $old_serialized_prefix  = "O:".strlen(get_class($doc));
         $old_serialized_prefix .= ":\"".get_class($doc)."\":";
+
+        // unset eventually existing children, because of performance reasons when serializing the document
+        $doc->setChilds(null);
 
         $old_serialized_object = Pimcore_Tool_Serialize::serialize($doc);
         $new_serialized_object = 'O:'.strlen($to_class).':"'.$to_class . '":';

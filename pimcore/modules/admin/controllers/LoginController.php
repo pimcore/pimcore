@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -39,9 +39,9 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                         $token = Pimcore_Tool_Authentication::generateToken($username, $user->getPassword());
                         $uri = $this->getRequest()->getScheme() . "://" . $this->getRequest()->getHttpHost() ;
                         $loginUrl = $uri . "/admin/login/login/?username=" . $username . "&token=" . $token . "&reset=true";
-                        
+
                         try {
-                            
+
                             $mail = Pimcore_Tool::getMail(array($user->getEmail()), "Pimcore lost password service");
                             $mail->setIgnoreDebugMode(true);
                             $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
@@ -66,6 +66,23 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
 
     public function indexAction() {
+
+        $user = $this->getUser();
+
+        if (!$user) {
+            Pimcore::getEventManager()->trigger("admin.login.index.authenticate", $this, [
+                "username" => $this->getParam("username"),
+                "password" => $this->getParam("password")
+            ]);
+
+            $user = $this->getUser();
+
+            if ($user instanceof User && $user->getId() && $user->isActive() && $user->getPassword()) {
+                Pimcore_Tool_Session::useSession(function($adminSession) use ($user) {
+                    $adminSession->user = $user;
+                });
+            }
+        }
 
         if ($this->getUser() instanceof User) {
             $this->redirect("/admin/?_dc=" . time());
@@ -93,32 +110,40 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
     }
 
     public function loginAction() {
-
         $user = null;
 
         try {
-            if ($this->getParam("password")) {
-                $user = Pimcore_Tool_Authentication::authenticatePlaintext($this->getParam("username"), $this->getParam("password"));
-                if(!$user) {
-                    throw new \Exception("Invalid username or password");
-                }
-            } else if ($this->getParam("token")) {
+            Pimcore::getEventManager()->trigger("admin.login.login.authenticate", $this, [
+                "username" => $this->getParam("username"),
+                "password" => $this->getParam("password")
+            ]);
 
-                $user = Pimcore_Tool_Authentication::authenticateToken($this->getParam("username"), $this->getParam("token"));
+            $user = $this->getUser();
 
-                if(!$user) {
-                    throw new \Exception("Invalid username or token");
-                }
+            if (!$user instanceof User) {
+                if ($this->getParam("password")) {
+                    $user = Pimcore_Tool_Authentication::authenticatePlaintext($this->getParam("username"), $this->getParam("password"));
+                    if(!$user) {
+                        throw new \Exception("Invalid username or password");
+                    }
+                } else if ($this->getParam("token")) {
 
-                // save the information to session when the user want's to reset the password
-                // this is because otherwise the old password is required => see also PIMCORE-1468
-                if($this->getParam("reset")) {
-                    Pimcore_Tool_Session::useSession(function($adminSession) {
-                        $adminSession->password_reset = true;
-                    });
+                    $user = Pimcore_Tool_Authentication::authenticateToken($this->getParam("username"), $this->getParam("token"));
+
+                    if(!$user) {
+                        throw new \Exception("Invalid username or token");
+                    }
+
+                    // save the information to session when the user want's to reset the password
+                    // this is because otherwise the old password is required => see also PIMCORE-1468
+                    if($this->getParam("reset")) {
+                        Pimcore_Tool_Session::useSession(function($adminSession) {
+                            $adminSession->password_reset = true;
+                        });
+                    }
+                } else {
+                    throw new \Exception("Invalid authentication method, must be either password or token");
                 }
-            } else {
-                throw new \Exception("Invalid authentication method, must be either password or token");
             }
         } catch (Exception $e) {
 
@@ -139,6 +164,8 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         if ($user instanceof User && $user->getId() && $user->isActive() && $user->getPassword()) {
             Pimcore_Tool_Session::useSession(function($adminSession) use ($user) {
                 $adminSession->user = $user;
+
+                Pimcore_Tool_Session::regenerateId();
             });
 
             if($this->_getParam('deeplink')){
@@ -163,7 +190,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
             }
 
             Zend_Session::destroy();
-       });
+        });
 
         // cleanup pimcore-cookies => 315554400 => strtotime('1980-01-01')
         setcookie("pimcore_opentabs", false, 315554400, "/");

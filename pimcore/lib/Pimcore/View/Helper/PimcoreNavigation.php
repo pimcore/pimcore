@@ -10,7 +10,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 class Pimcore_View_Helper_PimcoreNavigation extends Zend_View_Helper_Abstract
@@ -80,6 +80,15 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
         return $this->_pageClass;
     }
 
+
+    /**
+     * @param Document $parentDocument
+     * @return Document[]
+     */
+    protected function getChilds($parentDocument) {
+        return $parentDocument->getChilds();
+    }
+
     /**
      * @param  Document $parentDocument
      * @param  Pimcore_Navigation_Page_Uri $parentPage
@@ -89,7 +98,7 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
     {
         $pages = array();
 
-        $childs = $parentDocument->getChilds();
+        $childs = $this->getChilds($parentDocument);
         if (is_array($childs)) {
             foreach ($childs as $child) {
                 $classes = "";

@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Webservice
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -78,8 +78,8 @@ class Webservice_Data_Asset extends Webservice_Data {
     public $customSettings;
 
 
-    public function map($object) {
-        parent::map($object);
+    public function map($object, $options = null) {
+        parent::map($object, $options);
 
         $settings = $object->getCustomSettings();
         if (!empty($settings)) {

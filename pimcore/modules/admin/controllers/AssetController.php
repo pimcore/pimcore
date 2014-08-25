@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license dsf sdaf asdf asdf
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -51,6 +51,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             $this->_helper->json(array("success" => false, "message" => "asset doesn't exist"));
         }
 
+        $asset->setMetadata(Asset_Service::expandMetadata($asset->getMetadata()));
         $asset->setProperties(Element_Service::minimizePropertiesForEditmode($asset->getProperties()));
         //$asset->getVersions();
         $asset->getScheduledTasks();
@@ -523,16 +524,17 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             $tmpAsset["permissions"]["create"] = $asset->isAllowed("create");
 
             $folderThumbs = array();
-            foreach ($asset->getChilds() as $child) {
+            $children = new Asset_List();
+            $children->setCondition("path LIKE ?", [$asset->getFullPath() . "/%"]);
+            $children->setLimit(35);
+
+            foreach ($children as $child) {
                 if ($thumbnailUrl = $this->getThumbnailUrl($child)) {
                     $folderThumbs[] = $thumbnailUrl;
                 }
             }
 
             if (!empty($folderThumbs)) {
-                if (count($folderThumbs) > 35) {
-                    $folderThumbs = array_splice($folderThumbs, 0, 35);
-                }
                 $tmpAsset["thumbnails"] = $folderThumbs;
             }
         } else {
@@ -722,6 +724,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                 // metadata
                 if($this->getParam("metadata")) {
                     $metadata = Zend_Json::decode($this->getParam("metadata"));
+                    $metadata = Asset_Service::minimizeMetadata($metadata);
                     $asset->setMetadata($metadata);
                 }
 
@@ -770,7 +773,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                     $asset->setScheduledTasks($tasks);
                 }
 
-                if ($this->getParam("data")) {
+                if ($this->hasParam("data")) {
                     $asset->setData($this->getParam("data"));
                 }
 
@@ -916,7 +919,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             ));
 
             $hash = md5(Pimcore_Tool_Serialize::serialize($this->getAllParams()));
-            $thumbnail->setName("auto_" . $hash);
+            $thumbnail->setName($thumbnail->getName() . "_auto_" . $hash);
         }
 
         if($this->getParam("download")) {
@@ -1701,7 +1704,13 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
                     if ($operator == "LIKE") {
                         $value = "%" . $value . "%";
                     }
-                    $conditionFilters[] =  "`" . $filter["field"] . "` " . $operator . " '" . $value . "' ";
+
+                    $field = "`" . $filter["field"] . "` ";
+                    if($filter["field"] == "fullpath") {
+                        $field = "CONCAT(path,filename)";
+                    }
+
+                    $conditionFilters[] =  $field . $operator . " '" . $value . "' ";
                 }
             }
 

@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -94,7 +94,7 @@ class Object_Abstract_Resource extends Element_Resource
         ));
         $this->model->setId($this->db->lastInsertId());
 
-        if (is_null($this->model->geto_key())) {
+        if (!$this->model->getKey()) {
             $this->model->setKey($this->db->lastInsertId());
         }
         //$this->model->save();
@@ -394,7 +394,7 @@ class Object_Abstract_Resource extends Element_Resource
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_object WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
+            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_object WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC, ABS(userId-" . $user->getId() . ") ASC LIMIT 1");
 
             if ($permissionsParent) {
                 return true;

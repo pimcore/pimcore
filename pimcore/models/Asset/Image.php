@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Asset
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -106,7 +106,7 @@ class Asset_Image extends Asset {
      * @param mixed$config
      * @return Asset_Image_Thumbnail
      */
-    public function getThumbnail($config, $deferred = false) {
+    public function getThumbnail($config = null, $deferred = false) {
 
        return new Asset_Image_Thumbnail($this, $config, $deferred);
     }

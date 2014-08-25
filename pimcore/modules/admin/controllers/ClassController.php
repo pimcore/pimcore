@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -241,7 +241,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $customLayout->save();
 
         $this->_helper->json(array("success" => true, "id" => $customLayout->getId(), "name" => $customLayout->getName(),
-                            "data" => $customLayout));
+            "data" => $customLayout));
     }
 
 
@@ -348,19 +348,10 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
 
     protected function correctClassname($name) {
-        $tmpFilename = $name;
-        $validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        $filenameParts = array();
-
-        for ($i = 0; $i < strlen($tmpFilename); $i++) {
-            if (strpos($validChars, $tmpFilename[$i]) !== false) {
-                $filenameParts[] = $tmpFilename[$i];
-            }
-        }
-
-        return implode("", $filenameParts);
+        $name = preg_replace('/[^a-zA-Z0-9]+/', '', $name);
+        $name = preg_replace("/^[0-9]+/", "", $name);
+        return $name;
     }
-
 
 
     public function importClassAction() {
@@ -369,6 +360,35 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $json = file_get_contents($_FILES["Filedata"]["tmp_name"]);
 
         $success = Object_Class_Service::importClassDefinitionFromJson($class, $json);
+
+        $this->removeViewRenderer();
+
+        $this->_helper->json(array(
+            "success" => $success
+        ), false);
+
+        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+        // Ext.form.Action.Submit and mark the submission as failed
+        $this->getResponse()->setHeader("Content-Type", "text/html");
+    }
+
+
+    public function importCustomLayoutDefinitionAction() {
+
+        $success = false;
+        $json = file_get_contents($_FILES["Filedata"]["tmp_name"]);
+        $importData = Zend_Json::decode($json);
+
+
+        $customLayoutId = $this->getParam("id");
+        $customLayout = Object_Class_CustomLayout::getById($customLayoutId);
+        if ($customLayout) {
+            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+            $customLayout->setLayoutDefinitions($layout);
+            $customLayout->setDescription($importData["description"]);
+            $customLayout->save();
+            $success = true;
+        }
 
         $this->removeViewRenderer();
 
@@ -457,6 +477,43 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         }
 
     }
+
+
+    public function exportCustomLayoutDefinitionAction() {
+
+        $this->removeViewRenderer();
+        $id = $this->getParam("id");
+
+        if ($id) {
+            $customLayout = Object_Class_CustomLayout::getById($id);
+            if ($customLayout) {
+                $name = $customLayout->getName();
+                unset($customLayout->id);
+                unset($customLayout->classId);
+                unset($customLayout->name);
+                unset($customLayout->creationDate);
+                unset($customLayout->modificationDate);
+                unset($customLayout->userOwner);
+                unset($customLayout->userModification);
+                unset($customLayout->fieldDefinitions);
+
+                header("Content-type: application/json");
+                header("Content-Disposition: attachment; filename=\"custom_definition_" . $name . "_export.json\"");
+                $json = json_encode($customLayout);
+                $json = Zend_Json::prettyPrint($json);
+                echo $json;
+                die();
+            }
+        }
+
+
+        $errorMessage = ": Custom Layout with id [ " . $id . " not found. ]";
+        Logger::error($errorMessage);
+        echo $errorMessage;
+
+
+    }
+
 
 
     /**
@@ -739,24 +796,237 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
             $classId = $this->getParam("class_id");
             $fieldname = $this->getParam("field_name");
             foreach ($list as $type) {
+                /** @var  $type Object_Objectbrick_Definition */
                 $clsDefs = $type->getClassDefinitions();
                 if(!empty($clsDefs)) {
                     foreach($clsDefs as $cd) {
-
                         if($cd["classname"] == $classId && $cd["fieldname"] == $fieldname) {
                             $filteredList[] = $type;
                             continue;
                         }
-
                     }
-
                 }
+
+                $layout = $type->getLayoutDefinitions();
+                Object_Service::enrichLayoutDefinition($layout);
+                $type->setLayoutDefinitions($layout);
             }
 
             $list = $filteredList;
         }
         $this->_helper->json(array("objectbricks" => $list));
     }
+
+    /**
+     * See http://www.pimcore.org/issues/browse/PIMCORE-2358
+     * Add option to export/import all class definitions/brick definitions etc. at once
+     */
+    public function bulkImportAction() {
+
+        $result = array();
+
+        $tmpName = $_FILES["Filedata"]["tmp_name"];
+        $json = file_get_contents($tmpName);
+
+        $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/bulk-import.tmp";
+        file_put_contents($tmpName, $json);
+
+        $json = json_decode($json, true);
+
+        foreach($json as $groupName => $group) {
+            foreach($group as $groupItem) {
+                $displayName = null;
+
+                if ($groupName == "class") {
+                    $name = $groupItem["name"];
+                    $icon = "database_gear";
+                } else if ($groupName == "customlayout") {
+                    $className = $groupItem["className"];
+
+                    $layoutData = array("className" => $className, "name" => $groupItem["name"]);
+                    $name = serialize($layoutData);
+                    $displayName = $className . " / " . $groupItem["name"];
+                    $icon = "database_lightning";
+                } else {
+                    if ($groupName == "objectbrick") {
+                        $icon = "bricks";
+                    } else if ($groupName == "fieldcollection") {
+                        $icon = "table_multiple";
+                    }
+                    $name = $groupItem["key"];
+
+                }
+
+                if (!$displayName) {
+                    $displayName = $name;
+                }
+                $result[] = array("icon" => $icon, "checked" => true, "type" => $groupName, "name" => $name, "displayName" => $displayName);
+            }
+
+        }
+
+        $this->_helper->json(array("success" => true, "filename" => $tmpName, "data" => $result), false);
+        $this->getResponse()->setHeader("Content-Type", "text/html");
+    }
+
+    /**
+     * See http://www.pimcore.org/issues/browse/PIMCORE-2358
+     * Add option to export/import all class definitions/brick definitions etc. at once
+     */
+    public function bulkCommitAction() {
+        $filename = $this->getParam("filename");
+        $data = json_decode($this->getParam("data"), true);
+
+        $json = @file_get_contents($filename);
+        $json = json_decode($json, true);
+
+        $type = $data["type"];
+        $name = $data["name"];
+        $list = $json[$type];
+
+        foreach($list as $item) {
+            unset($item["creationDate"]);
+            unset($item["modificationDate"]);
+            unset($item["userOwner"]);
+            unset($item["userModification"]);
+
+
+            unset($item["id"]);
+
+            if ($type == "class" && $item["name"] == $name) {
+
+                $class = Object_Class::getByName($name);
+                if (!$class) {
+                    $class = new Object_Class();
+                    $class->setName($name);
+
+                }
+                $success = Object_Class_Service::importClassDefinitionFromJson($class, json_encode($item), true);
+                $this->_helper->json(array("success" => $success !== false));
+
+            } else if ($type == "objectbrick" && $item["key"] == $name) {
+                try {
+                    $brick = Object_Objectbrick_Definition::getByKey($name);
+                } catch (Exception $e) {
+                    $brick = new Object_Objectbrick_Definition();
+                    $brick->setKey($name);
+                }
+
+                $success = Object_Class_Service::importObjectBrickFromJson($brick, json_encode($item), true);
+                $this->_helper->json(array("success" => $success !== false));
+
+            } else if ($type == "fieldcollection" && $item["key"] == $name) {
+                try {
+                    $fieldCollection = Object_Fieldcollection_Definition::getByKey($name);
+                } catch (Exception $e) {
+                    $fieldCollection = new Object_Fieldcollection_Definition();
+                    $fieldCollection->setKey($name);
+                }
+                $success = Object_Class_Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
+                $this->_helper->json(array("success" => $success !== false));
+
+            } else if ($type == "customlayout") {
+                $layoutData = unserialize($data["name"]);
+                $className = $layoutData["className"];
+                $layoutName = $layoutData["name"];
+
+                if ($item["name"] == $layoutName && $item["className"] == $className) {
+                    $class = Object_Class::getByName($className);
+                    if (!$class) {
+                        throw new Exception("Class does not exist");
+                    }
+
+                    $classId = $class->getId();
+
+
+                    $layoutList = new Object_Class_CustomLayout_List();
+                    $db = Pimcore_Resource::get();
+                    $layoutList->setCondition("name = " . $db->quote($layoutName) . " AND classId = " . $classId);
+                    $layoutList = $layoutList->load();
+
+                    $layoutDefinition = null;
+                    if ($layoutList) {
+                        $layoutDefinition = $layoutList[0];
+                    }
+
+                    if (!$layoutDefinition) {
+                        $layoutDefinition = new Object_Class_CustomLayout();
+                        $layoutDefinition->setName($layoutName);
+                        $layoutDefinition->setClassId($classId);
+                    }
+
+                    $layoutDefinition->setDescription($item["description"]);
+                    $layoutDef = Object_Class_Service::generateLayoutTreeFromArray($item["layoutDefinitions"]);
+                    $layoutDefinition->setLayoutDefinitions($layoutDef);
+                    $layoutDefinition->save();
+                }
+
+            }
+        }
+
+
+        $this->_helper->json(array("success" => true));
+    }
+
+    /**
+     * See http://www.pimcore.org/issues/browse/PIMCORE-2358
+     * Add option to export/import all class definitions/brick definitions etc. at once
+     */
+    public function bulkExportAction() {
+
+        $result = array();
+        $this->removeViewRenderer();
+
+        $fieldCollections = new Object_Fieldcollection_Definition_List();
+        $fieldCollections = $fieldCollections->load();
+
+        foreach ($fieldCollections as $fieldCollection) {
+            $key = $fieldCollection->key;
+            $fieldCollectionJson = json_decode(Object_Class_Service::generateFieldCollectionJson($fieldCollection));
+            $fieldCollectionJson->key = $key;
+            $result["fieldcollection"][] = $fieldCollectionJson;
+        }
+
+
+        $classes = new Object_Class_List();
+        $classes->setOrder("ASC");
+        $classes->setOrderKey("id");
+        $classes = $classes->load();
+
+        foreach ($classes as $class) {
+            $data = Webservice_Data_Mapper::map($class, "Webservice_Data_Class_Out", "out");
+            unset($data->fieldDefinitions);
+            $result["class"][] = $data;
+        }
+
+        $objectBricks = new Object_Objectbrick_Definition_List();
+        $objectBricks = $objectBricks->load();
+
+        foreach ($objectBricks as $objectBrick) {
+            $key = $objectBrick->key;
+            $objectBrickJson = json_decode(Object_Class_Service::generateObjectBrickJson($objectBrick));
+            $objectBrickJson->key = $key;
+            $result["objectbrick"][] = $objectBrickJson;
+        }
+
+        $customLayouts = new Object_Class_CustomLayout_List();
+        $customLayouts = $customLayouts->load();
+        foreach ($customLayouts as $customLayout) {
+            /** @var  $customLayout Object_Class_CustomLayout */
+            $classId = $customLayout->getClassId();
+            $class = Object_Class::getById($classId);
+            $customLayout->className = $class->getName();
+            $result["customlayout"][] = $customLayout;
+        }
+
+
+        header("Content-type: application/json");
+        header("Content-Disposition: attachment; filename=\"bulk_export.json\"");
+        $result = json_encode($result);
+        echo $result;
+    }
+
+
 
 
 }

@@ -8,12 +8,15 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
 pimcore.registerNS("pimcore.object.helpers.customLayoutEditor");
 pimcore.object.helpers.customLayoutEditor = Class.create({
+
+    uploadUrl: '/admin/class/import-custom-layout-definition',
+    exportUrl: "/admin/class/export-custom-layout-definition",
 
     data: {},
 
@@ -43,11 +46,34 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             }
         );
 
+        this.exportButton = new Ext.Button(
+            {
+                text: t("export"),
+                iconCls: "pimcore_icon_class_export",
+                disabled: true,
+                handler: function() {
+                    pimcore.helpers.download(this.getExportUrl());
+                }.bind(this)
+            }
+        );
+
+        this.importButton = new Ext.Button(
+            {
+                text: t("import"),
+                iconCls: "pimcore_icon_class_import",
+                disabled: true,
+                handler: this.upload.bind(this)
+            }
+        );
+
         this.configPanel = new Ext.Panel({
             layout: "border",
             items: [this.getLayoutSelection(), this.getSelectionPanel(), this.getResultPanel(), this.getEditPanel()],
             bbar: [
                 "->",
+                this.importButton,
+                this.exportButton,
+                '-',
                 {
                     xtype: 'button',
                     text: t('cancel'),
@@ -56,6 +82,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                         this.window.close();
                     }.bind(this)
                 },
+
                 this.saveButton
             ]
         });
@@ -72,6 +99,13 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         this.window.show();
     },
 
+    getUploadUrl: function(){
+        return this.uploadUrl + '?pimcore_admin_sid=' + pimcore.settings.sessionId + "&id=" + this.data.id;
+    },
+
+    getExportUrl: function() {
+        return  this.exportUrl + "?id=" + this.data.id;
+    },
 
     getNodeData: function (node) {
         var data = {};
@@ -181,7 +215,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                         success: function(response) {
                             this.initLayoutFields(true, response);
                             this.resultPanel.enable();
-                            this.saveButton.enable();
+                            this.enableButtons();
                             this.currentLayoutId = layoutId;
                         }.bind(this)
 
@@ -250,13 +284,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
                                 var copy = this.recursiveCloneNode(n);
                                 e.dropNode = copy; // assign the copy as the new dropNode
-
-                                if (e.dropNode.attributes.dataType == "keyValue") {
-
-                                    var ccd = new pimcore.object.keyvalue.columnConfigDialog();
-                                    ccd.getConfigDialog(copy, this.selectionPanel);
-                                    return;
-                                }
                             }
                         }
                     }.bind(this),
@@ -367,7 +394,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             text: pimcore.object.classes.data.localizedfields.prototype.getTypeName(),
             iconCls: pimcore.object.classes.data.localizedfields.prototype.getIconClass(),
             handler: node.attributes.reference.addDataChild.bind(node, "localizedfields", {name: "localizedfields"},
-                                                                                    null, true, true)
+                null, true, true)
         });
 
         menu.add(new Ext.menu.Item({
@@ -732,8 +759,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     if(data && data.success) {
                         this.editPanel.removeAll();
                         this.resultPanel.enable();
-                        this.saveButton.enable();
-
+                        this.enableButtons();
                         this.layoutComboStore.reload();
                         this.currentLayoutId = data.id;
                         this.layoutChangeCombo.setValue(data.id);
@@ -783,9 +809,40 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     this.clearSelectionPanel();
                     this.resultPanel.disable();
                     this.saveButton.disable();
+                    this.importButton.disable();
+                    this.exportButton.disable();
                     this.rootPanel = null;
                 }
             }.bind(this));
         }
+    },
+
+    upload: function() {
+
+        pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function() {
+            Ext.Ajax.request({
+                url: "/admin/class/get-custom-layout",
+                params: {
+                    id: this.data.id
+                },
+                success: function(response) {
+                    this.editPanel.removeAll();
+                    this.initLayoutFields(true, response);
+                    this.resultPanel.enable();
+                    this.enableButtons();
+                    this.currentLayoutId = layoutId;
+                }.bind(this)
+
+            });
+        }.bind(this), function () {
+            Ext.MessageBox.alert(t("error"), t("error"));
+        });
+    },
+
+    enableButtons: function() {
+        this.saveButton.enable();
+        this.importButton.enable();
+        this.exportButton.enable();
     }
+
 });

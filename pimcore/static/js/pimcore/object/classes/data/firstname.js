@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -21,8 +21,8 @@ pimcore.object.classes.data.firstname = Class.create(pimcore.object.classes.data
      */
     allowIn: {
         object: true,
-        objectbrick: false,
-        fieldcollection: false,
+        objectbrick: true,
+        fieldcollection: true,
         localizedfield: false
     },
 
@@ -80,6 +80,19 @@ pimcore.object.classes.data.firstname = Class.create(pimcore.object.classes.data
         ]);
 
         return this.layout;
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    width: source.datax.width,
+                    columnLength: source.datax.columnLength
+                });
+        }
     }
 
 });

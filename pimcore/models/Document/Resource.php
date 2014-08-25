@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -402,7 +402,7 @@ class Document_Resource extends Element_Resource
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_document WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
+            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_document WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC, ABS(userId-" . $user->getId() . ") ASC LIMIT 1");
 
             if ($permissionsParent) {
                 return true;

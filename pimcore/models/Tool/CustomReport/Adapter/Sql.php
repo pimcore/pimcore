@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Pimcore
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -84,9 +84,6 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
             $sql .= " " . str_replace("\n", " ", $config->from);
         }
         if($config->where || $drillDownFilters) {
-            if(strpos(strtoupper(trim($config->where)), "WHERE") === false) {
-                $sql .= " WHERE ";
-            }
             $whereParts = array();
             if($config->where) {
                 $whereParts[] = "(" . str_replace("\n", " ", $config->where) . ")";
@@ -101,7 +98,13 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
                 }
             }
 
-            $sql .= " " . implode(" AND ", $whereParts);
+            if($whereParts) {
+                if(strpos(strtoupper(trim($config->where)), "WHERE") === false) {
+                    $sql .= " WHERE ";
+                }
+
+                $sql .= " " . implode(" AND ", $whereParts);
+            }
         }
         if($config->groupby && !$ignoreSelectAndGroupBy) {
             if(strpos(strtoupper($config->groupby), "GROUP BY") === false) {

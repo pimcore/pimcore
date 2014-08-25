@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -38,21 +38,24 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function save() {
-
-        Logger::debug("save called");
         $this->delete();
         $db = $this->db;
         $model = $this->model;
         $objectId = $model->getObjectId();
         $properties = $model->getInternalProperties();
         foreach ($properties as $pair) {
-            $key = $db->quote($pair["key"]);
-            $value = $db->quote($pair["value"]);
-            $translated = $db->quote($pair["translated"]);
-            $metadata = $db->quote($pair["metadata"]);
-            $sql = "INSERT INTO " . $this->getTableName() . " (`o_id`, `key`, `value`, `translated`, `metadata`) VALUES (" . $objectId . "," . $key . "," . $value . "," . $translated . "," . $metadata . ")";
-            Logger::debug($sql);
-            $db->query($sql);
+            $key = $pair["key"];
+            $value = $pair["value"];
+            $translated = $pair["translated"];
+            $metadata = $pair["metadata"];
+
+            $this->db->insert($this->getTableName(), array(
+                "o_id" => $objectId,
+                "key" => $key,
+                "value" => $value,
+                "translated" => $translated,
+                "metadata" => $metadata
+            ));
         }
     }
 

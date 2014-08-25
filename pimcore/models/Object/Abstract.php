@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -521,7 +521,12 @@ class Object_Abstract extends Element_Abstract {
 
                 break; // transaction was successfully completed, so we cancel the loop here -> no restart required
             } catch (Exception $e) {
-                $this->rollBack();
+                try {
+                    $this->rollBack();
+                } catch (\Exception $er) {
+                    // PDO adapter throws exceptions if rollback fails
+                    Logger::info($er);
+                }
 
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
                 if($retries < ($maxRetries-1)) {
@@ -532,6 +537,7 @@ class Object_Abstract extends Element_Abstract {
                     usleep($waitTime); // wait specified time until we restart the transaction
                 } else {
                     // if the transaction still fail after $maxRetries retries, we throw out the exception
+                    Logger::error("Finally giving up restarting the same transaction again and again, last message: " . $e->getMessage());
                     throw $e;
                 }
             }
@@ -763,12 +769,7 @@ class Object_Abstract extends Element_Abstract {
      */
     public function setParentId($o_parentId) {
         $this->o_parentId = (int) $o_parentId;
-
-        try {
-            $this->o_parent = Object_Abstract::getById($o_parentId);
-        }
-        catch (Exception $e) {
-        }
+        $this->o_parent = Object_Abstract::getById($o_parentId);
         return $this;
     }
 

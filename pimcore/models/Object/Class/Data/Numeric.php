@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object_Class
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -56,6 +56,31 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
     public $phpdocType = "float";
 
     /**
+     * @var bool
+     */
+    public $integer = false;
+
+    /**
+     * @var bool
+     */
+    public $unsigned = false;
+
+    /**
+     * @var float
+     */
+    public $minValue;
+
+    /**
+     * @var float
+     */
+    public $maxValue;
+
+    /**
+     * @var int
+     */
+    public $decimalPrecision;
+
+    /**
      * @return integer
      */
     public function getWidth() {
@@ -76,7 +101,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      */
     public function getDefaultValue() {
         if($this->defaultValue !== null) {
-            return (double) $this->defaultValue;
+            return $this->toNumeric($this->defaultValue);
         }
     }
 
@@ -92,6 +117,116 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
     }
 
     /**
+     * @param boolean $integer
+     */
+    public function setInteger($integer)
+    {
+        $this->integer = $integer;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getInteger()
+    {
+        return $this->integer;
+    }
+
+    /**
+     * @param float $maxValue
+     */
+    public function setMaxValue($maxValue)
+    {
+        $this->maxValue = $maxValue;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMaxValue()
+    {
+        return $this->maxValue;
+    }
+
+    /**
+     * @param float $minValue
+     */
+    public function setMinValue($minValue)
+    {
+        $this->minValue = $minValue;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMinValue()
+    {
+        return $this->minValue;
+    }
+
+    /**
+     * @param boolean $unsigned
+     */
+    public function setUnsigned($unsigned)
+    {
+        $this->unsigned = $unsigned;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getUnsigned()
+    {
+        return $this->unsigned;
+    }
+
+    /**
+     * @param int $decimalPrecision
+     */
+    public function setDecimalPrecision($decimalPrecision)
+    {
+        $this->decimalPrecision = $decimalPrecision;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDecimalPrecision()
+    {
+        return $this->decimalPrecision;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColumnType() {
+        if($this->getInteger()) {
+            return "bigint(20)";
+        }
+
+        if($this->getDecimalPrecision()) {
+            return "decimal(64, " . intval($this->getDecimalPrecision()) . ")";
+        }
+
+        return parent::getColumnType();
+    }
+
+    /**
+     * @return string
+     */
+    public function getQueryColumnType() {
+        if($this->getInteger()) {
+            return "bigint(20)";
+        }
+
+        if($this->getDecimalPrecision()) {
+            return "decimal(64, " . intval($this->getDecimalPrecision()) . ")";
+        }
+
+        return parent::getQueryColumnType();
+    }
+
+    /**
      * @see Object_Class_Data::getDataForResource
      * @param float $data
      * @param null|Object_Abstract $object
@@ -100,7 +235,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
     public function getDataForResource($data, $object = null) {
 
         if(is_numeric($data)) {
-           return (float) $data; 
+           return $data;
         }
         return null;
     }
@@ -112,7 +247,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      */
     public function getDataFromResource($data) {
         if(is_numeric($data)) {
-            return (float) $data;
+            return $this->toNumeric($data);
         }
         return $data;
     }
@@ -172,6 +307,31 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
         if(!empty($data) and !is_numeric($data)){
             throw new Exception("invalid numeric data");
         }
+
+        if(!$omitMandatoryCheck ) {
+
+            $data = $this->toNumeric($data);
+
+            if($data >= PHP_INT_MAX) {
+                throw new \Exception("value exceeds PHP_INT_MAX please use an input data type instead of numeric!");
+            }
+
+            if($this->getInteger() && strpos((string) $data, ".") !== false) {
+                throw new \Exception("Value in field [ ".$this->getName()." ] is not an integer");
+            }
+
+            if(strlen($this->getMinValue()) && $this->getMinValue() > $data) {
+                throw new \Exception("Value in field [ ".$this->getName()." ] is not at least " . $this->getMinValue());
+            }
+
+            if(strlen($this->getMaxValue()) && $data > $this->getMaxValue()) {
+                throw new \Exception("Value in field [ ".$this->getName()." ] is bigger than " . $this->getMaxValue());
+            }
+
+            if($this->getUnsigned() && $data < 0) {
+                throw new \Exception("Value in field [ ".$this->getName()." ] is not unsigned (bigger than 0)");
+            }
+        }
     }
 
     /**
@@ -189,10 +349,10 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
     /**
      * fills object field data values from CSV Import String
      * @param string $importValue
-     * @return double
+     * @return float
      */
     public function getFromCsvImport($importValue) {
-        $value = (double) str_replace(",",".",$importValue);
+        $value = $this->toNumeric(str_replace(",",".",$importValue));
         return $value;
     }
 
@@ -212,5 +372,16 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param $value
+     * @return float|int
+     */
+    protected function toNumeric($value) {
+        if(strpos((string) $value, ".") === false) {
+            return (int) $value;
+        }
+        return (float) $value;
     }
 }

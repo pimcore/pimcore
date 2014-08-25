@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object_Class
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -203,6 +203,54 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
 
     }
 
+    /** Enrich relation with type-specific data.
+     * @param $object
+     * @param $params
+     * @param $classId
+     * @param array $relation
+     */
+    protected function enrichRelation($object, $params, &$classId, &$relation = array()) {
+        if (!$relation) {
+            $relation = array();
+        }
+
+        if($object instanceof Object_Concrete) {
+
+            $relation["src_id"] = $object->getId();
+            $relation["ownertype"] = "object";
+
+            $classId = $object->getClassId();
+
+        } else if($object instanceof Object_Fieldcollection_Data_Abstract) {
+
+            $relation["src_id"] = $object->getObject()->getId(); // use the id from the object, not from the field collection
+            $relation["ownertype"] = "fieldcollection";
+            $relation["ownername"] = $object->getFieldname();
+            $relation["position"] = $object->getIndex();
+
+            $classId = $object->getObject()->getClassId();
+
+        } else if ($object instanceof Object_Localizedfield) {
+
+            $relation["src_id"] = $object->getObject()->getId();
+            $relation["ownertype"] = "localizedfield";
+            $relation["ownername"] = "localizedfield";
+            $relation["position"] = $params["language"];
+
+            $classId = $object->getObject()->getClassId();
+
+        } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
+
+            $relation["src_id"] = $object->getObject()->getId();
+            $relation["ownertype"] = "objectbrick";
+            $relation["ownername"] = $object->getFieldname();
+            $relation["position"] = $object->getType();
+
+            $classId = $object->getObject()->getClassId();
+        }
+
+    }
+
     /**
      * @param Object_Concrete|Object_Fieldcollection_Data_Abstract|Object_Localizedfield $object
      * @return void
@@ -216,60 +264,21 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
 
         if (is_array($relations) && !empty($relations)) {
             foreach ($relations as $relation) {
+                $this->enrichRelation($object, $params, $classId, $relation);
 
-
-                if($object instanceof Object_Concrete) {
-
-                    $relation["src_id"] = $object->getId();
-                    $relation["ownertype"] = "object";
-
-                    $classId = $object->getClassId();
-
-                } else if($object instanceof Object_Fieldcollection_Data_Abstract) {
-
-                    $relation["src_id"] = $object->getObject()->getId(); // use the id from the object, not from the field collection
-                    $relation["ownertype"] = "fieldcollection";
-                    $relation["ownername"] = $object->getFieldname();
-                    $relation["position"] = $object->getIndex();
-
-                    $classId = $object->getObject()->getClassId();
-
-                } else if ($object instanceof Object_Localizedfield) {
-                    
-                    $relation["src_id"] = $object->getObject()->getId();
-                    $relation["ownertype"] = "localizedfield";
-                    $relation["ownername"] = "localizedfield";
-                    $relation["position"] = $params["language"];
-
-                    $classId = $object->getObject()->getClassId();
-                    
-                } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
-
-                    $relation["src_id"] = $object->getObject()->getId();
-                    $relation["ownertype"] = "objectbrick";
-                    $relation["ownername"] = $object->getFieldname();
-                    $relation["position"] = $object->getType();
-
-                    $classId = $object->getObject()->getClassId();
-                }
 
                 /*relation needs to be an array with src_id, dest_id, type, fieldname*/
                 try {
                     $db->insert("object_relations_" . $classId, $relation);
                 } catch (Exception $e) {
                     Logger::error("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"]
-                        . " (fieldname: " . $this->getName() . ") already exist -> try to update");
+                        . " (fieldname: " . $this->getName() . ") already exist -> please check immediately!");
                     Logger::error($e);
 
                     // try it again with an update if the insert fails, shouldn't be the case, but it seems that
                     // sometimes the insert throws an exception
 
-                    // build condition
-                    $condition = array();
-                    foreach ($relation as $key => $value) {
-                        $condition[] = $db->quoteInto($db->quoteIdentifier($key) . " = ?", $value);
-                    }
-                    $db->update("object_relations_" . $classId, $relation, implode(" AND ", $condition));
+                    throw $e;
                 }
             }
         }
@@ -304,7 +313,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
         }
 
         // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
-        // filesort in MySQL which is extremly slow especially when there are millions of relations in the database
+        // filesort in MySQL which is extremely slow especially when there are millions of relations in the database
         usort($relations, function ($a, $b) {
             if ($a["index"] == $b["index"]) {
                 return 0;

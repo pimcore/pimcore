@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -18,6 +18,12 @@ class Pimcore_Google_Analytics {
     public static $stack = array();
 
     public static $defaultPath = null;
+
+    protected static $additionalCodes = [
+        "beforeInit" => [],
+        "beforePageview" => [],
+        "beforeEnd" => []
+    ];
     
     public static function isConfigured (Site $site = null) {
         if(self::getSiteConfig($site) && self::getSiteConfig($site)->profile) {
@@ -52,28 +58,26 @@ class Pimcore_Google_Analytics {
             return "";
         }
 
+        $codeBeforeInit = $config->additionalcodebeforeinit;
+        $codeBeforePageview = $config->additionalcodebeforepageview;
+        $codeBeforeEnd = $config->additionalcode;
+
+        if(!empty(self::$additionalCodes["beforeInit"])) {
+            $codeBeforeInit .= "\n" . implode("\n", self::$additionalCodes["beforeInit"]);
+        }
+
+        if(!empty(self::$additionalCodes["beforePageview"])) {
+            $codeBeforePageview .= "\n" . implode("\n", self::$additionalCodes["beforePageview"]);
+        }
+
+        if(!empty(self::$additionalCodes["beforeEnd"])) {
+            $codeBeforeEnd .= "\n" . implode("\n", self::$additionalCodes["beforeEnd"]);
+        }
+
+
         $code = "";
 
-        if($config->universalcode) {
-            $code .= "
-            <script>
-              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-              })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-              " . $config->additionalcodebeforepageview . "
-
-              ga('create', '" . $config->trackid . "'" . ($config->universal_configuration ? ("," . $config->universal_configuration) : "") . ");
-              if (typeof _gaqPageView != \"undefined\"){
-                ga('send', 'pageview', _gaqPageView);
-              } else {
-                ga('send', 'pageview');
-              }
-
-              " . $config->additionalcode . "
-            </script>";
-        } else {
+        if($config->asynchronouscode || $config->retargetingcode) {
             $typeSrc = "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';";
             if($config->retargetingcode) {
                 $typeSrc = "ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';";
@@ -82,17 +86,18 @@ class Pimcore_Google_Analytics {
             $code .= "
             <script type=\"text/javascript\">
 
+              " . $codeBeforeInit . "
               var _gaq = _gaq || [];
               _gaq.push(['_setAccount', '" . $config->trackid . "']);
               _gaq.push (['_gat._anonymizeIp']);
-              " . $config->additionalcodebeforepageview . "
+              " . $codeBeforePageview . "
               if (typeof _gaqPageView != \"undefined\"){
                 _gaq.push(['_trackPageview',_gaqPageView]);
               } else {
                 _gaq.push(['_trackPageview'" . (self::$defaultPath ? (",'" . self::$defaultPath . "'") : "") . "]);
               }
 
-              " . $config->additionalcode . "
+              " . $codeBeforeEnd . "
 
               (function() {
                 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
@@ -100,10 +105,38 @@ class Pimcore_Google_Analytics {
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
               })();
             </script>";
+        } else {
+            $code .= "
+            <script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+              " . $codeBeforeInit . "
+
+              ga('create', '" . $config->trackid . "'" . ($config->universal_configuration ? ("," . $config->universal_configuration) : "") . ");
+              " . $codeBeforePageview . "
+              if (typeof _gaqPageView != \"undefined\"){
+                ga('send', 'pageview', _gaqPageView);
+              } else {
+                ga('send', 'pageview'" . (self::$defaultPath ? (",'" . self::$defaultPath . "'") : "") . ");
+              }
+
+              " . $codeBeforeEnd . "
+            </script>";
         }
 
         
         return $code;  
+    }
+
+    /**
+     * @param string $code
+     * @param string $where
+     */
+    public static function addAdditionalCode($code, $where = "beforeEnd") {
+        self::$additionalCodes[$where][] = $code;
     }
     
     public static function trackElement (Element_Interface $element) {

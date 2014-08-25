@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -47,6 +47,9 @@ pimcore.document.tags.table = Class.create(pimcore.document.tag, {
         options.name = id + "_editable";
         options.frame = true;
         options.layout = "fit";
+        options.autoHeight = true;
+
+        delete options["height"];
 
         this.options = options;
 
@@ -87,7 +90,7 @@ pimcore.document.tags.table = Class.create(pimcore.document.tag, {
         this.grid = new Ext.grid.EditorGridPanel({
             store: this.store,
             width: 700,
-            height: 300,
+            border: false,
             columns:columns,
             stripeRows: true,
             columnLines: true,

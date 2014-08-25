@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -563,7 +563,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
         }
 
         $checksApps[] = array(
-            "name" => "PNG Optimizer (pngquant, pngcrush)",
+            "name" => "PNG Optimizer (pngcrush)",
             "state" => $pngOptimizer ? "ok" : "warning"
         );
 
@@ -591,6 +591,17 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => $timeoutBin ? "ok" : "warning"
         );
 
+        // pdftotext binary
+        try {
+            $pdftotextBin = (bool) Pimcore_Document_Adapter_Ghostscript::getPdftotextCli();
+        } catch (Exception $e) {
+            $pdftotextBin = false;
+        }
+
+        $checksApps[] = array(
+            "name" => "pdftotext - (part of poppler-utils)",
+            "state" => $pdftotextBin ? "ok" : "warning"
+        );
 
         $this->view->checksApps = $checksApps;
         $this->view->checksPHP = $checksPHP;

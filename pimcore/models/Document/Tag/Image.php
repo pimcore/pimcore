@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -194,7 +194,7 @@ class Document_Tag_Image extends Document_Tag {
         }
 
         if ($this->image instanceof Asset) {
-            if ($this->options["thumbnail"] || $this->cropPercent) {
+            if ((isset($this->options["thumbnail"]) && $this->options["thumbnail"]) || $this->cropPercent) {
                 // create a thumbnail first
                 $autoName = false;
 
@@ -230,7 +230,7 @@ class Document_Tag_Image extends Document_Tag {
                 // autogenerate a name for the thumbnail because it's different from the original
                 if($autoName) {
                     $hash = md5(Pimcore_Tool_Serialize::serialize($thumbConfig->getItems()));
-                    $thumbConfig->setName("auto_" . $hash);
+                    $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);
                 }
 
                 $imagePath = $this->image->getThumbnail($thumbConfig);
@@ -491,7 +491,7 @@ class Document_Tag_Image extends Document_Tag {
                     "x" => $this->cropLeft
                 ));
                 $hash = md5(Pimcore_Tool_Serialize::serialize($thumbConfig->getItems()));
-                $thumbConfig->setName("auto_" . $hash);
+                $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);
             }
 
             return $this->image->getThumbnail($thumbConfig);

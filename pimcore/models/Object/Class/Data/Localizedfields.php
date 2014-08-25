@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object_Class
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -73,6 +73,11 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
      * @var integer
      */
     public $maxTabs;
+
+    /**
+     * @var integer
+     */
+    public $labelWidth;
 
     /**
      * contains further localized field definitions if there are more than one localized fields in on class
@@ -499,6 +504,13 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         $localizedFields = new Object_Localizedfield();
         $localizedFields->setClass($class);
         $localizedFields->createUpdateTable();
+
+        foreach ($this->getFieldDefinitions() as $fd) {
+            if (method_exists($fd, "classSaved")) {
+                $fd->classSaved($class);
+            }
+
+        }
     }
 
     public function preGetData($object, $params = array())
@@ -839,6 +851,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         }
 
         $localizedFields = new Object_Localizedfield($localData);
+        $localizedFields->setObject( $object );
         return $localizedFields;
     }
 
@@ -904,4 +917,22 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     {
         return $this->maxTabs;
     }
+
+    /**
+     * @param int $labelWidth
+     */
+    public function setLabelWidth($labelWidth)
+    {
+        $this->labelWidth = $labelWidth;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLabelWidth()
+    {
+        return $this->labelWidth;
+    }
+
+
 }

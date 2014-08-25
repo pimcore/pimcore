@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Dependency
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -123,25 +123,15 @@ class Dependency_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function save() {
-        try {
-            foreach ($this->model->getRequires() as $r) {
-
-                try {
-                    if ($r["id"] && $r["type"]) {
-                        $this->db->insert("dependencies", array(
-                            "sourceid" => $this->model->getSourceId(),
-                            "sourcetype" => $this->model->getSourceType(),
-                            "targetid" => $r["id"],
-                            "targettype" => $r["type"]
-                        ));
-                    }
-                }
-                catch (Exception $e) {
-                    Logger::error($e);
-                }
+        foreach ($this->model->getRequires() as $r) {
+            if ($r["id"] && $r["type"]) {
+                $this->db->insert("dependencies", array(
+                    "sourceid" => $this->model->getSourceId(),
+                    "sourcetype" => $this->model->getSourceType(),
+                    "targetid" => $r["id"],
+                    "targettype" => $r["type"]
+                ));
             }
-        } catch (Exception $e) {
-            Logger::error($e);
         }
     }
 }

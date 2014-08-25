@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object_Class
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -46,6 +46,16 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      * @var int
      */
     public $maxItems;
+
+    /**
+     * @var boolean
+     */
+    public $disallowAddRemove;
+
+    /**
+     * @var boolean
+     */
+    public $disallowReorder;
 
 
     /**
@@ -641,6 +651,62 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         $this->allowedTypes = $masterDefinition->allowedTypes;
         $this->lazyLoading = $masterDefinition->lazyLoading;
         $this->maxItems = $masterDefinition->maxItems;
+    }
+
+    /**
+     * This method is called in Object_Class::save() and is used to create the database table for the localized data
+     * @return void
+     */
+    public function classSaved($class)
+    {
+
+        if (is_array($this->allowedTypes)) {
+            foreach ($this->allowedTypes as $allowedType) {
+                $definition = Object_Fieldcollection_Definition::getByKey($allowedType);
+                if ($definition) {
+                    $fieldDefinition = $definition->getFieldDefinitions();
+
+                    foreach ($fieldDefinition as $fd) {
+                        if (method_exists($fd, "classSaved")) {
+                            $fd->classSaved($class);
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param boolean $disallowAddRemove
+     */
+    public function setDisallowAddRemove($disallowAddRemove)
+    {
+        $this->disallowAddRemove = $disallowAddRemove;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getDisallowAddRemove()
+    {
+        return $this->disallowAddRemove;
+    }
+
+    /**
+     * @param boolean $disallowReorder
+     */
+    public function setDisallowReorder($disallowReorder)
+    {
+        $this->disallowReorder = $disallowReorder;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getDisallowReorder()
+    {
+        return $this->disallowReorder;
     }
 
 }

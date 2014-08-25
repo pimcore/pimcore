@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -655,6 +655,8 @@ class Pimcore_Mail extends Zend_Mail
             }
             $this->clearRecipients();
             $this->addTo(self::$debugEmailAddresses);
+
+            /*
             $this->clearFrom();
             list($primaryDebugEmailAddress) = self::$debugEmailAddresses;
             $this->setFrom($primaryDebugEmailAddress);
@@ -662,6 +664,7 @@ class Pimcore_Mail extends Zend_Mail
                 $this->clearReplyTo();
                 $this->setReplyTo($primaryDebugEmailAddress);
             }
+            */
         }
     }
 

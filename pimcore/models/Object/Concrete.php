@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
@@ -67,6 +67,14 @@ class Object_Concrete extends Object_Abstract {
      */
     protected $omitMandatoryCheck = false;
 
+    /**
+     * returns the class ID of the current object class
+     * @return int
+     */
+    public static function classId() {
+        $v = get_class_vars(get_called_class());
+        return $v["o_classId"];
+    }
 
     /**
      *

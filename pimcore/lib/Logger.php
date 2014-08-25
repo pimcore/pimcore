@@ -9,11 +9,12 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
-class Logger {
+class
+Logger {
 	
 	private static $logger = array();
 	private static $priorities = array();
@@ -79,13 +80,19 @@ class Logger {
 		if(in_array($code,self::$priorities)) {
 
             $backtrace = debug_backtrace();
-            @$call = $backtrace[2];
+
+            if (!isset($backtrace[2])) {
+                $call = array('class' => '', 'type' => '', 'function' => '');
+            } else {
+                $call = $backtrace[2];
+            }
+
             $call["line"] = $backtrace[1]["line"];
 
             if(is_object($message) || is_array($message)) {
                 // special formatting for exception
 				if($message instanceof Exception) {
-					$message = @$call["class"] . @$call["type"] . @$call["function"] . "() [" . $call["line"] . "]: [Exception] with message: ".$message->getMessage()
+					$message = $call["class"] . $call["type"] . $call["function"] . "() [" . $call["line"] . "]: [Exception] with message: ".$message->getMessage()
                         ."\n"
                         ."In file: "
                         .$message->getFile()
@@ -98,7 +105,7 @@ class Logger {
 					$message = print_r($message,true);
 				}
 			} else {
-                $message = @$call["class"] . @$call["type"] . @$call["function"] . "() [" . $call["line"] . "]: " . $message;
+                $message = $call["class"] . $call["type"] . $call["function"] . "() [" . $call["line"] . "]: " . $message;
             }
 
             // add the memory consumption

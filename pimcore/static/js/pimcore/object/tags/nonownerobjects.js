@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -276,7 +276,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
         allowedClasses.push(record.data.text);
 
 
-        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
+        pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
             type: ["object"],
             subtype: [
                 {
@@ -350,20 +350,24 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
 
 
     addDataFromSelector: function (items) {
+        if (items.length > 0) {
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
 
-        if (this.object.id == items.id) {
-            //cannot select myself!
-            Ext.MessageBox.show({
-                title:t('error'),
-                msg: t('nonownerobjects_self_selection'),
-                buttons: Ext.Msg.OK ,
-                icon: Ext.MessageBox.ERROR
-            });
+                if (this.object.id == item.id) {
+                    //cannot select myself!
+                    Ext.MessageBox.show({
+                        title:t('error'),
+                        msg: t('nonownerobjects_self_selection'),
+                        buttons: Ext.Msg.OK ,
+                        icon: Ext.MessageBox.ERROR
+                    });
 
-        } else if (!this.objectAlreadyExists(items.id)) {
-            this.addObject(items);
+                } else if (!this.objectAlreadyExists(item.id)) {
+                    this.addObject(item);
+                }
+            }
         }
-
     }
 
 });

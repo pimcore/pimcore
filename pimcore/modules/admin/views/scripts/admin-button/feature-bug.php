@@ -21,7 +21,7 @@
         </h1>
 
         <?php if(!$this->contactEmail) { ?>
-            <b style="color: red;">Please enter a contact address in: <i>Settings -> System -> General -> Contact E-Mail</i> to use this feature.</b>
+            <b style="color: red;">Please enter a contact address in: <i>Settings -> System -> General -> Contact E-Mail</i> in order to use this feature.</b>
         <?php } else if(!$this->getParam("submit")) { ?>
             <form action="" method="post">
                 <label><?php echo $this->translate("description"); ?></label>

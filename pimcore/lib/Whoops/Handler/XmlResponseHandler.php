@@ -7,8 +7,8 @@
 namespace Whoops\Handler;
 
 use SimpleXMLElement;
-use Whoops\Exception\Frame;
 use Whoops\Handler\Handler;
+use Whoops\Exception\Formatter;
 
 /**
  * Catches an exception and converts it to an XML
@@ -24,7 +24,7 @@ class XmlResponseHandler extends Handler
 
     /**
      * @param  bool|null $returnFrames
-     * @return null|bool
+     * @return bool|$this
      */
     public function addTraceToOutput($returnFrames = null)
     {
@@ -33,6 +33,7 @@ class XmlResponseHandler extends Handler
         }
 
         $this->returnFrames = (bool) $returnFrames;
+        return $this;
     }
 
     /**
@@ -40,35 +41,12 @@ class XmlResponseHandler extends Handler
      */
     public function handle()
     {
-        $exception = $this->getException();
-
         $response = array(
-            'error' => array(
-                'type'    => get_class($exception),
-                'message' => $exception->getMessage(),
-                'file'    => $exception->getFile(),
-                'line'    => $exception->getLine()
-            )
+            'error' => Formatter::formatExceptionAsDataArray(
+                $this->getInspector(),
+                $this->addTraceToOutput()
+            ),
         );
-
-        if($this->addTraceToOutput()) {
-            $inspector = $this->getInspector();
-            $frames    = $inspector->getFrames();
-            $frameData = array();
-
-            foreach($frames as $frame) {
-                /** @var Frame $frame */
-                $frameData[] = array(
-                    'file'     => $frame->getFile(),
-                    'line'     => $frame->getLine(),
-                    'function' => $frame->getFunction(),
-                    'class'    => $frame->getClass(),
-                    'args'     => $frame->getArgs()
-                );
-            }
-
-            $response['error']['trace'] = array_flip($frameData);
-        }
 
         echo $this->toXml($response);
 
@@ -120,18 +98,8 @@ class XmlResponseHandler extends Handler
     {
         assert('is_array($data) || $node instanceof Traversable');
 
-        // turn off compatibility mode as simple xml throws a wobbly if you don't.
-        $compatibilityMode = ini_get('zend.ze1_compatibility_mode');
-        if ($compatibilityMode) {
-            ini_set('zend.ze1_compatibility_mode', 0);
-        }
-
         $node = simplexml_load_string("<?xml version='1.0' encoding='utf-8'?><root />");
-        $xml = self::addDataToNode($node, $data)->asXML();
 
-        if ($compatibilityMode) {
-            ini_set('zend.ze1_compatibility_mode', $compatibilityMode);
-        }
-        return $xml;
+        return self::addDataToNode($node, $data)->asXML();
     }
 }

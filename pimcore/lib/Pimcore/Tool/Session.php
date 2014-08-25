@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -41,7 +41,8 @@ class Pimcore_Tool_Session {
                 "name" => "pimcore_admin_sid",
                 "strict" => false,
                 "use_trans_sid" => false,
-                "use_only_cookies" => false
+                "use_only_cookies" => false,
+                "cookie_httponly" => true
             ));
         }
 
@@ -117,6 +118,10 @@ class Pimcore_Tool_Session {
         if(!self::$openedSessions) { // do not write session data if there's still an open session
             session_write_close();
         }
+    }
+
+    public static function regenerateId() {
+        Zend_Session::regenerateId();
     }
 
 }

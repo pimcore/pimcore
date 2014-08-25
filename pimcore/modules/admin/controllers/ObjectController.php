@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -361,8 +361,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData["childdata"]["id"] = $object->getId();
             $objectData["childdata"]["data"]["classes"] = $object->getResource()->getClasses();
 
-            $objectData = $this->filterLocalizedFields($object, $objectData);
-
             $currentLayoutId = $this->getParam("layoutId");
 
             $validLayouts = Object_Service::getValidLayouts($object);
@@ -395,6 +393,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                 $objectData["currentLayoutId"] = $currentLayoutId;
             }
+
+            $objectData = $this->filterLocalizedFields($object, $objectData);
+            Object_Service::enrichLayoutDefinition($objectData["layout"]);
 
             $this->_helper->json($objectData);
         } else {

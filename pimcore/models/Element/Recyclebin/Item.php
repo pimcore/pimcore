@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Element
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
@@ -168,7 +168,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
         $saveBinaryData($this->getElement(), $saveBinaryData, $this);
 
-        chmod($this->getStoreageFile(), Pimcore_File::getDefaultMode());
+        @chmod($this->getStoreageFile(), Pimcore_File::getDefaultMode());
     }
 
     /**

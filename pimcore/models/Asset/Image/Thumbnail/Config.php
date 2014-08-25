@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Asset
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
@@ -107,13 +107,29 @@ class Asset_Image_Thumbnail_Config {
      * @return Asset_Image_Thumbnail_Config
      */
     public static function getByName ($name) {
-        $pipe = new self();
-        $pipe->setName($name);
-        if(!is_readable($pipe->getConfigFile()) || !$pipe->load()) {
-            throw new Exception("thumbnail definition : " . $name . " does not exist");
+
+        $cacheKey = "imagethumb_" . crc32($name);
+
+        if(Zend_Registry::isRegistered($cacheKey)) {
+            $pipe = Zend_Registry::get($cacheKey);
+            $pipe->setName($name); // set the name again because in documents there's an automated prefixing logic
+        } else {
+            $pipe = new self();
+            $pipe->setName($name);
+            if(!is_readable($pipe->getConfigFile()) || !$pipe->load()) {
+                throw new Exception("thumbnail definition : " . $name . " does not exist");
+            }
+
+            Zend_Registry::set($cacheKey, $pipe);
         }
 
-        return $pipe;
+        // only return clones of configs, this is necessary since we cache the configs in the registry (see above)
+        // sometimes, e.g. when using the cropping tools, the thumbnail configuration is modified on-the-fly, since
+        // pass-by-reference this modifications would then go to the cache/registry (singleton), by cloning the config
+        // we can bypass this problem in an elegant way without parsing the XML config again and again
+        $clone = clone $pipe;
+
+        return $clone;
     }
 
     /**
@@ -557,7 +573,7 @@ class Asset_Image_Thumbnail_Config {
                 "height" => $config["height"]
             ));
         }
-        else if (isset($config["aspectratio"])) {
+        else if (isset($config["aspectratio"]) && $config["aspectratio"]) {
 
             if (isset($config["height"]) && isset($config["width"]) && $config["height"] > 0 && $config["width"] > 0) {
                 $pipe->addItem("contain", array(
@@ -662,5 +678,22 @@ class Asset_Image_Thumbnail_Config {
         }
 
         return $dimensions;
+    }
+
+
+    /**
+     * @param string $colorspace
+     */
+    public function setColorspace($colorspace)
+    {
+        // no functionality, just for compatibility reasons
+    }
+
+    /**
+     * @return string
+     */
+    public function getColorspace()
+    {
+        // no functionality, just for compatibility reasons
     }
 }

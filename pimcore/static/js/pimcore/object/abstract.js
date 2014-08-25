@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license 
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -17,7 +17,7 @@ pimcore.object.abstract = Class.create(pimcore.element.abstract, {
 
     selectInTree: function (type) {
 
-        if(type != "variant") {
+        if(type != "variant" || this.data.general.showVariants) {
             try {
                 Ext.getCmp("pimcore_panel_tree_objects").expand();
                 var tree = pimcore.globalmanager.get("layout_object_tree");

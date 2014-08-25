@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -29,7 +29,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
             die("Google Analytics is not configured");
         }
 
-        $this->service = new Google_AnalyticsService($client);
+        $this->service = new Google_Service_Analytics($client);
     }
 
     public function deeplinkAction () {

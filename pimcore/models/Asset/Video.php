@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Asset
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -26,6 +26,16 @@ class Asset_Video extends Asset {
      * @return void
      */
     protected function update() {
+
+        // only do this if the file exists and contains data
+        if($this->getDataChanged() || !$this->getCustomSetting("duration")) {
+            try {
+                $this->setCustomSetting("duration", $this->getDurationFromBackend());
+            } catch (\Exception $e) {
+                Logger::err("Unable to get duration of video: " . $this->getId());
+            }
+        }
+
         $this->clearThumbnails();
         parent::update();
     }
@@ -133,23 +143,25 @@ class Asset_Video extends Asset {
 
         $cs = $this->getCustomSetting("image_thumbnail_time");
         $im = $this->getCustomSetting("image_thumbnail_asset");
-        if(!$timeOffset && !$imageAsset && $cs) {
+
+        if($im || $imageAsset) {
+            if($im) {
+                $imageAsset = Asset::getById($im);
+            }
+
+            if($imageAsset instanceof Asset_Image) {
+                return $imageAsset->getThumbnail($thumbnailName);
+            }
+        }
+
+        if(!$timeOffset && $cs) {
             $timeOffset = $cs;
-        } else if (!$timeOffset && !$imageAsset && $im) {
-            $imageAsset = Asset::getById($im);
         }
 
         // fallback
-        if(!$timeOffset && !$imageAsset) {
-            $timeOffset = 5;
+        if(!$timeOffset) {
+            $timeOffset = ceil($this->getDuration() / 3);
         }
-
-        if($imageAsset instanceof Asset_Image) {
-            return $imageAsset->getThumbnail($thumbnailName);
-        }
-
-        $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
-        $thumbnail->setFilenameSuffix("time-" . $timeOffset);
 
         $converter = Pimcore_Video::getInstance();
         $converter->load($this->getFileSystemPath());
@@ -159,10 +171,22 @@ class Asset_Video extends Asset {
         }
 
         if(!is_file($path)) {
-            $converter->saveImage($path, $timeOffset);
+            $lockKey = "video_image_thumbnail_" . $this->getId() . "_" . $timeOffset;
+            Tool_Lock::acquire($lockKey);
+
+            // after we got the lock, check again if the image exists in the meantime - if not - generate it
+            if(!is_file($path)) {
+                $converter->saveImage($path, $timeOffset);
+            }
+
+            Tool_Lock::release($lockKey);
         }
 
+        $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
+
         if($thumbnail) {
+            $thumbnail->setFilenameSuffix("time-" . $timeOffset);
+
             try {
                 $path = Asset_Image_Thumbnail_Processor::process($this, $thumbnail, $path);
             } catch (Exception $e) {
@@ -172,24 +196,94 @@ class Asset_Video extends Asset {
             }
         }
 
-        // if no thumbnail config is given return the original image
-        if(empty($path)) {
-            $fsPath = $this->getFileSystemPath();
-            $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
-        }
+        $path = preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", $path);
 
         return $path;
+    }
+
+    /**
+     * how many frames, delay in seconds between frames, pimcore thumbnail configuration
+     *
+     * @param int $frames
+     * @param int $delay
+     * @param null $thumbnail
+     * @return string
+     */
+    public function getPreviewAnimatedGif($frames = 10, $delay = 200, $thumbnail = null) {
+
+        if(!$frames) {
+            $frames = 10;
+        }
+        if(!$delay) {
+            $delay = 200; // no clue which unit this has ;-)
+        }
+
+        $thumbnailUniqueId = md5(serialize([$thumbnail, $frames, $delay]));
+        $animGifPath = PIMCORE_TEMPORARY_DIRECTORY . "/video-image-cache/video_" . $this->getId() . "_" . $thumbnailUniqueId . ".gif";
+
+        if(!is_file($animGifPath)) {
+            $duration = $this->getDuration();
+            $sampleRate = floor($duration / $frames);
+
+            $thumbnails = [];
+            $delays = [];
+
+            $thumbnailConfig = $this->getImageThumbnailConfig($thumbnail);
+            if(!$thumbnailConfig) {
+                $thumbnailConfig = new Asset_Image_Thumbnail_Config();
+            }
+            $thumbnailConfig->setFormat("GIF");
+
+            for($i=0; $i<=$frames; $i++) {
+                $frameImage = $this->getImageThumbnail($thumbnailConfig, $i*$sampleRate);
+                $frameImage = PIMCORE_DOCUMENT_ROOT . $frameImage;
+
+                if(preg_match("/\.gif$/", $frameImage) && filesize($frameImage) > 10) {
+                    // check if the image is correct and not a "not supported" placeholder
+                    $thumbnails[] = $frameImage;
+                    $delays[] = $delay;
+                }
+            }
+
+            try {
+                $animator = new Pimcore_Image_GifAnimator($thumbnails, $delays, 0, 2, 255, 255, 255, "url");
+                $animGifContent = $animator->GetAnimation();
+            } catch (\Exception $e) {
+                Logger::error($e);
+                $animGifContent = file_get_contents($thumbnails[0]);
+            }
+
+            Pimcore_File::put($animGifPath, $animGifContent);
+        }
+
+        $animGifPath = preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", $animGifPath);
+
+        return $animGifPath;
+    }
+
+    protected function getDurationFromBackend() {
+        if(Pimcore_Video::isAvailable()) {
+            $converter = Pimcore_Video::getInstance();
+            $converter->load($this->getFileSystemPath());
+            return $converter->getDuration();
+        }
+        return null;
     }
 
     /**
      * @return mixed
      */
     public function getDuration () {
-        if(Pimcore_Video::isAvailable()) {
-            $converter = Pimcore_Video::getInstance();
-            $converter->load($this->getFileSystemPath());
+        $duration = $this->getCustomSetting("duration");
+        if(!$duration) {
+            $duration = $this->getDurationFromBackend();
+            $this->setCustomSetting("duration", $duration);
 
-            return $converter->getDuration();
+            Version::disable();
+            $this->save(); // auto save
+            Version::enable();
         }
+
+        return $duration;
     }
 }

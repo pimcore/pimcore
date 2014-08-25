@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -224,6 +224,33 @@ class Object_Class extends Pimcore_Model_Abstract {
         $cd = '<?php ';
 
         $cd .= "\n\n";
+        $cd .= "/** Generated at " . date('c') . " */";
+        $cd .= "\n\n";
+
+        $cd .= "/**\n";
+
+        if ($this->getDescription()) {
+            $description = str_replace(array("/**", "*/", "//"), "", $this->getDescription());
+            $description = str_replace("\n", "\n* ", $description);
+
+            $cd .= "* " . $description . "\n";
+        }
+
+        $cd .= "* Inheritance: " . ($this->getAllowInherit() ? "yes" : "no") . "\n";
+        $cd .= "* Variants   : " . ($this->getAllowVariants() ? "yes" : "no") . "\n";
+
+        $user = User::getById($this->getUserModification());
+        if ($user) {
+            $cd .= "* Changed by : " . $user->getName() . " (" . $user->getId() . ")" . "\n";
+        }
+
+        if ($_SERVER["REMOTE_ADDR"]) {
+            $cd .= "* IP:          " . $_SERVER["REMOTE_ADDR"] . "\n";
+        }
+
+        $cd .= "*/\n";
+        $cd .= "\n\n";
+
         $cd .= "class Object_" . ucfirst($this->getName()) . " extends " . $extendClass . " {";
         $cd .= "\n\n";
 
@@ -247,7 +274,7 @@ class Object_Class extends Pimcore_Model_Abstract {
         $cd .= '*/' . "\n";
         $cd .= 'public static function create($values = array()) {';
         $cd .= "\n";
-        $cd .= "\t" . '$object = new self();' . "\n";
+        $cd .= "\t" . '$object = new static();' . "\n";
         $cd .= "\t" . '$object->setValues($values);' . "\n";
         $cd .= "\t" . 'return $object;' . "\n";
         $cd .= "}";

@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -64,7 +64,7 @@ class WebsiteSetting_Resource extends Pimcore_Model_Resource_Abstract {
         if ($name != null) {
             $this->model->setName($name);
         }
-        $data = $this->db->fetchRow("SELECT id FROM website_setting WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) ORDER BY siteId DESC", array($this->model->getName(), $siteId));
+        $data = $this->db->fetchRow("SELECT id, data FROM website_settings WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) ORDER BY siteId DESC", array($this->model->getName(), $siteId));
         
         if($data["id"]) {
             $this->assignVariablesToModel($data);

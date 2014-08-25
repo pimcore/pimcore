@@ -8,18 +8,27 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
 pimcore.registerNS("pimcore.element.tag.imagecropper");
 pimcore.element.tag.imagecropper = Class.create({
 
-    initialize: function (imageId, data, saveCallback) {
+    initialize: function (imageId, data, saveCallback, config) {
         this.imageId = imageId;
         this.data = data;
         this.saveCallback = saveCallback;
         this.modal = true;
+
+        this.ratioX = null;
+        this.ratioY = null;
+        if(typeof config == "object") {
+            if(config["ratioX"] && config["ratioY"]) {
+                this.ratioX = config["ratioX"];
+                this.ratioY = config["ratioY"];
+            }
+        }
     },
 
     open: function (modal) {
@@ -97,13 +106,14 @@ pimcore.element.tag.imagecropper = Class.create({
                         var checkSize = function () {
                             // this function checks if the selected area fits into the image
                             var sel = Ext.get("selector");
+                            var dimensions;
                             var originalWidth = this.editWindow.getInnerWidth();
                             var originalHeight = this.editWindow.getInnerHeight();
                             var skip = false;
 
                             while(!skip) {
                                 skip = true;
-                                var dimensions = sel.getStyles("top","left","width","height");
+                                 dimensions = sel.getStyles("top","left","width","height");
 
                                 if(intval(dimensions.top) < 0) {
                                     sel.setStyle("top", "0");
@@ -131,6 +141,15 @@ pimcore.element.tag.imagecropper = Class.create({
                                     }
                                     skip = false;
                                 }
+                            }
+
+
+                            // check the ratio if given
+                            if(this.ratioX && this.ratioY) {
+                                dimensions = sel.getStyles("width","height");
+
+                                var height = intval(dimensions.width) * (this.ratioY / this.ratioX);
+                                sel.setStyle("height", (height) + "px");
                             }
                         };
 

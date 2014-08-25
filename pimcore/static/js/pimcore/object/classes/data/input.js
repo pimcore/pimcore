@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -68,9 +68,80 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                     value: this.datax.columnLength
                 }
             ]);
+
+
+            var regexSet;
+            var checkRegex = function () {
+                var testStringEl = regexSet.getComponent("regexTestString");
+                var regex = regexSet.getComponent("regex").getValue();
+                var testString = testStringEl.getValue();
+
+                try {
+                    var regexp = new RegExp(regex);
+                    if(regexp.test(testString)) {
+                        testStringEl.getEl().applyStyles({
+                            background: "green",
+                            color: "white"
+                        });
+                    } else {
+                        testStringEl.getEl().applyStyles({
+                            background: "red",
+                            color: "white"
+                        });
+                    }
+                } catch(e) {
+                    console.log(e);
+                }
+            };
+
+            regexSet = new Ext.form.FieldSet({
+                xtype: "fieldset",
+                style: "margin-top:10px;",
+                title: t("regex_validation"),
+                items: [{
+                    xtype: "textfield",
+                    fieldLabel: t("regex"),
+                    itemId: "regex",
+                    name: "regex",
+                    width: 400,
+                    value: this.datax["regex"],
+                    enableKeyEvents: true,
+                    listeners: {
+                        keyup: checkRegex
+                    }
+                }, {
+                    xtype: "displayfield",
+                    hideLabel:true,
+                    html:'<span class="object_field_setting_warning">' + t('object_regex_info')+' (Delimiter: #)</span>'
+                }, {
+                    xtype: "textfield",
+                    fieldLabel: t("test_string"),
+                    itemId: "regexTestString",
+                    width: 400,
+                    enableKeyEvents: true,
+                    listeners: {
+                        keyup: checkRegex
+                    }
+                }]
+            });
+
+            this.specificPanel.add(regexSet);
         }
 
         return this.layout;
-    }
+    },
 
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    width: source.datax.width,
+                    columnLength: source.datax.columnLength,
+                    regex: source.datax.regex
+                });
+        }
+    }
 });

@@ -5,8 +5,6 @@
  */
 
 namespace Whoops\Exception;
-use Whoops\Exception\FrameCollection;
-use Whoops\Exception\ErrorException;
 use Exception;
 
 class Inspector
@@ -17,9 +15,14 @@ class Inspector
     private $exception;
 
     /**
-     * @var FrameCollection
+     * @var \Whoops\Exception\FrameCollection
      */
     private $frames;
+
+    /**
+     * @var \Whoops\Exception\Inspector
+     */
+    private $previousExceptionInspector;
 
     /**
      * @param Exception $exception The exception to inspect
@@ -54,9 +57,36 @@ class Inspector
     }
 
     /**
+     * Does the wrapped Exception has a previous Exception?
+     * @return bool
+     */
+    public function hasPreviousException()
+    {
+        return !!$this->previousExceptionInspector || !!$this->exception->getPrevious();
+    }
+
+    /**
+     * Returns an Inspector for a previous Exception, if any.
+     * @todo   Clean this up a bit, cache stuff a bit better.
+     * @return Inspector
+     */
+    public function getPreviousExceptionInspector()
+    {
+        if($this->previousExceptionInspector === null) {
+            $previousException = $this->exception->getPrevious();
+
+            if($previousException) {
+                $this->previousExceptionInspector = new Inspector($previousException);
+            }
+        }
+
+        return $this->previousExceptionInspector;
+    }
+
+    /**
      * Returns an iterator for the inspected exception's
      * frames.
-     * @return FrameCollection
+     * @return \Whoops\Exception\FrameCollection
      */
     public function getFrames()
     {
@@ -74,10 +104,26 @@ class Inspector
                 array_unshift($frames, $firstFrame);
             }
             $this->frames = new FrameCollection($frames);
+
+            if ($previousInspector = $this->getPreviousExceptionInspector()) {
+                // Keep outer frame on top of the inner one
+                $outerFrames = $this->frames;
+                $newFrames = clone $previousInspector->getFrames();
+                // I assume it will always be set, but let's be safe
+                if (isset($newFrames[0])) {
+                    $newFrames[0]->addComment(
+                        $previousInspector->getExceptionMessage(),
+                        'Exception message:'
+                    );
+                }
+                $newFrames->prependFrames($outerFrames->topDiff($newFrames));
+                $this->frames = $newFrames;
+            }
         }
 
         return $this->frames;
     }
+
 
     /**
      * Given an exception, generates an array in the format

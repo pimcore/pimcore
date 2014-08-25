@@ -21,21 +21,23 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
     initialize: function (data, fieldConfig) {
         this.data = [];
         this.fieldConfig = fieldConfig;
-        this.visibleFieldsLabels = data["visibleFieldsLabels"];
+
         var classStore = pimcore.globalmanager.get("object_types_store");
         var className = classStore.getById(fieldConfig.allowedClassId);
 
         var classNameText = (typeof(className) != 'undefined') ? className.data.text : '';
         this.fieldConfig.classes = [{classes: classNameText, id: fieldConfig.allowedClassId}];
 
-        if (data["data"]) {
-            this.data = data["data"];
+        if (data) {
+            this.data = data;
         }
 
         var fields = [];
         var visibleFields = this.fieldConfig.visibleFields.split(",");
 
         fields.push("id");
+        fields.push("inheritedFields");
+        fields.push("metadata");
 
         var i;
 
@@ -47,8 +49,10 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             fields.push(this.fieldConfig.columns[i].key);
         }
 
+
         this.store = new Ext.data.JsonStore({
             data: this.data,
+            idProperty: 'id',
             listeners: {
                 add:function() {
                     this.dataChanged = true;
@@ -65,6 +69,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             },
             fields: fields
         });
+
     },
 
 
@@ -84,7 +89,25 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         for (i = 0; i < visibleFields.length; i++) {
             if(!empty(visibleFields[i])) {
-                columns.push({header: this.visibleFieldsLabels[visibleFields[i]], dataIndex: visibleFields[i], width: 100, editor: null});
+                var layout = this.fieldConfig.visibleFieldDefinitions[visibleFields[i]];
+
+                var field = {
+                    key: visibleFields[i],
+                    label: layout.title,
+                    layout: layout,
+                    position: i,
+                    type: layout.fieldtype
+                };
+
+                var fc = pimcore.object.tags[layout.fieldtype].prototype.getGridColumnConfig(field);
+
+                fc.width = 100;
+                fc.hidden = false;
+                fc.layout = field;
+                fc.editor = null;
+                fc.sortable = false;
+
+                columns.push(fc);
             }
         }
 
@@ -325,12 +348,12 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                             } else {
                                 var initData = {
                                     id: data.node.attributes.id,
-                                    path: data.node.attributes.path,
-                                    type: data.node.attributes.className
+                                    metadata: '',
+                                    inheritedFields: {}
                                 };
 
                                 if (!this.objectAlreadyExists(initData.id)) {
-                                    this.loadObjectData(initData.id, this.fieldConfig.visibleFields.split(","));
+                                    this.loadObjectData(initData, this.fieldConfig.visibleFields.split(","));
                                     return true;
                                 }
                             }
@@ -354,7 +377,6 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
     },
 
     dndAllowed: function(data) {
-
         // check if data is a treenode, if not allow drop because of the reordering
         if (!this.sourceIsTreeNode(data)) {
             if(data["grid"] && data["grid"] == this.component) {
@@ -373,6 +395,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         var classStore = pimcore.globalmanager.get("object_types_store");
         var classId = classStore.getAt(classStore.findExact("text", classname));
         var isAllowedClass = false;
+
         if(classId) {
             if (this.fieldConfig.allowedClassId == classId.id) {
                 isAllowedClass = true;
@@ -387,20 +410,20 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             for (var i = 0; i < items.length; i++) {
                 var fields = this.fieldConfig.visibleFields.split(",");
                 if (!this.objectAlreadyExists(items[i].id)) {
-                    this.loadObjectData(items[i].id, fields);
+                    this.loadObjectData(items[i], fields);
                 }
             }
         }
     },
 
-    loadObjectData: function(id, fields) {
+    loadObjectData: function(item, fields) {
 
-        this.store.add(new this.store.recordType({id: id}, id));
+        this.store.add(new this.store.recordType(item, item.id));
 
         Ext.Ajax.request({
             url: "/admin/object-helper/load-object-data",
             params: {
-                id: id,
+                id: item.id,
                 'fields[]': fields
             },
             success: function (response) {
@@ -408,7 +431,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 var key;
 
                 if(rdata.success) {
-                    var rec = this.store.getById(id);
+                    var rec = this.store.getById(item.id);
                     for(key in rdata.fields) {
                         rec.set(key, rdata.fields[key]);
                     }

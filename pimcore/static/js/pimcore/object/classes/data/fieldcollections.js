@@ -8,7 +8,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -92,10 +92,39 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
                 fieldLabel: t("maximum_items"),
                 name: "maxItems",
                 value: this.datax.maxItems
+            },
+            {
+                xtype: "checkbox",
+                fieldLabel: t("disallow_addremove"),
+                name: "disallowAddRemove",
+                checked: this.datax.disallowAddRemove
+            },
+            {
+                xtype: "checkbox",
+                fieldLabel: t("disallow_reorder"),
+                name: "disallowReorder",
+                checked: this.datax.disallowReorder
             }
+
         ]);
 
         this.specificPanel.doLayout();
+    },
+
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    allowedTypes: source.datax.allowedTypes,
+                    lazyLoading: source.datax.lazyLoading,
+                    maxItems: source.datax.maxItems,
+                    disallowAddRemove: source.datax.disallowAddRemove,
+                    disallowReorder: source.datax.disallowReorder
+                });
+        }
     }
 
 });

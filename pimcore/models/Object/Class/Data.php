@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object_Class
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -613,13 +613,16 @@ abstract class Object_Class_Data
         $code = "";
 
         $code .= '/**' . "\n";
+        $code .= '* Get ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . " () {\n";
 
         // adds a hook preGetValue which can be defined in an extended class
         $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-        $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
+        $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { ' . "\n";
+        $code .= "\t\t" . 'return $preValue;' . "\n";
+        $code .= "\t" . '}' . "\n";
 
         if (method_exists($this, "preGetData")) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
@@ -629,10 +632,12 @@ abstract class Object_Class_Data
 
         // insert this line if inheritance from parent objects is allowed
         if ($class->getAllowInherit()) {
-            $code .= "\t" . 'if(Object_Abstract::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) { return $this->getValueFromParent("' . $key . '");}' . "\n";
+            $code .= "\t" . 'if(Object_Abstract::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+            $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t" . '}' . "\n";
         }
 
-        $code .= "\t return " . '$data' . ";\n";
+        $code .= "\treturn " . '$data' . ";\n";
         $code .= "}\n\n";
 
         return $code;
@@ -649,8 +654,9 @@ abstract class Object_Class_Data
         $code = "";
 
         $code .= '/**' . "\n";
+        $code .= '* Set ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= "* @return void\n";
+        $code .= "* @return Object_" . ucfirst($class->getName()) . "\n";
         $code .= '*/' . "\n";
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
 
@@ -675,7 +681,9 @@ abstract class Object_Class_Data
     public function getGetterCodeObjectbrick($brickClass)
     {
         $key = $this->getName();
-        $code = '/**' . "\n";
+        $code = "";
+        $code .= '/**' . "\n";
+        $code .= '* Set ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . " () {\n";
@@ -706,9 +714,11 @@ abstract class Object_Class_Data
     {
         $key = $this->getName();
 
-        $code = '/**' . "\n";
+        $code = "";
+        $code .= '/**' . "\n";
+        $code .= '* Set ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= "* @return void\n";
+        $code .= "* @return Object_" . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
 
@@ -735,7 +745,9 @@ abstract class Object_Class_Data
         $key = $this->getName();
         $code = "";
 
+        $code = "";
         $code .= '/**' . "\n";
+        $code .= '* Get ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . " () {\n";
@@ -763,8 +775,9 @@ abstract class Object_Class_Data
         $code = "";
 
         $code .= '/**' . "\n";
+        $code .= '* Get ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= "* @return void\n";
+        $code .= "* @return Object_" . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
 
@@ -789,7 +802,8 @@ abstract class Object_Class_Data
     public function getGetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
-        $code = '/**' . "\n";
+        $code  = '/**' . "\n";
+        $code .= '* Get ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . ' ($language = null) {' . "\n";
@@ -815,9 +829,10 @@ abstract class Object_Class_Data
     {
         $key = $this->getName();
 
-        $code = '/**' . "\n";
+        $code  = '/**' . "\n";
+        $code .= '* Set ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= "* @return void\n";
+        $code .= "* @return Object_" . ucfirst($class->getName()) . "\n";
         $code .= '*/' . "\n";
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ', $language = null) {' . "\n";
 

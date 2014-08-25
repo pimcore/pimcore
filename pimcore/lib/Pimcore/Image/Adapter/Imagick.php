@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
@@ -42,6 +42,15 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function load ($imagePath, $options = []) {
 
+        // support image URLs
+        if(preg_match("@^https?://@", $imagePath)) {
+            $tmpFilename = "imagick_auto_download_" . md5($imagePath) . "." . Pimcore_File::getFileExtension($imagePath);
+            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
+
+            Pimcore_File::put($tmpFilePath, Pimcore_Tool::getHttpData($imagePath));
+            $imagePath = $tmpFilePath;
+        }
+
         if($this->resource) {
             unset($this->resource);
             $this->resource = null;
@@ -51,7 +60,10 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $i = new Imagick();
             $this->imagePath = $imagePath;
 
-            $i->setcolorspace(Imagick::COLORSPACE_SRGB);
+            if(method_exists($i, "setcolorspace")) {
+                $i->setcolorspace(Imagick::COLORSPACE_SRGB);
+            }
+
             $i->setBackgroundColor(new ImagickPixel('transparent')); //set .png transparent (print)
 
             if(isset($options["resolution"])) {
@@ -92,11 +104,12 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @param null $colorProfile
      * @return $this|mixed
      */
-    public function save ($path, $format = null, $quality = null) {
+    public function save ($path, $format = null, $quality = null, $colorProfile = null) {
 
         if(!$format) {
             $format = "png32";
         }
+        $format = strtolower($format);
 
         if($format == "png") {
             // we need to force imagich to create png32 images, otherwise this can cause some strange effects
@@ -110,7 +123,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         if(!$this->reinitializing) {
             if($this->getUseContentOptimizedFormat()) {
                 $format = "jpeg";
-                if($i->getImageAlphaChannel()) {
+                if($this->hasAlphaChannel()) {
                     $format = "png32";
                 }
             }
@@ -135,6 +148,15 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $i->writeImage($format . ":" . $path);
         }
 
+        // force progressive JPEG if filesize >= 10k
+        // better compression, smaller filesize, especially for web optimization
+        if($format == "jpeg") {
+            if(filesize($path) >= 10240) {
+                $i->setinterlacescheme(Imagick::INTERLACE_PLANE);
+                $i->writeImage($path);
+            }
+        }
+
         return $this;
     }
 
@@ -147,6 +169,29 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $this->resource->destroy();
             $this->resource = null;
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function hasAlphaChannel() {
+
+        $width = $this->resource->getImageWidth(); // Get the width of the image
+        $height = $this->resource->getImageHeight(); // Get the height of the image
+
+        // We run the image pixel by pixel and as soon as we find a transparent pixel we stop and return true.
+        for($i = 0; $i < $width; $i++) {
+            for($j = 0; $j < $height; $j++) {
+                $pixel = $this->resource->getImagePixelColor($i, $j);
+                $color = $pixel->getColor(true); // get the real alpha not just 1/0
+                if($color["a"] < 1) { // if there's an alpha pixel, return true
+                    return true;
+                }
+            }
+        }
+
+        // If we dont find any pixel the function will return false.
+        return false;
     }
 
     /**
@@ -264,8 +309,18 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $y_ratio = $res['y'] / $this->getHeight();
             $this->resource->removeImage();
 
-            $this->resource->setResolution($width * $x_ratio, $height * $y_ratio);
+            $newRes = ["x" => $width * $x_ratio, "y" => $height * $y_ratio];
+
+            // only use the calculated resolution if we need a higher one that the one we got from the metadata (getImageResolution)
+            // this is because sometimes the quality is much better when using the "native" resulution from the metadata
+            if($newRes["x"] > $res["x"] && $newRes["y"] > $res["y"]) {
+                $this->resource->setResolution($newRes["x"], $newRes["y"]);
+            } else {
+                $this->resource->setResolution($res["x"], $res["y"]);
+            }
+
             $this->resource->readImage($this->imagePath);
+            $this->setColorspaceToRGB();
         }
 
         $width  = (int)$width;

@@ -11,7 +11,7 @@
  *
  * @category   Pimcore
  * @package    Object_Class
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
@@ -34,14 +34,14 @@ class Object_Class_Data_Password extends Object_Class_Data {
      *
      * @var string
      */
-    public $queryColumnType = "varchar(32)";
+    public $queryColumnType = "varchar(255)";
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "varchar(32)";
+    public $columnType = "varchar(255)";
 
     /**
      * Type for the generated phpdoc

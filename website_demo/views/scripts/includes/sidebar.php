@@ -13,8 +13,8 @@
     </head>
 
     <body>
-        <div style="max-width: 1170px;">
-            <div class="col-md-3 sidebar">
+        <div style="max-width: 300px;">
+            <div class="sidebar">
 <?php } ?>
 
 
