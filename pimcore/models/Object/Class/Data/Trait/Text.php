@@ -52,6 +52,9 @@ trait Object_Class_Data_Trait_Text {
      * @return string
      */
     public function getVersionPreview($data) {
+        // remove all <script> tags, to prevent XSS in the version preview
+        // this should normally be filtered in the project specific controllers/action (/website folder) but just to be sure
+        $data = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $data);
         return $data;
     }
 }
