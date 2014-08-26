@@ -80,9 +80,9 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             selModel:new Ext.grid.RowSelectionModel({singleSelect:true}),
             columnLines: true,
             columns: [
-                {header: t("display_name"), sortable: false, dataIndex: 'key', editor: new Ext.form.TextField({}),
+                {header: t("display_name"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
                                     width: 200},
-                {header: t("value"), sortable: false, dataIndex: 'value', editor: new Ext.form.TextField({}),
+                {header: t("value"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
                                     width: 200},
                 {
                     xtype:'actioncolumn',
