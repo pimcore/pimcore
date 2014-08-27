@@ -225,8 +225,8 @@ class Test_Data
         $hotspots = self::createHotspots();
         $expected = new Object_Data_Hotspotimage($asset, $hotspots);
 
-        $value = Test_Tool::createAssetComparisonString($value->getImage);
-        $expected = Test_Tool::createAssetComparisonString($expected->getImage);
+        $value = Test_Tool::createAssetComparisonString($value->getImage());
+        $expected = Test_Tool::createAssetComparisonString($expected->getImage());
 
         if ($expected != $value) {
             print("   expected " . $expected . " but was " . $value);
