@@ -1012,6 +1012,10 @@ class Pimcore {
         // flush everything
         flush();
 
+        if(function_exists("fastcgi_finish_request")) {
+            fastcgi_finish_request();
+        }
+
         // clear tags scheduled for the shutdown
         Pimcore_Model_Cache::clearTagsOnShutdown();
 
