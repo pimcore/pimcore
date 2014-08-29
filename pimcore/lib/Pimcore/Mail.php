@@ -175,11 +175,11 @@ class Pimcore_Mail extends Zend_Mail
         $emailSettings =& $systemConfig[$type];
 
         if ($emailSettings['sender']['email']) {
-            $this->setDefaultFrom($emailSettings['sender']['email'], $emailSettings['sender']['name']);
+            Zend_Mail::setDefaultFrom($emailSettings['sender']['email'], $emailSettings['sender']['name']);
         }
 
         if ($emailSettings['return']['email']) {
-            $this->setDefaultReplyTo($emailSettings['return']['email'], $emailSettings['return']['name']);
+            Zend_Mail::setDefaultReplyTo($emailSettings['return']['email'], $emailSettings['return']['name']);
         }
 
         if ($emailSettings['method'] == "smtp") {
@@ -201,7 +201,7 @@ class Pimcore_Mail extends Zend_Mail
             }
 
             $transport = new Zend_Mail_Transport_Smtp($emailSettings['smtp']['host'], $config);
-            $this->setDefaultTransport($transport);
+            Zend_Mail::setDefaultTransport($transport);
         }
 
         //setting debug email addresses
