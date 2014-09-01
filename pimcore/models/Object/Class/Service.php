@@ -32,6 +32,9 @@ class Object_Class_Service  {
         unset($data->userOwner);
         unset($data->userModification);
         unset($data->fieldDefinitions);
+        
+        //add propertyVisibility to export data
+        $data->propertyVisibility = $class->propertyVisibility;
 
         $json = Zend_Json::encode($data);
         $json = Zend_Json::prettyPrint($json);

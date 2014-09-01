@@ -46,7 +46,7 @@ abstract class Translation_Abstract_Resource extends Pimcore_Model_Resource_Abst
      */
     public function save() {
 
-        if ($this->model->getKey()) {
+        if ($this->model->getKey() !== '') {
 
             foreach ($this->model->getTranslations() as $language => $text) {
 

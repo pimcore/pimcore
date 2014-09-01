@@ -1542,4 +1542,8 @@
 "definition_save_error","Could not save definition"
 "definitions_saved","Definitions saved"
 "warning_bulk_import","The Bulk Import will overwrite your class/fieldcollection/objectbrick definitions without warning! Do you want to continue?"
+<<<<<<< HEAD
 "customlayout","Custom Layout"
+=======
+"customlayout","Custom Layout"
+>>>>>>> 4b8a5b5c8eee79bde558c18d8719af3b56902ec2
