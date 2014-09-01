@@ -163,6 +163,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
 
         this.component = new Ext.grid.EditorGridPanel({
             store: this.store,
+            enableColumnMove: false,
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
                     sortable: false
