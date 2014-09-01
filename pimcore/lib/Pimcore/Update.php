@@ -53,27 +53,31 @@ class Pimcore_Update {
 
         $revisions = array();
         $releases = array();
-        if(isset($xml->revision)){
-            foreach ($xml->revision as $r) {
+        if($xml instanceof SimpleXMLElement){
+            if(isset($xml->revision)) {
+                foreach ($xml->revision as $r) {
 
-                $date = new Zend_Date($r->date);
+                    $date = new Zend_Date($r->date);
 
-                if (strlen(strval($r->version)) > 0) {
-                    $releases[] = array(
-                        "id" => strval($r->id),
-                        "date" => strval($r->date),
-                        "version" => strval($r->version),
-                        "text" => strval($r->id) . " - " . $date->get(Zend_Date::DATETIME_MEDIUM)
-                    );
-                }
-                else {
-                    $revisions[] = array(
-                        "id" => strval($r->id),
-                        "date" => strval($r->date),
-                        "text" => strval($r->id) . " - " . $date->get(Zend_Date::DATETIME_MEDIUM)
-                    );
+                    if (strlen(strval($r->version)) > 0) {
+                        $releases[] = array(
+                            "id" => strval($r->id),
+                            "date" => strval($r->date),
+                            "version" => strval($r->version),
+                            "text" => strval($r->id) . " - " . $date->get(Zend_Date::DATETIME_MEDIUM)
+                        );
+                    }
+                    else {
+                        $revisions[] = array(
+                            "id" => strval($r->id),
+                            "date" => strval($r->date),
+                            "text" => strval($r->id) . " - " . $date->get(Zend_Date::DATETIME_MEDIUM)
+                        );
+                    }
                 }
             }
+        } else {
+            throw new \Exception("Unable to retrieve response from update server. Please ensure that your server is allowed to connect to update.pimcore.org:80");
         }
 
         return array(
