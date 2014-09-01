@@ -417,19 +417,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
                 handler: function () {
                     errWin.close();
                 }
-            }],
-            listeners: {
-                afterrender: function (el) {
-                    var myRobotId = "robot-" + Math.random();
-                    el.getEl().addClass("swing animated");
-                    el.getEl().insertHtml("afterBegin", '<div class="error-robot" id="' + myRobotId + '"><img src="/admin/misc/robohash" /></div><div class="error-bubble"></div> ');
-                    window.setTimeout(function () {
-                        Ext.get(myRobotId).animate({left: {from: "0px", to: "-300px"}}, 0.3, function () {
-                            Ext.get(Ext.query(".error-bubble")[0]).show();
-                        }, "easeOut", "run");
-                    }, 1000);
-                }
-            }
+            }]
         });
         errWin.show();
     } else {
