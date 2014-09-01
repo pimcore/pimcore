@@ -62,7 +62,27 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         $list->load();
 
         $translations = array();
-        foreach ($list->getTranslations() as $t) {
+        $translationObjects = $list->getTranslations();
+
+        // fill with one dummy translation if the store is empty
+        if(empty($translationObjects)) {
+            if($admin) {
+                $t = new Translation_Admin();
+                $languages = Pimcore_Tool_Admin::getLanguages();
+            } else {
+                $t = new Translation_Website();
+                $languages = Pimcore_Tool::getValidLanguages();
+            }
+
+            foreach($languages as $language) {
+                $t->addTranslation($language, "");
+            }
+
+            $translationObjects[] = $t;
+        }
+
+
+        foreach ($translationObjects as $t) {
             $translations[] = array_merge(array("key" => $t->getKey(),
                 "creationDate" => $t->getCreationDate(),
                 "modificationDate" => $t->getModificationDate(),
@@ -107,6 +127,7 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
             }
             $csv .= implode(";", $tempRow) . "\r\n";
         }
+
         header("Content-type: text/csv");
         header("Content-Disposition: attachment; filename=\"export.csv\"");
         ini_set('display_errors',false); //to prevent warning messages in csv
