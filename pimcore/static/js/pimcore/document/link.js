@@ -41,7 +41,7 @@ pimcore.document.link = Class.create(pimcore.document.page_snippet, {
         this.dependencies = new pimcore.element.dependencies(this, "document");
     },
 
-    getSaveData : function (only) {
+    getSaveData : function () {
         var parameters = {};
 
         parameters.id = this.id;
