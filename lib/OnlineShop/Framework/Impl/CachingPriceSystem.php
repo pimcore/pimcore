@@ -10,7 +10,7 @@
 abstract class OnlineShop_Framework_Impl_CachingPriceSystem extends OnlineShop_Framework_Impl_AbstractPriceSystem implements OnlineShop_Framework_ICachingPriceSystem {
 
     /** @var $priceInfos  */
-    private $priceInfos = array();
+    protected $priceInfos = array();
 
     public function loadPriceInfos($productEntries, $options) {
         throw new OnlineShop_Framework_Exception_UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
