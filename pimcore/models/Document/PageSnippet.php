@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-abstract class Document_PageSnippet extends Document {
+abstract class Document_PageSnippet extends Document_Versionable {
 
     /**
      * @var string
@@ -43,20 +43,6 @@ abstract class Document_PageSnippet extends Document {
      * @var array
      */
     public $elements = null;
-
-    /**
-     * Contains all versions of the document
-     *
-     * @var array
-     */
-    public $versions = null;
-
-    /**
-     * Contains all scheduled tasks
-     *
-     * @var array
-     */
-    public $scheduledTasks = null;
 
     /**
      * @var null|int
@@ -99,49 +85,6 @@ abstract class Document_PageSnippet extends Document {
 
         // save version if needed
         $this->saveVersion(false, false);
-    }
-
-    /**
-     * Save the current object as version
-     *
-     * @return void
-     */
-    public function saveVersion($setModificationDate = true, $callPluginHook = true) {
-
-        // hook should be also called if "save only new version" is selected
-        if($callPluginHook) {
-            Pimcore::getEventManager()->trigger("document.preUpdate", $this);
-        }
-
-        // set date
-        if ($setModificationDate) {
-            $this->setModificationDate(time());
-        }
-        
-        // scheduled tasks are saved always, they are not versioned!
-        $this->saveScheduledTasks();
-        
-        // create version
-        $version = null;
-
-        // only create a new version if there is at least 1 allowed
-        if(Pimcore_Config::getSystemConfig()->documents->versions->steps
-            || Pimcore_Config::getSystemConfig()->documents->versions->days) {
-            $version = new Version();
-            $version->setCid($this->getId());
-            $version->setCtype("document");
-            $version->setDate($this->getModificationDate());
-            $version->setUserId($this->getUserModification());
-            $version->setData($this);
-            $version->save();
-        }
-
-        // hook should be also called if "save only new version" is selected
-        if($callPluginHook) {
-            Pimcore::getEventManager()->trigger("document.postUpdate", $this);
-        }
-
-        return $version;
     }
 
     /**
@@ -406,7 +349,7 @@ abstract class Document_PageSnippet extends Document {
      * @param  $name
      * @return bool
      */
-    public function hasElement ($name) {
+    public function hasElement($name) {
         $elements = $this->getElements();
         return array_key_exists($name,$elements);
     }
@@ -431,66 +374,11 @@ abstract class Document_PageSnippet extends Document {
     }
 
     /**
-     * @return array
-     */
-    public function getVersions() {
-        if ($this->versions === null) {
-            $this->setVersions($this->getResource()->getVersions());
-        }
-        return $this->versions;
-    }
-
-    /**
-     * @param array $versions
-     * @return void
-     */
-    public function setVersions($versions) {
-        $this->versions = $versions;
-        return $this;
-    }
-
-    /**
      * @see Document::getFullPath
      * @return string
      */
     public function getHref() {
         return $this->getFullPath();
-    }
-
-    /**
-     * @return the $scheduledTasks
-     */
-    public function getScheduledTasks() {
-        if ($this->scheduledTasks == null) {
-            $taskList = new Schedule_Task_List();
-            $taskList->setCondition("cid = ? AND ctype='document'", $this->getId());
-            $this->setScheduledTasks($taskList->load());
-        }
-        return $this->scheduledTasks;
-    }
-
-    /**
-     * @param $scheduledTasks the $scheduledTasks to set
-     */
-    public function setScheduledTasks($scheduledTasks) {
-        $this->scheduledTasks = $scheduledTasks;
-        return $this;
-    }
-    
-    
-    public function saveScheduledTasks () {
-        $this->getScheduledTasks();
-        $this->getResource()->deleteAllTasks();
-
-        if (is_array($this->getScheduledTasks()) && count($this->getScheduledTasks()) > 0) {
-            foreach ($this->getScheduledTasks() as $task) {
-                $task->setId(null);
-                $task->setResource(null);
-                $task->setCid($this->getId());
-                $task->setCtype("document");
-                $task->save();
-            }
-        }
     }
 
     /**

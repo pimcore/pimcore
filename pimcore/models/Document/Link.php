@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Link extends Document
+class Document_Link extends Document_Versionable
 {
 
     /**
@@ -68,6 +68,33 @@ class Document_Link extends Document
      */
     public $href = "";
 
+       /**
+     * @see Document::update
+     * @return void
+     */
+    protected function update() {
+        // update this
+        parent::update();
+
+        // save version if needed
+        $this->saveVersion(false, false);
+    }
+
+    /**
+     * @see Document::delete
+     * @return void
+     */
+    public function delete() {
+        $versions = $this->getVersions();
+        foreach ($versions as $version) {
+            $version->delete();
+        }
+
+        // remove all tasks
+        $this->getResource()->deleteAllTasks();
+
+        parent::delete();
+    }    
 
     /**
      * @see Document::resolveDependencies
