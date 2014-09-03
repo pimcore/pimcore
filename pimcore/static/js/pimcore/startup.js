@@ -505,8 +505,10 @@ Ext.onReady(function () {
 });
 
 
+pimcore["intervals"] = {};
+
 //add missing translation keys
-window.setInterval(function () {
+pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function () {
     var missingTranslations = pimcore.globalmanager.get("translations_admin_missing");
     var addedTranslations = pimcore.globalmanager.get("translations_admin_added");
     if (missingTranslations.length > 0) {
@@ -525,7 +527,7 @@ window.setInterval(function () {
 }, 30000);
 
 // session renew
-window.setInterval(function () {
+pimcore["intervals"]["ping"] = window.setInterval(function () {
     Ext.Ajax.request({
         url:"/admin/misc/ping",
         success:function (response) {
