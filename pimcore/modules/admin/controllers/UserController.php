@@ -272,12 +272,15 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             }
         }
 
-        $user->setPassword(null);
+        // unset confidential informations
+        $userData = object2array($user);
+        unset($userData["password"]);
+
         $conf = Pimcore_Config::getSystemConfig();
         $this->_helper->json(array(
             "success" => true,
             "wsenabled" => $conf->webservice->enabled,
-            "user" => $user,
+            "user" => $userData,
             "roles" => $roles,
             "permissions" => $user->generatePermissionList(),
             "availablePermissions" => $availableUserPermissions,
@@ -387,7 +390,11 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             $user->setPermission($definition->getKey(), $user->isAllowed($definition->getKey()));
         }
 
-        echo "pimcore.currentuser = " . Zend_Json::encode($user);
+        // unset confidential informations
+        $userData = object2array($user);
+        unset($userData["password"]);
+
+        echo "pimcore.currentuser = " . Zend_Json::encode($userData);
         exit;
     }
 
