@@ -47,7 +47,7 @@
         <default_controller>default</default_controller>
         <default_action>default</default_action>
         <error_pages>
-            <default>/</default>
+            <default>/error</default>
         </error_pages>
         <createredirectwhenmoved/>
         <allowtrailingslash>no</allowtrailingslash>
