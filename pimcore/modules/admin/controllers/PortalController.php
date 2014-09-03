@@ -197,14 +197,19 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
                     break;
                 }
 
-
-                $entries[] = array(
+                $entry = array(
                     "title" => $entry->getTitle(),
                     "description" => $entry->getDescription(),
                     'authors' => $entry->getAuthors(),
                     'link' => $entry->getLink(),
                     'content' => $entry->getContent()
                 );
+
+                foreach($entry as &$content) {
+                    $content = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $content);
+                }
+
+                $entries[] = $entry;
             }
         }
 
