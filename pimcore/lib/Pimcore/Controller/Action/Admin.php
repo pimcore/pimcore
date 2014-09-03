@@ -63,6 +63,8 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         } else {
             // the following code is only called once, even when there are some subcalls (eg. with $this->action, ... )
 
+            Pimcore::getEventManager()->trigger("admin.controller.preInit", $this);
+
             $this->disableBrowserCache();
 
             // general definitions
@@ -141,6 +143,8 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
 
             // usage statistics
             $this->logUsageStatistics();
+
+            Pimcore::getEventManager()->trigger("admin.controller.postInit", $this);
         }
     }
 
