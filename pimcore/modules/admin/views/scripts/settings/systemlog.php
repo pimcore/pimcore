@@ -55,7 +55,7 @@
             $class = "loglevel_" . $matches[1];
         }
     ?>
-    <div class="line <?php echo $class; ?>"><?php echo $line; ?></div>
+    <div class="line <?php echo $class; ?>"><?php echo htmlentities($line); ?></div>
 
 <?php } ?>
 
