@@ -260,6 +260,7 @@ class Pimcore {
         }
 
         // run dispatcher
+        // this is also standard for /admin/ requests -> error handling is done in Pimcore_Controller_Action_Admin
         if (!PIMCORE_DEBUG && !$throwExceptions && !PIMCORE_DEVMODE) {
             @ini_set("display_errors", "Off");
             @ini_set("display_startup_errors", "Off");
@@ -274,14 +275,12 @@ class Pimcore {
 
             try {
                 $front->dispatch();
-            }
-            catch (Zend_Controller_Router_Exception $e) {
+            } catch (Zend_Controller_Router_Exception $e) {
                 if(!headers_sent()) {
                     header("HTTP/1.0 404 Not Found");
                 }
                 throw new Zend_Controller_Router_Exception("No route, document, custom route or redirect is matching the request: " . $_SERVER["REQUEST_URI"] . " | \n" . "Specific ERROR: " . $e->getMessage());
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 if(!headers_sent()) {
                     header("HTTP/1.0 500 Internal Server Error");
                 }
