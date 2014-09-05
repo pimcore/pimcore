@@ -166,8 +166,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     updateImage: function () {
         // 5px padding (-10)
-        this.originalWidth = this.component.getInnerWidth();
-        this.originalHeight = this.component.getInnerHeight();
+        this.originalWidth = this.getBody().getWidth();
+        this.originalHeight = this.getBody().getHeight();
 
         var width = this.getBody().getWidth()-10;
         var height = this.getBody().getHeight()-10;
@@ -285,28 +285,26 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             }
             this.previewItems = [];
 
+
             for (i = 0; i < this.hotspots.length; i++) {
                 var hotspotId = "hotspotId-" + uniqid();
                 this.panel.body.insertHtml("beforeEnd", '<div id="' + hotspotId + '" class="pimcore_image_hotspot"></div>');
                 this.previewItems.push(hotspotId);
 
-
                 var hotspotEl = Ext.get(hotspotId);
                 var config = this.hotspots[i];
 
-                var top = config["top"]/100;
-                var left = config["left"]/100;
-                var width = ((config["width"] / 100) * this.fileinfo.width) / originalWidth;
-                var height = ((config["height"]/100) * this.fileinfo.height) / originalHeight;
-
-                left = ((left * this.fileinfo.width) + addX) / originalWidth;
-                top = ((top * this.fileinfo.height) + addY) / originalHeight;
+                //calculate absolute size based in image-size
+                var absoluteHeight = config["height"] * this.fileinfo.height / 100;
+                var absoluteWidth = config["width"] * this.fileinfo.width / 100;
+                var absoluteTop = config["top"] * this.fileinfo.height / 100;
+                var absoluteLeft = config["left"] * this.fileinfo.width / 100;
 
                 hotspotEl.applyStyles({
-                    top: (originalHeight * top) + "px",
-                    left: (originalWidth * left) + "px",
-                    width: (originalWidth * width) + "px",
-                    height: (originalHeight * height) + "px"
+                    top: (absoluteTop + addY) + "px",
+                    left: (absoluteLeft + addX) + "px",
+                    height: (absoluteHeight) + "px",
+                    width: (absoluteWidth) + "px"
                 });
 
                 this.addHotspotInfo(hotspotEl, config);
