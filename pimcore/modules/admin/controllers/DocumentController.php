@@ -998,7 +998,19 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin
     {
         if ($this->getParam("id")) {
             $doc = Document::getById($this->getParam("id"));
+            
+            $schedule = $doc->getScheduledTasks();
+			$schedule_array = array();
+			foreach ($schedule as $task){
+				if ($task->active == 1){
+					$schedule_array[$task->version] = $task->date;
+				}
+			}
+
             $versions = $doc->getVersions();
+			foreach ($versions as $version){
+				$version->scheduled = $schedule_array[$version->id];
+			}
 
             $this->_helper->json(array("versions" => $versions));
         }

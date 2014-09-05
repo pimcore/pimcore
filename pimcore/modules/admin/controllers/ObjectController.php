@@ -1271,7 +1271,20 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $object = Object_Abstract::getById($id);
             if($object) {
                 if ($object->isAllowed("versions")) {
-                    $versions = $object->getVersions();
+                
+                    $schedule = $object->getScheduledTasks();
+					$schedule_array = array();
+					foreach ($schedule as $task){
+						if ($task->active == 1){
+							$schedule_array[$task->version] = $task->date;
+						}
+					}
+		
+		            $versions = $object->getVersions();
+					foreach ($versions as $version){
+						$version->scheduled = $schedule_array[$version->id];
+					}
+					
                     $this->_helper->json(array("success" => true, "versions" => $versions));
                 } else {
                     throw new \Exception("Permission denied, object id [" . $id . "]");
