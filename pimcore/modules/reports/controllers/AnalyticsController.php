@@ -100,6 +100,11 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         if($this->getParam("type") == "document" && $this->getParam("id")) {
             $doc = Document::getById($this->getParam("id"));
             $path = $doc->getFullPath();
+
+            if($doc instanceof Document_Page && $doc->getPrettyUrl()) {
+                $path = $doc->getPrettyUrl();
+            }
+
             if($this->getParam("site")) {
                 $site = Site::getById($this->getParam("site"));
                 $path = preg_replace("@^" . preg_quote($site->getRootPath(), "@") . "/@", "/", $path);
