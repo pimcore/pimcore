@@ -41,7 +41,7 @@ pimcore.document.versions = Class.create({
                         }
                     }
                     return null;
-                }},"public","show", {name:'publicurl', convert: function (v, rec) {
+                }},"public","scheduled","show", {name:'publicurl', convert: function (v, rec) {
                     return this.document.data.path + this.document.data.key + "?v=" + rec.id;
                 }.bind(this)}]
             });
@@ -69,6 +69,12 @@ pimcore.document.versions = Class.create({
                         return date.format("Y-m-d H:i:s");
                     }, editable: false},
                     {header: t("user"), sortable: true, dataIndex: 'name', editable: false},
+                    {header: t("scheduled"), width:130, sortable: true, dataIndex: 'scheduled', renderer: function(d) {
+                    	if (d != null){
+                        	var date = new Date(d * 1000);
+                        	return date.format("Y-m-d H:i:s");
+                    	}
+                    }, editable: false},
                     {header: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()},
                     checkPublic,
                     {header: t("public_url"), width:300, sortable: false, dataIndex: 'publicurl', editable: false}
@@ -77,7 +83,7 @@ pimcore.document.versions = Class.create({
                 trackMouseOver: true,
                 stripeRows: true,
                 plugins: [checkPublic,checkShow],
-                width:470,
+                width:600,
                 title: t('available_versions'),
                 region: "west",
                 viewConfig: {

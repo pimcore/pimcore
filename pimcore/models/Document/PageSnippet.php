@@ -461,11 +461,13 @@ abstract class Document_PageSnippet extends Document {
      * @return the $scheduledTasks
      */
     public function getScheduledTasks() {
-        if ($this->scheduledTasks == null) {
+
+        if ($this->scheduledTasks === null) {
             $taskList = new Schedule_Task_List();
             $taskList->setCondition("cid = ? AND ctype='document'", $this->getId());
             $this->setScheduledTasks($taskList->load());
         }
+
         return $this->scheduledTasks;
     }
 
@@ -478,12 +480,12 @@ abstract class Document_PageSnippet extends Document {
     }
     
     
-    public function saveScheduledTasks () {
-        $this->getScheduledTasks();
+    public function saveScheduledTasks() {
+        $scheduled_tasks = $this->getScheduledTasks();
         $this->getResource()->deleteAllTasks();
-
-        if (is_array($this->getScheduledTasks()) && count($this->getScheduledTasks()) > 0) {
-            foreach ($this->getScheduledTasks() as $task) {
+ 		
+        if (is_array($scheduled_tasks) && count($scheduled_tasks) > 0) {
+            foreach ($scheduled_tasks as $task) {
                 $task->setId(null);
                 $task->setResource(null);
                 $task->setCid($this->getId());

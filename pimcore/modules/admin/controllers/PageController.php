@@ -115,20 +115,23 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                     }
                 }
             }
-
-            $metaData = array();
-            for($i=1; $i<30; $i++) {
-                if(array_key_exists("metadata_idName_" . $i, $settings)) {
-                    $metaData[] = array(
-                        "idName" => $settings["metadata_idName_" . $i],
-                        "idValue" => $settings["metadata_idValue_" . $i],
-                        "contentName" => $settings["metadata_contentName_" . $i],
-                        "contentValue" => $settings["metadata_contentValue_" . $i],
-                    );
-                }
-            }
-            $page->setMetaData($metaData);
-
+			
+            // check if settings exist, before saving meta data
+			if($this->getParam("settings") && is_array($settings)) {
+	            $metaData = array();
+	            for($i=1; $i<30; $i++) {
+	                if(array_key_exists("metadata_idName_" . $i, $settings)) {
+	                    $metaData[] = array(
+	                        "idName" => $settings["metadata_idName_" . $i],
+	                        "idValue" => $settings["metadata_idValue_" . $i],
+	                        "contentName" => $settings["metadata_contentName_" . $i],
+	                        "contentValue" => $settings["metadata_contentValue_" . $i],
+	                    );
+	                }
+	            }
+	            $page->setMetaData($metaData);
+			}
+			
             // only save when publish or unpublish
             if (($this->getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
                 $this->setValuesToDocument($page);
@@ -143,6 +146,21 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                     $this->_helper->json(array("success" => false,"message"=>$e->getMessage()));
                 }
 
+            }
+            else if ($this->getParam("task") == 'scheduler'){
+                if ($page->isAllowed("save")) {
+
+                    try{
+                    	$this->addSchedulerToDocument($page);
+                        $page->saveScheduledTasks();
+                        $this->saveToSession($page);
+                        $this->_helper->json(array("success" => true));
+                    } catch (Exception $e) {
+                        Logger::err($e);
+                        $this->_helper->json(array("success" => false,"message"=>$e->getMessage()));
+                    }
+
+                }
             }
             else {
                 if ($page->isAllowed("save")) {
