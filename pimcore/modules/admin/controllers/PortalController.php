@@ -206,7 +206,9 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
                 );
 
                 foreach($entry as &$content) {
+                    $content = strip_tags($content, "h1,h2,h3,h4,h5,p,br,a,img,div,b,strong,i");
                     $content = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $content);
+                    $content = preg_replace('/on[a-z]+="[^"]+?"/i', "", $content);
                 }
 
                 $entries[] = $entry;
