@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Link_Resource extends Document_Resource {
+class Document_Link_Resource extends Document_PageSnippet_Resource {
 
     /**
      * Contains the valid database colums

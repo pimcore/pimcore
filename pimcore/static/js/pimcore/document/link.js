@@ -13,7 +13,7 @@
  */
 
 pimcore.registerNS("pimcore.document.link");
-pimcore.document.link = Class.create(pimcore.document.document, {
+pimcore.document.link = Class.create(pimcore.document.page_snippet, {
 
     initialize: function(id) {
 
@@ -26,12 +26,16 @@ pimcore.document.link = Class.create(pimcore.document.document, {
     },
 
     init: function () {
+
+        if (this.isAllowed("settings")) {
+            this.scheduler = new pimcore.element.scheduler(this, "document");
+            this.notes = new pimcore.element.notes(this, "document");
+        }
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.document.properties(this, "document");
         }
-
-        if (this.isAllowed("settings")) {
-            this.notes = new pimcore.element.notes(this, "document");
+        if (this.isAllowed("versions")) {
+            this.versions = new pimcore.document.links.versions(this);
         }
 
         this.dependencies = new pimcore.element.dependencies(this, "document");
@@ -52,6 +56,16 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             }
             catch (e) {
                 //console.log(e);
+            }
+        }
+
+        if (this.isAllowed("settings")) {
+            // scheduler
+            try {
+                parameters.scheduler = Ext.encode(this.scheduler.getValues());
+            }
+            catch (e4) {
+                //console.log(e4);
             }
         }
 
@@ -110,97 +124,6 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         pimcore.layout.refresh();
     },
 
-    getLayoutToolbar : function () {
-
-        if (!this.toolbar) {
-
-            this.toolbarButtons = {};
-
-            this.toolbarButtons.publish = new Ext.Button({
-                text: t('save_and_publish'),
-                iconCls: "pimcore_icon_publish_medium",
-                scale: "medium",
-                handler: this.publish.bind(this)
-            });
-
-
-            this.toolbarButtons.unpublish = new Ext.Button({
-                text: t('unpublish'),
-                iconCls: "pimcore_icon_unpublish_medium",
-                scale: "medium",
-                handler: this.unpublish.bind(this)
-            });
-
-            this.toolbarButtons.remove = new Ext.Button({
-                text: t('delete'),
-                iconCls: "pimcore_icon_delete_medium",
-                scale: "medium",
-                handler: this.remove.bind(this)
-            });
-
-
-            var buttons = [];
-
-            if (this.isAllowed("publish")) {
-                buttons.push(this.toolbarButtons.publish);
-            }
-            if (this.isAllowed("unpublish") && !this.data.locked) {
-                buttons.push(this.toolbarButtons.unpublish);
-            }
-
-            if(this.isAllowed("delete") && !this.data.locked) {
-                buttons.push(this.toolbarButtons.remove);
-            }
-
-            buttons.push("-");
-
-            this.toolbarButtons.reload = new Ext.Button({
-                text: t('reload'),
-                iconCls: "pimcore_icon_reload_medium",
-                scale: "medium",
-                handler: this.reload.bind(this)
-            });
-            buttons.push(this.toolbarButtons.reload);
-
-            buttons.push({
-                text: t('show_in_tree'),
-                iconCls: "pimcore_icon_download_showintree",
-                scale: "medium",
-                handler: this.selectInTree.bind(this)
-            });
-
-            buttons.push("-");
-            buttons.push({
-                xtype: 'tbtext',
-                text: this.data.id,
-                scale: "medium"
-            });
-
-            this.toolbar = new Ext.Toolbar({
-                id: "document_toolbar_" + this.id,
-                region: "north",
-                border: false,
-                cls: "document_toolbar",
-                items: buttons
-            });
-
-            this.toolbar.on("afterrender", function () {
-                window.setTimeout(function () {
-                    // it's not possible to delete the root-node
-                    if (this.id == 1) {
-                        this.toolbarButtons.remove.hide();
-                    }
-
-                    if (!this.data.published) {
-                        this.toolbarButtons.unpublish.hide();
-                    }
-                }.bind(this), 500);
-            }.bind(this));
-        }
-
-        return this.toolbar;
-    },
-
     getTabPanel: function () {
 
         var items = [];
@@ -209,6 +132,14 @@ pimcore.document.link = Class.create(pimcore.document.document, {
 
         if (this.isAllowed("properties")) {
             items.push(this.properties.getLayout());
+        }
+
+        if (this.isAllowed("versions")) {
+            items.push(this.versions.getLayout());
+        }
+
+        if (this.isAllowed("settings")) {
+            items.push(this.scheduler.getLayout());
         }
 
         items.push(this.dependencies.getLayout());

@@ -270,6 +270,7 @@ $scripts = array(
     "pimcore/document/pages/preview.js",
     "pimcore/document/snippets/settings.js",
     "pimcore/document/emails/settings.js",
+    "pimcore/document/links/versions.js",
     "pimcore/document/link.js",
     "pimcore/document/hardlink.js",
     "pimcore/document/folder.js",

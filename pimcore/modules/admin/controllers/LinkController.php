@@ -24,8 +24,13 @@ class Admin_LinkController extends Pimcore_Controller_Action_Admin_Document {
             ));
         }
         Element_Editlock::lock($this->getParam("id"), "document");
-
         $link = Document_Link::getById($this->getParam("id"));
+        
+        $modificationDate = $link->getModificationDate();
+        $link = $this->getLatestVersion($link);
+        
+        $link->setVersions(array_splice($link->getVersions(), 0, 1));
+        $link->getScheduledTasks();
         $link->setObject(null);
         $link->idPath = Element_Service::getIdPath($link);
         $link->userPermissions = $link->getUserPermissions();
@@ -40,12 +45,13 @@ class Admin_LinkController extends Pimcore_Controller_Action_Admin_Document {
 
         $this->_helper->json(false);
     }
-
+    
     public function saveAction() {
         if ($this->getParam("id")) {
             $link = Document_Link::getById($this->getParam("id"));
+            $link = $this->getLatestVersion($link);
             $this->setValuesToDocument($link);
-
+            
             $link->setModificationDate(time());
             $link->setUserModification($this->getUser()->getId());
 
@@ -56,11 +62,32 @@ class Admin_LinkController extends Pimcore_Controller_Action_Admin_Document {
                 $link->setPublished(true);
             }
 
-            // only save when publish or unpublish
-            if (($this->getParam("task") == "publish" && $link->isAllowed("publish")) || ($this->getParam("task") == "unpublish" && $link->isAllowed("unpublish"))) {
-                $link->save();
 
-                $this->_helper->json(array("success" => true));
+            if (($this->getParam("task") == "publish" && $link->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $link->isAllowed("unpublish"))) {
+
+                try {
+                    $link->save();
+                    $this->saveToSession($link);
+                    $this->_helper->json(array("success" => true));
+                } catch (Exception $e) {
+                    $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                }
+
+
+            }
+            else {
+                if ($snippet->isAllowed("save")) {
+
+                    try {
+                        $link->saveVersion();
+                        $this->saveToSession($link);
+                        $this->_helper->json(array("success" => true));
+                    } catch (Exception $e) {
+                        $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                    }
+
+
+                }
             }
         }
 
@@ -93,6 +120,38 @@ class Admin_LinkController extends Pimcore_Controller_Action_Admin_Document {
 
         $link->setValues($data);
         $this->addPropertiesToDocument($link);
+        $this->addSchedulerToDocument($link);
+    }
+    
+    public function showVersionAction() {
+         $version = Version::getById($this->getParam("id"));
+         $versionData = $version->loadData();
+         
+         echo "<html><head></head><body><span>".htmlspecialchars($versionData->getHref())."</span></html>";
+         $this->removeViewRenderer();
+    }
+    
+    public function diffVersionsAction() {
+        include_once 'DaisyDiff/HTMLDiff.php';
+        include_once 'simple_html_dom.php';
+
+        $versionFrom = Version::getById($this->getParam("from"));
+        $versionTo = Version::getById($this->getParam("to"));
+
+        $docFrom = $versionFrom->loadData();
+        $docTo = $versionTo->loadData();
+        
+        $from = str_get_html("<span>".htmlspecialchars($docFrom->getHref())."</span>");
+        $to = str_get_html("<span>".htmlspecialchars($docTo->getHref())."</span>");
+        
+        $diff = new HTMLDiffer();
+        $text = $diff->htmlDiff($from, $to);
+
+        echo "<html><head>"
+        .'<link rel="stylesheet" type="text/css" href="/pimcore/static/css/daisydiff.css" />'
+        . "</head><body>$text</body></html>";
+
+        $this->removeViewRenderer();
     }
 
 }

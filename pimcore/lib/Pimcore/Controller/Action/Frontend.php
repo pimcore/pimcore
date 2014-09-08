@@ -159,7 +159,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                         $latestVersion = $this->getDocument()->getLatestVersion();
                         if($latestVersion) {
                             $latestDoc = $latestVersion->loadData();
-                            if($latestDoc instanceof Document_PageSnippet) {
+                            if($latestDoc instanceof Document_Versionable) {
                                 $this->setDocument($latestDoc);
                             }
                         }
