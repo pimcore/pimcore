@@ -27,7 +27,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
         $page = Document_Page::getById($this->getParam("id"));
         $page = $this->getLatestVersion($page);
-        
+
         $page->setVersions(array_splice($page->getVersions(), 0, 1));
         $page->getScheduledTasks();
         $page->idPath = Element_Service::getIdPath($page);
@@ -50,7 +50,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
         // cleanup properties
         $this->minimizeProperties($page);
- 
+
         if ($page->isAllowed("view")) {
             $this->_helper->json($page);
         }
@@ -62,7 +62,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
         if ($this->getParam("id")) {
             $page = Document_Page::getById($this->getParam("id"));
-            
+
             $page = $this->getLatestVersion($page);
             $page->setUserModification($this->getUser()->getId());
 
@@ -116,18 +116,21 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                 }
             }
 
-            $metaData = array();
-            for($i=1; $i<30; $i++) {
-                if(array_key_exists("metadata_idName_" . $i, $settings)) {
-                    $metaData[] = array(
-                        "idName" => $settings["metadata_idName_" . $i],
-                        "idValue" => $settings["metadata_idValue_" . $i],
-                        "contentName" => $settings["metadata_contentName_" . $i],
-                        "contentValue" => $settings["metadata_contentValue_" . $i],
-                    );
+            // check if settings exist, before saving meta data
+            if($this->getParam("settings") && is_array($settings)) {
+                $metaData = array();
+                for($i=1; $i<30; $i++) {
+                    if(array_key_exists("metadata_idName_" . $i, $settings)) {
+                        $metaData[] = array(
+                            "idName" => $settings["metadata_idName_" . $i],
+                            "idValue" => $settings["metadata_idValue_" . $i],
+                            "contentName" => $settings["metadata_contentName_" . $i],
+                            "contentValue" => $settings["metadata_contentValue_" . $i],
+                        );
+                    }
                 }
+                $page->setMetaData($metaData);
             }
-            $page->setMetaData($metaData);
 
             // only save when publish or unpublish
             if (($this->getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
