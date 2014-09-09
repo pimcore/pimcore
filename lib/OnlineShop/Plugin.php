@@ -295,7 +295,6 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
 
             $prios = array();
             $conf = Pimcore_Config::getSystemConfig();
-            $conf = Pimcore_Config::getSystemConfig();
             if($conf && $conf->general->debugloglevel) {
                 $prioMapping = array_reverse($prioMapping);
                 foreach ($prioMapping as $level => $state) {
@@ -311,7 +310,6 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
                     $prios[] = $p;
                 }
             }
-
 
             $logger = new Zend_Log();
             $logger->addWriter(new Zend_Log_Writer_Stream($logfilename));

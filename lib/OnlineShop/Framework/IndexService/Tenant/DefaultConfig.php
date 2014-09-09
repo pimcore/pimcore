@@ -48,7 +48,7 @@ class OnlineShop_Framework_IndexService_Tenant_DefaultConfig extends OnlineShop_
     /**
      * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
      */
-    public function updateSubTenantEntries(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+    public function updateSubTenantEntries(OnlineShop_Framework_ProductInterfaces_IIndexable $object, $subObjectId = null) {
         return;
     }
 

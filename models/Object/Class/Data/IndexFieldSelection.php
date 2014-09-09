@@ -61,13 +61,13 @@ class Object_Class_Data_IndexFieldSelection extends Object_Class_Data {
 
     public function __construct() {
 
-        $indexColumns = array();
-        try {
-            $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
-            $indexColumns = $indexService->getIndexColumns(true);
-        } catch (Exception $e) {
-            Logger::err($e);
-        }
+//        $indexColumns = array();
+//        try {
+//            $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+//            $indexColumns = $indexService->getIndexColumns(true);
+//        } catch (Exception $e) {
+//            Logger::err($e);
+//        }
 
         /*$options = array();
 

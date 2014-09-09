@@ -72,7 +72,14 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
             $order = $this->getNewOrderObject();
 
-            $order->setParent(Object_Folder::getById($this->parentFolderId));
+            if(is_numeric($this->parentFolderId)) {
+                $parent = Object_Folder::getById($this->parentFolderId);
+            }
+            if(empty($parent) && is_string($this->parentFolderId)) {
+                $parent = Object_Service::createFolderByPath($this->parentFolderId);
+            }
+
+            $order->setParent($parent);
             $order->setCreationDate(Zend_Date::now()->get());
             $order->setKey($tempOrdernumber);
             $order->setPublished(true);
@@ -208,12 +215,6 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         $currentPaymentInformation->setPaymentFinish(Zend_Date::now());
         $currentPaymentInformation->setPaymentReference($status->getPaymentReference());
         $currentPaymentInformation->setPaymentState($status->getStatus());
-
-        $currentPaymentInformation->setMessage($status->getMessage());
-        $currentPaymentInformation->setPaymentStateProvider($status->getPaymentState());
-        $currentPaymentInformation->setPaymentType($status->getPaymentType());
-        $currentPaymentInformation->setAnonymousPan($status->getAnonymousPan());
-        $currentPaymentInformation->setAuthenticated($status->getAuthenticated());
 
         $order->save();
 
@@ -351,7 +352,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         $orderItem->setComment($item->getComment());
 
         $price = 0;
-        if($item->getTotalPrice()) {
+        if(is_object($item->getTotalPrice())) {
             $price = $item->getTotalPrice()->getAmount();
         }
 

@@ -38,7 +38,7 @@ class OnlineShop_Framework_FilterService_SelectRelation extends OnlineShop_Frame
         ));
     }
 
-    private function loadAllAvailableRelations($availableRelations, $availableRelationsArray = array()) {
+    protected function loadAllAvailableRelations($availableRelations, $availableRelationsArray = array()) {
         foreach($availableRelations as $rel) {
             if($rel instanceof Object_Folder) {
                 $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChilds(), $availableRelationsArray);

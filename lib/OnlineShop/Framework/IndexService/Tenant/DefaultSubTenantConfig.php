@@ -2,6 +2,8 @@
 
 class OnlineShop_Framework_IndexService_Tenant_DefaultSubTenantConfig extends OnlineShop_Framework_IndexService_Tenant_AbstractConfig {
 
+    // NOTE: this works only with a single-column primary key
+
     public function getTablename() {
         return "plugin_onlineshop_productindex2";
     }
@@ -40,7 +42,7 @@ class OnlineShop_Framework_IndexService_Tenant_DefaultSubTenantConfig extends On
         return !empty($tenants);
     }
 
-    public function updateSubTenantEntries(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+    public function updateSubTenantEntries(OnlineShop_Framework_ProductInterfaces_IIndexable $object, $subObjectId = null) {
         $db = Pimcore_Resource::get();
         $db->delete($this->getTenantRelationTablename(), "o_id = " . $db->quote($object->getId()));
 

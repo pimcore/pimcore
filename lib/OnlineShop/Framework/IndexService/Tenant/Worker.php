@@ -34,12 +34,15 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
     }
 
     public function createOrUpdateTable() {
+        $primaryIdColumnType = $this->tenantConfig->getIdColumnType(true);
+        $idColumnType = $this->tenantConfig->getIdColumnType(false);
+
         $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $this->tenantConfig->getTablename() . "` (
-          `o_id` int(11) NOT NULL default '0',
-          `o_virtualProductId` int(11) NOT NULL,
+          `o_id` $primaryIdColumnType,
+          `o_virtualProductId` $idColumnType,
           `o_virtualProductActive` TINYINT(1) NOT NULL,
           `o_classId` int(11) NOT NULL,
-          `o_parentId` int(11) NOT NULL,
+          `o_parentId` $idColumnType,
           `o_type` varchar(20) NOT NULL,
           `categoryIds` varchar(255) NOT NULL,
           `parentCategoryIds` varchar(255) NOT NULL,
@@ -112,7 +115,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
 
 
         $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $this->tenantConfig->getRelationTablename() . "` (
-          `src` int(11) NOT NULL,
+          `src` $idColumnType,
           `src_virtualProductId` int(11) NOT NULL,
           `dest` int(11) NOT NULL,
           `fieldname` varchar(255) COLLATE utf8_bin NOT NULL,
@@ -122,7 +125,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
 
         if($this->tenantConfig->getTenantRelationTablename()) {
             $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $this->tenantConfig->getTenantRelationTablename() . "` (
-              `o_id` int(11) NOT NULL,
+              `o_id` $idColumnType,
               `subtenant_id` int(11) NOT NULL,
               PRIMARY KEY (`o_id`,`subtenant_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
@@ -136,11 +139,16 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
             return;
         }
 
-        $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $object->getId());
-        $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($object->getId()));
-        if($this->tenantConfig->getTenantRelationTablename()) {
-            $this->db->delete($this->tenantConfig->getRelationTablename(), "o_id = " . $this->db->quote($object->getId()));
+        $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
+
+        foreach($subObjectIds as $subObjectId => $object) {
+            $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
+            $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
+            if($this->tenantConfig->getTenantRelationTablename()) {
+                $this->db->delete($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($subObjectId));
+            }
         }
+
     }
 
     public function updateIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
@@ -149,190 +157,193 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
             return;
         }
 
+        $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
 
-        if($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
-            $a = Pimcore::inAdmin();
-            $b = Object_Abstract::doGetInheritedValues();
-            Pimcore::unsetAdminMode();
-            Object_Abstract::setGetInheritedValues(true);
-            $hidePublishedMemory = Object_Abstract::doHideUnpublished();
-            Object_Abstract::setHideUnpublished(false);
-            $categories = $object->getCategories();
-            $categoryIds = array();
-            $parentCategoryIds = array();
-            if($categories) {
-                foreach($categories as $c) {
-                    $parent = $c;
+        foreach($subObjectIds as $subObjectId => $object) {
 
-                    if ($parent != null) {
-                        if($parent->getOSProductsInParentCategoryVisible()) {
-                            while($parent && $parent instanceof OnlineShop_Framework_AbstractCategory) {
+            if($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
+                $a = Pimcore::inAdmin();
+                $b = Object_Abstract::doGetInheritedValues();
+                Pimcore::unsetAdminMode();
+                Object_Abstract::setGetInheritedValues(true);
+                $hidePublishedMemory = Object_Abstract::doHideUnpublished();
+                Object_Abstract::setHideUnpublished(false);
+                $categories = $object->getCategories();
+                $categoryIds = array();
+                $parentCategoryIds = array();
+                if($categories) {
+                    foreach($categories as $c) {
+                        $parent = $c;
+
+                        if ($parent != null) {
+                            if($parent->getOSProductsInParentCategoryVisible()) {
+                                while($parent && $parent instanceof OnlineShop_Framework_AbstractCategory) {
+                                    $parentCategoryIds[$parent->getId()] = $parent->getId();
+                                    $parent = $parent->getParent();
+                                }
+                            } else {
                                 $parentCategoryIds[$parent->getId()] = $parent->getId();
-                                $parent = $parent->getParent();
                             }
-                        } else {
-                            $parentCategoryIds[$parent->getId()] = $parent->getId();
-                        }
 
-                        $categoryIds[$c->getId()] = $c->getId();
+                            $categoryIds[$c->getId()] = $c->getId();
+                        }
                     }
                 }
-            }
 
-            ksort($categoryIds);
+                ksort($categoryIds);
 
-            $virtualProductId = $object->getId();
-            $virtualProductActive = $object->isActive();
-            if($object->getOSIndexType() == "variant") {
-                $virtualProductId = $object->getOSParentId();
-            }
+                $virtualProductId = $subObjectId;
+                $virtualProductActive = $object->isActive();
+                if($object->getOSIndexType() == "variant") {
+                    $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
+                }
 
-            $virtualProduct = Object_Abstract::getById($virtualProductId);
-            if($virtualProduct && method_exists($virtualProduct, "isActive")) {
-                $virtualProductActive = $virtualProduct->isActive();
-            }
+                $virtualProduct = Object_Abstract::getById($virtualProductId);
+                if($virtualProduct && method_exists($virtualProduct, "isActive")) {
+                    $virtualProductActive = $virtualProduct->isActive();
+                }
 
-            $data = array(
-                "o_id" => $object->getId(),
-                "o_classId" => $object->getClassId(),
-                "o_virtualProductId" => $virtualProductId,
-                "o_virtualProductActive" => $virtualProductActive,
-                "o_parentId" => $object->getOSParentId(),
-                "o_type" => $object->getOSIndexType(),
-                "categoryIds" => ',' . implode(",", $categoryIds) . ",",
-                "parentCategoryIds" => ',' . implode(",", $parentCategoryIds) . ",",
-                "priceSystemName" => $object->getPriceSystemName(),
-                "active" => $object->isActive(),
-                "inProductList" => $object->isActive(true)
-            );
+                $data = array(
+                    "o_id" => $subObjectId,
+                    "o_classId" => $object->getClassId(),
+                    "o_virtualProductId" => $virtualProductId,
+                    "o_virtualProductActive" => $virtualProductActive,
+                    "o_parentId" => $object->getOSParentId(),
+                    "o_type" => $object->getOSIndexType(),
+                    "categoryIds" => ',' . implode(",", $categoryIds) . ",",
+                    "parentCategoryIds" => ',' . implode(",", $parentCategoryIds) . ",",
+                    "priceSystemName" => $object->getPriceSystemName(),
+                    "active" => $object->isActive(),
+                    "inProductList" => $object->isActive(true)
+                );
 
-            $relationData = array();
+                $relationData = array();
 
-            $columnConfig = $this->columnConfig->column;
-            if(!empty($columnConfig->name)) {
-                $columnConfig = array($columnConfig);
-            }
-            else if(empty($columnConfig))
-            {
-                $columnConfig = array();
-            }
-            foreach($columnConfig as $column) {
-                try {
-                    $value = null;
-                    if(!empty($column->getter)) {
-                        $getter = $column->getter;
-                        $value = $getter::get($object, $column->config);
-                    } else {
-                        if(!empty($column->fieldname)) {
-                            $getter = "get" . ucfirst($column->fieldname);
+                $columnConfig = $this->columnConfig->column;
+                if(!empty($columnConfig->name)) {
+                    $columnConfig = array($columnConfig);
+                }
+                else if(empty($columnConfig))
+                {
+                    $columnConfig = array();
+                }
+                foreach($columnConfig as $column) {
+                    try {
+                        $value = null;
+                        if(!empty($column->getter)) {
+                            $getter = $column->getter;
+                            $value = $getter::get($object, $column->config, $subObjectId, $this->tenantConfig);
                         } else {
-                            $getter = "get" . ucfirst($column->name);
+                            if(!empty($column->fieldname)) {
+                                $getter = "get" . ucfirst($column->fieldname);
+                            } else {
+                                $getter = "get" . ucfirst($column->name);
+                            }
+
+                            if(method_exists($object, $getter)) {
+                                $value = $object->$getter($column->locale);
+                            }
                         }
 
-                        if(method_exists($object, $getter)) {
-                            $value = $object->$getter($column->locale);
-                        }
-                    }
-
-                    if(!empty($column->interpreter)) {
-                        $interpreter = $column->interpreter;
-                        $value = $interpreter::interpret($value, $column->config);
-                        $interpreterObject = new $interpreter();
-                        if($interpreterObject instanceof OnlineShop_Framework_IndexService_RelationInterpreter) {
-                            foreach($value as $v) {
-                                $relData = array();
-                                $relData['src'] = $object->getId();
-                                $relData['src_virtualProductId'] = $virtualProductId;
-                                $relData['dest'] = $v['dest'];
-                                $relData['fieldname'] = $column->name;
-                                $relData['type'] = $v['type'];
-                                $relationData[] = $relData;
+                        if(!empty($column->interpreter)) {
+                            $interpreter = $column->interpreter;
+                            $value = $interpreter::interpret($value, $column->config);
+                            $interpreterObject = new $interpreter();
+                            if($interpreterObject instanceof OnlineShop_Framework_IndexService_RelationInterpreter) {
+                                foreach($value as $v) {
+                                    $relData = array();
+                                    $relData['src'] = $subObjectId;
+                                    $relData['src_virtualProductId'] = $virtualProductId;
+                                    $relData['dest'] = $v['dest'];
+                                    $relData['fieldname'] = $column->name;
+                                    $relData['type'] = $v['type'];
+                                    $relationData[] = $relData;
+                                }
+                            } else {
+                                $data[$column->name] = $value;
                             }
                         } else {
                             $data[$column->name] = $value;
                         }
-                    } else {
-                        $data[$column->name] = $value;
+
+                        if(is_array($data[$column->name])) {
+                            $data[$column->name] = self::MULTISELECT_DELIMITER . implode($data[$column->name], self::MULTISELECT_DELIMITER) . self::MULTISELECT_DELIMITER;
+                        }
+
+                    } catch(Exception $e) {
+                        Logger::err("Exception in IndexService: " . $e->getMessage(), $e);
                     }
 
-                    if(is_array($data[$column->name])) {
-                        $data[$column->name] = self::MULTISELECT_DELIMITER . implode($data[$column->name], self::MULTISELECT_DELIMITER) . self::MULTISELECT_DELIMITER;
-                    }
-
-                } catch(Exception $e) {
-                    Logger::err("Exception in IndexService: " . $e->getMessage(), $e);
                 }
-
-            }
-            if($a) {
-                Pimcore::setAdminMode();
-            }
-            Object_Abstract::setGetInheritedValues($b);
-            Object_Abstract::setHideUnpublished($hidePublishedMemory);
-
-            try {
-
-                $quotedData = array();
-                $updateStatement = array();
-                foreach($data as $key => $d) {
-                    $quotedData[$this->db->quoteIdentifier($key)] = $this->db->quote($d);
-                    $updateStatement[] = $this->db->quoteIdentifier($key) . "=" . $this->db->quote($d);
+                if($a) {
+                    Pimcore::setAdminMode();
                 }
+                Object_Abstract::setGetInheritedValues($b);
+                Object_Abstract::setHideUnpublished($hidePublishedMemory);
 
-
-                $this->db->update($this->tenantConfig->getTablename(), array("o_virtualProductActive" => $virtualProductActive), "o_virtualProductId = " . $virtualProductId);
-
-                $insert = "INSERT INTO " . $this->tenantConfig->getTablename() . " (" . implode(",", array_keys($quotedData)) . ") VALUES (" . implode("," , $quotedData) . ")"
-                . " ON DUPLICATE KEY UPDATE " . implode(",", $updateStatement);
-
-                $this->db->query($insert);
-
-            } catch (Exception $e) {
                 try {
-                    $this->db->insert($this->tenantConfig->getTablename(), $data);
-                } catch (Exception $ex) {
-                    Logger::warn("Error during updating index table: " . $ex->getMessage(), $ex);
+
+                    $quotedData = array();
+                    $updateStatement = array();
+                    foreach($data as $key => $d) {
+                        $quotedData[$this->db->quoteIdentifier($key)] = $this->db->quote($d);
+                        $updateStatement[] = $this->db->quoteIdentifier($key) . "=" . $this->db->quote($d);
+                    }
+
+
+                    $this->db->update($this->tenantConfig->getTablename(), array("o_virtualProductActive" => $virtualProductActive), "o_virtualProductId = " . $virtualProductId);
+
+                    $insert = "INSERT INTO " . $this->tenantConfig->getTablename() . " (" . implode(",", array_keys($quotedData)) . ") VALUES (" . implode("," , $quotedData) . ")"
+                    . " ON DUPLICATE KEY UPDATE " . implode(",", $updateStatement);
+
+                    $this->db->query($insert);
+
+                } catch (Exception $e) {
+                    try {
+                        $this->db->insert($this->tenantConfig->getTablename(), $data);
+                    } catch (Exception $ex) {
+                        Logger::warn("Error during updating index table: " . $ex->getMessage(), $ex);
+                    }
                 }
-            }
 
-            try {
-                $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($object->getId()));
-                foreach($relationData as $rd) {
-                    $this->db->insert($this->tenantConfig->getRelationTablename(), $rd);
+                try {
+                    $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
+                    foreach($relationData as $rd) {
+                        $this->db->insert($this->tenantConfig->getRelationTablename(), $rd);
+                    }
+                } catch (Exception $e) {
+                    Logger::warn("Error during updating index relation table: " . $e->getMessage(), $e);
                 }
-            } catch (Exception $e) {
-                Logger::warn("Error during updating index relation table: " . $e->getMessage(), $e);
-            }
-        } else {
+            } else {
 
-            Logger::info("Don't adding product " . $object->getId() . " to index.");
+                Logger::info("Don't adding product " . $subObjectId . " to index.");
 
-            try {
-                $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($object->getId()));
-            } catch (Exception $e) {
-                Logger::warn("Error during updating index relation table: " . $e->getMessage(), $e);
-            }
-
-            try {
-                $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($object->getId()));
-            } catch (Exception $e) {
-                Logger::warn("Error during updating index relation table: " . $e->getMessage(), $e);
-            }
-
-            try {
-                if($this->tenantConfig->getTenantRelationTablename()) {
-                    $this->db->delete($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($object->getId()));
+                try {
+                    $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
+                } catch (Exception $e) {
+                    Logger::warn("Error during updating index relation table: " . $e->getMessage(), $e);
                 }
-            } catch (Exception $e) {
 
-                echo $e;
-                var_dump($this->tenantConfig->getTenantRelationTablename());
-                Logger::warn("Error during updating index tenant relation table: " . $e->getMessage(), $e);
+                try {
+                    $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
+                } catch (Exception $e) {
+                    Logger::warn("Error during updating index relation table: " . $e->getMessage(), $e);
+                }
+
+                try {
+                    if($this->tenantConfig->getTenantRelationTablename()) {
+                        $this->db->delete($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($subObjectId));
+                    }
+                } catch (Exception $e) {
+
+                    echo $e;
+                    var_dump($this->tenantConfig->getTenantRelationTablename());
+                    Logger::warn("Error during updating index tenant relation table: " . $e->getMessage(), $e);
+                }
+
             }
-
+            $this->tenantConfig->updateSubTenantEntries($object, $subObjectId);
         }
-        $this->tenantConfig->updateSubTenantEntries($object);
-
     }
 
     public function getIndexAttributes($id) {
@@ -362,7 +373,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
 
     public function getIndexColumnsByFilterGroup($filterGroup) {
         $this->getAllFilterGroups();
-        return $this->filterGroups[$filterGroup];
+        return $this->filterGroups[$filterGroup] ? $this->filterGroups[$filterGroup] : [];
     }
 
     public function getAllFilterGroups() {

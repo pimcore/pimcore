@@ -6,7 +6,7 @@
  * Time: 14:58
  * To change this template use File | Settings | File Templates.
  */
-class OnlineShop_Framework_Impl_AttributeAvailabilitySystem implements OnlineShop_Framework_IAvailabilitySystem{
+class OnlineShop_Framework_Impl_AttributeAvailabilitySystem implements OnlineShop_Framework_IAvailabilitySystem {
     /**
      * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct
      * @param int $quantityScale

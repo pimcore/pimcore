@@ -127,7 +127,7 @@ class OnlineShop_Framework_ProductList_Resource {
             $query .= " AND src IN (" . $subquery . ") GROUP BY dest";
 
             OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
-            $result = $this->db->fetchAll($query);
+            $result = $this->db->fetchAssoc($query);
             OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
             return $result;
         } else {

@@ -29,7 +29,11 @@ class OnlineShop_Framework_IndexService {
                     }
                 }
 
-                $worker = new OnlineShop_Framework_IndexService_Tenant_Worker(new $tenantConfigClass($tenantConfig, $config));
+                /**
+                 * @var $tenantConfig OnlineShop_Framework_IndexService_Tenant_AbstractConfig
+                 */
+                $tenantConfig = new $tenantConfigClass($tenantConfig, $config);
+                $worker = $tenantConfig->createWorker();
                 $this->tenantWorkers[$name] = $worker;
             }
         }

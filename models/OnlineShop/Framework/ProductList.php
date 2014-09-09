@@ -284,7 +284,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
 
         $this->products = array();
         foreach($objectRaws as $raw) {
-            $product = Object_Concrete::getById($raw['o_id']);
+            $product = $this->getCurrentTenantConfig()->getObjectById($raw['o_id']);
             if($product) {
                 $this->products[] = $product;
             }
