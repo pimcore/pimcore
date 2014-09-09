@@ -79,6 +79,7 @@ class Document_Tag_Input extends Document_Tag
      */
     public function setDataFromEditmode($data)
     {
+        $data = html_entity_decode($data, ENT_HTML5); // this is because the input is now an div contenteditable -> therefore in entities
         $this->text = $data;
         return $this;
     }
