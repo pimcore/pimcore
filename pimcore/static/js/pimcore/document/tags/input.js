@@ -55,23 +55,34 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
     },
 
     checkValue: function () {
-        var value = this.getValue();
+        var value = trim(this.element.dom.innerHTML);
         var origValue = value;
-        value = strip_tags(value);
+
+        // replace all but the last one // FF fix, because he needs the <br>
+        value = value.replace(/<br([^>]+)?>(.)/gi, function (match, p1, p2) {
+            return " " + p2;
+        });
+        value = strip_tags(value, "<br>");
+
+        var textLength = trim(strip_tags(value)).length;
+
+        if(textLength < 1) {
+            this.element.addClass("empty");
+            value = ""; // set to "" since it can contain an <br> at the end
+        } else {
+            this.element.removeClass("empty");
+        }
 
         if(value != origValue) {
             this.element.update(value);
         }
-
-        if(trim(value).length < 1) {
-            this.element.addClass("empty");
-        } else {
-            this.element.removeClass("empty");
-        }
     },
 
     getValue: function () {
-        return this.element.dom.innerHTML;
+        var value = this.element.dom.innerHTML;
+        value = strip_tags(value);
+        value = trim(value);
+        return value;
     },
 
     getType: function () {
