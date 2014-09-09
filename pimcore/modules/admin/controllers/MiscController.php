@@ -146,9 +146,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     public function fileexplorerTreeAction()
     {
         $this->checkPermission("fileexplorer");
-
-        $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("node"));
-        $referencePath = PIMCORE_DOCUMENT_ROOT . $path;
+        $referencePath = $this->getFileexplorerPath("node");
 
         $items = scandir($referencePath);
         $contents = array();
@@ -190,8 +188,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $success = false;
         $writeable = false;
-        $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("path"));
-        $file = PIMCORE_DOCUMENT_ROOT . $path;
+        $file = $this->getFileexplorerPath("path");
         if (is_file($file)) {
             if (is_readable($file)) {
                 $content = file_get_contents($file);
@@ -201,11 +198,11 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         }
 
         $this->_helper->json(array(
-                                  "success" => $success,
-                                  "content" => $content,
-                                  "writeable" => $writeable,
-                                  "path" => $path
-                             ));
+            "success" => $success,
+            "content" => $content,
+            "writeable" => $writeable,
+            "path" => preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT) . "@", "", $file)
+        ));
     }
 
     public function fileexplorerContentSaveAction()
@@ -215,7 +212,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $success = false;
 
         if ($this->getParam("content") && $this->getParam("path")) {
-            $file = PIMCORE_DOCUMENT_ROOT . $this->getParam("path");
+            $file = $this->getFileexplorerPath("path");
             if (is_file($file) && is_writeable($file)) {
                 Pimcore_File::put($file, $this->getParam("content"));
 
@@ -235,8 +232,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $success = false;
 
         if ($this->getParam("filename") && $this->getParam("path")) {
-            $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("path"));
-            $file = PIMCORE_DOCUMENT_ROOT . $path . "/" . $this->getParam("filename");
+            $path = $this->getFileexplorerPath("path");
+            $file = $path . "/" . $this->getParam("filename");
 
             if (is_writeable(dirname($file))) {
                 Pimcore_File::put($file, "");
@@ -257,8 +254,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $success = false;
 
         if ($this->getParam("filename") && $this->getParam("path")) {
-            $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("path"));
-            $file = PIMCORE_DOCUMENT_ROOT . $path . "/" . $this->getParam("filename");
+            $path = $this->getFileexplorerPath("path");
+            $file = $path . "/" . $this->getParam("filename");
 
             if (is_writeable(dirname($file))) {
                 Pimcore_File::mkdir($file);
@@ -268,8 +265,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         }
 
         $this->_helper->json(array(
-                                  "success" => $success
-                             ));
+            "success" => $success
+        ));
     }
 
     public function fileexplorerDeleteAction()
@@ -277,8 +274,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $this->checkPermission("fileexplorer");
 
         if ($this->getParam("path")) {
-            $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("path"));
-            $file = PIMCORE_DOCUMENT_ROOT . $path;
+            $file = $this->getFileexplorerPath("path");
             if (is_writeable($file)) {
                 unlink($file);
                 $success = true;
@@ -288,6 +284,17 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $this->_helper->json(array(
               "success" => $success
         ));
+    }
+
+    private function getFileexplorerPath($paramName = 'node')
+    {
+        $path = preg_replace("/^\/fileexplorer/", "", $this->getParam($paramName));
+        $path = realpath(PIMCORE_DOCUMENT_ROOT . $path);
+
+        if (strpos($path, PIMCORE_DOCUMENT_ROOT) !== 0) {
+            throw new Exception('operation permitted, permission denied');
+        }
+        return $path;
     }
 
     public function maintenanceAction()
