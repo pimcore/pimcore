@@ -62,6 +62,13 @@ class Document_Tag_Input extends Document_Tag
     }
 
     /**
+     *
+     */
+    public function getDataEditmode() {
+        return htmlentities($this->text);
+    }
+
+    /**
      * @see Document_Tag_Interface::setDataFromResource
      * @param mixed $data
      * @return void
