@@ -187,7 +187,16 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
         //$searcherList->setOrderKey("modificationdate");
 
         if ($this->getParam("sort")) {
-            $searcherList->setOrderKey($this->getParam("sort"));
+            // we need a special mapping for classname as this is stored in subtype column
+            $sortMapping = [
+                "classname" => "subtype"
+            ];
+
+            $sort = $this->getParam("sort");
+            if(array_key_exists($this->getParam("sort"), $sortMapping)) {
+                $sort = $sortMapping[$this->getParam("sort")];
+            }
+            $searcherList->setOrderKey($sort);
         }
         if ($this->getParam("dir")) {
             $searcherList->setOrder($this->getParam("dir"));
