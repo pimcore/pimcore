@@ -41,17 +41,10 @@ pimcore.document.versions = Class.create({
                         }
                     }
                     return null;
-                }},"public","scheduled","show", {name:'publicurl', convert: function (v, rec) {
-                    return this.document.data.path + this.document.data.key + "?v=" + rec.id;
-                }.bind(this)}]
+                }},"public","scheduled","show"] //, {name:'publicurl', convert: function (v, rec) {return this.document.data.path + this.document.data.key + "?v=" + rec.id;  }.bind(this)}
             });
             this.store.on("update", this.dataUpdate.bind(this));
 
-            var checkPublic = new Ext.grid.CheckColumn({
-                header: t("public"),
-                dataIndex: "public",
-                width: 50
-            });
 
             var checkShow = new Ext.grid.CheckColumn({
                 header: t("show"),
@@ -75,14 +68,13 @@ pimcore.document.versions = Class.create({
                         	return date.format("Y-m-d H:i:s");
                     	}
                     }, editable: false},
-                    {header: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()},
-                    checkPublic,
-                    {header: t("public_url"), width:300, sortable: false, dataIndex: 'publicurl', editable: false}
+                    {header: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField(), width: 145},
+                    //{header: t("public_url"), width:300, sortable: false, dataIndex: 'publicurl', editable: false}
                 ],
                 columnLines: true,
                 trackMouseOver: true,
                 stripeRows: true,
-                plugins: [checkPublic,checkShow],
+                plugins: [checkShow],
                 width:600,
                 title: t('available_versions'),
                 region: "west",
