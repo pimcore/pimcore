@@ -34,7 +34,7 @@ pimcore.object.versions = Class.create({
                     field: 'date',
                     direction: 'DESC'
                 },
-                fields: ['id', 'date', 'note', {name:'name', convert: function (v, rec) {
+                fields: ['id', 'date', 'scheduled', 'note', {name:'name', convert: function (v, rec) {
                     if (rec.user) {
                         if (rec.user.name) {
                             return rec.user.name;
@@ -52,10 +52,16 @@ pimcore.object.versions = Class.create({
                         return date.format("Y-m-d H:i:s");
                     }},
                     {header: t("user"), sortable: true, dataIndex: 'name'},
-                    {header: t("note"), sortable: true, dataIndex: 'note'}
+                    {header: t("scheduled"), width:130, sortable: true, dataIndex: 'scheduled', renderer: function(d) {
+                    	if (d != null){
+                        	var date = new Date(d * 1000);
+                        	return date.format("Y-m-d H:i:s");
+                    	}
+                    }, editable: false}
+                    //Not used: {header: t("note"), sortable: true, dataIndex: 'note'}
                 ],
                 stripeRows: true,
-                width:350,
+                width:360,
                 title: t('available_versions'),
                 region: "west",
                 viewConfig: {
@@ -199,5 +205,5 @@ pimcore.object.versions = Class.create({
     reload: function () {
         this.store.reload();
     }
-
+    
 });
