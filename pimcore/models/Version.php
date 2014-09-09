@@ -84,6 +84,14 @@ class Version extends Pimcore_Model_Abstract {
 
         return $version;
     }
+    
+    public static function getByCidAndCtype($cid, $ctype) {
+
+        $version = new self();
+        $version->getResource()->getByCidAndCtype($cid, $ctype);
+
+        return $version;
+    }
 
     /**
      * disables the versioning for the current process, this is useful for importers, ...

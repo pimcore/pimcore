@@ -48,6 +48,16 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
 
         $this->assignVariablesToModel($data);
     }
+    
+    public function getByCidAndCtype($cid, $ctype) {
+        $data = $this->db->fetchRow("SELECT * FROM versions WHERE cid = ? AND ctype = ? ORDER BY `id` DESC LIMIT 1", [$cid, $ctype]);
+
+        if (!$data["id"]) {
+            throw new Exception("version with cid " . $cid . " and ctype " . $ctype . " not found");
+        }
+
+        $this->assignVariablesToModel($data);
+    }
 
     /**
      * Save object to database

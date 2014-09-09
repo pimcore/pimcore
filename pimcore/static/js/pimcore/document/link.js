@@ -41,13 +41,25 @@ pimcore.document.link = Class.create(pimcore.document.page_snippet, {
         this.dependencies = new pimcore.element.dependencies(this, "document");
     },
 
-    getSaveData : function () {
+    getSaveData : function (only) {
         var parameters = {};
 
         parameters.id = this.id;
         var values = this.panel.getForm().getFieldValues();
         values.published = this.data.published;
         parameters.data = Ext.encode(values);
+
+        // get only scheduled tasks
+        if (only === "scheduler" && this.isAllowed("settings")) {
+            try {
+                parameters.scheduler = Ext.encode(this.scheduler.getValues());
+                return parameters;
+            }
+            catch (e) {
+                console.log("scheduler not available");
+                return;
+            }
+        }
 
         if (this.isAllowed("properties")) {
             // properties
