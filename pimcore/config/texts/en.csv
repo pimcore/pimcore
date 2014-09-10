@@ -1543,3 +1543,7 @@
 "definitions_saved","Definitions saved"
 "warning_bulk_import","The Bulk Import will overwrite your class/fieldcollection/objectbrick definitions without warning! Do you want to continue?"
 "customlayout","Custom Layout"
+<<<<<<< HEAD
+=======
+"scheduled","Scheduled"
+>>>>>>> d57694bc5c40ce13998f9d34a292c2f4f4753b37

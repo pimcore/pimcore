@@ -848,8 +848,22 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             $asset = Asset::getById($id);
             if($asset) {
                 if($asset->isAllowed("versions")) {
-                    $versions = $asset->getVersions();
+                    
+                	$schedule = $asset->getScheduledTasks();
+					$schedule_array = array();
+					foreach ($schedule as $task){
+						if ($task->active == 1){
+							$schedule_array[$task->version] = $task->date;
+						}
+					}
+		
+		            $versions = $asset->getVersions();
+					foreach ($versions as $version){
+						$version->scheduled = $schedule_array[$version->id];
+					}
+					
                     $this->_helper->json(array("versions" => $versions));
+                    
                 } else {
                     throw new \Exception("Permission denied, asset id [" . $id . "]");
                 }

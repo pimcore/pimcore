@@ -147,6 +147,21 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                 }
 
             }
+            else if ($this->getParam("task") == 'scheduler'){
+                if ($page->isAllowed("save")) {
+
+                    try{
+                    	$this->addSchedulerToDocument($page);
+                        $page->saveScheduledTasks();
+                        $this->saveToSession($page);
+                        $this->_helper->json(array("success" => true));
+                    } catch (Exception $e) {
+                        Logger::err($e);
+                        $this->_helper->json(array("success" => false,"message"=>$e->getMessage()));
+                    }
+
+                }
+            }
             else {
                 if ($page->isAllowed("save")) {
                     $this->setValuesToDocument($page);
