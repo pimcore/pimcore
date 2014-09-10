@@ -41,9 +41,7 @@ pimcore.document.versions = Class.create({
                         }
                     }
                     return null;
-                }},"public","show", "scheduled", {name:'publicurl', convert: function (v, rec) {
-                    return this.document.data.path + this.document.data.key + "?v=" + rec.id;
-                }.bind(this)}]
+                }},"public","show", "scheduled"]
             });
             this.store.on("update", this.dataUpdate.bind(this));
 
@@ -58,6 +56,7 @@ pimcore.document.versions = Class.create({
                 dataIndex: "show",
                 width: 50
             });
+
 
             this.grid = new Ext.grid.EditorGridPanel({
                 store: this.store,
@@ -76,14 +75,13 @@ pimcore.document.versions = Class.create({
                     	}
                     }, editable: false},
                     {header: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()},
-                    checkPublic,
-                    {header: t("public_url"), width:300, sortable: false, dataIndex: 'publicurl', editable: false}
+                    checkPublic
                 ],
                 columnLines: true,
                 trackMouseOver: true,
                 stripeRows: true,
                 plugins: [checkPublic,checkShow],
-                width:600,
+                width:603,
                 title: t('available_versions'),
                 region: "west",
                 viewConfig: {
@@ -175,6 +173,12 @@ pimcore.document.versions = Class.create({
         var menu = new Ext.menu.Menu();
 
         menu.add(new Ext.menu.Item({
+            text: t('open'),
+            iconCls: "pimcore_icon_menu_webbrowser",
+            handler: this.openVersion.bind(this, rowIndex, grid)
+        }));
+        
+        menu.add(new Ext.menu.Item({
             text: t('edit'),
             iconCls: "pimcore_icon_menu_settings",
             handler: this.editVersion.bind(this, rowIndex, grid)
@@ -210,7 +214,14 @@ pimcore.document.versions = Class.create({
 
         grid.getStore().removeAt(index);
     },
-
+    
+    openVersion: function (index, grid) {
+        var data = grid.getStore().getAt(index).data;
+        var versionId = data.id;
+		
+        window.open('/?v=' + versionId,'_blank');
+    },
+    
     editVersion: function (index, grid) {
         var data = grid.getStore().getAt(index).data;
         var versionId = data.id;
