@@ -13,7 +13,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_AssetController extends Pimcore_Controller_Action_Admin
+class Admin_AssetController extends Pimcore_Controller_Action_Admin_Element
 {
 
     /**
@@ -838,38 +838,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin
             $this->render("show-version-" . $asset->getType());
         } else {
             throw new \Exception("Permission denied, version id [" . $id . "]");
-        }
-    }
-
-    public function getVersionsAction()
-    {
-        $id = intval($this->getParam("id"));
-        if ($id) {
-            $asset = Asset::getById($id);
-            if($asset) {
-                if($asset->isAllowed("versions")) {
-                    
-                	$schedule = $asset->getScheduledTasks();
-					$schedule_array = array();
-					foreach ($schedule as $task){
-						if ($task->active == 1){
-							$schedule_array[$task->version] = $task->date;
-						}
-					}
-		
-		            $versions = $asset->getVersions();
-					foreach ($versions as $version){
-						$version->scheduled = $schedule_array[$version->id];
-					}
-					
-                    $this->_helper->json(array("versions" => $versions));
-                    
-                } else {
-                    throw new \Exception("Permission denied, asset id [" . $id . "]");
-                }
-            } else {
-                throw new \Exception("Asset with id [" . $id . "] doesn't exist");
-            }
         }
     }
 

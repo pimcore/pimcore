@@ -13,7 +13,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_ObjectController extends Pimcore_Controller_Action_Admin
+class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
 {
     /**
      * @var Object_Service
@@ -1263,38 +1263,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             throw new \Exception("Version with ids [" . $id1 . ", " . $id2 . "] doesn't exist");
         }
     }
-
-    public function getVersionsAction()
-    {
-        $id = intval($this->getParam("id"));
-        if ($id) {
-            $object = Object_Abstract::getById($id);
-            if($object) {
-                if ($object->isAllowed("versions")) {
-                
-                    $schedule = $object->getScheduledTasks();
-					$schedule_array = array();
-					foreach ($schedule as $task){
-						if ($task->active == 1){
-							$schedule_array[$task->version] = $task->date;
-						}
-					}
-		
-		            $versions = $object->getVersions();
-					foreach ($versions as $version){
-						$version->scheduled = $schedule_array[$version->id];
-					}
-					
-                    $this->_helper->json(array("success" => true, "versions" => $versions));
-                } else {
-                    throw new \Exception("Permission denied, object id [" . $id . "]");
-                }
-            } else {
-                throw new \Exception("Object with id [" . $id . "] doesn't exist");
-            }
-        }
-    }
-
 
     public function gridProxyAction()
     {

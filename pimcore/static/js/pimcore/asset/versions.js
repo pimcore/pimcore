@@ -53,7 +53,7 @@ pimcore.asset.versions = Class.create({
                     }},
                     {header: t("user"), sortable: true, dataIndex: 'name'},
                     {header: t("scheduled"), width:130, sortable: true, dataIndex: 'scheduled', renderer: function(d) {
-                    	if (d != null){
+                        if (d != null){
                         	var date = new Date(d * 1000);
                         	return date.format("Y-m-d H:i:s");
                     	}
