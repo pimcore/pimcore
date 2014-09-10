@@ -103,45 +103,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin_Element
         $this->_helper->json(array("success" => false, "message" => "missing_permission"));
     }
 
-
-    public function getRequiresDependenciesAction()
-    {
-        $id = $this->getParam("id");
-        $asset = Asset::getById($id);
-        if ($asset instanceof Asset) {
-            $dependencies = Element_Service::getRequiresDependenciesForFrontend($asset->getDependencies());
-            $this->_helper->json($dependencies);
-        }
-        $this->_helper->json(false);
-    }
-
-    public function getRequiredByDependenciesAction()
-    {
-        $id = $this->getParam("id");
-        $asset = Asset::getById($id);
-        if ($asset instanceof Asset) {
-            $dependencies = Element_Service::getRequiredByDependenciesForFrontend($asset->getDependencies());
-            $this->_helper->json($dependencies);
-        }
-        $this->_helper->json(false);
-    }
-
-    public function treeGetRootAction()
-    {
-
-        $id = 1;
-        if ($this->getParam("id")) {
-            $id = intval($this->getParam("id"));
-        }
-
-        $root = Asset::getById($id);
-        if ($root->isAllowed("list")) {
-            $this->_helper->json($this->getTreeNodeConfig($root));
-        }
-
-        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
-    }
-
     public function treeGetChildsByIdAction()
     {
 
@@ -195,21 +156,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin_Element
         }
 
         $this->_helper->json(false);
-    }
-
-    public function getPredefinedPropertiesAction()
-    {
-
-        $list = new Property_Predefined_List();
-        $list->setCondition("ctype = 'asset'");
-        $list->load();
-
-        $properties = array();
-        foreach ($list->getProperties() as $type) {
-            $properties[] = $type;
-        }
-
-        $this->_helper->json(array("properties" => $properties));
     }
 
     public function addAssetAction()
@@ -795,14 +741,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin_Element
         }
 
         $this->_helper->json(false);
-    }
-
-    public function deleteVersionAction()
-    {
-        $version = Version::getById($this->getParam("id"));
-        $version->delete();
-
-        $this->_helper->json(array("success" => true));
     }
 
     public function publishVersionAction()

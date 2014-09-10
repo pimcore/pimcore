@@ -34,45 +34,12 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin_Element
         $this->_documentService = new Document_Service($this->getUser());
     }
 
-    public function getPredefinedPropertiesAction()
-    {
-
-        $list = new Property_Predefined_List();
-        $list->setCondition("ctype = 'document'");
-        $list->setOrder("ASC");
-        $list->setOrderKey("name");
-        $list->load();
-
-        $properties = array();
-        foreach ($list->getProperties() as $type) {
-            $properties[] = $type;
-        }
-
-        $this->_helper->json(array("properties" => $properties));
-    }
-
     public function getDataByIdAction()
     {
 
         $document = Document::getById($this->getParam("id"));
         if ($document->isAllowed("view")) {
             $this->_helper->json($document);
-        }
-
-        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
-    }
-
-    public function treeGetRootAction()
-    {
-
-        $id = 1;
-        if ($this->getParam("id")) {
-            $id = intval($this->getParam("id"));
-        }
-
-        $root = Document::getById($id);
-        if ($root->isAllowed("list")) {
-            $this->_helper->json($this->getTreeNodeConfig($root));
         }
 
         $this->_helper->json(array("success" => false, "message" => "missing_permission"));
@@ -343,28 +310,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin_Element
         ));
     }
 
-    public function getRequiresDependenciesAction()
-    {
-        $id = $this->getParam("id");
-        $document = Document::getById($id);
-        if ($document instanceof Document) {
-            $dependencies = Element_Service::getRequiresDependenciesForFrontend($document->getDependencies());
-            $this->_helper->json($dependencies);
-        }
-        $this->_helper->json(false);
-    }
-
-    public function getRequiredByDependenciesAction()
-    {
-        $id = $this->getParam("id");
-        $document = Document::getById($id);
-        if ($document instanceof Document) {
-            $dependencies = Element_Service::getRequiredByDependenciesForFrontend($document->getDependencies());
-            $this->_helper->json($dependencies);
-        }
-        $this->_helper->json(false);
-    }
-
     public function updateAction()
     {
 
@@ -564,14 +509,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin_Element
 
         $document = Document::getById($this->getParam("id"));
         die($document->getPath() . $document->getKey());
-    }
-
-    public function deleteVersionAction()
-    {
-        $version = Version::getById($this->getParam("id"));
-        $version->delete();
-
-        $this->_helper->json(array("success" => true));
     }
 
     public function versionUpdateAction()

@@ -122,44 +122,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
 
     }
 
-    public function getRequiresDependenciesAction()
-    {
-        $id = $this->getParam("id");
-        $object = Object_Abstract::getById($id);
-        if ($object instanceof Object_Abstract) {
-            $dependencies = Element_Service::getRequiresDependenciesForFrontend($object->getDependencies());
-            $this->_helper->json($dependencies);
-        }
-        $this->_helper->json(false);
-    }
-
-    public function getRequiredByDependenciesAction()
-    {
-        $id = $this->getParam("id");
-        $object = Object_Abstract::getById($id);
-        if ($object instanceof Object_Abstract) {
-            $dependencies = Element_Service::getRequiredByDependenciesForFrontend($object->getDependencies());
-            $this->_helper->json($dependencies);
-        }
-        $this->_helper->json(false);
-    }
-
-    public function treeGetRootAction()
-    {
-
-        $id = 1;
-        if ($this->getParam("id")) {
-            $id = intval($this->getParam("id"));
-        }
-
-        $root = Object_Abstract::getById($id);
-        if ($root->isAllowed("list")) {
-            $this->_helper->json($this->getTreeNodeConfig($root));
-        }
-
-        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
-    }
-
     /**
      * @param Object_Abstract $child
      * @return array
@@ -1176,30 +1138,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
         }
 
         return $object;
-    }
-
-
-    public function getPredefinedPropertiesAction()
-    {
-
-        $list = new Property_Predefined_List();
-        $list->setCondition("ctype = 'object'");
-        $list->load();
-
-        $properties = array();
-        foreach ($list->getProperties() as $type) {
-            $properties[] = $type;
-        }
-
-        $this->_helper->json(array("properties" => $properties));
-    }
-
-    public function deleteVersionAction()
-    {
-        $version = Version::getById($this->getParam("id"));
-        $version->delete();
-
-        $this->_helper->json(array("success" => true));
     }
 
     public function publishVersionAction()
