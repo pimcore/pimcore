@@ -111,13 +111,19 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
             }
         }
 
+        //Hook for modifying return value - e.g. for changing permissions based on object data
+        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
+        $returnValueContainer = new Tool_Admin_EventDataContainer($objects);
+        Pimcore::getEventManager()->trigger("admin.object.treeGetChildsById.preSendData", $this, array("returnValueContainer" => $returnValueContainer));
+
+
         if ($this->getParam("limit")) {
             $this->_helper->json(array(
                 "total" => $object->getChildAmount(array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_VARIANT), $this->getUser()),
-                "nodes" => $objects
+                "nodes" => $returnValueContainer->getData()
             ));
         } else {
-            $this->_helper->json($objects);
+            $this->_helper->json($returnValueContainer->getData());
         }
 
     }
@@ -359,7 +365,13 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
             $objectData = $this->filterLocalizedFields($object, $objectData);
             Object_Service::enrichLayoutDefinition($objectData["layout"]);
 
-            $this->_helper->json($objectData);
+
+            //Hook for modifying return value - e.g. for changing permissions based on object data
+            //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
+            $returnValueContainer = new Tool_Admin_EventDataContainer($objectData);
+            Pimcore::getEventManager()->trigger("admin.object.get.preSendData", $this, array("returnValueContainer" => $returnValueContainer));
+
+            $this->_helper->json($returnValueContainer->getData());
         } else {
             Logger::debug("prevented getting object id [ " . $object->getId() . " ] because of missing permissions");
             $this->_helper->json(array("success" => false, "message" => "missing_permission"));
