@@ -226,6 +226,14 @@ pimcore.document.versions = Class.create({
         var data = grid.getStore().getAt(index).data;
         var versionId = data.id;
 
+        if (this.document.data.modificationDate < data.date) {
+        	this.document.versionNotification('newer');
+        }else if (this.document.data.modificationDate == data.date) {
+        	this.document.versionNotification('published');
+        }else{
+        	this.document.versionNotification('older');
+        }
+       
         Ext.Ajax.request({
             url: "/admin/document/version-to-session",
             params: {id: versionId},
@@ -265,6 +273,10 @@ pimcore.document.versions = Class.create({
 
     reloadEdit: function () {
         this.document.edit.reload(true);
+		
+        // Open edit tab
+        this.document.tabbar.setActiveTab(0);
+
     },
 
     reload: function () {
