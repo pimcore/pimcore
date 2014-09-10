@@ -504,7 +504,54 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
                 $data->setMarker(null);
                 $data->setCrop(null);
             }
+
+
+            if($data->getHotspots()) {
+                $data->setHotspots($this->rewriteIdsInDataEntries($data->getHotspots(), $idMapping));
+            }
+            if($data->getMarker()) {
+                $data->setMarker($this->rewriteIdsInDataEntries($data->getMarker(), $idMapping));
+            }
         }
+
         return $data;
+    }
+
+    private function rewriteIdsInDataEntries($dataArray, $idMapping) {
+        $newDataArray = array();
+        if($dataArray) {
+            foreach($dataArray as $dataArrayEntry) {
+                if($dataArrayEntry['data']) {
+                    $newData = array();
+                    foreach($dataArrayEntry['data'] as $dataEntry) {
+                        //rewrite objects
+                        if($dataEntry['type'] == 'object' && $dataEntry['value']) {
+                            $id = $dataEntry['value']->getId();
+                            if(array_key_exists("object", $idMapping) and array_key_exists($id, $idMapping["object"])) {
+                                $dataEntry['value'] = Object_Abstract::getById($idMapping["object"][$id]);
+                            }
+                        }
+                        //rewrite assets
+                        if($dataEntry['type'] == 'asset' && $dataEntry['value']) {
+                            $id = $dataEntry['value']->getId();
+                            if(array_key_exists("asset", $idMapping) and array_key_exists($id, $idMapping["asset"])) {
+                                $dataEntry['value'] = Asset::getById($idMapping["asset"][$id]);
+                            }
+                        }
+                        //rewrite documents
+                        if($dataEntry['type'] == 'document' && $dataEntry['value']) {
+                            $id = $dataEntry['value']->getId();
+                            if(array_key_exists("document", $idMapping) and array_key_exists($id, $idMapping["document"])) {
+                                $dataEntry['value'] = Document::getById($idMapping["document"][$id]);
+                            }
+                        }
+                        $newData[] = $dataEntry;
+                    }
+                    $dataArrayEntry['data'] = $newData;
+                }
+                $newDataArray[] = $dataArrayEntry;
+            }
+        }
+        return $newDataArray;
     }
 }
