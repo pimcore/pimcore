@@ -287,23 +287,14 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             });
 
             buttons.push(this.newerVersionNotification);
-            
-            this.olderVersionNotification = new Ext.Toolbar.TextItem({
-                xtype: 'tbtext',
-                text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;'
-                    + t("this_is_a_older_not_published_version"),
-                scale: "medium",
-                hidden: true
-            });
 
-            buttons.push(this.olderVersionNotification);
+            // check for newer version than the published
+            if (this.data.versions.length > 0) {
+                if (this.data.modificationDate < this.data.versions[0].date) {
+                    this.newerVersionNotification.show();
+                }
+            }
 
-    	    // check for newer version than the published
-	        if (this.data.versions.length > 0) {
-	            if (this.data.modificationDate < this.data.versions[0].date) {
-	                this.newerVersionNotification.show();
-	            }
-	        }
 
             this.toolbar = new Ext.Toolbar({
                 id: "document_toolbar_" + this.id,
@@ -401,18 +392,5 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 value: window.location.protocol + "//" + window.location.hostname + "/admin/login/deeplink?document_" + this.data.id + "_" + this.data.type
             }
         ], "document");
-    },
-    
-    versionNotification: function(version) {
-		
-    	this.olderVersionNotification.hide();
-		this.newerVersionNotification.hide();
-   		
-		if (version == 'newer'){
-   			this.newerVersionNotification.show();
-   		}else if (version == 'older'){
-   			this.olderVersionNotification.show();
-   		}
-
     }
 });

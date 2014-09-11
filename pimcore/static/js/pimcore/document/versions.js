@@ -41,13 +41,9 @@ pimcore.document.versions = Class.create({
                         }
                     }
                     return null;
-<<<<<<< HEAD
                 }},"public","show", "scheduled", {name:'publicurl', convert: function (v, rec) {
                     return this.document.data.path + this.document.data.key + "?v=" + rec.id;
                 }.bind(this)}]
-=======
-                }},"public","show", "scheduled"]
->>>>>>> 5701dcc96701996bed9049169c5adfc050c71589
             });
             this.store.on("update", this.dataUpdate.bind(this));
 
@@ -63,7 +59,6 @@ pimcore.document.versions = Class.create({
                 width: 50
             });
 
-
             this.grid = new Ext.grid.EditorGridPanel({
                 store: this.store,
                 columns: [
@@ -75,23 +70,20 @@ pimcore.document.versions = Class.create({
                     }, editable: false},
                     {header: t("user"), sortable: true, dataIndex: 'name', editable: false},
                     {header: t("scheduled"), width:130, sortable: true, dataIndex: 'scheduled', renderer: function(d) {
-                    	if (d != null){
-                        	var date = new Date(d * 1000);
-                        	return date.format("Y-m-d H:i:s");
-                    	}
+                        if (d != null){
+                            var date = new Date(d * 1000);
+                            return date.format("Y-m-d H:i:s");
+                        }
                     }, editable: false},
                     {header: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()},
-                    checkPublic
+                    checkPublic,
+                    {header: t("public_url"), width:300, sortable: false, dataIndex: 'publicurl', editable: false}
                 ],
                 columnLines: true,
                 trackMouseOver: true,
                 stripeRows: true,
                 plugins: [checkPublic,checkShow],
-<<<<<<< HEAD
                 width:600,
-=======
-                width:603,
->>>>>>> 5701dcc96701996bed9049169c5adfc050c71589
                 title: t('available_versions'),
                 region: "west",
                 viewConfig: {
@@ -116,7 +108,7 @@ pimcore.document.versions = Class.create({
                 region: "center",
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
                 html: '<iframe src="about:blank" frameborder="0" id="document_version_iframe_'
-                                                                            + this.document.id + '"></iframe>'
+                    + this.document.id + '"></iframe>'
             });
 
             this.layout = new Ext.Panel({
@@ -176,10 +168,10 @@ pimcore.document.versions = Class.create({
     },
 
     onRowContextmenu: function (grid, rowIndex, event) {
-        
+
         $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
-                                                                    .animate( { backgroundColor: '#fff' }, 400);
-        
+            .animate( { backgroundColor: '#fff' }, 400);
+
         var menu = new Ext.menu.Menu();
 
         menu.add(new Ext.menu.Item({
@@ -187,7 +179,7 @@ pimcore.document.versions = Class.create({
             iconCls: "pimcore_icon_menu_webbrowser",
             handler: this.openVersion.bind(this, rowIndex, grid)
         }));
-        
+
         menu.add(new Ext.menu.Item({
             text: t('edit'),
             iconCls: "pimcore_icon_menu_settings",
@@ -216,7 +208,7 @@ pimcore.document.versions = Class.create({
 
         var data = grid.getStore().getAt(index).data;
         var versionId = data.id;
-        
+
         Ext.Ajax.request({
             url: "/admin/document/delete-version",
             params: {id: versionId}
@@ -224,26 +216,18 @@ pimcore.document.versions = Class.create({
 
         grid.getStore().removeAt(index);
     },
-    
+
     openVersion: function (index, grid) {
         var data = grid.getStore().getAt(index).data;
         var versionId = data.id;
-		
+
         window.open('/?v=' + versionId,'_blank');
     },
-    
+
     editVersion: function (index, grid) {
         var data = grid.getStore().getAt(index).data;
         var versionId = data.id;
 
-        if (this.document.data.modificationDate < data.date) {
-        	this.document.versionNotification('newer');
-        }else if (this.document.data.modificationDate == data.date) {
-        	this.document.versionNotification('published');
-        }else{
-        	this.document.versionNotification('older');
-        }
-       
         Ext.Ajax.request({
             url: "/admin/document/version-to-session",
             params: {id: versionId},
@@ -283,7 +267,7 @@ pimcore.document.versions = Class.create({
 
     reloadEdit: function () {
         this.document.edit.reload(true);
-		
+
         // Open edit tab
         this.document.tabbar.setActiveTab(0);
 
@@ -292,5 +276,5 @@ pimcore.document.versions = Class.create({
     reload: function () {
         this.store.reload();
     }
-    
+
 });
