@@ -1636,11 +1636,14 @@ pimcore.helpers.handleTabRightClick = function (tabPanel, el, index) {
     }
 };
 
-pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess, callbackFailure) {
+pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess, callbackProgress, callbackFailure) {
     var reader = new FileReader();
 
     if(typeof callbackSuccess != "function") {
         callbackSuccess = function () {};
+    }
+    if(typeof callbackProgress != "function") {
+        callbackProgress = function () {};
     }
     if(typeof callbackFailure != "function") {
         callbackFailure = function () {};
@@ -1651,7 +1654,7 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
         // "text" base64 upload
         reader.onload = function(e) {
 
-            Ext.Ajax.request({
+            /*Ext.Ajax.request({
                 url: url,
                 method: "post",
                 params: {
@@ -1661,6 +1664,30 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
                 },
                 success: callbackSuccess,
                 failure: callbackFailure
+            });*/
+
+
+            jQuery.ajax({
+                xhr: function()
+                {
+                    var xhr = new window.XMLHttpRequest();
+
+                    //Upload progress
+                    xhr.upload.addEventListener("progress", function(evt){
+                        callbackProgress(evt);
+                    }, false);
+
+                    return xhr;
+                },
+                type: 'POST',
+                url: url,
+                data: {
+                    type: "base64",
+                    filename: file.name,
+                    data: e.target.result
+                },
+                success: callbackSuccess,
+                error: callbackFailure
             });
         };
 

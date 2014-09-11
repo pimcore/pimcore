@@ -130,6 +130,8 @@ pimcore.asset.tree = Class.create({
                     e.stopPropagation();
                     e.preventDefault();
 
+                    pimcore.helpers.treeNodeThumbnailPreviewHide();
+
                     try {
                         if(!this.tree.getSelectionModel().getSelectedNode()) {
                             return true;
@@ -142,6 +144,8 @@ pimcore.asset.tree = Class.create({
 
                     var dt = e.dataTransfer;
                     var files = dt.files;
+
+
                     var file;
                     this.activeUploads = 0;
 
@@ -149,21 +153,68 @@ pimcore.asset.tree = Class.create({
                         return;
                     }
 
-                    var pbar = new Ext.ProgressBar({
-                        width:500
-                    });
                     var win = new Ext.Window({
-                        items: [pbar],
+                        items: [],
                         modal: true,
                         closable: false,
-                        bodyStyle: "padding:10px;"
-                    });
-                    pbar.wait({
-                        interval:2000,
-                        duration:3600000,
-                        increment:5
+                        bodyStyle: "padding:10px;",
+                        width: 500,
+                        autoHeight: true,
+                        autoScroll: true
                     });
                     win.show();
+
+
+                    var doFileUpload = function (file, path) {
+
+                        if(typeof path == "undefined") {
+                            path = "";
+                        }
+
+                        this.activeUploads++;
+
+                        var pbar = new Ext.ProgressBar({
+                            width:465,
+                            text: file.name,
+                            style: "margin-bottom: 5px"
+                        });
+
+                        win.add(pbar);
+                        win.doLayout();
+
+                        var finishedErrorHandler = function () {
+                            // success
+                            this.activeUploads--;
+
+                            win.remove(pbar);
+
+                            if(this.activeUploads < 1) {
+                                win.close();
+                                node.reload();
+                            }
+                        }.bind(this);
+
+                        pimcore.helpers.uploadAssetFromFileObject(file,
+                            "/admin/asset/add-asset/?pimcore_admin_sid="
+                                + pimcore.settings.sessionId + "&parentId=" + node.id + "&dir=" + path,
+                            finishedErrorHandler,
+                            function (evt) {
+                                //progress
+                                if (evt.lengthComputable) {
+                                    var percentComplete = evt.loaded / evt.total;
+                                    var progressText = file.name + " ( " + Math.floor(percentComplete*100) + "% )";
+                                    if(percentComplete == 1) {
+                                        progressText = file.name + " " + t("converting") + "... ";
+                                    }
+
+                                    pbar.updateProgress(percentComplete, progressText);
+                                }
+                            },
+                            finishedErrorHandler
+                        );
+                    }.bind(this);
+
+
 
 
                     // this is for browser that support folders (currently: Chrome)
@@ -174,22 +225,7 @@ pimcore.asset.tree = Class.create({
                             if (item.isFile) {
                                 // Get file
                                 item.file(function(file) {
-                                    this.activeUploads++;
-                                    pimcore.helpers.uploadAssetFromFileObject(file,
-                                        "/admin/asset/add-asset/?pimcore_admin_sid="
-                                            + pimcore.settings.sessionId + "&parentId=" + node.id + "&dir=" + path,
-                                        function () {
-                                            this.activeUploads--;
-                                            if(this.activeUploads < 1) {
-                                                win.close();
-                                                node.reload();
-                                            }
-                                        }.bind(this),
-                                        function () {
-                                            win.close();
-                                            node.reload();
-                                        }.bind(this)
-                                    );
+                                    doFileUpload(file, path);
                                 }.bind(this));
                             } else if (item.isDirectory) {
                                 // Get folder contents
@@ -215,18 +251,7 @@ pimcore.asset.tree = Class.create({
                             file = files[i];
 
                             if (window.FileList && file.name && file.type) { // check for type (folder has no type)
-                                this.activeUploads++;
-                                pimcore.helpers.uploadAssetFromFileObject(file,
-                                    "/admin/asset/add-asset/?pimcore_admin_sid="
-                                        + pimcore.settings.sessionId + "&parentId=" + node.id,
-                                    function () {
-                                        this.activeUploads--;
-                                        if(this.activeUploads < 1) {
-                                            win.close();
-                                            node.reload();
-                                        }
-                                    }.bind(this)
-                                );
+                                doFileUpload(file);
                             }
                         }
 
