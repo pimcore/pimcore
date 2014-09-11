@@ -60,7 +60,6 @@ $styles = array(
     "/pimcore/static/css/icons.css",
     "/pimcore/static/js/lib/ext/resources/css/ext-all.css",
     "/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css",
-    "/pimcore/static/js/lib/ext-plugins/SwfUploadPanel/SwfUploadPanel.css",
     "/pimcore/static/js/lib/ext-plugins/Notification/notification.css",
     "/pimcore/static/js/lib/ext-plugins/SuperBoxSelect/superboxselect.css",
     "/pimcore/static/js/lib/ext-plugins/ux/css/RowEditor.css",
@@ -478,12 +477,6 @@ $scripts = array(
 
 );
 
-// they're here because they are using some pimcore core functionality like t() for i18n , ...
-$modifiedPlugins = array(
-    "lib/ext-plugins/SwfUploadPanel/swfupload.js",
-    "lib/ext-plugins/SwfUploadPanel/SwfUploadPanel.js"
-);
-
 // google maps API key
 $googleMapsApiKey = $this->config->services->google->browserapikey;
 
@@ -560,10 +553,6 @@ foreach ($scripts as $scriptUrl) {
     <script type="text/javascript" src="<?php echo Pimcore_Tool_Admin::getMinimizedScriptPath($scriptContents) ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
 <?php } ?>
 
-<!-- modified plugins -->
-<?php foreach ($modifiedPlugins as $scriptUrl) { ?>
-    <script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
-<?php } ?>
 
 <?php // load plugin scripts ?>
 <?php
