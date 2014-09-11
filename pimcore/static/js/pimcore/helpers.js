@@ -1637,7 +1637,6 @@ pimcore.helpers.handleTabRightClick = function (tabPanel, el, index) {
 };
 
 pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess, callbackProgress, callbackFailure) {
-    var reader = new FileReader();
 
     if(typeof callbackSuccess != "function") {
         callbackSuccess = function () {};
@@ -1649,50 +1648,31 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
         callbackFailure = function () {};
     }
 
-    // base64 upload
-    if(typeof reader["readAsDataURL"] == "function") {
-        // "text" base64 upload
-        reader.onload = function(e) {
+    var data = new FormData();
+    data.append('Filedata', file);
+    data.append("filename", file.name);
 
-            /*Ext.Ajax.request({
-                url: url,
-                method: "post",
-                params: {
-                    type: "base64",
-                    filename: file.name,
-                    data: e.target.result
-                },
-                success: callbackSuccess,
-                failure: callbackFailure
-            });*/
+    jQuery.ajax({
+        xhr: function()
+        {
+            var xhr = new window.XMLHttpRequest();
 
+            //Upload progress
+            xhr.upload.addEventListener("progress", function(evt){
+                callbackProgress(evt);
+            }, false);
 
-            jQuery.ajax({
-                xhr: function()
-                {
-                    var xhr = new window.XMLHttpRequest();
+            return xhr;
+        },
+        processData: false,
+        contentType: false,
+        type: 'POST',
+        url: url,
+        data: data,
+        success: callbackSuccess,
+        error: callbackFailure
+    });
 
-                    //Upload progress
-                    xhr.upload.addEventListener("progress", function(evt){
-                        callbackProgress(evt);
-                    }, false);
-
-                    return xhr;
-                },
-                type: 'POST',
-                url: url,
-                data: {
-                    type: "base64",
-                    filename: file.name,
-                    data: e.target.result
-                },
-                success: callbackSuccess,
-                error: callbackFailure
-            });
-        };
-
-        reader.readAsDataURL(file);
-    }
 };
 
 
