@@ -772,20 +772,19 @@ pimcore.asset.tree = Class.create({
     },
 
     addAssets : function () {
-
-        var ref = this.attributes.reference;
-        var node = this;
-
         // check if multiupload fields exists in dom
         if(!Ext.get("multiUploadField")) {
             // we have to do the following in jQuery :(
             jQuery("body").append('<input type="file" name="multiUploadField" id="multiUploadField" multiple>');
-            jQuery("#multiUploadField").on("change", function (e) {
-                if(this.files.length) {
-                    ref.uploadFileList(this.files, node);
-                }
-            });
         }
+
+        // this is the tree node
+        jQuery("#multiUploadField").unbind("change");
+        jQuery("#multiUploadField").on("change", function (e) {
+            if(e.target.files.length) {
+                this.attributes.reference.uploadFileList(e.target.files, this);
+            }
+        }.bind(this));
 
         jQuery("#multiUploadField").trigger("click");
     },
