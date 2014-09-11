@@ -228,6 +228,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin_Element
 
         if ($parentAsset->isAllowed("create")) {
 
+            if(!is_file($sourcePath) || filesize($sourcePath) < 1) {
+                throw new \Exception("Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of /website/var/");
+            }
+
             $asset = Asset::create($this->getParam("parentId"), array(
                 "filename" => $filename,
                 "sourcePath" => $sourcePath,
@@ -235,6 +239,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin_Element
                 "userModification" => $this->user->getId()
             ));
             $success = true;
+
+            @unlink($sourcePath);
         } else {
             Logger::debug("prevented creating asset because of missing permissions");
         }

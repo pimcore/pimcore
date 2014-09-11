@@ -150,7 +150,6 @@ pimcore.asset.tree = Class.create({
                     }
 
                     var pbar = new Ext.ProgressBar({
-                        id:'pbar3',
                         width:500
                     });
                     var win = new Ext.Window({
@@ -185,6 +184,10 @@ pimcore.asset.tree = Class.create({
                                                 win.close();
                                                 node.reload();
                                             }
+                                        }.bind(this),
+                                        function () {
+                                            win.close();
+                                            node.reload();
                                         }.bind(this)
                                     );
                                 }.bind(this));

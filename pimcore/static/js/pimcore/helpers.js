@@ -408,6 +408,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
             width: 700,
             height: 500,
             html: text,
+            autoScroll: true,
             bodyStyle: "padding: 10px; background:#fff;",
             buttonAlign: "center",
             shadow: false,
@@ -1635,60 +1636,18 @@ pimcore.helpers.handleTabRightClick = function (tabPanel, el, index) {
     }
 };
 
-pimcore.helpers.uploadAssetFromFileObject = function (file, url, callback) {
+pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess, callbackFailure) {
     var reader = new FileReader();
 
-    if(typeof callback != "function") {
-        callback = function () {};
+    if(typeof callbackSuccess != "function") {
+        callbackSuccess = function () {};
+    }
+    if(typeof callbackFailure != "function") {
+        callbackFailure = function () {};
     }
 
-    // binary upload
-    if(typeof reader["readAsBinaryString"] == "function") {
-        reader.onload = function(e) {
-
-            var boundary = '------multipartformboundary' + (new Date()).getTime();
-            var dashdash = '--';
-            var crlf     = '\r\n';
-
-            var builder = '';
-
-            builder += dashdash;
-            builder += boundary;
-            builder += crlf;
-
-            var xhr = new XMLHttpRequest();
-
-            builder += 'Content-Disposition: form-data; name="Filedata"';
-            if (file.name) {
-                builder += '; filename="' + file.name + '"';
-            }
-            builder += crlf;
-
-            builder += 'Content-Type: ' + file.type;
-            builder += crlf;
-            builder += crlf;
-
-            builder += e.target.result;
-            builder += crlf;
-
-            builder += dashdash;
-            builder += boundary;
-            builder += crlf;
-
-            builder += dashdash;
-            builder += boundary;
-            builder += dashdash;
-            builder += crlf;
-
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader('content-type', 'multipart/form-data; boundary='
-                + boundary);
-            xhr.sendAsBinary(builder);
-            xhr.onload = callback;
-        };
-
-        reader.readAsBinaryString(file);
-    } else if(typeof reader["readAsDataURL"] == "function") {
+    // base64 upload
+    if(typeof reader["readAsDataURL"] == "function") {
         // "text" base64 upload
         reader.onload = function(e) {
 
@@ -1700,7 +1659,8 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callback) {
                     filename: file.name,
                     data: e.target.result
                 },
-                success: callback
+                success: callbackSuccess,
+                failure: callbackFailure
             });
         };
 
