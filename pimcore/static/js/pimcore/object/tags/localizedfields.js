@@ -110,7 +110,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             var data = [];
             for (var i = 0; i < nrOfLanguages; i++) {
                 var language = this.frontendLanguages[i];
-                data.push([language, pimcore.available_languages[language]]);
+                data.push([language, ts(pimcore.available_languages[language])]);
             }
 
             var store = new Ext.data.ArrayStore({
