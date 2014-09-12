@@ -3502,6 +3502,7 @@ INSERT INTO `users_permission_definitions` VALUES ('bounce_mail_inbox');
 INSERT INTO `users_permission_definitions` VALUES ('classes');
 INSERT INTO `users_permission_definitions` VALUES ('clear_cache');
 INSERT INTO `users_permission_definitions` VALUES ('clear_temp_files');
+INSERT INTO `users_permission_definitions` VALUES ('dashboards');
 INSERT INTO `users_permission_definitions` VALUES ('documents');
 INSERT INTO `users_permission_definitions` VALUES ('document_style_editor');
 INSERT INTO `users_permission_definitions` VALUES ('document_types');

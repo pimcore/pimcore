@@ -158,6 +158,7 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
             array("key" => "emails"),
             array("key" => "website_settings"),
             array("key" => "newsletter"),
+            array("key" => "dashboards"),
         );
         foreach ($userPermissions as $up) {
             $this->db->insert("users_permission_definitions", $up);
