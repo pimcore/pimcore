@@ -583,6 +583,8 @@ class Asset extends Element_Abstract {
             }
         }
 
+        $typeChanged = false;
+
         if ($this->getType() != "folder") {
             if($this->getDataChanged()) {
                 $src = $this->getStream();
@@ -612,7 +614,6 @@ class Asset extends Element_Abstract {
                 $this->setMimetype($mimetype);
 
                 // set type
-                $typeChanged = false;
                 $type = self::getTypeFromMimeMapping($mimetype, $this->getFilename());
                 if($type != $this->getType()) {
                     $this->setType($type);
