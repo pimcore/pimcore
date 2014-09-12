@@ -44,6 +44,9 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
 
     openEditor: function () {
 
+        // disable the global dnd handler in this editmode/frame
+        window.dndManager.disable();
+
         this.window = pimcore.helpers.editmode.openVideoEditPanel(this.data, {
             save: this.save.bind(this),
             cancel: this.cancel.bind(this)
@@ -51,6 +54,9 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
     },
 
     save: function () {
+
+        // enable the global dnd dropzone again
+        window.dndManager.enable();
 
         // close window
         this.window.hide();
@@ -64,6 +70,10 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
     },
 
     cancel: function () {
+
+        // enable the global dnd dropzone again
+        window.dndManager.enable();
+
         this.window.hide();
     },
 
