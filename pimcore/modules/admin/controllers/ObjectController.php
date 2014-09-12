@@ -369,7 +369,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
             //Hook for modifying return value - e.g. for changing permissions based on object data
             //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
             $returnValueContainer = new Tool_Admin_EventDataContainer($objectData);
-            Pimcore::getEventManager()->trigger("admin.object.get.preSendData", $this, array("returnValueContainer" => $returnValueContainer));
+            Pimcore::getEventManager()->trigger("admin.object.get.preSendData", $this, [
+                "object" => $object,
+                "returnValueContainer" => $returnValueContainer
+            ]);
 
             $this->_helper->json($returnValueContainer->getData());
         } else {
