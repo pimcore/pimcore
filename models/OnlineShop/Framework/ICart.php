@@ -69,6 +69,15 @@ interface OnlineShop_Framework_ICart {
     public function updateItem($itemKey, OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
     /**
+     * updates count of specific cart item
+     *
+     * @param $itemKey
+     * @param $count
+     * @return mixed
+     */
+    public function updateItemCount($itemKey, $count);
+
+    /**
      * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      * @param int $count
      * @param null $itemKey

@@ -196,6 +196,19 @@ abstract class OnlineShop_Framework_AbstractCart extends Pimcore_Model_Abstract 
 
 
     /**
+     * updates count of specific cart item
+     *
+     * @param $itemKey
+     * @param $count
+     */
+    public function updateItemCount($itemKey, $count) {
+        if($this->items[$itemKey]) {
+            $this->items[$itemKey]->setCount($count);
+        }
+        return $this->items[$itemKey];
+    }
+
+    /**
      * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      * @param int                                  $count
      * @param null                                 $itemKey
