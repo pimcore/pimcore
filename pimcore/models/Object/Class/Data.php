@@ -176,13 +176,24 @@ abstract class Object_Class_Data
      * @param boolean $omitMandatoryCheck
      * @throws Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
-    {
+    public function checkValidity($data, $omitMandatoryCheck = false) {
 
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new Exception("Empty mandatory field [ " . $this->getName() . " ]");
+        $isEmpty = true;
+
+        // this is to do not treated "0" as empty
+        if(is_string($data) || is_numeric($data)) {
+            if(strlen($data) > 0) {
+                $isEmpty = false;
+            }
         }
 
+        if(!empty($data)) {
+            $isEmpty = false;
+        }
+
+        if (!$omitMandatoryCheck && $this->getMandatory() && $isEmpty) {
+            throw new Exception("Empty mandatory field [ " . $this->getName() . " ]");
+        }
     }
 
     /**
