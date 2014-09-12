@@ -536,6 +536,7 @@ class Object_Concrete extends Object_Abstract {
                 throw new Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "', it's only allowed for the following fieldtypes: " . implode(",",$allowedDataTypes));
             }
 
+            $arguments = array_pad($arguments, 3, 0);
             list($value, $limit, $offset) = $arguments;
 
             $defaultCondition = $propertyName . " = " . Pimcore_Resource::get()->quote($value) . " ";
@@ -543,21 +544,21 @@ class Object_Concrete extends Object_Abstract {
                 "condition" => $defaultCondition
             );
 
-            if(!is_array($arguments[1])){
+            if(!is_array($limit)){
                 if($limit) {
                     $listConfig["limit"] = $limit;
                 }
                 if($offset) {
                     $listConfig["offset"] = $offset;
                 }
-            }else{
-                $listConfig = array_merge($listConfig,$arguments[1]);
-                $listConfig['condition'] = $defaultCondition . $arguments[1]['condition'];
+            } else {
+                $listConfig = array_merge($listConfig,$limit);
+                $listConfig['condition'] = $defaultCondition . $limit['condition'];
             }
 
             $list = static::getList($listConfig);
 
-            if($listConfig['limit'] == 1) {
+            if(isset($listConfig['limit']) && $listConfig['limit'] == 1) {
                 $elements = $list->getObjects();
                 return $elements[0];
             }
