@@ -416,4 +416,13 @@ class Asset_Image_Thumbnail {
     public static function isPictureElementInUse() {
         return self::$pictureElementInUse;
     }
+
+    /**
+     * Enables, when set to true, dispatchLoopShutdown of Pimcore_Controller_Plugin_Thumbnail
+     * @param bool $flag
+     * @return void
+     */
+    public static function setPictureElementInUse($flag) {
+    	self::$pictureElementInUse = (bool) $flag;
+    }
 }
