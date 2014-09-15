@@ -645,7 +645,7 @@ class Object_Service extends Element_Service {
              * @var Object_Class_Data_Select $definition
              */
             $definition = $class->getFielddefinition($fieldname);
-            if($definition instanceof Object_Class_Data_Select) {
+            if($definition instanceof Object_Class_Data_Select || $definition instanceof Object_Class_Data_Multiselect) {
                 $_options = $definition->getOptions();
 
                 foreach($_options as $option) {
@@ -655,6 +655,16 @@ class Object_Service extends Element_Service {
         }
 
         return $options;
+    }
+
+    /**
+     * alias of getOptionsForMultiSelectField
+     * @param $object
+     * @param $fieldname
+     * @return array
+     */
+    public static function getOptionsForMultiSelectField($object, $fieldname) {
+        return self::getOptionsForSelectField($object, $fieldname);
     }
 
     /**
