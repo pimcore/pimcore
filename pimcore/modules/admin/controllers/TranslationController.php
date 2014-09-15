@@ -427,27 +427,38 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
 
             // elements
             if($element instanceof Document) {
-                if(method_exists($element, "getElements")) {
-                    foreach ($element->getElements() as $tag) {
+                $elements = [];
 
-                        if(in_array($tag->getType(), array("wysiwyg", "input", "textarea", "image"))) {
+                $doc = $element;
 
-                            if($tag->getType() == "image") {
-                                $content = $tag->getText();
-                            } else {
-                                $content = $tag->getData();
-                            }
+                // get also content of inherited document elements
+                while($doc) {
+                    if(method_exists($doc, "getElements")) {
+                        $elements = array_merge($elements, $doc->getElements());
+                    }
+                    $doc = $doc->getContentMasterDocument();
+                }
 
-                            if(is_string($content)) {
-                                $contentCheck = trim(strip_tags($content));
-                                if(!empty($contentCheck)) {
-                                    $this->addTransUnitNode($body, "tag~-~" . $tag->getName(), $content, $source);
-                                    $addedElements = true;
-                                }
+                foreach ($elements as $tag) {
+
+                    if(in_array($tag->getType(), array("wysiwyg", "input", "textarea", "image"))) {
+
+                        if($tag->getType() == "image") {
+                            $content = $tag->getText();
+                        } else {
+                            $content = $tag->getData();
+                        }
+
+                        if(is_string($content)) {
+                            $contentCheck = trim(strip_tags($content));
+                            if(!empty($contentCheck)) {
+                                $this->addTransUnitNode($body, "tag~-~" . $tag->getName(), $content, $source);
+                                $addedElements = true;
                             }
                         }
                     }
                 }
+
 
                 if($element instanceof Document_Page) {
                     $data = array(
