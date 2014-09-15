@@ -62,6 +62,8 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
         });
 
         this.valueGrid = new Ext.grid.EditorGridPanel({
+            enableDragDrop: true,
+            ddGroup: 'objectclassmultiselect',
             tbar: [{
                 xtype: "tbtext",
                 text: t("selection_options")
@@ -82,9 +84,9 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             selModel:new Ext.grid.RowSelectionModel({singleSelect:true}),
             columnLines: true,
             columns: [
-                {header: t("display_name"), sortable: false, dataIndex: 'key', editor: new Ext.form.TextField({}),
+                {header: t("display_name"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
                                                     width: 200},
-                {header: t("value"), sortable: false, dataIndex: 'value', editor: new Ext.form.TextField({}),
+                {header: t("value"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
                                                     width: 200},
                 {
                     xtype:'actioncolumn',
@@ -136,6 +138,35 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             ],
             autoHeight: true
         });
+
+        this.valueGrid.on("afterrender", function () {
+
+            var dropTargetEl = this.valueGrid.getEl();
+            var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
+                ddGroup    : 'objectclassmultiselect',
+                getTargetFromEvent: function(e) {
+                    return this.valueGrid.getEl().dom;
+                }.bind(this),
+                onNodeOver: function (overHtmlNode, ddSource, e, data) {
+                    if(data["grid"] && data["grid"] == this.valueGrid) {
+                        return Ext.dd.DropZone.prototype.dropAllowed;
+                    }
+                    return Ext.dd.DropZone.prototype.dropNotAllowed;
+                }.bind(this),
+                onNodeDrop : function(target, dd, e, data) {
+                    if(data["grid"] && data["grid"] == this.valueGrid) {
+                        var rowIndex = this.valueGrid.getView().findRowIndex(e.target);
+                        if(rowIndex !== false) {
+                            var store = this.valueGrid.getStore();
+                            var rec = store.getAt(data.rowIndex);
+                            store.removeAt(data.rowIndex);
+                            store.insert(rowIndex, [rec]);
+                        }
+                    }
+                    return false;
+                }.bind(this)
+            });
+        }.bind(this));
 
         $super();
 
