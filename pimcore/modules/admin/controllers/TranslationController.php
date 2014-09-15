@@ -436,7 +436,12 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                     if(method_exists($doc, "getElements")) {
                         $elements = array_merge($elements, $doc->getElements());
                     }
-                    $doc = $doc->getContentMasterDocument();
+
+                    if(method_exists($doc, "getContentMasterDocument")) {
+                        $doc = $doc->getContentMasterDocument();
+                    } else {
+                        $doc = null;
+                    }
                 }
 
                 foreach ($elements as $tag) {
