@@ -129,10 +129,10 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         }
 
         header('Content-Encoding: UTF-8');
-		header('Content-type: text/csv; charset=UTF-8');
+	header('Content-type: text/csv; charset=UTF-8');
         header("Content-Disposition: attachment; filename=\"export.csv\"");
         ini_set('display_errors',false); //to prevent warning messages in csv
-		echo "\xEF\xBB\xBF"; // UTF-8 BOM
+	echo "\xEF\xBB\xBF"; // UTF-8 BOM
         echo $csv;
         die();
     }
