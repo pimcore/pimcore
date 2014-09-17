@@ -651,6 +651,42 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
+    itemTrim: function (panel, data, getName) {
+
+        var niceName = t("trim") + " (Imagick)";
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'spinnerfield',
+                name: "tolerance",
+                minValue: 0,
+                maxValue: 100,
+                fieldLabel: t("tolerance"),
+                width: 60,
+                value: data.tolerance ? data.tolerance : 0
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "trim"
+            }]
+        });
+
+        return item;
+    },
+
     itemRotate: function (panel, data, getName) {
 
         var niceName = t("rotate");

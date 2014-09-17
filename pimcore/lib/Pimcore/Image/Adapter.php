@@ -237,6 +237,15 @@ abstract class Pimcore_Image_Adapter {
     }
 
     /**
+     * @param  int $tolerance
+     * @return Pimcore_Image_Adapter
+     */
+    public function trim ($tolerance) {
+
+        return $this;
+    }
+
+    /**
      * @param  $angle
      * @param bool $autoResize
      * @param string $color

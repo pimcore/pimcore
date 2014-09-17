@@ -25,6 +25,7 @@ class Asset_Image_Thumbnail_Processor {
         "contain" => array("width","height"),
         "cover" => array("width","height","positioning","doNotScaleUp"),
         "frame" => array("width","height"),
+        "trim" => array("tolerance"),
         "rotate" => array("angle"),
         "crop" => array("x","y","width","height"),
         "setBackgroundColor" => array("color"),

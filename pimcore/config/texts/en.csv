@@ -487,6 +487,8 @@
 "radius","Radius"
 "sigma","Sigma"
 "threshold","Threshold"
+"trim","Trim"
+"tolerance","Tolerance"
 "grayscale","Grayscale"
 "nothing_to_configure", "Nothing to configure"
 "enter_the_name_of_the_new_thumbnail","Enter the name for the new thumbnail:"

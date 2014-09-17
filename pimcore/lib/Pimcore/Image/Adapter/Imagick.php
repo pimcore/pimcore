@@ -389,6 +389,21 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     }
 
     /**
+     * @param  $tolerance
+     * @return Pimcore_Image_Adapter_Imagick
+     */
+    public function trim ($tolerance) {
+
+        $this->preModify();
+
+        $this->resource->trimimage($tolerance);
+
+        $this->postModify();
+
+        return $this;
+    }
+
+    /**
      * @param  $color
      * @return Pimcore_Image_Adapter
      */
