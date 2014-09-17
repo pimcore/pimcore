@@ -229,7 +229,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $draw = new ImagickDraw();
         $draw->setFillColor("#ff0000");
         $draw->setfillopacity(.01);
-        $draw->point($this->getWidth()-1,$this->getHeight()-1); // place it in the right bottom corner
+        $draw->point(floor($this->getWidth()/2),floor($this->getHeight()/2)); // place it in the middle of the image
         $this->resource->drawImage($draw);
 
         return $this;
