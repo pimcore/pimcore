@@ -128,7 +128,7 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
             $csv .= implode(";", $tempRow) . "\r\n";
         }
 
-        header("Content-type: text/csv");
+        header('Content-type: text/csv; charset=UTF-8');
         header("Content-Disposition: attachment; filename=\"export.csv\"");
         ini_set('display_errors',false); //to prevent warning messages in csv
         echo $csv;
