@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -12,7 +12,7 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
+
 class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
 
@@ -79,6 +79,11 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
             $this->resource = $i; // this is because of HHVM which has problems with $this->resource->readImage();
 
+            // set dimensions
+            $dimensions = $this->getDimensions();
+            $this->setWidth($dimensions["width"]);
+            $this->setHeight($dimensions["height"]);
+
             $this->setColorspaceToRGB();
 
         } catch (Exception $e) {
@@ -87,10 +92,6 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             return false;
         }
 
-        // set dimensions
-        $dimensions = $this->getDimensions();
-        $this->setWidth($dimensions["width"]);
-        $this->setHeight($dimensions["height"]);
 
         $this->setModified(false);
 
@@ -398,6 +399,10 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         $this->resource->trimimage($tolerance);
 
+        $dimensions = $this->getDimensions();
+        $this->setWidth($dimensions['width']);
+        $this->setHeight($dimensions['height']);
+
         $this->postModify();
 
         return $this;
@@ -536,7 +541,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 $y = round($this->resource->getImageHeight() / 2) -round($newImage->getImageHeight() / 2) + $y;
             }
 
-            $newImage->evaluateImage(Imagick::EVALUATE_MULTIPLY, $alpha, Imagick::CHANNEL_ALPHA); 
+            $newImage->evaluateImage(Imagick::EVALUATE_MULTIPLY, $alpha, Imagick::CHANNEL_ALPHA);
             $this->resource->compositeImage($newImage, constant("Imagick::" . $composite), $x ,$y);
         }
 
