@@ -3526,6 +3526,7 @@ INSERT INTO `users_permission_definitions` VALUES ('tag_snippet_management');
 INSERT INTO `users_permission_definitions` VALUES ('targeting');
 INSERT INTO `users_permission_definitions` VALUES ('thumbnails');
 INSERT INTO `users_permission_definitions` VALUES ('translations');
+INSERT INTO `users_permission_definitions` VALUES ('users');
 INSERT INTO `users_permission_definitions` VALUES ('website_settings');
 
 

@@ -1465,7 +1465,7 @@ pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
 
 pimcore.helpers.showUser = function(specificUser) {
     var user = pimcore.globalmanager.get("user");
-    if (user.admin) {
+    if (user.isAllowed("users")) {
         var panel = null;
         try {
             panel = pimcore.globalmanager.get("users");

@@ -183,66 +183,70 @@ pimcore.settings.user.user.settings = Class.create({
 
 
         var adminItems = [];
-        adminItems.push({
-            xtype:"checkbox",
-            fieldLabel:t("admin"),
-            name:"admin",
-            disabled:user.id == this.currentUser.id,
-            checked:this.currentUser.admin,
-            handler:function (box, checked) {
-                if (checked == true) {
-                    this.roleField.hide();
-                    this.typesSet.hide();
-                    this.permissionsSet.hide();
-                    this.userPanel.workspaces.disable();
-                } else {
-                    this.roleField.show();
-                    this.typesSet.show();
-                    this.permissionsSet.show();
-                    this.userPanel.workspaces.enable();
-                }
-            }.bind(this)
-        });
 
-        adminItems.push({
-            xtype:"displayfield",
-            hideLabel:true,
-            width:600,
-            value:t("user_admin_description"),
-            cls:"pimcore_extra_label_bottom"
-        });
-
-        this.apiKeyField = new Ext.form.TextField({
-            xtype: "textfield",
-            fieldLabel:t("apikey"),
-            name:"apiKey",
-            style: "font-family: courier;",
-            value:this.currentUser.apiKey,
-            width: 460
-        });
-
-        this.apiKeyFieldContainer = new Ext.form.CompositeField({
-            items: [this.apiKeyField, {
-                xtype: "button",
-                test: t("Generate"),
-                iconCls: "pimcore_icon_menu_clear_cache",
-                handler: function (e) {
-                    this.apiKeyField.setValue(md5(uniqid()) + md5(uniqid()));
+        if(user.admin) {
+            // only admins are allowed to create new admin users and to manage API related settings
+            adminItems.push({
+                xtype: "checkbox",
+                fieldLabel: t("admin"),
+                name: "admin",
+                disabled: user.id == this.currentUser.id,
+                checked: this.currentUser.admin,
+                handler: function (box, checked) {
+                    if (checked == true) {
+                        this.roleField.hide();
+                        this.typesSet.hide();
+                        this.permissionsSet.hide();
+                        this.userPanel.workspaces.disable();
+                    } else {
+                        this.roleField.show();
+                        this.typesSet.show();
+                        this.permissionsSet.show();
+                        this.userPanel.workspaces.enable();
+                    }
                 }.bind(this)
-            }],
-            hidden: !this.wsenabled
-        });
+            });
 
-        this.apiKeyDescription = new Ext.form.DisplayField({
-            hideLabel:true,
-            width:600,
-            value:t("user_apikey_description"),
-            cls:"pimcore_extra_label_bottom",
-            hidden: !this.wsenabled
-        });
+            adminItems.push({
+                xtype: "displayfield",
+                hideLabel: true,
+                width: 600,
+                value: t("user_admin_description"),
+                cls: "pimcore_extra_label_bottom"
+            });
 
-        adminItems.push(this.apiKeyFieldContainer);
-        adminItems.push(this.apiKeyDescription);
+            this.apiKeyField = new Ext.form.TextField({
+                xtype: "textfield",
+                fieldLabel: t("apikey"),
+                name: "apiKey",
+                style: "font-family: courier;",
+                value: this.currentUser.apiKey,
+                width: 460
+            });
+
+            this.apiKeyFieldContainer = new Ext.form.CompositeField({
+                items: [this.apiKeyField, {
+                    xtype: "button",
+                    test: t("Generate"),
+                    iconCls: "pimcore_icon_menu_clear_cache",
+                    handler: function (e) {
+                        this.apiKeyField.setValue(md5(uniqid()) + md5(uniqid()));
+                    }.bind(this)
+                }],
+                hidden: !this.wsenabled
+            });
+
+            this.apiKeyDescription = new Ext.form.DisplayField({
+                hideLabel: true,
+                width: 600,
+                value: t("user_apikey_description"),
+                cls: "pimcore_extra_label_bottom",
+                hidden: !this.wsenabled
+            });
+
+            adminItems.push(this.apiKeyFieldContainer);
+            adminItems.push(this.apiKeyDescription);
+        }
 
         adminItems.push({
             xtype: "button",
@@ -268,8 +272,7 @@ pimcore.settings.user.user.settings = Class.create({
 
         this.adminSet = new Ext.form.FieldSet({
             title:t("admin"),
-            items:[adminItems],
-            hidden: !user.admin
+            items:[adminItems]
         });
 
 

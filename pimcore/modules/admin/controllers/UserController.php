@@ -49,6 +49,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             "id" => $user->getId(),
             "text" => $user->getName(),
             "elementType" => "user",
+            "type" => $user->getType(),
             "qtipCfg" => array(
                 "title" => "ID: " . $user->getId()
             )
@@ -69,6 +70,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             $tmpUser["leaf"] = true;
             $tmpUser["iconCls"] = "pimcore_icon_user";
             $tmpUser["allowChildren"] = false;
+            $tmpUser["admin"] = $user->isAdmin();
 
         }
 
@@ -128,7 +130,10 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                         $user->setPermissions($rObject->getPermissions());
 
                         if ($type == "user") {
-                            $user->setAdmin($rObject->getAdmin());
+                            $user->setAdmin(false);
+                            if($this->getUser()->isAdmin()) {
+                                $user->setAdmin($rObject->getAdmin());
+                            }
                             $user->setActive($rObject->getActive());
                             $user->setRoles($rObject->getRoles());
                             $user->setWelcomeScreen($rObject->getWelcomescreen());
@@ -153,7 +158,14 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
     public function deleteAction() {
         $user = User_Abstract::getById(intval($this->getParam("id")));
-        $user->delete();
+
+        // only admins are allowed to delete admins and folders
+        // because a folder might conain an admin user, so it's stimply not allowed for users with the "users" permission
+        if(($user instanceof User_Folder && !$this->getUser()->isAdmin()) || ($user instanceof User && $user->isAdmin() && !$this->getUser()->isAdmin())) {
+            throw new \Exception("You are not allowed to delete this user");
+        } else {
+            $user->delete();
+        }
 
         $this->_helper->json(array("success" => true));
     }
@@ -163,6 +175,10 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $this->protectCSRF();
 
         $user = User_Abstract::getById(intval($this->getParam("id")));
+
+        if($user->isAdmin() && !$this->getUser()->isAdmin()) {
+            throw new \Exception("Only admin users are allowed to modify admin users");
+        }
 
         if($this->getParam("data")) {
             $values = Zend_Json::decode($this->getParam("data"));
@@ -175,6 +191,12 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                 $user->setAllAclToFalse();
             }
             $user->setValues($values);
+
+            // only admins are allowed to create admin users
+            // if the logged in user isn't an admin, set admin always to false
+            if(!$this->getUser()->isAdmin()) {
+                $user->setAdmin(false);
+            }
 
             // check for permissions
             $availableUserPermissionsList = new User_Permission_Definition_List();
@@ -224,6 +246,10 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         }
 
         $user = User::getById(intval($this->getParam("id")));
+
+        if($user->isAdmin() && !$this->getUser()->isAdmin()) {
+            throw new \Exception("Only admin users are allowed to modify admin users");
+        }
 
         // workspaces
         $types = array("asset","document","object");
@@ -489,6 +515,11 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         }
 
         $userObj = User::getById($id);
+
+        if($userObj->isAdmin() && !$this->getUser()->isAdmin()) {
+            throw new \Exception("Only admin users are allowed to modify admin users");
+        }
+
         $userObj->setImage($_FILES["Filedata"]["tmp_name"]);
 
 
@@ -524,18 +555,21 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     }
 
     public function getTokenLoginLinkAction() {
-        if($this->getUser()->isAdmin()) {
 
-            $user = User::getById($this->getParam("id"));
-            if($user) {
-                $token = Pimcore_Tool_Authentication::generateToken($user->getName(), $user->getPassword());
-                $r = $this->getRequest();
-                $link = $r->getScheme() . "://" . $r->getHttpHost() . "/admin/login/login/?username=" . $user->getName() . "&token=" . $token;
+        $user = User::getById($this->getParam("id"));
 
-                $this->_helper->json(array(
-                    "link" => $link
-                ));
-            }
+        if($user->isAdmin() && !$this->getUser()->isAdmin()) {
+            throw new \Exception("Only admin users are allowed to login as an admin user");
+        }
+
+        if($user) {
+            $token = Pimcore_Tool_Authentication::generateToken($user->getName(), $user->getPassword());
+            $r = $this->getRequest();
+            $link = $r->getScheme() . "://" . $r->getHttpHost() . "/admin/login/login/?username=" . $user->getName() . "&token=" . $token;
+
+            $this->_helper->json(array(
+                "link" => $link
+            ));
         }
     }
 

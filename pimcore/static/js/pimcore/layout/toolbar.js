@@ -533,7 +533,7 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        if (user.admin) {
+        if (user.isAllowed("users")) {
             settingsItems.push({
                 text: t("users") + " / " + t("roles"),
                 iconCls: "pimcore_icon_users",
@@ -553,7 +553,7 @@ pimcore.layout.toolbar = Class.create({
             });
         } else {
             settingsItems.push({
-                text: t("profile"),
+                text: t("my_profile"),
                 iconCls: "pimcore_icon_users",
                 handler: this.editProfile
             });
@@ -754,10 +754,12 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        this.searchMenu = new Ext.menu.Menu({
-            items: searchItems,
-            cls: "pimcore_navigation_flyout"
-        });
+        if (searchItems.length > 0) {
+            this.searchMenu = new Ext.menu.Menu({
+                items: searchItems,
+                cls: "pimcore_navigation_flyout"
+            });
+        }
 
 
         Ext.get("pimcore_menu_file").on("mousedown", this.showSubMenu.bind(this.fileMenu));
