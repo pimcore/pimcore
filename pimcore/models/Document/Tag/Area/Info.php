@@ -18,6 +18,11 @@
 class Document_Tag_Area_Info {
 
     /**
+     * @var Document_Tag
+     */
+    public $tag;
+
+    /**
      * @var string
      */
     public $name;
@@ -125,6 +130,22 @@ class Document_Tag_Area_Info {
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return Document_Tag
+     */
+    public function getTag()
+    {
+        return $this->tag;
+    }
+
+    /**
+     * @param Document_Tag $tag
+     */
+    public function setTag($tag)
+    {
+        $this->tag = $tag;
     }
 }
     

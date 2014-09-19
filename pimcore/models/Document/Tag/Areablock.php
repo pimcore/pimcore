@@ -160,6 +160,7 @@ class Document_Tag_Areablock extends Document_Tag {
         $info = null;
         try {
             $info = new Document_Tag_Area_Info();
+            $info->setTag($this);
             $info->setName($this->getName());
             $info->setId($this->currentIndex["type"]);
             $info->setIndex($this->current);
