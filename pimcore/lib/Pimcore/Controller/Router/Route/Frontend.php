@@ -134,9 +134,8 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         // this is after the first redirect check, to allow redirects in index.php?xxx
         if(preg_match("@^/index.php(.*)@", $_SERVER["REQUEST_URI"], $matches) && strtolower($_SERVER["REQUEST_METHOD"]) == "get") {
             $redirectUrl = $matches[1];
-            if(empty($redirectUrl)) {
-                $redirectUrl = "/";
-            }
+            $redirectUrl = ltrim($redirectUrl, "/");
+            $redirectUrl = "/" . $redirectUrl;
             header("Location: " . $redirectUrl, true, 301);
             exit;
         }
