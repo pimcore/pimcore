@@ -52,7 +52,7 @@ class Asset_Image extends Asset {
 
         parent::update();
 
-       $this->clearThumbnails();
+        $this->clearThumbnails();
 
         // now directly create "system" thumbnails (eg. for the tree, ...)
         if($this->getDataChanged()) {
