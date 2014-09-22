@@ -288,6 +288,9 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
 
     public function setVideoBitrate($videoBitrate) {
         $videoBitrate = intval($videoBitrate);
+
+        $videoBitrate = ceil($videoBitrate/2) * 2;
+
         parent::setVideoBitrate($videoBitrate);
 
         if($videoBitrate) {
@@ -298,6 +301,9 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
 
     public function setAudioBitrate($audioBitrate) {
         $audioBitrate = intval($audioBitrate);
+
+        $audioBitrate = ceil($audioBitrate/2) * 2;
+
         parent::setAudioBitrate($audioBitrate);
 
         if($audioBitrate) {
