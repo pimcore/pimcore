@@ -36,7 +36,8 @@ class Asset_Image_Thumbnail_Processor {
         "cropPercent" => array("width","height","x","y"),
         "grayscale" => array(),
         "sepia" => array(),
-        "sharpen" => array('radius', 'sigma', 'amount', 'threshold')
+        "sharpen" => array('radius', 'sigma', 'amount', 'threshold'),
+        "mirror" => array("mode")
     );
 
     /**
@@ -169,6 +170,56 @@ class Asset_Image_Thumbnail_Processor {
         $startTime = Pimcore_Tool_StopWatch::microtime_float();
 
         $transformations = $config->getItems();
+
+        // check if the original image has an orientation exif flag
+        // if so add a transformation at the beginning that rotates and/or mirrors the image
+        if (function_exists("exif_read_data")) {
+            $exif = @exif_read_data($fileSystemPath);
+            if (is_array($exif)) {
+                if(array_key_exists("Orientation", $exif)) {
+                    $orientation = intval($exif["Orientation"]);
+
+                    if($orientation > 1) {
+                        $angleMappings = [
+                            2 => 180,
+                            3 => 180,
+                            4 => 180,
+                            5 => 90,
+                            6 => 90,
+                            7 => 90,
+                            8 => 270,
+                        ];
+
+                        if(array_key_exists($orientation, $angleMappings)) {
+                            array_unshift($transformations, [
+                                "method" => "rotate",
+                                "arguments" => [
+                                    "angle" => $angleMappings[$orientation]
+                                ]
+                            ]);
+                        }
+
+                        // values that have to be mirrored, this is not very common, but should be covered anyway
+                        $mirrorMappings = [
+                            2 => "vertical",
+                            4 => "horizontal",
+                            5 => "vertical",
+                            7 => "horizontal"
+                        ];
+
+                        if(array_key_exists($orientation, $mirrorMappings)) {
+                            array_unshift($transformations, [
+                                "method" => "mirror",
+                                "arguments" => [
+                                    "mode" => $mirrorMappings[$orientation]
+                                ]
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
+
         if(is_array($transformations) && count($transformations) > 0) {
             foreach ($transformations as $transformation) {
                 if(!empty($transformation)) {

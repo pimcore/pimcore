@@ -326,4 +326,45 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
 
         return $this;
     }
+
+    /**
+     * @param string $mode
+     * @return $this|Pimcore_Image_Adapter
+     */
+    public function mirror($mode) {
+
+        $this->preModify();
+
+        if($mode == "vertical") {
+            imageflip($this->resource, IMG_FLIP_VERTICAL);
+        } else if ($mode == "horizontal") {
+            imageflip($this->resource, IMG_FLIP_HORIZONTAL);
+        }
+
+        $this->postModify();
+
+        return $this;
+    }
+
+    /**
+     * @param  $angle
+     * @param bool $autoResize
+     * @param string $color
+     * @return Pimcore_Image_Adapter_Imagick
+     */
+    public function rotate ($angle) {
+
+        $this->preModify();
+        $angle = 360 - $angle;
+        $this->resource = imagerotate($this->resource, $angle, imageColorAllocateAlpha($this->resource, 0, 0, 0, 127));
+
+        $this->setWidth(imagesx($this->resource));
+        $this->setHeight(imagesy($this->resource));
+
+        $this->postModify();
+
+        $this->setIsAlphaPossible(true);
+
+        return $this;
+    }
 }

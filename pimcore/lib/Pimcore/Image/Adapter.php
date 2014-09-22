@@ -375,6 +375,14 @@ abstract class Pimcore_Image_Adapter {
     }
 
     /**
+     * @return Pimcore_Image_Adapter
+     */
+    public function mirror () {
+
+        return $this;
+    }
+
+    /**
      * @abstract
      * @param  $imagePath
      * @return Pimcore_Image_Adapter

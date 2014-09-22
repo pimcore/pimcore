@@ -644,6 +644,25 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         return $this;
     }
 
+    /**
+     * @param string $mode
+     * @return $this|Pimcore_Image_Adapter
+     */
+    public function mirror($mode) {
+
+        $this->preModify();
+
+        if($mode == "vertical") {
+            $this->resource->flipImage();
+        } else if ($mode == "horizontal") {
+            $this->resource->flopImage();
+        }
+
+        $this->postModify();
+
+        return $this;
+    }
+
     public function isVectorGraphic ($imagePath = null) {
 
         if($imagePath) {
