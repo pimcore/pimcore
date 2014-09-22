@@ -32,9 +32,9 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
     protected $_relation;
 
     /**
-     * @var Document
+     * @var int
      */
-    protected $_document;
+    protected $_documentId;
 
 
     /**
@@ -96,7 +96,9 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
      */
     public function setDocument($document)
     {
-        $this->_document = $document;
+        if($document instanceof Document) {
+            $this->setDocumentId($document->getId());
+        }
         return $this;
     }
 
@@ -105,6 +107,27 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
      */
     public function getDocument()
     {
-        return $this->_document;
+        $docId = $this->getDocumentId();
+        if($docId) {
+            return Document::getById($docId);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDocumentId()
+    {
+        return $this->_documentId;
+    }
+
+    /**
+     * @param int $documentId
+     */
+    public function setDocumentId($documentId)
+    {
+        $this->_documentId = $documentId;
     }
 }
