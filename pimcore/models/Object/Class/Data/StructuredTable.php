@@ -505,6 +505,9 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
     public function isEmpty($data) {
         if($data instanceof Object_Data_StructuredTable) {
             return $data->isEmpty();
+        } else if(Pimcore::inAdmin()) {
+            //this is necessary because in editmode the data is not instanceof Object_Data_StructuredTable but an array
+            return empty($data);
         } else {
             return true;
         }
