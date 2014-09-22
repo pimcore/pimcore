@@ -84,6 +84,14 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $this->setWidth($dimensions["width"]);
             $this->setHeight($dimensions["height"]);
 
+            // check if image can have alpha channel
+            if(!$this->reinitializing) {
+                $alphaChannel = $i->getImageAlphaChannel();
+                if($alphaChannel) {
+                    $this->setIsAlphaPossible(true);
+                }
+            }
+
             $this->setColorspaceToRGB();
 
         } catch (Exception $e) {
@@ -177,16 +185,18 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     protected function hasAlphaChannel() {
 
-        $width = $this->resource->getImageWidth(); // Get the width of the image
-        $height = $this->resource->getImageHeight(); // Get the height of the image
+        if($this->isAlphaPossible) {
+            $width = $this->resource->getImageWidth(); // Get the width of the image
+            $height = $this->resource->getImageHeight(); // Get the height of the image
 
-        // We run the image pixel by pixel and as soon as we find a transparent pixel we stop and return true.
-        for($i = 0; $i < $width; $i++) {
-            for($j = 0; $j < $height; $j++) {
-                $pixel = $this->resource->getImagePixelColor($i, $j);
-                $color = $pixel->getColor(true); // get the real alpha not just 1/0
-                if($color["a"] < 1) { // if there's an alpha pixel, return true
-                    return true;
+            // We run the image pixel by pixel and as soon as we find a transparent pixel we stop and return true.
+            for($i = 0; $i < $width; $i++) {
+                for($j = 0; $j < $height; $j++) {
+                    $pixel = $this->resource->getImagePixelColor($i, $j);
+                    $color = $pixel->getColor(true); // get the real alpha not just 1/0
+                    if($color["a"] < 1) { // if there's an alpha pixel, return true
+                        return true;
+                    }
                 }
             }
         }
@@ -386,6 +396,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         $this->postModify();
 
+        $this->setIsAlphaPossible(true);
+
         return $this;
     }
 
@@ -422,6 +434,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         $this->postModify();
 
+        $this->setIsAlphaPossible(false);
+
         return $this;
     }
 
@@ -454,6 +468,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         $this->postModify();
 
+        $this->setIsAlphaPossible(true);
+
         return $this;
     }
 
@@ -470,6 +486,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $this->resource->roundCorners($x, $y);
 
         $this->postModify();
+
+        $this->setIsAlphaPossible(true);
 
         return $this;
     }
@@ -570,6 +588,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         }
 
         $this->postModify();
+
+        $this->setIsAlphaPossible(true);
 
         return $this;
     }

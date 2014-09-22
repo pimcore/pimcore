@@ -46,6 +46,11 @@ abstract class Pimcore_Image_Adapter {
     protected $modified = false;
 
     /**
+     * @var bool
+     */
+    protected $isAlphaPossible = false;
+
+    /**
      * @param int $height
      */
     public function setHeight($height)
@@ -492,5 +497,12 @@ abstract class Pimcore_Image_Adapter {
     public function getModified()
     {
         return $this->modified;
+    }
+
+    /**
+     * @param bool $value
+     */
+    public function setIsAlphaPossible($value) {
+        $this->isAlphaPossible = $value;
     }
 }

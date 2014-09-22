@@ -165,6 +165,9 @@ class Asset_Image_Thumbnail_Processor {
 
         $image->setUseContentOptimizedFormat($contentOptimizedFormat);
 
+
+        $startTime = Pimcore_Tool_StopWatch::microtime_float();
+
         $transformations = $config->getItems();
         if(is_array($transformations) && count($transformations) > 0) {
             foreach ($transformations as $transformation) {
@@ -202,6 +205,8 @@ class Asset_Image_Thumbnail_Processor {
         }
 
         clearstatcache();
+
+        Logger::debug("Thumbnail " . $path . " generated in " . (Pimcore_Tool_StopWatch::microtime_float() - $startTime) . " seconds");
 
         // quick bugfix / workaround, it seems that imagemagick / image optimizers creates sometimes empty PNG chunks (total size 33 bytes)
         // no clue why it does so as this is not continuous reproducible, and this is the only fix we can do for now
