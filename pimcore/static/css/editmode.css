@@ -50,6 +50,10 @@
 
 /* pimcore editables */
 
+.pimcore_tag_image .x-panel-body {
+    overflow: hidden;
+}
+
 .pimcore_tag_image_alt {
 	position: absolute;
 	bottom: 0;
