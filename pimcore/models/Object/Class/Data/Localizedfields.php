@@ -156,7 +156,6 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                     // still some values are passing, ask the parent
                     $parentData = $parent->getLocalizedFields();
                     $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
-                    Logger::debug("merge results");
                 }
             }
         }
