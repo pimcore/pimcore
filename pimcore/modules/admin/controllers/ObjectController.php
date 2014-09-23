@@ -477,7 +477,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
                 $this->objectData[$key] = $value;
                 $this->metaData[$key]['inherited'] = $isInheritedValue;
 
-                if ($isInheritedValue && !$fielddefinition->isEmpty($value) && !$this->isInheritableField($fielddefinition)) {
+                if ($isInheritedValue && !$fielddefinition->isEmpty($fieldData) && !$this->isInheritableField($fielddefinition)) {
                     $this->objectData[$key] = null;
                     $this->metaData[$key]['inherited'] = false;
                     $this->metaData[$key]['hasParentValue'] = true;

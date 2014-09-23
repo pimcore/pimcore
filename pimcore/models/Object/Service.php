@@ -313,7 +313,7 @@ class Object_Service extends Element_Service {
                             $data[$dataKey] = $object->$getter();
                         } else {
 
-                            $valueObject = self::getValueForObject($object, $getter, $brickType, $brickGetter);
+                            $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey);
                             $data['inheritedFields'][$dataKey] = array("inherited" => $valueObject->objectid != $object->getId(), "objectid" => $valueObject->objectid);
 
                             if(method_exists($def, "getDataForGrid")) {
@@ -443,21 +443,28 @@ class Object_Service extends Element_Service {
      * @static
      * @return stdclass, value and objectid where the value comes from
      */
-    private static function getValueForObject($object, $getter, $brickType = null, $brickGetter = null) {
+    private static function getValueForObject($object, $key, $brickType = null, $brickKey = null) {
+        $getter = "get".ucfirst($key);
         $value = $object->$getter();
         if(!empty($value) && !empty($brickType)) {
             $getBrickType = "get" . ucfirst($brickType);
             $value = $value->$getBrickType();
-            if(!empty($value) && !empty($brickGetter)) {
+            if(!empty($value) && !empty($brickKey)) {
+                $brickGetter = "get".ucfirst($brickKey);
                 $value = $value->$brickGetter();
             }
         }
 
+        $fd = $object->getClass()->getFieldDefinition($key);
+        if(!empty($brickType) && !empty($brickKey)) {
+            $brickClass = Object_Objectbrick_Definition::getByKey($brickType);
+            $fd = $brickClass->getFieldDefinition($brickKey);
+        }
 
-        if(empty($value) || (is_object($value) && method_exists($value, "isEmpty") && $value->isEmpty())) {
+        if($fd->isEmpty($key)) {
             $parent = self::hasInheritableParentObject($object);
             if(!empty($parent)) {
-                return self::getValueForObject($parent, $getter, $brickType, $brickGetter);
+                return self::getValueForObject($parent, $key, $brickType, $brickKey);
             }
         }
 

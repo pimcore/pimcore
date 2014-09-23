@@ -108,6 +108,13 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
         $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1);
 
+        // replace the real data with the data for the editmode
+        foreach($result["data"] as $language => &$data) {
+            foreach($data as $key => &$value) {
+                $value = $this->getFielddefinition($key)->getDataForEditmode($value, $object);
+            }
+        }
+
         return $result;
     }
 
@@ -119,7 +126,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         foreach ($data->getItems() as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 $key = $fd->getName();
-                $fdata = $fd->getDataForEditmode($values[$fd->getName()], $object);
+                $fdata = $values[$fd->getName()];
 
                 if (!isset($fieldData[$language][$key]) || $fd->isEmpty($fieldData[$language][$key])) {
                     // never override existing data
