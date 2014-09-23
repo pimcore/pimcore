@@ -26,7 +26,7 @@ trait Object_Class_Data_Trait_Text {
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and strlen($data) < 1) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
             throw new Exception("Empty mandatory field [ " . $this->getName() . " ]");
         }
     }
