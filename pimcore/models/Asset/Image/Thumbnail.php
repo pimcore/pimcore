@@ -398,7 +398,7 @@ class Asset_Image_Thumbnail {
     protected function applyFileInfo() {
         $info = @getimagesize($this->getFileSystemPath());
         if($info) {
-            list($this->width, $this->height, $type, $attr, $this->mimetype) = $info;
+            list($this->width, $this->height) = $info;
 
             $this->realHeight = $this->height;
             $this->realWidth = $this->width;
