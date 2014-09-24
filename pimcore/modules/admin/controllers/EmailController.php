@@ -113,6 +113,10 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
      */
     public function emailLogsAction()
     {
+        if(!$this->getUser()->isAllowed("sent_emails")) {
+            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        }
+
         $list = new Tool_Email_Log_List();
         if ($this->getParam('documentId')) {
             $list->setCondition('documentId = ' . (int)$this->getParam('documentId'));
@@ -166,6 +170,10 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
      */
     public function showEmailLogAction()
     {
+        if(!$this->getUser()->isAllowed("sent_emails")) {
+            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        }
+
         $type = $this->getParam('type');
         $emailLog = Tool_Email_Log::getById($this->getParam('id'));
 
@@ -191,71 +199,6 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         else {
             die('No Type specified');
         }
-    }
-
-    public function blacklistAction() {
-
-        if ($this->getParam("data")) {
-
-            $data = Zend_Json::decode($this->getParam("data"));
-
-            if(is_array($data)) {
-                foreach ($data as &$value) {
-                    $value = trim($value);
-                }
-            }
-
-            if ($this->getParam("xaction") == "destroy") {
-                $address = Tool_Email_Blacklist::getByAddress($data);
-                $address->delete();
-
-                $this->_helper->json(array("success" => true, "data" => array()));
-            }
-            else if ($this->getParam("xaction") == "update") {
-                $address = Tool_Email_Blacklist::getByAddress($data["address"]);
-                $address->setValues($data);
-                $address->save();
-
-                $this->_helper->json(array("data" => $address, "success" => true));
-            }
-            else if ($this->getParam("xaction") == "create") {
-
-                unset($data["id"]);
-
-                $address = new Tool_Email_Blacklist();
-                $address->setValues($data);
-                $address->save();
-
-                $this->_helper->json(array("data" => $address, "success" => true));
-            }
-        }
-        else {
-            // get list of routes
-
-            $list = new Tool_Email_Blacklist_List();
-
-            $list->setLimit($this->getParam("limit"));
-            $list->setOffset($this->getParam("start"));
-
-            if($this->getParam("sort")) {
-                $list->setOrderKey($this->getParam("sort"));
-                $list->setOrder($this->getParam("dir"));
-            }
-
-            if($this->getParam("filter")) {
-                $list->setCondition("`address` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
-            }
-
-            $data = $list->load();
-
-            $this->_helper->json(array(
-                "success" => true,
-                "data" => $data,
-                "total" => $list->getTotalCount()
-            ));
-        }
-
-        $this->_helper->json(false);
     }
 
     /**
@@ -334,6 +277,10 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
      */
     public function deleteEmailLogAction()
     {
+        if(!$this->getUser()->isAllowed("sent_emails")) {
+            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        }
+
         $success = false;
         $emailLog = Tool_Email_Log::getById($this->getParam('id'));
         if ($emailLog instanceof Tool_Email_Log) {
@@ -349,6 +296,11 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
      * Resends the email to the recipients
      */
     public function resendEmailAction(){
+
+        if(!$this->getUser()->isAllowed("sent_emails")) {
+            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        }
+
         $success = false;
         $emailLog = Tool_Email_Log::getById($this->getParam('id'));
 
@@ -387,26 +339,99 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         ));
     }
 
+
+    /* global functionalities */
+
     public function sendTestEmailAction() {
 
-        if($this->getUser()->isAllowed("emails")) {
-            $mail = new Pimcore_Mail();
-            $mail->addTo($this->getParam("to"));
-            $mail->setSubject($this->getParam("subject"));
+        if(!$this->getUser()->isAllowed("emails")) {
+            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        }
 
-            if($this->getParam("type") == "text") {
-                $mail->setBodyText($this->getParam("content"));
-            } else {
-                $mail->setBodyHtml($this->getParam("content"));
+        $mail = new Pimcore_Mail();
+        $mail->addTo($this->getParam("to"));
+        $mail->setSubject($this->getParam("subject"));
+
+        if($this->getParam("type") == "text") {
+            $mail->setBodyText($this->getParam("content"));
+        } else {
+            $mail->setBodyHtml($this->getParam("content"));
+        }
+
+        $mail->send();
+
+        $this->_helper->json(array(
+            "success" => true,
+        ));
+    }
+
+
+    public function blacklistAction() {
+
+        if(!$this->getUser()->isAllowed("emails")) {
+            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        }
+
+        if ($this->getParam("data")) {
+
+            $data = Zend_Json::decode($this->getParam("data"));
+
+            if(is_array($data)) {
+                foreach ($data as &$value) {
+                    $value = trim($value);
+                }
             }
 
-            $mail->send();
+            if ($this->getParam("xaction") == "destroy") {
+                $address = Tool_Email_Blacklist::getByAddress($data);
+                $address->delete();
+
+                $this->_helper->json(array("success" => true, "data" => array()));
+            }
+            else if ($this->getParam("xaction") == "update") {
+                $address = Tool_Email_Blacklist::getByAddress($data["address"]);
+                $address->setValues($data);
+                $address->save();
+
+                $this->_helper->json(array("data" => $address, "success" => true));
+            }
+            else if ($this->getParam("xaction") == "create") {
+
+                unset($data["id"]);
+
+                $address = new Tool_Email_Blacklist();
+                $address->setValues($data);
+                $address->save();
+
+                $this->_helper->json(array("data" => $address, "success" => true));
+            }
+        }
+        else {
+            // get list of routes
+
+            $list = new Tool_Email_Blacklist_List();
+
+            $list->setLimit($this->getParam("limit"));
+            $list->setOffset($this->getParam("start"));
+
+            if($this->getParam("sort")) {
+                $list->setOrderKey($this->getParam("sort"));
+                $list->setOrder($this->getParam("dir"));
+            }
+
+            if($this->getParam("filter")) {
+                $list->setCondition("`address` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
+            }
+
+            $data = $list->load();
 
             $this->_helper->json(array(
                 "success" => true,
+                "data" => $data,
+                "total" => $list->getTotalCount()
             ));
-        } else {
-            throw new \Exception("Permission denied");
         }
+
+        $this->_helper->json(false);
     }
 }

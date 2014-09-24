@@ -30,9 +30,8 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
         this.edit = new pimcore.document.edit(this);
 
         var user = pimcore.globalmanager.get("user");
-
-        if (user.admin || in_array("sent_emails", user.permissions)) {
-            this.logs     = new pimcore.settings.email.log(this);
+        if (user.isAllowed("sent_emails")) {
+            this.logs = new pimcore.settings.email.log(this);
         }
 
         if (this.isAllowed("settings")) {
@@ -63,7 +62,7 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
             items.push(this.settings.getLayout());
         }
 
-        if (user.admin || in_array("sent_emails", user.permissions)) {
+        if (user.isAllowed("sent_emails")) {
             items.push(this.logs.getLayout());
         }
 
