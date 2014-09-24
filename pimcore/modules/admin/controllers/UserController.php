@@ -176,7 +176,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
         $user = User_Abstract::getById(intval($this->getParam("id")));
 
-        if($user->isAdmin() && !$this->getUser()->isAdmin()) {
+        if($user instanceof User && $user->isAdmin() && !$this->getUser()->isAdmin()) {
             throw new \Exception("Only admin users are allowed to modify admin users");
         }
 
