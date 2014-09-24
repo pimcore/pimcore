@@ -147,6 +147,7 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
             array("key" => "reports"),
             array("key" => "document_style_editor"),
             array("key" => "recyclebin"),
+            array("key" => "sent_emails"),
             array("key" => "seo_document_editor"),
             array("key" => "robots.txt"),
             array("key" => "http_errors"),

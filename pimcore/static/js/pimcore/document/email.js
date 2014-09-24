@@ -29,12 +29,18 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
 
         this.edit = new pimcore.document.edit(this);
 
+        var user = pimcore.globalmanager.get("user");
+
+        if (user.admin || in_array("sent_emails", user.permissions)) {
+            this.logs     = new pimcore.settings.email.log(this);
+        }
+
         if (this.isAllowed("settings")) {
             this.settings = new pimcore.document.emails.settings(this);
-            this.logs     = new pimcore.settings.email.log(this);
             this.scheduler = new pimcore.element.scheduler(this, "document");
             this.notes = new pimcore.element.notes(this, "document");
         }
+
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.document.properties(this, "document");
         }
@@ -48,13 +54,19 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
     },
 
     getTabPanel: function () {
+        var user = pimcore.globalmanager.get("user");
+
         var items = [];
         items.push(this.edit.getLayout());
         items.push(this.preview.getLayout());
         if (this.isAllowed("settings")) {
             items.push(this.settings.getLayout());
+        }
+
+        if (user.admin || in_array("sent_emails", user.permissions)) {
             items.push(this.logs.getLayout());
         }
+
         if (this.isAllowed("properties")) {
             items.push(this.properties.getLayout());
         }
@@ -104,7 +116,7 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
         }
 
 
-        // save all data allowed		
+        // save all data allowed
         if (this.isAllowed("properties")) {
             // properties
             try {

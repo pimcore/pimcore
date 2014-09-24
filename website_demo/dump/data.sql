@@ -3520,6 +3520,7 @@ INSERT INTO `users_permission_definitions` VALUES ('reports');
 INSERT INTO `users_permission_definitions` VALUES ('robots.txt');
 INSERT INTO `users_permission_definitions` VALUES ('routes');
 INSERT INTO `users_permission_definitions` VALUES ('seemode');
+INSERT INTO `users_permission_definitions` VALUES ('sent_emails');
 INSERT INTO `users_permission_definitions` VALUES ('seo_document_editor');
 INSERT INTO `users_permission_definitions` VALUES ('system_settings');
 INSERT INTO `users_permission_definitions` VALUES ('tag_snippet_management');
