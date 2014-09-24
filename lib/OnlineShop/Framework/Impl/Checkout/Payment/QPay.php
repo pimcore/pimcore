@@ -191,7 +191,7 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
      */
     public function isPaid()
     {
-        return $this->orderNumber !== NULL;
+        return strlen($this->orderNumber) > 3;
     }
 
 
