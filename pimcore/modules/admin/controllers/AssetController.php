@@ -242,7 +242,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin_Element
 
             @unlink($sourcePath);
         } else {
-            Logger::debug("prevented creating asset because of missing permissions");
+            Logger::debug("prevented creating asset because of missing permissions, parent asset is " . $parentAsset->getFullPath());
         }
 
         return array(
