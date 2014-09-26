@@ -586,7 +586,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $users = array();
         if(is_array($list->getUsers())){
             foreach ($list->getUsers() as $user) {
-                if($user->getId() && $user->getName() != "system") {
+                if($user instanceof User && $user->getId() && $user->getName() != "system") {
                     $users[] = [
                         "id" => $user->getId(),
                         "name" => $user->getName(),
