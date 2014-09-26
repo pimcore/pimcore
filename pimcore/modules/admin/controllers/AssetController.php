@@ -175,7 +175,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin_Element
         $this->disableViewAutoRender();
         echo Zend_Json::encode(array(
             "success" => $res["success"],
-            "msg" => "Success",
+            "msg" => $res["success"] ? "Success" : "Error",
             "id" => $res["asset"] ? $res["asset"]->getId() : null,
             "fullpath" => $res["asset"] ? $res["asset"]->getFullPath() : null,
             "type" => $res["asset"] ? $res["asset"]->getType() : null
