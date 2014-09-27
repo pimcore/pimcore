@@ -197,11 +197,13 @@ class Object_Class_Data_Image extends Object_Class_Data {
     }
 
     /**
+     * This is a dummy and is mostly implemented by relation types
+     *
      * @param mixed $data
-     * @param Object_Concrete $ownerObject
-     * @param array $blockedTags
+     * @param array $tags
+     * @return array
      */
-    public function getCacheTags($data, $ownerObject, $tags = array()) {
+    public function getCacheTags($data, $tags = array()) {
 
         $tags = is_array($tags) ? $tags : array();
 

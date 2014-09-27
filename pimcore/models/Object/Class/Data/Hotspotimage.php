@@ -328,11 +328,13 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
     }
 
     /**
+     * This is a dummy and is mostly implemented by relation types
+     *
      * @param mixed $data
-     * @param Object_Concrete $ownerObject
-     * @param array $blockedTags
+     * @param array $tags
+     * @return array
      */
-    public function getCacheTags($data, $ownerObject, $tags = array()) {
+    public function getCacheTags($data, $tags = array()) {
 
         $tags = is_array($tags) ? $tags : array();
 
@@ -352,7 +354,9 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
                     if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
                         foreach($element["data"] as $metaData) {
                             if($metaData["value"] instanceof Element_Interface) {
-                                $tags = $metaData["value"]->getCacheTags($tags);
+                                if(!array_key_exists($metaData["value"]->getCacheTag(), $tags)) {
+                                    $tags = $metaData["value"]->getCacheTags($tags);
+                                }
                             }
                         }
                     }

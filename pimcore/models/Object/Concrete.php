@@ -307,7 +307,7 @@ class Object_Concrete extends Object_Abstract {
 
     /**
      * @param string $key
-     * @return void
+     * @return mixed
      */
     public function getValueForFieldName($key) {
         if ($this->$key) {
@@ -329,7 +329,7 @@ class Object_Concrete extends Object_Abstract {
         foreach ($this->getClass()->getFieldDefinitions() as $name => $def) {
             // no need to add lazy-loading fields to the cache tags
             if (!method_exists($def, "getLazyLoading") or !$def->getLazyLoading()) {
-                $tags = $def->getCacheTags($this->getValueForFieldName($name), $this, $tags);
+                $tags = $def->getCacheTags($this->getValueForFieldName($name), $tags);
             }
         }
         return $tags;

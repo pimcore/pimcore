@@ -334,20 +334,20 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
 
 
     /**
+     * This is a dummy and is mostly implemented by relation types
+     *
      * @param mixed $data
-     * @param Object_Concrete $ownerObject
-     * @param array $blockedTags
+     * @param array $tags
+     * @return array
      */
-    public function getCacheTags ($data, $ownerObject, $tags = array()) {
+    public function getCacheTags ($data, $tags = array()) {
 
         $tags = is_array($tags) ? $tags : array();
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
-                if (!array_key_exists($object->getCacheTag(), $tags)) {
-                    if(!$ownerObject instanceof Element_Interface || $object->getId() != $ownerObject->getId()) {
-                        $tags = $object->getCacheTags($tags);
-                    }
+                if ($object instanceof Element_Interface && !array_key_exists($object->getCacheTag(), $tags)) {
+                    $tags = $object->getCacheTags($tags);
                 }
             }
         }
