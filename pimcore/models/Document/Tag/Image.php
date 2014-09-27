@@ -534,7 +534,9 @@ class Document_Tag_Image extends Document_Tag {
                 if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
                     foreach($element["data"] as $metaData) {
                         if($metaData["value"] instanceof Element_Interface) {
-                            $tags = $metaData["value"]->getCacheTags($tags);
+                            if(!array_key_exists($metaData["value"]->getCacheTag(), $tags)) {
+                                $tags = $metaData["value"]->getCacheTags($tags);
+                            }
                         }
                     }
                 }
