@@ -247,7 +247,7 @@ class Document_Tag_Areablock extends Document_Tag {
                 if(is_file($edit) && $editmode) {
                     $this->getView()->editmode = true;
 
-                    echo '<div class="pimcore_area_editmode_' . $this->getName() . ' pimcore_area_editmode">';
+                    echo '<div class="pimcore_area_editmode_' . $this->getName() . ' pimcore_area_editmode pimcore_area_editmode_hidden">';
                     $this->getView()->template($edit);
                     echo '</div>';
                 }
