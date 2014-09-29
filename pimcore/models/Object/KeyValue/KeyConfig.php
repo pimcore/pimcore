@@ -284,13 +284,14 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
             Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.preAdd", $this);
         }
 
-        parent::save();
+        $model = parent::save();
 
         if ($isUpdate) {
             Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.postUpdate", $this);
         } else {
             Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.postAdd", $this);
         }
+        return $model;
     }
 
     /**

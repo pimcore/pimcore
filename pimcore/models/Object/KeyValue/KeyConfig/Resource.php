@@ -123,6 +123,7 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
             }
 
             $this->db->update(self::TABLE_NAME_KEYS, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            return $this->model;
         }
         catch (Exception $e) {
             throw $e;
