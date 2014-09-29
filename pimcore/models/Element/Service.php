@@ -43,6 +43,26 @@ class Element_Service extends Pimcore_Model_Abstract {
         return $path;
     }
 
+    /**
+     * @static
+     * @param  $list array | Pimcore_Model_List_Abstract
+     * @return array
+     */
+    public static function getIdList($list,$idGetter = 'getId'){
+       $ids = array();
+       if(is_array($list)){
+           foreach($list as $entry){
+               if(method_exists($entry,$idGetter)){
+                   $ids[] = $entry->getId();
+               }
+           }
+       }
+
+       if($list instanceof Pimcore_Model_List_Abstract){
+               $ids = $list->loadIdList();
+       }
+       return $ids;
+    }
 
     /**
      * @param Dependency $d
