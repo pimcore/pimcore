@@ -117,6 +117,7 @@ class Object_KeyValue_GroupConfig_Resource extends Pimcore_Model_Resource_Abstra
             }
 
             $this->db->update(self::TABLE_NAME_GROUPS, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            return $this->model;
         }
         catch (Exception $e) {
             throw $e;
