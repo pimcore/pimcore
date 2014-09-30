@@ -134,6 +134,7 @@ CREATE TABLE `content_index` (
   KEY `lastUpdate` (`lastUpdate`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `custom_layouts` ;
 CREATE TABLE `custom_layouts` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`classId` INT(11) UNSIGNED NOT NULL,
