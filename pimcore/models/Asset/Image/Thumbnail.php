@@ -400,6 +400,10 @@ class Asset_Image_Thumbnail {
         if($info) {
             list($this->width, $this->height) = $info;
 
+            if(array_key_exists("mime", $info)) {
+                $this->mimetype = $info["mime"];
+            }
+
             $this->realHeight = $this->height;
             $this->realWidth = $this->width;
 
