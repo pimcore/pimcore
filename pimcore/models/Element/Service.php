@@ -53,7 +53,7 @@ class Element_Service extends Pimcore_Model_Abstract {
        if(is_array($list)){
            foreach($list as $entry){
                if(is_object($entry) && method_exists($entry,$idGetter)){
-                   $ids[] = $entry->getId();
+                   $ids[] = $entry->$idGetter();
                }elseif(is_scalar($entry)){
                    $ids[] = $entry;
                }
