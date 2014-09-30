@@ -1315,6 +1315,12 @@ class Asset extends Element_Abstract {
     }
 
 
+    /**
+     * @param $name
+     * @param $type can be "folder", "image", "text", "audio", "video", "document", "archive" or "unknown"
+     * @param null $data
+     * @param null $language
+     */
     public function addMetadata($name, $type, $data = null, $language = null) {
         if ($name && $type) {
             $metadata = $this->metadata;
