@@ -354,7 +354,7 @@ class Asset_Image_Thumbnail {
 
             return $thumb;
         } else {
-            throw new \Exception("Media  query '" . $name . "' doesn't exist in thumbnail configuration: " . $thumbConfig->getName());
+            throw new \Exception("Media query '" . $name . "' doesn't exist in thumbnail configuration: " . $thumbConfig->getName());
         }
     }
 
