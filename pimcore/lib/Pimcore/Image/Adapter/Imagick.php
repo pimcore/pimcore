@@ -162,7 +162,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         if($format == "jpeg") {
             if(filesize($path) >= 10240) {
                 $i->setinterlacescheme(Imagick::INTERLACE_PLANE);
-                $i->writeImage($path);
+                if(!$i->writeImage($path)) {
+                    throw new \Exception("Unable to write image: " , $path);
+                }
             }
         }
 
