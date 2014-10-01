@@ -68,15 +68,10 @@ class Asset_Image_Thumbnail {
     protected static $pictureElementInUse = false;
 
     /**
-     * @var bool
+     * @param $asset
+     * @param null $config
+     * @param bool $deferred
      */
-    protected static $useSrcSet = false;
-
-    /**
-     * Generate a thumbnail image.
-     * @param Image_Asset Original image
-     * @param mixed $selector Name, array or object with the thumbnail configuration.
-    */
     public function __construct($asset, $config = null, $deferred = false) {
 
         $this->asset = $asset;
@@ -337,6 +332,29 @@ class Asset_Image_Thumbnail {
             $html .= '</picture>' . "\n";
 
             return $html;
+        }
+    }
+
+    /**
+     * @param string $name
+     * @param int $highRes
+     * @return Asset_Image_Thumbnail
+     * @throws \Exception
+     */
+    public function getMedia($name, $highRes = 1) {
+        $thumbConfig = $this->getConfig();
+        $mediaConfigs = $thumbConfig->getMedias();
+
+        if(array_key_exists($name, $mediaConfigs)) {
+            $thumbConfigRes = clone $thumbConfig;
+            $thumbConfigRes->selectMedia($name);
+            $thumbConfigRes->setHighResolution($highRes);
+            $thumbConfigRes->setMedias([]);
+            $thumb = $this->getAsset()->getThumbnail($thumbConfigRes);
+
+            return $thumb;
+        } else {
+            throw new \Exception("Media query '" . $name . "' doesn't exist in thumbnail configuration: " . $thumbConfig->getName());
         }
     }
 
