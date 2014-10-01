@@ -981,3 +981,20 @@
     z-index: 100;
     zoom: 1;
 }
+
+.x-menu-focus {
+    position:absolute;
+    left:-1px;
+    top:-1px;
+    width:1px;
+    height:1px;
+    line-height:1px;
+    font-size:1px;
+    -moz-outline:0 none;
+    outline:0 none;
+    -moz-user-select: none;
+    -khtml-user-select:none;
+    -webkit-user-select:ignore;
+    overflow:hidden;
+    display:block;
+}
