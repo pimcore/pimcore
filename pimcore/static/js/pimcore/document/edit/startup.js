@@ -90,7 +90,7 @@ Ext.onReady(function () {
         }
         
         if(in_array(name,editableNames)) {
-            Ext.MessageBox.alert("ERROR","Dublicate editable name: " + name);
+            pimcore.helpers.showNotification("ERROR", "Dublicate editable name: " + name, "error");
         }
         editableNames.push(name);
 
