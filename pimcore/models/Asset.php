@@ -1323,8 +1323,6 @@ class Asset extends Element_Abstract {
      */
     public function addMetadata($name, $type, $data = null, $language = null) {
         if ($name && $type) {
-            $metadata = $this->metadata;
-
             $tmp = array();
             if (!is_array($this->metadata)) {
                 $this->metadata = array();
@@ -1350,6 +1348,14 @@ class Asset extends Element_Abstract {
      */
     public function getMetadata($name = null, $language = null)
     {
+        $convert = function ($metaData) {
+            if(in_array($metaData["type"], ["asset","document","object"]) && is_numeric($metaData["data"])) {
+                return Element_Service::getElementById($metaData["type"], $metaData["data"]);
+            }
+            return $metaData["data"];
+        };
+
+
         if($name) {
             if($language === null) {
                 if(Zend_Registry::isRegistered("Zend_Locale")) {
@@ -1361,7 +1367,7 @@ class Asset extends Element_Abstract {
             foreach ($this->metadata as $md) {
                 if($md["name"] == $name) {
                     if($language == $md["language"]) {
-                        return $md["data"];
+                        return $convert($md);
                     }
                     if(empty($md["language"])) {
                         $data = $md;
@@ -1370,11 +1376,17 @@ class Asset extends Element_Abstract {
             }
 
             if($data) {
-                return $data["data"];
+                return $convert($data);
             }
             return null;
         }
-        return $this->metadata;
+
+        $metaData = $this->metadata;
+        foreach($metaData as &$md) {
+            $md["data"] = $convert($md);
+        }
+
+        return $metaData;
     }
 
     /**

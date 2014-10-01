@@ -141,6 +141,11 @@ class Asset_Resource extends Element_Resource
             if(!empty($metadata)) {
                 foreach ($metadata as $metadata) {
                     $metadata["cid"] = $this->model->getId();
+
+                    if($metadata["data"] instanceof Element_Interface) {
+                        $metadata["data"] = $metadata["data"]->getId();
+                    }
+
                     $this->db->insert("assets_metadata", $metadata);
                 }
             }
