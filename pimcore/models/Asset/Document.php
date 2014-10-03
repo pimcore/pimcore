@@ -37,6 +37,8 @@ class Asset_Document extends Asset {
             } catch (\Exception $e) {
 
             }
+
+            unlink($tmpFile);
         }
 
         parent::update();
