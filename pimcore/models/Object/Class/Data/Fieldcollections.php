@@ -389,11 +389,13 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
     }
 
     /**
+     * This is a dummy and is mostly implemented by relation types
+     *
      * @param mixed $data
-     * @param Object_Concrete $ownerObject
-     * @param array $blockedTags
+     * @param array $tags
+     * @return array
      */
-    public function getCacheTags($data, $ownerObject, $tags = array())
+    public function getCacheTags($data, $tags = array())
     {
         $tags = is_array($tags) ? $tags : array();
 
@@ -412,7 +414,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     $getter = "get" . ucfirst($fd->getName());
-                    $tags = $fd->getCacheTags($item->$getter(), $item, $tags);
+                    $tags = $fd->getCacheTags($item->$getter(), $tags);
                 }
             }
         }

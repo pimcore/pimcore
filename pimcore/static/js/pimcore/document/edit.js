@@ -262,17 +262,23 @@ pimcore.document.edit = Class.create({
                 height = Ext.get(iFrames[i]).getHeight();
 
                 offset = Ext.get(iFrames[i]).getOffsetsTo(this.frame.Ext.getBody());
-                
-                element = this.frame.Ext.getBody().createChild({
+
+                var parentElement = this.frame.Ext.get(iFrames[i]).parent();
+
+                parentElement.applyStyles({
+                    position: "relative"
+                });
+
+                element = parentElement.createChild({
                     tag: "div",
                     id: Ext.id()
                 });
-                
+
                 element.setStyle({
                     width: width + "px",
                     height: height + "px",
-                    left: offset[0] + "px",
-                    top: offset[1] + "px"
+                    left: 0,
+                    top: 0
                 });              
                 
                 element.addClass("pimcore_iframe_mask");

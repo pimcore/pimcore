@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -12,7 +12,7 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
+
 class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
 
@@ -79,6 +79,19 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
             $this->resource = $i; // this is because of HHVM which has problems with $this->resource->readImage();
 
+            // set dimensions
+            $dimensions = $this->getDimensions();
+            $this->setWidth($dimensions["width"]);
+            $this->setHeight($dimensions["height"]);
+
+            // check if image can have alpha channel
+            if(!$this->reinitializing) {
+                $alphaChannel = $i->getImageAlphaChannel();
+                if($alphaChannel) {
+                    $this->setIsAlphaPossible(true);
+                }
+            }
+
             $this->setColorspaceToRGB();
 
         } catch (Exception $e) {
@@ -87,10 +100,6 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             return false;
         }
 
-        // set dimensions
-        $dimensions = $this->getDimensions();
-        $this->setWidth($dimensions["width"]);
-        $this->setHeight($dimensions["height"]);
 
         $this->setModified(false);
 
@@ -153,7 +162,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         if($format == "jpeg") {
             if(filesize($path) >= 10240) {
                 $i->setinterlacescheme(Imagick::INTERLACE_PLANE);
-                $i->writeImage($path);
+                if(!$i->writeImage($path)) {
+                    throw new \Exception("Unable to write image: " , $path);
+                }
             }
         }
 
@@ -176,16 +187,18 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     protected function hasAlphaChannel() {
 
-        $width = $this->resource->getImageWidth(); // Get the width of the image
-        $height = $this->resource->getImageHeight(); // Get the height of the image
+        if($this->isAlphaPossible) {
+            $width = $this->resource->getImageWidth(); // Get the width of the image
+            $height = $this->resource->getImageHeight(); // Get the height of the image
 
-        // We run the image pixel by pixel and as soon as we find a transparent pixel we stop and return true.
-        for($i = 0; $i < $width; $i++) {
-            for($j = 0; $j < $height; $j++) {
-                $pixel = $this->resource->getImagePixelColor($i, $j);
-                $color = $pixel->getColor(true); // get the real alpha not just 1/0
-                if($color["a"] < 1) { // if there's an alpha pixel, return true
-                    return true;
+            // We run the image pixel by pixel and as soon as we find a transparent pixel we stop and return true.
+            for($i = 0; $i < $width; $i++) {
+                for($j = 0; $j < $height; $j++) {
+                    $pixel = $this->resource->getImagePixelColor($i, $j);
+                    $color = $pixel->getColor(true); // get the real alpha not just 1/0
+                    if($color["a"] < 1) { // if there's an alpha pixel, return true
+                        return true;
+                    }
                 }
             }
         }
@@ -229,7 +242,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $draw = new ImagickDraw();
         $draw->setFillColor("#ff0000");
         $draw->setfillopacity(.01);
-        $draw->point($this->getWidth()-1,$this->getHeight()-1); // place it in the right bottom corner
+        $draw->point(floor($this->getWidth()/2),floor($this->getHeight()/2)); // place it in the middle of the image
         $this->resource->drawImage($draw);
 
         return $this;
@@ -385,6 +398,27 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         $this->postModify();
 
+        $this->setIsAlphaPossible(true);
+
+        return $this;
+    }
+
+    /**
+     * @param  $tolerance
+     * @return Pimcore_Image_Adapter_Imagick
+     */
+    public function trim ($tolerance) {
+
+        $this->preModify();
+
+        $this->resource->trimimage($tolerance);
+
+        $dimensions = $this->getDimensions();
+        $this->setWidth($dimensions['width']);
+        $this->setHeight($dimensions['height']);
+
+        $this->postModify();
+
         return $this;
     }
 
@@ -401,6 +435,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $this->resource = $newImage;
 
         $this->postModify();
+
+        $this->setIsAlphaPossible(false);
 
         return $this;
     }
@@ -434,6 +470,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         $this->postModify();
 
+        $this->setIsAlphaPossible(true);
+
         return $this;
     }
 
@@ -450,6 +488,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $this->resource->roundCorners($x, $y);
 
         $this->postModify();
+
+        $this->setIsAlphaPossible(true);
 
         return $this;
     }
@@ -521,7 +561,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 $y = round($this->resource->getImageHeight() / 2) -round($newImage->getImageHeight() / 2) + $y;
             }
 
-            $newImage->evaluateImage(Imagick::EVALUATE_MULTIPLY, $alpha, Imagick::CHANNEL_ALPHA); 
+            $newImage->evaluateImage(Imagick::EVALUATE_MULTIPLY, $alpha, Imagick::CHANNEL_ALPHA);
             $this->resource->compositeImage($newImage, constant("Imagick::" . $composite), $x ,$y);
         }
 
@@ -550,6 +590,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         }
 
         $this->postModify();
+
+        $this->setIsAlphaPossible(true);
 
         return $this;
     }
@@ -599,6 +641,25 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $this->preModify();
         $this->resource->normalizeImage();
         $this->resource->unsharpMaskImage($radius, $sigma, $amount, $threshold);
+        $this->postModify();
+
+        return $this;
+    }
+
+    /**
+     * @param string $mode
+     * @return $this|Pimcore_Image_Adapter
+     */
+    public function mirror($mode) {
+
+        $this->preModify();
+
+        if($mode == "vertical") {
+            $this->resource->flipImage();
+        } else if ($mode == "horizontal") {
+            $this->resource->flopImage();
+        }
+
         $this->postModify();
 
         return $this;

@@ -106,7 +106,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      * @param  $object
      * @param  $key
      * @param  $fielddefinition
-     * @return void
+     * @return mixed
      */
     private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $objectFromVersion) {
         $result = new stdClass();
@@ -152,17 +152,18 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             $result->metaData['inherited'] = $level != 0;
 
         } else {
-            $value = null;
+            $editmodeValue = null;
             if(!empty($item)) {
-                $value = $fielddefinition->getDataForEditmode($item->$valueGetter(), $baseObject);
+                $fieldValue = $item->$valueGetter();
+                $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject);
             }
-            if($fielddefinition->isEmpty($value) && !empty($parent)) {
+            if($fielddefinition->isEmpty($fieldValue) && !empty($parent)) {
                 $parentItem = $parent->{"get" . ucfirst($this->getName())}()->$getter();
                 if(!empty($parentItem)) {
                     return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion);
                 }
             }
-            $result->objectData = $value;
+            $result->objectData = $editmodeValue;
             $result->metaData['objectid'] = $baseObject->getId();
             $result->metaData['inherited'] = $level != 0;
         }
@@ -468,11 +469,13 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     }
 
     /**
+     * This is a dummy and is mostly implemented by relation types
+     *
      * @param mixed $data
-     * @param Object_Concrete $ownerObject
-     * @param array $blockedTags
+     * @param array $tags
+     * @return array
      */
-    public function getCacheTags($data, $ownerObject, $tags = array())
+    public function getCacheTags($data, $tags = array())
     {
         $tags = is_array($tags) ? $tags : array();
 
@@ -493,7 +496,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     $key = $fd->getName();
                     $getter = "get" . ucfirst($key);
-                    $tags = $fd->getCacheTags($item->$getter(), $item, $tags);
+                    $tags = $fd->getCacheTags($item->$getter(), $tags);
                 }
             }
         }

@@ -155,13 +155,14 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
             Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.preAdd", $this);
         }
 
-        parent::save();
+        $model = parent::save();
 
         if ($isUpdate) {
             Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.postUpdate", $this);
         } else {
             Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.postAdd", $this);
         }
+        return $model;
     }
 
     /**

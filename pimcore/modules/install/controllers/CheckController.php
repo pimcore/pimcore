@@ -114,6 +114,13 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => function_exists("gd_info") ? "ok" : "error"
         );
 
+        // exif
+        $checksPHP[] = array(
+            "name" => "EXIF",
+            "link" => "http://www.php.net/exif",
+            "state" => function_exists("exif_read_data") ? "ok" : "error"
+        );
+
         // multibyte support
         $checksPHP[] = array(
             "name" => "Multibyte String (mbstring)",

@@ -259,10 +259,11 @@ class Asset_Service extends Element_Service {
                 case "asset":
                 case "object":
                 {
+                    $element = $item["data"];
                     if (is_numeric($item["data"])) {
                         $element = Element_Service::getElementById($type, $item["data"]);
                     }
-                    if ($element) {
+                    if ($element instanceof Element_Interface) {
                         $item["data"] = $element->getFullPath();
                     } else {
                         $item["data"] = "";

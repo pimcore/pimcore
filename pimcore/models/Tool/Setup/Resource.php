@@ -147,6 +147,7 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
             array("key" => "reports"),
             array("key" => "document_style_editor"),
             array("key" => "recyclebin"),
+            array("key" => "sent_emails"),
             array("key" => "seo_document_editor"),
             array("key" => "robots.txt"),
             array("key" => "http_errors"),
@@ -158,6 +159,8 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
             array("key" => "emails"),
             array("key" => "website_settings"),
             array("key" => "newsletter"),
+            array("key" => "dashboards"),
+            array("key" => "users"),
         );
         foreach ($userPermissions as $up) {
             $this->db->insert("users_permission_definitions", $up);

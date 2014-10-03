@@ -30,6 +30,14 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     protected $name;
 
     /**
+     * Contains the real name of the editable without the prefixes and suffixes
+     * which are generated automatically by blocks and areablocks
+     *
+     * @var string
+     */
+    protected $realName;
+
+    /**
      * Element belongs to the ID of the document
      *
      * @var integer
@@ -205,6 +213,21 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
         return $this->view;
     }
 
+    /**
+     * @return string
+     */
+    public function getRealName()
+    {
+        return $this->realName;
+    }
+
+    /**
+     * @param string $realName
+     */
+    public function setRealName($realName)
+    {
+        $this->realName = $realName;
+    }
 
     /**
      * Returns only the properties which should be serialized

@@ -22,87 +22,88 @@ pimcore.layout.toolbar = Class.create({
 
         var fileItems = [];
 
-        this.dashboardMenu = new Ext.menu.Item({
-            text: t("dashboards"),
-            iconCls: "pimcore_icon_welcome",
-            hideOnClick: false,
-            menu: {
-                cls: "pimcore_navigation_flyout",
-                items: [{
-                    text: t("welcome"),
-                    iconCls: "pimcore_icon_welcome",
-                    handler: pimcore.helpers.openWelcomePage.bind(this)
-                }]
-            }
-        });
-
-        Ext.Ajax.request({
-            url: "/admin/portal/dashboard-list",
-            success: function (response) {
-                var data = Ext.decode(response.responseText);
-                for(var i = 0; i < data.length; i++) {
-                    this.dashboardMenu.menu.add(new Ext.menu.Item({
-                        text: data[i],
+        if(user.isAllowed("dashboards")) {
+            this.dashboardMenu = new Ext.menu.Item({
+                text: t("dashboards"),
+                iconCls: "pimcore_icon_welcome",
+                hideOnClick: false,
+                menu: {
+                    cls: "pimcore_navigation_flyout",
+                    items: [{
+                        text: t("welcome"),
                         iconCls: "pimcore_icon_welcome",
-                        handler: function (key) {
-                            try {
-                                pimcore.globalmanager.get("layout_portal_" + key).activate();
-                            }
-                            catch (e) {
-                                pimcore.globalmanager.add("layout_portal_" + key, new pimcore.layout.portal(key));
-                            }
-                        }.bind(this, data[i])
-                    }));
+                        handler: pimcore.helpers.openWelcomePage.bind(this)
+                    }]
                 }
+            });
 
-                this.dashboardMenu.menu.add(new Ext.menu.Separator({}));
-                this.dashboardMenu.menu.add({
-                    text: t("add_dashboard"),
-                    iconCls: "pimcore_icon_add",
-                    handler: function () {
-                        Ext.MessageBox.prompt(t('create_new_dashboard'), t('please_enter_the_name_of_the_new_dashboard'),
-                            function (button, value, object) {
-                                if(button == "ok") {
-                                    Ext.Ajax.request({
-                                        url: "/admin/portal/create-dashboard",
-                                        params: {
-                                            key: value
-                                        },
-                                        success: function(response) {
-                                            var response = Ext.decode(response.responseText);
-                                            if(response.success) {
-                                                Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
-                                                    if (buttonValue == "yes") {
-                                                        window.location.reload();
-                                                    }
-                                                });
-                                                try {
-                                                    pimcore.globalmanager.get("layout_portal_" + value).activate();
-                                                }
-                                                catch (e) {
-                                                    pimcore.globalmanager.add("layout_portal_" + value, new pimcore.layout.portal(value));
-                                                }
-                                            } else {
-                                                Ext.Msg.show({
-                                                    title: t("error"),
-                                                    msg: t(response.message),
-                                                    buttons: Ext.Msg.OK,
-                                                    animEl: 'elId',
-                                                    icon: Ext.MessageBox.ERROR
-                                                });
-                                            }
-                                        }
-                                    });
+            Ext.Ajax.request({
+                url: "/admin/portal/dashboard-list",
+                success: function (response) {
+                    var data = Ext.decode(response.responseText);
+                    for(var i = 0; i < data.length; i++) {
+                        this.dashboardMenu.menu.add(new Ext.menu.Item({
+                            text: data[i],
+                            iconCls: "pimcore_icon_welcome",
+                            handler: function (key) {
+                                try {
+                                    pimcore.globalmanager.get("layout_portal_" + key).activate();
                                 }
-                            }
-                        );
-                    }.bind(this)
-                });
-            }.bind(this)
-        });
+                                catch (e) {
+                                    pimcore.globalmanager.add("layout_portal_" + key, new pimcore.layout.portal(key));
+                                }
+                            }.bind(this, data[i])
+                        }));
+                    }
 
+                    this.dashboardMenu.menu.add(new Ext.menu.Separator({}));
+                    this.dashboardMenu.menu.add({
+                        text: t("add_dashboard"),
+                        iconCls: "pimcore_icon_add",
+                        handler: function () {
+                            Ext.MessageBox.prompt(t('create_new_dashboard'), t('please_enter_the_name_of_the_new_dashboard'),
+                                function (button, value, object) {
+                                    if(button == "ok") {
+                                        Ext.Ajax.request({
+                                            url: "/admin/portal/create-dashboard",
+                                            params: {
+                                                key: value
+                                            },
+                                            success: function(response) {
+                                                var response = Ext.decode(response.responseText);
+                                                if(response.success) {
+                                                    Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
+                                                        if (buttonValue == "yes") {
+                                                            window.location.reload();
+                                                        }
+                                                    });
+                                                    try {
+                                                        pimcore.globalmanager.get("layout_portal_" + value).activate();
+                                                    }
+                                                    catch (e) {
+                                                        pimcore.globalmanager.add("layout_portal_" + value, new pimcore.layout.portal(value));
+                                                    }
+                                                } else {
+                                                    Ext.Msg.show({
+                                                        title: t("error"),
+                                                        msg: t(response.message),
+                                                        buttons: Ext.Msg.OK,
+                                                        animEl: 'elId',
+                                                        icon: Ext.MessageBox.ERROR
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            );
+                        }.bind(this)
+                    });
+                }.bind(this)
+            });
 
-        fileItems.push(this.dashboardMenu);
+            fileItems.push(this.dashboardMenu);
+        }
 
         if (user.isAllowed("documents")) {
 //            fileItems.push({
@@ -532,7 +533,7 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        if (user.admin) {
+        if (user.isAllowed("users")) {
             settingsItems.push({
                 text: t("users") + " / " + t("roles"),
                 iconCls: "pimcore_icon_users",
@@ -552,7 +553,7 @@ pimcore.layout.toolbar = Class.create({
             });
         } else {
             settingsItems.push({
-                text: t("profile"),
+                text: t("my_profile"),
                 iconCls: "pimcore_icon_users",
                 handler: this.editProfile
             });
@@ -753,10 +754,12 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        this.searchMenu = new Ext.menu.Menu({
-            items: searchItems,
-            cls: "pimcore_navigation_flyout"
-        });
+        if (searchItems.length > 0) {
+            this.searchMenu = new Ext.menu.Menu({
+                items: searchItems,
+                cls: "pimcore_navigation_flyout"
+            });
+        }
 
 
         Ext.get("pimcore_menu_file").on("mousedown", this.showSubMenu.bind(this.fileMenu));

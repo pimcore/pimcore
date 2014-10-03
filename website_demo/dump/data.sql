@@ -3502,6 +3502,7 @@ INSERT INTO `users_permission_definitions` VALUES ('bounce_mail_inbox');
 INSERT INTO `users_permission_definitions` VALUES ('classes');
 INSERT INTO `users_permission_definitions` VALUES ('clear_cache');
 INSERT INTO `users_permission_definitions` VALUES ('clear_temp_files');
+INSERT INTO `users_permission_definitions` VALUES ('dashboards');
 INSERT INTO `users_permission_definitions` VALUES ('documents');
 INSERT INTO `users_permission_definitions` VALUES ('document_style_editor');
 INSERT INTO `users_permission_definitions` VALUES ('document_types');
@@ -3519,12 +3520,14 @@ INSERT INTO `users_permission_definitions` VALUES ('reports');
 INSERT INTO `users_permission_definitions` VALUES ('robots.txt');
 INSERT INTO `users_permission_definitions` VALUES ('routes');
 INSERT INTO `users_permission_definitions` VALUES ('seemode');
+INSERT INTO `users_permission_definitions` VALUES ('sent_emails');
 INSERT INTO `users_permission_definitions` VALUES ('seo_document_editor');
 INSERT INTO `users_permission_definitions` VALUES ('system_settings');
 INSERT INTO `users_permission_definitions` VALUES ('tag_snippet_management');
 INSERT INTO `users_permission_definitions` VALUES ('targeting');
 INSERT INTO `users_permission_definitions` VALUES ('thumbnails');
 INSERT INTO `users_permission_definitions` VALUES ('translations');
+INSERT INTO `users_permission_definitions` VALUES ('users');
 INSERT INTO `users_permission_definitions` VALUES ('website_settings');
 
 

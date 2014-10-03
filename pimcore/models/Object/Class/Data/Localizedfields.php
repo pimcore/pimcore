@@ -108,6 +108,13 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
         $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1);
 
+        // replace the real data with the data for the editmode
+        foreach($result["data"] as $language => &$data) {
+            foreach($data as $key => &$value) {
+                $value = $this->getFielddefinition($key)->getDataForEditmode($value, $object);
+            }
+        }
+
         return $result;
     }
 
@@ -119,7 +126,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         foreach ($data->getItems() as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 $key = $fd->getName();
-                $fdata = $fd->getDataForEditmode($values[$fd->getName()], $object);
+                $fdata = $values[$fd->getName()];
 
                 if (!isset($fieldData[$language][$key]) || $fd->isEmpty($fieldData[$language][$key])) {
                     // never override existing data
@@ -156,7 +163,6 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                     // still some values are passing, ask the parent
                     $parentData = $parent->getLocalizedFields();
                     $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
-                    Logger::debug("merge results");
                 }
             }
         }
@@ -618,11 +624,13 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
 
     /**
+     * This is a dummy and is mostly implemented by relation types
+     *
      * @param mixed $data
-     * @param Object_Concrete $ownerObject
-     * @param array $blockedTags
+     * @param array $tags
+     * @return array
      */
-    public function getCacheTags($data, $ownerObject, $tags = array())
+    public function getCacheTags($data, $tags = array())
     {
         $tags = is_array($tags) ? $tags : array();
 
@@ -632,7 +640,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
         foreach ($data->getItems() as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                $tags = $fd->getCacheTags($values[$fd->getName()], $ownerObject, $tags);
+                $tags = $fd->getCacheTags($values[$fd->getName()], $tags);
             }
         }
 

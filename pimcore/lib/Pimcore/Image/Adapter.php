@@ -46,6 +46,11 @@ abstract class Pimcore_Image_Adapter {
     protected $modified = false;
 
     /**
+     * @var bool
+     */
+    protected $isAlphaPossible = false;
+
+    /**
      * @param int $height
      */
     public function setHeight($height)
@@ -237,6 +242,15 @@ abstract class Pimcore_Image_Adapter {
     }
 
     /**
+     * @param  int $tolerance
+     * @return Pimcore_Image_Adapter
+     */
+    public function trim ($tolerance) {
+
+        return $this;
+    }
+
+    /**
      * @param  $angle
      * @param bool $autoResize
      * @param string $color
@@ -356,6 +370,14 @@ abstract class Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter
      */
     public function sharpen () {
+
+        return $this;
+    }
+
+    /**
+     * @return Pimcore_Image_Adapter
+     */
+    public function mirror () {
 
         return $this;
     }
@@ -483,5 +505,12 @@ abstract class Pimcore_Image_Adapter {
     public function getModified()
     {
         return $this->modified;
+    }
+
+    /**
+     * @param bool $value
+     */
+    public function setIsAlphaPossible($value) {
+        $this->isAlphaPossible = $value;
     }
 }

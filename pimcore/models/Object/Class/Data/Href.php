@@ -399,19 +399,19 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
     }
 
     /**
+     * This is a dummy and is mostly implemented by relation types
+     *
      * @param mixed $data
-     * @param Object_Concrete $ownerObject
-     * @param array $blockedTags
+     * @param array $tags
+     * @return array
      */
-    public function getCacheTags ($data, $ownerObject, $tags = array()) {
+    public function getCacheTags ($data, $tags = array()) {
 
         $tags = is_array($tags) ? $tags : array();
 
-        if ($data instanceof Document || $data instanceof Asset || $data instanceof Object_Abstract) {
+        if ($data instanceof Element_Interface) {
             if (!array_key_exists($data->getCacheTag(), $tags)) {
-                if(!$ownerObject instanceof Element_Interface || $data->getId() != $ownerObject->getId()) {
-                    $tags = $data->getCacheTags($tags);
-                }
+                $tags = $data->getCacheTags($tags);
             }
         }
 

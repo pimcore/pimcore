@@ -68,15 +68,10 @@ class Asset_Image_Thumbnail {
     protected static $pictureElementInUse = false;
 
     /**
-     * @var bool
+     * @param $asset
+     * @param null $config
+     * @param bool $deferred
      */
-    protected static $useSrcSet = false;
-
-    /**
-     * Generate a thumbnail image.
-     * @param Image_Asset Original image
-     * @param mixed $selector Name, array or object with the thumbnail configuration.
-    */
     public function __construct($asset, $config = null, $deferred = false) {
 
         $this->asset = $asset;
@@ -341,6 +336,29 @@ class Asset_Image_Thumbnail {
     }
 
     /**
+     * @param string $name
+     * @param int $highRes
+     * @return Asset_Image_Thumbnail
+     * @throws \Exception
+     */
+    public function getMedia($name, $highRes = 1) {
+        $thumbConfig = $this->getConfig();
+        $mediaConfigs = $thumbConfig->getMedias();
+
+        if(array_key_exists($name, $mediaConfigs)) {
+            $thumbConfigRes = clone $thumbConfig;
+            $thumbConfigRes->selectMedia($name);
+            $thumbConfigRes->setHighResolution($highRes);
+            $thumbConfigRes->setMedias([]);
+            $thumb = $this->getAsset()->getThumbnail($thumbConfigRes);
+
+            return $thumb;
+        } else {
+            throw new \Exception("Media query '" . $name . "' doesn't exist in thumbnail configuration: " . $thumbConfig->getName());
+        }
+    }
+
+    /**
      * @return Asset_Image The original image from which this thumbnail is generated.
     */
     public function getAsset() {
@@ -398,7 +416,11 @@ class Asset_Image_Thumbnail {
     protected function applyFileInfo() {
         $info = @getimagesize($this->getFileSystemPath());
         if($info) {
-            list($this->width, $this->height, $type, $attr, $this->mimetype) = $info;
+            list($this->width, $this->height) = $info;
+
+            if(array_key_exists("mime", $info)) {
+                $this->mimetype = $info["mime"];
+            }
 
             $this->realHeight = $this->height;
             $this->realWidth = $this->width;
@@ -415,5 +437,14 @@ class Asset_Image_Thumbnail {
      */
     public static function isPictureElementInUse() {
         return self::$pictureElementInUse;
+    }
+
+    /**
+     * Enables, when set to true, dispatchLoopShutdown of Pimcore_Controller_Plugin_Thumbnail
+     * @param bool $flag
+     * @return void
+     */
+    public static function setPictureElementInUse($flag) {
+    	self::$pictureElementInUse = (bool) $flag;
     }
 }

@@ -43,6 +43,11 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         $this->setWidth($width);
         $this->setHeight($height);
 
+        if(in_array(Pimcore_File::getFileExtension($imagePath), ["png","gif"])) {
+            // in GD only gif and PNG can have an alphachannel
+            $this->setIsAlphaPossible(true);
+        }
+
         $this->setModified(false);
 
         return $this;
@@ -104,15 +109,17 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      */
     protected function hasAlphaChannel() {
 
-        $width = imagesx($this->resource); // Get the width of the image
-        $height = imagesy($this->resource); // Get the height of the image
+        if($this->isAlphaPossible) {
+            $width = imagesx($this->resource); // Get the width of the image
+            $height = imagesy($this->resource); // Get the height of the image
 
-        // We run the image pixel by pixel and as soon as we find a transparent pixel we stop and return true.
-        for($i = 0; $i < $width; $i++) {
-            for($j = 0; $j < $height; $j++) {
-                $rgba = imagecolorat($this->resource, $i, $j);
-                if(($rgba & 0x7F000000) >> 24) {
-                    return true;
+            // We run the image pixel by pixel and as soon as we find a transparent pixel we stop and return true.
+            for($i = 0; $i < $width; $i++) {
+                for($j = 0; $j < $height; $j++) {
+                    $rgba = imagecolorat($this->resource, $i, $j);
+                    if(($rgba & 0x7F000000) >> 24) {
+                        return true;
+                    }
                 }
             }
         }
@@ -220,6 +227,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
 
         $this->postModify();
 
+        $this->setIsAlphaPossible(true);
+
         return $this;
     }
 
@@ -243,6 +252,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         $this->resource = $newImg;
 
         $this->postModify();
+
+        $this->setIsAlphaPossible(false);
 
         return $this;
     }
@@ -312,6 +323,47 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         }
 
         $this->postModify();
+
+        return $this;
+    }
+
+    /**
+     * @param string $mode
+     * @return $this|Pimcore_Image_Adapter
+     */
+    public function mirror($mode) {
+
+        $this->preModify();
+
+        if($mode == "vertical") {
+            imageflip($this->resource, IMG_FLIP_VERTICAL);
+        } else if ($mode == "horizontal") {
+            imageflip($this->resource, IMG_FLIP_HORIZONTAL);
+        }
+
+        $this->postModify();
+
+        return $this;
+    }
+
+    /**
+     * @param  $angle
+     * @param bool $autoResize
+     * @param string $color
+     * @return Pimcore_Image_Adapter_Imagick
+     */
+    public function rotate ($angle) {
+
+        $this->preModify();
+        $angle = 360 - $angle;
+        $this->resource = imagerotate($this->resource, $angle, imageColorAllocateAlpha($this->resource, 0, 0, 0, 127));
+
+        $this->setWidth(imagesx($this->resource));
+        $this->setHeight(imagesy($this->resource));
+
+        $this->postModify();
+
+        $this->setIsAlphaPossible(true);
 
         return $this;
     }

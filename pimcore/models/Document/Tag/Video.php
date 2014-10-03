@@ -140,8 +140,14 @@ class Document_Tag_Video extends Document_Tag
      * @see Document_Tag_Interface::frontend
      * @return string
      */
-    public function frontend($inAdmin = false)
+    public function frontend()
     {
+
+        $inAdmin = false;
+        $args = func_get_args();
+        if(array_key_exists(0, $args)) {
+            $inAdmin = $args[0];
+        }
 
         if (!$this->id || !$this->type) {
             return $this->getEmptyCode();

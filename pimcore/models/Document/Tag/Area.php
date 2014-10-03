@@ -98,6 +98,7 @@ class Document_Tag_Area extends Document_Tag {
         $info = null;
         try {
             $info = new Document_Tag_Area_Info();
+            $info->setTag($this);
             $info->setId($options["type"]);
             $info->setIndex($count);
             $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", Pimcore_ExtensionManager::getPathForExtension($options["type"],"brick")));
@@ -185,7 +186,7 @@ class Document_Tag_Area extends Document_Tag {
                 if(is_file($edit) && $editmode) {
                     $this->getView()->editmode = true;
 
-                    echo '<div class="pimcore_area_editmode">';
+                    echo '<div class="pimcore_area_editmode pimcore_area_editmode_hidden">';
                     $this->getView()->template($edit);
                     echo '</div>';
                 }

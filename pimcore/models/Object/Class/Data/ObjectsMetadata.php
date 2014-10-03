@@ -307,21 +307,21 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
 
     /**
+     * This is a dummy and is mostly implemented by relation types
+     *
      * @param mixed $data
-     * @param Object_Concrete $ownerObject
-     * @param array $blockedTags
+     * @param array $tags
+     * @return array
      */
-    public function getCacheTags ($data, $ownerObject, $tags = array()) {
+    public function getCacheTags ($data, $tags = array()) {
 
         $tags = is_array($tags) ? $tags : array();
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $object = $metaObject->getObject();
-                if (!array_key_exists($object->getCacheTag(), $tags)) {
-                    if(!$ownerObject instanceof Element_Interface || $object->getId() != $ownerObject->getId()) {
-                        $tags = $object->getCacheTags($tags);
-                    }
+                if ($object instanceof Element_Interface && !array_key_exists($object->getCacheTag(), $tags)) {
+                    $tags = $object->getCacheTags($tags);
                 }
             }
         }
@@ -457,14 +457,9 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         $table = "object_metadata_" . $classId;
         $db = Pimcore_Resource::get();
 
-        //if(!empty($objectsMetadata)) {
-        //$objectsMetadata[0]->getResource()->createOrUpdateTable($class);
-        //}
-
-
         $this->enrichRelation($object, $params, $classId, $relation);
 
-        $position = $relation["position"] ? $relation["position"] : "0";
+        $position = (isset($relation["position"]) && $relation["position"]) ? $relation["position"] : "0";
 
         $sql = $db->quoteInto("o_id = ?", $objectId) . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
             . " AND " . $db->quoteInto("position = ?", $position);
@@ -483,7 +478,9 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
             }
 
             foreach($objectsMetadata as $meta) {
-                $meta->save($objectConcrete, $relation["ownertype"], $relation["ownername"], $position);
+                $ownerName = isset($relation["ownername"]) ? $relation["ownername"] : null;
+                $ownerType = isset($relation["ownertype"]) ? $relation["ownertype"] : null;
+                $meta->save($objectConcrete, $ownerType, $ownerName, $position);
             }
         }
 

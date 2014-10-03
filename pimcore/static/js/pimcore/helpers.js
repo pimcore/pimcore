@@ -408,6 +408,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
             width: 700,
             height: 500,
             html: text,
+            autoScroll: true,
             bodyStyle: "padding: 10px; background:#fff;",
             buttonAlign: "center",
             shadow: false,
@@ -1311,43 +1312,6 @@ pimcore.helpers.openDocumentByPathDialog = function () {
     });
 };
 
-pimcore.helpers.isCanvasSupported = function () {
-    var elem = document.createElement('canvas');
-    return !!(elem.getContext && elem.getContext('2d'));
-};
-
-pimcore.helpers.urlToCanvas = function (url, callback) {
-
-    if(!pimcore.helpers.isCanvasSupported()) {
-        return;
-    }
-
-    var date = new Date();
-    var frameId = "screenshotIframe_" + date.getTime();
-    var iframe = document.createElement("iframe");
-    iframe.setAttribute("name", frameId);
-    iframe.setAttribute("id", frameId);
-    iframe.setAttribute("src", url);
-    iframe.setAttribute("allowtransparency", "false");
-    iframe.setAttribute("style","width:1280px; height:1000px; position:absolute; left:-10000; "
-        + "top:-10000px; background:#fff;");
-    iframe.onload = function () {
-        window.setTimeout(function () {
-            html2canvas([window[frameId].document.body], {
-                onrendered: function (canvas) {
-                    document.body.removeChild(iframe);
-                    if(typeof callback == "function") {
-                        callback(canvas);
-                    }
-                },
-                proxy: "/admin/misc/proxy/"
-            });
-        }, 2000);
-    };
-
-    document.body.appendChild(iframe);
-};
-
 pimcore.helpers.generatePagePreview = function (id, path, callback) {
 
     var cb = callback;
@@ -1364,44 +1328,7 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
                 }
             }
         });
-    } /*else {
-     // DISABLED BECAUSE NOT REALLY SATISFIED WITH THE RESULTS
-
-     pimcore.helpers.urlToCanvas(path, function (id, canvas) {
-
-     // resize canvas
-     var tempCanvas = document.createElement('canvas');
-     tempCanvas.width = canvas.width;
-     tempCanvas.height = canvas.height;
-
-     tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
-
-     // resize to width 400px
-     canvas.width = tempCanvas.width / 3.2;
-     canvas.height = tempCanvas.height / 3.2;
-
-     // draw temp canvas back into canvas, scaled as needed
-     canvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0,
-     canvas.width, canvas.height);
-     delete tempCanvas;
-
-     var data = canvas.toDataURL('image/jpeg', 85);
-
-     Ext.Ajax.request({
-     url: '/admin/page/upload-screenshot',
-     method: "post",
-     params: {
-     id: id,
-     data: data
-     },
-     success: function () {
-     if(typeof cb == "function") {
-     cb();
-     }
-     }
-     });
-     }.bind(this, id));
-     }*/
+    }
 };
 
 pimcore.helpers.treeNodeThumbnailTimeout = null;
@@ -1538,7 +1465,7 @@ pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
 
 pimcore.helpers.showUser = function(specificUser) {
     var user = pimcore.globalmanager.get("user");
-    if (user.admin) {
+    if (user.isAllowed("users")) {
         var panel = null;
         try {
             panel = pimcore.globalmanager.get("users");
@@ -1635,77 +1562,43 @@ pimcore.helpers.handleTabRightClick = function (tabPanel, el, index) {
     }
 };
 
-pimcore.helpers.uploadAssetFromFileObject = function (file, url, callback) {
-    var reader = new FileReader();
+pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess, callbackProgress, callbackFailure) {
 
-    if(typeof callback != "function") {
-        callback = function () {};
+    if(typeof callbackSuccess != "function") {
+        callbackSuccess = function () {};
+    }
+    if(typeof callbackProgress != "function") {
+        callbackProgress = function () {};
+    }
+    if(typeof callbackFailure != "function") {
+        callbackFailure = function () {};
     }
 
-    // binary upload
-    if(typeof reader["readAsBinaryString"] == "function") {
-        reader.onload = function(e) {
+    var data = new FormData();
+    data.append('Filedata', file);
+    data.append("filename", file.name);
 
-            var boundary = '------multipartformboundary' + (new Date()).getTime();
-            var dashdash = '--';
-            var crlf     = '\r\n';
+    jQuery.ajax({
+        xhr: function()
+        {
+            var xhr = new window.XMLHttpRequest();
 
-            var builder = '';
+            //Upload progress
+            xhr.upload.addEventListener("progress", function(evt){
+                callbackProgress(evt);
+            }, false);
 
-            builder += dashdash;
-            builder += boundary;
-            builder += crlf;
+            return xhr;
+        },
+        processData: false,
+        contentType: false,
+        type: 'POST',
+        url: url,
+        data: data,
+        success: callbackSuccess,
+        error: callbackFailure
+    });
 
-            var xhr = new XMLHttpRequest();
-
-            builder += 'Content-Disposition: form-data; name="Filedata"';
-            if (file.name) {
-                builder += '; filename="' + file.name + '"';
-            }
-            builder += crlf;
-
-            builder += 'Content-Type: ' + file.type;
-            builder += crlf;
-            builder += crlf;
-
-            builder += e.target.result;
-            builder += crlf;
-
-            builder += dashdash;
-            builder += boundary;
-            builder += crlf;
-
-            builder += dashdash;
-            builder += boundary;
-            builder += dashdash;
-            builder += crlf;
-
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader('content-type', 'multipart/form-data; boundary='
-                + boundary);
-            xhr.sendAsBinary(builder);
-            xhr.onload = callback;
-        };
-
-        reader.readAsBinaryString(file);
-    } else if(typeof reader["readAsDataURL"] == "function") {
-        // "text" base64 upload
-        reader.onload = function(e) {
-
-            Ext.Ajax.request({
-                url: url,
-                method: "post",
-                params: {
-                    type: "base64",
-                    filename: file.name,
-                    data: e.target.result
-                },
-                success: callback
-            });
-        };
-
-        reader.readAsDataURL(file);
-    }
 };
 
 

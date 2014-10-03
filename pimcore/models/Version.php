@@ -176,9 +176,17 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function delete() {
 
-        if(is_file($this->getFilePath())) {
-            @unlink($this->getFilePath());
+        foreach([$this->getFilePath(), $this->getLegacyFilePath()] as $path) {
+            if(is_file($path)) {
+                @unlink($path);
+            }
+
+            $compressed = $path . ".gz";
+            if(is_file($compressed)) {
+                @unlink($compressed);
+            }
         }
+
         if(is_file($this->getBinaryFilePath())) {
             @unlink($this->getBinaryFilePath());
         }
@@ -194,13 +202,26 @@ class Version extends Pimcore_Model_Abstract {
     public function loadData() {
 
         $data = null;
-        $rawPath = $this->getFilePath();
-        $compressedPath = $this->getFilePath() . ".gz";
+        $zipped = false;
 
-        if(is_file($rawPath) && is_readable($rawPath)){
-            $data = file_get_contents($rawPath);
-        } else if(is_file($compressedPath) && is_readable($compressedPath)){
-            $data = gzdecode(file_get_contents($compressedPath));
+        // check both the legacy file path and the new structure
+        foreach([$this->getFilePath(), $this->getLegacyFilePath()] as $path) {
+            if(file_exists($path)) {
+                $filePath = $path;
+                break;
+            }
+
+            if(file_exists($path . ".gz")) {
+                $filePath = $path . ".gz";
+                $zipped = true;
+                break;
+            }
+        }
+
+        if($zipped && is_file($filePath) && is_readable($filePath)){
+            $data = gzdecode(file_get_contents($filePath));
+        } else if(is_file($filePath) && is_readable($filePath)){
+            $data = file_get_contents($filePath);
         }
 
         if(!$data) {
@@ -234,11 +255,34 @@ class Version extends Pimcore_Model_Abstract {
      * @return string
      */
     protected function getFilePath() {
-        return PIMCORE_VERSION_DIRECTORY . "/" . $this->getCtype() . "/" . $this->getId();
+        $group = floor($this->getCid() / 10000) * 10000;
+        $path = PIMCORE_VERSION_DIRECTORY . "/" . $this->getCtype() . "/g" . $group . "/" . $this->getCid() . "/" . $this->getId();
+        if(!is_dir(dirname($path))) {
+            Pimcore_File::mkdir(dirname($path));
+        }
+
+        return $path;
     }
 
+    /**
+     * @return string
+     */
     protected function getBinaryFilePath() {
+
+        // compatibility
+        $compatibilityPath = $this->getLegacyFilePath() . ".bin";
+        if(file_exists($compatibilityPath)) {
+            return $compatibilityPath;
+        }
+
         return $this->getFilePath() . ".bin";
+    }
+
+    /**
+     * @return string
+     */
+    protected function getLegacyFilePath() {
+        return PIMCORE_VERSION_DIRECTORY . "/" . $this->getCtype() . "/" . $this->getId();
     }
 
     /**

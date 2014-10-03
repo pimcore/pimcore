@@ -300,11 +300,11 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      */
     public function checkValidity($data, $omitMandatoryCheck = false){
 
-        if(!$omitMandatoryCheck and $this->getMandatory() and $data === NULL){
+        if(!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)){
             throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
         }
 
-        if(!empty($data) and !is_numeric($data)){
+        if(!$this->isEmpty($data) and !is_numeric($data)){
             throw new Exception("invalid numeric data");
         }
 
@@ -368,10 +368,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      * @return bool
      */
     public function isEmpty($data) {
-        if($data === null) {
-            return true;
-        }
-        return false;
+        return (strlen($data) < 1);
     }
 
     /**

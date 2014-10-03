@@ -160,6 +160,7 @@ class Document_Tag_Areablock extends Document_Tag {
         $info = null;
         try {
             $info = new Document_Tag_Area_Info();
+            $info->setTag($this);
             $info->setName($this->getName());
             $info->setId($this->currentIndex["type"]);
             $info->setIndex($this->current);
@@ -246,7 +247,7 @@ class Document_Tag_Areablock extends Document_Tag {
                 if(is_file($edit) && $editmode) {
                     $this->getView()->editmode = true;
 
-                    echo '<div class="pimcore_area_editmode_' . $this->getName() . ' pimcore_area_editmode">';
+                    echo '<div class="pimcore_area_editmode_' . $this->getName() . ' pimcore_area_editmode pimcore_area_editmode_hidden">';
                     $this->getView()->template($edit);
                     echo '</div>';
                 }

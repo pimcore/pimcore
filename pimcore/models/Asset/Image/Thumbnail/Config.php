@@ -601,7 +601,7 @@ class Asset_Image_Thumbnail_Config {
                 $pipe->addItem("scaleByWidth", array(
                     "width" => $config["width"]
                 ));
-            } else {
+            } else if (isset($config["width"]) && isset($config["height"])) {
                 $pipe->addItem("resize", array(
                     "width" => $config["width"],
                     "height" => $config["height"]

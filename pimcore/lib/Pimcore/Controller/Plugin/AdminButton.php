@@ -40,7 +40,7 @@ class Pimcore_Controller_Plugin_AdminButton extends Zend_Controller_Plugin_Abstr
                         $documentId = $document->getId();
                     }
 
-                    if(!$documentId) {
+                    if(!isset($documentId) || !$documentId) {
                         $documentId = "null";
                     }
 

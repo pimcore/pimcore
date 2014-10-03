@@ -180,13 +180,15 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
     public function resolveDependencies($data) {
         return Pimcore_Tool_Text::getDependenciesOfWysiwygText($data);
     }
-    
+
     /**
+     * This is a dummy and is mostly implemented by relation types
+     *
      * @param mixed $data
-     * @param Object_Concrete $ownerObject
-     * @param array $blockedTags
+     * @param array $tags
+     * @return array
      */
-    public function getCacheTags($data, $ownerObject, $tags = array()) {
+    public function getCacheTags($data, $tags = array()) {
         return Pimcore_Tool_Text::getCacheTagsOfWysiwygText($data, $tags);
     }
 

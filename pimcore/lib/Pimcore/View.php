@@ -27,13 +27,13 @@ class Pimcore_View extends Zend_View {
      * @param array $options
      * @return Tag
      */
-    public function tag($type, $name, $options = array()) {
+    public function tag($type, $realName, $options = array()) {
 
         $type = strtolower($type);
 
         try {
             $document = $this->document;
-            $name = Document_Tag::buildTagName($type,$name, $document);
+            $name = Document_Tag::buildTagName($type,$realName, $document);
 
             if($document instanceof Document) {
                 $tag = $document->getElement($name);
@@ -55,6 +55,9 @@ class Pimcore_View extends Zend_View {
                     $tag = Document_Tag::factory($type, $name, $document->getId(), $options, $this->controller, $this, $this->editmode);
                     $document->setElement($name, $tag);
                 }
+
+                // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
+                $tag->setRealName($realName);
             }
             
             return $tag;

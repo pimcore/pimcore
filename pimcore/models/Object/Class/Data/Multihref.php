@@ -542,20 +542,20 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
 
 
     /**
+     * This is a dummy and is mostly implemented by relation types
+     *
      * @param mixed $data
-     * @param Object_Concrete $ownerObject
-     * @param array $blockedTags
+     * @param array $tags
+     * @return array
      */
-    public function getCacheTags($data, $ownerObject, $tags = array())
+    public function getCacheTags($data, $tags = array())
     {
         $tags = is_array($tags) ? $tags : array();
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
-                if (!array_key_exists($element->getCacheTag(), $tags)) {
-                    if(!$ownerObject instanceof Element_Interface || $element->getId() != $ownerObject->getId()) {
-                        $tags = $element->getCacheTags($tags);
-                    }
+                if ($element instanceof Element_Interface && !array_key_exists($element->getCacheTag(), $tags)) {
+                    $tags = $element->getCacheTags($tags);
                 }
             }
         }
