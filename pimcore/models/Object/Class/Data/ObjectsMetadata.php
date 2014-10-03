@@ -671,6 +671,10 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                         $this->visibleFieldDefinitions[$field]["title"] = $fd->getTitle();
                         $this->visibleFieldDefinitions[$field]["fieldtype"] = $fd->getFieldType();
 
+                        if ($fd instanceof Object_Class_Data_Select) {
+                            $this->visibleFieldDefinitions[$field]["options"] = $fd->getOptions();
+                        }
+
                         $fieldFound = true;
                     }
                 }
