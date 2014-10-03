@@ -732,7 +732,7 @@ pimcore.layout.toolbar = Class.create({
 
         if (user.isAllowed("documents")) {
             searchItems.push({
-                text: t("document"),
+                text: t("documents"),
                 iconCls: "pimcore_icon_document",
                 handler: searchAction.bind(this, "document")
             });
