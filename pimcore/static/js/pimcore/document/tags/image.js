@@ -29,7 +29,11 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         };
 
         if (!this.options.height) {
-            this.options.height = 100;
+        	if (this.options.dropAreaHeight){
+        		this.options.height = this.options.dropAreaHeight;
+        	}else{
+            	this.options.height = 100;
+        	}
         }
 
         if (data) {
