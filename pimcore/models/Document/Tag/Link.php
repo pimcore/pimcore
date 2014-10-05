@@ -100,7 +100,7 @@ class Document_Tag_Link extends Document_Tag
     public function checkValidity()
     {
         $sane = true;
-        if (is_array($this->data) && $this->data["internal"]) {
+        if (is_array($this->data) && isset($this->data["internal"]) && $this->data["internal"]) {
             if ($this->data["internalType"] == "document") {
                 $doc = Document::getById($this->data["internalId"]);
                 if (!$doc) {
@@ -258,7 +258,7 @@ class Document_Tag_Link extends Document_Tag
             }
         }
 
-        if (!$data["internal"]) {
+        if (!(isset($data["internal"]) && $data["internal"])) {
             if ($asset = Asset::getByPath($data["path"])) {
                 if ($asset instanceof Asset) {
                     $data["internal"] = true;
@@ -290,7 +290,7 @@ class Document_Tag_Link extends Document_Tag
 
         $tags = array();
 
-        if ($this->data["internal"]) {
+        if (isset($this->data["internal"]) && $this->data["internal"]) {
             if ($this->data["internalType"] == "document") {
                 if ($doc = Document::getById($this->data["internalId"])) {
                     if ($doc->getId() != $ownerDocument->getId() and !in_array($doc->getCacheTag(), $blockedTags)) {
@@ -316,7 +316,7 @@ class Document_Tag_Link extends Document_Tag
 
         $dependencies = array();
 
-        if (is_array($this->data) && $this->data["internal"]) {
+        if (is_array($this->data) && isset($this->data["internal"]) && $this->data["internal"]) {
 
             if (intval($this->data["internalId"]) > 0) {
                 if ($this->data["internalType"] == "document") {
@@ -360,7 +360,7 @@ class Document_Tag_Link extends Document_Tag
         if (empty($wsElement->value->data) or is_array($wsElement->value->data)) {
 
             $this->data = $wsElement->value->data;
-            if ($this->data["internal"]) {
+            if (isset($this->data["internal"]) && $this->data["internal"]) {
                 if (intval($this->data["internalId"]) > 0) {
                     $id = $this->data["internalId"];
 
@@ -408,7 +408,7 @@ class Document_Tag_Link extends Document_Tag
     public function getForWebserviceExport()
     {
         $el = parent::getForWebserviceExport();
-        if ($this->data["internal"]) {
+        if (isset($this->data["internal"]) && $this->data["internal"]) {
             if (intval($this->data["internalId"]) > 0) {
                 if ($this->data["internalType"] == "document") {
                     $referencedDocument = Document::getById($this->data["internalId"]);
@@ -446,7 +446,7 @@ class Document_Tag_Link extends Document_Tag
      */
     public function rewriteIds($idMapping)
     {
-        if ($this->data["internal"]) {
+        if (isset($this->data["internal"]) && $this->data["internal"]) {
             $type = $this->data["internalType"];
             $id = (int)$this->data["internalId"];
 

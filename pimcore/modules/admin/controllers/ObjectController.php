@@ -308,7 +308,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
 
             $objectData["properties"] = Element_Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData["userPermissions"] = $object->getUserPermissions();
-            $objectData["versions"] = array_splice($object->getVersions(), 0, 1);
+			$versions = $object->getVersions(); // Only variables should be passed by reference
+            $objectData["versions"] = array_splice($versions, 0, 1);
             $objectData["scheduledTasks"] = $object->getScheduledTasks();
             $objectData["general"]["allowVariants"] = $object->getClass()->getAllowVariants();
             $objectData["general"]["showVariants"] = $object->getClass()->getShowVariants();
