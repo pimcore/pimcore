@@ -71,6 +71,12 @@ class Pimcore_Backup {
     }
 
     protected function getFormattedFilesize () {
+
+        if($this->zipArchive) {
+            $this->zipArchive->close();
+            $this->zipArchive = null;
+        }
+
         return formatBytes(filesize($this->getBackupFile()));
     }
 
@@ -390,7 +396,7 @@ class Pimcore_Backup {
     public function mysqlComplete() {
         $this->getArchive()->addFile(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql", "dump.sql");
         // cleanup
-        unlink(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql");
+        //unlink(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql");
 
         return array(
             "success" => true,
@@ -410,6 +416,10 @@ class Pimcore_Backup {
             "download" => str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getBackupFile()),
             "filesystem" => $this->getBackupFile()
         );
+    }
+
+    public function __wakeup() {
+        $this->zipArchive = null;
     }
 
     public function __destruct() {
