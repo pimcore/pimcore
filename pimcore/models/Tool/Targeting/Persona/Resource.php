@@ -49,7 +49,7 @@ class Tool_Targeting_Persona_Resource extends Pimcore_Model_Resource_Abstract {
 
         if($data["id"]) {
             $data["conditions"] = Pimcore_Tool_Serialize::unserialize($data["conditions"]);
-            $data["actions"] = Pimcore_Tool_Serialize::unserialize($data["actions"]);
+            $data["actions"] = Pimcore_Tool_Serialize::unserialize(isset($data["actions"])?$data["actions"]:null);
             $this->assignVariablesToModel($data);
         } else {
             throw new Exception("persona with id " . $this->model->getId() . " doesn't exist");
