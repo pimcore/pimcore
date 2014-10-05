@@ -266,7 +266,7 @@ class Pimcore_Backup {
                     }
 
                     if (!$exclude && is_file($file)) {
-                        $this->getArchive()->addFile($file, $relPath);
+                        $this->getArchive()->addFile($file, ltrim($relPath,"/"));
                     }
                     else {
                         Logger::info("Backup: Excluded: " . $file);
