@@ -626,12 +626,7 @@ class Pimcore {
         $autoloader->registerNamespace('Version');
         $autoloader->registerNamespace('Sabre');
         $autoloader->registerNamespace('Site');
-        $autoloader->registerNamespace('Services_');
-        $autoloader->registerNamespace('HTTP_');
         $autoloader->registerNamespace('Net_');
-        $autoloader->registerNamespace('File_');
-        $autoloader->registerNamespace('System_');
-        $autoloader->registerNamespace('PEAR_');
         $autoloader->registerNamespace('Thumbnail');
         $autoloader->registerNamespace('Staticroute');
         $autoloader->registerNamespace('Redirect');
@@ -641,8 +636,6 @@ class Pimcore {
         $autoloader->registerNamespace('Glossary');
         $autoloader->registerNamespace('Website');
         $autoloader->registerNamespace('Element');
-        $autoloader->registerNamespace('API');
-        $autoloader->registerNamespace('Archive');
         $autoloader->registerNamespace('Csv');
         $autoloader->registerNamespace('Webservice');
         $autoloader->registerNamespace('Search');
