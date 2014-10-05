@@ -26,7 +26,7 @@ class Pimcore_Tool_Text
 
         return $text;
     }
-    
+
     public static function wysiwygText($text)
     {
         if(empty($text)) {
@@ -82,7 +82,7 @@ class Pimcore_Tool_Text
                         preg_match("/height=\"([^\"]+)*\"/", $oldTag, $heightAttr);
                         preg_match("/style=\"([^\"]+)*\"/", $oldTag, $styleAttr);
 
-                        if ($widthAttr[1] || $heightAttr[1]) {
+                        if ((isset($widthAttr[1]) && $widthAttr[1]) || (isset($heightAttr[1]) && $heightAttr[1])) {
                             $config = array(
                                 "width" => intval($widthAttr[1]),
                                 "height" => intval($heightAttr[1])
@@ -294,7 +294,7 @@ class Pimcore_Tool_Text
     public static function getCacheTagsOfWysiwygText($text, $tags = array())
     {
         $tags = is_array($tags) ? $tags : array();
-        
+
         if (!empty($text)) {
             $elements = self::getElementsInWysiwyg($text);
             foreach ($elements as $element) {

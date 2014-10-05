@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -22,7 +22,7 @@ class Pimcore_Google_Api {
     }
 
     public static function getConfig () {
-        return Pimcore_Config::getSystemConfig()->services->google;
+        return isset(Pimcore_Config::getSystemConfig()->services->google)?Pimcore_Config::getSystemConfig()->services->google:null;
     }
 
     public static function isConfigured($type = "service") {
@@ -45,7 +45,7 @@ class Pimcore_Google_Api {
     public static function isSimpleConfigured() {
         $config = self::getConfig();
 
-        if($config->simpleapikey) {
+        if(isset($config->simpleapikey) && $config->simpleapikey) {
             return true;
         }
         return false;

@@ -129,7 +129,7 @@ class Document_Tag_Link extends Document_Tag
     public function getHref()
     {
 
-        if ($this->data["internal"]) {
+        if (isset($this->data["internal"]) && $this->data["internal"]) {
             if ($this->data["internalType"] == "document") {
                 if ($doc = Document::getById($this->data["internalId"])) {
                     if (!Document::doHideUnpublished() || $doc->isPublished()) {

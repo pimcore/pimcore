@@ -167,7 +167,7 @@ class Pimcore_Tool {
             $systemRoutingDefaults = $config->documents->toArray();
 
             foreach ($routeingDefaults as $key => $value) {
-                if ($systemRoutingDefaults["default_" . $key]) {
+                if (isset($systemRoutingDefaults["default_" . $key]) && $systemRoutingDefaults["default_" . $key]) {
                     $routeingDefaults[$key] = $systemRoutingDefaults["default_" . $key];
                 }
             }
@@ -368,10 +368,10 @@ class Pimcore_Tool {
                 }
             }
         }
-        
+
         return true;
     }
-    
+
     /**
      * @static
      * @throws Exception
@@ -411,7 +411,7 @@ class Pimcore_Tool {
      * @return bool|string
      */
     public static function getHttpData($url, $paramsGet = array(), $paramsPost = array()) {
-        
+
         $client = self::getHttpClient();
         $client->setUri($url);
         $requestType = Zend_Http_Client::GET;

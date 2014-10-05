@@ -138,7 +138,7 @@ class Document_Tag_Block extends Document_Tag {
             return false;
         }
     }
-    
+
     /**
      * Alias for loop
      * @deprecated
@@ -157,7 +157,7 @@ class Document_Tag_Block extends Document_Tag {
     public function start() {
 
         $this->setupStaticEnvironment();
-        
+
         // get configuration data for admin
         if (method_exists($this, "getDataEditmode")) {
             $data = $this->getDataEditmode();
@@ -176,13 +176,13 @@ class Document_Tag_Block extends Document_Tag {
         );
         $options = @Zend_Json::encode($options);
         //$options = base64_encode($options);
-        
+
         $this->outputEditmode('
             <script type="text/javascript">
                 editableConfigurations.push('.$options.');
             </script>
         ');
-        
+
         // set name suffix for the whole block element, this will be addet to all child elements of the block
         $suffixes = Zend_Registry::get("pimcore_tag_block_current");
         $suffixes[] = $this->getName();
@@ -204,7 +204,7 @@ class Document_Tag_Block extends Document_Tag {
 
         // remove the suffix which was set by self::start()
         $suffixes = Zend_Registry::get("pimcore_tag_block_current");
-        array_pop($suffixes);
+        if (is_array($suffixes)) array_pop($suffixes);
         Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
         $this->outputEditmode("</div>");
@@ -226,7 +226,7 @@ class Document_Tag_Block extends Document_Tag {
      */
     public function blockDestruct () {
         $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
-        array_pop($suffixes);
+        if (is_array($suffixes)) array_pop($suffixes);
         Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
     }
 
@@ -333,7 +333,7 @@ class Document_Tag_Block extends Document_Tag {
     public function getCurrent() {
         return $this->current-1;
     }
-    
+
     /**
      * Return current index
      *
@@ -351,7 +351,7 @@ class Document_Tag_Block extends Document_Tag {
     public function __wakeup() {
         $this->current = 0;
     }
-    
+
     /**
      * @return bool
      */
