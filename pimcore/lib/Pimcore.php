@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -233,7 +233,7 @@ class Pimcore {
 
         // check if webdav is configured and add router
         if ($conf instanceof Zend_Config) {
-            if ($conf->assets->webdav->hostname) {
+            if (isset($conf->assets->webdav->hostname) && $conf->assets->webdav->hostname) {
                 $routeWebdav = new Zend_Controller_Router_Route_Hostname(
                     $conf->assets->webdav->hostname,
                     array(
@@ -374,7 +374,7 @@ class Pimcore {
         Logger::setPriorities($prios);
 
         if (is_writable(PIMCORE_LOG_DEBUG)) {
-            
+
             // check for big logfile, empty it if it's bigger than about 200M
             if (filesize(PIMCORE_LOG_DEBUG) > 200000000) {
                 rename(PIMCORE_LOG_DEBUG, PIMCORE_LOG_DEBUG . "-archive-" . date("m-d-Y-H-i")); // archive log (will be cleaned up by maintenance)
@@ -586,7 +586,7 @@ class Pimcore {
                     try {
                         $className = $p['plugin']['pluginClassName'];
                         if (!empty($className) && Pimcore_Tool::classExists($className)) {
-                         
+
                             $plugin = new $className($jsPaths, $cssPaths);
                             if ($plugin instanceof Pimcore_API_Plugin_Abstract) {
                                 $broker->registerPlugin($plugin);
@@ -658,7 +658,7 @@ class Pimcore {
      * @return bool
      */
     public static function initConfiguration() {
-               
+
         // init configuration
         try {
             $conf = Pimcore_Config::getSystemConfig();
@@ -671,7 +671,7 @@ class Pimcore {
             }
 
             $debug = self::inDebugMode();
-            
+
             if (!defined("PIMCORE_DEBUG")) define("PIMCORE_DEBUG", $debug);
             if (!defined("PIMCORE_DEVMODE")) define("PIMCORE_DEVMODE", (bool) $conf->general->devmode);
 
@@ -687,7 +687,7 @@ class Pimcore {
         catch (Exception $e) {
             $m = "Couldn't load system configuration";
             Logger::err($m);
-            
+
             //@TODO check here for /install otherwise exit here
         }
 

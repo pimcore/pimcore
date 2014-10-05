@@ -34,7 +34,7 @@ abstract class Pimcore_Controller_Action_Admin_Element extends Pimcore_Controlle
         $this->_helper->json(array("success" => false, "message" => "missing_permission"));
     }
 
-    protected function getTreeNodeConfig() {
+    protected function getTreeNodeConfig($childDocument) {
         return [];
     }
 
