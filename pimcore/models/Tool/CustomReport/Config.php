@@ -208,7 +208,7 @@ class Tool_CustomReport_Config {
     /**
      * @return array
      */
-    public function getReportsList () {
+    public static function getReportsList () {
         $dir = Tool_CustomReport_Config::getWorkingDir();
 
         $reports = array();

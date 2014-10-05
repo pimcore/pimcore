@@ -36,7 +36,7 @@ class Pimcore_Google_Api {
     public static function isServiceConfigured() {
         $config = self::getConfig();
 
-        if($config->client_id && $config->email && file_exists(self::getPrivateKeyPath())) {
+        if(isset($config->client_id) && $config->client_id && isset($config->email) && $config->email && file_exists(self::getPrivateKeyPath())) {
             return true;
         }
         return false;
