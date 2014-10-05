@@ -15,7 +15,7 @@ if (strpos($this->asset->getFilename(), ".pdf") !== false) {
     $pdfPath = $this->asset->getFullpath();
 }
 
-if($pdfPath) {
+if(isset($pdfPath) && $pdfPath) {
     if($this->getParam("native-viewer")) {
         header("Location: " . $pdfPath, true, 301);
         exit;

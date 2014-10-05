@@ -1018,6 +1018,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
 
             if (!empty($tasksData)) {
                 foreach ($tasksData as $taskData) {
+                    if (!isset($taskData["time"])) $taskData["time"] = null;
                     $taskData["date"] = strtotime($taskData["date"] . " " . $taskData["time"]);
 
                     $task = new Schedule_Task($taskData);
