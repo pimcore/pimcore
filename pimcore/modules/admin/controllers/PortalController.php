@@ -48,13 +48,15 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
 
     public function createDashboardAction() {
         $dashboards = $this->dashboardHelper->getAllDashboards();
-        $key = $this->getParam("key");
+        $key = trim($this->getParam("key"));
 
         if($dashboards[$key]) {
             $this->_helper->json(array("success" => false, "message" => "dashboard_already_exists"));
-        } else {
+        } else if (!empty($key)) {
             $this->dashboardHelper->saveDashboard($key);
             $this->_helper->json(array("success" => true));
+        } else {
+            $this->_helper->json(array("success" => false, "message" => "empty"));
         }
     }
 
