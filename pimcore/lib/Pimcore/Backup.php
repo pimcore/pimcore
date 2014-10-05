@@ -22,6 +22,11 @@ class Pimcore_Backup {
     public $backupFile;
     protected $options = array();
 
+    /**
+     * @var ZipArchive
+     */
+    protected $zipArchive;
+
     public function __construct ($backupFile) {
         $this->backupFile = $backupFile;
     }
@@ -69,19 +74,29 @@ class Pimcore_Backup {
         return formatBytes(filesize($this->getBackupFile()));
     }
 
+    /**
+     * @return ZipArchive
+     * @throws Exception
+     */
     protected function getArchive () {
-        $obj = new Archive_Tar($this->getBackupFile());
 
-        if (!is_file($this->getBackupFile())) {
-
-            $files = array();
-
-            if (!$obj->create($files)) {
-                echo "can't create archive";
-            }
+        // if already initialized, just return the handler
+        if($this->zipArchive) {
+            return $this->zipArchive;
         }
 
-        return $obj;
+        $this->zipArchive = new ZipArchive();
+        if (!is_file($this->getBackupFile())) {
+            $zipState = $this->zipArchive->open($this->getBackupFile(), ZipArchive::CREATE);
+        } else {
+            $zipState = $this->zipArchive->open($this->getBackupFile());
+        }
+
+        if ($zipState === TRUE) {
+            return $this->zipArchive;
+        } else {
+            throw new \Exception("unable to create zip archive");
+        }
     }
 
     public function init ($options = array()) {
@@ -235,7 +250,7 @@ class Pimcore_Backup {
                 if (file_exists($file) && is_readable($file)) {
 
                     $exclude = false;
-                    $relPath = str_replace(PIMCORE_DOCUMENT_ROOT . DIRECTORY_SEPARATOR, "", $file);
+                    $relPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $file);
                     $relPath = str_replace(DIRECTORY_SEPARATOR, "/", $relPath); // windows compatibility
 
                     foreach ($excludePatterns as $pattern) {
@@ -245,7 +260,7 @@ class Pimcore_Backup {
                     }
 
                     if (!$exclude && is_file($file)) {
-                        $this->getArchive()->addString($relPath, file_get_contents($file));
+                        $this->getArchive()->addFile($file, $relPath);
                     }
                     else {
                         Logger::info("Backup: Excluded: " . $file);
@@ -373,8 +388,7 @@ class Pimcore_Backup {
     }
 
     public function mysqlComplete() {
-        $this->getArchive()->addString("dump.sql", file_get_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql"));
-
+        $this->getArchive()->addFile(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql", "dump.sql");
         // cleanup
         unlink(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql");
 
@@ -385,12 +399,11 @@ class Pimcore_Backup {
     }
 
     public function complete () {
-        $this->getArchive()->addString(PIMCORE_FRONTEND_MODULE . "/var/cache/.dummy", "dummy");
-        $this->getArchive()->addString(PIMCORE_FRONTEND_MODULE . "/var/tmp/.dummy", "dummy");
-        $this->getArchive()->addString(PIMCORE_FRONTEND_MODULE . "/var/log/debug.log", "dummy");
-        $this->getArchive()->addString("index.php", file_get_contents(PIMCORE_DOCUMENT_ROOT . "/index.php"));
-        $this->getArchive()->addString(".htaccess", file_get_contents(PIMCORE_DOCUMENT_ROOT . "/.htaccess"));
-
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/cache/.dummy", "dummy");
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/tmp/.dummy", "dummy");
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/log/debug.log", "dummy");
+        $this->getArchive()->addFile(PIMCORE_DOCUMENT_ROOT . "/index.php", "index.php");
+        $this->getArchive()->addFile(PIMCORE_DOCUMENT_ROOT . "/.htaccess", ".htaccess");
 
         return array(
             "success" => true,
@@ -399,35 +412,10 @@ class Pimcore_Backup {
         );
     }
 
-    public function restore(){
-        $archive = $this->getArchive();
-        $tmpRestoreDirectory = PIMCORE_TEMPORARY_DIRECTORY .'/backup-restore';
-        recursiveDelete($tmpRestoreDirectory);
-        Pimcore_File::mkdir($tmpRestoreDirectory);
-        $archive->extract($tmpRestoreDirectory);
-        $dumpFile = $tmpRestoreDirectory.'/dump.sql';
-        if(is_readable($dumpFile)){
-            $dbSettings = Pimcore_Config::getSystemConfig()->database->toArray();
-
-            if(!in_array($dbSettings['adapter'],array('Mysqli','Mysql'))){
-                throw new Exception("Database restore is only supporter for Mysql/Mysqli.");
-            }
-
-            $cmd = "mysql --user=" . escapeshellarg($dbSettings['params']['username']);
-            $cmd .= " --password=" . escapeshellarg($dbSettings['params']['password']);
-            $cmd .= " --host=" . escapeshellarg($dbSettings['params']['host']);
-            $cmd .= " --database=" . escapeshellarg($dbSettings['params']['dbname']);
-            $cmd .= " < " . escapeshellarg($dumpFile);
-
-            exec($cmd,$output,$resultCode);
-            if($resultCode === 0){
-                verboseMessage("Successfully imported sql data.");
-            }else{
-                throw new Exception("Could not import sql data.");
-            }
+    public function __destruct() {
+        if($this->zipArchive) {
+            @$this->zipArchive->close();
         }
-
-        recursiveDelete($tmpRestoreDirectory);
     }
 }
 

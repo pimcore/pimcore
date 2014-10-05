@@ -19,7 +19,7 @@ include_once("startup.php");
 
 try {
     $opts = new Zend_Console_Getopt(array(
-        'filename|f=s'    => 'filename for the backup (default: backup_m-d-Y_H-i) .tar is added automatically',
+        'filename|f=s'    => 'filename for the backup (default: backup_m-d-Y_H-i) .zip is added automatically',
         'directory|d=s'   => 'target directory (absolute path without trailing slash) for the backup-file (default: ' . PIMCORE_BACKUP_DIRECTORY . ')',
         'overwrite|o' => 'overwrite existing backup with the same filename, default: true',
         'cleanup|c=s' => 'in days, backups in the target directory which are older than the given days will be deleted, default 7, use false to disable it',
@@ -73,7 +73,7 @@ foreach ($config as $key => $value) {
 $config = $tmpConfig;
 Zend_Registry::set("config", $config);
 
-$backupFile = $config["directory"] . "/" . $config["filename"] . ".tar";
+$backupFile = $config["directory"] . "/" . $config["filename"] . ".zip";
 
 
 // check for existing file
@@ -89,7 +89,7 @@ if($config["cleanup"] != "false") {
     $files = scandir($config["directory"]);
     $lifetime = (int) $config["cleanup"] * 86400;
     foreach ($files as $file) {
-        if(is_file($config["directory"] . "/" . $file) && preg_match("/\.tar$/",$file)) {
+        if(is_file($config["directory"] . "/" . $file) && preg_match("/\.zip$/",$file)) {
             if(filemtime($config["directory"] . "/" . $file) < (time()-$lifetime) ) {
                 verboseMessage("delete: " . $config["directory"] . "/" . $file . "\n");
                 unlink($config["directory"] . "/" . $file);
