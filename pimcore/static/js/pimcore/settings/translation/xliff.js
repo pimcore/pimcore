@@ -245,6 +245,10 @@ pimcore.settings.translation.xliff = Class.create({
             return true;
         });
 
+        // skip if no items are selected to export
+        if(data.items.length < 1) {
+            return;
+        }
 
         for (var i = 0; i < data.items.length; i++) {
             tmData.push(data.items[i].data);
