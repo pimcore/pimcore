@@ -799,29 +799,36 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin_Element
 
         $request = $this->getRequest();
 
-        $fromSource = file_get_html($request->getScheme() . "://" . $request->getHttpHost() . $docFrom->getFullPath() . "?pimcore_version=" . $this->getParam("from") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
-        $toSource = file_get_html($request->getScheme() . "://" . $request->getHttpHost() . $docTo->getFullPath() . "?pimcore_version=" . $this->getParam("to") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
+        $fromSourceHtml = Pimcore_Tool::getHttpData($request->getScheme() . "://" . $request->getHttpHost() . $docFrom->getFullPath() . "?pimcore_version=" . $this->getParam("from") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
+        $toSourceHtml = Pimcore_Tool::getHttpData($request->getScheme() . "://" . $request->getHttpHost() . $docTo->getFullPath() . "?pimcore_version=" . $this->getParam("to") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
 
-        if ($docFrom instanceof Document_Page) {
-            $from = $fromSource->find("body", 0);
-            $to = $toSource->find("body", 0);
+        $fromSource = str_get_html($fromSourceHtml);
+        $toSource = str_get_html($toSourceHtml);
+
+        if($fromSource && $toSource) {
+            if ($docFrom instanceof Document_Page) {
+                $from = $fromSource->find("body", 0);
+                $to = $toSource->find("body", 0);
+            } else {
+                $from = $fromSource;
+                $to = $toSource;
+            }
+
+            $diff = new HTMLDiffer();
+            $text = $diff->htmlDiff($from, $to);
+
+
+            if ($docFrom instanceof Document_Page) {
+                $fromSource->find("head", 0)->innertext = $fromSource->find("head", 0)->innertext . '<link rel="stylesheet" type="text/css" href="/pimcore/static/css/daisydiff.css" />';
+                $fromSource->find("body", 0)->innertext = $text;
+
+                echo $fromSource;
+            } else {
+                echo '<link rel="stylesheet" type="text/css" href="/pimcore/static/css/daisydiff.css" />';
+                echo $text;
+            }
         } else {
-            $from = $fromSource;
-            $to = $toSource;
-        }
-
-        $diff = new HTMLDiffer();
-        $text = $diff->htmlDiff($from, $to);
-
-
-        if ($docFrom instanceof Document_Page) {
-            $fromSource->find("head", 0)->innertext = $fromSource->find("head", 0)->innertext . '<link rel="stylesheet" type="text/css" href="/pimcore/static/css/daisydiff.css" />';
-            $fromSource->find("body", 0)->innertext = $text;
-
-            echo $fromSource;
-        } else {
-            echo '<link rel="stylesheet" type="text/css" href="/pimcore/static/css/daisydiff.css" />';
-            echo $text;
+            echo "Unable to create diff";
         }
 
 
