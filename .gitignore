@@ -1,0 +1,12 @@
+website
+website_demo
+website_demo/
+website_demo/*
+
+######################
+# Other generated files #
+######################
+nbproject/
+.idea/
+Thumbs.db
+.DS_Store
