@@ -640,7 +640,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         $filteredDefinitions = Object_Service::getCustomLayoutDefinitionForGridColumnConfig($class, $objectId);;
         $layoutDefinitions = $filteredDefinitions["layoutDefinition"];
-        $filteredFieldDefinition = $filteredDefinitions["fieldDefinition"];
+        $filteredFieldDefinition = isset($filteredDefinitions["fieldDefinition"])?$filteredDefinitions["fieldDefinition"]:null;
 
         $class->setFieldDefinitions(null);
 

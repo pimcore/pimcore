@@ -113,6 +113,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
+        if (!isset($objects)) $objects = null;
         $returnValueContainer = new Tool_Admin_EventDataContainer($objects);
         Pimcore::getEventManager()->trigger("admin.object.treeGetChildsById.preSendData", $this, array("returnValueContainer" => $returnValueContainer));
 
@@ -879,7 +880,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
 
         if ($object->isAllowed("settings")) {
 
-
+            if (!isset($values["key"])) $values["key"] = null;
             if ($values["key"] && $object->isAllowed("rename")) {
                 $object->setKey($values["key"]);
             } else if ($values["key"] != $object->getKey()) {

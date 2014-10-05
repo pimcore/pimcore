@@ -313,6 +313,7 @@ class Object_Service extends Element_Service {
                             $data[$dataKey] = $object->$getter();
                         } else {
 
+                            if (!isset($brickKey)) $brickKey = null;
                             $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey);
                             $data['inheritedFields'][$dataKey] = array("inherited" => $valueObject->objectid != $object->getId(), "objectid" => $valueObject->objectid);
 
