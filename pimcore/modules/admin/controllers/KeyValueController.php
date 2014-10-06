@@ -178,8 +178,9 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
             }
 
             $config->save();
+            $item = $this->getConfigItem($config);
 
-            $this->_helper->json(array("success" => true, "data" => $config));
+            $this->_helper->json(array("success" => true, "data" => $item));
         } else {
 
             $start = 0;
@@ -268,48 +269,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
 
             $data = array();
             foreach($configList as $config) {
-                $name = $config->getName();
-                if (!$name) {
-                    $name = "EMPTY";
-                }
-
-                $groupDescription = null;
-                if ($config->getGroup()) {
-                    try {
-                        $group = Object_KeyValue_GroupConfig::getById($config->getGroup());
-                        $groupDescription = $group->getDescription();
-                        $groupName = $group->getName();
-                    } catch (Exception $e) {
-
-                    }
-
-                    if (empty($groupDescription)) {
-                        $groupDescription = $group->getName();
-                    }
-                }
-
-                $item = array(
-                    "id" => $config->getId(),
-                    "name" => $name,
-                    "description" => $config->getDescription(),
-                    "type" => $config->getType(),
-                    "unit" => $config->getUnit(),
-                    "possiblevalues" => $config->getPossibleValues(),
-                    "group" => $config->getGroup(),
-                    "groupdescription" => $groupDescription,
-                    "groupName" => $groupName,
-                    "translator" => $config->getTranslator(),
-                    "mandatory" => $config->getMandatory()
-                );
-
-                if ($config->getCreationDate()) {
-                    $item["creationDate"] = $config->getCreationDate();
-                }
-
-                if ($config->getModificationDate()) {
-                    $item["modificationDate"] = $config->getModificationDate();
-                }
-
+                $item = $this->getConfigItem($config);
                 $data[] = $item;
             }
             $rootElement["data"] = $data;
@@ -317,6 +277,52 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
             $rootElement["total"] = $list->getTotalCount();
             return $this->_helper->json($rootElement);
         }
+    }
+
+
+    protected function getConfigItem($config) {
+        $name = $config->getName();
+        if (!$name) {
+            $name = "EMPTY";
+        }
+
+        $groupDescription = null;
+        if ($config->getGroup()) {
+            try {
+                $group = Object_KeyValue_GroupConfig::getById($config->getGroup());
+                $groupDescription = $group->getDescription();
+                $groupName = $group->getName();
+            } catch (Exception $e) {
+
+            }
+
+            if (empty($groupDescription)) {
+                $groupDescription = $group->getName();
+            }
+        }
+
+        $item = array(
+            "id" => $config->getId(),
+            "name" => $name,
+            "description" => $config->getDescription(),
+            "type" => $config->getType(),
+            "unit" => $config->getUnit(),
+            "possiblevalues" => $config->getPossibleValues(),
+            "group" => $config->getGroup(),
+            "groupdescription" => $groupDescription,
+            "groupName" => $groupName,
+            "translator" => $config->getTranslator(),
+            "mandatory" => $config->getMandatory()
+        );
+
+        if ($config->getCreationDate()) {
+            $item["creationDate"] = $config->getCreationDate();
+        }
+
+        if ($config->getModificationDate()) {
+            $item["modificationDate"] = $config->getModificationDate();
+        }
+        return $item;
     }
 
     public function addpropertyAction() {
