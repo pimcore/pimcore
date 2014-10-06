@@ -23,18 +23,18 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         this.options = options;
 
-        this.originalDimensions = {
-            width: this.options.width,
-            height: this.options.height
-        };
-
-        if (!this.options.height) {
-            if (this.options.defautHeight){
-                this.options.height = this.options.defautHeight;
+        if (!this.options["height"]) {
+            if (this.options["defautHeight"]){
+                this.options.height = this.options["defautHeight"];
             }else{
                 this.options.height = 100;
             }
         }
+
+        this.originalDimensions = {
+            width: this.options.width,
+            height: this.options.height
+        };
 
         if (data) {
             this.datax = data;
