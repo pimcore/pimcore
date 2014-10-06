@@ -310,7 +310,7 @@ class Pimcore_Tool {
             if (empty($confArray["views"]["view"])) {
                 return array();
             }
-            else if ($confArray["views"]["view"][0]) {
+            else if (isset($confArray["views"]["view"][0]) && $confArray["views"]["view"][0]) {
                 $cvData = $confArray["views"]["view"];
             }
             else {

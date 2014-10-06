@@ -186,6 +186,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
      */
     private function cleanupOldFiles($serializedFilename) {
         $this->oldClassDefinitions = array();
+        $prevSerialized = null;
         if(file_exists($serializedFilename)) {
             $prevSerialized = file_get_contents($serializedFilename);
         }

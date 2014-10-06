@@ -113,7 +113,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
             {
                 /* @var Object_Class $classItem */
                 $currentClass = $classes[$i];
-                $nextClass = $classes[$i+1];
+                $nextClass = isset($classes[$i+1]) ? $classes[$i+1] : null;
 
                 // check last group
                 $className = $currentClass->getName();

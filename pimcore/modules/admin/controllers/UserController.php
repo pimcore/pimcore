@@ -311,7 +311,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             "permissions" => $user->generatePermissionList(),
             "availablePermissions" => $availableUserPermissions,
             "objectDependencies" => array(
-                "hasHidden" => $hasHidden,
+                "hasHidden" => isset($hasHidden)?$hasHidden:null,
                 "dependencies" => $userObjectData
             )
         ));

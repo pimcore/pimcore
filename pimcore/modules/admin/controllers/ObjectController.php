@@ -887,7 +887,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
                 Logger::debug("prevented renaming object because of missing permissions ");
             }
 
-            if ($values["parentId"]) {
+            if (isset($values["parentId"]) && $values["parentId"]) {
                 $parent = Object_Abstract::getById($values["parentId"]);
 
                 //check if parent is changed

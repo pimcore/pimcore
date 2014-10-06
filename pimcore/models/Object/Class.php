@@ -308,6 +308,7 @@ class Object_Class extends Pimcore_Model_Abstract {
                 }
             }
 
+            if (!isset($lazyLoadedFields)) $lazyLoadedFields = null;
             $cd .= 'protected static $_relationFields = ' . var_export($relationTypes, true) . ";\n\n";
             $cd .= 'public $lazyLoadedFields = ' . var_export($lazyLoadedFields, true) . ";\n\n";
         }
