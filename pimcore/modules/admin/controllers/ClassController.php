@@ -816,7 +816,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         }
 
         $returnValueContainer = new Tool_Admin_EventDataContainer($list);
-        Pimcore::getEventManager()->trigger("admin.class.objectbrickList.preSendData", $this, ["returnValueContainer" => $returnValueContainer]);
+        Pimcore::getEventManager()->trigger("admin.class.objectbrickList.preSendData", $this, ["returnValueContainer" => $returnValueContainer,"objectId"=>$this->getParam('object_id')]);
 
         $this->_helper->json(array("objectbricks" => $list));
     }
