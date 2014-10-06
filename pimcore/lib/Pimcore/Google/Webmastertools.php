@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -14,22 +14,22 @@
  */
 
 class Pimcore_Google_Webmastertools {
-    
+
     public static $stack = array();
-    
+
     public static function isConfigured (Site $site = null) {
         if(self::getSiteConfig($site)) {
             return true;
         }
         return false;
     }
-    
+
 
     public static function getSiteConfig ($site = null) {
-        
+
         $siteKey = Pimcore_Tool_Frontend::getSiteKey($site);
-        
-        if(Pimcore_Config::getReportConfig()->webmastertools->sites->$siteKey->verification) {
+
+        if(isset(Pimcore_Config::getReportConfig()->webmastertools->sites->$siteKey->verification) && Pimcore_Config::getReportConfig()->webmastertools->sites->$siteKey->verification) {
             return Pimcore_Config::getReportConfig()->webmastertools->sites->$siteKey;
         }
         return false;

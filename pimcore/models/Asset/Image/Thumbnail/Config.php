@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
+
 class Asset_Image_Thumbnail_Config {
 
     /**
@@ -503,17 +503,17 @@ class Asset_Image_Thumbnail_Config {
     public static function getByArrayConfig ($config) {
         $pipe = new Asset_Image_Thumbnail_Config();
 
-        if($config["format"]) {
+        if(isset($config["format"]) && $config["format"]) {
             $pipe->setFormat($config["format"]);
         }
-        if($config["quality"]) {
+        if(isset($config["quality"]) && $config["quality"]) {
             $pipe->setQuality($config["quality"]);
         }
-        if($config["items"]) {
+        if(isset($config["items"]) && $config["items"]) {
             $pipe->setItems($config["items"]);
         }
 
-        if($config["highResolution"]) {
+        if(isset($config["highResolution"]) && $config["highResolution"]) {
             $pipe->setHighResolution($config["highResolution"]);
         }
 

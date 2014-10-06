@@ -572,7 +572,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function getFielddefinition($name)
     {
         $fds = $this->getFieldDefinitions();
-        if ($fds[$name]) {
+        if (isset($fds[$name]) && $fds[$name]) {
             return $fds[$name];
         }
         return;

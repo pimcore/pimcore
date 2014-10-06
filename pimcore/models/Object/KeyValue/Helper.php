@@ -20,7 +20,7 @@ class Object_KeyValue_Helper {
     /** Returns the group/key config as XML.
      * @return mixed
      */
-    public function export() {
+    public static function export() {
         $xml = new SimpleXMLElement('<xml/>');
 
         $list = new Object_KeyValue_GroupConfig_List();

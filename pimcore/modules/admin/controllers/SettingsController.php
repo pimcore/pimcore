@@ -326,7 +326,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "language" => $values["general.language"],
                 "validLanguages" => implode(",", $filteredLanguages),
                 "fallbackLanguages" => $fallbackLanguages,
-                "theme" => $values["general.theme"],
+                "theme" => isset($values["general.theme"])?$values["general.theme"]:null,
                 "contactemail" => $values["general.contactemail"],
                 "loginscreencustomimage" => $values["general.loginscreencustomimage"],
                 "disableusagestatistics" => $values["general.disableusagestatistics"],
@@ -348,8 +348,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             "database" => $oldValues["database"], // db cannot be changed here
             "documents" => array(
                 "versions" => array(
-                    "days" => $values["documents.versions.days"],
-                    "steps" => $values["documents.versions.steps"]
+                    "days" => isset($values["documents.versions.days"])?$values["documents.versions.days"]:null,
+                    "steps" => isset($values["documents.versions.steps"])?$values["documents.versions.steps"]:null
                 ),
                 "default_controller" => $values["documents.default_controller"],
                 "default_action" => $values["documents.default_action"],
@@ -365,8 +365,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             ),
             "objects" => array(
                 "versions" => array(
-                    "days" => $values["objects.versions.days"],
-                    "steps" => $values["objects.versions.steps"]
+                    "days" => isset($values["objects.versions.days"])?$values["objects.versions.days"]:null,
+                    "steps" => isset($values["objects.versions.steps"])?$values["objects.versions.steps"]:null
                 )
             ),
             "assets" => array(
@@ -374,8 +374,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "hostname" => $values["assets.webdav.hostname"]
                 ),
                 "versions" => array(
-                    "days" => $values["assets.versions.days"],
-                    "steps" => $values["assets.versions.steps"]
+                    "days" => isset($values["assets.versions.days"])?$values["assets.versions.days"]:null,
+                    "steps" => isset($values["assets.versions.steps"])?$values["assets.versions.steps"]:null
                 ),
                 "ffmpeg" => $values["assets.ffmpeg"],
                 "ghostscript" => $values["assets.ghostscript"],
@@ -424,7 +424,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         foreach(array("email", "newsletter") as $type) {
             $smtpPassword = $values[$type . ".smtp.auth.password"];
             if (empty($smtpPassword)) {
-                $smtpPassword = $oldValues[$type]['smtp']['auth']['password'];
+                $smtpPassword = isset($oldValues[$type]['smtp']['auth']['password'])?$oldValues[$type]['smtp']['auth']['password']:null;
             }
 
             $settings[$type] = array(
@@ -1427,11 +1427,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         }
         return $resultItem;
     }
-    
+
     public function getAvailableAlgorithmsAction () {
-        
+
     	$options = array();
-		
+
     	$algorithms = hash_algos();
         foreach ($algorithms as $algorithm) {
 
@@ -1439,7 +1439,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "key" => $algorithm,
                 "value" => $algorithm
             );
-            
+
         }
 
         $result = array("data" => $options, "success" => true, "total" => count($options));

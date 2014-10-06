@@ -208,7 +208,7 @@ class Tool_CustomReport_Config {
     /**
      * @return array
      */
-    public function getReportsList () {
+    public static function getReportsList () {
         $dir = Tool_CustomReport_Config::getWorkingDir();
 
         $reports = array();
@@ -227,9 +227,9 @@ class Tool_CustomReport_Config {
 
     }
 
-    public function getAdapter($configuration, $fullConfig = null) {
+    public static function getAdapter($configuration, $fullConfig = null) {
 
-        $type = $configuration->type ? ucfirst($configuration->type) : 'Sql';
+        $type = (isset($configuration->type) && $configuration->type) ? ucfirst($configuration->type) : 'Sql';
         $adapter = "Tool_CustomReport_Adapter_{$type}";
         return new $adapter($configuration, $fullConfig);
     }

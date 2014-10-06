@@ -69,7 +69,7 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
         // force loading of properties
         $document->getProperties();
     }
-    
+
     protected function addSchedulerToDocument(Document $document) {
 
         // scheduled tasks
@@ -79,6 +79,7 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
 
             if (!empty($tasksData)) {
                 foreach ($tasksData as $taskData) {
+                    if (!isset($taskData["time"])) $taskData["time"] = null;
                     $taskData["date"] = strtotime($taskData["date"] . " " . $taskData["time"]);
 
                     $task = new Schedule_Task($taskData);
@@ -129,7 +130,7 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
                 $document = $this->getLatestVersion($document);
             }
 
-            // set _fulldump otherwise the properties will be removed because of the session-serialize 
+            // set _fulldump otherwise the properties will be removed because of the session-serialize
             $document->_fulldump = true;
             $this->setValuesToDocument($document);
 
@@ -191,9 +192,9 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
         $properties = Element_Service::minimizePropertiesForEditmode($document->getProperties());
         $document->setProperties($properties);
     }
-    
+
     protected function getLatestVersion (Document $document) {
-        
+
         $latestVersion = $document->getLatestVersion();
         if($latestVersion) {
             $latestDoc = $latestVersion->loadData();

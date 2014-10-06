@@ -27,10 +27,11 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
 
         $snippet = Document_Snippet::getById($this->getParam("id"));
         $modificationDate = $snippet->getModificationDate();
-        
+
         $snippet = $this->getLatestVersion($snippet);
 
-        $snippet->setVersions(array_splice($snippet->getVersions(), 0, 1));
+        $versions = $snippet->getVersions(); // Only variables should be passed by reference
+        $snippet->setVersions(array_splice($versions, 0, 1));
         $snippet->getScheduledTasks();
         $snippet->idPath = Element_Service::getIdPath($snippet);
         $snippet->userPermissions = $snippet->getUserPermissions();

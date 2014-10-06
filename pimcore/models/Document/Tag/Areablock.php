@@ -180,7 +180,7 @@ class Document_Tag_Areablock extends Document_Tag {
             $edit = $areas[$this->currentIndex["type"]] . "/edit.php";
             $options = $this->getOptions();
             $params = array();
-            if(is_array($options["params"]) && array_key_exists($this->currentIndex["type"], $options["params"])) {
+            if(isset($options["params"]) && is_array($options["params"]) && array_key_exists($this->currentIndex["type"], $options["params"])) {
                 if(is_array($options["params"][$this->currentIndex["type"]])) {
                     $params = $options["params"][$this->currentIndex["type"]];
                 }
@@ -227,7 +227,7 @@ class Document_Tag_Areablock extends Document_Tag {
             if(is_file($view)) {
                 $editmode = $this->getView()->editmode;
 
-                if(method_exists($actionObject,"getBrickHtmlTagOpen")) {
+                if(isset($actionObject) && method_exists($actionObject,"getBrickHtmlTagOpen")) {
                     echo $actionObject->getBrickHtmlTagOpen($this);
                 }else{
                     echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content">';
@@ -252,13 +252,13 @@ class Document_Tag_Areablock extends Document_Tag {
                     echo '</div>';
                 }
 
-                if(method_exists($actionObject,"getBrickHtmlTagClose")) {
+                if(isset($actionObject) && method_exists($actionObject,"getBrickHtmlTagClose")) {
                     echo $actionObject->getBrickHtmlTagClose($this);
                 }else{
                     echo '</div>';
                 }
 
-                if(is_object($actionObject) && method_exists($actionObject,"postRenderAction")) {
+                if(isset($actionObject) && is_object($actionObject) && method_exists($actionObject,"postRenderAction")) {
                     $actionObject->postRenderAction();
                 }
             }
@@ -305,7 +305,7 @@ class Document_Tag_Areablock extends Document_Tag {
      */
     public function blockDestruct() {
         $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
-        array_pop($suffixes);
+        if (is_array($suffixes)) array_pop($suffixes);
         Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
     }
 
@@ -381,7 +381,7 @@ class Document_Tag_Areablock extends Document_Tag {
 
         // remove the suffix which was set by self::start()
         $suffixes = Zend_Registry::get("pimcore_tag_block_current");
-        array_pop($suffixes);
+        if (is_array($suffixes)) array_pop($suffixes);
         Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
         $this->outputEditmode("</div>");
@@ -478,7 +478,7 @@ class Document_Tag_Areablock extends Document_Tag {
         foreach ($areaConfigs as $areaName => $areaConfig) {
 
             // don't show disabled bricks
-            if(!$options['dontCheckEnabled']){
+            if(!(isset($options['dontCheckEnabled']) && $options['dontCheckEnabled'])){
                 if(!$this->isBrickEnabled($areaName)) {
                     continue;
                 }

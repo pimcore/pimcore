@@ -50,11 +50,11 @@ class Document_Tag_Textarea extends Document_Tag {
         $options = $this->getOptions();
 
         $text = $this->text;
-        if ($options["htmlspecialchars"] !== false) {
+        if (isset($options["htmlspecialchars"]) && $options["htmlspecialchars"] !== false) {
             $text = htmlspecialchars($this->text);
         }
 
-        if ($options["nl2br"]) {
+        if (isset($options["nl2br"]) && $options["nl2br"]) {
             $text = nl2br($text);
         }
 

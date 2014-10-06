@@ -66,7 +66,7 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
 
     protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null) {
         $sql = "";
-        if($config->sql && !$ignoreSelectAndGroupBy) {
+        if(isset($config->sql) && $config->sql && !$ignoreSelectAndGroupBy) {
             if(strpos(strtoupper(trim($config->sql)), "SELECT") === false || strpos(strtoupper(trim($config->sql)), "SELECT") > 5) {
                 $sql .= "SELECT ";
             }
@@ -77,13 +77,13 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
         } else {
             $sql .= "SELECT *";
         }
-        if($config->from) {
+        if(isset($config->from) && $config->from) {
             if(strpos(strtoupper(trim($config->from)), "FROM") === false) {
                 $sql .= " FROM ";
             }
             $sql .= " " . str_replace("\n", " ", $config->from);
         }
-        if($config->where || $drillDownFilters) {
+        if((isset($config->where) && $config->where) || $drillDownFilters) {
             $whereParts = array();
             if($config->where) {
                 $whereParts[] = "(" . str_replace("\n", " ", $config->where) . ")";
@@ -106,7 +106,7 @@ class Tool_CustomReport_Adapter_Sql extends Tool_CustomReport_Adapter_Abstract {
                 $sql .= " " . implode(" AND ", $whereParts);
             }
         }
-        if($config->groupby && !$ignoreSelectAndGroupBy) {
+        if(isset($config->groupby) && $config->groupby && !$ignoreSelectAndGroupBy) {
             if(strpos(strtoupper($config->groupby), "GROUP BY") === false) {
                 $sql .= " GROUP BY ";
             }

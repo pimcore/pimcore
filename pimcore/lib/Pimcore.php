@@ -233,7 +233,7 @@ class Pimcore {
 
         // check if webdav is configured and add router
         if ($conf instanceof Zend_Config) {
-            if ($conf->assets->webdav->hostname) {
+            if (isset($conf->assets->webdav->hostname) && $conf->assets->webdav->hostname) {
                 $routeWebdav = new Zend_Controller_Router_Route_Hostname(
                     $conf->assets->webdav->hostname,
                     array(

@@ -55,13 +55,13 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         }
 
         // assign variables
-        $this->view->controller = $this; 
-        
+        $this->view->controller = $this;
+
         // init website config
         $config = Pimcore_Config::getWebsiteConfig();
         $this->config = $config;
         $this->view->config = $config;
-        
+
         $document = $this->getParam("document");
         if (!$document instanceof Document) {
             Zend_Registry::set("pimcore_editmode", false);
@@ -245,7 +245,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
         self::$isInitial = false;
     }
-    
+
     public function getConfig () {
         return $this->config;
     }
@@ -290,7 +290,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                 $translate = new Pimcore_Translate_Website($locale);
 
                 if(Pimcore_Tool::isValidLanguage($locale)) {
-                    $translate->setLocale($locale);    
+                    $translate->setLocale($locale);
                 } else {
                     Logger::error("You want to use an invalid language which is not defined in the system settings: " . $locale);
                     // fall back to the first (default) language defined
@@ -338,7 +338,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
     protected function forceRender() {
 
-        if (!$this->viewRendered) {
+        if (!(isset($this->viewRendered) && $this->viewRendered)) {
             if ($script = $this->getRenderScript()) {
                 $this->renderScript($script);
                 $this->viewRendered = true;

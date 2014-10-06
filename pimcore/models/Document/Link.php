@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -100,7 +100,7 @@ class Document_Link extends Document
     public function getCacheTags($tags = array())
     {
         $tags = is_array($tags) ? $tags : array();
-        
+
         $tags = parent::getCacheTags($tags);
 
         if ($this->getLinktype() == "internal") {
@@ -379,7 +379,7 @@ class Document_Link extends Document
      */
     public function getTitle()
     {
-        return $this->title;
+        return isset($this->title)?$this->title:null;
     }
 
     /**

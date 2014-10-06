@@ -47,7 +47,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $row = 1;
         $handle = fopen($languageFile, "r");
         while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
-            $translations[$data[0]] = $data[1];
+            $translations[$data[0]] = isset($data[1])?$data[1]:null;
         }
         fclose($handle);
 
@@ -487,11 +487,11 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $limit = ($this->getParam("limit")) ? $this->getParam("limit") : 40;
 
         $mail = $this->getBounceMailbox();
-        $mail->seek($offset);
+        if ($mail) $mail->seek($offset);
 
         $mails = array();
         $count = 0;
-        while ($mail->valid()) {
+        if ($mail) while ($mail->valid()) {
             $count++;
 
             $message = $mail->current();
@@ -518,7 +518,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $this->_helper->json(array(
             "data" => $mails,
             "success" => true,
-            "total" => $mail->countMessages()
+            "total" => $mail?$mail->countMessages():0
         ));
     }
 

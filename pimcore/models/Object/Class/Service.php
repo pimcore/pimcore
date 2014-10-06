@@ -32,7 +32,7 @@ class Object_Class_Service  {
         unset($data->userOwner);
         unset($data->userModification);
         unset($data->fieldDefinitions);
-        
+
         //add propertyVisibility to export data
         $data->propertyVisibility = $class->propertyVisibility;
 
@@ -177,7 +177,7 @@ class Object_Class_Service  {
 
                     $item->setValues($array, array("childs"));
 
-                    if(is_array($array) && is_array($array["childs"]) && $array["childs"]["datatype"]){
+                    if(is_array($array) && is_array($array["childs"]) && isset($array["childs"]["datatype"]) && $array["childs"]["datatype"]){
                         $childO = self::generateLayoutTreeFromArray($array["childs"], $throwException);
                         $item->addChild($childO);
                     } else if (is_array($array["childs"]) && count($array["childs"]) > 0) {

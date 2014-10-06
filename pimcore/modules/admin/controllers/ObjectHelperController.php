@@ -68,7 +68,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
             foreach ($configFiles as $configFile) {
                 if (is_file($configFile)) {
                     $gridConfig = Pimcore_Tool_Serialize::unserialize(file_get_contents($configFile));
-                    if(array_key_exists("classId", $gridConfig)) {
+                    if(is_array($gridConfig) && array_key_exists("classId", $gridConfig)) {
                         if($gridConfig["classId"] == $class->getId()) {
                             break;
                         } else {
@@ -105,7 +105,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                         $key = "path";
                     }
 
-                    if(empty($types) && ($vis[$gridType][$key] || $gridType == "all")) {
+                    if(empty($types) && ((isset($vis[$gridType][$key]) && $vis[$gridType][$key]) || $gridType == "all")) {
                         $availableFields[] = array(
                             "key" => $sc,
                             "type" => "system",
@@ -171,7 +171,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         } else {
             $savedColumns = $gridConfig['columns'];
             foreach($savedColumns as $key => $sc) {
-                if(!$sc['hidden']) {
+                if(!(isset($sc['hidden']) && $sc['hidden'])) {
                     if(in_array($key, $systemColumns)) {
                         $colConfig = array(
                             "key" => $key,
@@ -254,10 +254,10 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
             $language = $gridConfig['language'];
         }
         $this->_helper->json(array(
-            "sortinfo" => $gridConfig['sortinfo'],
+            "sortinfo" => isset($gridConfig['sortinfo'])?$gridConfig['sortinfo']:null,
             "language" => $language,
             "availableFields" => $availableFields,
-            "onlyDirectChildren" => $gridConfig['onlyDirectChildren']
+            "onlyDirectChildren" => isset($gridConfig['onlyDirectChildren'])?$gridConfig['onlyDirectChildren']:null
         ));
     }
 

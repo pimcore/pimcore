@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -12,7 +12,7 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
+
 abstract class Pimcore_Image_Adapter {
 
     /**
@@ -237,7 +237,7 @@ abstract class Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter
      */
     public function frame ($width, $height) {
-        
+
         return $this;
     }
 
@@ -287,7 +287,7 @@ abstract class Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter
      */
     public function setBackgroundImage ($image) {
-        
+
         return $this;
     }
 
@@ -377,7 +377,7 @@ abstract class Pimcore_Image_Adapter {
     /**
      * @return Pimcore_Image_Adapter
      */
-    public function mirror () {
+    public function mirror ($mode) {
 
         return $this;
     }
@@ -439,7 +439,7 @@ abstract class Pimcore_Image_Adapter {
     }
 
     /**
-     * 
+     *
      */
     public function __destruct() {
         $this->destroy();

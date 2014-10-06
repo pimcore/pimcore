@@ -310,7 +310,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
             "possiblevalues" => $config->getPossibleValues(),
             "group" => $config->getGroup(),
             "groupdescription" => $groupDescription,
-            "groupName" => $groupName,
+                    "groupName" => isset($groupName)?$groupName:null,
             "translator" => $config->getTranslator(),
             "mandatory" => $config->getMandatory()
         );

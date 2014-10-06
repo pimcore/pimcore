@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -16,23 +16,23 @@
  */
 
 class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
-    
+
     /**
      * @var string
      */
     public $key;
-    
+
     /**
      * @var string
      */
     public $parentClass;
-    
+
     /**
      * @var array
      */
     public $layoutDefinitions;
-    
-    
+
+
     /**
      * @return string
      */
@@ -48,7 +48,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         $this->key = $key;
         return $this;
     }
-    
+
     /**
      * @return string
      */
@@ -64,7 +64,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         $this->parentClass = $parentClass;
         return $this;
     }
-    
+
     /**
      * @return array
      */
@@ -78,17 +78,17 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
      */
     public function setLayoutDefinitions($layoutDefinitions) {
         $this->layoutDefinitions = $layoutDefinitions;
-        
+
         $this->fieldDefinitions = array();
         $this->extractDataDefinitions($this->layoutDefinitions);
         return $this;
     }
-    
+
     /**
      * @return array
      */
     public function getFieldDefinitions() {
-        return $this->fieldDefinitions;
+        return (isset($this->fieldDefinitions) ? $this->fieldDefinitions : null);
     }
 
     /**
@@ -120,7 +120,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         }
         return false;
     }
-    
+
     /**
      * @param array|Object_Class_Layout|Object_Class_Data $def
      * @return void
@@ -139,8 +139,8 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
             $this->addFieldDefinition($def->getName(), $def);
         }
     }
-    
-    
+
+
     public static function getByKey ($key) {
 
         $fc = null;
@@ -166,23 +166,23 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         if($fc) {
             return $fc;
         }
-        
+
         throw new Exception("Field-Collection with key: " . $key . " does not exist.");
     }
-    
+
     public function save () {
-        
+
         if(!$this->getKey()) {
             throw new Exception("A field-collection needs a key to be saved!");
         }
-        
+
         $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/fieldcollections";
-        
+
         // create folder if not exist
         if(!is_dir($fieldCollectionFolder)) {
             Pimcore_File::mkdir($fieldCollectionFolder);
         }
-        
+
         $serialized = Pimcore_Tool_Serialize::serialize($this);
 
         $definitionFile = $fieldCollectionFolder . "/" . $this->getKey() . ".psf";
@@ -192,13 +192,13 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         }
 
         Pimcore_File::put($definitionFile, $serialized);
-        
+
         $extendClass = "Object_Fieldcollection_Data_Abstract";
         if ($this->getParentClass()) {
             $extendClass = $this->getParentClass();
         }
 
-        
+
         // create class file
         $cd = '<?php ';
 
@@ -243,8 +243,8 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
 
         $cd .= "}\n";
         $cd .= "\n";
-        
-        $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Fieldcollection/Data"; 
+
+        $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Fieldcollection/Data";
         if(!is_dir($fieldClassFolder)) {
             Pimcore_File::mkdir($fieldClassFolder);
         }
@@ -256,7 +256,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         }
 
         Pimcore_File::put($classFile,$cd);
-        
+
         // update classes
         $classList = new Object_Class_List();
         $classes = $classList->load();
@@ -273,19 +273,19 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
             }
         }
     }
-    
+
     public function delete () {
         $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/fieldcollections";
         $fieldFile = $fieldCollectionFolder . "/" . $this->getKey() . ".psf";
-        
+
         @unlink($fieldFile);
-        
-        $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Fieldcollection/Data"; 
+
+        $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Fieldcollection/Data";
         $fieldClass = $fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php";
-        
+
         @unlink($fieldClass);
-        
-        
+
+
         // update classes
         $classList = new Object_Class_List();
         $classes = $classList->load();

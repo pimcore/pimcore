@@ -362,7 +362,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($data, $relatedObject, $idMapper = null)
+    public function getFromWebserviceImport($data, $relatedObject = null, $idMapper = null)
     {
         $containerName = "Object_" . ucfirst($relatedObject->getClass()->getName()) . "_" . ucfirst($this->getName());
         $container = new $containerName($relatedObject, $this->getName());

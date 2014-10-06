@@ -179,6 +179,7 @@ class Element_Service extends Pimcore_Model_Abstract {
      */
     public static function getElementByPath($type, $path)
     {
+        $element = null;
         if ($type == "asset") {
             $element = Asset::getByPath($path);
         } else if ($type == "object") {

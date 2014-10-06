@@ -167,7 +167,7 @@ class Pimcore_Tool {
             $systemRoutingDefaults = $config->documents->toArray();
 
             foreach ($routeingDefaults as $key => $value) {
-                if ($systemRoutingDefaults["default_" . $key]) {
+                if (isset($systemRoutingDefaults["default_" . $key]) && $systemRoutingDefaults["default_" . $key]) {
                     $routeingDefaults[$key] = $systemRoutingDefaults["default_" . $key];
                 }
             }
@@ -310,7 +310,7 @@ class Pimcore_Tool {
             if (empty($confArray["views"]["view"])) {
                 return array();
             }
-            else if ($confArray["views"]["view"][0]) {
+            else if (isset($confArray["views"]["view"][0]) && $confArray["views"]["view"][0]) {
                 $cvData = $confArray["views"]["view"];
             }
             else {
@@ -368,10 +368,10 @@ class Pimcore_Tool {
                 }
             }
         }
-        
+
         return true;
     }
-    
+
     /**
      * @static
      * @throws Exception
@@ -383,15 +383,15 @@ class Pimcore_Tool {
         $config = Pimcore_Config::getSystemConfig();
         $clientConfig = $config->httpclient->toArray();
         $clientConfig["adapter"] = $clientConfig["adapter"] ? $clientConfig["adapter"] : "Zend_Http_Client_Adapter_Socket";
-        $clientConfig["maxredirects"] = $options["maxredirects"] ? $options["maxredirects"] : 2;
-        $clientConfig["timeout"] = $options["timeout"] ? $options["timeout"] : 3600;
+        $clientConfig["maxredirects"] = (isset($options["maxredirects"]) && $options["maxredirects"]) ? $options["maxredirects"] : 2;
+        $clientConfig["timeout"] = (isset($options["timeout"]) && $options["timeout"]) ? $options["timeout"] : 3600;
         $type = empty($type) ? "Zend_Http_Client" : $type;
 
         if(Pimcore_Tool::classExists($type)) {
             $client = new $type(null, $clientConfig);
 
             // workaround/for ZF (Proxy-authorization isn't added by ZF)
-            if ($clientConfig['proxy_user']) {
+            if (isset($clientConfig['proxy_user']) && $clientConfig['proxy_user']) {
                 $client->setHeaders('Proxy-authorization',  Zend_Http_Client::encodeAuthHeader(
                     $clientConfig['proxy_user'], $clientConfig['proxy_pass'], Zend_Http_Client::AUTH_BASIC
                     ));
@@ -411,7 +411,7 @@ class Pimcore_Tool {
      * @return bool|string
      */
     public static function getHttpData($url, $paramsGet = array(), $paramsPost = array()) {
-        
+
         $client = self::getHttpClient();
         $client->setUri($url);
         $requestType = Zend_Http_Client::GET;

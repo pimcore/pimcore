@@ -12,9 +12,9 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
+
 class Admin_ElementController extends Pimcore_Controller_Action_Admin {
-    
+
     public function lockElementAction()
     {
         Element_Editlock::lock($this->getParam("id"), $this->getParam("type"));
@@ -220,7 +220,7 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
         $results = array();
         $success = false;
 
-        if($element) {
+        if(isset($element) && $element) {
             $elements = $element->getDependencies()->getRequiredBy();
             foreach ($elements as $el) {
                 $item = Element_Service::getElementById($el["type"], $el["id"]);

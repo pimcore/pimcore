@@ -113,6 +113,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
+        if (!isset($objects)) $objects = null;
         $returnValueContainer = new Tool_Admin_EventDataContainer($objects);
         Pimcore::getEventManager()->trigger("admin.object.treeGetChildsById.preSendData", $this, array("returnValueContainer" => $returnValueContainer));
 
@@ -308,7 +309,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
 
             $objectData["properties"] = Element_Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData["userPermissions"] = $object->getUserPermissions();
-            $objectData["versions"] = array_splice($object->getVersions(), 0, 1);
+			$versions = $object->getVersions(); // Only variables should be passed by reference
+            $objectData["versions"] = array_splice($versions, 0, 1);
             $objectData["scheduledTasks"] = $object->getScheduledTasks();
             $objectData["general"]["allowVariants"] = $object->getClass()->getAllowVariants();
             $objectData["general"]["showVariants"] = $object->getClass()->getShowVariants();
@@ -878,14 +880,14 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
 
         if ($object->isAllowed("settings")) {
 
-
+            if (!isset($values["key"])) $values["key"] = null;
             if ($values["key"] && $object->isAllowed("rename")) {
                 $object->setKey($values["key"]);
             } else if ($values["key"] != $object->getKey()) {
                 Logger::debug("prevented renaming object because of missing permissions ");
             }
 
-            if ($values["parentId"]) {
+            if (isset($values["parentId"]) && $values["parentId"]) {
                 $parent = Object_Abstract::getById($values["parentId"]);
 
                 //check if parent is changed
@@ -1017,6 +1019,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
 
             if (!empty($tasksData)) {
                 foreach ($tasksData as $taskData) {
+                    if (!isset($taskData["time"])) $taskData["time"] = null;
                     $taskData["date"] = strtotime($taskData["date"] . " " . $taskData["time"]);
 
                     $task = new Schedule_Task($taskData);

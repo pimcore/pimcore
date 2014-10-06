@@ -73,9 +73,9 @@ class Document_Tag_Href extends Document_Tag {
      * @return mixed
      */
     public function getDataEditmode() {
-	
+
 		$this->setElement();
-	
+
         if ($this->element instanceof Element_Interface) {
             return array(
                 "id" => $this->id,
@@ -95,7 +95,7 @@ class Document_Tag_Href extends Document_Tag {
     public function frontend() {
 
 		$this->setElement();
-	
+
         //don't give unpublished elements in frontend
         if (Document::doHideUnpublished() and !Element_Service::isPublished($this->element)) {
             return "";
@@ -124,8 +124,8 @@ class Document_Tag_Href extends Document_Tag {
         }
 
         $this->id = $data["id"];
-        $this->type = $data["type"];
-        $this->subtype = $data["subtype"];
+        $this->type = isset($data["type"])?$data["type"]:null;
+        $this->subtype = isset($data["subtype"])?$data["subtype"]:null;
 
         $this->setElement();
         return $this;
@@ -139,8 +139,8 @@ class Document_Tag_Href extends Document_Tag {
     public function setDataFromEditmode($data) {
 
         $this->id = $data["id"];
-        $this->type = $data["type"];
-        $this->subtype = $data["subtype"];
+        $this->type = isset($data["type"])?$data["type"]:null;
+        $this->subtype = isset($data["subtype"])?$data["subtype"]:null;
 
         $this->setElement();
         return $this;
@@ -166,7 +166,7 @@ class Document_Tag_Href extends Document_Tag {
     public function getElement() {
 
 		$this->setElement();
-	
+
         //don't give unpublished elements in frontend
         if (Document::doHideUnpublished() and !Element_Service::isPublished($this->element)) {
             return false;
@@ -183,7 +183,7 @@ class Document_Tag_Href extends Document_Tag {
     public function getFullPath() {
 
 		$this->setElement();
-	
+
         //don't give unpublished elements in frontend
         if (Document::doHideUnpublished() and !Element_Service::isPublished($this->element)) {
             return false;
@@ -198,9 +198,9 @@ class Document_Tag_Href extends Document_Tag {
      * @return boolean
      */
     public function isEmpty() {
-		
+
 		$this->setElement();
-	
+
         if ($this->getElement() instanceof Element_Interface) {
             return false;
         }
@@ -308,7 +308,7 @@ class Document_Tag_Href extends Document_Tag {
             }
         }
         return $sane;
-    
+
     }
 
     /**

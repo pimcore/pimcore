@@ -91,7 +91,7 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
         $actions = new Tool_Targeting_Rule_Actions();
         $actions->setRedirectEnabled($data["actions"]["redirect.enabled"]);
         $actions->setRedirectUrl($data["actions"]["redirect.url"]);
-        $actions->setRedirectCode($data["actions"]["redirect.code"]);
+        $actions->setRedirectCode(isset($data["actions"]["redirect.code"])?$data["actions"]["redirect.code"]:null);
         $actions->setEventEnabled($data["actions"]["event.enabled"]);
         $actions->setEventKey($data["actions"]["event.key"]);
         $actions->setEventValue($data["actions"]["event.value"]);

@@ -114,7 +114,7 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         foreach ($translations as $t) {
             $tempRow = array();
             foreach ($columns as $key) {
-                $value = $t[$key];
+                $value = isset($t[$key])?$t[$key]:null;
                 //clean value of evil stuff such as " and linebreaks
                 if (is_string($value)) {
                     $value = Pimcore_Tool_Text::removeLineBreaks($value);
