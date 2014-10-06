@@ -129,7 +129,7 @@ pimcore.settings.targeting.personas.panel= Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_persona'), t('problem_creating_new_persona'));
+            Ext.Msg.alert(t('add_persona'), t('naming_requirements_3chars'));
         }
     },
 

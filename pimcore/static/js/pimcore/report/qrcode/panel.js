@@ -200,7 +200,7 @@ pimcore.report.qrcode.panel = Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('qr_codes'), t('problem_creating_new_qrcode'));
+            Ext.Msg.alert(t('qr_codes'), t('naming_requirements_3chars'));
         }
     },
 

@@ -1551,3 +1551,4 @@
 "scheduled","Scheduled"
 "sent_emails","View Sent Emails"
 "predefined_metadata_definitions","Predefined Metdata Definitons"
+"naming_requirements_3chars","Name must be alphanumeric and at least 3 characters long"
