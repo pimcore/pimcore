@@ -2088,10 +2088,17 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
         if(type != "asset") {
             searchButton.disable();
+
+            poster.hide();
+            poster.setValue("");
+        } else {
+            poster.show();
         }
+
         if(type == "youtube") {
             labelEl.update("URL / ID");
         }
+
         if(type == "vimeo") {
             labelEl.update("URL");
         }
