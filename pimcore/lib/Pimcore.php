@@ -455,7 +455,7 @@ class Pimcore {
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
         //@ini_set("memory_limit", "1024M");
         @ini_set("max_execution_time", $maxExecutionTime);
-        set_time_limit($maxExecutionTime);
+        @set_time_limit($maxExecutionTime);
         mb_internal_encoding("UTF-8");
 
         // this is for simple_dom_html
