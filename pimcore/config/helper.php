@@ -181,7 +181,7 @@ function urlencode_ignore_slash($var) {
 }
 
 /**
- * @depricated
+ * @deprecated
  * @param  $filename
  * @return bool
  */
