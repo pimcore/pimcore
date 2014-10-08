@@ -549,7 +549,7 @@ class Version extends Pimcore_Model_Abstract {
             // is would be very unusual that older versions are not already compressed, so we assume that only new
             // versions need to be compressed, that's not perfect but a compromise we can (hopefully) live with.
             if($alreadyCompressedCounter > 100) {
-                Logger::debug("Over " . $alreadyCompressedCounter . " versions were already compresssed before, it doesn't seem that there are sill uncompressed versions in the past, skip...");
+                Logger::debug("Over " . $alreadyCompressedCounter . " versions were already compressed before, it doesn't seem that there are still uncompressed versions in the past, skip...");
                 return;
             }
         }
