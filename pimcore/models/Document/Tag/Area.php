@@ -206,11 +206,11 @@ class Document_Tag_Area extends Document_Tag {
 
         
         $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
-        array_pop($suffixes);
+        if (is_array($suffixes)) array_pop($suffixes);
         Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
         
         $suffixes = Zend_Registry::get("pimcore_tag_block_current");
-        array_pop($suffixes);
+        if (is_array($suffixes)) array_pop($suffixes);
         Zend_Registry::set("pimcore_tag_block_current", $suffixes);
     }
 

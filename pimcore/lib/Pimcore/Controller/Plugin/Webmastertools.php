@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -16,11 +16,11 @@
 class Pimcore_Controller_Plugin_Webmastertools extends Zend_Controller_Plugin_Abstract {
 
     public function routeStartup(Zend_Controller_Request_Abstract $request) {
-            
+
         $conf = Pimcore_Config::getReportConfig();
-        if($conf->webmastertools->sites) {
+        if(isset($conf->webmastertools->sites) && $conf->webmastertools->sites) {
             $sites = $conf->webmastertools->sites->toArray();
-            
+
             if(is_array($sites)) {
                 foreach ($sites as $site) {
                     if($site["verification"]) {

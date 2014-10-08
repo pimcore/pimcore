@@ -24,7 +24,7 @@ class Search_Backend_Data_List_Resource extends Pimcore_Model_List_Resource_Abst
 
         $entries = array();
         $data = $this->db->fetchAll("SELECT * FROM search_backend_data" .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-     
+
         foreach ($data as $entryData) {
 
              if($entryData['maintype']=='document'){
@@ -42,10 +42,10 @@ class Search_Backend_Data_List_Resource extends Pimcore_Model_List_Resource_Abst
                 $entry->setFullPath($entryData['fullpath']);
                 $entry->setType($entryData['type']);
                 $entry->setSubtype($entryData['subtype']);
-                $entry->setUserOwner($entryData['userowner']);
-                $entry->setUserModification($entryData['usermodification']);
-                $entry->setCreationDate($entryData['creationdate']);
-                $entry->setModificationDate($entryData['modificationdate']);
+                $entry->setUserOwner(isset($entryData['userowner'])?$entryData['userowner']:null);
+                $entry->setUserModification(isset($entryData['usermodification'])?$entryData['usermodification']:null);
+                $entry->setCreationDate(isset($entryData['creationdate'])?$entryData['creationdate']:null);
+                $entry->setModificationDate(isset($entryData['modificationdate'])?$entryData['modificationdate']:null);
                 $entry->setPublished($entryData['published']=== 0 ? false : true);
                 $entries[]=$entry;
             }

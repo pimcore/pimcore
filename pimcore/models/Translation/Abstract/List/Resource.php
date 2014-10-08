@@ -40,7 +40,7 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
             $translationsData = $this->db->fetchAll("SELECT * FROM " . static::getTableName());
 
             foreach ($translationsData as $t) {
-                if(!$translations[$t["key"]]) {
+                if(!(isset($translations[$t["key"]]) && $translations[$t["key"]])) {
                     $translations[$t["key"]] = new $itemClass();
                     $translations[$t["key"]]->setKey($t["key"]);
                 }
@@ -59,7 +59,7 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
             Pimcore_Model_Cache::save($translations, $cacheKey, array("translator","translate"), 999);
         }
 
-        
+
         return $translations;
     }
 

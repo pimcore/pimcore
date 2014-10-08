@@ -133,6 +133,7 @@ class Pimcore_Backup {
         $tables = $this->getTables();
 
 
+        if (!isset($this->options['mysql-tables'])) $this->options['mysql-tables'] = null;
         $steps[] = array("mysql-tables", $this->options['mysql-tables']);
 
         // tables
@@ -167,6 +168,7 @@ class Pimcore_Backup {
 
         $steps[] = array("mysql-complete", null);
 
+        if (!isset($options['only-mysql-related-tasks'])) $options['only-mysql-related-tasks'] = null;
         if(!$options['only-mysql-related-tasks']){
             // check files
             $currentFileCount = 0;
@@ -290,6 +292,7 @@ class Pimcore_Backup {
     protected function getTables(){
         $db = Pimcore_Resource::get();
 
+        if (!isset($this->options['mysql-tables'])) $this->options['mysql-tables'] = null;
         if($mysqlTables = $this->options['mysql-tables']){
             $specificTables = explode(',',$mysqlTables);
             $databaseName = (string)Pimcore_Config::getSystemConfig()->database->params->dbname;

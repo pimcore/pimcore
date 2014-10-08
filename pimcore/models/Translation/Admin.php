@@ -27,7 +27,7 @@ class Translation_Admin extends Translation_Abstract {
      * @return string
      * @throws Exception
      */
-    public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false)
+    public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
     {
         if($user = Pimcore_Tool_Admin::getCurrentUser()) {
             $language = $user->getLanguage();

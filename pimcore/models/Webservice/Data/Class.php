@@ -95,12 +95,13 @@ class Webservice_Data_Class extends Webservice_Data {
     public $previewUrl;
 
 
-  
 
-    public function map ($class) {
+
+    public function map ($class, $options = null) {
 
         $arr = $class->fieldDefinitions;
         $result = array();
+        $item = null;
         foreach ($arr as $item) {
             $result[] = $item;
         }
@@ -129,5 +130,5 @@ class Webservice_Data_Class extends Webservice_Data {
 
 
 
-    
+
 }

@@ -88,7 +88,7 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
     public function columnConfigAction() {
 
         $configuration = json_decode($this->getParam("configuration"));
-        $configuration = $configuration[0];
+        $configuration = isset($configuration[0])?$configuration[0]:null;
 
         $success = false;
         $columns = null;

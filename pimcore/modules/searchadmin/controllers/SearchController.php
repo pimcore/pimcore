@@ -94,7 +94,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             }
         }
 
-        if ($forbiddenConditions) {
+        if (isset($forbiddenConditions) && $forbiddenConditions) {
             $conditionParts[] = "(" . implode(" AND ", $forbiddenConditions) . ")";
         }
 
@@ -109,7 +109,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             //}
 
             $conditionParts[] = $queryCondition;
-        }                      
+        }
 
 
         //For objects - handling of bricks
@@ -129,7 +129,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
                     $bricks[$parts[0]] = $parts[0];
                 }
             }
-        }        
+        }
 
         // filtering for objects
         if ($this->getParam("filter") && $this->getParam("class")) {
@@ -162,7 +162,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
         if (is_array($classnames) and !empty($classnames[0])) {
             if(in_array("folder",$subtypes)){
-                $classnames[]="folder";    
+                $classnames[]="folder";
             }
             foreach ($classnames as $classname) {
                 $conditionClassnameParts[] = $db->quote($classname);

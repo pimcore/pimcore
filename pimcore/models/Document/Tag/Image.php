@@ -223,7 +223,7 @@ class Document_Tag_Image extends Document_Tag {
                     $autoName = true;
                 }
 
-                if($this->options["highResolution"] && $this->options["highResolution"] > 1) {
+                if(isset($this->options["highResolution"]) && $this->options["highResolution"] && $this->options["highResolution"] > 1) {
                     $thumbConfig->setHighResolution($this->options["highResolution"]);
                 }
 
