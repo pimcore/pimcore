@@ -1,5 +1,15 @@
 <?php 
 
+/** Generated at 2014-10-08T09:53:31+02:00 */
+
+/**
+* Inheritance: no
+* Variants   : no
+* Changed by : admin (30)
+* IP:          192.168.9.37
+*/
+
+
 class Object_BlogCategory extends Object_Concrete {
 
 public $o_classId = 6;
@@ -12,22 +22,26 @@ public $localizedfields;
 * @return Object_BlogCategory
 */
 public static function create($values = array()) {
-	$object = new self();
+	$object = new static();
 	$object->setValues($values);
 	return $object;
 }
 
 /**
+* Get localizedfields - 
 * @return array
 */
 public function getLocalizedfields () {
 	$preValue = $this->preGetValue("localizedfields"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
+	if($preValue !== null && !Pimcore::inAdmin()) { 
+		return $preValue;
+	}
 	$data = $this->getClass()->getFieldDefinition("localizedfields")->preGetData($this);
-	 return $data;
+	return $data;
 }
 
 /**
+* Get name - Name
 * @return string
 */
 public function getName ($language = null) {
@@ -38,8 +52,9 @@ public function getName ($language = null) {
 }
 
 /**
+* Set localizedfields - 
 * @param array $localizedfields
-* @return void
+* @return Object_BlogCategory
 */
 public function setLocalizedfields ($localizedfields) {
 	$this->localizedfields = $localizedfields;
@@ -47,8 +62,9 @@ public function setLocalizedfields ($localizedfields) {
 }
 
 /**
+* Set name - Name
 * @param string $name
-* @return void
+* @return Object_BlogCategory
 */
 public function setName ($name, $language = null) {
 	$this->getLocalizedfields()->setLocalizedValue("name", $name, $language);

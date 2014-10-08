@@ -1,5 +1,15 @@
 <?php 
 
+/** Generated at 2014-10-08T09:53:39+02:00 */
+
+/**
+* Inheritance: no
+* Variants   : no
+* Changed by : admin (30)
+* IP:          192.168.9.37
+*/
+
+
 class Object_News extends Object_Concrete {
 
 public $o_classId = 2;
@@ -16,22 +26,26 @@ public $image_3;
 * @return Object_News
 */
 public static function create($values = array()) {
-	$object = new self();
+	$object = new static();
 	$object->setValues($values);
 	return $object;
 }
 
 /**
+* Get localizedfields - 
 * @return array
 */
 public function getLocalizedfields () {
 	$preValue = $this->preGetValue("localizedfields"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
+	if($preValue !== null && !Pimcore::inAdmin()) { 
+		return $preValue;
+	}
 	$data = $this->getClass()->getFieldDefinition("localizedfields")->preGetData($this);
-	 return $data;
+	return $data;
 }
 
 /**
+* Get title - Title
 * @return string
 */
 public function getTitle ($language = null) {
@@ -42,6 +56,7 @@ public function getTitle ($language = null) {
 }
 
 /**
+* Get shortText - Short Text
 * @return string
 */
 public function getShortText ($language = null) {
@@ -52,6 +67,7 @@ public function getShortText ($language = null) {
 }
 
 /**
+* Get text - Text
 * @return string
 */
 public function getText ($language = null) {
@@ -62,8 +78,9 @@ public function getText ($language = null) {
 }
 
 /**
+* Set localizedfields - 
 * @param array $localizedfields
-* @return void
+* @return Object_News
 */
 public function setLocalizedfields ($localizedfields) {
 	$this->localizedfields = $localizedfields;
@@ -71,8 +88,9 @@ public function setLocalizedfields ($localizedfields) {
 }
 
 /**
+* Set title - Title
 * @param string $title
-* @return void
+* @return Object_News
 */
 public function setTitle ($title, $language = null) {
 	$this->getLocalizedfields()->setLocalizedValue("title", $title, $language);
@@ -80,8 +98,9 @@ public function setTitle ($title, $language = null) {
 }
 
 /**
+* Set shortText - Short Text
 * @param string $shortText
-* @return void
+* @return Object_News
 */
 public function setShortText ($shortText, $language = null) {
 	$this->getLocalizedfields()->setLocalizedValue("shortText", $shortText, $language);
@@ -89,8 +108,9 @@ public function setShortText ($shortText, $language = null) {
 }
 
 /**
+* Set text - Text
 * @param string $text
-* @return void
+* @return Object_News
 */
 public function setText ($text, $language = null) {
 	$this->getLocalizedfields()->setLocalizedValue("text", $text, $language);
@@ -98,18 +118,22 @@ public function setText ($text, $language = null) {
 }
 
 /**
+* Get date - Date
 * @return Zend_Date
 */
 public function getDate () {
 	$preValue = $this->preGetValue("date"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
+	if($preValue !== null && !Pimcore::inAdmin()) { 
+		return $preValue;
+	}
 	$data = $this->date;
-	 return $data;
+	return $data;
 }
 
 /**
+* Set date - Date
 * @param Zend_Date $date
-* @return void
+* @return Object_News
 */
 public function setDate ($date) {
 	$this->date = $date;
@@ -117,18 +141,22 @@ public function setDate ($date) {
 }
 
 /**
+* Get image_1 - Image
 * @return Asset_Image
 */
 public function getImage_1 () {
 	$preValue = $this->preGetValue("image_1"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
+	if($preValue !== null && !Pimcore::inAdmin()) { 
+		return $preValue;
+	}
 	$data = $this->image_1;
-	 return $data;
+	return $data;
 }
 
 /**
+* Set image_1 - Image
 * @param Asset_Image $image_1
-* @return void
+* @return Object_News
 */
 public function setImage_1 ($image_1) {
 	$this->image_1 = $image_1;
@@ -136,18 +164,22 @@ public function setImage_1 ($image_1) {
 }
 
 /**
+* Get image_2 - Image
 * @return Asset_Image
 */
 public function getImage_2 () {
 	$preValue = $this->preGetValue("image_2"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
+	if($preValue !== null && !Pimcore::inAdmin()) { 
+		return $preValue;
+	}
 	$data = $this->image_2;
-	 return $data;
+	return $data;
 }
 
 /**
+* Set image_2 - Image
 * @param Asset_Image $image_2
-* @return void
+* @return Object_News
 */
 public function setImage_2 ($image_2) {
 	$this->image_2 = $image_2;
@@ -155,18 +187,22 @@ public function setImage_2 ($image_2) {
 }
 
 /**
+* Get image_3 - Image
 * @return Asset_Image
 */
 public function getImage_3 () {
 	$preValue = $this->preGetValue("image_3"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
+	if($preValue !== null && !Pimcore::inAdmin()) { 
+		return $preValue;
+	}
 	$data = $this->image_3;
-	 return $data;
+	return $data;
 }
 
 /**
+* Set image_3 - Image
 * @param Asset_Image $image_3
-* @return void
+* @return Object_News
 */
 public function setImage_3 ($image_3) {
 	$this->image_3 = $image_3;
