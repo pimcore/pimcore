@@ -136,4 +136,68 @@ class TestSuite_Inheritance_GeneralTest extends Test_Base {
 
         }
     }
+
+
+    /**
+     * Tests the following scenario:
+     *
+     * root
+     *    |-one
+     *      | -folder
+     *         |-two
+     *
+     * object relations field should inherit it's values from one to two
+     */
+    public function testInheritanceWithFolder() {
+        $this->printTestName();
+        // According to the bootstrap file en and de are valid website languages
+
+        $one = new Object_Inheritance();
+        $one->setKey("one");
+        $one->setParentId(1);
+        $one->setPublished(1);
+
+        $one->setNormalInput("parenttext");
+        $one->save();
+        $id1 = $one->getId();
+
+
+        $folder = new Object_Folder();
+        $folder->setParent($one);
+        $folder->setKey('folder');
+        $folder->save();
+
+        $two = new Object_Inheritance();
+        $two->setKey("two");
+        $two->setParentId($folder->getId());
+        $two->setPublished(1);
+
+        $two->setNormalInput("childtext");
+        $two->save();
+
+        $one->setRelationobjects([$one]);
+        $one->save();
+
+        Pimcore::collectGarbage();
+
+        $two = Object_Inheritance::getById($two->getId());
+
+        $relationobjects = $two->getRelationObjects();
+        if(sizeof($relationobjects) != 1) {
+            $this->fail('inheritance for object relations failed');
+        } else {
+            if($relationobjects[0]->getId() != $one->getId()) {
+                $this->fail('inheritance for object relations failed (wrong object)');
+            }
+        }
+
+        $table = 'object_'.$one->getClassId();
+        $db = Pimcore_Resource::get();
+
+        $relationobjectsString = $db->fetchOne("select relationobjects from {$table} where oo_id= ? ", $two->getId());
+
+        if($relationobjectsString != ','.$one->getId().',') {
+            $this->fail("comma separated relation ids not written correctly in object_* view");
+        }
+    }
 }

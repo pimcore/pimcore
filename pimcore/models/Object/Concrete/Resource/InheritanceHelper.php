@@ -21,6 +21,7 @@ class Object_Concrete_Resource_InheritanceHelper {
     const STORE_TABLE = "object_store_";
     const QUERY_TABLE = "object_query_";
     const RELATION_TABLE = "object_relations_";
+    const OBJECTS_TABLE = 'objects';
     const ID_FIELD = "oo_id";
 
     public function __construct($classId, $idField = null, $storetable = null, $querytable = null, $relationtable = null) {
@@ -152,6 +153,20 @@ class Object_Concrete_Resource_InheritanceHelper {
 
             $objects[] = $o;
         }
+
+        $folderIds = $this->db->fetchAll("SELECT distinct o_id as id FROM " . self::OBJECTS_TABLE . " where o_parentId = ? and o_type='folder'", $currentParentId);
+
+        if(!empty($folderIds)) {
+            foreach($folderIds as $r) {
+                $o = new stdClass();
+                $o->id = $r['id'];
+                $o->values = $r;
+                $o->childs = $this->buildTree($r['id'], $fields);
+
+                $objects[] = $o;
+            }
+        }
+
         return $objects;
     }
 
