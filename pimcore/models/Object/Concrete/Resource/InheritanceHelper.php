@@ -154,6 +154,7 @@ class Object_Concrete_Resource_InheritanceHelper {
             $objects[] = $o;
         }
 
+        //the inheritance shouldn't stop here, when a folder is between two inherited objects
         $folderIds = $this->db->fetchAll("SELECT distinct o_id as id FROM " . self::OBJECTS_TABLE . " where o_parentId = ? and o_type='folder'", $currentParentId);
 
         if(!empty($folderIds)) {
