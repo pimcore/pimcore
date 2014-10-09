@@ -269,7 +269,10 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
 
         pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
             type: this.options.types,
-            subtype: this.options.subtypes
+            subtype: this.options.subtypes,
+            specific: {
+                classes: this.options["classes"]
+            }
         });
     },
 
