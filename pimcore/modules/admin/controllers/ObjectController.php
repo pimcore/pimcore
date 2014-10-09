@@ -1407,6 +1407,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin_Element
             $list->setOffset($start);
             $list->setOrder($order);
             $list->setOrderKey($orderKey);
+            if($class->getShowVariants()) {
+                $list->setObjectTypes([Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_VARIANT]);
+            }
 
             $list->load();
 
