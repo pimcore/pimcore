@@ -186,12 +186,11 @@ class Pimcore_Document_Adapter_LibreOffice extends Pimcore_Document_Adapter_Ghos
                 unlink($tmpName);
                 return $text;
             } else {
-                $message = "Couldn't convert document to PDF: " . $path . " with the command: '" . $cmd . "'";
+                $message = "Couldn't convert document to PDF: " . $path . " with the command: '" . $cmd . "' - now trying to get the text out of the PDF ...";
                 Logger::error($message);
-                //throw new \Exception($message);
-            }
 
-            return "";
+                return parent::getText(null, $this->getPdf($path));
+            }
         }
     }
 }

@@ -360,7 +360,10 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
 
             if($element instanceof Asset_Document && Pimcore_Document::isAvailable()) {
                 if(Pimcore_Document::isFileTypeSupported($element->getFilename())) {
-                    $this->data .= " " . $element->getText();
+                    $contentText = $element->getText();
+                    $contentText = str_replace(["\r\n","\r","\n","\t","\f"], " ", $contentText);
+                    $contentText = preg_replace("/[ ]+/", " ", $contentText);
+                    $this->data .= " " . $contentText;
                 }
             }
 
