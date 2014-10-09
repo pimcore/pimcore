@@ -580,13 +580,14 @@ class Document extends Element_Abstract {
 
     /**
      * Get a list of the Childs (not recursivly)
-     *
+     * @param bool
      * @return array
      */
-    public function getChilds() {
+    public function getChilds($unpublished = false) {
 
         if ($this->childs === null) {
             $list = new Document_List();
+            $list->setUnpublished($unpublished);
             $list->setCondition("parentId = ?", $this->getId());
             $list->setOrderKey("index");
             $list->setOrder("asc");
@@ -646,7 +647,7 @@ class Document extends Element_Abstract {
             // delete also unpublished children
             $unpublishedStatus = self::doHideUnpublished();
             self::setHideUnpublished(false);
-            foreach ($this->getChilds() as $child) {
+            foreach ($this->getChilds(true) as $child) {
                 $child->delete();
             }
             self::setHideUnpublished($unpublishedStatus);

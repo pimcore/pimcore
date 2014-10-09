@@ -372,14 +372,17 @@ class Object_Abstract extends Element_Abstract {
     private $lastGetChildsObjectTypes = array();
 
     /**
+     * @param array
+     * @param bool
      * @return array
      */
-    public function getChilds($objectTypes = array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER)) {
+    public function getChilds($objectTypes = array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER), $unpublished = false) {
 
         if ($this->o_childs === null || $this->lastGetChildsObjectTypes != $objectTypes) {
             $this->lastGetChildsObjectTypes = $objectTypes;
 
-            $list = new Object_List(true);
+            $list = new Object_List();
+            $list->setUnpublished($unpublished);
             $list->setCondition("o_parentId = ?", $this->getId());
             $list->setOrderKey("o_key");
             $list->setOrder("asc");
@@ -433,7 +436,7 @@ class Object_Abstract extends Element_Abstract {
             // delete also unpublished children
             $unpublishedStatus = self::doHideUnpublished();
             self::setHideUnpublished(false);
-            foreach ($this->getChilds(array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT)) as $value) {
+            foreach ($this->getChilds(array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT), true) as $value) {
                 $value->delete();
             }
             self::setHideUnpublished($unpublishedStatus);
