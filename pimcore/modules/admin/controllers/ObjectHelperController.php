@@ -396,7 +396,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
     {
 
         $success = true;
-        $supportedFieldTypes = array("checkbox", "country", "date", "datetime", "href", "image", "input", "language", "table", "multiselect", "numeric", "password", "select", "slider", "textarea", "wysiwyg", "objects", "multihref", "geopoint", "geopolygon", "geobounds", "link", "user", "email", "gender", "firstname", "lastname", "newsletterActive", "newsletterConfirmed");
+        $supportedFieldTypes = array("checkbox", "country", "date", "datetime", "href", "image", "input", "language", "table", "multiselect", "numeric", "password", "select", "slider", "textarea", "wysiwyg", "objects", "multihref", "geopoint", "geopolygon", "geobounds", "link", "user", "email", "gender", "firstname", "lastname", "newsletterActive", "newsletterConfirmed", "countrymultiselect", "objectsMetadata");
 
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->getParam("id");
 
@@ -545,7 +545,10 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                 $mapping[$map[2]] = $map[0];
             } else if ($map[1] == "published (system)") {
                 $mapping["published"] = $map[0];
+            } else if ($map[1] == "type (system)") {
+                $mapping["type"] = $map[0];
             }
+
         }
 
         // create new object
@@ -603,6 +606,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
             $object->setCreationDate(time());
             $object->setUserOwner($this->getUser()->getId());
             $object->setUserModification($this->getUser()->getId());
+            $object->setType($data[$mapping["type"]]);
 
             if ($data[$mapping["published"]] === "1") {
                 $object->setPublished(true);
@@ -733,6 +737,8 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         $o["key (system)"] = $object->getKey();
         $o["fullpath (system)"] = $object->getFullPath();
         $o["published (system)"] = $object->isPublished();
+        $o["type (system)"] = $object->getType();
+
 
         return $o;
     }
