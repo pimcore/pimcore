@@ -464,7 +464,7 @@ class Object_Service extends Element_Service {
             $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
         }
 
-        if($fieldDefinition->isEmpty($key)) {
+        if($fieldDefinition->isEmpty($value)) {
             $parent = self::hasInheritableParentObject($object);
             if(!empty($parent)) {
                 return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition);
