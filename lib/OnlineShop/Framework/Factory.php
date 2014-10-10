@@ -265,11 +265,7 @@ class OnlineShop_Framework_Factory {
 
     private function configurePaymentManager(Zend_Config $config)
     {
-        if (empty($config->onlineshop->paymentmanager->class))
-        {
-            throw new OnlineShop_Framework_Exception_InvalidConfigException("No PaymentManager class defined.");
-        }
-        else
+        if (!empty($config->onlineshop->paymentmanager->class))
         {
             if (class_exists($config->onlineshop->paymentmanager->class))
             {
