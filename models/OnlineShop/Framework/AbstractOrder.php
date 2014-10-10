@@ -8,6 +8,7 @@ class OnlineShop_Framework_AbstractOrder extends Object_Concrete {
     const ORDER_STATE_COMMITTED = "committed";
     const ORDER_STATE_CANCELLED = "cancelled";
     const ORDER_STATE_PAYMENT_PENDING = "paymentPending";
+    const ORDER_STATE_PAYMENT_AUTHORIZED = "paymentAuthorized";
     const ORDER_STATE_ABORTED = "aborted";
 
     /**

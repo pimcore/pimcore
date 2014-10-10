@@ -13,10 +13,10 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
     public function getOrCreateActivePaymentInfo(OnlineShop_Framework_AbstractOrder $order);
 
     /**
-     * @param OnlineShop_Framework_Impl_Checkout_Payment_Status $status
+     * @param OnlineShop_Framework_Payment_IStatus $status
      * @return OnlineShop_Framework_AbstractOrder
      */
-    public function updateOrderPayment(OnlineShop_Framework_Impl_Checkout_Payment_Status $status);
+    public function updateOrderPayment(OnlineShop_Framework_Payment_IStatus $status);
 
     /**
      * @abstract

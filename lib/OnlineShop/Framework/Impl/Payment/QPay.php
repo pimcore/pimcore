@@ -1,9 +1,7 @@
 <?php
 
-class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framework_Impl_Checkout_AbstractPayment implements OnlineShop_Framework_ICheckoutPayment
+class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPayment
 {
-    const PRIVATE_NAMESPACE = 'paymentQPay';
-
     /**
      * @var string
      */
@@ -26,13 +24,13 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
 
 
     /**
-     * @param Zend_Config                $xml
-     * @param OnlineShop_Framework_ICart $cart
+     * @param Zend_Config $xml
+     *
      * @throws Exception
      */
-    public function __construct(Zend_Config $xml, OnlineShop_Framework_ICart $cart)
+    public function __construct(Zend_Config $xml)
     {
-        $settings = $xml->{$xml->mode};
+        $settings = $xml->config->{$xml->mode};
         if($settings->secret == '' || $settings->customer == '')
         {
             throw new Exception('payment configuration is wrong. secret or customer is empty !');
@@ -40,54 +38,46 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
 
         $this->secret = $settings->secret;
         $this->customer = $settings->customer;
-        $this->cart = $cart;
 
         if($settings->paymenttype)
         {
             $this->paymenttype = $settings->paymenttype;
         }
-
-        // load checkout data
-        $this->loadCheckoutData();
     }
 
 
     /**
-     * @param array $config
+     * start payment
+     * @param OnlineShop_Framework_IPrice $price
+     * @param array                       $config
      *
-     * @return Zend_Form|bool
+     * @return Zend_Form
+     * @throws Exception
+     * @throws Zend_Form_Exception
      */
-    public function initPayment(array $config)
+    public function initPayment(OnlineShop_Framework_IPrice $price, array $config)
     {
-        // init
-        $return = false;    // return false on errors
-        $this->errors = array();
-
         // check params
-        $required = array('successURL', 'cancelURL', 'failureURL', 'serviceURL', 'orderDescription', 'language');
-        $missing = array();
+        $required = [  'successURL' => null
+                       , 'cancelURL' => null
+                       , 'failureURL' => null
+                       , 'serviceURL' => null
+                       , 'orderDescription' => null
+                       , 'language' => null
+        ];
+        $config = array_intersect_key($config, $required);
 
-        foreach($required as $property)
+        if(count($required) != count($config))
         {
-            if(!array_key_exists($property, $config))
-            {
-                $missing[] = $property;
-            }
+            throw new Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $config)))));
         }
-
-        if(count($missing) > 0)
-        {
-            $this->errors[] = sprintf('required field %s is missing', implode(', ', $missing));
-            return $return;
-        }
-
 
 
         // collect payment data
         $paymentData['secret'] = $this->secret;
         $paymentData['customerId'] = $this->customer;
-        $paymentData['amount'] = round($this->cart->getPriceCalculator()->getGrandTotal()->getAmount(), 2);
-        $paymentData['currency'] = $this->cart->getPriceCalculator()->getGrandTotal()->getCurrency()->getShortName();
+        $paymentData['amount'] = round($price->getAmount(), 2);
+        $paymentData['currency'] = $price->getCurrency()->getShortName();
         $paymentData['language'] = $config['language'];
         $paymentData['orderDescription'] = $config['orderDescription'];
         $paymentData['successURL'] = $config['successURL'];
@@ -140,15 +130,11 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
     /**
      * @param mixed $response
      *
-     * @return OnlineShop_Framework_Impl_Checkout_Payment_Status
+     * @return OnlineShop_Framework_Payment_IStatus
+     * @throws Exception
      */
     public function handleResponse($response)
     {
-
-        // init
-        $return = false;    // return false on errors
-        $this->errors = array();
-
         // check fingerprint
         $fields = explode(',', $response['responseFingerprintOrder']);
         $fingerprint = '';
@@ -161,71 +147,73 @@ class OnlineShop_Framework_Impl_Checkout_Payment_QPay extends OnlineShop_Framewo
         if($fingerprint != $response['responseFingerprint'])
         {
             // fingerprint is wrong, ignore this response
-            $this->errors[] = 'fingerprint is invalid';
+            throw new Exception( 'fingerprint is invalid' );
         }
 
 
-        // save
-        $this->orderNumber = $response['orderNumber'];
+        // restore price object for payment status
+        $price = new OnlineShop_Framework_Impl_Price($response['amount'], new Zend_Currency($response['currency']));
 
-        $status = new OnlineShop_Framework_Impl_Checkout_Payment_Status(
-            base64_decode($response['internal_id']),
-            $this->orderNumber,
-            $this->isPaid() ? OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED : OnlineShop_Framework_AbstractOrder::ORDER_STATE_CANCELLED,
-            $response['paymentState'],
-            $response['message'],
-            $response['paymentType'],
-            $response['anonymousPan'],
-            $response['authenticated']
+
+        return new OnlineShop_Framework_Impl_Payment_Status(
+            base64_decode($response['internal_id'])
+            , $response['orderNumber']
+            , $response['avsResponseMessage']
+            , $response['orderNumber'] !== NULL
+                ? OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED
+                : OnlineShop_Framework_AbstractOrder::ORDER_STATE_CANCELLED
+            , [
+                'qpay_amount' => (string)$price
+                , 'qpay_paymentType' => $response['paymentType']
+                , 'qpay_paymentState' => $response['paymentState']
+            ]
         );
-
-
-        $this->saveCheckoutData();
-
-        return $status;
     }
 
-
     /**
-     * @return bool
+     * return the authorized data from payment provider
+     *
+     * @return array
      */
-    public function isPaid()
+    public function getAuthorizedData()
     {
-        return strlen($this->orderNumber) > 3;
+        // TODO: Implement getAuthorizedData() method.
     }
 
-
     /**
-     * @return string|null
+     * set authorized data from payment provider
+     *
+     * @param array $getAuthorizedData
      */
-    public function getPayReference()
+    public function setAuthorizedData(array $getAuthorizedData)
     {
-        return $this->orderNumber;
+        // TODO: Implement setAuthorizedData() method.
     }
 
-
     /**
-     * load session data
+     * execute payment
+     *
+     * @param OnlineShop_Framework_IPrice $price
+     * @param string                      $reference
+     *
+     * @return OnlineShop_Framework_Payment_IStatus
      */
-    protected function loadCheckoutData()
+    public function executeDebit(OnlineShop_Framework_IPrice $price = null, $reference = null)
     {
-        $data = json_decode($this->cart->getCheckoutData(self::PRIVATE_NAMESPACE), true);
-        $this->orderNumber = $data['orderNumber'];
-        $this->errors = $data['Errors'];
+        // TODO: Implement executeDebit() method.
     }
 
-
     /**
-     * save session data
+     * execute credit
+     *
+     * @param OnlineShop_Framework_IPrice $price
+     * @param string                      $reference
+     * @param                             $transactionId
+     *
+     * @return OnlineShop_Framework_Payment_IStatus
      */
-    protected function saveCheckoutData()
+    public function executeCredit(OnlineShop_Framework_IPrice $price, $reference, $transactionId)
     {
-        $data = array(
-            'orderNumber' => $this->orderNumber,
-            'Errors' => $this->errors
-        );
-
-        $this->cart->setCheckoutData(self::PRIVATE_NAMESPACE, json_encode($data));
-        $this->cart->save();
+        // TODO: Implement executeCredit() method.
     }
 }

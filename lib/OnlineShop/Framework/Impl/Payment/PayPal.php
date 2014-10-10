@@ -1,6 +1,6 @@
 <?php
 
-class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Framework_Impl_Checkout_AbstractPayment implements OnlineShop_Framework_ICheckoutPayment
+class OnlineShop_Framework_Impl_Payment_PayPal extends OnlineShop_Framework_Impl_AbstractPayment implements OnlineShop_Framework_IPayment
 {
     const PRIVATE_NAMESPACE = 'paymentPayPal';
 
@@ -23,6 +23,11 @@ class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Frame
      * @var string
      */
     protected $TransactionID;
+
+    /**
+     * @var string[]
+     */
+    protected $authorizedData;
 
 
     /**
@@ -147,9 +152,11 @@ class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Frame
 
     /**
      * execute payment
-     *
      * @param mixed $response
-     * @return boole
+     *
+     * @return OnlineShop_Framework_Impl_Checkout_Payment_Status
+     * @throws Exception
+     * @todo
      */
     public function handleResponse($response)
     {
@@ -163,7 +170,6 @@ class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Frame
         }
 
         // init
-        $return = false;
         $this->errors = array();
 
         // check if we have all required fields
@@ -171,6 +177,7 @@ class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Frame
         {
             $this->errors[] = 'required field "token" or "PayerId" is missing';
         }
+        $this->setAuthorizedData(['token' => $response['token'], 'PayerID' => $response['PayerID']]);
 
 
         // Execute payment
@@ -220,6 +227,58 @@ class OnlineShop_Framework_Impl_Checkout_Payment_PayPal extends OnlineShop_Frame
 
         return $status;
 
+    }
+
+    /**
+     * execute payment
+     *
+     * @return OnlineShop_Framework_Impl_Checkout_Payment_Status
+     */
+    public function doSettlement()
+    {
+        $authorizedData = $this->getAuthorizedData();
+
+        // Execute payment
+        $x = new stdClass;
+        $x->DoExpressCheckoutPaymentRequest = new stdClass();
+        $x->DoExpressCheckoutPaymentRequest->Version = $this->protocol;
+        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails = new stdClass();
+        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->Token = $authorizedData['token'];
+        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PayerID = $authorizedData['PayerID'];
+        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PaymentDetails = $this->createPaymentDetails();
+
+        try
+        {
+            $ret = $this->client->DoExpressCheckoutPayment($x);
+        }
+        catch (Exception $e)
+        {
+            $this->errors[] = $e->getMessage();
+        }
+
+
+        // check Ack
+        if($ret->Ack == 'Success' || $ret->Ack == 'SuccessWithWarning')
+        {
+            $this->TransactionID = $ret->DoExpressCheckoutPaymentResponseDetails->PaymentInfo->TransactionID;
+        }
+        else
+        {
+            $errors = is_array($ret->Errors)
+                ? $ret->Errors
+                : array($ret->Errors);
+            foreach($errors as $error)
+            {
+                $this->errors[] = $error->LongMessage;
+            }
+        }
+
+
+        $status = new OnlineShop_Framework_Impl_Checkout_Payment_Status(
+            base64_decode($response['internal_id']),
+            $this->TransactionID,
+            $this->isPaid() ? OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED : OnlineShop_Framework_AbstractOrder::ORDER_STATE_CANCELLED
+        );
     }
 
 

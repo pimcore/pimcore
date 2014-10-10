@@ -57,6 +57,11 @@ class OnlineShop_Framework_Factory {
      */
     private $environment;
 
+    /**
+     * @var OnlineShop_Framework_IPaymentManager
+     */
+    private $paymentManager;
+
 
     public static function getInstance() {
         if (self::$instance === null) {
@@ -114,6 +119,7 @@ class OnlineShop_Framework_Factory {
 
         $this->configureCheckoutManager($config);
         $this->configurePricingManager($config);
+        $this->configurePaymentManager($config);
 
         $this->configureOfferToolService($config);
     }
@@ -252,6 +258,30 @@ class OnlineShop_Framework_Factory {
             }
             if (!class_exists($config->onlineshop->offertool->orderstorage->offerItemClass)) {
                 throw new OnlineShop_Framework_Exception_InvalidConfigException("OfferToolOfferItem class " . $config->onlineshop->offertool->orderstorage->offerItemClass . " not found.");
+            }
+        }
+    }
+
+
+    private function configurePaymentManager(Zend_Config $config)
+    {
+        if (empty($config->onlineshop->paymentmanager->class))
+        {
+            throw new OnlineShop_Framework_Exception_InvalidConfigException("No PaymentManager class defined.");
+        }
+        else
+        {
+            if (class_exists($config->onlineshop->paymentmanager->class))
+            {
+                $this->paymentManager = new $config->onlineshop->paymentmanager->class($config->onlineshop->paymentmanager->config);
+                if (!($this->paymentManager instanceof OnlineShop_Framework_IPaymentManager))
+                {
+                    throw new OnlineShop_Framework_Exception_InvalidConfigException("PaymentManager class " . $config->onlineshop->paymentmanager->class . " does not implement OnlineShop_Framework_IPaymentManager.");
+                }
+            }
+            else
+            {
+                throw new OnlineShop_Framework_Exception_InvalidConfigException("PaymentManager class " . $config->onlineshop->paymentmanager->class . " not found.");
             }
         }
     }
@@ -399,5 +429,14 @@ class OnlineShop_Framework_Factory {
         }
 
         return $this->offerToolService;
+    }
+
+
+    /**
+     * @return OnlineShop_Framework_IPaymentManager
+     */
+    public function getPaymentManager()
+    {
+        return $this->paymentManager;
     }
 }

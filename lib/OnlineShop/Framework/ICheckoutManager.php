@@ -52,10 +52,10 @@ interface OnlineShop_Framework_ICheckoutManager {
     public function getOrder();
 
     /**
-     * @param OnlineShop_Framework_Impl_Checkout_Payment_Status $status
+     * @param OnlineShop_Framework_Payment_IStatus $status
      * @return OnlineShop_Framework_AbstractOrder
      */
-    public function commitOrderPayment(OnlineShop_Framework_Impl_Checkout_Payment_Status $status);
+    public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $status);
 
     /**
      * @abstract
@@ -70,7 +70,7 @@ interface OnlineShop_Framework_ICheckoutManager {
     public function isCommitted();
 
     /**
-     * @return OnlineShop_Framework_ICheckoutPayment|null
+     * @return OnlineShop_Framework_IPayment|null
      */
     public function getPayment();
 

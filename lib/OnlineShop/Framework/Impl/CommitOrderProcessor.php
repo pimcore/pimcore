@@ -72,14 +72,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
             $order = $this->getNewOrderObject();
 
-            if(is_numeric($this->parentFolderId)) {
-                $parent = Object_Folder::getById($this->parentFolderId);
-            }
-            if(empty($parent) && is_string($this->parentFolderId)) {
-                $parent = Object_Service::createFolderByPath($this->parentFolderId);
-            }
-
-            $order->setParent($parent);
+            $order->setParent( Object_Folder::getById($this->parentFolderId) );
             $order->setCreationDate(Zend_Date::now()->get());
             $order->setKey($tempOrdernumber);
             $order->setPublished(true);
@@ -189,14 +182,18 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     }
 
     /**
+     * @param OnlineShop_Framework_Payment_IStatus $status
+     *
      * @return OnlineShop_Framework_AbstractOrder
+     * @throws Exception
      */
-    public function updateOrderPayment(OnlineShop_Framework_Impl_Checkout_Payment_Status $status) {
+    public function updateOrderPayment(OnlineShop_Framework_Payment_IStatus $status) {
 
         $orderId = explode("~", $status->getInternalPaymentId());
         $orderId = $orderId[1];
         $orderClass = $this->orderClass;
         $order = $orderClass::getById($orderId);
+        /* @var OnlineShop_Framework_AbstractOrder $order */
 
 
         $paymentInformation = $order->getPaymentInfo();
@@ -212,9 +209,23 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             throw new Exception("Paymentinformation with internal id " . $status->getInternalPaymentId() . " not found.");
         }
 
+        // save basic payment data
         $currentPaymentInformation->setPaymentFinish(Zend_Date::now());
         $currentPaymentInformation->setPaymentReference($status->getPaymentReference());
         $currentPaymentInformation->setPaymentState($status->getStatus());
+        $currentPaymentInformation->setMessage($status->getMessage());
+
+
+        // save additional data
+        foreach($status->getData() as $field => $value)
+        {
+            $setter = 'setProvider_' . $field;
+            if(method_exists($currentPaymentInformation, $setter))
+            {
+                $currentPaymentInformation->$setter( $value );
+            }
+        }
+
 
         $order->save();
 
@@ -230,18 +241,6 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
      */
     public function commitOrder(OnlineShop_Framework_ICart $cart) {
         $order = $this->getOrCreateOrder($cart);
-
-        // add payment information
-        $checkout = OnlineShop_Framework_Factory::getInstance()->getCheckoutManager($cart);
-        $payment = $checkout->getPayment();
-        if($payment)
-        {
-            if(method_exists($order, 'setPaymentReference'))
-            {
-                $order->setPaymentReference( $payment->getPayReference() );
-            }
-        }
-
 
         try {
             $this->processOrder($cart, $order);

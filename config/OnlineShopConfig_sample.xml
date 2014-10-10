@@ -49,23 +49,9 @@
                     <deliveryaddress class="OnlineShop_Framework_Impl_Checkout_DeliveryAddress"/>
                     <confirm class="Website_OnlineShop_Checkout_Confirm"/>
                 </steps>
-                <payment class="OnlineShop_Framework_Impl_Checkout_Payment_QPay" mode="dev">
-                    <dev>
-                        <secret>B8AKTPWBRMNBV455FG6M2DANE99WU2</secret>
-                        <customer>D200001</customer>
-                    </dev>
-                    <live>
-                        <secret></secret>
-                        <customer></customer>
-                    </live>
-                </payment>
-                <!--<payment class="OnlineShop_Framework_Impl_Checkout_Payment_PayPal" mode="sandbox">
-                    <sandbox>
-                        <api_username>paypal-facilitator_api1.i-2xdream.de</api_username>
-                        <api_password>1375366858</api_password>
-                        <api_signature>AT2PJj7VTo5Rt.wM6enrwOFBoD1fACBe1RbAEMsSshWFRhpvjAuPR8wD</api_signature>
-                    </sandbox>
-                </payment>-->
+
+                <payment provider="qpay" />
+
                 <commitorderprocessor class="Website_OnlineShop_Order_Processor"/>
                 <orderstorage orderClass="Object_OnlineShopOrder" orderItemClass="Object_OnlineShopOrderItem"/>
                 <mails confirmation="/en/emails/order-confirmation"
@@ -76,6 +62,51 @@
                 <parentorderfolder>11166</parentorderfolder>
             </config>
         </checkoutmanager>
+
+        <paymentmanager class="OnlineShop_Framework_Impl_PaymentManager" statusClass="OnlineShop_Framework_Impl_Checkout_Payment_Status">
+            <config>
+                <provider name="datatrans" class="OnlineShop_Framework_Impl_Payment_Datatrans" mode="sandbox">
+                    <config>
+                        <sandbox>
+                            <merchantId>1000011011</merchantId>
+                            <sign>30916165706580013</sign>
+                        </sandbox>
+                        <live>
+                            <merchantId></merchantId>
+                            <sign></sign>
+                        </live>
+                    </config>
+                </provider>
+
+                <provider name="qpay" class="OnlineShop_Framework_Impl_Payment_QPay" mode="sandbox">
+                    <config>
+                        <sandbox>
+                            <secret>B8AKTPWBRMNBV455FG6M2DANE99WU2</secret>
+                            <customer>D200001</customer>
+                        </sandbox>
+                        <live>
+                            <secret></secret>
+                            <customer></customer>
+                        </live>
+                    </config>
+                </provider>
+
+                <provider name="paypal" class="OnlineShop_Framework_Impl_Payment_PayPal" mode="sandbox">
+                    <config>
+                        <sandbox>
+                            <api_username>paypal-facilitator_api1.i-2xdream.de</api_username>
+                            <api_password>1375366858</api_password>
+                            <api_signature>AT2PJj7VTo5Rt.wM6enrwOFBoD1fACBe1RbAEMsSshWFRhpvjAuPR8wD</api_signature>
+                        </sandbox>
+                        <live>
+                            <api_username></api_username>
+                            <api_password></api_password>
+                            <api_signature></api_signature>
+                        </live>
+                    </config>
+                </provider>
+            </config>
+        </paymentmanager>
 
         <productindex>
             <!-- add columns for general fulltext search index of productlist - they must be part of the column configuration below -->

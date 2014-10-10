@@ -34,7 +34,8 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
     /**
      * Payment Provider
-     * @var OnlineShop_Framework_ICheckoutPayment
+     *
+     * @var OnlineShop_Framework_IPayment
      */
     protected $payment;
 
@@ -46,7 +47,18 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     public function __construct(OnlineShop_Framework_ICart $cart, $config) {
         $this->cart = $cart;
 
-        $this->parentFolderId = (string)$config->parentorderfolder;
+        $parentFolderId = (string)$config->parentorderfolder;
+        if(is_numeric($parentFolderId))
+        {
+            $this->parentFolderId = (int)$parentFolderId;
+        }
+        else
+        {
+            $p = Object_Service::createFolderByPath( strftime((string)$this->parentFolderId, time()) );
+            $this->parentFolderId = $p->getId();
+            unset($p);
+        }
+
         $this->commitOrderProcessorClassname = $config->commitorderprocessor->class;
         $this->orderClassname = (string)$config->orderstorage->orderClass;
         $this->orderItemClassname = (string)$config->orderstorage->orderItemClass;
@@ -68,8 +80,9 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
 
         // init payment provider
-        if($config->payment) {
-            $this->payment = new $config->payment->class( $config->payment, $cart );
+        if($config->payment)
+        {
+            $this->payment = OnlineShop_Framework_Factory::getInstance()->getPaymentManager()->getProvider( $config->payment->provider );
         }
 
     }
@@ -127,9 +140,12 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
 
     /**
+     * @param OnlineShop_Framework_Payment_IStatus $status
+     *
      * @return OnlineShop_Framework_AbstractOrder
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
      */
-    public function commitOrderPayment(OnlineShop_Framework_Impl_Checkout_Payment_Status $status) {
+    public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $status) {
         if(!$this->payment) {
             throw new OnlineShop_Framework_Exception_UnsupportedException("Payment is not activated");
         }
@@ -140,7 +156,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         $env->removeCustomItem(self::CART_READONLY_PREFIX . "_" . $this->cart->getId());
         $env->save();
 
-        if($status->getStatus() == OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED) {
+        if(in_array($status->getStatus(), [OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED, OnlineShop_Framework_AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED])) {
             $order = $this->commitOrder();
         } else {
             $this->currentStep = $this->checkoutStepOrder[count($this->checkoutStepOrder) - 1];
@@ -388,7 +404,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
 
     /**
-     * @return OnlineShop_Framework_ICheckoutPayment
+     * @return OnlineShop_Framework_IPayment
      */
     public function getPayment()
     {
