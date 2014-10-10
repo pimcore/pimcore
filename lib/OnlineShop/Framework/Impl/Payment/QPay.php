@@ -183,9 +183,9 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
     /**
      * set authorized data from payment provider
      *
-     * @param array $getAuthorizedData
+     * @param array $authorizedData
      */
-    public function setAuthorizedData(array $getAuthorizedData)
+    public function setAuthorizedData(array $authorizedData)
     {
         // TODO: Implement setAuthorizedData() method.
     }

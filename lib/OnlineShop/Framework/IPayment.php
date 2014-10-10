@@ -23,7 +23,7 @@ interface OnlineShop_Framework_IPayment
 
     /**
      * handle response / execute payment
-     * @param mixed $response
+     * @param OnlineShop_Framework_Payment_IStatus $response
      */
     public function handleResponse($response);
 
@@ -37,9 +37,9 @@ interface OnlineShop_Framework_IPayment
 
     /**
      * set authorized data from payment provider
-     * @param array $getAuthorizedData
+     * @param array $authorizedData
      */
-    public function setAuthorizedData(array $getAuthorizedData);
+    public function setAuthorizedData(array $authorizedData);
 
 
     /**

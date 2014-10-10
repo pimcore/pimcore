@@ -138,7 +138,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
      *
      * @param mixed $response
      *
-     * @return OnlineShop_Framework_Impl_Payment_Status
+     * @return OnlineShop_Framework_Payment_IStatus
      * @throws Exception
      *
      * @see http://pilot.datatrans.biz/showcase/doc/XML_Authorisation.pdf : Page 7 > 2.3 Authorisation response

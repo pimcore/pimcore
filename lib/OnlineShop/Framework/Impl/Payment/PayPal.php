@@ -1,9 +1,7 @@
 <?php
 
-class OnlineShop_Framework_Impl_Payment_PayPal extends OnlineShop_Framework_Impl_AbstractPayment implements OnlineShop_Framework_IPayment
+class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_IPayment
 {
-    const PRIVATE_NAMESPACE = 'paymentPayPal';
-
     /**
      * @var string  sandbox|null
      */
@@ -31,19 +29,13 @@ class OnlineShop_Framework_Impl_Payment_PayPal extends OnlineShop_Framework_Impl
 
 
     /**
-     * @param Zend_Config                $xml
-     * @param OnlineShop_Framework_ICart $cart
-     * @throws Exception
+     * @param Zend_Config $xml
      */
-    public function __construct(Zend_Config $xml, OnlineShop_Framework_ICart $cart)
+    public function __construct(Zend_Config $xml)
     {
         // init
-        $this->cart = $cart;
         $this->environment = $xml->mode == 'sandbox' ? 'sandbox' : '';
-        $credentials = $xml->{$xml->mode};
-
-        // load checkout data
-        $this->loadCheckoutData();
+        $credentials = $xml->config->{$xml->mode};
 
 
         // create paypal interface
@@ -61,39 +53,30 @@ class OnlineShop_Framework_Impl_Payment_PayPal extends OnlineShop_Framework_Impl
         $header = new SoapHeader('urn:ebay:api:PayPalAPI', 'RequesterCredentials', $auth);
 
         $this->client->__setSoapHeaders($header);
-
     }
 
 
     /**
      * start payment
-     * @param array $config
+     * @param OnlineShop_Framework_IPrice $price
+     * @param array                       $config
      *
-     * @return string|bool
+     * @return string
+     * @throws Exception
      * @link https://devtools-paypal.com/apiexplorer/PayPalAPIs
      */
-    public function initPayment(array $config)
+    public function initPayment(OnlineShop_Framework_IPrice $price, array $config)
     {
-        // init
-        $return = false;    // return false on errors
-        $this->errors = array();
-
         // check params
-        $required = array('ReturnURL', 'CancelURL', 'OrderDescription');
-        $missing = array();
+        $required = [  'ReturnURL' => null
+                       , 'CancelURL' => null
+                       , 'OrderDescription' => null
+        ];
+        $config = array_intersect_key($config, $required);
 
-        foreach($required as $property)
+        if(count($required) != count($config))
         {
-            if(!array_key_exists($property, $config))
-            {
-                $missing[] = $property;
-            }
-        }
-
-        if(count($missing) > 0)
-        {
-            $this->errors[] = sprintf('required field %s is missing', implode(',', $missing));
-            return $return;
+            throw new Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $config)))));
         }
 
 
@@ -106,7 +89,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal extends OnlineShop_Framework_Impl
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->CancelURL = $config['CancelURL'];
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->NoShipping = "1";
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->AllowNote = "0";
-        $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->PaymentDetails = $this->createPaymentDetails();
+        $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->PaymentDetails = $this->createPaymentDetails( $price );
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->OrderDescription = $config['OrderDescription'];
 
 
@@ -118,35 +101,27 @@ class OnlineShop_Framework_Impl_Payment_PayPal extends OnlineShop_Framework_Impl
 
 
         // execute request
-        try
-        {
-            $ret = $this->client->SetExpressCheckout($x);
-        }
-        catch (Exception $e)
-        {
-            $this->errors[] = $e->getMessage();
-            return $return;
-        }
+        $ret = $this->client->SetExpressCheckout($x);
 
 
         // check Ack
         if($ret->Ack == 'Success' || $ret->Ack == 'SuccessWithWarning')
         {
             # pay url
-            $return = 'https://www.' . $this->environment . '.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=' . $ret->Token;
+            return 'https://www.' . $this->environment . '.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=' . $ret->Token;
         }
         else
         {
+            $messages = null;
             $errors = is_array($ret->Errors)
                 ? $ret->Errors
                 : array($ret->Errors);
             foreach($errors as $error)
             {
-                $this->errors[] = $error->LongMessage;
+                $messages .= $error->LongMessage ."\n";
             }
+            throw new Exception( $messages );
         }
-
-        return $return;
     }
 
 
@@ -154,248 +129,216 @@ class OnlineShop_Framework_Impl_Payment_PayPal extends OnlineShop_Framework_Impl
      * execute payment
      * @param mixed $response
      *
-     * @return OnlineShop_Framework_Impl_Checkout_Payment_Status
+     * @return OnlineShop_Framework_Payment_IStatus
      * @throws Exception
-     * @todo
      */
     public function handleResponse($response)
     {
-        $orderId = explode("~", base64_decode($response['internal_id']));
-        $orderId = $orderId[1];
+        // check required fields
+        $required = [   'token' => null
+                      , 'PayerID' => null
+                      , 'internal_id' => null
+                      , 'amount' => null
+                      , 'currency' => null
+        ];
+        $authorizedData = [
+              'token' => null
+            , 'PayerID' => null
+        ];
 
-        //TODO make order class configurable
-        $order = Object_OnlineShopOrder::getById($orderId);
-        if($order->getOrderState() == OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED) {
-            throw new Exception("Order already committed.");
-        }
 
-        // init
-        $this->errors = array();
-
-        // check if we have all required fields
-        if($response['token'] == '' || $response['PayerID'] == '')
+        // check fields
+        $response = array_intersect_key($response, $required);
+        if(count($required) != count($response))
         {
-            $this->errors[] = 'required field "token" or "PayerId" is missing';
-        }
-        $this->setAuthorizedData(['token' => $response['token'], 'PayerID' => $response['PayerID']]);
-
-
-        // Execute payment
-        $x = new stdClass;
-        $x->DoExpressCheckoutPaymentRequest = new stdClass();
-        $x->DoExpressCheckoutPaymentRequest->Version = $this->protocol;
-        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails = new stdClass();
-        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->Token = $response['token'];
-        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PayerID = $response['PayerID'];
-        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PaymentDetails = $this->createPaymentDetails();
-
-        try
-        {
-            $ret = $this->client->DoExpressCheckoutPayment($x);
-        }
-        catch (Exception $e)
-        {
-            $this->errors[] = $e->getMessage();
+            throw new Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $authorizedData)))) );
         }
 
 
-        // check Ack
-        if($ret->Ack == 'Success' || $ret->Ack == 'SuccessWithWarning')
-        {
-            $this->TransactionID = $ret->DoExpressCheckoutPaymentResponseDetails->PaymentInfo->TransactionID;
-        }
-        else
-        {
-            $errors = is_array($ret->Errors)
-                ? $ret->Errors
-                : array($ret->Errors);
-            foreach($errors as $error)
-            {
-                $this->errors[] = $error->LongMessage;
-            }
-        }
+        // handle
+        $authorizedData = array_intersect_key($response, $authorizedData);
+        $this->setAuthorizedData( $authorizedData );
 
 
-        $status = new OnlineShop_Framework_Impl_Checkout_Payment_Status(
-            base64_decode($response['internal_id']),
-            $this->TransactionID,
-            $this->isPaid() ? OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED : OnlineShop_Framework_AbstractOrder::ORDER_STATE_CANCELLED
-        );
+        // restore price object for payment status
+        $price = new OnlineShop_Framework_Impl_Price($response['amount'], new Zend_Currency($response['currency']));
 
 
-        $this->saveCheckoutData();
-
-        return $status;
-
+        // execute
+        return $this->executeDebit($price, $response['internal_id']);
     }
+
+
+    /**
+     * return the authorized data from payment provider
+     *
+     * @return array
+     */
+    public function getAuthorizedData()
+    {
+        return $this->authorizedData;
+    }
+
+
+    /**
+     * set authorized data from payment provider
+     *
+     * @param array $authorizedData
+     */
+    public function setAuthorizedData(array $authorizedData)
+    {
+        $this->authorizedData = $authorizedData;
+    }
+
 
     /**
      * execute payment
      *
-     * @return OnlineShop_Framework_Impl_Checkout_Payment_Status
+     * @param OnlineShop_Framework_IPrice $price
+     * @param string                      $reference
+     *
+     * @return OnlineShop_Framework_Payment_IStatus
      */
-    public function doSettlement()
+    public function executeDebit(OnlineShop_Framework_IPrice $price = null, $reference = null)
     {
-        $authorizedData = $this->getAuthorizedData();
-
         // Execute payment
         $x = new stdClass;
         $x->DoExpressCheckoutPaymentRequest = new stdClass();
         $x->DoExpressCheckoutPaymentRequest->Version = $this->protocol;
         $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails = new stdClass();
-        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->Token = $authorizedData['token'];
-        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PayerID = $authorizedData['PayerID'];
-        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PaymentDetails = $this->createPaymentDetails();
+        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->Token = $this->authorizedData['token'];
+        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PayerID = $this->authorizedData['PayerID'];
+        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PaymentDetails = $this->createPaymentDetails( $price );
 
-        try
-        {
-            $ret = $this->client->DoExpressCheckoutPayment($x);
-        }
-        catch (Exception $e)
-        {
-            $this->errors[] = $e->getMessage();
-        }
+
+        // execute
+        $ret = $this->client->DoExpressCheckoutPayment($x);
 
 
         // check Ack
         if($ret->Ack == 'Success' || $ret->Ack == 'SuccessWithWarning')
         {
-            $this->TransactionID = $ret->DoExpressCheckoutPaymentResponseDetails->PaymentInfo->TransactionID;
+            // success
+
+            $paymentInfo = $ret->DoExpressCheckoutPaymentResponseDetails->PaymentInfo;
+            return new OnlineShop_Framework_Impl_Payment_Status(
+                $reference
+                , $paymentInfo->TransactionID
+                , null
+                , OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED
+                , [
+                    'paypal_TransactionType' => $paymentInfo->TransactionType
+                    , 'paypal_PaymentType' => $paymentInfo->PaymentType
+                    , 'paypal_amount' => (string)$price
+                ]
+            );
+
         }
         else
         {
+            // failed
+
+            $message = '';
             $errors = is_array($ret->Errors)
                 ? $ret->Errors
                 : array($ret->Errors);
             foreach($errors as $error)
             {
-                $this->errors[] = $error->LongMessage;
+                $message .= $error->LongMessage . "\n";
             }
+
+
+            return new OnlineShop_Framework_Impl_Payment_Status(
+                $reference
+                , $ret->CorrelationID
+                , $message
+                , OnlineShop_Framework_AbstractOrder::ORDER_STATE_ABORTED
+            );
         }
-
-
-        $status = new OnlineShop_Framework_Impl_Checkout_Payment_Status(
-            base64_decode($response['internal_id']),
-            $this->TransactionID,
-            $this->isPaid() ? OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED : OnlineShop_Framework_AbstractOrder::ORDER_STATE_CANCELLED
-        );
     }
 
-
     /**
-     * @return bool
+     * execute credit
+     *
+     * @param OnlineShop_Framework_IPrice $price
+     * @param string                      $reference
+     * @param                             $transactionId
+     *
+     * @return OnlineShop_Framework_Payment_IStatus
      */
-    public function isPaid()
+    public function executeCredit(OnlineShop_Framework_IPrice $price, $reference, $transactionId)
     {
-        return $this->TransactionID !== NULL;
+        // TODO: Implement executeCredit() method.
     }
 
 
     /**
-     * @return string|null
-     */
-    public function getPayReference()
-    {
-        return $this->TransactionID;
-    }
-
-
-    /**
+     * @param OnlineShop_Framework_IPrice $price
+     *
      * @return stdClass
      */
-    protected function createPaymentDetails()
+    protected function createPaymentDetails(OnlineShop_Framework_IPrice $price) # OnlineShop_Framework_AbstractOrder $order
     {
-        // init
-        $priceCalculator = $this->cart->getPriceCalculator();
-        $currency = $priceCalculator->getGrandTotal()->getCurrency()->getShortName();
-
-
         // create order total
         $paymentDetails = new stdClass();
         $paymentDetails->OrderTotal = new stdClass();
-        $paymentDetails->OrderTotal->_ = $this->cart->getPriceCalculator()->getGrandTotal()->getAmount();
-        $paymentDetails->OrderTotal->currencyID = $currency;
+        $paymentDetails->OrderTotal->_ = $price->getAmount();
+        $paymentDetails->OrderTotal->currencyID = $price->getCurrency()->getShortName();
 
 
-        // add article
-        $itemTotal = 0;
-        $paymentDetails->PaymentDetailsItem = array();
-        foreach($this->cart->getItems() as $item)
-        {
-            $article = new stdClass();
-            $article->Name = $item->getProduct()->getOSName();
-            $article->Description = $item->getComment();
-            $article->Number = $item->getProduct()->getOSProductNumber();
-            $article->Quantity = $item->getCount();
-            $article->Amount = new stdClass();
-            $article->Amount->_ = $item->getPrice()->getAmount();
-            $article->Amount->currencyID = $currency;
-
-            $paymentDetails->PaymentDetailsItem[] = $article;
-            $itemTotal += $item->getPrice()->getAmount();
-        }
-
-
-        // add modificators
-        foreach($priceCalculator->getPriceModifications() as $name => $modification)
-        {
-            if($modification instanceof OnlineShop_Framework_IModificatedPrice && $name == 'shipping')
-            {
-                // add shipping charge
-                $paymentDetails->ShippingTotal = new stdClass();
-                $paymentDetails->ShippingTotal->_ = $modification->getAmount();
-                $paymentDetails->ShippingTotal->currencyID = $currency;
-            }
-            else if($modification instanceof OnlineShop_Framework_IModificatedPrice && $modification->getAmount() !== 0)
-            {
-                // add discount line
-                $article = new stdClass();
-                $article->Name = $modification->getDescription();
-                $article->Quantity = 1;
-                $article->PromoCode = $modification->getDescription();
-                $article->Amount = new stdClass();
-                $article->Amount->_ = $modification->getAmount();
-                $article->Amount->currencyID = $currency;
-                $paymentDetails->PaymentDetailsItem[] = $article;
-
-                $itemTotal += $modification->getAmount();;
-            }
-        }
-
-
-        // create item total
-        $paymentDetails->ItemTotal = new stdClass();
-        $paymentDetails->ItemTotal->_ = $itemTotal;
-        $paymentDetails->ItemTotal->currencyID = $currency;
+//        // add article
+//        $itemTotal = 0;
+//        $paymentDetails->PaymentDetailsItem = array();
+//        foreach($this->cart->getItems() as $item)
+//        {
+//            $article = new stdClass();
+//            $article->Name = $item->getProduct()->getOSName();
+//            $article->Description = $item->getComment();
+//            $article->Number = $item->getProduct()->getOSProductNumber();
+//            $article->Quantity = $item->getCount();
+//            $article->Amount = new stdClass();
+//            $article->Amount->_ = $item->getPrice()->getAmount();
+//            $article->Amount->currencyID = $currency;
+//
+//            $paymentDetails->PaymentDetailsItem[] = $article;
+//            $itemTotal += $item->getPrice()->getAmount();
+//        }
+//
+//
+//        // add modificators
+//        foreach($priceCalculator->getPriceModifications() as $name => $modification)
+//        {
+//            if($modification instanceof OnlineShop_Framework_IModificatedPrice && $name == 'shipping')
+//            {
+//                // add shipping charge
+//                $paymentDetails->ShippingTotal = new stdClass();
+//                $paymentDetails->ShippingTotal->_ = $modification->getAmount();
+//                $paymentDetails->ShippingTotal->currencyID = $currency;
+//            }
+//            else if($modification instanceof OnlineShop_Framework_IModificatedPrice && $modification->getAmount() !== 0)
+//            {
+//                // add discount line
+//                $article = new stdClass();
+//                $article->Name = $modification->getDescription();
+//                $article->Quantity = 1;
+//                $article->PromoCode = $modification->getDescription();
+//                $article->Amount = new stdClass();
+//                $article->Amount->_ = $modification->getAmount();
+//                $article->Amount->currencyID = $currency;
+//                $paymentDetails->PaymentDetailsItem[] = $article;
+//
+//                $itemTotal += $modification->getAmount();;
+//            }
+//        }
+//
+//
+//        // create item total
+//        $paymentDetails->ItemTotal = new stdClass();
+//        $paymentDetails->ItemTotal->_ = $itemTotal;
+//        $paymentDetails->ItemTotal->currencyID = $currency;
 
 
         return $paymentDetails;
-    }
-
-
-    /**
-     * load session data
-     */
-    protected function loadCheckoutData()
-    {
-        $data = json_decode($this->cart->getCheckoutData(self::PRIVATE_NAMESPACE), true);
-        $this->TransactionID = $data['TransactionID'];
-        $this->errors = $data['Errors'];
-    }
-
-
-    /**
-     * save session data
-     */
-    protected function saveCheckoutData()
-    {
-        $data = array(
-            'TransactionID' => $this->TransactionID,
-            'Errors' => $this->errors
-        );
-
-        $this->cart->setCheckoutData(self::PRIVATE_NAMESPACE, json_encode($data));
-        $this->cart->save();
     }
 }
 
