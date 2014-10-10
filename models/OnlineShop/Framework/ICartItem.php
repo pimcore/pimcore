@@ -150,4 +150,10 @@ interface OnlineShop_Framework_ICartItem {
      * @return void
      */
     public function setAddedDateTimestamp($time);
+
+    /**
+     * get item name
+     * @return string
+     */
+    public function getName();
 }

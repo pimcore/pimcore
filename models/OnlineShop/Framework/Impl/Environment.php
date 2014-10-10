@@ -50,17 +50,20 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     }
 
     public function save() {
-        $key = self::SESSION_KEY_CUSTOM_ITEMS;
-        $this->session->$key = $this->customItems;
+        if(php_sapi_name() != "cli")
+        {
+            $key = self::SESSION_KEY_CUSTOM_ITEMS;
+            $this->session->$key = $this->customItems;
 
-        $key = self::SESSION_KEY_USERID;
-        $this->session->$key = $this->userId;
+            $key = self::SESSION_KEY_USERID;
+            $this->session->$key = $this->userId;
 
-        $key = self::SESSION_KEY_TENANT;
-        $this->session->$key = $this->currentTenant;
+            $key = self::SESSION_KEY_TENANT;
+            $this->session->$key = $this->currentTenant;
 
-        $key = self::SESSION_KEY_SUB_TENANT;
-        $this->session->$key = $this->currentSubTenant;
+            $key = self::SESSION_KEY_SUB_TENANT;
+            $this->session->$key = $this->currentSubTenant;
+        }
     }
 
     public function getAllCustomItems() {

@@ -218,4 +218,13 @@ abstract class OnlineShop_Framework_AbstractCartItem extends Pimcore_Model_Abstr
         $this->addedDateTimestamp = $time;
     }
 
+    /**
+     * get item name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->getProduct()->getOSName();
+    }
 }
