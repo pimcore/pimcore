@@ -29,7 +29,15 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
 
         this.element = Ext.get(id);
         this.element.dom.setAttribute("contenteditable", true);
+
+        // set min height for IE, as he isn't able to update :after css selector
+        this.element.update("|"); // dummy content to get appropriate height
+        this.element.applyStyles({
+            "min-height": this.element.getHeight() + "px"
+        });
+
         this.element.update(data);
+
         this.checkValue();
 
         this.element.on("keyup", this.checkValue.bind(this));
@@ -50,6 +58,26 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
                 e.stopEvent();
             }
         });
+
+        this.element.dom.addEventListener("paste", function(e) {
+            e.preventDefault();
+
+            var text = "";
+            if(e.clipboardData) {
+                text = e.clipboardData.getData("text/plain");
+            } else if (window.clipboardData) {
+                text = window.clipboardData.getData("Text");
+            }
+
+            text = this.clearText(text);
+
+            try {
+                document.execCommand("insertHTML", false, text);
+            } catch (e) {
+                // IE <= 10
+                document.selection.createRange().pasteHTML(text);
+            }
+        }.bind(this));
 
         if(options["width"] || options["height"]) {
             this.element.applyStyles({
@@ -78,6 +106,10 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
 
         var value = this.element.dom.innerHTML;
         var origValue = value;
+
+        // replace all style tags
+        value = value.replace(/<style([^<]+)<\/style>/gi, "");
+
         value = strip_tags(value, "<br>");
 
         if(value != origValue) {
