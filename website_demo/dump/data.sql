@@ -342,14 +342,14 @@ DROP TABLE IF EXISTS `email_log`;
 CREATE TABLE `email_log` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `documentId` int(11) DEFAULT NULL,
-  `requestUri` varchar(255) DEFAULT NULL,
+  `requestUri` varchar(500) DEFAULT NULL,
   `params` text,
-  `from` varchar(255) DEFAULT NULL,
-  `to` varchar(255) DEFAULT NULL,
-  `cc` varchar(255) DEFAULT NULL,
-  `bcc` varchar(255) DEFAULT NULL,
+  `from` varchar(500) DEFAULT NULL,
+  `to` longtext,
+  `cc` longtext,
+  `bcc` longtext,
   `sentDate` bigint(20) DEFAULT NULL,
-  `subject` varchar(255) DEFAULT NULL,
+  `subject` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
