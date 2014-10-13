@@ -96,7 +96,9 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
      */
     public function setDocument($document)
     {
-        if($document instanceof Document) {
+        if($document instanceof Document_Hardlink_Wrapper_Interface) {
+            $this->setDocumentId($document->getHardlinkSource()->getId());
+        } else if($document instanceof Document) {
             $this->setDocumentId($document->getId());
         }
         return $this;
@@ -109,7 +111,11 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
     {
         $docId = $this->getDocumentId();
         if($docId) {
-            return Document::getById($docId);
+            $doc = Document::getById($docId);
+            if($doc instanceof Document_Hardlink) {
+                $doc = Document_Hardlink_Service::wrap($doc);
+            }
+            return $doc;
         }
 
         return null;
