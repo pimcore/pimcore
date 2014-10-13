@@ -44,16 +44,21 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
         this.element.on("keydown", function (e, t, o) {
 
             if(e.getCharCode() == 13) {
-                var selection = window.getSelection(),
-                    range = selection.getRangeAt(0),
-                    br = document.createElement("br");
-                range.deleteContents();
-                range.insertNode(br);
-                range.setStartAfter(br);
-                range.setEndAfter(br);
-                range.collapse(false);
-                selection.removeAllRanges();
-                selection.addRange(range);
+
+                if (window.getSelection) {
+                    var selection = window.getSelection(),
+                        range = selection.getRangeAt(0),
+                        br = document.createElement("br"),
+                        textNode = document.createTextNode("\u00a0"); //Passing " " directly will not end up being shown correctly
+                    range.deleteContents();//required or not?
+                    range.insertNode(br);
+                    range.collapse(false);
+                    range.insertNode(textNode);
+                    range.selectNodeContents(textNode);
+
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
 
                 e.stopEvent();
             }
@@ -98,11 +103,6 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
     },
 
     checkValue: function () {
-
-        // ensure that the last node is always an <br>
-        if (!this.element.dom.lastChild || this.element.dom.lastChild.nodeName.toLowerCase() != "br") {
-            this.element.dom.appendChild(document.createElement("br"));
-        }
 
         var value = this.element.dom.innerHTML;
         var origValue = value;
