@@ -3057,26 +3057,6 @@ INSERT INTO `properties_predefined` VALUES (4,'Sidebar','','sidebar','document',
 
 
 
-INSERT INTO `recyclebin` VALUES (21,'object','object','/bernhard.rusch-pimcore.com~91b',1,1388412013,'admin');
-INSERT INTO `recyclebin` VALUES (22,'object','object','/crm/newsletter/pimcore-byom.de~29b',1,1388412087,'admin');
-INSERT INTO `recyclebin` VALUES (23,'object','object','/crm/newsletter/pimcore-byom.de~af8',1,1388412411,'admin');
-INSERT INTO `recyclebin` VALUES (24,'object','object','/crm/newsletter/pimcore-byom.de~ddb',1,1388412521,'admin');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 INSERT INTO `search_backend_data` VALUES (1,'/','asset','folder','folder',1,1368522989,1368522989,1,1,'ID: 1  \nPath: /  \n','');
 INSERT INTO `search_backend_data` VALUES (3,'/portal-sujets','asset','folder','folder',1,1368530371,1368632469,0,0,'ID: 3  \nPath: /portal-sujets  \nportal-sujets','');
 INSERT INTO `search_backend_data` VALUES (4,'/portal-sujets/slide-01.jpg','asset','image','image',1,1368530684,1370432846,0,0,'ID: 4  \nPath: /portal-sujets/slide-01.jpg  \nslide-01.jpg','');
