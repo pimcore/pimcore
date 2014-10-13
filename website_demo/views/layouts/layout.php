@@ -40,7 +40,7 @@
 
     <link href="/website/static/css/global.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="/website/static/lib/projekktor/theme/style.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="/website/static/lib/video-js/video-js.min.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="/website/static/lib/magnific/magnific.css" type="text/css" media="screen" />
 
     <?= $this->headLink(); ?>
@@ -182,10 +182,12 @@
 <script src="/website/static/js/jquery-1.11.0.min.js"></script>
 <script src="/website/static/bootstrap/js/bootstrap.js"></script>
 
-
-
-<script src="/website/static/lib/projekktor/projekktor-1.2.25r232.min.js"></script>
 <script src="/website/static/lib/magnific/magnific.js"></script>
+<script src="/website/static/lib/video-js/video.js"></script>
+<script>
+    videojs.options.flash.swf = "/website/static/lib/video-js/video-js.swf";
+</script>
+
 <script>
 
     // main menu
@@ -232,24 +234,20 @@
     });
 
     <?php if(!$this->editmode) { ?>
-    $(document).ready(function() {
-        // initialize projekktor, the HTML5 video player
-        projekktor('video', {
-            playerFlashMP4: "/website/static/lib/projekktor/jarisplayer.swf",
-            autoplay: false
+        $(document).ready(function() {
+
+            // lightbox (magnific)
+            $('a.thumbnail').magnificPopup({
+                type:'image',
+                gallery: {
+                    enabled: true
+                }
+            });
+
+            $(".image-hotspot").tooltip();
+            $(".image-marker").tooltip();
         });
 
-        // lightbox (magnific)
-        $('a.thumbnail').magnificPopup({
-            type:'image',
-            gallery: {
-                enabled: true
-            }
-        });
-
-        $(".image-hotspot").tooltip();
-        $(".image-marker").tooltip();
-    });
     <?php } ?>
 </script>
 <script type="text/javascript" src="/website/static/js/srcset-polyfill.min.js"></script>
