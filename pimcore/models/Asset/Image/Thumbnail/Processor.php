@@ -84,7 +84,9 @@ class Asset_Image_Thumbnail_Processor {
 
         if($asset instanceof Asset) {
             $id = $asset->getId();
-            $modificationDate = $asset->getModificationDate();
+            // do not use the asset modification date because not every modification of an asset has an impact on the
+            // binary data on the hdd (e.g. meta-data, properties, ...), so it's better to use the filemtime instead
+            $modificationDate = filemtime($asset->getFileSystemPath());
         } else {
             $id = "dyn~" . crc32($fileSystemPath);
             if(file_exists($fileSystemPath)) {
