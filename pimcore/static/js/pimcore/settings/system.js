@@ -241,7 +241,7 @@ pimcore.settings.system = Class.create({
                     },
                     {
                         xtype:'fieldset',
-                        title: t('localization_and_internationalization') + " (i18n/i10n)",
+                        title: t('localization_and_internationalization') + " (i18n/l10n)",
                         collapsible: true,
                         collapsed: true,
                         autoHeight:true,
