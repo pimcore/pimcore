@@ -34,7 +34,7 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
             "min-height": this.element.getHeight() + "px"
         });
 
-        this.element.update(data);
+        this.element.update(data + "<br>");
 
         this.checkValue();
 

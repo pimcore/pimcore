@@ -313,7 +313,7 @@
     box-shadow: 0 0 5px 2px #E8E8E8;
 }
 
-.pimcore_tag_input.empty:after, .pimcore_wysiwyg.empty:after, .pimcore_tag_textarea.empty:after {
+.pimcore_wysiwyg.empty:after {
     /* this is a firefox fix, to set the hight automatically to the font height, otherwise the height of the input can be 0px */
     content: "\0000a0";
 }
