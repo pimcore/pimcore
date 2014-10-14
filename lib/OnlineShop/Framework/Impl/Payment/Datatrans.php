@@ -292,9 +292,9 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
             , $message
             , $paymentState
             , [
-                  'amount' => (string)$price
-                  , 'responseXML' => $transaction->asXML()
-                  , 'acqAuthorizationCode' => (string)$response->acqAuthorizationCode
+                  'datatrans_amount' => (string)$price
+                  , 'datatrans_responseXML' => $transaction->asXML()
+                  , 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
               ]
         );
 
@@ -377,9 +377,9 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
             , $message
             , $paymentState
             , [
-                  'amount' => (string)$price
-                  , 'responseXML' => $transaction->asXML()
-                  , 'acqAuthorizationCode' => (string)$response->acqAuthorizationCode
+                  'datatrans_amount' => (string)$price
+                  , 'datatrans_responseXML' => $transaction->asXML()
+                  , 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
               ]
         );
 
