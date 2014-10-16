@@ -89,14 +89,18 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         $this->_helper->viewRenderer->setNoRender();
     }
 
-    protected function viewScriptExists($path) {
-        $scriptPath = $this->view->getScriptPaths();
-        $scriptPath = $scriptPath[0];
+    protected function viewScriptExists($path)
+    {
+        $found = false;
 
-        if (is_file($scriptPath . $path)) {
-            return true;
+        $scriptPaths = $this->view->getScriptPaths();
+        foreach ($scriptPaths as $scriptPath) {
+            if (is_file($scriptPath . $path)) {
+                $found = true;
+            }
         }
-        return false;
+
+        return $found;
     }
 
     public function preDispatch() {
