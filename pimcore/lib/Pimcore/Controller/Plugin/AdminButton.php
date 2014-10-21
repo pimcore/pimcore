@@ -13,7 +13,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_AdminButton extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
+
+use Pimcore\Tool;
+use Pimcore\Tool\Authentication;
+use Pimcore\Model;
+
+class AdminButton extends \Zend_Controller_Plugin_Abstract {
 
 
     /**
@@ -21,22 +27,22 @@ class Pimcore_Controller_Plugin_AdminButton extends Zend_Controller_Plugin_Abstr
      */
     public function dispatchLoopShutdown() {
 
-        if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
+        if(!Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
 
-        if(!Pimcore_Tool::useFrontendOutputFilters($this->getRequest()) && !$this->getRequest()->getParam("pimcore_preview")) {
+        if(!Tool::useFrontendOutputFilters($this->getRequest()) && !$this->getRequest()->getParam("pimcore_preview")) {
             return;
         }
 
         if(isset($_COOKIE["pimcore_admin_sid"])) {
             try {
-                $user = Pimcore_Tool_Authentication::authenticateSession();
-                if($user instanceof User) {
+                $user = Authentication::authenticateSession();
+                if($user instanceof Model\User) {
                     $body = $this->getResponse()->getBody();
 
                     $document = $this->getRequest()->getParam("document");
-                    if($document instanceof Document && !Staticroute::getCurrentRoute()) {
+                    if($document instanceof Model\Document && !Model\Staticroute::getCurrentRoute()) {
                         $documentId = $document->getId();
                     }
 
@@ -45,7 +51,7 @@ class Pimcore_Controller_Plugin_AdminButton extends Zend_Controller_Plugin_Abstr
                     }
 
                     $personas = array();
-                    $list = new Tool_Targeting_Persona_List();
+                    $list = new Model\Tool\Targeting\Persona\Listing();
                     foreach($list->load() as $persona) {
                         $personas[$persona->getId()] = $persona->getName();
                     }
@@ -55,7 +61,7 @@ class Pimcore_Controller_Plugin_AdminButton extends Zend_Controller_Plugin_Abstr
                         try {
                             var pimcore = pimcore || {};
                             pimcore["admin"] = {documentId: ' . $documentId . '};
-                            pimcore["personas"] = ' . Zend_Json::encode($personas) .';
+                            pimcore["personas"] = ' . \Zend_Json::encode($personas) .';
                         } catch (e) {}
                     </script>';
 
@@ -72,7 +78,7 @@ class Pimcore_Controller_Plugin_AdminButton extends Zend_Controller_Plugin_Abstr
                     $this->getResponse()->setBody($body);
                 }
             } catch (\Exception $e) {
-                Logger::error($e);
+                \Logger::error($e);
             }
         }
     }

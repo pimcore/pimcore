@@ -13,15 +13,27 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Helper_Dashboard {
+namespace Pimcore\Helper;
+
+use Pimcore\Tool\Serialize; 
+use Pimcore\File;
+use Pimcore\Model\User;
+
+class Dashboard {
 
     /**
      * @var User
      */
     protected $user;
 
+    /**
+     * @var array
+     */
     protected $dashboards;
 
+    /**
+     * @param User $user
+     */
     public function __construct(User $user) {
         $this->user = $user;
     }
@@ -33,23 +45,32 @@ class Pimcore_Helper_Dashboard {
         return $this->user;
     }
 
+    /**
+     * @return string
+     */
     protected function getConfigDir () {
         return PIMCORE_CONFIGURATION_DIRECTORY."/portal";
     }
 
+    /**
+     * @return string
+     */
     protected function getConfigFile () {
         return $this->getConfigDir()."/dashboards_".$this->getUser()->getId().".psf";
     }
 
+    /**
+     * @return array|mixed
+     */
     protected function loadFile() {
         if(!is_dir($this->getConfigDir())) {
-            Pimcore_File::mkdir($this->getConfigDir());
+            File::mkdir($this->getConfigDir());
         }
 
         if(empty($this->dashboards)) {
 
             if(is_file($this->getConfigFile())) {
-                $dashboards = Pimcore_Tool_Serialize::unserialize(file_get_contents($this->getConfigFile()));
+                $dashboards = Serialize::unserialize(file_get_contents($this->getConfigFile()));
                 if(!empty($dashboards)) {
                     $this->dashboards = $dashboards;
                 }
@@ -93,16 +114,26 @@ class Pimcore_Helper_Dashboard {
         return $this->dashboards;
     }
 
+    /**
+     * @return array|mixed
+     */
     public function getAllDashboards() {
         return $this->loadFile();
     }
 
+    /**
+     * @param string $key
+     * @return mixed
+     */
     public function getDashboard($key = "welcome") {
         $dashboards = $this->loadFile();
         return $dashboards[$key];
     }
 
-
+    /**
+     * @param $key
+     * @param null $configuration
+     */
     public function saveDashboard($key, $configuration = null) {
         $this->loadFile();
 
@@ -111,13 +142,16 @@ class Pimcore_Helper_Dashboard {
         }
 
         $this->dashboards[$key] = $configuration;
-        Pimcore_File::put($this->getConfigFile(), Pimcore_Tool_Serialize::serialize($this->dashboards));
+        File::put($this->getConfigFile(), Serialize::serialize($this->dashboards));
     }
 
+    /**
+     * @param $key
+     */
     public function deleteDashboard($key) {
         $this->loadFile();
         unset($this->dashboards[$key]);
-        Pimcore_File::put($this->getConfigFile(), Pimcore_Tool_Serialize::serialize($this->dashboards));
+        File::put($this->getConfigFile(), Serialize::serialize($this->dashboards));
     }
 
 }

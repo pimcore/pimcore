@@ -65,7 +65,6 @@ $includePaths = array(
     PIMCORE_PATH . "/models",
     PIMCORE_WEBSITE_PATH . "/lib",
     PIMCORE_WEBSITE_PATH . "/models",
-    PIMCORE_PATH . "/modules/searchadmin/models",
     PIMCORE_CLASS_DIRECTORY
 );
 set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
@@ -111,7 +110,7 @@ if(@is_file($composerStartup)) {
 
 // on pimcore shutdown
 register_shutdown_function(function () {
-    Pimcore::getEventManager()->trigger("system.shutdown");
+    \Pimcore::getEventManager()->trigger("system.shutdown");
 });
 
 // attach global shutdown event

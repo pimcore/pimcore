@@ -21,10 +21,10 @@ include("../../../cli/startup.php");
 chdir($workingDirectory);
 
 // start global session an keep it open (this is needed for the CSRF protections from adminer)
-Pimcore_Tool_Session::get();
+\Pimcore\Tool\Session::get();
 
 // only for logged in users
-$user = Pimcore_Tool_Authentication::authenticateSession();
+$user = \Pimcore\Tool\Authentication::authenticateSession();
 if(!$user instanceof User) {
     die("Authentication failed!");
 }
@@ -34,7 +34,7 @@ if(!$user->isAllowed("database"))
 	die("Permission denied!");
 }
 
-$conf = Pimcore_Config::getSystemConfig()->database->params;
+$conf = \Pimcore\Config::getSystemConfig()->database->params;
 if(empty($_SERVER["QUERY_STRING"])) {
     header("Location: /pimcore/modules/3rdparty/adminer/index.php?username=" . $conf->username . "&db=" . $conf->dbname);
     exit;
@@ -63,7 +63,7 @@ function adminer_object() {
 
 		function permanentLogin() {
 			// key used for permanent login
-			return Zend_Session::getId();
+			return \Zend_Session::getId();
 		}
 
         function login($login, $password) {
@@ -71,7 +71,7 @@ function adminer_object() {
         }
 
 		function credentials() {
-            $conf = Pimcore_Config::getSystemConfig()->database->params;
+            $conf = \Pimcore\Config::getSystemConfig()->database->params;
 
             $host = $conf->host;
             if($conf->port) {
@@ -85,7 +85,7 @@ function adminer_object() {
 		}
 
 		function database() {
-            $conf = Pimcore_Config::getSystemConfig()->database->params;
+            $conf = \Pimcore\Config::getSystemConfig()->database->params;
 			// database name, will be escaped by Adminer
 			return $conf->dbname;
 		}

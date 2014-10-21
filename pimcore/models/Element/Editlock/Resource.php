@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Editlock_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Element\Editlock;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      * Contains all valid columns in the database table
@@ -34,23 +38,21 @@ class Element_Editlock_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
-     * Get the data for the object from database for the given id
-     *
-     * @param integer $cid
-     * @param string $ctype
-     * @return void
+     * @param $cid
+     * @param $ctype
+     * @throws \Exception
      */
     public function getByElement($cid, $ctype) {
         $data = $this->db->fetchRow("SELECT * FROM edit_lock WHERE cid = ? AND ctype = ?", array($cid, $ctype));
 
         if (!$data["id"]) {
-            throw new Exception("Lock with cid " . $cid . " and ctype " . $ctype . " not found");
+            throw new \Exception("Lock with cid " . $cid . " and ctype " . $ctype . " not found");
         }
 
         $this->assignVariablesToModel($data);
 
         // add elements path
-        $element = Element_Service::getElementById($ctype, $cid);
+        $element = Model\Element\Service::getElementById($ctype, $cid);
         if($element) {
             $this->model->setCpath($element->getFullpath());
         }

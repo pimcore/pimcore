@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Asset extends Webservice_Data {
+namespace Pimcore\Model\Webservice\Data;
+
+use Pimcore\Model;
+use Pimcore\Model\Webservice;
+
+class Asset extends Model\Webservice\Data {
 
     /**
      * @var integer
@@ -68,7 +73,7 @@ class Webservice_Data_Asset extends Webservice_Data {
     public $userModification;
 
     /**
-     * @var Webservice_Data_Property[]
+     * @var Webservice\Data\Property[]
      */
     public $properties;
 
@@ -77,7 +82,10 @@ class Webservice_Data_Asset extends Webservice_Data {
      */
     public $customSettings;
 
-
+    /**
+     * @param $object
+     * @param null $options
+     */
     public function map($object, $options = null) {
         parent::map($object, $options);
 
@@ -91,7 +99,7 @@ class Webservice_Data_Asset extends Webservice_Data {
             if ($object->hasChilds()) {
                 $this->childs = array();
                 foreach ($object->getChilds() as $child) {
-                    $item = new Webservice_Data_Asset_List_Item();
+                    $item = new Webservice\Data\Asset\Listing\Item();
                     $item->id = $child->getId();
                     $item->type = $child->getType();
 

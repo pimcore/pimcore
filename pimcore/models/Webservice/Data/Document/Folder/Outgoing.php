@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Document_Folder_Outgoing extends Webservice_Data_Document_Folder {
+namespace Pimcore\Model\Webservice\Data\Document\Folder;
+
+use Pimcore\Model;
+
+class Outgoing extends Model\Webservice\Data\Document\Folder {
 
 
     /**
@@ -39,9 +43,7 @@ class Webservice_Data_Document_Folder_Outgoing extends Webservice_Data_Document_
     public $userModification;
 
     /**
-     * @var Webservice_Data_Document_List_Item[]
+     * @var Model\Webservice\Data\Document\Listing\Item[]
      */
     public $childs;
-
-
 }

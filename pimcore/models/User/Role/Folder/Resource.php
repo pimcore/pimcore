@@ -15,6 +15,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_Role_Folder_Resource extends User_Abstract_Resource {
+namespace Pimcore\Model\User\Role\Folder;
+
+use Pimcore\Model;
+
+class Resource extends Model\User\AbstractUser\Resource {
 
 }

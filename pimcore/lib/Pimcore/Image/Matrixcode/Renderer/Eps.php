@@ -13,7 +13,7 @@
  * through the world-wide-web, please send a note to license@zend.com
  * so we can mail you a copy immediately.
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * 
@@ -24,11 +24,14 @@
 /**
  * Pimcore_Image_Matrixcode_Renderer_Eps
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Pimcore_Image_Matrixcode_Renderer_Eps extends Pimcore_Image_Matrixcode_Renderer_Abstract
+
+namespace Pimcore\Image\Matrixcode\Renderer;
+
+class Eps extends AbstractRenderer
 {
 	
 	/**
@@ -39,7 +42,7 @@ class Pimcore_Image_Matrixcode_Renderer_Eps extends Pimcore_Image_Matrixcode_Ren
 	public function getScale() {
 		$module_size = $this->_matrixcode->getModuleSize();
 		if($module_size[0] != $module_size[1]) {
-            throw new Pimcore_Image_Matrixcode_Renderer_Exception(
+            throw new Exception(
                 'So far only square modules are supported. The current module size settings of '.$module_size[0].'x'.$module_size[1].' indicate a different rectangular shape.'
             );
 		}

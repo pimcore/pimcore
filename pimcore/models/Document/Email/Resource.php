@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Email_Resource extends Document_PageSnippet_Resource {
+namespace Pimcore\Model\Document\Email;
+
+use Pimcore\Model;
+
+class Resource extends Model\Document\PageSnippet\Resource {
 
     /**
      * Contains the valid database columns
@@ -58,10 +62,10 @@ class Document_Email_Resource extends Document_PageSnippet_Resource {
                 $this->assignVariablesToModel($data);
             }
             else {
-                throw new Exception("Email Document with the ID " . $this->model->getId() . " doesn't exists");
+                throw new \Exception("Email Document with the ID " . $this->model->getId() . " doesn't exists");
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -79,7 +83,7 @@ class Document_Email_Resource extends Document_PageSnippet_Resource {
                 "id" => $this->model->getId()
             ));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
 
@@ -125,7 +129,7 @@ class Document_Email_Resource extends Document_PageSnippet_Resource {
 
             $this->updateLocks();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -145,7 +149,7 @@ class Document_Email_Resource extends Document_PageSnippet_Resource {
 
             parent::delete();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

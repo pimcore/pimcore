@@ -12,8 +12,11 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Admin_RecyclebinController extends Pimcore_Controller_Action_Admin {
+
+use Pimcore\Model\Element\Recyclebin;
+use Pimcore\Model\Element;
+
+class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin {
 
     public function init() {
 
@@ -34,13 +37,13 @@ class Admin_RecyclebinController extends Pimcore_Controller_Action_Admin {
     public function listAction () {
         
         if($this->getParam("xaction") == "destroy") {
-            $item = Element_Recyclebin_Item::getById($this->getParam("data"));
+            $item = Recyclebin\Item::getById($this->getParam("data"));
             $item->delete();
  
             $this->_helper->json(array("success" => true, "data" => array()));
         }
         else {
-            $list = new Element_Recyclebin_Item_List();
+            $list = new Recyclebin\Item\Listing();
             $list->setLimit($this->getParam("limit"));
             $list->setOffset($this->getParam("start"));
 
@@ -60,14 +63,14 @@ class Admin_RecyclebinController extends Pimcore_Controller_Action_Admin {
     }
     
     public function restoreAction () {
-        $item = Element_Recyclebin_Item::getById($this->getParam("id"));
+        $item = Recyclebin\Item::getById($this->getParam("id"));
         $item->restore();
  
         $this->_helper->json(array("success" => true));
     }
  
     public function flushAction () {
-        $bin = new Element_Recyclebin();
+        $bin = new Element\Recyclebin();
         $bin->flush();
         
         $this->_helper->json(array("success" => true)); 
@@ -75,18 +78,18 @@ class Admin_RecyclebinController extends Pimcore_Controller_Action_Admin {
 
     public function addAction () {
 
-        $element = Element_Service::getElementById($this->getParam("type"), $this->getParam("id"));
+        $element = Element\Service::getElementById($this->getParam("type"), $this->getParam("id"));
 
         if($element) {
 
-            $type = Element_Service::getElementType($element);
+            $type = Element\Service::getElementType($element);
             $listClass = ucfirst($type) . "_List";
             $list = new $listClass();
             $list->setCondition( (($type == "object") ? "o_" : "") . "path LIKE '" . $element->getFullPath() . "/%'");
             $children = $list->getTotalCount();
 
             if($children <= 100) {
-                Element_Recyclebin_Item::create($element, $this->getUser());
+                Recyclebin\Item::create($element, $this->getUser());
             }
 
             $this->_helper->json(array("success" => true));

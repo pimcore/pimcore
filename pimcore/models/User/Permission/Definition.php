@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_Permission_Definition extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\User\Permission;
+
+use Pimcore\Model;
+
+class Definition extends Model\AbstractModel {
 
     public $key;
 
@@ -36,7 +40,8 @@ class User_Permission_Definition extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $key
+     * @param $key
+     * @return $this
      */
     function setKey($key) {
         $this->key = $key;
@@ -44,15 +49,15 @@ class User_Permission_Definition extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param $permisson permission key
+     * @param $permission
      * @return mixed
-     * @throws Exception
+     * @throws \Exception
      */
     public static function getByKey($permission){
         if(!$permission){
-            throw new Exception("No permisson defined.");
+            throw new \Exception("No permisson defined.");
         }
-        $list = new User_Permission_Definition_List();
+        $list = new Definition\Listing();
         $list->setCondition("`key`=?",array($permission));
         $list->setLimit(1);
         $permissionDefinition = $list->load();
@@ -62,17 +67,17 @@ class User_Permission_Definition extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param $permission permission key
-     * @return mixed
-     * @throws Exception
+     * @param $permission
+     * @return mixed|static
+     * @throws \Exception
      */
     public static function create($permission){
         if(!$permission){
-            throw new Exception("No permisson defined.");
+            throw new \Exception("No permisson defined.");
         }
         $permissionDefinition = static::getByKey($permission);
-        if($permissionDefinition instanceof User_Permission_Definition){
-            Logger::info("Permission $permission allready exists. Skipping creation.");
+        if($permissionDefinition instanceof self){
+            \Logger::info("Permission $permission allready exists. Skipping creation.");
             return $permissionDefinition;
         }else{
             $permissionDefinition = new static();

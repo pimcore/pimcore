@@ -15,11 +15,15 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Schedule_Manager_Factory {
+namespace Pimcore\Model\Schedule\Manager;
+
+use Pimcore\Model;
+
+class Factory {
     /**
      * @static
      * @param  string $pidFile
-     * @return Schedule_Manager_Procedural|Schedule_Manager_Daemon
+     * @return Procedural|Daemon
      */
     public static function getManager($pidFile, $type = null) {
 
@@ -37,11 +41,11 @@ class Schedule_Manager_Factory {
         }
 
         if($type == "daemon") {
-            Logger::info("Using Schedule_Manager_Daemon as maintenance manager");
-            $manager = new Schedule_Manager_Daemon($pidFile);
+            \Logger::info("Using Schedule\\Manage\\_Daemon as maintenance manager");
+            $manager = new Daemon($pidFile);
         } else {
-            Logger::info("Using Schedule_Manager_Procedural as maintenance manager");
-            $manager = new Schedule_Manager_Procedural($pidFile);
+            \Logger::info("Using Schedule\\Manager\\Procedural as maintenance manager");
+            $manager = new Procedural($pidFile);
         }
 
         return $manager;

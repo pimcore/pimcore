@@ -1,16 +1,19 @@
 <?php 
 
-/** Generated at 2014-10-08T09:53:26+02:00 */
+/** Generated at 2014-10-21T11:07:04+02:00 */
 
 /**
 * Inheritance: no
 * Variants   : no
-* Changed by : admin (30)
-* IP:          192.168.9.37
+* IP:          192.168.11.104
 */
 
 
-class Object_BlogArticle extends Object_Concrete {
+namespace Pimcore\Model\Object;
+
+
+
+class BlogArticle extends Concrete {
 
 public $o_classId = 5;
 public $o_className = "blogArticle";
@@ -22,7 +25,7 @@ public $posterImage;
 
 /**
 * @param array $values
-* @return Object_BlogArticle
+* @return \Pimcore\Model\Object\BlogArticle
 */
 public static function create($values = array()) {
 	$object = new static();
@@ -36,7 +39,7 @@ public static function create($values = array()) {
 */
 public function getLocalizedfields () {
 	$preValue = $this->preGetValue("localizedfields"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { 
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
 		return $preValue;
 	}
 	$data = $this->getClass()->getFieldDefinition("localizedfields")->preGetData($this);
@@ -50,7 +53,7 @@ public function getLocalizedfields () {
 public function getTitle ($language = null) {
 	$data = $this->getLocalizedfields()->getLocalizedValue("title", $language);
 	$preValue = $this->preGetValue("title"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
+	if($preValue !== null && !\Pimcore::inAdmin()) { return $preValue;}
 	 return $data;
 }
 
@@ -61,7 +64,7 @@ public function getTitle ($language = null) {
 public function getText ($language = null) {
 	$data = $this->getLocalizedfields()->getLocalizedValue("text", $language);
 	$preValue = $this->preGetValue("text"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
+	if($preValue !== null && !\Pimcore::inAdmin()) { return $preValue;}
 	 return $data;
 }
 
@@ -72,14 +75,14 @@ public function getText ($language = null) {
 public function getTags ($language = null) {
 	$data = $this->getLocalizedfields()->getLocalizedValue("tags", $language);
 	$preValue = $this->preGetValue("tags"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}
+	if($preValue !== null && !\Pimcore::inAdmin()) { return $preValue;}
 	 return $data;
 }
 
 /**
 * Set localizedfields - 
 * @param array $localizedfields
-* @return Object_BlogArticle
+* @return \Pimcore\Model\Object\BlogArticle
 */
 public function setLocalizedfields ($localizedfields) {
 	$this->localizedfields = $localizedfields;
@@ -89,7 +92,7 @@ public function setLocalizedfields ($localizedfields) {
 /**
 * Set title - Title
 * @param string $title
-* @return Object_BlogArticle
+* @return \Pimcore\Model\Object\BlogArticle
 */
 public function setTitle ($title, $language = null) {
 	$this->getLocalizedfields()->setLocalizedValue("title", $title, $language);
@@ -99,7 +102,7 @@ public function setTitle ($title, $language = null) {
 /**
 * Set text - Text
 * @param string $text
-* @return Object_BlogArticle
+* @return \Pimcore\Model\Object\BlogArticle
 */
 public function setText ($text, $language = null) {
 	$this->getLocalizedfields()->setLocalizedValue("text", $text, $language);
@@ -109,7 +112,7 @@ public function setText ($text, $language = null) {
 /**
 * Set tags - Tags
 * @param string $tags
-* @return Object_BlogArticle
+* @return \Pimcore\Model\Object\BlogArticle
 */
 public function setTags ($tags, $language = null) {
 	$this->getLocalizedfields()->setLocalizedValue("tags", $tags, $language);
@@ -122,7 +125,7 @@ public function setTags ($tags, $language = null) {
 */
 public function getDate () {
 	$preValue = $this->preGetValue("date"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { 
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
 		return $preValue;
 	}
 	$data = $this->date;
@@ -132,7 +135,7 @@ public function getDate () {
 /**
 * Set date - Date
 * @param Zend_Date $date
-* @return Object_BlogArticle
+* @return \Pimcore\Model\Object\BlogArticle
 */
 public function setDate ($date) {
 	$this->date = $date;
@@ -145,7 +148,7 @@ public function setDate ($date) {
 */
 public function getCategories () {
 	$preValue = $this->preGetValue("categories"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { 
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
 		return $preValue;
 	}
 	$data = $this->getClass()->getFieldDefinition("categories")->preGetData($this);
@@ -155,7 +158,7 @@ public function getCategories () {
 /**
 * Set categories - Categories
 * @param array $categories
-* @return Object_BlogArticle
+* @return \Pimcore\Model\Object\BlogArticle
 */
 public function setCategories ($categories) {
 	$this->categories = $this->getClass()->getFieldDefinition("categories")->preSetData($this, $categories);
@@ -168,7 +171,7 @@ public function setCategories ($categories) {
 */
 public function getPosterImage () {
 	$preValue = $this->preGetValue("posterImage"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { 
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
 		return $preValue;
 	}
 	$data = $this->posterImage;
@@ -178,7 +181,7 @@ public function getPosterImage () {
 /**
 * Set posterImage - Poster Image
 * @param Object_Data_Hotspotimage $posterImage
-* @return Object_BlogArticle
+* @return \Pimcore\Model\Object\BlogArticle
 */
 public function setPosterImage ($posterImage) {
 	$this->posterImage = $posterImage;

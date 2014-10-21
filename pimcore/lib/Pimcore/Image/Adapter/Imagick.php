@@ -13,7 +13,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
+namespace Pimcore\Image\Adapter;
+
+use Pimcore\Image\Adapter;
+use Pimcore\File; 
+use Pimcore\Config;
+
+class Imagick extends Adapter {
 
 
     /**
@@ -38,16 +44,17 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
     /**
      * @param $imagePath
-     * @return bool|Pimcore_Image_Adapter|Pimcore_Image_Adapter_Imagick
+     * @param array $options
+     * @return $this|bool|self
      */
     public function load ($imagePath, $options = []) {
 
         // support image URLs
         if(preg_match("@^https?://@", $imagePath)) {
-            $tmpFilename = "imagick_auto_download_" . md5($imagePath) . "." . Pimcore_File::getFileExtension($imagePath);
+            $tmpFilename = "imagick_auto_download_" . md5($imagePath) . "." . File::getFileExtension($imagePath);
             $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
 
-            Pimcore_File::put($tmpFilePath, Pimcore_Tool::getHttpData($imagePath));
+            File::put($tmpFilePath, \Pimcore\Tool::getHttpData($imagePath));
             $imagePath = $tmpFilePath;
         }
 
@@ -57,14 +64,14 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         }
 
         try {
-            $i = new Imagick();
+            $i = new \Imagick();
             $this->imagePath = $imagePath;
 
             if(method_exists($i, "setcolorspace")) {
-                $i->setcolorspace(Imagick::COLORSPACE_SRGB);
+                $i->setcolorspace(\Imagick::COLORSPACE_SRGB);
             }
 
-            $i->setBackgroundColor(new ImagickPixel('transparent')); //set .png transparent (print)
+            $i->setBackgroundColor(new \ImagickPixel('transparent')); //set .png transparent (print)
 
             if(isset($options["resolution"])) {
                 // set the resolution to 2000x2000 for known vector formats
@@ -94,9 +101,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
             $this->setColorspaceToRGB();
 
-        } catch (Exception $e) {
-            Logger::error("Unable to load image: " . $imagePath);
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error("Unable to load image: " . $imagePath);
+            \Logger::error($e);
             return false;
         }
 
@@ -112,6 +119,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @param null $quality
      * @param null $colorProfile
      * @return $this|mixed
+     * @throws \Exception
      */
     public function save ($path, $format = null, $quality = null, $colorProfile = null) {
 
@@ -148,7 +156,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         }
 
         if($format == "tiff") {
-            $i->setCompression(Imagick::COMPRESSION_LZW);
+            $i->setCompression(\Imagick::COMPRESSION_LZW);
         }
 
         if(defined("HHVM_VERSION")) {
@@ -161,7 +169,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         // better compression, smaller filesize, especially for web optimization
         if($format == "jpeg") {
             if(filesize($path) >= 10240) {
-                $i->setinterlacescheme(Imagick::INTERLACE_PLANE);
+                $i->setinterlacescheme(\Imagick::INTERLACE_PLANE);
                 if(!$i->writeImage($path)) {
                     throw new \Exception("Unable to write image: " , $path);
                 }
@@ -208,14 +216,13 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     }
 
     /**
-     * @param string $type
-     * @return Pimcore_Image_Adapter|void
+     * @return $this
      */
     public function setColorspaceToRGB() {
 
         $imageColorspace = $this->resource->getImageColorspace();
 
-        if ($imageColorspace == Imagick::COLORSPACE_CMYK) {
+        if ($imageColorspace == \Imagick::COLORSPACE_CMYK) {
             if(self::getCMYKColorProfile() && self::getRGBColorProfile()) {
                 $profiles = $this->resource->getImageProfiles('*', false);
                 // we're only interested if ICC profile(s) exist
@@ -226,20 +233,20 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 }
                 // then we add an RGB profile
                 $this->resource->profileImage('icc', self::getRGBColorProfile());
-                $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB); // we have to use SRGB here, no clue why but it works
+                $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB); // we have to use SRGB here, no clue why but it works
             } else {
-                $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB);
+                $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
             }
-        } else if ($imageColorspace == Imagick::COLORSPACE_GRAY) {
-            $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB);
-        } else if (!in_array($imageColorspace, array(Imagick::COLORSPACE_RGB, Imagick::COLORSPACE_SRGB))) {
-            $this->resource->setImageColorspace(Imagick::COLORSPACE_SRGB);
+        } else if ($imageColorspace == \Imagick::COLORSPACE_GRAY) {
+            $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
+        } else if (!in_array($imageColorspace, array(\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB))) {
+            $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
         }
         // this is a HACK to force grayscale images to be real RGB - truecolor, this is important if you want to use
         // thumbnails in PDF's because they do not support "real" grayscale JPEGs or PNGs
         // problem is described here: http://imagemagick.org/Usage/basics/#type
         // and here: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=6888#p31891
-        $draw = new ImagickDraw();
+        $draw = new \ImagickDraw();
         $draw->setFillColor("#ff0000");
         $draw->setfillopacity(.01);
         $draw->point(floor($this->getWidth()/2),floor($this->getHeight()/2)); // place it in the middle of the image
@@ -262,7 +269,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public static function getCMYKColorProfile()
     {
         if(!self::$CMYKColorProfile) {
-            $path = Pimcore_Config::getSystemConfig()->assets->icc_cmyk_profile;
+            $path = Config::getSystemConfig()->assets->icc_cmyk_profile;
             if(!$path || !file_exists($path)) {
                 $path = __DIR__ . "/../icc-profiles/ISOcoated_v2_eci.icc"; // default profile
             }
@@ -290,7 +297,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public static function getRGBColorProfile()
     {
         if(!self::$RGBColorProfile) {
-            $path = Pimcore_Config::getSystemConfig()->assets->icc_rgb_profile;
+            $path = Config::getSystemConfig()->assets->icc_rgb_profile;
             if(!$path || !file_exists($path)) {
                 $path = __DIR__ . "/../icc-profiles/sRGB_IEC61966-2-1_black_scaled.icc"; // default profile
             }
@@ -306,7 +313,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     /**
      * @param  $width
      * @param  $height
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function resize ($width, $height) {
 
@@ -339,7 +346,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $width  = (int)$width;
         $height = (int)$height;
 
-        $this->resource->resizeimage($width, $height, Imagick::FILTER_UNDEFINED, 1, false);
+        $this->resource->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
 
         $this->setWidth($width);
         $this->setHeight($height);
@@ -354,7 +361,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @param  $y
      * @param  $width
      * @param  $height
-     * @return Pimcore_Image_Adapter_Imagick
+     * @return self
      */
     public function crop($x, $y, $width, $height) {
 
@@ -373,11 +380,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
 
     /**
-     * @param  $width
-     * @param  $height
-     * @param string $color
-     * @param string $orientation
-     * @return Pimcore_Image_Adapter_Imagick
+     * @param $width
+     * @param $height
+     * @return $this
      */
     public function frame ($width, $height) {
 
@@ -390,7 +395,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
 
         $newImage = $this->createImage($width, $height);
-        $newImage->compositeImage($this->resource, Imagick::COMPOSITE_DEFAULT , $x, $y);
+        $newImage->compositeImage($this->resource, \Imagick::COMPOSITE_DEFAULT , $x, $y);
         $this->resource = $newImage;
 
         $this->setWidth($width);
@@ -405,7 +410,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
     /**
      * @param  $tolerance
-     * @return Pimcore_Image_Adapter_Imagick
+     * @return self
      */
     public function trim ($tolerance) {
 
@@ -424,14 +429,14 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
     /**
      * @param  $color
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function setBackgroundColor ($color) {
 
         $this->preModify();
 
         $newImage = $this->createImage($this->getWidth(), $this->getHeight(), $color);
-        $newImage->compositeImage($this->resource, Imagick::COMPOSITE_DEFAULT , 0, 0);
+        $newImage->compositeImage($this->resource, \Imagick::COMPOSITE_DEFAULT , 0, 0);
         $this->resource = $newImage;
 
         $this->postModify();
@@ -447,7 +452,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @return Imagick
      */
     protected  function createImage ($width, $height, $color = "transparent") {
-        $newImage = new Imagick();
+        $newImage = new \Imagick();
         $newImage->newimage($width, $height, $color);
 
         return $newImage;
@@ -455,16 +460,14 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
 
     /**
-     * @param  $angle
-     * @param bool $autoResize
-     * @param string $color
-     * @return Pimcore_Image_Adapter_Imagick
+     * @param $angle
+     * @return $this
      */
     public function rotate ($angle) {
 
         $this->preModify();
 
-        $this->resource->rotateImage(new ImagickPixel('none'), $angle);
+        $this->resource->rotateImage(new \ImagickPixel('none'), $angle);
         $this->setWidth($this->resource->getimagewidth());
         $this->setHeight($this->resource->getimageheight());
 
@@ -479,7 +482,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     /**
      * @param  $x
      * @param  $y
-     * @return Pimcore_Image_Adapter_Imagick
+     * @return self
      */
     public function roundCorners ($x, $y) {
 
@@ -496,8 +499,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
 
     /**
-     * @param  $color
-     * @return Pimcore_Image_Adapter_Imagick
+     * @param $image
+     * @return $this|Adapter
      */
     public function setBackgroundImage ($image) {
 
@@ -507,10 +510,10 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
 
         if(is_file($image)) {
-            $newImage = new Imagick();
+            $newImage = new \Imagick();
             $newImage->readimage($image);
-            $newImage->resizeimage($this->getWidth(), $this->getHeight(), Imagick::FILTER_UNDEFINED, 1, false);
-            $newImage->compositeImage($this->resource, Imagick::COMPOSITE_DEFAULT, 0 ,0);
+            $newImage->resizeimage($this->getWidth(), $this->getHeight(), \Imagick::FILTER_UNDEFINED, 1, false);
+            $newImage->compositeImage($this->resource, \Imagick::COMPOSITE_DEFAULT, 0 ,0);
             $this->resource = $newImage;
         }
 
@@ -525,7 +528,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @param int $y Amount of vertical pixels the overlay should be offset from the origin
      * @param int $alpha Opacity in a scale of 0 (transparent) to 100 (opaque)
      * @param string $origin Origin of the X and Y coordinates (top-left, top-right, bottom-left, bottom-right or center)
-     * @return Pimcore_Image_Adapter_Imagick
+     * @return self
      */
     public function  addOverlay ($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left') {
 
@@ -546,7 +549,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         }
 
         if(is_file($image)) {
-            $newImage = new Imagick();
+            $newImage = new \Imagick();
             $newImage->readimage($image);
 
             if($origin == 'top-right') {
@@ -561,7 +564,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 $y = round($this->resource->getImageHeight() / 2) -round($newImage->getImageHeight() / 2) + $y;
             }
 
-            $newImage->evaluateImage(Imagick::EVALUATE_MULTIPLY, $alpha, Imagick::CHANNEL_ALPHA);
+            $newImage->evaluateImage(\Imagick::EVALUATE_MULTIPLY, $alpha, \Imagick::CHANNEL_ALPHA);
             $this->resource->compositeImage($newImage, constant("Imagick::" . $composite), $x ,$y);
         }
 
@@ -573,7 +576,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
     /**
      * @param  $image
-     * @return Pimcore_Image_Adapter_Imagick
+     * @return self
      */
     public function applyMask ($image) {
 
@@ -583,10 +586,10 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         if(is_file($image)) {
             $this->resource->setImageMatte(1);
-            $newImage = new Imagick();
+            $newImage = new \Imagick();
             $newImage->readimage($image);
-            $newImage->resizeimage($this->getWidth(), $this->getHeight(), Imagick::FILTER_UNDEFINED, 1, false);
-            $this->resource->compositeImage($newImage, Imagick::COMPOSITE_COPYOPACITY, 0 ,0, Imagick::CHANNEL_ALPHA);
+            $newImage->resizeimage($this->getWidth(), $this->getHeight(), \Imagick::FILTER_UNDEFINED, 1, false);
+            $this->resource->compositeImage($newImage, \Imagick::COMPOSITE_COPYOPACITY, 0 ,0, \Imagick::CHANNEL_ALPHA);
         }
 
         $this->postModify();
@@ -598,19 +601,19 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
 
     /**
-     * @return Pimcore_Image_Adapter_Imagick
+     * @return self
      */
     public function grayscale () {
 
         $this->preModify();
-        $this->resource->setImageType(imagick::IMGTYPE_GRAYSCALEMATTE);
+        $this->resource->setImageType(\Imagick::IMGTYPE_GRAYSCALEMATTE);
         $this->postModify();
 
         return $this;
     }
 
     /**
-     * @return Pimcore_Image_Adapter_Imagick
+     * @return self
      */
     public function sepia () {
 
@@ -622,19 +625,11 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     }
 
     /**
-     * Sharpen the image with an unsharp mask operator. The image is convolved
-     * with a Gaussian operator of the given radius and standard deviation (sigma).
-     * For reasonable results, radius should be larger than sigma.
-     * Use a radius of 0 to have the method select a suitable radius.
-     *
-     * @param float $radius The radius of the Gaussian, in pixels, not counting
-     *        the center pixel.
-     * @param float $sigma The standard deviation of the Gaussian, in pixels.
-     * @param float $amount The fraction of the difference between the original
-     *        and the blur image that is added back into the original.
-     * @param float $threshold The threshold, as a fraction of QuantumRange,
-     *        needed to apply the difference amount.
-     * @return \Pimcore_Image_Adapter_Imagick
+     * @param int $radius
+     * @param float $sigma
+     * @param float $amount
+     * @param float $threshold
+     * @return $this|Adapter
      */
     public function sharpen ($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05) {
 
@@ -647,8 +642,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     }
 
     /**
-     * @param string $mode
-     * @return $this|Pimcore_Image_Adapter
+     * @param $mode
+     * @return $this|Adapter
      */
     public function mirror($mode) {
 
@@ -665,11 +660,15 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         return $this;
     }
 
+    /**
+     * @param null $imagePath
+     * @return bool
+     */
     public function isVectorGraphic ($imagePath = null) {
 
         if($imagePath) {
             // use file-extension if filename is provided
-            return in_array(Pimcore_File::getFileExtension($imagePath), ["svg","svgz","eps","pdf","ps"]);
+            return in_array(File::getFileExtension($imagePath), ["svg","svgz","eps","pdf","ps"]);
         } else {
             try {
                 $type = $this->resource->getimageformat();
@@ -678,8 +677,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 if(in_array($type,$vectorTypes)) {
                     return true;
                 }
-            } catch (Exception $e) {
-                Logger::err($e);
+            } catch (\Exception $e) {
+                \Logger::err($e);
             }
         }
 

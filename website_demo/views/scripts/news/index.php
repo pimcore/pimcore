@@ -11,7 +11,7 @@
                 "id" => $news->getId(),
                 "text" => $news->getTitle(),
                 "prefix" => $this->document->getFullPath()
-            ], "news");
+            ], "news", true);
         ?>
         <?php if($news->getImage_1()) { ?>
             <a class="pull-left" href="<?= $detailLink; ?>">

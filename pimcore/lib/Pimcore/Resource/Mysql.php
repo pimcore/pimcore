@@ -13,7 +13,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Resource_Mysql {
+namespace Pimcore\Resource;
+
+use Pimcore\Config; 
+
+class Mysql {
 
     /**
      * @var string
@@ -40,57 +44,57 @@ class Pimcore_Resource_Mysql {
 
     /**
      * @param bool $raw
-     * @return Pimcore_Resource_Wrapper|Zend_Db_Adapter_Abstract
+     * @return Wrapper|\Zend_Db_Adapter_Abstract
      */
     public static function getConnection ($raw = false) {
 
         // just return the wrapper (for compatibility reasons)
         // the wrapper itself get's then the connection using $raw = true
         if(!$raw) {
-            return new Pimcore_Resource_Wrapper();
+            return new Wrapper();
         }
 
         $charset = "UTF8";
 
         // explicit set charset for connection (to the adapter)
-        $config = Pimcore_Config::getSystemConfig()->toArray();
+        $config = Config::getSystemConfig()->toArray();
         $config["database"]["params"]["charset"] = $charset;
 
-        $db = Zend_Db::factory($config["database"]["adapter"],$config["database"]["params"]);
+        $db = \Zend_Db::factory($config["database"]["adapter"],$config["database"]["params"]);
         $db->query("SET NAMES " . $charset);
 
         // try to set innodb as default storage-engine
         try {
             $db->query("SET storage_engine=InnoDB;");
-        } catch (Exception $e) {
-            Logger::warn($e);
+        } catch (\Exception $e) {
+            \Logger::warn($e);
         }
 
         // try to set mysql mode
         try {
             $db->query("SET sql_mode = '';");
-        } catch (Exception $e) {
-            Logger::warn($e);
+        } catch (\Exception $e) {
+            \Logger::warn($e);
         }
 
         $connectionId = $db->fetchOne("SELECT CONNECTION_ID()");
 
         // enable the db-profiler if the devmode is on and there is no custom profiler set (eg. in system.xml)
-        if((PIMCORE_DEVMODE && !$db->getProfiler()->getEnabled()) || (array_key_exists("pimcore_log", $_REQUEST) && Pimcore::inDebugMode())) {
-            $profiler = new Pimcore_Db_Profiler('All DB Queries');
+        if((PIMCORE_DEVMODE && !$db->getProfiler()->getEnabled()) || (array_key_exists("pimcore_log", $_REQUEST) && \Pimcore::inDebugMode())) {
+            $profiler = new \Pimcore\Db\Profiler('All DB Queries');
             $profiler->setEnabled(true);
             $profiler->setConnectionId($connectionId);
             $db->setProfiler($profiler);
         }
 
-        Logger::debug(get_class($db) . ": Successfully established connection to MySQL-Server, Process-ID: " . $connectionId);
+        \Logger::debug(get_class($db) . ": Successfully established connection to MySQL-Server, Process-ID: " . $connectionId);
 
         return $db;
     }
 
     /**
      * @static
-     * @return Zend_Db_Adapter_Abstract
+     * @return \Zend_Db_Adapter_Abstract
      */
     public static function reset(){
 
@@ -102,20 +106,20 @@ class Pimcore_Resource_Mysql {
 
     /**
      * @static
-     * @return mixed|Zend_Db_Adapter_Abstract
+     * @return mixed|\Zend_Db_Adapter_Abstract
      */
     public static function get() {
 
         try {
-            if(Zend_Registry::isRegistered("Pimcore_Resource_Mysql")) {
-                $connection = Zend_Registry::get("Pimcore_Resource_Mysql");
-                if($connection instanceof Pimcore_Resource_Wrapper) {
+            if(\Zend_Registry::isRegistered("Pimcore_Resource_Mysql")) {
+                $connection = \Zend_Registry::get("Pimcore_Resource_Mysql");
+                if($connection instanceof Wrapper) {
                     return $connection;
                 }
             }
         }
-        catch (Exception $e) {
-            Logger::error($e);
+        catch (\Exception $e) {
+            \Logger::error($e);
         }
 
         // get new connection
@@ -124,31 +128,29 @@ class Pimcore_Resource_Mysql {
             self::set($db);
             return $db;
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
 
             $errorMessage = "Unable to establish the database connection with the given configuration in /website/var/config/system.xml, for details see the debug.log. \nReason: " . $e->getMessage();
 
-            Logger::emergency($errorMessage);
-            Logger::emergency($e);
-            Pimcore_Tool::exitWithError($errorMessage);
+            \Logger::emergency($errorMessage);
+            \Logger::emergency($e);
+            \Pimcore\Tool::exitWithError($errorMessage);
         }
     }
 
     /**
-     * @static
-     * @param Pimcore_Resource_Wrapper $connection
-     * @return void
+     * @param $connection
      */
     public static function set($connection) {
 
-        if($connection instanceof Pimcore_Resource_Wrapper) {
-            // set default adapter for Zend_Db_Table -> use getResource() because setDefaultAdapter()
-            // accepts only instances of Zend_Db but $connection is an instance of Pimcore_Resource_Wrapper
-            Zend_Db_Table::setDefaultAdapter($connection->getResource());
+        if($connection instanceof Wrapper) {
+            // set default adapter for \Zend_Db_Table -> use getResource() because setDefaultAdapter()
+            // accepts only instances of \Zend_Db but $connection is an instance of Pimcore_Resource_Wrapper
+            \Zend_Db_Table::setDefaultAdapter($connection->getResource());
         }
 
         // register globally
-        Zend_Registry::set("Pimcore_Resource_Mysql", $connection);
+        \Zend_Registry::set("Pimcore_Resource_Mysql", $connection);
     }
 
     /**
@@ -157,18 +159,18 @@ class Pimcore_Resource_Mysql {
      */
     public static function close () {
         try {
-            if(Zend_Registry::isRegistered("Pimcore_Resource_Mysql")) {
-                $db = Zend_Registry::get("Pimcore_Resource_Mysql");
+            if(\Zend_Registry::isRegistered("Pimcore_Resource_Mysql")) {
+                $db = \Zend_Registry::get("Pimcore_Resource_Mysql");
 
-                if($db instanceof Pimcore_Resource_Wrapper) {
+                if($db instanceof Wrapper) {
                     // the following select causes an infinite loop (eg. when the connection is lost -> error handler)
-                    //Logger::debug("closing mysql connection with ID: " . $db->fetchOne("SELECT CONNECTION_ID()"));
+                    //\Logger::debug("closing mysql connection with ID: " . $db->fetchOne("SELECT CONNECTION_ID()"));
                     $db->closeResource();
                     //$db->closeDDLResource();
                 }
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
         }
     }
 
@@ -254,20 +256,17 @@ class Pimcore_Resource_Mysql {
 
 
     /**
-     * The error handler is called by the wrapper if an error occurs during __call()
-     *
-     * @static
-     * @throws Exception
-     * @param string $method
-     * @param array $args
-     * @param Exception $exception
-     * @return
+     * @param $method
+     * @param $args
+     * @param $exception
+     * @param bool $logError
+     * @throws \Exception
      */
     public static function errorHandler ($method, $args, $exception, $logError = true) {
 
         if($logError) {
-            Logger::error($exception);
-            Logger::error(array(
+            \Logger::error($exception);
+            \Logger::error(array(
                 "message" => $exception->getMessage(),
                 "method" => $method,
                 "arguments" => $args
@@ -283,14 +282,14 @@ class Pimcore_Resource_Mysql {
 
             // the connection to the server has probably been lost, try to reconnect and call the method again
             try {
-                Logger::warning("The connection to the MySQL-Server has probably been lost, try to reconnect...");
+                \Logger::warning("The connection to the MySQL-Server has probably been lost, try to reconnect...");
                 self::reset();
-                Logger::warning("Reconnecting to the MySQL-Server was successful, sending the command again to the server.");
+                \Logger::warning("Reconnecting to the MySQL-Server was successful, sending the command again to the server.");
                 $r = self::get()->callResourceMethod($method, $args);
-                Logger::warning("Resending the command was successful");
+                \Logger::warning("Resending the command was successful");
                 return $r;
-            } catch (Exception $e) {
-                Logger::error($e);
+            } catch (\Exception $e) {
+                \Logger::error($e);
                 throw $e;
             }
         }
@@ -318,14 +317,14 @@ class Pimcore_Resource_Mysql {
             if ($type == "VIEW") {
                 try {
                     $createStatement = $db->fetchRow("SHOW FIELDS FROM " . $name);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     if(strpos($e->getMessage(), "references invalid table") !== false) {
-                        Logger::err("view " . $name . " seems to be a broken one, it will be removed");
-                        Logger::err("error message was: " . $e->getMessage());
+                        \Logger::err("view " . $name . " seems to be a broken one, it will be removed");
+                        \Logger::err("error message was: " . $e->getMessage());
 
                         $db->query("DROP VIEW " . $name);
                     } else {
-                        Logger::error($e);
+                        \Logger::error($e);
                     }
                 }
             }

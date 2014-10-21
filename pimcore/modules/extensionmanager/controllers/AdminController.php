@@ -13,7 +13,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
+use Pimcore\ExtensionManager; 
+use Pimcore\File; 
+
+class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin {
 
     public function init () {
         parent::init();
@@ -26,7 +29,7 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         $configurations = array();
 
         // plugins
-        $pluginConfigs = Pimcore_ExtensionManager::getPluginConfigs();
+        $pluginConfigs = ExtensionManager::getPluginConfigs();
         foreach ($pluginConfigs as $config) {
             $className = $config["plugin"]["pluginClassName"];
             $updateable = false;
@@ -37,7 +40,7 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
             }
             
             if (!empty($className)) {
-                $isEnabled = Pimcore_ExtensionManager::isEnabled("plugin", $config["plugin"]["pluginName"]);
+                $isEnabled = ExtensionManager::isEnabled("plugin", $config["plugin"]["pluginName"]);
 
                 $plugin = array(
                     "id" => $config["plugin"]["pluginName"],
@@ -60,7 +63,7 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         }
 
         // bricks
-        $brickConfigs = Pimcore_ExtensionManager::getBrickConfigs();
+        $brickConfigs = ExtensionManager::getBrickConfigs();
         // get repo state of bricks
         foreach ($brickConfigs as $id => $config) {
 
@@ -71,7 +74,7 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
                 $updateable = true;
             }
 
-            $isEnabled = Pimcore_ExtensionManager::isEnabled("brick", $id);
+            $isEnabled = ExtensionManager::isEnabled("brick", $id);
             $brick = array(
                 "id" => $id,
                 "type" => "brick",
@@ -94,7 +97,7 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         $reload = true;
 
         if($type && $id) {
-            Pimcore_ExtensionManager::$method($type, $id);
+            ExtensionManager::$method($type, $id);
         }
 
         // do not reload when toggle an area-brick
@@ -114,7 +117,7 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         if($type == "plugin") {
 
             try {
-                $config = Pimcore_ExtensionManager::getPluginConfig($id);
+                $config = ExtensionManager::getPluginConfig($id);
                 $className = $config["plugin"]["pluginClassName"];
 
                 $message = $className::install();
@@ -127,8 +130,8 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
                     ),
                     "success" => true
                 ));
-            } catch (Exception $e) {
-                Logger::error($e);
+            } catch (\Exception $e) {
+                \Logger::error($e);
 
                 $this->_helper->json(array(
                     "message" => $e->getMessage(),
@@ -146,7 +149,7 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         if($type == "plugin") {
 
             try {
-                $config = Pimcore_ExtensionManager::getPluginConfig($id);
+                $config = ExtensionManager::getPluginConfig($id);
                 $className = $config["plugin"]["pluginClassName"];
 
                 $message = $className::uninstall();
@@ -160,7 +163,7 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
                     ),
                     "success" => true
                 ));
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->_helper->json(array(
                     "message" => $e->getMessage(),
                     "success" => false
@@ -174,7 +177,7 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         $type = $this->getParam("type");
         $id = $this->getParam("id");
 
-        Pimcore_ExtensionManager::delete($id, $type);
+        ExtensionManager::delete($id, $type);
 
         $this->_helper->json(array(
             "success" => true
@@ -198,18 +201,18 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
                 $content = file_get_contents($pluginExampleFile);
 
                 // do some modifications in the content of the file
-                $content = str_replace("Example_", $name."_", $content);
                 $content = str_replace("/Example/", "/".$name."/", $content);
                 $content = str_replace(">Example<", ">".$name."<", $content);
                 $content = str_replace(".example", ".".strtolower($name), $content);
                 $content = str_replace("examplePlugin", strtolower($name)."Plugin", $content);
                 $content = str_replace("Example Plugin", $name . " Plugin", $content);
+                $content = str_replace("Example", $name, $content);
 
                 if (!file_exists(dirname($newPath))) {
-                    Pimcore_File::mkdir(dirname($newPath));
+                    File::mkdir(dirname($newPath));
                 }
 
-                Pimcore_File::put($newPath, $content);
+                File::put($newPath, $content);
             }
             $success = true;
         }

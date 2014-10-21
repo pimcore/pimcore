@@ -19,7 +19,7 @@
     <title><?php echo htmlentities($this->getRequest()->getHttpHost(), ENT_QUOTES, 'UTF-8') ?> :: pimcore</title>
 
     <!-- load in head because of the progress bar at loading -->
-    <link rel="stylesheet" type="text/css" href="/pimcore/static/css/admin.css?_dc=<?php echo Pimcore_Version::$revision ?>" />
+    <link rel="stylesheet" type="text/css" href="/pimcore/static/css/admin.css?_dc=<?php echo \Pimcore\Version::$revision ?>" />
 </head>
 
 <body>
@@ -29,7 +29,7 @@
 </div>
 
 <div id="pimcore_loading">
-    <img class="loading" src="/pimcore/static/img/loading-white-bg.gif?_dc=<?php echo Pimcore_Version::$revision ?>" />
+    <img class="loading" src="/pimcore/static/img/loading-white-bg.gif?_dc=<?php echo \Pimcore\Version::$revision ?>" />
 </div>
 
 <div id="pimcore_navigation" style="display:none;">
@@ -84,7 +84,7 @@ $styles = array(
     // see also: http://blogs.telerik.com/blogs/posts/10-05-03/internet-explorer-css-limits.aspx
     // @import bypasses this problem in an elegant way
     foreach ($styles as $style) { ?>
-    @import url(<?php echo $style ?>?_dc=<?php echo Pimcore_Version::$revision ?>);
+    @import url(<?php echo $style ?>?_dc=<?php echo \Pimcore\Version::$revision ?>);
     <?php } ?>
 </style>
 
@@ -488,25 +488,25 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
         upload_max_filesize: <?php echo $this->upload_max_filesize; ?>,
         sessionId: "<?php echo htmlentities($_COOKIE["pimcore_admin_sid"], ENT_QUOTES, 'UTF-8') ?>",
         csrfToken: "<?= $this->csrfToken ?>",
-        version: "<?php echo Pimcore_Version::getVersion() ?>",
-        build: "<?php echo Pimcore_Version::$revision ?>",
+        version: "<?php echo \Pimcore\Version::getVersion() ?>",
+        build: "<?php echo \Pimcore\Version::$revision ?>",
         maintenance_active: <?php echo $this->maintenance_enabled; ?>,
-        maintenance_mode: <?php echo Pimcore_Tool_Admin::isInMaintenanceMode() ? "true" : "false"; ?>,
+        maintenance_mode: <?php echo \Pimcore\Tool\Admin::isInMaintenanceMode() ? "true" : "false"; ?>,
         mail: <?php echo $this->mail_settings_complete ?>,
-        debug: <?php echo Pimcore::inDebugMode() ? "true" : "false"; ?>,
+        debug: <?php echo \Pimcore::inDebugMode() ? "true" : "false"; ?>,
         devmode: <?php echo PIMCORE_DEVMODE ? "true" : "false"; ?>,
-        google_analytics_enabled: <?php echo Zend_Json::encode((bool) Pimcore_Google_Analytics::isConfigured()) ?>,
-        google_webmastertools_enabled: <?php echo Zend_Json::encode((bool) Pimcore_Google_Webmastertools::isConfigured()) ?>,
-        customviews: <?php echo Zend_Json::encode($this->customview_config) ?>,
+        google_analytics_enabled: <?php echo \Zend_Json::encode((bool) \Pimcore\Google\Analytics::isConfigured()) ?>,
+        google_webmastertools_enabled: <?php echo \Zend_Json::encode((bool) \Pimcore\Google\Webmastertools::isConfigured()) ?>,
+        customviews: <?php echo \Zend_Json::encode($this->customview_config) ?>,
         language: '<?php echo $this->language; ?>',
-        websiteLanguages: <?php echo Zend_Json::encode(explode(",",$this->config->general->validLanguages)); ?>,
+        websiteLanguages: <?php echo \Zend_Json::encode(explode(",",$this->config->general->validLanguages)); ?>,
         google_translate_api_key: "<?php echo $this->config->services->translate->apikey; ?>",
         google_maps_api_key: "<?php echo $googleMapsApiKey ?>",
         showCloseConfirmation: true,
-        debug_admin_translations: <?php echo Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
-        document_generatepreviews: <?php echo Zend_Json::encode((bool) $this->config->documents->generatepreview) ?>,
-        htmltoimage: <?php echo Zend_Json::encode(Pimcore_Image_HtmlToImage::isSupported()) ?>,
-        videoconverter: <?php echo Zend_Json::encode(Pimcore_Video::isAvailable()) ?>
+        debug_admin_translations: <?php echo \Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
+        document_generatepreviews: <?php echo \Zend_Json::encode((bool) $this->config->documents->generatepreview) ?>,
+        htmltoimage: <?php echo \Zend_Json::encode(\Pimcore\Image\HtmlToImage::isSupported()) ?>,
+        videoconverter: <?php echo \Zend_Json::encode(\Pimcore\Video::isAvailable()) ?>
     };
 </script>
 
@@ -522,15 +522,15 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
     })();
 </script>
 
-<script type="text/javascript" src="/admin/misc/json-translations-system/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
-<script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
-<script type="text/javascript" src="/admin/user/get-current-user/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
-<script type="text/javascript" src="/admin/misc/available-languages?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+<script type="text/javascript" src="/admin/misc/json-translations-system/language/<?php echo $this->language ?>/?_dc=<?php echo \Pimcore\Version::$revision ?>"></script>
+<script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/?_dc=<?php echo \Pimcore\Version::$revision ?>"></script>
+<script type="text/javascript" src="/admin/user/get-current-user/?_dc=<?php echo \Pimcore\Version::$revision ?>"></script>
+<script type="text/javascript" src="/admin/misc/available-languages?_dc=<?php echo \Pimcore\Version::$revision ?>"></script>
 
 
 <!-- library scripts -->
 <?php foreach ($scriptLibs as $scriptUrl) { ?>
-    <script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+    <script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>?_dc=<?php echo \Pimcore\Version::$revision ?>"></script>
 <?php } ?>
 
 
@@ -538,7 +538,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 <!-- internal scripts -->
 <?php if (PIMCORE_DEVMODE) { ?>
     <?php foreach ($scripts as $scriptUrl) { ?>
-    <script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+    <script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>?_dc=<?php echo \Pimcore\Version::$revision ?>"></script>
 <?php } ?>
 <?php } else { ?>
 <?php
@@ -549,7 +549,7 @@ foreach ($scripts as $scriptUrl) {
     }
 }
 ?>
-    <script type="text/javascript" src="<?php echo Pimcore_Tool_Admin::getMinimizedScriptPath($scriptContents) ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+    <script type="text/javascript" src="<?php echo \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) ?>?_dc=<?php echo \Pimcore\Version::$revision ?>"></script>
 <?php } ?>
 
 
@@ -564,8 +564,8 @@ if(PIMCORE_DEVMODE) {
 }
 
 try {
-    $pluginBroker = Zend_Registry::get("Pimcore_API_Plugin_Broker");
-    if ($pluginBroker instanceof Pimcore_API_Plugin_Broker) {
+    $pluginBroker = \Zend_Registry::get("Pimcore_API_Plugin_Broker");
+    if ($pluginBroker instanceof \Pimcore\API\Plugin\Broker) {
         foreach ($pluginBroker->getSystemComponents() as $plugin) {
             if ($plugin->isInstalled()) {
                 $jsPaths = $plugin->getJsPaths();
@@ -596,10 +596,10 @@ try {
         }
     }
 }
-catch (Exception $e) {}
+catch (\Exception $e) {}
 ?>
 
 <?php // MUST BE THE LAST LINE ?>
-<script type="text/javascript" src="/pimcore/static/js/pimcore/startup.js?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+<script type="text/javascript" src="/pimcore/static/js/pimcore/startup.js?_dc=<?php echo \Pimcore\Version::$revision ?>"></script>
 </body>
 </html>

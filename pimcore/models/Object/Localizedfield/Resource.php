@@ -15,29 +15,46 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Object\Localizedfield;
 
+use Pimcore\Model;
+use Pimcore\Model\Object;
+use Pimcore\Tool;
 
+class Resource extends Model\Resource\AbstractResource {
+
+    /**
+     * @var null
+     */
     protected $tableDefinitions = null;
 
+    /**
+     * @return string
+     */
     public function getTableName () {
         return "object_localized_data_" . $this->model->getClass()->getId();
     }
 
+    /**
+     * @return string
+     */
     public function getQueryTableName () {
         return "object_localized_query_" . $this->model->getClass()->getId();
     }
 
+    /**
+     *
+     */
     public function save () {
         $this->delete(false);
 
         $object = $this->model->getObject();
-        $validLanguages = Pimcore_Tool::getValidLanguages();
+        $validLanguages = Tool::getValidLanguages();
         $fieldDefinitions = $this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions();
 
         foreach ($validLanguages as $language) {
-            $inheritedValues = Object_Abstract::doGetInheritedValues();
-            Object_Abstract::setGetInheritedValues(false);
+            $inheritedValues = Object\AbstractObject::doGetInheritedValues();
+            Object\AbstractObject::setGetInheritedValues(false);
 
             $insertData = array(
                 "ooo_id" => $this->model->getObject()->getId(),
@@ -64,13 +81,13 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
             $this->db->insertOrUpdate($this->getTableName(), $insertData);
 
-            Object_Abstract::setGetInheritedValues(true);
+            Object\AbstractObject::setGetInheritedValues(true);
 
             $data = array();
             $data["ooo_id"] = $this->model->getObject()->getId();
             $data["language"] = $language;
 
-            $this->inheritanceHelper = new Object_Concrete_Resource_InheritanceHelper($object->getClassId(), "ooo_id", $storeTable, $queryTable);
+            $this->inheritanceHelper = new Object\Concrete\Resource\InheritanceHelper($object->getClassId(), "ooo_id", $storeTable, $queryTable);
             $this->inheritanceHelper->resetFieldsToCheck();
             $sql = "SELECT * FROM " . $queryTable . " WHERE ooo_id = " . $object->getId() . " AND language = '" . $language . "'";
 
@@ -92,16 +109,6 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $untouchable = array();
 
             // @TODO: currently we do not support lazyloading in localized fields
-            /*$fd = $this->model->getClass()->getFieldDefinitions();
-            foreach ($fd as $key => $value) {
-                if (method_exists($value, "getLazyLoading") && $value->getLazyLoading()) {
-                    if (method_exists()!in_array($key, $this->model->getLazyLoadedFields())) {
-                        //this is a relation subject to lazy loading - it has not been loaded
-                        $untouchable[] = $key;
-                    }
-                }
-            }*/
-
 
             foreach ($fieldDefinitions as $fd) {
 
@@ -155,7 +162,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                                 }
                             }
                         } else {
-                            Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
+                            \Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
                         }
                     }
                 }
@@ -167,11 +174,14 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $this->inheritanceHelper->doUpdate($object->getId());
             $this->inheritanceHelper->resetFieldsToCheck();
 
-            Object_Abstract::setGetInheritedValues($inheritedValues);
+            Object\AbstractObject::setGetInheritedValues($inheritedValues);
 
         } // foreach language
     }
 
+    /**
+     * @param bool $deleteQuery
+     */
     public function delete ($deleteQuery = true) {
 
         try {
@@ -180,14 +190,14 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                 $tablename = $this->getTableName();
                 $this->db->delete($tablename, $this->db->quoteInto("ooo_id = ?", $id));
 
-                $validLanguages = Pimcore_Tool::getValidLanguages();
+                $validLanguages = Tool::getValidLanguages();
                 foreach ($validLanguages as $language) {
                     $queryTable = $this->getQueryTableName() . "_" . $language;
                     $this->db->delete($queryTable, $this->db->quoteInto("ooo_id = ?", $id));
                 }
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             $this->createUpdateTable();
         }
 
@@ -195,8 +205,11 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         $this->db->delete("object_relations_" . $this->model->getObject()->getClassId(), $this->db->quoteInto("ownertype = 'localizedfield' AND ownername = 'localizedfield' AND src_id = ?", $this->model->getObject()->getId()));
     }
 
+    /**
+     *
+     */
     public function load () {
-        $validLanguages = Pimcore_Tool::getValidLanguages();
+        $validLanguages = Tool::getValidLanguages();
         foreach ($validLanguages as &$language) {
             $language = $this->db->quote($language);
         }
@@ -227,9 +240,12 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         }
     }
 
+    /**
+     *
+     */
     public function createLocalizedViews () {
 
-        $languages = Pimcore_Tool::getValidLanguages();
+        $languages = Tool::getValidLanguages();
 
         $defaultTable = 'object_query_' . $this->model->getClass()->getId();
 
@@ -238,12 +254,15 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                 $tablename = $this->getQueryTableName() . "_" . $language;
                 $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $defaultTable . '`.`oo_id` left JOIN `' . $tablename . '` ON `' . $defaultTable . '`.`oo_id` = `' . $tablename . '`.`ooo_id`;');
             }
-            catch (Exception $e) {
-                Logger::error($e);
+            catch (\Exception $e) {
+                \Logger::error($e);
             }
         }
     }
 
+    /**
+     *
+     */
     public function createUpdateTable () {
 
         $table = $this->getTableName();
@@ -260,7 +279,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         $columnsToRemove = $existingColumns;
         $protectedColumns = array("ooo_id", "language");
 
-        Object_Class_Service::updateTableDefinitions($this->tableDefinitions, (array($table)));
+        Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, (array($table)));
 
         foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $value) {
 
@@ -286,9 +305,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColumns);
 
-
-
-        $validLanguages = Pimcore_Tool::getValidLanguages();
+        $validLanguages = Tool::getValidLanguages();
 
         foreach ($validLanguages as &$language) {
             $queryTable = $this->getQueryTableName();
@@ -308,7 +325,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $existingColumns = $this->getValidTableColumns($queryTable, false); // no caching of table definition
             $columnsToRemove = $existingColumns;
 
-            Object_Class_Service::updateTableDefinitions($this->tableDefinitions, array($queryTable));
+            Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, array($queryTable));
 
             $fieldDefinitions = $this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions();
 
@@ -347,7 +364,10 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         $this->tableDefinitions = null;
     }
 
-
+    /**
+     * @param $field
+     * @param $table
+     */
     private function addIndexToField ($field, $table) {
 
         if ($field->getIndex()) {
@@ -357,14 +377,14 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                     $columnName = $field->getName() . "__" . $fkey;
                     try {
                         $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
-                    } catch (Exception $e) {}
+                    } catch (\Exception $e) {}
                 }
             } else {
                 // single -column field
                 $columnName = $field->getName();
                 try {
                     $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
-                } catch (Exception $e) {}
+                } catch (\Exception $e) {}
             }
         } else {
             if (is_array($field->getColumnType())) {
@@ -373,19 +393,26 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                     $columnName = $field->getName() . "__" . $fkey;
                     try {
                         $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
-                    } catch (Exception $e) {}
+                    } catch (\Exception $e) {}
                 }
             } else {
                 // single -column field
                 $columnName = $field->getName();
                 try {
                     $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                 }
             }
         }
     }
 
+    /**
+     * @param $table
+     * @param $colName
+     * @param $type
+     * @param $default
+     * @param $null
+     */
     private function addModifyColumn ($table, $colName, $type, $default, $null) {
 
         $existingColumns = $this->getValidTableColumns($table, false);
@@ -401,13 +428,17 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $this->db->query('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
             $this->resetValidTableColumnsCache($table);
         } else {
-            if (!Object_Class_Service::skipColumn($this->tableDefinitions, $table, $colName, $type, $default, $null)) {
+            if (!Object\ClassDefinition\Service::skipColumn($this->tableDefinitions, $table, $colName, $type, $default, $null)) {
                 $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
             }
         }
     }
 
-
+    /**
+     * @param $table
+     * @param $columnsToRemove
+     * @param $protectedColumns
+     */
     private function removeUnusedColumns ($table, $columnsToRemove, $protectedColumns) {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
             foreach ($columnsToRemove as $value) {

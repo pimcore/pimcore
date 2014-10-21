@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_KeyValue_TranslatorConfig_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Object\KeyValue\TranslatorConfig;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     const TABLE_NAME_TRANSLATOR = "keyvalue_translator_configuration";
 
@@ -52,6 +56,10 @@ class Object_KeyValue_TranslatorConfig_Resource extends Pimcore_Model_Resource_A
         $this->assignVariablesToModel($data);
     }
 
+    /**
+     * @param null $name
+     * @throws \Exception
+     */
     public function getByName($name = null) {
 
         if ($name != null) {
@@ -66,7 +74,7 @@ class Object_KeyValue_TranslatorConfig_Resource extends Pimcore_Model_Resource_A
         if($data["id"]) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Exception("Config with name: " . $this->model->getName() . " does not exist");
+            throw new \Exception("Config with name: " . $this->model->getName() . " does not exist");
         }
     }
 
@@ -93,9 +101,7 @@ class Object_KeyValue_TranslatorConfig_Resource extends Pimcore_Model_Resource_A
     }
 
     /**
-     * Save changes to database, it's an good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
         try {
@@ -107,7 +113,7 @@ class Object_KeyValue_TranslatorConfig_Resource extends Pimcore_Model_Resource_A
                         $value = (int) $value;
                     }
                     if(is_array($value) || is_object($value)) {
-                        $value = Pimcore_Tool_Serialize::serialize($value);
+                        $value = \Pimcore\Tool\Serialize::serialize($value);
                     }
 
                     $data[$key] = $value;
@@ -116,7 +122,7 @@ class Object_KeyValue_TranslatorConfig_Resource extends Pimcore_Model_Resource_A
 
             $this->db->update(self::TABLE_NAME_TRANSLATOR, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

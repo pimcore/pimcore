@@ -14,8 +14,12 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Element_Note extends Pimcore_Model_Abstract {
+
+namespace Pimcore\Model\Element;
+
+use Pimcore\Model;
+
+class Note extends Model\AbstractModel {
 
     /**
      * @var int
@@ -65,7 +69,7 @@ class Element_Note extends Pimcore_Model_Abstract {
     /**
      * @static
      * @param $id
-     * @return Element_Note
+     * @return Element\Note
      */
     public static function getById ($id) {
 
@@ -74,7 +78,7 @@ class Element_Note extends Pimcore_Model_Abstract {
             $note->getResource()->getById($id);
 
             return $note;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }
@@ -93,11 +97,12 @@ class Element_Note extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param Element_Interface $element
+     * @param ElementInterface $element
+     * @return $this
      */
-    public function setElement(Element_Interface $element) {
+    public function setElement(ElementInterface $element) {
         $this->setCid($element->getId());
-        $this->setCtype(Element_Service::getType($element));
+        $this->setCtype(Service::getType($element));
         return $this;
     }
 
@@ -106,8 +111,8 @@ class Element_Note extends Pimcore_Model_Abstract {
         // check if there's a valid user
         if(!$this->getUser()) {
             // try to use the logged in user
-            if(Pimcore::inAdmin()) {
-                if($user = Pimcore_Tool_Admin::getCurrentUser()) {
+            if(\Pimcore::inAdmin()) {
+                if($user = \Pimcore\Tool\Admin::getCurrentUser()) {
                     $this->setUser($user->getId());
                 }
             }
@@ -117,7 +122,8 @@ class Element_Note extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $cid
+     * @param $cid
+     * @return $this
      */
     public function setCid($cid)
     {
@@ -134,7 +140,8 @@ class Element_Note extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $ctype
+     * @param $ctype
+     * @return $this
      */
     public function setCtype($ctype)
     {
@@ -151,7 +158,8 @@ class Element_Note extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param array $data
+     * @param $data
+     * @return $this
      */
     public function setData($data)
     {
@@ -168,7 +176,8 @@ class Element_Note extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $date
+     * @param $date
+     * @return $this
      */
     public function setDate($date)
     {
@@ -185,7 +194,8 @@ class Element_Note extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $description
+     * @param $description
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -202,7 +212,8 @@ class Element_Note extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $id
+     * @param $id
+     * @return $this
      */
     public function setId($id)
     {
@@ -219,7 +230,8 @@ class Element_Note extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $title
+     * @param $title
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -236,7 +248,8 @@ class Element_Note extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $type
+     * @param $type
+     * @return $this
      */
     public function setType($type)
     {
@@ -253,7 +266,8 @@ class Element_Note extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $user
+     * @param $user
+     * @return $this
      */
     public function setUser($user)
     {

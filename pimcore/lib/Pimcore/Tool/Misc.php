@@ -13,8 +13,14 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Tool_Misc {
+namespace Pimcore\Tool;
 
+class Misc {
+
+    /**
+     * @param array $config
+     * @return string
+     */
     public static function roboHash($config = []) {
 
         $defaultConfig = [

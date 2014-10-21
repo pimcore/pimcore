@@ -15,7 +15,15 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Href extends Document_Tag {
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Model;
+use Pimcore\Model\Document;
+use Pimcore\Model\Element;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Object;
+
+class Href extends Model\Document\Tag {
 
     /**
      * ID of the source object
@@ -46,7 +54,7 @@ class Document_Tag_Href extends Document_Tag {
     public $element;
 
     /**
-     * @see Document_Tag_Interface::getType
+     * @see Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType() {
@@ -56,7 +64,7 @@ class Document_Tag_Href extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData() {
@@ -76,7 +84,7 @@ class Document_Tag_Href extends Document_Tag {
 	
 		$this->setElement();
 	
-        if ($this->element instanceof Element_Interface) {
+        if ($this->element instanceof Element\ElementInterface) {
             return array(
                 "id" => $this->id,
                 "path" => $this->element->getFullPath(),
@@ -89,7 +97,7 @@ class Document_Tag_Href extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::frontend
+     * @see Document\Tag\TagInterface::frontend
      * @return void
      */
     public function frontend() {
@@ -97,30 +105,26 @@ class Document_Tag_Href extends Document_Tag {
 		$this->setElement();
 	
         //don't give unpublished elements in frontend
-        if (Document::doHideUnpublished() and !Element_Service::isPublished($this->element)) {
+        if (Document::doHideUnpublished() and !Element\Service::isPublished($this->element)) {
             return "";
         }
 
-        if ($this->element instanceof Element_Interface) {
+        if ($this->element instanceof Element\ElementInterface) {
             return $this->element->getFullPath();
         }
 
         return "";
-        // return "Please use method getElement() to retrieve the linked object";
-        //return $this->getElement();
-        // there is no direct output to the frontend
-        // use ::getElement to get the linked element of the href
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
     public function setDataFromResource($data) {
 
         if (!empty($data)) {
-            $data = Pimcore_Tool_Serialize::unserialize($data);
+            $data = \Pimcore\Tool\Serialize::unserialize($data);
         }
 
         $this->id = $data["id"];
@@ -132,7 +136,7 @@ class Document_Tag_Href extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
@@ -153,7 +157,7 @@ class Document_Tag_Href extends Document_Tag {
      */
     private function setElement() {
 		if(!$this->element) {
-			$this->element = Element_Service::getElementById($this->type, $this->id);
+			$this->element = Element\Service::getElementById($this->type, $this->id);
 		}
         return $this;
     }
@@ -168,7 +172,7 @@ class Document_Tag_Href extends Document_Tag {
 		$this->setElement();
 	
         //don't give unpublished elements in frontend
-        if (Document::doHideUnpublished() and !Element_Service::isPublished($this->element)) {
+        if (Document::doHideUnpublished() and !Element\Service::isPublished($this->element)) {
             return false;
         }
 
@@ -185,10 +189,10 @@ class Document_Tag_Href extends Document_Tag {
 		$this->setElement();
 	
         //don't give unpublished elements in frontend
-        if (Document::doHideUnpublished() and !Element_Service::isPublished($this->element)) {
+        if (Document::doHideUnpublished() and !Element\Service::isPublished($this->element)) {
             return false;
         }
-        if ($this->element instanceof Element_Interface) {
+        if ($this->element instanceof Element\ElementInterface) {
             return $this->element->getFullPath();
         }
         return;
@@ -201,12 +205,11 @@ class Document_Tag_Href extends Document_Tag {
 		
 		$this->setElement();
 	
-        if ($this->getElement() instanceof Element_Interface) {
+        if ($this->getElement() instanceof Element\ElementInterface) {
             return false;
         }
         return true;
     }
-
 
     /**
      * @return array
@@ -216,8 +219,8 @@ class Document_Tag_Href extends Document_Tag {
         $dependencies = array();
 		$this->setElement();
 
-        if ($this->element instanceof Element_Interface) {
-            $elementType = Element_Service::getElementType($this->element);
+        if ($this->element instanceof Element\ElementInterface) {
+            $elementType = Element\Service::getElementType($this->element);
             $key = $elementType . "_" . $this->element->getId();
             $dependencies[$key] = array(
                 "id" => $this->element->getId(),
@@ -228,13 +231,10 @@ class Document_Tag_Href extends Document_Tag {
         return $dependencies;
     }
 
-
     /**
-     * Receives a Webservice_Data_Document_Element from webservice import and fill the current tag's data
-     *
-     * @abstract
-     * @param  Webservice_Data_Document_Element $data
-     * @return void
+     * @param Document\Webservice\Data\Document\Element $wsElement
+     * @param null $idMapper
+     * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
@@ -245,7 +245,7 @@ class Document_Tag_Href extends Document_Tag {
             $this->id = $data->id;
 
             if (!is_numeric($this->id)) {
-                throw new Exception("cannot get values from web service import - id is not valid");
+                throw new \Exception("cannot get values from web service import - id is not valid");
             }
 
             if ($idMapper) {
@@ -259,7 +259,7 @@ class Document_Tag_Href extends Document_Tag {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
                         $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
                     } else {
-                        throw new Exception("cannot get values from web service import - referenced asset with id [ ".$data->id." ] is unknown");
+                        throw new \Exception("cannot get values from web service import - referenced asset with id [ ".$data->id." ] is unknown");
                     }
                 }
             } else if ($this->type == "document") {
@@ -268,23 +268,23 @@ class Document_Tag_Href extends Document_Tag {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
                         $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
                     } else {
-                        throw new Exception("cannot get values from web service import - referenced document with id [ ".$data->id." ] is unknown");
+                        throw new \Exception("cannot get values from web service import - referenced document with id [ ".$data->id." ] is unknown");
                     }
                 }
             } else if ($this->type == "object") {
-                $this->element = Object_Abstract::getById($this->id);
-                if(!$this->element instanceof Object_Abstract){
+                $this->element = Object\AbstractObject::getById($this->id);
+                if(!$this->element instanceof Object\AbstractObject){
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
                         $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
                     } else {
-                        throw new Exception("cannot get values from web service import - referenced object with id [ ".$data->id." ] is unknown");
+                        throw new \Exception("cannot get values from web service import - referenced object with id [ ".$data->id." ] is unknown");
                     }
                 }
             } else {
                 if ($idMapper && $idMapper->ignoreMappingFailures()) {
                     $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
                 } else {
-                    throw new Exception("cannot get values from web service import - type is not valid");
+                    throw new \Exception("cannot get values from web service import - type is not valid");
                 }
             }
         }
@@ -297,10 +297,10 @@ class Document_Tag_Href extends Document_Tag {
     public function checkValidity() {
         $sane = true;
         if($this->id){
-            $el = Element_Service::getElementById($this->type, $this->id);
-            if(!$el instanceof Element_Interface){
+            $el = Element\Service::getElementById($this->type, $this->id);
+            if(!$el instanceof Element\ElementInterface){
                 $sane = false;
-                Logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
+                \Logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
                 $this->id = null;
                 $this->type = null;
                 $this->subtype=null;
@@ -328,9 +328,8 @@ class Document_Tag_Href extends Document_Tag {
         return $finalVars;
     }
 
-
     /**
-     * this method is called by Document_Service::loadAllDocumentFields() to load all lazy loading fields
+     * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields
      * @return void
      */
     public function load () {
@@ -341,7 +340,7 @@ class Document_Tag_Href extends Document_Tag {
 
     /**
      * @param int $id
-     * @return Document_Tag_Href
+     * @return Document\Tag\Href
      */
     public function setId($id)
     {
@@ -359,7 +358,7 @@ class Document_Tag_Href extends Document_Tag {
 
     /**
      * @param string $subtype
-     * @return Document_Tag_Href
+     * @return Document\Tag\Href
      */
     public function setSubtype($subtype)
     {

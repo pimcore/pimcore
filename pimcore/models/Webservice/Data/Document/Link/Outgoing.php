@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Document_Link_Outgoing extends Webservice_Data_Document_Link {
+namespace Pimcore\Model\Webservice\Data\Document\Link;
+
+use Pimcore\Model;
+
+class Outgoing extends Model\Webservice\Data\Document\Link {
 
 
     /**

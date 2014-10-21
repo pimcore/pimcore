@@ -13,7 +13,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_MiscController extends Pimcore_Controller_Action_Admin
+use Pimcore\Tool;
+use Pimcore\File;
+use Pimcore\Resource;
+use Pimcore\Model\Translation;
+
+class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 {
     public function jsonTranslationsAdminAction()
     {
@@ -21,7 +26,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $language = $this->getParam("language");
 
-        $list = new Translation_Admin_List();
+        $list = new Translation\Admin\Listing();
         $list->setOrder("asc");
         $list->setOrderKey("key");
         $list->load();
@@ -39,9 +44,9 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $language = $this->getParam("language");
 
-        $languageFile = Pimcore_Tool_Admin::getLanguageFile($language);
+        $languageFile = Tool\Admin::getLanguageFile($language);
         if (!is_file($languageFile)) {
-            $languageFile = Pimcore_Tool_Admin::getLanguageFile("en");
+            $languageFile = Tool\Admin::getLanguageFile("en");
         }
 
         $row = 1;
@@ -51,7 +56,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         }
         fclose($handle);
 
-        $broker = Pimcore_API_Plugin_Broker::getInstance();
+        $broker = \Pimcore\API\Plugin\Broker::getInstance();
         $pluginTranslations = $broker->getTranslations($language);
         //$pluginTranslations = $this->getApiPluginBroker()->getTranslations($language);
         $translations = array_merge($pluginTranslations, $translations);
@@ -85,7 +90,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     public function adminCssAction()
     {
         // customviews config
-        $cvData = Pimcore_Tool::getCustomViewConfig();
+        $cvData = Tool::getCustomViewConfig();
         $this->view->customviews = $cvData;
 
 
@@ -97,19 +102,19 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
             header("Content-Type: application/javascript");
 
-            $client = Pimcore_Tool::getHttpClient();
+            $client = Tool::getHttpClient();
             $client->setUri($this->getParam("url"));
 
             try {
-                $response = $client->request(Zend_Http_Client::GET);
+                $response = $client->request(\Zend_Http_Client::GET);
 
                 if ($response->isSuccessful()) {
-                    echo $this->getParam("callback") . "(" . Zend_Json::encode("data:" .$response->getHeader("Content-Type") . ";base64," . base64_encode($response->getBody())) . ");";
+                    echo $this->getParam("callback") . "(" . \Zend_Json::encode("data:" .$response->getHeader("Content-Type") . ";base64," . base64_encode($response->getBody())) . ");";
                 } else {
-                    throw new Exception("Invalid response");
+                    throw new \Exception("Invalid response");
                 }
-            } catch (Exception $e) {
-                echo $this->getParam("callback") . "(" . Zend_Json::encode("error:Application error") . ")";
+            } catch (\Exception $e) {
+                echo $this->getParam("callback") . "(" . \Zend_Json::encode("error:Application error") . ")";
             }
         }
 
@@ -131,13 +136,13 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     {
         $this->getResponse()->setHeader("Content-Type", "text/javascript", true);
 
-        $locales = Pimcore_Tool::getSupportedLocales();
+        $locales = Tool::getSupportedLocales();
         $this->view->languages = $locales;
     }
 
     public function getValidFilenameAction () {
         $this->_helper->json(array(
-            "filename" => Pimcore_File::getValidFilename($this->getParam("value"))
+            "filename" => File::getValidFilename($this->getParam("value"))
         ));
     }
 
@@ -214,7 +219,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         if ($this->getParam("content") && $this->getParam("path")) {
             $file = $this->getFileexplorerPath("path");
             if (is_file($file) && is_writeable($file)) {
-                Pimcore_File::put($file, $this->getParam("content"));
+                File::put($file, $this->getParam("content"));
 
                 $success = true;
             }
@@ -236,7 +241,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
             $file = $path . "/" . $this->getParam("filename");
 
             if (is_writeable(dirname($file))) {
-                Pimcore_File::put($file, "");
+                File::put($file, "");
 
                 $success = true;
             }
@@ -258,7 +263,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
             $file = $path . "/" . $this->getParam("filename");
 
             if (is_writeable(dirname($file))) {
-                Pimcore_File::mkdir($file);
+                File::mkdir($file);
 
                 $success = true;
             }
@@ -292,7 +297,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $path = realpath(PIMCORE_DOCUMENT_ROOT . $path);
 
         if (strpos($path, PIMCORE_DOCUMENT_ROOT) !== 0) {
-            throw new Exception('operation permitted, permission denied');
+            throw new \Exception('operation permitted, permission denied');
         }
         return $path;
     }
@@ -302,11 +307,11 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $this->checkPermission("maintenance_mode");
 
         if ($this->getParam("activate")) {
-            Pimcore_Tool_Admin::activateMaintenanceMode();
+            Tool\Admin::activateMaintenanceMode();
         }
 
         if ($this->getParam("deactivate")) {
-            Pimcore_Tool_Admin::deactivateMaintenanceMode();
+            Tool\Admin::deactivateMaintenanceMode();
         }
 
         $this->_helper->json(array(
@@ -318,7 +323,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $this->checkPermission("http_errors");
 
-        $db = Pimcore_Resource::get();
+        $db = Resource::get();
 
         $limit = $this->getParam("limit");
         $offset = $this->getParam("start");
@@ -370,7 +375,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $this->checkPermission("http_errors");
 
-        $db = Pimcore_Resource::get();
+        $db = Resource::get();
         $db->delete("http_error_log");
 
         $this->_helper->json(array(
@@ -382,7 +387,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $this->checkPermission("http_errors");
 
-        $db = Pimcore_Resource::get();
+        $db = Resource::get();
         $data = $db->fetchRow("SELECT * FROM http_error_log WHERE id = ?", array($this->getParam("id")));
 
         foreach ($data as $key => &$value) {
@@ -395,7 +400,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     }
 
     public function countryListAction() {
-        $countries = Zend_Locale::getTranslationList('territory');
+        $countries = \Zend_Locale::getTranslationList('territory');
         asort($countries);
         $options = array();
 
@@ -412,7 +417,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     }
 
     public function languageListAction() {
-        $locales = Pimcore_Tool::getSupportedLocales();
+        $locales = Tool::getSupportedLocales();
 
         foreach ($locales as $short => $translation) {
             $options[] = array(
@@ -438,18 +443,18 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     protected function getBounceMailbox () {
 
         $mail = null;
-        $config = Pimcore_Config::getSystemConfig();
+        $config = \Pimcore\Config::getSystemConfig();
 
         if($config->email->bounce->type == "Mbox") {
-            $mail = new Zend_Mail_Storage_Mbox(array(
+            $mail = new \Zend_Mail_Storage_Mbox(array(
                 'filename' => $config->email->bounce->mbox
             ));
         } else if ($config->email->bounce->type == "Maildir") {
-            $mail = new Zend_Mail_Storage_Maildir(array(
+            $mail = new \Zend_Mail_Storage_Maildir(array(
                 'dirname' => $config->email->bounce->maildir
             ));
         } else if ($config->email->bounce->type == "IMAP") {
-            $mail = new Zend_Mail_Storage_Imap(array(
+            $mail = new \Zend_Mail_Storage_Imap(array(
                 'host' => $config->email->bounce->imap->host,
                 "port" => $config->email->bounce->imap->port,
                 'user' => $config->email->bounce->imap->username,
@@ -465,11 +470,11 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
             foreach ($pathes as $path) {
                 if(is_dir($path)) {
-                    $mail = new Zend_Mail_Storage_Maildir(array(
+                    $mail = new \Zend_Mail_Storage_Maildir(array(
                         'dirname' => $path . "/"
                     ));
                 } else if(is_file($path)) {
-                    $mail = new Zend_Mail_Storage_Mbox(array(
+                    $mail = new \Zend_Mail_Storage_Mbox(array(
                         'filename' => $path
                     ));
                 }
@@ -503,8 +508,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
                 "id" => (int) $mail->key()
             );
 
-            $date = new Zend_Date($message->date);
-            $mailData["date"] = $date->get(Zend_Date::DATETIME_MEDIUM);
+            $date = new \Zend_Date($message->date);
+            $mailData["date"] = $date->get(\Zend_Date::DATETIME_MEDIUM);
 
             $mails[] = $mailData;
 
@@ -593,7 +598,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $files = rscandir($viewPath . DIRECTORY_SEPARATOR);
         foreach ($files as $file) {
             $dat = array();
-            if(strpos($file, Pimcore_View::getViewScriptSuffix()) !== false) {
+            if(strpos($file, \Pimcore\View::getViewScriptSuffix()) !== false) {
                 $dat["path"] = str_replace($viewPath, "", $file);
                 $dat["path"] = str_replace("\\", "/", $dat["path"]); // unix directory separator are compatible with windows, not the reverse
                 $templates[] = $dat;
@@ -607,7 +612,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function robohashAction() {
 
-        $hash = Pimcore_Tool_Misc::roboHash([
+        $hash = Tool\Misc::roboHash([
             "seed" => $this->getParam("seed", rand(0,20000)),
             "width" => $this->getParam("width"),
             "height" => $this->getParam("height")

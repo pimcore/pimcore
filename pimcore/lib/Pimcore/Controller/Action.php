@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Action extends Zend_Controller_Action {
+namespace Pimcore\Controller;
+
+class Action extends \Zend_Controller_Action {
 
     /**
      * Indicator if the custom view is already initialized or not
@@ -23,6 +25,9 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
      */
     protected static $_customViewInitialized = false;
 
+    /**
+     * @throws \Zend_Controller_Response_Exception
+     */
     public function init() {
         parent::init();
 
@@ -41,6 +46,9 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         }
     }
 
+    /**
+     * @throws \Zend_Controller_Response_Exception
+     */
     protected function disableBrowserCache () {
         // set this headers to avoid problems with proxies, ...
         if($this->getResponse()->canSendHeaders()) {
@@ -51,25 +59,34 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         }
     }
 
+    /**
+     *
+     */
     protected function removeViewRenderer() {
-        Zend_Controller_Action_HelperBroker::removeHelper('viewRenderer');
+        \Zend_Controller_Action_HelperBroker::removeHelper('viewRenderer');
 
         $this->viewEnabled = false;
     }
 
+    /**
+     * @throws \Zend_Controller_Action_Exception
+     */
     protected function enableLayout() {
 
-        $viewRenderer = Zend_Controller_Action_HelperBroker::getExistingHelper("viewRenderer");
+        $viewRenderer = \Zend_Controller_Action_HelperBroker::getExistingHelper("viewRenderer");
         $viewRenderer->setIsInitialized(false); // reset so that the view get's initialized again, because of error page from other modules
         $viewRenderer->initView();
 
-        Zend_Layout::startMvc();
-        $layout = Zend_Layout::getMvcInstance();
-        $layout->setViewSuffix(Pimcore_View::getViewScriptSuffix());
+        \Zend_Layout::startMvc();
+        $layout = \Zend_Layout::getMvcInstance();
+        $layout->setViewSuffix(\Pimcore\View::getViewScriptSuffix());
     }
 
+    /**
+     *
+     */
     protected function disableLayout() {
-        $layout = Zend_Layout::getMvcInstance();
+        $layout = \Zend_Layout::getMvcInstance();
         if ($layout) {
             $layout->disableLayout();
         }
@@ -77,18 +94,29 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         $this->layoutEnabled = false;
     }
 
+    /**
+     * @param $name
+     * @return $this
+     */
     protected function setLayout($name) {
-        $layout = Zend_Layout::getMvcInstance();
-        if ($layout instanceof Zend_Layout) {
+        $layout = \Zend_Layout::getMvcInstance();
+        if ($layout instanceof \Zend_Layout) {
             $layout->setLayout($name);
         }
         return $this;
     }
 
+    /**
+     *
+     */
     protected function disableViewAutoRender() {
         $this->_helper->viewRenderer->setNoRender();
     }
 
+    /**
+     * @param $path
+     * @return bool
+     */
     protected function viewScriptExists($path) {
         $scriptPath = $this->view->getScriptPaths();
         $scriptPath = $scriptPath[0];
@@ -99,6 +127,9 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         return false;
     }
 
+    /**
+     *
+     */
     public function preDispatch() {
         if ($this->hasParam("_segment")) {
             $this->_helper->viewRenderer->setResponseSegment($this->getParam("_segment"));

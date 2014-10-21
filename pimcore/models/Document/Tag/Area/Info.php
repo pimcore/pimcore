@@ -15,10 +15,14 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Area_Info {
+namespace Pimcore\Model\Document\Tag\Area;
+
+use Pimcore\Model;
+
+class Info {
 
     /**
-     * @var Document_Tag
+     * @var Model\Document\Tag
      */
     public $tag;
 
@@ -28,7 +32,7 @@ class Document_Tag_Area_Info {
     public $name;
 
     /**
-     * @var Zend_Config
+     * @var \Zend_Config
      */
     public $config;
 
@@ -50,6 +54,7 @@ class Document_Tag_Area_Info {
 
     /**
      * @param \Zend_Config $config
+     * @return $this
      */
     public function setConfig($config)
     {
@@ -67,6 +72,7 @@ class Document_Tag_Area_Info {
 
     /**
      * @param string $id
+     * @return $this
      */
     public function setId($id)
     {
@@ -84,6 +90,7 @@ class Document_Tag_Area_Info {
 
     /**
      * @param int $index
+     * @return $this
      */
     public function setIndex($index)
     {
@@ -101,6 +108,7 @@ class Document_Tag_Area_Info {
 
     /**
      * @param string $path
+     * @return $this
      */
     public function setPath($path)
     {
@@ -133,7 +141,7 @@ class Document_Tag_Area_Info {
     }
 
     /**
-     * @return Document_Tag
+     * @return Model\Document\Tag
      */
     public function getTag()
     {
@@ -141,7 +149,7 @@ class Document_Tag_Area_Info {
     }
 
     /**
-     * @param Document_Tag $tag
+     * @param Model\Document\Tag $tag
      */
     public function setTag($tag)
     {

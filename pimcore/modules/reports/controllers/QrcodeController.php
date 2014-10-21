@@ -13,7 +13,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
+use Pimcore\Model\Tool\Qrcode;
+use Pimcore\Model\Document;
+
+class Reports_QrcodeController extends \Pimcore\Controller\Action\Admin\Reports {
 
     public function init() {
         parent::init();
@@ -26,7 +29,7 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
 
     public function treeAction () {
 
-        $dir = Tool_Qrcode_Config::getWorkingDir();
+        $dir = Qrcode\Config::getWorkingDir();
 
         $codes = array();
         $files = scandir($dir);
@@ -46,14 +49,14 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
     public function addAction () {
 
         try {
-            Tool_Qrcode_Config::getByName($this->getParam("name"));
+            Qrcode\Config::getByName($this->getParam("name"));
             $alreadyExist = true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $alreadyExist = false;
         }
 
         if(!$alreadyExist) {
-            $code = new Tool_Qrcode_Config();
+            $code = new Qrcode\Config();
             $code->setName($this->getParam("name"));
             $code->save();
         }
@@ -63,7 +66,7 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
 
     public function deleteAction () {
 
-        $code = Tool_Qrcode_Config::getByName($this->getParam("name"));
+        $code = Qrcode\Config::getByName($this->getParam("name"));
         $code->delete();
 
         $this->_helper->json(array("success" => true));
@@ -72,15 +75,15 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
 
     public function getAction () {
 
-        $code = Tool_Qrcode_Config::getByName($this->getParam("name"));
+        $code = Qrcode\Config::getByName($this->getParam("name"));
         $this->_helper->json($code);
     }
 
 
     public function updateAction () {
 
-        $code = Tool_Qrcode_Config::getByName($this->getParam("name"));
-        $data = Zend_Json::decode($this->getParam("configuration"));
+        $code = Qrcode\Config::getByName($this->getParam("name"));
+        $data = \Zend_Json::decode($this->getParam("configuration"));
         $data = array_htmlspecialchars($data);
 
         foreach ($data as $key => $value) {
@@ -147,7 +150,7 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
             $renderer = $this->getParam("renderer");
         }
 
-        $code = Pimcore_Image_Matrixcode::render('qrcode', $codeSettings, $renderer, $renderSettings);
+        $code = \Pimcore\Image\Matrixcode::render('qrcode', $codeSettings, $renderer, $renderSettings);
     }
 }
 

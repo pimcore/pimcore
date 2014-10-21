@@ -13,21 +13,26 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Tool_Frontend {
+namespace Pimcore\Tool;
+
+use Pimcore\Model\Document;
+use Pimcore\Model\Site;
+
+class Frontend {
 
     /**
      * Returns the Website-Config
-     * @return Zend_Config
+     * @return \Zend_Config
      * @depricated
      */
     public static function getWebsiteConfig () {
-        return Pimcore_Config::getWebsiteConfig();
+        return \Pimcore\Config::getWebsiteConfig();
     }
 
     /**
-     * @static
-     * @param null|Site $site
+     * @param Site $site
      * @return string
+     * @throws \Exception
      */
     public static function getSiteKey (Site $site = null) {
         // check for site
@@ -58,7 +63,7 @@ class Pimcore_Tool_Frontend {
     public static function isDocumentInSite ($site, $document) {
         $inSite = true;
 
-        if ($site && $site->getRootDocument() instanceof Document_Page) {
+        if ($site && $site->getRootDocument() instanceof Document\Page) {
             if(!preg_match("@^" . $site->getRootDocument()->getRealFullPath() . "/@", $document->getRealFullPath())) {
                 $inSite = false;
             }
@@ -89,12 +94,12 @@ class Pimcore_Tool_Frontend {
     public static function getSiteForDocument($document) {
 
         $cacheKey = "sites_full_list";
-        if(Zend_Registry::isRegistered($cacheKey)) {
-            $sites = Zend_Registry::get($cacheKey);
+        if(\Zend_Registry::isRegistered($cacheKey)) {
+            $sites = \Zend_Registry::get($cacheKey);
         } else {
-            $sites = new Site_List();
+            $sites = new Site\Listing();
             $sites = $sites->load();
-            Zend_Registry::set($cacheKey, $sites);
+            \Zend_Registry::set($cacheKey, $sites);
         }
 
         foreach ($sites as $site) {
@@ -110,8 +115,8 @@ class Pimcore_Tool_Frontend {
      * @return array|bool
      */
     public static function isOutputCacheEnabled() {
-        $front = Zend_Controller_Front::getInstance();
-        $cachePlugin = $front->getPlugin("Pimcore_Controller_Plugin_Cache");
+        $front = \Zend_Controller_Front::getInstance();
+        $cachePlugin = $front->getPlugin("Pimcore\\Controller\\Plugin\\Cache");
         if($cachePlugin && $cachePlugin->isEnabled()) {
             return array(
                 "enabled" => true,

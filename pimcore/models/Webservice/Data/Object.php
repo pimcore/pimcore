@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Object extends Webservice_Data {
+namespace Pimcore\Model\Webservice\Data;
+
+use Pimcore\Model;
+
+class Object extends Model\Webservice\Data {
 
 
     /** If set to true then null values will not be exported.
@@ -55,7 +59,7 @@ class Webservice_Data_Object extends Webservice_Data {
 
 
     /**
-     * @var Webservice_Data_Property[]
+     * @var Webservice\Data\Property[]
      */
     public $properties;
 
@@ -68,7 +72,7 @@ class Webservice_Data_Object extends Webservice_Data {
             if($object->hasChilds()) {
                 $this->childs = array();
                 foreach ($object->getChilds() as $child) {
-                    $item = new Webservice_Data_Object_List_Item();
+                    $item = new Model\Webservice\Data\Object\Listing\Item();
                     $item->id = $child->getId();
                     $item->type = $child->getType();
                     $this->childs[] = $item;

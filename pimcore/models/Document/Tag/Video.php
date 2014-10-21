@@ -15,7 +15,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Video extends Document_Tag
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Model;
+use Pimcore\Tool;
+use Pimcore\Model\Asset;
+
+class Video extends Model\Document\Tag
 {
 
     public static $playerJsEmbedded = false;
@@ -50,7 +56,8 @@ class Document_Tag_Video extends Document_Tag
     public $description = "";
 
     /**
-     * @param string $title
+     * @param $title
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -71,7 +78,8 @@ class Document_Tag_Video extends Document_Tag
     }
 
     /**
-     * @param string $description
+     * @param $description
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -92,7 +100,7 @@ class Document_Tag_Video extends Document_Tag
     }
 
     /**
-     * @see Document_Tag_Interface::getType
+     * @see Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType()
@@ -101,7 +109,7 @@ class Document_Tag_Video extends Document_Tag
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData()
@@ -137,7 +145,7 @@ class Document_Tag_Video extends Document_Tag
     }
 
     /**
-     * @see Document_Tag_Interface::frontend
+     * @see Document\Tag\TagInterface::frontend
      * @return string
      */
     public function frontend()
@@ -209,7 +217,7 @@ class Document_Tag_Video extends Document_Tag
             $el = Asset::getById($this->id);
             if (!$el instanceof Asset) {
                 $sane = false;
-                Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
+                \Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
                 $this->id = null;
                 $this->type = null;
             }
@@ -217,7 +225,7 @@ class Document_Tag_Video extends Document_Tag
 
         if(!($poster = Asset::getById($this->poster))) {
             $sane = false;
-            Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
+            \Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
             $this->poster = null;
         }
 
@@ -226,7 +234,7 @@ class Document_Tag_Video extends Document_Tag
 
 
     /**
-     * @see Document_Tag_Interface::admin
+     * @see Document\Tag\TagInterface::admin
      * @return string
      */
     public function admin()
@@ -242,14 +250,14 @@ class Document_Tag_Video extends Document_Tag
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
     public function setDataFromResource($data)
     {
         if (!empty($data)) {
-            $data = Pimcore_Tool_Serialize::unserialize($data);
+            $data = \Pimcore\Tool\Serialize::unserialize($data);
         }
 
         $this->id = $data["id"];
@@ -261,7 +269,7 @@ class Document_Tag_Video extends Document_Tag
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
@@ -285,7 +293,7 @@ class Document_Tag_Video extends Document_Tag
         }
 
         $video = Asset::getByPath($data["path"]);
-        if($video instanceof Asset_Video) {
+        if($video instanceof Asset\Video) {
             $this->id = $video->getId();
         } else {
             $this->id = $data["path"];
@@ -293,7 +301,7 @@ class Document_Tag_Video extends Document_Tag
 
         $this->poster = null;
         $poster = Asset::getByPath($data["poster"]);
-        if($poster instanceof Asset_Image) {
+        if($poster instanceof Asset\Image) {
             $this->poster = $poster->getId();
         }
         return $this;
@@ -325,7 +333,7 @@ class Document_Tag_Video extends Document_Tag
         $options = $this->getOptions();
 
         // compatibility mode when FFMPEG is not present or no thumbnail config is given
-        if(!Pimcore_Video::isAvailable() || !$options["thumbnail"]) {
+        if(!\Pimcore\Video::isAvailable() || !$options["thumbnail"]) {
             if($asset instanceof Asset && preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
                 return $this->getHtml5Code(array("mp4" => (string) $asset));
             }
@@ -333,7 +341,7 @@ class Document_Tag_Video extends Document_Tag
             return $this->getErrorCode("Asset is not a video, or missing thumbnail configuration");
         }
 
-        if ($asset instanceof Asset_Video && $options["thumbnail"]) {
+        if ($asset instanceof Asset\Video && $options["thumbnail"]) {
             $thumbnail = $asset->getThumbnail($options["thumbnail"]);
             if ($thumbnail) {
 
@@ -373,10 +381,10 @@ class Document_Tag_Video extends Document_Tag
                     return $this->getHtml5Code($thumbnail["formats"], $image);
                 } else if ($thumbnail["status"] == "inprogress") {
                     // disable the output-cache if enabled
-                    $front = Zend_Controller_Front::getInstance();
-                    $front->unregisterPlugin("Pimcore_Controller_Plugin_Cache");
+                    $front = \Zend_Controller_Front::getInstance();
+                    $front->unregisterPlugin("Pimcore\\Controller\\Plugin\\Cache");
 
-                    $progress = Asset_Video_Thumbnail_Processor::getProgress($thumbnail["processId"]);
+                    $progress = Asset\Video\Thumbnail\Processor::getProgress($thumbnail["processId"]);
                     return $this->getProgressCode($progress, $image);
                 } else {
                     return $this->getErrorCode("The video conversion failed, please see the debug.log for more details.");
@@ -400,7 +408,7 @@ class Document_Tag_Video extends Document_Tag
         }
 
         // only display error message in debug mode
-        if(!Pimcore::inDebugMode()) {
+        if(!\Pimcore::inDebugMode()) {
             $message = "";
         }
 
@@ -583,9 +591,9 @@ class Document_Tag_Video extends Document_Tag
             $code .= '<meta itemprop="name" content="' . $this->getTitle() . '" />' . "\n";
             $code .= '<meta itemprop="description" content="' . $this->getDescription() . '" />' . "\n";
             $code .= '<meta itemprop="duration" content="' . $durationString . '" />' . "\n";
-            $code .= '<meta itemprop="contentURL" content="' . Pimcore_Tool::getHostUrl() . $urls["mp4"] .  '" />' . "\n";
+            $code .= '<meta itemprop="contentURL" content="' . Tool::getHostUrl() . $urls["mp4"] .  '" />' . "\n";
             if($thumbnail) {
-                $code .= '<meta itemprop="thumbnailURL" content="' . Pimcore_Tool::getHostUrl() . $thumbnail . '" />' . "\n";
+                $code .= '<meta itemprop="thumbnailURL" content="' . Tool::getHostUrl() . $thumbnail . '" />' . "\n";
             }
 
 
@@ -698,13 +706,10 @@ class Document_Tag_Video extends Document_Tag
         return true;
     }
 
-
     /**
-     * Receives a Webservice_Data_Document_Element from webservice import and fill the current tag's data
-     *
-     * @abstract
-     * @param  Webservice_Data_Document_Element $data
-     * @return void
+     * @param Model\Document\Webservice\Data\Document\Element $wsElement
+     * @param null $idMapper
+     * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $idMapper = null)
     {
@@ -715,7 +720,7 @@ class Document_Tag_Video extends Document_Tag
                 $this->id = $data->id;
                 $asset = Asset::getById($data->id);
                 if(!$asset){
-                    throw new Exception("Referencing unknown asset with id [ ".$data->id." ] in webservice import field [ ".$data->name." ]");
+                    throw new \Exception("Referencing unknown asset with id [ ".$data->id." ] in webservice import field [ ".$data->name." ]");
                 }
                 $this->type = $data->type;
 
@@ -723,7 +728,7 @@ class Document_Tag_Video extends Document_Tag
                 $this->id = $data->id;
                 $this->type = $data->type;
             } else {
-                throw new Exception("cannot get values from web service import - type must be asset,youtube,url or vimeo ");
+                throw new \Exception("cannot get values from web service import - type must be asset,youtube,url or vimeo ");
             }
         }
 
@@ -782,7 +787,7 @@ class Document_Tag_Video extends Document_Tag
 
     /**
      * @param mixed $id
-     * @return Document_Tag_Video
+     * @return Video
      */
     public function setId($id)
     {

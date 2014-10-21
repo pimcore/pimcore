@@ -13,7 +13,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_CommonFilesFilter extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
+
+use Pimcore\Tool;
+use Pimcore\Model\Site;
+
+class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract {
 
     /**
      * @var array
@@ -25,9 +30,9 @@ class Pimcore_Controller_Plugin_CommonFilesFilter extends Zend_Controller_Plugin
     );
 
     /**
-     * @param Zend_Controller_Request_Abstract $request
+     * @param \Zend_Controller_Request_Abstract $request
      */
-    public function routeStartup(Zend_Controller_Request_Abstract $request) {
+    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
 
         // this is a filter which checks for common used files (by browser, crawlers, ...) and prevent the default
         // error page, because this is more resource-intensive than exiting right here
@@ -37,9 +42,9 @@ class Pimcore_Controller_Plugin_CommonFilesFilter extends Zend_Controller_Plugin
 
                 // check for site
                 try {
-                    $domain = Pimcore_Tool::getHostname();
+                    $domain = Tool::getHostname();
                     $site = Site::getByDomain($domain);
-                } catch (Exception $e) { }
+                } catch (\Exception $e) { }
 
                 $siteSuffix = "";
                 if($site instanceof Site) {

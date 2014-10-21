@@ -12,29 +12,32 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Pimcore_Video {
+
+namespace Pimcore;
+
+class Video {
 
     /**
-     * @static
-     * @return null|Pimcore_Video_Adapter
+     * @param null $adapter
+     * @return bool|null|Video\Adapter
+     * @throws \Exception
      */
     public static function getInstance ($adapter = null) {
         try {
             if($adapter) {
-                $adapterClass = "Pimcore_Video_Adapter_" . $adapter;
-                if(Pimcore_Tool::classExists($adapterClass)) {
+                $adapterClass = "\\Pimcore\\Video\\Adapter\\" . $adapter;
+                if(Tool::classExists($adapterClass)) {
                     return new $adapterClass();
                 } else {
-                    throw new Exception("Video-transcode adapter `" . $adapter . "´ does not exist.");
+                    throw new \Exception("Video-transcode adapter `" . $adapter . "´ does not exist.");
                 }
             } else {
                 if($adapter = self::getDefaultAdapter()) {
                     return $adapter;
                 }
             }
-        } catch (Exception $e) {
-            Logger::crit("Unable to load video adapter: " . $e->getMessage());
+        } catch (\Exception $e) {
+            \Logger::crit("Unable to load video adapter: " . $e->getMessage());
             throw $e;
         }
 
@@ -59,15 +62,15 @@ class Pimcore_Video {
         $adapters = array("Ffmpeg");
 
         foreach ($adapters as $adapter) {
-            $adapterClass = "Pimcore_Video_Adapter_" . $adapter;
-            if(Pimcore_Tool::classExists($adapterClass)) {
+            $adapterClass = "\\Pimcore\\Video\\Adapter\\" . $adapter;
+            if(Tool::classExists($adapterClass)) {
                 try {
                     $adapter = new $adapterClass();
                     if($adapter->isAvailable()) {
                         return $adapter;
                     }
-                } catch (Exception $e) {
-                    Logger::warning($e);
+                } catch (\Exception $e) {
+                    \Logger::warning($e);
                 }
             }
         }

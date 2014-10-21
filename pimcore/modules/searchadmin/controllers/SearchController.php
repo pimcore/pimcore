@@ -13,7 +13,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
+use Pimcore\Model\Search\Backend\Data;
+use Pimcore\Model\Element;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Document;
+use Pimcore\Model\Object;
+
+class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
 
 
     /**
@@ -44,16 +50,16 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
         $offset = $offset ? $offset : 0;
         $limit = $limit ? $limit : 50;
 
-        $searcherList = new Search_Backend_Data_List();
+        $searcherList = new Data\Listing();
         $conditionParts = array();
-        $db = Pimcore_Resource::get();
+        $db = \Pimcore\Resource::get();
 
         //exclude forbidden assets
         if(in_array("asset", $types)) {
             if (!$user->isAllowed("assets")) {
                 $forbiddenConditions[] = " `type` != 'asset' ";
             } else {
-                $forbiddenAssetPaths = Element_Service::findForbiddenPaths("asset", $user);
+                $forbiddenAssetPaths = Element\Service::findForbiddenPaths("asset", $user);
                 if (count($forbiddenAssetPaths) > 0) {
                     for ($i = 0; $i < count($forbiddenAssetPaths); $i++) {
                         $forbiddenAssetPaths[$i] = " (maintype = 'asset' AND fullpath not like " . $db->quote($forbiddenAssetPaths[$i] . "%") . ")";
@@ -69,7 +75,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             if (!$user->isAllowed("documents")) {
                 $forbiddenConditions[] = " `type` != 'document' ";
             } else {
-                $forbiddenDocumentPaths = Element_Service::findForbiddenPaths("document", $user);
+                $forbiddenDocumentPaths = Element\Service::findForbiddenPaths("document", $user);
                 if (count($forbiddenDocumentPaths) > 0) {
                     for ($i = 0; $i < count($forbiddenDocumentPaths); $i++) {
                         $forbiddenDocumentPaths[$i] = " (maintype = 'document' AND fullpath not like " . $db->quote($forbiddenDocumentPaths[$i] . "%") . ")";
@@ -84,7 +90,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             if (!$user->isAllowed("objects")) {
                 $forbiddenConditions[] = " `type` != 'object' ";
             } else {
-                $forbiddenObjectPaths = Element_Service::findForbiddenPaths("object", $user);
+                $forbiddenObjectPaths = Element\Service::findForbiddenPaths("object", $user);
                 if (count($forbiddenObjectPaths) > 0) {
                     for ($i = 0; $i < count($forbiddenObjectPaths); $i++) {
                         $forbiddenObjectPaths[$i] = " (maintype = 'object' AND fullpath not like " . $db->quote($forbiddenObjectPaths[$i] . "%") . ")";
@@ -133,8 +139,8 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
         // filtering for objects
         if ($this->getParam("filter") && $this->getParam("class")) {
-            $class = Object_Class::getByName($this->getParam("class"));
-            $conditionFilters = Object_Service::getFilterCondition($this->getParam("filter"), $class);
+            $class = Object\ClassDefinition::getByName($this->getParam("class"));
+            $conditionFilters = Object\Service::getFilterCondition($this->getParam("filter"), $class);
             $join = "";
             foreach($bricks as $ob) {
                 $join .= " LEFT JOIN object_brick_query_" . $ob . "_" . $class->getId();
@@ -209,24 +215,23 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
         $elements=array();
         foreach ($hits as $hit) {
 
-            $element = Element_Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
+            $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element->isAllowed("list")) {
-                if ($element instanceof Object_Abstract) {
-                    $data = Object_Service::gridObjectData($element, $fields);
+                if ($element instanceof Object\AbstractObject) {
+                    $data = Object\Service::gridObjectData($element, $fields);
                 } else if ($element instanceof Document) {
-                    $data = Document_Service::gridDocumentData($element);
+                    $data = Document\Service::gridDocumentData($element);
                 } else if ($element instanceof Asset) {
-                    $data = Asset_Service::gridAssetData($element);
+                    $data = Asset\Service::gridAssetData($element);
                 }
 
                 $elements[] = $data;
             } else {
                 //TODO: any message that view is blocked?
-                //$data = Element_Service::gridElementData($element);
+                //$data = Element\Service::gridElementData($element);
             }
 
         }
-
 
         // only get the real total-count when the limit parameter is given otherwise use the default limit
         if($this->getParam("limit")) {
@@ -238,9 +243,5 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("data" => $elements, "success" => true, "total" => $totalMatches));
 
         $this->removeViewRenderer();
-
-
     }
-
-
 }

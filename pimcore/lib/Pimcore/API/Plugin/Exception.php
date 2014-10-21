@@ -13,6 +13,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_API_Plugin_Exception extends Zend_Exception {
+namespace Pimcore\API\Plugin;
+
+class Exception extends \Zend_Exception {
 
 }

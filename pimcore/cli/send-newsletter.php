@@ -15,18 +15,20 @@
 
 include_once("startup.php");
 
-$newsletter = Tool_Newsletter_Config::getByName($argv[1]);
+use Pimcore\Model;
+
+$newsletter = Model\Tool\Newsletter\Config::getByName($argv[1]);
 if($newsletter) {
 
     $pidFile = $newsletter->getPidFile();
 
     if(file_exists($pidFile)) {
-        Logger::alert("Cannot send newsletters because there's already one active sending process");
+        \Logger::alert("Cannot send newsletters because there's already one active sending process");
         exit;
     }
 
     $elementsPerLoop = 10;
-    $objectList = "Object_" . ucfirst($newsletter->getClass()) . "_List";
+    $objectList = "\\Pimcore\\Model\\Object\\" . ucfirst($newsletter->getClass()) . "\\Listing";
     $list = new $objectList();
 
     $conditions = array("(newsletterActive = 1 AND newsletterConfirmed = 1)");
@@ -34,7 +36,7 @@ if($newsletter) {
         $conditions[] = $newsletter->getObjectFilterSQL();
     }
     if($newsletter->getPersonas()) {
-        $class = Object_Class::getByName($newsletter->getClass());
+        $class = Model\Object\ClassDefinition::getByName($newsletter->getClass());
         if($class && $class->getFieldDefinition("persona")) {
             $personas = array();
             $p = explode(",", $newsletter->getPersonas());
@@ -74,11 +76,11 @@ if($newsletter) {
 
             try {
                 $count++;
-                Logger::info("Sending newsletter " . $count . " / " . $elementsTotal. " [" . $newsletter->getName() . "]");
+                \Logger::info("Sending newsletter " . $count . " / " . $elementsTotal. " [" . $newsletter->getName() . "]");
 
-                Pimcore_Tool_Newsletter::sendMail($newsletter, $object, null, $argv[2]);
+                \Pimcore\Tool\Newsletter::sendMail($newsletter, $object, null, $argv[2]);
 
-                $note = new Element_Note();
+                $note = new Model\Element\Note();
                 $note->setElement($object);
                 $note->setDate(time());
                 $note->setType("newsletter");
@@ -87,15 +89,15 @@ if($newsletter) {
                 $note->setData(array());
                 $note->save();
 
-                Logger::info("Sent newsletter to: " . obfuscateEmail($object->getEmail()) . " [" . $newsletter->getName() . "]");
+                \Logger::info("Sent newsletter to: " . obfuscateEmail($object->getEmail()) . " [" . $newsletter->getName() . "]");
             } catch (\Exception $e) {
-                Logger::err($e);
+                \Logger::err($e);
             }
         }
 
         // check if pid exists
         if(!file_exists($pidFile)) {
-            Logger::alert("Newsletter PID not found, cancel sending process");
+            \Logger::alert("Newsletter PID not found, cancel sending process");
             exit;
         }
 
@@ -104,14 +106,14 @@ if($newsletter) {
         $pidContents["current"] = $count;
         writePid($pidFile, $pidContents);
 
-        Pimcore::collectGarbage();
+        \Pimcore::collectGarbage();
     }
 
     // remove pid
     @unlink($pidFile);
 
 } else {
-    Logger::emerg("Newsletter '" . $argv[1] . "' doesn't exist");
+    \Logger::emerg("Newsletter '" . $argv[1] . "' doesn't exist");
 }
 
 
@@ -122,5 +124,5 @@ function obfuscateEmail($email) {
 }
 
 function writePid ($file, $content) {
-    Pimcore_File::put($file, serialize($content));
+    \Pimcore\File::put($file, serialize($content));
 }

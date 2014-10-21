@@ -13,12 +13,23 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Version {
+namespace Pimcore;
 
+class Version {
+
+    /**
+     * @var string
+     */
     public static $version = "2.3.0";
 
+    /**
+     * @var int
+     */
     public static $revision = 3302;
 
+    /**
+     * @var array
+     */
     public static $svnInfo = array (
   'Path' => 'trunk',
   'URL' => 'http',
@@ -31,15 +42,24 @@ class Pimcore_Version {
   'Last Changed Date' => '2014-10-13 16',
 );
 
+    /**
+     * @return string
+     */
     public static function getVersion() {
         return self::$version;
     }
 
+    /**
+     * @return int
+     */
     public static function getRevision()
     {
         return self::$revision;
     }
 
+    /**
+     * @return array
+     */
     public static function getSvnInfo()
     {
         return self::$svnInfo;

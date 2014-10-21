@@ -15,6 +15,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Object_Concrete_In extends Webservice_Data_Object_Concrete {
+namespace Pimcore\Model\Webservice\Data\Object\Concrete;
+
+use Pimcore\Model;
+
+class In extends Model\Webservice\Data\Object\Concrete {
 
 }

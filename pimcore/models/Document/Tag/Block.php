@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Block extends Document_Tag {
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Model;
+
+class Block extends Model\Document\Tag {
 
     /**
      * Contains an array of indices, which represent the order of the elements in the block
@@ -37,7 +41,7 @@ class Document_Tag_Block extends Document_Tag {
     public $suffixes = array();
 
     /**
-     * @see Document_Tag_Interface::getType
+     * @see Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType() {
@@ -45,7 +49,7 @@ class Document_Tag_Block extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData() {
@@ -53,14 +57,14 @@ class Document_Tag_Block extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::admin
+     * @see Document\Tag\TagInterface::admin
      */
     public function admin() {
         // nothing to do
     }
 
     /**
-     * @see Document_Tag_Interface::frontend
+     * @see Document\Tag\TagInterface::frontend
      */
     public function frontend() {
         // nothing to do
@@ -68,17 +72,17 @@ class Document_Tag_Block extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
     public function setDataFromResource($data) {
-        $this->indices = Pimcore_Tool_Serialize::unserialize($data);
+        $this->indices = \Pimcore\Tool\Serialize::unserialize($data);
         return $this;
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
@@ -174,7 +178,7 @@ class Document_Tag_Block extends Document_Tag {
             "type" => $this->getType(),
             "inherited" => $this->getInherited()
         );
-        $options = @Zend_Json::encode($options);
+        $options = @\Zend_Json::encode($options);
         //$options = base64_encode($options);
         
         $this->outputEditmode('
@@ -184,9 +188,9 @@ class Document_Tag_Block extends Document_Tag {
         ');
         
         // set name suffix for the whole block element, this will be addet to all child elements of the block
-        $suffixes = Zend_Registry::get("pimcore_tag_block_current");
+        $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
         $suffixes[] = $this->getName();
-        Zend_Registry::set("pimcore_tag_block_current", $suffixes);
+        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
         $this->outputEditmode('<div id="pimcore_editable_' . $this->getName() . '" name="' . $this->getName() . '" class="pimcore_editable pimcore_tag_' . $this->getType() . '" type="' . $this->getType() . '">');
 
@@ -203,9 +207,9 @@ class Document_Tag_Block extends Document_Tag {
         $this->current = 0;
 
         // remove the suffix which was set by self::start()
-        $suffixes = Zend_Registry::get("pimcore_tag_block_current");
+        $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
         array_pop($suffixes);
-        Zend_Registry::set("pimcore_tag_block_current", $suffixes);
+        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
         $this->outputEditmode("</div>");
     }
@@ -216,18 +220,18 @@ class Document_Tag_Block extends Document_Tag {
     public function blockConstruct () {
 
         // set the current block suffix for the child elements (0, 1, 3, ...) | this will be removed in Pimcore_View_Helper_Tag::tag
-        $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
+        $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
         $suffixes[] = $this->indices[$this->current];
-        Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
     }
 
     /**
      *
      */
     public function blockDestruct () {
-        $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
+        $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
         array_pop($suffixes);
-        Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
     }
 
     /**
@@ -279,8 +283,8 @@ class Document_Tag_Block extends Document_Tag {
     public function setupStaticEnvironment() {
 
         // setup static environment for blocks
-        if(Zend_Registry::isRegistered("pimcore_tag_block_current")) {
-            $current = Zend_Registry::get("pimcore_tag_block_current");
+        if(\Zend_Registry::isRegistered("pimcore_tag_block_current")) {
+            $current = \Zend_Registry::get("pimcore_tag_block_current");
             if (!is_array($current)) {
                 $current = array();
             }
@@ -288,8 +292,8 @@ class Document_Tag_Block extends Document_Tag {
             $current = array();
         }
 
-        if(Zend_Registry::isRegistered("pimcore_tag_block_numeration")) {
-            $numeration = Zend_Registry::get("pimcore_tag_block_numeration");
+        if(\Zend_Registry::isRegistered("pimcore_tag_block_numeration")) {
+            $numeration = \Zend_Registry::get("pimcore_tag_block_numeration");
             if (!is_array($numeration)) {
                 $numeration = array();
             }
@@ -297,8 +301,8 @@ class Document_Tag_Block extends Document_Tag {
             $numeration = array();
         }
 
-        Zend_Registry::set("pimcore_tag_block_numeration", $numeration);
-        Zend_Registry::set("pimcore_tag_block_current", $current);
+        \Zend_Registry::set("pimcore_tag_block_numeration", $numeration);
+        \Zend_Registry::set("pimcore_tag_block_current", $current);
 
     }
 
@@ -359,13 +363,10 @@ class Document_Tag_Block extends Document_Tag {
         return !(bool) count($this->indices);
     }
 
-
-     /**
-     * Receives a Webservice_Data_Document_Element from webservice import and fill the current tag's data
-     *
-     * @abstract
-     * @param  Webservice_Data_Document_Element $data
-     * @return void
+    /**
+     * @param Model\Document\Model\Webservice\Data\Document\Element $wsElement
+     * @param null $idMapper
+     * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $idMapper = null){
         $data = $wsElement->value;
@@ -373,20 +374,19 @@ class Document_Tag_Block extends Document_Tag {
             $this->indices = $data->indices;
             $this->current = $data->current;
         } else  {
-            throw new Exception("cannot get  values from web service import - invalid data");
+            throw new \Exception("cannot get  values from web service import - invalid data");
         }
 
 
     }
 
-
     /**
-     * @return Document_Tag_Block_Item[]
+     * @return Block\Item[]
      */
     public function getElements()
     {
         // init
-        $doc = Document_Page::getById( $this->getDocumentId() );
+        $doc = Model\Document\Page::getById( $this->getDocumentId() );
 
         $suffixes = (array)$this->suffixes;
         $suffixes[] = $this->getName();
@@ -394,7 +394,7 @@ class Document_Tag_Block extends Document_Tag {
         $list = array();
         foreach($this->getData() as $index)
         {
-            $list[] = new Document_Tag_Block_Item($doc, $index, $suffixes);
+            $list[] = new Block\Item($doc, $index, $suffixes);
         }
 
         return $list;

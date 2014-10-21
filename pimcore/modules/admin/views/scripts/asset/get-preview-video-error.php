@@ -34,7 +34,7 @@
     <tr>
         <td class="error" align="center" valign="center">
             <?php if ($this->thumbnail && $this->thumbnail["status"] == "inprogress") { ?>
-                <?php $progress = Asset_Video_Thumbnail_Processor::getProgress($this->thumbnail["processId"]) ?>
+                <?php $progress = \Pimcore\Model\Asset\Video\Thumbnail\Processor::getProgress($this->thumbnail["processId"]) ?>
 
                 <style type="text/css">
                     .pimcore_tag_video_progress {
@@ -80,7 +80,7 @@
                         location.reload();
                     }, 5000);
                 </script>
-            <?php } else if (!Pimcore_Video::isAvailable()) { ?>
+            <?php } else if (!\Pimcore\Video::isAvailable()) { ?>
                 <?php echo $this->translate("preview_not_available"); ?>
                 <br />
                 <?php echo $this->translate("php_cli_binary_and_or_ffmpeg_binary_setting_is_missing"); ?>

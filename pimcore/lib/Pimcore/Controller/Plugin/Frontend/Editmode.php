@@ -13,15 +13,31 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class
-Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin\Frontend;
+
+use Pimcore\Version;
+use Pimcore\ExtensionManager;
+use Pimcore\Config;
+use Pimcore\Model\Document;
+
+class Editmode extends \Zend_Controller_Plugin_Abstract {
+
+    /**
+     * @var \Pimcore\Controller\Action\Frontend
+     */
     protected $controller;
 
-    public function __construct(Pimcore_Controller_Action_Frontend $controller) {
+    /**
+     * @param \Pimcore\Controller\Action\Frontend $controller
+     */
+    public function __construct(\Pimcore\Controller\Action\Frontend $controller) {
         $this->controller = $controller;
     }
 
-    public function postDispatch(Zend_Controller_Request_Abstract $request) {
+    /**
+     * @param \Zend_Controller_Request_Abstract $request
+     */
+    public function postDispatch(\Zend_Controller_Request_Abstract $request) {
 
         // add scripts to editmode
         
@@ -72,7 +88,7 @@ Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin_Abstr
         );
 
 
-        $conf = Pimcore_Config::getSystemConfig();
+        $conf = Config::getSystemConfig();
 
         $editmodeStylesheets = array(
             /*"/pimcore/static/js/lib/ext/resources/css/ext-all.css",
@@ -86,7 +102,7 @@ Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin_Abstr
 
         //add plugin editmode JS and CSS
         try {
-            $pluginConfigs = Pimcore_ExtensionManager::getPluginConfigs();
+            $pluginConfigs = ExtensionManager::getPluginConfigs();
             $jsPaths = array();
             $cssPaths = array();
 
@@ -143,16 +159,16 @@ Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin_Abstr
             $editmodeStylesheets=array_merge($editmodeStylesheets,$cssPaths);
             
         }
-        catch (Exception $e) {
-            Logger::alert("there is a problem with the plugin configuration");
-            Logger::alert($e);
+        catch (\Exception $e) {
+            \Logger::alert("there is a problem with the plugin configuration");
+            \Logger::alert($e);
         }
 
         $editmodeHeadHtml = "\n\n\n<!-- pimcore editmode -->\n";
 
         // include stylesheets
         foreach ($editmodeStylesheets as $sheet) {
-            $editmodeHeadHtml .= '<link rel="stylesheet" type="text/css" href="' . $sheet . '?_dc=' . Pimcore_Version::$revision . '" />';
+            $editmodeHeadHtml .= '<link rel="stylesheet" type="text/css" href="' . $sheet . '?_dc=' . Version::$revision . '" />';
             $editmodeHeadHtml .= "\n";
         }
 
@@ -162,14 +178,14 @@ Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin_Abstr
 
         // include script libraries
         foreach ($editmodeLibraries as $script) {
-            $editmodeHeadHtml .= '<script type="text/javascript" src="' . $script . '?_dc=' . Pimcore_Version::$revision . '"></script>';
+            $editmodeHeadHtml .= '<script type="text/javascript" src="' . $script . '?_dc=' . Version::$revision . '"></script>';
             $editmodeHeadHtml .= "\n";
         }
         
         // combine the pimcore scripts in non-devmode
         if($conf->general->devmode) {
             foreach ($editmodeScripts as $script) {
-                $editmodeHeadHtml .= '<script type="text/javascript" src="' . $script . '?_dc=' . Pimcore_Version::$revision . '"></script>';
+                $editmodeHeadHtml .= '<script type="text/javascript" src="' . $script . '?_dc=' . Version::$revision . '"></script>';
                 $editmodeHeadHtml .= "\n";
             }
         }
@@ -178,19 +194,19 @@ Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin_Abstr
             foreach ($editmodeScripts as $scriptUrl) {
                 $scriptContents .= file_get_contents(PIMCORE_DOCUMENT_ROOT.$scriptUrl) . "\n\n\n";
             }
-            $editmodeHeadHtml .= '<script type="text/javascript" src="' . Pimcore_Tool_Admin::getMinimizedScriptPath($scriptContents) . '?_dc=' . Pimcore_Version::$revision . '"></script>'."\n";
+            $editmodeHeadHtml .= '<script type="text/javascript" src="' . \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) . '?_dc=' . Version::$revision . '"></script>'."\n";
         }
 
-        $user = Pimcore_Tool_Authentication::authenticateSession();
+        $user = \Pimcore\Tool\Authentication::authenticateSession();
         $lang = $user->getLanguage();
 
-        $editmodeHeadHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-system/language/'.$lang.'/?_dc=' . Pimcore_Version::$revision . '"></script>'."\n";
-        $editmodeHeadHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-admin/language/'.$lang.'/?_dc=' . Pimcore_Version::$revision . '"></script>'."\n";
+        $editmodeHeadHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-system/language/'.$lang.'/?_dc=' . Version::$revision . '"></script>'."\n";
+        $editmodeHeadHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-admin/language/'.$lang.'/?_dc=' . Version::$revision . '"></script>'."\n";
 
         
         $editmodeHeadHtml .= "\n\n";
         
-        // set var for editable configurations which is filled by Document_Tag::admin()
+        // set var for editable configurations which is filled by Document\Tag::admin()
         $editmodeHeadHtml .= '<script type="text/javascript">
             var editableConfigurations = new Array();
             var pimcore_document_id = ' . $request->getParam("document")->getId() . ';
@@ -204,7 +220,7 @@ Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin_Abstr
 
 
         // add scripts in html header for pages in editmode
-        if ($this->controller->editmode && Document_Service::isValidType($this->controller->document->getType()) ) { //ckogler
+        if ($this->controller->editmode && Document\Service::isValidType($this->controller->document->getType()) ) { //ckogler
             include_once("simple_html_dom.php");
             $body = $this->getResponse()->getBody();
 
@@ -229,7 +245,7 @@ Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin_Abstr
                 if($head && $bodyElement && $htmlElement) {
                     $head->innertext = $head->innertext . "\n\n" . $editmodeHeadHtml;
                     $bodyElement->onunload = "pimcoreOnUnload();";
-                    $bodyElement->innertext = $bodyElement->innertext . "\n\n" . '<script type="text/javascript" src="/pimcore/static/js/pimcore/document/edit/startup.js?_dc=' . Pimcore_Version::$revision . '"></script>' . "\n\n";
+                    $bodyElement->innertext = $bodyElement->innertext . "\n\n" . '<script type="text/javascript" src="/pimcore/static/js/pimcore/document/edit/startup.js?_dc=' . Version::$revision . '"></script>' . "\n\n";
 
                     $body = $html->save();
                     $this->getResponse()->setBody($body);

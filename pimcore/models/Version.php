@@ -15,7 +15,14 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Version extends Pimcore_Model_Abstract {
+namespace Pimcore\Model;
+
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Tool\Serialize;
+use Pimcore\Config;
+use Pimcore\File; 
+
+class Version extends AbstractModel {
 
     /**
      * @var integer
@@ -127,14 +134,14 @@ class Version extends Pimcore_Model_Abstract {
         if (is_object($data) or is_array($data)) {
 
             // this is because of lazy loaded element inside documents and objects (eg: multihref, objects, fieldcollections, ...)
-            if($data instanceof Element_Interface) {
-                Element_Service::loadAllFields($data);
+            if($data instanceof Element\ElementInterface) {
+                Element\Service::loadAllFields($data);
             }
 
             $this->setSerialized(true);
 
             $data->_fulldump = true;
-            $dataString = Pimcore_Tool_Serialize::serialize($data);
+            $dataString = Serialize::serialize($data);
 
             // revert all changed made by __sleep()
             if(method_exists($data, "__wakeup")) {
@@ -151,14 +158,14 @@ class Version extends Pimcore_Model_Abstract {
         // check if directory exists
         $saveDir = dirname($this->getFilePath());
         if(!is_dir($saveDir)) {
-            Pimcore_File::mkdir($saveDir);
+            File::mkdir($saveDir);
         }
 
         // save data to filesystem
         if(!is_writable(dirname($this->getFilePath())) || (is_file($this->getFilePath()) && !is_writable($this->getFilePath()))) {
-            throw new Exception("Cannot save version for element " . $this->getCid() . " with type " . $this->getCtype() . " because the file " . $this->getFilePath() . " is not writeable.");
+            throw new \Exception("Cannot save version for element " . $this->getCid() . " with type " . $this->getCtype() . " because the file " . $this->getFilePath() . " is not writeable.");
         } else {
-            Pimcore_File::put($this->getFilePath(),$dataString);
+            File::put($this->getFilePath(),$dataString);
 
             // assets are kina special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
             if($data instanceof Asset && $data->getType() != "folder") {
@@ -225,13 +232,13 @@ class Version extends Pimcore_Model_Abstract {
         }
 
         if(!$data) {
-            Logger::err("Version: cannot read version data from file system.");
+            \Logger::err("Version: cannot read version data from file system.");
             $this->delete();
             return;
         }
 
         if ($this->getSerialized()) {
-            $data = Pimcore_Tool_Serialize::unserialize($data);
+            $data = Serialize::unserialize($data);
         }
 
         if($data instanceof Asset && file_exists($this->getBinaryFilePath())) {
@@ -242,7 +249,7 @@ class Version extends Pimcore_Model_Abstract {
             $data->setData($data->data);
         }
 
-        $data = Element_Service::renewReferences($data);
+        $data = Element\Service::renewReferences($data);
         $this->setData($data);
 
         return $data;
@@ -258,7 +265,7 @@ class Version extends Pimcore_Model_Abstract {
         $group = floor($this->getCid() / 10000) * 10000;
         $path = PIMCORE_VERSION_DIRECTORY . "/" . $this->getCtype() . "/g" . $group . "/" . $this->getCid() . "/" . $this->getId();
         if(!is_dir(dirname($path))) {
-            Pimcore_File::mkdir(dirname($path));
+            \Pimcore\File::mkdir(dirname($path));
         }
 
         return $path;
@@ -292,13 +299,13 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function cleanHistory() {
         if ($this->getCtype() == "document") {
-            $conf = Pimcore_Config::getSystemConfig()->documents->versions;
+            $conf = Config::getSystemConfig()->documents->versions;
         }
         else if ($this->getCtype() == "asset") {
-            $conf = Pimcore_Config::getSystemConfig()->assets->versions;
+            $conf = Config::getSystemConfig()->assets->versions;
         }
         else if ($this->getCtype() == "object") {
-            $conf = Pimcore_Config::getSystemConfig()->objects->versions;
+            $conf = Config::getSystemConfig()->objects->versions;
         }
         else {
             return;
@@ -504,7 +511,7 @@ class Version extends Pimcore_Model_Abstract {
         $alreadyCompressedCounter = 0;
         $overallCounter = 0;
 
-        $list = new Version_List();
+        $list = new Version\Listing();
         $list->setCondition("date < " . (time() - 86400*30));
         $list->setOrderKey("date");
         $list->setOrder("DESC");
@@ -515,7 +522,7 @@ class Version extends Pimcore_Model_Abstract {
 
         for($i=0; $i<$iterations; $i++) {
 
-            Logger::debug("iteration " . ($i+1) . " of " . $iterations);
+            \Logger::debug("iteration " . ($i+1) . " of " . $iterations);
 
             $list->setOffset($i*$perIteration);
 
@@ -531,25 +538,25 @@ class Version extends Pimcore_Model_Abstract {
 
                     $alreadyCompressedCounter = 0;
 
-                    Logger::debug("version compressed:" . $version->getFilePath());
+                    \Logger::debug("version compressed:" . $version->getFilePath());
                 } else {
                     $alreadyCompressedCounter++;
                 }
 
                 if($overallCounter % 10 == 0) {
-                    Logger::debug("Waiting 5 secs to not kill the server...");
+                    \Logger::debug("Waiting 5 secs to not kill the server...");
                     sleep(5);
                 }
             }
 
-            Pimcore::collectGarbage();
+            \Pimcore::collectGarbage();
 
             // check here how many already compressed versions we've found so far, if over 100 skip here
             // this is necessary to keep the load on the system low
             // is would be very unusual that older versions are not already compressed, so we assume that only new
             // versions need to be compressed, that's not perfect but a compromise we can (hopefully) live with.
             if($alreadyCompressedCounter > 100) {
-                Logger::debug("Over " . $alreadyCompressedCounter . " versions were already compressed before, it doesn't seem that there are still uncompressed versions in the past, skip...");
+                \Logger::debug("Over " . $alreadyCompressedCounter . " versions were already compressed before, it doesn't seem that there are still uncompressed versions in the past, skip...");
                 return;
             }
         }
@@ -560,9 +567,9 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function maintenanceCleanUp () {
 
-        $conf["document"] = Pimcore_Config::getSystemConfig()->documents->versions;
-        $conf["asset"] = Pimcore_Config::getSystemConfig()->assets->versions;
-        $conf["object"] = Pimcore_Config::getSystemConfig()->objects->versions;
+        $conf["document"] = Config::getSystemConfig()->documents->versions;
+        $conf["asset"] = Config::getSystemConfig()->assets->versions;
+        $conf["object"] = Config::getSystemConfig()->objects->versions;
 
         $elementTypes = array();
 
@@ -592,15 +599,15 @@ class Version extends Pimcore_Model_Abstract {
             }
             $counter = 0;
 
-            Logger::debug("versions to check: " . count($versions));
+            \Logger::debug("versions to check: " . count($versions));
             if(is_array($versions) && !empty($versions)) {
                 $totalCount = count($versions);
                 foreach ($versions as $index => $id) {
                     try {
                         $version = Version::getById($id);
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         $ignoredIds[] = $id;
-                        Logger::debug("Version with " . $id . " not found\n");
+                        \Logger::debug("Version with " . $id . " not found\n");
                         continue;
                     }
                     $counter++;
@@ -618,30 +625,30 @@ class Version extends Pimcore_Model_Abstract {
                         $element = Asset::getById($version->getCid());
                     }
                     else if ($version->getCtype() == "object") {
-                        $element = Object_Abstract::getById($version->getCid());
+                        $element = Object::getById($version->getCid());
                     }
 
-                    if($element instanceof Element_Interface) {
+                    if($element instanceof ElementInterface) {
 
-                        Logger::debug("currently checking Element-ID: " . $element->getId() . " Element-Type: " . Element_Service::getElementType($element) . " in cycle: " . $counter . "/" . $totalCount);
+                        \Logger::debug("currently checking Element-ID: " . $element->getId() . " Element-Type: " . Element\Service::getElementType($element) . " in cycle: " . $counter . "/" . $totalCount);
 
                         if($element->getModificationDate() >= $version->getDate()) {
                             // delete version if it is outdated
-                            Logger::debug("delete version: " . $version->getId() . " because it is outdated");
+                            \Logger::debug("delete version: " . $version->getId() . " because it is outdated");
                             $version->delete();
                         } else {
                             $ignoredIds[] = $version->getId();
-                            Logger::debug("do not delete version (" . $version->getId() . ") because version's date is newer than the actual modification date of the element. Element-ID: " . $element->getId() . " Element-Type: " . Element_Service::getElementType($element));
+                            \Logger::debug("do not delete version (" . $version->getId() . ") because version's date is newer than the actual modification date of the element. Element-ID: " . $element->getId() . " Element-Type: " . Element\Service::getElementType($element));
                         }
                     } else {
                         // delete version if the corresponding element doesn't exist anymore
-                        Logger::debug("delete version (" . $version->getId() . ") because the corresponding element doesn't exist anymore");
+                        \Logger::debug("delete version (" . $version->getId() . ") because the corresponding element doesn't exist anymore");
                         $version->delete();
                     }
 
                     // call the garbage collector if memory consumption is > 100MB
                     if(memory_get_usage() > 100000000) {
-                        Pimcore::collectGarbage();
+                        \Pimcore::collectGarbage();
                     }
                 }
             }

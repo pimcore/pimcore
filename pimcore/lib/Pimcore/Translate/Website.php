@@ -13,10 +13,14 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Translate_Website extends Pimcore_Translate {
+namespace Pimcore\Translate;
+
+use Pimcore\Translate;
+
+class Website extends Translate {
 
     /**
      * @var string
      */
-    protected static $backend = "Translation_Website";
+    protected static $backend = "\\Pimcore\\Model\\Translation\\Website";
 }

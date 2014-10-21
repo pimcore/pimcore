@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Data_Video {
+namespace Pimcore\Model\Object\Data;
+
+use Pimcore\Model\Asset;
+
+class Video {
 
     /**
      * @var string

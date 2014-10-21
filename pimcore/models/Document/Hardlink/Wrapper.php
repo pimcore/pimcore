@@ -15,10 +15,15 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-trait Document_Hardlink_Wrapper {
+namespace Pimcore\Model\Document\Hardlink;
+
+use Pimcore\Model;
+use Pimcore\Model\Document;
+
+trait Wrapper {
 
     /**
-     * @var Document_Hardlink
+     * @var Document\Hardlink
      */
     protected $hardLinkSource;
 
@@ -76,10 +81,10 @@ trait Document_Hardlink_Wrapper {
             $hardLink = $this->getHardLinkSource();
             $childs = array();
 
-            if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !Pimcore::inAdmin()) {
+            if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
                 $childs = parent::getChilds();
                 foreach($childs as &$c) {
-                    $c = Document_Hardlink_Service::wrap($c);
+                    $c = Service::wrap($c);
                     $c->setHardLinkSource($hardLink);
                     $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . "@", $hardLink->getRealFullpath(), $c->getRealPath()));
                 }
@@ -94,7 +99,7 @@ trait Document_Hardlink_Wrapper {
     public function hasChilds() {
         $hardLink = $this->getHardLinkSource();
 
-        if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !Pimcore::inAdmin()) {
+        if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
             return parent::hasChilds();
         }
 
@@ -102,15 +107,16 @@ trait Document_Hardlink_Wrapper {
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      * @return void
      */
     protected function raiseHardlinkError () {
-        throw new Exception("Method no supported by hardlinked documents");
+        throw new \Exception("Method no supported by hardlinked documents");
     }
 
     /**
-     * @param \Document_Hardlink $hardLinkSource
+     * @param Document\Hardlink $hardLinkSource
+     * @return $this
      */
     public function setHardLinkSource($hardLinkSource)
     {
@@ -119,7 +125,7 @@ trait Document_Hardlink_Wrapper {
     }
 
     /**
-     * @return \Document_Hardlink
+     * @return Document\Hardlink
      */
     public function getHardLinkSource()
     {

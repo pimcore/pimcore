@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Concrete_Resource extends Object_Abstract_Resource {
+namespace Pimcore\Model\Object\Concrete;
+
+use Pimcore\Model;
+use Pimcore\Model\Object;
+
+class Resource extends Model\Object\AbstractObject\Resource {
 
     /**
      * Contains all valid columns in the database table
@@ -25,16 +30,16 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
     protected $validColumnsObjectConcrete = array();
 
     /**
-     * @var Object_Concrete_Resource_InheritanceHelper
+     * @var Object\Concrete\Resource\InheritanceHelper
      */
     protected $inheritanceHelper = null;
 
     /**
-     * @see Object_Abstract_Resource::init
+     *
      */
     public function init() {  
         parent::init();
-        $this->inheritanceHelper = new Object_Concrete_Resource_InheritanceHelper($this->model->getClassId());
+        $this->inheritanceHelper = new Object\Concrete\Resource\InheritanceHelper($this->model->getClassId());
     }
 
     /**
@@ -54,12 +59,12 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
                 $this->getData();
             }
             else {
-                throw new Exception("Object with the ID " . $id . " doesn't exists");
+                throw new \Exception("Object with the ID " . $id . " doesn't exists");
             }
 
         }
-        catch (Exception $e) {
-            Logger::warning($e);
+        catch (\Exception $e) {
+            \Logger::warning($e);
         }
     }
 
@@ -164,39 +169,6 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
     }
 
     /**
-     * Create a new record for the object in database
-     *
-     * @return boolean
-     */
-    /*public function create() {
-
-        parent::create();
-
-        //$this->createDataRows();
-        //$this->model->save();
-    }*/
-
-
-    /**
-     * create data rows for query table and for the store table
-     *
-     * @return void
-     */
-    /*protected function createDataRows() {
-        try {
-            $this->db->insert("object_store_" . $this->model->getO_classId(), array("oo_id" => $this->model->getO_id()));
-        }
-        catch (Exception $e) {
-        }
-
-        try {
-            $this->db->insert("object_query_" . $this->model->getO_classId(), array("oo_id" => $this->model->getO_id()));
-        }
-        catch (Exception $e) {
-        }
-    }*/
-
-    /**
      * Save changes to database, it's an good idea to use save() instead
      *
      * @return void
@@ -204,8 +176,6 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
     public function update() {
 
         parent::update();
-
-        //$this->createDataRows();
 
         // get fields which shouldn't be updated
         $fd = $this->model->getClass()->getFieldDefinitions();
@@ -228,8 +198,8 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
         }
 
         
-        $inheritedValues = Object_Abstract::doGetInheritedValues();
-        Object_Abstract::setGetInheritedValues(false);
+        $inheritedValues = Object\AbstractObject::doGetInheritedValues();
+        Object\AbstractObject::setGetInheritedValues(false);
 
         $data = array();
         $data["oo_id"] = $this->model->getId();
@@ -258,7 +228,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
 
         // get data for query table
         // this is special because we have to call each getter to get the inherited values from a possible parent object
-        Object_Abstract::setGetInheritedValues(true);
+        Object\AbstractObject::setGetInheritedValues(true);
 
         $object = get_object_vars($this->model);
 
@@ -317,7 +287,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
                         }
 
                     } else {
-                        Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
+                        \Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
                     }
                 }
             }
@@ -326,10 +296,12 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
 
         $this->db->insertOrUpdate("object_query_" . $this->model->getClassId(), $data);
 
-        Object_Abstract::setGetInheritedValues($inheritedValues);
+        Object\AbstractObject::setGetInheritedValues($inheritedValues);
     }
 
-    
+    /**
+     *
+     */
     public function saveChilds() {
         $this->inheritanceHelper->doUpdate($this->model->getId());
         $this->inheritanceHelper->resetFieldsToCheck();
@@ -365,7 +337,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
 
         $versions = array();
         foreach ($versionIds as $versionId) {
-            $versions[] = Version::getById($versionId);
+            $versions[] = Model\Version::getById($versionId);
         }
 
         $this->model->setVersions($versions);
@@ -382,7 +354,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
         $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
 
         if(($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
-            $version = Version::getById($versionData["id"]);
+            $version = Model\Version::getById($versionData["id"]);
             return $version;
         }
         return;

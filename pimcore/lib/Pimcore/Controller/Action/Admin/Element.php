@@ -13,8 +13,16 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-abstract class Pimcore_Controller_Action_Admin_Element extends Pimcore_Controller_Action_Admin {
+namespace Pimcore\Controller\Action\Admin;
 
+use Pimcore\Controller\Action\Admin;
+use Pimcore\Model;
+
+abstract class Element extends Admin {
+
+    /**
+     *
+     */
     public function treeGetRootAction() {
         $type = $this->getParam("controller");
         $allowedTypes = ["asset","document","object"];
@@ -25,7 +33,7 @@ abstract class Pimcore_Controller_Action_Admin_Element extends Pimcore_Controlle
         }
 
         if(in_array($type, $allowedTypes)) {
-            $root = Element_Service::getElementById($type, $id);
+            $root = Model\Element\Service::getElementById($type, $id);
             if ($root->isAllowed("list")) {
                 $this->_helper->json($this->getTreeNodeConfig($root));
             }
@@ -34,10 +42,16 @@ abstract class Pimcore_Controller_Action_Admin_Element extends Pimcore_Controlle
         $this->_helper->json(array("success" => false, "message" => "missing_permission"));
     }
 
+    /**
+     * @return array
+     */
     protected function getTreeNodeConfig() {
         return [];
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getVersionsAction()
     {
         $id = intval($this->getParam("id"));
@@ -45,7 +59,7 @@ abstract class Pimcore_Controller_Action_Admin_Element extends Pimcore_Controlle
         $allowedTypes = ["asset","document","object"];
 
         if ($id && in_array($type, $allowedTypes)) {
-            $element = Element_Service::getElementById($type, $id);
+            $element = Model\Element\Service::getElementById($type, $id);
             if($element) {
                 if($element->isAllowed("versions")) {
 
@@ -80,14 +94,20 @@ abstract class Pimcore_Controller_Action_Admin_Element extends Pimcore_Controlle
         }
     }
 
+    /*
+     *
+     */
     public function deleteVersionAction()
     {
-        $version = Version::getById($this->getParam("id"));
+        $version = Model\Version::getById($this->getParam("id"));
         $version->delete();
 
         $this->_helper->json(array("success" => true));
     }
 
+    /*
+     *
+     */
     public function getRequiresDependenciesAction()
     {
         $id = $this->getParam("id");
@@ -95,15 +115,18 @@ abstract class Pimcore_Controller_Action_Admin_Element extends Pimcore_Controlle
         $allowedTypes = ["asset","document","object"];
 
         if ($id && in_array($type, $allowedTypes)) {
-            $element = Element_Service::getElementById($type, $id);
-            if ($element instanceof Element_Interface) {
-                $dependencies = Element_Service::getRequiresDependenciesForFrontend($element->getDependencies());
+            $element = Model\Element\Service::getElementById($type, $id);
+            if ($element instanceof Model\Element\ElementInterface) {
+                $dependencies = Model\Element\Service::getRequiresDependenciesForFrontend($element->getDependencies());
                 $this->_helper->json($dependencies);
             }
         }
         $this->_helper->json(false);
     }
 
+    /**
+     *
+     */
     public function getRequiredByDependenciesAction()
     {
         $id = $this->getParam("id");
@@ -111,15 +134,18 @@ abstract class Pimcore_Controller_Action_Admin_Element extends Pimcore_Controlle
         $allowedTypes = ["asset","document","object"];
 
         if ($id && in_array($type, $allowedTypes)) {
-            $element = Element_Service::getElementById($type, $id);
-            if ($element instanceof Element_Interface) {
-                $dependencies = Element_Service::getRequiredByDependenciesForFrontend($element->getDependencies());
+            $element = Model\Element\Service::getElementById($type, $id);
+            if ($element instanceof Model\Element\ElementInterface) {
+                $dependencies = Model\Element\Service::getRequiredByDependenciesForFrontend($element->getDependencies());
                 $this->_helper->json($dependencies);
             }
         }
         $this->_helper->json(false);
     }
 
+    /**
+     *
+     */
     public function getPredefinedPropertiesAction()
     {
         $properties = array();
@@ -127,7 +153,7 @@ abstract class Pimcore_Controller_Action_Admin_Element extends Pimcore_Controlle
         $allowedTypes = ["asset","document","object"];
 
         if (in_array($type, $allowedTypes)) {
-            $list = new Property_Predefined_List();
+            $list = new Model\Property\Predefined\Listing();
             $list->setCondition("ctype = ?", [$type]);
             $list->setOrder("ASC");
             $list->setOrderKey("name");
@@ -140,5 +166,4 @@ abstract class Pimcore_Controller_Action_Admin_Element extends Pimcore_Controlle
 
         $this->_helper->json(array("properties" => $properties));
     }
-
 }

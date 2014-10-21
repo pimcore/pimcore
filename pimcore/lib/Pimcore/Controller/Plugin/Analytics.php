@@ -13,28 +13,46 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_Analytics extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
 
+use Pimcore\Tool;
+use Pimcore\Google\Analytics as AnalyticsHelper;
+
+class Analytics extends \Zend_Controller_Plugin_Abstract {
+
+    /**
+     * @var bool
+     */
     protected $enabled = true;
 
-    public function routeShutdown(Zend_Controller_Request_Abstract $request) {
-        if(!Pimcore_Tool::useFrontendOutputFilters($request)) {
+    /**
+     * @param \Zend_Controller_Request_Abstract $request
+     * @return bool|void
+     */
+    public function routeShutdown(\Zend_Controller_Request_Abstract $request) {
+        if(!Tool::useFrontendOutputFilters($request)) {
             return $this->disable();
         }
     }
 
+    /**
+     * @return bool
+     */
     public function disable() {
         $this->enabled = false;
         return true;
     }
 
+    /**
+     *
+     */
     public function dispatchLoopShutdown() {
         
-        if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
+        if(!Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
         
-        if ($this->enabled && $code = Pimcore_Google_Analytics::getCode()) {
+        if ($this->enabled && $code = AnalyticsHelper::getCode()) {
             
             // analytics
             $body = $this->getResponse()->getBody();

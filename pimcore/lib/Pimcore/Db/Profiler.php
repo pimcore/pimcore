@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Db_Profiler extends Zend_Db_Profiler
+namespace Pimcore\Db;
+
+class Profiler extends \Zend_Db_Profiler
 {
     /**
      * The original label for this profiler.
@@ -29,7 +31,7 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
 
     /**
      * The message envelope holding the profiling summary
-     * @var Zend_Wildfire_Plugin_FirePhp_TableMessage
+     * @var \Zend_Wildfire_Plugin_FirePhp_TableMessage
      */
     protected $_message = null;
 
@@ -57,16 +59,13 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
     protected $queries = array();
 
     /**
-     * Constructor
-     *
-     * @param string $label OPTIONAL Label for the profiling info.
-     * @return void
+     * @param null $label
      */
     public function __construct($label = null)
     {
         $this->_label = $label;
         if(!$this->_label) {
-            $this->_label = 'Pimcore_Db_Profiler';
+            $this->_label = "Pimcore\\Db\\Profiler";
         }
     }
 
@@ -75,7 +74,7 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
      * is disabled and will not log any queries sent to it.
      *
      * @param  boolean $enable
-     * @return Zend_Db_Profiler Provides a fluent interface
+     * @return \Zend_Db_Profiler Provides a fluent interface
      */
     public function setEnabled($enable)
     {
@@ -87,7 +86,7 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
      * Intercept the query end and log the profiling data.
      *
      * @param  integer $queryId
-     * @throws Zend_Db_Profiler_Exception
+     * @throws \Zend_Db_Profiler_Exception
      * @return void
      */
     public function queryEnd($queryId)
@@ -103,7 +102,7 @@ class Pimcore_Db_Profiler extends Zend_Db_Profiler
         $this->_totalQueries++;
 
         $logEntry = "Process: " . $this->getConnectionId() . " | DB Query (#" . $this->_totalQueries . "): " . (string)round($profile->getElapsedSecs(),5) . " | " . $profile->getQuery() . " | " . implode(",",$profile->getQueryParams());
-        Logger::debug($logEntry);
+        \Logger::debug($logEntry);
 
         $this->queries[] = array(
             "time" => $profile->getElapsedSecs(),

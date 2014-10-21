@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Object_Element extends Webservice_Data {
+namespace Pimcore\Model\Webservice\Data\Object;
+
+use Pimcore\Model;
+
+class Element extends Model\Webservice\Data {
     
     /**
      * @var string
@@ -36,10 +40,4 @@ class Webservice_Data_Object_Element extends Webservice_Data {
      * @var string
      */
     public $language;
-
-
-
-
-
-
 }

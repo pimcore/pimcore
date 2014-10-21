@@ -186,7 +186,7 @@ function urlencode_ignore_slash($var) {
  * @return bool
  */
 function is_includeable($filename) {
-    return Pimcore_File::isIncludeable($filename);
+    return \Pimcore\File::isIncludeable($filename);
 }
 
 /**

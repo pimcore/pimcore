@@ -15,9 +15,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Asset_Folder_Incoming extends Webservice_Data_Asset_Folder {
+namespace Pimcore\Model\Webservice\Data\Asset\Folder;
 
+use Pimcore\Model;
 
-
+class Incoming extends Model\Webservice\Data\Asset\Folder {
 
 }

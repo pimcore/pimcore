@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Tool\Lock;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      * Contains all valid columns in the database table
@@ -33,6 +37,11 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
         $this->validColumns = $this->getValidTableColumns("locks");
     }
 
+    /**
+     * @param $key
+     * @param int $expire
+     * @return bool
+     */
     public function isLocked ($key, $expire = 120) {
         if(!is_numeric($expire)) {
             $expire = 120;
@@ -45,7 +54,7 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
             return false;
         } else if(is_array($lock) && array_key_exists("id", $lock) && $lock["date"] < (time()-$expire)) {
             if($expire > 0){
-                Logger::debug("Lock '" . $key . "' expired (expiry time: " . $expire . ", lock date: " . $lock["date"] . " / current time: " . time() . ")");
+                \Logger::debug("Lock '" . $key . "' expired (expiry time: " . $expire . ", lock date: " . $lock["date"] . " / current time: " . time() . ")");
                 $this->release($key);
                 return false;
             }
@@ -54,9 +63,14 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
         return true;
     }
 
+    /**
+     * @param $key
+     * @param int $expire
+     * @param int $refreshInterval
+     */
     public function acquire ($key, $expire = 120, $refreshInterval = 1) {
 
-        Logger::debug("Acquiring key: '" . $key . "' expiry: " . $expire);
+        \Logger::debug("Acquiring key: '" . $key . "' expiry: " . $expire);
 
         if(!is_numeric($refreshInterval)) {
             $refreshInterval = 1;
@@ -71,21 +85,28 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
                 $this->lock($key, false);
                 return true;
             } catch (\Exception $e) {
-                Logger::debug($e);
+                \Logger::debug($e);
             }
         }
     }
 
+    /**
+     * @param $key
+     */
     public function release ($key) {
 
-        Logger::debug("Releasing: '" . $key . "'");
+        \Logger::debug("Releasing: '" . $key . "'");
 
         $this->db->delete("locks", "id = " . $this->db->quote($key));
     }
 
+    /**
+     * @param $key
+     * @param bool $force
+     */
     public function lock ($key, $force = true) {
 
-        Logger::debug("Locking: '" . $key . "'");
+        \Logger::debug("Locking: '" . $key . "'");
 
         $updateMethod = $force ? "insertOrUpdate" : "insert";
 

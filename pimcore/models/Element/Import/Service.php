@@ -15,11 +15,21 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Import_Service
+namespace Pimcore\Model\Element\Import;
+
+use Pimcore\Model;
+use Pimcore\Tool;
+use Pimcore\Model\Webservice;
+use Pimcore\Model\Element;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Object;
+use Pimcore\Model\Document;
+
+class Service
 {
 
     /**
-     * @var Webservice_Service
+     * @var Webservice\Service
      */
     protected $webService;
 
@@ -36,7 +46,7 @@ class Element_Import_Service
 
     public function __construct($user)
     {
-        $this->webService = new Webservice_Service();
+        $this->webService = new Webservice\Service();
         $this->importInfo = array();
         $this->user = $user;
     }
@@ -56,14 +66,14 @@ class Element_Import_Service
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      * @param  $rootElement
      * @param  $apiKey
      * @param  $path
      * @param  $apiElement
      * @param  bool $overwrite
      * @param  $elementCounter
-     * @return Element_Interface
+     * @return Element\ElementInterface
      */
     public function create($rootElement, $apiKey, $path, $apiElement, $overwrite, $elementCounter)
     {
@@ -76,30 +86,30 @@ class Element_Import_Service
 
         $type = $apiElement->type;
 
-        if ($apiElement instanceof Webservice_Data_Asset) {
-            $className = "Asset_" . ucfirst($type);
-            $parentClassName = "Asset";
+        if ($apiElement instanceof Webservice\Data\Asset) {
+            $className = "\\Pimcore\\Model\\Asset\\" . ucfirst($type);
+            $parentClassName = "\\Pimcore\\Model\\Asset";
             $maintype = "asset";
             $fullPath = $path . $apiElement->filename;
-        } else if ($apiElement instanceof Webservice_Data_Object) {
+        } else if ($apiElement instanceof Webservice\Data\Object) {
             $maintype = "object";
             if ($type == "object") {
-                $className = "Object_" . ucfirst($apiElement->className);
-                if (!Pimcore_Tool::classExists($className)) {
-                    throw new Exception("Unknown class [ " . $className . " ]");
+                $className = "\\Pimcore\\Model\\Object\\" . ucfirst($apiElement->className);
+                if (!Tool::classExists($className)) {
+                    throw new \Exception("Unknown class [ " . $className . " ]");
                 }
             } else {
-                $className = "Object_" . ucfirst($type);
+                $className = "\\Pimcore\\Model\\Object\\" . ucfirst($type);
             }
-            $parentClassName = "Object_Abstract";
+            $parentClassName = "\\Pimcore\\Model\\Object";
             $fullPath = $path . $apiElement->key;
-        } else if ($apiElement instanceof Webservice_Data_Document) {
+        } else if ($apiElement instanceof Webservice\Data\Document) {
             $maintype = "document";
-            $className = "Document_" . ucfirst($type);
-            $parentClassName = "Document";
+            $className = "\\Pimcore\\Model\\Document\\" . ucfirst($type);
+            $parentClassName = "\\Pimcore\\Model\\Document";
             $fullPath = $path . $apiElement->key;
         } else {
-            throw new Exception("Unknown import element");
+            throw new \Exception("Unknown import element");
         }
 
         $existingElement = $className::getByPath($fullPath);
@@ -114,12 +124,12 @@ class Element_Import_Service
         if ($element instanceof Asset) {
             $element->setFilename($apiElement->filename);
             $element->setData(base64_decode($apiElement->data));
-        } else if ($element instanceof Object_Concrete) {
+        } else if ($element instanceof Object\Concrete) {
             $element->setKey($apiElement->key);
             $element->setClassName($apiElement->className);
-            $class = Object_Class::getByName($apiElement->className);
-            if (!$class instanceof Object_Class) {
-                throw new Exception("Unknown object class [ " . $apiElement->className . " ] ");
+            $class = Object\ClassDefinition::getByName($apiElement->className);
+            if (!$class instanceof Object\ClassDefinition) {
+                throw new \Exception("Unknown object class [ " . $apiElement->className . " ] ");
             }
             $element->setClassId($class->getId());
 
@@ -136,12 +146,12 @@ class Element_Import_Service
                 $element->setKey("home_" . uniqid());
             }
         } else if (empty($key)) {
-            throw new Exception ("Cannot create element without key ");
+            throw new \Exception ("Cannot create element without key ");
         }
 
         $parent = $parentClassName::getByPath($path);
 
-        if (Element_Service::getType($rootElement) == $maintype and $parent) {
+        if (Element\Service::getType($rootElement) == $maintype and $parent) {
             $element->setParentId($parent->getId());
             $apiElement->parentId = $parent->getId();
             $existingElement = $parentClassName::getByPath($parent->getFullPath() . "/" . $element->getKey());
@@ -153,7 +163,7 @@ class Element_Import_Service
                     $element->setKey(str_replace("/", "_", $apiElement->path) . uniqid() . "_" . $elementCounter . "_" . $element->getKey());
                 }
             }
-        } else if (Element_Service::getType($rootElement) != $maintype) {
+        } else if (Element\Service::getType($rootElement) != $maintype) {
             //this is a related element - try to import it to it's original path or set the parent to home folder
             $potentialParent = $parentClassName::getByPath($path);
 
@@ -203,7 +213,7 @@ class Element_Import_Service
         $element->save();
 
         //todo save type and id for later rollback
-        $this->importInfo[Element_Service::getType($element) . "_" . $element->getId()] = array("id" => $element->getId(), "type" => Element_Service::getType($element), "fullpath" => $element->getFullPath());
+        $this->importInfo[Element\Service::getType($element) . "_" . $element->getId()] = array("id" => $element->getId(), "type" => Element\Service::getType($element), "fullpath" => $element->getFullPath());
 
 
         return $element;
@@ -211,7 +221,7 @@ class Element_Import_Service
     }
 
     /**
-     * @param Webservice_Data $apiElement
+     * @param Webservice\Data $apiElement
      * @param string $type
      * @param array $idMapping
      * @return void
@@ -234,7 +244,7 @@ class Element_Import_Service
     }
 
     /**
-     * @param  Webservice_Data_Document_PageSnippet $apiElement
+     * @param  Webservice\Data\Document\PageSnippet $apiElement
      * @param  array $idMapping
      * @return void
      */
@@ -248,7 +258,7 @@ class Element_Import_Service
                 } else if ($el->type == "image" and is_object($el->value) and $el->value->id) {
                     $el->value->id = $idMapping["asset"][$el->value->id];
                 } else if ($el->type == "wysiwyg" and is_object($el->value) and $el->value->text) {
-                    $el->value->text = Pimcore_Tool_Text::replaceWysiwygTextRelationIds($idMapping, $el->value->text);
+                    $el->value->text = Tool\Text::replaceWysiwygTextRelationIds($idMapping, $el->value->text);
                 } else if ($el->type == "link" and is_object($el->value) and is_array($el->value->data) and $el->value->data["internalId"]) {
                     $el->value->data["internalId"] = $idMapping[$el->value->data["internalType"]][$el->value->data["internalId"]];
                 } else if ($el->type == "video" and is_object($el->value) and $el->value->type == "asset") {
@@ -263,7 +273,7 @@ class Element_Import_Service
     }
 
     /**
-     * @param  Webservice_Data_Object_Concrete $apiElement
+     * @param  Webservice\Data\Object\Concrete $apiElement
      * @return void
      */
     public function correctObjectRelations($apiElement, $idMapping)
@@ -291,16 +301,16 @@ class Element_Import_Service
                     }
 
                 } else if ($el->type == "wysiwyg") {
-                    $el->value = Pimcore_Tool_Text::replaceWysiwygTextRelationIds($idMapping, $el->value);
+                    $el->value = Tool\Text::replaceWysiwygTextRelationIds($idMapping, $el->value);
                 } else if ($el->type == "fieldcollections") {
-                    if ($el instanceof Webservice_Data_Object_Element and is_array($el->value)) {
+                    if ($el instanceof Webservice\Data\Object\Element and is_array($el->value)) {
                         foreach ($el->value as $fieldCollectionEl) {
                             if (is_array($fieldCollectionEl->value)) {
                                 foreach ($fieldCollectionEl->value as $collectionItem) {
                                     if ($collectionItem->type == "image") {
                                         $collectionItem->value = $idMapping["asset"][$collectionItem->value];
                                     } else if ($collectionItem->type == "wysiwyg") {
-                                        $collectionItem->value = Pimcore_Tool_Text::replaceWysiwygTextRelationIds($idMapping, $collectionItem->value);
+                                        $collectionItem->value = Tool\Text::replaceWysiwygTextRelationIds($idMapping, $collectionItem->value);
                                     } else if ($collectionItem->type == "link" and $collectionItem->value["internalType"]) {
                                         $collectionItem->value["internal"] = $idMapping[$collectionItem->value["internalType"]][$collectionItem->value["internal"]];
                                     } else if ($collectionItem->type == "href" and $collectionItem->value["id"]){
@@ -325,7 +335,7 @@ class Element_Import_Service
                             if ($localizedDataEl->type == "image") {
                                 $localizedDataEl->value = $idMapping["asset"][$localizedDataEl->value];
                             } else if ($localizedDataEl->type == "wysiwyg") {
-                                $localizedDataEl->value = Pimcore_Tool_Text::replaceWysiwygTextRelationIds($idMapping, $localizedDataEl->value);
+                                $localizedDataEl->value = Tool\Text::replaceWysiwygTextRelationIds($idMapping, $localizedDataEl->value);
                             } else if ($localizedDataEl->type == "link" and $localizedDataEl->value["internalType"]) {
                                 $localizedDataEl->value["internal"] = $idMapping[$localizedDataEl->value["internalType"]][$localizedDataEl->value["internal"]];
                             }
@@ -338,14 +348,16 @@ class Element_Import_Service
     }
 
     /**
-     * @param  Element_Interface $element
-     * @return void
+     * @param $element
+     * @param bool $creation
+     * @return $this
+     * @throws \Exception
      */
     public function setModificationParams($element, $creation = false)
     {
         $user = $this->user;
-        if (!$user instanceof User) {
-            throw new Exception("No user present");
+        if (!$user instanceof Model\User) {
+            throw new \Exception("No user present");
         }
         if ($creation) {
             $element->setUserOwner($user->getId());
@@ -354,6 +366,4 @@ class Element_Import_Service
         $element->setModificationDate(time());
         return $this;
     }
-
-
 }

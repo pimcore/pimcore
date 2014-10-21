@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Tracking_Event extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Tool\Tracking;
+
+use Pimcore\Model;
+
+class Event extends Model\AbstractModel {
 
     /**
      * @var int
@@ -48,9 +52,9 @@ class Tool_Tracking_Event extends Pimcore_Model_Abstract {
     public $data;
 
     /**
-    * @param integer $id
-    * @return Tool_Tracking_Event
-    */
+     * @param $id
+     * @return Event
+     */
     public static function getById($id) {
         $event = new self();
         $event->getResource()->getById(intval($id));
@@ -65,12 +69,13 @@ class Tool_Tracking_Event extends Pimcore_Model_Abstract {
      * @param $day
      * @param $month
      * @param $year
+     * @return Event
      */
     public static function getByDate($category, $action, $label, $day, $month, $year) {
         $event = new self();
         try {
             $event->getResource()->getByDate($category, $action, $label, $day, $month, $year);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $event->setTimestamp(mktime(1,0,0,$month, $day, $year));
             $event->setCategory($category);
             $event->setAction($action);
@@ -81,7 +86,8 @@ class Tool_Tracking_Event extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $action
+     * @param $action
+     * @return $this
      */
     public function setAction($action)
     {
@@ -98,7 +104,8 @@ class Tool_Tracking_Event extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $category
+     * @param $category
+     * @return $this
      */
     public function setCategory($category)
     {
@@ -115,7 +122,8 @@ class Tool_Tracking_Event extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $id
+     * @param $id
+     * @return $this
      */
     public function setId($id)
     {
@@ -132,7 +140,8 @@ class Tool_Tracking_Event extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $label
+     * @param $label
+     * @return $this
      */
     public function setLabel($label)
     {
@@ -149,7 +158,8 @@ class Tool_Tracking_Event extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $timestamp
+     * @param $timestamp
+     * @return $this
      */
     public function setTimestamp($timestamp)
     {
@@ -166,7 +176,8 @@ class Tool_Tracking_Event extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $data
+     * @param $data
+     * @return $this
      */
     public function setData($data)
     {
@@ -181,7 +192,4 @@ class Tool_Tracking_Event extends Pimcore_Model_Abstract {
     {
         return $this->data;
     }
-
-
-
 }

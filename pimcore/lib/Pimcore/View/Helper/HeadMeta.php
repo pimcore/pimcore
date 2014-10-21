@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_View_Helper_HeadMeta extends Zend_View_Helper_HeadMeta {
+namespace Pimcore\View\Helper;
+
+class HeadMeta extends \Zend_View_Helper_HeadMeta {
 
     /**
      * Determine if item is valid
@@ -24,6 +26,4 @@ class Pimcore_View_Helper_HeadMeta extends Zend_View_Helper_HeadMeta {
     protected function _isValid($item) {
         return true;
     }
-
 }
-

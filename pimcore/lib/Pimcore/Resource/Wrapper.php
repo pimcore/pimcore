@@ -13,16 +13,20 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Resource_Wrapper {
+namespace Pimcore\Resource;
+
+use Pimcore\Resource;
+
+class Wrapper {
 
     /**
-     * @var Zend_Db_Adapter_Abstract
+     * @var \Zend_Db_Adapter_Abstract
      */
     protected $resource;
 
     /**
      * use a seperate connection for DDL queries to avoid implicit commits
-     * @var Zend_Db_Adapter_Abstract
+     * @var \Zend_Db_Adapter_Abstract
      */
     //protected $DDLResource;
 
@@ -41,7 +45,7 @@ class Pimcore_Resource_Wrapper {
     /*public function getDDLResource()
     {
         if(!$this->DDLResource) {
-            // get the Zend_Db_Adapter_Abstract not the wrapper
+            // get the \Zend_Db_Adapter_Abstract not the wrapper
             $this->DDLResource = Pimcore_Resource::getConnection(true);
         }
         return $this->DDLResource;
@@ -75,13 +79,13 @@ class Pimcore_Resource_Wrapper {
     }
 
     /**
-     * @return Zend_Db_Adapter_Abstract
+     * @return \Zend_Db_Adapter_Abstract
      */
     public function getResource()
     {
         if(!$this->resource) {
-            // get the Zend_Db_Adapter_Abstract not the wrapper
-            $this->resource = Pimcore_Resource::getConnection(true);
+            // get the \Zend_Db_Adapter_Abstract not the wrapper
+            $this->resource = Resource::getConnection(true);
         }
         return $this->resource;
     }
@@ -95,7 +99,7 @@ class Pimcore_Resource_Wrapper {
     }
 
     /**
-     * @param Zend_Db_Adapter_Abstract $resource
+     * @param \Zend_Db_Adapter_Abstract $resource
      */
     protected function closeConnectionResource($resource) {
         if($resource) {
@@ -105,30 +109,30 @@ class Pimcore_Resource_Wrapper {
                 // unfortunately mysqli doesn't throw an exception in the case the connection is lost (issues a warning)
                 // and when sending a query to the broken connection (eg. when forking)
                 // so we have to handle mysqli and pdo_mysql differently
-                if($resource instanceof Zend_Db_Adapter_Mysqli) {
+                if($resource instanceof \Zend_Db_Adapter_Mysqli) {
                     if($resource->getConnection()) {
                         $connectionId = $resource->getConnection()->thread_id;
                     }
-                } else if ($resource instanceof Zend_Db_Adapter_Pdo_Mysql) {
+                } else if ($resource instanceof \Zend_Db_Adapter_Pdo_Mysql) {
                     $connectionId = $resource->fetchOne("SELECT CONNECTION_ID()");
                 }
-                Logger::debug(get_class($resource) . ": closing MySQL-Server connection with ID: " . $connectionId);
+                \Logger::debug(get_class($resource) . ": closing MySQL-Server connection with ID: " . $connectionId);
 
                 $resource->closeConnection();
             } catch (\Exception $e) {
                 // this is the case when the mysql connection has gone away (eg. when forking using pcntl)
-                Logger::info($e);
+                \Logger::info($e);
             }
         }
     }
 
 
     /**
-     * insert on dublicate key update extension to the Zend_Db Adapter
+     * insert on dublicate key update extension to the \Zend_Db Adapter
      * @param $table
      * @param array $data
      * @return mixed
-     * @throws Zend_Db_Adapter_Exception
+     * @throws \Zend_Db_Adapter_Exception
      */
     public function insertOrUpdate($table, array $data)
     {
@@ -139,7 +143,7 @@ class Pimcore_Resource_Wrapper {
         $vals = array();
         foreach ($data as $col => $val) {
             $cols[] = $this->quoteIdentifier($col, true);
-            if ($val instanceof Zend_Db_Expr) {
+            if ($val instanceof \Zend_Db_Expr) {
                 $vals[] = $val->__toString();
             } else {
                 if ($this->supportsParameters('positional')) {
@@ -151,8 +155,8 @@ class Pimcore_Resource_Wrapper {
                         $vals[] = ':col' . $i;
                         $i++;
                     } else {
-                        /** @see Zend_Db_Adapter_Exception */
-                        throw new Zend_Db_Adapter_Exception(get_class($this->getResource()) . " doesn't support positional or named binding");
+                        /** @see \Zend_Db_Adapter_Exception */
+                        throw new \Zend_Db_Adapter_Exception(get_class($this->getResource()) . " doesn't support positional or named binding");
                     }
                 }
             }
@@ -186,7 +190,7 @@ class Pimcore_Resource_Wrapper {
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      * @param  $method
      * @param  $args
      * @return mixed
@@ -196,8 +200,8 @@ class Pimcore_Resource_Wrapper {
             $r = $this->callResourceMethod($method, $args);
             return $r;
         }
-        catch (Exception $e) {
-            return Pimcore_Resource::errorHandler($method, $args, $e);
+        catch (\Exception $e) {
+            return Resource::errorHandler($method, $args, $e);
         }
     }
 
@@ -215,18 +219,18 @@ class Pimcore_Resource_Wrapper {
 
         $capture = false;
 
-        if(Pimcore::inAdmin()) {
+        if(\Pimcore::inAdmin()) {
             $methodsToCheck = array("query","update","delete","insert");
             if(in_array($method, $methodsToCheck)) {
                 $capture = true;
-                Pimcore_Resource::startCapturingDefinitionModifications($resource, $method, $args);
+                Resource::startCapturingDefinitionModifications($resource, $method, $args);
             }
         }
 
         $r = call_user_func_array(array($resource, $method), $args);
 
-        if(Pimcore::inAdmin() && $capture) {
-            Pimcore_Resource::stopCapturingDefinitionModifications($resource);
+        if(\Pimcore::inAdmin() && $capture) {
+            Resource::stopCapturingDefinitionModifications($resource);
         }
 
         return $r;

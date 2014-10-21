@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_Permission_Definition_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\User\Permission\Definition;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
     /**
      * Contains all valid columns in the database table
      *
@@ -41,8 +45,8 @@ class User_Permission_Definition_Resource extends Pimcore_Model_Resource_Abstrac
             $this->db->insert("users_permission_definitions", array(
                 "key" => $this->model->getKey()
             ));
-        } catch (Exception $e) {
-            Logger::warn($e);
+        } catch (\Exception $e) {
+            \Logger::warn($e);
         }
     }
 }

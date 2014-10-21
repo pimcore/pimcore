@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_UserRole_Folder extends User_Abstract {
+namespace Pimcore\Model\User\UserRole;
+
+use Pimcore\Model;
+
+class Folder extends Model\User\AbstractUser {
 
     /**
      * @var boolean
@@ -23,7 +27,8 @@ class User_UserRole_Folder extends User_Abstract {
     public $hasChilds;
 
     /**
-     * @param boolean $state
+     * @param $state
+     * @return $this
      */
     function setHasChilds($state){
         $this->hasChilds= $state;

@@ -15,11 +15,21 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Translation_Website_Resource extends Translation_Abstract_Resource {
-    
+namespace Pimcore\Model\Translation\Website;
+
+use Pimcore\Model;
+
+class Resource extends Model\Translation\AbstractTranslation\Resource {
+
+    /**
+     * @var string
+     */
     public static $_tableName = "translations_website";
-    
+
+    /**
+     * @return mixed
+     */
     public static function getTableName(){
-        return Translation_Website_Resource::$_tableName;
+        return Model\Translation\Website\Resource::$_tableName;
     }
 }

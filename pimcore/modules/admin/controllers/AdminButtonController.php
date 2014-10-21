@@ -13,7 +13,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
+use Pimcore\Image\HtmlToImage;
+use Pimcore\Model;
+
+class Admin_AdminButtonController extends \Pimcore\Controller\Action\Admin {
 
     public function featureRequestAction () {
 
@@ -32,14 +35,14 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
     }
 
     protected function featureBug() {
-        $conf = Pimcore_Config::getSystemConfig();
+        $conf = \Pimcore\Config::getSystemConfig();
         $email = $conf->general->contactemail;
         $this->view->contactEmail = $email;
 
         if(!$this->getParam("submit")) {
-            if(Pimcore_Image_HtmlToImage::isSupported()) {
+            if(HtmlToImage::isSupported()) {
                 $file = PIMCORE_TEMPORARY_DIRECTORY . "/screen-" . uniqid() . ".jpeg";
-                Pimcore_Image_HtmlToImage::convert($this->getParam("url"), $file, 1280, "jpeg");
+                HtmlToImage::convert($this->getParam("url"), $file, 1280, "jpeg");
                 $this->view->image = str_replace(PIMCORE_DOCUMENT_ROOT, "", $file);
             }
         } else {
@@ -53,15 +56,15 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
 
             $subject .=  $urlParts["host"];
 
-            $mail = Pimcore_Tool::getMail($email, $subject, "UTF-8");
+            $mail = \Pimcore\Tool::getMail($email, $subject, "UTF-8");
             $mail->setIgnoreDebugMode(true);
 
             $bodyText = "URL: " . $this->getParam("url") . "\n\n";
             $bodyText .= "Description: \n\n" . $this->getParam("description");
 
             $image = null;
-            if(Pimcore_Image_HtmlToImage::isSupported()) {
-                $markers = Zend_Json::decode($this->getParam("markers"));
+            if(HtmlToImage::isSupported()) {
+                $markers = \Zend_Json::decode($this->getParam("markers"));
 
                 $screenFile = PIMCORE_DOCUMENT_ROOT . $this->getParam("screenshot");
 
@@ -111,8 +114,8 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
 
                 $at = $mail->createAttachment($image);
                 $at->type        = 'image/jpeg';
-                $at->disposition = Zend_Mime::DISPOSITION_ATTACHMENT;
-                $at->encoding    = Zend_Mime::ENCODING_BASE64;
+                $at->disposition = \Zend_Mime::DISPOSITION_ATTACHMENT;
+                $at->encoding    = \Zend_Mime::ENCODING_BASE64;
                 $at->filename    = 'screen.jpg';
             }
 
@@ -134,7 +137,7 @@ class Admin_AdminButtonController extends Pimcore_Controller_Action_Admin {
 
     public function personaAction() {
 
-        $list = new Tool_Targeting_Persona_List();
+        $list = new Model\Tool\Targeting\Persona\Listing();
         $list->setCondition("active = 1");
         $this->view->personas = $list->load();
     }

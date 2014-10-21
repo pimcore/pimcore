@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Translation_Website extends Translation_Abstract
+namespace Pimcore\Model\Translation;
+
+use Pimcore\Model;
+
+class Website extends AbstractTranslation
 {
 
 }

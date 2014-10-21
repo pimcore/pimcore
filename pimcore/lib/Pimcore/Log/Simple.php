@@ -13,25 +13,33 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Log_Simple {
+namespace Pimcore\Log;
 
+use Pimcore\File;
+
+class Simple {
+
+    /**
+     * @param $name
+     * @param $message
+     */
     public static function log($name, $message) {
 
         $log = PIMCORE_LOG_DIRECTORY . "/$name.log";
         if(!is_file($log)) {
             if(is_writable(dirname($log))) {
-                Pimcore_File::put($log, "AUTOCREATE\n");
+                File::put($log, "AUTOCREATE\n");
             }
         }
 
         if (is_writable($log)) {
             // check for big logfile, empty it if it's bigger than about 200M
             if (filesize($log) > 200000000) {
-                Pimcore_File::put($log, "");
+                File::put($log, "");
             }
 
             $f = fopen($log, "a+");
-            fwrite($f, Zend_Date::now()->getIso() . " : " . $message . "\n");
+            fwrite($f, \Zend_Date::now()->getIso() . " : " . $message . "\n");
             fclose($f);
         }
     }

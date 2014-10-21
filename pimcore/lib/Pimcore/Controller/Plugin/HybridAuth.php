@@ -13,15 +13,17 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_HybridAuth extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
+
+class HybridAuth extends \Zend_Controller_Plugin_Abstract {
 
     /**
-     * @param Zend_Controller_Request_Abstract $request
+     * @param \Zend_Controller_Request_Abstract $request
      */
-    public function routeStartup(Zend_Controller_Request_Abstract $request) {
+    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
 
         if(preg_match("@^/hybridauth/endpoint@",$request->getPathInfo(), $matches)) {
-            Pimcore_Tool_HybridAuth::process();
+            \Pimcore\Tool\HybridAuth::process();
         }
     }
 }

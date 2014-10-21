@@ -13,7 +13,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_UserController extends Pimcore_Controller_Action_Admin {
+use Pimcore\Tool; 
+use Pimcore\Model\User;
+use Pimcore\Model\Element;
+use Pimcore\Model\Object;
+
+class Admin_UserController extends \Pimcore\Controller\Action\Admin {
 
     public function init() {
         parent::init();
@@ -27,7 +32,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
     public function treeGetChildsByIdAction() {
 
-        $list = new User_List();
+        $list = new User\Listing();
         $list->setCondition("parentId = ?", intval($this->getParam("node")));
         $list->setOrder("ASC");
         $list->setOrderKey("name");
@@ -56,7 +61,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         );
 
         // set type specific settings
-        if ($user instanceof User_Folder) {
+        if ($user instanceof User\Folder) {
             $tmpUser["leaf"] = false;
             $tmpUser["iconCls"] = "pimcore_icon_folder";
             $tmpUser["expanded"] = true;
@@ -83,7 +88,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
         try {
             $type = $this->getParam("type");;
-            $className = User_Service::getClassNameForType($type);
+            $className = User\Service::getClassNameForType($type);
             $user = $className::create(array(
                 "parentId" => intval($this->getParam("parentId")),
                 "name" => trim($this->getParam("name")),
@@ -114,7 +119,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                             if (is_array($workspaces)) {
                                 foreach($workspaces as $workspace) {
                                     $vars = get_object_vars($workspace);
-                                    $workspaceClass = "User_Workspace_" . ucfirst($key);
+                                    $workspaceClass = "\\Pimcore\\Model\\User\\Workspace\\" . ucfirst($key);
                                     $newWorkspace = new $workspaceClass();
                                     foreach ($vars as $varKey => $varValue) {
                                         $newWorkspace->$varKey = $varValue;
@@ -149,7 +154,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                 "success" => true,
                 "id" => $user->getId()
             ));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
         }
 
@@ -157,11 +162,11 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     }
 
     public function deleteAction() {
-        $user = User_Abstract::getById(intval($this->getParam("id")));
+        $user = User\AbstractUser::getById(intval($this->getParam("id")));
 
         // only admins are allowed to delete admins and folders
         // because a folder might conain an admin user, so it's stimply not allowed for users with the "users" permission
-        if(($user instanceof User_Folder && !$this->getUser()->isAdmin()) || ($user instanceof User && $user->isAdmin() && !$this->getUser()->isAdmin())) {
+        if(($user instanceof User\Folder && !$this->getUser()->isAdmin()) || ($user instanceof User && $user->isAdmin() && !$this->getUser()->isAdmin())) {
             throw new \Exception("You are not allowed to delete this user");
         } else {
             $user->delete();
@@ -174,17 +179,17 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
         $this->protectCSRF();
 
-        $user = User_Abstract::getById(intval($this->getParam("id")));
+        $user = User\AbstractUser::getById(intval($this->getParam("id")));
 
         if($user instanceof User && $user->isAdmin() && !$this->getUser()->isAdmin()) {
             throw new \Exception("Only admin users are allowed to modify admin users");
         }
 
         if($this->getParam("data")) {
-            $values = Zend_Json::decode($this->getParam("data"));
+            $values = \Zend_Json::decode($this->getParam("data"));
 
             if (!empty($values["password"])) {
-                $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["password"]);
+                $values["password"] = Tool\Authentication::getPasswordHash($user->getName(),$values["password"]);
             }
 
             if(method_exists($user, "setAllAclToFalse")) {
@@ -199,7 +204,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             }
 
             // check for permissions
-            $availableUserPermissionsList = new User_Permission_Definition_List();
+            $availableUserPermissionsList = new User\Permission\Definition\Listing();
             $availableUserPermissions = $availableUserPermissionsList->load();
 
             foreach($availableUserPermissions as $permission) {
@@ -210,15 +215,15 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
             // check for workspaces
             if($this->getParam("workspaces")) {
-                $workspaces = Zend_Json::decode($this->getParam("workspaces"));
+                $workspaces = \Zend_Json::decode($this->getParam("workspaces"));
                 foreach ($workspaces as $type => $spaces) {
 
                     $newWorkspaces = array();
                     foreach ($spaces as $space) {
 
-                        $element = Element_Service::getElementByPath($type, $space["path"]);
+                        $element = Element\Service::getElementByPath($type, $space["path"]);
                         if($element) {
-                            $className = "User_Workspace_" . ucfirst($type);
+                            $className = "\\Pimcore\\Model\\User\\Workspace\\" . ucfirst($type);
                             $workspace = new $className();
                             $workspace->setValues($space);
 
@@ -256,7 +261,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         foreach ($types as $type) {
             $workspaces = $user->{"getWorkspaces" . ucfirst($type)}();
             foreach ($workspaces as $workspace) {
-                $el = Element_Service::getElementById($type, $workspace->getCid());
+                $el = Element\Service::getElementById($type, $workspace->getCid());
                 if($el) {
                     // direct injection => not nice but in this case ok ;-)
                     $workspace->path = $el->getFullPath();
@@ -265,7 +270,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         }
 
         // object <=> user dependencies
-        $userObjects = Object_Service::getObjectsReferencingUser($user->getId());
+        $userObjects = Object\Service::getObjectsReferencingUser($user->getId());
         $userObjectData = array();
 
         foreach ($userObjects as $o) {
@@ -282,12 +287,12 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         }
 
         // get available permissions
-        $availableUserPermissionsList = new User_Permission_Definition_List();
+        $availableUserPermissionsList = new User\Permission\Definition\Listing();
         $availableUserPermissions = $availableUserPermissionsList->load();
 
         // get available roles
         $roles = array();
-        $list = new User_Role_List();
+        $list = new User\Role\Listing();
         $list->setCondition("`type` = ?", array("role"));
         $list->load();
 
@@ -302,7 +307,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $userData = object2array($user);
         unset($userData["password"]);
 
-        $conf = Pimcore_Config::getSystemConfig();
+        $conf = \Pimcore\Config::getSystemConfig();
         $this->_helper->json(array(
             "success" => true,
             "wsenabled" => $conf->webservice->enabled,
@@ -338,7 +343,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             if ($user->getId() == $this->getParam("id")) {
                 $this->uploadImageAction();
             } else {
-                Logger::warn("prevented save current user, because ids do not match. ");
+                \Logger::warn("prevented save current user, because ids do not match. ");
                 $this->_helper->json(false);
             }
         } else {
@@ -354,7 +359,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $user = $this->getUser();
         if ($user != null) {
             if ($user->getId() == $this->getParam("id")) {
-                $values = Zend_Json::decode($this->getParam("data"));
+                $values = \Zend_Json::decode($this->getParam("data"));
 
                 unset($values["name"]);
                 unset($values["id"]);
@@ -369,7 +374,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
                     if(empty($values["old_password"])) {
                         // if the user want to reset the password, the old password isn't required
-                        $oldPasswordCheck = Pimcore_Tool_Session::useSession(function($adminSession) use ($oldPasswordCheck) {
+                        $oldPasswordCheck = Tool\Session::useSession(function($adminSession) use ($oldPasswordCheck) {
                             if($adminSession->password_reset) {
                                 return true;
                             }
@@ -378,14 +383,14 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
                     } else {
                         // the password has to match
-                        $checkUser = Pimcore_Tool_Authentication::authenticatePlaintext($user->getName(), $values["old_password"]);
+                        $checkUser = Tool\Authentication::authenticatePlaintext($user->getName(), $values["old_password"]);
                         if($checkUser) {
                             $oldPasswordCheck = true;
                         }
                     }
 
                     if($oldPasswordCheck && $values["new_password"] == $values["retype_password"]) {
-                        $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["new_password"]);
+                        $values["password"] = Tool\Authentication::getPasswordHash($user->getName(),$values["new_password"]);
                     } else {
                         $this->_helper->json(array("success" => false, "message" => "password_cannot_be_changed"));
                     }
@@ -395,7 +400,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                 $user->save();
                 $this->_helper->json(array("success" => true));
             } else {
-                Logger::warn("prevented save current user, because ids do not match. ");
+                \Logger::warn("prevented save current user, because ids do not match. ");
                 $this->_helper->json(false);
             }
         } else {
@@ -409,7 +414,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
         $user = $this->getUser();
 
-        $list = new User_Permission_Definition_List();
+        $list = new User\Permission\Definition\Listing();
         $definitions = $list->load();
 
         foreach ($definitions as $definition) {
@@ -420,7 +425,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $userData = object2array($user);
         unset($userData["password"]);
 
-        echo "pimcore.currentuser = " . Zend_Json::encode($userData);
+        echo "pimcore.currentuser = " . \Zend_Json::encode($userData);
         exit;
     }
 
@@ -429,7 +434,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
     public function roleTreeGetChildsByIdAction() {
 
-        $list = new User_Role_List();
+        $list = new User\Role\Listing();
         $list->setCondition("parentId = ?", intval($this->getParam("node")));
         $list->load();
 
@@ -453,7 +458,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         );
 
         // set type specific settings
-        if ($role instanceof User_Role_Folder) {
+        if ($role instanceof User\Role\Folder) {
             $tmpUser["leaf"] = false;
             $tmpUser["iconCls"] = "pimcore_icon_folder";
             $tmpUser["expanded"] = true;
@@ -474,14 +479,14 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     }
 
     public function roleGetAction() {
-        $role = User_Role::getById(intval($this->getParam("id")));
+        $role = User\Role::getById(intval($this->getParam("id")));
 
         // workspaces
         $types = array("asset","document","object");
         foreach ($types as $type) {
             $workspaces = $role->{"getWorkspaces" . ucfirst($type)}();
             foreach ($workspaces as $workspace) {
-                $el = Element_Service::getElementById($type, $workspace->getCid());
+                $el = Element\Service::getElementById($type, $workspace->getCid());
                 if($el) {
                     // direct injection => not nice but in this case ok ;-)
                     $workspace->path = $el->getFullPath();
@@ -490,7 +495,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         }
 
         // get available permissions
-        $availableUserPermissionsList = new User_Permission_Definition_List();
+        $availableUserPermissionsList = new User\Permission\Definition\Listing();
         $availableUserPermissions = $availableUserPermissionsList->load();
 
         $this->_helper->json(array(
@@ -563,7 +568,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         }
 
         if($user) {
-            $token = Pimcore_Tool_Authentication::generateToken($user->getName(), $user->getPassword());
+            $token = Tool\Authentication::generateToken($user->getName(), $user->getPassword());
             $r = $this->getRequest();
             $link = $r->getScheme() . "://" . $r->getHttpHost() . "/admin/login/login/?username=" . $user->getName() . "&token=" . $token;
 
@@ -577,7 +582,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
         $q = "%" . $this->getParam("query") . "%";
 
-        $list = new User_List();
+        $list = new User\Listing();
         $list->setCondition("name LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ? OR id = ?", [$q, $q, $q, $q, intval($this->getParam("query"))]);
         $list->setOrder("ASC");
         $list->setOrderKey("name");

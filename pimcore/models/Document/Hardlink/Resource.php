@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Hardlink_Resource extends Document_Resource {
+namespace Pimcore\Model\Document\Hardlink;
+
+use Pimcore\Model;
+
+class Resource extends Model\Document\Resource {
 
     /**
      * Contains the valid database colums
@@ -41,7 +45,7 @@ class Document_Hardlink_Resource extends Document_Resource {
      * Get the data for the object by the given id, or by the id which is set in the object
      *
      * @param integer $id
-     * @return void
+     * @throws \Exception
      */
     public function getById($id = null) {
         try {
@@ -58,11 +62,11 @@ class Document_Hardlink_Resource extends Document_Resource {
                 $this->assignVariablesToModel($data);
             }
             else {
-                throw new Exception("Hardlink with the ID " . $this->model->getId() . " doesn't exists");
+                throw new \Exception("Hardlink with the ID " . $this->model->getId() . " doesn't exists");
             }
 
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -70,7 +74,7 @@ class Document_Hardlink_Resource extends Document_Resource {
     /**
      * Create a new record for the object in the database
      *
-     * @return void
+     * @throws \Exception
      */
     public function create() {
         try {
@@ -80,7 +84,7 @@ class Document_Hardlink_Resource extends Document_Resource {
                 "id" => $this->model->getId()
             ));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
 
@@ -89,7 +93,7 @@ class Document_Hardlink_Resource extends Document_Resource {
     /**
      * Updates the data in the object to the database
      *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
         try {
@@ -127,7 +131,7 @@ class Document_Hardlink_Resource extends Document_Resource {
 
             $this->updateLocks();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -135,14 +139,14 @@ class Document_Hardlink_Resource extends Document_Resource {
     /**
      * Deletes the object (and data) from database
      *
-     * @return void
+     * @throws \Exception
      */
     public function delete() {
         try {
             $this->db->delete("documents_hardlink", $this->db->quoteInto("id = ?", $this->model->getId()));
             parent::delete();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

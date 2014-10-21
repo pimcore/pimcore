@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Sanitycheck_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Element\Sanitycheck;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
 
     /**
@@ -53,7 +57,7 @@ class Element_Sanitycheck_Resource extends Pimcore_Model_Resource_Abstract {
         try {
             $this->db->insert("sanitycheck", $data);
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
            //probably duplicate
         }
 

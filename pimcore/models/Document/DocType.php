@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_DocType extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Document;
+
+use Pimcore\Model;
+
+class DocType extends Model\AbstractModel {
 
     /**
      * ID of the document-type
@@ -80,10 +84,10 @@ class Document_DocType extends Pimcore_Model_Abstract {
     public $modificationDate;
 
     /**
-     * Static helper to retrieve an instance of Document_DocType by the given ID
+     * Static helper to retrieve an instance of Document\DocType by the given ID
      *
      * @param integer $id
-     * @return Document_DocType
+     * @return DocType
      */
     public static function getById($id) {
 
@@ -102,7 +106,7 @@ class Document_DocType extends Pimcore_Model_Abstract {
     /**
      * Shortcut to quickly create a new instance
      *
-     * @return Document_DocType
+     * @return DocType
      */
     public static function create() {
         $type = new self();
@@ -225,7 +229,8 @@ class Document_DocType extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $module
+     * @param $module
+     * @return $this
      */
     public function setModule($module)
     {
@@ -242,7 +247,8 @@ class Document_DocType extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $modificationDate
+     * @param $modificationDate
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -259,7 +265,8 @@ class Document_DocType extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $creationDate
+     * @param $creationDate
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {
@@ -274,6 +281,4 @@ class Document_DocType extends Pimcore_Model_Abstract {
     {
         return $this->creationDate;
     }
-
-
 }

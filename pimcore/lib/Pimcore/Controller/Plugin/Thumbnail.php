@@ -13,12 +13,16 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
+
+use Pimcore\Model\Asset;
+
+class Thumbnail extends \Zend_Controller_Plugin_Abstract {
 
     /**
-     * @param Zend_Controller_Request_Abstract $request
+     * @param \Zend_Controller_Request_Abstract $request
      */
-    public function routeStartup(Zend_Controller_Request_Abstract $request) {
+    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
 
         // this is a filter which checks for common used files (by browser, crawlers, ...) and prevent the default
         // error page, because this is more resource-intensive than exiting right here
@@ -35,15 +39,15 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
                     if(file_exists($deferredConfig)) {
                         $thumbnailConfig = unserialize(file_get_contents($deferredConfig));
                         @unlink($deferredConfig); // cleanup, this isn't needed anymore
-                        if(!$thumbnailConfig instanceof Asset_Image_Thumbnail_Config) {
-                            throw new \Exception("Deferred thumbnail config file doesn't contain a valid Asset_Image_Thumbnail_Config object");
+                        if(!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
+                            throw new \Exception("Deferred thumbnail config file doesn't contain a valid \\Asset\\Image\\Thumbnail\\Config object");
                         }
                     } else {
                         // just check if the thumbnail exists -> throws exception otherwise
-                        $thumbnailConfig = Asset_Image_Thumbnail_Config::getByName($thumbnailName);
+                        $thumbnailConfig = Asset\Image\Thumbnail\Config::getByName($thumbnailName);
                     }
 
-                    if($asset instanceof Asset_Document) {
+                    if($asset instanceof Asset\Document) {
                         $page = 1;
 
                         $tmpPage = array_pop(explode("-", $thumbnailName));
@@ -55,7 +59,7 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
                         $thumbnailConfig->setName(str_replace("document_","",$thumbnailConfig->getName()));
 
                         $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getImageThumbnail($thumbnailConfig, $page);
-                    } else if ($asset instanceof Asset_Image) {
+                    } else if ($asset instanceof Asset\Image) {
                         //check if high res image is called
                         if(array_key_exists(5, $matches)) {
                             $highResFactor = (float) str_replace(array("@","x"),"", $matches[5]);
@@ -66,7 +70,7 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
                     }
 
                     $imageContent = file_get_contents($thumbnailFile);
-                    $fileExtension = Pimcore_File::getFileExtension($thumbnailFile);
+                    $fileExtension = \Pimcore\File::getFileExtension($thumbnailFile);
                     if(in_array($fileExtension, array("gif","jpeg","jpeg","png","pjpeg"))) {
                         header("Content-Type: image/".$fileExtension, true);
                     } else {
@@ -77,22 +81,24 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
                     echo $imageContent;
                     exit;
 
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     // nothing to do
-                    Logger::error("Thumbnail with name '" . $thumbnailName . "' doesn't exist");
+                    \Logger::error("Thumbnail with name '" . $thumbnailName . "' doesn't exist");
                 }
             }
         }
     }
 
-
+    /**
+     *
+     */
     public function dispatchLoopShutdown() {
 
-        if(!Asset_Image_Thumbnail::isPictureElementInUse()) {
+        if(!Asset\Image\Thumbnail::isPictureElementInUse()) {
             return;
         }
 
-        if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
+        if(!\Pimcore\Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
 

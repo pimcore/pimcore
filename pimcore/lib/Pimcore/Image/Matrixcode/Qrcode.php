@@ -14,7 +14,7 @@
  * 
  * Thanks to http://www.swetake.com/qr/qr1_en.html
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -23,11 +23,17 @@
 /**
  * Pimcore_Image_Matrixcode_Qrcode
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
+
+namespace Pimcore\Image\Matrixcode;
+
+use Pimcore\Image\Matrixcode\Qrcode\Qrspecs;
+use Pimcore\Image\Matrixcode\Qrcode\Exception; 
+
+class Qrcode extends AbstractMatrixcode
 {
 	
 	/**
@@ -47,7 +53,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
 	 * (L, M, Q or H)
 	 * @var string
 	 */
-	protected $_eccLevel = Pimcore_Image_Matrixcode_Qrcode_Qrspecs::QR_ECC_M;
+	protected $_eccLevel = Qrspecs::QR_ECC_M;
 	
 	/**
 	 * Version
@@ -81,17 +87,17 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
 
 	/**
      * Constructor
-     * @param array|Zend_Config $options 
+     * @param array|\Zend_Config $options 
      * @return void
      */
     public function __construct ($options = null)
     {
     	// initialize padding with default
-    	$this->setPadding(Pimcore_Image_Matrixcode_Qrcode_Qrspecs::DEFAULT_PADDING);
+    	$this->setPadding(Qrspecs::DEFAULT_PADDING);
     	
         if (is_array($options)) {
             $this->setOptions($options);
-        } elseif ($options instanceof Zend_Config) {
+        } elseif ($options instanceof \Zend_Config) {
             $this->setConfig($options);
         }
         
@@ -106,15 +112,15 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
     public function setEccLevel ($level)
     {
     	if($level != '') {
-			if(array_key_exists($level, Pimcore_Image_Matrixcode_Qrcode_Qrspecs::$eccLevels)) {
+			if(array_key_exists($level, Qrspecs::$eccLevels)) {
 				// level specified in letter format ('L', 'M', ...)
-    			$this->_eccLevel = Pimcore_Image_Matrixcode_Qrcode_Qrspecs::$eccLevels[strtoupper($level)];
-			}else if(in_array($level, Pimcore_Image_Matrixcode_Qrcode_Qrspecs::$eccLevels)) {
+    			$this->_eccLevel = Qrspecs::$eccLevels[strtoupper($level)];
+			}else if(in_array($level, Qrspecs::$eccLevels)) {
 				// level specified in numeric format (0,1,...)
 				$this->_eccLevel = $level;
 			}
     	}else{
-            throw new Pimcore_Image_Matrixcode_Qrcode_Exception(
+            throw new Exception(
                 'Invalid value for the ECC level'
             );
     	}
@@ -134,15 +140,15 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
     /**
      * Set version
      * @param int $version
-     * @throws Pimcore_Image_Matrixcode_Qrcode_Exception
+     * @throws Exception
      */
     public function setVersion ($version)
     {
-    	if(is_int($version) && $version <= Pimcore_Image_Matrixcode_Qrcode_Qrspecs::QR_VERSION_MAX) {
+    	if(is_int($version) && $version <= Qrspecs::QR_VERSION_MAX) {
     		$this->_version = $version;
     	}else{
-            throw new Pimcore_Image_Matrixcode_Qrcode_Exception(
-                'The version of a QR code should be between 0 and '.Pimcore_Image_Matrixcode_Qrcode_Qrspecs::QR_VERSION_MAX
+            throw new Exception(
+                'The version of a QR code should be between 0 and '. Qrspecs::QR_VERSION_MAX
             );
     	}
         return $this;
@@ -167,7 +173,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
     	if(is_int($parity) && $parity <= 255) {
     		$this->_parity = $parity;
     	}else{
-            throw new Pimcore_Image_Matrixcode_Qrcode_Exception(
+            throw new Exception(
                 'The parity of a QR code should be between 0 and 255'
             );
     	}
@@ -214,12 +220,12 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
     {
     	if ( preg_match('/[^0-9]/', $this->getText()) ) { // if contains non-numerical characters
 		    if( preg_match('/[^0-9A-Z \$\*\%\+\-\.\/\:]/',$this->getText()) ) {
-		     	return Pimcore_Image_Matrixcode_Qrcode_Qrspecs::QR_MODE_8;
+		     	return Qrspecs::QR_MODE_8;
 			} else {
-		    	return Pimcore_Image_Matrixcode_Qrcode_Qrspecs::QR_MODE_AN;
+		    	return Qrspecs::QR_MODE_AN;
 			}
 		} else {
-			return Pimcore_Image_Matrixcode_Qrcode_Qrspecs::QR_MODE_NUM;
+			return Qrspecs::QR_MODE_NUM;
 		}
     }
     
@@ -245,7 +251,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
      */
     protected function _getMaximumCodeWords()
     {
-    	return Pimcore_Image_Matrixcode_Qrcode_Qrspecs::getMatrixCapacityWords($this->_version);
+    	return Qrspecs::getMatrixCapacityWords($this->_version);
     }
     
     /**
@@ -305,7 +311,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
 		    $n3_search = chr($bit_r).chr(255).chr($bit_r).chr($bit_r).chr($bit_r).chr(255).chr($bit_r);
 		
 		   	$demerit_n3 = substr_count($hor,$n3_search)*40;
-		   	$total_bits = Pimcore_Image_Matrixcode_Qrcode_Qrspecs::getMatrixCapacityRemainder($this->_version) + ($this->_getMaximumCodeWords() << 3);
+		   	$total_bits = Qrspecs::getMatrixCapacityRemainder($this->_version) + ($this->_getMaximumCodeWords() << 3);
 		   	$demerit_n4 = floor(abs(( (100* (substr_count($ver,chr($bit_r))/($total_bits)) )-50)/5))*10;
 		
 		   	$n2_search1 = "/".chr($bit_r).chr($bit_r)."+/";
@@ -376,7 +382,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
 		
 		switch ($mode) {
 			
-			case Pimcore_Image_Matrixcode_Qrcode_Qrspecs::QR_MODE_8:
+			case Qrspecs::QR_MODE_8:
 				
 				$data_bits[$data_counter] = 8;   	// #version 1-9
 				
@@ -399,7 +405,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
 				break;
 				
 				
-			case Pimcore_Image_Matrixcode_Qrcode_Qrspecs::QR_MODE_AN:
+			case Qrspecs::QR_MODE_AN:
 				
 				$data_bits[$data_counter] = 9;   	// #version 1-9
 				
@@ -433,7 +439,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
 				break;
 				
 				
-			case Pimcore_Image_Matrixcode_Qrcode_Qrspecs::QR_MODE_NUM:
+			case Qrspecs::QR_MODE_NUM:
 				
 				$data_bits[$data_counter] = 10;  	// #version 1-9
 				
@@ -484,13 +490,13 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
 		if (!$this->_version) {	// auto-select version
 	    	$this->_version = 1;
 			for($k=0; $k<40; $k++) {
-			    if ( Pimcore_Image_Matrixcode_Qrcode_Qrspecs::$maxDataBits[$this->_eccLevel][$k] >= $total_data_bits+$codeword_num_plus[$this->_version] ) {
+			    if ( Qrspecs::$maxDataBits[$this->_eccLevel][$k] >= $total_data_bits+$codeword_num_plus[$this->_version] ) {
 			        break;
 			    }
 			    $this->_version++;
 			}
 		}
-		$max_data_bits = Pimcore_Image_Matrixcode_Qrcode_Qrspecs::$maxDataBits[$this->_eccLevel][($this->_version-1)];
+		$max_data_bits = Qrspecs::$maxDataBits[$this->_eccLevel][($this->_version-1)];
 		
 		$total_data_bits += $codeword_num_plus[$this->_version];
 		$data_bits[$codeword_num_counter_value] += $codeword_num_plus[$this->_version];
@@ -508,7 +514,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
 				$data_value[$data_counter] = 0;
 		        $data_bits[$data_counter] = $max_data_bits - $total_data_bits;
 		    } else if ($total_data_bits > $max_data_bits) {
-            	throw new Pimcore_Image_Matrixcode_Qrcode_Exception(
+            	throw new Exception(
                 	'QR code overflow error. Version cannot hold all the encoded data.'
             	);
 		    }
@@ -550,7 +556,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
 		
 		
 		// Read QR version data file
-		$byte_num = Pimcore_Image_Matrixcode_Qrcode_Qrspecs::getMatrixCapacityRemainder($this->_version) + ($max_codewords << 3);
+		$byte_num = Qrspecs::getMatrixCapacityRemainder($this->_version) + ($max_codewords << 3);
 		$filename = $this->_resourcesBasePath . DIRECTORY_SEPARATOR . $this->_resourceDataPath . DIRECTORY_SEPARATOR . "qrv".$this->_version."_".$this->_eccLevel.".dat";
 		if($fp = fopen ($filename, "rb")) {
 		    $matx	= fread($fp,$byte_num);
@@ -562,7 +568,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
 		    $rso = fread($fp,128);
 			fclose($fp);
 		}else{
-            throw new Pimcore_Image_Matrixcode_Qrcode_Exception(
+            throw new Exception(
                 $filename. 'could not be opened'
             );
 		}
@@ -662,7 +668,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
 		    }
 		}
 		
-		$matrix_remain = Pimcore_Image_Matrixcode_Qrcode_Qrspecs::getMatrixCapacityRemainder($this->_version);
+		$matrix_remain = Qrspecs::getMatrixCapacityRemainder($this->_version);
 		while ($matrix_remain){
 		    $remain_bit_temp = $matrix_remain + ($max_codewords << 3);
 		    $matrix_content[ $matrix_x_array[$remain_bit_temp] ][ $matrix_y_array[$remain_bit_temp] ]  =  ( 255 ^ $mask_array[$remain_bit_temp] );
@@ -674,7 +680,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
 		//
 		// 8. Add information data
 		//
-		$format_information = Pimcore_Image_Matrixcode_Qrcode_Qrspecs::$formatInformation;
+		$format_information = Qrspecs::$formatInformation;
 		$symbol_format_info = str_pad(decbin(hexdec($format_information[$this->_eccLevel][$this->_maskData['number']])),15,'0',STR_PAD_LEFT);
 		for($i=0; $i<15; $i++) {
 		    $content = substr( $symbol_format_info, $i, 1);
@@ -755,7 +761,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
     		return;
     	
     	$matrix_dimension = $this->_getMatrixDimension();
-    	$aPattern = Pimcore_Image_Matrixcode_Qrcode_Qrspecs::getAlignmentPattern($this->_version);
+    	$aPattern = Qrspecs::getAlignmentPattern($this->_version);
     	
     	$d = $aPattern[1] - $aPattern[0];
 		if($d < 0) {
@@ -815,7 +821,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
     	}
     	
     	$matrix_dimension = $this->_getMatrixDimension();
-    	$vPattern = Pimcore_Image_Matrixcode_Qrcode_Qrspecs::getVersionPattern($this->_version);
+    	$vPattern = Qrspecs::getVersionPattern($this->_version);
     	for($x=0; $x<6; $x++) {
     		for($y=$matrix_dimension-11; $y<=$matrix_dimension-9; $y++) {
     			if($vPattern & 1 == 1) {

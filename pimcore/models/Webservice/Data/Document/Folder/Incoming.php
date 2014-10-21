@@ -15,6 +15,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Document_Folder_Incoming extends Webservice_Data_Document_Folder {
+namespace Pimcore\Model\Webservice\Data\Document\Folder;
+
+use Pimcore\Model;
+
+class Incoming extends Model\Webservice\Data\Document\Folder {
 
 }

@@ -18,7 +18,7 @@ include("startup.php");
 
 
 try {
-    $opts = new Zend_Console_Getopt(array(
+    $opts = new \Zend_Console_Getopt(array(
         'core|c' => 'generate class map for all core files in /pimcore (usually used by the core team)',
         'website|w' => 'generate class map for all classes in include path (usually for you ;-) ) - this is the default',
         'help|h' => 'display this help'
@@ -29,7 +29,7 @@ try {
 
 try {
     $opts->parse();
-} catch (Zend_Console_Getopt_Exception $e) {
+} catch (\Zend_Console_Getopt_Exception $e) {
     echo $e->getMessage();
 }
 
@@ -45,7 +45,6 @@ if($opts->getOption("core")) {
     $paths = array(
         PIMCORE_PATH . "/lib",
         PIMCORE_PATH . "/models",
-        PIMCORE_PATH . "/modules/searchadmin/models"
     );
     $output = PIMCORE_PATH . "/config/autoload-classmap.php";
 } else {
@@ -60,7 +59,8 @@ foreach ($paths as $path) {
 
     if(!empty($path)) {
         // Get the ClassFileLocator, and pass it the library path
-        $l = new Zend_File_ClassFileLocator($path);
+        echo "current path: " . $path . "\n";
+        $l = new \Zend_File_ClassFileLocator($path);
 
         // Iterate over each element in the path, and create a map of
         // classname => filename, where the filename is relative to the library path

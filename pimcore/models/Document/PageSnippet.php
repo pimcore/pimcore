@@ -15,7 +15,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-abstract class Document_PageSnippet extends Document {
+namespace Pimcore\Model\Document;
+
+use Pimcore\Model;
+use Pimcore\Config;
+use Pimcore\Model\Document;
+
+abstract class PageSnippet extends Model\Document {
 
     /**
      * @var string
@@ -110,7 +116,7 @@ abstract class Document_PageSnippet extends Document {
 
         // hook should be also called if "save only new version" is selected
         if($callPluginHook) {
-            Pimcore::getEventManager()->trigger("document.preUpdate", $this);
+            \Pimcore::getEventManager()->trigger("document.preUpdate", $this);
         }
 
         // set date
@@ -125,9 +131,9 @@ abstract class Document_PageSnippet extends Document {
         $version = null;
 
         // only create a new version if there is at least 1 allowed
-        if(Pimcore_Config::getSystemConfig()->documents->versions->steps
-            || Pimcore_Config::getSystemConfig()->documents->versions->days) {
-            $version = new Version();
+        if(Config::getSystemConfig()->documents->versions->steps
+            || Config::getSystemConfig()->documents->versions->days) {
+            $version = new Model\Version();
             $version->setCid($this->getId());
             $version->setCtype("document");
             $version->setDate($this->getModificationDate());
@@ -138,7 +144,7 @@ abstract class Document_PageSnippet extends Document {
 
         // hook should be also called if "save only new version" is selected
         if($callPluginHook) {
-            Pimcore::getEventManager()->trigger("document.postUpdate", $this);
+            \Pimcore::getEventManager()->trigger("document.postUpdate", $this);
         }
 
         return $version;
@@ -256,7 +262,8 @@ abstract class Document_PageSnippet extends Document {
     }
 
     /**
-     * @param string $module
+     * @param $module
+     * @return $this
      */
     public function setModule($module)
     {
@@ -283,15 +290,15 @@ abstract class Document_PageSnippet extends Document {
     public function setRawElement($name, $type, $data) {
         try {
             if ($type) {
-                $class = "Document_Tag_" . ucfirst($type);
+                $class = "Document\\Tag\\" . ucfirst($type);
                 $this->elements[$name] = new $class();
                 $this->elements[$name]->setDataFromEditmode($data);
                 $this->elements[$name]->setName($name);
                 $this->elements[$name]->setDocumentId($this->getId());
             }
         }
-        catch (Exception $e) {
-            Logger::warning("can't set element " . $name . " with the type " . $type . " to the document: " . $this->getRealFullPath());
+        catch (\Exception $e) {
+            \Logger::warning("can't set element " . $name . " with the type " . $type . " to the document: " . $this->getRealFullPath());
         }
         return $this;
     }
@@ -326,7 +333,7 @@ abstract class Document_PageSnippet extends Document {
      * Get an element with the given key/name
      *
      * @param string $name
-     * @return Document_Tag
+     * @return Document\Tag
      */
     public function getElement($name) {
         $elements = $this->getElements();
@@ -340,7 +347,7 @@ abstract class Document_PageSnippet extends Document {
 
             // check for content master document (inherit data)
             if($contentMasterDocument = $this->getContentMasterDocument()) {
-                if($contentMasterDocument instanceof Document_PageSnippet) {
+                if($contentMasterDocument instanceof Document\PageSnippet) {
                     $inheritedElement = $contentMasterDocument->getElement($name);
                     if($inheritedElement) {
                         $inheritedElement = clone $inheritedElement;
@@ -362,7 +369,7 @@ abstract class Document_PageSnippet extends Document {
         // this is that the path is automatically converted to ID => when setting directly from admin UI
         if (!is_numeric($contentMasterDocumentId) && !empty($contentMasterDocumentId)) {
             $contentMasterDocument = Document::getByPath($contentMasterDocumentId);
-            if($contentMasterDocument instanceof Document_PageSnippet) {
+            if($contentMasterDocument instanceof Document\PageSnippet) {
                 $contentMasterDocumentId = $contentMasterDocument->getId();
             }
         }
@@ -391,10 +398,11 @@ abstract class Document_PageSnippet extends Document {
     }
 
     /**
-     * @param Document_PageSnippet $document
+     * @param $document
+     * @return $this
      */
     public function setContentMasterDocument($document) {
-        if($document instanceof Document_PageSnippet) {
+        if($document instanceof Document\PageSnippet) {
             $this->setContentMasterDocumentId($document->getId());
         } else {
             $this->setContentMasterDocumentId(null);
@@ -462,7 +470,7 @@ abstract class Document_PageSnippet extends Document {
      */
     public function getScheduledTasks() {
         if ($this->scheduledTasks === null) {
-            $taskList = new Schedule_Task_List();
+            $taskList = new Model\Schedule\Task\Listing();
             $taskList->setCondition("cid = ? AND ctype='document'", $this->getId());
             $this->setScheduledTasks($taskList->load());
         }
@@ -470,14 +478,17 @@ abstract class Document_PageSnippet extends Document {
     }
 
     /**
-     * @param $scheduledTasks the $scheduledTasks to set
+     * @param $scheduledTasks
+     * @return $this
      */
     public function setScheduledTasks($scheduledTasks) {
         $this->scheduledTasks = $scheduledTasks;
         return $this;
     }
 
-
+    /**
+     *
+     */
     public function saveScheduledTasks() {
         $scheduled_tasks = $this->getScheduledTasks();
         $this->getResource()->deleteAllTasks();

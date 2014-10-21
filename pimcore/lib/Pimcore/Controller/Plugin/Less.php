@@ -13,17 +13,27 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-require_once 'simple_html_dom.php';
-require_once 'lessc.inc.php';
+namespace Pimcore\Controller\Plugin;
 
-class Pimcore_Controller_Plugin_Less extends Zend_Controller_Plugin_Abstract {
+class Less extends \Zend_Controller_Plugin_Abstract {
 
+    /**
+     * @var bool
+     */
     protected $enabled = true;
+
+    /**
+     * @var
+     */
     protected $conf;
 
-    public function routeStartup(Zend_Controller_Request_Abstract $request) {
+    /**
+     * @param \Zend_Controller_Request_Abstract $request
+     * @return bool|void
+     */
+    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
 
-        $this->conf = Pimcore_Config::getSystemConfig();
+        $this->conf = \Pimcore\Config::getSystemConfig();
 
         if($request->getParam('disable_less_compiler') || $_COOKIE["disable_less_compiler"]){
             return $this->disable();
@@ -39,14 +49,20 @@ class Pimcore_Controller_Plugin_Less extends Zend_Controller_Plugin_Abstract {
 
     }
 
+    /**
+     * @return bool
+     */
     public function disable() {
         $this->enabled = false;
         return true;
     }
 
+    /**
+     *
+     */
     public function dispatchLoopShutdown() {
 
-        if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
+        if(!\Pimcore\Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
         
@@ -62,15 +78,21 @@ class Pimcore_Controller_Plugin_Less extends Zend_Controller_Plugin_Abstract {
         }
     }
 
+    /**
+     *
+     */
     protected function frontend () {
 
         $body = $this->getResponse()->getBody();
 
-        $body = Pimcore_Tool_Less::processHtml($body);
+        $body = \Pimcore\Tool\Less::processHtml($body);
 
         $this->getResponse()->setBody($body);
     }
 
+    /**
+     *
+     */
     protected function editmode () {
         $body = $this->getResponse()->getBody();
 
@@ -89,7 +111,5 @@ class Pimcore_Controller_Plugin_Less extends Zend_Controller_Plugin_Abstract {
             unset($html);
         }
     }
-
-
 }
 

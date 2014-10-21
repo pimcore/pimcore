@@ -1,16 +1,20 @@
 <?php 
 
-/** Generated at 2014-10-08T09:53:42+02:00 */
+/** Generated at 2014-10-21T11:07:05+02:00 */
 
 /**
 * Inheritance: no
 * Variants   : no
-* Changed by : admin (30)
-* IP:          192.168.9.37
+* Changed by : system (0)
+* IP:          192.168.11.104
 */
 
 
-class Object_Person extends Object_Concrete {
+namespace Pimcore\Model\Object;
+
+
+
+class Person extends Concrete {
 
 public $o_classId = 4;
 public $o_className = "person";
@@ -25,7 +29,7 @@ public $dateRegister;
 
 /**
 * @param array $values
-* @return Object_Person
+* @return \Pimcore\Model\Object\Person
 */
 public static function create($values = array()) {
 	$object = new static();
@@ -39,7 +43,7 @@ public static function create($values = array()) {
 */
 public function getGender () {
 	$preValue = $this->preGetValue("gender"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { 
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
 		return $preValue;
 	}
 	$data = $this->gender;
@@ -49,7 +53,7 @@ public function getGender () {
 /**
 * Set gender - Gender
 * @param string $gender
-* @return Object_Person
+* @return \Pimcore\Model\Object\Person
 */
 public function setGender ($gender) {
 	$this->gender = $gender;
@@ -62,7 +66,7 @@ public function setGender ($gender) {
 */
 public function getFirstname () {
 	$preValue = $this->preGetValue("firstname"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { 
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
 		return $preValue;
 	}
 	$data = $this->firstname;
@@ -72,7 +76,7 @@ public function getFirstname () {
 /**
 * Set firstname - Firstname
 * @param string $firstname
-* @return Object_Person
+* @return \Pimcore\Model\Object\Person
 */
 public function setFirstname ($firstname) {
 	$this->firstname = $firstname;
@@ -85,7 +89,7 @@ public function setFirstname ($firstname) {
 */
 public function getLastname () {
 	$preValue = $this->preGetValue("lastname"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { 
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
 		return $preValue;
 	}
 	$data = $this->lastname;
@@ -95,7 +99,7 @@ public function getLastname () {
 /**
 * Set lastname - Lastname
 * @param string $lastname
-* @return Object_Person
+* @return \Pimcore\Model\Object\Person
 */
 public function setLastname ($lastname) {
 	$this->lastname = $lastname;
@@ -108,7 +112,7 @@ public function setLastname ($lastname) {
 */
 public function getEmail () {
 	$preValue = $this->preGetValue("email"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { 
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
 		return $preValue;
 	}
 	$data = $this->email;
@@ -118,7 +122,7 @@ public function getEmail () {
 /**
 * Set email - Email
 * @param string $email
-* @return Object_Person
+* @return \Pimcore\Model\Object\Person
 */
 public function setEmail ($email) {
 	$this->email = $email;
@@ -131,7 +135,7 @@ public function setEmail ($email) {
 */
 public function getNewsletterActive () {
 	$preValue = $this->preGetValue("newsletterActive"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { 
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
 		return $preValue;
 	}
 	$data = $this->newsletterActive;
@@ -141,7 +145,7 @@ public function getNewsletterActive () {
 /**
 * Set newsletterActive - Newsletter Active
 * @param boolean $newsletterActive
-* @return Object_Person
+* @return \Pimcore\Model\Object\Person
 */
 public function setNewsletterActive ($newsletterActive) {
 	$this->newsletterActive = $newsletterActive;
@@ -154,7 +158,7 @@ public function setNewsletterActive ($newsletterActive) {
 */
 public function getNewsletterConfirmed () {
 	$preValue = $this->preGetValue("newsletterConfirmed"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { 
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
 		return $preValue;
 	}
 	$data = $this->newsletterConfirmed;
@@ -164,7 +168,7 @@ public function getNewsletterConfirmed () {
 /**
 * Set newsletterConfirmed - Newsletter Confirmed
 * @param boolean $newsletterConfirmed
-* @return Object_Person
+* @return \Pimcore\Model\Object\Person
 */
 public function setNewsletterConfirmed ($newsletterConfirmed) {
 	$this->newsletterConfirmed = $newsletterConfirmed;
@@ -177,7 +181,7 @@ public function setNewsletterConfirmed ($newsletterConfirmed) {
 */
 public function getDateRegister () {
 	$preValue = $this->preGetValue("dateRegister"); 
-	if($preValue !== null && !Pimcore::inAdmin()) { 
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
 		return $preValue;
 	}
 	$data = $this->dateRegister;
@@ -187,7 +191,7 @@ public function getDateRegister () {
 /**
 * Set dateRegister - dateRegister
 * @param Zend_Date $dateRegister
-* @return Object_Person
+* @return \Pimcore\Model\Object\Person
 */
 public function setDateRegister ($dateRegister) {
 	$this->dateRegister = $dateRegister;

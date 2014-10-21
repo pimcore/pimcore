@@ -13,7 +13,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Helper_SocialMedia {
+namespace Pimcore\Helper;
+
+use Pimcore\Tool; 
+
+class SocialMedia {
 
     /**
      * @param string|array $urls
@@ -23,14 +27,14 @@ class Pimcore_Helper_SocialMedia {
 
         $urls = (array) $urls;
 
-        $data  = Pimcore_Tool::getHttpData("https://graph.facebook.com/", array(
+        $data  = Tool::getHttpData("https://graph.facebook.com/", array(
             "ids" => implode(",",$urls)
         ));
 
         $results = array();
 
         if($data) {
-            $data = Zend_Json::decode($data);
+            $data = \Zend_Json::decode($data);
             if($data) {
                 foreach($data as $d) {
                     $shares = array_key_exists("shares", $d) ? $d["shares"] : 0;
@@ -42,6 +46,12 @@ class Pimcore_Helper_SocialMedia {
         return $results;
     }
 
+    /**
+     * @param $urls
+     * @return array
+     * @throws \Exception
+     * @throws \Zend_Http_Client_Exception
+     */
     public static function getGooglePlusShares($urls) {
 
         $urls = (array) $urls;
@@ -49,17 +59,17 @@ class Pimcore_Helper_SocialMedia {
         $results = array();
 
         foreach ($urls as $url) {
-            $client = Pimcore_Tool::getHttpClient();
+            $client = Tool::getHttpClient();
             $client->setUri("https://clients6.google.com/rpc?key=AIzaSyCKSbrvQasunBoV16zDH9R33D88CeLr9gQ");
             $client->setHeaders("Content-Type", "application/json");
             $client->setRawData('[{"method":"pos.plusones.get","id":"p","params":{"nolog":true,"id":"' . $url . '","source":"widget","userId":"@viewer","groupId":"@self"},"jsonrpc":"2.0","key":"p","apiVersion":"v1"}]');
 
             try {
-                $response = $client->request(Zend_Http_Client::POST);
+                $response = $client->request(\Zend_Http_Client::POST);
                 if($response->isSuccessful()) {
                     $data = $response->getBody();
                     if($data) {
-                        $data = Zend_Json::decode($data);
+                        $data = \Zend_Json::decode($data);
                         if($data) {
                             if(array_key_exists(0, $data)) {
                                 $results[$data[0]['result']["id"]] = $data[0]['result']['metadata']['globalCounts']['count'];
@@ -67,12 +77,11 @@ class Pimcore_Helper_SocialMedia {
                         }
                     }
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
 
             }
         }
 
         return $results;
     }
-
 }

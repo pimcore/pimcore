@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Editlock extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Element;
+
+use Pimcore\Model;
+
+class Editlock extends Model\AbstractModel {
 
     /**
      * @var integer
@@ -74,7 +78,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
             $lock->getResource()->getByElement($cid, $ctype);
             return $lock;
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             return null;
         }
     }
@@ -82,7 +86,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
     public static function lock($cid, $ctype) {
 
         // try to get user
-        if(!$user = Pimcore_Tool_Admin::getCurrentUser()) {
+        if(!$user = \Pimcore\Tool\Admin::getCurrentUser()) {
             return false;
         }
 
@@ -148,7 +152,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
      */
     public function setUserId($userId) {
         if ($userId) {
-            if ($user = User::getById($userId)) {
+            if ($user = Model\User::getById($userId)) {
                 $this->userId = (int) $userId;
                 $this->setUser($user);
             }

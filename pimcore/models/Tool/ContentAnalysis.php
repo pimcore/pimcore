@@ -15,14 +15,20 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Tool;
+
+use Pimcore\Model;
+use Pimcore\Model\Tool;
+use Pimcore\Helper\SocialMedia;
+
+class ContentAnalysis extends Model\AbstractModel {
 
     /**
      *
      */
     public static function run () {
 
-        $config = Pimcore_Config::getReportConfig()->contentanalysis;
+        $config = \Pimcore\Config::getReportConfig()->contentanalysis;
         if(!$config->enabled) {
             return;
         }
@@ -119,9 +125,9 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
                 $record["urlParameters"] = substr_count($urlParts["query"], "=");
 
                 try {
-                    $robotsTester = new Pimcore_Helper_RobotsTxt($urlParts["scheme"] . "://" . $urlParts["host"] . (array_key_exists("port", $urlParts) ? $urlParts["port"] : ""));
+                    $robotsTester = new \Pimcore\Helper\RobotsTxt($urlParts["scheme"] . "://" . $urlParts["host"] . (array_key_exists("port", $urlParts) ? $urlParts["port"] : ""));
                     $record["robotsTxtBlocked"] = (int) $robotsTester->isUrlBlocked($item["url"], "Googlebot");
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
 
                 }
 
@@ -131,7 +137,7 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
             }
 
             try {
-                $fbShares = Pimcore_Helper_SocialMedia::getFacebookShares($urls);
+                $fbShares = SocialMedia::getFacebookShares($urls);
                 if($fbShares && is_array($fbShares) && count($fbShares) > 0) {
                     foreach ($fbShares as $url => $shares) {
                         if(array_key_exists($url, $data)) {
@@ -139,12 +145,12 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
                         }
                     }
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
 
             }
 
             try {
-                $googlePlus = Pimcore_Helper_SocialMedia::getGooglePlusShares($urls);
+                $googlePlus = SocialMedia::getGooglePlusShares($urls);
                 if($googlePlus && is_array($googlePlus) && count($googlePlus) > 0) {
                     foreach ($googlePlus as $url => $shares) {
                         if(array_key_exists($url, $data)) {
@@ -152,7 +158,7 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
                         }
                     }
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
 
             }
 
@@ -163,34 +169,38 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
             sleep(5);
 
             if($i % 20 === 0) {
-                Pimcore::collectGarbage();
+                \Pimcore::collectGarbage();
             }
         }
 
         // statistics for sites
-        $sites = new Site_List();
+        $sites = new Model\Site\Listing();
         $sites = $sites->load();
 
         foreach ($sites as $site) {
-            $service = new Tool_ContentAnalysis_Service();
+            $service = new Tool\ContentAnalysis\Service();
             $overview = $service->getOverviewData($site->getId());
             self::saveAggregatedStatistics("pimcore_content_analysis_site_" . $site->getId(), $overview);
         }
 
         // statistics for default/main site
-        $service = new Tool_ContentAnalysis_Service();
+        $service = new Tool\ContentAnalysis\Service();
         $overview = $service->getOverviewData("default");
         self::saveAggregatedStatistics("pimcore_content_analysis_default", $overview);
 
         // save statistics data overall
-        $service = new Tool_ContentAnalysis_Service();
+        $service = new Tool\ContentAnalysis\Service();
         $overview = $service->getOverviewData();
         self::saveAggregatedStatistics("pimcore_content_analysis", $overview);
     }
 
+    /**
+     * @param $category
+     * @param $overview
+     */
     protected static function saveAggregatedStatistics($category, $overview) {
         foreach ($overview as $key => $value) {
-            $event = Tool_Tracking_Event::getByDate($category, null, $key, date("d"), date("m"), date("Y"));
+            $event = Tool\Tracking\Event::getByDate($category, null, $key, date("d"), date("m"), date("Y"));
             $event->setData($value);
             $event->save();
         }
