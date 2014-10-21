@@ -54,7 +54,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         }
         else
         {
-            $p = Object_Service::createFolderByPath( strftime((string)$this->parentFolderId, time()) );
+            $p = Object_Service::createFolderByPath( strftime($parentFolderId, time()) );
             $this->parentFolderId = $p->getId();
             unset($p);
         }
