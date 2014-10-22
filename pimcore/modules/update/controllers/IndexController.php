@@ -21,6 +21,14 @@ class Update_IndexController extends \Pimcore\Controller\Action\Admin {
     public function init() {
         parent::init();
 
+        if(function_exists("opcache_reset")) {
+            opcache_reset();
+        }
+
+        if(function_exists("apc_clear_cache")) {
+            apc_clear_cache();
+        }
+
         $this->checkPermission("update");
     }
 
