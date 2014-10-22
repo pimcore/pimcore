@@ -118,13 +118,12 @@ class Action extends \Zend_Controller_Action {
      * @return bool
      */
     protected function viewScriptExists($path) {
-        $scriptPath = $this->view->getScriptPaths();
-        $scriptPath = $scriptPath[0];
-
-        if (is_file($scriptPath . $path)) {
-            return true;
+        $scriptPaths = $this->view->getScriptPaths();
+        foreach ($scriptPaths as $scriptPath) {
+            if (is_file($scriptPath . $path)) {
+                return true;
+            }
         }
-        return false;
     }
 
     /**
