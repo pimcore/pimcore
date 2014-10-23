@@ -201,12 +201,11 @@ class Install_CheckController extends \Pimcore\Controller\Action {
         );
 
         // Phar to create phar archives
-        $checksPHP[] = array(
+        /*$checksPHP[] = array(
             "name" => "Phar (is writeable)",
             "link" => "http://www.php.net/phar",
             "state" => ini_get("phar.readonly") == 0 ? "ok" : "warning"
-        );
-
+        );*/
 
 
 
