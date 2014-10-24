@@ -638,6 +638,26 @@ class Pimcore {
         $autoloader->registerNamespace('Whoops');
         $autoloader->registerNamespace('Google');
 
+        // these are necessary to be backward compatible
+        // so if e.g. plugins use the namespace Object but do not include them in their own autoloader definition (plugin.xml)
+        $autoloader->registerNamespace('Tool');
+        $autoloader->registerNamespace('Webservice');
+        $autoloader->registerNamespace('Element');
+        $autoloader->registerNamespace('Thumbnail');
+        $autoloader->registerNamespace('Staticroute');
+        $autoloader->registerNamespace('Redirect');
+        $autoloader->registerNamespace('Dependency');
+        $autoloader->registerNamespace('Schedule');
+        $autoloader->registerNamespace('Translation');
+        $autoloader->registerNamespace('Glossary');
+        $autoloader->registerNamespace('Document');
+        $autoloader->registerNamespace('Object');
+        $autoloader->registerNamespace('Asset');
+        $autoloader->registerNamespace('User');
+        $autoloader->registerNamespace('Property');
+        $autoloader->registerNamespace('Version');
+        $autoloader->registerNamespace('Site');
+
         Tool::registerClassModelMappingNamespaces();
     }
 
