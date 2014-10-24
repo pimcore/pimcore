@@ -44,6 +44,16 @@ abstract class Resource extends Model\Document\Resource {
 
         foreach ($elementsRaw as $elementRaw) {
             $class = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst($elementRaw["type"]);
+
+            // this is the fallback for custom document tags using prefixes
+            // so we need to check if the class exists first
+            if(!\Pimcore\Tool::classExists($class)) {
+                $oldStyleClass = "Document_Tag_" . ucfirst($elementRaw["type"]);
+                if(\Pimcore\Tool::classExists($oldStyleClass)) {
+                    $class = $oldStyleClass;
+                }
+            }
+
             $element = new $class();
             $element->setDataFromResource($elementRaw["data"]);
             $element->setName($elementRaw["name"]);

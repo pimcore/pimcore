@@ -80,15 +80,28 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $inherited = false;
 
     /**
-     * @param string $type
-     * @param string $name
-     * @param integer $documentId
-     * @param array $config
-     * @return Tag
+     * @param $type
+     * @param $name
+     * @param $documentId
+     * @param null $config
+     * @param null $controller
+     * @param null $view
+     * @param null $editmode
+     * @return mixed
      */
     public static function factory($type, $name, $documentId, $config = null, $controller = null, $view = null, $editmode = null) {
 
         $tagClass = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst($type);
+
+        // this is the fallback for custom document tags using prefixes
+        // so we need to check if the class exists first
+        if(!\Pimcore\Tool::classExists($tagClass)) {
+            $oldStyleClass = "Document_Tag_" . ucfirst($type);
+            if(\Pimcore\Tool::classExists($oldStyleClass)) {
+                $tagClass = $oldStyleClass;
+            }
+        }
+
         $tag = new $tagClass();
         $tag->setName($name);
         $tag->setDocumentId($documentId);

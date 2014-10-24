@@ -470,8 +470,8 @@ class Tool {
 
         if($map = Config::getModelClassMappingConfig()) {
             $tmpClassName = $map->{$lookupName};
-            $tmpClassName = "\\" . ltrim($tmpClassName, "\\");
             if($tmpClassName) {
+                $tmpClassName = "\\" . ltrim($tmpClassName, "\\");
                 if(self::classExists($tmpClassName)) {
                     if(is_subclass_of($tmpClassName, $sourceClassName)) {
                         $targetClassName = "\\" . ltrim($tmpClassName, "\\"); // ensure class is in global namespace
