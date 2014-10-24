@@ -128,6 +128,7 @@ class Definition extends Model\Object\Fieldcollection\Definition {
         $extendClass = "Object\\Objectbrick\\Data\\AbstractData";
         if ($this->getParentClass()) {
             $extendClass = $this->getParentClass();
+            $extendClass = "\\" . ltrim($extendClass, "\\");
         }
 
         // create class

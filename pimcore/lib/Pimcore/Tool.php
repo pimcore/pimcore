@@ -549,6 +549,20 @@ class Tool {
     }
 
     /**
+     * @static
+     * @param $class
+     * @return bool
+     */
+    public static function interfaceExists ($class) {
+        \Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(true);
+        $class = "\\" . ltrim($class, "\\");
+        $exists = interface_exists($class);
+        \Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(false);
+
+        return $exists;
+    }
+
+    /**
      * @param $message
      */
     public static function exitWithError($message) {

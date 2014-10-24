@@ -208,6 +208,7 @@ class Definition extends Model\AbstractModel {
         $extendClass = "Object\\Fieldcollection\\Data\\AbstractData";
         if ($this->getParentClass()) {
             $extendClass = $this->getParentClass();
+            $extendClass = "\\" . ltrim($extendClass, "\\");
         }
 
         

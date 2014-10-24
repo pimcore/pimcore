@@ -15,6 +15,8 @@
 
 namespace Pimcore\Loader;
 
+use Pimcore\Tool;
+
 class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
 
     public function autoload($class) {
@@ -97,7 +99,7 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
                 if(!class_exists($namespacedClass, false) && !interface_exists($namespacedClass, false)) {
                     class_alias($class, $namespacedClass);
                 }
-            } else if(class_exists($namespacedClass) || interface_exists($namespacedClass)) {
+            } else if(Tool::classExists($namespacedClass) || Tool::interfaceExists($namespacedClass)) {
                 if(!class_exists($class, false) && !interface_exists($class, false)) {
                     class_alias($namespacedClass, $class);
                 }

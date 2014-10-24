@@ -203,7 +203,7 @@ class Areablock extends Model\Document\Tag {
                 include_once($action);
 
                 $actionClassname = "Document\\Tag\\Area\\" . ucfirst($this->currentIndex["type"]);
-                if(Tool::classExists($actionClassname)) {
+                if(class_exists($actionClassname, false)) {
                     $actionObject = new $actionClassname();
 
                     if($actionObject instanceof Area\AbstractArea) {
