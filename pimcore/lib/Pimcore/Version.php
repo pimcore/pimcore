@@ -35,11 +35,11 @@ class Version {
   'URL' => 'http',
   'Repository Root' => 'http',
   'Repository UUID' => '1f8fe7d8-47f0-464c-8d0a-336f4953ab05',
-  'Revision' => '5421',
+  'Revision' => '5426',
   'Node Kind' => 'directory',
   'Last Changed Author' => 'brusch',
-  'Last Changed Rev' => '5421',
-  'Last Changed Date' => '2014-10-21 13',
+  'Last Changed Rev' => '5426',
+  'Last Changed Date' => '2014-10-24 14',
 );
 
     /**
