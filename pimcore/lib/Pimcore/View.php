@@ -212,35 +212,39 @@ class View extends \Zend_View {
                 $content = $this->action("default", "default", null, $params);
             }
 
-            // we need to parse the returned html from the document include
-            // a component id is added to every first level container (if available)
-            // in editmode we additionally add a class and the pimcore id / type so that it can be opened in editmode using the context menu
-            $editmodeClass = " pimcore_editable pimcore_tag_inc ";
-            include_once("simple_html_dom.php");
-            if($html = str_get_html($content)) {
-                $childs = $html->find("*");
-                if(is_array($childs)) {
-                    foreach ($childs as $child) {
-                        if($this->editmode) {
+            // in editmode, we need to parse the returned html from the document include
+            // add a class and the pimcore id / type so that it can be opened in editmode using the context menu
+            // if there's no first level HTML container => add one (wrapper)
+            if($this->editmode) {
+
+                include_once("simple_html_dom.php");
+
+                $editmodeClass = " pimcore_editable pimcore_tag_inc ";
+
+                // this is if the content that is included does already contain markup/html
+                // this is needed by the editmode to highlight included documents
+                if($html = str_get_html($content)) {
+                    $childs = $html->find("*");
+                    if(is_array($childs)) {
+                        foreach ($childs as $child) {
                             $child->class = $child->class . $editmodeClass;
                             $child->pimcore_type = $include->getType();
                             $child->pimcore_id = $include->getId();
                         }
-
-                        $child->{"data-component-id"} = 'document:' . $this->document->getId() . '.type:inc.name:' . $include->getId();
                     }
-                }
-                $content = $html->save();
+                    $content = $html->save();
 
-                $html->clear();
-                unset($html);
-            } else {
-                if($this->editmode) {
+                    $html->clear();
+                    unset($html);
+                } else {
                     // add a div container if the include doesn't contain markup/html
                     $content = '<div class="' . $editmodeClass . '" pimcore_id="' . $include->getId() . '" pimcore_type="' . $include->getType() . '">' . $content . '</div>';
                 }
             }
 
+            // we need to add a component id to all first level html containers
+            $componentId = 'document:' . $this->document->getId() . '.type:inc.name:' . $include->getId();;
+            $content = \Pimcore\Tool\Frontend::addComponentIdToHtml($content, $componentId);
         }
 
         \Zend_Registry::set("pimcore_editmode", $editmodeBackup);

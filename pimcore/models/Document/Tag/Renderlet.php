@@ -144,19 +144,8 @@ class Renderlet extends Model\Document\Tag {
                         $params);
 
                     // we need to add a component id to all first level html containers
-                    include_once("simple_html_dom.php");
-                    if($html = str_get_html($content)) {
-                        $childs = $html->find("*");
-                        if(is_array($childs)) {
-                            foreach ($childs as $child) {
-                                $child->{"data-component-id"} = 'document:' . $this->getDocumentId() . '.type:renderlet.name:' . $this->type . "-" . $this->subtype . "-" . $this->id;
-                            }
-                        }
-                        $content = $html->save();
-
-                        $html->clear();
-                        unset($html);
-                    }
+                    $componentId = 'document:' . $this->getDocumentId() . '.type:tag-renderlet.name:' . $this->type . "-" . $this->subtype . "-" . $this->id;
+                    $content = \Pimcore\Tool\Frontend::addComponentIdToHtml($content, $componentId);
 
                     return $content;
                 } catch (\Exception $e) {

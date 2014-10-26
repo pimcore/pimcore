@@ -125,4 +125,18 @@ class Frontend {
         }
         return false;
     }
+
+    /**
+     * @param $content
+     * @param $id
+     * @return string
+     */
+    public static function addComponentIdToHtml($content, $id) {
+
+        // well the regex here is not the perfect solution, but it should work for most cases and is much faster than
+        // using a HTML/XML parser or simple_dom_html, as this is not a critical information, the regex is fine here
+        $content = preg_replace("@<([a-z]+)([^>]*)(?<!\/)>@", '<$1$2 data-component-id="' . $id . '">', $content, 1);
+
+        return $content;
+    }
 }
