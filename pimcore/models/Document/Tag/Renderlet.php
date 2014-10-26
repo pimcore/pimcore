@@ -138,10 +138,27 @@ class Renderlet extends Model\Document\Tag {
 
             if ($this->getView() != null) {
                 try {
-                    return $this->getView()->action($this->options["action"],
+                    $content = $this->getView()->action($this->options["action"],
                         $this->options["controller"],
                         isset($this->options["module"]) ? $this->options["module"] : null,
                         $params);
+
+                    // we need to add a component id to all first level html containers
+                    include_once("simple_html_dom.php");
+                    if($html = str_get_html($content)) {
+                        $childs = $html->find("*");
+                        if(is_array($childs)) {
+                            foreach ($childs as $child) {
+                                $child->{"data-component-id"} = 'document:' . $this->getDocumentId() . '.type:renderlet.name:' . $this->type . "-" . $this->subtype . "-" . $this->id;
+                            }
+                        }
+                        $content = $html->save();
+
+                        $html->clear();
+                        unset($html);
+                    }
+
+                    return $content;
                 } catch (\Exception $e) {
                     if(\Pimcore::inDebugMode()) {
                         return "ERROR: " . $e->getMessage() . " (for details see debug.log)";

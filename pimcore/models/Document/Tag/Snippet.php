@@ -123,6 +123,21 @@ class Snippet extends Model\Document\Tag {
                             Cache::save($content, $cacheKey, array("output"), $cacheConfig["lifetime"]);
                         }
 
+                        // we need to add a component id to all first level html containers
+                        include_once("simple_html_dom.php");
+                        if($html = str_get_html($content)) {
+                            $childs = $html->find("*");
+                            if(is_array($childs)) {
+                                foreach ($childs as $child) {
+                                    $child->{"data-component-id"} = 'document:' . $this->getDocumentId() . '.type:inc.name:' . $this->snippet->getId();
+                                }
+                            }
+                            $content = $html->save();
+
+                            $html->clear();
+                            unset($html);
+                        }
+
                         return $content;
                     }
                     return "";

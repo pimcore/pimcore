@@ -247,7 +247,8 @@ class Areablock extends Model\Document\Tag {
                 if(method_exists($actionObject,"getBrickHtmlTagOpen")) {
                     echo $actionObject->getBrickHtmlTagOpen($this);
                 }else{
-                    echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content">';
+                    $htmlSectionId = 'document:' . $this->getDocumentId() . '.type:area.name:' . $this->getName() . "--" . ($this->getCurrentIndex() ? $this->getCurrentIndex() : "0") . "--" . $this->currentIndex["type"];
+                    echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content" data-component-id="' . $htmlSectionId . '">';
                 }
 
                 if(is_file($edit) && $editmode) {
