@@ -285,13 +285,18 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
         $configuration["fieldtype"] = "panel";
         $configuration["name"] = "pimcore_root";
 
-        $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration);
-        $customLayout->setLayoutDefinitions($layout);
-        $customLayout->setName($values["name"]);
-        $customLayout->setDescription($values["description"]);
-        $customLayout->save();
+        try {
+            $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
+            $customLayout->setLayoutDefinitions($layout);
+            $customLayout->setName($values["name"]);
+            $customLayout->setDescription($values["description"]);
+            $customLayout->save();
 
-        $this->_helper->json(array("success" => true, "id" => $customLayout->getId(), "data" => $customLayout));
+            $this->_helper->json(["success" => true, "id" => $customLayout->getId(), "data" => $customLayout]);
+        } catch (\Exception $e) {
+            \Logger::error($e->getMessage());
+            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+        }
     }
 
     public function saveAction() {
@@ -322,33 +327,38 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
 
         $class->setValues($values);
 
-        $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration);
+        try {
+            $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
 
-        $class->setLayoutDefinitions($layout);
+            $class->setLayoutDefinitions($layout);
 
-        $class->setUserModification($this->user->getId());
-        $class->setModificationDate(time());
+            $class->setUserModification($this->user->getId());
+            $class->setModificationDate(time());
 
-        $propertyVisibility = array();
-        foreach ($values as $key => $value) {
-            if (preg_match("/propertyVisibility/i", $key)) {
-                if (preg_match("/\.grid\./i", $key)) {
-                    $propertyVisibility["grid"][preg_replace("/propertyVisibility\.grid\./i", "", $key)] = (bool) $value;
-                } else if (preg_match("/\.search\./i", $key)) {
-                    $propertyVisibility["search"][preg_replace("/propertyVisibility\.search\./i", "", $key)] = (bool) $value;
+            $propertyVisibility = array();
+            foreach ($values as $key => $value) {
+                if (preg_match("/propertyVisibility/i", $key)) {
+                    if (preg_match("/\.grid\./i", $key)) {
+                        $propertyVisibility["grid"][preg_replace("/propertyVisibility\.grid\./i", "", $key)] = (bool) $value;
+                    } else if (preg_match("/\.search\./i", $key)) {
+                        $propertyVisibility["search"][preg_replace("/propertyVisibility\.search\./i", "", $key)] = (bool) $value;
+                    }
                 }
             }
+            if (!empty($propertyVisibility)) {
+                $class->setPropertyVisibility($propertyVisibility);
+            }
+
+            $class->save();
+
+            // set the fielddefinitions to null because we don't need them in the response
+            $class->setFieldDefinitions(null);
+
+            $this->_helper->json(array("success" => true, "class" => $class));
+        } catch (\Exception $e) {
+            \Logger::error($e->getMessage());
+            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
         }
-        if (!empty($propertyVisibility)) {
-            $class->setPropertyVisibility($propertyVisibility);
-        }
-
-        $class->save();
-
-        // set the fielddefinitions to null because we don't need them in the response
-        $class->setFieldDefinitions(null);
-
-        $this->_helper->json(array("success" => true, "class" => $class));
     }
 
 
@@ -388,11 +398,15 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
         $customLayoutId = $this->getParam("id");
         $customLayout = Object\ClassDefinition\CustomLayout::getById($customLayoutId);
         if ($customLayout) {
-            $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-            $customLayout->setLayoutDefinitions($layout);
-            $customLayout->setDescription($importData["description"]);
-            $customLayout->save();
-            $success = true;
+            try {
+                $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($importData["layoutDefinitions"], true);
+                $customLayout->setLayoutDefinitions($layout);
+                $customLayout->setDescription($importData["description"]);
+                $customLayout->save();
+                $success = true;
+            } catch (\Exception $e) {
+                \Logger::error($e->getMessage());
+            }
         }
 
         $this->removeViewRenderer();
@@ -532,29 +546,32 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
 
     public function fieldcollectionUpdateAction() {
 
+        try {
+            $fc = new Object\Fieldcollection\Definition();
+            $fc->setKey($this->getParam("key"));
 
-        $fc = new Object\Fieldcollection\Definition();
-        $fc->setKey($this->getParam("key"));
+            if ($this->getParam("values")) {
+                $values = \Zend_Json::decode($this->getParam("values"));
+                $fc->setParentClass($values["parentClass"]);
+            }
 
-        if ($this->getParam("values")) {
-            $values = \Zend_Json::decode($this->getParam("values"));
-            $fc->setParentClass($values["parentClass"]);
+            if ($this->getParam("configuration")) {
+                $configuration = \Zend_Json::decode($this->getParam("configuration"));
+
+                $configuration["datatype"] = "layout";
+                $configuration["fieldtype"] = "panel";
+
+                $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
+                $fc->setLayoutDefinitions($layout);
+            }
+
+            $fc->save();
+
+            $this->_helper->json(array("success" => true, "id" => $fc->getKey()));
+        } catch (\Exception $e) {
+            \Logger::error($e->getMessage());
+            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
         }
-
-        if ($this->getParam("configuration")) {
-            $configuration = \Zend_Json::decode($this->getParam("configuration"));
-
-            $configuration["datatype"] = "layout";
-            $configuration["fieldtype"] = "panel";
-
-            $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration);
-            $fc->setLayoutDefinitions($layout);
-        }
-
-
-        $fc->save();
-
-        $this->_helper->json(array("success" => true, "id" => $fc->getKey()));
     }
 
     public function importFieldcollectionAction() {
@@ -706,31 +723,34 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
 
     public function objectbrickUpdateAction() {
 
+        try {
+            $fc = new Object\Objectbrick\Definition();
+            $fc->setKey($this->getParam("key"));
 
-        $fc = new Object\Objectbrick\Definition();
-        $fc->setKey($this->getParam("key"));
+            if ($this->getParam("values")) {
+                $values = \Zend_Json::decode($this->getParam("values"));
 
-        if ($this->getParam("values")) {
-            $values = \Zend_Json::decode($this->getParam("values"));
+                $fc->setParentClass($values["parentClass"]);
+                $fc->setClassDefinitions($values["classDefinitions"]);
+            }
 
-            $fc->setParentClass($values["parentClass"]);
-            $fc->setClassDefinitions($values["classDefinitions"]);
+            if ($this->getParam("configuration")) {
+                $configuration = \Zend_Json::decode($this->getParam("configuration"));
+
+                $configuration["datatype"] = "layout";
+                $configuration["fieldtype"] = "panel";
+
+                $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
+                $fc->setLayoutDefinitions($layout);
+            }
+
+            $fc->save();
+
+            $this->_helper->json(array("success" => true, "id" => $fc->getKey()));
+        } catch (\Exception $e) {
+            \Logger::error($e->getMessage());
+            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
         }
-
-        if ($this->getParam("configuration")) {
-            $configuration = \Zend_Json::decode($this->getParam("configuration"));
-
-            $configuration["datatype"] = "layout";
-            $configuration["fieldtype"] = "panel";
-
-            $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration);
-            $fc->setLayoutDefinitions($layout);
-        }
-
-
-        $fc->save();
-
-        $this->_helper->json(array("success" => true, "id" => $fc->getKey()));
     }
 
     public function importObjectbrickAction() {
@@ -964,10 +984,15 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
                         $layoutDefinition->setClassId($classId);
                     }
 
-                    $layoutDefinition->setDescription($item["description"]);
-                    $layoutDef = Object\ClassDefinition\Service::generateLayoutTreeFromArray($item["layoutDefinitions"]);
-                    $layoutDefinition->setLayoutDefinitions($layoutDef);
-                    $layoutDefinition->save();
+                    try {
+                        $layoutDefinition->setDescription($item["description"]);
+                        $layoutDef = Object\ClassDefinition\Service::generateLayoutTreeFromArray($item["layoutDefinitions"], true);
+                        $layoutDefinition->setLayoutDefinitions($layoutDef);
+                        $layoutDefinition->save();
+                    } catch (\Exception $e) {
+                        \Logger::error($e->getMessage());
+                        $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+                    }
                 }
 
             }
