@@ -247,13 +247,18 @@ class Areablock extends Model\Document\Tag {
                 if(method_exists($actionObject,"getBrickHtmlTagOpen")) {
                     echo $actionObject->getBrickHtmlTagOpen($this);
                 }else{
-                    $dataComponentId = 'document:' . $this->getDocumentId() . '.type:tag-areablock.name:' . $this->getName() . "--" . ($this->getCurrentIndex() ? $this->getCurrentIndex() : "0") . "--" . $this->currentIndex["type"];
-                    $crc = \Pimcore\Tool\Frontend::getCurrentRequestUrlCrc32();
-                    if($crc) {
-                        $dataComponentId = "uri:" . $crc . "." . $dataComponentId;
+                    $dataComponentAttribute = "";
+                    if(\Pimcore\View::addComponentIds()) {
+                        $dataComponentId = 'document:' . $this->getDocumentId() . '.type:tag-areablock.name:' . $this->getName() . "--" . ($this->getCurrentIndex() ? $this->getCurrentIndex() : "0") . "--" . $this->currentIndex["type"];
+                        $crc = \Pimcore\Tool\Frontend::getCurrentRequestUrlCrc32();
+                        if ($crc) {
+                            $dataComponentId = "uri:" . $crc . "." . $dataComponentId;
+                        }
+
+                        $dataComponentAttribute = 'data-component-id="' . $dataComponentId . '"';
                     }
 
-                    echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content" data-component-id="' . $dataComponentId . '">';
+                    echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content" ' . $dataComponentAttribute . '>';
                 }
 
                 if(is_file($edit) && $editmode) {

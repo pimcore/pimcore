@@ -25,6 +25,10 @@ class View extends \Zend_View {
      */
     protected $request;
 
+    /**
+     * @var bool
+     */
+    protected static $addComponentIds = false;
 
     /**
      * @param $type
@@ -387,4 +391,21 @@ class View extends \Zend_View {
 
         return $viewSuffix;
     }
+
+    /**
+     * @return boolean
+     */
+    public static function addComponentIds()
+    {
+        return self::$addComponentIds;
+    }
+
+    /**
+     * @param boolean $addComponentIds
+     */
+    public static function setAddComponentIds($addComponentIds)
+    {
+        self::$addComponentIds = $addComponentIds;
+    }
+
 }
