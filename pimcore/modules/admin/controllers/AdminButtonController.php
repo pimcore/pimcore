@@ -18,6 +18,39 @@ use Pimcore\Model;
 
 class Admin_AdminButtonController extends \Pimcore\Controller\Action\Admin {
 
+    public function init() {
+        if($this->getParam("action") != "script") {
+            parent::init();
+        }
+    }
+
+    public function scriptAction() {
+        // this is just to ensure that the script is only embedded if the user is logged in
+
+        // check the login manually
+        $user = \Pimcore\Tool\Authentication::authenticateSession();
+        if($user instanceof Model\User) {
+
+            $personas = array();
+            $list = new Model\Tool\Targeting\Persona\Listing();
+            foreach($list->load() as $persona) {
+                $personas[$persona->getId()] = $persona->getName();
+            }
+
+            echo 'try {
+                var pimcore = pimcore || {};
+                pimcore["admin"] = {documentId: ' . $this->getParam("documentId") . '};
+                pimcore["personas"] = ' . \Zend_Json::encode($personas) .';
+            } catch (e) {}';
+
+            echo "\n\n\n";
+
+            echo file_get_contents(PIMCORE_PATH . "/static/js/frontend/admin/admin.js");
+        }
+
+        exit;
+    }
+
     public function featureRequestAction () {
 
         $type = "feature";
