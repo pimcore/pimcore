@@ -248,6 +248,11 @@ class Areablock extends Model\Document\Tag {
                     echo $actionObject->getBrickHtmlTagOpen($this);
                 }else{
                     $dataComponentId = 'document:' . $this->getDocumentId() . '.type:tag-areablock.name:' . $this->getName() . "--" . ($this->getCurrentIndex() ? $this->getCurrentIndex() : "0") . "--" . $this->currentIndex["type"];
+                    $crc = \Pimcore\Tool\Frontend::getCurrentRequestUrlCrc32();
+                    if($crc) {
+                        $dataComponentId = "uri:" . $crc . "." . $dataComponentId;
+                    }
+
                     echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content" data-component-id="' . $dataComponentId . '">';
                 }
 
