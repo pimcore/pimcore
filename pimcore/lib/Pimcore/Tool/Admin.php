@@ -79,7 +79,7 @@ class Admin {
             File::put($scriptPath, $scriptContent);
         }
 
-        return str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath);
+        return preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", $scriptPath);
     }
 
     /**
@@ -96,7 +96,7 @@ class Admin {
             File::put($stylesheetPath, $stylesheetContent);
         }
 
-        return str_replace(PIMCORE_DOCUMENT_ROOT,"",$stylesheetPath);
+        return preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", $stylesheetPath);
     }
 
 
