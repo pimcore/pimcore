@@ -209,7 +209,7 @@ class OnlineShop_OfferTool_Impl_DefaultService implements OnlineShop_OfferTool_I
         return $offer;
     }
 
-    public function updateOfferFromCart(OnlineShop_OfferTool_AbstractOffer $offer, OnlineShop_Framework_ICart $cart, array $excludeItems = array()) {
+    public function updateOfferFromCart(OnlineShop_OfferTool_AbstractOffer $offer, OnlineShop_Framework_ICart $cart, array $excludeItems = array(), $save = true) {
         $excludedItemKeys = $this->getExcludedItemKeys($excludeItems);
 
 
@@ -248,7 +248,9 @@ class OnlineShop_OfferTool_Impl_DefaultService implements OnlineShop_OfferTool_I
         //Update total price
         $offer = $this->updateTotalPriceOfOffer($offer);
 
-        $offer->save();
+        if ($save) {
+            $offer->save();
+        }
 
         return $offer;
     }
