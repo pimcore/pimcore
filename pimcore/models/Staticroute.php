@@ -505,7 +505,10 @@ class Staticroute extends AbstractModel {
             if (is_array($matches) && count($matches) > 1) {
                 foreach ($matches as $index => $match) {
                     if ($variables[$index - 1]) {
-                        $params[$variables[$index - 1]] = urldecode($match[0]);
+                        $paramValue = urldecode($match[0]);
+                        if(!empty($paramValue) || !array_key_exists($variables[$index - 1], $params)) {
+                            $params[$variables[$index - 1]] = $paramValue;
+                        }
                     }
                 }
             }
