@@ -267,6 +267,9 @@ class Processor {
 
         \Logger::debug("Thumbnail " . $path . " generated in " . (StopWatch::microtime_float() - $startTime) . " seconds");
 
+        // set proper permissions
+        @chmod($fsPath, File::getDefaultMode());
+
         // quick bugfix / workaround, it seems that imagemagick / image optimizers creates sometimes empty PNG chunks (total size 33 bytes)
         // no clue why it does so as this is not continuous reproducible, and this is the only fix we can do for now
         // if the file is corrupted the file will be created on the fly when requested by the browser (because it's deleted here)

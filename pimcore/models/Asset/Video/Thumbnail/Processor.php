@@ -209,6 +209,9 @@ class Processor {
                 }
                 \Logger::info("finished video " . $converter->getFormat() . " to " . $converter->getDestinationFile());
 
+                // set proper permissions
+                @chmod($converter->getDestinationFile(), File::getDefaultMode());
+
                 if($converter->getConversionStatus() !== "error") {
                     $formats[$converter->getFormat()] = str_replace(PIMCORE_DOCUMENT_ROOT, "", $converter->getDestinationFile());
                 } else {
