@@ -7,7 +7,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
     /**
      * @var string
      */
-    protected $endpoint;
+    protected $endpoint = [];
 
     /**
      * @var string
@@ -49,11 +49,13 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
         if($xml->mode == 'live')
         {
-            $this->endpoint = 'https://payment.datatrans.biz/upp/jsp/XML_authorize.jsp';
+            $this->endpoint['form'] = 'https://payment.datatrans.biz/upp/jsp/upStart.jsp';
+            $this->endpoint['xml'] = 'https://payment.datatrans.biz/upp/jsp/XML_authorize.jsp';
         }
         else
         {
-            $this->endpoint = 'https://pilot.datatrans.biz/upp/jsp/XML_authorize.jsp';
+            $this->endpoint['form'] = 'https://pilot.datatrans.biz/upp/jsp/upStart.jsp';
+            $this->endpoint['xml'] = 'https://pilot.datatrans.biz/upp/jsp/XML_authorize.jsp';
         }
     }
 
@@ -99,7 +101,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
         // create form
         $form = new Zend_Form();
-        $form->setAction( 'https://pilot.datatrans.biz/upp/jsp/upStart.jsp' );
+        $form->setAction( $this->endpoint['form'] );
         $form->setMethod( 'post' );
 
         // auth
@@ -236,7 +238,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
      * @param OnlineShop_Framework_IPrice $price
      * @param string                      $reference
      *
-     * @return OnlineShop_Framework_Impl_Payment_Status|OnlineShop_Framework_Payment_IStatus
+     * @return OnlineShop_Framework_Payment_IStatus
      * @throws Exception
      */
     public function executeDebit(OnlineShop_Framework_IPrice $price = null, $reference = null)
@@ -336,7 +338,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
             , $price->getCurrency()->getShortName()
         );
 
-        $ch = curl_init( 'https://pilot.datatrans.biz/upp/jsp/XML_processor.jsp' );
+        $ch = curl_init( $this->endpoint['xml'] );
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -458,7 +460,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         );
 
 
-        $ch = curl_init( $this->endpoint );
+        $ch = curl_init( $this->endpoint['xml'] );
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_POST, 1);
