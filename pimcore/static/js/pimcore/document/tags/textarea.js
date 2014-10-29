@@ -102,6 +102,12 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
         }
     },
 
+    clearText: function (text) {
+        text = str_replace("\r\n", " ", text);
+        text = str_replace("\n", " ", text);
+        return text;
+    },
+
     checkValue: function () {
 
         var value = this.element.dom.innerHTML;
