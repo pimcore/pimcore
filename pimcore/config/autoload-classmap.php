@@ -102,7 +102,7 @@ return array (
   'Pimcore\\Document\\Adapter' => $pdr . '/pimcore/lib/Pimcore/Document/Adapter.php',
   'Pimcore\\Document\\Adapter\\LibreOffice' => $pdr . '/pimcore/lib/Pimcore/Document/Adapter/LibreOffice.php',
   'Pimcore\\Document\\Adapter\\Ghostscript' => $pdr . '/pimcore/lib/Pimcore/Document/Adapter/Ghostscript.php',
-  'Pimcore\\Helper\\Auth\\Adapter\\Http\\ResolverStatic' => $pdr . '/pimcore/lib/Pimcore/Helper/Auth/Adapter/Http/Static.php',
+  'Pimcore\\Helper\\Auth\\Adapter\\Http\\ResolverStatic' => $pdr . '/pimcore/lib/Pimcore/Helper/Auth/Adapter/Http/ResolverStatic.php',
   'Pimcore\\Helper\\ImageChart' => $pdr . '/pimcore/lib/Pimcore/Helper/ImageChart.php',
   'Pimcore\\Helper\\Mail' => $pdr . '/pimcore/lib/Pimcore/Helper/Mail.php',
   'Pimcore\\Helper\\Dashboard' => $pdr . '/pimcore/lib/Pimcore/Helper/Dashboard.php',
