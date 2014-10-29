@@ -25,7 +25,7 @@ class Resource extends Model\Resource\AbstractResource {
      *
      */
     public function database () {
-
+        
         $mysqlInstallScript = file_get_contents(PIMCORE_PATH . "/modules/install/mysql/install.sql");
 
         // remove comments in SQL script

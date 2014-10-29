@@ -247,7 +247,11 @@ class View extends \Zend_View {
             }
 
             // we need to add a component id to all first level html containers
-            $componentId = 'document:' . $this->document->getId() . '.type:inc.name:' . $include->getId();;
+            $componentId = "";
+            if($this->document instanceof Document) {
+                $componentId .= 'document:' . $this->document->getId() . '.';
+            }
+            $componentId .= 'type:inc.name:' . $include->getId();;
             $content = \Pimcore\Tool\Frontend::addComponentIdToHtml($content, $componentId);
         }
 
