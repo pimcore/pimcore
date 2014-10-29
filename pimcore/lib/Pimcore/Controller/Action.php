@@ -79,6 +79,7 @@ class Action extends \Zend_Controller_Action {
 
         \Zend_Layout::startMvc();
         $layout = \Zend_Layout::getMvcInstance();
+        $layout->enableLayout();
         $layout->setViewSuffix(\Pimcore\View::getViewScriptSuffix());
     }
 
