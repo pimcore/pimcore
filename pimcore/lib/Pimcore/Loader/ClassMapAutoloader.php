@@ -55,9 +55,6 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
             }
         }
 
-        // check if the class is a model, if so, load it
-        $this->loadModel($class);
-
         // compatibility layer from prefixed to namespaced e.g. Document => Pimcore\Model\Document
         $isLegacyClass = preg_match("/^(Pimcore_|Asset|Dependency|Document|Element|Glossary|Metadata|Object|Property|Redirect|Schedule|Site|Staticroute|Tool|Translation|User|Version|Webservice|WebsiteSetting|Search)/", $class);
         if(!class_exists($class, false) && !interface_exists($class, false) && $isLegacyClass) {
@@ -94,12 +91,7 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
 
             $class = "\\" . ltrim($class, "\\"); // ensure that the class is in the global namespace
 
-            if(class_exists($class, false) || interface_exists($class, false)) {
-                // this is mainly for objects, because loadModel() will load the legacy class e.g. Object_News, so we need to create an alias for the namspaced name
-                if(!class_exists($namespacedClass, false) && !interface_exists($namespacedClass, false)) {
-                    class_alias($class, $namespacedClass);
-                }
-            } else if(Tool::classExists($namespacedClass) || Tool::interfaceExists($namespacedClass)) {
+            if(Tool::classExists($namespacedClass) || Tool::interfaceExists($namespacedClass)) {
                 if(!class_exists($class, false) && !interface_exists($class, false)) {
                     class_alias($namespacedClass, $class);
                 }
