@@ -232,9 +232,9 @@ class Console {
      * @throws \Exception
      */
     public static function checkExecutingUser($allowedUsers = array()){
-        $owner = fileowner(ConfigURATION_SYSTEM);
+        $owner = fileowner(PIMCORE_CONFIGURATION_SYSTEM);
         if($owner == false){
-            throw new \Exception("Couldn't get user from file " . ConfigURATION_SYSTEM);
+            throw new \Exception("Couldn't get user from file " . PIMCORE_CONFIGURATION_SYSTEM);
         }
         $userData = posix_getpwuid($owner);
         $allowedUsers[] = $userData['name'];
