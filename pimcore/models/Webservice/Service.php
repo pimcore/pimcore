@@ -628,7 +628,7 @@ class Service
     {
         try {
             if ($wsDocument instanceof Webservice\Data\Object\Concrete\In) {
-                $wsDocument->type = "object";
+//                $wsDocument->type = "object";
                 $classname = "\\Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className);
                 if (Tool::classExists($classname)) {
                     $object = new $classname();
