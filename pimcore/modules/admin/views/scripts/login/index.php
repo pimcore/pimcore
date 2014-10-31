@@ -141,7 +141,7 @@ $config = \Pimcore\Config::getSystemConfig();
     $("#username").select();
 </script>
 
-<script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1&build=<?php echo \Pimcore\Version::getRevision(); ?>"></script>
+<script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1"></script>
 
 </body>
 </html>
