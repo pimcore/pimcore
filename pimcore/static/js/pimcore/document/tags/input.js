@@ -57,6 +57,7 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
             }
 
             text = this.clearText(text);
+            text = htmlentities(text, "ENT_NOQUOTES", null, false);
 
             try {
                 document.execCommand("insertHTML", false, text);
@@ -85,15 +86,6 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
     checkValue: function () {
         var value = trim(this.element.dom.innerHTML);
         var origValue = value;
-
-        // replace all style tags
-        value = value.replace(/<style([^<]+)<\/style>/gi, "");
-
-        // replace all but the last one // FF fix, because he needs the <br>
-        value = value.replace(/<br([^>]+)?>(.)/gi, function (match, p1, p2) {
-            return " " + p2;
-        });
-        value = strip_tags(value, "<br>");
 
         var textLength = trim(strip_tags(value)).length;
 

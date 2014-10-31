@@ -326,8 +326,9 @@
     box-shadow: none;
 }
 
-
-
+.pimcore_tag_textarea {
+    white-space: pre;
+}
 
 
 

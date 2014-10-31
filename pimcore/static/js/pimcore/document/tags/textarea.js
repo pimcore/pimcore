@@ -74,7 +74,7 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
                 text = window.clipboardData.getData("Text");
             }
 
-            text = this.clearText(text);
+            text = htmlentities(text, null, null, false);
 
             try {
                 document.execCommand("insertHTML", false, text);
@@ -102,25 +102,8 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
         }
     },
 
-    clearText: function (text) {
-        text = str_replace("\r\n", " ", text);
-        text = str_replace("\n", " ", text);
-        return text;
-    },
-
     checkValue: function () {
-
         var value = this.element.dom.innerHTML;
-        var origValue = value;
-
-        // replace all style tags
-        value = value.replace(/<style([^<]+)<\/style>/gi, "");
-
-        value = strip_tags(value, "<br>");
-
-        if(value != origValue) {
-            this.element.update(value);
-        }
 
         if(trim(strip_tags(value)).length < 1) {
             this.element.addClass("empty");
