@@ -15,15 +15,21 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
-class Object_KeyValue_Helper {
+
+namespace Pimcore\Model\Object\KeyValue;
+
+use Pimcore\Model;
+use Pimcore\Model\Object;
+
+class Helper {
 
     /** Returns the group/key config as XML.
      * @return mixed
      */
     public static function export() {
-        $xml = new SimpleXMLElement('<xml/>');
+        $xml = new \SimpleXMLElement('<xml/>');
 
-        $groupConfigList = new Object_KeyValue_GroupConfig_List();
+        $groupConfigList = new Object\KeyValue\GroupConfig\Listing();
         $groupConfigList->load();
         $groupConfigItems = $groupConfigList->getList();
 
@@ -36,7 +42,7 @@ class Object_KeyValue_Helper {
             $group->addChild("description", $item->getDescription());
         }
 
-        $keyConfigList = new Object_KeyValue_KeyConfig_List();
+        $keyConfigList = new Object\KeyValue\KeyConfig\Listing();
         $keyConfigList->load();
         $keyConfigItems = $keyConfigList->getList();
 
@@ -69,9 +75,9 @@ class Object_KeyValue_Helper {
 
             foreach ($groups as $groupConfig) {
                 $name = $groupConfig["name"];
-                $group = Object_KeyValue_GroupConfig::getByName($name);
+                $group = Object\KeyValue\GroupConfig::getByName($name);
                 if (!$group) {
-                    $group = new Object_KeyValue_GroupConfig();
+                    $group = new Object\KeyValue\GroupConfig();
                     $group->setName($name);
                 }
                 $group->setDescription($groupConfig["description"]);
@@ -88,9 +94,9 @@ class Object_KeyValue_Helper {
             }
             foreach ($keys as $keyConfig) {
                 $name = $keyConfig["name"];
-                $key = Object_KeyValue_KeyConfig::getByName($name);
+                $key = Object\KeyValue\KeyConfig::getByName($name);
                 if (!$key) {
-                    $key = new Object_KeyValue_KeyConfig();
+                    $key = new Object\KeyValue\KeyConfig();
                     $key->setName($name);
                 }
 
