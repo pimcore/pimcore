@@ -212,7 +212,7 @@ class Config {
     /**
      * @return array
      */
-    public function getReportsList () {
+    public static function getReportsList () {
         $dir = Model\Tool\CustomReport\Config::getWorkingDir();
 
         $reports = array();
@@ -236,7 +236,7 @@ class Config {
      * @param null $fullConfig
      * @return mixed
      */
-    public function getAdapter($configuration, $fullConfig = null) {
+    public static function getAdapter($configuration, $fullConfig = null) {
 
         $type = $configuration->type ? ucfirst($configuration->type) : 'Sql';
         $adapter = "\\Pimcore\\Model\\Tool\\CustomReport\\Adapter\\{$type}";
