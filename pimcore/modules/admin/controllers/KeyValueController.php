@@ -351,6 +351,23 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
     }
 
     /**
+     * Imports group and key config from XML format.
+     */
+    public function importAction() {
+
+        $tmpFile = file_get_contents($_FILES["Filedata"]["tmp_name"]);
+        $conf = new \Zend_Config_Xml($tmpFile);
+        $importData = $conf->toArray();
+        Object\KeyValue\Helper::import($importData);
+
+        $this->_helper->json(array("success" => true), false);
+
+        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+        // Ext.form.Action.Submit and mark the submission as failed
+        $this->getResponse()->setHeader("Content-Type", "text/html", true);
+    }
+
+    /**
      * Exports group and key config into XML format.
      */
     public function exportAction() {
