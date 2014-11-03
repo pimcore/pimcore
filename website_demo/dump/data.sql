@@ -2646,7 +2646,7 @@ INSERT INTO `documents_elements` VALUES (71,'leadcontent2','wysiwyg','');
 
 
 
-INSERT INTO `documents_email` VALUES (38,'','default','default','/advanced/email.php','bernhard.rusch@elements.at','webserver@pimcore.org','','','Contact Form');
+INSERT INTO `documents_email` VALUES (38,'','default','default','/advanced/email.php','pimcore@byom.de','webserver@pimcore.org','','','Contact Form');
 INSERT INTO `documents_email` VALUES (66,'','newsletter','standard-mail','','','','','','');
 INSERT INTO `documents_email` VALUES (67,'','newsletter','standard-mail','','','','','','Example Newsletter');
 
