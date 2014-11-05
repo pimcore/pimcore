@@ -100,8 +100,11 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      */
     public function getDataFromResource($data)
     {
-        return (bool) $data;
-}
+        if(!is_null($data)) {
+            $data = (bool) $data;
+        }
+        return $data;
+    }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForQueryResource
