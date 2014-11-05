@@ -198,7 +198,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param integer $id
-     * @return self
+     * @return static
      */
     public static function getById($id) {
 
