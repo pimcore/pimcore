@@ -6,5 +6,5 @@
  */
 interface OnlineShop_Framework_IndexService_ExtendedGetter {
 
-    public static function get($object, $config = null, $subObjectId = null, OnlineShop_Framework_IndexService_Tenant_AbstractConfig $tenantConfig = null);
+    public static function get($object, $config = null, $subObjectId = null, OnlineShop_Framework_IndexService_Tenant_IConfig $tenantConfig = null);
 }
