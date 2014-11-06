@@ -50,15 +50,13 @@ class Object_Class_Data_IndexFieldSelectionCombo extends Object_Class_Data_Selec
             );
         }  
 
-//        var_dump($this->getSpecificPriceField()); die();
         if($this->getSpecificPriceField()) {
             $options[] = array(
-                "key" => OnlineShop_Framework_ProductList::ORDERKEY_PRICE,
-                "value" => OnlineShop_Framework_ProductList::ORDERKEY_PRICE
+                "key" => OnlineShop_Framework_IProductList::ORDERKEY_PRICE,
+                "value" => OnlineShop_Framework_IProductList::ORDERKEY_PRICE
             );            
         }
 
-//        p_r($options); die();
         $this->setOptions($options);
     }
 

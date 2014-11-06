@@ -1,0 +1,259 @@
+
+== Configuration
+
+Almost every aspect of the client is configurable.  The client is built around http://pimple.sensiolabs.org[Pimple] a light-weight dependency injection container.  Most users will only need to configure a few parameters to suit their needs.
+
+However, since the container also controls all object instantiation, it is possible for users to completely change the internal components used by the client.  A user could, for example, write a custom ConnectionPool class and use that instead of the default connection pools that ship with the client
+
+=== Example: Configuring the Hosts
+
+A common operation will be telling the client what nodes are in your cluster.  By default, the client will connect to 'localhost:9200', which obviously doesn't work in many production environments.
+
+All configurations (both simple parameters and more advanced component-replacement) are injected into the constructor of the client.  
+
+The client accepts an array of hosts that you would like to connect to.  Each value in the array must be a string (either with or without the port number).  SSL can be enabled by prefixing the host with 'https':
+
+[source,php]
+----
+$params = array();
+$params['hosts'] = array (
+    '192.168.1.1:9200',         // IP + Port
+    '192.168.1.2',              // Just IP
+    'mydomain.server.com:9201', // Domain + Port
+    'mydomain2.server.com',     // Just Domain
+    'https://localhost',        // SSL to localhost
+    'https://192.168.1.3:9200'  // SSL to IP + Port
+);
+
+$client = new Elasticsearch\Client($params);
+----
+
+This associative array holds all custom configurations that you may want to set.  Often, you'll only need to configure the hosts, but if you need more advanced behavior, read on.
+
+=== Example: Configuring HTTP Basic Auth
+HTTP basic authentication is a very common requirement.  To enable Basic Auth in the client, simply set a parameter with the required auth parameters:
+
+[source,php]
+----
+$params = array();
+$params['connectionParams']['auth'] = array(
+    'username',
+    'password',
+    'Basic' <1>
+);
+$client = new Elasticsearch\Client($params);
+----
+<1> Accepts four different options: `Basic`, `Digests`, `NTLM`, `Any`
+
+After being initialized with authentication credentials, all outgoing requests will automatically include the HTTP auth headers.
+
+
+=== Example: Ignoring exceptions
+The library attempts to throw exceptions for common problems.  These exceptions
+match the HTTP response code provided by Elasticsearch.  For example, attempting to
+GET a nonexistent document will throw a `MissingDocument404Exception`.
+
+Exceptions are a useful and consistent way to deal with problems like missing
+documents, syntax errors, version conflicts, etc.  But sometimes you want
+to deal with the response body rather than catch exceptions (often useful
+in test suites).
+
+If you need that behavior, you can configure an `ignore` parameter.  The
+following setting will ignore the `MissingDocument404Exception` exception and
+instead return the JSON provided by Elasticsearch:
+
+[source,php]
+----
+$client = new Client();
+
+$params = array(
+    'index'  => 'test_missing',
+    'type'   => 'test',
+    'id'     => 1,
+    'ignore' => 404 <1>
+);
+echo $client->get($params);
+
+> {"_index":"test_missing","_type":"test","_id":"1","found":false}
+
+
+$params = array(
+    'index'  => 'test_missing',
+    'type'   => 'test',
+    'ignore' => [400, 404] <2>
+);
+echo $client->get($params);
+
+> No handler found for uri [/test_missing/test/] and method [GET]
+
+----
+<1> This will ignore just the 404 missing exception
+<2> `ignore` also accepts an array of exceptions to ignore. In this example,
+the `BadRequest400Exception` is being ignored
+
+It should be noted that the response is simply a string, which may or may not
+be encoded as JSON.  In the first example, the response body was a complete
+JSON object which could be decoded.  In the second example, it was simply a string.
+
+Since the client has no way of knowing what the exception response will contain,
+no attempts to decode it are taken.
+
+
+=== Example: Configuring the Logger
+By default, logging in the client is disabled for performance reasons.  If you wish to enable logging, simply set the `logging` parameter to true:
+
+[source,php]
+----
+$params = array();
+$params['logging'] = true;
+$client = new Elasticsearch\Client($params);
+----
+{zwsp} +
+
+This will enable logging to a file called `elasticsearch.log` inside your project directory.  The default logging level is `WARN`.  This is a logging level
+that only describes important events that should probably require action from you.
+
+Often, you'll want to change the logging location.  To change this location, simply do the following:
+
+[source,php]
+----
+$params = array();
+$params['logging'] = true;
+$params['logPath'] = '/var/logs/elasticsearch/elasticsearch.log';
+$client = new Elasticsearch\Client($params);
+----
+{zwsp} +
+
+Not all parameters are strings.  For example, we can change the logging level of the client:
+
+[source,php]
+----
+$params = array();
+$params['logging']  = true;
+$params['logPath']  = '/var/logs/elasticsearch/elasticsearch.log';
+$params['logLevel'] = Psr\Log\LogLevel::INFO;
+$client = new Elasticsearch\Client($params);
+----
+{zwsp} +
+
+Easy, right?  Let's get a little more complicated and specify a custom logger.  By default, the client uses a file-based logger provided by the https://github.com/Seldaek/monolog[Monolog] framework.  Monolog provides a variety of loggers.
+
+Let's log to the SysLog instead of a file:
+
+[source,php]
+----
+use Monolog\Logger;
+
+// Build a Monolog logger that uses the SyslogHandler
+$logger    = new Logger('log');
+$handler   = new SyslogHandler('my_user');
+$processor = new IntrospectionProcessor();
+
+$logger->pushHandler($handler);
+$logger->pushProcessor($processor);
+
+// Over-ride the client's logger object with your own
+$params['logging']   = true;
+$params['logObject'] = $logger;
+$client = new Elasticsearch\Client($params);
+----
+{zwsp} +
+
+The client uses the generic https://github.com/php-fig/log[PSR\Log interface], which means that any PSR\Log compatible loggers will work just fine in the client.
+Replacing the logger with another PSR\Log compatible logger is similar to the previous example of configuring a Monolog logger:
+
+[source,php]
+----
+use Monolog\Logger;
+
+$logger = new MySpecialPSRLogger();
+
+
+$params['logging'] = true;
+$params['logObject'] = $logger;
+$client = new Elasticsearch\Client($params);
+----
+{zwsp} +
+
+=== Example: Configuring the Selector Class
+When we changed the logger object, we provided a complete object that we wanted to over-ride the default with.  There are many configurations where this won't work.  For example, the Connection class must be instantiated repeatedly when new connections are made.
+
+Rather than provide an anonymous function or callback which builds new objects, the client simply accepts a class path which is used to build new objects.  
+
+Let's configure the Selector class.  By default, the client uses a Round-Robin selector (called RoundRobinSelector, unsurprisingly).  This will select connections in a loop, evenly distributing requests against your whole cluster.
+
+Let's change it to a different Selector - the RandomSelector:
+
+[source,php]
+----
+$params['selectorClass'] = '\Elasticsearch\ConnectionPool\Selectors\RandomSelector';
+$client = new Elasticsearch\Client($params);
+----
+{zwsp} +
+
+The client will now query random nodes.  Let's go one step further and define our own selector, using custom business logic that is specific to your domain.  Most configurable components in the client adhere to an interface, which makes it easy to swap them out for your own class.
+
+Let's make a selector that only chooses the first connection.  This is obviously not a good selector (!!!), but it demonstrates the concept well:
+
+[source,php]
+----
+namespace MyProject\Selectors;
+
+use Elasticsearch\Connections\ConnectionInterface;
+use Elasticsearch\ConnectionPool\Selectors\SelectorInterface
+
+class FirstSelector implements SelectorInterface
+{
+
+    /**
+     * Selects the first connection
+     *
+     * @param array $connections Array of Connection objects
+     *
+     * @return ConnectionInterface
+     */
+    public function select($connections)
+    {
+        return $connections[0];
+    }
+
+}
+----
+{zwsp} +
+
+And now we can specify that when creating the client:
+
+[source,php]
+----
+$params['selectorClass'] = '\MyProject\Selectors\FirstSelector';
+$client = new Elasticsearch\Client($params);
+----
+{zwsp} +
+
+=== Full list of configurations
+
+.Default Configurations
+[source,php]
+----
+$paramDefaults = array(
+    'connectionClass'       => '\Elasticsearch\Connections\GuzzleConnection',
+    'connectionFactoryClass'=> '\Elasticsearch\Connections\ConnectionFactory',
+    'connectionPoolClass'   => '\Elasticsearch\ConnectionPool\StaticNoPingConnectionPool',
+    'selectorClass'         => '\Elasticsearch\ConnectionPool\Selectors\RoundRobinSelector',
+    'serializerClass'       => '\Elasticsearch\Serializers\SmartSerializer',
+    'sniffOnStart'          => false,
+    'connectionParams'      => array(),
+    'logging'               => false,
+    'logObject'             => null,
+    'logPath'               => 'elasticsearch.log',
+    'logLevel'              => Log\LogLevel::WARNING,
+    'traceObject'           => null,
+    'tracePath'             => 'elasticsearch.log',
+    'traceLevel'            => Log\LogLevel::WARNING,
+    'guzzleOptions'         => array(),
+    'connectionPoolParams'  => array(
+        'randomizeHosts' => true
+    ),
+    'retries'               => null
+);
+----

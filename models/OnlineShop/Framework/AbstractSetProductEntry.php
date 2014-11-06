@@ -11,26 +11,26 @@ class OnlineShop_Framework_AbstractSetProductEntry {
     private $quantity;
 
     /**
-     * @var OnlineShop_Framework_AbstractProduct
+     * @var OnlineShop_Framework_ProductInterfaces_ICheckoutable
      */
     private $product;
 
-    public function __construct(OnlineShop_Framework_AbstractProduct $product, $quantity = 1) {
+    public function __construct(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $quantity = 1) {
         $this->product = $product;
         $this->quantity = $quantity;
     }
 
 
     /**
-     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      * @return void
      */
-    public function setProduct(OnlineShop_Framework_AbstractProduct $product) {
+    public function setProduct(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product) {
         $this->product = $product;
     }
 
     /**
-     * @return OnlineShop_Framework_AbstractProduct
+     * @return OnlineShop_Framework_ProductInterfaces_ICheckoutable
      */
     public function getProduct() {
         return $this->product;

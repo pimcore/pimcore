@@ -2,7 +2,7 @@
 
 class OnlineShop_Framework_FilterService_SelectCategory extends OnlineShop_Framework_FilterService_AbstractFilterType {
 
-    public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter) {
+    public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
         } else {
@@ -43,7 +43,7 @@ class OnlineShop_Framework_FilterService_SelectCategory extends OnlineShop_Frame
         ));
     }
 
-    public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $value = $params[$filterDefinition->getField()];
 
         if($value == OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING) {

@@ -1,0 +1,255 @@
+
+== Index Operations
+
+This section will walk you through the various index APIs that are exposed through the client.  Index operations include anything that manages an index itself (e.g. create an index, delete, change mappings, etc).
+
+We'll walk through a few common operations with detailed code snippets, then list the rest of the methods in a table.  The parameters are identical to the REST api, so it should be easy to perform the operation you need.
+
+=== Create an index
+
+The index operations are all contained under a distinct namespace, separated from other methods that are on the root client object.  As an example, let's create a new index:
+
+[source,php]
+----
+$client = new Elasticsearch\Client();
+$indexParams['index']  = 'my_index';    //index
+
+$client->indices()->create($indexParams);
+----
+{zwsp} +
+
+You can, of course, specify any parameters that would normally be included in a new index creation API.  All parameters that would normally go in the request body are located in the 'body' associative array:
+
+[source,php]
+----
+$client = new Elasticsearch\Client();
+$indexParams['index']  = 'my_index';
+
+// Index Settings
+$indexParams['body']['settings']['number_of_shards']   = 3;
+$indexParams['body']['settings']['number_of_replicas'] = 2;
+
+// Example Index Mapping
+$myTypeMapping = array(
+    '_source' => array(
+        'enabled' => true
+    ),
+    'properties' => array(
+        'first_name' => array(
+            'type' => 'string',
+            'analyzer' => 'standard'
+        ),
+        'age' => array(
+            'type' => 'integer'
+        )
+    )
+);
+$indexParams['body']['mappings']['my_type'] = $myTypeMapping;
+
+// Create the index
+$client->indices()->create($indexParams);
+----
+{zwsp} +
+
+=== Create an index (advanced example)
+
+This is a more complicated example of creating an index, showing how to define analyzers, tokenizers, filters and index settings.
+Although essentially the same as the previous example, the more complicated example can be helpful for "real world" usage
+of the client, since this particular syntax is easy to mess up.
+
+For brevity, the example is presented using PHP 5.4+ short array syntax (`[]` as opposed to `array()`).
+
+[source,php]
+----
+$params = [
+    'index' => 'reuters',
+    'body' => [
+        'settings' => [ <1>
+            'number_of_shards' => 1,
+            'number_of_replicas' => 0,
+            'analysis' => [ <2>
+                'filter' => [
+                    'shingle' => [
+                        'type' => 'shingle'
+                    ]
+                ],
+                'char_filter' => [
+                    'pre_negs' => [
+                        'type' => 'pattern_replace',
+                        'pattern' => '(\\w+)\\s+((?i:never|no|nothing|nowhere|noone|none|not|havent|hasnt|hadnt|cant|couldnt|shouldnt|wont|wouldnt|dont|doesnt|didnt|isnt|arent|aint))\\b',
+                        'replacement' => '~$1 $2'
+                    ],
+                    'post_negs' => [
+                        'type' => 'pattern_replace',
+                        'pattern' => '\\b((?i:never|no|nothing|nowhere|noone|none|not|havent|hasnt|hadnt|cant|couldnt|shouldnt|wont|wouldnt|dont|doesnt|didnt|isnt|arent|aint))\\s+(\\w+)',
+                        'replacement' => '$1 ~$2'
+                    ]
+                ],
+                'analyzer' => [
+                    'reuters' => [
+                        'type' => 'custom',
+                        'tokenizer' => 'standard',
+                        'filter' => ['lowercase', 'stop', 'kstem']
+                    ]
+                ]
+            ]
+        ],
+        'mappings' => [ <3>
+            '_default_' => [    <4>
+                'properties' => [
+                    'title' => [
+                        'type' => 'string',
+                        'analyzer' => 'reuters',
+                        'term_vector' => 'yes',
+                        'copy_to' => 'combined'
+                    ],
+                    'body' => [
+                        'type' => 'string',
+                        'analyzer' => 'reuters',
+                        'term_vector' => 'yes',
+                        'copy_to' => 'combined'
+                    ],
+                    'combined' => [
+                        'type' => 'string',
+                        'analyzer' => 'reuters',
+                        'term_vector' => 'yes'
+                    ],
+                    'topics' => [
+                        'type' => 'string',
+                        'index' => 'not_analyzed'
+                    ],
+                    'places' => [
+                        'type' => 'string',
+                        'index' => 'not_analyzed'
+                    ]
+                ]
+            ],
+            'my_type' => [  <5>
+                'properties' => [
+                    'my_field' => [
+                        'type' => 'string'
+                    ]
+                ]
+            ]
+        ]
+    ]
+];
+$client->indices()->create($params);
+----
+<1> The top level `settings` contains config about the index (# of shards, etc) as well as analyzers
+<2> `analysis` is nested inside of `settings`, and contains tokenizers, filters, char filters and analyzers
+<3> `mappings` is another element nested inside of `settings`, and contains the mappings for various types
+<4> The `_default_` type is a dynamic template that is applied to all fields that don't have an explicit mapping
+<5> The `my_type` type is an example of a user-defined type that holds a single field, `my_field`
+
+
+=== Delete an index
+
+Deleting an index is very simple:
+
+[source,php]
+----
+$deleteParams['index'] = 'my_index';
+$client->indices()->delete($deleteParams);
+----
+{zwsp} +
+
+=== Put Settings API
+The Put Settings API allows you to modify any index setting that is dynamic:
+
+[source,php]
+----
+$params['index'] = 'my_index';
+$params['body']['index']['number_of_replicas'] = 0;
+$params['body']['index']['refresh_interval'] = -1;
+
+$ret = $client->indices()->putSettings($params);
+----
+{zwsp} +
+
+=== Get Settings API
+
+Get Settings API will show you the currently configured settings for one or more indexes:
+
+[source,php]
+----
+// Get settings for one index
+$params['index'] = 'my_index';
+$ret = $client->indices()->getSettings($params);
+
+// Get settings for several indexes
+$params['index'] = array('my_index', 'my_index2');
+$ret = $client->indices()->getSettings($params);
+----
+{zwsp} +
+
+=== Put Mappings API
+
+The Put Mappings API allows you to modify or add to an existing index's mapping.
+
+[source,php]
+----
+// Set the index and type
+$params['index'] = 'my_index';
+$params['type']  = 'my_type2';
+
+// Adding a new type to an existing index
+$myTypeMapping2 = array(
+    '_source' => array(
+        'enabled' => true
+    ),
+    'properties' => array(
+        'first_name' => array(
+            'type' => 'string',
+            'analyzer' => 'standard'
+        ),
+        'age' => array(
+            'type' => 'integer'
+        )
+    )
+);
+$params['body']['my_type2'] = $myTypeMapping2;
+
+// Update the index mapping
+$client->indices()->putMapping($params);
+----
+{zwsp} +
+
+=== Get Mappings API
+
+The Get Mappings API will return the mapping details about your indexes and types.  Depending on the mappings that you wish to retrieve, you can specify a number of combinations of index and type:
+
+[source,php]
+----
+// Get mappings for all indexes and types
+$ret = $client->indices()->getMapping();
+
+// Get mappings for all types in 'my_index'
+$params['index'] = 'my_index';
+$ret = $client->indices()->getMapping($params);
+
+// Get mappings for all types of 'my_type', regardless of index
+$params['type'] = 'my_type';
+$ret = $client->indices()->getMapping($params);
+
+// Get mapping 'my_type' in 'my_index'
+$params['index'] = 'my_index';
+$params['type']  = 'my_type'
+$ret = $client->indices()->getMapping($params);
+
+// Get mappings for two indexes
+$params['index'] = array('my_index', 'my_index2');
+$ret = $client->indices()->getMapping($params);
+----
+{zwsp} +
+
+=== Other APIs in the Indices Namespace
+There are a number of other APIs in the indices namespace that allow you to manage your elasticsearch indexes (add/remove templates, flush segments, close indexes, etc).
+
+If you use an IDE with autocompletion, you should be able to easily explore the indices namespace by typing:
+
+[source,php]
+----
+$client->indices()->
+----
+And perusing the list of available methods.  Alternatively, browsing the `\Elasticsearch\Namespaces\Indices.php` file will show you the full list of available method calls (as well as parameter lists in the comments for each method).

@@ -42,21 +42,30 @@ abstract class OnlineShop_Framework_FilterService_AbstractFilterType {
     /**
      * @abstract
      * @param OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition
-     * @param OnlineShop_Framework_ProductList $productList
+     * @param OnlineShop_Framework_IProductList $productList
      * @param $currentFilter
      * @return string
      */
-    public abstract function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter);
+    public abstract function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter);
 
     /**
      * @abstract
      * @param OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition
-     * @param OnlineShop_Framework_ProductList $productList
+     * @param OnlineShop_Framework_IProductList $productList
      * @param $currentFilter
      * @param $params
      * @param bool $isPrecondition
      * @return array
      */
-    public abstract function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false);
+    public abstract function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false);
 
+    /**
+     * calls prepareGroupByValues of productlist if necessary
+     *
+     * @param OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition
+     * @param OnlineShop_Framework_IProductList $productList
+     */
+    public function prepareGroupByValues(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList) {
+        //by default do thing here
+    }
 }

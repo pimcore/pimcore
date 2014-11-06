@@ -60,10 +60,16 @@ interface OnlineShop_Framework_ProductInterfaces_IIndexable {
      * returns array of categories.
      * has to be overwritten either in pimcore object or mapped sub class.
      *
-     * @return array
+     * @return OnlineShop_Framework_AbstractCategory[]
      */
     public function getCategories();
 
+    /**
+     * returns the class id of the object
+     *
+     * @return int
+     */
+    public function getClassId();
 
 
 }

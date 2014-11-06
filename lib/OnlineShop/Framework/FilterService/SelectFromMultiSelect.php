@@ -2,7 +2,8 @@
 
 class OnlineShop_Framework_FilterService_SelectFromMultiSelect extends OnlineShop_Framework_FilterService_AbstractFilterType {
 
-    public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter) {
+    public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
+        //return "";
         $field = $this->getField($filterDefinition);
 
         if ($filterDefinition->getScriptPath()) {
@@ -15,7 +16,7 @@ class OnlineShop_Framework_FilterService_SelectFromMultiSelect extends OnlineSho
 
         $values = array();
         foreach($rawValues as $v) {
-            $explode = explode(OnlineShop_Framework_IndexService_Tenant_Worker::MULTISELECT_DELIMITER, $v['value']);
+            $explode = explode(OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER, $v['value']);
             foreach($explode as $e) {
                 if(!empty($e)) {
                     if($values[$e]) {
@@ -36,7 +37,7 @@ class OnlineShop_Framework_FilterService_SelectFromMultiSelect extends OnlineSho
         ));
     }
 
-    public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 

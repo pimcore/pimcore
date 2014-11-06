@@ -51,7 +51,7 @@ class OnlineShop_IndexController extends Pimcore_Controller_Action_Admin {
                     }
                 }
 
-                $productList = new OnlineShop_Framework_ProductList();
+                $productList = OnlineShop_Framework_Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
                 $helper = $filterService->getFilterGroupHelper();
                 $data = $helper->getGroupByValuesForFilterGroup($columnGroup, $productList, $this->getParam("field"));
 
@@ -105,7 +105,7 @@ class OnlineShop_IndexController extends Pimcore_Controller_Action_Admin {
         }
 
         if($this->_getParam("specific_price_field") == "true") {
-            $fields[OnlineShop_Framework_ProductList::ORDERKEY_PRICE] = array("key" => OnlineShop_Framework_ProductList::ORDERKEY_PRICE, "name" => $adminTranslator->translateAdmin(OnlineShop_Framework_ProductList::ORDERKEY_PRICE));
+            $fields[OnlineShop_Framework_IProductList::ORDERKEY_PRICE] = array("key" => OnlineShop_Framework_IProductList::ORDERKEY_PRICE, "name" => $adminTranslator->translateAdmin(OnlineShop_Framework_IProductList::ORDERKEY_PRICE));
         }
 
         ksort($fields);

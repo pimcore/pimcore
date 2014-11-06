@@ -3,17 +3,17 @@
 class OnlineShop_Framework_IndexService {
 
     /**
-     * @var OnlineShop_Framework_IndexService_Tenant_Worker
+     * @var OnlineShop_Framework_IndexService_Tenant_IWorker
      */
-    private $defaultWorker;
+    protected $defaultWorker;
 
     /**
-     * @var OnlineShop_Framework_IndexService_Tenant_Worker[]
+     * @var OnlineShop_Framework_IndexService_Tenant_IWorker[]
      */
-    private $tenantWorkers;
+    protected $tenantWorkers;
 
     public function __construct($config) {
-        $this->defaultWorker = new OnlineShop_Framework_IndexService_Tenant_Worker(new OnlineShop_Framework_IndexService_Tenant_DefaultConfig($config));
+        $this->defaultWorker = new OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql(new OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql("default", $config));
 
         $this->tenantWorkers = array();
         if($config->tenants && $config->tenants instanceof Zend_Config) {
@@ -30,41 +30,72 @@ class OnlineShop_Framework_IndexService {
                 }
 
                 /**
-                 * @var $tenantConfig OnlineShop_Framework_IndexService_Tenant_AbstractConfig
+                 * @var $tenantConfig OnlineShop_Framework_IndexService_Tenant_IConfig
                  */
-                $tenantConfig = new $tenantConfigClass($tenantConfig, $config);
-                $worker = $tenantConfig->createWorker();
+                $tenantConfig = new $tenantConfigClass($name, $tenantConfig, $config);
+                $worker = $tenantConfig->getTenantWorker();
                 $this->tenantWorkers[$name] = $worker;
             }
         }
     }
 
+    /**
+     * @deprecated
+     *
+     * @param null $tenant
+     * @return array
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
     public function getGeneralSearchColumns($tenant = null) {
+        return $this->getGeneralSearchAttributes($tenant);
+    }
+
+    /**
+     * returns all attributes marked as general search attributes for full text search
+     *
+     * @param string $tenant
+     * @return array
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    public function getGeneralSearchAttributes($tenant = null) {
         if(empty($tenant)) {
             $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentTenant();
         }
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
-                return $this->tenantWorkers[$tenant]->getGeneralSearchColumns();
+                return $this->tenantWorkers[$tenant]->getGeneralSearchAttributes();
             } else {
                 throw new OnlineShop_Framework_Exception_InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
-        return $this->defaultWorker->getGeneralSearchColumns();
+        return $this->defaultWorker->getGeneralSearchAttributes();
     }
 
+    /**
+     * @deprecated
+     */
     public function createOrUpdateTable() {
-        $this->defaultWorker->createOrUpdateTable();
+        $this->createOrUpdateIndexStructures();
+    }
+
+    /**
+     *  creates or updates necessary index structures (like database tables and so on)
+     */
+    public function createOrUpdateIndexStructures() {
+        $this->defaultWorker->createOrUpdateIndexStructures();
 
         foreach($this->tenantWorkers as $name => $tenant) {
-            $tenant->createOrUpdateTable();
+            $tenant->createOrUpdateIndexStructures();
         }
-
     }
 
-
+    /**
+     * deletes given element from index
+     *
+     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     */
     public function deleteFromIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object){
         $this->defaultWorker->deleteFromIndex($object);
         foreach($this->tenantWorkers as $name => $tenant) {
@@ -72,6 +103,11 @@ class OnlineShop_Framework_IndexService {
         }
     }
 
+    /**
+     * updates given element in index
+     *
+     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     */
     public function updateIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
         $this->defaultWorker->updateIndex($object);
         foreach($this->tenantWorkers as $name => $tenant) {
@@ -79,22 +115,49 @@ class OnlineShop_Framework_IndexService {
         }
     }
 
-    public function getIndexColumns($considerHideInFieldList = false, $tenant = null) {
+    /**
+     * returns all index attributes
+     *
+     * @param bool $considerHideInFieldList
+     * @param string $tenant
+     * @return array
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    public function getIndexAttributes($considerHideInFieldList = false, $tenant = null) {
         if(empty($tenant)) {
             $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentTenant();
         }
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
-                return $this->tenantWorkers[$tenant]->getIndexColumns($considerHideInFieldList);
+                return $this->tenantWorkers[$tenant]->getIndexAttributes($considerHideInFieldList);
             } else {
                 throw new OnlineShop_Framework_Exception_InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
-        return $this->defaultWorker->getIndexColumns($considerHideInFieldList);
+        return $this->defaultWorker->getIndexAttributes($considerHideInFieldList);
     }
 
+    /**
+     * @deprecated
+     *
+     * @param bool $considerHideInFieldList
+     * @param null $tenant
+     * @return mixed
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    public function getIndexColumns($considerHideInFieldList = false, $tenant = null) {
+        return $this->getIndexAttributes($considerHideInFieldList, $tenant);
+    }
+
+    /**
+     * returns all filter groups
+     *
+     * @param string $tenant
+     * @return array
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
     public function getAllFilterGroups($tenant = null) {
         if(empty($tenant)) {
             $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentTenant();
@@ -111,39 +174,78 @@ class OnlineShop_Framework_IndexService {
         return $this->defaultWorker->getAllFilterGroups();
     }
 
-    public function getIndexColumnsByFilterGroup($filterType, $tenant = null) {
+
+    /**
+     * retruns all index attributes for a given filter group
+     *
+     * @param $filterType
+     * @param string $tenant
+     * @return array
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    public function getIndexAttributesByFilterGroup($filterType, $tenant = null) {
         if(empty($tenant)) {
             $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentTenant();
         }
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
-                return $this->tenantWorkers[$tenant]->getIndexColumnsByFilterGroup($filterType);
+                return $this->tenantWorkers[$tenant]->getIndexAttributesByFilterGroup($filterType);
             } else {
                 throw new OnlineShop_Framework_Exception_InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
-        return $this->defaultWorker->getIndexColumnsByFilterGroup($filterType);
+        return $this->defaultWorker->getIndexAttributesByFilterGroup($filterType);
+    }
+
+    /**
+     * @deprecated
+     *
+     * @param $filterType
+     * @param null $tenant
+     * @return mixed
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    public function getIndexColumnsByFilterGroup($filterType, $tenant = null) {
+        return $this->getIndexAttributesByFilterGroup($filterType, $tenant);
     }
 
 
     /**
-     * @return OnlineShop_Framework_IndexService_Tenant_AbstractConfig
+     * returns current tenant configuration
+     *
+     * @return OnlineShop_Framework_IndexService_Tenant_IConfig
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
      */
     public function getCurrentTenantConfig() {
+        return $this->getCurrentTenantWorker()->getTenantConfig();
+    }
+
+    /**
+     * @return OnlineShop_Framework_IndexService_Tenant_IWorker
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    public function getCurrentTenantWorker() {
         $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentTenant();
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
-                return $this->tenantWorkers[$tenant]->getTenantConfig();
+                return $this->tenantWorkers[$tenant];
             } else {
                 throw new OnlineShop_Framework_Exception_InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         } else {
-            return $this->defaultWorker->getTenantConfig();
+            return $this->defaultWorker;
         }
+    }
+
+    /**
+     * @return OnlineShop_Framework_IProductList
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    public function getProductListForCurrentTenant() {
+        return $this->getCurrentTenantWorker()->getProductList();
     }
 }
 

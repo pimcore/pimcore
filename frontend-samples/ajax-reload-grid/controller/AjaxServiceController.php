@@ -9,8 +9,9 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
         $filterDefinition = Object_FilterDefinition::getById(intval($this->_getParam("filterdef")));
         $this->view->filterDefinitionObject = $filterDefinition;
 
-        $productList = new OnlineShop_Framework_ProductList();
-        $productList->setVariantMode(OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
+        $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+        $productList = $indexService->getProductListForCurrentTenant();
+        $productList->setVariantMode(OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
 
         $filterService = OnlineShop_Framework_Factory::getInstance()->getFilterService($this->view);
 
@@ -48,8 +49,9 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
         }
         $this->view->filterDefinitionObject = $filterDefinition;
 
-        $productList = new OnlineShop_Framework_ProductList();
-        $productList->setVariantMode(OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
+        $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+        $productList = $indexService->getProductListForCurrentTenant();
+        $productList->setVariantMode(OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
 
         $filterService = OnlineShop_Framework_Factory::getInstance()->getFilterService($this->view);
 

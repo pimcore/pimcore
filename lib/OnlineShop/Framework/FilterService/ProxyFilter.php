@@ -29,7 +29,7 @@ class OnlineShop_Framework_FilterService_ProxyFilter extends OnlineShop_Framewor
 
     public function getFilterFrontend(
         OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition,
-        OnlineShop_Framework_ProductList $productList, $currentFilter
+        OnlineShop_Framework_IProductList $productList, $currentFilter
     )
     {
         $filterDefinition->field=$this->field;
@@ -38,7 +38,7 @@ class OnlineShop_Framework_FilterService_ProxyFilter extends OnlineShop_Framewor
 
     public function addCondition(
         OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition,
-        OnlineShop_Framework_ProductList $productList, $currentFilter, $params,
+        OnlineShop_Framework_IProductList $productList, $currentFilter, $params,
         $isPrecondition = false
     ) {
         $filterDefinition->field=$this->field;

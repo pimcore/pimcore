@@ -12,6 +12,7 @@
             <path>/OnlineShop/lib</path>
             <path>/OnlineShop/models</path>
             <path>/OnlineShop/controllers</path>
+            <path>/OnlineShop/vendor</path>
         </pluginIncludePaths>
 
         <!-- namespaces to register with autoloader-->

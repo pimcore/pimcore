@@ -57,11 +57,11 @@ class OnlineShop_Framework_FilterService {
      * Initializes the FilterService, adds all conditions to the ProductList and returns an array of the currently set filters
      *
      * @param OnlineShop_Framework_AbstractFilterDefinition $filterObject filter definition object to use
-     * @param OnlineShop_Framework_ProductList $productList product list to use and add conditions to
+     * @param OnlineShop_Framework_IProductList $productList product list to use and add conditions to
      * @param array $params request params with eventually set filter conditions
      * @return array returns set filters
      */
-    public function initFilterService(OnlineShop_Framework_AbstractFilterDefinition $filterObject, OnlineShop_Framework_ProductList $productList, $params = array()) {
+    public function initFilterService(OnlineShop_Framework_AbstractFilterDefinition $filterObject, OnlineShop_Framework_IProductList $productList, $params = array()) {
         $currentFilter = array();
 
         if ($filterObject->getFilters()) {
@@ -71,6 +71,9 @@ class OnlineShop_Framework_FilterService {
                  * @var $filter OnlineShop_Framework_AbstractFilterDefinitionType
                  */
                 $currentFilter = $this->addCondition($filter, $productList, $currentFilter, $params);
+
+                //prepare group by filters
+                $this->getFilterDefinitionClass($filter->getType())->prepareGroupByValues($filter, $productList);
             }
         }
 
@@ -92,25 +95,28 @@ class OnlineShop_Framework_FilterService {
      * Returns filter frontend script for given filter type (delegates )
      *
      * @param OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition filter definition to get frontend script for
-     * @param OnlineShop_Framework_ProductList $productList current product list (with all set filters) to get available options and counts
-     * @param $currentFilter current filter for this filter definition
+     * @param OnlineShop_Framework_IProductList $productList current product list (with all set filters) to get available options and counts
+     * @param $currentFilter array current filter for this filter definition
      * @return string view snippet
      */
-    public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter) {
-        return $this->getFilterDefinitionClass($filterDefinition->getType())->getFilterFrontend($filterDefinition, $productList, $currentFilter);
+    public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
+
+        $frontend = $this->getFilterDefinitionClass($filterDefinition->getType())->getFilterFrontend($filterDefinition, $productList, $currentFilter);
+
+        return $frontend;
     }
 
     /**
      * Adds condition - delegates it to the OnlineShop_Framework_FilterService_AbstractFilterType instance
      *
      * @param OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition
-     * @param OnlineShop_Framework_ProductList $productList
+     * @param OnlineShop_Framework_IProductList $productList
      * @param $currentFilter
      * @param $params
      * @param bool $isPrecondition
      * @return array updated currentFilter array
      */
-    public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         return $this->getFilterDefinitionClass($filterDefinition->getType())->addCondition($filterDefinition, $productList, $currentFilter, $params, $isPrecondition);
     }
 
