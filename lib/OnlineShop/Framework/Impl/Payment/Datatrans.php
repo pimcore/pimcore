@@ -2,7 +2,9 @@
 
 class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framework_IPayment
 {
-    const PRIVATE_NAMESPACE = 'datatrans';
+    const TRANS_TYPE_DEBIT = '05';
+    const TRANS_TYPE_CREDIT = '05';
+
 
     /**
      * @var string
@@ -50,12 +52,14 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         if($xml->mode == 'live')
         {
             $this->endpoint['form'] = 'https://payment.datatrans.biz/upp/jsp/upStart.jsp';
-            $this->endpoint['xml'] = 'https://payment.datatrans.biz/upp/jsp/XML_authorize.jsp';
+            $this->endpoint['xmlAuthorize'] = 'https://payment.datatrans.biz/upp/jsp/XML_authorize.jsp';
+            $this->endpoint['xmlProcessor'] = 'https://payment.datatrans.biz/upp/jsp/XML_processor.jsp';
         }
         else
         {
             $this->endpoint['form'] = 'https://pilot.datatrans.biz/upp/jsp/upStart.jsp';
-            $this->endpoint['xml'] = 'https://pilot.datatrans.biz/upp/jsp/XML_authorize.jsp';
+            $this->endpoint['xmlAuthorize'] = 'https://pilot.datatrans.biz/upp/jsp/XML_authorize.jsp';
+            $this->endpoint['xmlProcessor'] = 'https://pilot.datatrans.biz/upp/jsp/XML_processor.jsp';
         }
     }
 
@@ -94,7 +98,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         // collect payment data
         $paymentData['amount'] = round($price->getAmount(), 2) * 100;
         $paymentData['currency'] = $price->getCurrency()->getShortName();
-        $paymentData['reqtype'] = $config['expressCheckout'] ? 'CAA' : 'NOA';
+        $paymentData['reqtype'] = $config['reqtype'];
         // NOA – Authorisation only (default)
         // CAA – Authorisation and settlement
 
@@ -149,21 +153,26 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
     {
         // check required fields
         $required = [  'uppTransactionId' => null
-                     , 'responseCode' => null
-                     , 'responseMessage' => null
-                     , 'pmethod' => null
-                     , 'reqtype' => null
-                     , 'acqAuthorizationCode' => null
-                     , 'status' => null
-                     , 'uppMsgType' => null
-                     , 'refno' => null
-                     , 'amount' => null
-                     , 'currency' => null
+                       , 'responseCode' => null
+                       , 'responseMessage' => null
+                       , 'pmethod' => null
+                       , 'reqtype' => null
+                       , 'acqAuthorizationCode' => null
+                       , 'status' => null
+                       , 'uppMsgType' => null
+                       , 'refno' => null
+                       , 'amount' => null
+                       , 'currency' => null
         ];
         $authorizedData = [
-                     'aliasCC' => null
-                     , 'expm' => null
-                     , 'expy' => null
+            'aliasCC' => null
+            , 'expm' => null
+            , 'expy' => null
+            , 'reqtype' => null
+            , 'uppTransactionId' => null
+            , 'amount' => null
+            , 'currency' => null
+            , 'refno' => null
         ];
 
 
@@ -207,6 +216,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         {
             // success
             $paymentState = $response['reqtype'] == 'CAA'
+                // CAA - authorization with immediate settlement
                 ? OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED
                 : OnlineShop_Framework_AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED;
 
@@ -221,15 +231,15 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
 
         return new OnlineShop_Framework_Impl_Payment_Status(
-              $response['refno']
+            $response['refno']
             , $response['uppTransactionId']
             , $message
             , $paymentState
             , [
-                  'datatrans_amount' => (string)$price
-                  , 'datatrans_acqAuthorizationCode' => $response['acqAuthorizationCode']
-                  , 'datatrans_response' => $response
-              ]
+                'datatrans_amount' => (string)$price
+                , 'datatrans_acqAuthorizationCode' => $response['acqAuthorizationCode']
+                , 'datatrans_response' => $response
+            ]
         );
     }
 
@@ -238,33 +248,41 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
      * @param OnlineShop_Framework_IPrice $price
      * @param string                      $reference
      *
-     * @return OnlineShop_Framework_Payment_IStatus
+     * @return OnlineShop_Framework_Impl_Payment_Status|OnlineShop_Framework_Payment_IStatus
      * @throws Exception
      */
     public function executeDebit(OnlineShop_Framework_IPrice $price = null, $reference = null)
     {
-        // ...
-        if($this->paymentStatus && $price === null)
+        if($this->authorizedData['reqtype'] == 'NOA' && $this->authorizedData['uppTransactionId'])
         {
-            return $this->paymentStatus;
+            // complete authorized payment
+            $xml = $this->xmlSettlement(
+                self::TRANS_TYPE_DEBIT
+                , $this->authorizedData['amount']
+                , $this->authorizedData['currency']
+                , $this->authorizedData['refno']
+                , $this->authorizedData['uppTransactionId']
+            );
         }
         else if($price === null)
         {
+            // wrong call
             throw new Exception('nothing to execute');
         }
-
-
-        // zahlung ausführen
-        $xml = $this->transmit(
-             'CAA'
-            , '05'
-            , $price->getAmount() * 100
-            , $price->getCurrency()->getShortName()
-            , $reference
-            , $this->authorizedData['aliasCC']
-            , $this->authorizedData['expm']
-            , $this->authorizedData['expy']
-        );
+        else
+        {
+            // authorisieren und zahlung ausführen
+            $xml = $this->xmlAuthorisation(
+                'CAA'
+                , self::TRANS_TYPE_DEBIT
+                , $price->getAmount() * 100
+                , $price->getCurrency()->getShortName()
+                , $reference
+                , $this->authorizedData['aliasCC']
+                , $this->authorizedData['expm']
+                , $this->authorizedData['expy']
+            );
+        }
 
 
         // handle response
@@ -289,15 +307,15 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
         // create and return status
         $status = new OnlineShop_Framework_Impl_Payment_Status(
-              (string)$transaction->attributes()['refno']
+            (string)$transaction->attributes()['refno']
             , (string)$response->uppTransactionId
             , $message
             , $paymentState
             , [
-                  'datatrans_amount' => (string)$price
-                  , 'datatrans_responseXML' => $transaction->asXML()
-                  , 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
-              ]
+                'datatrans_amount' => (string)$price
+                , 'datatrans_responseXML' => $transaction->asXML()
+                , 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
+            ]
         );
 
         return $status;
@@ -305,6 +323,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
 
     /**
+     * gutschrift ausführen
      * @param OnlineShop_Framework_IPrice $price
      * @param string                      $reference
      * @param string                      $transactionId
@@ -313,43 +332,31 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
      */
     public function executeCredit(OnlineShop_Framework_IPrice $price, $reference, $transactionId)
     {
-        // gutschrift ausführen
-        $xml = sprintf('
-<?xml version="1.0" encoding="UTF-8" ?>
-<paymentService version="1">
-  <body merchantId="%1$s">
-    <transaction refno="%2$s">
-      <request>
-        <transtype>06</transtype>
-        <uppTransactionId>%3$d</uppTransactionId>
-
-        <amount>%4$d</amount>
-        <currency>%5$s</currency>
-      </request>
-    </transaction>
-  </body>
-</paymentService>
-        '
-            , $this->merchantId
-
-            , $reference
-            , $transactionId
-            , $price->getAmount() * 100
-            , $price->getCurrency()->getShortName()
-        );
-
-        $ch = curl_init( $this->endpoint['xml'] );
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: text/xml']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-        $output = curl_exec($ch);
-        curl_close($ch);
-
-        $xml = simplexml_load_string($output);
+        if($this->authorizedData['reqtype'] == 'NOA' && $this->authorizedData['uppTransactionId'])
+        {
+            // complete authorized payment
+            $xml = $this->xmlSettlement(
+                self::TRANS_TYPE_CREDIT
+                , $this->authorizedData['amount']
+                , $this->authorizedData['currency']
+                , $this->authorizedData['refno']
+                , $this->authorizedData['uppTransactionId']
+            );
+        }
+        else
+        {
+            // authorisieren und zahlung ausführen
+            $xml = $this->xmlAuthorisation(
+                'CAA'
+                , self::TRANS_TYPE_CREDIT
+                , $price->getAmount() * 100
+                , $price->getCurrency()->getShortName()
+                , $reference
+                , $this->authorizedData['aliasCC']
+                , $this->authorizedData['expm']
+                , $this->authorizedData['expy']
+            );
+        }
 
 
 
@@ -374,15 +381,15 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
         // create and return status
         $status = new OnlineShop_Framework_Impl_Payment_Status(
-              (string)$transaction->attributes()['refno']
+            (string)$transaction->attributes()['refno']
             , (string)$response->uppTransactionId
             , $message
             , $paymentState
             , [
-                  'datatrans_amount' => (string)$price
-                  , 'datatrans_responseXML' => $transaction->asXML()
-                  , 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
-              ]
+                'datatrans_amount' => (string)$price
+                , 'datatrans_responseXML' => $transaction->asXML()
+                , 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
+            ]
         );
 
         return $status;
@@ -408,7 +415,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
     /**
      * transmit to datatrans
-     * @param string $reqType              NOA = nur authorisieren, CAA = direkt ausführen
+     * @param string $reqType              NOA = nur authorisieren, CAA = authorisieren und ausführen, COA = ausführen sofern es authorisiert wurde
      * @param string $transType            05 = debit transaction, 06 = – credit transaction
      * @param int    $amount               in kleinster einheit > 1,10 € > 110 !
      * @param string $currency
@@ -418,21 +425,21 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
      * @param string $expireYear
      *
      * @return SimpleXMLElement
+     * @see https://www.datatrans.ch/showcase/authorisation/xml-authorisation
      */
-    protected function transmit($reqType, $transType, $amount, $currency, $refno, $aliasCC, $expireMonth, $expireYear)
+    protected function xmlAuthorisation($reqType, $transType, $amount, $currency, $refno, $aliasCC, $expireMonth, $expireYear)
     {
         // transaktion einleiten
-        $xml = sprintf('
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8" ?>
 <authorizationService version="2">
   <body merchantId="%1$s">
-    <transaction refno="%3$s"><!-- eigene order id -->
+    <transaction refno="%3$s">
       <request>
         <sign>%2$s</sign>
 
-        <reqtype>%4$s</reqtype><!-- NOA = nur authorisieren, CAA = direkt ausführen -->
+        <reqtype>%4$s</reqtype>
         <transtype>%5$s</transtype>
-        <uppTransactionId>141006145315284359</uppTransactionId>
 
         <amount>%6$d</amount>
         <currency>%7$s</currency>
@@ -444,7 +451,9 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
     </transaction>
   </body>
 </authorizationService>
-        '
+XML;
+
+        $xml = sprintf($xml
             , $this->merchantId
             , $this->sign
 
@@ -460,7 +469,64 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         );
 
 
-        $ch = curl_init( $this->endpoint['xml'] );
+        $ch = curl_init( $this->endpoint['xmlAuthorize'] );
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: text/xml']);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        $output = curl_exec($ch);
+        curl_close($ch);
+
+        return simplexml_load_string($output);
+    }
+
+
+    /**
+     * authorisiertes settlement ausführen
+     * @param string $transType 05 = settlement debit
+     *                          06 = settlement credit
+     * @param int    $amount    in kleinster einheit > 1,10 € > 110 !
+     * @param string $currency
+     * @param string            $reference
+     * @param string            $transactionId
+     *
+     * @return SimpleXMLElement
+     */
+    protected function xmlSettlement($transType, $amount, $currency, $reference, $transactionId)
+    {
+        // request erstellen
+        $xml = <<<'XML'
+<?xml version="1.0" encoding="UTF-8" ?>
+<paymentService version="1">
+  <body merchantId="%1$s">
+    <transaction refno="%2$s">
+      <request>
+        <reqtype>COA</reqtype>
+        <transtype>%6$s</transtype>
+        <uppTransactionId>%3$d</uppTransactionId>
+
+        <amount>%4$d</amount>
+        <currency>%5$s</currency>
+      </request>
+    </transaction>
+  </body>
+</paymentService>
+XML;
+
+        $xml = sprintf($xml
+            , $this->merchantId
+
+            , $reference
+            , $transactionId
+            , $amount
+            , $currency
+            , $transType
+        );
+
+        $ch = curl_init( $this->endpoint['xmlProcessor'] );
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_POST, 1);
