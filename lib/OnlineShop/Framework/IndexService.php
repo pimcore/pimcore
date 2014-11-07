@@ -13,7 +13,9 @@ class OnlineShop_Framework_IndexService {
     protected $tenantWorkers;
 
     public function __construct($config) {
-        $this->defaultWorker = new OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql(new OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql("default", $config));
+        if(!(string)$config->disableDefaultTenant) {
+            $this->defaultWorker = new OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql(new OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql("default", $config));
+        }
 
         $this->tenantWorkers = array();
         if($config->tenants && $config->tenants instanceof Zend_Config) {
@@ -70,7 +72,11 @@ class OnlineShop_Framework_IndexService {
             }
         }
 
-        return $this->defaultWorker->getGeneralSearchAttributes();
+        if($this->defaultWorker) {
+            return $this->defaultWorker->getGeneralSearchAttributes();
+        } else {
+            return array();
+        }
     }
 
     /**
@@ -84,7 +90,9 @@ class OnlineShop_Framework_IndexService {
      *  creates or updates necessary index structures (like database tables and so on)
      */
     public function createOrUpdateIndexStructures() {
-        $this->defaultWorker->createOrUpdateIndexStructures();
+        if($this->defaultWorker) {
+            $this->defaultWorker->createOrUpdateIndexStructures();
+        }
 
         foreach($this->tenantWorkers as $name => $tenant) {
             $tenant->createOrUpdateIndexStructures();
@@ -97,7 +105,9 @@ class OnlineShop_Framework_IndexService {
      * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
      */
     public function deleteFromIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object){
-        $this->defaultWorker->deleteFromIndex($object);
+        if($this->defaultWorker) {
+            $this->defaultWorker->deleteFromIndex($object);
+        }
         foreach($this->tenantWorkers as $name => $tenant) {
             $tenant->deleteFromIndex($object);
         }
@@ -109,7 +119,9 @@ class OnlineShop_Framework_IndexService {
      * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
      */
     public function updateIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
-        $this->defaultWorker->updateIndex($object);
+        if($this->defaultWorker) {
+            $this->defaultWorker->updateIndex($object);
+        }
         foreach($this->tenantWorkers as $name => $tenant) {
             $tenant->updateIndex($object);
         }
@@ -136,7 +148,11 @@ class OnlineShop_Framework_IndexService {
             }
         }
 
-        return $this->defaultWorker->getIndexAttributes($considerHideInFieldList);
+        if($this->defaultWorker) {
+            return $this->defaultWorker->getIndexAttributes($considerHideInFieldList);
+        } else {
+            return array();
+        }
     }
 
     /**
@@ -171,7 +187,11 @@ class OnlineShop_Framework_IndexService {
             }
         }
 
-        return $this->defaultWorker->getAllFilterGroups();
+        if($this->defaultWorker) {
+            return $this->defaultWorker->getAllFilterGroups();
+        } else {
+            return array();
+        }
     }
 
 
@@ -196,7 +216,11 @@ class OnlineShop_Framework_IndexService {
             }
         }
 
-        return $this->defaultWorker->getIndexAttributesByFilterGroup($filterType);
+        if($this->defaultWorker) {
+            return $this->defaultWorker->getIndexAttributesByFilterGroup($filterType);
+        } else {
+            return array();
+        }
     }
 
     /**
