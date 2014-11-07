@@ -760,7 +760,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param int $o_id
-     * @return void
+     * @return $this
      */
     public function setId($o_id) {
         $this->o_id = (int) $o_id;
@@ -769,7 +769,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param int $o_parentId
-     * @return void
+     * @return $this
      */
     public function setParentId($o_parentId) {
         $this->o_parentId = (int) $o_parentId;
@@ -779,7 +779,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param string $o_type
-     * @return void
+     * @return $this
      */
     public function setType($o_type) {
         $this->o_type = $o_type;
@@ -788,7 +788,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param string $o_key
-     * @return void
+     * @return $this
      */
     public function setKey($o_key) {
         $this->o_key = $o_key;
@@ -797,7 +797,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param string $o_path
-     * @return void
+     * @return $this
      */
     public function setPath($o_path) {
         $this->o_path = $o_path;
@@ -806,7 +806,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param int $o_index
-     * @return void
+     * @return $this
      */
     public function setIndex($o_index) {
         $this->o_index = (int) $o_index;
@@ -815,7 +815,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param int $o_creationDate
-     * @return void
+     * @return $this
      */
     public function setCreationDate($o_creationDate) {
         $this->o_creationDate = (int) $o_creationDate;
@@ -824,7 +824,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param int $o_modificationDate
-     * @return void
+     * @return $this
      */
     public function setModificationDate($o_modificationDate) {
         $this->o_modificationDate = (int) $o_modificationDate;
@@ -833,7 +833,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param int $o_userOwner
-     * @return void
+     * @return $this
      */
     public function setUserOwner($o_userOwner) {
         $this->o_userOwner = (int) $o_userOwner;
@@ -842,7 +842,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param int $o_userModification
-     * @return void
+     * @return $this
      */
     public function setUserModification($o_userModification) {
         $this->o_userModification = (int) $o_userModification;
@@ -851,7 +851,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param array $o_childs
-     * @return void
+     * @return $this
      */
     public function setChilds($o_childs) {
         $this->o_childs = $o_childs;
@@ -877,7 +877,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param self $o_parent
-     * @return void
+     * @return $this
      */
     public function setParent($o_parent) {
         $this->o_parent = $o_parent;
@@ -909,7 +909,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param array $o_properties
-     * @return void
+     * @return $this
      */
     public function setProperties($o_properties) {
         $this->o_properties = $o_properties;
