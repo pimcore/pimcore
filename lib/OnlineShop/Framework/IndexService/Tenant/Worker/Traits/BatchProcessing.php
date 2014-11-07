@@ -190,7 +190,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
                 if(!$currentEntry) {
                     $this->db->insert($this->getStoreTableName(), $insertData);
                 } else if($currentEntry['crc_current'] != $crc) {
-                    $this->db->update($this->getStoreTableName(), $insertData, "id = " . $subObjectId . " AND tenant = " . $this->db->quote($this->name));
+                    $this->db->update($this->getStoreTableName(), $insertData, "id = " . $this->db->quote($subObjectId) . " AND tenant = " . $this->db->quote($this->name));
                 } else if($currentEntry['in_preparation_queue']) {
                     $this->db->query("UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 0, preparation_worker_timestamp = 0, preparation_worker_id = null WHERE id = ? AND tenant = ?", array($subObjectId, $this->name));
                 }
