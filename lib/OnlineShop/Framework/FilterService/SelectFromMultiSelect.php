@@ -55,7 +55,7 @@ class OnlineShop_Framework_FilterService_SelectFromMultiSelect extends OnlineSho
 
 
         if(!empty($value)) {
-            $value =  "%" . OnlineShop_Framework_IndexService_Tenant_Worker::MULTISELECT_DELIMITER  . $value .  OnlineShop_Framework_IndexService_Tenant_Worker::MULTISELECT_DELIMITER . "%";
+            $value =  "%" . OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER  . $value .  OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER . "%";
             if($isPrecondition) {
                 $productList->addCondition($field . " LIKE " . $productList->quote($value), "PRECONDITION_" . $field);
             } else {
