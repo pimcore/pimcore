@@ -101,7 +101,7 @@ class Property extends AbstractModel {
      * Takes data from resource and convert it to internal objects
      *
      * @param mixed $data
-     * @return void
+     * @return static
      */
     public function setDataFromResource($data) {
         // IMPORTANT: if you use this method be sure that the type of the property is already set
@@ -125,7 +125,7 @@ class Property extends AbstractModel {
     /**
      * get the config from an predefined property-set (eg. select)
      *
-     * @return void
+     * @return static
      */
     public function setConfigFromPredefined() {
         if ($this->getName() && $this->getType()) {
@@ -181,7 +181,7 @@ class Property extends AbstractModel {
 
     /**
      * @param integer $cid
-     * @return void
+     * @return static
      */
     public function setCid($cid) {
         $this->cid = (int) $cid;
@@ -190,7 +190,7 @@ class Property extends AbstractModel {
 
     /**
      * @param string $ctype
-     * @return void
+     * @return static
      */
     public function setCtype($ctype) {
         $this->ctype = $ctype;
@@ -199,7 +199,7 @@ class Property extends AbstractModel {
 
     /**
      * @param mixed $data
-     * @return void
+     * @return static
      */
     public function setData($data) {
         $this->data = $data;
@@ -208,7 +208,7 @@ class Property extends AbstractModel {
 
     /**
      * @param string $name
-     * @return void
+     * @return static
      */
     public function setName($name) {
         $this->name = $name;
@@ -218,7 +218,7 @@ class Property extends AbstractModel {
 
     /**
      * @param string $type
-     * @return void
+     * @return static
      */
     public function setType($type) {
         $this->type = $type;
@@ -251,7 +251,7 @@ class Property extends AbstractModel {
 
     /**
      * @param string $cpath
-     * @return void
+     * @return static
      */
     public function setCpath($cpath) {
         $this->cpath = $cpath;
@@ -260,7 +260,7 @@ class Property extends AbstractModel {
 
     /**
      * @param boolean $inherited
-     * @return void
+     * @return static
      */
     public function setInherited($inherited) {
         $this->inherited = (bool) $inherited;
@@ -276,7 +276,7 @@ class Property extends AbstractModel {
 
     /**
      * @param boolean $inheritable
-     * @return void
+     * @return static
      */
     public function setInheritable($inheritable) {
         $this->inheritable = (bool) $inheritable;
