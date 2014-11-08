@@ -690,7 +690,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
     protected function unescapeXliff($content) {
 
-        $content = preg_replace("/<\/?target([^>.]+)?>/i", "", $content);
+        $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>/i", "", $content);
 
         if(preg_match("/<\/?(bpt|ept)/", $content)) {
             $xml = str_get_html($content);
