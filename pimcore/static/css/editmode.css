@@ -327,7 +327,7 @@
 }
 
 .pimcore_tag_textarea {
-    white-space: pre;
+    white-space: pre-line;
 }
 
 
