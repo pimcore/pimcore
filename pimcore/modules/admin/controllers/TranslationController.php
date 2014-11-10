@@ -662,7 +662,11 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
                 if($fieldType == "property") {
                     $property = $element->getProperty($name, true);
-                    $property->setData($content);
+                    if($property) {
+                        $property->setData($content);
+                    } else {
+                        $element->setProperty($name, "text", $content);
+                    }
                 }
             }
 
