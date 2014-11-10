@@ -278,6 +278,8 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data {
      */
     public function rewriteIds($object, $idMapping, $params = array()) {
 
+        include_once("simple_html_dom.php");
+
         $data = $this->getDataFromObjectParam($object, $params);
         $html = str_get_html($data);
         if($html) {
