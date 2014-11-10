@@ -38,9 +38,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     getData: function () {
         var params = {id: this.id};
         if (this.options !== undefined) {
-            if (this.options.layoutId) {
-                params.layoutId = this.options.layoutId;
-            }
+            params.layoutId = this.options.layoutId;
         }
 
         Ext.Ajax.request({
@@ -639,9 +637,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     reload: function (layoutId) {
         var options = {};
-        if (layoutId) {
-            options.layoutId = layoutId;
-        }
+        options.layoutId = layoutId;
         window.setTimeout(function (id) {
             pimcore.helpers.openObject(id, "object", options);
         }.bind(window, this.id), 500);

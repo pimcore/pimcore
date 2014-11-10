@@ -290,6 +290,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
             $customLayout->setLayoutDefinitions($layout);
             $customLayout->setName($values["name"]);
             $customLayout->setDescription($values["description"]);
+            $customLayout->setDefault($values["default"]);
             $customLayout->save();
 
             $this->_helper->json(["success" => true, "id" => $customLayout->getId(), "data" => $customLayout]);
@@ -430,7 +431,8 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
         foreach ($list as $item) {
             $result[] = array(
                 "id" => $item->getId(),
-                "name" => $item->getName() . " (ID: " . $item->getId() . ")"
+                "name" => $item->getName() . " (ID: " . $item->getId() . ")",
+                "default" => $item->getDefault() ?: 0,
             );
         }
 

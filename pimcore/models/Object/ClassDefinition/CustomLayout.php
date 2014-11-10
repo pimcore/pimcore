@@ -69,6 +69,11 @@ class CustomLayout extends Model\AbstractModel {
     public $layoutDefinitions;
 
     /**
+     * @var int
+     */
+    public $default;
+
+    /**
      * @param $id
      * @return mixed|null|CustomLayout
      * @throws \Exception
@@ -232,6 +237,26 @@ class CustomLayout extends Model\AbstractModel {
         $this->name = $name;
         return $this;
     }
+
+    /**
+     * @return int
+     */
+    public function getDefault()
+    {
+        return $this->default;
+    }
+
+    /**
+     * @param int $default
+     * @return $this
+     */
+    public function setDefault($default)
+    {
+        $this->default = (int)$default;
+        return $this;
+    }
+
+
 
     /**
      * @param int $creationDate

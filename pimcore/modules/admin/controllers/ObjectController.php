@@ -333,6 +333,15 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $currentLayoutId = $this->getParam("layoutId");
 
             $validLayouts = Object\Service::getValidLayouts($object);
+
+            //master layout has id 0 so we check for is_null()
+            if(is_null($currentLayoutId) && !empty($validLayouts)){
+                foreach($validLayouts as $checkDefaultLayout){
+                    if($checkDefaultLayout->getDefault()){
+                        $currentLayoutId = $checkDefaultLayout->getId();
+                    }
+                }
+            }
             if(!empty($validLayouts)) {
                 $objectData["validLayouts"] = array( );
 
