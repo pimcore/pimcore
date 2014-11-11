@@ -257,4 +257,15 @@ abstract class AbstractModel {
     public function __clone() {
         $this->resource = null;
     }
+
+    /**
+     * returns object values without the resource
+     *
+     * @return array
+     */
+    public function getObjectVars(){
+        $data = get_object_vars($this);
+        unset($data['resource']);
+        return $data;
+    }
 }
