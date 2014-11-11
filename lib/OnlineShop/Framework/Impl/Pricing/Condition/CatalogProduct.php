@@ -97,7 +97,11 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct implements Onli
         $products = array();
         foreach($json->products as $cat)
         {
-            $products[] = OnlineShop_Framework_AbstractProduct::getById($cat->id);
+            $product = $this->loadProduct($cat->id);
+            if($product)
+            {
+                $products[] = $product;
+            }
         }
         $this->setProducts( $products );
 
@@ -126,7 +130,11 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct implements Onli
     {
         foreach($this->products as $key => $product_id)
         {
-            $this->products[ $key ] = OnlineShop_Framework_AbstractProduct::getById($product_id);
+            $product = $this->loadProduct($product_id);
+            if($product)
+            {
+                $this->products[ $key ] = $this->loadProduct($product_id);
+            }
         }
     }
 
@@ -149,4 +157,14 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct implements Onli
         return $this->products;
     }
 
+
+    /**
+     * @param $id
+     *
+     * @return Object_Abstract|null
+     */
+    protected function loadProduct($id)
+    {
+        return Object_Concrete::getById($id);
+    }
 }
