@@ -69,7 +69,11 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory implements Onl
         $categories = array();
         foreach($json->categories as $cat)
         {
-            $categories[] = OnlineShop_Framework_AbstractCategory::getById($cat->id);
+            $category = $this->loadCategory($cat->id);
+            if($category)
+            {
+                $categories[] = $category;
+            }
         }
         $this->setCategories( $categories );
 
@@ -98,7 +102,11 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory implements Onl
     {
         foreach($this->categories as $key => $cat_id)
         {
-            $this->categories[ $key ] = OnlineShop_Framework_AbstractCategory::getById($cat_id);
+            $category = $this->loadCategory($cat_id);
+            if($category)
+            {
+                $this->categories[ $key ] = $category;
+            }
         }
     }
 
@@ -122,5 +130,16 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory implements Onl
         }
 
         return false;
+    }
+
+
+    /**
+     * @param $id
+     *
+     * @return Object_Abstract|null
+     */
+    protected function loadCategory($id)
+    {
+        return Object_Concrete::getById($id);
     }
 }
