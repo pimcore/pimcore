@@ -854,6 +854,48 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
         });
 
         return item;
+    },
+
+
+    /**
+     * @param panel
+     * @param data
+     * @param getName
+     * @returns Ext.form.FormPanel
+     */
+    conditionToken: function (panel, data, getName) {
+
+        //
+        var niceName = t("plugin_onlineshop_pricing_config_condition_token");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        // check params
+        if(typeof data == "undefined") {
+            data = {};
+        }
+
+        // create item
+        var myId = Ext.id();
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            type: 'Token',
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionToken"),
+            items: [{
+                xtype: "textfield",
+                fieldLabel: t("plugin_onlineshop_pricing_config_condition_token_value"),
+                name: "token",
+                width: 200,
+                value: data.token
+            }],
+        });
+
+        return item;
     }
 };
 

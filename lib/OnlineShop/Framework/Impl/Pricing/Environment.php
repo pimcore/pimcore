@@ -30,9 +30,15 @@ class OnlineShop_Framework_Impl_Pricing_Environment implements OnlineShop_Framew
     protected $priceInfo;
 
     /**
-     * @var array|OnlineShop_Framework_AbstractCategory
+     * @var OnlineShop_Framework_AbstractCategory[]
      */
     protected $categories = array();
+
+    /**
+     * @var Zend_Session_Namespace
+     */
+    protected $session;
+
 
     /**
      * @param OnlineShop_Framework_ICart $cart
@@ -127,6 +133,26 @@ class OnlineShop_Framework_Impl_Pricing_Environment implements OnlineShop_Framew
     public function getCategories()
     {
         return $this->categories;
+    }
+
+    /**
+     * @return Zend_Session_Namespace
+     */
+    public function getSession()
+    {
+        return $this->session;
+    }
+
+    /**
+     * @param Zend_Session_Namespace $session
+     *
+     * @return OnlineShop_Framework_Pricing_IEnvironment
+     */
+    public function setSession(Zend_Session_Namespace $session)
+    {
+        $this->session = $session;
+
+        return $this;
     }
 
 

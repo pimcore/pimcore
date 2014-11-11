@@ -232,6 +232,7 @@
                     <CartAmount class="OnlineShop_Framework_Impl_Pricing_Condition_CartAmount" />
                     <CatalogProduct class="OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct" />
                     <CatalogCategory class="OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory" />
+                    <Token class="OnlineShop_Framework_Impl_Pricing_Condition_Token" />
                 </condition>
 
                 <!-- rule actions -->

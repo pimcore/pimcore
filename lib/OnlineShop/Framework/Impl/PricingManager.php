@@ -16,6 +16,11 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
     protected $config;
 
     /**
+     * @var OnlineShop_Framework_Impl_Pricing_Rule_List
+     */
+    private $rules;
+
+    /**
      * @param Zend_Config $config
      */
     public function __construct(Zend_Config $config)
@@ -113,7 +118,10 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
         return $this;
     }
 
-    private $rules;
+
+    /**
+     * @return OnlineShop_Framework_Impl_Pricing_Rule_List
+     */
     private function getRulesFromDatabase() {
         if(empty($this->rules)) {
             $rules = new OnlineShop_Framework_Impl_Pricing_Rule_List();
@@ -129,29 +137,12 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
     /**
      * @param OnlineShop_Framework_Pricing_IEnvironment $environment
      *
-     * @return array|OnlineShop_Framework_Pricing_IRule
+     * @return OnlineShop_Framework_Pricing_IRule[]
      */
     public function getValidRules(OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
         // load all active rules from database
         return $this->getRulesFromDatabase();
-
-//        // test all rules
-//        $validRules = array();
-//        foreach($list as $rule)
-//        {
-//            /* @var OnlineShop_Framework_Pricing_IRule $rule */
-//
-//            $environment->setRule( $rule );
-//
-//            // test rule
-//            if($rule->check($environment))
-//                $validRules[] = $rule;
-//
-//        }
-//
-//        // finish
-//        return $validRules;
     }
 
     /**
@@ -159,7 +150,10 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
      */
     public function getEnvironment()
     {
-       return new OnlineShop_Framework_Impl_Pricing_Environment();
+        $environment = new OnlineShop_Framework_Impl_Pricing_Environment();
+        $environment->setSession( new Zend_Session_Namespace('PricingManager') );
+
+        return $environment;
     }
 
     /**

@@ -65,22 +65,19 @@ interface OnlineShop_Framework_Pricing_IEnvironment
     public function setCategories(array $categories);
 
     /**
-     * @return array|OnlineShop_Framework_AbstractCategory
+     * @return OnlineShop_Framework_AbstractCategory[]
      */
     public function getCategories();
 
-
-    #public function setTenant();
-    #public function getTenant();
-
     /**
-     * @param int $userId
+     * @param Zend_Session_Namespace $namespace
+     *
      * @return OnlineShop_Framework_Pricing_IEnvironment
      */
-    #public function setUserId($userId);
+    public function setSession(Zend_Session_Namespace $namespace);
 
     /**
-     * @return int
+     * @return Zend_Session_Namespace
      */
-    #public function getUserId();
+    public function getSession();
 }
