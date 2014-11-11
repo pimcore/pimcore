@@ -99,8 +99,8 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     initCkEditor: function () {
 
-        // add drop zone
-        var dd = new Ext.dd.DropZone(Ext.get(this.editableDivId), {
+        // add drop zone, use the parent panel here (container), otherwise this can cause problems when specifying a fixed height on the wysiwyg
+        var dd = new Ext.dd.DropZone(Ext.get(this.editableDivId).parent(), {
             ddGroup: "element",
 
             getTargetFromEvent: function(e) {
