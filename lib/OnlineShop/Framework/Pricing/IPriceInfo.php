@@ -25,7 +25,7 @@ interface OnlineShop_Framework_Pricing_IPriceInfo extends OnlineShop_Framework_I
      * returns all valid rules, if forceRecalc, recalculation of valid rules is forced
      *
      * @param bool $forceRecalc
-     * @return array|OnlineShop_Framework_Pricing_IRule
+     * @return OnlineShop_Framework_Pricing_IRule[]
      */
     public function getRules($forceRecalc = false);
 
