@@ -79,6 +79,8 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
             $this->validRules = array();
             foreach($this->rules as $rule)
             {
+                $env->setRule( $rule );
+
                 if($rule->check($env) === true) {
                     $this->validRules[] = $rule;
                 }
