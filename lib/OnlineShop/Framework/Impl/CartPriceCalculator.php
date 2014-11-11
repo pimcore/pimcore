@@ -60,7 +60,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
                     $currency = $item->getPrice()->getCurrency();
                 }
 
-                if($currency->getName() != $item->getPrice()->getCurrency()->getName()) {
+                if($currency->compare( $item->getPrice()->getCurrency() ) != 0) {
                     throw new OnlineShop_Framework_Exception_UnsupportedException("Different currencies within one cart are not supported");
                 }
 
