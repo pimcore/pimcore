@@ -208,7 +208,34 @@
 						"invisible":false,
 						"visibleGridView":false,
 						"visibleSearch":false
-					}
+					},
+                    {
+                        "fieldtype":"fieldcollections",
+                        "phpdocType":"Object_Fieldcollection",
+                        "allowedTypes":[
+                            "PricingRule"
+                        ],
+                        "lazyLoading":true,
+                        "maxItems":"",
+                        "disallowAddRemove":false,
+                        "disallowReorder":false,
+                        "name":"pricingRules",
+                        "title":"Aktive Preisregeln",
+                        "tooltip":"",
+                        "mandatory":false,
+                        "noteditable":true,
+                        "index":false,
+                        "locked":false,
+                        "style":"",
+                        "permissions":null,
+                        "datatype":"data",
+                        "columnType":null,
+                        "queryColumnType":null,
+                        "relationType":false,
+                        "invisible":false,
+                        "visibleGridView":false,
+                        "visibleSearch":false
+                    }
 				],
 				"locked":false
 			}

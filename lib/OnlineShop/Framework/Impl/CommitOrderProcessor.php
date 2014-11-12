@@ -313,7 +313,10 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     /**
      * @param \OnlineShop_Framework_ICartItem $item
      * @param OnlineShop_Framework_AbstractOrder |OnlineShop_Framework_AbstractOrderItem $parent
-     * @return Object_OnlineShopOrderItem
+     *
+     * @return OnlineShop_Framework_AbstractOrderItem
+     * @throws Exception
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
      */
     protected function createOrderItem(OnlineShop_Framework_ICartItem $item,  $parent) {
 
@@ -356,6 +359,26 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         }
 
         $orderItem->setTotalPrice($price);
+
+
+        // save active pricing rules
+        $priceInfo = $item->getPriceInfo();
+        if($priceInfo instanceof OnlineShop_Framework_Pricing_IPriceInfo && method_exists($orderItem, 'setPricingRules'))
+        {
+            $priceRules = new Object_Fieldcollection();
+            foreach($priceInfo->getRules() as $rule)
+            {
+                $priceRule = new Object_Fieldcollection_Data_PricingRule();
+                $priceRule->setRuleId( $rule->getId() );
+                $priceRule->setName( $rule->getName() );
+
+                $priceRules->add( $priceRule );
+            }
+
+            $orderItem->setPricingRules( $priceRules );
+            $orderItem->save();
+        }
+
 
         return $orderItem;
     }

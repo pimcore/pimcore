@@ -896,7 +896,146 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
         });
 
         return item;
-    }
+    },
+
+
+    /**
+     * @param panel
+     * @param data
+     * @param getName
+     * @returns Ext.form.FormPanel
+     */
+    conditionSold: function (panel, data, getName) {
+
+        //
+        var niceName = t("plugin_onlineshop_pricing_config_condition_sold");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        // check params
+        if(typeof data == "undefined") {
+            data = {};
+        }
+
+        // create item
+        var myId = Ext.id();
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            type: 'Sold',
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionSold"),
+            items: [{
+                xtype: "numberfield",
+                fieldLabel: t("plugin_onlineshop_pricing_config_condition_sold_count"),
+                name: "count",
+                width: 200,
+                value: data.count
+            }],
+        });
+
+        return item;
+    },
+
+
+    /**
+     * @param panel
+     * @param data
+     * @param getName
+     * @returns Ext.form.FormPanel
+     */
+    conditionSales: function (panel, data, getName) {
+
+        //
+        var niceName = t("plugin_onlineshop_pricing_config_condition_sales");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        // check params
+        if(typeof data == "undefined") {
+            data = {};
+        }
+
+        // create item
+        var myId = Ext.id();
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            type: 'Sales',
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionSales"),
+            items: [{
+                xtype: "numberfield",
+                fieldLabel: t("plugin_onlineshop_pricing_config_condition_sales_amount"),
+                name: "amount",
+                width: 200,
+                value: data.amount
+            }],
+        });
+
+        return item;
+    },
+
+
+    /**
+     * @param panel
+     * @param data
+     * @param getName
+     * @returns Ext.form.FormPanel
+     */
+    conditionClientIp: function (panel, data, getName) {
+
+        //
+        var niceName = t("plugin_onlineshop_pricing_config_condition_client-ip");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+
+        // create item
+        var myId = Ext.id();
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            type: 'ClientIp',
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionClientIp"),
+            items: [{
+                xtype: "textfield",
+                fieldLabel: t("plugin_onlineshop_pricing_config_condition_client_ip"),
+                name: "ip",
+                width: 200,
+                value: data.ip
+            }]
+        });
+
+
+        // set default value
+        if(data.ip == undefined)
+        {
+            Ext.Ajax.request({
+                url: "/admin/settings/get-system",
+                success: function (response) {
+
+                    var settings = Ext.decode(response.responseText);
+                    item.getForm().findField('ip').setValue( settings.config.client_ip );
+
+                }.bind(this)
+            });
+        }
+
+
+        return item;
+    },
+
 };
 
 

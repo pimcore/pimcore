@@ -233,6 +233,9 @@
                     <CatalogProduct class="OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct" />
                     <CatalogCategory class="OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory" />
                     <Token class="OnlineShop_Framework_Impl_Pricing_Condition_Token" />
+                    <Sold class="OnlineShop_Framework_Impl_Pricing_Condition_Sold" />
+                    <Sales class="OnlineShop_Framework_Impl_Pricing_Condition_Sales" />
+                    <ClientIp class="OnlineShop_Framework_Impl_Pricing_Condition_ClientIp" />
                 </condition>
 
                 <!-- rule actions -->

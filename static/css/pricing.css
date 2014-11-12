@@ -45,6 +45,17 @@
 .plugin_onlineshop_pricing_icon_conditionCatalogCategory {
     background: url("/pimcore/static/img/icon/folder_camera.png") no-repeat scroll left center transparent !important;
 }
+.plugin_onlineshop_pricing_icon_conditionToken {
+    background: url(/pimcore/static/img/icon/award_star_silver_3.png) left center no-repeat !important;
+}
+.plugin_onlineshop_pricing_icon_conditionSold,
+.plugin_onlineshop_pricing_icon_conditionSales {
+    background: url("/pimcore/static/img/icon/money.png") left center no-repeat !important;
+}
+.plugin_onlineshop_pricing_icon_conditionClientIp {
+    background: url("/pimcore/static/img/icon/computer.png") left center no-repeat !important;
+}
+
 
 /** Actions **/
 .plugin_onlineshop_pricing_icon_action {
