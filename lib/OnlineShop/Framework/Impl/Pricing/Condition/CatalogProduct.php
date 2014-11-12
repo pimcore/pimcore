@@ -48,12 +48,13 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct implements Onli
             {
                 /* @var OnlineShop_Framework_AbstractProduct $allow */
 
-                while($currentProduct instanceof OnlineShop_Framework_ProductInterfaces_ICheckoutable) {
-                    if($currentProduct->getId() === $product->getId())
+                $currentProductCheck = $currentProduct;
+                while($currentProductCheck instanceof OnlineShop_Framework_ProductInterfaces_ICheckoutable) {
+                    if($currentProductCheck->getId() === $product->getId())
                     {
                         return true;
                     }
-                    $currentProduct = $currentProduct->getParent();
+                    $currentProductCheck = $currentProductCheck->getParent();
                 }
             }
         }
