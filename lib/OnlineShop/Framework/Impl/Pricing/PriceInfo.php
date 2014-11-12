@@ -95,8 +95,13 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
      */
     public function getPrice()
     {
-        if($this->priceInfo->getPrice() == null) {
+        $price = $this->priceInfo->getPrice();
+        if($price == null) {
             return null;
+        }
+        else
+        {
+            $this->setAmount( $price->getAmount() );
         }
 
         if(!$this->rulesApplied) {
@@ -114,7 +119,6 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
         }
 
 
-        $price = $this->priceInfo->getPrice();
         $price->setAmount($this->getAmount());
         return $price;
     }
