@@ -81,10 +81,10 @@ $config = \Pimcore\Config::getSystemConfig();
         <div id="right">
             <form id="loginform" method="post" action="/admin/login/login">
                 <label><?php echo $this->translate("Username"); ?></label>
-                <input id="username" type="text" name="username" />
+                <input id="username" type="text" name="username" required />
 
                 <label><?php echo $this->translate("Password"); ?></label>
-                <input type="password" name="password" />
+                <input type="password" name="password" required />
 
                 <input type="submit" name="submit" value="<?php echo $this->translate("Login"); ?>" />
 
