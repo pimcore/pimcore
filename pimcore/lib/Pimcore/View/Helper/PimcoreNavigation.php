@@ -151,6 +151,10 @@ class PimcoreNavigationController
                         if ($this->_activeDocument->getRealFullPath() == $child->getHref()) {
                             $active = true;
                         }
+
+                        if (strpos($this->_activeDocument->getRealFullPath(), $child->getHref() . "/") === 0) {
+                            $classes .= " active active-trail";
+                        }
                     }
 
                     $path = $child->getFullPath();
