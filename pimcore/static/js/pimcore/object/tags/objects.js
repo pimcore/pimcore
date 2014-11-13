@@ -187,7 +187,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                             id: data.id,
                             path: parent + "/" + pimcore.helpers.getValidFilename(name),
                             type: className
-                        }, this.store.getCount() + 1));
+                        }));
                         pimcore.helpers.openElement(data.id, "object", "object");
                         this.window.close();
                     } else {
@@ -419,7 +419,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                             };
 
                             if (!this.objectAlreadyExists(initData.id)) {
-                                this.store.add(new this.store.recordType(initData, this.store.getCount() + 1));
+                                this.store.add(new this.store.recordType(initData));
                                 return true;
                             }
                         }
@@ -572,7 +572,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                         id: items[i].id,
                         path: items[i].fullpath,
                         type: items[i].classname
-                    }, this.store.getCount() + 1));
+                    }));
                 }
             }
         }
