@@ -20,7 +20,7 @@ class Version {
     /**
      * @var string
      */
-    public static $version = "2.3.0";
+    public static $version = "3.0.0 RC1";
 
     /**
      * @var int
@@ -30,7 +30,7 @@ class Version {
     /**
      * @var array
      */
-    public static $svnInfo = array (
+   public static $svnInfo = array (
   'Path' => 'trunk',
   'URL' => 'http',
   'Repository Root' => 'http',
