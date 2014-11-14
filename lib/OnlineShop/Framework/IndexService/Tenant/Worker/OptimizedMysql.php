@@ -107,7 +107,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends Onl
 
 
                 //insert sub tenant data
-                $this->tenantConfig->updateSubTenantEntries($objectId, $data['subtenants']);
+                $this->tenantConfig->updateSubTenantEntries($objectId, $data['subtenants'], $data['data']['o_id']);
 
                 $this->db->commit();
             } catch(Exception $e) {

@@ -271,5 +271,22 @@ class OnlineShop_Framework_IndexService {
     public function getProductListForCurrentTenant() {
         return $this->getCurrentTenantWorker()->getProductList();
     }
+
+
+    /**
+     * @return OnlineShop_Framework_IProductList
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    public function getProductListForTenant($tenant) {
+        if($tenant) {
+            if (array_key_exists($tenant, $this->tenantWorkers)) {
+                return $this->tenantWorkers[$tenant]->getProductList();
+            } else {
+                throw new OnlineShop_Framework_Exception_InvalidConfigException("Tenant $tenant doesn't exist.");
+            }
+        } else {
+            return $this->defaultWorker->getProductList();
+        }
+    }
 }
 

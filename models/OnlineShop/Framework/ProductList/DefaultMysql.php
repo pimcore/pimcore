@@ -85,6 +85,11 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
     protected $relationConditions = array();
 
     /**
+     * @var string[]
+     */
+    protected $queryConditions = array();
+
+    /**
      * @var float
      */
     protected $conditionPriceFrom = null;
@@ -120,6 +125,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
     public function resetConditions() {
         $this->conditions = array();
         $this->relationConditions = array();
+        $this->queryConditions = array();
         $this->conditionPriceFrom = null;
         $this->conditionPriceTo = null;
     }
@@ -135,8 +141,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
      */
     public function addQueryCondition($condition, $fieldname = "")
     {
-        // TODO: Implement addQueryCondition() method.
-        throw new Exception("Not implemented yet.");
+        $this->queryConditions[$fieldname][] = $condition;
     }
 
     /**
@@ -147,8 +152,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
      */
     public function resetQueryCondition($fieldname)
     {
-        // TODO: Implement resetQueryCondition() method.
-        throw new Exception("Not implemented yet.");
+        unset($this->queryConditions[$fieldname]);
     }
 
     /**
@@ -425,6 +429,18 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
                     $condition .= " AND " . $userspecific;
                 }
             }
+        }
+
+
+        if($this->queryConditions) {
+            $searchstring = "";
+            foreach($this->queryConditions as $queryConditionPartArray) {
+                foreach($queryConditionPartArray as $queryConditionPart) {
+                    $searchstring .= "+" . $queryConditionPart . "* ";
+                }
+            }
+
+            $condition .= " AND " . $this->resource->buildFulltextSearchWhere($this->tenantConfig->getSearchAttributeConfig(), $searchstring);
         }
 
         OnlineShop_Plugin::getSQLLogger()->log("Total Condition: " . $condition, Zend_Log::INFO);
