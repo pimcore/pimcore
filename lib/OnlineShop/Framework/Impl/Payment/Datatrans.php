@@ -255,6 +255,9 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
     {
         if($this->authorizedData['reqtype'] == 'NOA' && $this->authorizedData['uppTransactionId'])
         {
+            // restore price object for payment status
+            $price = new OnlineShop_Framework_Impl_Price($this->authorizedData['amount'] / 100, new Zend_Currency($this->authorizedData['currency']));
+
             // complete authorized payment
             $xml = $this->xmlSettlement(
                 self::TRANS_TYPE_DEBIT
@@ -334,6 +337,9 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
     {
         if($this->authorizedData['reqtype'] == 'NOA' && $this->authorizedData['uppTransactionId'])
         {
+            // restore price object for payment status
+            $price = new OnlineShop_Framework_Impl_Price($this->authorizedData['amount'] / 100, new Zend_Currency($this->authorizedData['currency']));
+
             // complete authorized payment
             $xml = $this->xmlSettlement(
                 self::TRANS_TYPE_CREDIT
