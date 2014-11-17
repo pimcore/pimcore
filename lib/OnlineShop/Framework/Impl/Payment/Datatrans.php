@@ -3,7 +3,7 @@
 class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framework_IPayment
 {
     const TRANS_TYPE_DEBIT = '05';
-    const TRANS_TYPE_CREDIT = '05';
+    const TRANS_TYPE_CREDIT = '06';
 
 
     /**
