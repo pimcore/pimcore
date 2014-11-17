@@ -160,7 +160,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
         // redirect to the main domain if specified
         try {
             $hostRedirect = null;
-            if ($config->general->redirect_to_maindomain && $config->general->domain && $config->general->domain != Tool::getHostname() && !Site::isSiteRequest()) {
+            if ($config->general->redirect_to_maindomain && $config->general->domain && $config->general->domain != Tool::getHostname() && !Site::isSiteRequest() && !Tool::isFrontentRequestByAdmin()) {
                 $hostRedirect = $config->general->domain;
             }
             if(Site::isSiteRequest()) {
