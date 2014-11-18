@@ -241,6 +241,15 @@ class Document extends Element\AbstractElement {
                     $document->getResource()->getById($id);
 
                     $mappingClass = "\\Pimcore\\Model\\Document\\" . ucfirst($document->getType());
+
+                    // this is the fallback for custom document types using prefixes
+                    // so we need to check if the class exists first
+                    if(!\Pimcore\Tool::classExists($mappingClass)) {
+                        $oldStyleClass = "Document_" . ucfirst($document->getType());
+                        if(\Pimcore\Tool::classExists($oldStyleClass)) {
+                            $mappingClass = $oldStyleClass;
+                        }
+                    }
                     $typeClass = Tool::getModelClassMapping($mappingClass);
 
                     if (Tool::classExists($typeClass)) {
