@@ -17,7 +17,7 @@ use Pimcore\Tool;
 use Pimcore\File;
 use Pimcore\Model\Object;
 
-class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
+class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
 
     public function loadObjectDataAction() {
         $object = Object::getById($this->getParam("id"));
@@ -583,11 +583,11 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
                 if (!$object instanceof Object\Concrete) {
                     //create new object
                     $object = new $className();
-                } else if (object instanceof Object\Concrete and $object->getClassName() !== $className) {
+                } else if ($object instanceof Object\Concrete and !($object instanceof $className)) {
                     //delete the old object it is of a different class
                     $object->delete();
                     $object = new $className();
-                } else if (object instanceof Object\Folder) {
+                } else if ($object instanceof Object\Folder) {
                     //delete the folder
                     $object->delete();
                     $object = new $className();
