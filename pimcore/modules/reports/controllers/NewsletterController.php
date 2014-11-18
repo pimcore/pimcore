@@ -200,7 +200,7 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
 
         $object = $className::getByEmail($letter->getTestEmailAddress(), 1);
         if(!$object) {
-            $objectList = $className . "_List";
+            $objectList = $className . "\\Listing";
             $list = new $objectList();
 
             if($letter->getObjectFilterSQL()) {
