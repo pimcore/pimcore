@@ -350,7 +350,7 @@ class AbstractObject extends Model\Element\AbstractElement {
         if (is_array($config)) {
             if ($className) {
 
-                $listClass = ucfirst($className) . "_List";
+                $listClass = ucfirst($className) . "\\Listing";
 
                 // check for a mapped class
                 $listClass = Tool::getModelClassMapping($listClass);

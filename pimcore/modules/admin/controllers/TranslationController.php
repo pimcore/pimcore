@@ -297,7 +297,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
     public function cleanupAction() {
 
-        $listClass = "Translation_" . ucfirst($this->getParam("type")) . "_List";
+        $listClass = "\\Pimcore\\Model\\Translation\\" . ucfirst($this->getParam("type")) . "\\Listing";
         if(class_exists($listClass)) {
 
             $list = new $listClass();

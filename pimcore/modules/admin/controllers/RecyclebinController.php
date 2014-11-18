@@ -83,7 +83,7 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin {
         if($element) {
 
             $type = Element\Service::getElementType($element);
-            $listClass = ucfirst($type) . "_List";
+            $listClass = "\\Pimcore\\Model\\" . ucfirst($type) . "\\Listing";
             $list = new $listClass();
             $list->setCondition( (($type == "object") ? "o_" : "") . "path LIKE '" . $element->getFullPath() . "/%'");
             $children = $list->getTotalCount();

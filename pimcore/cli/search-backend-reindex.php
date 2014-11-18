@@ -25,7 +25,7 @@ $elementsPerLoop = 100;
 $types = array("asset","document","object");
 
 foreach ($types as $type) {
-    $listClassName = ucfirst($type) . "_List";
+    $listClassName = "\\Pimcore\\Model\\" . ucfirst($type) . "\\Listing";
     $list = new $listClassName();
     $elementsTotal = $list->getTotalCount();
 

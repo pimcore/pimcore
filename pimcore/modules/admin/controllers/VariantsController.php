@@ -163,7 +163,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin {
                     $order = $this->getParam("dir");
                 }
 
-                $listClass = "Object_" . ucfirst($className) . "_List";
+                $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
 
                 $conditionFilters = array("o_parentId = " . $parentObject->getId());
                 // create filter condition

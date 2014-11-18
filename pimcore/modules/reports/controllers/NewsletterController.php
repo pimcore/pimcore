@@ -134,7 +134,7 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
         $count = 0;
         $success = false;
         try {
-            $className = "\\Pimcore\\Model\\Object\\" . ucfirst($this->getParam("class")) . "_List";
+            $className = "\\Pimcore\\Model\\Object\\" . ucfirst($this->getParam("class")) . "\\Listing";
             $list = new $className();
 
             $conditions = array("(newsletterActive = 1 AND newsletterConfirmed = 1)");
