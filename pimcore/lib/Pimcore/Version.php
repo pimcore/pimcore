@@ -25,7 +25,7 @@ class Version {
     /**
      * @var int
      */
-    public static $revision = 3326;
+    public static $revision = 3327;
 
     /**
      * @var array
@@ -35,11 +35,11 @@ class Version {
   'URL' => 'http',
   'Repository Root' => 'http',
   'Repository UUID' => '1f8fe7d8-47f0-464c-8d0a-336f4953ab05',
-  'Revision' => '5503',
+  'Revision' => '5507',
   'Node Kind' => 'directory',
   'Last Changed Author' => 'brusch',
-  'Last Changed Rev' => '5503',
-  'Last Changed Date' => '2014-11-17 12',
+  'Last Changed Rev' => '5507',
+  'Last Changed Date' => '2014-11-18 06',
 );
 
     /**
