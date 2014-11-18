@@ -191,7 +191,7 @@ class LibreOffice extends Ghostscript {
         if($page || parent::isFileTypeSupported($path)) {
             // for per page extraction we have to convert the document to PDF and extract the text via ghostscript
             return parent::getText($page, $this->getPdf($path));
-        } else {
+        } else if(File::getFileExtension($path)) {
             // if we want to get the text of the whole document, we can use libreoffices text export feature
             $cmd = self::getLibreOfficeCli() . " --headless --nologo --nofirststartwizard --norestore --convert-to txt:Text --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path;
             $out = Console::exec($cmd, null, 240);
@@ -211,5 +211,7 @@ class LibreOffice extends Ghostscript {
                 return parent::getText(null, $this->getPdf($path));
             }
         }
+
+        return ""; // default empty string
     }
 }
