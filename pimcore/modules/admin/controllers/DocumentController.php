@@ -175,6 +175,16 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                         break;
                     default:
                         $classname = "\\Pimcore\\Model\\Document\\" . ucfirst($this->getParam("type"));
+
+                        // this is the fallback for custom document types using prefixes
+                        // so we need to check if the class exists first
+                        if(!\Pimcore\Tool::classExists($classname)) {
+                            $oldStyleClass = "Document_" . ucfirst($this->getParam("type"));
+                            if(\Pimcore\Tool::classExists($oldStyleClass)) {
+                                $classname = $oldStyleClass;
+                            }
+                        }
+
                         if (class_exists($classname)) {
                             $document = $classname::create($this->getParam("parentId"), $createValues);
                             try {
