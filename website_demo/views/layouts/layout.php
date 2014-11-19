@@ -89,7 +89,13 @@
                     </a>
                 </div>
                 <div class="navbar-collapse collapse">
-                    <?= $this->pimcoreNavigation($this->document, $mainNavStartNode)->menu()->renderMenu($mainNavigation, ["maxDepth" => 1, "ulClass" => "nav navbar-nav"]); ?>
+                    <?php
+                        $mainNavigation = $this->pimcoreNavigation($this->document, $mainNavStartNode);
+                        echo $mainNavigation->menu()->renderMenu(null, [
+                            "maxDepth" => 1,
+                            "ulClass" => "nav navbar-nav"
+                        ]);
+                    ?>
                 </div>
             </div>
             <?= $this->inc("/shared/includes/languages"); ?>
@@ -134,10 +140,7 @@
 
             <div>
                 <a href="/"><?= $this->translate("Home"); ?></a> &gt;
-                <?php
-                    $this->navigation($mainNavigation);
-                    echo $this->navigation()->breadcrumbs()->setMinDepth(null);
-                ?>
+                <?= $mainNavigation->breadcrumbs()->setMinDepth(null); ?>
             </div>
         </div>
 
