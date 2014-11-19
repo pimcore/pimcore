@@ -154,11 +154,10 @@
                         }
                     ?>
                     <h3><?= $startNode->getProperty("navigation_name"); ?></h3>
-                    <?= $this->pimcoreNavigation($this->document, $startNode)->menu($leftNavigation)->renderMenu($leftNavigation, [
+                    <?= $this->pimcoreNavigation($this->document, $startNode)->menu()->renderMenu(null, [
                         "ulClass" => "nav bs-sidenav",
                         "expandSiblingNodesOfActiveBranch" => true
-                    ]);
-                    ?>
+                    ]); ?>
                 </div>
                 <?= $this->inc($this->document->getProperty("sidebar")); ?>
             </div>
