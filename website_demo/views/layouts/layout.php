@@ -89,11 +89,7 @@
                     </a>
                 </div>
                 <div class="navbar-collapse collapse">
-                    <?php
-                        $mainNavigation = $this->pimcoreNavigation()->getNavigation($this->document, $mainNavStartNode);
-                        $this->navigation($mainNavigation);
-                        echo $this->navigation()->menu()->setUseTranslator(false)->renderMenu($mainNavigation, ["maxDepth" => 1, "ulClass" => "nav navbar-nav"]);
-                    ?>
+                    <?= $this->pimcoreNavigation($this->document, $mainNavStartNode)->menu()->renderMenu($mainNavigation, ["maxDepth" => 1, "ulClass" => "nav navbar-nav"]); ?>
                 </div>
             </div>
             <?= $this->inc("/shared/includes/languages"); ?>
@@ -155,10 +151,7 @@
                         }
                     ?>
                     <h3><?= $startNode->getProperty("navigation_name"); ?></h3>
-                    <?php
-                    $leftNavigation = $this->pimcoreNavigation()->getNavigation($this->document, $startNode);
-                    $this->navigation($leftNavigation);
-                    echo $this->navigation()->menu($leftNavigation)->setUseTranslator(false)->renderMenu($leftNavigation, [
+                    <?= $this->pimcoreNavigation($this->document, $startNode)->menu($leftNavigation)->renderMenu($leftNavigation, [
                         "ulClass" => "nav bs-sidenav",
                         "expandSiblingNodesOfActiveBranch" => true
                     ]);

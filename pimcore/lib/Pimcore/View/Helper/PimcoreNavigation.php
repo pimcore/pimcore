@@ -18,7 +18,7 @@ namespace Pimcore\View\Helper;
 
 use Pimcore\Model\Document;
 
-class PimcoreNavigation extends \Zend_View_Helper_Abstract
+class PimcoreNavigation extends \Zend_View_Helper_Navigation
 {
     /**
      * @var PimcoreNavigationController
@@ -40,11 +40,40 @@ class PimcoreNavigation extends \Zend_View_Helper_Abstract
     /**
      * @return PimcoreNavigationController
      */
-    public function pimcoreNavigation()
+    public function pimcoreNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null)
     {
-        return self::getController();
+
+        $controller = self::getController();
+
+        if($activeDocument) {
+            // this is the new more convenient way of creating a navigation
+            $navContainer = $controller->getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix);
+            $this->navigation($navContainer);
+            $this->setUseTranslator(false);
+            $this->setInjectTranslator(false);
+            return $this;
+        } else {
+            // this is the old-style navigation
+            return $controller;
+        }
     }
 
+    /**
+     * @param string $method
+     * @param array $arguments
+     * @return mixed
+     */
+    public function __call($method, array $arguments = array())
+    {
+        $return = parent::__call($method, $arguments);
+
+        // disable the translator per default, because this isn't necessary for pimcore
+        if(is_object($return) && method_exists($return, "setUseTranslator")) {
+            $return->setUseTranslator(false);
+        }
+
+        return $return;
+    }
 }
 
 class PimcoreNavigationController
