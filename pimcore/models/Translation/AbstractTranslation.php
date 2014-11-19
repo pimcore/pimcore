@@ -236,6 +236,22 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
          return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
      }
 
+
+    /**
+     *
+     */
+    public function save() {
+        if(!$this->getCreationDate()) {
+            $this->setCreationDate(time());
+        }
+
+        if(!$this->getModificationDate()) {
+            $this->setModificationDate(time());
+        }
+
+        $this->getResource()->save();
+    }
+
     /**
      * Imports translations from a csv file
      * The CSV file has to have the same format as an Pimcore translation-export-file
