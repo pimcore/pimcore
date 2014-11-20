@@ -221,4 +221,68 @@ class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin 
             "success" => $success
         ));
     }
+
+    public function uploadAction() {
+
+        $success = true;
+        $tmpId = uniqid();
+        $zipPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/plugin-" . $tmpId . ".zip";
+        $tempPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/plugin-" . $tmpId;
+
+        mkdir($tempPath);
+        copy($_FILES["zip"]["tmp_name"], $zipPath);
+
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath) === TRUE) {
+            $zip->extractTo($tempPath);
+            $zip->close();
+        } else {
+            $success = false;
+        }
+
+        unlink($zipPath);
+
+        // look for the plugin.xml
+        $rootDir = null;
+        $pluginName = null;
+        $files = rscandir($tempPath);
+        foreach ($files as $file) {
+            if(preg_match("@plugin.xml$@", $file)) {
+                $rootDir = dirname($file);
+
+                $pluginConfig = new \Zend_Config_Xml($file);
+                if($pluginConfig->plugin->pluginName) {
+                    $pluginName = $pluginConfig->plugin->pluginName;
+                } else {
+                    Logger::error("Unable to find 'pluginName' in " . $file);
+                }
+
+                break;
+            }
+        }
+
+        if($rootDir && $pluginName) {
+
+            $pluginPath = PIMCORE_PLUGINS_PATH . "/" . $pluginName;
+
+            // check for existing plugin
+            if(is_dir($pluginPath)) {
+                // move it to the backup directory
+                rename($pluginPath, PIMCORE_BACKUP_DIRECTORY . "/" . $pluginName . "-" . time());
+            }
+
+            rename($rootDir, $pluginPath);
+        } else {
+            $success = false;
+            Logger::err("No plugin.xml or plugin name found for uploaded plugin");
+        }
+
+        $this->_helper->json(array(
+            "success" => $success
+        ), false);
+
+        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+        // Ext.form.Action.Submit and mark the submission as failed
+        $this->getResponse()->setHeader("Content-Type", "text/html");
+    }
 }
