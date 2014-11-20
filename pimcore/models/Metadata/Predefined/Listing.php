@@ -69,7 +69,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
                 $types[] = $db->quote($item);
             }
 
-            $condition = "targetSubtype IN (" . implode(',',$types) . ")" ;
+            $condition = "(ISNULL(targetSubtype) OR targetSubtype = '' OR targetSubtype IN (" . implode(',',$types) . "))" ;
             $list->setCondition($condition);
         }
         $list = $list->load();
