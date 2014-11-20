@@ -253,6 +253,9 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
      */
     public function executeDebit(OnlineShop_Framework_IPrice $price = null, $reference = null)
     {
+        $uppTransactionId = null;
+
+
         if($this->authorizedData['reqtype'] == 'NOA' && $this->authorizedData['uppTransactionId'])
         {
             // restore price object for payment status
@@ -266,6 +269,8 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
                 , $this->authorizedData['refno']
                 , $this->authorizedData['uppTransactionId']
             );
+
+            $uppTransactionId = $this->authorizedData['uppTransactionId'];
         }
         else if($price === null)
         {
@@ -310,8 +315,8 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
         // create and return status
         $status = new OnlineShop_Framework_Impl_Payment_Status(
-            (string)$transaction->attributes()['refno']
-            , (string)$response->uppTransactionId
+              (string)$transaction->attributes()['refno']
+            , (string)$response->uppTransactionId ?: $uppTransactionId
             , $message
             , $paymentState
             , [
@@ -351,19 +356,15 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         }
         else
         {
-            // authorisieren und zahlung ausführen
-            $xml = $this->xmlAuthorisation(
-                'CAA'
-                , self::TRANS_TYPE_CREDIT
+            // complete authorized payment
+            $xml = $this->xmlSettlement(
+                self::TRANS_TYPE_CREDIT
                 , $price->getAmount() * 100
                 , $price->getCurrency()->getShortName()
                 , $reference
-                , $this->authorizedData['aliasCC']
-                , $this->authorizedData['expm']
-                , $this->authorizedData['expy']
+                , $transactionId
             );
         }
-
 
 
         // handle response
@@ -510,6 +511,8 @@ XML;
   <body merchantId="%1$s">
     <transaction refno="%2$s">
       <request>
+        <sign>%7$s</sign>
+
         <reqtype>COA</reqtype>
         <transtype>%6$s</transtype>
         <uppTransactionId>%3$d</uppTransactionId>
@@ -524,12 +527,12 @@ XML;
 
         $xml = sprintf($xml
             , $this->merchantId
-
             , $reference
             , $transactionId
             , $amount
             , $currency
             , $transType
+            , $this->sign
         );
 
         $ch = curl_init( $this->endpoint['xmlProcessor'] );
