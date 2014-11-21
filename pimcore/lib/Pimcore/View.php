@@ -147,7 +147,7 @@ class View extends \Zend_View {
      * @param array $params
      * @return string
      */
-    public function inc($include, $params, $cacheEnabled = true) {
+    public function inc($include, $params = null, $cacheEnabled = true) {
 
         if(!is_array($params)) {
             $params = [];
