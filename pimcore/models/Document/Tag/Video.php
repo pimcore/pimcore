@@ -348,12 +348,14 @@ class Video extends Model\Document\Tag
                 if(!array_key_exists("imagethumbnail", $options) || empty($options["imagethumbnail"])) {
                     // try to get the dimensions out ouf the video thumbnail
                     $imageThumbnailConf = $asset->getThumbnailConfig($options["thumbnail"])->getEstimatedDimensions();
+                    $imageThumbnailConf["format"] = "JPEG";
                 } else {
                     $imageThumbnailConf = $options["imagethumbnail"];
                 }
 
                 if(empty($imageThumbnailConf)) {
                     $imageThumbnailConf["width"] = 800;
+                    $imageThumbnailConf["format"] = "JPEG";
                 }
 
                 if($this->poster && ($poster = Asset::getById($this->poster))) {
