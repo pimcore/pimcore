@@ -63,7 +63,8 @@ pimcore.asset.metadata = Class.create({
                     ["document", "Document"],
                     ["asset", "Asset"],
                     ["object", "Object"],
-                    ["date", "Date"]
+                    ["date", "Date"],
+                    ["checkbox", "checkbox"]
                 ],
                 editable: false,
                 triggerAction: 'all',
@@ -101,7 +102,7 @@ pimcore.asset.metadata = Class.create({
                         }
                         return v;
                     }
-                }, "language"],
+                }, "language", "config"],
                 data: this.asset.data.metadata
             });
 
@@ -184,7 +185,10 @@ pimcore.asset.metadata = Class.create({
                         dataIndex: 'data',
                         getCellEditor: this.getCellEditor.bind(this),
                         editable: true,
-                        renderer: this.getCellRenderer.bind(this)
+                        renderer: this.getCellRenderer.bind(this),
+                        listeners: {
+                            "mousedown": this.cellMousedown.bind(this)
+                        }
                     },
                     {
                         xtype: 'actioncolumn',
@@ -312,6 +316,10 @@ pimcore.asset.metadata = Class.create({
             if (value) {
                 return value.format("Y-m-d");
             }
+        } else if (type == "checkbox") {
+            metaData.css += ' x-grid3-check-col-td';
+            return String.format('<div class="x-grid3-check-col{0}" '
+            + 'style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
         }
 
         return value;
@@ -370,6 +378,20 @@ pimcore.asset.metadata = Class.create({
         this.grid.getView().refresh();
     },
 
+    cellMousedown: function (col, grid, rowIndex, event) {
+
+        // this is used for the boolean field type
+
+        var store = grid.getStore();
+        var record = store.getAt(rowIndex);
+        var data = record.data;
+        var type = data.type;
+
+        if (type == "checkbox") {
+            record.set("data", !record.data.data);
+        }
+    },
+
     getCellEditor: function (rowIndex) {
 
         var store = this.grid.getStore();
@@ -394,6 +416,16 @@ pimcore.asset.metadata = Class.create({
             });
         } else if (type == "date") {
             property = new Ext.form.DateField();
+        } else if (type == "checkbox") {
+            property = new Ext.form.Checkbox();
+            return false;
+        } else if (type == "select") {
+            var config = data.config;
+            property = new Ext.form.ComboBox({
+                triggerAction: 'all',
+                editable: false,
+                store: config.split(",")
+            });
         }
 
         return new Ext.grid.GridEditor(property);
@@ -486,6 +518,7 @@ pimcore.asset.metadata = Class.create({
                     name: key,
                     data: value,
                     type: item.type,
+                    config: item.config,
                     language: language
                 });
 

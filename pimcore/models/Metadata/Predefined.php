@@ -101,11 +101,11 @@ class Predefined extends Model\AbstractModel {
      * @param string $key
      * @return self
      */
-    public static function getByName($key, $language = "") {
+    public static function getByName($name, $language = "") {
 
         $metadata = new self();
-        $metadata->setKey($key);
-        $metadata->getResource()->getByKeyAndLanguage($key, $language);
+        $metadata->setName($name);
+        $metadata->getResource()->getByNameAndLanguage($name, $language);
 
         return $metadata;
     }
@@ -272,6 +272,23 @@ class Predefined extends Model\AbstractModel {
     {
         return $this->targetSubtype;
     }
+
+    /**
+     * @return string
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * @param string $config
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
+    }
+
 
     /**
      *

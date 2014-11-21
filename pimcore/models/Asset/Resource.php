@@ -58,6 +58,15 @@ class Resource extends Model\Element\Resource
             $metadata = array();
             foreach ($metadataRaw as $md) {
                 unset($md["cid"]);
+
+
+                //get the config from an predefined property-set (eg. select)
+                $predefined = \Pimcore\Model\Metadata\Predefined::getByName($md['name']);
+
+                if ($predefined && $predefined->getType() == $md['type'] && $predefined->getConfig()) {
+                    $md['config'] = $predefined->getConfig();
+                }
+
                 $metadata[] = $md;
             }
             $this->model->setMetadata($metadata);

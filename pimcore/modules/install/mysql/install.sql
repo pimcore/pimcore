@@ -22,7 +22,7 @@ CREATE TABLE `assets_metadata` (
   `cid` int(11) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   `language` varchar(255) DEFAULT NULL,
-  `type` ENUM('input','textarea','asset','document','object','date') DEFAULT NULL,
+  `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
   KEY `cid` (`cid`)
 ) DEFAULT CHARSET=utf8;
@@ -33,11 +33,12 @@ CREATE TABLE `assets_metadata_predefined` (
   `name` varchar(255) DEFAULT NULL,
   `description` text,
   `language` varchar(255) DEFAULT NULL,
-  `type` enum('input','textarea','asset','document','object','date') DEFAULT NULL,
+  `type` enum('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
   `targetSubtype` enum('image', 'text', 'audio', 'video', 'document', 'archive', 'unknown') DEFAULT NULL,
   `creationDate` bigint(20) unsigned DEFAULT '0',
   `modificationDate` bigint(20) unsigned DEFAULT '0',
+  `config` text,
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `id` (`id`),

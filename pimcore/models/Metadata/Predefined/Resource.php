@@ -55,18 +55,18 @@ class Resource extends Model\Resource\AbstractResource {
 
 
     /**
-     * Get the data for the object from database for the given key, or from the key which is set in the object
+     * Get the data for the object from database for the given name, or from the name which is set in the object
      *
-     * @param string $key
+     * @param string $name
      * @return void
      */
-    public function getByKeyAndLanguage($key = null, $language = null) {
+    public function getByNameAndLanguage($name = null, $language = null) {
 
         if ($key != null) {
-            $this->model->setKey($key);
+            $this->model->setName($name);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM assets_metadata_predefined WHERE `key` = ?", $this->model->getKey());
+        $data = $this->db->fetchRow("SELECT * FROM assets_metadata_predefined WHERE `name` = ?", $this->model->getName());
         $this->assignVariablesToModel($data);
     }
 
