@@ -1556,3 +1556,4 @@
 "naming_requirements_3chars","Name must be alphanumeric and at least 3 characters long"
 "item_saved_successfully","Item saved successfully"
 "default_layout","Use as default layout"
+"there_are_more_columns","There are more columns than currently displayed"
