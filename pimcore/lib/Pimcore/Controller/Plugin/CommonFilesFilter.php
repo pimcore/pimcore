@@ -24,9 +24,10 @@ class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract {
      * @var array
      */
     public static $files = array(
-        "/robots.txt",
-        "/crossdomain.xml",
-        "/favicon.ico"
+        "@^/robots.txt$@",
+        "@^/crossdomain.xml$@",
+        "@^/favicon.ico$@",
+        "@^/apple-touch-icon@"
     );
 
     /**
@@ -36,8 +37,15 @@ class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract {
 
         // this is a filter which checks for common used files (by browser, crawlers, ...) and prevent the default
         // error page, because this is more resource-intensive than exiting right here
-        if(in_array($request->getPathInfo(), self::$files)) {
+        $found = false;
+        foreach(self::$files as $pattern) {
+            if(preg_match($pattern, $request->getPathInfo())) {
+                $found = true;
+                break;
+            }
+        }
 
+        if($found) {
             if($request->getPathInfo() == "/robots.txt") {
 
                 // check for site
@@ -62,7 +70,7 @@ class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract {
 
             // if no other rule matches, exit anyway with a 404, to prevent the error page to be shown
             header('HTTP/1.1 404 Not Found');
-            echo "HTTP/1.1 404 Not Found";
+            echo "HTTP/1.1 404 Not Found\nFiltered by common files filter";
             exit;
         }
     }
