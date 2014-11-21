@@ -40,6 +40,7 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
                 $alias = preg_replace("/_Abstract(.*)/", "_Abstract", $alias);
                 $alias = preg_replace("/_[^_]+Interface/", "_Interface", $alias);
                 $alias = str_replace("_Listing_", "_List_", $alias);
+                $alias = preg_replace("/_Listing$/", "_List", $alias);
                 $alias = str_replace("Object_ClassDefinition", "Object_Class", $alias);
 
                 if(strpos($alias, "Pimcore_Model") === 0) {
