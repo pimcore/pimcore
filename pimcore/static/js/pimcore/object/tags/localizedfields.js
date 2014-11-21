@@ -202,7 +202,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 monitorResize: true,
                 cls: "object_field",
                 activeTab: 0,
-                height: 10,
+                height: "auto",
                 items: [],
                 deferredRender: true,
                 forceLayout: true,
@@ -217,26 +217,36 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
             // this is because the tabpanel has a strange behavior with automatic height, this corrects the problem
             panelConf.listeners = {
-                afterrender: function () {
+
+                afterlayout: function () {
+                    if (this.component.heightAlreadyFixed) {
+                        return;
+                    }
+
                     this.tabPanelAdjustIntervalCounter = 0;
                     this.tabPanelAdjustInterval = window.setInterval(function () {
-
-                        this.tabPanelAdjustIntervalCounter++;
-                        if(this.tabPanelAdjustIntervalCounter > 20) {
-                            clearInterval(this.tabPanelAdjustInterval);
-                        }
-
                         if(!this.fieldConfig.height && !this.fieldConfig.region) {
+                            this.tabPanelAdjustIntervalCounter++;
+                            if(this.tabPanelAdjustIntervalCounter > 20) {
+                                clearInterval(this.tabPanelAdjustInterval);
+                            }
+
                             try {
                                 var panelBodies = this.tabPanel.items.first().getEl().query(".x-panel-body");
                                 var panelBody = Ext.get(panelBodies[0]);
                                 panelBody.applyStyles("height: auto;");
                                 var height = panelBody.getHeight();
-                                // 100 is just a fixed value which seems to be ok(caused by title bar, tabs itself, ... )
-                                this.component.setHeight(height+100);
+                                if (height > 0) {
+                                    // 100 is just a fixed value which seems to be ok(caused by title bar, tabs itself, ... )
+                                    this.component.setHeight(height+100);
+                                    clearInterval(this.tabPanelAdjustInterval);
 
-                                //this.tabPanel.getEl().applyStyles("position:relative;");
-                                this.component.doLayout();
+                                    //this.tabPanel.getEl().applyStyles("position:relative;");
+                                    this.component.doLayout();
+                                    this.component.heightAlreadyFixed = true;
+
+                                }
+
                             } catch (e) {
                                 console.log(e);
                             }
