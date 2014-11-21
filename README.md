@@ -11,6 +11,8 @@ MULTI-CHANNEL EXPERIENCE AND ENGAGEMENT MANAGEMENT PLATFORM
 * Issue Tracker: - [Issues](http://www.pimcore.org/issues) - Report bugs here
 * Forums: - http://www.pimcore.org/board/ - Get help
 
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/pimcore/pimcore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 ## Getting started
 
 Download the [latest release](http://www.pimcore.org/download) and extract the archive in document root.
