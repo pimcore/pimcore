@@ -97,6 +97,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
+        this.tabpanel.setActiveTab(0);
+
         pimcore.layout.refresh();
     },
 
