@@ -211,8 +211,12 @@ class OnlineShop_PricingController extends Pimcore_Controller_Action_Admin
                     $newContainer->parent = $currentContainer;
                     $newContainer->type = 'Bracket';
                     $newContainer->conditions = array();
-                    $currentContainer->conditions[] = $newContainer;
 
+                    // move condition from current item to bracket item
+                    $newContainer->operator = $settings->operator;
+                    $settings->operator = null;
+
+                    $currentContainer->conditions[] = $newContainer;
                     $currentContainer = $newContainer;
                 }
 
