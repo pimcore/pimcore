@@ -20,12 +20,12 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     protected $amount = 0;
 
     /**
-     * @var array|OnlineShop_Framework_Pricing_IRule
+     * @var OnlineShop_Framework_Pricing_IRule[]
      */
     protected $rules = array();
 
     /**
-     * @var array|OnlineShop_Framework_Pricing_IRule
+     * @var OnlineShop_Framework_Pricing_IRule[]
      */
     protected $validRules = array();
 
@@ -81,8 +81,15 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
             {
                 $env->setRule( $rule );
 
-                if($rule->check($env) === true) {
+                if($rule->check($env) === true)
+                {
                     $this->validRules[] = $rule;
+
+                    // is this a stop rule?
+                    if($rule->getBehavior() == 'stopExecute')
+                    {
+                        break;
+                    }
                 }
             }
         }

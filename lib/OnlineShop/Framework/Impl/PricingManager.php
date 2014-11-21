@@ -55,11 +55,6 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
         {
             /* @var OnlineShop_Framework_Pricing_IRule $rule */
             $priceInfoWithRules->addRule($rule);
-
-            // is this a stop rule?
-            if($rule->getBehavior() == 'stopExecute') {
-                break;
-            }
         }
 
         return $priceInfoWithRules;
