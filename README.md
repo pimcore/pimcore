@@ -1,7 +1,7 @@
-# pimcore
+# pimcore 
 
 THE PREMIER OPEN-SOURCE  
-MULTI-CHANNEL EXPERIENCE AND ENGAGEMENT MANAGEMENT PLATFORM
+MULTI-CHANNEL EXPERIENCE AND ENGAGEMENT MANAGEMENT PLATFORM [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/pimcore/pimcore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 
 ![Editing Interface](website_demo/static/screenshots/1.png)
