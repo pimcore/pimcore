@@ -15,6 +15,7 @@
 pimcore.registerNS("pimcore.settings.translation.website");
 pimcore.settings.translation.website = Class.create(pimcore.settings.translations,{
 
+    translationType: 'website',
     dataUrl: '/admin/translation/translations',
     exportUrl: '/admin/translation/export',
     importUrl:'/admin/translation/import/?pimcore_admin_sid=' + pimcore.settings.sessionId,
