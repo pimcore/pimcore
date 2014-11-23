@@ -166,7 +166,23 @@ class AbstractObject extends Model\Element\AbstractElement {
      */
     public $o_hasChilds;
 
-    /**
+
+	/**
+	 * Contains a list of sibling documents
+	 *
+	 * @var array
+	 */
+	public $o_siblings;
+
+	/**
+	 * Indicator if document has siblings or not
+	 *
+	 * @var boolean
+	 */
+	public $o_hasSiblings;
+
+
+	/**
      * @var Model\Dependency[]
      */
     public $o_dependencies;
@@ -405,7 +421,50 @@ class AbstractObject extends Model\Element\AbstractElement {
         return $this->getResource()->hasChilds($objectTypes);
     }
 
-    /**
+
+	private $lastGetSiblingObjectTypes = array();
+
+	/**
+	 * Get a list of the sibling documents
+	 *
+	 * @param array $objectTypes
+	 * @param bool $unpublished
+	 * @return array
+	 */
+	public function getSiblings($objectTypes = array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER), $unpublished = false) {
+		if ($this->o_siblings === null || $this->lastGetSiblingObjectTypes != $objectTypes) {
+			$list = new Listing();
+			$list->setUnpublished($unpublished);
+			// string conversion because parentId could be 0
+			$list->addConditionParam("o_parentId = ?", (string)$this->getParentId());
+			$list->addConditionParam("o_id != ?", $this->getId());
+			$list->setOrderKey("o_key");
+			$list->setObjectTypes($objectTypes);
+			$list->setOrder("asc");
+			$this->o_siblings = $list->load();
+		}
+		return $this->o_siblings;
+	}
+
+	/**
+	 * Returns true if the document has at least one sibling
+	 *
+	 * @param array $objectTypes
+	 * @return bool
+	 */
+	public function hasSiblings($objectTypes = array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER)) {
+		if(is_bool($this->o_hasSiblings)){
+			if(($this->o_hasSiblings and empty($this->o_siblings)) or (!$this->o_hasSiblings and !empty($this->o_siblings))){
+				return $this->getResource()->hasSiblings($objectTypes);
+			} else {
+				return $this->o_hasSiblings;
+			}
+		}
+		return $this->getResource()->hasSiblings($objectTypes);
+	}
+
+
+	/**
      * Returns true if the element is locked
      * @return string
      */

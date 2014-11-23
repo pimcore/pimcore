@@ -167,7 +167,21 @@ class Asset extends Element\AbstractElement {
      */
     public $hasChilds;
 
-    /**
+	/**
+	 * Contains a list of sibling documents
+	 *
+	 * @var array
+	 */
+	public $siblings;
+
+	/**
+	 * Indicator if document has siblings or not
+	 *
+	 * @var boolean
+	 */
+	public $hasSiblings;
+
+	/**
      * Contains all scheduled tasks
      *
      * @var array
@@ -780,6 +794,40 @@ class Asset extends Element\AbstractElement {
         }
         return false;
     }
+
+	/**
+	 * Get a list of the sibling assets
+	 *
+	 * @return array
+	 */
+	public function getSiblings() {
+		if ($this->siblings === null) {
+			$list = new Asset\Listing();
+			// string conversion because parentId could be 0
+			$list->addConditionParam("parentId = ?", (string)$this->getParentId());
+			$list->addConditionParam("id != ?", $this->getId());
+			$list->setOrderKey("filename");
+			$list->setOrder("asc");
+			$this->siblings = $list->load();
+		}
+		return $this->siblings;
+	}
+
+	/**
+	 * Returns true if the asset has at least one sibling
+	 *
+	 * @return bool
+	 */
+	public function hasSiblings() {
+		if(is_bool($this->hasSiblings)){
+			if(($this->hasSiblings and empty($this->siblings)) or (!$this->hasSiblings and !empty($this->siblings))){
+				return $this->getResource()->hasSiblings();
+			} else {
+				return $this->hasSiblings;
+			}
+		}
+		return $this->getResource()->hasSiblings();
+	}
 
     /**
      * Returns true if the element is locked

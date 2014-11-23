@@ -332,6 +332,16 @@ class Resource extends Model\Element\Resource
         return $c;
     }
 
+	/**
+	 * Quick test if there are siblings
+	 *
+	 * @return boolean
+	 */
+	public function hasSiblings() {
+		$c = $this->db->fetchOne("SELECT id FROM documents WHERE parentId = ? and id != ? LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
+		return (bool)$c;
+	}
+
     public function isLocked()
     {
 

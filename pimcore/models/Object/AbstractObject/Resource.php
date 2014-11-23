@@ -288,6 +288,17 @@ class Resource extends Model\Element\Resource
         return (bool)$c;
     }
 
+	/**
+	 * Quick test if there are siblings
+	 *
+	 * @param array $objectTypes
+	 * @return boolean
+	 */
+	public function hasSiblings($objectTypes = array(Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER)) {
+		$c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? and o_id != ? AND o_type IN ('" . implode("','", $objectTypes) . "')", [$this->model->getParentId(), $this->model->getId()]);
+		return (bool)$c;
+	}
+
     /**
      * returns the amount of directly childs (not recursivly)
      *
