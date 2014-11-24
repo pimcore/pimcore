@@ -614,9 +614,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         callback();
                     }
                 }.bind(this),
-                failure: function () {
+                failure: function (response) {
                     this.tab.enable();
-                }
+                }.bind(this)
             });
 
             return true;
