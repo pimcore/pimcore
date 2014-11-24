@@ -354,7 +354,6 @@ class Resource extends Model\Element\Resource
 	 * @return boolean
 	 */
 	public function hasSiblings() {
-		die(var_dump($this->model->getParentId()));
 		$c = $this->db->fetchOne("SELECT id FROM assets WHERE parentId = ? and id != ? LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
 		return (bool)$c;
 	}
