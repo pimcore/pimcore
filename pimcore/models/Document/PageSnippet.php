@@ -291,6 +291,16 @@ abstract class PageSnippet extends Model\Document {
         try {
             if ($type) {
                 $class = "Document\\Tag\\" . ucfirst($type);
+
+                // this is the fallback for custom document tags using prefixes
+                // so we need to check if the class exists first
+                if(!\Pimcore\Tool::classExists($class)) {
+                    $oldStyleClass = "Document_Tag_" . ucfirst($type);
+                    if(\Pimcore\Tool::classExists($oldStyleClass)) {
+                        $class = $oldStyleClass;
+                    }
+                }
+
                 $this->elements[$name] = new $class();
                 $this->elements[$name]->setDataFromEditmode($data);
                 $this->elements[$name]->setName($name);
