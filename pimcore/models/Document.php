@@ -173,6 +173,20 @@ class Document extends Element\AbstractElement {
      */
     public $hasChilds;
 
+	/**
+	 * Contains a list of sibling documents
+	 *
+	 * @var array
+	 */
+	public $siblings;
+
+	/**
+	 * Indicator if document has siblings or not
+	 *
+	 * @var boolean
+	 */
+	public $hasSiblings;
+
     /**
      * @var string
      */
@@ -638,6 +652,42 @@ class Document extends Element\AbstractElement {
         }
         return $this->getResource()->hasChilds();
     }
+
+	/**
+	 * Get a list of the sibling documents
+	 *
+	 * @param bool $unpublished
+	 * @return array
+	 */
+	public function getSiblings($unpublished = false) {
+		if ($this->siblings === null) {
+			$list = new Document\Listing();
+			$list->setUnpublished($unpublished);
+			// string conversion because parentId could be 0
+			$list->addConditionParam("parentId = ?", (string)$this->getParentId());
+			$list->addConditionParam("id != ?", $this->getId());
+			$list->setOrderKey("index");
+			$list->setOrder("asc");
+			$this->siblings = $list->load();
+		}
+		return $this->siblings;
+	}
+
+	/**
+	 * Returns true if the document has at least one sibling
+	 *
+	 * @return bool
+	 */
+	public function hasSiblings() {
+		if(is_bool($this->hasSiblings)){
+			if(($this->hasSiblings and empty($this->siblings)) or (!$this->hasSiblings and !empty($this->siblings))){
+				return $this->getResource()->hasSiblings();
+			} else {
+				return $this->hasSiblings;
+			}
+		}
+		return $this->getResource()->hasSiblings();
+	}
 
     /**
      * Returns true if the element is locked

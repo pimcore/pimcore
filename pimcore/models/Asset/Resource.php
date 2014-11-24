@@ -348,6 +348,17 @@ class Resource extends Model\Element\Resource
         return (bool)$c;
     }
 
+	/**
+	 * Quick test if there are siblings
+	 *
+	 * @return boolean
+	 */
+	public function hasSiblings() {
+		die(var_dump($this->model->getParentId()));
+		$c = $this->db->fetchOne("SELECT id FROM assets WHERE parentId = ? and id != ? LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
+		return (bool)$c;
+	}
+
     /**
      * returns the amount of directly childs (not recursivly)
      *
