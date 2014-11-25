@@ -139,7 +139,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
             return null;
         }
 
-        $price = $this->priceInfo->getPrice();
+        $price = clone $this->priceInfo->getPrice();
         $price->setAmount($this->getPrice()->getAmount() * $this->getQuantity());
         return $price;
     }
