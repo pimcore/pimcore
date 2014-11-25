@@ -105,10 +105,29 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
                 name: "disallowReorder",
                 checked: this.datax.disallowReorder
             }
-
         ]);
 
         this.specificPanel.doLayout();
+
+        this.standardSettingsForm.add(
+            [
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("collapsible"),
+                    name: "collapsible",
+                    checked: this.datax.collapsible
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("collapsed"),
+                    name: "collapsed",
+                    checked: this.datax.collapsed
+                }
+            ]
+
+        );
+
+        this.standardSettingsForm.doLayout();
     },
 
     applySpecialData: function(source) {

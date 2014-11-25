@@ -75,7 +75,9 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         
         var panelConf = {
             autoHeight: true,
-            cls: "object_field"
+            cls: "object_field",
+            collapsible: this.fieldConfig.collapsible,
+            collapsed: this.fieldConfig.collapsed
         };
         if(this.fieldConfig.title) {
             panelConf.title = this.fieldConfig.title;

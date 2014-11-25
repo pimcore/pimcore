@@ -64,6 +64,15 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      */
     public $disallowReorder;
 
+    /**
+     * @var boolean
+     */
+    public $collapsed;
+
+    /**
+     * @var boolean
+     */
+    public $collapsible;
 
     /**
      * @return boolean
@@ -751,4 +760,39 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     {
         return $this->disallowReorder;
     }
+
+    /**
+     * @return boolean
+     */
+    public function isCollapsed()
+    {
+        return $this->collapsed;
+    }
+
+    /**
+     * @param boolean $collapsed
+     */
+    public function setCollapsed($collapsed)
+    {
+        $this->collapsed = $collapsed;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isCollapsible()
+    {
+        return $this->collapsible;
+    }
+
+    /**
+     * @param boolean $collapsible
+     */
+    public function setCollapsible($collapsible)
+    {
+        $this->collapsible = $collapsible;
+    }
+
+
+
 }
