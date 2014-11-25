@@ -506,7 +506,8 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
         debug_admin_translations: <?php echo \Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
         document_generatepreviews: <?php echo \Zend_Json::encode((bool) $this->config->documents->generatepreview) ?>,
         htmltoimage: <?php echo \Zend_Json::encode(\Pimcore\Image\HtmlToImage::isSupported()) ?>,
-        videoconverter: <?php echo \Zend_Json::encode(\Pimcore\Video::isAvailable()) ?>
+        videoconverter: <?php echo \Zend_Json::encode(\Pimcore\Video::isAvailable()) ?>,
+        asset_hide_edit: <?php echo $this->config->assets->hide_edit_image ? "true" : "false" ?>
     };
 </script>
 

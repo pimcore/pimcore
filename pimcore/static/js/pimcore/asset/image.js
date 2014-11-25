@@ -39,7 +39,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
         items.push(this.getDisplayPanel());
 
-        if (this.isAllowed("save") || this.isAllowed("publish")) {
+        if (!pimcore.settings.asset_hide_edit && (this.isAllowed("save") || this.isAllowed("publish"))) {
             items.push(this.getEditPanel());
         }
         if (this.isAllowed("publish")) {

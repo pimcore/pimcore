@@ -979,6 +979,12 @@ pimcore.settings.system = Class.create({
                                 name: 'assets.icc_cmyk_profile',
                                 value: this.getValue("assets.icc_cmyk_profile"),
                                 width: 300
+                            },
+                            {
+                                fieldLabel: t("hide_edit_image_tab"),
+                                xtype: "checkbox",
+                                name: "assets.hide_edit_image",
+                                checked: this.getValue("assets.hide_edit_image")
                             }
                         ]
                     },

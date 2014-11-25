@@ -399,7 +399,8 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
                 "jpegoptim" => $values["assets.jpegoptim"],
                 "pdftotext" => $values["assets.pdftotext"],
                 "icc_rgb_profile" => $values["assets.icc_rgb_profile"],
-                "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"]
+                "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"],
+                "hide_edit_image" => $values["assets.hide_edit_image"]
             ),
             "services" => array(
                 "translate" => array(
