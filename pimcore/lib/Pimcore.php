@@ -966,7 +966,7 @@ class Pimcore {
 
             // prepare the response to be sent (gzip or not)
             // do not add text/xml or a wildcard for text/* here because this causes problems with the SOAP server
-            $gzipContentTypes = array("@text/html@i","@application/json@");
+            $gzipContentTypes = array("@text/html@i","@application/json@","@text/javascript@","@text/css@");
             $gzipIt = false;
             foreach ($gzipContentTypes as $type) {
                 if(@preg_match($type, $contentType)) {
