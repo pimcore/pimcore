@@ -52,8 +52,57 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin {
                 $list->setOrder($this->getParam("dir"));
             }
 
-            if($this->getParam("filter")) {
-                $list->setCondition("path LIKE " . $list->quote("%".$this->getParam("filter")."%"));
+            $filters = $this->getParam("filter");
+            if($filters) {
+                $conditionFilters = array();
+                $filters = \Zend_Json::decode($filters);
+
+                foreach ($filters as $filter) {
+
+                    $operator = "=";
+
+                    if($filter["type"] == "string") {
+                        $operator = "LIKE";
+                    } else if ($filter["type"] == "numeric") {
+                        if($filter["comparison"] == "lt") {
+                            $operator = "<";
+                        } else if($filter["comparison"] == "gt") {
+                            $operator = ">";
+                        } else if($filter["comparison"] == "eq") {
+                            $operator = "=";
+                        }
+                    } else if ($filter["type"] == "date") {
+                        if($filter["comparison"] == "lt") {
+                            $operator = "<";
+                        } else if($filter["comparison"] == "gt") {
+                            $operator = ">";
+                        } else if($filter["comparison"] == "eq") {
+                            $operator = "=";
+                        }
+                        $filter["value"] = strtotime($filter["value"]);
+                    } else if ($filter["type"] == "list") {
+                        $operator = "=";
+                    } else if ($filter["type"] == "boolean") {
+                        $operator = "=";
+                        $filter["value"] = (int) $filter["value"];
+                    }
+                    // system field
+                    $value = $filter["value"];
+                    if ($operator == "LIKE") {
+                        $value = "%" . $value . "%";
+                    }
+
+                    $field = "`" . $filter["field"] . "` ";
+                    if($filter["field"] == "fullpath") {
+                        $field = "CONCAT(path,filename)";
+                    }
+
+                    $conditionFilters[] =  $field . $operator . " '" . $value . "' ";
+                }
+
+
+                $condition = implode(" AND ", $conditionFilters);
+                $list->setCondition($condition);
             }
             
             $items = $list->load();
