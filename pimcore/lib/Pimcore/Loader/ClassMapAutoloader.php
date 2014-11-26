@@ -27,14 +27,14 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
         if(strpos($class, "Pimcore\\") === 0) {
 
             // first check for a model, if it doesnt't work fall back to the default autoloader
-            if(!class_exists($class, false)) {
+            if(!class_exists($class, false) && !interface_exists($class, false)) {
                 if(!$this->loadModel($class)) {
                     $loader = \Zend_Loader_Autoloader::getInstance();
                     $loader->autoload($class);
                 }
             }
 
-            if(class_exists($class, false)) {
+            if(class_exists($class, false) || interface_exists($class, false)) {
                 // create an alias
                 $alias = str_replace("\\", "_", $class);
                 $alias = preg_replace("/_Abstract(.*)/", "_Abstract", $alias);
@@ -49,7 +49,7 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
                     }
                 }
 
-                if(!class_exists($alias, false)) {
+                if(!class_exists($alias, false) && !interface_exists($alias, false)) {
                     class_alias($class, $alias);
                     return; // skip here, nothing more to do ...
                 }
