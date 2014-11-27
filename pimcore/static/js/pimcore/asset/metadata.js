@@ -447,9 +447,9 @@ pimcore.asset.metadata = Class.create({
             var currentData = records[i];
             if (currentData) {
                 var data = currentData.data.data;
-                if (currentData.data.type == "date") {
+                if (data && currentData.data.type == "date") {
                     data = data.valueOf() / 1000;
-                };
+                }
                 values.push({
                     data: data,
                     type: currentData.data.type,
