@@ -672,9 +672,13 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
         $list->setOrder("ASC");
         $list->setOrderKey("o_id");
 
-        if($this->getParam("objecttype")) {
-            $list->setObjectTypes(array($this->getParam("objecttype")));
-        }
+        $objectType = $this->getParam("objecttype");
+        if($objectType) {
+            if ($objectType == Object\AbstractObject::OBJECT_TYPE_OBJECT && $class->getShowVariants()) {
+                $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
+            } else {
+                $list->setObjectTypes(array($objectType));
+            }        }
 
         $list->load();
 
