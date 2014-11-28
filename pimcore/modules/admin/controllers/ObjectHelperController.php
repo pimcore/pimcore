@@ -261,7 +261,8 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
             "sortinfo" => $gridConfig['sortinfo'],
             "language" => $language,
             "availableFields" => $availableFields,
-            "onlyDirectChildren" => $gridConfig['onlyDirectChildren']
+            "onlyDirectChildren" => $gridConfig['onlyDirectChildren'],
+            "pageSize" => $gridConfig['pageSize']
         ));
     }
 
