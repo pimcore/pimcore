@@ -507,17 +507,17 @@ class Config {
     public static function getByArrayConfig ($config) {
         $pipe = new self();
 
-        if($config["format"]) {
+        if(isset($config["format"]) && $config["format"]) {
             $pipe->setFormat($config["format"]);
         }
-        if($config["quality"]) {
+        if(isset($config["quality"]) && $config["quality"]) {
             $pipe->setQuality($config["quality"]);
         }
-        if($config["items"]) {
+        if(isset($config["items"]) && $config["items"]) {
             $pipe->setItems($config["items"]);
         }
 
-        if($config["highResolution"]) {
+        if(isset($config["highResolution"]) && $config["highResolution"]) {
             $pipe->setHighResolution($config["highResolution"]);
         }
 
