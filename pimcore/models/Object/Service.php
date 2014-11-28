@@ -547,7 +547,7 @@ class Service extends Model\Element\Service {
      */
     public static function getFilterCondition($filterJson, $class) {
 
-        $systemFields = array("o_path", "o_key", "o_id", "o_published","o_creationDate","o_modificationDate");
+        $systemFields = array("o_path", "o_key", "o_id", "o_published","o_creationDate","o_modificationDate", "o_fullpath");
 
         // create filter condition
         $conditionPartsFilters = array();
@@ -642,7 +642,11 @@ class Service extends Model\Element\Service {
 
                 } else if (in_array("o_".$filter["field"], $systemFields)) {
                     // system field
-                    $conditionPartsFilters[] = "`o_" . $filter["field"] . "` " . $operator . " '" . $filter["value"] . "' ";
+                    if ($filter["field"] == "fullpath") {
+                        $conditionPartsFilters[] = "concat(o_path, o_key) " . $operator . " '%" . $filter["value"] . "%' ";
+                    } else {
+                        $conditionPartsFilters[] = "`o_" . $filter["field"] . "` " . $operator . " '" . $filter["value"] . "' ";
+                    }
                 }
             }
         }
