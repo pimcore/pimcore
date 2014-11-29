@@ -310,7 +310,8 @@ class AbstractObject extends Model\Element\AbstractElement {
 
     /**
      * @param array $config
-     * @return Listing
+     * @return mixed
+     * @throws \Exception
      */
     public static function getList($config = array()) {
 
@@ -335,14 +336,15 @@ class AbstractObject extends Model\Element\AbstractElement {
 
                 if (Tool::classExists($listClass)) {
                     $list = new $listClass();
+                    $list->setValues($config);
+                    $list->load();
+
+                    return $list;
                 }
             }
-
-            $list->setValues($config);
-            $list->load();
-
-            return $list;
         }
+
+        throw new \Exception("Unable to initiate list class - class not found or invalid configuration");
     }
 
 

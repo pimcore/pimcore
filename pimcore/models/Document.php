@@ -337,7 +337,8 @@ class Document extends Element\AbstractElement {
 
     /**
      * @param array $config
-     * @return Document\Listing
+     * @return mixed
+     * @throws \Exception
      */
     public static function getList($config = array()) {
 
@@ -345,13 +346,18 @@ class Document extends Element\AbstractElement {
 
             $listClass = "\\Pimcore\\Model\\Document\\Listing";
             $listClass = Tool::getModelClassMapping($listClass);
-            $list = new $listClass();
 
-            $list->setValues($config);
-            $list->load();
+            if (Tool::classExists($listClass)) {
+                $list = new $listClass();
 
-            return $list;
+                $list->setValues($config);
+                $list->load();
+
+                return $list;
+            }
         }
+
+        throw new \Exception("Unable to initiate list class - class not found or invalid configuration");
     }
 
     /**
