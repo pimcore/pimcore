@@ -64,7 +64,8 @@ class Translate extends \Zend_Translate_Adapter {
     protected function _loadTranslationData($data, $locale, array $options = array()) {
 
         $locale = (string) $locale;
-        $cacheKey = "Translate_" . array_pop(explode("\\", self::getBackend())) . "_data_" . $locale;
+        $tmpKeyParts = explode("\\", self::getBackend());
+        $cacheKey = "Translate_" . array_pop($tmpKeyParts) . "_data_" . $locale;
 
         if(!$data = Cache::load($cacheKey)) {
             $data = array("__pimcore_dummy" => "only_a_dummy");
