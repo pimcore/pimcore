@@ -1,7 +1,7 @@
 <?php
 
 // flush cache
-\Pimcore\Model\Cache::clearAll();
+\Pimcore_Model_Cache::clearAll();
 
 // delete the autoload class map
 $file = PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php";
