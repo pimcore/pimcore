@@ -19,7 +19,7 @@ namespace Pimcore\Model\Translation;
 
 use Pimcore\Model;
 use Pimcore\Tool;
-use Pimcore\File; 
+use Pimcore\File;
 
 abstract class AbstractTranslation extends Model\AbstractModel implements TranslationInterface {
 
@@ -213,28 +213,28 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         return $translation;
     }
 
-     /**
-      * Static Helper to get the translation of the current locale
-      *
-      * @static
-      * @param $id - translation key
-      * @param bool $create - creates an empty translation entry if the key doesn't exists
-      * @param bool $returnIdIfEmpty - returns $id if no translation is available
-      * @return string
-      * @throws \Exception
-      */
-     public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
-     {
-         if(!$language) {
-             try {
-                 $language = (string) \Zend_Registry::get('Zend_Locale');
-             } catch (\Exception $e) {
-                 throw new \Exception("Couldn't determine current language.");
-             }
-         }
+    /**
+     * Static Helper to get the translation of the current locale
+     *
+     * @static
+     * @param $id - translation key
+     * @param bool $create - creates an empty translation entry if the key doesn't exists
+     * @param bool $returnIdIfEmpty - returns $id if no translation is available
+     * @return string
+     * @throws \Exception
+     */
+    public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
+    {
+        if(!$language) {
+            try {
+                $language = (string) \Zend_Registry::get('Zend_Locale');
+            } catch (\Exception $e) {
+                throw new \Exception("Couldn't determine current language.");
+            }
+        }
 
-         return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
-     }
+        return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
+    }
 
 
     /**
@@ -262,6 +262,9 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * @throws \Exception
      */
     public static function importTranslationsFromFile($file, $replaceExistingTranslations = true, $languages = null){
+
+        $delta = array();
+
         if(is_readable($file)){
             if(!$languages || empty($languages) || !is_array($languages)) {
                 $languages = Tool::getValidLanguages();
@@ -300,33 +303,55 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
                         $rd = str_replace("&quot;", '"', $row[$counter]);
                         $keyValueArray[$keys[$counter]] = $rd;
                     }
-                    if ($keyValueArray["key"]) {
-                        $t = static::getByKey($keyValueArray["key"],true);
+
+                    $textKey = $keyValueArray["key"];
+                    if ($textKey) {
+                        $t = static::getByKey($textKey,true);
+                        $dirty = false;
                         foreach ($keyValueArray as $key => $value) {
                             if (in_array($key, $languages)) {
+                                $currentTranslation = $t->getTranslation($key);
                                 if($replaceExistingTranslations){
                                     $t->addTranslation($key, $value);
+                                    if ($currentTranslation != $value) {
+                                        $dirty = true;
+                                    }
                                 }else{
                                     if(!$t->getTranslation($key)){
                                         $t->addTranslation($key, $value);
+                                        if ($currentTranslation != $value) {
+                                            $dirty = true;
+                                        }
+                                    } else if ($t->getTranslation($key) != $value && $value) {
+                                        $delta[]=
+                                            array(
+                                                "lg" => $key,
+                                                "key" => $textKey,
+                                                "text" => $t->getTranslation($key),
+                                                "csv" =>  $value
+                                            );
                                     }
                                 }
                             }
                         }
-                        if($keyValueArray['creationDate']){
-                            $t->setCreationDate($keyValueArray['creationDate']);
+
+                        if ($dirty) {
+                            if ($keyValueArray['creationDate']) {
+                                $t->setCreationDate($keyValueArray['creationDate']);
+                            }
+                            $t->setModificationDate(time()); //ignore modificationDate from file
+                            $t->save();
                         }
-                        $t->setModificationDate(time()); //ignore modificationDate from file
-                        $t->save();
                     }
                 }
                 Model\Translation\AbstractTranslation::clearDependentCache();
             } else {
                 throw new \Exception("less than 2 rows of data - nothing to import");
             }
-        }else{
+        } else {
             throw new \Exception("$file is not readable");
         }
+        return $delta;
     }
 
 

@@ -13,8 +13,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-use Pimcore\Tool; 
-use Pimcore\File; 
+use Pimcore\Tool;
+use Pimcore\File;
 use Pimcore\Model\Translation;
 use Pimcore\Model\Object;
 use Pimcore\Model\Document;
@@ -25,23 +25,43 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
     public function importAction() {
 
+//        $this->disableViewAutoRender(true);
         $this->checkPermission("translations");
 
         $admin = $this->getParam("admin");
+        $merge = $this->getParam("merge");
 
         $tmpFile = $_FILES["Filedata"]["tmp_name"];
+
+        $overwrite = $merge ? false : true;
+
         if($admin){
-            Translation\Admin::importTranslationsFromFile($tmpFile,true);
-        }else{
-            Translation\Website::importTranslationsFromFile($tmpFile,true);
+            $delta = Translation\Admin::importTranslationsFromFile($tmpFile, $overwrite);
+        } else {
+            $delta = Translation\Website::importTranslationsFromFile($tmpFile, $overwrite);
         }
 
-        $this->_helper->json(array(
+        $result =array(
             "success" => true
-        ), false);
+        );
+        if ($merge) {
+            $enrichedDelta = array();
 
-        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
-        // Ext.form.Action.Submit and mark the submission as failed
+            foreach ($delta as $item) {
+                $lg = $item["lg"];
+                $item["lgname"] =  \Zend_Locale::getTranslation($lg, "language");
+                $item["icon"] = "http://www.pimcore.org/static/img/flags/" . $lg . ".png";
+                $item["current"] = $item["text"];
+                $enrichedDelta[]= $item;
+            }
+
+            $result["delta"] = base64_encode(json_encode($enrichedDelta));
+        }
+
+        $this->_helper->json($result, false);
+
+//        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+//        // Ext.form.Action.Submit and mark the submission as failed
         $this->getResponse()->setHeader("Content-Type", "text/html");
     }
 
@@ -136,8 +156,9 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
             $csv .= implode(";", $tempRow) . "\r\n";
         }
 
+        $suffix = $admin ? "admin" : "website";
         header('Content-type: text/csv; charset=UTF-8');
-        header("Content-Disposition: attachment; filename=\"export.csv\"");
+        header("Content-Disposition: attachment; filename=\"export_ " . $suffix . "_translations.csv\"");
         ini_set('display_errors',false); //to prevent warning messages in csv
         echo $csv;
         die();
@@ -719,7 +740,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
         $content = html_entity_decode($content, null, "UTF-8");
 
         if(!preg_match_all("/<([^>]+)>([^<]+)?/", $content, $matches)) {
-                // return original content if it doesn't contain HTML tags
+            // return original content if it doesn't contain HTML tags
             return '<![CDATA[' . $content . ']]>';
         }
 
@@ -1031,5 +1052,23 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
         @unlink($exportFile);
         @unlink($tmpName);
         exit;
+    }
+
+    public function mergeItemAction() {
+
+        $translationType = $this->getParam("translationType");
+        $success = true;
+
+        $data = json_decode($this->getParam("data"), true);
+
+        $classname = "Pimcore\\Model\\Translation\\" . ucfirst($translationType);
+        $t = $classname::getByKey($data["key"],true);
+        $t->addTranslation($data["lg"], $data["current"]);
+        $t->setModificationDate(time());$t->save();
+
+
+        $this->_helper->json(array(
+            "success" => $success
+        ));
     }
 }

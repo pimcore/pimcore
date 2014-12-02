@@ -284,7 +284,15 @@ pimcore.settings.translations = Class.create({
                     text: t('cleanup'),
                     handler: this.cleanup.bind(this),
                     iconCls: "pimcore_icon_cleanup"
-                },{
+                },
+                "-",
+                {
+                    text: t('merge_csv'),
+                    handler: this.doMerge.bind(this),
+                    iconCls: "pimcore_icon_merge"
+                },
+                "-",
+                {
                     text: t('import_csv'),
                     handler: this.doImport.bind(this),
                     iconCls: "pimcore_icon_import"
@@ -317,6 +325,23 @@ pimcore.settings.translations = Class.create({
             Ext.MessageBox.alert(t("error"), t("error"));
         });
     },
+
+    doMerge:function(){
+        pimcore.helpers.uploadDialog(this.mergeUrl, "Filedata", function(result) {
+            var data = result.response.responseText;
+            data = Ext.decode(data);
+
+            var merger = new pimcore.settings.translation.translationmerger(this.translationType, data, this);
+            this.refresh();
+        }.bind(this), function () {
+            Ext.MessageBox.alert(t("error"), t("error"));
+        });
+    },
+
+    refresh: function() {
+        this.store.reload();
+    },
+
 
     doExport:function(){
 
@@ -356,4 +381,3 @@ pimcore.settings.translations = Class.create({
         });
     }
 });
-
