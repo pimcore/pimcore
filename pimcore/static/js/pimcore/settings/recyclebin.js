@@ -85,7 +85,7 @@ pimcore.settings.recyclebin = Class.create({
             remoteSort: true,
             baseParams: {
                 limit: itemsPerPage,
-                filter: ""
+                filterFullText: ""
             },  
             listeners: {
                 write : function(store, action, result, response, rs) {
@@ -109,7 +109,7 @@ pimcore.settings.recyclebin = Class.create({
                 "keydown" : function (field, key) {
                     if (key.getKey() == key.ENTER) {
                         var input = field;
-                        this.store.baseParams.filter = input.getValue();
+                        this.store.baseParams.filterFullText = input.getValue();
                         this.store.load();
                     }
                 }.bind(this)
@@ -319,7 +319,5 @@ pimcore.settings.recyclebin = Class.create({
         });
 
         return gridfilters;
-
     }
-
 });

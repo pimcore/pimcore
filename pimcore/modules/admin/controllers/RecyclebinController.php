@@ -52,9 +52,14 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin {
                 $list->setOrder($this->getParam("dir"));
             }
 
+            $conditionFilters = array();
+
+            if($this->getParam("filterFullText")) {
+                $conditionFilters[] = "path LIKE " . $list->quote("%".$this->getParam("filterFullText")."%");
+            }
+
             $filters = $this->getParam("filter");
             if($filters) {
-                $conditionFilters = array();
                 $filters = \Zend_Json::decode($filters);
 
                 foreach ($filters as $filter) {
@@ -99,12 +104,13 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin {
 
                     $conditionFilters[] =  $field . $operator . " '" . $value . "' ";
                 }
+            }
 
-
+            if(!empty($conditionFilters)) {
                 $condition = implode(" AND ", $conditionFilters);
                 $list->setCondition($condition);
             }
-            
+
             $items = $list->load();
             
             $this->_helper->json(array("data" => $items, "success" => true, "total" => $list->getTotalCount()));
