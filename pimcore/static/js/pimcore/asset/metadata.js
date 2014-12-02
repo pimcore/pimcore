@@ -76,8 +76,11 @@ pimcore.asset.metadata = Class.create({
             });
 
             var languagestore = [["",t("none")]];
-            for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
-                languagestore.push([pimcore.settings.websiteLanguages[i],pimcore.settings.websiteLanguages[i]]);
+            var websiteLanguages = pimcore.settings.websiteLanguages;
+            var selectContent = "";
+            for (var i=0; i<websiteLanguages.length; i++) {
+                selectContent = pimcore.available_languages[websiteLanguages[i]] + " [" + websiteLanguages[i] + "]";
+                languagestore.push([websiteLanguages[i], selectContent]);
             }
 
             var customLanguage = new Ext.form.ComboBox({
