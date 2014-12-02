@@ -59,6 +59,19 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
                 languagestore.push([websiteLanguages[i], selectContent]);
             }
 
+            var setLanguageIcon = function (select) {
+                if(!select.label["originalClass"]) {
+                    select.label.originalClass = select.label.getAttribute("class");
+                }
+                select.label.dom.setAttribute("class", "");
+                select.label.addClass(select.label.originalClass);
+
+                if(select.getValue()) {
+                    select.label.addClass("pimcore_icon_language_" + select.getValue().toLowerCase());
+                    select.label.addClass("pimcore_document_property_language_label");
+                }
+            };
+
             var language = new Ext.form.ComboBox({
                 fieldLabel: t('language'),
                 name: "language",
@@ -67,7 +80,11 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
                 triggerAction: 'all',
                 mode: "local",
                 listWidth: 200,
-                value: languageData
+                value: languageData,
+                listeners: {
+                    "afterrender": setLanguageIcon,
+                    "select": setLanguageIcon
+                }
             });
 
             this.languagesPanel = new Ext.form.FormPanel({
