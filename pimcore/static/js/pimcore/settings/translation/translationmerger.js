@@ -17,22 +17,8 @@ pimcore.settings.translation.translationmerger = Class.create({
         this.languages = mergeResult.languages;
         this.callback = callback;
 
-
-        //this.downloadMask = new Ext.LoadMask(Ext.getBody(), {msg:t('downloading_language')});
-        //
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
-            //url: '/admin/update/index/get-languages',
-            //root: 'delta',
-            //idProperty: 'key',
-            //autoload:true,
-            //listeners: {
-            //    load: this.getTabPanel.bind(this),
-            //    exception:function() {
-            //        pimcore.helpers.showNotification(t("error"), t("languages_download_error"), "error");
-            //        pimcore.globalmanager.remove("languages_overview");
-            //    }.bind(this)
-            //},
             sortInfo: {
                 field    : 'key',
                 direction: 'ASC'
@@ -42,10 +28,7 @@ pimcore.settings.translation.translationmerger = Class.create({
             fields: ['lg', 'lgname', 'icon', 'key','text' , 'current', 'csv', 'dirty']
         });
 
-        //this.availableStore.load();
-
         this.getTabPanel();
-
     },
 
 
@@ -138,13 +121,14 @@ pimcore.settings.translation.translationmerger = Class.create({
                 viewConfig: {
                     forceFit: true,
                     markDirty:false
-                }
+                },
+                cls: "translationmerger"
             });
 
             this.panel = new Ext.Panel({
                 id: uniqid(),
                 title: t("translation_merger_" + this.translationType),
-                iconCls: "pimcore_icon_languages",
+                iconCls: "pimcore_icon_translations",
                 border: false,
                 layout: "fit",
                 closable:true
@@ -156,17 +140,14 @@ pimcore.settings.translation.translationmerger = Class.create({
 
             tabPanel.activate(this.panel.getId());
 
-            this.panel.on("destroy", function () {
-                //pimcore.globalmanager.remove("languages_overview");
-            }.bind(this));
             this.panel.add(this.layout);
             pimcore.layout.refresh();
 
             this.layout.doLayout();
 
         }
-        return this.panel;
 
+        return this.panel;
     },
 
     activate: function () {
@@ -193,8 +174,5 @@ pimcore.settings.translation.translationmerger = Class.create({
         });
 
         return gridfilters;
-
     }
-
-
 });
