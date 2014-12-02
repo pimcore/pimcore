@@ -217,7 +217,6 @@ pimcore.settings.translations = Class.create({
                 }
             }
         });
-        this.store.load();
 
         this.pagingtoolbar = new Ext.PagingToolbar({
             pageSize: itemsPerPage,
@@ -305,6 +304,8 @@ pimcore.settings.translations = Class.create({
                 forceFit: true
             }
         });
+
+        this.store.load();
 
         return this.grid;
     },
