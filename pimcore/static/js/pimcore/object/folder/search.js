@@ -344,7 +344,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         var config = $super();
         config.onlyDirectChildren = this.onlyDirectChildren;
         config.pageSize = this.pagingtoolbar.pageSize;
-        console.log(this.pagingtoolbar.pageSize);
         return config;
     },
 

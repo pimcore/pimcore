@@ -679,7 +679,8 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
                 $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
             } else {
                 $list->setObjectTypes(array($objectType));
-            }        }
+            }
+        }
 
         $list->load();
 

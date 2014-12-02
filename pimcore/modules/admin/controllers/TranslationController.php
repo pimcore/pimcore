@@ -25,7 +25,6 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
     public function importAction() {
 
-//        $this->disableViewAutoRender(true);
         $this->checkPermission("translations");
 
         $admin = $this->getParam("admin");
