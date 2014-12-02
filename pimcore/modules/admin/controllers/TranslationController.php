@@ -50,7 +50,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
             foreach ($delta as $item) {
                 $lg = $item["lg"];
                 $item["lgname"] =  \Zend_Locale::getTranslation($lg, "language");
-                $item["icon"] = "http://www.pimcore.org/static/img/flags/" . $lg . ".png";
+                $item["icon"] = "/admin/misc/get-language-flag?language=" . $lg;
                 $item["current"] = $item["text"];
                 $enrichedDelta[]= $item;
             }
@@ -60,8 +60,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
         $this->_helper->json($result, false);
 
-//        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
-//        // Ext.form.Action.Submit and mark the submission as failed
+        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+        // Ext.form.Action.Submit and mark the submission as failed
         $this->getResponse()->setHeader("Content-Type", "text/html");
     }
 

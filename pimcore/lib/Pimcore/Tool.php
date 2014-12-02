@@ -154,6 +154,40 @@ class Tool {
     }
 
     /**
+     * @param $language
+     * @return string
+     */
+    public static function getLanguageFlagFile($language) {
+        $iconBasePath = PIMCORE_PATH . '/static/img/flags';
+
+        $code = strtolower($language);
+        $code = str_replace("_","-", $code);
+        $countryCode = null;
+        $fallbackLanguageCode = null;
+
+        $parts = explode("-", $code);
+        if(count($parts) > 1) {
+            $countryCode = array_pop($parts);
+            $fallbackLanguageCode = $parts[0];
+        }
+
+        $languagePath = $iconBasePath . "/languages/" . $code . ".png";
+        $countryPath = $iconBasePath . "/countries/" . $countryCode . ".png";
+        $fallbackLanguagePath = $iconBasePath . "/languages/" . $fallbackLanguageCode . ".png";
+
+        $iconPath = $iconBasePath . "/countries/_unknown.png";
+        if(file_exists($languagePath)) {
+            $iconPath = $languagePath;
+        } else if($countryCode && file_exists($countryPath)) {
+            $iconPath = $countryPath;
+        } else if ($fallbackLanguageCode && file_exists($fallbackLanguagePath)) {
+            $iconPath = $fallbackLanguagePath;
+        }
+
+        return $iconPath;
+    }
+
+    /**
      * @static
      * @return array
      */

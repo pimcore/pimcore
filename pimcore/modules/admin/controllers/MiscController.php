@@ -610,6 +610,15 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         ));
     }
 
+    public function getLanguageFlagAction() {
+
+        $iconPath = Tool::getLanguageFlagFile($this->getParam("language"));
+        header("Content-Type: image/png");
+        echo file_get_contents($iconPath);
+
+        exit;
+    }
+
     public function robohashAction() {
 
         $hash = Tool\Misc::roboHash([

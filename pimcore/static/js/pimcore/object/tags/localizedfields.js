@@ -270,6 +270,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     padding: "10px",
                     deferredRender: false,
                     hideMode: "offsets",
+                    iconCls: "pimcore_icon_language_" + this.frontendLanguages[i].toLowerCase(),
                     title: pimcore.available_languages[this.frontendLanguages[i]],
                     items: this.getRecursiveLayout(this.fieldConfig, !editable).items
                 };
