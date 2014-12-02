@@ -154,8 +154,8 @@ pimcore.settings.translations = Class.create({
         for (var i = 0; i < languages.length; i++) {
 
             readerFields.push({name: languages[i]});
-            var columnConfig = {header: languages[i].toUpperCase(), sortable: false, dataIndex: languages[i],
-                editor: new Ext.form.TextField({})};
+            var columnConfig = {header: pimcore.available_languages[languages[i]], sortable: false, dataIndex: languages[i],
+                editor: new Ext.form.TextField({}), id: "translation_column_" + languages[i].toLowerCase()};
             if (applyInitialSettings) {
                 var hidden = i > maxLanguages;
                 columnConfig.hidden = hidden;
