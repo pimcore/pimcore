@@ -36,7 +36,7 @@ class Cache extends \Zend_View_Helper_Abstract {
             return self::$_caches[$name];
         }
 
-        $cache = new CacheController($name, $lifetime, $this->view->editmode);
+        $cache = new CacheController($name, $lifetime, $this->view->editmode, $force);
         self::$_caches[$name] = $cache;
 
         return self::$_caches[$name];
