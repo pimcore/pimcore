@@ -48,6 +48,11 @@ class Test_Base extends PHPUnit_Framework_TestCase {
                 $class->setUserModification(1);
                 $class->setModificationDate(time());
 
+                $fd = $class->getFieldDefinition("objectswithmetadata");
+                if($fd) {
+                    $fd->setAllowedClassId($class->getId());
+                }
+
                 $class->save();
 
 
