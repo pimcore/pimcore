@@ -271,12 +271,13 @@ class AbstractObject extends Model\Element\AbstractElement {
             }
         }
 
-        // @TODO
         // check for type
-        /*$staticType = get_called_class();
-        if (!$object instanceof $staticType) {
-            return null;
-        }*/
+        $staticType = get_called_class();
+        if($staticType != 'Pimcore\Model\Object\Concrete' && $staticType != 'Pimcore\Model\Object\AbstractObject') {
+            if(!$object instanceof $staticType) {
+                return null;
+            }
+        }
 
         if(!$object) {
             return null;
