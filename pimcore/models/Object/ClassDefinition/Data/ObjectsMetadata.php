@@ -268,10 +268,8 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects {
                 }
 
                 $o = $objectMetadata->getObject();
-
-                $allowClass = $this->allowObjectRelation($o);
-                if (!$allowClass or!($o instanceof Object\Concrete)) {
-                    if(!$allowClass && $o instanceof Object\Concrete){
+                if ($o->getClassId() != $this->getAllowedClassId() || !($o instanceof Object\Concrete)) {
+                    if($o instanceof Object\Concrete){
                         $id = $o->getId();
                     } else {
                         $id = "??";
