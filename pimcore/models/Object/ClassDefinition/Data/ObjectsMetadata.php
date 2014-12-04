@@ -103,7 +103,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects {
                 $source = Object::getById($object["src_id"]);
                 $destination = Object::getById($object["dest_id"]);
 
-                if ($source instanceof Object\Concrete && $destination instanceof Object\Concrete) {
+                if ($source instanceof Object\Concrete && $destination instanceof Object\Concrete && $destination->getClassId() == $this->getAllowedClassId()) {
                     $className = Tool::getModelClassMapping('\Pimcore\Model\Object\Data\ObjectMetadata'); // the name for the class mapping is still with underscores
                     $metaData = new $className($this->getName(), $this->getColumnKeys(), $destination);
 
@@ -198,7 +198,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects {
             foreach ($data as $object) {
 
                 $o = Object::getById($object["id"]);
-                if($o) {
+                if($o && $o->getClassId() == $this->getAllowedClassId()) {
                     $className = Tool::getModelClassMapping('\Pimcore\Model\Object\Data\ObjectMetadata');
                     $metaData = new $className($this->getName(), $this->getColumnKeys(), $o);
                     foreach($this->getColumns() as $c) {
