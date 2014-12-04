@@ -868,43 +868,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
         $this->_helper->json(false);
     }
 
-    public function systemlogAction() {
-
-        $this->checkPermission("systemlog");
-
-        $file = PIMCORE_LOG_DEBUG;
-        $lines = 400;
-
-        $handle = fopen($file, "r");
-        $linecounter = $lines;
-        $pos = -2;
-        $beginning = false;
-        $text = array();
-        while ($linecounter > 0) {
-            $t = " ";
-            while ($t != "\n") {
-                if (fseek($handle, $pos, SEEK_END) == -1) {
-                    $beginning = true;
-                    break;
-                }
-                $t = fgetc($handle);
-                $pos--;
-            }
-            $linecounter--;
-            if ($beginning) {
-                rewind($handle);
-            }
-            $text[$lines - $linecounter - 1] = fgets($handle);
-            if ($beginning) break;
-        }
-        fclose($handle);
-
-        //$lines = array_reverse($text);
-        $lines = $text;
-
-        $this->view->lines = $lines;
-    }
-
     public function getAvailableSitesAction() {
 
         $sitesList = new Model\Site\Listing();
