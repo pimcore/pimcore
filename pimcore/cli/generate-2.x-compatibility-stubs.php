@@ -47,7 +47,7 @@ foreach ($paths as $path) {
         //iterator_apply($l, 'createMap', array($l, $map));
 
         foreach ($l as $file) {
-            $filename  = str_replace(PIMCORE_DOCUMENT_ROOT, "\$pdr . '", $file->getRealpath());
+            $filename  = $file->getRealpath();
 
             // Windows portability
             $filename  = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
@@ -75,7 +75,21 @@ $globalMap = (array) $globalMap;
 
 $content = '<' . "?" . "php \n\n";
 
+$processedClasses = [];
+
 foreach($globalMap as $class => $file) {
+
+    $contents = file_get_contents($file);
+    $definition = "";
+    if(strpos($contents, "abstract class")) {
+        $definition = "abstract class";
+    } else if (strpos($contents, "class ")) {
+        $definition = "class";
+    } else if (strpos($contents, "interface ")) {
+        $definition = "interface";
+    } else {
+        continue;
+    }
 
     $alias = str_replace("\\", "_", $class);
     $alias = preg_replace("/_Abstract(.*)/", "_Abstract", $alias);
@@ -90,11 +104,14 @@ foreach($globalMap as $class => $file) {
         }
     }
 
-    if($class != $alias) {
-        $line = "class " . $alias . " extends \\" . $class . " {} \n";
+    $line = "";
+    if($class != $alias && !in_array($alias, $processedClasses)) {
+        $line = $definition . " " . $alias . " extends \\" . $class . " {} \n";
     }
 
     $content .= $line;
+
+    $processedClasses[] = $alias;
 }
 
 // Write the contents to disk
