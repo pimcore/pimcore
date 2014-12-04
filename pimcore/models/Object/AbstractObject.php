@@ -637,7 +637,7 @@ class AbstractObject extends Model\Element\AbstractElement {
                 throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");
             }
 
-            $parent = self::getById($this->getParentId());
+            $parent = AbstractObject::getById($this->getParentId());
 
             if($parent) {
                 // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
@@ -654,7 +654,7 @@ class AbstractObject extends Model\Element\AbstractElement {
         }
 
         if(Service::pathExists($this->getFullPath())) {
-            $duplicate = self::getByPath($this->getFullPath());
+            $duplicate = AbstractObject::getByPath($this->getFullPath());
             if($duplicate instanceof self and $duplicate->getId() != $this->getId()){
                 throw new \Exception("Duplicate full path [ ".$this->getFullPath()." ] - cannot save object");
             }
@@ -835,7 +835,7 @@ class AbstractObject extends Model\Element\AbstractElement {
      */
     public function setParentId($o_parentId) {
         $this->o_parentId = (int) $o_parentId;
-        $this->o_parent = self::getById($o_parentId);
+        $this->o_parent = AbstractObject::getById($o_parentId);
         return $this;
     }
 
@@ -931,7 +931,7 @@ class AbstractObject extends Model\Element\AbstractElement {
     public function getParent() {
 
         if($this->o_parent === null) {
-            $this->setParent(self::getById($this->getParentId()));
+            $this->setParent(AbstractObject::getById($this->getParentId()));
         }
 
         return $this->o_parent;
@@ -1045,7 +1045,7 @@ class AbstractObject extends Model\Element\AbstractElement {
     public function __wakeup() {
         if(isset($this->_fulldump)) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
-            $originalElement = self::getById($this->getId());
+            $originalElement = AbstractObject::getById($this->getId());
             if($originalElement) {
                 $this->setKey($originalElement->getKey());
                 $this->setPath($originalElement->getPath());
