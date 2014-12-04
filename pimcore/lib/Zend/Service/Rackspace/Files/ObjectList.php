@@ -19,8 +19,8 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Service/Rackspace/Files/Object.php';
-require_once 'Zend/Service/Rackspace/Files.php';
+// require_once 'Zend/Service/Rackspace/Files/Object.php';
+// require_once 'Zend/Service/Rackspace/Files.php';
 
 /**
  * List of servers retrived from the GoGrid web service
@@ -65,15 +65,15 @@ class Zend_Service_Rackspace_Files_ObjectList implements Countable, Iterator, Ar
     public function __construct($service,$list,$container)
     {
         if (!($service instanceof Zend_Service_Rackspace_Files)) {
-            require_once 'Zend/Service/Rackspace/Files/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Files/Exception.php';
             throw new Zend_Service_Rackspace_Files_Exception("You must pass a Zend_Service_Rackspace_Files object");
         }
         if (!is_array($list)) {
-            require_once 'Zend/Service/Rackspace/Files/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Files/Exception.php';
             throw new Zend_Service_Rackspace_Files_Exception("You must pass an array of data objects");
         }
         if (empty($container)) {
-            require_once 'Zend/Service/Rackspace/Files/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Files/Exception.php';
             throw new Zend_Service_Rackspace_Files_Exception("You must pass the container of the object list");
         }
         $this->service= $service;
@@ -201,7 +201,7 @@ class Zend_Service_Rackspace_Files_ObjectList implements Countable, Iterator, Ar
         if ($this->offsetExists($offset)) {
             return $this->objects[$offset];
         } else {
-            require_once 'Zend/Service/Rackspace/Files/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Files/Exception.php';
             throw new Zend_Service_Rackspace_Files_Exception('Illegal index');
         }
     }
@@ -217,7 +217,7 @@ class Zend_Service_Rackspace_Files_ObjectList implements Countable, Iterator, Ar
      */
     public function offsetSet($offset, $value)
     {
-        require_once 'Zend/Service/Rackspace/Files/Exception.php';
+        // require_once 'Zend/Service/Rackspace/Files/Exception.php';
         throw new Zend_Service_Rackspace_Files_Exception('You are trying to set read-only property');
     }
 
@@ -231,7 +231,7 @@ class Zend_Service_Rackspace_Files_ObjectList implements Countable, Iterator, Ar
      */
     public function offsetUnset($offset)
     {
-        require_once 'Zend/Service/Rackspace/Files/Exception.php';
+        // require_once 'Zend/Service/Rackspace/Files/Exception.php';
         throw new Zend_Service_Rackspace_Files_Exception('You are trying to unset read-only property');
     }
 }

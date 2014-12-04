@@ -24,32 +24,32 @@
 /**
  * @see Zend_Gdata_App_Entry
  */
-require_once 'Zend/Gdata/App/Entry.php';
+// require_once 'Zend/Gdata/App/Entry.php';
 
 /**
  * @see Zend_Gdata_App_FeedSourceParent
  */
-require_once 'Zend/Gdata/App/FeedEntryParent.php';
+// require_once 'Zend/Gdata/App/FeedEntryParent.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Generator
  */
-require_once 'Zend/Gdata/App/Extension/Generator.php';
+// require_once 'Zend/Gdata/App/Extension/Generator.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Icon
  */
-require_once 'Zend/Gdata/App/Extension/Icon.php';
+// require_once 'Zend/Gdata/App/Extension/Icon.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Logo
  */
-require_once 'Zend/Gdata/App/Extension/Logo.php';
+// require_once 'Zend/Gdata/App/Extension/Logo.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Subtitle
  */
-require_once 'Zend/Gdata/App/Extension/Subtitle.php';
+// require_once 'Zend/Gdata/App/Extension/Subtitle.php';
 
 /**
  * Atom feed class

@@ -23,25 +23,25 @@
 /**
  * @see Zend_Http_Client
  */
- require_once 'Zend/Http/Client.php';
+ // require_once 'Zend/Http/Client.php';
  
  /**
  * @see Zend_Service_WindowsAzure_RetryPolicy_RetryPolicyAbstract
  */
- require_once 'Zend/Service/WindowsAzure/RetryPolicy/RetryPolicyAbstract.php';
+ // require_once 'Zend/Service/WindowsAzure/RetryPolicy/RetryPolicyAbstract.php';
  
  /**
  * @see Zend_Service_SqlAzure_Management_ServerInstance
  */
- require_once 'Zend/Service/SqlAzure/Management/ServerInstance.php';
+ // require_once 'Zend/Service/SqlAzure/Management/ServerInstance.php';
  
  /**
  * @see Zend_Service_SqlAzure_Management_FirewallRuleInstance
  */
- require_once 'Zend/Service/SqlAzure/Management/FirewallRuleInstance.php';
+ // require_once 'Zend/Service/SqlAzure/Management/FirewallRuleInstance.php';
 
  /** @see Zend_Xml_Security */
- require_once 'Zend/Xml/Security.php';
+ // require_once 'Zend/Xml/Security.php';
 
 /**
  * @category   Zend
@@ -278,7 +278,7 @@ class Zend_Service_SqlAzure_Management_Client
 	protected function _parseResponse(Zend_Http_Response $response = null)
 	{
 		if (is_null($response)) {
-			require_once 'Zend/Service/SqlAzure/Exception.php';
+			// require_once 'Zend/Service/SqlAzure/Exception.php';
 			throw new Zend_Service_SqlAzure_Exception('Response should not be null.');
 		}
 		
@@ -350,15 +350,15 @@ class Zend_Service_SqlAzure_Management_Client
 	public function createServer($administratorLogin, $administratorPassword, $location)
 	{
 		if ($administratorLogin == '' || is_null($administratorLogin)) {
-                    require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+                    // require_once 'Zend/Service/SqlAzure/Management/Exception.php';
                     throw new Zend_Service_SqlAzure_Management_Exception('Administrator login should be specified.');
                 }
 		if ($administratorPassword == '' || is_null($administratorPassword)) {
-                    require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+                    // require_once 'Zend/Service/SqlAzure/Management/Exception.php';
                     throw new Zend_Service_SqlAzure_Management_Exception('Administrator password should be specified.');
                 }
                 if (is_null($location) && is_null($affinityGroup)) {
-                    require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+                    // require_once 'Zend/Service/SqlAzure/Management/Exception.php';
                     throw new Zend_Service_SqlAzure_Management_Exception('Please specify a location for the server.');
                 }
     	
@@ -376,7 +376,7 @@ class Zend_Service_SqlAzure_Management_Client
 				$location
 			);
                 } else {
-			require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+			// require_once 'Zend/Service/SqlAzure/Management/Exception.php';
 			throw new Zend_Service_SqlAzure_Management_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}	
 	}
@@ -417,7 +417,7 @@ class Zend_Service_SqlAzure_Management_Client
 		}
 		return $services;
             } else {
-		require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+		// require_once 'Zend/Service/SqlAzure/Management/Exception.php';
 		throw new Zend_Service_SqlAzure_Management_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
             }
 	}
@@ -431,14 +431,14 @@ class Zend_Service_SqlAzure_Management_Client
 	public function dropServer($serverName)
 	{
             if ($serverName == '' || is_null($serverName)) {
-                require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+                // require_once 'Zend/Service/SqlAzure/Management/Exception.php';
                 throw new Zend_Service_SqlAzure_Management_Exception('Server name should be specified.');
             }
     	
             $response = $this->_performRequest(self::OP_SERVERS . '/' . $serverName, '', Zend_Http_Client::DELETE);
 
             if (!$response->isSuccessful()) {
-		require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+		// require_once 'Zend/Service/SqlAzure/Management/Exception.php';
 		throw new Zend_Service_SqlAzure_Management_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
             }	
 	}
@@ -453,11 +453,11 @@ class Zend_Service_SqlAzure_Management_Client
 	public function setAdministratorPassword($serverName, $administratorPassword)
 	{
             if ($serverName == '' || is_null($serverName)) {
-		require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+		// require_once 'Zend/Service/SqlAzure/Management/Exception.php';
     		throw new Zend_Service_SqlAzure_Management_Exception('Server name should be specified.');
             }
             if ($administratorPassword == '' || is_null($administratorPassword)) {
-                require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+                // require_once 'Zend/Service/SqlAzure/Management/Exception.php';
     		throw new Zend_Service_SqlAzure_Management_Exception('Administrator password should be specified.');
             }
     	
@@ -467,7 +467,7 @@ class Zend_Service_SqlAzure_Management_Client
     		'<AdministratorLoginPassword xmlns="http://schemas.microsoft.com/sqlazure/2010/12/">' . $administratorPassword . '</AdministratorLoginPassword>');
     		
             if (!$response->isSuccessful()) {
-		require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+		// require_once 'Zend/Service/SqlAzure/Management/Exception.php';
 		throw new Zend_Service_SqlAzure_Management_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
             }	
 	}
@@ -485,19 +485,19 @@ class Zend_Service_SqlAzure_Management_Client
 	public function createFirewallRule($serverName, $ruleName, $startIpAddress, $endIpAddress)
 	{
             if ($serverName == '' || is_null($serverName)) {
-                require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+                // require_once 'Zend/Service/SqlAzure/Management/Exception.php';
                 throw new Zend_Service_SqlAzure_Management_Exception('Server name should be specified.');
             }
             if ($ruleName == '' || is_null($ruleName)) {
-                require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+                // require_once 'Zend/Service/SqlAzure/Management/Exception.php';
                 throw new Zend_Service_SqlAzure_Management_Exception('Rule name should be specified.');
             }
             if ($startIpAddress == '' || is_null($startIpAddress) || !filter_var($startIpAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-                require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+                // require_once 'Zend/Service/SqlAzure/Management/Exception.php';
                 throw new Zend_Service_SqlAzure_Management_Exception('Start IP address should be specified.');
             }
             if ($endIpAddress == '' || is_null($endIpAddress) || !filter_var($endIpAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-                require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+                // require_once 'Zend/Service/SqlAzure/Management/Exception.php';
                 throw new Zend_Service_SqlAzure_Management_Exception('End IP address should be specified.');
             }
     	
@@ -514,7 +514,7 @@ class Zend_Service_SqlAzure_Management_Client
     			$endIpAddress
     		);
             } else {
-		require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+		// require_once 'Zend/Service/SqlAzure/Management/Exception.php';
 		throw new Zend_Service_SqlAzure_Management_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
             }
 	}
@@ -529,7 +529,7 @@ class Zend_Service_SqlAzure_Management_Client
 	public function listFirewallRules($serverName)
 	{
             if ($serverName == '' || is_null($serverName)) {
-		require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+		// require_once 'Zend/Service/SqlAzure/Management/Exception.php';
                 throw new Zend_Service_SqlAzure_Management_Exception('Server name should be specified.');
             }
     	
@@ -561,7 +561,7 @@ class Zend_Service_SqlAzure_Management_Client
 		}
 		return $services;
             } else {
-		require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+		// require_once 'Zend/Service/SqlAzure/Management/Exception.php';
 		throw new Zend_Service_SqlAzure_Management_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
             }		
 	}
@@ -576,11 +576,11 @@ class Zend_Service_SqlAzure_Management_Client
 	public function deleteFirewallRule($serverName, $ruleName)
 	{
 		if ($serverName == '' || is_null($serverName)) {
-			require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+			// require_once 'Zend/Service/SqlAzure/Management/Exception.php';
     		throw new Zend_Service_SqlAzure_Management_Exception('Server name should be specified.');
     	}
 		if ($ruleName == '' || is_null($ruleName)) {
-			require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+			// require_once 'Zend/Service/SqlAzure/Management/Exception.php';
     		throw new Zend_Service_SqlAzure_Management_Exception('Rule name should be specified.');
     	}
     	
@@ -588,7 +588,7 @@ class Zend_Service_SqlAzure_Management_Client
     		Zend_Http_Client::DELETE);
 
     	if (!$response->isSuccessful()) {
-			require_once 'Zend/Service/SqlAzure/Management/Exception.php';
+			// require_once 'Zend/Service/SqlAzure/Management/Exception.php';
 			throw new Zend_Service_SqlAzure_Management_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}

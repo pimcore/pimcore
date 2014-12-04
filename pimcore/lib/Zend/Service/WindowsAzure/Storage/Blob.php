@@ -23,37 +23,37 @@
 /**
  * @see Zend_Service_WindowsAzure_Storage
  */
-require_once 'Zend/Service/WindowsAzure/Storage.php';
+// require_once 'Zend/Service/WindowsAzure/Storage.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_BlobInstance
  */
-require_once 'Zend/Service/WindowsAzure/Storage/BlobInstance.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/BlobInstance.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_BlobContainer
  */
-require_once 'Zend/Service/WindowsAzure/Storage/BlobContainer.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/BlobContainer.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_PageRegionInstance
  */
-require_once 'Zend/Service/WindowsAzure/Storage/PageRegionInstance.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/PageRegionInstance.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_LeaseInstance
  */
-require_once 'Zend/Service/WindowsAzure/Storage/LeaseInstance.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/LeaseInstance.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_Blob_Stream
  */
-require_once 'Zend/Service/WindowsAzure/Storage/Blob/Stream.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/Blob/Stream.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Credentials_SharedAccessSignature
  */
-require_once 'Zend/Service/WindowsAzure/Credentials/SharedAccessSignature.php';
+// require_once 'Zend/Service/WindowsAzure/Credentials/SharedAccessSignature.php';
 /**
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
@@ -160,15 +160,15 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function blobExists($containerName = '', $blobName = '', $snapshotId = null)
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 
@@ -191,11 +191,11 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function containerExists($containerName = '')
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 			
@@ -221,15 +221,15 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function createContainer($containerName = '', $metadata = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if (!is_array($metadata)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Meta data should be an array of key and value pairs.');
 		}
 			
@@ -248,7 +248,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 			$metadata
 			);
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -278,11 +278,11 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function getContainerAcl($containerName = '', $signedIdentifiers = false)
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 
@@ -312,7 +312,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 					}
 				}
 
-				require_once 'Zend/Service/WindowsAzure/Storage/SignedIdentifier.php';
+				// require_once 'Zend/Service/WindowsAzure/Storage/SignedIdentifier.php';
 				// Return value
 				$returnValue = array();
 				foreach ($entries as $entry) {
@@ -328,7 +328,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 				return $returnValue;
 			}
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -344,11 +344,11 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function setContainerAcl($containerName = '', $acl = self::ACL_PRIVATE, $signedIdentifiers = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 
@@ -385,7 +385,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 		// Perform request
 		$response = $this->_performRequest($containerName, '?restype=container&comp=acl', Zend_Http_Client::PUT, $headers, false, $policies, Zend_Service_WindowsAzure_Storage::RESOURCE_CONTAINER, Zend_Service_WindowsAzure_Credentials_CredentialsAbstract::PERMISSION_WRITE);
 		if (!$response->isSuccessful()) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -400,11 +400,11 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function getContainer($containerName = '')
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 
@@ -422,7 +422,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 			$metadata
 			);
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -437,11 +437,11 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function getContainerMetadata($containerName = '')
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 
@@ -461,15 +461,15 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function setContainerMetadata($containerName = '', $metadata = array(), $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if (!is_array($metadata)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Meta data should be an array of key and value pairs.');
 		}
 		if (count($metadata) == 0) {
@@ -488,7 +488,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 		// Perform request
 		$response = $this->_performRequest($containerName, '?restype=container&comp=metadata', Zend_Http_Client::PUT, $headers, false, null, Zend_Service_WindowsAzure_Storage::RESOURCE_CONTAINER, Zend_Service_WindowsAzure_Credentials_CredentialsAbstract::PERMISSION_WRITE);
 		if (!$response->isSuccessful()) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -503,11 +503,11 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function deleteContainer($containerName = '', $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 			
@@ -520,7 +520,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 		// Perform request
 		$response = $this->_performRequest($containerName, '?restype=container', Zend_Http_Client::DELETE, $headers, false, null, Zend_Service_WindowsAzure_Storage::RESOURCE_CONTAINER, Zend_Service_WindowsAzure_Credentials_CredentialsAbstract::PERMISSION_WRITE);
 		if (!$response->isSuccessful()) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -584,7 +584,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 			 
 			return $containers;
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -604,27 +604,27 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function putBlob($containerName = '', $blobName = '', $localFileName = '', $metadata = array(), $leaseId = null, $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($localFileName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Local file name is not specified.');
 		}
 		if (!file_exists($localFileName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Local file not found.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 			
@@ -652,19 +652,19 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function putBlobData($containerName = '', $blobName = '', $data = '', $metadata = array(), $leaseId = null, $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 
@@ -705,7 +705,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 			$metadata
 			);
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -725,27 +725,27 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function putLargeBlob($containerName = '', $blobName = '', $localFileName = '', $metadata = array(), $leaseId = null, $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($localFileName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Local file name is not specified.');
 		}
 		if (!file_exists($localFileName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Local file not found.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 			
@@ -766,7 +766,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 		// Open file
 		$fp = fopen($localFileName, 'r');
 		if ($fp === false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Could not open local file.');
 		}
 			
@@ -809,23 +809,23 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function putBlock($containerName = '', $blobName = '', $identifier = '', $contents = '', $leaseId = null)
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($identifier === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Block identifier is not specified.');
 		}
 		if (strlen($contents) > self::MAX_BLOB_TRANSFER_SIZE) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Block size is too big.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 
@@ -841,7 +841,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 		// Upload
 		$response = $this->_performRequest($resourceName, '?comp=block&blockid=' . base64_encode($identifier), Zend_Http_Client::PUT, $headers, false, $contents, Zend_Service_WindowsAzure_Storage::RESOURCE_BLOB, Zend_Service_WindowsAzure_Credentials_CredentialsAbstract::PERMISSION_WRITE);
 		if (!$response->isSuccessful()) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -860,23 +860,23 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function putBlockList($containerName = '', $blobName = '', $blockList = array(), $metadata = array(), $leaseId = null, $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if (count($blockList) == 0) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Block list does not contain any elements.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 
@@ -912,7 +912,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 			// Perform request
 			$response = $this->_performRequest($resourceName, '?comp=blocklist', Zend_Http_Client::PUT, $headers, false, $fileContents, Zend_Service_WindowsAzure_Storage::RESOURCE_BLOB, Zend_Service_WindowsAzure_Credentials_CredentialsAbstract::PERMISSION_WRITE);
 			if (!$response->isSuccessful()) {
-				require_once 'Zend/Service/WindowsAzure/Exception.php';
+				// require_once 'Zend/Service/WindowsAzure/Exception.php';
 				throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 			}
 	}
@@ -931,19 +931,19 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function getBlockList($containerName = '', $blobName = '', $snapshotId = null, $leaseId = null, $type = 0)
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($type < 0 || $type > 2) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Invalid type of block list to retrieve.');
 		}
 
@@ -999,7 +999,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 
 			return $returnValue;
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -1019,23 +1019,23 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function createPageBlob($containerName = '', $blobName = '', $size = 0, $metadata = array(), $leaseId = null, $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 		if ($size <= 0) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Page blob size must be specified.');
 		}
 
@@ -1078,7 +1078,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 			$metadata
 			);
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -1099,34 +1099,34 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function putPage($containerName = '', $blobName = '', $startByteOffset = 0, $endByteOffset = 0, $contents = '', $writeMethod = self::PAGE_WRITE_UPDATE, $leaseId = null, $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 		if ($startByteOffset % 512 != 0) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Start byte offset must be a modulus of 512.');
 		}
 		if (($endByteOffset + 1) % 512 != 0) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('End byte offset must be a modulus of 512 minus 1.');
 		}
 
 		// Determine size
 		$size = strlen($contents);
 		if ($size >= self::MAX_BLOB_TRANSFER_SIZE) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Page blob size must not be larger than ' + self::MAX_BLOB_TRANSFER_SIZE . ' bytes.');
 		}
 
@@ -1153,7 +1153,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 		// Perform request
 		$response = $this->_performRequest($resourceName, '?comp=page', Zend_Http_Client::PUT, $headers, false, $contents, Zend_Service_WindowsAzure_Storage::RESOURCE_BLOB, Zend_Service_WindowsAzure_Credentials_CredentialsAbstract::PERMISSION_WRITE);
 		if (!$response->isSuccessful()) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -1172,27 +1172,27 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function getPageRegions($containerName = '', $blobName = '', $startByteOffset = 0, $endByteOffset = 0, $leaseId = null)
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 		if ($startByteOffset % 512 != 0) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Start byte offset must be a modulus of 512.');
 		}
 		if ($endByteOffset > 0 && ($endByteOffset + 1) % 512 != 0) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('End byte offset must be a modulus of 512 minus 1.');
 		}
 
@@ -1233,7 +1233,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 			 
 			return $ranges;
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -1255,35 +1255,35 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function copyBlob($sourceContainerName = '', $sourceBlobName = '', $destinationContainerName = '', $destinationBlobName = '', $metadata = array(), $sourceSnapshotId = null, $destinationLeaseId = null, $additionalHeaders = array())
 	{
 		if ($sourceContainerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Source container name is not specified.');
 		}
 		if (!self::isValidContainerName($sourceContainerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Source container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($sourceBlobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Source blob name is not specified.');
 		}
 		if ($destinationContainerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Destination container name is not specified.');
 		}
 		if (!self::isValidContainerName($destinationContainerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Destination container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($destinationBlobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Destination blob name is not specified.');
 		}
 		if ($sourceContainerName === '$root' && strpos($sourceBlobName, '/') !== false) {
-		require_once 'Zend/Service/WindowsAzure/Exception.php';
+		// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 		if ($destinationContainerName === '$root' && strpos($destinationBlobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 
@@ -1328,7 +1328,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 			$metadata
 			);
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -1347,19 +1347,19 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function getBlob($containerName = '', $blobName = '', $localFileName = '', $snapshotId = null, $leaseId = null, $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($localFileName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Local file name is not specified.');
 		}
 
@@ -1381,15 +1381,15 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function getBlobData($containerName = '', $blobName = '', $snapshotId = null, $leaseId = null, $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 
@@ -1417,7 +1417,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 		if ($response->isSuccessful()) {
 			return $response->getBody();
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -1436,19 +1436,19 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function getBlobInstance($containerName = '', $blobName = '', $snapshotId = null, $leaseId = null, $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 
@@ -1496,7 +1496,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 				$metadata
 			);
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -1514,19 +1514,19 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function getBlobMetadata($containerName = '', $blobName = '', $snapshotId = null, $leaseId = null)
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 
@@ -1548,19 +1548,19 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function setBlobMetadata($containerName = '', $blobName = '', $metadata = array(), $leaseId = null, $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 		if (count($metadata) == 0) {
@@ -1582,7 +1582,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 		// Perform request
 		$response = $this->_performRequest($containerName . '/' . $blobName, '?comp=metadata', Zend_Http_Client::PUT, $headers, false, null, Zend_Service_WindowsAzure_Storage::RESOURCE_BLOB, Zend_Service_WindowsAzure_Credentials_CredentialsAbstract::PERMISSION_WRITE);
 		if (!$response->isSuccessful()) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -1601,23 +1601,23 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function setBlobProperties($containerName = '', $blobName = '', $leaseId = null, $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 		if (count($additionalHeaders) == 0) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('No additional headers are specified.');
 		}
 
@@ -1637,7 +1637,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 		// Perform request
 		$response = $this->_performRequest($containerName . '/' . $blobName, '?comp=properties', Zend_Http_Client::PUT, $headers, false, null, Zend_Service_WindowsAzure_Storage::RESOURCE_BLOB, Zend_Service_WindowsAzure_Credentials_CredentialsAbstract::PERMISSION_WRITE);
 		if (!$response->isSuccessful()) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -1655,19 +1655,19 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function getBlobProperties($containerName = '', $blobName = '', $snapshotId = null, $leaseId = null)
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 
@@ -1687,19 +1687,19 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function deleteBlob($containerName = '', $blobName = '', $snapshotId = null, $leaseId = null, $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 
@@ -1725,7 +1725,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 		// Perform request
 		$response = $this->_performRequest($resourceName, $queryString, Zend_Http_Client::DELETE, $headers, false, null, Zend_Service_WindowsAzure_Storage::RESOURCE_BLOB, Zend_Service_WindowsAzure_Credentials_CredentialsAbstract::PERMISSION_WRITE);
 		if (!$response->isSuccessful()) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -1743,19 +1743,19 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function snapshotBlob($containerName = '', $blobName = '', $metadata = array(), $additionalHeaders = array())
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 
@@ -1773,7 +1773,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 		if ($response->isSuccessful()) {
 			return $response->getHeader('x-ms-snapshot');
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -1791,19 +1791,19 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function leaseBlob($containerName = '', $blobName = '', $leaseAction = self::LEASE_ACQUIRE, $leaseId = null)
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 		if ($blobName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blob name is not specified.');
 		}
 		if ($containerName === '$root' && strpos($blobName, '/') !== false) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Blobs stored in the root container can not have a name containing a forward slash (/).');
 		}
 
@@ -1829,7 +1829,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 			$response->getHeader('x-ms-lease-id'),
 			$response->getHeader('x-ms-lease-time'));
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -1850,11 +1850,11 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function listBlobs($containerName = '', $prefix = '', $delimiter = '', $maxResults = null, $marker = null, $include = null, $currentResultCount = 0)
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 			
@@ -1950,7 +1950,7 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 				
 			return $blobs;
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -1970,11 +1970,11 @@ class Zend_Service_WindowsAzure_Storage_Blob extends Zend_Service_WindowsAzure_S
 	public function generateSharedAccessUrl($containerName = '', $blobName = '', $resource = 'b', $permissions = 'r', $start = '', $expiry = '', $identifier = '')
 	{
 		if ($containerName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name is not specified.');
 		}
 		if (!self::isValidContainerName($containerName)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Container name does not adhere to container naming conventions. See http://msdn.microsoft.com/en-us/library/dd135715.aspx for more information.');
 		}
 

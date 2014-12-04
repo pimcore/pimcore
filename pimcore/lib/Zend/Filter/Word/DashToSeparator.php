@@ -22,7 +22,7 @@
 /**
  * @see Zend_Filter_PregReplace
  */
-require_once 'Zend/Filter/Word/Separator/Abstract.php';
+// require_once 'Zend/Filter/Word/Separator/Abstract.php';
 
 /**
  * @category   Zend

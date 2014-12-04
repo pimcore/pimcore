@@ -215,7 +215,7 @@ class Zend_Translate_Plural
         }
 
         if (!is_callable($rule)) {
-            require_once 'Zend/Translate/Exception.php';
+            // require_once 'Zend/Translate/Exception.php';
             throw new Zend_Translate_Exception('The given rule can not be called');
         }
 

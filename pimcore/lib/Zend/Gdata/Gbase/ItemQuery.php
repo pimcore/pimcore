@@ -24,12 +24,12 @@
 /**
  * @see Zend_Exception
  */
-require_once 'Zend/Exception.php';
+// require_once 'Zend/Exception.php';
 
 /**
  * @see Zend_Gdata_Gbase_Query
  */
-require_once 'Zend/Gdata/Gbase/Query.php';
+// require_once 'Zend/Gdata/Gbase/Query.php';
 
 
 /**

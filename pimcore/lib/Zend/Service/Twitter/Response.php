@@ -23,12 +23,12 @@
 /**
  * @see Zend_Http_Response
  */
-require_once 'Zend/Http/Response.php';
+// require_once 'Zend/Http/Response.php';
 
 /**
  * @see Zend_Json
  */
-require_once 'Zend/Json.php';
+// require_once 'Zend/Json.php';
 
 /**
  * Representation of a response from Twitter.
@@ -81,7 +81,7 @@ class Zend_Service_Twitter_Response
             $jsonBody = Zend_Json::decode($this->rawBody, Zend_Json::TYPE_OBJECT);
             $this->jsonBody = $jsonBody;
         } catch (Zend_Json_Exception $e) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(sprintf(
                 'Unable to decode response from twitter: %s',
                 $e->getMessage()
@@ -149,7 +149,7 @@ class Zend_Service_Twitter_Response
         if (null === $this->jsonBody
             || !isset($this->jsonBody->errors)
         ) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Either no JSON response received, or JSON error response is malformed; cannot return errors'
             );

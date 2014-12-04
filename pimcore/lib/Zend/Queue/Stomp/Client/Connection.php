@@ -23,7 +23,7 @@
 /**
  * @see Zend_Queue_Stomp_Client_ConnectionInterface
  */
-require_once 'Zend/Queue/Stomp/Client/ConnectionInterface.php';
+// require_once 'Zend/Queue/Stomp/Client/ConnectionInterface.php';
 
 /**
  * The Stomp client interacts with a Stomp server.
@@ -72,7 +72,7 @@ class Zend_Queue_Stomp_Client_Connection
         if ($this->_socket === false) {
             // aparently there is some reason that fsockopen will return false
             // but it normally throws an error.
-            require_once 'Zend/Queue/Exception.php';
+            // require_once 'Zend/Queue/Exception.php';
             throw new Zend_Queue_Exception("Unable to connect to $str; error = $errstr ( errno = $errno )");
         }
 
@@ -136,7 +136,7 @@ class Zend_Queue_Stomp_Client_Connection
     public function ping()
     {
         if (!is_resource($this->_socket)) {
-            require_once 'Zend/Queue/Exception.php';
+            // require_once 'Zend/Queue/Exception.php';
             throw new Zend_Queue_Exception('Not connected to Stomp server');
         }
         return true;
@@ -157,7 +157,7 @@ class Zend_Queue_Stomp_Client_Connection
 
         $bytes = fwrite($this->_socket, $output, strlen($output));
         if ($bytes === false || $bytes == 0) {
-            require_once 'Zend/Queue/Exception.php';
+            // require_once 'Zend/Queue/Exception.php';
             throw new Zend_Queue_Exception('No bytes written');
         }
 
@@ -205,7 +205,7 @@ class Zend_Queue_Stomp_Client_Connection
 
             // check to make sure that the connection is not lost.
             if ($data === false) {
-                require_once 'Zend/Queue/Exception.php';
+                // require_once 'Zend/Queue/Exception.php';
                 throw new Zend_Queue_Exception('Connection lost');
             }
 
@@ -264,14 +264,14 @@ class Zend_Queue_Stomp_Client_Connection
         $class = $this->getFrameClass();
 
         if (!class_exists($class)) {
-            require_once 'Zend/Loader.php';
+            // require_once 'Zend/Loader.php';
             Zend_Loader::loadClass($class);
         }
 
         $frame = new $class();
 
         if (!$frame instanceof Zend_Queue_Stomp_FrameInterface) {
-            require_once 'Zend/Queue/Exception.php';
+            // require_once 'Zend/Queue/Exception.php';
             throw new Zend_Queue_Exception('Invalid Frame class provided; must implement Zend_Queue_Stomp_FrameInterface');
         }
 

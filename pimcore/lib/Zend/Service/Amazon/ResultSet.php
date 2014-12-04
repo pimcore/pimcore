@@ -25,7 +25,7 @@
 /**
  * @see Zend_Service_Amazon_Item
  */
-require_once 'Zend/Service/Amazon/Item.php';
+// require_once 'Zend/Service/Amazon/Item.php';
 
 
 /**

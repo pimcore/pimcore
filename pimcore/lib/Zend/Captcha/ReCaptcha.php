@@ -20,10 +20,10 @@
  */
 
 /** @see Zend_Captcha_Base */
-require_once 'Zend/Captcha/Base.php';
+// require_once 'Zend/Captcha/Base.php';
 
 /** @see Zend_Service_ReCaptcha */
-require_once 'Zend/Service/ReCaptcha.php';
+// require_once 'Zend/Service/ReCaptcha.php';
 
 /**
  * ReCaptcha adapter

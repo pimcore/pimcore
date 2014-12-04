@@ -23,12 +23,12 @@
 /**
  * @see Zend_Application_Bootstrap_Bootstrapper
  */
-require_once 'Zend/Application/Bootstrap/Bootstrapper.php';
+// require_once 'Zend/Application/Bootstrap/Bootstrapper.php';
 
 /**
  * @see Zend_Application_Bootstrap_ResourceBootstrapper
  */
-require_once 'Zend/Application/Bootstrap/ResourceBootstrapper.php';
+// require_once 'Zend/Application/Bootstrap/ResourceBootstrapper.php';
 
 /**
  * Abstract base class for bootstrap classes

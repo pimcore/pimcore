@@ -22,7 +22,7 @@
 /**
  * Zend_Tag_Exception
  */
-require_once 'Zend/Tag/Exception.php';
+// require_once 'Zend/Tag/Exception.php';
 
 /**
  * Exception class for Zend_Tag_Cloud

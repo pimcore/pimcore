@@ -71,7 +71,7 @@ class Zend_Crypt_Rsa_Key implements Countable
         /**
          * @see Zend_Crypt_Exception
          */
-        require_once 'Zend/Crypt/Exception.php';
+        // require_once 'Zend/Crypt/Exception.php';
         throw new Zend_Crypt_Exception('No public key string representation is available');
     }
 

@@ -19,7 +19,7 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Http/Client.php';
+// require_once 'Zend/Http/Client.php';
 
 abstract class Zend_Service_Rackspace_Abstract
 {
@@ -114,15 +114,15 @@ abstract class Zend_Service_Rackspace_Abstract
     public function __construct($user, $key, $authUrl=self::US_AUTH_URL)
     {
         if (!isset($user)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception("The user cannot be empty");
         }
         if (!isset($key)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception("The key cannot be empty");
         }
         if (!in_array($authUrl, array(self::US_AUTH_URL, self::UK_AUTH_URL))) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception("The authentication URL should be valid");
         }
         $this->setUser($user);
@@ -233,7 +233,7 @@ abstract class Zend_Service_Rackspace_Abstract
         if (!empty($url) && in_array($url, array(self::US_AUTH_URL, self::UK_AUTH_URL))) {
             $this->authUrl = $url;
         } else {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception("The authentication URL is not valid");
         }
     }
@@ -365,7 +365,7 @@ abstract class Zend_Service_Rackspace_Abstract
             /**
              * @see Zend_Service_Rackspace_Exception
              */
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception("User has not been set");
         }
 

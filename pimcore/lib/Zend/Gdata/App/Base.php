@@ -24,10 +24,10 @@
 /**
  * @see Zend_Gdata_App_Util
  */
-require_once 'Zend/Gdata/App/Util.php';
+// require_once 'Zend/Gdata/App/Util.php';
 
 /** @see Zend_Xml_Security */
-require_once 'Zend/Xml/Security.php';
+// require_once 'Zend/Xml/Security.php';
 
 /**
  * Abstract class for all XML elements
@@ -307,17 +307,17 @@ abstract class Zend_Gdata_App_Base
             $doc = @Zend_Xml_Security::scan($xml, $doc);
             @ini_restore('track_errors');
             if (!$doc) {
-                require_once 'Zend/Gdata/App/Exception.php';
+                // require_once 'Zend/Gdata/App/Exception.php';
                 throw new Zend_Gdata_App_Exception("DOMDocument cannot parse XML: $php_errormsg");
             }
             $element = $doc->getElementsByTagName($this->_rootElement)->item(0);
             if (!$element) {
-                require_once 'Zend/Gdata/App/Exception.php';
+                // require_once 'Zend/Gdata/App/Exception.php';
                 throw new Zend_Gdata_App_Exception('No root <' . $this->_rootElement . '> element');
             }
             $this->transferFromDOM($element);
         } else {
-            require_once 'Zend/Gdata/App/Exception.php';
+            // require_once 'Zend/Gdata/App/Exception.php';
             throw new Zend_Gdata_App_Exception('XML passed to transferFromXML cannot be null');
         }
     }
@@ -483,7 +483,7 @@ abstract class Zend_Gdata_App_Base
         } else if (property_exists($this, "_${name}")) {
             return $this->{'_' . $name};
         } else {
-            require_once 'Zend/Gdata/App/InvalidArgumentException.php';
+            // require_once 'Zend/Gdata/App/InvalidArgumentException.php';
             throw new Zend_Gdata_App_InvalidArgumentException(
                     'Property ' . $name . ' does not exist');
         }
@@ -509,7 +509,7 @@ abstract class Zend_Gdata_App_Base
         } else if (isset($this->{'_' . $name}) || ($this->{'_' . $name} === null)) {
             $this->{'_' . $name} = $val;
         } else {
-            require_once 'Zend/Gdata/App/InvalidArgumentException.php';
+            // require_once 'Zend/Gdata/App/InvalidArgumentException.php';
             throw new Zend_Gdata_App_InvalidArgumentException(
                     'Property ' . $name . '  does not exist');
         }
@@ -525,7 +525,7 @@ abstract class Zend_Gdata_App_Base
         $rc = new ReflectionClass(get_class($this));
         $privName = '_' . $name;
         if (!($rc->hasProperty($privName))) {
-            require_once 'Zend/Gdata/App/InvalidArgumentException.php';
+            // require_once 'Zend/Gdata/App/InvalidArgumentException.php';
             throw new Zend_Gdata_App_InvalidArgumentException(
                     'Property ' . $name . ' does not exist');
         } else {

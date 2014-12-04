@@ -21,7 +21,7 @@
 /**
  * Zend_Server_Reflection_Function_Abstract
  */
-require_once 'Zend/Server/Reflection/Function/Abstract.php';
+// require_once 'Zend/Server/Reflection/Function/Abstract.php';
 
 /**
  * Method Reflection

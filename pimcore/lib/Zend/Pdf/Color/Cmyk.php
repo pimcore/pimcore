@@ -20,11 +20,11 @@
  */
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element/Numeric.php';
+// require_once 'Zend/Pdf/Element/Numeric.php';
 
 
 /** Zend_Pdf_Color */
-require_once 'Zend/Pdf/Color.php';
+// require_once 'Zend/Pdf/Color.php';
 
 /**
  * CMYK color implementation

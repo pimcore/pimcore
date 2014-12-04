@@ -23,7 +23,7 @@
 /**
  * @see Zend_Controller_Action_Helper_Abstract
  */
-require_once 'Zend/Controller/Action/Helper/Abstract.php';
+// require_once 'Zend/Controller/Action/Helper/Abstract.php';
 
 /**
  * Create and send autocompletion lists
@@ -71,7 +71,7 @@ abstract class Zend_Controller_Action_Helper_AutoComplete_Abstract extends Zend_
         /**
          * @see Zend_Layout
          */
-        require_once 'Zend/Layout.php';
+        // require_once 'Zend/Layout.php';
         if (null !== ($layout = Zend_Layout::getMvcInstance())) {
             $layout->disableLayout();
         }
@@ -98,7 +98,7 @@ abstract class Zend_Controller_Action_Helper_AutoComplete_Abstract extends Zend_
         /**
          * @see Zend_Controller_Action_Exception
          */
-        require_once 'Zend/Controller/Action/Exception.php';
+        // require_once 'Zend/Controller/Action/Exception.php';
         throw new Zend_Controller_Action_Exception('Invalid data passed for autocompletion');
     }
 

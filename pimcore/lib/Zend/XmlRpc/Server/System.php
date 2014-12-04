@@ -70,7 +70,7 @@ class Zend_XmlRpc_Server_System
     {
         $table = $this->_server->getDispatchTable();
         if (!$table->hasMethod($method)) {
-            require_once 'Zend/XmlRpc/Server/Exception.php';
+            // require_once 'Zend/XmlRpc/Server/Exception.php';
             throw new Zend_XmlRpc_Server_Exception('Method "' . $method . '" does not exist', 640);
         }
 
@@ -87,7 +87,7 @@ class Zend_XmlRpc_Server_System
     {
         $table = $this->_server->getDispatchTable();
         if (!$table->hasMethod($method)) {
-            require_once 'Zend/XmlRpc/Server/Exception.php';
+            // require_once 'Zend/XmlRpc/Server/Exception.php';
             throw new Zend_XmlRpc_Server_Exception('Method "' . $method . '" does not exist', 640);
         }
         $method = $table->getMethod($method)->toArray();

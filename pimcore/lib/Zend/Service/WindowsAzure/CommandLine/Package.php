@@ -21,12 +21,12 @@
  */
 
 /** @see Zend_Xml_Security */
-require_once 'Zend/Xml/Security.php';
+// require_once 'Zend/Xml/Security.php';
 
 /**
 * @see Zend_Service_Console_Command
 */
-require_once 'Zend/Service/Console/Command.php';
+// require_once 'Zend/Service/Console/Command.php';
 
 /**
  * Package commands
@@ -68,7 +68,7 @@ class Zend_Service_WindowsAzure_CommandLine_Package
 
 		// Verify scaffolder
 		if (!is_file($scaffolder)) {
-			require_once 'Zend/Service/Console/Exception.php';
+			// require_once 'Zend/Service/Console/Exception.php';
 			throw new Zend_Service_Console_Exception('Could not locate the given scaffolder: ' . $scaffolder);
 		}
 
@@ -76,7 +76,7 @@ class Zend_Service_WindowsAzure_CommandLine_Package
 		$archive = new Phar($scaffolder);
 		include $scaffolder;
 		if (!class_exists('Scaffolder')) {
-			require_once 'Zend/Service/Console/Exception.php';
+			// require_once 'Zend/Service/Console/Exception.php';
 			throw new Zend_Service_Console_Exception('Could not locate a class named Scaffolder in the given scaffolder: ' . $scaffolder . '. Make sure the scaffolder package contains a file named index.php and contains a class named Scaffolder.');
 		}
 
@@ -129,7 +129,7 @@ class Zend_Service_WindowsAzure_CommandLine_Package
 		// Open the ServiceDefinition.csdef file and check for role paths
 		$serviceDefinitionFile = $path . '/ServiceDefinition.csdef';
 		if (!file_exists($serviceDefinitionFile)) {
-			require_once 'Zend/Service/Console/Exception.php';
+			// require_once 'Zend/Service/Console/Exception.php';
 			throw new Zend_Service_Console_Exception('Could not locate ServiceDefinition.csdef at ' . $serviceDefinitionFile . '.');
 		}
 		$serviceDefinition = Zend_Xml_Security::scanFile($serviceDefinitionFile);

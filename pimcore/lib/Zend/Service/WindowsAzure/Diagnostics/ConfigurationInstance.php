@@ -23,15 +23,15 @@
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_ConfigurationObjectBaseAbstract
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationObjectBaseAbstract.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationObjectBaseAbstract.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_ConfigurationDataSources
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationDataSources.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationDataSources.php';
 
 /** Zend_Xml_Security */
-require_once 'Zend/Xml/Security.php';
+// require_once 'Zend/Xml/Security.php';
 
 /**
  * @category   Zend

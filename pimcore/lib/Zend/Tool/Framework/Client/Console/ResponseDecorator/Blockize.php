@@ -19,7 +19,7 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once "Zend/Tool/Framework/Client/Response/ContentDecorator/Interface.php";
+// require_once "Zend/Tool/Framework/Client/Response/ContentDecorator/Interface.php";
 
 /**
  * Take a text and block it into several lines of a fixed length.

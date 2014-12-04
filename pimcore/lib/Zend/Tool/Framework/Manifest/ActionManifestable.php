@@ -23,7 +23,7 @@
 /**
  * @see Zend_Tool_Framework_Manifest_Interface
  */
-require_once 'Zend/Tool/Framework/Manifest/Interface.php';
+// require_once 'Zend/Tool/Framework/Manifest/Interface.php';
 
 /**
  * @category   Zend

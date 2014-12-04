@@ -19,7 +19,7 @@
  */
 
 /** Zend_Form_Decorator_ViewHelper */
-require_once 'Zend/Form/Decorator/ViewHelper.php';
+// require_once 'Zend/Form/Decorator/ViewHelper.php';
 
 /**
  * Zend_Dojo_Form_Decorator_DijitElement
@@ -152,7 +152,7 @@ class Zend_Dojo_Form_Decorator_DijitElement extends Zend_Form_Decorator_ViewHelp
         $element = $this->getElement();
         $view = $element->getView();
         if (null === $view) {
-            require_once 'Zend/Form/Decorator/Exception.php';
+            // require_once 'Zend/Form/Decorator/Exception.php';
             throw new Zend_Form_Decorator_Exception('DijitElement decorator cannot render without a registered view object');
         }
 

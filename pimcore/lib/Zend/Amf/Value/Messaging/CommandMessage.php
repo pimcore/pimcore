@@ -23,7 +23,7 @@
 /**
  * @see Zend_Amf_Value_Messaging_AsyncMessage
  */
-require_once 'Zend/Amf/Value/Messaging/AsyncMessage.php';
+// require_once 'Zend/Amf/Value/Messaging/AsyncMessage.php';
 
 /**
  * A message that represents an infrastructure command passed between

@@ -20,7 +20,7 @@
  * @version    $Id$
  */
 
- require_once 'Zend/Service/SqlAzure/Exception.php';
+ // require_once 'Zend/Service/SqlAzure/Exception.php';
 
 /**
  * @category   Zend

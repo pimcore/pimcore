@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_SqlAzure_Management_ServiceEntityAbstract
  */
-require_once 'Zend/Service/SqlAzure/Management/ServiceEntityAbstract.php';
+// require_once 'Zend/Service/SqlAzure/Management/ServiceEntityAbstract.php';
 
 /**
  * @category   Zend

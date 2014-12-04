@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_Ebay_Finding_Set_Abstract
  */
-require_once 'Zend/Service/Ebay/Finding/Set/Abstract.php';
+// require_once 'Zend/Service/Ebay/Finding/Set/Abstract.php';
 
 /**
  * @category   Zend
@@ -51,7 +51,7 @@ class Zend_Service_Ebay_Finding_Category_Histogram_Set extends Zend_Service_Ebay
         /**
          * @see Zend_Service_Ebay_Finding_Category_Histogram
          */
-        require_once 'Zend/Service/Ebay/Finding/Category/Histogram.php';
+        // require_once 'Zend/Service/Ebay/Finding/Category/Histogram.php';
         return new Zend_Service_Ebay_Finding_Category_Histogram($node);
     }
 }

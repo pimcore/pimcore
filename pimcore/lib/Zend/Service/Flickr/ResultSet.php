@@ -25,7 +25,7 @@
 /**
  * @see Zend_Service_Flickr_Result
  */
-require_once 'Zend/Service/Flickr/Result.php';
+// require_once 'Zend/Service/Flickr/Result.php';
 
 
 /**

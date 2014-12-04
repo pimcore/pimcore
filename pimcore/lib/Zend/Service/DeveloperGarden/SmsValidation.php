@@ -23,52 +23,52 @@
 /**
  * @see Zend_Service_DeveloperGarden_Client_ClientAbstract
  */
-require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
+// require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_SmsValidation_GetValidatedNumbers
  */
-require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/GetValidatedNumbers.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/GetValidatedNumbers.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SmsValidation_GetValidatedNumbersResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/GetValidatedNumbersResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/GetValidatedNumbersResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SmsValidation_ValidatedNumber
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/ValidatedNumber.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/ValidatedNumber.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_SmsValidation_SendValidationKeyword
  */
-require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/SendValidationKeyword.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/SendValidationKeyword.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SmsValidation_SendValidationKeywordResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/SendValidationKeywordResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/SendValidationKeywordResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_SmsValidation_Validate
  */
-require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/Validate.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/Validate.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SmsValidation_ValidateResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/ValidateResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/ValidateResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_SmsValidation_Invalidate
  */
-require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/Invalidate.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/Invalidate.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SmsValidation_InvalidateResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/InvalidateResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/InvalidateResponse.php';
 
 /**
  * @category   Zend

@@ -22,7 +22,7 @@
 /**
  * @see Zend_ProgressBar_Exception
  */
-require_once 'Zend/ProgressBar/Exception.php';
+// require_once 'Zend/ProgressBar/Exception.php';
 
 /**
  * Exception class for Zend_ProgressBar_Adapter

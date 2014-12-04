@@ -22,7 +22,7 @@
 
 
 /** @see Zend_Pdf_Resource_Font */
-require_once 'Zend/Pdf/Resource/Font.php';
+// require_once 'Zend/Pdf/Resource/Font.php';
 
 /**
  * Extracted fonts implementation
@@ -76,7 +76,7 @@ class Zend_Pdf_Resource_Font_Extracted extends Zend_Pdf_Resource_Font
                 // Composite type 0 font
                 if (count($fontDictionary->DescendantFonts->items) != 1) {
                     // Multiple descendant fonts are not supported
-                    require_once 'Zend/Pdf/Exception.php';
+                    // require_once 'Zend/Pdf/Exception.php';
                     throw new Zend_Pdf_Exception(self::TYPE_NOT_SUPPORTED);
                 }
 
@@ -115,7 +115,7 @@ class Zend_Pdf_Resource_Font_Extracted extends Zend_Pdf_Resource_Font
                 break;
 
             default:
-                require_once 'Zend/Pdf/Exception.php';
+                // require_once 'Zend/Pdf/Exception.php';
                 throw new Zend_Pdf_Exception(self::TYPE_NOT_SUPPORTED);
         }
 
@@ -147,7 +147,7 @@ class Zend_Pdf_Resource_Font_Extracted extends Zend_Pdf_Resource_Font
      */
     public function glyphNumbersForCharacters($characterCodes)
     {
-        require_once 'Zend/Pdf/Exception.php';
+        // require_once 'Zend/Pdf/Exception.php';
         throw new Zend_Pdf_Exception(self::OPERATION_NOT_SUPPORTED);
     }
 
@@ -165,7 +165,7 @@ class Zend_Pdf_Resource_Font_Extracted extends Zend_Pdf_Resource_Font
      */
     public function glyphNumberForCharacter($characterCode)
     {
-        require_once 'Zend/Pdf/Exception.php';
+        // require_once 'Zend/Pdf/Exception.php';
         throw new Zend_Pdf_Exception(self::OPERATION_NOT_SUPPORTED);
     }
 
@@ -189,7 +189,7 @@ class Zend_Pdf_Resource_Font_Extracted extends Zend_Pdf_Resource_Font
      */
     public function getCoveredPercentage($string, $charEncoding = '')
     {
-        require_once 'Zend/Pdf/Exception.php';
+        // require_once 'Zend/Pdf/Exception.php';
         throw new Zend_Pdf_Exception(self::OPERATION_NOT_SUPPORTED);
     }
 
@@ -207,7 +207,7 @@ class Zend_Pdf_Resource_Font_Extracted extends Zend_Pdf_Resource_Font
      */
     public function widthsForGlyphs($glyphNumbers)
     {
-        require_once 'Zend/Pdf/Exception.php';
+        // require_once 'Zend/Pdf/Exception.php';
         throw new Zend_Pdf_Exception(self::OPERATION_NOT_SUPPORTED);
     }
 
@@ -222,7 +222,7 @@ class Zend_Pdf_Resource_Font_Extracted extends Zend_Pdf_Resource_Font
      */
     public function widthForGlyph($glyphNumber)
     {
-        require_once 'Zend/Pdf/Exception.php';
+        // require_once 'Zend/Pdf/Exception.php';
         throw new Zend_Pdf_Exception(self::OPERATION_NOT_SUPPORTED);
     }
 
@@ -245,7 +245,7 @@ class Zend_Pdf_Resource_Font_Extracted extends Zend_Pdf_Resource_Font
             return iconv($charEncoding, 'CP1252//IGNORE', $string);
         }
 
-        require_once 'Zend/Pdf/Exception.php';
+        // require_once 'Zend/Pdf/Exception.php';
         throw new Zend_Pdf_Exception(self::ENCODING_NOT_SUPPORTED);
     }
 
@@ -268,7 +268,7 @@ class Zend_Pdf_Resource_Font_Extracted extends Zend_Pdf_Resource_Font
             return iconv('CP1252', $charEncoding, $string);
         }
 
-        require_once 'Zend/Pdf/Exception.php';
+        // require_once 'Zend/Pdf/Exception.php';
         throw new Zend_Pdf_Exception(self::ENCODING_NOT_SUPPORTED);
     }
 }

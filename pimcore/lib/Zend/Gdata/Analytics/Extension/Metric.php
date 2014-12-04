@@ -23,7 +23,7 @@
 /**
  * @see Zend_Gdata_Extension_Property
  */
-require_once 'Zend/Gdata/Analytics/Extension/Property.php';
+// require_once 'Zend/Gdata/Analytics/Extension/Property.php';
 
 /**
  * @category   Zend

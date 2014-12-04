@@ -48,7 +48,7 @@ abstract class Zend_Pdf_Trailer
     {
         if ( !in_array($key, self::$_allowedKeys) ) {
             /** @todo Make warning (log entry) instead of an exception */
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception("Unknown trailer dictionary key: '$key'.");
         }
     }

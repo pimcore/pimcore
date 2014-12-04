@@ -69,7 +69,7 @@ class Zend_Service_StrikeIron
 
         try {
             if (!class_exists($class)) {
-                require_once 'Zend/Loader.php';
+                // require_once 'Zend/Loader.php';
                 @Zend_Loader::loadClass($class);
             }
             if (!class_exists($class, false)) {
@@ -80,7 +80,7 @@ class Zend_Service_StrikeIron
             /**
              * @see Zend_Service_StrikeIron_Exception
              */
-            require_once 'Zend/Service/StrikeIron/Exception.php';
+            // require_once 'Zend/Service/StrikeIron/Exception.php';
             throw new Zend_Service_StrikeIron_Exception($msg, $e->getCode(), $e);
         }
 

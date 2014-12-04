@@ -22,7 +22,7 @@
 /**
  * @see Zend_Json_Server_Response
  */
-require_once 'Zend/Json/Server/Response.php';
+// require_once 'Zend/Json/Server/Response.php';
 
 /**
  * @category   Zend

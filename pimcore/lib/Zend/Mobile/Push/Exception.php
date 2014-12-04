@@ -21,7 +21,7 @@
  */
 
 /** Zend_Mobile_Exception */
-require_once 'Zend/Mobile/Exception.php';
+// require_once 'Zend/Mobile/Exception.php';
 
 /**
  * @category   Zend

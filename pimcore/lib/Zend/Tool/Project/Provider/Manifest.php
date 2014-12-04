@@ -23,7 +23,7 @@
 /**
  * @see Zend_Tool_Framework_Manifest_ProviderManifestable
  */
-require_once 'Zend/Tool/Framework/Manifest/ProviderManifestable.php';
+// require_once 'Zend/Tool/Framework/Manifest/ProviderManifestable.php';
 
 /**
  * @category   Zend

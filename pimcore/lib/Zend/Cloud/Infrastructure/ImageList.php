@@ -8,7 +8,7 @@
  */
 
 
-require_once 'Zend/Cloud/Infrastructure/Image.php';
+// require_once 'Zend/Cloud/Infrastructure/Image.php';
 
 /**
  * List of images
@@ -47,7 +47,7 @@ class Zend_Cloud_Infrastructure_ImageList implements Countable, Iterator, ArrayA
     public function __construct($images, $adapter = null)
     {
         if (empty($images) || !is_array($images)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception(__CLASS__ . ' expects an array of images');
         }
 
@@ -181,7 +181,7 @@ class Zend_Cloud_Infrastructure_ImageList implements Countable, Iterator, ArrayA
     public function offsetGet($offset)
     {
         if (!$this->offsetExists($offset)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('Illegal index');
         }
         return $this->images[$offset];
@@ -198,7 +198,7 @@ class Zend_Cloud_Infrastructure_ImageList implements Countable, Iterator, ArrayA
      */
     public function offsetSet($offset, $value)
     {
-        require_once 'Zend/Cloud/Infrastructure/Exception.php';
+        // require_once 'Zend/Cloud/Infrastructure/Exception.php';
         throw new Zend_Cloud_Infrastructure_Exception('You are trying to set read-only property');
     }
 
@@ -212,7 +212,7 @@ class Zend_Cloud_Infrastructure_ImageList implements Countable, Iterator, ArrayA
      */
     public function offsetUnset($offset)
     {
-        require_once 'Zend/Cloud/Infrastructure/Exception.php';
+        // require_once 'Zend/Cloud/Infrastructure/Exception.php';
         throw new Zend_Cloud_Infrastructure_Exception('You are trying to unset read-only property');
     }
 }

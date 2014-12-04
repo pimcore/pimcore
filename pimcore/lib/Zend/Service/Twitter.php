@@ -23,27 +23,27 @@
 /**
  * @see Zend_Http_Client
  */
-require_once 'Zend/Http/Client.php';
+// require_once 'Zend/Http/Client.php';
 
 /**
  * @see Zend_Http_CookieJar
  */
-require_once 'Zend/Http/CookieJar.php';
+// require_once 'Zend/Http/CookieJar.php';
 
 /**
  * @see Zend_Oauth_Consumer
  */
-require_once 'Zend/Oauth/Consumer.php';
+// require_once 'Zend/Oauth/Consumer.php';
 
 /**
  * @see Zend_Oauth_Token_Access
  */
-require_once 'Zend/Oauth/Token/Access.php';
+// require_once 'Zend/Oauth/Token/Access.php';
 
 /**
  * @see Zend_Service_Twitter_Response
  */
-require_once 'Zend/Service/Twitter/Response.php';
+// require_once 'Zend/Service/Twitter/Response.php';
 
 /**
  * @category   Zend
@@ -226,7 +226,7 @@ class Zend_Service_Twitter
         $type = strtolower($type);
         $type = str_replace('_', '', $type);
         if (!in_array($type, $this->methodTypes)) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Invalid method type "' . $type . '"'
             );
@@ -253,7 +253,7 @@ class Zend_Service_Twitter
             return $return;
         }
         if (empty($this->methodType)) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Invalid method "' . $method . '"'
             );
@@ -262,7 +262,7 @@ class Zend_Service_Twitter
         $test = str_replace('_', '', strtolower($method));
         $test = $this->methodType . $test;
         if (!method_exists($this, $test)) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Invalid method "' . $test . '"'
             );
@@ -506,12 +506,12 @@ class Zend_Service_Twitter
 
         $len = iconv_strlen($text, 'UTF-8');
         if (0 == $len) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Direct message must contain at least one character'
             );
         } elseif (140 < $len) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Direct message must contain no more than 140 characters'
             );
@@ -719,7 +719,7 @@ class Zend_Service_Twitter
 
         $len = iconv_strlen($query, 'UTF-8');
         if (0 == $len) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Query must contain at least one character'
             );
@@ -730,7 +730,7 @@ class Zend_Service_Twitter
             switch (strtolower($key)) {
                 case 'geocode':
                     if (!substr_count($value, ',') !== 2) {
-                        require_once 'Zend/Service/Twitter/Exception.php';
+                        // require_once 'Zend/Service/Twitter/Exception.php';
                         throw new Zend_Service_Twitter_Exception(
                             '"geocode" must be of the format "latitude,longitude,radius"'
                         );
@@ -738,7 +738,7 @@ class Zend_Service_Twitter
                     list($latitude, $longitude, $radius) = explode(',', $value);
                     $radius = trim($radius);
                     if (!preg_match('/^\d+(mi|km)$/', $radius)) {
-                        require_once 'Zend/Service/Twitter/Exception.php';
+                        // require_once 'Zend/Service/Twitter/Exception.php';
                         throw new Zend_Service_Twitter_Exception(
                             'Radius segment of "geocode" must be of the format "[unit](mi|km)"'
                         );
@@ -749,7 +749,7 @@ class Zend_Service_Twitter
                     break;
                 case 'lang':
                     if (strlen($value) > 2) {
-                        require_once 'Zend/Service/Twitter/Exception.php';
+                        // require_once 'Zend/Service/Twitter/Exception.php';
                         throw new Zend_Service_Twitter_Exception(
                             'Query language must be a 2 character string'
                         );
@@ -758,7 +758,7 @@ class Zend_Service_Twitter
                     break;
                 case 'locale':
                     if (strlen($value) > 2) {
-                        require_once 'Zend/Service/Twitter/Exception.php';
+                        // require_once 'Zend/Service/Twitter/Exception.php';
                         throw new Zend_Service_Twitter_Exception(
                             'Query locale must be a 2 character string'
                         );
@@ -768,7 +768,7 @@ class Zend_Service_Twitter
                 case 'result_type':
                     $value = strtolower($value);
                     if (!in_array($value, array('mixed', 'recent', 'popular'))) {
-                        require_once 'Zend/Service/Twitter/Exception.php';
+                        // require_once 'Zend/Service/Twitter/Exception.php';
                         throw new Zend_Service_Twitter_Exception(
                             'result_type must be one of "mixed", "recent", or "popular"'
                         );
@@ -778,7 +778,7 @@ class Zend_Service_Twitter
                 case 'count':
                     $value = (int) $value;
                     if (1 > $value || 100 < $value) {
-                        require_once 'Zend/Service/Twitter/Exception.php';
+                        // require_once 'Zend/Service/Twitter/Exception.php';
                         throw new Zend_Service_Twitter_Exception(
                             'count must be between 1 and 100'
                         );
@@ -787,7 +787,7 @@ class Zend_Service_Twitter
                     break;
                 case 'until':
                     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
-                        require_once 'Zend/Service/Twitter/Exception.php';
+                        // require_once 'Zend/Service/Twitter/Exception.php';
                         throw new Zend_Service_Twitter_Exception(
                             '"until" must be a date in the format YYYY-MM-DD'
                         );
@@ -988,14 +988,14 @@ class Zend_Service_Twitter
         $path = 'statuses/update';
         $len = iconv_strlen(htmlspecialchars($status, ENT_QUOTES, 'UTF-8'), 'UTF-8');
         if ($len > self::STATUS_MAX_CHARACTERS) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Status must be no more than '
                 . self::STATUS_MAX_CHARACTERS
                 . ' characters in length'
             );
         } elseif (0 == $len) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Status must contain at least one character'
             );
@@ -1096,7 +1096,7 @@ class Zend_Service_Twitter
 
         $len = iconv_strlen($query, 'UTF-8');
         if (0 == $len) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Query must contain at least one character'
             );
@@ -1108,7 +1108,7 @@ class Zend_Service_Twitter
                 case 'count':
                     $value = (int) $value;
                     if (1 > $value || 20 < $value) {
-                        require_once 'Zend/Service/Twitter/Exception.php';
+                        // require_once 'Zend/Service/Twitter/Exception.php';
                         throw new Zend_Service_Twitter_Exception(
                             'count must be between 1 and 20'
                         );
@@ -1156,7 +1156,7 @@ class Zend_Service_Twitter
     protected function init()
     {
         if (!$this->isAuthorised() && $this->getUsername() !== null) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Twitter session is unauthorised. You need to initialize '
                 . __CLASS__ . ' with an OAuth Access Token or use '
@@ -1203,7 +1203,7 @@ class Zend_Service_Twitter
     protected function validateScreenName($name)
     {
         if (!preg_match('/^[a-zA-Z0-9_]{0,20}$/', $name)) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Screen name, "' . $name
                 . '" should only contain alphanumeric characters and'

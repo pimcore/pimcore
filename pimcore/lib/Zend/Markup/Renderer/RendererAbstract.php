@@ -23,15 +23,15 @@
 /**
  * @see Zend_config
  */
-require_once 'Zend/Config.php';
+// require_once 'Zend/Config.php';
 /**
  * @see Zend_Filter
  */
-require_once 'Zend/Filter.php';
+// require_once 'Zend/Filter.php';
 /**
  * @see Zend_Markup_Renderer_TokenConverterInterface
  */
-require_once 'Zend/Markup/Renderer/TokenConverterInterface.php';
+// require_once 'Zend/Markup/Renderer/TokenConverterInterface.php';
 
 /**
  * Defines the basic rendering functionality
@@ -205,7 +205,7 @@ abstract class Zend_Markup_Renderer_RendererAbstract
     public function addMarkup($name, $type, array $options)
     {
         if (!isset($options['group']) && ($type ^ self::TYPE_ALIAS)) {
-            require_once 'Zend/Markup/Renderer/Exception.php';
+            // require_once 'Zend/Markup/Renderer/Exception.php';
             throw new Zend_Markup_Renderer_Exception("There is no render group defined.");
         }
 
@@ -227,7 +227,7 @@ abstract class Zend_Markup_Renderer_RendererAbstract
             // add a callback tag
             if (isset($options['callback'])) {
                 if (!($options['callback'] instanceof Zend_Markup_Renderer_TokenConverterInterface)) {
-                    require_once 'Zend/Markup/Renderer/Exception.php';
+                    // require_once 'Zend/Markup/Renderer/Exception.php';
                     throw new Zend_Markup_Renderer_Exception("Not a valid tag callback.");
                 }
                 if (method_exists($options['callback'], 'setRenderer')) {
@@ -244,7 +244,7 @@ abstract class Zend_Markup_Renderer_RendererAbstract
         } elseif ($type & self::TYPE_ALIAS) {
             // add an alias
             if (empty($options['name'])) {
-                require_once 'Zend/Markup/Renderer/Exception.php';
+                // require_once 'Zend/Markup/Renderer/Exception.php';
                 throw new Zend_Markup_Renderer_Exception(
                         'No alias was provided but tag was defined as such');
             }
@@ -424,7 +424,7 @@ abstract class Zend_Markup_Renderer_RendererAbstract
                 $markup['callback'] = new $class;
 
                 if (!($markup['callback'] instanceof Zend_Markup_Renderer_TokenConverterInterface)) {
-                    require_once 'Zend/Markup/Renderer/Exception.php';
+                    // require_once 'Zend/Markup/Renderer/Exception.php';
                     throw new Zend_Markup_Renderer_Exception("Callback for tag '$name' found, but it isn't valid.");
                 }
 

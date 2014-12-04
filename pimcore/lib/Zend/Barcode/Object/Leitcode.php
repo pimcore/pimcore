@@ -23,12 +23,12 @@
 /**
  * @see Zend_Barcode_Object_Identcode
  */
-require_once 'Zend/Barcode/Object/Identcode.php';
+// require_once 'Zend/Barcode/Object/Identcode.php';
 
 /**
  * @see Zend_Validate_Barcode
  */
-require_once 'Zend/Validate/Barcode.php';
+// require_once 'Zend/Validate/Barcode.php';
 
 /**
  * Class for generate Identcode barcode

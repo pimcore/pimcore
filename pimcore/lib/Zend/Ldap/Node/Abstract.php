@@ -23,11 +23,11 @@
 /**
  * @see Zend_Ldap_Attribute
  */
-require_once 'Zend/Ldap/Attribute.php';
+// require_once 'Zend/Ldap/Attribute.php';
 /**
  * @see Zend_Ldap_Dn
  */
-require_once 'Zend/Ldap/Dn.php';
+// require_once 'Zend/Ldap/Dn.php';
 
 /**
  * Zend_Ldap_Node_Abstract provides a bas eimplementation for LDAP nodes

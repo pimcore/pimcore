@@ -21,7 +21,7 @@
  */
 
 /** Zend_Amf_Value_Messaging_AsyncMessage */
-require_once 'Zend/Amf/Value/Messaging/AsyncMessage.php';
+// require_once 'Zend/Amf/Value/Messaging/AsyncMessage.php';
 
 /**
  * This is the type of message returned by the MessageBroker

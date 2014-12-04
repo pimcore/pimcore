@@ -48,7 +48,7 @@ abstract class Zend_Service_WindowsAzure_Storage_StorageEntityAbstract
             $this->_data[strtolower($name)] = $value;
             return;
         }
-		require_once 'Zend/Service/WindowsAzure/Exception.php';
+		// require_once 'Zend/Service/WindowsAzure/Exception.php';
         throw new Zend_Service_WindowsAzure_Exception("Unknown property: " . $name);
     }
 
@@ -61,7 +61,7 @@ abstract class Zend_Service_WindowsAzure_Storage_StorageEntityAbstract
         if (array_key_exists(strtolower($name), $this->_data)) {
             return $this->_data[strtolower($name)];
         }
-		require_once 'Zend/Service/WindowsAzure/Exception.php';
+		// require_once 'Zend/Service/WindowsAzure/Exception.php';
         throw new Zend_Service_WindowsAzure_Exception("Unknown property: " . $name);
     }
 }

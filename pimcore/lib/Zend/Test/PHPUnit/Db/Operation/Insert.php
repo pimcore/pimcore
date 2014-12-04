@@ -23,7 +23,7 @@
 /**
  * @see Zend_Test_PHPUnit_Db_Connection
  */
-require_once "Zend/Test/PHPUnit/Db/Connection.php";
+// require_once "Zend/Test/PHPUnit/Db/Connection.php";
 
 /**
  * Operation for Inserting on setup or teardown of a database tester.
@@ -44,7 +44,7 @@ class Zend_Test_PHPUnit_Db_Operation_Insert implements PHPUnit_Extensions_Databa
     public function execute(PHPUnit_Extensions_Database_DB_IDatabaseConnection $connection, PHPUnit_Extensions_Database_DataSet_IDataSet $dataSet)
     {
         if(!($connection instanceof Zend_Test_PHPUnit_Db_Connection)) {
-            require_once "Zend/Test/PHPUnit/Db/Exception.php";
+            // require_once "Zend/Test/PHPUnit/Db/Exception.php";
             throw new Zend_Test_PHPUnit_Db_Exception("Not a valid Zend_Test_PHPUnit_Db_Connection instance, ".get_class($connection)." given!");
         }
 

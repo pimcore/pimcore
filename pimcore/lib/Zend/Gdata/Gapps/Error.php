@@ -25,7 +25,7 @@
 /**
  * Zend_Gdata_App_Base
  */
-require_once 'Zend/Gdata/App/Base.php';
+// require_once 'Zend/Gdata/App/Base.php';
 
 /**
  * Gdata Gapps Error class. This class is used to represent errors returned

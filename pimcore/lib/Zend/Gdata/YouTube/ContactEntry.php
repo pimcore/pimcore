@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_YouTube_UserProfileEntry
  */
-require_once 'Zend/Gdata/YouTube/UserProfileEntry.php';
+// require_once 'Zend/Gdata/YouTube/UserProfileEntry.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Status
  */
-require_once 'Zend/Gdata/YouTube/Extension/Status.php';
+// require_once 'Zend/Gdata/YouTube/Extension/Status.php';
 
 /**
  * The YouTube contacts flavor of an Atom Entry with media support

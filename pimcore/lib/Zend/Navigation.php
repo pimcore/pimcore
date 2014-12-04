@@ -22,7 +22,7 @@
 /**
  * @see Zend_Navigation_Container
  */
-require_once 'Zend/Navigation/Container.php';
+// require_once 'Zend/Navigation/Container.php';
 
 /**
  * A simple container class for {@link Zend_Navigation_Page} pages
@@ -45,7 +45,7 @@ class Zend_Navigation extends Zend_Navigation_Container
         if (is_array($pages) || $pages instanceof Zend_Config) {
             $this->addPages($pages);
         } elseif (null !== $pages) {
-            require_once 'Zend/Navigation/Exception.php';
+            // require_once 'Zend/Navigation/Exception.php';
             throw new Zend_Navigation_Exception(
                     'Invalid argument: $pages must be an array, an ' .
                     'instance of Zend_Config, or null');
