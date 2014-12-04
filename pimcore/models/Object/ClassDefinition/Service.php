@@ -181,7 +181,7 @@ class Service  {
 
         if (is_array($array) && count($array) > 0) {
 
-            $class = "Object\\ClassDefinition\\".ucfirst($array["datatype"])."\\" . ucfirst($array["fieldtype"]);
+            $class = "\\Pimcore\\Model\\Object\\ClassDefinition\\".ucfirst($array["datatype"])."\\" . ucfirst($array["fieldtype"]);
             if (!\Pimcore\Tool::classExists($class)) {
                 $class = "\\Object_Class_" .ucfirst($array["datatype"])."_" . ucfirst($array["fieldtype"]);
                 if (!\Pimcore\Tool::classExists($class)) {
