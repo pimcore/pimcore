@@ -19,16 +19,16 @@
  * Abstract IO base class
  */
 
-require_once 'Google/Client.php';
-require_once 'Google/IO/Exception.php';
-require_once 'Google/Http/CacheParser.php';
-require_once 'Google/Http/Request.php';
+// pimcore modification: removed autoloader include
 
 abstract class Google_IO_Abstract
 {
   const UNKNOWN_CODE = 0;
   const FORM_URLENCODED = 'application/x-www-form-urlencoded';
-  const CONNECTION_ESTABLISHED = "HTTP/1.0 200 Connection established\r\n\r\n";
+  private static $CONNECTION_ESTABLISHED_HEADERS = array(
+    "HTTP/1.0 200 Connection established\r\n\r\n",
+    "HTTP/1.1 200 Connection established\r\n\r\n",
+  );
   private static $ENTITY_HTTP_METHODS = array("POST" => null, "PUT" => null);
 
   /** @var Google_Client */
@@ -249,14 +249,18 @@ abstract class Google_IO_Abstract
    */
   public function parseHttpResponse($respData, $headerSize)
   {
-    if (stripos($respData, self::CONNECTION_ESTABLISHED) !== false) {
-      $respData = str_ireplace(self::CONNECTION_ESTABLISHED, '', $respData);
-
-      // Subtract the proxy header size unless the cURL bug prior to 7.30.0
-      // is present which prevented the proxy header size from being taken into
-      // account.
-      if (!$this->needsQuirk()) {
-        $headerSize -= strlen(self::CONNECTION_ESTABLISHED);
+    // check proxy header
+    foreach (self::$CONNECTION_ESTABLISHED_HEADERS as $established_header) {
+      if (stripos($respData, $established_header) !== false) {
+        // existed, remove it
+        $respData = str_ireplace($established_header, '', $respData);
+        // Subtract the proxy header size unless the cURL bug prior to 7.30.0
+        // is present which prevented the proxy header size from being taken into
+        // account.
+        if (!$this->needsQuirk()) {
+          $headerSize -= strlen($established_header);
+        }
+        break;
       }
     }
 
@@ -264,7 +268,10 @@ abstract class Google_IO_Abstract
       $responseBody = substr($respData, $headerSize);
       $responseHeaders = substr($respData, 0, $headerSize);
     } else {
-      list($responseHeaders, $responseBody) = explode("\r\n\r\n", $respData, 2);
+      $responseSegments = explode("\r\n\r\n", $respData, 2);
+      $responseHeaders = $responseSegments[0];
+      $responseBody = isset($responseSegments[1]) ? $responseSegments[1] :
+                                                    null;
     }
 
     $responseHeaders = $this->getHttpResponseHeaders($responseHeaders);
@@ -293,7 +300,7 @@ abstract class Google_IO_Abstract
       if ($headerLine && strpos($headerLine, ':') !== false) {
         list($header, $value) = explode(': ', $headerLine, 2);
         $header = strtolower($header);
-        if (isset($responseHeaders[$header])) {
+        if (isset($headers[$header])) {
           $headers[$header] .= "\n" . $value;
         } else {
           $headers[$header] = $value;

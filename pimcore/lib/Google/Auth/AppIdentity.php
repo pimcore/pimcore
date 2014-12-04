@@ -22,8 +22,7 @@
  */
 use google\appengine\api\app_identity\AppIdentityService;
 
-require_once "Google/Auth/Abstract.php";
-require_once "Google/Http/Request.php";
+// pimcore modification: removed autoloader include
 
 /**
  * Authentication via the Google App Engine App Identity service.
@@ -31,7 +30,6 @@ require_once "Google/Http/Request.php";
 class Google_Auth_AppIdentity extends Google_Auth_Abstract
 {
   const CACHE_PREFIX = "Google_Auth_AppIdentity::";
-  const CACHE_LIFETIME = 1500;
   private $key = null;
   private $client;
   private $token = false;
@@ -50,12 +48,22 @@ class Google_Auth_AppIdentity extends Google_Auth_Abstract
     if ($this->token && $this->tokenScopes == $scopes) {
       return $this->token;
     }
-    $memcache = new Memcached();
-    $this->token = $memcache->get(self::CACHE_PREFIX . $scopes);
+
+    $cacheKey = self::CACHE_PREFIX;
+    if (is_string($scopes)) {
+      $cacheKey .= $scopes;
+    } else if (is_array($scopes)) {
+      $cacheKey .= implode(":", $scopes);
+    }
+
+    $this->token = $this->client->getCache()->get($cacheKey);
     if (!$this->token) {
       $this->token = AppIdentityService::getAccessToken($scopes);
       if ($this->token) {
-        $memcache->set(self::CACHE_PREFIX . $scopes, $this->token, self::CACHE_LIFETIME);
+        $this->client->getCache()->set(
+            $cacheKey,
+            $this->token
+        );
       }
     }
     $this->tokenScopes = $scopes;
@@ -75,7 +83,7 @@ class Google_Auth_AppIdentity extends Google_Auth_Abstract
   public function authenticatedRequest(Google_Http_Request $request)
   {
     $request = $this->sign($request);
-    return $this->io->makeRequest($request);
+    return $this->client->getIo()->makeRequest($request);
   }
 
   public function sign(Google_Http_Request $request)
@@ -84,6 +92,9 @@ class Google_Auth_AppIdentity extends Google_Auth_Abstract
       // No token, so nothing to do.
       return $request;
     }
+
+    $this->client->getLogger()->debug('App Identity authentication');
+
     // Add the OAuth2 header to the request
     $request->setRequestHeaders(
         array('Authorization' => 'Bearer ' . $this->token['access_token'])

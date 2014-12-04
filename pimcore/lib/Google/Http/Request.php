@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-require_once 'Google/Utils.php';
+// pimcore modification: removed autoloader include
 
 /**
  * HTTP Request to be executed by IO classes. Upon execution, the
