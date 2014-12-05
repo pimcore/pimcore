@@ -163,7 +163,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                 }
             }
 
-            if($hostRedirect && !$this->getParam("pimcore_disable_host_redirect")) {
+            if($hostRedirect && !isset($_GET["pimcore_disable_host_redirect"])) {
                 $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $hostRedirect . $_SERVER["REQUEST_URI"];
 
                 header("HTTP/1.1 301 Moved Permanently");
