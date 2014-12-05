@@ -290,12 +290,12 @@ abstract class PageSnippet extends Model\Document {
     public function setRawElement($name, $type, $data) {
         try {
             if ($type) {
-                $class = "Document\\Tag\\" . ucfirst($type);
+                $class = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst($type);
 
                 // this is the fallback for custom document tags using prefixes
                 // so we need to check if the class exists first
                 if(!\Pimcore\Tool::classExists($class)) {
-                    $oldStyleClass = "Document_Tag_" . ucfirst($type);
+                    $oldStyleClass = "\\Document_Tag_" . ucfirst($type);
                     if(\Pimcore\Tool::classExists($oldStyleClass)) {
                         $class = $oldStyleClass;
                     }

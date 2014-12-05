@@ -72,7 +72,7 @@ class Item
     public function __call($func, $args)
     {
         $element = $this->getElement($args[0]);
-        $class = 'Pimcore\Model\Document\Tag\\' . str_replace('get', '', $func);
+        $class = "\\Pimcore\\Model\\Document\\Tag\\" . str_replace('get', '', $func);
 
         if(!strcasecmp(get_class($element), $class))
         {

@@ -16,4 +16,4 @@
  */
 
 // this is just an alias ;-)
-class_alias("Pimcore\\Model\\Object\\AbstractObject", "Pimcore\\Model\\Object");
+class_alias("\\Pimcore\\Model\\Object\\AbstractObject", "\\Pimcore\\Model\\Object");

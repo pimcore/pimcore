@@ -819,11 +819,12 @@ class Service
             if (!empty($limit)) $params["limit"] = $limit;
             if (!empty($groupBy)) $params["groupBy"] = $groupBy;
 
-            $listClassName = "Object";
+            $listClassName = "\\Pimcore\\Model\\Object";
             if(!empty($objectClass)) {
-                $listClassName = "Object\\" . ucfirst($objectClass);
+
+                $listClassName = "\\Pimcore\\Model\\Object\\" . ucfirst($objectClass);
                 if(!Tool::classExists($listClassName)) {
-                    $listClassName = "Object";
+                    $listClassName = "\\Pimcore\\Model\\Object";
                 }
             }
 

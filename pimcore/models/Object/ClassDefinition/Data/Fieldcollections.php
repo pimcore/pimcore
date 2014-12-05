@@ -372,7 +372,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
                 }
 
-                $collectionClass = "Object\\Fieldcollection\\Data\\" . ucfirst($fieldcollection);
+                $collectionClass = "\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\" . ucfirst($fieldcollection);
                 $collection = new $collectionClass;
                 $collection->setValues($collectionData);
                 $collection->setIndex($count);

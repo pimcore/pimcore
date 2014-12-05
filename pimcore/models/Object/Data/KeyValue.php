@@ -70,7 +70,7 @@ class KeyValue extends Model\AbstractModel {
      * @return string
      */
     public function __toString() {
-        $str = "\\Object\\Data\\KeyValue oid=" . $this->objectId . "\n";
+        $str = "Object\\Data\\KeyValue oid=" . $this->objectId . "\n";
         $props = $this->getInternalProperties();
 
         if (is_array($props)) {
