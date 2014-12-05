@@ -22,6 +22,10 @@ use Pimcore\Tool;
 
 class Localizedfield extends Model\AbstractModel {
 
+    const STRICT_DISABLED = 0;
+
+    const STRICT_ENABLED = 1;
+
     private static $getFallbackValues = false;
 
     /**
@@ -40,6 +44,11 @@ class Localizedfield extends Model\AbstractModel {
     public $class;
 
     /**
+     * @var bool
+     */
+    private static $strictMode;
+
+    /**
      * @param boolean $getFallbackValues
      */
     public static function setGetFallbackValues($getFallbackValues)
@@ -54,6 +63,23 @@ class Localizedfield extends Model\AbstractModel {
     {
         return self::$getFallbackValues;
     }
+
+    /**
+     * @return boolean
+     */
+    public static function isStrictMode()
+    {
+        return self::$strictMode;
+    }
+
+    /**
+     * @param boolean $strictMode
+     */
+    public static function setStrictMode($strictMode)
+    {
+        self::$strictMode = $strictMode;
+    }
+
 
     /**
      * @return boolean
@@ -247,7 +273,14 @@ class Localizedfield extends Model\AbstractModel {
      * @return void
      */
     public function setLocalizedValue ($name, $value, $language = null) {
-        $language = $this->getLanguage($language);
+
+        if (self::$strictMode) {
+            if (!$language || !in_array($language, Tool::getValidLanguages())) {
+                throw new \Exception("Language " . $language . " not accepted in strict mode");
+            }
+        }
+
+        $language  = $this->getLanguage($language);
         if(!$this->languageExists($language)) {
             $this->items[$language] = array();
         }
