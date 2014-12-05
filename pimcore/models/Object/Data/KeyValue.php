@@ -157,7 +157,7 @@ class KeyValue extends Model\AbstractModel {
             $internalKeys[] = $pair["key"];
         }
 
-        $blacklist = array();
+        $blacklist = $internalKeys;
 
         $parent = Object\Service::hasInheritableParentObject($object);
         while ($parent) {
