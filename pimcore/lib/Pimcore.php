@@ -850,7 +850,7 @@ class Pimcore {
             "pimcore_editmode",
             "pimcore_error_document",
             "pimcore_site",
-            "Resource_Mysql"
+            "Pimcore_Resource_Mysql"
         );
 
         if(is_array($keepItems) && count($keepItems) > 0) {
