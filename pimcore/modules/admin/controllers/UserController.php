@@ -161,15 +161,51 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin {
         $this->_helper->json(false);
     }
 
+
+    protected function populateChildNodes($node, &$currentList) {
+        $currentUser = \Pimcore\Tool\Admin::getCurrentUser();
+        $list = new User\Listing();
+        $list->setCondition("parentId = ?", $node->getId());
+        $list->setOrder("ASC");
+        $list->setOrderKey("name");
+        $list->load();
+
+        $childList = $list->getUsers();
+        if(is_array($childList)) {
+            foreach ($childList as $user) {
+                if ($user->getId() == $currentUser->getId()) {
+                    throw new Exception("Cannot delete current user");
+                }
+                if ($user->getId() && $currentUser->getId() && $user->getName() != "system") {
+                    $currentList[] = $user;
+                    $this->populateChildNodes($user, $currentList);
+                }
+            }
+        }
+        return $currentList;
+    }
+
     public function deleteAction() {
         $user = User\AbstractUser::getById(intval($this->getParam("id")));
 
         // only admins are allowed to delete admins and folders
-        // because a folder might conain an admin user, so it's stimply not allowed for users with the "users" permission
+        // because a folder might contain an admin user, so it is simply not allowed for users with the "users" permission
         if(($user instanceof User\Folder && !$this->getUser()->isAdmin()) || ($user instanceof User && $user->isAdmin() && !$this->getUser()->isAdmin())) {
             throw new \Exception("You are not allowed to delete this user");
         } else {
-            $user->delete();
+            if ($user instanceof User\Folder) {
+
+                $list = array($user);
+                $this->populateChildNodes($user, $list);
+                $listCount = count($list);
+                for ($i = $listCount - 1; $i >= 0; $i--) {
+                    // iterate over the list from the so that nothing can get "lost"
+                    $user = $list[$i];
+                    $user->delete();
+                }
+            } else {
+                $user->delete();
+            }
         }
 
         $this->_helper->json(array("success" => true));
