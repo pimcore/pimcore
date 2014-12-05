@@ -129,13 +129,6 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                 $site = \Zend_Registry::isRegistered("pimcore_site") ? \Zend_Registry::get("pimcore_site") : Site::getByDomain($domain);
                 $path = $site->getRootPath() . $path;
 
-                if($site->getRedirectToMainDomain() && $domain != $site->getMainDomain()) {
-                    $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $site->getMainDomain() . $_SERVER["REQUEST_URI"];
-                    header("HTTP/1.1 301 Moved Permanently");
-                    header("Location: " . $url, true, 301);
-                    exit;
-                }
-
                 \Zend_Registry::set("pimcore_site", $site);
             }
         } catch (\Exception $e) {
