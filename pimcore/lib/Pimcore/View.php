@@ -80,7 +80,7 @@ class View extends \Zend_View {
      * @param string $script
      */
     public function includeTemplateFile($script){
-        $showTemplatePaths = isset($_REQUEST["show_template_paths"]);
+        $showTemplatePaths = isset($_REQUEST["pimcore_show_template_paths"]);
         if($showTemplatePaths && \Pimcore::inDebugMode()){
             echo "\n<!-- start template inclusion: " . $script . " -->\n";
         }
