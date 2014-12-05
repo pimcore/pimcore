@@ -179,7 +179,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                         // this is the fallback for custom document types using prefixes
                         // so we need to check if the class exists first
                         if(!\Pimcore\Tool::classExists($classname)) {
-                            $oldStyleClass = "Document_" . ucfirst($this->getParam("type"));
+                            $oldStyleClass = "\\Document_" . ucfirst($this->getParam("type"));
                             if(\Pimcore\Tool::classExists($oldStyleClass)) {
                                 $classname = $oldStyleClass;
                             }

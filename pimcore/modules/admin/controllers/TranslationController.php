@@ -1060,7 +1060,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
         $data = json_decode($this->getParam("data"), true);
 
-        $classname = "Pimcore\\Model\\Translation\\" . ucfirst($translationType);
+        $classname = "\\Pimcore\\Model\\Translation\\" . ucfirst($translationType);
         $t = $classname::getByKey($data["key"],true);
         $t->addTranslation($data["lg"], $data["current"]);
         $t->setModificationDate(time());$t->save();

@@ -195,10 +195,10 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         $container = $this->getDataFromObjectParam($object);
 
         if(empty($container)) {
-            $className = $object->getClass()->getName(); //$this->getObject()->getClass()->getName();
+            $className = $object->getClass()->getName();
 
             $containerClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\" . ucfirst($this->getName());
-            $container = new $containerClass($object, $this->getName()); //$this->getObject(), $this->getName());
+            $container = new $containerClass($object, $this->getName());
         }
 
         if (is_array($data)) {
@@ -211,7 +211,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                 $brick = $container->$getter();
                 if(empty($brick)) {
                     $brickClass = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\" . ucfirst($collectionRaw["type"]);
-                    $brick = new $brickClass($object); //$this->getObject());
+                    $brick = new $brickClass($object);
                 }
 
 

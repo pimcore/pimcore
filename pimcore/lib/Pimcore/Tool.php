@@ -501,6 +501,7 @@ class Tool {
 
         $targetClassName = $sourceClassName;
         $lookupName = str_replace(["\\Pimcore\\Model\\", "\\"], ["", "_"], $sourceClassName);
+        $lookupName = ltrim($lookupName, "\\_");
 
         if($map = Config::getModelClassMappingConfig()) {
             $tmpClassName = $map->{$lookupName};

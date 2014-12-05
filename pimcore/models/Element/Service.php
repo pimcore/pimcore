@@ -613,6 +613,7 @@ class Service extends Model\AbstractModel {
         }
 
         $type = str_replace('\Service','',$calledClass);
+        $type = "\\" . ltrim($type, "\\");
         $folderType = $type . '\Folder';
 
         $lastFolder = null;

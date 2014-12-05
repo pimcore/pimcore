@@ -132,6 +132,8 @@ abstract class AbstractModel {
             throw new \Exception("No resource implementation found for: " . $myClass);
         }
 
+        $resource = "\\" . ltrim($resource, "\\");
+
         $this->resource = new $resource();
         $this->resource->setModel($this);
 

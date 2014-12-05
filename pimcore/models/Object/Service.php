@@ -672,6 +672,7 @@ class Service extends Model\Element\Service {
         if(is_object($object) && method_exists($object, "getClass")) {
             $class = $object->getClass();
         } else if(is_string($object)) {
+            $object = "\\" . ltrim($object, "\\");
             $object = new $object();
             $class = $object->getClass();
         }

@@ -628,7 +628,6 @@ class Service
     {
         try {
             if ($wsDocument instanceof Webservice\Data\Object\Concrete\In) {
-//                $wsDocument->type = "object";
                 $classname = "\\Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className);
                 if (Tool::classExists($classname)) {
                     $object = new $classname();
@@ -1074,7 +1073,7 @@ class Service
         if(in_array($type,array('website','admin'))){
             $listClass = '\\Pimcore\\Model\\Translation\\' . ucfirst($type) .'\\Listing';
             /**
-             * @var $list Translation\Website
+             * @var $list \Pimcore\Model\Translation\Website\Listing
              */
             $list = new $listClass();
             if($key = $params['key']){

@@ -96,7 +96,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         // this is the fallback for custom document tags using prefixes
         // so we need to check if the class exists first
         if(!\Pimcore\Tool::classExists($tagClass)) {
-            $oldStyleClass = "Document_Tag_" . ucfirst($type);
+            $oldStyleClass = "\\Document_Tag_" . ucfirst($type);
             if(\Pimcore\Tool::classExists($oldStyleClass)) {
                 $tagClass = $oldStyleClass;
             }
