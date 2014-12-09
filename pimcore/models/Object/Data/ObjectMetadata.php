@@ -46,10 +46,11 @@ class ObjectMetadata extends Model\AbstractModel {
      * @param $fieldname
      * @param array $columns
      * @param null $object
+     * @throws \Exception
      */
     public function __construct($fieldname, $columns = array(), $object = null) {
         if (!is_string($fieldname) || ($object && !$object instanceof Object\AbstractObject)) {
-            throw new Exception("wrong usage of API");
+            throw new \Exception("wrong usage of API");
         }
         $this->fieldname = $fieldname;
         $this->object = $object;
