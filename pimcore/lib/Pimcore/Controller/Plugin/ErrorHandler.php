@@ -78,6 +78,19 @@ class ErrorHandler extends \Zend_Controller_Plugin_ErrorHandler {
 
                     $request->setParam("document", $document);
                     \Zend_Registry::set("pimcore_error_document", $document);
+
+                    // ensure that a viewRenderer exists, and is enabled
+                    if(!\Zend_Controller_Action_HelperBroker::hasHelper("viewRenderer")) {
+                        $viewRenderer = new \Pimcore\Controller\Action\Helper\ViewRenderer();
+                        \Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
+                    }
+
+                    $viewRenderer = \Zend_Controller_Action_HelperBroker::getExistingHelper("viewRenderer");
+                    $viewRenderer->setNoRender(false);
+
+                    if($viewRenderer->view === null) {
+                        $viewRenderer->initView(PIMCORE_WEBSITE_PATH . "/views");
+                    }
                 }
 
             }
