@@ -166,6 +166,7 @@ CREATE TABLE `custom_layouts` (
   `modificationDate` bigint(20) unsigned DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
+  `default` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`,`classId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
