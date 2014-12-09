@@ -18,27 +18,12 @@ namespace Pimcore\Controller;
 class Action extends \Zend_Controller_Action {
 
     /**
-     * Indicator if the custom view is already initialized or not
-     * this isn't necessary any more because this functionality has moved to Pimcore_Controller_Action_Helper_ViewRenderer
-     * @deprecated
-     * @var bool
-     */
-    protected static $_customViewInitialized = false;
-
-    /**
      * @throws \Zend_Controller_Response_Exception
      */
     public function init() {
         parent::init();
 
         $this->view->setRequest($this->getRequest());
-
-        // init view | only once if there are called other actions
-        // this is just for compatibilty reasons see $this->initCustomView();
-        if (!self::$_customViewInitialized) {
-            $this->initCustomView();
-            self::$_customViewInitialized = true;
-        }
 
         // set content type
         if($this->getResponse()->canSendHeaders()) {
@@ -134,12 +119,5 @@ class Action extends \Zend_Controller_Action {
         if ($this->hasParam("_segment")) {
             $this->_helper->viewRenderer->setResponseSegment($this->getParam("_segment"));
         }
-    }
-
-    /**
-     * @deprecated
-     */
-    protected function initCustomView() {
-        // just for compatibility
     }
 }
