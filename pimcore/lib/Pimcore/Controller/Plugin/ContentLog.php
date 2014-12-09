@@ -13,15 +13,25 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_ContentLog extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
 
+use Pimcore\Config;
+use Pimcore\Model\Site;
+use Pimcore\Model\Document;
+use Pimcore\Model\Staticroute;
+
+class ContentLog extends \Zend_Controller_Plugin_Abstract {
+
+    /**
+     *
+     */
     public function dispatchLoopShutdown() {
 
-        if (!isset(Pimcore_Config::getReportConfig()->contentanalysis)) {
+        if (!isset(Config::getReportConfig()->contentanalysis)) {
             return;
         }
 
-        $config = Pimcore_Config::getReportConfig()->contentanalysis;
+        $config = Config::getReportConfig()->contentanalysis;
         if(!$config->enabled) {
             return;
         }
@@ -49,12 +59,12 @@ class Pimcore_Controller_Plugin_ContentLog extends Zend_Controller_Plugin_Abstra
             }
         }
 
-        if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
+        if(!\Pimcore\Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
 
         try {
-            $db = Pimcore_Resource::get();
+            $db = \Pimcore\Resource::get();
             $content = $this->getResponse()->getBody();
             $id = md5($url) . "." . abs(crc32($url));
 
@@ -92,8 +102,8 @@ class Pimcore_Controller_Plugin_ContentLog extends Zend_Controller_Plugin_Abstra
                 $db->insert("content_index", $data);
             }
 
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
         }
     }
 }

@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Object\KeyValue\KeyConfig;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     const TABLE_NAME_KEYS = "keyvalue_keys";
 
@@ -52,6 +56,10 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
         $this->assignVariablesToModel($data);
     }
 
+    /**
+     * @param null $name
+     * @throws \Exception
+     */
     public function getByName($name = null) {
 
         if ($name != null) {
@@ -71,10 +79,9 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
         if($data["id"]) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Exception("KeyConfig with name: " . $this->model->getName() . " does not exist");
+            throw new \Exception("KeyConfig with name: " . $this->model->getName() . " does not exist");
         }
     }
-
 
     /**
      * Save object to database
@@ -98,9 +105,7 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
     }
 
     /**
-     * Save changes to database, it's an good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
         try {
@@ -115,7 +120,7 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
                         $value = (int) $value;
                     }
                     if(is_array($value) || is_object($value)) {
-                        $value = Pimcore_Tool_Serialize::serialize($value);
+                        $value = \Pimcore\Tool\Serialize::serialize($value);
                     }
 
                     $data[$key] = $value;
@@ -123,8 +128,9 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
             }
 
             $this->db->update(self::TABLE_NAME_KEYS, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            return $this->model;
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

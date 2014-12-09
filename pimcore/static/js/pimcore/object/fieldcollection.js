@@ -198,20 +198,26 @@ pimcore.object.fieldcollection = Class.create({
         }
     },
 
-    deleteField: function () {
-        Ext.Ajax.request({
-            url: "/admin/class/fieldcollection-delete",
-            params: {
-                id: this.id
-            }
-        });
-
-        this.attributes.reference.getEditPanel().removeAll();
-        this.remove();
-    },
-
     activate: function () {
         Ext.getCmp("pimcore_panel_tabs").activate("pimcore_fieldcollections");
+    },
+
+    deleteField: function () {
+
+        Ext.Msg.confirm(t('delete'), t('delete_message'), function(btn){
+            if (btn == 'yes'){
+                Ext.Ajax.request({
+                    url: "/admin/class/fieldcollection-delete",
+                    params: {
+                        id: this.id
+                    }
+                });
+
+                this.attributes.reference.getEditPanel().removeAll();
+                this.remove();
+            }
+        }.bind(this));
     }
+
 
 });

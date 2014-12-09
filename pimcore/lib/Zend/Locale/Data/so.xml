@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="so"/>
 	</identity>
 	<localeDisplayNames>
@@ -20,7 +20,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="az" draft="unconfirmed">Azerbaijan</language>
 			<language type="be">Beleruusiyaan</language>
 			<language type="bg">Bulgeeriyaan</language>
-			<language type="bh" draft="unconfirmed">Bixaari</language>
 			<language type="bn">Bangaali</language>
 			<language type="br" draft="unconfirmed">Bereton</language>
 			<language type="bs" draft="unconfirmed">Boosniya</language>

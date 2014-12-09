@@ -10,18 +10,30 @@
  * http://www.pimcore.org/license
  *
  * @category   Pimcore
- * @package    Object_Fieldcollection
+ * @package    Object\Fieldcollection
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Fieldcollection_Resource extends Pimcore_Model_Resource_Abstract {
-    
-    public function save (Object_Concrete $object) {
+namespace Pimcore\Model\Object\Fieldcollection;
+
+use Pimcore\Model;
+use Pimcore\Model\Object;
+
+class Resource extends Model\Resource\AbstractResource {
+
+    /**
+     * @param Object\Concrete $object
+     */
+    public function save (Object\Concrete $object) {
         $this->delete($object);
     }
-    
-    public function load (Object_Concrete $object) {
+
+    /**
+     * @param Object\Concrete $object
+     * @return array
+     */
+    public function load (Object\Concrete $object) {
         
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         $values = array();
@@ -29,8 +41,8 @@ class Object_Fieldcollection_Resource extends Pimcore_Model_Resource_Abstract {
         
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
-                $definition = Object_Fieldcollection_Definition::getByKey($type);
-            } catch (Exception $e) {
+                $definition = Object\Fieldcollection\Definition::getByKey($type);
+            } catch (\Exception $e) {
                 continue;
             }
             
@@ -38,14 +50,14 @@ class Object_Fieldcollection_Resource extends Pimcore_Model_Resource_Abstract {
             
             try {
                 $results = $this->db->fetchAll("SELECT * FROM " . $tableName . " WHERE o_id = ? AND fieldname = ? ORDER BY `index` ASC", array($object->getId(), $this->model->getFieldname()));
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $results = array();
             }
 
             //$allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND ownertype = 'fieldcollection' AND ownername = ? ORDER BY `index` ASC", array($object->getO_id(), $this->model->getFieldname()));
             
             $fieldDefinitions = $definition->getFieldDefinitions();
-            $collectionClass = "Object_Fieldcollection_Data_" . ucfirst($type);
+            $collectionClass = "\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\" . ucfirst($type);
             
             
             foreach ($results as $result) {
@@ -91,16 +103,19 @@ class Object_Fieldcollection_Resource extends Pimcore_Model_Resource_Abstract {
                 
         return $orderedValues;
     }
-    
-    public function delete (Object_Concrete $object) {
+
+    /**
+     * @param Object\Concrete $object
+     */
+    public function delete (Object\Concrete $object) {
         // empty or create all relevant tables 
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         
         foreach ($fieldDef->getAllowedTypes() as $type) {
             
             try {
-                $definition = Object_Fieldcollection_Definition::getByKey($type);
-            } catch (Exception $e) {
+                $definition = Object\Fieldcollection\Definition::getByKey($type);
+            } catch (\Exception $e) {
                 continue;
             }
               
@@ -108,7 +123,7 @@ class Object_Fieldcollection_Resource extends Pimcore_Model_Resource_Abstract {
             
             try {
                 $this->db->delete($tableName, $this->db->quoteInto("o_id = ?", $object->getId()) . " AND " . $this->db->quoteInto("fieldname = ?", $this->model->getFieldname()));
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // create definition if it does not exist
                 $definition->createUpdateTable($object->getClass());
             }

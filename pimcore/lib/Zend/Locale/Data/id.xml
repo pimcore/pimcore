@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9308 $"/>
-		<generation date="$Date: 2013-09-04 14:41:52 -0500 (Wed, 04 Sep 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="id"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,54 +25,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">Adygei</language>
 			<language type="ae">Avesta</language>
 			<language type="af">Afrikaans</language>
-			<language type="afa">Rumpun Bahasa Afro-Asia</language>
 			<language type="afh">Afrihili</language>
 			<language type="agq">Aghem</language>
 			<language type="ain">Ainu</language>
 			<language type="ak">Akan</language>
 			<language type="akk">Akkadia</language>
 			<language type="ale">Aleut</language>
-			<language type="alg">Bahasa Algonquia</language>
 			<language type="alt">Altai Selatan</language>
 			<language type="am">Amharik</language>
 			<language type="an">Aragon</language>
 			<language type="ang">Inggris Kuno</language>
 			<language type="anp">Angika</language>
-			<language type="apa">Rumpun Bahasa Apache</language>
 			<language type="ar">Arab</language>
 			<language type="ar_001">Arab Standar Modern</language>
 			<language type="arc">Aram</language>
 			<language type="arn">Araukan</language>
 			<language type="arp">Arapaho</language>
-			<language type="art">Bahasa Buatan</language>
 			<language type="arw">Arawak</language>
 			<language type="as">Assam</language>
 			<language type="asa">Asu</language>
 			<language type="ast">Astur</language>
-			<language type="ath">Rumpun Bahasa Athapaska</language>
-			<language type="aus">Rumpun Bahasa Australia</language>
 			<language type="av">Avar</language>
 			<language type="awa">Awadhi</language>
 			<language type="ay">Aymara</language>
 			<language type="az">Azerbaijan</language>
 			<language type="az" alt="short">Azeri</language>
 			<language type="ba">Bashkir</language>
-			<language type="bad">Banda</language>
-			<language type="bai">Rumpun Bahasa Bamileke</language>
 			<language type="bal">Baluchi</language>
 			<language type="ban">Bali</language>
 			<language type="bas">Basa</language>
-			<language type="bat">Rumpun Bahasa Baltik</language>
 			<language type="bax">Bamun</language>
 			<language type="bbj">Ghomala</language>
 			<language type="be">Belarusia</language>
 			<language type="bej">Beja</language>
 			<language type="bem">Bemba</language>
-			<language type="ber">Rumpun Bahasa Berber</language>
 			<language type="bez">Bena</language>
 			<language type="bfd">Bafut</language>
 			<language type="bg">Bulgar</language>
-			<language type="bh">Bihari</language>
 			<language type="bho">Bhojpuri</language>
 			<language type="bi">Bislama</language>
 			<language type="bik">Bikol</language>
@@ -81,14 +70,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">Siksika</language>
 			<language type="bm">Bambara</language>
 			<language type="bn">Bengali</language>
-			<language type="bnt">Bantu</language>
 			<language type="bo">Tibet</language>
 			<language type="br">Breton</language>
 			<language type="bra">Braj</language>
 			<language type="brx">Bodo</language>
 			<language type="bs">Bosnia</language>
 			<language type="bss">Akoose</language>
-			<language type="btk">Batak</language>
 			<language type="bua">Buriat</language>
 			<language type="bug">Bugis</language>
 			<language type="bum">Bulu</language>
@@ -96,14 +83,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv">Medumba</language>
 			<language type="ca">Katalan</language>
 			<language type="cad">Kado</language>
-			<language type="cai">India Amerika Tengah</language>
 			<language type="car">Karib</language>
-			<language type="cau">Rumpun Bahasa Kaukasia</language>
 			<language type="cay">Cayuga</language>
 			<language type="cch">Atsam</language>
 			<language type="ce">Chechen</language>
 			<language type="ceb">Sebuano</language>
-			<language type="cel">Rumpun Bahasa Keltik</language>
 			<language type="cgg">Kiga</language>
 			<language type="ch">Chamorro</language>
 			<language type="chb">Chibcha</language>
@@ -116,26 +100,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">Cherokee</language>
 			<language type="chy">Cheyenne</language>
 			<language type="ckb">Kurdi Sorani</language>
-			<language type="cmc">Rumpun Bahasa Chamik</language>
 			<language type="co">Korsika</language>
 			<language type="cop">Koptik</language>
-			<language type="cpe">Kreol dan Pijin Lain berbasis Inggris</language>
-			<language type="cpf">Kreol dan Pijin Lain berbasis Prancis</language>
-			<language type="cpp">Kreol dan Pijin Lain berbasis Portugis</language>
 			<language type="cr">Kree</language>
 			<language type="crh">Tatar Krimea</language>
-			<language type="crp">Kreol dan Pijin Lain</language>
 			<language type="cs">Cheska</language>
 			<language type="csb">Kashubia</language>
 			<language type="cu">Bahasa Gereja Slavonia</language>
-			<language type="cus">Rumpun Bahasa Kush</language>
 			<language type="cv">Chuvash</language>
 			<language type="cy">Welsh</language>
 			<language type="da">Dansk</language>
 			<language type="dak">Dakota</language>
 			<language type="dar">Dargwa</language>
 			<language type="dav">Taita</language>
-			<language type="day">Dayak</language>
 			<language type="de">Jerman</language>
 			<language type="de_AT">Jerman Austria</language>
 			<language type="de_CH">Jerman Tinggi Swiss</language>
@@ -145,7 +122,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">Dinka</language>
 			<language type="dje">Zarma</language>
 			<language type="doi">Dogri</language>
-			<language type="dra">Rumpun Bahasa Dravidia</language>
 			<language type="dsb">Sorbia Rendah</language>
 			<language type="dua">Duala</language>
 			<language type="dum">Belanda Tengah</language>
@@ -183,7 +159,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">Fula</language>
 			<language type="fi">Suomi</language>
 			<language type="fil">Filipino</language>
-			<language type="fiu">Rumpun Bahasa Finno-Ugrik</language>
 			<language type="fj">Fiji</language>
 			<language type="fo">Faro</language>
 			<language type="fon">Fon</language>
@@ -201,7 +176,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">Gayo</language>
 			<language type="gba">Gbaya</language>
 			<language type="gd">Gaelik Skotlandia</language>
-			<language type="gem">Rumpun Bahasa Jermanik</language>
 			<language type="gez">Geez</language>
 			<language type="gil">Gilbert</language>
 			<language type="gl">Galisia</language>
@@ -224,7 +198,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">Ibrani</language>
 			<language type="hi">Hindi</language>
 			<language type="hil">Hiligaynon</language>
-			<language type="him">Himachali</language>
 			<language type="hit">Hitit</language>
 			<language type="hmn">Hmong</language>
 			<language type="ho">Hiri Motu</language>
@@ -242,20 +215,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">Interlingue</language>
 			<language type="ig">Igbo</language>
 			<language type="ii">Sichuan Yi</language>
-			<language type="ijo">Ijo</language>
 			<language type="ik">Inupiak</language>
 			<language type="ilo">Iloko</language>
-			<language type="inc">Rumpun Bahasa Indik</language>
-			<language type="ine">Rumpun Bahasa Indo-Eropa</language>
 			<language type="inh">Ingushetia</language>
 			<language type="io">Ido</language>
-			<language type="ira">Rumpun Bahasa Iran</language>
-			<language type="iro">Rumpun Bahasa Iroquis</language>
 			<language type="is">Islandia</language>
 			<language type="it">Italia</language>
 			<language type="iu">Inuktitut</language>
 			<language type="ja">Jepang</language>
 			<language type="jbo">Lojban</language>
+			<language type="jgo" draft="contributed">Ngomba</language>
 			<language type="jmc">Machame</language>
 			<language type="jpr">Ibrani-Persia</language>
 			<language type="jrb">Ibrani-Arab</language>
@@ -266,7 +235,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">Kachin</language>
 			<language type="kaj">Jju</language>
 			<language type="kam">Kamba</language>
-			<language type="kar">Karen</language>
 			<language type="kaw">Kawi</language>
 			<language type="kbd">Kabardi</language>
 			<language type="kbl">Kanembu</language>
@@ -276,7 +244,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">Koro</language>
 			<language type="kg">Kongo</language>
 			<language type="kha">Khasi</language>
-			<language type="khi">Rumpun Bahasa Khoisa</language>
 			<language type="kho">Khotan</language>
 			<language type="khq">Koyra Chiini</language>
 			<language type="ki">Kikuyu</language>
@@ -295,7 +262,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">Kanuri</language>
 			<language type="krc">Karachai Balkar</language>
 			<language type="krl">Karelia</language>
-			<language type="kro">Kru</language>
 			<language type="kru">Kuruk</language>
 			<language type="ks">Kashmir</language>
 			<language type="ksb">Shambala</language>
@@ -335,7 +301,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">Maithili</language>
 			<language type="mak">Makasar</language>
 			<language type="man">Mandingo</language>
-			<language type="map">Austronesia</language>
 			<language type="mas">Masai</language>
 			<language type="mde">Maba</language>
 			<language type="mdf">Moksha</language>
@@ -346,19 +311,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mg">Malagasi</language>
 			<language type="mga">Irlandia Abad Pertengahan</language>
 			<language type="mgh">Makhuwa-Meetto</language>
+			<language type="mgo" draft="contributed">meta'</language>
 			<language type="mh">Marshall</language>
 			<language type="mi">Maori</language>
 			<language type="mic">Mikmak</language>
 			<language type="min">Minangkabau</language>
-			<language type="mis">Bahasa Lain-lain</language>
 			<language type="mk">Makedonia</language>
-			<language type="mkh">Rumpun Bahasa Mon-Khmer</language>
 			<language type="ml">Malayalam</language>
 			<language type="mn">Mongolia</language>
 			<language type="mnc">Manchuria</language>
 			<language type="mni">Manipuri</language>
-			<language type="mno">Rumpun Bahasa Manobo</language>
-			<language type="mo">Moldavia</language>
 			<language type="moh">Mohawk</language>
 			<language type="mos">Mossi</language>
 			<language type="mr">Marathi</language>
@@ -366,17 +328,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">Malta</language>
 			<language type="mua">Mundang</language>
 			<language type="mul">Beberapa Bahasa</language>
-			<language type="mun">Rumpun Bahasa Munda</language>
 			<language type="mus">Bahasa Muskogee</language>
 			<language type="mwl">Miranda</language>
 			<language type="mwr">Marwari</language>
 			<language type="my">Burma</language>
 			<language type="mye">Myene</language>
-			<language type="myn">Rumpun Bahasa Maya</language>
 			<language type="myv">Eryza</language>
 			<language type="na">Nauru</language>
-			<language type="nah">Nahuatl</language>
-			<language type="nai">Rumpun Bahasa Indian Amerika Utara</language>
 			<language type="nap">Neapolitan</language>
 			<language type="naq">Nama</language>
 			<language type="nb">Bokmål Norwegia</language>
@@ -386,7 +344,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">Newari</language>
 			<language type="ng">Ndonga</language>
 			<language type="nia">Nias</language>
-			<language type="nic">Rumpun Bahasa Niger-Kordofania</language>
 			<language type="niu">Niuea</language>
 			<language type="nl">Belanda</language>
 			<language type="nl_BE">Flemish</language>
@@ -399,7 +356,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">N'Ko</language>
 			<language type="nr">Ndebele Selatan</language>
 			<language type="nso">Sotho Utara</language>
-			<language type="nub">Rumpun Bahasa Nubia</language>
 			<language type="nus">Nuer</language>
 			<language type="nv">Navajo</language>
 			<language type="nwc">Newari Klasik</language>
@@ -415,21 +371,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">Ossetia</language>
 			<language type="osa">Osage</language>
 			<language type="ota">Turki Osmani</language>
-			<language type="oto">Rumpun Bahasa Otomia</language>
 			<language type="pa">Punjabi</language>
-			<language type="paa">Rumpun Bahasa Papua</language>
 			<language type="pag">Pangasina</language>
 			<language type="pal">Pahlevi</language>
 			<language type="pam">Pampanga</language>
 			<language type="pap">Papiamento</language>
 			<language type="pau">Palau</language>
 			<language type="peo">Persia Kuno</language>
-			<language type="phi">Rumpun Bahasa Filipina</language>
 			<language type="phn">Funisia</language>
 			<language type="pi">Pali</language>
 			<language type="pl">Polski</language>
 			<language type="pon">Pohnpeia</language>
-			<language type="pra">Rumpun Bahasa Prakrit</language>
 			<language type="pro">Provencal Lama</language>
 			<language type="ps">Pashto</language>
 			<language type="ps" alt="variant">Pushto</language>
@@ -443,7 +395,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">Reto-Roman</language>
 			<language type="rn">Rundi</language>
 			<language type="ro">Rumania</language>
-			<language type="roa">Rumpun Bahasa Roman</language>
+			<language type="ro_MD">Moldavia</language>
 			<language type="rof">Rombo</language>
 			<language type="rom">Romani</language>
 			<language type="root">Root</language>
@@ -454,8 +406,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">Sanskerta</language>
 			<language type="sad">Sandawe</language>
 			<language type="sah">Sakha</language>
-			<language type="sai">Rumpun Bahasa Indian Amerika Selatan</language>
-			<language type="sal">Rumpun Bahasa Salisha</language>
 			<language type="sam">Aram Samaria</language>
 			<language type="saq">Samburu</language>
 			<language type="sas">Sasak</language>
@@ -470,25 +420,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see">Seneca</language>
 			<language type="seh">Sena</language>
 			<language type="sel">Selkup</language>
-			<language type="sem">Rumpun Bahasa Semit</language>
 			<language type="ses">Koyraboro Senni</language>
 			<language type="sg">Sango</language>
 			<language type="sga">Irlandia Kuno</language>
-			<language type="sgn">Bahasa Isyarat</language>
 			<language type="sh">Serbo-Kroasia</language>
 			<language type="shi">Tachelhit</language>
 			<language type="shn">Shan</language>
 			<language type="shu">Arab Suwa</language>
 			<language type="si">Sinhala</language>
 			<language type="sid">Sidamo</language>
-			<language type="sio">Rumpun Bahasa Sioux</language>
-			<language type="sit">Rumpun Bahasa Sino-Tibet</language>
 			<language type="sk">Slovak</language>
 			<language type="sl">Sloven</language>
-			<language type="sla">Rumpun Bahasa Slavik</language>
 			<language type="sm">Samoa</language>
 			<language type="sma">Sami Selatan</language>
-			<language type="smi">Rumpun Bahasa Sami</language>
 			<language type="smj">Lule Sami</language>
 			<language type="smn">Inari Sami</language>
 			<language type="sms">Skolt Sami</language>
@@ -496,13 +440,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">Soninke</language>
 			<language type="so">Somali</language>
 			<language type="sog">Sogdien</language>
-			<language type="son">Songhai</language>
 			<language type="sq">Albania</language>
 			<language type="sr">Serb</language>
 			<language type="srn">Sranan Tongo</language>
 			<language type="srr">Serer</language>
 			<language type="ss">Swati</language>
-			<language type="ssa">Rumpun Bahasa Nilo-Sahara</language>
 			<language type="ssy">Saho</language>
 			<language type="st">Sotho Selatan</language>
 			<language type="su">Sunda</language>
@@ -516,7 +458,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">Suriah Klasik</language>
 			<language type="syr">Suriah</language>
 			<language type="ta">Tamil</language>
-			<language type="tai">Rumpun Bahasa Tai</language>
 			<language type="te">Telugu</language>
 			<language type="tem">Timne</language>
 			<language type="teo">Teso</language>
@@ -543,8 +484,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">Tsimshia</language>
 			<language type="tt">Tatar</language>
 			<language type="tum">Tumbuka</language>
-			<language type="tup">Rumpun Bahasa Tupi</language>
-			<language type="tut">Altai</language>
 			<language type="tvl">Tuvalu</language>
 			<language type="tw">Twi</language>
 			<language type="twq">Tasawaq</language>
@@ -568,11 +507,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun">Vunjo</language>
 			<language type="wa">Walloon</language>
 			<language type="wae">Walser</language>
-			<language type="wak">Rumpun Bahasa Wakasha</language>
 			<language type="wal">Walamo</language>
 			<language type="war">Warai</language>
 			<language type="was">Washo</language>
-			<language type="wen">Rumpun Bahasa Sorbia</language>
 			<language type="wo">Wolof</language>
 			<language type="xal">Kalmuk</language>
 			<language type="xh">Xhosa</language>
@@ -583,7 +520,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb">Yemba</language>
 			<language type="yi">Yiddish</language>
 			<language type="yo">Yoruba</language>
-			<language type="ypk">Rumpun Bahasa Yupik</language>
 			<language type="yue">Kanton</language>
 			<language type="za">Zhuang</language>
 			<language type="zap">Zapotek</language>
@@ -593,7 +529,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">China</language>
 			<language type="zh_Hans">China (Aksara Sederhana)</language>
 			<language type="zh_Hant">China (Aksara Tradisional)</language>
-			<language type="znd">Zande</language>
 			<language type="zu">Zulu</language>
 			<language type="zun">Zuni</language>
 			<language type="zxx">Tidak ada konten linguistik</language>
@@ -909,7 +844,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<territory type="ID">Indonesia</territory>
 			<territory type="IE">Irlandia</territory>
 			<territory type="IL">Israel</territory>
-			<territory type="IM">Isle of Man</territory>
+			<territory type="IM">Pulau Man</territory>
 			<territory type="IN">India</territory>
 			<territory type="IO">Wilayah Inggris di Samudra Hindia</territory>
 			<territory type="IQ">Irak</territory>
@@ -1252,6 +1187,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<codePattern type="territory">Wilayah: {0}</codePattern>
 		</codePatterns>
 	</localeDisplayNames>
+	<contextTransforms>
+		<contextTransformUsage type="relative">
+			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
+			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
+		</contextTransformUsage>
+	</contextTransforms>
 	<characters>
 		<exemplarCharacters>[a b c d e f g h i j k l m n o p q r s t u v w x y z]</exemplarCharacters>
 		<exemplarCharacters type="auxiliary">[å q x z]</exemplarCharacters>
@@ -3230,9 +3171,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Anguilla">
 				<exemplarCity>Anguila</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Kutub Selatan</exemplarCity>
 			</zone>
 			<zone type="Antarctica/DumontDUrville">
 				<exemplarCity>Dumont d’Urville</exemplarCity>

@@ -13,8 +13,8 @@
     <?php
     // load plugin scripts
     try {
-        $pluginBroker = Zend_Registry::get("Pimcore_API_Plugin_Broker");
-        if ($pluginBroker instanceof Pimcore_API_Plugin_Broker) {
+        $pluginBroker = \Zend_Registry::get("Pimcore_API_Plugin_Broker");
+        if ($pluginBroker instanceof \Pimcore\API\Plugin\Broker) {
             foreach ($pluginBroker->getPlugins() as $plugin) {
                 if ($plugin->isInstalled()) {
                     $cssPaths = $plugin->getCssPaths();
@@ -33,7 +33,7 @@
             }
         }
     }
-    catch (Exception $e) {}
+    catch (\Exception $e) {}
     ?>
 
 </head>
@@ -43,24 +43,24 @@
 
 //detect browser
 $supported = false;
-$browser = new Pimcore_Browser();
+$browser = new \Pimcore\Browser();
 $browserVersion = (int) $browser->getVersion();
 $platform = $browser->getPlatform();
 
-if ($browser->getBrowser() == Pimcore_Browser::BROWSER_FIREFOX && $browserVersion >= 4) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_FIREFOX && $browserVersion >= 4) {
     $supported = true;
 }
-if ($browser->getBrowser() == Pimcore_Browser::BROWSER_IE && $browserVersion >= 9) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_IE && $browserVersion >= 9) {
     $supported = true;
 }
-if ($browser->getBrowser() == Pimcore_Browser::BROWSER_CHROME && $browserVersion >= 6) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_CHROME && $browserVersion >= 6) {
     $supported = true;
 }
-if ($browser->getBrowser() == Pimcore_Browser::BROWSER_SAFARI && $browserVersion >= 5) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_SAFARI && $browserVersion >= 5) {
     $supported = true;
 }
 
-$config = Pimcore_Config::getSystemConfig();
+$config = \Pimcore\Config::getSystemConfig();
 
 ?>
 
@@ -81,10 +81,10 @@ $config = Pimcore_Config::getSystemConfig();
         <div id="right">
             <form id="loginform" method="post" action="/admin/login/login">
                 <label><?php echo $this->translate("Username"); ?></label>
-                <input id="username" type="text" name="username" />
+                <input id="username" type="text" name="username" required />
 
                 <label><?php echo $this->translate("Password"); ?></label>
-                <input type="password" name="password" />
+                <input type="password" name="password" required />
 
                 <input type="submit" name="submit" value="<?php echo $this->translate("Login"); ?>" />
 
@@ -141,7 +141,7 @@ $config = Pimcore_Config::getSystemConfig();
     $("#username").select();
 </script>
 
-<script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1&build=<?php echo Pimcore_Version::getRevision(); ?>"></script>
+<script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1"></script>
 
 </body>
 </html>

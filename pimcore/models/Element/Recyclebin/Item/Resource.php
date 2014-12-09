@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Recyclebin_Item_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Element\Recyclebin\Item;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      * Contains all valid columns in the database table
@@ -34,16 +38,14 @@ class Element_Recyclebin_Item_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
-     * Get the data for the object from database for the given id
-     *
-     * @param integer $id
-     * @return void
+     * @param $id
+     * @throws \Exception
      */
     public function getById($id) {
         $data = $this->db->fetchRow("SELECT * FROM recyclebin WHERE id = ?", $id);
 
         if (!$data["id"]) {
-            throw new Exception("Recyclebin item with id " . $id . " not found");
+            throw new \Exception("Recyclebin item with id " . $id . " not found");
         }
 
         $this->assignVariablesToModel($data);
@@ -68,8 +70,8 @@ class Element_Recyclebin_Item_Resource extends Pimcore_Model_Resource_Abstract {
             $this->db->insert("recyclebin", $data);
             $this->model->setId($this->db->lastInsertId());
         }
-        catch (Exception $e) {
-            Logger::error($e);
+        catch (\Exception $e) {
+            \Logger::error($e);
         }
 
         return true;

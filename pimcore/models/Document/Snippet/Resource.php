@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Snippet_Resource extends Document_PageSnippet_Resource {
+namespace Pimcore\Model\Document\Snippet;
+
+use Pimcore\Model;
+
+class Resource extends Model\Document\PageSnippet\Resource {
 
     /**
      * Contains the valid database colums
@@ -43,7 +47,7 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
      * Get the data for the object by the given id, or by the id which is set in the object
      *
      * @param integer $id
-     * @return void
+     * @throws \Exception
      */
     public function getById($id = null) {
         try {
@@ -60,21 +64,21 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
             if ($data["id"] > 0) {
                 $this->assignVariablesToModel($data);
             } else {
-                throw new Exception("Snippet with the ID " . $this->model->getId() . " doesn't exists");
+                throw new \Exception("Snippet with the ID " . $this->model->getId() . " doesn't exists");
             }
 
             $this->assignVariablesToModel($data);
 
             //$this->getElements();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
         }
     }
 
     /**
      * Create a new record for the object in the database
      *
-     * @return void
+     * @throws \Exception
      */
     public function create() {
         try {
@@ -84,7 +88,7 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
                 "id" => $this->model->getId()
             ));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
 
@@ -93,7 +97,7 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
     /**
      * Updates the object's data to the database, it's an good idea to use save() instead
      *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
         try {
@@ -132,7 +136,7 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
 
             $this->updateLocks();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -140,14 +144,14 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
     /**
      * Deletes the object from database
      *
-     * @return void
+     * @throws \Exception
      */
     public function delete() {
         try {
             $this->db->delete("documents_snippet", $this->db->quoteInto("id = ?", $this->model->getId()));
             parent::delete();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

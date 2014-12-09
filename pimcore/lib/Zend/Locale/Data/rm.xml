@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="rm"/>
 	</identity>
 	<localeDisplayNames>
@@ -24,46 +24,35 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady" draft="contributed">adygai</language>
 			<language type="ae" draft="contributed">avestic</language>
 			<language type="af" draft="contributed">afrikaans</language>
-			<language type="afa" draft="contributed">lingua afro-asiatica</language>
 			<language type="afh" draft="contributed">afrihili</language>
 			<language type="ain" draft="contributed">ainu</language>
 			<language type="ak" draft="contributed">akan</language>
 			<language type="akk" draft="contributed">accadic</language>
 			<language type="ale" draft="contributed">aleutic</language>
-			<language type="alg" draft="contributed">linguas algonchinas</language>
 			<language type="alt" draft="contributed">altaic dal sid</language>
 			<language type="am" draft="contributed">amaric</language>
 			<language type="an" draft="contributed">aragonais</language>
 			<language type="ang" draft="contributed">englais vegl</language>
 			<language type="anp" draft="contributed">angika</language>
-			<language type="apa" draft="contributed">linguas apachas</language>
 			<language type="ar" draft="contributed">arab</language>
 			<language type="arc" draft="contributed">arameic</language>
 			<language type="arn" draft="contributed">araucanic</language>
 			<language type="arp" draft="contributed">arapaho</language>
-			<language type="art" draft="contributed">lingua artifiziala</language>
 			<language type="arw" draft="contributed">arawak</language>
 			<language type="as" draft="contributed">assami</language>
 			<language type="ast" draft="contributed">asturian</language>
-			<language type="ath" draft="contributed">linguas athapascas</language>
-			<language type="aus" draft="contributed">linguas australianas</language>
 			<language type="av" draft="contributed">avaric</language>
 			<language type="awa" draft="contributed">awadhi</language>
 			<language type="ay" draft="contributed">aymara</language>
 			<language type="az" draft="contributed">aserbeidschanic</language>
 			<language type="ba" draft="contributed">baschkir</language>
-			<language type="bad" draft="contributed">banda</language>
-			<language type="bai" draft="contributed">lingua bamileka</language>
 			<language type="bal" draft="contributed">belutschi</language>
 			<language type="ban" draft="contributed">balinais</language>
 			<language type="bas" draft="contributed">basaa</language>
-			<language type="bat" draft="contributed">lingua baltica</language>
 			<language type="be" draft="contributed">bieloruss</language>
 			<language type="bej" draft="contributed">bedscha</language>
 			<language type="bem" draft="contributed">bemba</language>
-			<language type="ber" draft="contributed">berb</language>
 			<language type="bg" draft="contributed">bulgar</language>
-			<language type="bh" draft="contributed">bihari</language>
 			<language type="bho" draft="contributed">bhojpuri</language>
 			<language type="bi" draft="contributed">bislama</language>
 			<language type="bik" draft="contributed">bikol</language>
@@ -71,24 +60,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla" draft="contributed">siksika</language>
 			<language type="bm" draft="contributed">bambara</language>
 			<language type="bn" draft="contributed">bengal</language>
-			<language type="bnt" draft="contributed">bantu</language>
 			<language type="bo" draft="contributed">tibetan</language>
 			<language type="br" draft="contributed">breton</language>
 			<language type="bra" draft="contributed">braj</language>
 			<language type="bs" draft="contributed">bosniac</language>
-			<language type="btk" draft="contributed">batak</language>
 			<language type="bua" draft="contributed">buriat</language>
 			<language type="bug" draft="contributed">bugi</language>
 			<language type="byn" draft="contributed">blin</language>
 			<language type="ca" draft="contributed">catalan</language>
 			<language type="cad" draft="contributed">caddo</language>
-			<language type="cai" draft="contributed">linguas dals Indians da l'America centrala</language>
 			<language type="car" draft="contributed">caribic</language>
-			<language type="cau" draft="contributed">linguas dal Caucasus</language>
 			<language type="cch" draft="contributed">atsam</language>
 			<language type="ce" draft="contributed">tschetschen</language>
 			<language type="ceb" draft="contributed">cebuano</language>
-			<language type="cel" draft="contributed">linguas celticas</language>
 			<language type="ch" draft="contributed">chamorro</language>
 			<language type="chb" draft="contributed">chibcha</language>
 			<language type="chg" draft="contributed">tschagataic</language>
@@ -99,25 +83,18 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chp" draft="contributed">chipewyan</language>
 			<language type="chr" draft="contributed">cherokee</language>
 			<language type="chy" draft="contributed">cheyenne</language>
-			<language type="cmc" draft="contributed">linguas chamicas</language>
 			<language type="co" draft="contributed">cors</language>
 			<language type="cop" draft="contributed">coptic</language>
-			<language type="cpe" draft="contributed">creol u pidgin che sa basan sin l'englais</language>
-			<language type="cpf" draft="contributed">creol u pidgin che sa basan sin il franzos</language>
-			<language type="cpp" draft="contributed">creol u pidgin che sa basan sin il portugais</language>
 			<language type="cr" draft="contributed">cree</language>
 			<language type="crh" draft="contributed">tirc crimean</language>
-			<language type="crp" draft="contributed">creolic u pidgin</language>
 			<language type="cs" draft="contributed">tschec</language>
 			<language type="csb" draft="contributed">kaschubic</language>
 			<language type="cu" draft="contributed">slav da baselgia</language>
-			<language type="cus" draft="contributed">linguas cuschiticas</language>
 			<language type="cv" draft="contributed">tschuvasch</language>
 			<language type="cy" draft="contributed">kimric</language>
 			<language type="da" draft="contributed">danais</language>
 			<language type="dak" draft="contributed">dakota</language>
 			<language type="dar" draft="contributed">dargwa</language>
-			<language type="day" draft="contributed">dayak</language>
 			<language type="de" draft="contributed">tudestg</language>
 			<language type="de_AT" draft="contributed">tudestg austriac</language>
 			<language type="del" draft="contributed">delaware</language>
@@ -125,7 +102,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="dgr" draft="contributed">dogrib</language>
 			<language type="din" draft="contributed">dinka</language>
 			<language type="doi" draft="contributed">dogri</language>
-			<language type="dra" draft="contributed">lingua dravidica</language>
 			<language type="dsb" draft="contributed">bass sorb</language>
 			<language type="dua" draft="contributed">duala</language>
 			<language type="dum" draft="contributed">ollandais mesaun</language>
@@ -157,7 +133,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff" draft="contributed">fulah</language>
 			<language type="fi" draft="contributed">finlandais</language>
 			<language type="fil" draft="contributed">filippino</language>
-			<language type="fiu" draft="contributed">lingua ungrofinnica</language>
 			<language type="fj" draft="contributed">fidschian</language>
 			<language type="fo" draft="contributed">ferrais</language>
 			<language type="fon" draft="contributed">fon</language>
@@ -175,7 +150,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay" draft="contributed">gayo</language>
 			<language type="gba" draft="contributed">gbaya</language>
 			<language type="gd" draft="contributed">gaelic scot</language>
-			<language type="gem" draft="contributed">lingua germana</language>
 			<language type="gez" draft="contributed">geez</language>
 			<language type="gil" draft="contributed">gilbertais</language>
 			<language type="gl" draft="contributed">galician</language>
@@ -197,7 +171,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he" draft="contributed">ebraic</language>
 			<language type="hi" draft="contributed">hindi</language>
 			<language type="hil" draft="contributed">hiligaynon</language>
-			<language type="him" draft="contributed">himachali</language>
 			<language type="hit" draft="contributed">ettitic</language>
 			<language type="hmn" draft="contributed">hmong</language>
 			<language type="ho" draft="contributed">hiri motu</language>
@@ -214,15 +187,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie" draft="contributed">interlingue</language>
 			<language type="ig" draft="contributed">igbo</language>
 			<language type="ii" draft="contributed">sichuan yi</language>
-			<language type="ijo" draft="contributed">ijo</language>
 			<language type="ik" draft="contributed">inupiak</language>
 			<language type="ilo" draft="contributed">ilocano</language>
-			<language type="inc" draft="contributed">lingua indiana</language>
-			<language type="ine" draft="contributed">lingua indoeuropeica</language>
 			<language type="inh" draft="contributed">ingush</language>
 			<language type="io" draft="contributed">ido</language>
-			<language type="ira" draft="contributed">lingua da l'Iran</language>
-			<language type="iro" draft="contributed">linguas irochesas</language>
 			<language type="is" draft="contributed">islandais</language>
 			<language type="it" draft="contributed">talian</language>
 			<language type="iu" draft="contributed">inuktitut</language>
@@ -237,14 +205,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac" draft="contributed">kachin</language>
 			<language type="kaj" draft="contributed">jju</language>
 			<language type="kam" draft="contributed">kamba</language>
-			<language type="kar" draft="contributed">karen</language>
 			<language type="kaw" draft="contributed">kawi</language>
 			<language type="kbd" draft="contributed">kabardic</language>
 			<language type="kcg" draft="contributed">tyap</language>
 			<language type="kfo" draft="contributed">koro</language>
 			<language type="kg" draft="contributed">kongo</language>
 			<language type="kha" draft="contributed">khasi</language>
-			<language type="khi" draft="contributed">lingua khoisan</language>
 			<language type="kho" draft="contributed">khotanais</language>
 			<language type="ki" draft="contributed">kikuyu</language>
 			<language type="kj" draft="contributed">kuanyama</language>
@@ -260,7 +226,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr" draft="contributed">kanuri</language>
 			<language type="krc" draft="contributed">karachay-balkar</language>
 			<language type="krl" draft="contributed">carelian</language>
-			<language type="kro" draft="contributed">kru</language>
 			<language type="kru" draft="contributed">kurukh</language>
 			<language type="ks" draft="contributed">kashmiri</language>
 			<language type="ku" draft="contributed">curd</language>
@@ -294,7 +259,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai" draft="contributed">maithili</language>
 			<language type="mak" draft="contributed">makassar</language>
 			<language type="man" draft="contributed">mandingo</language>
-			<language type="map" draft="contributed">austronesian</language>
 			<language type="mas" draft="contributed">masai</language>
 			<language type="mdf" draft="contributed">moksha</language>
 			<language type="mdr" draft="contributed">mandar</language>
@@ -305,31 +269,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi" draft="contributed">maori</language>
 			<language type="mic" draft="contributed">micmac</language>
 			<language type="min" draft="contributed">minangkabau</language>
-			<language type="mis" draft="contributed">diversas linguas</language>
 			<language type="mk" draft="contributed">macedon</language>
-			<language type="mkh" draft="contributed">lingua mon-khmer</language>
 			<language type="ml" draft="contributed">malayalam</language>
 			<language type="mn" draft="contributed">mongolic</language>
 			<language type="mnc" draft="contributed">manchu</language>
 			<language type="mni" draft="contributed">manipuri</language>
-			<language type="mno" draft="contributed">manobo</language>
-			<language type="mo" draft="contributed">moldav</language>
 			<language type="moh" draft="contributed">mohawk</language>
 			<language type="mos" draft="contributed">mossi</language>
 			<language type="mr" draft="contributed">marathi</language>
 			<language type="ms" draft="contributed">malaic</language>
 			<language type="mt" draft="contributed">maltais</language>
 			<language type="mul" draft="contributed">pluriling</language>
-			<language type="mun" draft="contributed">lingua munda</language>
 			<language type="mus" draft="contributed">creek</language>
 			<language type="mwl" draft="contributed">mirandais</language>
 			<language type="mwr" draft="contributed">marwari</language>
 			<language type="my" draft="contributed">birman</language>
-			<language type="myn" draft="contributed">lingau maya</language>
 			<language type="myv" draft="contributed">erzya</language>
 			<language type="na" draft="contributed">nauru</language>
-			<language type="nah" draft="contributed">nahuatl</language>
-			<language type="nai" draft="contributed">lingua indiana da l'America dal Nord</language>
 			<language type="nap" draft="contributed">neapolitan</language>
 			<language type="nb" draft="contributed">norvegais bokmål</language>
 			<language type="nd" draft="contributed">ndebele dal nord</language>
@@ -338,7 +294,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new" draft="contributed">newari</language>
 			<language type="ng" draft="contributed">ndonga</language>
 			<language type="nia" draft="contributed">nias</language>
-			<language type="nic" draft="contributed">lingua niger-cordofanica</language>
 			<language type="niu" draft="contributed">niue</language>
 			<language type="nl" draft="contributed">ollandais</language>
 			<language type="nl_BE" draft="contributed">flam</language>
@@ -349,7 +304,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo" draft="contributed">n'ko</language>
 			<language type="nr" draft="contributed">ndebele dal sid</language>
 			<language type="nso" draft="contributed">sotho dal nord</language>
-			<language type="nub" draft="contributed">linguas nubicas</language>
 			<language type="nv" draft="contributed">navajo</language>
 			<language type="nwc" draft="contributed">newari classic</language>
 			<language type="ny" draft="contributed">nyanja</language>
@@ -364,21 +318,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os" draft="contributed">ossetic</language>
 			<language type="osa" draft="contributed">osage</language>
 			<language type="ota" draft="contributed">tirc ottoman</language>
-			<language type="oto" draft="contributed">linguas otomangue</language>
 			<language type="pa" draft="contributed">punjabi</language>
-			<language type="paa" draft="contributed">lingua papuana</language>
 			<language type="pag" draft="contributed">pangasinan</language>
 			<language type="pal" draft="contributed">pahlavi</language>
 			<language type="pam" draft="contributed">pampanga</language>
 			<language type="pap" draft="contributed">papiamento</language>
 			<language type="pau" draft="contributed">palau</language>
 			<language type="peo" draft="contributed">persian vegl</language>
-			<language type="phi" draft="contributed">lingua filippina</language>
 			<language type="phn" draft="contributed">fenizian</language>
 			<language type="pi" draft="contributed">pali</language>
 			<language type="pl" draft="contributed">polac</language>
 			<language type="pon" draft="contributed">ponapean</language>
-			<language type="pra" draft="contributed">prakrit</language>
 			<language type="pro" draft="contributed">provenzal vegl</language>
 			<language type="ps" draft="contributed">paschto</language>
 			<language type="pt" draft="contributed">portugais</language>
@@ -391,7 +341,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm" draft="contributed">rumantsch</language>
 			<language type="rn" draft="contributed">rundi</language>
 			<language type="ro" draft="contributed">rumen</language>
-			<language type="roa" draft="contributed">lingua romana</language>
+			<language type="ro_MD">moldav</language>
 			<language type="rom" draft="contributed">romani</language>
 			<language type="ru" draft="contributed">russ</language>
 			<language type="rup" draft="contributed">aromunic</language>
@@ -399,8 +349,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa" draft="contributed">sanscrit</language>
 			<language type="sad" draft="contributed">sandawe</language>
 			<language type="sah" draft="contributed">jakut</language>
-			<language type="sai" draft="contributed">lingua indiana da l'America dal Sid</language>
-			<language type="sal" draft="contributed">lingua salish</language>
 			<language type="sam" draft="contributed">arameic samaritan</language>
 			<language type="sas" draft="contributed">sasak</language>
 			<language type="sat" draft="contributed">santali</language>
@@ -410,22 +358,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sd" draft="contributed">sindhi</language>
 			<language type="se" draft="contributed">sami dal nord</language>
 			<language type="sel" draft="contributed">selkup</language>
-			<language type="sem" draft="contributed">lingua semitica</language>
 			<language type="sg" draft="contributed">sango</language>
 			<language type="sga" draft="contributed">irlandais vegl</language>
-			<language type="sgn" draft="contributed">lingua da segns</language>
 			<language type="sh" draft="contributed">serbo-croat</language>
 			<language type="shn" draft="contributed">shan</language>
 			<language type="si" draft="contributed">singalais</language>
 			<language type="sid" draft="contributed">sidamo</language>
-			<language type="sio" draft="contributed">linguas sioux</language>
-			<language type="sit" draft="contributed">linguas sino-tibetanas</language>
 			<language type="sk" draft="contributed">slovac</language>
 			<language type="sl" draft="contributed">sloven</language>
-			<language type="sla" draft="contributed">lingua slava</language>
 			<language type="sm" draft="contributed">samoan</language>
 			<language type="sma" draft="contributed">sami dal sid</language>
-			<language type="smi" draft="contributed">lingua sami</language>
 			<language type="smj" draft="contributed">sami lule</language>
 			<language type="smn" draft="contributed">sami inari</language>
 			<language type="sms" draft="contributed">sami skolt</language>
@@ -433,13 +375,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk" draft="contributed">soninke</language>
 			<language type="so" draft="contributed">somali</language>
 			<language type="sog" draft="contributed">sogdian</language>
-			<language type="son" draft="contributed">songhai</language>
 			<language type="sq" draft="contributed">albanais</language>
 			<language type="sr" draft="contributed">serb</language>
 			<language type="srn" draft="contributed">sranan tongo</language>
 			<language type="srr" draft="contributed">serer</language>
 			<language type="ss" draft="contributed">swazi</language>
-			<language type="ssa" draft="contributed">lingua nilo-sahariana</language>
 			<language type="st" draft="contributed">sotho dal sid</language>
 			<language type="su" draft="contributed">sundanais</language>
 			<language type="suk" draft="contributed">sukuma</language>
@@ -450,7 +390,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc" draft="contributed">siric classic</language>
 			<language type="syr" draft="contributed">siric</language>
 			<language type="ta" draft="contributed">tamil</language>
-			<language type="tai" draft="contributed">lingua tai</language>
 			<language type="te" draft="contributed">telugu</language>
 			<language type="tem" draft="contributed">temne</language>
 			<language type="ter" draft="contributed">tereno</language>
@@ -475,8 +414,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi" draft="contributed">tsimshian</language>
 			<language type="tt" draft="contributed">tatar</language>
 			<language type="tum" draft="contributed">tumbuka</language>
-			<language type="tup" draft="contributed">linguas tupi</language>
-			<language type="tut" draft="contributed">linguas altaicas</language>
 			<language type="tvl" draft="contributed">tuvalu</language>
 			<language type="tw" draft="contributed">twi</language>
 			<language type="ty" draft="contributed">tahitian</language>
@@ -495,11 +432,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vo" draft="contributed">volapuk</language>
 			<language type="vot" draft="contributed">votic</language>
 			<language type="wa" draft="contributed">vallon</language>
-			<language type="wak" draft="contributed">linguas wakash</language>
 			<language type="wal" draft="contributed">walamo</language>
 			<language type="war" draft="contributed">waray</language>
 			<language type="was" draft="contributed">washo</language>
-			<language type="wen" draft="contributed">sorb</language>
 			<language type="wo" draft="contributed">wolof</language>
 			<language type="xal" draft="contributed">kalmuk</language>
 			<language type="xh" draft="contributed">xhosa</language>
@@ -507,7 +442,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="yap" draft="contributed">yapais</language>
 			<language type="yi" draft="contributed">jiddic</language>
 			<language type="yo" draft="contributed">yoruba</language>
-			<language type="ypk" draft="contributed">linguas yupik</language>
 			<language type="za" draft="contributed">zhuang</language>
 			<language type="zap" draft="contributed">zapotec</language>
 			<language type="zbl" draft="contributed">simbols da Bliss</language>
@@ -515,7 +449,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh" draft="contributed">chinais</language>
 			<language type="zh_Hans" draft="contributed">chinais simplifitgà</language>
 			<language type="zh_Hant" draft="contributed">chinais tradiziunal</language>
-			<language type="znd" draft="contributed">zande</language>
 			<language type="zu" draft="contributed">zulu</language>
 			<language type="zun" draft="contributed">zuni</language>
 			<language type="zxx" draft="contributed">nagins cuntegns linguistics</language>
@@ -1048,7 +981,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMMd" draft="contributed">d. MMM</dateFormatItem>
 						<dateFormatItem id="MMMEd" draft="contributed">E d. MMM</dateFormatItem>
 						<dateFormatItem id="MMMMd" draft="contributed">d. MMMM</dateFormatItem>
-						<dateFormatItem id="MMMMdd" draft="contributed">dd. MMMM</dateFormatItem>
 						<dateFormatItem id="MMMMEd" draft="contributed">E d. MMMM</dateFormatItem>
 						<dateFormatItem id="mmss" draft="contributed">mm:ss</dateFormatItem>
 						<dateFormatItem id="ms" draft="contributed">mm:ss</dateFormatItem>
@@ -1069,22 +1001,22 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="d" draft="contributed">d.-d.</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="h">
-							<greatestDifference id="a" draft="contributed">HH-HH</greatestDifference>
-							<greatestDifference id="h" draft="contributed">HH-HH</greatestDifference>
+							<greatestDifference id="a" draft="contributed">h a - h a</greatestDifference>
+							<greatestDifference id="h" draft="contributed">h-h a</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hm">
-							<greatestDifference id="a" draft="contributed">HH:mm-HH:mm</greatestDifference>
-							<greatestDifference id="h" draft="contributed">HH:mm-HH:mm</greatestDifference>
-							<greatestDifference id="m" draft="contributed">HH:mm-HH:mm</greatestDifference>
+							<greatestDifference id="a" draft="contributed">h:mm a - h:mm a</greatestDifference>
+							<greatestDifference id="h" draft="contributed">h:mm-h:mm a</greatestDifference>
+							<greatestDifference id="m" draft="contributed">h:mm-h:mm a</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hmv">
-							<greatestDifference id="a" draft="contributed">HH:mm-HH:mm v</greatestDifference>
-							<greatestDifference id="h" draft="contributed">HH:mm-HH:mm v</greatestDifference>
-							<greatestDifference id="m" draft="contributed">HH:mm-HH:mm v</greatestDifference>
+							<greatestDifference id="a" draft="contributed">h:mm a - h:mm a v</greatestDifference>
+							<greatestDifference id="h" draft="contributed">h:mm-h:mm a v</greatestDifference>
+							<greatestDifference id="m" draft="contributed">h:mm-h:mm a v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hv">
-							<greatestDifference id="a" draft="contributed">HH-HH v</greatestDifference>
-							<greatestDifference id="h" draft="contributed">HH-HH v</greatestDifference>
+							<greatestDifference id="a" draft="contributed">h a - h a v</greatestDifference>
+							<greatestDifference id="h" draft="contributed">h-h a v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="M">
 							<greatestDifference id="M" draft="contributed">M.-M.</greatestDifference>
@@ -1317,7 +1249,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMMd" draft="contributed">d. MMM</dateFormatItem>
 						<dateFormatItem id="MMMEd" draft="contributed">E d. MMM</dateFormatItem>
 						<dateFormatItem id="MMMMd" draft="contributed">d. MMMM</dateFormatItem>
-						<dateFormatItem id="MMMMdd" draft="contributed">dd. MMMM</dateFormatItem>
 						<dateFormatItem id="MMMMEd" draft="contributed">E d. MMMM</dateFormatItem>
 						<dateFormatItem id="mmss" draft="contributed">mm:ss</dateFormatItem>
 						<dateFormatItem id="ms" draft="contributed">mm:ss</dateFormatItem>
@@ -1338,22 +1269,22 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="d" draft="contributed">d.-d.</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="h">
-							<greatestDifference id="a" draft="contributed">HH-HH</greatestDifference>
-							<greatestDifference id="h" draft="contributed">HH-HH</greatestDifference>
+							<greatestDifference id="a" draft="contributed">h a - h a</greatestDifference>
+							<greatestDifference id="h" draft="contributed">h-h a</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hm">
-							<greatestDifference id="a" draft="contributed">HH:mm-HH:mm</greatestDifference>
-							<greatestDifference id="h" draft="contributed">HH:mm-HH:mm</greatestDifference>
-							<greatestDifference id="m" draft="contributed">HH:mm-HH:mm</greatestDifference>
+							<greatestDifference id="a" draft="contributed">h:mm a - h:mm a</greatestDifference>
+							<greatestDifference id="h" draft="contributed">h:mm-h:mm a</greatestDifference>
+							<greatestDifference id="m" draft="contributed">h:mm-h:mm a</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hmv">
-							<greatestDifference id="a" draft="contributed">HH:mm-HH:mm v</greatestDifference>
-							<greatestDifference id="h" draft="contributed">HH:mm-HH:mm v</greatestDifference>
-							<greatestDifference id="m" draft="contributed">HH:mm-HH:mm v</greatestDifference>
+							<greatestDifference id="a" draft="contributed">h:mm a - h:mm a v</greatestDifference>
+							<greatestDifference id="h" draft="contributed">h:mm-h:mm a v</greatestDifference>
+							<greatestDifference id="m" draft="contributed">h:mm-h:mm a v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hv">
-							<greatestDifference id="a" draft="contributed">HH-HH v</greatestDifference>
-							<greatestDifference id="h" draft="contributed">HH-HH v</greatestDifference>
+							<greatestDifference id="a" draft="contributed">h a - h a v</greatestDifference>
+							<greatestDifference id="h" draft="contributed">h-h a v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="M">
 							<greatestDifference id="M" draft="contributed">M.-M.</greatestDifference>
@@ -1471,9 +1402,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Asia/Yerevan">
 				<exemplarCity draft="contributed">Jerevan</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity draft="contributed">Pol dal Sid</exemplarCity>
 			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity draft="contributed">Showa</exemplarCity>

@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-require_once "Google/Cache/Abstract.php";
-require_once "Google/Cache/Exception.php";
+// pimcore modification: removed autoloader include
 
 /**
  * A blank storage class, for cases where caching is not

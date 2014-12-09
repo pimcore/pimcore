@@ -150,8 +150,10 @@ class Zend_Barcode_Object_Ean8 extends Zend_Barcode_Object_Ean13
     /**
      * Particular validation for Ean8 barcode objects
      * (to suppress checksum character substitution)
+     *
      * @param string $value
      * @param array  $options
+     * @throws Zend_Barcode_Object_Exception
      */
     protected function _validateText($value, $options = array())
     {

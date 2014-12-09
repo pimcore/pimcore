@@ -13,11 +13,28 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Update_IndexController extends Pimcore_Controller_Action_Admin {
+use Pimcore\Update; 
+
+class Update_IndexController extends \Pimcore\Controller\Action\Admin {
 
 
     public function init() {
         parent::init();
+
+        // clear the opcache (as of PHP 5.5)
+        if(function_exists("opcache_reset")) {
+            opcache_reset();
+        }
+
+        // clear the APC opcode cache (<= PHP 5.4)
+        if(function_exists("apc_clear_cache")) {
+            apc_clear_cache();
+        }
+
+        // clear the Zend Optimizer cache (Zend Server <= PHP 5.4)
+        if (function_exists('accelerator_reset')) {
+            return accelerator_reset();
+        }
 
         $this->checkPermission("update");
     }
@@ -25,7 +42,7 @@ class Update_IndexController extends Pimcore_Controller_Action_Admin {
     public function checkFilePermissionsAction () {
         
         $success = false;
-        if(Pimcore_Update::isWriteable()) {
+        if(Update::isWriteable()) {
             $success = true;
         }
 
@@ -36,20 +53,20 @@ class Update_IndexController extends Pimcore_Controller_Action_Admin {
     
     public function getAvailableUpdatesAction () {
 
-        $availableUpdates = Pimcore_Update::getAvailableUpdates();
+        $availableUpdates = Update::getAvailableUpdates();
         $this->_helper->json($availableUpdates);
     }
     
     public function getJobsAction () {
 
-        $jobs = Pimcore_Update::getJobs($this->getParam("toRevision"));
+        $jobs = Update::getJobs($this->getParam("toRevision"));
         
         $this->_helper->json($jobs);
     }
     
     public function jobParallelAction () {
         if($this->getParam("type") == "download") {
-            Pimcore_Update::downloadData($this->getParam("revision"), $this->getParam("url"));
+            Update::downloadData($this->getParam("revision"), $this->getParam("url"));
         }
         
         $this->_helper->json(array("success" => true));
@@ -60,17 +77,17 @@ class Update_IndexController extends Pimcore_Controller_Action_Admin {
         $status = array("success" => true);
         
         if($this->getParam("type") == "files") {
-            Pimcore_Update::installData($this->getParam("revision"));
+            Update::installData($this->getParam("revision"));
         } else if ($this->getParam("type") == "clearcache") {
-            Pimcore_Model_Cache::clearAll();
+            \Pimcore\Model\Cache::clearAll();
         } else if ($this->getParam("type") == "preupdate") {
-            $status = Pimcore_Update::executeScript($this->getParam("revision"), "preupdate");
+            $status = Update::executeScript($this->getParam("revision"), "preupdate");
         } else if ($this->getParam("type") == "postupdate") {
-            $status = Pimcore_Update::executeScript($this->getParam("revision"), "postupdate");
+            $status = Update::executeScript($this->getParam("revision"), "postupdate");
         } else if ($this->getParam("type") == "cleanup") {
-            Pimcore_Update::cleanup();
+            Update::cleanup();
         } else if ($this->getParam("type") == "languages") {
-            Pimcore_Update::downloadLanguage();
+            Update::downloadLanguage();
         }
 
         $this->_helper->json($status);
@@ -79,12 +96,12 @@ class Update_IndexController extends Pimcore_Controller_Action_Admin {
     
     public function getLanguagesAction() {
         
-        $languagesJson = Pimcore_Tool::getHttpData("http://www.pimcore.org/?controller=translation&action=json");
+        $languagesJson = \Pimcore\Tool::getHttpData("http://www.pimcore.org/?controller=translation&action=json");
         
         echo $languagesJson;
         exit;
         
-        $languagesData = Zend_Json_Decoder::decode($languagesJson);
+        $languagesData = \Zend_Json_Decoder::decode($languagesJson);
         $languages = $languagesData["languages"];
         if (is_array($languages)) {
             for ($i = 0; $i < count($languages); $i++) {
@@ -104,7 +121,7 @@ class Update_IndexController extends Pimcore_Controller_Action_Admin {
     public function downloadLanguageAction() {
 
         $lang = $this->getParam("language");
-        $success = Pimcore_Update::downloadLanguage($lang);
+        $success = Update::downloadLanguage($lang);
         
         $this->_helper->json(array(
             "success" => $success

@@ -13,8 +13,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_HttpErrorLog extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
 
+class HttpErrorLog extends \Zend_Controller_Plugin_Abstract {
+
+    /**
+     *
+     */
     public function dispatchLoopShutdown() {
 
         $code = (string) $this->getResponse()->getHttpResponseCode();
@@ -24,16 +29,19 @@ class Pimcore_Controller_Plugin_HttpErrorLog extends Zend_Controller_Plugin_Abst
             // put the response into the cache, this is read in Pimcore_Controller_Action_Frontend::checkForErrors()
             $responseData = $this->getResponse()->getBody();
             if(strlen($responseData) > 20) {
-                $cacheKey = "error_page_response_" . Pimcore_Tool_Frontend::getSiteKey();
-                Pimcore_Model_Cache::save($responseData, $cacheKey, array("output"), 900, 9992);
+                $cacheKey = "error_page_response_" . \Pimcore\Tool\Frontend::getSiteKey();
+                \Pimcore\Model\Cache::save($responseData, $cacheKey, array("output"), 900, 9992);
             }
         }
     }
 
+    /**
+     *
+     */
     public function writeLog () {
 
         $code = (string) $this->getResponse()->getHttpResponseCode();
-        $db = Pimcore_Resource::get();
+        $db = \Pimcore\Resource::get();
 
         try {
             $db->insert("http_error_log", array(
@@ -45,9 +53,9 @@ class Pimcore_Controller_Plugin_HttpErrorLog extends Zend_Controller_Plugin_Abst
                 "serverVars" => serialize($_SERVER),
                 "date" => time()
             ));
-        } catch (Exception $e) {
-            Logger::error("Unable to log http error");
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error("Unable to log http error");
+            \Logger::error($e);
         }
     }
 }

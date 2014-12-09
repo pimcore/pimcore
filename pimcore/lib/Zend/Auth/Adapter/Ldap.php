@@ -76,7 +76,6 @@ class Zend_Auth_Adapter_Ldap implements Zend_Auth_Adapter_Interface
      * @param  array  $options  An array of arrays of Zend_Ldap options
      * @param  string $username The username of the account being authenticated
      * @param  string $password The password of the account being authenticated
-     * @return void
      */
     public function __construct(array $options = array(), $username = null, $password = null)
     {

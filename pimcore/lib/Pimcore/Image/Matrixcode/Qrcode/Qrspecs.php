@@ -14,7 +14,7 @@
  * 
  * Thanks to http://www.swetake.com/qr/qr1_en.html
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -23,11 +23,14 @@
 /**
  * Pimcore_Image_Matrixcode_Qrcode_Qrspecs
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Pimcore_Image_Matrixcode_Qrcode_Qrspecs
+
+namespace Pimcore\Image\Matrixcode\Qrcode;
+
+class Qrspecs
 {
 	
 	/*

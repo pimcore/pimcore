@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="ro"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,54 +25,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady" draft="contributed">adyghe</language>
 			<language type="ae" draft="contributed">avestană</language>
 			<language type="af">afrikaans</language>
-			<language type="afa">limbă afro-asiatică</language>
 			<language type="afh" draft="contributed">afrihili</language>
 			<language type="agq" draft="contributed">aghem</language>
 			<language type="ain">ainu</language>
 			<language type="ak" draft="contributed">akan</language>
 			<language type="akk">akkadiană</language>
 			<language type="ale">aleută</language>
-			<language type="alg" draft="contributed">limbă algonchiană</language>
 			<language type="alt">altaică meridională</language>
 			<language type="am">amharică</language>
 			<language type="an">aragoneză</language>
 			<language type="ang">engleză veche</language>
 			<language type="anp" draft="contributed">angika</language>
-			<language type="apa">limbă apașă</language>
 			<language type="ar">arabă</language>
 			<language type="ar_001" draft="contributed">arabă standard modernă</language>
 			<language type="arc">aramaică</language>
 			<language type="arn" draft="contributed">araucaniană</language>
 			<language type="arp" draft="contributed">arapaho</language>
-			<language type="art">limbă artificială</language>
 			<language type="arw" draft="contributed">arawak</language>
 			<language type="as">asameză</language>
 			<language type="asa" draft="contributed">asu</language>
 			<language type="ast">asturiană</language>
-			<language type="ath" draft="contributed">limbă athapascană</language>
-			<language type="aus">limbă australiană</language>
 			<language type="av">avară</language>
 			<language type="awa" draft="contributed">awadhi</language>
 			<language type="ay">aymara</language>
 			<language type="az">azeră</language>
 			<language type="az" alt="short">azeră</language>
 			<language type="ba">bașkiră</language>
-			<language type="bad" draft="contributed">banda</language>
-			<language type="bai" draft="contributed">limbă bamileke</language>
 			<language type="bal" draft="contributed">baluchi</language>
 			<language type="ban" draft="contributed">balineză</language>
 			<language type="bas" draft="contributed">basaa</language>
-			<language type="bat">limbă baltică</language>
 			<language type="bax" draft="contributed">bamun</language>
 			<language type="bbj" draft="contributed">ghomala</language>
 			<language type="be">bielorusă</language>
 			<language type="bej" draft="contributed">beja</language>
 			<language type="bem" draft="contributed">bemba</language>
-			<language type="ber">berberă</language>
 			<language type="bez" draft="contributed">bena</language>
 			<language type="bfd" draft="contributed">bafut</language>
 			<language type="bg">bulgară</language>
-			<language type="bh">bihari</language>
 			<language type="bho" draft="contributed">bhojpuri</language>
 			<language type="bi" draft="contributed">bislama</language>
 			<language type="bik" draft="contributed">bikol</language>
@@ -81,14 +70,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla" draft="contributed">siksika</language>
 			<language type="bm" draft="contributed">bambara</language>
 			<language type="bn">bengaleză</language>
-			<language type="bnt">bantu</language>
 			<language type="bo">tibetană</language>
 			<language type="br">bretonă</language>
 			<language type="bra" draft="contributed">braj</language>
 			<language type="brx" draft="contributed">bodo</language>
 			<language type="bs">bosniacă</language>
 			<language type="bss" draft="contributed">akoose</language>
-			<language type="btk" draft="contributed">batak</language>
 			<language type="bua" draft="contributed">buriat</language>
 			<language type="bug" draft="contributed">bugineză</language>
 			<language type="bum" draft="contributed">bulu</language>
@@ -96,14 +83,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv" draft="contributed">medumba</language>
 			<language type="ca">catalană</language>
 			<language type="cad" draft="contributed">caddo</language>
-			<language type="cai">limbă central-amerindiană</language>
 			<language type="car" draft="contributed">carib</language>
-			<language type="cau">limbă caucaziană</language>
 			<language type="cay" draft="contributed">cayuga</language>
 			<language type="cch" draft="contributed">atsam</language>
 			<language type="ce">cecenă</language>
 			<language type="ceb" draft="contributed">cebuano</language>
-			<language type="cel">limbă celtică</language>
 			<language type="cgg" draft="contributed">chiga</language>
 			<language type="ch" draft="contributed">chamorro</language>
 			<language type="chb" draft="contributed">chibcha</language>
@@ -116,26 +100,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr" draft="contributed">cherokee</language>
 			<language type="chy" draft="contributed">cheyenne</language>
 			<language type="ckb" draft="contributed">kurdă sorani</language>
-			<language type="cmc" draft="contributed">limbă chamică</language>
 			<language type="co">corsicană</language>
 			<language type="cop">coptă</language>
-			<language type="cpe" draft="contributed">creolă sau pidgin bazată pe engleză</language>
-			<language type="cpf" draft="contributed">creolă sau pidgin bazată pe franceză</language>
-			<language type="cpp" draft="contributed">creolă sau pidgin bazată pe portugheză</language>
 			<language type="cr" draft="contributed">cree</language>
 			<language type="crh" draft="contributed">turcă crimeeană</language>
-			<language type="crp" draft="contributed">creolă sau pidgin</language>
 			<language type="cs">cehă</language>
 			<language type="csb" draft="contributed">cașubiană</language>
 			<language type="cu">slavonă</language>
-			<language type="cus" draft="contributed">limbă cushitică</language>
 			<language type="cv">ciuvașă</language>
 			<language type="cy">velșă</language>
 			<language type="da">daneză</language>
 			<language type="dak" draft="contributed">dakota</language>
 			<language type="dar" draft="contributed">dargwa</language>
 			<language type="dav" draft="contributed">taita</language>
-			<language type="day" draft="contributed">dayak</language>
 			<language type="de">germană</language>
 			<language type="de_AT">germană austriacă</language>
 			<language type="de_CH">germană standard elvețiană</language>
@@ -145,7 +122,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din" draft="contributed">dinka</language>
 			<language type="dje" draft="contributed">zarma</language>
 			<language type="doi" draft="contributed">dogri</language>
-			<language type="dra">limbă dravidiană</language>
 			<language type="dsb" draft="contributed">sorabă de jos</language>
 			<language type="dua" draft="contributed">duala</language>
 			<language type="dum" draft="contributed">olandeză mijlocie</language>
@@ -183,7 +159,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff" draft="contributed">fulah</language>
 			<language type="fi">finlandeză</language>
 			<language type="fil">filipineză</language>
-			<language type="fiu">limbă fino-ugrică</language>
 			<language type="fj">fijiană</language>
 			<language type="fo">faroeză</language>
 			<language type="fon" draft="contributed">fon</language>
@@ -201,7 +176,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay" draft="contributed">gayo</language>
 			<language type="gba" draft="contributed">gbaya</language>
 			<language type="gd">gaelică scoțiană</language>
-			<language type="gem">limbă germanică</language>
 			<language type="gez" draft="contributed">geez</language>
 			<language type="gil" draft="contributed">gilbertină</language>
 			<language type="gl">galiciană</language>
@@ -224,7 +198,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">ebraică</language>
 			<language type="hi">hindi</language>
 			<language type="hil" draft="contributed">hiligaynon</language>
-			<language type="him" draft="contributed">himachali</language>
 			<language type="hit">hitită</language>
 			<language type="hmn" draft="contributed">hmong</language>
 			<language type="ho" draft="contributed">hiri motu</language>
@@ -242,20 +215,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">interlingue</language>
 			<language type="ig">igbo</language>
 			<language type="ii" draft="contributed">sichuan yi</language>
-			<language type="ijo" draft="contributed">ijo</language>
 			<language type="ik">inupiak</language>
 			<language type="ilo" draft="contributed">iloko</language>
-			<language type="inc">limbă indiană</language>
-			<language type="ine">limbă indo-europeană</language>
 			<language type="inh" draft="contributed">ingușă</language>
 			<language type="io" draft="contributed">ido</language>
-			<language type="ira">limbă iraniană</language>
-			<language type="iro" draft="contributed">limbă irocheză</language>
 			<language type="is">islandeză</language>
 			<language type="it">italiană</language>
 			<language type="iu" draft="contributed">inuktitut</language>
 			<language type="ja">japoneză</language>
 			<language type="jbo" draft="contributed">lojban</language>
+			<language type="jgo" draft="contributed">ngomba</language>
 			<language type="jmc" draft="contributed">machame</language>
 			<language type="jpr">iudeo-persană</language>
 			<language type="jrb">iudeo-arabă</language>
@@ -266,7 +235,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac" draft="contributed">kachin</language>
 			<language type="kaj" draft="contributed">jju</language>
 			<language type="kam" draft="contributed">kamba</language>
-			<language type="kar" draft="contributed">karen</language>
 			<language type="kaw" draft="contributed">kawi</language>
 			<language type="kbd" draft="contributed">kabardian</language>
 			<language type="kbl" draft="contributed">kanembu</language>
@@ -276,7 +244,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo" draft="contributed">koro</language>
 			<language type="kg">congoleză</language>
 			<language type="kha" draft="contributed">khasi</language>
-			<language type="khi" draft="contributed">limbă khoisan</language>
 			<language type="kho" draft="contributed">limbp khotaneză</language>
 			<language type="khq" draft="contributed">koyra chiini</language>
 			<language type="ki" draft="contributed">kikuyu</language>
@@ -295,7 +262,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr" draft="contributed">kanuri</language>
 			<language type="krc" draft="contributed">karaceai-balkar</language>
 			<language type="krl" draft="contributed">kareliană</language>
-			<language type="kro" draft="contributed">kru</language>
 			<language type="kru" draft="contributed">kurukh</language>
 			<language type="ks">cașmiră</language>
 			<language type="ksb" draft="contributed">shambala</language>
@@ -335,7 +301,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai" draft="contributed">maithili</language>
 			<language type="mak" draft="contributed">makasar</language>
 			<language type="man" draft="contributed">mandingo</language>
-			<language type="map">austroneziană</language>
 			<language type="mas" draft="contributed">masai</language>
 			<language type="mde" draft="contributed">maba</language>
 			<language type="mdf" draft="contributed">moksha</language>
@@ -346,19 +311,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mg">malgașă</language>
 			<language type="mga" draft="contributed">irlandeză mijlocie</language>
 			<language type="mgh" draft="contributed">makhuwa-meetto</language>
+			<language type="mgo" draft="contributed">meta'</language>
 			<language type="mh" draft="contributed">marshalleză</language>
 			<language type="mi">maori</language>
 			<language type="mic" draft="contributed">micmac</language>
 			<language type="min" draft="contributed">minangkabau</language>
-			<language type="mis">limbi diverse</language>
 			<language type="mk">macedoneană</language>
-			<language type="mkh" draft="contributed">limbă mon-khmeră</language>
 			<language type="ml">malayalam</language>
 			<language type="mn">mongolă</language>
 			<language type="mnc">manciuriană</language>
 			<language type="mni" draft="contributed">manipur</language>
-			<language type="mno" draft="contributed">limbă manobo</language>
-			<language type="mo">moldovenească</language>
 			<language type="moh" draft="contributed">mohawk</language>
 			<language type="mos" draft="contributed">mossi</language>
 			<language type="mr">marathi</language>
@@ -366,17 +328,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">malteză</language>
 			<language type="mua" draft="contributed">mundang</language>
 			<language type="mul">limbi multiple</language>
-			<language type="mun">limbă munda</language>
 			<language type="mus" draft="contributed">creek</language>
 			<language type="mwl">mirandeză</language>
 			<language type="mwr" draft="contributed">marwari</language>
 			<language type="my">birmaneză</language>
 			<language type="mye" draft="contributed">myene</language>
-			<language type="myn">limbă mayașă</language>
 			<language type="myv" draft="contributed">erzya</language>
 			<language type="na" draft="contributed">nauru</language>
-			<language type="nah" draft="contributed">nahuatl</language>
-			<language type="nai">limbă nord-amerindiană</language>
 			<language type="nap">napolitană</language>
 			<language type="naq" draft="contributed">nama</language>
 			<language type="nb">norvegiană bokmål</language>
@@ -386,7 +344,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new" draft="contributed">newari</language>
 			<language type="ng" draft="contributed">ndonga</language>
 			<language type="nia" draft="contributed">nias</language>
-			<language type="nic" draft="contributed">limbă nigero-kordofaniană</language>
 			<language type="niu" draft="contributed">niueană</language>
 			<language type="nl">olandeză</language>
 			<language type="nl_BE">flamandă</language>
@@ -399,7 +356,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo" draft="contributed">n’ko</language>
 			<language type="nr" draft="contributed">ndebele de sud</language>
 			<language type="nso">sotho de nord</language>
-			<language type="nub">limbă nubiană</language>
 			<language type="nus" draft="contributed">nuer</language>
 			<language type="nv">navajo</language>
 			<language type="nwc" draft="contributed">newari clasică</language>
@@ -415,21 +371,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">osetă</language>
 			<language type="osa" draft="contributed">osage</language>
 			<language type="ota">turcă otomană</language>
-			<language type="oto">limbă otomi</language>
 			<language type="pa">punjabi</language>
-			<language type="paa">limbă papuașă</language>
 			<language type="pag" draft="contributed">pangasinan</language>
 			<language type="pal" draft="contributed">pahlavi</language>
 			<language type="pam" draft="contributed">pampanga</language>
 			<language type="pap" draft="contributed">papiamento</language>
 			<language type="pau" draft="contributed">palauană</language>
 			<language type="peo">persană veche</language>
-			<language type="phi">limbă filipineză</language>
 			<language type="phn">feniciană</language>
 			<language type="pi">pali</language>
 			<language type="pl">poloneză</language>
 			<language type="pon" draft="contributed">pohnpeiană</language>
-			<language type="pra" draft="contributed">limbă prakrit</language>
 			<language type="pro">provensală veche</language>
 			<language type="ps">paștună</language>
 			<language type="ps" alt="variant">pushto</language>
@@ -443,7 +395,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">romanșă</language>
 			<language type="rn">kirundi</language>
 			<language type="ro">română</language>
-			<language type="roa">limbă romanică</language>
+			<language type="ro_MD">moldovenească</language>
 			<language type="rof" draft="contributed">rombo</language>
 			<language type="rom" draft="contributed">romani</language>
 			<language type="root" draft="contributed">root</language>
@@ -454,8 +406,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">sanscrită</language>
 			<language type="sad" draft="contributed">sandawe</language>
 			<language type="sah">sakha</language>
-			<language type="sai">limbă sud-amerindiană</language>
-			<language type="sal" draft="contributed">limbă salishan</language>
 			<language type="sam">aramaică samariteană</language>
 			<language type="saq" draft="contributed">samburu</language>
 			<language type="sas" draft="contributed">sasak</language>
@@ -470,25 +420,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see" draft="contributed">seneca</language>
 			<language type="seh" draft="contributed">sena</language>
 			<language type="sel" draft="contributed">selkup</language>
-			<language type="sem">limbă semitică</language>
 			<language type="ses" draft="contributed">koyraboro Senni</language>
 			<language type="sg">sango</language>
 			<language type="sga">irlandeză veche</language>
-			<language type="sgn">limbaj mimico-gestual</language>
 			<language type="sh">sârbo-croată</language>
 			<language type="shi" draft="contributed">tachelhit</language>
 			<language type="shn" draft="contributed">shan</language>
 			<language type="shu" draft="contributed">arabă ciadiană</language>
 			<language type="si">singhaleză</language>
 			<language type="sid" draft="contributed">sidamo</language>
-			<language type="sio" draft="contributed">limbă siouană</language>
-			<language type="sit">limbă sino-tibetană</language>
 			<language type="sk">slovacă</language>
 			<language type="sl">slovenă</language>
-			<language type="sla">limbă slavă</language>
 			<language type="sm">samoană</language>
 			<language type="sma" draft="contributed">sami de sud</language>
-			<language type="smi" draft="contributed">limbă sami</language>
 			<language type="smj" draft="contributed">lule sami</language>
 			<language type="smn" draft="contributed">inari sami</language>
 			<language type="sms" draft="contributed">skolt sami</language>
@@ -496,13 +440,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk" draft="contributed">soninke</language>
 			<language type="so">somaleză</language>
 			<language type="sog" draft="contributed">sogdien</language>
-			<language type="son" draft="contributed">songhai</language>
 			<language type="sq">albaneză</language>
 			<language type="sr">sârbă</language>
 			<language type="srn" draft="contributed">sranan tongo</language>
 			<language type="srr" draft="contributed">serer</language>
 			<language type="ss">swati</language>
-			<language type="ssa" draft="contributed">limbă nilo-sahariană</language>
 			<language type="ssy" draft="contributed">saho</language>
 			<language type="st">sesotho</language>
 			<language type="su">sundaneză</language>
@@ -516,7 +458,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc" draft="contributed">siriacă clasică</language>
 			<language type="syr">siriacă</language>
 			<language type="ta">tamilă</language>
-			<language type="tai">limbă thai</language>
 			<language type="te">telugu</language>
 			<language type="tem" draft="contributed">timne</language>
 			<language type="teo" draft="contributed">teso</language>
@@ -543,8 +484,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi" draft="contributed">tsimshian</language>
 			<language type="tt">tătară</language>
 			<language type="tum" draft="contributed">tumbuka</language>
-			<language type="tup" draft="contributed">limbă tupi</language>
-			<language type="tut">limbă altaică</language>
 			<language type="tvl" draft="contributed">tuvalu</language>
 			<language type="tw">twi</language>
 			<language type="twq" draft="contributed">tasawaq</language>
@@ -568,11 +507,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun" draft="contributed">vunjo</language>
 			<language type="wa">valonă</language>
 			<language type="wae" draft="contributed">walser</language>
-			<language type="wak" draft="contributed">limbă wakashan</language>
 			<language type="wal" draft="contributed">walamo</language>
 			<language type="war" draft="contributed">waray</language>
 			<language type="was" draft="contributed">washo</language>
-			<language type="wen" draft="contributed">limbă sorabă</language>
 			<language type="wo">wolof</language>
 			<language type="xal">calmucă</language>
 			<language type="xh">xhosa</language>
@@ -583,7 +520,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb" draft="contributed">yemba</language>
 			<language type="yi">idiș</language>
 			<language type="yo">yoruba</language>
-			<language type="ypk" draft="contributed">limbă yupik</language>
 			<language type="yue">cantoneză</language>
 			<language type="za" draft="contributed">zhuang</language>
 			<language type="zap">zapotecă</language>
@@ -593,7 +529,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">chineză</language>
 			<language type="zh_Hans">chineză simplificată</language>
 			<language type="zh_Hant">chineză tradițională</language>
-			<language type="znd" draft="contributed">zande</language>
 			<language type="zu">zulu</language>
 			<language type="zun" draft="contributed">zuni</language>
 			<language type="zxx">fară conținut lingvistic</language>
@@ -2141,9 +2076,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Asia/Yerevan">
 				<exemplarCity>Erevan</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Polul Sud</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Showa</exemplarCity>
 			</zone>
@@ -2766,6 +2698,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<standard>Ora standard a Europei Centrale</standard>
 					<daylight>Ora de vară a Europei Centrale</daylight>
 				</long>
+				<short>
+					<generic>CET</generic>
+					<standard>CET</standard>
+					<daylight>CEST</daylight>
+				</short>
 			</metazone>
 			<metazone type="Europe_Eastern">
 				<long>
@@ -2773,6 +2710,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<standard>Ora standard a Europei de Est</standard>
 					<daylight>Ora de vară a Europei de Est</daylight>
 				</long>
+				<short>
+					<generic>EET</generic>
+					<standard>EET</standard>
+					<daylight>EEST</daylight>
+				</short>
 			</metazone>
 			<metazone type="Europe_Western">
 				<long>
@@ -2780,6 +2722,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<standard>Ora standard a Europei de Vest</standard>
 					<daylight>Ora de vară a Europei de Vest</daylight>
 				</long>
+				<short>
+					<generic>WET</generic>
+					<standard>WET</standard>
+					<daylight>WEST</daylight>
+				</short>
 			</metazone>
 			<metazone type="Falkland">
 				<long>
@@ -2831,6 +2778,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<long>
 					<standard>Ora de Greenwhich</standard>
 				</long>
+				<short>
+					<standard>GMT</standard>
+				</short>
 			</metazone>
 			<metazone type="Greenland_Eastern">
 				<long>

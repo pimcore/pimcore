@@ -1026,7 +1026,7 @@ EOJ;
             return '';
         }
 
-        array_reverse($stylesheets);
+        $stylesheets = array_reverse($stylesheets);
         $style = '<style type="text/css">' . PHP_EOL
                . (($this->_isXhtml) ? '<!--' : '<!--') . PHP_EOL;
         foreach ($stylesheets as $stylesheet) {

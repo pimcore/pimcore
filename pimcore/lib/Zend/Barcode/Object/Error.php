@@ -45,6 +45,8 @@ class Zend_Barcode_Object_Error extends Zend_Barcode_Object_ObjectAbstract
 
     /**
      * Height is forced
+     *
+     * @param bool $recalculate
      * @return integer
      */
     public function getHeight($recalculate = false)
@@ -54,6 +56,8 @@ class Zend_Barcode_Object_Error extends Zend_Barcode_Object_ObjectAbstract
 
     /**
      * Width is forced
+     *
+     * @param bool $recalculate
      * @return integer
      */
     public function getWidth($recalculate = false)

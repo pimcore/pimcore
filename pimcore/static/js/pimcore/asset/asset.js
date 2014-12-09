@@ -325,7 +325,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 }
                 // reload versions
                 if (this.isAllowed("versions")) {
-                    if (typeof this.versions.reload == "function") {
+                    if (this["versions"] && typeof this.versions.reload == "function") {
                         this.versions.reload();
                     }
                 }

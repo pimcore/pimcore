@@ -15,7 +15,14 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Pdf extends Document_Tag
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Model;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Element;
+use Pimcore\Model\Document;
+
+class Pdf extends Model\Document\Tag
 {
     /**
      * @var int
@@ -38,7 +45,7 @@ class Document_Tag_Pdf extends Document_Tag
     public $chapters = array();
 
     /**
-     * @see Document_Tag_Interface::getType
+     * @see Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType()
@@ -47,7 +54,7 @@ class Document_Tag_Pdf extends Document_Tag
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData()
@@ -72,7 +79,7 @@ class Document_Tag_Pdf extends Document_Tag
                 foreach ($page as &$element) {
                     if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
                         foreach($element["data"] as &$metaData) {
-                            if($metaData["value"] instanceof Element_Interface) {
+                            if($metaData["value"] instanceof Element\ElementInterface) {
                                 $metaData["value"] = $metaData["value"]->getId();
                             }
                         }
@@ -106,7 +113,7 @@ class Document_Tag_Pdf extends Document_Tag
                 foreach ($page as &$element) {
                     if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
                         foreach ($element["data"] as &$metaData) {
-                            if ($metaData["value"] instanceof Element_Interface) {
+                            if ($metaData["value"] instanceof Element\ElementInterface) {
                                 $metaData["value"] = $metaData["value"]->getFullPath();
                             }
                         }
@@ -152,7 +159,7 @@ class Document_Tag_Pdf extends Document_Tag
                     foreach ($page as $element) {
                         if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
                             foreach($element["data"] as $metaData) {
-                                if($metaData["value"] instanceof Element_Interface) {
+                                if($metaData["value"] instanceof Element\ElementInterface) {
                                     $tags = $metaData["value"]->getCacheTags($tags);
                                 }
                             }
@@ -196,7 +203,7 @@ class Document_Tag_Pdf extends Document_Tag
                 foreach ($page as $element) {
                     if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
                         foreach ($element["data"] as $metaData) {
-                            if ($metaData["value"] instanceof Element_Interface) {
+                            if ($metaData["value"] instanceof Element\ElementInterface) {
 
                                 $elTtype = $metaData["type"];
                                 if($metaData["type"] == "link") {
@@ -230,7 +237,7 @@ class Document_Tag_Pdf extends Document_Tag
             $el = Asset::getById($this->id);
             if (!$el instanceof Asset) {
                 $sane = false;
-                Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
+                \Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
                 $this->id = null;
             }
         }
@@ -239,14 +246,14 @@ class Document_Tag_Pdf extends Document_Tag
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
     public function setDataFromResource($data)
     {
         if (!empty($data)) {
-            $data = Pimcore_Tool_Serialize::unserialize($data);
+            $data = \Pimcore\Tool\Serialize::unserialize($data);
         }
 
         $rewritePath = function ($data) {
@@ -264,7 +271,7 @@ class Document_Tag_Pdf extends Document_Tag
                                 if($metaData["type"] == "link") {
                                     $elTtype = "document";
                                 }
-                                $el = Element_Service::getElementById($elTtype, $metaData["value"]);
+                                $el = Element\Service::getElementById($elTtype, $metaData["value"]);
 
                                 if(!$el && $metaData["type"] == "link") {
                                     $metaData["value"] = $metaData["value"];
@@ -298,7 +305,7 @@ class Document_Tag_Pdf extends Document_Tag
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
@@ -306,7 +313,7 @@ class Document_Tag_Pdf extends Document_Tag
     {
 //        var_dump($data); Exit;
         $pdf = Asset::getById($data["id"]);
-        if($pdf instanceof Asset_Document) {
+        if($pdf instanceof Asset\Document) {
             $this->id = $pdf->getId();
             if(array_key_exists("hotspots", $data) && !empty($data["hotspots"])) {
 
@@ -325,7 +332,7 @@ class Document_Tag_Pdf extends Document_Tag
                                         if($metaData["type"] == "link") {
                                             $elTtype = "document";
                                         }
-                                        $el = Element_Service::getElementByPath($elTtype, $metaData["value"]);
+                                        $el = Element\Service::getElementByPath($elTtype, $metaData["value"]);
 
                                         if(!$el && $metaData["type"] == "link") {
                                             $metaData["value"] = $metaData["value"];
@@ -379,7 +386,7 @@ class Document_Tag_Pdf extends Document_Tag
         $options = $this->getOptions();
 
 
-        if ($asset instanceof Asset_Document && $asset->getPageCount()) {
+        if ($asset instanceof Asset\Document && $asset->getPageCount()) {
             $pageCount = $asset->getPageCount();
             $hotspots = $this->getHotspots();
             $rewritePath = function ($data) {
@@ -434,7 +441,7 @@ class Document_Tag_Pdf extends Document_Tag
 
             $jsVarName = "pimcore_pdf_" . $this->getName();
             $divId = "pimcore-pdf-" . uniqid();
-            $jsonData = Zend_Json::encode($data);
+            $jsonData = \Zend_Json::encode($data);
 
             $code = <<<HTML
 
@@ -471,7 +478,7 @@ HTML;
         }
 
         // only display error message in debug mode
-        if(!Pimcore::inDebugMode()) {
+        if(!\Pimcore::inDebugMode()) {
             $message = "";
         }
 
@@ -497,9 +504,9 @@ HTML;
     }
 
     /**
-     * @param Webservice_Data_Document_Element $wsElement
+     * @param Webservice\Data\Document\Element $wsElement
      * @param null $idMapper
-     * @throws Exception
+     * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $idMapper = null)
     {
@@ -507,7 +514,7 @@ HTML;
         if($data->id){
             $asset = Asset::getById($data->id);
             if(!$asset){
-                throw new Exception("Referencing unknown asset with id [ ".$data->id." ] in webservice import field [ ".$data->name." ]");
+                throw new \Exception("Referencing unknown asset with id [ ".$data->id." ] in webservice import field [ ".$data->name." ]");
             } else {
                 $this->id = $data->id;
             }
@@ -539,7 +546,7 @@ HTML;
             return $texts[$page];
         }else{
             $asset = $this->getElement();
-            if($asset instanceof Asset_Document){
+            if($asset instanceof Asset\Document){
                 return $asset->getText($page);
             }
         }

@@ -314,6 +314,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
             return sprintf('%F', $value);
         }
 
+        $value = addcslashes($value, "\000\032");
         return "'" . str_replace("'", "''", $value) . "'";
     }
 

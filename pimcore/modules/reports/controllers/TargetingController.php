@@ -13,7 +13,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
+use Pimcore\Model\Tool\Targeting;
+use Pimcore\Model\Document;
+
+class Reports_TargetingController extends \Pimcore\Controller\Action\Admin {
 
     public function init() {
         parent::init();
@@ -30,7 +33,7 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
     public function ruleListAction() {
 
         $targets = array();
-        $list = new Tool_Targeting_Rule_List();
+        $list = new Targeting\Rule\Listing();
 
         foreach($list->load() as $target) {
             $targets[] = array(
@@ -45,7 +48,7 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
     public function ruleAddAction() {
 
-        $target = new Tool_Targeting_Rule();
+        $target = new Targeting\Rule();
         $target->setName($this->getParam("name"));
         $target->save();
 
@@ -56,7 +59,7 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
         $success = false;
 
-        $target = Tool_Targeting_Rule::getById($this->getParam("id"));
+        $target = Targeting\Rule::getById($this->getParam("id"));
         if($target) {
             $target->delete();
             $success = true;
@@ -67,7 +70,7 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
     public function ruleGetAction() {
 
-        $target = Tool_Targeting_Rule::getById($this->getParam("id"));
+        $target = Targeting\Rule::getById($this->getParam("id"));
         $redirectUrl = $target->getActions()->getRedirectUrl();
         if(is_numeric($redirectUrl)) {
             $doc = Document::getById($redirectUrl);
@@ -81,14 +84,14 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
     public function ruleSaveAction() {
 
-        $data = Zend_Json::decode($this->getParam("data"));
+        $data = \Zend_Json::decode($this->getParam("data"));
 
-        $target = Tool_Targeting_Rule::getById($this->getParam("id"));
+        $target = Targeting\Rule::getById($this->getParam("id"));
         $target->setValues($data["settings"]);
 
         $target->setConditions($data["conditions"]);
 
-        $actions = new Tool_Targeting_Rule_Actions();
+        $actions = new Targeting\Rule\Actions();
         $actions->setRedirectEnabled($data["actions"]["redirect.enabled"]);
         $actions->setRedirectUrl($data["actions"]["redirect.url"]);
         $actions->setRedirectCode($data["actions"]["redirect.code"]);
@@ -118,7 +121,7 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
     public function personaListAction() {
 
         $personas = array();
-        $list = new Tool_Targeting_Persona_List();
+        $list = new Targeting\Persona\Listing();
 
         foreach($list->load() as $persona) {
             $personas[] = array(
@@ -133,7 +136,7 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
     public function personaAddAction() {
 
-        $persona = new Tool_Targeting_Persona();
+        $persona = new Targeting\Persona();
         $persona->setName($this->getParam("name"));
         $persona->save();
 
@@ -144,7 +147,7 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
         $success = false;
 
-        $persona = Tool_Targeting_Persona::getById($this->getParam("id"));
+        $persona = Targeting\Persona::getById($this->getParam("id"));
         if($persona) {
             $persona->delete();
             $success = true;
@@ -155,15 +158,15 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
     public function personaGetAction() {
 
-        $persona = Tool_Targeting_Persona::getById($this->getParam("id"));
+        $persona = Targeting\Persona::getById($this->getParam("id"));
         $this->_helper->json($persona);
     }
 
     public function personaSaveAction() {
 
-        $data = Zend_Json::decode($this->getParam("data"));
+        $data = \Zend_Json::decode($this->getParam("data"));
 
-        $persona = Tool_Targeting_Persona::getById($this->getParam("id"));
+        $persona = Targeting\Persona::getById($this->getParam("id"));
         $persona->setValues($data["settings"]);
 
         $persona->setConditions($data["conditions"]);

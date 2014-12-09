@@ -13,13 +13,23 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_ErrorHandler extends Zend_Controller_Plugin_ErrorHandler {
+namespace Pimcore\Controller\Plugin;
 
+use Pimcore\Tool;
+use Pimcore\Config;
+use Pimcore\Model\Document;
+use Pimcore\Model\Site;
 
-    protected function _handleError(Zend_Controller_Request_Abstract $request) {
+class ErrorHandler extends \Zend_Controller_Plugin_ErrorHandler {
+
+    /**
+     * @param \Zend_Controller_Request_Abstract $request
+     * @throws mixed
+     */
+    protected function _handleError(\Zend_Controller_Request_Abstract $request) {
         
         // remove zend error handler
-        $front = Zend_Controller_Front::getInstance();
+        $front = \Zend_Controller_Front::getInstance();
         $front->unregisterPlugin("Zend_Controller_Plugin_ErrorHandler");
 
         $response = $this->getResponse();
@@ -31,7 +41,7 @@ class Pimcore_Controller_Plugin_ErrorHandler extends Zend_Controller_Plugin_Erro
                 // enable error handler
                 $front->setParam('noErrorHandler', false);
 
-                $errorPath = Pimcore_Config::getSystemConfig()->documents->error_pages->default;
+                $errorPath = Config::getSystemConfig()->documents->error_pages->default;
 
                 if(Site::isSiteRequest()) {
                     $site = Site::getCurrentSite();
@@ -44,14 +54,14 @@ class Pimcore_Controller_Plugin_ErrorHandler extends Zend_Controller_Plugin_Erro
 
                 $document = Document::getByPath($errorPath);
 
-                if (!$document instanceof Document_Page) {
+                if (!$document instanceof Document\Page) {
                     // default is home
                     $document = Document::getById(1);
                 }
 
-                if ($document instanceof Document_Page) {
+                if ($document instanceof Document\Page) {
 
-                    $params = Pimcore_Tool::getRoutingDefaults();
+                    $params = Tool::getRoutingDefaults();
 
                     if ($module = $document->getModule()) {
                         $params["module"] = $module;
@@ -67,12 +77,25 @@ class Pimcore_Controller_Plugin_ErrorHandler extends Zend_Controller_Plugin_Erro
                     $this->setErrorHandler($params);
 
                     $request->setParam("document", $document);
-                    Zend_Registry::set("pimcore_error_document", $document);
+                    \Zend_Registry::set("pimcore_error_document", $document);
+
+                    // ensure that a viewRenderer exists, and is enabled
+                    if(!\Zend_Controller_Action_HelperBroker::hasHelper("viewRenderer")) {
+                        $viewRenderer = new \Pimcore\Controller\Action\Helper\ViewRenderer();
+                        \Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
+                    }
+
+                    $viewRenderer = \Zend_Controller_Action_HelperBroker::getExistingHelper("viewRenderer");
+                    $viewRenderer->setNoRender(false);
+
+                    if($viewRenderer->view === null) {
+                        $viewRenderer->initView(PIMCORE_WEBSITE_PATH . "/views");
+                    }
                 }
 
             }
-            catch (Exception $e) {
-                Logger::emergency("error page not found");
+            catch (\Exception $e) {
+                \Logger::emergency("error page not found");
             }
         }
 

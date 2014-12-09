@@ -15,7 +15,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_Tag_Interface {
+namespace Pimcore\Model\Document;
+
+use Pimcore\Model;
+use Pimcore\Model\Document;
+use Pimcore\Model\Webservice;
+
+abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\TagInterface {
 
     /**
      * Options of the current tag, can contain some configurations for the editmode, or the thumbnail name, ...
@@ -52,12 +58,12 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     protected $resource;
 
     /**
-     * @var Pimcore_Controller_Action
+     * @var \Pimcore\Controller\Action
      */
     protected $controller;
 
     /**
-     * @var Pimcore_View
+     * @var \Pimcore\View
      */
     protected $view;
 
@@ -74,15 +80,28 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     protected $inherited = false;
 
     /**
-     * @param string $type
-     * @param string $name
-     * @param integer $documentId
-     * @param array $config
-     * @return Tag
+     * @param $type
+     * @param $name
+     * @param $documentId
+     * @param null $config
+     * @param null $controller
+     * @param null $view
+     * @param null $editmode
+     * @return mixed
      */
     public static function factory($type, $name, $documentId, $config = null, $controller = null, $view = null, $editmode = null) {
 
-        $tagClass = "Document_Tag_" . ucfirst($type);
+        $tagClass = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst($type);
+
+        // this is the fallback for custom document tags using prefixes
+        // so we need to check if the class exists first
+        if(!\Pimcore\Tool::classExists($tagClass)) {
+            $oldStyleClass = "\\Document_Tag_" . ucfirst($type);
+            if(\Pimcore\Tool::classExists($oldStyleClass)) {
+                $tagClass = $oldStyleClass;
+            }
+        }
+
         $tag = new $tagClass();
         $tag->setName($name);
         $tag->setDocumentId($documentId);
@@ -94,7 +113,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     }
 
     /**
-     * @see Document_Tag_Interface::admin
+     * @see Document\Tag\DocumentInterface::admin
      * @return string
      */
     public function admin() {
@@ -115,7 +134,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
             "type" => $this->getType(),
             "inherited" => $this->getInherited()
         );
-        $options = @Zend_Json::encode($options, false, array('enableJsonExprFinder' => true));
+        $options = @\Zend_Json::encode($options, false, array('enableJsonExprFinder' => true));
 
         return '
             <script type="text/javascript">
@@ -126,7 +145,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\DocumentInterface::getData
      * @return mixed
      */
     public function getValue() {
@@ -182,7 +201,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     }
 
     /**
-     * @param Pimcore_Controller_Action $controller
+     * @param \Pimcore\Controller\Action $controller
      * @return void
      */
     public function setController($controller) {
@@ -191,14 +210,14 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     }
 
     /**
-     * @return Pimcore_Controller_Action
+     * @return \Pimcore\Controller\Action
      */
     public function getController() {
         return $this->controller;
     }
 
     /**
-     * @param Pimcore_View $view
+     * @param \Pimcore\View $view
      * @return void
      */
     public function setView($view) {
@@ -207,7 +226,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     }
 
     /**
-     * @return Pimcore_View
+     * @return \Pimcore\View
      */
     public function getView() {
         return $this->view;
@@ -258,12 +277,12 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
             else {
                 $return = $this->frontend();
             }
-        } catch (Exception $e) {
-            if(Pimcore::inDebugMode()){
+        } catch (\Exception $e) {
+            if(\Pimcore::inDebugMode()){
                 // the __toString method isn't allowed to throw exceptions
                 $return = '<b style="color:#f00">__toString not possible - ' . $e->getMessage().'</b><br/>'.$e->getTraceAsString();
             }
-            Logger::error("to string not possible - " . $e->getMessage());
+            \Logger::error("to string not possible - " . $e->getMessage());
         }
 
         if (is_string($return)) {
@@ -272,7 +291,6 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
         return '';
 
     }
-
 
     /**
      * @return boolean
@@ -292,7 +310,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
 
 
     /**
-     * @see Document_Tag_Interface::getDataForResource
+     * @see Document\Tag\DocumentInterface::getDataForResource
      * @return void
      */
     public function getDataForResource() {
@@ -301,9 +319,9 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
      * @param $ownerDocument
-     * @param array $blockedTags
+     * @param array $tags
+     * @return array
      */
     public function getCacheTags($ownerDocument, $tags = array()) {
         return $tags;
@@ -321,7 +339,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      * Receives a standard class object from webservice import and fills the current tag's data
      *
      * @abstract
-     * @param  Webservice_Data_Document_Element $wsElement
+     * @param  Webservice\Data\Document\Element $wsElement
      * @return void
      */
     public function getFromWebserviceImport($wsElement) {
@@ -341,11 +359,11 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
         $el = array();
         foreach ($keys as $key => $value) {
 
-            if ($value instanceof Element_Interface) {
+            if ($value instanceof Model\Element\ElementInterface) {
                 $value = $value->getId();
             }
-            $className = Webservice_Data_Mapper::findWebserviceClass($value,"out");
-            $el[$key] = Webservice_Data_Mapper::map($value,$className,"out");
+            $className = Webservice\Data\Mapper::findWebserviceClass($value,"out");
+            $el[$key] = Webservice\Data\Mapper::map($value,$className,"out");
         }
 
         unset($el["resource"]);
@@ -354,7 +372,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
         unset($el["view"]);
         unset($el["editmode"]);
 
-        $el = Webservice_Data_Mapper::toObject($el);
+        $el = Webservice\Data\Mapper::toObject($el);
         return $el;
     }
 
@@ -368,7 +386,8 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     }
 
     /**
-     * @param boolean $inherited
+     * @param $inherited
+     * @return $this
      */
     public function setInherited($inherited)
     {
@@ -394,16 +413,16 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     public static function buildTagName($type,$name, $document = null){
 
         // check for persona content
-        if($document && $document instanceof Document_Page && $document->getUsePersona()) {
+        if($document && $document instanceof Document\Page && $document->getUsePersona()) {
             $name = $document->getPersonaElementName($name);
         }
 
         // @todo add document-id to registry key | for example for embeded snippets
         // set suffixes if the tag is inside a block
-        if(Zend_Registry::isRegistered("pimcore_tag_block_current")) {
-            $blocks = Zend_Registry::get("pimcore_tag_block_current");
+        if(\Zend_Registry::isRegistered("pimcore_tag_block_current")) {
+            $blocks = \Zend_Registry::get("pimcore_tag_block_current");
 
-            $numeration = Zend_Registry::get("pimcore_tag_block_numeration");
+            $numeration = \Zend_Registry::get("pimcore_tag_block_numeration");
             if (is_array($blocks) and count($blocks) > 0) {
 
                 if ($type == "block") {
@@ -429,8 +448,4 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
 
         return $name;
     }
-
-
-
-
 }

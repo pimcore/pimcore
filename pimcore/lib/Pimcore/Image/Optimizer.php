@@ -13,10 +13,21 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Image_Optimizer {
+namespace Pimcore\Image;
 
+use Pimcore\Tool\Console; 
+use Pimcore\Config; 
+
+class Optimizer {
+
+    /**
+     * @var array
+     */
     protected static $optimizerBinaries = array();
 
+    /**
+     * @param $path
+     */
     public static function optimize($path) {
 
         $format = getimagesize($path);
@@ -28,7 +39,7 @@ class Pimcore_Image_Optimizer {
                 $optimizer = self::getPngOptimizerCli();
                 if($optimizer) {
                     /*if($optimizer["type"] == "pngquant") {
-                        Pimcore_Tool_Console::exec($optimizer["path"] . " --ext xxxoptimized.png " . $path, null, 60);
+                        Console::exec($optimizer["path"] . " --ext xxxoptimized.png " . $path, null, 60);
                         $newFile = preg_replace("/\.png$/", "", $path);
                         $newFile .= "xxxoptimized.png";
 
@@ -39,7 +50,7 @@ class Pimcore_Image_Optimizer {
                     } else */
                     if ($optimizer["type"] == "pngcrush") {
                         $newFile = $path . ".xxxoptimized";
-                        Pimcore_Tool_Console::exec($optimizer["path"] . " " . $path . " " . $newFile, null, 60);
+                        Console::exec($optimizer["path"] . " " . $path . " " . $newFile, null, 60);
                         if(file_exists($newFile)) {
                             unlink($path);
                             rename($newFile, $path);
@@ -51,7 +62,7 @@ class Pimcore_Image_Optimizer {
                 if($optimizer) {
                     if($optimizer["type"] == "imgmin") {
                         $newFile = $path . ".xxxoptimized";
-                        Pimcore_Tool_Console::exec($optimizer["path"] . " " . $path . " " . $newFile, null, 60);
+                        Console::exec($optimizer["path"] . " " . $path . " " . $newFile, null, 60);
                         if(file_exists($newFile)) {
                             unlink($path);
                             rename($newFile, $path);
@@ -61,7 +72,7 @@ class Pimcore_Image_Optimizer {
                         if(filesize($path) > 10000) {
                             $additionalParams = " --all-progressive";
                         }
-                        Pimcore_Tool_Console::exec($optimizer["path"] . $additionalParams . " -o --strip-all --max=85 " . $path, null, 60);
+                        Console::exec($optimizer["path"] . $additionalParams . " -o --strip-all --max=85 " . $path, null, 60);
                     }
                 }
             }
@@ -79,7 +90,7 @@ class Pimcore_Image_Optimizer {
         }
 
         // check the system-config for a path
-        $configPath = Pimcore_Config::getSystemConfig()->assets->pngcrush;
+        $configPath = Config::getSystemConfig()->assets->pngcrush;
         if($configPath) {
             if(@is_executable($configPath)) {
                 self::$optimizerBinaries["pngOptimizer"] = array(
@@ -89,7 +100,7 @@ class Pimcore_Image_Optimizer {
 
                 return $configPath;
             } else {
-                Logger::critical("Binary: " . $configPath . " is not executable");
+                \Logger::critical("Binary: " . $configPath . " is not executable");
             }
         }
 
@@ -117,6 +128,9 @@ class Pimcore_Image_Optimizer {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public static function getJpegOptimizerCli() {
 
         // check if we have a cached path for this process
@@ -126,7 +140,7 @@ class Pimcore_Image_Optimizer {
 
         // check the system-config for a path
         foreach (["imgmin","jpegoptim"] as $type) {
-            $configPath = Pimcore_Config::getSystemConfig()->assets->$type;
+            $configPath = Config::getSystemConfig()->assets->$type;
             if($configPath) {
                 if(@is_executable($configPath)) {
                     self::$optimizerBinaries["pngOptimizer"] = array(
@@ -136,7 +150,7 @@ class Pimcore_Image_Optimizer {
 
                     return $configPath;
                 } else {
-                    Logger::critical("Binary: " . $configPath . " is not executable");
+                    \Logger::critical("Binary: " . $configPath . " is not executable");
                 }
             }
         }

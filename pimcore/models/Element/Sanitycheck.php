@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Sanitycheck extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Element;
+
+use Pimcore\Model;
+
+class Sanitycheck extends Model\AbstractModel {
 
     /**
      * @var int
@@ -33,7 +37,6 @@ class Element_Sanitycheck extends Pimcore_Model_Abstract {
     public function getId(){
         return $this->id;
     }
-
 
     /**
      * @param  int $id
@@ -82,16 +85,13 @@ class Element_Sanitycheck extends Pimcore_Model_Abstract {
 
     /**
      * @static
-     * @return Element_Sanitycheck
+     * @return Sanitycheck
      */
     public static function getNext(){
-        $sanityCheck = new Element_Sanitycheck();
+        $sanityCheck = new Sanitycheck();
         $sanityCheck->getResource()->getNext();
         if($sanityCheck->getId() and $sanityCheck->getType()){
                 return $sanityCheck;
         } else return null;
-
-
     }
-
 }

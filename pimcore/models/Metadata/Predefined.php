@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Metadata_Predefined extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Metadata;
+
+use Pimcore\Model;
+use Pimcore\Model\Element;
+
+class Predefined extends Model\AbstractModel {
 
     /**
      * @var integer
@@ -82,7 +87,7 @@ class Metadata_Predefined extends Pimcore_Model_Abstract {
 
     /**
      * @param integer $id
-     * @return Metadata_Predefined
+     * @return self
      */
     public static function getById($id) {
         $metadata = new self();
@@ -94,30 +99,19 @@ class Metadata_Predefined extends Pimcore_Model_Abstract {
 
     /**
      * @param string $key
-     * @return Metadata_Predefined
+     * @return self
      */
-    public static function getByName($key, $language = "") {
+    public static function getByName($name, $language = "") {
 
-//        $cacheKey = "metadata_predefined_" . $key . "_" . $language;
-
-//        try {
-//            $metadata = Zend_Registry::get($cacheKey);
-//            if(!$metadata) {
-//                throw new Exception("Predefined metadata in registry is null");
-//            }
-//        } catch (Exception $e) {
-            $metadata = new self();
-            $metadata->setKey($key);
-            $metadata->getResource()->getByKeyAndLanguage($key, $language);
-//
-//            Zend_Registry::set($cacheKey, $metadata);
-//        }
+        $metadata = new self();
+        $metadata->setName($name);
+        $metadata->getResource()->getByNameAndLanguage($name, $language);
 
         return $metadata;
     }
 
     /**
-     * @return Metadata_Predefined
+     * @return self
      */
     public static function create() {
         $type = new self();
@@ -212,7 +206,8 @@ class Metadata_Predefined extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $creationDate
+     * @param $creationDate
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {
@@ -229,7 +224,8 @@ class Metadata_Predefined extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $modificationDate
+     * @param $modificationDate
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -277,14 +273,33 @@ class Metadata_Predefined extends Pimcore_Model_Abstract {
         return $this->targetSubtype;
     }
 
+    /**
+     * @return string
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
 
+    /**
+     * @param string $config
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
+    }
+
+
+    /**
+     *
+     */
     public function minimize() {
         switch ($this->type) {
             case "document":
             case "asset":
             case "object":
                 {
-                    $element = Element_Service::getElementByPath($this->type, $this->data);
+                    $element = Element\Service::getElementByPath($this->type, $this->data);
                     if ($element) {
                         $this->data = $element->getId();
                     } else {
@@ -303,7 +318,9 @@ class Metadata_Predefined extends Pimcore_Model_Abstract {
         }
     }
 
-
+    /**
+     *
+     */
     public function expand() {
         switch ($this->type) {
             case "document":
@@ -311,7 +328,7 @@ class Metadata_Predefined extends Pimcore_Model_Abstract {
             case "object":
                 {
                 if (is_numeric($this->data)) {
-                    $element = Element_Service::getElementById($this->type, $this->data);
+                    $element = Element\Service::getElementById($this->type, $this->data);
                 }
                 if ($element) {
                     $this->data = $element->getFullPath();
@@ -325,8 +342,4 @@ class Metadata_Predefined extends Pimcore_Model_Abstract {
         //nothing to do
         }
     }
-
-
-
-
 }

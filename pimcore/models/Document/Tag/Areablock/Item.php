@@ -1,15 +1,28 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: tballmann
- * Date: 03.02.14
- * Time: 15:40
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @category   Pimcore
+ * @package    Document
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Areablock_Item
+namespace Pimcore\Model\Document\Tag\Areablock;
+
+use Pimcore\Model;
+
+class Item
 {
     /**
-     * @var Document_Page
+     * @var Model\Document\Page
      */
     protected $doc;
 
@@ -24,11 +37,11 @@ class Document_Tag_Areablock_Item
     protected $index;
 
     /**
-     * @param Document_Page $doc
+     * @param Model\Document\Page $doc
      * @param               $name
      * @param               $index
      */
-    public function __construct(Document_Page $doc, $name, $index)
+    public function __construct(Model\Document\Page $doc, $name, $index)
     {
         $this->doc = $doc;
         $this->name = $name;
@@ -39,7 +52,7 @@ class Document_Tag_Areablock_Item
     /**
      * @param $name
      *
-     * @return Document_Tag
+     * @return Model\Document\Page
      */
     public function getElement($name)
     {
@@ -54,12 +67,12 @@ class Document_Tag_Areablock_Item
      * @param $func
      * @param $args
      *
-     * @return Document_Tag_*|null
+     * @return Model\Document\Page*|null
      */
     public function __call($func, $args)
     {
         $element = $this->getElement($args[0]);
-        $class = 'Document_Tag_' . str_replace('get', '', $func);
+        $class = "\\Pimcore\\Model\\Document\\Tag\\" . str_replace('get', '', $func);
 
         if(!strcasecmp(get_class($element), $class))
         {

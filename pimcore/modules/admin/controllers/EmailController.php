@@ -13,24 +13,29 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
+use Pimcore\Mail;
+use Pimcore\Model\Element;
+use Pimcore\Model\Document;
+use Pimcore\Model\Tool;
+
+class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
 {
 
     public function getDataByIdAction()
     {
 
         // check for lock
-        if (Element_Editlock::isLocked($this->getParam("id"), "document")) {
+        if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
             $this->_helper->json(array(
-                "editlock" => Element_Editlock::getByElement($this->getParam("id"), "document")
+                "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
             ));
         }
-        Element_Editlock::lock($this->getParam("id"), "document");
+        Element\Editlock::lock($this->getParam("id"), "document");
 
-        $email = Document_Email::getById($this->getParam("id"));
+        $email = Document\Email::getById($this->getParam("id"));
         $email = $this->getLatestVersion($email);
         $email->setVersions(array_splice($email->getVersions(), 0, 1));
-        $email->idPath = Element_Service::getIdPath($email);
+        $email->idPath = Element\Service::getIdPath($email);
         $email->userPermissions = $email->getUserPermissions();
         $email->setLocked($email->isLocked());
         $email->setParent(null);
@@ -53,7 +58,7 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
     {
 
         if ($this->getParam("id")) {
-            $page = Document_Email::getById($this->getParam("id"));
+            $page = Document\Email::getById($this->getParam("id"));
 
             $page = $this->getLatestVersion($page);
             $page->setUserModification($this->getUser()->getId());
@@ -73,8 +78,8 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
                     $page->save();
                     $this->saveToSession($page);
                     $this->_helper->json(array("success" => true));
-                } catch (Exception $e) {
-                    Logger::err($e);
+                } catch (\Exception $e) {
+                    \Logger::err($e);
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
 
@@ -88,8 +93,8 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
                         $page->saveVersion();
                         $this->saveToSession($page);
                         $this->_helper->json(array("success" => true));
-                    } catch (Exception $e) {
-                        Logger::err($e);
+                    } catch (\Exception $e) {
+                        \Logger::err($e);
                         $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                     }
 
@@ -113,7 +118,11 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
      */
     public function emailLogsAction()
     {
-        $list = new Tool_Email_Log_List();
+        if(!$this->getUser()->isAllowed("sent_emails")) {
+            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        }
+
+        $list = new Tool\Email\Log\Listing();
         if ($this->getParam('documentId')) {
             $list->setCondition('documentId = ' . (int)$this->getParam('documentId'));
         }
@@ -166,8 +175,12 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
      */
     public function showEmailLogAction()
     {
+        if(!$this->getUser()->isAllowed("sent_emails")) {
+            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        }
+
         $type = $this->getParam('type');
-        $emailLog = Tool_Email_Log::getById($this->getParam('id'));
+        $emailLog = Tool\Email\Log::getById($this->getParam('id'));
 
         if ($this->getParam('type') == 'text') {
             $this->disableViewAutoRender();
@@ -178,9 +191,9 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         } elseif ($this->getParam('type') == 'params') {
             $this->disableViewAutoRender();
             try {
-                $params = Zend_Json::decode($emailLog->getParams());
-            } catch (Exception $e) {
-                Logger::warning("Could not decode JSON param string");
+                $params = \Zend_Json::decode($emailLog->getParams());
+            } catch (\Exception $e) {
+                \Logger::warning("Could not decode JSON param string");
                 $params = array();
             }
             foreach ($params as &$entry) {
@@ -193,71 +206,6 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         }
     }
 
-    public function blacklistAction() {
-
-        if ($this->getParam("data")) {
-
-            $data = Zend_Json::decode($this->getParam("data"));
-
-            if(is_array($data)) {
-                foreach ($data as &$value) {
-                    $value = trim($value);
-                }
-            }
-
-            if ($this->getParam("xaction") == "destroy") {
-                $address = Tool_Email_Blacklist::getByAddress($data);
-                $address->delete();
-
-                $this->_helper->json(array("success" => true, "data" => array()));
-            }
-            else if ($this->getParam("xaction") == "update") {
-                $address = Tool_Email_Blacklist::getByAddress($data["address"]);
-                $address->setValues($data);
-                $address->save();
-
-                $this->_helper->json(array("data" => $address, "success" => true));
-            }
-            else if ($this->getParam("xaction") == "create") {
-
-                unset($data["id"]);
-
-                $address = new Tool_Email_Blacklist();
-                $address->setValues($data);
-                $address->save();
-
-                $this->_helper->json(array("data" => $address, "success" => true));
-            }
-        }
-        else {
-            // get list of routes
-
-            $list = new Tool_Email_Blacklist_List();
-
-            $list->setLimit($this->getParam("limit"));
-            $list->setOffset($this->getParam("start"));
-
-            if($this->getParam("sort")) {
-                $list->setOrderKey($this->getParam("sort"));
-                $list->setOrder($this->getParam("dir"));
-            }
-
-            if($this->getParam("filter")) {
-                $list->setCondition("`address` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
-            }
-
-            $data = $list->load();
-
-            $this->_helper->json(array(
-                "success" => true,
-                "data" => $data,
-                "total" => $list->getTotalCount()
-            ));
-        }
-
-        $this->_helper->json(false);
-    }
-
     /**
      * Helper to build the correct Json array for the treeGrid
      *
@@ -268,14 +216,17 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
     {
 
         if ($data['objectId']) {
-            $class = $data['objectClass'];
+            $class = "\\" . ltrim($data['objectClass'],"\\");
             $obj = $class::getById($data['objectId']);
             if (is_null($obj)) {
                 $data['objectPath'] = '';
             } else {
                 $data['objectPath'] = $obj->getFullPath();
             }
-            $tmp = explode('_', $data['objectClass']);
+            $niceClassName = str_replace("\\Pimcore\\Model\\", "", $data['objectClass']);
+            $niceClassName = str_replace("_", "\\", $niceClassName);
+
+            $tmp = explode("\\", $niceClassName);
             if (in_array($tmp[0], array('Object', 'Document', 'Asset'))) {
                 $data['objectClassBase'] = $tmp[0];
                 $data['objectClassSubType'] = $tmp[1];
@@ -301,17 +252,17 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
                 if ($data['objectClassBase'] == 'Object') {
                     $fullEntry['iconCls'] = 'pimcore_icon_object';
                 } elseif ($data['objectClassBase'] == 'Asset') {
-                    switch ($data['objectClass']) {
-                        case 'Asset_Image':
+                    switch ($data['objectClassSubType']) {
+                        case 'Image':
                             $fullEntry['iconCls'] = 'pimcore_icon_image';
                             break;
-                        case 'Asset_Video':
+                        case 'Video':
                             $fullEntry['iconCls'] = 'pimcore_icon_wmv';
                             break;
-                        case 'Asset_Text':
+                        case 'Text':
                             $fullEntry['iconCls'] = 'pimcore_icon_txt';
                             break;
-                        case 'Asset_Document':
+                        case 'Document':
                             $fullEntry['iconCls'] = 'pimcore_icon_pdf';
                             break;
                         default :
@@ -334,9 +285,13 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
      */
     public function deleteEmailLogAction()
     {
+        if(!$this->getUser()->isAllowed("sent_emails")) {
+            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        }
+
         $success = false;
-        $emailLog = Tool_Email_Log::getById($this->getParam('id'));
-        if ($emailLog instanceof Tool_Email_Log) {
+        $emailLog = Tool\Email\Log::getById($this->getParam('id'));
+        if ($emailLog instanceof Tool\Email\Log) {
             $emailLog->delete();
             $success = true;
         }
@@ -349,11 +304,16 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
      * Resends the email to the recipients
      */
     public function resendEmailAction(){
-        $success = false;
-        $emailLog = Tool_Email_Log::getById($this->getParam('id'));
 
-        if($emailLog instanceof Tool_Email_Log){
-            $mail = new Pimcore_Mail();
+        if(!$this->getUser()->isAllowed("sent_emails")) {
+            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        }
+
+        $success = false;
+        $emailLog = Tool\Email\Log::getById($this->getParam('id'));
+
+        if($emailLog instanceof Tool\Email\Log){
+            $mail = new Mail();
             $mail->preventDebugInformationAppending();
 
             if($html = $emailLog->getHtmlLog()){
@@ -387,26 +347,99 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         ));
     }
 
+
+    /* global functionalities */
+
     public function sendTestEmailAction() {
 
-        if($this->getUser()->isAllowed("emails")) {
-            $mail = new Pimcore_Mail();
-            $mail->addTo($this->getParam("to"));
-            $mail->setSubject($this->getParam("subject"));
+        if(!$this->getUser()->isAllowed("emails")) {
+            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        }
 
-            if($this->getParam("type") == "text") {
-                $mail->setBodyText($this->getParam("content"));
-            } else {
-                $mail->setBodyHtml($this->getParam("content"));
+        $mail = new Mail();
+        $mail->addTo($this->getParam("to"));
+        $mail->setSubject($this->getParam("subject"));
+
+        if($this->getParam("type") == "text") {
+            $mail->setBodyText($this->getParam("content"));
+        } else {
+            $mail->setBodyHtml($this->getParam("content"));
+        }
+
+        $mail->send();
+
+        $this->_helper->json(array(
+            "success" => true,
+        ));
+    }
+
+
+    public function blacklistAction() {
+
+        if(!$this->getUser()->isAllowed("emails")) {
+            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        }
+
+        if ($this->getParam("data")) {
+
+            $data = \Zend_Json::decode($this->getParam("data"));
+
+            if(is_array($data)) {
+                foreach ($data as &$value) {
+                    $value = trim($value);
+                }
             }
 
-            $mail->send();
+            if ($this->getParam("xaction") == "destroy") {
+                $address = Tool\Email\Blacklist::getByAddress($data);
+                $address->delete();
+
+                $this->_helper->json(array("success" => true, "data" => array()));
+            }
+            else if ($this->getParam("xaction") == "update") {
+                $address = Tool\Email\Blacklist::getByAddress($data["address"]);
+                $address->setValues($data);
+                $address->save();
+
+                $this->_helper->json(array("data" => $address, "success" => true));
+            }
+            else if ($this->getParam("xaction") == "create") {
+
+                unset($data["id"]);
+
+                $address = new Tool\Email\Blacklist();
+                $address->setValues($data);
+                $address->save();
+
+                $this->_helper->json(array("data" => $address, "success" => true));
+            }
+        }
+        else {
+            // get list of routes
+
+            $list = new Tool\Email\Blacklist\Listing();
+
+            $list->setLimit($this->getParam("limit"));
+            $list->setOffset($this->getParam("start"));
+
+            if($this->getParam("sort")) {
+                $list->setOrderKey($this->getParam("sort"));
+                $list->setOrder($this->getParam("dir"));
+            }
+
+            if($this->getParam("filter")) {
+                $list->setCondition("`address` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
+            }
+
+            $data = $list->load();
 
             $this->_helper->json(array(
                 "success" => true,
+                "data" => $data,
+                "total" => $list->getTotalCount()
             ));
-        } else {
-            throw new \Exception("Permission denied");
         }
+
+        $this->_helper->json(false);
     }
 }

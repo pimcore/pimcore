@@ -64,7 +64,7 @@
                 echo "\n------------------------\n";
                 echo iconv(mb_detect_encoding($part), "UTF-8", $part);
                 echo "</pre>";
-            } catch (Zend_Mail_Exception $e) {
+            } catch (\Zend_Mail_Exception $e) {
                 // ignore
             }
         }

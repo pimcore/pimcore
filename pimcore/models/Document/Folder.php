@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Folder extends Document {
+namespace Pimcore\Model\Document;
+
+use Pimcore\Model;
+
+class Folder extends Model\Document {
 
     /**
      * static type of this object

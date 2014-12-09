@@ -46,7 +46,6 @@ class Zend_Application_Resource_Modules extends Zend_Application_Resource_Resour
      * Constructor
      *
      * @param  mixed $options
-     * @return void
      */
     public function __construct($options = null)
     {

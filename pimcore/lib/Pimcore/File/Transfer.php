@@ -13,11 +13,17 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_File_Transfer extends Zend_File_Transfer{
+namespace Pimcore\File;
 
-    public function __construct($adapter = 'Pimcore_File_Transfer_Adapter_Http', $direction = false, $options = array())
+class Transfer extends \Zend_File_Transfer{
+
+    /**
+     * @param string $adapter
+     * @param bool $direction
+     * @param array $options
+     */
+    public function __construct($adapter = "\\Pimcore\\File\\Transfer\\Adapter\\Http", $direction = false, $options = array())
     {
         parent::__construct($adapter,$direction,$options);
     }
-
 }

@@ -36,8 +36,11 @@
                     $type = $this->select("type")->getData();
                     if($type == "video") {
                         echo $this->video("video", [
-                            "html5" => true,
-                            "thumbnail" => "featurerette"
+                            "thumbnail" => "featurerette",
+                            "attributes" => [
+                                "class" => "video-js vjs-default-skin vjs-big-play-centered",
+                                "data-setup" => "{}"
+                            ],
                         ]);
                     } else {
                         $imgConfig = [

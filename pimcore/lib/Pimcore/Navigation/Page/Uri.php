@@ -13,7 +13,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
+namespace Pimcore\Navigation\Page;
+
+use Pimcore\Model\Document;
+
+class Uri extends \Zend_Navigation_Page_Uri
 {
 
     /**
@@ -36,7 +40,6 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
      */
     protected $_documentId;
 
-
     /**
      * @param  $tabindex
      * @return void
@@ -56,8 +59,8 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
     }
 
     /**
-     * @param  $accesskey
-     * @return void
+     * @param null $character
+     * @return $this|\Zend_Navigation_Page
      */
     public function setAccesskey($character = null)
     {
@@ -92,11 +95,14 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
     }
 
     /**
-     * @param Document $document
+     * @param $document
+     * @return $this
      */
     public function setDocument($document)
     {
-        if($document instanceof Document) {
+        if($document instanceof Document\Hardlink\Wrapper\WrapperInterface) {
+            $this->setDocumentId($document->getHardlinkSource()->getId());
+        } else if($document instanceof Document) {
             $this->setDocumentId($document->getId());
         }
         return $this;
@@ -109,7 +115,11 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
     {
         $docId = $this->getDocumentId();
         if($docId) {
-            return Document::getById($docId);
+            $doc = Document::getById($docId);
+            if($doc instanceof Document\Hardlink) {
+                $doc = Document\Hardlink\Service::wrap($doc);
+            }
+            return $doc;
         }
 
         return null;

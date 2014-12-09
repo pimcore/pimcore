@@ -66,7 +66,7 @@ class Zend_Barcode_Object_Identcode extends Zend_Barcode_Object_Code25interleave
      * Check allowed characters
      * @param string $value
      * @return string
-     * @throw Zend_Barcode_Object_Exception
+     * @throws Zend_Barcode_Object_Exception
      */
     public function validateText($value)
     {

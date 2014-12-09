@@ -1041,16 +1041,6 @@ abstract class Zend_Db_Table_Abstract
         $primary = (array) $this->_primary;
         $pkIdentity = $primary[(int)$this->_identity];
 
-        /**
-         * If this table uses a database sequence object and the data does not
-         * specify a value, then get the next ID from the sequence and add it
-         * to the row.  We assume that only the first column in a compound
-         * primary key takes a value from a sequence.
-         */
-        if (is_string($this->_sequence) && !isset($data[$pkIdentity])) {
-            $data[$pkIdentity] = $this->_db->nextSequenceId($this->_sequence);
-            $pkSuppliedBySequence = true;
-        }
 
         /**
          * If the primary key can be generated automatically, and no value was
@@ -1060,13 +1050,23 @@ abstract class Zend_Db_Table_Abstract
          * position of the data.  The following values are considered empty:
          *   null, false, true, '', array()
          */
-        if (!isset($pkSuppliedBySequence) && array_key_exists($pkIdentity, $data)) {
+        if (array_key_exists($pkIdentity, $data)) {
             if ($data[$pkIdentity] === null                                        // null
                 || $data[$pkIdentity] === ''                                       // empty string
                 || is_bool($data[$pkIdentity])                                     // boolean
                 || (is_array($data[$pkIdentity]) && empty($data[$pkIdentity]))) {  // empty array
                 unset($data[$pkIdentity]);
             }
+        }
+
+        /**
+         * If this table uses a database sequence object and the data does not
+         * specify a value, then get the next ID from the sequence and add it
+         * to the row.  We assume that only the first column in a compound
+         * primary key takes a value from a sequence.
+         */
+        if (is_string($this->_sequence) && !isset($data[$pkIdentity])) {
+            $data[$pkIdentity] = $this->_db->nextSequenceId($this->_sequence);
         }
 
         /**
@@ -1212,20 +1212,20 @@ abstract class Zend_Db_Table_Abstract
     {
         // setup metadata
         $this->_setupMetadata();
-        
+
         // get this class name
         $thisClass = get_class($this);
         if ($thisClass === 'Zend_Db_Table') {
             $thisClass = $this->_definitionConfigName;
         }
-        
+
         $rowsAffected = 0;
-        
+
         foreach ($this->_getReferenceMapNormalized() as $map) {
             if ($map[self::REF_TABLE_CLASS] == $parentTableClassname && isset($map[self::ON_DELETE])) {
-                
+
                 $where = array();
-                
+
                 // CASCADE or CASCADE_RECURSE
                 if (in_array($map[self::ON_DELETE], array(self::CASCADE, self::CASCADE_RECURSE))) {
                     for ($i = 0; $i < count($map[self::COLUMNS]); ++$i) {
@@ -1237,10 +1237,10 @@ abstract class Zend_Db_Table_Abstract
                             $primaryKey[$refCol], $type);
                     }
                 }
-                
+
                 // CASCADE_RECURSE
                 if ($map[self::ON_DELETE] == self::CASCADE_RECURSE) {
-                    
+
                     /**
                      * Execute cascading deletes against dependent tables
                      */
@@ -1259,7 +1259,7 @@ abstract class Zend_Db_Table_Abstract
                 if (in_array($map[self::ON_DELETE], array(self::CASCADE, self::CASCADE_RECURSE))) {
                     $rowsAffected += $this->delete($where);
                 }
-                
+
             }
         }
         return $rowsAffected;
@@ -1610,5 +1610,5 @@ abstract class Zend_Db_Table_Abstract
 
         return new $tableName($options);
     }
-    
+
 }

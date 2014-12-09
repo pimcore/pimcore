@@ -6,15 +6,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9061 $"/>
-		<generation date="$Date: 2013-07-20 12:27:45 -0500 (Sat, 20 Jul 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="tg"/>
 	</identity>
 	<localeDisplayNames>
 		<languages>
 			<language type="be" draft="unconfirmed">Белорусӣ</language>
 			<language type="bg" draft="unconfirmed">Булғорӣ</language>
-			<language type="bh" draft="unconfirmed">Биҳарӣ</language>
 			<language type="bn" draft="unconfirmed">Бенгалӣ</language>
 			<language type="br" draft="unconfirmed">Бретонӣ</language>
 			<language type="bs" draft="unconfirmed">Босниягӣ</language>
@@ -246,3 +245,4 @@ For terms of use, see http://www.unicode.org/copyright.html
 		</currencies>
 	</numbers>
 </ldml>
+

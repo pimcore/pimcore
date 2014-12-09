@@ -19,6 +19,8 @@
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
     box-sizing: content-box;
+    height: auto;
+    margin: 0;
 }
 
 #pimcore_admin_console.open {

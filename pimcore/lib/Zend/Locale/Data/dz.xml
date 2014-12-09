@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="dz"/>
 	</identity>
 	<localeDisplayNames>
@@ -22,12 +22,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="af">ཨཕ་རི་ཀཱནས་ཁ</language>
 			<language type="am">ཨམ་ཧ་རིཀ་ཁ</language>
 			<language type="ar">ཨེ་ར་བིཀ་ཁ</language>
-			<language type="art" draft="unconfirmed">བཟོ་བཟོཝ (གཞན)</language>
 			<language type="as">ཨ་ས་མིས་ཁ</language>
 			<language type="az">ཨ་ཛར་བྷའི་ཇཱན་ཁ</language>
 			<language type="be">བེལ་ཨ་རུས་ཁ</language>
 			<language type="bg">བཱལ་གེ་རི་ཡཱན་ཁ</language>
-			<language type="bh" draft="unconfirmed">བི་ཧ་ལི</language>
 			<language type="bn">བངྒ་ལ་ཁ</language>
 			<language type="bo">བོད་ཁ</language>
 			<language type="bs">བྷོས་ནི་ཡཱན་ཁ</language>
@@ -73,14 +71,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="haw">ཧ་ཝ་ཡིའི་ཁ</language>
 			<language type="he">ཧེ་བྲུ་ཁ</language>
 			<language type="hi">ཧིན་དི་ཁ</language>
-			<language type="him">ཧི་མ་ཅ་ལི་ཁ</language>
 			<language type="hr">ཀྲོ་ཨེ་ཤི་ཡཱན་ཁ</language>
 			<language type="ht">ཧེ་ཏི་ཡཱན་ཁ</language>
 			<language type="hu">ཧཱང་གྷ་རི་ཡཱན་ཁ</language>
 			<language type="hy">ཨར་མི་ནི་ཡཱན་ཁ</language>
 			<language type="id">ཨིན་ཌོ་ནེ་ཤི་ཡཱན་ཁ</language>
 			<language type="ig">ཨིག་བོ་ཁ</language>
-			<language type="inc">ཨིན་ཌིཀ་ཁ་སྐད</language>
 			<language type="is">ཨ་ཡིས་ལེན་ཌིཀ་ཁ</language>
 			<language type="it">ཨི་ཊ་ལི་ཡཱན་ཁ</language>
 			<language type="ja">ཇཱ་པཱ་ནིས་ཁ</language>
@@ -1289,9 +1285,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity draft="unconfirmed">ཕཱལ་མར</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity draft="unconfirmed">སཱའུཐ་པོལ</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Mawson">
 				<exemplarCity>མའུ་སཱོན</exemplarCity>
 			</zone>
@@ -1399,9 +1392,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>ཊོ་རོན་ཊོ</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>མཱོནཊ་རི་ཡལ</exemplarCity>
 			</zone>
 			<zone type="America/Pangnirtung">
 				<exemplarCity>པེང་ནིར་ཏུང</exemplarCity>

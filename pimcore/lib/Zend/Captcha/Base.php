@@ -78,6 +78,7 @@ abstract class Zend_Captcha_Base extends Zend_Validate_Abstract implements Zend_
      * Set name
      *
      * @param string $name
+     * @return Zend_Captcha_Adapter
      */
     public function setName($name)
     {
@@ -89,7 +90,6 @@ abstract class Zend_Captcha_Base extends Zend_Validate_Abstract implements Zend_
      * Constructor
      *
      * @param  array|Zend_Config $options
-     * @return void
      */
     public function __construct($options = null)
     {

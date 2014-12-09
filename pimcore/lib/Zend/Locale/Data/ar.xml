@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="ar"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,52 +25,41 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">الأديجه</language>
 			<language type="ae">الأفستية</language>
 			<language type="af">الأفريقية</language>
-			<language type="afa">لغة أفرو آسيوية</language>
 			<language type="afh">الأفريهيلية</language>
 			<language type="agq" draft="contributed">أغم</language>
 			<language type="ain">الآينوية</language>
 			<language type="ak">الأكانية</language>
 			<language type="akk">الأكادية</language>
 			<language type="ale">الأليوتية</language>
-			<language type="alg">اللغات الأمريكية الهندية</language>
 			<language type="alt">الألطائية الجنوبية</language>
 			<language type="am">الأمهرية</language>
 			<language type="an">الأراجونية</language>
 			<language type="ang">الإنجليزية القديمة</language>
 			<language type="anp">الأنجيكا</language>
-			<language type="apa">اللغات الأباتشية</language>
 			<language type="ar">العربية</language>
 			<language type="ar_001" draft="contributed">العربية الرسمية الحديثة</language>
 			<language type="arc">الآرامية</language>
 			<language type="arn">الأروكانية</language>
 			<language type="arp">الأراباهو</language>
-			<language type="art">الصناعية - أخرى</language>
 			<language type="arw">الأراواكية</language>
 			<language type="as">الأسامية</language>
 			<language type="asa" draft="contributed">آسو</language>
 			<language type="ast">الأسترية</language>
-			<language type="ath">اللغة الأزباسكانية</language>
-			<language type="aus">اللغة الأسترالية</language>
 			<language type="av">الأفاريكية</language>
 			<language type="awa">الأوادية</language>
 			<language type="ay">الأيمارا</language>
 			<language type="az">الأذرية</language>
 			<language type="az" alt="short">الأذرية</language>
 			<language type="ba">الباشكيرية</language>
-			<language type="bad">الباندا</language>
-			<language type="bai">اللغة الباميليكية</language>
 			<language type="bal">البلوشية</language>
 			<language type="ban">اللغة البالية</language>
 			<language type="bas">الباسا</language>
-			<language type="bat">اللغة البلطيقية</language>
 			<language type="bax" draft="contributed">بامن</language>
 			<language type="be">البيلوروسية</language>
 			<language type="bej">البيجا</language>
 			<language type="bem">البيمبا</language>
-			<language type="ber">البربرية</language>
 			<language type="bez" draft="contributed">بينا</language>
 			<language type="bg">البلغارية</language>
-			<language type="bh">البيهارية</language>
 			<language type="bho">البهوجبرية</language>
 			<language type="bi">البيسلامية</language>
 			<language type="bik">البيكولية</language>
@@ -78,26 +67,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">السيكسيكية</language>
 			<language type="bm">البامبارا</language>
 			<language type="bn">البنغالية</language>
-			<language type="bnt">البانتو</language>
 			<language type="bo">التبتية</language>
 			<language type="br">البريتونية</language>
 			<language type="bra">البراجية</language>
 			<language type="brx" draft="contributed">البودو</language>
 			<language type="bs">البوسنية</language>
 			<language type="bss" draft="contributed">أكوس</language>
-			<language type="btk">الباتاكية</language>
 			<language type="bua">البرياتية</language>
 			<language type="bug">البجينيزية</language>
 			<language type="byn">البلينية</language>
 			<language type="ca">الكتالانية</language>
 			<language type="cad">الكادو</language>
-			<language type="cai">اللغة الهندية الأمريكية الوسطى</language>
 			<language type="car">الكاريبية</language>
-			<language type="cau">القوقازية - أخرى</language>
 			<language type="cch">الأتسام</language>
 			<language type="ce">الشيشانية</language>
 			<language type="ceb">السيبيونو</language>
-			<language type="cel">السلتية - أخرى</language>
 			<language type="cgg" draft="contributed">تشيغا</language>
 			<language type="ch">التشامورو</language>
 			<language type="chb">التشيبشا</language>
@@ -110,26 +94,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">الشيروكي</language>
 			<language type="chy">الشايان</language>
 			<language type="ckb">السريانية الكردية</language>
-			<language type="cmc">اللغة التشاميكية</language>
 			<language type="co">الكورسيكية</language>
 			<language type="cop">القبطية</language>
-			<language type="cpe">الكرييولى و اللغات المبسطة الأخرى للتفاهم بين الشعوب على أساس الأنجليزية</language>
-			<language type="cpf">الكرييولى و اللغات المبسطة الأخرى للتفاهم بين الشعوب على أساس الفرنسية</language>
-			<language type="cpp">الكرييولي واللغات المبسطة الأخرى للتفاهم بين الشعوب على أساس البرتغالية</language>
 			<language type="cr">الكرى</language>
 			<language type="crh">التركية الكريمينية</language>
-			<language type="crp">الكرييولى و اللغات المبسطة الأخرى للتفاهم بين الشعوب - أخرى</language>
 			<language type="cs">التشيكية</language>
 			<language type="csb">الكاشبايان</language>
 			<language type="cu">سلافية كنسية</language>
-			<language type="cus">اللغة الكشيتيكية</language>
 			<language type="cv">التشفاش</language>
 			<language type="cy">الولزية</language>
 			<language type="da">الدانماركية</language>
 			<language type="dak">الداكوتا</language>
 			<language type="dar">الدارجوا</language>
 			<language type="dav" draft="contributed">تيتا</language>
-			<language type="day">الدياك</language>
 			<language type="de">الألمانية</language>
 			<language type="de_AT">الألمانية النمساوية</language>
 			<language type="de_CH">الألمانية العليا السويسرية</language>
@@ -139,7 +116,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">الدنكا</language>
 			<language type="dje" draft="contributed">زرمة</language>
 			<language type="doi">الدوجري</language>
-			<language type="dra">اللغة الدرافيدينية</language>
 			<language type="dsb">الصربية السفلى</language>
 			<language type="dua">الديولا</language>
 			<language type="dum">الهولندية الوسطى</language>
@@ -176,7 +152,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">الفلة</language>
 			<language type="fi">الفنلندية</language>
 			<language type="fil">الفلبينية</language>
-			<language type="fiu">لغة فينو أجريانية</language>
 			<language type="fj">الفيجية</language>
 			<language type="fo">الفارويز</language>
 			<language type="fon">الفون</language>
@@ -194,7 +169,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">الجايو</language>
 			<language type="gba">الجبيا</language>
 			<language type="gd">الغيلية الأسكتلندية</language>
-			<language type="gem">اللغة الجرمانية</language>
 			<language type="gez">الجيز</language>
 			<language type="gil">لغة أهل جبل طارق</language>
 			<language type="gl">الجاليكية</language>
@@ -217,7 +191,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">العبرية</language>
 			<language type="hi">الهندية</language>
 			<language type="hil">الهيليجينون</language>
-			<language type="him">الهيماتشالي</language>
 			<language type="hit">الحثية</language>
 			<language type="hmn">الهمونجية</language>
 			<language type="ho">الهيري موتو</language>
@@ -234,20 +207,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">الإنترلينج</language>
 			<language type="ig">الإيجبو</language>
 			<language type="ii">السيتشيون يي</language>
-			<language type="ijo">الإجو</language>
 			<language type="ik">الإينبياك</language>
 			<language type="ilo">الإيلوكو</language>
-			<language type="inc">اللغة الهندية</language>
-			<language type="ine">الهندية الأوروبية - أخرى</language>
 			<language type="inh">الإنجوشية</language>
 			<language type="io">الإيدو</language>
-			<language type="ira">اللغة الإيرانية</language>
-			<language type="iro">اللغة الإيروكويانية</language>
 			<language type="is">الأيسلاندية</language>
 			<language type="it">الإيطالية</language>
 			<language type="iu">الإينكتيتت</language>
 			<language type="ja">اليابانية</language>
 			<language type="jbo">اللوجبان</language>
+			<language type="jgo" draft="contributed">نغومبا</language>
+			<language type="jmc" draft="contributed">ماتشيم</language>
 			<language type="jpr">الجيدو - الفارسي</language>
 			<language type="jrb">الجيدو - العربي</language>
 			<language type="jv">الجاوية</language>
@@ -257,19 +227,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">الكاتشين</language>
 			<language type="kaj">الجو</language>
 			<language type="kam">الكامبا</language>
-			<language type="kar">الكاريين</language>
 			<language type="kaw">الكوي</language>
 			<language type="kbd">الكاباردايان</language>
 			<language type="kbl">كانمبو</language>
+			<language type="kde" draft="contributed">ماكونده</language>
+			<language type="kea" draft="contributed">كابوفيرديانو</language>
 			<language type="kfo">الكورو</language>
 			<language type="kg">الكونغو</language>
 			<language type="kha">الكازية</language>
-			<language type="khi">اللغة الخويسانية</language>
 			<language type="kho">الخوتانيز</language>
+			<language type="khq" draft="contributed">كويرا تشيني</language>
 			<language type="ki">الكيكيو</language>
 			<language type="kj">الكيونياما</language>
 			<language type="kk">الكازاخستانية</language>
 			<language type="kl">الكالاليست</language>
+			<language type="kln" draft="contributed">كالينجين</language>
 			<language type="km">الخميرية</language>
 			<language type="kmb">الكيمبندو</language>
 			<language type="kn">الكانادا</language>
@@ -280,9 +252,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">الكانيوري</language>
 			<language type="krc">الكاراتشاي-بالكار</language>
 			<language type="krl">الكريلية</language>
-			<language type="kro">الكرو</language>
 			<language type="kru" draft="contributed">كرخانة</language>
 			<language type="ks">الكشميرية</language>
+			<language type="ksb" draft="contributed">شامبالا</language>
+			<language type="ksf" draft="contributed">بافيا</language>
 			<language type="ku">الكردية</language>
 			<language type="kum">الكميك</language>
 			<language type="kut">الكتيناي</language>
@@ -291,6 +264,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ky">القرغيزية</language>
 			<language type="la">اللاتينية</language>
 			<language type="lad">الإسباعبرية</language>
+			<language type="lag" draft="contributed">انجي</language>
 			<language type="lah">اللاهندا</language>
 			<language type="lam">اللامبا</language>
 			<language type="lb">اللوكسمبرجية</language>
@@ -308,34 +282,33 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="lun">اللوندا</language>
 			<language type="luo">اللو</language>
 			<language type="lus">اللشاي</language>
+			<language type="luy" draft="contributed">لويا</language>
 			<language type="lv">اللاتفية</language>
 			<language type="mad">المادريز</language>
 			<language type="mag">الماجا</language>
 			<language type="mai">المايثيلي</language>
 			<language type="mak">الماكاسار</language>
 			<language type="man">الماندينغ</language>
-			<language type="map">الأوسترونيسيان</language>
 			<language type="mas">الماساي</language>
 			<language type="mde">مابا</language>
 			<language type="mdf">الموكشا</language>
 			<language type="mdr">الماندار</language>
 			<language type="men">الميند</language>
+			<language type="mer" draft="contributed">ميرو</language>
 			<language type="mfe" draft="contributed">المورسيانية</language>
 			<language type="mg">المالاجاشية</language>
 			<language type="mga">الأيرلندية الوسطى</language>
+			<language type="mgh" draft="contributed">ماخاوا-ميتو</language>
+			<language type="mgo" draft="contributed">ميتا</language>
 			<language type="mh">المارشالية</language>
 			<language type="mi">الماورية</language>
 			<language type="mic">الميكماكيونية</language>
 			<language type="min">المينانجكاباو</language>
-			<language type="mis">اللغة المتنوعة</language>
 			<language type="mk">المقدونية</language>
-			<language type="mkh">لغة المون - خمير</language>
 			<language type="ml">الماليالام</language>
 			<language type="mn">المنغولية</language>
 			<language type="mnc">المانشو</language>
 			<language type="mni">المانيبري</language>
-			<language type="mno">لغات مانوبو</language>
-			<language type="mo">المولدوفية</language>
 			<language type="moh">الموهوك</language>
 			<language type="mos">الموسي</language>
 			<language type="mr">الماراثي</language>
@@ -343,17 +316,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">المالطية</language>
 			<language type="mua">مندنج</language>
 			<language type="mul">لغات متعددة</language>
-			<language type="mun">لغة المندا</language>
 			<language type="mus">الكريك</language>
 			<language type="mwl">الميرانديز</language>
 			<language type="mwr">المارواري</language>
 			<language type="my">البورمية</language>
-			<language type="myn">لغة المايا</language>
 			<language type="myv">الأرزية</language>
 			<language type="na">النورو</language>
-			<language type="nah">الناهيوتل</language>
-			<language type="nai">اللغة الهندية الأمريكية الشمالية</language>
 			<language type="nap">اللغة النابولية</language>
+			<language type="naq" draft="contributed">ناما</language>
 			<language type="nb">البوكمالية النرويجية</language>
 			<language type="nd">النديبيل الشمالي</language>
 			<language type="nds">الألمانية السفلى</language>
@@ -361,10 +331,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">النيواري</language>
 			<language type="ng">الندونجا</language>
 			<language type="nia">النياس</language>
-			<language type="nic">النيجر - كوردوفانايان</language>
 			<language type="niu">النيوي</language>
 			<language type="nl">الهولندية</language>
 			<language type="nl_BE">الفلمنك</language>
+			<language type="nmg" draft="contributed">كوايسو</language>
 			<language type="nn">النينورسك النرويجي</language>
 			<language type="no">النرويجية</language>
 			<language type="nog">النوجاي</language>
@@ -372,7 +342,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">أنكو</language>
 			<language type="nr">النديبيل الجنوبي</language>
 			<language type="nso">السوتو الشمالية</language>
-			<language type="nub">لغة نوبية</language>
+			<language type="nus" draft="contributed">النوير</language>
 			<language type="nv">النافاجو</language>
 			<language type="nwc">النوارية التقليدية</language>
 			<language type="ny">النيانجا</language>
@@ -387,21 +357,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">الأوسيتيك</language>
 			<language type="osa">الأوساج</language>
 			<language type="ota">التركية العثمانية</language>
-			<language type="oto">اللغة الأوتومية</language>
 			<language type="pa">البنجابية</language>
-			<language type="paa">اللغة الغينية</language>
 			<language type="pag">البانجاسينان</language>
 			<language type="pal">البهلوية</language>
 			<language type="pam">البامبانجا</language>
 			<language type="pap">البابيامينتو</language>
 			<language type="pau">البالوان</language>
 			<language type="peo">الفارسية القديمة</language>
-			<language type="phi">اللغة الفليبينية</language>
 			<language type="phn">الفينيقية</language>
 			<language type="pi">البالية</language>
 			<language type="pl">البولندية</language>
 			<language type="pon">البوهنبيايان</language>
-			<language type="pra">اللغات البراقريطية</language>
 			<language type="pro">البروفانسية القديمة</language>
 			<language type="ps">البشتونية</language>
 			<language type="ps" alt="variant">بشتو</language>
@@ -415,43 +381,41 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">الرومانشية</language>
 			<language type="rn">الرندي</language>
 			<language type="ro">الرومانية</language>
-			<language type="roa">اللغة الرومانسية</language>
+			<language type="ro_MD">المولدوفية</language>
+			<language type="rof" draft="contributed">رومبو</language>
 			<language type="rom">غجري</language>
 			<language type="root">الجذر</language>
 			<language type="ru">الروسية</language>
 			<language type="rup">الأرومانيان</language>
 			<language type="rw">الكينيارواندا</language>
+			<language type="rwk" draft="contributed">روا</language>
 			<language type="sa">السنسكريتية</language>
 			<language type="sad">السانداوي</language>
 			<language type="sah">الساخية</language>
-			<language type="sai">اللغة الهندية الأمريكية الجنوبية</language>
-			<language type="sal">اللغة الساليشانية</language>
 			<language type="sam">الآرامية السومارية</language>
+			<language type="saq" draft="contributed">سامبورو</language>
 			<language type="sas">الساساك</language>
 			<language type="sat">السانتالي</language>
 			<language type="sba">نامبي</language>
+			<language type="sbp" draft="contributed">سانغو</language>
 			<language type="sc">السردينية</language>
 			<language type="scn">الصقلية</language>
 			<language type="sco">الأسكتلندية</language>
 			<language type="sd">السندية</language>
 			<language type="se">السامي الشمالي</language>
+			<language type="seh" draft="contributed">سينا</language>
 			<language type="sel">السيلكب</language>
-			<language type="sem">لغة سامية</language>
+			<language type="ses" draft="contributed">كويرابورو سيني</language>
 			<language type="sg">السانجو</language>
 			<language type="sga">الأيرلندية القديمة</language>
-			<language type="sgn">لغات الإشارة</language>
 			<language type="shn">الشانية</language>
 			<language type="shu">العربية التشادية</language>
 			<language type="si">السنهالية</language>
 			<language type="sid">السيدامو</language>
-			<language type="sio">لغة السيويون</language>
-			<language type="sit">اللغة الصينية التيبتية</language>
 			<language type="sk">السلوفاكية</language>
 			<language type="sl">السلوفانية</language>
-			<language type="sla">اللغة السلافية</language>
 			<language type="sm">الساموائية</language>
 			<language type="sma">السامي الجنوبي</language>
-			<language type="smi">اللغة السامية</language>
 			<language type="smj">اللول سامي</language>
 			<language type="smn">الإيناري سامي</language>
 			<language type="sms">السكولت سامي</language>
@@ -459,13 +423,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">السونينك</language>
 			<language type="so">الصومالية</language>
 			<language type="sog">السوجدين</language>
-			<language type="son">السونجهاي</language>
 			<language type="sq">الألبانية</language>
 			<language type="sr">الصربية</language>
 			<language type="srn">السرانان تونجو</language>
 			<language type="srr">السرر</language>
 			<language type="ss">السواتي</language>
-			<language type="ssa">لغة نيلية الصحراوية</language>
 			<language type="st">السوتو الجنوبية</language>
 			<language type="su">السوندانية</language>
 			<language type="suk">السوكوما</language>
@@ -474,12 +436,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sv">السويدية</language>
 			<language type="sw">السواحلية</language>
 			<language type="swb">القمرية</language>
+			<language type="swc" draft="contributed">الكونغو السواحلية</language>
 			<language type="syc">سريانية تقليدية</language>
 			<language type="syr">السريانية</language>
 			<language type="ta">التاميلية</language>
-			<language type="tai">لغة تاي</language>
 			<language type="te">التيلجو</language>
 			<language type="tem">التيمن</language>
+			<language type="teo" draft="contributed">تيسو</language>
 			<language type="ter">التيرينو</language>
 			<language type="tet">التيتم</language>
 			<language type="tg">الطاجيكية</language>
@@ -502,12 +465,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">التسيمشيان</language>
 			<language type="tt">التتارية</language>
 			<language type="tum">التامبوكا</language>
-			<language type="tup">اللغة التوبية</language>
-			<language type="tut">الألطائية - أخرى</language>
 			<language type="tvl">التوفالو</language>
 			<language type="tw">التوي</language>
+			<language type="twq" draft="contributed">تاساواق</language>
 			<language type="ty">التاهيتية</language>
 			<language type="tyv" draft="contributed">التُرك</language>
+			<language type="tzm" draft="contributed">الأمازيغية وسط الأطلس</language>
 			<language type="udm">الأدمرت</language>
 			<language type="ug">الأغورية</language>
 			<language type="ug" alt="variant">الأيغورية</language>
@@ -521,20 +484,20 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ve">الفيندا</language>
 			<language type="vi">الفيتنامية</language>
 			<language type="vot">الفوتيك</language>
+			<language type="vun" draft="contributed">فونجو</language>
 			<language type="wa">الولونية</language>
-			<language type="wak">اللغة الواكاشانية</language>
 			<language type="wal">الوالامو</language>
 			<language type="war">الواراي</language>
 			<language type="was">الواشو</language>
-			<language type="wen">اللغة الصربية</language>
 			<language type="wo">الولوف</language>
 			<language type="xal">الكالميك</language>
 			<language type="xh">الخوسا</language>
+			<language type="xog" draft="contributed">سوجا</language>
 			<language type="yao">الياو</language>
 			<language type="yap">اليابيز</language>
+			<language type="yav" draft="contributed">يانجبن</language>
 			<language type="yi">اليديشية</language>
 			<language type="yo">اليوروبية</language>
-			<language type="ypk">اللغة اليوبيكية</language>
 			<language type="yue">الكَنْتُونية</language>
 			<language type="za">الزهيونج</language>
 			<language type="zap">الزابوتيك</language>
@@ -544,7 +507,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">الصينية</language>
 			<language type="zh_Hans">الصينية المبسطة</language>
 			<language type="zh_Hant">الصينية التقليدية</language>
-			<language type="znd">الزاند</language>
 			<language type="zu">الزولو</language>
 			<language type="zun">الزونية</language>
 			<language type="zxx">بدون محتوى لغوي</language>
@@ -2524,9 +2486,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>بالمير</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>القطب الجنوبي</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>سايووا</exemplarCity>
 			</zone>
@@ -2799,9 +2758,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>تورونتو</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>مونتريال</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>اكويلت</exemplarCity>
@@ -3645,9 +3601,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>فينكس</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>شيبروك</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>دنفر</exemplarCity>

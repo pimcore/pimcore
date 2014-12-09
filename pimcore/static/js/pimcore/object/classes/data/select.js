@@ -71,7 +71,16 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                         key: "",
                         value: ""
                     });
-                    this.valueStore.insert(0, u);
+
+                    var selectedRow = this.selectionModel.getSelected();
+                    var idx;
+                    if (selectedRow) {
+                        idx = this.valueStore.indexOf(selectedRow) + 1;
+                    } else {
+                        idx = this.valueStore.getCount();
+                    }
+                    this.valueStore.insert(idx, u);
+                    this.selectionModel.selectRow(idx);
                 }.bind(this)
             }],
             disabled: this.isInCustomLayoutEditor(),
@@ -81,9 +90,9 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             columnLines: true,
             columns: [
                 {header: t("display_name"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
-                                    width: 200},
+                    width: 200},
                 {header: t("value"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
-                                    width: 200},
+                    width: 200},
                 {
                     xtype:'actioncolumn',
                     width:30,
@@ -95,7 +104,9 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                                 if (rowIndex > 0) {
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
-                                    grid.getStore().insert(rowIndex - 1, [rec]);
+                                    grid.getStore().insert(--rowIndex, [rec]);
+                                    var sm = this.valueGrid.getSelectionModel();
+                                    this.selectionModel.selectRow(rowIndex);
                                 }
                             }.bind(this)
                         }
@@ -112,7 +123,8 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                                 if (rowIndex < (grid.getStore().getCount() - 1)) {
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
-                                    grid.getStore().insert(rowIndex + 1, [rec]);
+                                    grid.getStore().insert(++rowIndex, [rec]);
+                                    this.selectionModel.selectRow(rowIndex);
                                 }
                             }.bind(this)
                         }
@@ -136,6 +148,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
         });
 
 
+        this.selectionModel = this.valueGrid.getSelectionModel();;
         this.valueGrid.on("afterrender", function () {
 
             var dropTargetEl = this.valueGrid.getEl();

@@ -262,10 +262,6 @@ pimcore.object.classes.klass = Class.create({
             // check for disallowed types
             var allowed = false;
 
-//            if(changeTypeAllowed && dataComp.prototype.allowIn[this.parentNode.attributes.reference.allowedInType]) {
-//                allowed = true;
-//            }
-
             var theNode;
             if (editMode) {
                 theNode = this.parentNode.attributes.reference;
@@ -281,13 +277,9 @@ pimcore.object.classes.klass = Class.create({
                 continue;
             }
 
-//                if (in_array(dataComps[i], this.attributes.reference.disallowedDataTypes)) {
-//                    continue;
-//                }
 
             if (dataComps[i] != "data") { // class data is an abstract class => disallow
-                if (in_array("data", allowedTypes[parentType]) || in_array(dataComps[i], allowedTypes[parentType])
-                /* || changeTypeAllowed */ ) {
+                if (in_array("data", allowedTypes[parentType]) || in_array(dataComps[i], allowedTypes[parentType]) ) {
 
                     // check for restrictions from a parent field (eg. localized fields)
                     if(in_array("data", allowedTypes[parentType])) {
@@ -343,11 +335,6 @@ pimcore.object.classes.klass = Class.create({
 
         //get all allowed data types for localized fields
         var lftypes = ["panel","tabpanel","accordion","fieldset","text","region","button"];
-        //["checkbox","select","date","datetime","time","image","input","link","numeric","slider","table","wysiwyg",
-        // "textarea","panel","tabpanel","accordion","fieldset","text","html","region","multiselect",
-        // "countrymultiselect","languagemultiselect","objects","multihref","href","hotspotimage","geopoint",
-        // "geobounds","geopolygon","structuredTable"]
-
         var dataComps = Object.keys(pimcore.object.classes.data);
 
         for (var i = 0; i < dataComps.length; i++) {
@@ -380,7 +367,6 @@ pimcore.object.classes.klass = Class.create({
         }
 
         var changeTypeAllowed = false;
-        var changeTypeItem;
         if (this.attributes.type == "data") {
             changeTypeAllowed = true;
         }
@@ -439,7 +425,6 @@ pimcore.object.classes.klass = Class.create({
                 }));
             }
 
-//            var changeDataMenu = getDataMenu(allowedTypes, this.parentNode.attributes.object.type, true);
             if (this.attributes.type == "data") {
                 var dataComps = Object.keys(pimcore.object.classes.data);
                 menu.add(new Ext.menu.Item({

@@ -18,8 +18,8 @@ echo "\n";
 include_once("startup.php");
 
 try {
-    $opts = new Zend_Console_Getopt(array(
-        'filename|f=s'    => 'filename for the backup (default: backup_m-d-Y_H-i) .tar is added automatically',
+    $opts = new \Zend_Console_Getopt(array(
+        'filename|f=s'    => 'filename for the backup (default: backup_m-d-Y_H-i) .zip is added automatically',
         'directory|d=s'   => 'target directory (absolute path without trailing slash) for the backup-file (default: ' . PIMCORE_BACKUP_DIRECTORY . ')',
         'overwrite|o' => 'overwrite existing backup with the same filename, default: true',
         'cleanup|c=s' => 'in days, backups in the target directory which are older than the given days will be deleted, default 7, use false to disable it',
@@ -39,7 +39,7 @@ try {
 
 try {
     $opts->parse();
-} catch (Zend_Console_Getopt_Exception $e) {
+} catch (\Zend_Console_Getopt_Exception $e) {
     echo "There's a problem with your configuration, I will now create a backup with the default configuration.";
     echo "\n";
     echo "For details, see the error below:";
@@ -71,9 +71,9 @@ foreach ($config as $key => $value) {
     }
 }
 $config = $tmpConfig;
-Zend_Registry::set("config", $config);
+\Zend_Registry::set("config", $config);
 
-$backupFile = $config["directory"] . "/" . $config["filename"] . ".tar";
+$backupFile = $config["directory"] . "/" . $config["filename"] . ".zip";
 
 
 // check for existing file
@@ -89,7 +89,7 @@ if($config["cleanup"] != "false") {
     $files = scandir($config["directory"]);
     $lifetime = (int) $config["cleanup"] * 86400;
     foreach ($files as $file) {
-        if(is_file($config["directory"] . "/" . $file) && preg_match("/\.tar$/",$file)) {
+        if(is_file($config["directory"] . "/" . $file) && preg_match("/\.zip$/",$file)) {
             if(filemtime($config["directory"] . "/" . $file) < (time()-$lifetime) ) {
                 verboseMessage("delete: " . $config["directory"] . "/" . $file . "\n");
                 unlink($config["directory"] . "/" . $file);
@@ -109,7 +109,7 @@ $options['only-mysql-related-tasks'] = $opts->getOption('only-mysql-related-task
 
 
 
-$backup = new Pimcore_Backup($backupFile);
+$backup = new \Pimcore\Backup($backupFile);
 $initInfo = $backup->init($options);
 
 $stepMethodMapping = array(
@@ -146,7 +146,7 @@ verboseMessage("backup finished, you can find your backup here: " . $backupFile)
 
 
 function verboseMessage ($m) {
-    $config = Zend_Registry::get("config");
+    $config = \Zend_Registry::get("config");
     if($config["verbose"]) {
         echo $m . "\n";
     }

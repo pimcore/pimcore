@@ -13,7 +13,7 @@
  * through the world-wide-web, please send a note to license@zend.com
  * so we can mail you a copy immediately.
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -22,11 +22,14 @@
 /**
  * Pimcore_Image_Matrixcode_Renderer_Pdf
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Pimcore_Image_Matrixcode_Renderer_Pdf extends Pimcore_Image_Matrixcode_Renderer_Abstract
+
+namespace Pimcore\Image\Matrixcode\Renderer;
+
+class Pdf extends AbstractRenderer
 {
 	
 	/**
@@ -64,7 +67,7 @@ class Pimcore_Image_Matrixcode_Renderer_Pdf extends Pimcore_Image_Matrixcode_Ren
 	public function getScale() {
 		$module_size = $this->_matrixcode->getModuleSize();
 		if($module_size[0] != $module_size[1]) {
-            throw new Pimcore_Image_Matrixcode_Renderer_Exception(
+            throw new Exception(
                 'So far only square modules are supported. The current module size settings of '.$module_size[0].'x'.$module_size[1].' indicate a different rectangular shape.'
             );
 		}
@@ -102,14 +105,14 @@ class Pimcore_Image_Matrixcode_Renderer_Pdf extends Pimcore_Image_Matrixcode_Ren
 		
     	
     	
-    	$pdf = new Zend_Pdf();
+    	$pdf = new \Zend_Pdf();
     	$pdf->pages[] = ($page = $pdf->newPage('A4'));
     	
     	// Add credits
     	if(!empty($this->_footnote)) {
-	    	$font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
+	    	$font = \Zend_Pdf_Font::fontWithName(\Zend_Pdf_Font::FONT_HELVETICA);
 			$page->setFont($font, 10)
-	      		 ->setFillColor(Zend_Pdf_Color_Html::color('#000000'))
+	      		 ->setFillColor(\Zend_Pdf_Color_Html::color('#000000'))
 	      		 ->drawText($this->_footnote, 20, 20);
     	}
       		 	 
@@ -119,12 +122,12 @@ class Pimcore_Image_Matrixcode_Renderer_Pdf extends Pimcore_Image_Matrixcode_Ren
 		$page->translate(floor($page_width - $output_size_width) / 2, ($page_height - $output_size_height) / 2);
 		
 		if(!empty($back_color)) {
-			$back_color = new Zend_Pdf_Color_HTML('#' . $this->_decimalToHTMLColor($back_color));
+			$back_color = new \Zend_Pdf_Color_HTML('#' . $this->_decimalToHTMLColor($back_color));
 			$page->setFillColor($back_color);
-			$page->drawRectangle(0,0,$output_size_width,$output_size_height,Zend_Pdf_Page::SHAPE_DRAW_FILL);
+			$page->drawRectangle(0,0,$output_size_width,$output_size_height,\Zend_Pdf_Page::SHAPE_DRAW_FILL);
 		}
 		
-		$page->setFillColor(new Zend_Pdf_Color_HTML('#' . $this->_decimalToHTMLColor($fore_color)));
+		$page->setFillColor(new \Zend_Pdf_Color_HTML('#' . $this->_decimalToHTMLColor($fore_color)));
 		
 		// Convert the matrix into pixels
     	$matrix = $this->_matrixcode->getMatrix();
@@ -133,7 +136,7 @@ class Pimcore_Image_Matrixcode_Renderer_Pdf extends Pimcore_Image_Matrixcode_Ren
 		    	if( $matrix[$i][$j] ) {
 		    		$x = ($i + $padding[3]) * $scale;
 		    		$y = ($matrix_dimension - 1 - $j + $padding[2]) * $scale;
-		    		$page->drawRectangle($x, $y, $x + $scale, $y + $scale, Zend_Pdf_Page::SHAPE_DRAW_FILL);
+		    		$page->drawRectangle($x, $y, $x + $scale, $y + $scale, \Zend_Pdf_Page::SHAPE_DRAW_FILL);
 		        }
 		    }
 		}

@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="he"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,54 +25,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">אדיגית</language>
 			<language type="ae">אבסטן</language>
 			<language type="af">אפריקאנס</language>
-			<language type="afa">שפה אפרו-אסייתית</language>
 			<language type="afh">אפריהילי</language>
 			<language type="agq" draft="contributed">אהיים</language>
 			<language type="ain">אינו</language>
 			<language type="ak">אקאן</language>
 			<language type="akk">אכדית</language>
 			<language type="ale" draft="contributed">אלאוט</language>
-			<language type="alg" draft="contributed">השפה האלגונקוויאנית</language>
 			<language type="alt" draft="contributed">אלטאי דרומית</language>
 			<language type="am">אמהרית</language>
 			<language type="an" draft="contributed">אראגונית</language>
 			<language type="ang">אנגלית עתיקה</language>
 			<language type="anp" draft="contributed">אנג׳יקה</language>
-			<language type="apa">שפה אפאצ׳ית</language>
 			<language type="ar">ערבית</language>
 			<language type="ar_001" draft="contributed">ערבית ספרותית</language>
 			<language type="arc">ארמית</language>
 			<language type="arn" draft="contributed">אראוקנית</language>
 			<language type="arp" draft="contributed">ארפהו</language>
-			<language type="art">שפה מלאכותית</language>
 			<language type="arw" draft="contributed">ארוואק</language>
 			<language type="as">אסאמית</language>
 			<language type="asa" draft="contributed">אסו</language>
 			<language type="ast">אסטורית</language>
-			<language type="ath" draft="contributed">השפה האת׳פסקנית</language>
-			<language type="aus">שפה אוסטרלית</language>
 			<language type="av" draft="contributed">אבארית</language>
 			<language type="awa">אוואדית</language>
 			<language type="ay">איימארית</language>
 			<language type="az">אזרית</language>
 			<language type="az" alt="short" draft="contributed">אזרית</language>
 			<language type="ba">בשקירית</language>
-			<language type="bad" draft="contributed">בנדה</language>
-			<language type="bai" draft="contributed">השפה הבאמילקית</language>
 			<language type="bal">באלוצ׳י</language>
 			<language type="ban">בלינזית</language>
 			<language type="bas" draft="contributed">בסאא</language>
-			<language type="bat">שפות בלטיות</language>
 			<language type="bax" draft="contributed">באקס</language>
 			<language type="bbj" draft="contributed">גומל</language>
 			<language type="be">בלארוסית</language>
 			<language type="bej">בז׳ה</language>
 			<language type="bem" draft="contributed">במבה</language>
-			<language type="ber">ברברית</language>
 			<language type="bez" draft="contributed">בנה</language>
 			<language type="bfd" draft="contributed">באפוט</language>
 			<language type="bg">בולגרית</language>
-			<language type="bh">ביהארי</language>
 			<language type="bho" draft="contributed">בוג׳פורי</language>
 			<language type="bi">ביסלמה</language>
 			<language type="bik" draft="contributed">ביקול</language>
@@ -81,14 +70,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla" draft="contributed">סיקסיקה</language>
 			<language type="bm" draft="contributed">במבארה</language>
 			<language type="bn">בנגלית</language>
-			<language type="bnt" draft="contributed">בנטו</language>
 			<language type="bo">טיבטית</language>
 			<language type="br">ברטונית</language>
 			<language type="bra" draft="contributed">בראג׳</language>
 			<language type="brx" draft="contributed">בודו</language>
 			<language type="bs">בוסנית</language>
 			<language type="bss" draft="contributed">אקוסה</language>
-			<language type="btk" draft="contributed">בטאק</language>
 			<language type="bua" draft="contributed">בוריאט</language>
 			<language type="bug" draft="contributed">בוגינזית</language>
 			<language type="bum" draft="contributed">בולו</language>
@@ -96,14 +83,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv" draft="contributed">מדומבה</language>
 			<language type="ca">קטלאנית</language>
 			<language type="cad">קאדו</language>
-			<language type="cai">שפה אינדיאנית מרכז-אמריקאית</language>
 			<language type="car" draft="contributed">קאריב</language>
-			<language type="cau">שפה קווקזית</language>
 			<language type="cay" draft="contributed">קאיוגה</language>
 			<language type="cch" draft="contributed">אטסם</language>
 			<language type="ce">צ׳צ׳נית</language>
 			<language type="ceb">קבואנו</language>
-			<language type="cel">שפה קלטית</language>
 			<language type="cgg" draft="contributed">צ׳יגה</language>
 			<language type="ch" draft="contributed">צ׳מורו</language>
 			<language type="chb" draft="contributed">צ׳יבצ׳ה</language>
@@ -116,26 +100,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">צ׳רוקי</language>
 			<language type="chy" draft="contributed">שאיין</language>
 			<language type="ckb" draft="contributed">כורדית סוראנית</language>
-			<language type="cmc" draft="contributed">השפה הצ׳אמית</language>
 			<language type="co">קורסיקנית</language>
 			<language type="cop">קופטית</language>
-			<language type="cpe" draft="contributed">קריאולית או פידג׳ין מבוססת אנגלית</language>
-			<language type="cpf" draft="contributed">קריאולית או פידג׳ין מבוססת-צרפתית</language>
-			<language type="cpp" draft="contributed">קריאולית או פידג׳ין מבוססת-פורטוגזית</language>
 			<language type="cr" draft="contributed">קרי</language>
 			<language type="crh">טטרית של קרים</language>
-			<language type="crp">שפה קראולית או פידג׳אנית</language>
 			<language type="cs">צ׳כית</language>
 			<language type="csb" draft="contributed">קשוביאן</language>
 			<language type="cu">סלאבית כנסייתית עתיקה</language>
-			<language type="cus" draft="contributed">השפה הקושיטית</language>
 			<language type="cv" draft="contributed">צ׳ובאש</language>
 			<language type="cy">ולשית</language>
 			<language type="da">דנית</language>
 			<language type="dak">דקוטה</language>
 			<language type="dar" draft="contributed">דרגווה</language>
 			<language type="dav" draft="contributed">טאיטה</language>
-			<language type="day" draft="contributed">דיאק</language>
 			<language type="de">גרמנית</language>
 			<language type="de_AT">גרמנית אוסטרית</language>
 			<language type="de_CH">גרמנית שוויצרית (גבוהה)</language>
@@ -145,7 +122,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din" draft="contributed">דינקה</language>
 			<language type="dje" draft="contributed">זארמה</language>
 			<language type="doi">דוגרי</language>
-			<language type="dra" draft="contributed">השפה הדראווידיאנית</language>
 			<language type="dsb" draft="contributed">סורביאן נמוכה</language>
 			<language type="dua" draft="contributed">דואלה</language>
 			<language type="dum">הולנדית תיכונה</language>
@@ -183,7 +159,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff" draft="contributed">פולה</language>
 			<language type="fi">פינית</language>
 			<language type="fil">פיליפינית</language>
-			<language type="fiu" draft="contributed">השפה הפינו-אוגרית</language>
 			<language type="fj">פיג׳ית</language>
 			<language type="fo">פארואזית</language>
 			<language type="fon" draft="contributed">פון</language>
@@ -201,7 +176,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay" draft="contributed">גאיו</language>
 			<language type="gba" draft="contributed">גבאיה</language>
 			<language type="gd">גאלית סקוטית</language>
-			<language type="gem">שפה גרמאנית</language>
 			<language type="gez">געז</language>
 			<language type="gil" draft="contributed">גילברטזית</language>
 			<language type="gl">גליציאנית</language>
@@ -224,7 +198,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">עברית</language>
 			<language type="hi">הינדי</language>
 			<language type="hil" draft="contributed">היליגאינון</language>
-			<language type="him" draft="contributed">הימצ׳אלי</language>
 			<language type="hit">חיתית</language>
 			<language type="hmn" draft="contributed">מונג</language>
 			<language type="ho">הארי מוטו</language>
@@ -242,15 +215,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">אינטרלינגה</language>
 			<language type="ig">איגבו</language>
 			<language type="ii" draft="contributed">סיצ׳ואן יי</language>
-			<language type="ijo" draft="contributed">איג׳ו</language>
 			<language type="ik" draft="contributed">אינופיאק</language>
 			<language type="ilo" draft="contributed">אילוקו</language>
-			<language type="inc" draft="contributed">שפת האינדיק</language>
-			<language type="ine">שפה הודו-אירופית</language>
 			<language type="inh">אינגושית</language>
 			<language type="io">אידו</language>
-			<language type="ira">שפה איראנית</language>
-			<language type="iro" draft="contributed">השפה האירוקואונית</language>
 			<language type="is">איסלנדית</language>
 			<language type="it">איטלקית</language>
 			<language type="iu">אינוקטיטוט</language>
@@ -267,7 +235,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac" draft="contributed">קצ׳ין</language>
 			<language type="kaj" draft="contributed">ג׳יו</language>
 			<language type="kam" draft="contributed">קמבה</language>
-			<language type="kar" draft="contributed">קארן</language>
 			<language type="kaw" draft="contributed">קאווי</language>
 			<language type="kbd" draft="contributed">קברדית</language>
 			<language type="kbl" draft="contributed">קנמבו</language>
@@ -277,7 +244,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo" draft="contributed">קורו</language>
 			<language type="kg" draft="contributed">קונגו</language>
 			<language type="kha" draft="contributed">קאסי</language>
-			<language type="khi" draft="contributed">השפה הקויסאנית</language>
 			<language type="kho" draft="contributed">קוטאנזית</language>
 			<language type="khq" draft="contributed">קוירה צ׳יני</language>
 			<language type="ki" draft="contributed">קיקויו</language>
@@ -296,7 +262,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr" draft="contributed">קאנורי</language>
 			<language type="krc" draft="contributed">קראצ׳י-בלקר</language>
 			<language type="krl" draft="contributed">קארלית</language>
-			<language type="kro" draft="contributed">קרו</language>
 			<language type="kru" draft="contributed">קורוק</language>
 			<language type="ks">קשמירית</language>
 			<language type="ksb" draft="contributed">שמבאלה</language>
@@ -336,7 +301,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">מאיטילית</language>
 			<language type="mak" draft="contributed">מקסאר</language>
 			<language type="man" draft="contributed">מנדינגו</language>
-			<language type="map">שפה אוסטרונזית</language>
 			<language type="mas">מאסאית</language>
 			<language type="mde" draft="contributed">מאבא</language>
 			<language type="mdf" draft="contributed">מוקשה</language>
@@ -352,15 +316,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">מאורית</language>
 			<language type="mic" draft="contributed">מיקמק</language>
 			<language type="min" draft="contributed">מיננגקבאו</language>
-			<language type="mis">שפה אחרת</language>
 			<language type="mk">מקדונית</language>
-			<language type="mkh" draft="contributed">שפת מון-חמר</language>
 			<language type="ml">מלאיאלם</language>
 			<language type="mn">מונגולית</language>
 			<language type="mnc" draft="contributed">מנצ׳ו</language>
 			<language type="mni">מניפורית</language>
-			<language type="mno" draft="contributed">שפת מנובו</language>
-			<language type="mo">מולדבית</language>
 			<language type="moh" draft="contributed">מוהוק</language>
 			<language type="mos" draft="contributed">מוסי</language>
 			<language type="mr">מרטהי</language>
@@ -368,17 +328,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">מלטית</language>
 			<language type="mua" draft="contributed">מונדאנג</language>
 			<language type="mul">מספר שפות</language>
-			<language type="mun" draft="contributed">שפת מונדה</language>
 			<language type="mus" draft="contributed">קריק</language>
 			<language type="mwl" draft="contributed">מירנדזית</language>
 			<language type="mwr" draft="contributed">מרווארי</language>
 			<language type="my">בורמזית</language>
 			<language type="mye" draft="contributed">מאיין</language>
-			<language type="myn">מאיה</language>
 			<language type="myv" draft="contributed">ארזיה</language>
 			<language type="na">נאורית</language>
-			<language type="nah">נאהואטל</language>
-			<language type="nai">שפה אינדיאנית צפון-אמריקאית</language>
 			<language type="nap">נפוליטנית</language>
 			<language type="naq" draft="contributed">נאמה</language>
 			<language type="nb">‏נורבגית ספרותית</language>
@@ -388,7 +344,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new" draft="contributed">נווארי</language>
 			<language type="ng" draft="contributed">נדונגה</language>
 			<language type="nia" draft="contributed">ניאס</language>
-			<language type="nic" draft="contributed">השפה הניגר-קורדופניאנית</language>
 			<language type="niu" draft="contributed">ניואיאן</language>
 			<language type="nl">הולנדית</language>
 			<language type="nl_BE">פלמית</language>
@@ -401,7 +356,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo" draft="contributed">נ׳קו</language>
 			<language type="nr" draft="contributed">דרום נדבלה</language>
 			<language type="nso" draft="contributed">סוטו הצפונית</language>
-			<language type="nub">שפות נבטיות</language>
 			<language type="nus" draft="contributed">נואר</language>
 			<language type="nv">נבחו</language>
 			<language type="nwc">נווארית קלאסית</language>
@@ -417,21 +371,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os" draft="contributed">אוסטית</language>
 			<language type="osa" draft="contributed">אוסג׳ה</language>
 			<language type="ota">טורקית עותומנית</language>
-			<language type="oto" draft="contributed">השפה האוטומיאנית</language>
 			<language type="pa">פנג׳אבית</language>
-			<language type="paa" draft="contributed">השפה הפפואנית</language>
 			<language type="pag" draft="contributed">פנגסינאן</language>
 			<language type="pal" draft="contributed">פלאבי</language>
 			<language type="pam" draft="contributed">פמפאניה</language>
 			<language type="pap" draft="contributed">פפיאמנטו</language>
 			<language type="pau" draft="contributed">פלוואן</language>
 			<language type="peo">פרסית עתיקה</language>
-			<language type="phi">שפה פיליפינית</language>
 			<language type="phn">פניקית</language>
 			<language type="pi" draft="contributed">פאלי</language>
 			<language type="pl">פולנית</language>
 			<language type="pon" draft="contributed">פונפיאן</language>
-			<language type="pra" draft="contributed">שפת פרקריט</language>
 			<language type="pro" draft="contributed">פרובנסאל עתיקה</language>
 			<language type="ps">פאשטו</language>
 			<language type="ps" alt="variant" draft="contributed">פושטו</language>
@@ -445,7 +395,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm" draft="contributed">רומאנש</language>
 			<language type="rn">קירונדי</language>
 			<language type="ro">רומנית</language>
-			<language type="roa" draft="contributed">שפת רומאנס</language>
+			<language type="ro_MD">מולדבית</language>
 			<language type="rof" draft="contributed">רומבו</language>
 			<language type="rom">רומאנית</language>
 			<language type="root" draft="contributed">רוט</language>
@@ -456,8 +406,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">סנסקריט</language>
 			<language type="sad" draft="contributed">סנדאווה</language>
 			<language type="sah" draft="contributed">סאחה</language>
-			<language type="sai">שפה אינדיאנית דרום אמריקאית</language>
-			<language type="sal" draft="contributed">השפה הסלישאנית</language>
 			<language type="sam">ארמית שומרונית</language>
 			<language type="saq" draft="contributed">סמבורו</language>
 			<language type="sas" draft="contributed">ססאק</language>
@@ -472,25 +420,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see" draft="contributed">סנקה</language>
 			<language type="seh" draft="contributed">סנה</language>
 			<language type="sel" draft="contributed">סלקופ</language>
-			<language type="sem">שפה שמית</language>
 			<language type="ses" draft="contributed">קויראבורו סני</language>
 			<language type="sg" draft="contributed">סנגו</language>
 			<language type="sga">אירית עתיקה</language>
-			<language type="sgn">שפת סימנים</language>
 			<language type="sh">סרבו-קרואטית</language>
 			<language type="shi" draft="contributed">טצ׳להיט</language>
 			<language type="shn" draft="contributed">שאן</language>
 			<language type="shu" draft="contributed">ערבית צ׳אדית</language>
 			<language type="si">סינהלה</language>
 			<language type="sid">סידמו</language>
-			<language type="sio" draft="contributed">שפת סו</language>
-			<language type="sit">שפה סינו־טיבטית</language>
 			<language type="sk">סלובקית</language>
 			<language type="sl">סלובנית</language>
-			<language type="sla">שפה סלאבית</language>
 			<language type="sm">סמואית</language>
 			<language type="sma" draft="contributed">סאמי דרומית</language>
-			<language type="smi">שפת סאמי</language>
 			<language type="smj" draft="contributed">לולה סאמי</language>
 			<language type="smn" draft="contributed">אינארי סאמי</language>
 			<language type="sms" draft="contributed">סקולט סאמי</language>
@@ -498,13 +440,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk" draft="contributed">סונינקה</language>
 			<language type="so">סומלית</language>
 			<language type="sog" draft="contributed">סוגדיאן</language>
-			<language type="son" draft="contributed">סונגהאי</language>
 			<language type="sq">אלבנית</language>
 			<language type="sr">סרבית</language>
 			<language type="srn" draft="contributed">סרנאן טונגו</language>
 			<language type="srr" draft="contributed">סרר</language>
 			<language type="ss">סיסוואטי</language>
-			<language type="ssa" draft="contributed">השפה הנילו-סהרנית</language>
 			<language type="ssy" draft="contributed">סאהו</language>
 			<language type="st">ססות׳ו</language>
 			<language type="su">סונדנית</language>
@@ -518,7 +458,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc" draft="contributed">סירית קלאסית</language>
 			<language type="syr">סורית</language>
 			<language type="ta">טמילית</language>
-			<language type="tai" draft="contributed">שפת טאי</language>
 			<language type="te">טלוגו</language>
 			<language type="tem" draft="contributed">טימנה</language>
 			<language type="teo" draft="contributed">טסו</language>
@@ -545,8 +484,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi" draft="contributed">טסימשיאן</language>
 			<language type="tt">טטרית</language>
 			<language type="tum" draft="contributed">טומבוקה</language>
-			<language type="tup" draft="contributed">שפת טופי</language>
-			<language type="tut" draft="contributed">השפה האלטאית</language>
 			<language type="tvl" draft="contributed">טובאלו</language>
 			<language type="tw">טווי</language>
 			<language type="twq" draft="contributed">טסוואק</language>
@@ -570,11 +507,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun" draft="contributed">וונג׳ו</language>
 			<language type="wa" draft="contributed">וואלון</language>
 			<language type="wae" draft="contributed">וואלסר</language>
-			<language type="wak" draft="contributed">שפת ווקשאן</language>
 			<language type="wal" draft="contributed">וולאמו</language>
 			<language type="war" draft="contributed">ווראי</language>
 			<language type="was" draft="contributed">וואשו</language>
-			<language type="wen" draft="contributed">השפה הסורבית</language>
 			<language type="wo" draft="contributed">ג׳ולוף</language>
 			<language type="xal" draft="contributed">קלמיק</language>
 			<language type="xh">קסוסה</language>
@@ -585,7 +520,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb" draft="contributed">ימבה</language>
 			<language type="yi">יידיש</language>
 			<language type="yo" draft="contributed">יורובה</language>
-			<language type="ypk" draft="contributed">השפה היופית</language>
 			<language type="yue">קנטונזית</language>
 			<language type="za" draft="contributed">ז׳ואנג</language>
 			<language type="zap" draft="contributed">זאפוטק</language>
@@ -595,7 +529,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">סינית</language>
 			<language type="zh_Hans">סינית (מפושטת)</language>
 			<language type="zh_Hant">סינית מסורתית</language>
-			<language type="znd" draft="contributed">זאנדה</language>
 			<language type="zu">זולו</language>
 			<language type="zun" draft="contributed">זוני</language>
 			<language type="zxx">ללא תוכן לשוני</language>
@@ -1318,18 +1251,18 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<months>
 					<monthContext type="format">
 						<monthWidth type="abbreviated">
-							<month type="1">ינו</month>
-							<month type="2">פבר</month>
+							<month type="1">ינו׳</month>
+							<month type="2">פבר׳</month>
 							<month type="3">מרץ</month>
-							<month type="4">אפר</month>
+							<month type="4">אפר׳</month>
 							<month type="5">מאי</month>
-							<month type="6">יונ</month>
-							<month type="7">יול</month>
-							<month type="8">אוג</month>
-							<month type="9">ספט</month>
-							<month type="10">אוק</month>
-							<month type="11">נוב</month>
-							<month type="12">דצמ</month>
+							<month type="6">יוני</month>
+							<month type="7">יולי</month>
+							<month type="8">אוג׳</month>
+							<month type="9">ספט׳</month>
+							<month type="10">אוק׳</month>
+							<month type="11">נוב׳</month>
+							<month type="12">דצמ׳</month>
 						</monthWidth>
 						<monthWidth type="narrow">
 							<month type="1">1</month>
@@ -1367,8 +1300,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<month type="3">מרץ</month>
 							<month type="4">אפר׳</month>
 							<month type="5">מאי</month>
-							<month type="6">יונ׳</month>
-							<month type="7">יול׳</month>
+							<month type="6">יוני</month>
+							<month type="7">יולי</month>
 							<month type="8">אוג׳</month>
 							<month type="9">ספט׳</month>
 							<month type="10">אוק׳</month>
@@ -2276,9 +2209,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>אמריקה/פאלמר</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity draft="contributed">הקוטב הדרומי</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity draft="contributed">שויה</exemplarCity>
 			</zone>
@@ -2551,9 +2481,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>אמריקה/טורנטו</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>אמריקה/מונטריאול</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity draft="contributed">איקלואיט</exemplarCity>
@@ -3397,9 +3324,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>אמריקה/פיניקס</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>אמריקה/שיפרוק</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>אמריקה/דנוור</exemplarCity>

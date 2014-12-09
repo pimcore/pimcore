@@ -36,7 +36,7 @@ class Zend_Service_Flickr
     /**
      * Base URI for the REST client
      */
-    const URI_BASE = 'http://www.flickr.com';
+    const URI_BASE = 'https://www.flickr.com';
 
     /**
      * Your Flickr API key

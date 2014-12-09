@@ -27,7 +27,15 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
 
         this.element = Ext.get(id);
         this.element.dom.setAttribute("contenteditable", true);
-        this.element.update(data);
+
+        // set min height for IE, as he isn't able to update :after css selector
+        this.element.update("|"); // dummy content to get appropriate height
+        this.element.applyStyles({
+            "min-height": this.element.getHeight() + "px"
+        });
+
+        this.element.update(data + "<br>");
+
         this.checkValue();
 
         this.element.on("keyup", this.checkValue.bind(this));
@@ -37,6 +45,27 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
                 e.stopEvent();
             }
         });
+
+        this.element.dom.addEventListener("paste", function(e) {
+            e.preventDefault();
+
+            var text = "";
+            if(e.clipboardData) {
+                text = e.clipboardData.getData("text/plain");
+            } else if (window.clipboardData) {
+                text = window.clipboardData.getData("Text");
+            }
+
+            text = this.clearText(text);
+            text = htmlentities(text, "ENT_NOQUOTES", null, false);
+
+            try {
+                document.execCommand("insertHTML", false, text);
+            } catch (e) {
+                // IE <= 10
+                document.selection.createRange().pasteHTML(text);
+            }
+        }.bind(this));
 
         if(options["width"]) {
             this.element.applyStyles({
@@ -58,12 +87,6 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
         var value = trim(this.element.dom.innerHTML);
         var origValue = value;
 
-        // replace all but the last one // FF fix, because he needs the <br>
-        value = value.replace(/<br([^>]+)?>(.)/gi, function (match, p1, p2) {
-            return " " + p2;
-        });
-        value = strip_tags(value, "<br>");
-
         var textLength = trim(strip_tags(value)).length;
 
         if(textLength < 1) {
@@ -74,15 +97,26 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
         }
 
         if(value != origValue) {
-            this.element.update(value);
+            this.element.update(this.getValue());
         }
     },
 
     getValue: function () {
-        var value = this.element.dom.innerHTML;
-        value = strip_tags(value);
-        value = trim(value);
-        return value;
+        var text = "";
+        if(typeof this.element.dom.textContent != "undefined") {
+            text = this.element.dom.textContent;
+        } else {
+            text = this.element.dom.innerText;
+        }
+
+        text = this.clearText(text);
+        return text;
+    },
+
+    clearText: function (text) {
+        text = str_replace("\r\n", " ", text);
+        text = str_replace("\n", " ", text);
+        return text;
     },
 
     getType: function () {

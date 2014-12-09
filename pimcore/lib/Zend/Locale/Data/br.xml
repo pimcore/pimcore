@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9275 $"/>
-		<generation date="$Date: 2013-08-25 22:28:21 -0500 (Sun, 25 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="br"/>
 	</identity>
 	<localeDisplayNames>
@@ -39,17 +39,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ay">aymara</language>
 			<language type="az">azeri</language>
 			<language type="ba">bachkir</language>
-			<language type="bad">banda</language>
 			<language type="bal">baloutchi</language>
 			<language type="ban">balineg</language>
 			<language type="bas">basaa</language>
-			<language type="bat">balteg</language>
 			<language type="be">belaruseg</language>
 			<language type="bem">bemba</language>
-			<language type="ber">berbereg</language>
 			<language type="bez">bena</language>
 			<language type="bg">bulgareg</language>
-			<language type="bh">bihari</language>
 			<language type="bho">bhojpuri</language>
 			<language type="bi">bislama</language>
 			<language type="bik">bikol</language>
@@ -61,7 +57,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bra">braj</language>
 			<language type="brx">bodo</language>
 			<language type="bs">bosneg</language>
-			<language type="btk">batak</language>
 			<language type="bua">bouriat</language>
 			<language type="bug">bugi</language>
 			<language type="byn">blin</language>
@@ -70,7 +65,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="car">karibeg</language>
 			<language type="ce">tchetcheneg</language>
 			<language type="ceb">cebuano</language>
-			<language type="cel">keltieg</language>
 			<language type="ch">chamorru</language>
 			<language type="chb">chibcha</language>
 			<language type="chm">marieg</language>
@@ -91,7 +85,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="da">daneg</language>
 			<language type="dak">dakota</language>
 			<language type="dar">dargwa</language>
-			<language type="day">dayak</language>
 			<language type="de">alamaneg</language>
 			<language type="de_AT">alamaneg Aostria</language>
 			<language type="de_CH">alamaneg uhel Suis</language>
@@ -128,7 +121,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="fat">fanti</language>
 			<language type="fi">finneg</language>
 			<language type="fil">filipineg</language>
-			<language type="fiu">finneg-ougrieg</language>
 			<language type="fj">fidjieg</language>
 			<language type="fo">faeroeg</language>
 			<language type="fon">fon</language>
@@ -146,7 +138,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">gayo</language>
 			<language type="gba">gbaya</language>
 			<language type="gd">skoseg</language>
-			<language type="gem">germaneg</language>
 			<language type="gez">gezeg</language>
 			<language type="gil">gilberteg</language>
 			<language type="gl">galizeg</language>
@@ -164,7 +155,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">hebraeg</language>
 			<language type="hi">hindi</language>
 			<language type="hil">hiligaynon</language>
-			<language type="him">himachali</language>
 			<language type="hmn">hmong</language>
 			<language type="ho">hiri motu</language>
 			<language type="hr">kroateg</language>
@@ -180,9 +170,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="id">indonezeg</language>
 			<language type="ie">interlingue</language>
 			<language type="ig">igbo</language>
-			<language type="ijo">ijo</language>
 			<language type="ik">inupiaq</language>
-			<language type="ine">indezeuropeg</language>
 			<language type="inh">ingoucheg</language>
 			<language type="io">ido</language>
 			<language type="is">islandeg</language>
@@ -197,7 +185,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kab">kabileg</language>
 			<language type="kac">kachin</language>
 			<language type="kam">kamba</language>
-			<language type="kar">karen</language>
 			<language type="kbd">kabardeg</language>
 			<language type="kea">kabuverdianu</language>
 			<language type="kg">kongo</language>
@@ -258,7 +245,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mn">mongoleg</language>
 			<language type="mnc">manchou</language>
 			<language type="mni">manipuri</language>
-			<language type="mo">moldoveg</language>
 			<language type="moh">mohawk</language>
 			<language type="mr">marathi</language>
 			<language type="ms">malayseg</language>
@@ -266,10 +252,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mul">yezhoù lies</language>
 			<language type="mus">muskogi</language>
 			<language type="my">birmaneg</language>
-			<language type="myn">mayaeg</language>
 			<language type="myv">erza</language>
 			<language type="na">naurueg</language>
-			<language type="nah">nahuatl</language>
 			<language type="nap">napolitaneg</language>
 			<language type="nb">norvegeg bokmål</language>
 			<language type="nd">ndebele an Norzh</language>
@@ -318,6 +302,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">romañcheg</language>
 			<language type="rn">rundi</language>
 			<language type="ro">roumaneg</language>
+			<language type="ro_MD">moldoveg</language>
 			<language type="rof">rombo</language>
 			<language type="rom">romanieg</language>
 			<language type="ru">rusianeg</language>
@@ -333,20 +318,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sco">skoteg</language>
 			<language type="sd">sindhi</language>
 			<language type="se">sámi an Norzh</language>
-			<language type="sem">semiteg</language>
 			<language type="sg">sango</language>
 			<language type="sga">heniwerzhoneg</language>
-			<language type="sgn">yezh ar sinoù</language>
 			<language type="sh">serb-kroateg</language>
 			<language type="shn">shan</language>
 			<language type="si">singhaleg</language>
 			<language type="sid">sidamo</language>
 			<language type="sk">slovakeg</language>
 			<language type="sl">sloveneg</language>
-			<language type="sla">slaveg</language>
 			<language type="sm">samoan</language>
 			<language type="sma">sámi ar Su</language>
-			<language type="smi">sámi</language>
 			<language type="smj">sámi Luleå</language>
 			<language type="smn">sámi Inari</language>
 			<language type="sms">sámi Skolt</language>
@@ -354,7 +335,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">soninke</language>
 			<language type="so">somali</language>
 			<language type="sog">sogdieg</language>
-			<language type="son">songhai</language>
 			<language type="sq">albaneg</language>
 			<language type="sr">serbeg</language>
 			<language type="srr">serer</language>
@@ -391,7 +371,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">tsimshian</language>
 			<language type="tt">tatar</language>
 			<language type="tum">tumbuka</language>
-			<language type="tut">altaieg</language>
 			<language type="tvl">tuvalu</language>
 			<language type="tw">twi</language>
 			<language type="ty">tahitianeg</language>
@@ -1119,9 +1098,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Europe/Minsk">
 				<exemplarCity>Mensk</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>Montréal</exemplarCity>
 			</zone>
 			<zone type="America/St_Johns">
 				<exemplarCity>Saint John's</exemplarCity>

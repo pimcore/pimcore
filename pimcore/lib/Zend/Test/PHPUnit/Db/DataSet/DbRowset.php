@@ -26,11 +26,6 @@
 // require_once "Zend/Db/Table/Rowset/Abstract.php";
 
 /**
- * @see PHPUnit_Extensions_Database_DataSet_AbstractTable
- */
-// require_once "PHPUnit/Extensions/Database/DataSet/AbstractTable.php";
-
-/**
  * Use a Zend_Db Rowset as a datatable for assertions with other PHPUnit Database extension tables.
  *
  * @uses       PHPUnit_Extensions_Database_DataSet_AbstractTable

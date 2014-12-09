@@ -200,12 +200,12 @@ abstract class Zend_Navigation_Container implements RecursiveIterator, Countable
     /**
      * Removes the given page from the container
      *
-     * @param  Zend_Navigation_Page|int $page  page to remove, either a page
-     *                                         instance or a specific page order
-     * @return bool                            whether the removal was
-     *                                         successful
+     * @param  Zend_Navigation_Page|int $page      page to remove, either a page
+     *                                             instance or a specific page order
+     * @param  bool                     $recursive [optional] whether to remove recursively
+     * @return bool whether the removal was successful
      */
-    public function removePage($page)
+    public function removePage($page, $recursive = false)
     {
         if ($page instanceof Zend_Navigation_Page) {
             $hash = $page->hashCode();
@@ -223,6 +223,16 @@ abstract class Zend_Navigation_Container implements RecursiveIterator, Countable
             unset($this->_index[$hash]);
             $this->_dirtyIndex = true;
             return true;
+        }
+
+        if ($recursive) {
+            /** @var Zend_Navigation_Page $childPage */
+            foreach ($this->_pages as $childPage) {
+                if ($childPage->hasPage($page, true)) {
+                    $childPage->removePage($page, true);
+                    return true;
+                }
+            }
         }
 
         return false;

@@ -13,12 +13,28 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Update {
+namespace Pimcore;
 
+class Update {
+
+    /**
+     * @var string
+     */
     public static $updateHost = "update.pimcore.org";
+
+    /**
+     * @var bool
+     */
     public static $dryRun = false;
+
+    /**
+     * @var string
+     */
     public static $tmpTable = "_tmp_update";
-    
+
+    /**
+     * @return bool
+     */
     public static function isWriteable () {
         
         if(self::$dryRun) {
@@ -36,42 +52,46 @@ class Pimcore_Update {
         
         return true;
     }
-    
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
     public static function getAvailableUpdates() {
 
-        $currentRev = Pimcore_Version::$revision;
+        $currentRev = Version::$revision;
                 
         self::cleanup();
  
         if(PIMCORE_DEVMODE){
-            $xmlRaw = Pimcore_Tool::getHttpData("http://" . self::$updateHost . "/v2/getUpdateInfo.php?devmode=1&revision=" . $currentRev);    
+            $xmlRaw = Tool::getHttpData("http://" . self::$updateHost . "/v2/getUpdateInfo.php?devmode=1&revision=" . $currentRev);    
         } else {
-            $xmlRaw = Pimcore_Tool::getHttpData("http://" . self::$updateHost . "/v2/getUpdateInfo.php?revision=" . $currentRev);
+            $xmlRaw = Tool::getHttpData("http://" . self::$updateHost . "/v2/getUpdateInfo.php?revision=" . $currentRev);
         }
 
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
 
         $revisions = array();
         $releases = array();
-        if($xml instanceof SimpleXMLElement){
+        if($xml instanceof \SimpleXMLElement){
             if(isset($xml->revision)) {
                 foreach ($xml->revision as $r) {
 
-                    $date = new Zend_Date($r->date);
+                    $date = new \Zend_Date($r->date);
 
                     if (strlen(strval($r->version)) > 0) {
                         $releases[] = array(
                             "id" => strval($r->id),
                             "date" => strval($r->date),
                             "version" => strval($r->version),
-                            "text" => strval($r->id) . " - " . $date->get(Zend_Date::DATETIME_MEDIUM)
+                            "text" => strval($r->id) . " - " . $date->get(\Zend_Date::DATETIME_MEDIUM)
                         );
                     }
                     else {
                         $revisions[] = array(
                             "id" => strval($r->id),
                             "date" => strval($r->date),
-                            "text" => strval($r->id) . " - " . $date->get(Zend_Date::DATETIME_MEDIUM)
+                            "text" => strval($r->id) . " - " . $date->get(\Zend_Date::DATETIME_MEDIUM)
                         );
                     }
                 }
@@ -85,12 +105,16 @@ class Pimcore_Update {
             "releases" => $releases
         );
     }
-    
+
+    /**
+     * @param $toRevision
+     * @return array
+     */
     public static function getJobs ($toRevision) {
         
-        $currentRev = Pimcore_Version::$revision;
+        $currentRev = Version::$revision;
         
-        $xmlRaw = Pimcore_Tool::getHttpData("http://" . self::$updateHost . "/v2/getDownloads.php?from=" . $currentRev . "&to=" . $toRevision);
+        $xmlRaw = Tool::getHttpData("http://" . self::$updateHost . "/v2/getDownloads.php?from=" . $currentRev . "&to=" . $toRevision);
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
         
         $jobs = array();
@@ -158,10 +182,15 @@ class Pimcore_Update {
         
         return $jobs;
     }
-    
+
+    /**
+     * @param $revision
+     * @param $url
+     * @throws \Zend_Db_Adapter_Exception
+     */
     public static function downloadData ($revision, $url) {
         
-        $db = Pimcore_Resource::get();
+        $db = Resource::get();
         
         $db->query("CREATE TABLE IF NOT EXISTS `" . self::$tmpTable . "` (
           `revision` int(11) NULL DEFAULT NULL,
@@ -171,21 +200,21 @@ class Pimcore_Update {
         
         $downloadDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision;
         if(!is_dir($downloadDir)) {
-            Pimcore_File::mkdir($downloadDir);
+            File::mkdir($downloadDir);
         }
         
         $filesDir = $downloadDir . "/files";
         if(!is_dir($filesDir)) {
-            Pimcore_File::mkdir($filesDir);
+            File::mkdir($filesDir);
         }
         
         $scriptsDir = $downloadDir . "/scripts";
         if(!is_dir($scriptsDir)) {
-            Pimcore_File::mkdir($scriptsDir);
+            File::mkdir($scriptsDir);
         }
         
         
-        $xml = Pimcore_Tool::getHttpData($url);
+        $xml = Tool::getHttpData($url);
         if($xml) {
             $updateFiles = simplexml_load_string($xml, null, LIBXML_NOCDATA);
             
@@ -195,7 +224,7 @@ class Pimcore_Update {
                     if ($file->action == "update" || $file->action == "add") {
                         $newPath = str_replace("/","~~~",$file->path);
                         $newFile = $filesDir."/".$newPath;
-                        Pimcore_File::put($newFile, base64_decode((string) $file->content));
+                        File::put($newFile, base64_decode((string) $file->content));
                     }
                     
                     $db->insert(self::$tmpTable, array(
@@ -205,22 +234,25 @@ class Pimcore_Update {
                     ));
                 } else if ($file->type == "script") {
                     $newScript = $scriptsDir. $file->path;
-                    Pimcore_File::put($newScript, base64_decode((string) $file->content));
+                    File::put($newScript, base64_decode((string) $file->content));
                 }
             }
         }
     }
-    
+
+    /**
+     * @param $revision
+     */
     public static function installData ($revision) {
         
-        $db = Pimcore_Resource::get();
+        $db = Resource::get();
         $files = $db->fetchAll("SELECT * FROM `" . self::$tmpTable . "` WHERE revision = ?", $revision);
         
         foreach ($files as $file) { 
             if ($file["action"] == "update" || $file["action"] == "add") {
                 if (!is_dir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]))) {
                     if(!self::$dryRun) {
-                        Pimcore_File::mkdir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]));
+                        File::mkdir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]));
                     }
                 }
                 $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision."/files/" . str_replace("/","~~~",$file["path"]);
@@ -242,7 +274,12 @@ class Pimcore_Update {
             }
         }
     }
-    
+
+    /**
+     * @param $revision
+     * @param $type
+     * @return array
+     */
     public static function executeScript ($revision, $type) {
         
         $script = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision . "/scripts/" . $type . ".php";
@@ -251,7 +288,7 @@ class Pimcore_Update {
         @ini_set("max_execution_time", $maxExecutionTime);
         set_time_limit($maxExecutionTime);
 
-        Pimcore_Model_Cache::disable(); // it's important to disable the cache here eg. db-schemas, ...
+        Model\Cache::disable(); // it's important to disable the cache here eg. db-schemas, ...
 
         if(is_file($script)) {
             ob_start();
@@ -260,8 +297,8 @@ class Pimcore_Update {
                     include($script);
                 }
             }
-            catch (Exception $e) {
-                Logger::error($e);
+            catch (\Exception $e) {
+                \Logger::error($e);
             }
             $outputMessage = ob_get_clean();
         }
@@ -271,11 +308,14 @@ class Pimcore_Update {
             "success" => true
         );
     }
-    
+
+    /**
+     *
+     */
     public static function cleanup () {
         
         // remove database tmp table
-        $db = Pimcore_Resource::get();
+        $db = Resource::get();
         $db->query("DROP TABLE IF EXISTS `" . self::$tmpTable . "`");
         
         //delete tmp data
@@ -297,7 +337,7 @@ class Pimcore_Update {
      * @return bool
      */
     public static function downloadLanguages() {
-        return Pimcore_Update::downloadLanguage();
+        return self::downloadLanguage();
     }
 
 
@@ -310,7 +350,7 @@ class Pimcore_Update {
      */
     public static function downloadLanguage($lang = null) {
 
-        $languages = Pimcore_Tool_Admin::getLanguages();
+        $languages = Tool\Admin::getLanguages();
         if (!empty($lang)) {
             $languages = array($lang);
         } else {
@@ -327,7 +367,7 @@ class Pimcore_Update {
         //directory for additional languages
         $langDir = PIMCORE_CONFIGURATION_DIRECTORY . "/texts";
         if (!is_dir($langDir)) {
-            Pimcore_File::mkdir($langDir);
+            File::mkdir($langDir);
         }
 
         $success = is_dir($langDir);
@@ -336,7 +376,7 @@ class Pimcore_Update {
                 foreach ($languages as $language) {
                     //TODO: remove hard coded
                     $src = "http://www.pimcore.org/?controller=translation&action=download&language=" . $language;
-                    $data = Pimcore_Tool::getHttpData($src);
+                    $data = Tool::getHttpData($src);
     
                     if (!empty($language) and !empty($data)) {
                         try {
@@ -345,16 +385,16 @@ class Pimcore_Update {
                             fwrite($fh, $data);
                             fclose($fh);
     
-                        } catch (Exception $e) {
-                            Logger::error("could not download language file");
-                            Logger::error($e);
+                        } catch (\Exception $e) {
+                            \Logger::error("could not download language file");
+                            \Logger::error($e);
                             $success = false;
                         }
                     }
                 }
             }
         } else {
-            Logger::warning("Pimcore_Update: Could not create language dir [  $langDir ]");
+            \Logger::warning("Pimcore_Update: Could not create language dir [  $langDir ]");
         }
         return $success;
 
@@ -375,9 +415,9 @@ class Pimcore_Update {
 
         // update if file is older than 30 days, or if it is the first tuesday of the month
         if($filemtime < (time()-30*86400) || (date("m/d/Y") == date("m/d/Y", $firstTuesdayOfMonth) && $filemtime < time()-86400)) {
-            $data = Pimcore_Tool::getHttpData($downloadUrl);
+            $data = Tool::getHttpData($downloadUrl);
             if(strlen($data) > 1000000) {
-                Pimcore_File::put($geoDbFileGz, $data);
+                File::put($geoDbFileGz, $data);
 
                 @unlink($geoDbFile);
 
@@ -392,12 +432,12 @@ class Pimcore_Update {
 
                 unlink($geoDbFileGz);
 
-                Logger::info("Updated MaxMind GeoIP2 Database in: " . $geoDbFile);
+                \Logger::info("Updated MaxMind GeoIP2 Database in: " . $geoDbFile);
             } else {
-                Logger::err("Failed to update MaxMind GeoIP2, size is under about 1M");
+                \Logger::err("Failed to update MaxMind GeoIP2, size is under about 1M");
             }
         } else {
-            Logger::debug("MayMind GeoIP2 Download skipped, everything up to date, last update: " . date("m/d/Y H:i", $filemtime));
+            \Logger::debug("MayMind GeoIP2 Download skipped, everything up to date, last update: " . date("m/d/Y H:i", $filemtime));
         }
     }
 }

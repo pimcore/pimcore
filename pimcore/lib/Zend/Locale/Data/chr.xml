@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9315 $"/>
-		<generation date="$Date: 2013-09-05 11:52:00 -0500 (Thu, 05 Sep 2013) $"/>
+		<version number="$Revision: 9876 $"/>
+		<generation date="$Date: 2014-03-05 23:14:25 -0600 (Wed, 05 Mar 2014) $"/>
 		<language type="chr"/>
 	</identity>
 	<localeDisplayNames>
@@ -383,7 +383,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<month type="9">ᏚᎵ</month>
 							<month type="10">ᏚᏂ</month>
 							<month type="11">ᏅᏓ</month>
-							<month type="12">ᎤᏍ</month>
+							<month type="12">ᎥᏍ</month>
 						</monthWidth>
 						<monthWidth type="wide">
 							<month type="1">ᎤᏃᎸᏔᏅ</month>
@@ -397,7 +397,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<month type="9">ᏚᎵᏍᏗ</month>
 							<month type="10">ᏚᏂᏅᏗ</month>
 							<month type="11">ᏅᏓᏕᏆ</month>
-							<month type="12">ᎤᏍᎩᏱ</month>
+							<month type="12">ᎥᏍᎩᏱ</month>
 						</monthWidth>
 					</monthContext>
 					<monthContext type="stand-alone">
@@ -413,7 +413,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<month type="9">Ꮪ</month>
 							<month type="10">Ꮪ</month>
 							<month type="11">Ꮕ</month>
-							<month type="12">Ꭴ</month>
+							<month type="12">Ꭵ</month>
 						</monthWidth>
 					</monthContext>
 				</months>
@@ -823,6 +823,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<unit type="duration-year">
 				<unitPattern count="one">{0} ᏑᏕᏘᏴᏓ</unitPattern>
 				<unitPattern count="other">{0} ᏧᏕᏘᏴᏓ</unitPattern>
+			</unit>
+		</unitLength>
+		<unitLength type="narrow">
+			<unit type="temperature-celsius">
+				<unitPattern count="one">{0}°C</unitPattern>
+				<unitPattern count="other">{0}°C</unitPattern>
+			</unit>
+			<unit type="temperature-fahrenheit">
+				<unitPattern count="one">{0}°</unitPattern>
+				<unitPattern count="other">{0}°</unitPattern>
 			</unit>
 		</unitLength>
 	</units>

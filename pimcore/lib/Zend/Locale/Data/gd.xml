@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9792 $"/>
+		<generation date="$Date: 2014-02-25 16:17:53 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="gd"/>
 	</identity>
 	<localeDisplayNames>
@@ -22,7 +22,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="am" draft="unconfirmed">Amharais</language>
 			<language type="ang" draft="unconfirmed">Seann-Bheurla</language>
 			<language type="ar" draft="unconfirmed">Arabais</language>
-			<language type="art" draft="unconfirmed">Cànan fuadain</language>
 			<language type="az" draft="unconfirmed">Asarbaideànais</language>
 			<language type="az" alt="short" draft="unconfirmed">Azeri</language>
 			<language type="be" draft="unconfirmed">Bealaruisis</language>
@@ -32,7 +31,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="br" draft="unconfirmed">Breatnais</language>
 			<language type="bs" draft="unconfirmed">Bosnais</language>
 			<language type="ca" draft="unconfirmed">Catalanais</language>
-			<language type="cel" draft="unconfirmed">Cànan Ceilteach</language>
 			<language type="co" draft="unconfirmed">Corsais</language>
 			<language type="cs" draft="unconfirmed">Seicis</language>
 			<language type="cy" draft="unconfirmed">Cuimris</language>
@@ -67,7 +65,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="fy" draft="unconfirmed">Frìsis Iarach</language>
 			<language type="ga" draft="unconfirmed">Gaeilge</language>
 			<language type="gd" draft="unconfirmed">Gàidhlig</language>
-			<language type="gem" draft="unconfirmed">Cànan Gearmanach</language>
 			<language type="gl" draft="unconfirmed">Gailìsis</language>
 			<language type="gn" draft="unconfirmed">Guaraní</language>
 			<language type="gsw" draft="unconfirmed">Gearmailtis Eilbheiseach</language>
@@ -115,14 +112,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mk" draft="unconfirmed">Masadonais</language>
 			<language type="ml" draft="unconfirmed">Malayalam</language>
 			<language type="mn" draft="unconfirmed">Mongolais</language>
-			<language type="mo" draft="unconfirmed">Moldobhais</language>
 			<language type="mr" draft="unconfirmed">Marathi</language>
 			<language type="ms" draft="unconfirmed">Malaidhis</language>
 			<language type="mt" draft="unconfirmed">Maltais</language>
 			<language type="my" draft="unconfirmed">Burmais</language>
-			<language type="myn" draft="unconfirmed">Cànan Mayan</language>
 			<language type="na" draft="unconfirmed">Nauru</language>
-			<language type="nah" draft="unconfirmed">Nahuatl</language>
 			<language type="naq" draft="unconfirmed">Nama</language>
 			<language type="nb" draft="unconfirmed">Bokmål na Nirribhidh</language>
 			<language type="ne" draft="unconfirmed">Neapàilis</language>
@@ -139,13 +133,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="pa" draft="unconfirmed">Panjabi</language>
 			<language type="pi" draft="unconfirmed">Pali</language>
 			<language type="pl" draft="unconfirmed">Pòlainnis</language>
-			<language type="ps" references="R034" draft="unconfirmed">Paistiu</language>
+			<language type="ps" draft="unconfirmed" references="R034">Paistiu</language>
 			<language type="pt" draft="unconfirmed">Portagailis</language>
 			<language type="pt_BR" draft="unconfirmed">Portagailis Bhraisil</language>
 			<language type="qu" draft="unconfirmed">Ceatsua</language>
 			<language type="rap" draft="unconfirmed">Rapanui</language>
 			<language type="rm" draft="unconfirmed">Rumains</language>
 			<language type="ro" draft="unconfirmed">Ròmanais</language>
+			<language type="ro_MD">Moldobhais</language>
 			<language type="ru" draft="unconfirmed">Ruisis</language>
 			<language type="rw" draft="unconfirmed">Kinyarwanda</language>
 			<language type="sa" draft="unconfirmed">Sanskrit</language>
@@ -154,14 +149,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sd" draft="unconfirmed">Sindhi</language>
 			<language type="se" draft="unconfirmed">Sàmais Thuathach</language>
 			<language type="sga" draft="unconfirmed">Seann-Ghaeilge</language>
-			<language type="sgn" draft="unconfirmed">Cainnt-Shanais</language>
 			<language type="sh" draft="unconfirmed">Sèirb-Chròthaisis</language>
 			<language type="si" draft="unconfirmed">Sinhala</language>
 			<language type="sk" draft="unconfirmed">Slòbhacais</language>
 			<language type="sl" draft="unconfirmed">Slòbhainis</language>
 			<language type="sm" draft="unconfirmed">Samothanais</language>
 			<language type="sma" draft="unconfirmed">Sàmais Dheasach</language>
-			<language type="smi" draft="unconfirmed">Sàmais</language>
 			<language type="smj" draft="unconfirmed">Sàmais Lule</language>
 			<language type="smn" draft="unconfirmed">Sàmais Inari</language>
 			<language type="sms" draft="unconfirmed">Sàmais Skolt</language>
@@ -173,7 +166,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sv" draft="unconfirmed">Suainis</language>
 			<language type="sw" draft="unconfirmed">Swahili</language>
 			<language type="ta" draft="unconfirmed">Taimilis</language>
-			<language type="tai" draft="unconfirmed">Cànan nan Tàidh</language>
 			<language type="te" draft="unconfirmed">Telugu</language>
 			<language type="tet" draft="unconfirmed">Tetum</language>
 			<language type="tg" draft="unconfirmed">Taidigis</language>
@@ -193,7 +185,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="uz" draft="unconfirmed">Usbagais</language>
 			<language type="vi" draft="unconfirmed">Bhiet-Namais</language>
 			<language type="vo" draft="unconfirmed">Volapük</language>
-			<language type="wen" draft="unconfirmed">Sòrbais</language>
 			<language type="wo" draft="unconfirmed">Wolof</language>
 			<language type="xh" draft="unconfirmed">Xhosa</language>
 			<language type="yi" draft="unconfirmed">Iùdhais</language>
@@ -234,7 +225,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<script type="Telu" draft="unconfirmed">Telugu</script>
 			<script type="Tfng" draft="unconfirmed">Tifinagh</script>
 			<script type="Tglg" draft="unconfirmed">Tagalog</script>
-			<script type="Thai" references="R035" draft="unconfirmed">Tàidh</script>
+			<script type="Thai" draft="unconfirmed" references="R035">Tàidh</script>
 			<script type="Tibt" draft="unconfirmed">Tibeiteach</script>
 			<script type="Zmth" draft="unconfirmed">Comharran matamataig</script>
 			<script type="Zsym" draft="unconfirmed">Comharran</script>

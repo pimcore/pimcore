@@ -269,7 +269,7 @@ class Zend_Http_Client
      *
      * @var resource
      */
-    static protected $_fileInfoDb = null;
+    protected static $_fileInfoDb = null;
 
     /**
      * Constructor method. Will create a new HTTP client. Accepts the target
@@ -386,13 +386,17 @@ class Zend_Http_Client
     public function setMethod($method = self::GET)
     {
         if (! preg_match('/^[^\x00-\x1f\x7f-\xff\(\)<>@,;:\\\\"\/\[\]\?={}\s]+$/', $method)) {
-            /** @see Zend_Http_Client_Exception */
             // require_once 'Zend/Http/Client/Exception.php';
             throw new Zend_Http_Client_Exception("'{$method}' is not a valid HTTP request method.");
         }
 
-        if (($method == self::POST || $method == self::PUT || $method == self::DELETE || $method == self::PATCH)
-             && $this->enctype === null) {
+        if (($method == self::POST
+                || $method == self::PUT
+                || $method == self::DELETE
+                || $method == self::PATCH
+                || $method == self::OPTIONS)
+            && $this->enctype === null
+        ) {
             $this->setEncType(self::ENC_URLENCODED);
         }
 
@@ -761,7 +765,7 @@ class Zend_Http_Client
             'ctype'    => $ctype,
             'data'     => $data
         );
-        
+
         $this->body_field_order[$formname] = self::VTYPE_FILE;
 
         return $this;
@@ -1456,7 +1460,8 @@ class Zend_Http_Client
      * @param array $headers Associative array of optional headers @example ("Content-Transfer-Encoding" => "binary")
      * @return string
      */
-    public static function encodeFormData($boundary, $name, $value, $filename = null, $headers = array()) {
+    public static function encodeFormData($boundary, $name, $value, $filename = null, $headers = array())
+    {
         $ret = "--{$boundary}\r\n" .
             'Content-Disposition: form-data; name="' . $name .'"';
 
@@ -1531,7 +1536,7 @@ class Zend_Http_Client
      * @param  string $prefix
      * @return array
      */
-    static protected function _flattenParametersArray($parray, $prefix = null)
+    protected static function _flattenParametersArray($parray, $prefix = null)
     {
         if (! is_array($parray)) {
             return $parray;

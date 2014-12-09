@@ -62,6 +62,7 @@ class Zend_Application_Resource_Session extends Zend_Application_Resource_Resour
      * Get session save handler
      *
      * @return Zend_Session_SaveHandler_Interface
+     * @throws Zend_Application_Resource_Exception
      */
     public function getSaveHandler()
     {

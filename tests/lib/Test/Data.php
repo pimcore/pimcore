@@ -631,7 +631,7 @@ class Test_Data
 
     public static function fillObjectsWithMetadata($object, $field, $seed = 1) {
         $setter = "set" . ucfirst($field);
-        $objects = self::getObjectList("o_type = 'object'");
+        $objects = self::getObjectList("o_type = 'object' AND o_className = 'unittest'");
         $objects = array_slice($objects,0,4);
 
         $metaobjects = array();

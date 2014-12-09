@@ -445,6 +445,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     getRootPanel: function() {
 
+
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
@@ -457,6 +458,13 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     name: "name",
                     width: 300,
                     value: this.data.name
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("default_layout"),
+                    name: "default",
+                    value : 1,
+                    checked: this.data.default
                 },
                 {
                     xtype: "textarea",

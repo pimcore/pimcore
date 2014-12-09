@@ -21,11 +21,8 @@ if($_SERVER["HTTP_HOST"] != $referrerHost) {
 
 // this file doesn't boot the pimcore core for performance reasons
 ini_set("display_errors", "Off");
-set_include_path(realpath("../../../../lib") . PATH_SEPARATOR);
+include_once("../../../../lib/geoip2.phar");
 
-spl_autoload_register(function ($class) {
-    include_once(str_replace("\\","/",$class).".php");
-});
 
 use GeoIp2\Database\Reader;
 

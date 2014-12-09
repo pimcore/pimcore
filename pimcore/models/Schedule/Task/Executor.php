@@ -15,23 +15,29 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Schedule_Task_Executor {
+namespace Pimcore\Model\Schedule\Task;
 
+use Pimcore\Model;
+use Pimcore\Model\Document;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Object;
+use Pimcore\Model\Version;
+
+class Executor {
+
+    /**
+     *
+     */
     public static function execute() {
 
-        $list = new Schedule_Task_List();
+        $list = new Listing();
         $list->setCondition("active = 1 AND date < ?", time());
         $tasks = $list->load();
 
         foreach ($tasks as $task) {
-
             try {
-
                 if ($task->getCtype() == "document") {
-
                     $document = Document::getById($task->getCid());
-
-
                     if ($document instanceof Document) {
                         if ($task->getAction() == "publish-version" && $task->getVersion()) {
                             try{
@@ -41,11 +47,11 @@ class Schedule_Task_Executor {
                                     $document->setPublished(true);
                                     $document->save();
                                 } else {
-                                    Logger::err("Schedule_Task_Executor: Could not restore document from version data.");
+                                    \Logger::err("Schedule\\Task\\Executor: Could not restore document from version data.");
                                 }
 
-                            } catch(Exception $e){
-                                Logger::err("Schedule_Task_Executor: Version [ ".$task->getVersion()." ] does not exist.");
+                            } catch(\Exception $e){
+                                \Logger::err("Schedule\\Task\\Executor: Version [ ".$task->getVersion()." ] does not exist.");
                             }
 
                         }
@@ -74,11 +80,11 @@ class Schedule_Task_Executor {
                                 if($asset instanceof Asset){
                                     $asset->save();
                                 } else {
-                                    Logger::err("Schedule_Task_Executor: Could not restore asset from version data.");
+                                    \Logger::err("Schedule\\Task\\Executor: Could not restore asset from version data.");
                                 }
 
-                            } catch(Exception $e){
-                                Logger::err("Schedule_Task_Executor: Version [ ".$task->getVersion()." ] does not exist.");
+                            } catch(\Exception $e){
+                                \Logger::err("Schedule\\Task\\Executor: Version [ ".$task->getVersion()." ] does not exist.");
                             }
                         }
                         else if ($task->getAction() == "delete") {
@@ -88,22 +94,22 @@ class Schedule_Task_Executor {
                 }
                 else if ($task->getCtype() == "object") {
 
-                    $object = Object_Abstract::getById($task->getCid());
+                    $object = Object::getById($task->getCid());
 
-                    if ($object instanceof Object_Abstract) {
+                    if ($object instanceof Object) {
                         if ($task->getAction() == "publish-version" && $task->getVersion()) {
                             try{
                                 $version = Version::getById($task->getVersion());
                                 $object = $version->getData();
-                                if($object instanceof Object_Abstract){
+                                if($object instanceof Object\AbstractObject){
                                     $object->setPublished(true);
                                     $object->save();
                                 } else {
-                                    Logger::err("Schedule_Task_Executor: Could not restore object from version data.");
+                                    \Logger::err("Schedule\\Task\\Executor: Could not restore object from version data.");
                                 }
 
-                            } catch(Exception $e){
-                                Logger::err("Schedule_Task_Executor: Version [ ".$task->getVersion()." ] does not exist.");
+                            } catch(\Exception $e){
+                                \Logger::err("Schedule\\Task\\Executor: Version [ ".$task->getVersion()." ] does not exist.");
                             }
                         }
                         else if ($task->getAction() == "publish") {
@@ -123,9 +129,9 @@ class Schedule_Task_Executor {
                 $task->setActive(false);
                 $task->save();
                 
-            } catch (Exception $e) {
-                Logger::err("There was a problem with the scheduled task ID: " . $task->getId());
-                Logger::err($e);
+            } catch (\Exception $e) {
+                \Logger::err("There was a problem with the scheduled task ID: " . $task->getId());
+                \Logger::err($e);
             }
         }
     }

@@ -13,7 +13,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_BackupController extends Pimcore_Controller_Action_Admin {
+class Admin_BackupController extends \Pimcore\Controller\Action\Admin {
 
 
     public function init() {
@@ -23,12 +23,12 @@ class Admin_BackupController extends Pimcore_Controller_Action_Admin {
 
         @ini_set("memory_limit", "-1");
 
-        $this->session = Pimcore_Tool_Session::get("pimcore_backup");
+        $this->session = \Pimcore\Tool\Session::get("pimcore_backup");
     }
 
     public function initAction() {
 
-        $backup = new Pimcore_Backup(PIMCORE_BACKUP_DIRECTORY . "/backup_" . date("m-d-Y_H-i") . ".tar");
+        $backup = new \Pimcore\Backup(PIMCORE_BACKUP_DIRECTORY . "/backup_" . date("m-d-Y_H-i") . ".zip");
         $initInfo = $backup->init();
         
         $this->session->backup = $backup;        
@@ -89,7 +89,7 @@ class Admin_BackupController extends Pimcore_Controller_Action_Admin {
         
         $backup = $this->session->backup;
         
-        header("Content-Type: application/tar");
+        header("Content-Type: application/zip");
         header('Content-Disposition: attachment; filename="' . basename($backup->getBackupFile()) . '"');
 
         while(@ob_end_flush());

@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Targeting_Rule extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Tool\Targeting;
+
+use Pimcore\Model;
+use Pimcore\Model\Tool;
+
+class Rule extends Model\AbstractModel {
 
     /**
      * @var int
@@ -48,16 +53,16 @@ class Tool_Targeting_Rule extends Pimcore_Model_Abstract {
     public $conditions = array();
 
     /**
-     * @var Tool_Targeting_Rule_Actions
+     * @var Model\Tool\Targeting\Rule\Actions
      */
     public $actions;
 
     /**
-     * @param int|Tool_Targeting_Rule $targetId
+     * @param $target
      * @return bool
      */
     public static function inTarget($target) {
-        if($target instanceof Tool_Targeting_Rule) {
+        if($target instanceof Model\Tool\Targeting\Rule) {
             $targetId = $target->getId();
         } else if (is_string($target)) {
             $target = self::getByName($target);
@@ -85,18 +90,18 @@ class Tool_Targeting_Rule extends Pimcore_Model_Abstract {
             $value = true;
         }
 
-        $front = Zend_Controller_Front::getInstance();
-        $plugin = $front->getPlugin("Pimcore_Controller_Plugin_Targeting");
-        if($plugin instanceof Pimcore_Controller_Plugin_Targeting) {
+        $front = \Zend_Controller_Front::getInstance();
+        $plugin = $front->getPlugin("Pimcore\\Controller\\Plugin\\Targeting");
+        if($plugin instanceof \Pimcore\Controller\Plugin\Targeting) {
             $plugin->addEvent($key, $value);
         }
     }
 
     /**
-     * Static helper to retrieve an instance of Tool_Targeting_Rule by the given ID
+     * Static helper to retrieve an instance of Tool\Targeting\Rule by the given ID
      *
      * @param integer $id
-     * @return Tool_Targeting_Rule
+     * @return Tool\Targeting\Rule
      */
     public static function getById($id) {
         try {
@@ -104,15 +109,14 @@ class Tool_Targeting_Rule extends Pimcore_Model_Abstract {
             $target->setId(intval($id));
             $target->getResource()->getById();
             return $target;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }
 
     /**
-     * Static helper to retrieve an instance of Tool_Targeting_Rule by the given name
-     * @param integer $id
-     * @return Tool_Targeting_Rule
+     * @param $name
+     * @return null|Rule
      */
     public static function getByName($name) {
         try {
@@ -120,13 +124,14 @@ class Tool_Targeting_Rule extends Pimcore_Model_Abstract {
             $target->setName($name);
             $target->getResource()->getByName();
             return $target;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }
 
     /**
-     * @param string $description
+     * @param $description
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -143,7 +148,8 @@ class Tool_Targeting_Rule extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $id
+     * @param $id
+     * @return $this
      */
     public function setId($id)
     {
@@ -160,7 +166,8 @@ class Tool_Targeting_Rule extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $name
+     * @param $name
+     * @return $this
      */
     public function setName($name)
     {
@@ -177,32 +184,34 @@ class Tool_Targeting_Rule extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param \Tool_Targeting_Rule_Actions $actions
+     * @param $actions
+     * @return $this
      */
     public function setActions($actions)
     {
         if(!$actions) {
-            $actions = new Tool_Targeting_Rule_Actions();
+            $actions = new Tool\Targeting\Rule\Actions();
         }
         $this->actions = $actions;
         return $this;
     }
 
     /**
-     * @return \Tool_Targeting_Rule_Actions
+     * @return Tool\Targeting\Rule\Actions
      */
     public function getActions()
     {
-        // this is to be backward compatible (was Tool_Targeting_Actions)
-        if($this->actions instanceof Tool_Targeting_Rule_Actions) {
+        // this is to be backward compatible (was Tool\Targeting\Actions)
+        if($this->actions instanceof Tool\Targeting\Rule\Actions) {
             return $this->actions;
         }
 
-        return new Tool_Targeting_Rule_Actions();
+        return new Tool\Targeting\Rule\Actions();
     }
 
     /**
-     * @param array $conditions
+     * @param $conditions
+     * @return $this
      */
     public function setConditions($conditions)
     {

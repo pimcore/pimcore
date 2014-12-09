@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Targeting_Persona_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Tool\Targeting\Persona;
+
+use Pimcore\Model;
+use Pimcore\Tool\Serialize; 
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      * Contains all valid columns in the database table
@@ -34,10 +39,8 @@ class Tool_Targeting_Persona_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
-     * Get the data for the object from database for the given id
-     *
-     * @param integer $id
-     * @return void
+     * @param null $id
+     * @throws \Exception
      */
     public function getById($id = null) {
 
@@ -48,11 +51,11 @@ class Tool_Targeting_Persona_Resource extends Pimcore_Model_Resource_Abstract {
         $data = $this->db->fetchRow("SELECT * FROM targeting_personas WHERE id = ?", $this->model->getId());
 
         if($data["id"]) {
-            $data["conditions"] = Pimcore_Tool_Serialize::unserialize($data["conditions"]);
-            $data["actions"] = Pimcore_Tool_Serialize::unserialize($data["actions"]);
+            $data["conditions"] = Serialize::unserialize($data["conditions"]);
+            $data["actions"] = Serialize::unserialize($data["actions"]);
             $this->assignVariablesToModel($data);
         } else {
-            throw new Exception("persona with id " . $this->model->getId() . " doesn't exist");
+            throw new \Exception("persona with id " . $this->model->getId() . " doesn't exist");
         }
     }
 
@@ -78,9 +81,7 @@ class Tool_Targeting_Persona_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
-     * Save changes to database, it's an good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
 
@@ -90,7 +91,7 @@ class Tool_Targeting_Persona_Resource extends Pimcore_Model_Resource_Abstract {
             foreach ($type as $key => $value) {
                 if (in_array($key, $this->validColumns)) {
                     if(is_array($value) || is_object($value)) {
-                        $value = Pimcore_Tool_Serialize::serialize($value);
+                        $value = Serialize::serialize($value);
                     }
                     if(is_bool($value)) {
                         $value = (int) $value;
@@ -101,7 +102,7 @@ class Tool_Targeting_Persona_Resource extends Pimcore_Model_Resource_Abstract {
 
             $this->db->update("targeting_personas", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

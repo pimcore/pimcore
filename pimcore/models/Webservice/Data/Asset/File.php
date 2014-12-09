@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Asset_File extends Webservice_Data_Asset {
+namespace Pimcore\Model\Webservice\Data\Asset;
+
+use Pimcore\Model;
+
+class File extends Model\Webservice\Data\Asset {
     
     /**
      * @var string

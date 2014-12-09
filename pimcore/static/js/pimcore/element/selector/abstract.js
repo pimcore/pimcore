@@ -107,17 +107,14 @@ pimcore.element.selector.abstract = Class.create({
 
         pagingToolbar.add(new Ext.form.ComboBox({
             store: [
-                [10, "10"],
-                [20, "20"],
-                [40, "40"],
-                [60, "60"],
-                [80, "80"],
+                [50, "50"],
                 [100, "100"],
+                [200, "200"],
                 [999999, t("all")]
             ],
             mode: "local",
             width: 50,
-            value: 20,
+            value: 50,
             triggerAction: "all",
             listeners: {
                 select: function (box, rec, index) {

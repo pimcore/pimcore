@@ -13,19 +13,23 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Tool_Archive {
+namespace Pimcore\Tool;
+
+use Pimcore\File; 
+
+class Archive {
 
     /**
-     * @param $sourceDir Source directory
-     * @param $destinationFile destination zip file
-     * @param array $excludeFilePattern exclude files
+     * @param $sourceDir
+     * @param $destinationFile
+     * @param array $excludeFilePattern
      * @param array $options
-     * @return bool
-     * @throws Exception
+     * @return \ZipArchive
+     * @throws \Exception
      */
     public static function createZip($sourceDir,$destinationFile,$excludeFilePattern = array(), $options = array()){
         list($sourceDir,$destinationFile,$items) = self::prepareArchive($sourceDir,$destinationFile);
-        $mode = $options['mode'] ? $options['mode'] : ZIPARCHIVE::OVERWRITE;
+        $mode = $options['mode'] ? $options['mode'] : \ZIPARCHIVE::OVERWRITE;
 
         if(substr($sourceDir,-1,1) != DIRECTORY_SEPARATOR){
             $sourceDir .= DIRECTORY_SEPARATOR;
@@ -34,21 +38,21 @@ class Pimcore_Tool_Archive {
         if(is_dir($sourceDir) && is_readable($sourceDir)){
             $items = rscandir($sourceDir);
         }else{
-            throw new Exception("$sourceDir doesn't exits or is not readable!");
+            throw new \Exception("$sourceDir doesn't exits or is not readable!");
         }
 
         if(!$destinationFile || !is_string($destinationFile)){
-            throw new Exception('No destinationFile provided!');
+            throw new \Exception('No destinationFile provided!');
         }else{
             @unlink($destinationFile);
         }
 
         $destinationDir = dirname($destinationFile);
         if(!is_dir($destinationDir)){
-            Pimcore_File::mkdir($destinationDir);
+            File::mkdir($destinationDir);
         }
 
-        $zip = new ZipArchive();
+        $zip = new \ZipArchive();
         $zip->open($destinationFile, $mode);
         foreach($items as $item){
             $zipPath = str_replace($sourceDir,'',$item);
@@ -67,20 +71,28 @@ class Pimcore_Tool_Archive {
         }
 
         if(!$zip->close()){
-            throw new Exception("Couldn't close zip file!");
+            throw new \Exception("Couldn't close zip file!");
         }
 
         return $zip;
     }
 
+    /**
+     * @param $sourceDir
+     * @param $destinationFile
+     * @param array $excludeFilePattern
+     * @param array $options
+     * @return \Phar
+     * @throws \Exception
+     */
     public static function createPhar($sourceDir,$destinationFile,$excludeFilePattern = array(), $options = array()){
         list($sourceDir,$destinationFile,$items) = self::prepareArchive($sourceDir,$destinationFile);
 
         $alias = $options['alias'] ? $options['alias'] : 'archive.phar';
 
-        $phar = new Phar($destinationFile,0,$alias);
+        $phar = new \Phar($destinationFile,0,$alias);
         if($options['compress']){
-            $phar = $phar->convertToExecutable(Phar::TAR, Phar::GZ);
+            $phar = $phar->convertToExecutable(\Phar::TAR, \Phar::GZ);
         }
 
         foreach($items as $item){
@@ -106,6 +118,12 @@ class Pimcore_Tool_Archive {
         return $phar;
     }
 
+    /**
+     * @param $sourceDir
+     * @param $destinationFile
+     * @return array
+     * @throws \Exception
+     */
     protected static function prepareArchive($sourceDir,$destinationFile){
         if(substr($sourceDir,-1,1) != DIRECTORY_SEPARATOR){
             $sourceDir .= DIRECTORY_SEPARATOR;
@@ -114,18 +132,18 @@ class Pimcore_Tool_Archive {
         if(is_dir($sourceDir) && is_readable($sourceDir)){
             $items = rscandir($sourceDir);
         }else{
-            throw new Exception("$sourceDir doesn't exits or is not readable!");
+            throw new \Exception("$sourceDir doesn't exits or is not readable!");
         }
 
         if(!$destinationFile || !is_string($destinationFile)){
-            throw new Exception('No destinationFile provided!');
+            throw new \Exception('No destinationFile provided!');
         }else{
             @unlink($destinationFile);
         }
 
         $destinationDir = dirname($destinationFile);
         if(!is_dir($destinationDir)){
-            Pimcore_File::mkdir($destinationDir);
+            File::mkdir($destinationDir);
         }
         return array($sourceDir,$destinationFile,$items);
     }

@@ -21,11 +21,6 @@
  */
 
 /**
- * @see PHPUnit_Extensions_Database_TestCase
- */
-// require_once "PHPUnit/Extensions/Database/TestCase.php";
-
-/**
  * @see Zend_Test_PHPUnit_Db_Operation_Truncate
  */
 // require_once "Zend/Test/PHPUnit/Db/Operation/Truncate.php";

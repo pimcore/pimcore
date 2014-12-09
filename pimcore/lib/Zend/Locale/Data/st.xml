@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="st"/>
 	</identity>
 	<localeDisplayNames>
@@ -18,7 +18,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="az" draft="unconfirmed">Se-azerbaijani</language>
 			<language type="be" draft="unconfirmed">Se-belarusia</language>
 			<language type="bg" draft="unconfirmed">Se-bulgaria</language>
-			<language type="bh" draft="unconfirmed">Se-bihari</language>
 			<language type="bn" draft="unconfirmed">Se-bengali</language>
 			<language type="br" draft="unconfirmed">Breton</language>
 			<language type="bs" draft="unconfirmed">Se-bosnia</language>

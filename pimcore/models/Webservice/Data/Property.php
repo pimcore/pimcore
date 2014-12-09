@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Property extends Webservice_Data {
+namespace Pimcore\Model\Webservice\Data;
+
+use Pimcore\Model;
+
+class Property extends Model\Webservice\Data {
     
     /**
      * @var string

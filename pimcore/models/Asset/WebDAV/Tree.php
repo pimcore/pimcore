@@ -15,7 +15,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_WebDAV_Tree extends \Sabre\DAV\ObjectTree {
+namespace Pimcore\Model\Asset\WebDAV;
+
+use Pimcore\File;
+use Sabre\DAV;
+use Pimcore\Model\Asset;
+
+class Tree extends DAV\ObjectTree {
 
     /**
      * Moves a file/directory
@@ -27,11 +33,11 @@ class Asset_WebDAV_Tree extends \Sabre\DAV\ObjectTree {
     public function move($sourcePath, $destinationPath) {
 
         $nameParts = explode("/",$sourcePath);
-        $nameParts[count($nameParts)-1] = Pimcore_File::getValidFilename($nameParts[count($nameParts)-1]);
+        $nameParts[count($nameParts)-1] = File::getValidFilename($nameParts[count($nameParts)-1]);
         $sourcePath = implode("/",$nameParts);
         
         $nameParts = explode("/",$destinationPath);
-        $nameParts[count($nameParts)-1] = Pimcore_File::getValidFilename($nameParts[count($nameParts)-1]);
+        $nameParts[count($nameParts)-1] = File::getValidFilename($nameParts[count($nameParts)-1]);
         $destinationPath = implode("/",$nameParts);
   
         try {
@@ -46,10 +52,10 @@ class Asset_WebDAV_Tree extends \Sabre\DAV\ObjectTree {
                     $sourceAsset->delete();
                 }
 
-                // see: Asset_WebDAV_File::delete() why this is necessary
-                $log = Asset_WebDAV_Service::getDeleteLog();
+                // see: Asset\WebDAV\File::delete() why this is necessary
+                $log = Asset\WebDAV\Service::getDeleteLog();
                 if(!$asset && array_key_exists("/" .$destinationPath, $log)) {
-                    $asset = Pimcore_Tool_Serialize::unserialize($log["/" .$destinationPath]["data"]);
+                    $asset = \Pimcore\Tool\Serialize::unserialize($log["/" .$destinationPath]["data"]);
                     if($asset) {
                         $sourceAsset = Asset::getByPath("/" . $sourcePath);
                         $asset->setData($sourceAsset->getData());
@@ -71,12 +77,12 @@ class Asset_WebDAV_Tree extends \Sabre\DAV\ObjectTree {
                 $asset->setParentId($parent->getId());
             }
 
-            $user = Pimcore_Tool_Admin::getCurrentUser();
+            $user = \Pimcore\Tool\Admin::getCurrentUser();
             $asset->setUserModification($user->getId());
             $asset->save();
 
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
         }
     }
 

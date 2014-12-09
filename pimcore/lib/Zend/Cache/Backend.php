@@ -58,8 +58,6 @@ class Zend_Cache_Backend
      * Constructor
      *
      * @param  array $options Associative array of options
-     * @throws Zend_Cache_Exception
-     * @return void
      */
     public function __construct(array $options = array())
     {
@@ -269,7 +267,7 @@ class Zend_Cache_Backend
      * Log a message at the WARN (4) priority.
      *
      * @param  string $message
-     * @throws Zend_Cache_Exception
+     * @param  int    $priority
      * @return void
      */
     protected function _log($message, $priority = 4)

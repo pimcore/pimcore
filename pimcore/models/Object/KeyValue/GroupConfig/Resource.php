@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_KeyValue_GroupConfig_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Object\KeyValue\GroupConfig;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     const TABLE_NAME_GROUPS = "keyvalue_groups";
 
@@ -52,6 +56,10 @@ class Object_KeyValue_GroupConfig_Resource extends Pimcore_Model_Resource_Abstra
         $this->assignVariablesToModel($data);
     }
 
+    /**
+     * @param null $name
+     * @throws \Exception
+     */
     public function getByName($name = null) {
 
         if ($name != null) {
@@ -65,7 +73,7 @@ class Object_KeyValue_GroupConfig_Resource extends Pimcore_Model_Resource_Abstra
         if($data["id"]) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Exception("Config with name: " . $this->model->getName() . " does not exist");
+            throw new \Exception("Config with name: " . $this->model->getName() . " does not exist");
         }
     }
 
@@ -92,9 +100,7 @@ class Object_KeyValue_GroupConfig_Resource extends Pimcore_Model_Resource_Abstra
     }
 
     /**
-     * Save changes to database, it's an good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
         try {
@@ -109,7 +115,7 @@ class Object_KeyValue_GroupConfig_Resource extends Pimcore_Model_Resource_Abstra
                         $value = (int) $value;
                     }
                     if(is_array($value) || is_object($value)) {
-                        $value = Pimcore_Tool_Serialize::serialize($value);
+                        $value = \Pimcore\Tool\Serialize::serialize($value);
                     }
 
                     $data[$key] = $value;
@@ -117,8 +123,9 @@ class Object_KeyValue_GroupConfig_Resource extends Pimcore_Model_Resource_Abstra
             }
 
             $this->db->update(self::TABLE_NAME_GROUPS, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            return $this->model;
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

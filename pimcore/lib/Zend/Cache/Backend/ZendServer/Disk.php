@@ -72,7 +72,8 @@ class Zend_Cache_Backend_ZendServer_Disk extends Zend_Cache_Backend_ZendServer i
     /**
      * Fetch data
      *
-     * @param string $id          Cache id
+     * @param string $id Cache id
+     * @return mixed|null
      */
     protected function _fetch($id)
     {

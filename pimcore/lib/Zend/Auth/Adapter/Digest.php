@@ -71,7 +71,6 @@ class Zend_Auth_Adapter_Digest implements Zend_Auth_Adapter_Interface
      * @param  mixed $realm
      * @param  mixed $username
      * @param  mixed $password
-     * @return void
      */
     public function __construct($filename = null, $realm = null, $username = null, $password = null)
     {

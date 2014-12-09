@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Document_Snippet_Outgoing extends Webservice_Data_Document_Snippet {
+namespace Pimcore\Model\Webservice\Data\Document\Snippet;
+
+use Pimcore\Model;
+
+class Outgoing extends Model\Webservice\Data\Document\Snippet {
 
 
     /**
@@ -39,7 +43,7 @@ class Webservice_Data_Document_Snippet_Outgoing extends Webservice_Data_Document
     public $userModification;
 
     /**
-     * @var Webservice_Data_Document_List_Item[]
+     * @var Model\Webservice\Data\Document\Listing\Item[]
      */
     public $childs;
 

@@ -65,7 +65,6 @@ $includePaths = array(
     PIMCORE_PATH . "/models",
     PIMCORE_WEBSITE_PATH . "/lib",
     PIMCORE_WEBSITE_PATH . "/models",
-    PIMCORE_PATH . "/modules/searchadmin/models",
     PIMCORE_CLASS_DIRECTORY
 );
 set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
@@ -74,10 +73,10 @@ set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 include(dirname(__FILE__) . "/helper.php");
 
 // setup zend framework and pimcore
-require_once PIMCORE_DOCUMENT_ROOT . "/pimcore/lib/Pimcore.php";
-require_once PIMCORE_DOCUMENT_ROOT . "/pimcore/lib/Logger.php";
-require_once PIMCORE_DOCUMENT_ROOT . "/pimcore/lib/Zend/Loader.php";
-require_once PIMCORE_DOCUMENT_ROOT . "/pimcore/lib/Zend/Loader/Autoloader.php";
+require_once PIMCORE_PATH . "/lib/Pimcore.php";
+require_once PIMCORE_PATH . "/lib/Logger.php";
+require_once PIMCORE_PATH . "/lib/Zend/Loader.php";
+require_once PIMCORE_PATH . "/lib/Zend/Loader/Autoloader.php";
 
 $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->suppressNotFoundWarnings(false);
@@ -92,7 +91,7 @@ $autoloaderClassMapFiles = array(
 
 foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
     if(file_exists($autoloaderClassMapFile)) {
-        $classMapAutoLoader = new Zend_Loader_ClassMapAutoloader(array($autoloaderClassMapFile));
+        $classMapAutoLoader = new \Pimcore\Loader\ClassMapAutoloader(array($autoloaderClassMapFile));
         $classMapAutoLoader->register();
     }
 }
@@ -111,7 +110,7 @@ if(@is_file($composerStartup)) {
 
 // on pimcore shutdown
 register_shutdown_function(function () {
-    Pimcore::getEventManager()->trigger("system.shutdown");
+    \Pimcore::getEventManager()->trigger("system.shutdown");
 });
 
 // attach global shutdown event

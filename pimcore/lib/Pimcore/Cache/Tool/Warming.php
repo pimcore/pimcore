@@ -13,7 +13,16 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Cache_Tool_Warming {
+namespace Pimcore\Cache\Tool;
+
+use Pimcore\Model\Cache;
+use Pimcore\Model\Listing\AbstractListing;
+use Pimcore\Model\Document;
+use Pimcore\Model\Element;
+use Pimcore\Model\Object;
+use Pimcore\Model\Asset;
+
+class Warming {
 
 
     /**
@@ -37,7 +46,7 @@ class Pimcore_Cache_Tool_Warming {
             $types = array("page", "snippet", "folder", "link");
         }
 
-        $list = new Document_List();
+        $list = new Document\Listing();
         $list->setCondition("type IN ('" . implode("','", $types) . "')");
 
         self::loadToCache($list);
@@ -59,7 +68,7 @@ class Pimcore_Cache_Tool_Warming {
             $classesCondition .= " AND o_className IN ('" . implode("','", $classes) . "')";
         }
 
-        $list = new Object_List();
+        $list = new Object\Listing();
         $list->setCondition("o_type IN ('" . implode("','", $types) . "')" . $classesCondition);
 
         self::loadToCache($list);
@@ -76,7 +85,7 @@ class Pimcore_Cache_Tool_Warming {
             $types = array("folder", "image", "text", "audio", "video", "document", "archive", "unknown");
         }
 
-        $list = new Asset_List();
+        $list = new Asset\Listing();
         $list->setCondition("type IN ('" . implode("','", $types) . "')");
 
         self::loadToCache($list);
@@ -84,31 +93,29 @@ class Pimcore_Cache_Tool_Warming {
 
 
     /**
-     * @static
-     * @param Pimcore_Model_List_Abstract $list
-     * @return void
+     * @param AbstractListing $list
      */
-    protected static function loadToCache (Pimcore_Model_List_Abstract $list) {
+    protected static function loadToCache (AbstractListing $list) {
         
         $totalCount = $list->getTotalCount();
         $iterations = ceil($totalCount / self::getPerIteration());
 
-        Logger::info("New list of elements queued for storing into the cache with " . $iterations . " iterations and " . $totalCount . " total items");
+        \Logger::info("New list of elements queued for storing into the cache with " . $iterations . " iterations and " . $totalCount . " total items");
 
         for ($i=0; $i<$iterations; $i++) {
 
-            Logger::info("Starting iteration " . $i . " with offset: " . (self::getPerIteration() * $i));
+            \Logger::info("Starting iteration " . $i . " with offset: " . (self::getPerIteration() * $i));
 
             $list->setLimit(self::getPerIteration());
             $list->setOffset(self::getPerIteration() * $i);
             $elements = $list->load();
 
             foreach ($elements as $element) {
-                $cacheKey = Element_Service::getElementType($element) . "_" . $element->getId();
-                Pimcore_Model_Cache::storeToCache($element, $cacheKey);
+                $cacheKey = Element\Service::getElementType($element) . "_" . $element->getId();
+                Cache::storeToCache($element, $cacheKey);
             }
 
-            Pimcore::collectGarbage();
+            \Pimcore::collectGarbage();
             sleep(self::getTimoutBetweenIteration());
         }
     }

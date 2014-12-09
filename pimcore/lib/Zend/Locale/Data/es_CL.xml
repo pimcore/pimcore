@@ -6,15 +6,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="es"/>
 		<territory type="CL"/>
 	</identity>
 	<localeDisplayNames>
 		<languages>
 			<language type="arn" draft="unconfirmed">mapudungun</language>
-			<language type="ira" draft="unconfirmed">iraníes</language>
 		</languages>
 		<territories>
 			<territory type="005">Sudamérica</territory>

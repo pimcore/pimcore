@@ -21,26 +21,6 @@
  */
 
 /**
- * @see PHPUnit_Extensions_Database_Operation_IDatabaseOperation
- */
-// require_once "PHPUnit/Extensions/Database/Operation/IDatabaseOperation.php";
-
-/**
- * @see PHPUnit_Extensions_Database_DB_IDatabaseConnection
- */
-// require_once "PHPUnit/Extensions/Database/DB/IDatabaseConnection.php";
-
-/**
- * @see PHPUnit_Extensions_Database_DataSet_IDataSet
- */
-// require_once "PHPUnit/Extensions/Database/DataSet/IDataSet.php";
-
-/**
- * @see PHPUnit_Extensions_Database_Operation_Exception
- */
-// require_once "PHPUnit/Extensions/Database/Operation/Exception.php";
-
-/**
  * @see Zend_Test_PHPUnit_Db_Connection
  */
 // require_once "Zend/Test/PHPUnit/Db/Connection.php";
@@ -73,7 +53,6 @@ class Zend_Test_PHPUnit_Db_Operation_DeleteAll implements PHPUnit_Extensions_Dat
                 $tableName = $table->getTableMetaData()->getTableName();
                 $connection->getConnection()->delete($tableName);
             } catch (Exception $e) {
-                // require_once "PHPUnit/Extensions/Database/Operation/Exception.php";
                 throw new PHPUnit_Extensions_Database_Operation_Exception('DELETEALL', 'DELETE FROM '.$tableName.'', array(), $table, $e->getMessage());
             }
         }

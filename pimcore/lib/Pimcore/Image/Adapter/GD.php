@@ -12,10 +12,12 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
 
+namespace Pimcore\Image\Adapter;
 
+use Pimcore\Image\Adapter;
+
+class GD extends Adapter {
     /**
      * @var string
      */
@@ -29,7 +31,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
 
     /**
      * @param $imagePath
-     * @return bool|Pimcore_Image_Adapter_GD
+     * @param array $options
+     * @return $this|self
      */
     public function load ($imagePath, $options = []) {
 
@@ -43,7 +46,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         $this->setWidth($width);
         $this->setHeight($height);
 
-        if(in_array(Pimcore_File::getFileExtension($imagePath), ["png","gif"])) {
+        if(in_array(\Pimcore\File::getFileExtension($imagePath), ["png","gif"])) {
             // in GD only gif and PNG can have an alphachannel
             $this->setIsAlphaPossible(true);
         }
@@ -154,7 +157,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
     /**
      * @param  $width
      * @param  $height
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function resize ($width, $height) {
 
@@ -177,7 +180,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      * @param  $y
      * @param  $width
      * @param  $height
-     * @return Pimcore_Image_Adapter_GD
+     * @return self
      */
     public function crop($x, $y, $width, $height) {
 
@@ -205,9 +208,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
     /**
      * @param  $width
      * @param  $height
-     * @param string $color
-     * @param string $orientation
-     * @return Pimcore_Image_Adapter_GD
+     * @return self
      */
     public function frame ($width, $height) {
 
@@ -259,7 +260,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
     }
 
     /**
-     * @return Pimcore_Image_Adapter_GD
+     * @return self
      */
     public function grayscale () {
 
@@ -273,7 +274,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
     }
 
     /**
-     * @return Pimcore_Image_Adapter_GD
+     * @return self
      */
     public function sepia () {
 
@@ -323,6 +324,45 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         }
 
         $this->postModify();
+
+        return $this;
+    }
+
+    /**
+     * @param string $mode
+     * @return $this|self
+     */
+    public function mirror($mode) {
+
+        $this->preModify();
+
+        if($mode == "vertical") {
+            imageflip($this->resource, IMG_FLIP_VERTICAL);
+        } else if ($mode == "horizontal") {
+            imageflip($this->resource, IMG_FLIP_HORIZONTAL);
+        }
+
+        $this->postModify();
+
+        return $this;
+    }
+
+    /**
+     * @param $angle
+     * @return $this|self
+     */
+    public function rotate ($angle) {
+
+        $this->preModify();
+        $angle = 360 - $angle;
+        $this->resource = imagerotate($this->resource, $angle, imageColorAllocateAlpha($this->resource, 0, 0, 0, 127));
+
+        $this->setWidth(imagesx($this->resource));
+        $this->setHeight(imagesy($this->resource));
+
+        $this->postModify();
+
+        $this->setIsAlphaPossible(true);
 
         return $this;
     }

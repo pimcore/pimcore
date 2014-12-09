@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Table extends Document_Tag {
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Model;
+
+class Table extends Model\Document\Tag {
 
     /**
      * Contains the text for this element
@@ -26,7 +30,7 @@ class Document_Tag_Table extends Document_Tag {
 
 
     /**
-     * @see Document_Tag_Interface::getType
+     * @see Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType() {
@@ -34,7 +38,7 @@ class Document_Tag_Table extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData() {
@@ -42,7 +46,7 @@ class Document_Tag_Table extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::frontend
+     * @see Document\Tag\TagInterface::frontend
      * @return string
      */
     public function frontend() {
@@ -68,17 +72,17 @@ class Document_Tag_Table extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
     public function setDataFromResource($data) {
-        $this->data = Pimcore_Tool_Serialize::unserialize($data);
+        $this->data = \Pimcore\Tool\Serialize::unserialize($data);
         return $this;
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
@@ -95,18 +99,16 @@ class Document_Tag_Table extends Document_Tag {
     }
 
     /**
-     * Receives a Webservice_Data_Document_Element from webservice import and fill the current tag's data
-     *
-     * @abstract
-     * @param  Webservice_Data_Document_Element $data
-     * @return void
+     * @param Model\Document\Webservice\Data\Document\Element $wsElement
+     * @param null $idMapper
+     * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
         if ($data->data === null or is_array($data->data)) {
             $this->data = $data->data;
         } else {
-            throw new Exception("cannot get values from web service import - invalid data");
+            throw new \Exception("cannot get values from web service import - invalid data");
         }
 
     }

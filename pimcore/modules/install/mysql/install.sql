@@ -22,7 +22,7 @@ CREATE TABLE `assets_metadata` (
   `cid` int(11) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   `language` varchar(255) DEFAULT NULL,
-  `type` ENUM('input','textarea','asset','document','object','date') DEFAULT NULL,
+  `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
   KEY `cid` (`cid`)
 ) DEFAULT CHARSET=utf8;
@@ -33,11 +33,12 @@ CREATE TABLE `assets_metadata_predefined` (
   `name` varchar(255) DEFAULT NULL,
   `description` text,
   `language` varchar(255) DEFAULT NULL,
-  `type` enum('input','textarea','asset','document','object','date') DEFAULT NULL,
+  `type` enum('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
   `targetSubtype` enum('image', 'text', 'audio', 'video', 'document', 'archive', 'unknown') DEFAULT NULL,
   `creationDate` bigint(20) unsigned DEFAULT '0',
   `modificationDate` bigint(20) unsigned DEFAULT '0',
+  `config` text,
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `id` (`id`),
@@ -144,6 +145,7 @@ CREATE TABLE `custom_layouts` (
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
 	`userOwner` INT(11) UNSIGNED NULL DEFAULT NULL,
 	`userModification` INT(11) UNSIGNED NULL DEFAULT NULL,
+	`default` tinyint(4) NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `name` (`name`, `classId`)
 ) DEFAULT CHARSET=utf8;
@@ -299,14 +301,14 @@ DROP TABLE IF EXISTS `email_log`;
 CREATE TABLE `email_log` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `documentId` int(11) DEFAULT NULL,
-  `requestUri` varchar(255) DEFAULT NULL,
+  `requestUri` varchar(500) DEFAULT NULL,
   `params` text,
-  `from` varchar(255) DEFAULT NULL,
-  `to` varchar(255) DEFAULT NULL,
-  `cc` varchar(255) DEFAULT NULL,
-  `bcc` varchar(255) DEFAULT NULL,
+  `from` varchar(500) DEFAULT NULL,
+  `to` longtext,
+  `cc` longtext,
+  `bcc` longtext,
   `sentDate` bigint(20) DEFAULT NULL,
-  `subject` varchar(255) DEFAULT NULL,
+  `subject` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 

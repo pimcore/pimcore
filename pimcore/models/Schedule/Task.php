@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Schedule_Task extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Schedule;
+
+use Pimcore\Model;
+
+class Task extends Model\AbstractModel {
 
     /**
      * @var integer
@@ -54,23 +58,23 @@ class Schedule_Task extends Pimcore_Model_Abstract {
 
     /**
      * @param integer $id
-     * @return Schedule_Task
+     * @return Schedule\Task
      */
     public static function getById($id) {
 
         $cacheKey = "scheduled_task_" . $id;
 
         try {
-            $task = Zend_Registry::get($cacheKey);
+            $task = \Zend_Registry::get($cacheKey);
             if(!$task) {
-                throw new Exception("Scheduled Task in Registry is not valid");
+                throw new \Exception("Scheduled Task in Registry is not valid");
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             $task = new self();
             $task->getResource()->getById(intval($id));
 
-            Zend_Registry::set($cacheKey, $task);
+            \Zend_Registry::set($cacheKey, $task);
         }
 
         return $task;
@@ -78,7 +82,7 @@ class Schedule_Task extends Pimcore_Model_Abstract {
 
     /**
      * @param array $data
-     * @return Schedule_Task
+     * @return Schedule\Task
      */
     public static function create($data) {
 
@@ -137,7 +141,8 @@ class Schedule_Task extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param integer $id
+     * @param $id
+     * @return $this
      */
     public function setId($id) {
         $this->id = (int) $id;
@@ -145,7 +150,8 @@ class Schedule_Task extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param integer $cid
+     * @param $cid
+     * @return $this
      */
     public function setCid($cid) {
         $this->cid = (int) $cid;
@@ -153,7 +159,8 @@ class Schedule_Task extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $ctype
+     * @param $ctype
+     * @return $this
      */
     public function setCtype($ctype) {
         $this->ctype = $ctype;
@@ -161,7 +168,8 @@ class Schedule_Task extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param intger $date
+     * @param $date
+     * @return $this
      */
     public function setDate($date) {
         $this->date = (int) $date;
@@ -169,7 +177,8 @@ class Schedule_Task extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $action
+     * @param $action
+     * @return $this
      */
     public function setAction($action) {
         $this->action = $action;
@@ -177,7 +186,8 @@ class Schedule_Task extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param integer $version
+     * @param $version
+     * @return $this
      */
     public function setVersion($version) {
         $this->version = $version;
@@ -192,7 +202,8 @@ class Schedule_Task extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param boolean $active
+     * @param $active
+     * @return $this
      */
     public function setActive($active) {
         if (empty($active)) {

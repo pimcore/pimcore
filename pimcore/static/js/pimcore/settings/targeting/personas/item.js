@@ -208,7 +208,7 @@ pimcore.settings.targeting.personas.item = Class.create({
             },
             method: "post",
             success: function () {
-
+                pimcore.helpers.showNotification(t("success"), t("item_saved_successfully"), "success");
             }.bind(this)
         });
     },

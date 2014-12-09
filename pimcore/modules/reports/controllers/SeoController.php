@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Reports_SeoController extends Pimcore_Controller_Action_Admin_Reports {
+use Pimcore\Model\Tool\ContentAnalysis;
+
+class Reports_SeoController extends \Pimcore\Controller\Action\Admin\Reports {
 
 
     public function socialOverviewAction() {
@@ -23,7 +25,7 @@ class Reports_SeoController extends Pimcore_Controller_Action_Admin_Reports {
             $site = null;
         }
 
-        $service = new Tool_ContentAnalysis_Service();
+        $service = new ContentAnalysis\Service();
         $summary = $service->getSocialSummary($site);
         $this->view->summary = $summary;
     }
@@ -37,7 +39,7 @@ class Reports_SeoController extends Pimcore_Controller_Action_Admin_Reports {
 
         $condition = implode(" AND ", $conditions);
 
-        $service = new Tool_ContentAnalysis_Service();
+        $service = new ContentAnalysis\Service();
         $list = $service->listData($condition, (int) $this->getParam("start"), (int) $this->getParam("limit"), $this->getParam("sort"), $this->getParam("dir"));
 
         $this->_helper->json(array(

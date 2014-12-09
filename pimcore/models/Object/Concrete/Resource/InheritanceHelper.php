@@ -15,16 +15,46 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
- 
-class Object_Concrete_Resource_InheritanceHelper {
+namespace Pimcore\Model\Object\Concrete\Resource;
 
+use Pimcore\Model;
+ 
+class InheritanceHelper {
+
+    /**
+     *
+     */
     const STORE_TABLE = "object_store_";
+
+    /**
+     *
+     */
     const QUERY_TABLE = "object_query_";
+
+    /**
+     *
+     */
     const RELATION_TABLE = "object_relations_";
+
+    /**
+     *
+     */
+    const OBJECTS_TABLE = 'objects';
+
+    /**
+     *
+     */
     const ID_FIELD = "oo_id";
 
+    /**
+     * @param $classId
+     * @param null $idField
+     * @param null $storetable
+     * @param null $querytable
+     * @param null $relationtable
+     */
     public function __construct($classId, $idField = null, $storetable = null, $querytable = null, $relationtable = null) {
-        $this->db = Pimcore_Resource::get();
+        $this->db = \Pimcore\Resource::get();
         $this->fields = array();
         $this->relations = array();
         $this->fieldIds = array();
@@ -54,17 +84,27 @@ class Object_Concrete_Resource_InheritanceHelper {
         }
     }
 
+    /**
+     *
+     */
     public function resetFieldsToCheck() {  
         $this->fields = array();
         $this->relations = array();
         $this->fieldIds = array();         
     }
 
+    /**
+     * @param $fieldname
+     */
     public function addFieldToCheck($fieldname) {
         $this->fields[$fieldname] = $fieldname;
         $this->fieldIds[$fieldname] = array();
     }
 
+    /**
+     * @param $fieldname
+     * @param null $queryfields
+     */
     public function addRelationToCheck($fieldname, $queryfields = null) {
         if($queryfields == null) {
             $this->relations[$fieldname] = $fieldname;
@@ -75,9 +115,10 @@ class Object_Concrete_Resource_InheritanceHelper {
         $this->fieldIds[$fieldname] = array();
     }
 
+    /**
+     * @param $oo_id
+     */
     public function doUpdate($oo_id) {
-//        p_r($this->fields);
-//        p_r($this->relations); die();
 
         if(empty($this->fields) && empty($this->relations)) {
             return;
@@ -92,7 +133,7 @@ class Object_Concrete_Resource_InheritanceHelper {
         }
 
         $result = $this->db->fetchRow("SELECT " . $this->idField . " AS id" . $fields . " FROM " . $this->storetable . " WHERE " . $this->idField . " = ?", $oo_id);
-        $o = new stdClass();
+        $o = new \stdClass();
         $o->id = $result['id'];
         $o->values = $result;
         $o->childs = $this->buildTree($result['id'], $fields);
@@ -125,15 +166,18 @@ class Object_Concrete_Resource_InheritanceHelper {
 
     }
 
-
-
+    /**
+     * @param $currentParentId
+     * @param $fields
+     * @return array
+     */
     private function buildTree($currentParentId, $fields) {
         $result = $this->db->fetchAll("SELECT a." . $this->idField . " AS id $fields FROM " . $this->storetable . " a INNER JOIN objects b ON a." . $this->idField . " = b.o_id WHERE o_parentId = ? GROUP BY a." . $this->idField, $currentParentId);
 
         $objects = array();
 
         foreach($result as $r) {
-            $o = new stdClass();
+            $o = new \stdClass();
             $o->id = $r['id'];
             $o->values = $r;
             $o->childs = $this->buildTree($r['id'], $fields);
@@ -152,9 +196,28 @@ class Object_Concrete_Resource_InheritanceHelper {
 
             $objects[] = $o;
         }
+
+        //the inheritance shouldn't stop here, when a folder is between two inherited objects
+        $folderIds = $this->db->fetchAll("SELECT distinct o_id as id FROM " . self::OBJECTS_TABLE . " where o_parentId = ? and o_type='folder'", $currentParentId);
+
+        if(!empty($folderIds)) {
+            foreach($folderIds as $r) {
+                $o = new \stdClass();
+                $o->id = $r['id'];
+                $o->values = $r;
+                $o->childs = $this->buildTree($r['id'], $fields);
+
+                $objects[] = $o;
+            }
+        }
+
         return $objects;
     }
 
+    /**
+     * @param $currentNode
+     * @param $fieldname
+     */
     private function getIdsToUpdateForValuefields($currentNode, $fieldname) {
         $value = $currentNode->values[$fieldname];
         if($value == null) {
@@ -167,6 +230,10 @@ class Object_Concrete_Resource_InheritanceHelper {
         }
     }
 
+    /**
+     * @param $currentNode
+     * @param $fieldname
+     */
     private function getIdsToUpdateForRelationfields($currentNode, $fieldname) {
         $value = $currentNode->relations[$fieldname];
         if($value == null) {
@@ -179,12 +246,16 @@ class Object_Concrete_Resource_InheritanceHelper {
         }
     }
 
-
+    /**
+     * @param $oo_id
+     * @param $ids
+     * @param $fieldname
+     * @throws \Zend_Db_Adapter_Exception
+     */
     private function updateQueryTable($oo_id, $ids, $fieldname) {
         if(!empty($ids)) {
             $value = $this->db->fetchCol("SELECT `$fieldname` FROM " . $this->querytable . " WHERE " . $this->idField . " = ?", $oo_id);
             $this->db->update($this->querytable, array($fieldname => $value[0]), $this->idField . " IN (" . implode(",", $ids) . ")");
         }
     }
-
 }

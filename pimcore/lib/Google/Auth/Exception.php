@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-require_once "Google/Exception.php";
+// pimcore modification: removed autoloader include
 
 class Google_Auth_Exception extends Google_Exception
 {

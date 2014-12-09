@@ -6,14 +6,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9061 $"/>
-		<generation date="$Date: 2013-07-20 12:27:45 -0500 (Sat, 20 Jul 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="ru"/>
 		<territory type="UA"/>
 	</identity>
 	<localeDisplayNames>
 		<languages>
-			<language type="apa">апачский</language>
 			<language type="den">слэйви</language>
 			<language type="mh">маршальский</language>
 			<language type="tlh">клингон</language>
@@ -57,6 +56,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 					</timeFormatLength>
 				</timeFormats>
 				<dateTimeFormats>
+					<availableFormats>
+						<dateFormatItem id="yyyyMMMd">d MMM y G</dateFormatItem>
+					</availableFormats>
 					<intervalFormats>
 						<intervalFormatItem id="h">
 							<greatestDifference id="h" draft="unconfirmed">h-h 'ч'. a</greatestDifference>
@@ -136,6 +138,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 					</timeFormatLength>
 				</timeFormats>
 				<dateTimeFormats>
+					<availableFormats>
+						<dateFormatItem id="yMMMd">d MMM y</dateFormatItem>
+					</availableFormats>
 					<intervalFormats>
 						<intervalFormatItem id="h">
 							<greatestDifference id="h" draft="unconfirmed">h-h 'ч'. a</greatestDifference>
@@ -182,3 +187,4 @@ For terms of use, see http://www.unicode.org/copyright.html
 		</calendars>
 	</dates>
 </ldml>
+

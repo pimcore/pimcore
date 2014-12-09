@@ -44,6 +44,12 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
     protected static $_includeFileCache;
 
     /**
+     * Class map cache file handler
+     * @var resource
+     */
+    protected static $_includeFileCacheHandler;
+
+    /**
      * Instance loaded plugin paths
      *
      * @var array
@@ -438,6 +444,13 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
      */
     public static function setIncludeFileCache($file)
     {
+        if (!empty(self::$_includeFileCacheHandler)) {
+            flock(self::$_includeFileCacheHandler, LOCK_UN);
+            fclose(self::$_includeFileCacheHandler);
+        }
+
+        self::$_includeFileCacheHandler = null;
+
         if (null === $file) {
             self::$_includeFileCache = null;
             return;
@@ -477,14 +490,17 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
      */
     protected static function _appendIncFile($incFile)
     {
-        if (!file_exists(self::$_includeFileCache)) {
-            $file = '<?php';
-        } else {
-            $file = file_get_contents(self::$_includeFileCache);
+        if (!isset(self::$_includeFileCacheHandler)) {
+            self::$_includeFileCacheHandler = fopen(self::$_includeFileCache, 'ab');
+
+            if (!flock(self::$_includeFileCacheHandler, LOCK_EX | LOCK_NB, $wouldBlock) || $wouldBlock) {
+                self::$_includeFileCacheHandler = false;
+            }
         }
-        if (!strstr($file, $incFile)) {
-            $file .= "\ninclude_once '$incFile';";
-            file_put_contents(self::$_includeFileCache, $file);
+
+        if (false !== self::$_includeFileCacheHandler) {
+            $line = "<?php include_once '$incFile'?>\n";
+            fwrite(self::$_includeFileCacheHandler, $line, strlen($line));
         }
     }
 }

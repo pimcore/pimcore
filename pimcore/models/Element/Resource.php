@@ -15,11 +15,15 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-abstract class Element_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Element;
 
+use Pimcore\Model;
+
+abstract class Resource extends Model\Resource\AbstractResource {
 
     /**
      * @return array
+     * @throws \Exception
      */
     public function getParentIds() {
         // collect properties via parent - ids

@@ -13,14 +13,18 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Translate extends Zend_Translate_Adapter {
+namespace Pimcore;
+
+use Pimcore\Model\Cache; 
+
+class Translate extends \Zend_Translate_Adapter {
 
     /**
      * Translation_Website is default for backward compatibilty other options are: Translation_Admin
      * see: Pimcore_Translate_Admin & Pimcore_Translate_Website
      * @var string
      */
-    protected static $backend = "Translation_Website";
+    protected static $backend = "\\Pimcore\\Model\\Translation\\Website";
 
     /**
      * Translation data
@@ -39,8 +43,8 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
      */
     public function __construct($locale) {
 
-        if (!$locale instanceof Zend_Locale) {
-            $locale = new Zend_Locale($locale);
+        if (!$locale instanceof \Zend_Locale) {
+            $locale = new \Zend_Locale($locale);
         }
 
         $locale = (string) $locale;
@@ -60,11 +64,12 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
     protected function _loadTranslationData($data, $locale, array $options = array()) {
 
         $locale = (string) $locale;
-        $cacheKey = self::getBackend() . "_data_" . $locale;
+        $tmpKeyParts = explode("\\", self::getBackend());
+        $cacheKey = "Translate_" . array_pop($tmpKeyParts) . "_data_" . $locale;
 
-        if(!$data = Pimcore_Model_Cache::load($cacheKey)) {
+        if(!$data = Cache::load($cacheKey)) {
             $data = array("__pimcore_dummy" => "only_a_dummy");
-            $listClass = self::getBackend() . "_List";
+            $listClass = self::getBackend() . "\\Listing";
             $list = new $listClass();
 
             if($list->isCacheable()) {
@@ -72,10 +77,10 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
                 $translations = $list->loadRaw();
 
                 foreach ($translations as $translation) {
-                    $data[mb_strtolower($translation["key"])] = Pimcore_Tool_Text::removeLineBreaks($translation["text"]);
+                    $data[mb_strtolower($translation["key"])] = Tool\Text::removeLineBreaks($translation["text"]);
                 }
 
-                Pimcore_Model_Cache::save($data, $cacheKey, array("translator","translator_website","translate"), null, 999);
+                Cache::save($data, $cacheKey, array("translator","translator_website","translate"), null, 999);
                 $this->isCacheable = true;
             } else {
                 $this->isCacheable = false;
@@ -97,10 +102,10 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
 
 
     /**
-     * @param $messageId
+     * @param array|string $messageId
      * @param null $locale
-     * @return mixed
-     * @throws Exception
+     * @return array|string
+     * @throws \Exception
      */
     public function translate($messageId, $locale = null) {
 
@@ -109,7 +114,7 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
 
         // the maximum length of message-id's is 255
         if(strlen($messageId) > 255) {
-            throw new Exception("Pimcore_Translate: Message ID's longer than 255 characters are invalid!");
+            throw new \Exception("Pimcore_Translate: Message ID's longer than 255 characters are invalid!");
         }
 
         if ($locale === null) {
@@ -121,7 +126,7 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
             $backend = self::getBackend();
             $translation = $backend::getByKeyLocalized($messageIdOriginal, true, true, $locale);
             if($translation == $messageIdOriginal) {
-                foreach(Pimcore_Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
+                foreach(Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
                     $translation = $backend::getByKeyLocalized($messageIdOriginal, true, true, $fallbackLanguage);
                     if($translation != $messageIdOriginal) {
                         break;
@@ -162,7 +167,7 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
             $this->createEmptyTranslation($locale, $messageIdOriginal);
         } else {
             // look for a fallback translation
-            foreach(Pimcore_Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
+            foreach(Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
                 if (!empty($this->_translate[$fallbackLanguage][$messageId])) {
                     return $this->_translate[$fallbackLanguage][$messageId];
                 }
@@ -191,17 +196,17 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
         $class = self::getBackend();
 
         // no translation found create key
-        if (Pimcore_Tool::isValidLanguage($locale)) {
+        if (Tool::isValidLanguage($locale)) {
             try {
                 $t = $class::getByKey($messageId);
                 $t->addTranslation($locale, "");
             }
-            catch (Exception $e) {
+            catch (\Exception $e) {
                 $t = new $class();
                 $t->setKey($messageId);
 
                 // add all available languages
-                $availableLanguages = (array) Pimcore_Tool::getValidLanguages();
+                $availableLanguages = (array) Tool::getValidLanguages();
                 foreach ($availableLanguages as $language) {
                     $t->addTranslation($language, "");
                 }

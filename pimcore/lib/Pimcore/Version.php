@@ -13,33 +13,53 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Version {
+namespace Pimcore;
 
-    public static $version = "2.3.0";
+class Version {
 
-    public static $revision = 3289;
+    /**
+     * @var string
+     */
+    public static $version = "3.0.0 RC1";
 
-    public static $svnInfo = array (
+    /**
+     * @var int
+     */
+    public static $revision = 3348;
+
+    /**
+     * @var array
+     */
+   public static $svnInfo = array (
   'Path' => 'trunk',
   'URL' => 'http',
   'Repository Root' => 'http',
   'Repository UUID' => '1f8fe7d8-47f0-464c-8d0a-336f4953ab05',
-  'Revision' => '5300',
+  'Revision' => '5629',
   'Node Kind' => 'directory',
   'Last Changed Author' => 'brusch',
-  'Last Changed Rev' => '5300',
-  'Last Changed Date' => '2014-09-19 19',
+  'Last Changed Rev' => '5629',
+  'Last Changed Date' => '2014-12-09 11',
 );
 
+    /**
+     * @return string
+     */
     public static function getVersion() {
         return self::$version;
     }
 
+    /**
+     * @return int
+     */
     public static function getRevision()
     {
         return self::$revision;
     }
 
+    /**
+     * @return array
+     */
     public static function getSvnInfo()
     {
         return self::$svnInfo;

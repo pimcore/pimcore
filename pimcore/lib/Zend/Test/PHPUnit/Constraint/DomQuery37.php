@@ -20,9 +20,6 @@
  * @version    $Id$
  */
 
-/** @see PHPUnit_Framework_Constraint */
-// require_once 'PHPUnit/Framework/Constraint.php';
-
 /** @see Zend_Dom_Query */
 // require_once 'Zend/Dom/Query.php';
 
@@ -193,7 +190,7 @@ class Zend_Test_PHPUnit_Constraint_DomQuery extends PHPUnit_Framework_Constraint
             case self::ASSERT_CONTENT_COUNT:
             case self::ASSERT_CONTENT_COUNT_MIN:
             case self::ASSERT_CONTENT_COUNT_MAX:
-                if (!$match) {
+                if ($match === false) {
                     // require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
                     throw new Zend_Test_PHPUnit_Constraint_Exception('No count provided against which to compare');
                 }

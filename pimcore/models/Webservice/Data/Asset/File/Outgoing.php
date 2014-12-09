@@ -15,8 +15,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Asset_File_Outgoing extends Webservice_Data_Asset_File {
+namespace Pimcore\Model\Webservice\Data\Asset\File;
 
+use Pimcore\Model;
 
+class Outgoing extends Model\Webservice\Data\Asset\File {
 
 }

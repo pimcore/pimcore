@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Resource extends Element_Resource
+namespace Pimcore\Model\Document;
+
+use Pimcore\Model;
+
+class Resource extends Model\Element\Resource
 {
 
     /**
@@ -36,10 +40,8 @@ class Document_Resource extends Element_Resource
     }
 
     /**
-     * Get the data for the object by the given id
-     *
-     * @param integer $id
-     * @return void
+     * @param $id
+     * @throws \Exception
      */
     public function getById($id)
     {
@@ -48,13 +50,13 @@ class Document_Resource extends Element_Resource
                 LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                     WHERE documents.id = ?", $id);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         if ($data["id"] > 0) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Exception("Document with the ID " . $id . " doesn't exists");
+            throw new \Exception("Document with the ID " . $id . " doesn't exists");
         }
     }
 
@@ -83,21 +85,17 @@ class Document_Resource extends Element_Resource
             if ($data["id"]) {
                 $this->assignVariablesToModel($data);
             } else {
-                throw new Exception("document with path $path doesn't exist");
+                throw new \Exception("document with path $path doesn't exist");
             }
         }
     }
 
 
     /**
-     * Create a new record for the object in the database
-     *
-     * @return void
+     * @throws \Exception
      */
     public function create()
     {
-
-
         try {
             $this->db->insert("documents", array(
                 "key" => $this->model->getKey(),
@@ -112,16 +110,14 @@ class Document_Resource extends Element_Resource
             if (!$this->model->getKey()) {
                 $this->model->setKey($this->model->getId());
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
 
     }
 
     /**
-     * Updates the object's data to the database, it's an good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
      */
     public function update()
     {
@@ -152,21 +148,19 @@ class Document_Resource extends Element_Resource
             $this->db->insertOrUpdate("documents", $data);
 
             $this->updateLocks();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
 
     /**
-     * Deletes the object from database
-     *
-     * @return void
+     * @throws \Exception
      */
     public function delete()
     {
         try {
             $this->db->delete("documents", $this->db->quoteInto("id = ?", $this->model->getId()));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -183,7 +177,7 @@ class Document_Resource extends Element_Resource
         $documents = $this->db->fetchCol("SELECT id FROM documents WHERE path LIKE ?", $oldPath . "%");
 
         $userId = "0";
-        if ($user = Pimcore_Tool_Admin::getCurrentUser()) {
+        if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
             $userId = $user->getId();
         }
 
@@ -209,8 +203,8 @@ class Document_Resource extends Element_Resource
         $path = null;
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?", $this->model->getId());
-        } catch (Exception $e) {
-            Logger::error("could not  get current document path from DB");
+        } catch (\Exception $e) {
+            \Logger::error("could not  get current document path from DB");
 
         }
 
@@ -243,7 +237,7 @@ class Document_Resource extends Element_Resource
         foreach ($propertiesRaw as $propertyRaw) {
 
             try {
-                $property = new Property();
+                $property = new Model\Property();
                 $property->setType($propertyRaw["type"]);
                 $property->setCid($this->model->getId());
                 $property->setName($propertyRaw["name"]);
@@ -263,8 +257,8 @@ class Document_Resource extends Element_Resource
                 }
 
                 $properties[$propertyRaw["name"]] = $property;
-            } catch (Exception $e) {
-                Logger::error("can't add property " . $propertyRaw["name"] . " to document " . $this->model->getRealFullPath());
+            } catch (\Exception $e) {
+                \Logger::error("can't add property " . $propertyRaw["name"] . " to document " . $this->model->getRealFullPath());
             }
         }
 
@@ -337,6 +331,16 @@ class Document_Resource extends Element_Resource
         $c = $this->db->fetchOne($query, $this->model->getId());
         return $c;
     }
+
+	/**
+	 * Quick test if there are siblings
+	 *
+	 * @return boolean
+	 */
+	public function hasSiblings() {
+		$c = $this->db->fetchOne("SELECT id FROM documents WHERE parentId = ? and id != ? LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
+		return (bool)$c;
+	}
 
     public function isLocked()
     {
@@ -421,8 +425,8 @@ class Document_Resource extends Element_Resource
                     return true;
                 }
             }
-        } catch (Exception $e) {
-            Logger::warn("Unable to get permission " . $type . " for document " . $this->model->getId());
+        } catch (\Exception $e) {
+            \Logger::warn("Unable to get permission " . $type . " for document " . $this->model->getId());
         }
 
         return false;

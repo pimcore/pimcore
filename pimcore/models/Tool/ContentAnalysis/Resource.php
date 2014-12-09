@@ -15,14 +15,24 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_ContentAnalysis_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Tool\ContentAnalysis;
 
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
+
+    /**
+     * @return string
+     */
     public function getTotalIndexChangedItems() {
         return $this->db->fetchOne("SELECT COUNT(*)
         FROM content_index LEFT JOIN content_analysis ON content_analysis.id = content_index.id
         WHERE (content_index.lastUpdate - content_analysis.lastUpdate) > 86400 OR content_analysis.lastUpdate IS NULL");
     }
 
+    /**
+     * @return array
+     */
     public function getIndexChangedItems() {
         return $this->db->fetchAll("SELECT content_index.*
         FROM content_index LEFT JOIN content_analysis ON content_analysis.id = content_index.id
@@ -30,6 +40,10 @@ class Tool_ContentAnalysis_Resource extends Pimcore_Model_Resource_Abstract {
         ORDER BY content_index.lastUpdate ASC LIMIT 5");
     }
 
+    /**
+     * @param $data
+     * @throws \Zend_Db_Adapter_Exception
+     */
     public function update($data) {
         $exists = $this->db->fetchOne("SELECT id FROM content_analysis WHERE id = ?", $data["id"]);
 

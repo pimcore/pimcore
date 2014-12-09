@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_Role_Resource extends User_UserRole_Resource {
+namespace Pimcore\Model\User\Role;
+
+use Pimcore\Model;
+
+class Resource extends Model\User\UserRole\Resource {
 
 
 }

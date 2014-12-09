@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9862 $"/>
+		<generation date="$Date: 2014-03-03 17:35:05 -0600 (Mon, 03 Mar 2014) $"/>
 		<language type="ja"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,53 +25,42 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">アディゲ語</language>
 			<language type="ae">アヴェスタ語</language>
 			<language type="af">アフリカーンス語</language>
-			<language type="afa">セム・ハム諸語</language>
 			<language type="afh">アフリヒリ語</language>
 			<language type="agq">アゲム語</language>
 			<language type="ain">アイヌ語</language>
 			<language type="ak">アカン語</language>
 			<language type="akk">アッカド語</language>
 			<language type="ale">アレウト語</language>
-			<language type="alg">アルゴンキアン語族</language>
 			<language type="alt">南アルタイ語</language>
 			<language type="am">アムハラ語</language>
 			<language type="an">アラゴン語</language>
 			<language type="ang">古英語</language>
 			<language type="anp">アンギカ語</language>
-			<language type="apa">アパッチ語族</language>
 			<language type="ar">アラビア語</language>
 			<language type="arc">アラム語</language>
 			<language type="arn">アラウカン語</language>
 			<language type="arp">アラパホー語</language>
-			<language type="art">人工言語</language>
 			<language type="arw">アラワク語</language>
 			<language type="as">アッサム語</language>
 			<language type="asa">アス語</language>
 			<language type="ast">アストゥリアス語</language>
-			<language type="ath">アサパスカン語族</language>
-			<language type="aus">オーストラリア諸語</language>
 			<language type="av">アヴァル語</language>
 			<language type="awa">アワディー語</language>
 			<language type="ay">アイマラ語</language>
 			<language type="az">アゼルバイジャン語</language>
 			<language type="az" alt="short">アゼリー語</language>
 			<language type="ba">バシキール語</language>
-			<language type="bad">バンダ語</language>
-			<language type="bai">バミレケ語族</language>
 			<language type="bal">バルーチー語</language>
 			<language type="ban">バリ語</language>
 			<language type="bas">バサ語</language>
-			<language type="bat">バルト諸語</language>
 			<language type="bax">バムン語</language>
 			<language type="bbj" draft="contributed">ゴーマラ語</language>
 			<language type="be">ベラルーシ語</language>
 			<language type="bej">ベジャ語</language>
 			<language type="bem">ベンバ語</language>
-			<language type="ber">ベルベル諸語</language>
 			<language type="bez">ベナ語</language>
 			<language type="bfd">バフット語</language>
 			<language type="bg">ブルガリア語</language>
-			<language type="bh">ビハール語</language>
 			<language type="bho">ボージュプリー語</language>
 			<language type="bi">ビスラマ語</language>
 			<language type="bik">ビコル語</language>
@@ -80,14 +69,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">シクシカ語</language>
 			<language type="bm">バンバラ語</language>
 			<language type="bn">ベンガル語</language>
-			<language type="bnt">バントゥ諸語</language>
 			<language type="bo">チベット語</language>
 			<language type="br">ブルトン語</language>
 			<language type="bra">ブラジ語</language>
 			<language type="brx">ボド語</language>
 			<language type="bs">ボスニア語</language>
 			<language type="bss">アコース語</language>
-			<language type="btk">バタク語</language>
 			<language type="bua">ブリヤート語</language>
 			<language type="bug">ブギ語</language>
 			<language type="bum">ブル語</language>
@@ -95,14 +82,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv">メドゥンバ語</language>
 			<language type="ca">カタロニア語</language>
 			<language type="cad">カドー語</language>
-			<language type="cai">中米インディアン諸語</language>
 			<language type="car">カリブ語</language>
-			<language type="cau">コーカサス諸語</language>
 			<language type="cay">カユーガ語</language>
 			<language type="cch">チャワイ語</language>
 			<language type="ce">チェチェン語</language>
 			<language type="ceb">セブアノ語</language>
-			<language type="cel">ケルト諸語</language>
 			<language type="cgg">チガ語</language>
 			<language type="ch">チャモロ語</language>
 			<language type="chb">チブチャ語</language>
@@ -115,26 +99,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">チェロキー語</language>
 			<language type="chy">シャイアン語</language>
 			<language type="ckb" draft="contributed">クルド語(ソラニー)</language>
-			<language type="cmc">チャム語族</language>
 			<language type="co">コルシカ語</language>
 			<language type="cop">コプト語</language>
-			<language type="cpe">英語が基盤の混成語・混合語</language>
-			<language type="cpf">フランス語が基盤の混成語・混合語</language>
-			<language type="cpp">ポルトガル語が基盤の混成語・混合語</language>
 			<language type="cr">クリー語</language>
 			<language type="crh">クリミア・タタール語</language>
-			<language type="crp">その他の混成語・混合語</language>
 			<language type="cs">チェコ語</language>
 			<language type="csb">カシューブ語</language>
 			<language type="cu">教会スラブ語</language>
-			<language type="cus">クシュ諸語</language>
 			<language type="cv">チュヴァシ語</language>
 			<language type="cy">ウェールズ語</language>
 			<language type="da">デンマーク語</language>
 			<language type="dak">ダコタ語</language>
 			<language type="dar">ダルガン語</language>
 			<language type="dav">タイタ語</language>
-			<language type="day">ダヤク語</language>
 			<language type="de">ドイツ語</language>
 			<language type="de_CH">正統ドイツ語(スイス)</language>
 			<language type="del">デラウェア語</language>
@@ -143,7 +120,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">ディンカ語</language>
 			<language type="dje">ザルマ語</language>
 			<language type="doi">ドーグリー語</language>
-			<language type="dra">ドラヴィダ諸語</language>
 			<language type="dsb">低ソルビア語</language>
 			<language type="dua">ドゥアラ語</language>
 			<language type="dum">中世オランダ語</language>
@@ -177,7 +153,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">フラニ語</language>
 			<language type="fi">フィンランド語</language>
 			<language type="fil">フィリピノ語</language>
-			<language type="fiu">フィン・ウゴル諸語</language>
 			<language type="fj">フィジー語</language>
 			<language type="fo">フェロー語</language>
 			<language type="fon">フォン語</language>
@@ -193,7 +168,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">ガヨ語</language>
 			<language type="gba">バヤ語</language>
 			<language type="gd">スコットランド・ゲール語</language>
-			<language type="gem">ゲルマン諸語</language>
 			<language type="gez">ゲエズ語</language>
 			<language type="gil">キリバス語</language>
 			<language type="gl">ガリシア語</language>
@@ -216,7 +190,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">ヘブライ語</language>
 			<language type="hi">ヒンディー語</language>
 			<language type="hil">ヒリガイノン語</language>
-			<language type="him">ヒマチャル語</language>
 			<language type="hit">ヒッタイト語</language>
 			<language type="hmn">フモン語</language>
 			<language type="ho">ヒリモツ語</language>
@@ -234,20 +207,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">インターリング</language>
 			<language type="ig">イボ語</language>
 			<language type="ii">四川イ語</language>
-			<language type="ijo">イジョー語</language>
 			<language type="ik">イヌピアック語</language>
 			<language type="ilo">イロカノ語</language>
-			<language type="inc">インド諸語</language>
-			<language type="ine">印欧諸語</language>
 			<language type="inh">イングーシ語</language>
 			<language type="io">イド語</language>
-			<language type="ira">イラン語</language>
-			<language type="iro">イロコイ語族</language>
 			<language type="is">アイスランド語</language>
 			<language type="it">イタリア語</language>
 			<language type="iu">イヌクウティトット語</language>
 			<language type="ja">日本語</language>
 			<language type="jbo">ロジバン語</language>
+			<language type="jgo" draft="contributed">ンゴンバ語</language>
 			<language type="jmc">マチャメ語</language>
 			<language type="jpr">ユダヤ・ペルシア語</language>
 			<language type="jrb">ユダヤ・アラビア語</language>
@@ -258,7 +227,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">カチン語</language>
 			<language type="kaj">カジェ語</language>
 			<language type="kam">カンバ語</language>
-			<language type="kar">カレン諸語</language>
 			<language type="kaw">カウィ語</language>
 			<language type="kbd">カバルド語</language>
 			<language type="kbl">カネンブ語</language>
@@ -268,7 +236,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">コロ語</language>
 			<language type="kg">コンゴ語</language>
 			<language type="kha">カシ語</language>
-			<language type="khi">コイサン諸語</language>
 			<language type="kho">コータン語</language>
 			<language type="khq">コイラ・チーニ語</language>
 			<language type="ki">キクユ語</language>
@@ -287,7 +254,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">カヌリ語</language>
 			<language type="krc">カラチャイ語</language>
 			<language type="krl">カレリア語</language>
-			<language type="kro">クルー諸語</language>
 			<language type="kru">クルク語</language>
 			<language type="ks">カシミール語</language>
 			<language type="ksb">サンバー語</language>
@@ -327,7 +293,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">マイティリー語</language>
 			<language type="mak">マカッサル語</language>
 			<language type="man">マンディンゴ語</language>
-			<language type="map">オーストロネシア諸語</language>
 			<language type="mas">マサイ語</language>
 			<language type="mde">マバ語</language>
 			<language type="mdf">モクシャ語</language>
@@ -338,19 +303,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mg">マダガスカル語</language>
 			<language type="mga">中期アイルランド語</language>
 			<language type="mgh">マクア・ミート語</language>
+			<language type="mgo" draft="contributed">メタ語</language>
 			<language type="mh">マーシャル語</language>
 			<language type="mi">マオリ語</language>
 			<language type="mic">ミクマク語</language>
 			<language type="min">ミナンカバウ語</language>
-			<language type="mis">その他の言語</language>
 			<language type="mk">マケドニア語</language>
-			<language type="mkh">モン・クメール諸語</language>
 			<language type="ml">マラヤーラム語</language>
 			<language type="mn">モンゴル語</language>
 			<language type="mnc">満州語</language>
 			<language type="mni">マニプリ語</language>
-			<language type="mno">マノボ語族</language>
-			<language type="mo">モルダビア語</language>
 			<language type="moh">モーホーク語</language>
 			<language type="mos">モシ語</language>
 			<language type="mr">マラーティー語</language>
@@ -358,17 +320,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">マルタ語</language>
 			<language type="mua">ムンダン語</language>
 			<language type="mul">複数言語</language>
-			<language type="mun">ムンダ語族</language>
 			<language type="mus">クリーク語</language>
 			<language type="mwl">ミランダ語</language>
 			<language type="mwr">マールワーリー語</language>
 			<language type="my">ビルマ語</language>
 			<language type="mye">ミエネ語</language>
-			<language type="myn">マヤ語族</language>
 			<language type="myv">エルジャ語</language>
 			<language type="na">ナウル語</language>
-			<language type="nah">ナワトル語</language>
-			<language type="nai">北米インディアン諸語</language>
 			<language type="nap">ナポリ語</language>
 			<language type="naq">ナマ語</language>
 			<language type="nb">ノルウェー語(ブークモール)</language>
@@ -378,7 +336,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">ネワール語</language>
 			<language type="ng">ンドンガ語</language>
 			<language type="nia">ニアス語</language>
-			<language type="nic">ニジェール・コルドファン諸語</language>
 			<language type="niu">ニウーエイ語</language>
 			<language type="nl">オランダ語</language>
 			<language type="nl_BE">フレミッシュ語</language>
@@ -391,7 +348,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">ンコ語</language>
 			<language type="nr">南ンデベレ語</language>
 			<language type="nso">北部ソト語</language>
-			<language type="nub">ヌビア語族</language>
 			<language type="nus">ヌエル語</language>
 			<language type="nv">ナバホ語</language>
 			<language type="nwc">古典ネワール語</language>
@@ -407,21 +363,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">オセット語</language>
 			<language type="osa">オセージ語</language>
 			<language type="ota">オスマントルコ語</language>
-			<language type="oto">オトミ語族</language>
 			<language type="pa">パンジャブ語</language>
-			<language type="paa">パプア諸語</language>
 			<language type="pag">パンガシナン語</language>
 			<language type="pal">パフラヴィー語</language>
 			<language type="pam">パンパンガ語</language>
 			<language type="pap">パピアメント語</language>
 			<language type="pau">パラオ語</language>
 			<language type="peo">古代ペルシア語</language>
-			<language type="phi">フィリピン諸語</language>
 			<language type="phn">フェニキア語</language>
 			<language type="pi">パーリ語</language>
 			<language type="pl">ポーランド語</language>
 			<language type="pon">ポンペイ語</language>
-			<language type="pra">プラークリット諸語</language>
 			<language type="pro">古期プロバンス語</language>
 			<language type="ps">パシュトゥー語</language>
 			<language type="ps" alt="variant" draft="contributed">パシュトゥ語</language>
@@ -434,7 +386,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">ロマンシュ語</language>
 			<language type="rn">ルンディ語</language>
 			<language type="ro">ルーマニア語</language>
-			<language type="roa">ロマンス諸語</language>
+			<language type="ro_MD">モルダビア語</language>
 			<language type="rof">ロンボ語</language>
 			<language type="rom">ロマーニー語</language>
 			<language type="root">ルート</language>
@@ -445,8 +397,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">サンスクリット語</language>
 			<language type="sad">サンダウェ語</language>
 			<language type="sah">ヤクート語</language>
-			<language type="sai">南米インディアン諸語</language>
-			<language type="sal">セイリッシュ語族</language>
 			<language type="sam">サマリア・アラム語</language>
 			<language type="saq">サンブル語</language>
 			<language type="sas">ササク語</language>
@@ -461,25 +411,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see">セネカ語</language>
 			<language type="seh">セナ語</language>
 			<language type="sel">セリクプ語</language>
-			<language type="sem">セム諸語</language>
 			<language type="ses">コイラボロ・センニ語</language>
 			<language type="sg">サンゴ語</language>
 			<language type="sga">古期アイルランド語</language>
-			<language type="sgn">手話</language>
 			<language type="sh">セルボ・クロアチア語</language>
 			<language type="shi">タシルハイト語</language>
 			<language type="shn">シャン語</language>
 			<language type="shu">チャド・アラビア語</language>
 			<language type="si">シンハラ語</language>
 			<language type="sid">シダモ語</language>
-			<language type="sio">スー諸語</language>
-			<language type="sit">シナ・チベット諸語</language>
 			<language type="sk">スロバキア語</language>
 			<language type="sl">スロベニア語</language>
-			<language type="sla">スラブ諸語</language>
 			<language type="sm">サモア語</language>
 			<language type="sma">南サーミ語</language>
-			<language type="smi">サーミ諸語</language>
 			<language type="smj">ルレ・サーミ語</language>
 			<language type="smn">イナリ・サーミ語</language>
 			<language type="sms">スコルト・サーミ語</language>
@@ -487,13 +431,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">ソニンケ語</language>
 			<language type="so">ソマリ語</language>
 			<language type="sog">ソグド語</language>
-			<language type="son">ソンガイ語</language>
 			<language type="sq">アルバニア語</language>
 			<language type="sr">セルビア語</language>
 			<language type="srn">スリナム語</language>
 			<language type="srr">セレル語</language>
 			<language type="ss">スワジ語</language>
-			<language type="ssa">ナイル・サハラ諸語</language>
 			<language type="ssy">サホ語</language>
 			<language type="st">南部ソト語</language>
 			<language type="su">スンダ語</language>
@@ -507,7 +449,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">古典シリア語</language>
 			<language type="syr">シリア語</language>
 			<language type="ta">タミル語</language>
-			<language type="tai">タイ諸語</language>
 			<language type="te">テルグ語</language>
 			<language type="tem">テムネ語</language>
 			<language type="teo">テソ語</language>
@@ -534,8 +475,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">チムシュ語</language>
 			<language type="tt">タタール語</language>
 			<language type="tum">トゥンブカ語</language>
-			<language type="tup">トゥピ語族</language>
-			<language type="tut">アルタイ諸語</language>
 			<language type="tvl">ツバル語</language>
 			<language type="tw">トウィ語</language>
 			<language type="twq">タサワク語</language>
@@ -559,11 +498,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun">ヴンジョ語</language>
 			<language type="wa">ワロン語</language>
 			<language type="wae">ヴァリス語</language>
-			<language type="wak">ワカシ語族</language>
 			<language type="wal">ウォライタ語</language>
 			<language type="war">ワライ語</language>
 			<language type="was">ワショ語</language>
-			<language type="wen">ソルビア語族</language>
 			<language type="wo">ウォロフ語</language>
 			<language type="xal">カルムイク語</language>
 			<language type="xh">コサ語</language>
@@ -574,7 +511,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb">イエンバ語</language>
 			<language type="yi">イディッシュ語</language>
 			<language type="yo">ヨルバ語</language>
-			<language type="ypk">ユピック語族</language>
 			<language type="yue">広東語</language>
 			<language type="za">チワン語</language>
 			<language type="zap">サポテカ語</language>
@@ -584,7 +520,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">中国語</language>
 			<language type="zh_Hans">簡体中国語</language>
 			<language type="zh_Hant">繁体中国語</language>
-			<language type="znd">ザンデ語</language>
 			<language type="zu">ズールー語</language>
 			<language type="zun">ズニ語</language>
 			<language type="zxx">言語的内容なし</language>
@@ -1275,10 +1210,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 		</codePatterns>
 	</localeDisplayNames>
 	<characters>
-		<exemplarCharacters>[々 ゞ ー ゝヽ ヾ ぁァ あア ぃィ いイ ぅゥ うウ ヴ ぇェ えエ ぉォ おオ ヵ かカ がガ きキ ぎギ くク ぐグ ヶ けケ げゲ こコ ごゴ さサ ざザ しシ じジ すス ずズ せセ ぜゼ そソ ぞゾ たタ だダ ちチ ぢヂ っッ つツ づヅ てテ でデ とト どド なナ にニ ぬヌ ねネ のノ はハ ばバ ぱパ ひヒ びビ ぴピ ふフ ぶブ ぷプ へヘ べベ ぺペ ほホ ぼボ ぽポ まマ みミ むム めメ もモ ゃャ やヤ ゅュ ゆユ ょョ よヨ らラ りリ るル れレ ろロ ゎヮ わワ ゐヰ ゑヱ をヲ んン 一 丁 七 万-下 不 与 丑 且 世 丘 丙 両 並 中 丸 丹 主 久 乏 乗 乙 九 乱 乳 乾 亀 了 予 争 事 二 互 五 井 亜 亡 交 亥 亨 享-亭 人 仁 今 介 仏 仕 他 付 仙 代-以 仮 仰 仲 件 任 企 伊 伏-休 会 伝 伯 伴 伸 伺 似 但 位-佐 体 何 余 作 佳 併 使 例 侍 供 依 価 侮 侯 侵 便 係 促 俊 俗 保 信 修 俳 俵 俸 俺 倉 個 倍 倒 候 借 倣 値 倫 倹 偉 偏 停 健 側-偶 偽 傍 傑 傘 備 催 債 傷 傾 働 像 僕 僚 僧 儀 億 儒 償 優 元-兆 先 光 克 免 兎 児 党 入 全 八-六 共 兵 具 典 兼 内 円 冊 再 冒 冗 写 冠 冬 冷 准 凍 凝 凡 処 凶 凸-出 刀 刃 分-刈 刊 刑 列 初 判 別 利 到 制-券 刺 刻 則 削 前 剖 剛 剣 剤 副 剰 割 創 劇 力 功 加 劣 助 努 励 労 効 劾 勅 勇 勉 動 勘 務 勝 募 勢 勤 勧 勲 勺 匁 包 化 北 匠 匹-医 匿 十 千 升 午 半 卑-協 南 単 博 占 卯-危 即-卵 卸 厄 厘 厚 原 厳 去 参 又 及-収 叔 取 受 叙 口-句 叫 召 可 台 史 右 号 司 各 合 吉 同-向 君 吟 否 含 吸 吹 呈-告 周 味 呼 命 和 咲 哀 品 員 哲 唆 唇 唐 唯 唱 商 問 啓 善 喚 喜 喝 喪 喫 営 嗣 嘆 嘉 嘱 器 噴 嚇 囚 四 回 因 団 困 囲 図 固 国 圏 園 土 圧 在 地 坂 均 坊 坑 坪 垂 型 垣 埋 城 域 執 培 基 埼 堀 堂 堅 堕 堤 堪 報 場 塀 塁 塊 塑 塔 塗 塚 塩 塾 境 墓 増 墜 墨 墳 墾 壁 壇 壊 壌 士 壬 壮 声-売 変 夏 夕 外 多 夜 夢 大 天-夫 央 失 奇-奉 奏 契 奔 奥 奨 奪 奮 女 奴 好 如-妄 妊 妙 妥 妨 妹 妻 姉 始 姓 委 姫 姻 姿 威 娘 娠 娯 婆 婚 婦 婿 媒 嫁 嫌 嫡 嬢 子 孔 字 存 孝 季 孤 学 孫 宅 宇-安 完 宗-定 宜 宝 実 客-室 宮 宰 害-家 容 宿 寂 寄-密 富 寒 寛 寝 察 寡 寧 審 寮 寸 寺 対 寿 封 専 射 将 尉-尋 導 小 少 尚 就 尺 尼-局 居 屈 届 屋 展 属 層 履 屯 山 岐 岡 岩 岬 岳 岸 峠 峡 峰 島 崇 崎 崩 川 州 巡 巣 工-巨 差 己 巳 巻 市 布 帆 希 帝 帥 師 席 帯 帰 帳 常 帽 幅 幕 幣 干-年 幸 幹 幻-幾 庁 広 床 序 底 店 庚 府 度 座 庫 庭 庶-庸 廃 廉 廊 延 廷 建 弁 弊 式 弐 弓-引 弘 弟 弦 弧 弱 張 強 弾 当 形 彩 彫 彰 影 役 彼 往 征 径 待 律 後 徐 徒 従 得 御 復 循 微 徳 徴 徹 心 必 忌 忍 志-忙 応 忠 快 念 怒 怖 思 怠 急 性 怪 恋 恐 恒 恥 恨 恩 恭 息 恵 悔 悟 悠 患 悦 悩 悪 悲 悼 情 惑 惜 惨 惰 想 愁 愉 意 愚 愛 感 慈 態 慌 慎 慕 慢 慣 慨 慮 慰 慶 憂 憎 憤 憩 憲 憶 憾 懇 懐 懲 懸 戊 戌 成-戒 戦 戯 戸 戻 房 所 扇 扉 手 才 打 払 扱 扶 批 承 技 抄 把 抑 投 抗 折 抜 択 披 抱 抵 抹 押 抽 担 拍 拐 拒 拓 拘 拙 招 拝 拠 拡 括 拷 拾 持 指 挑 挙 挟 振 挿 捕 捜 捨 据 掃 授 掌 排 掘 掛 採 探 接 控 推 措 掲 描 提 揚 換 握 揮 援 揺 損 搬 搭 携 搾 摂 摘 摩 撃 撤 撮 撲 擁 操 擦 擬 支 改 攻 放 政 故 敏 救 敗 教 敢 散 敬 数 整 敵 敷 文 斉 斎 斗 料 斜 斤 斥 断 新 方 施 旅 旋 族 旗 既 日 旧-早 旬 昆 昇 昌 明 易 昔 星 映 春 昨 昭 是 昼 時 晩 普 景 晴 晶 暁 暇 暑 暖 暗 暦 暫 暮 暴 曇 曜 曲 更 書 曹 替 最 月 有 服 朕 朗 望 朝 期 木 未-札 朱 朴 机 朽 杉 材 村 束 条 来 杯 東 松 板 析 林 枚 果 枝 枠 枢 枯 架 柄 某 染 柔 柱 柳 査 栄 栓 校 株 核 根 格 栽 桃 案 桑 桜 桟 梅 械 棄 棋 棒 棚 棟 森 棺 植 検 業 極 楼 楽 概 構 様 槽 標 模 権 横 樹 橋 機 欄 欠 次 欧 欲 欺 款 歌 歓 止 正 武 歩 歯 歳 歴 死 殉-残 殖 殴 段 殺 殻 殿 母 毎 毒 比 毛 氏 民 気 水 氷 永 汁 求 汎 汗 汚 江 池 決 汽 沈 沖 没 沢 河 沸 油 治 沼 沿 況 泉 泊 泌 法 泡-泣 泥 注 泰 泳 洋 洗 洞 津 洪 活 派 流 浄 浅 浜 浦 浪 浮 浴 海 浸 消 涙 涯 液 涼 淑 淡 深 混 添 清 渇-渉 渋 渓 減 渡 渦 温 測 港 湖 湯 湾-満 源 準 溝 溶 滅 滋 滑 滝 滞 滴 漁 漂 漆 漏 演 漠 漢 漫 漬 漸 潔 潜 潟 潤 潮 澄 激 濁 濃 濫 濯 瀬 火 灯 灰 災 炉 炊 炎 炭 点 為 烈 無 焦 然 焼 煙 照 煩 煮 熟 熱 燃 燥 爆 爵 父 片 版 牙 牛 牧 物 牲 特 犠 犬 犯 状 狂 狩 独 狭 猛 猟 猪 猫 献 猶 猿 獄 獣 獲 玄 率 玉 王 珍 珠 班 現 球 理 琴 環 璽 瓶 甘 甚 生 産 用 田-申 男 町 画 界 畑 畔 留 畜 畝 略 番 異 畳 疎 疑 疫 疲 疾 病 症 痘 痛 痢 痴 療 癒 癖 癸 発 登 白 百 的 皆 皇 皮 皿 盆 益 盗 盛 盟 監 盤 目 盲 直 相 盾 省 看 県 真 眠 眺 眼 着 睡 督 瞬 矛 矢 知 短 矯 石 砂 研 砕 砲 破 硝 硫 硬 碁 碑 確 磁 磨 礁 礎 示 礼 社 祈 祉 祖 祚 祝 神 祥 票 祭 禁 禄 禅 禍-福 秀 私 秋 科 秒 秘 租 秩 称 移 程 税 稚 種 稲 稼 稿 穀 穂 積 穏 穫 穴 究 空 突 窃 窒 窓 窮 窯 立 竜 章 童 端 競 竹 笑 笛 符 第 筆 等 筋 筒 答 策 箇 算 管 箱 節 範 築 篤 簡 簿 籍 米 粉 粋 粒 粗 粘 粛 粧 精 糖 糧 糸 系 糾 紀 約 紅 紋 納 純 紙-紛 素-索 紫 累 細 紳 紹 紺 終 組 経 結 絞 絡 給 統 絵 絶 絹 継 続 維 綱 網 綿 緊 総 緑 緒 線 締 編 緩 緯 練 縁 縄 縛 縦 縫 縮 績 繁 繊 織 繕 繭 繰 缶 罪 置 罰 署 罷 羅 羊 美 群 義 羽 翁 翌 習 翻 翼 老 考 者 耐 耕 耗 耳 聖 聞 聴 職 肉 肌 肖 肝 肢 肥 肩 肪 肯 育 肺 胃 胆 背 胎 胞 胴 胸 能 脂 脅 脈 脚 脱 脳 脹 腐 腕 腰 腸 腹 膚 膜 膨 臓 臣 臨 自 臭 至 致 興 舌 舎 舗 舞 舟 航 般 舶 船 艇 艦 良 色 芋 芝 花 芳 芸 芽 苗 若 苦 英 茂 茎 茶 草 荒 荘 荷 菊 菌 菓 菜 華 落 葉 著 葬 蒸 蓄 蔵 薄 薦 薪-薬 藤 藩 藻 虎 虐 虚 虜 虞 虫 蚊 蚕 蛇 蛍 蛮 融 血 衆 行 術 街 衛 衝 衡 衣 表 衰 衷 袋 被 裁 裂 装 裏 裕 補 裸 製 複 褐 褒 襟 襲 西 要 覆 覇 見 規 視 覚 覧 親 観 角 解 触 言 訂 計 討 訓 託 記 訟 訪 設 許 訳 訴 診 証 詐 詔 評 詞 詠 試 詩 詰-詳 誇 誉 誌 認 誓 誕 誘 語 誠 誤 説 読 誰 課 調 談 請 論 諭 諮 諸 諾 謀 謁 謄 謙 講 謝 謡 謹 識 譜 警 議 譲 護 谷 豆 豊 豚 象 豪 貝 貞 負-貢 貧-販 貫 責 貯 貴 買 貸 費 貿 賀 賃 賄 資 賊 賓 賛 賜 賞 賠 賢 賦 質 購 贈 赤 赦 走 赴 起 超 越 趣 足 距 跡 路 跳 践 踊 踏 躍 身 車 軌 軍 軒 軟 転 軸 軽 較 載 輝 輩 輪 輸 轄 辛 辞 辰-農 辺 込 迅 迎 近 返 迫 迭 述 迷 追 退 送 逃 逆 透 逐 逓 途 通 逝 速 造 連 逮 週 進 逸 遂 遅 遇 遊 運 遍 過 道-違 遠 遣 適 遭 遮 遵 遷 選 遺 避 還 邦 邪 邸 郊 郎 郡 部 郭 郵 郷 都 酉 酌 配 酒 酔 酢 酪 酬 酵 酷 酸 醜 醸 釈 里-量 金 針 釣 鈍 鈴 鉄 鉛 鉢 鉱 銀 銃 銅 銑 銘 銭 鋭 鋳 鋼 錘 錠 錬 錯 録 鍛 鎖 鎮 鏡 鐘 鑑 長 門 閉 開 閏 閑 間 関 閣 閥 閲 闘 阪 防 阻 附 降 限 陛 院-陥 陪 陰 陳 陵 陶 陸 険 陽 隅 隆 隊 階 随 隔 際 障 隠 隣 隷 隻 雄-雇 雉 雌 雑 離 難 雨 雪 雰 雲 零 雷 電 需 震 霊 霜 霧 露 青 静 非 面 革 靴 韓 音 韻 響 頂 頃 項 順 預-頒 領 頭 頻 頼 題 額 顔 顕 願 類 顧 風 飛 食 飢 飯 飲 飼-飾 養 餓 館 首 香 馬 駄-駆 駐 騎 騒 験 騰 驚 骨 髄 高 髪 鬼 魂 魅 魔 魚 鮮 鯨 鳥 鳴 鶏 鹿 麗 麦 麻 黄 黒 黙 鼓 鼠 鼻 齢]</exemplarCharacters>
+		<exemplarCharacters>[々 ゝ ゞ ー-ヾ ぁ あ ァア ぃ い ィイ ぅ う ゥウ ヴ ぇ え ェエ ぉ お ォオ か ヵ カ がガ きキ ぎギ くク ぐグ け ヶ ケ げゲ こコ ごゴ さサ ざザ しシ じジ すス ずズ せセ ぜゼ そソ ぞゾ たタ だダ ちチ ぢヂ っ つ ッツ づヅ てテ でデ とト どド なナ にニ ぬヌ ねネ のノ はハ ばバ ぱパ ひヒ びビ ぴピ ふフ ぶブ ぷプ へヘ べベ ぺペ ほホ ぼボ ぽポ まマ みミ むム めメ もモ ゃ や ャヤ ゅ ゆ ュユ ょ よ ョヨ らラ りリ るル れレ ろロ ゎ わ ヮワ ゐヰ ゑヱ をヲ んン 一 丁 七 万-下 不 与 丑 且 世 丘 丙 両 並 中 丸 丹 主 久 乏 乗 乙 九 乱 乳 乾 亀 了 予 争 事 二 互 五 井 亜 亡 交 亥 亨 享-亭 人 仁 今 介 仏 仕 他 付 仙 代-以 仮 仰 仲 件 任 企 伊 伏-休 会 伝 伯 伴 伸 伺 似 但 位-佐 体 何 余 作 佳 併 使 例 侍 供 依 価 侮 侯 侵 便 係 促 俊 俗 保 信 修 俳 俵 俸 俺 倉 個 倍 倒 候 借 倣 値 倫 倹 偉 偏 停 健 側-偶 偽 傍 傑 傘 備 催 債 傷 傾 働 像 僕 僚 僧 儀 億 儒 償 優 元-兆 先 光 克 免 兎 児 党 入 全 八-六 共 兵 具 典 兼 内 円 冊 再 冒 冗 写 冠 冬 冷 准 凍 凝 凡 処 凶 凸-出 刀 刃 分-刈 刊 刑 列 初 判 別 利 到 制-券 刺 刻 則 削 前 剖 剛 剣 剤 副 剰 割 創 劇 力 功 加 劣 助 努 励 労 効 劾 勅 勇 勉 動 勘 務 勝 募 勢 勤 勧 勲 勺 匁 包 化 北 匠 匹-医 匿 十 千 升 午 半 卑-協 南 単 博 占 卯-危 即-卵 卸 厄 厘 厚 原 厳 去 参 又 及-収 叔 取 受 叙 口-句 叫 召 可 台 史 右 号 司 各 合 吉 同-向 君 吟 否 含 吸 吹 呈-告 周 味 呼 命 和 咲 哀 品 員 哲 唆 唇 唐 唯 唱 商 問 啓 善 喚 喜 喝 喪 喫 営 嗣 嘆 嘉 嘱 器 噴 嚇 囚 四 回 因 団 困 囲 図 固 国 圏 園 土 圧 在 地 坂 均 坊 坑 坪 垂 型 垣 埋 城 域 執 培 基 埼 堀 堂 堅 堕 堤 堪 報 場 塀 塁 塊 塑 塔 塗 塚 塩 塾 境 墓 増 墜 墨 墳 墾 壁 壇 壊 壌 士 壬 壮 声-売 変 夏 夕 外 多 夜 夢 大 天-夫 央 失 奇-奉 奏 契 奔 奥 奨 奪 奮 女 奴 好 如-妄 妊 妙 妥 妨 妹 妻 姉 始 姓 委 姫 姻 姿 威 娘 娠 娯 婆 婚 婦 婿 媒 嫁 嫌 嫡 嬢 子 孔 字 存 孝 季 孤 学 孫 宅 宇-安 完 宗-定 宜 宝 実 客-室 宮 宰 害-家 容 宿 寂 寄-密 富 寒 寛 寝 察 寡 寧 審 寮 寸 寺 対 寿 封 専 射 将 尉-尋 導 小 少 尚 就 尺 尼-局 居 屈 届 屋 展 属 層 履 屯 山 岐 岡 岩 岬 岳 岸 峠 峡 峰 島 崇 崎 崩 川 州 巡 巣 工-巨 差 己 巳 巻 市 布 帆 希 帝 帥 師 席 帯 帰 帳 常 帽 幅 幕 幣 干-年 幸 幹 幻-幾 庁 広 床 序 底 店 庚 府 度 座 庫 庭 庶-庸 廃 廉 廊 延 廷 建 弁 弊 式 弐 弓-引 弘 弟 弦 弧 弱 張 強 弾 当 形 彩 彫 彰 影 役 彼 往 征 径 待 律 後 徐 徒 従 得 御 復 循 微 徳 徴 徹 心 必 忌 忍 志-忙 応 忠 快 念 怒 怖 思 怠 急 性 怪 恋 恐 恒 恥 恨 恩 恭 息 恵 悔 悟 悠 患 悦 悩 悪 悲 悼 情 惑 惜 惨 惰 想 愁 愉 意 愚 愛 感 慈 態 慌 慎 慕 慢 慣 慨 慮 慰 慶 憂 憎 憤 憩 憲 憶 憾 懇 懐 懲 懸 戊 戌 成-戒 戦 戯 戸 戻 房 所 扇 扉 手 才 打 払 扱 扶 批 承 技 抄 把 抑 投 抗 折 抜 択 披 抱 抵 抹 押 抽 担 拍 拐 拒 拓 拘 拙 招 拝 拠 拡 括 拷 拾 持 指 挑 挙 挟 振 挿 捕 捜 捨 据 掃 授 掌 排 掘 掛 採 探 接 控 推 措 掲 描 提 揚 換 握 揮 援 揺 損 搬 搭 携 搾 摂 摘 摩 撃 撤 撮 撲 擁 操 擦 擬 支 改 攻 放 政 故 敏 救 敗 教 敢 散 敬 数 整 敵 敷 文 斉 斎 斗 料 斜 斤 斥 断 新 方 施 旅 旋 族 旗 既 日 旧-早 旬 昆 昇 昌 明 易 昔 星 映 春 昨 昭 是 昼 時 晩 普 景 晴 晶 暁 暇 暑 暖 暗 暦 暫 暮 暴 曇 曜 曲 更 書 曹 替 最 月 有 服 朕 朗 望 朝 期 木 未-札 朱 朴 机 朽 杉 材 村 束 条 来 杯 東 松 板 析 林 枚 果 枝 枠 枢 枯 架 柄 某 染 柔 柱 柳 査 栄 栓 校 株 核 根 格 栽 桃 案 桑 桜 桟 梅 械 棄 棋 棒 棚 棟 森 棺 植 検 業 極 楼 楽 概 構 様 槽 標 模 権 横 樹 橋 機 欄 欠 次 欧 欲 欺 款 歌 歓 止 正 武 歩 歯 歳 歴 死 殉-残 殖 殴 段 殺 殻 殿 母 毎 毒 比 毛 氏 民 気 水 氷 永 汁 求 汎 汗 汚 江 池 決 汽 沈 沖 没 沢 河 沸 油 治 沼 沿 況 泉 泊 泌 法 泡-泣 泥 注 泰 泳 洋 洗 洞 津 洪 活 派 流 浄 浅 浜 浦 浪 浮 浴 海 浸 消 涙 涯 液 涼 淑 淡 深 混 添 清 渇-渉 渋 渓 減 渡 渦 温 測 港 湖 湯 湾-満 源 準 溝 溶 滅 滋 滑 滝 滞 滴 漁 漂 漆 漏 演 漠 漢 漫 漬 漸 潔 潜 潟 潤 潮 澄 激 濁 濃 濫 濯 瀬 火 灯 灰 災 炉 炊 炎 炭 点 為 烈 無 焦 然 焼 煙 照 煩 煮 熟 熱 燃 燥 爆 爵 父 片 版 牙 牛 牧 物 牲 特 犠 犬 犯 状 狂 狩 独 狭 猛 猟 猪 猫 献 猶 猿 獄 獣 獲 玄 率 玉 王 珍 珠 班 現 球 理 琴 環 璽 瓶 甘 甚 生 産 用 田-申 男 町 画 界 畑 畔 留 畜 畝 略 番 異 畳 疎 疑 疫 疲 疾 病 症 痘 痛 痢 痴 療 癒 癖 癸 発 登 白 百 的 皆 皇 皮 皿 盆 益 盗 盛 盟 監 盤 目 盲 直 相 盾 省 看 県 真 眠 眺 眼 着 睡 督 瞬 矛 矢 知 短 矯 石 砂 研 砕 砲 破 硝 硫 硬 碁 碑 確 磁 磨 礁 礎 示 礼 社 祈 祉 祖 祚 祝 神 祥 票 祭 禁 禄 禅 禍-福 秀 私 秋 科 秒 秘 租 秩 称 移 程 税 稚 種 稲 稼 稿 穀 穂 積 穏 穫 穴 究 空 突 窃 窒 窓 窮 窯 立 竜 章 童 端 競 竹 笑 笛 符 第 筆 等 筋 筒 答 策 箇 算 管 箱 節 範 築 篤 簡 簿 籍 米 粉 粋 粒 粗 粘 粛 粧 精 糖 糧 糸 系 糾 紀 約 紅 紋 納 純 紙-紛 素-索 紫 累 細 紳 紹 紺 終 組 経 結 絞 絡 給 統 絵 絶 絹 継 続 維 綱 網 綿 緊 総 緑 緒 線 締 編 緩 緯 練 縁 縄 縛 縦 縫 縮 績 繁 繊 織 繕 繭 繰 缶 罪 置 罰 署 罷 羅 羊 美 群 義 羽 翁 翌 習 翻 翼 老 考 者 耐 耕 耗 耳 聖 聞 聴 職 肉 肌 肖 肝 肢 肥 肩 肪 肯 育 肺 胃 胆 背 胎 胞 胴 胸 能 脂 脅 脈 脚 脱 脳 脹 腐 腕 腰 腸 腹 膚 膜 膨 臓 臣 臨 自 臭 至 致 興 舌 舎 舗 舞 舟 航 般 舶 船 艇 艦 良 色 芋 芝 花 芳 芸 芽 苗 若 苦 英 茂 茎 茶 草 荒 荘 荷 菊 菌 菓 菜 華 落 葉 著 葬 蒸 蓄 蔵 薄 薦 薪-薬 藤 藩 藻 虎 虐 虚 虜 虞 虫 蚊 蚕 蛇 蛍 蛮 融 血 衆 行 術 街 衛 衝 衡 衣 表 衰 衷 袋 被 裁 裂 装 裏 裕 補 裸 製 複 褐 褒 襟 襲 西 要 覆 覇 見 規 視 覚 覧 親 観 角 解 触 言 訂 計 討 訓 託 記 訟 訪 設 許 訳 訴 診 証 詐 詔 評 詞 詠 試 詩 詰-詳 誇 誉 誌 認 誓 誕 誘 語 誠 誤 説 読 誰 課 調 談 請 論 諭 諮 諸 諾 謀 謁 謄 謙 講 謝 謡 謹 識 譜 警 議 譲 護 谷 豆 豊 豚 象 豪 貝 貞 負-貢 貧-販 貫 責 貯 貴 買 貸 費 貿 賀 賃 賄 資 賊 賓 賛 賜 賞 賠 賢 賦 質 購 贈 赤 赦 走 赴 起 超 越 趣 足 距 跡 路 跳 践 踊 踏 躍 身 車 軌 軍 軒 軟 転 軸 軽 較 載 輝 輩 輪 輸 轄 辛 辞 辰-農 辺 込 迅 迎 近 返 迫 迭 述 迷 追 退 送 逃 逆 透 逐 逓 途 通 逝 速 造 連 逮 週 進 逸 遂 遅 遇 遊 運 遍 過 道-違 遠 遣 適 遭 遮 遵 遷 選 遺 避 還 邦 邪 邸 郊 郎 郡 部 郭 郵 郷 都 酉 酌 配 酒 酔 酢 酪 酬 酵 酷 酸 醜 醸 釈 里-量 金 針 釣 鈍 鈴 鉄 鉛 鉢 鉱 銀 銃 銅 銑 銘 銭 鋭 鋳 鋼 錘 錠 錬 錯 録 鍛 鎖 鎮 鏡 鐘 鑑 長 門 閉 開 閏 閑 間 関 閣 閥 閲 闘 阪 防 阻 附 降 限 陛 院-陥 陪 陰 陳 陵 陶 陸 険 陽 隅 隆 隊 階 随 隔 際 障 隠 隣 隷 隻 雄-雇 雉 雌 雑 離 難 雨 雪 雰 雲 零 雷 電 需 震 霊 霜 霧 露 青 静 非 面 革 靴 韓 音 韻 響 頂 頃 項 順 預-頒 領 頭 頻 頼 題 額 顔 顕 願 類 顧 風 飛 食 飢 飯 飲 飼-飾 養 餓 館 首 香 馬 駄-駆 駐 騎 騒 験 騰 驚 骨 髄 高 髪 鬼 魂 魅 魔 魚 鮮 鯨 鳥 鳴 鶏 鹿 麗 麦 麻 黄 黒 黙 鼓 鼠 鼻 齢]</exemplarCharacters>
 		<exemplarCharacters type="auxiliary">[兌 拼 楔 錄 鳯]</exemplarCharacters>
 		<exemplarCharacters type="index" draft="contributed">[あ か さ た な は ま や ら わ]</exemplarCharacters>
-		<exemplarCharacters type="punctuation">[‾ _＿ \-－ ‐ — ― 〜 ・ ･ ,， 、､ ;； \:： !！ ?？ .． ‥ … 。｡ ＇ ‘ ’ &quot; “ ” (（ )） \[［ \]］ \{｛ \}｝ 〈 〉 《 》 「｢ 」｣ 『 』 【 】 〔 〕 ‖ § ¶ @＠ *＊ /／ \\ ＂ ＼ ＃ \&amp;＆ # %％ ‰ † ‡ ′ ″ 〃 ※]</exemplarCharacters>
+		<exemplarCharacters type="punctuation">[‾ _＿ \-－ ‐ — ― 〜 ・ ･ ,， 、､ ;； \:： !！ ?？ .． ‥ … 。｡ ＇ ‘ ’ &quot;＂ “ ” (（ )） \[［ \]］ \{｛ \}｝ 〈 〉 《 》 「｢ 」｣ 『 』 【 】 〔 〕 ‖ § ¶ @＠ *＊ /／ \\ ＼ \&amp;＆ #＃ %％ ‰ † ‡ ′ ″ 〃 ※]</exemplarCharacters>
 		<ellipsis type="final" draft="contributed">{0}…</ellipsis>
 		<ellipsis type="initial" draft="contributed">…{0}</ellipsis>
 		<ellipsis type="medial" draft="contributed">{0}…{1}</ellipsis>
@@ -4010,9 +3945,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>パーマー基地</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>サウスポール基地</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>昭和基地</exemplarCity>
 			</zone>
@@ -4285,9 +4217,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>トロント</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>モントリオール</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>イカルイット</exemplarCity>
@@ -5132,9 +5061,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Phoenix">
 				<exemplarCity>フェニックス</exemplarCity>
 			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>シップロック</exemplarCity>
-			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>デンバー</exemplarCity>
 			</zone>
@@ -5845,6 +5771,20 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<metazone type="Mawson">
 				<long>
 					<standard>モーソン基地時間</standard>
+				</long>
+			</metazone>
+			<metazone type="Mexico_Northwest">
+				<long>
+					<generic>メキシコ北西部時間</generic>
+					<standard>メキシコ北西部標準時</standard>
+					<daylight>メキシコ北西部夏時間</daylight>
+				</long>
+			</metazone>
+			<metazone type="Mexico_Pacific">
+				<long>
+					<generic>メキシコ太平洋時間</generic>
+					<standard>メキシコ太平洋標準時</standard>
+					<daylight>メキシコ太平洋夏時間</daylight>
 				</long>
 			</metazone>
 			<metazone type="Mongolia">
@@ -7578,7 +7518,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} ミリバール</unitPattern>
 			</unit>
 			<unit type="speed-kilometer-per-hour">
-				<unitPattern count="other">時速 {0} キロ</unitPattern>
+				<unitPattern count="other">時速 {0} キロメートル</unitPattern>
 			</unit>
 			<unit type="speed-meter-per-second">
 				<unitPattern count="other">秒速 {0} メートル</unitPattern>

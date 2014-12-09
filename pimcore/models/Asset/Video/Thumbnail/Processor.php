@@ -14,8 +14,15 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Asset_Video_Thumbnail_Processor {
+
+namespace Pimcore\Model\Asset\Video\Thumbnail;
+
+use Pimcore\File; 
+use Pimcore\Tool\Serialize;
+use Pimcore\Tool\Console;
+use Pimcore\Model;
+
+class Processor {
 
 
     protected static $argumentMapping = array(
@@ -40,7 +47,7 @@ class Asset_Video_Thumbnail_Processor {
     public $assetId;
 
     /**
-     * @var Asset_Video_Thumbnail_Config
+     * @var Config
      */
     public $config;
 
@@ -50,14 +57,16 @@ class Asset_Video_Thumbnail_Processor {
     public $status;
 
     /**
-     * @static
-     * @param Asset_Video $asset
-     * @param Asset_Video_Thumbnail_Config $config
+     * @param Model\Asset\Video $asset
+     * @param $config
+     * @param array $onlyFormats
+     * @return Processor
+     * @throws \Exception
      */
-    public static function process (Asset_Video $asset, $config, $onlyFormats = array()) {
+    public static function process (Model\Asset\Video $asset, $config, $onlyFormats = array()) {
 
-        if(!Pimcore_Video::isAvailable()) {
-            throw new Exception("No ffmpeg executable found, please configure the correct path in the system settings");
+        if(!\Pimcore\Video::isAvailable()) {
+            throw new \Exception("No ffmpeg executable found, please configure the correct path in the system settings");
         }
 
         $instance = new self();
@@ -91,25 +100,25 @@ class Asset_Video_Thumbnail_Processor {
                     return;
                 }
             } else if($customSetting[$config->getName()]["status"] == "error") {
-                throw new Exception("Unable to convert video, see logs for details.");
+                throw new \Exception("Unable to convert video, see logs for details.");
             }
         }
 
         foreach ($formats as $format) {
 
             $thumbDir = $asset->getVideoThumbnailSavePath() . "/thumb__" . $config->getName();
-            $filename = preg_replace("/\." . preg_quote(Pimcore_File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename()) . "." . $format;
+            $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename()) . "." . $format;
             $fsPath = $thumbDir . "/" . $filename;
 
             if(!is_dir(dirname($fsPath))) {
-                Pimcore_File::mkdir(dirname($fsPath));
+                File::mkdir(dirname($fsPath));
             }
 
             if(is_file($fsPath)) {
                 @unlink($fsPath);
             }
 
-            $converter = Pimcore_Video::getInstance();
+            $converter = \Pimcore\Video::getInstance();
             $converter->load($asset->getFileSystemPath());
             $converter->setAudioBitrate($config->getAudioBitrate());
             $converter->setVideoBitrate($config->getVideoBitrate());
@@ -137,7 +146,7 @@ class Asset_Video_Thumbnail_Processor {
                             call_user_func_array(array($converter,$transformation["method"]),$arguments);
                         } else {
                             $message = "Video Transform failed: cannot call method `" . $transformation["method"] . "´ with arguments `" . implode(",",$arguments) . "´ because there are too few arguments";
-                            Logger::error($message);
+                            \Logger::error($message);
                         }
                     }
                 }
@@ -161,10 +170,13 @@ class Asset_Video_Thumbnail_Processor {
         return $instance;
     }
 
+    /**
+     * @param $processId
+     */
     public static function execute ($processId) {
         $instance = new self();
         $instance->setProcessId($processId);
-        $instance = Pimcore_Tool_Serialize::unserialize(file_get_contents($instance->getJobFile()));
+        $instance = Serialize::unserialize(file_get_contents($instance->getJobFile()));
         $formats = array();
         $overallStatus = array();
         $conversionStatus = "finished";
@@ -175,12 +187,12 @@ class Asset_Video_Thumbnail_Processor {
         }
 
         // check if there is already a transcoding process running, wait if so ...
-        Tool_Lock::acquire("video-transcoding", 7200, 10); // expires after 2 hrs, refreshes every 10 secs
+        Model\Tool\Lock::acquire("video-transcoding", 7200, 10); // expires after 2 hrs, refreshes every 10 secs
 
         // start converting
         foreach ($instance->queue as $converter) {
             try {
-                Logger::info("start video " . $converter->getFormat() . " to " . $converter->getDestinationFile());
+                \Logger::info("start video " . $converter->getFormat() . " to " . $converter->getDestinationFile());
                 $converter->save();
                 while (!$converter->isFinished()) {
                     sleep(5);
@@ -195,7 +207,10 @@ class Asset_Video_Thumbnail_Processor {
                     $instance->setStatus($a);
                     $instance->save();
                 }
-                Logger::info("finished video " . $converter->getFormat() . " to " . $converter->getDestinationFile());
+                \Logger::info("finished video " . $converter->getFormat() . " to " . $converter->getDestinationFile());
+
+                // set proper permissions
+                @chmod($converter->getDestinationFile(), File::getDefaultMode());
 
                 if($converter->getConversionStatus() !== "error") {
                     $formats[$converter->getFormat()] = str_replace(PIMCORE_DOCUMENT_ROOT, "", $converter->getDestinationFile());
@@ -204,14 +219,14 @@ class Asset_Video_Thumbnail_Processor {
                 }
 
                 $converter->destroy();
-            } catch (Exception $e) {
-                Logger::error($e);
+            } catch (\Exception $e) {
+                \Logger::error($e);
             }
         }
 
-        Tool_Lock::release("video-transcoding");
+        Model\Tool\Lock::release("video-transcoding");
 
-        $asset = Asset::getById($instance->getAssetId());
+        $asset = Model\Asset::getById($instance->getAssetId());
         if($asset) {
             $customSetting = $asset->getCustomSetting("thumbnails");
             $customSetting = is_array($customSetting) ? $customSetting : array();
@@ -244,8 +259,8 @@ class Asset_Video_Thumbnail_Processor {
         $instance->setProcessId($processId);
 
         if(is_file($instance->getJobFile())) {
-            $i = Pimcore_Tool_Serialize::unserialize(file_get_contents($instance->getJobFile()));
-            if($i instanceof Asset_Video_Thumbnail_Processor) {
+            $i = Serialize::unserialize(file_get_contents($instance->getJobFile()));
+            if($i instanceof Processor) {
                 $instance = $i;
             }
         }
@@ -258,15 +273,15 @@ class Asset_Video_Thumbnail_Processor {
      */
     public function convert() {
         $this->save();
-        $cmd = Pimcore_Tool_Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "video-converter.php"). " " . $this->getProcessId();
-        Pimcore_Tool_Console::execInBackground($cmd);
+        $cmd = Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "video-converter.php"). " " . $this->getProcessId();
+        Console::execInBackground($cmd);
     }
 
     /**
      * @return bool
      */
     public function save() {
-        Pimcore_File::put($this->getJobFile(), Pimcore_Tool_Serialize::serialize($this));
+        File::put($this->getJobFile(), Serialize::serialize($this));
         return true;
     }
 
@@ -281,7 +296,8 @@ class Asset_Video_Thumbnail_Processor {
     }
 
     /**
-     * @param string $processId
+     * @param $processId
+     * @return $this
      */
     public function setProcessId($processId)
     {
@@ -298,7 +314,8 @@ class Asset_Video_Thumbnail_Processor {
     }
 
     /**
-     * @param int $assetId
+     * @param $assetId
+     * @return $this
      */
     public function setAssetId($assetId)
     {
@@ -315,7 +332,8 @@ class Asset_Video_Thumbnail_Processor {
     }
 
     /**
-     * @param \Asset_Video_Thumbnail_Config $config
+     * @param $config
+     * @return $this
      */
     public function setConfig($config)
     {
@@ -324,7 +342,7 @@ class Asset_Video_Thumbnail_Processor {
     }
 
     /**
-     * @return \Asset_Video_Thumbnail_Config
+     * @return Config
      */
     public function getConfig()
     {
@@ -332,7 +350,8 @@ class Asset_Video_Thumbnail_Processor {
     }
 
     /**
-     * @param array $queue
+     * @param $queue
+     * @return $this
      */
     public function setQueue($queue)
     {
@@ -349,7 +368,8 @@ class Asset_Video_Thumbnail_Processor {
     }
 
     /**
-     * @param int $status
+     * @param $status
+     * @return $this
      */
     public function setStatus($status)
     {

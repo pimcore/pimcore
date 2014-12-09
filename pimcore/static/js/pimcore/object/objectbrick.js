@@ -156,20 +156,26 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
         }
     },
 
-    deleteField: function () {
-        Ext.Ajax.request({
-            url: "/admin/class/objectbrick-delete",
-            params: {
-                id: this.id
-            }
-        });
-
-        this.attributes.reference.getEditPanel().removeAll();
-        this.remove();
-    },
-
     activate: function () {
         Ext.getCmp("pimcore_panel_tabs").activate("pimcore_objectbricks");
+    },
+
+    deleteField: function () {
+
+        Ext.Msg.confirm(t('delete'), t('delete_message'), function(btn){
+            if (btn == 'yes'){
+                Ext.Ajax.request({
+                    url: "/admin/class/objectbrick-delete",
+                    params: {
+                        id: this.id
+                    }
+                });
+
+                this.attributes.reference.getEditPanel().removeAll();
+                this.remove();
+            }
+        }.bind(this));
     }
+
 
 });

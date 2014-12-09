@@ -113,7 +113,6 @@ class Zend_Auth_Adapter_OpenId implements Zend_Auth_Adapter_Interface
      * @param mixed $extensions extension object or array of extensions objects
      * @param Zend_Controller_Response_Abstract $response an optional response
      *        object to perform HTTP or HTML form redirection
-     * @return void
      */
     public function __construct($id = null,
                                 Zend_OpenId_Consumer_Storage $storage = null,
@@ -192,7 +191,7 @@ class Zend_Auth_Adapter_OpenId implements Zend_Auth_Adapter_Interface
     /**
      * Sets an optional response object to perform HTTP or HTML form redirection
      *
-     * @param  string $root
+     * @param  string $response
      * @return Zend_Auth_Adapter_OpenId Provides a fluent interface
      */
     public function setResponse($response)

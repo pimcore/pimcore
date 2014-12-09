@@ -11,10 +11,12 @@ MULTI-CHANNEL EXPERIENCE AND ENGAGEMENT MANAGEMENT PLATFORM
 * Issue Tracker: - [Issues](http://www.pimcore.org/issues) - Report bugs here
 * Forums: - http://www.pimcore.org/board/ - Get help
 
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/pimcore/pimcore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 ## Getting started
 
 Download the [latest release](http://www.pimcore.org/download) and extract the archive in document root.
-Create a database for pimcore. If you have a website_example (empty installation) or a website_demo (boilerplate) folder please rename one of them to website.
+Create a database for pimcore (charset: utf8). If you have a website_example (empty installation) or a website_demo (boilerplate) folder please rename one of them to website.
 Run the pimcore installation by accessing the URL where you uploaded the pimcore files in a browser.
 
 [A detailed installation guide can be found here.](http://www.pimcore.org/wiki/pages/viewpage.action?pageId=12124463)
@@ -23,5 +25,5 @@ Run the pimcore installation by accessing the URL where you uploaded the pimcore
 ## Copyright and license
 
 Copyright [pimcore](http://www.pimcore.org) GmbH under a modified [BSD license](LICENSE.txt).  
-For licencing details please visit http://www.pimcore.org/license
+For licensing details please visit http://www.pimcore.org/license
 

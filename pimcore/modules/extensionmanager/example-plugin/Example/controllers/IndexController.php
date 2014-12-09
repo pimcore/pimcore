@@ -1,7 +1,7 @@
 <?php
 
 
-class Example_IndexController extends Pimcore_Controller_Action_Admin {
+class Example_IndexController extends \Pimcore\Controller\Action\Admin {
     
     public function indexAction () {
 

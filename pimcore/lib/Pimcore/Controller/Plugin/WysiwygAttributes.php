@@ -13,12 +13,16 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_WysiwygAttributes extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
 
+class WysiwygAttributes extends \Zend_Controller_Plugin_Abstract {
 
+    /**
+     *
+     */
     public function dispatchLoopShutdown() {
         
-        if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
+        if(!\Pimcore\Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
         

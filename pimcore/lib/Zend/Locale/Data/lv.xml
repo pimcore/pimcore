@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9967 $"/>
+		<generation date="$Date: 2014-03-14 12:20:13 -0500 (Fri, 14 Mar 2014) $"/>
 		<language type="lv"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,54 +25,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">adigu</language>
 			<language type="ae">avesta</language>
 			<language type="af">afrikandu</language>
-			<language type="afa">afroaziātu valodas</language>
 			<language type="afh">afrihili</language>
 			<language type="agq">aghemu</language>
 			<language type="ain">ainu</language>
 			<language type="ak">akanu</language>
 			<language type="akk">akadiešu</language>
 			<language type="ale">aleutu</language>
-			<language type="alg">algonkinu valodas</language>
 			<language type="alt">dienvidaltajiešu</language>
 			<language type="am">amharu</language>
 			<language type="an">aragoniešu</language>
 			<language type="ang">senangļu</language>
 			<language type="anp">angika</language>
-			<language type="apa">apaču valodas</language>
 			<language type="ar">arābu</language>
 			<language type="ar_001">mūsdienu standarta arābu</language>
 			<language type="arc">aramiešu</language>
 			<language type="arn">araukāņu</language>
 			<language type="arp">arapahu</language>
-			<language type="art">mākslīgās valodas</language>
 			<language type="arw">aravaku</language>
 			<language type="as">asamiešu</language>
 			<language type="asa">asu</language>
 			<language type="ast">astūriešu</language>
-			<language type="ath">atapasku valodas</language>
-			<language type="aus">austrāliešu valodas</language>
 			<language type="av">avāru</language>
 			<language type="awa">avadhu</language>
 			<language type="ay">aimaru</language>
 			<language type="az">azerbaidžāņu</language>
 			<language type="az" alt="short">azerbaidžāņu</language>
 			<language type="ba">baškīru</language>
-			<language type="bad">bandu</language>
-			<language type="bai">bamileku valodas</language>
 			<language type="bal">beludžu</language>
 			<language type="ban">baliešu</language>
 			<language type="bas">basu</language>
-			<language type="bat">baltu valodas</language>
 			<language type="bax">bamumu</language>
 			<language type="bbj">gomalu</language>
 			<language type="be">baltkrievu</language>
 			<language type="bej">bedžu</language>
 			<language type="bem">bembu</language>
-			<language type="ber">berberu</language>
 			<language type="bez">bena</language>
 			<language type="bfd">bafutu</language>
 			<language type="bg">bulgāru</language>
-			<language type="bh">biharu</language>
 			<language type="bho">bhodžpūru</language>
 			<language type="bi">bišlamā</language>
 			<language type="bik">bikolu</language>
@@ -81,14 +70,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">siksiku</language>
 			<language type="bm">bambaru</language>
 			<language type="bn">bengāļu</language>
-			<language type="bnt">bantu</language>
 			<language type="bo">tibetiešu</language>
 			<language type="br">bretoņu</language>
 			<language type="bra">bradžiešu</language>
 			<language type="brx">bodo</language>
 			<language type="bs">bosniešu</language>
 			<language type="bss">nkosi</language>
-			<language type="btk">bataku</language>
 			<language type="bua">burjatu</language>
 			<language type="bug">bugu</language>
 			<language type="bum">bulu</language>
@@ -96,14 +83,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv">medumbu</language>
 			<language type="ca">katalāņu</language>
 			<language type="cad">kadu</language>
-			<language type="cai">Centrālamerikas indiāņu valodas</language>
 			<language type="car">karību</language>
-			<language type="cau">kaukāziešu valodas</language>
 			<language type="cay">kajuga</language>
 			<language type="cch">atsamu</language>
 			<language type="ce">čečenu</language>
 			<language type="ceb">sebuāņu</language>
-			<language type="cel">ķeltu valoda</language>
 			<language type="cgg">kiga</language>
 			<language type="ch">čamorru</language>
 			<language type="chb">čibču</language>
@@ -116,26 +100,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">čiroku</language>
 			<language type="chy">šejenu</language>
 			<language type="ckb">kurdu (Sorani)</language>
-			<language type="cmc">čamiešu valodas</language>
 			<language type="co">korsikāņu</language>
 			<language type="cop">koptu</language>
-			<language type="cpe">angliskās kreoliskās valodas un pidžinvalodas</language>
-			<language type="cpf">franciskās kreoliskās valodas un pidžinvalodas</language>
-			<language type="cpp">portugāliskās kreoliskās valodas un pidžinvalodas</language>
 			<language type="cr">krī</language>
 			<language type="crh">Krimas tatāru</language>
-			<language type="crp">kreoliskās valodas un pidžinvalodas</language>
 			<language type="cs">čehu</language>
 			<language type="csb">kašubu</language>
 			<language type="cu">baznīcslāvu</language>
-			<language type="cus">kušītu valodas</language>
 			<language type="cv">čuvašu</language>
 			<language type="cy">velsiešu</language>
 			<language type="da">dāņu</language>
 			<language type="dak">dakotu</language>
 			<language type="dar">dargu</language>
 			<language type="dav">taitu</language>
-			<language type="day">dajaku</language>
 			<language type="de">vācu</language>
 			<language type="de_AT">Austrijas vācu</language>
 			<language type="de_CH">Šveices augšvācu</language>
@@ -145,7 +122,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">dinku</language>
 			<language type="dje">zarmu</language>
 			<language type="doi">dogru</language>
-			<language type="dra">dravīdu valodas</language>
 			<language type="dsb">lejassorbu</language>
 			<language type="dua">dualu</language>
 			<language type="dum">vidusholandiešu</language>
@@ -182,7 +158,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">fulu</language>
 			<language type="fi">somu</language>
 			<language type="fil">filipīniešu</language>
-			<language type="fiu">somugru valodas</language>
 			<language type="fj">fidžiešu</language>
 			<language type="fo">fēru</language>
 			<language type="fon">fonu</language>
@@ -200,7 +175,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">gajo</language>
 			<language type="gba">gbaju</language>
 			<language type="gd">gēlu</language>
-			<language type="gem">ģermāņu valodas</language>
 			<language type="gez">gēzu</language>
 			<language type="gil">kiribatiešu</language>
 			<language type="gl">galisiešu</language>
@@ -223,7 +197,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">ivrits</language>
 			<language type="hi">hindi</language>
 			<language type="hil">hiligainonu</language>
-			<language type="him">himačali</language>
 			<language type="hit">hetu</language>
 			<language type="hmn">hmongu</language>
 			<language type="ho">hirimotu</language>
@@ -241,15 +214,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">interlingve</language>
 			<language type="ig">igbo</language>
 			<language type="ii">Sičuaņas ji</language>
-			<language type="ijo">idžbu</language>
 			<language type="ik">inupiaku</language>
 			<language type="ilo">iloku</language>
-			<language type="inc">indoāriešu valodas</language>
-			<language type="ine">indoeiropiešu valodas</language>
 			<language type="inh">ingušu</language>
 			<language type="io">ido</language>
-			<language type="ira">irāņu valodas</language>
-			<language type="iro">irokēzu valodas</language>
 			<language type="is">īslandiešu</language>
 			<language type="it">itāļu</language>
 			<language type="iu">inuītu</language>
@@ -266,7 +234,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">kačinu</language>
 			<language type="kaj">kadži</language>
 			<language type="kam">kambu</language>
-			<language type="kar">karenu</language>
 			<language type="kaw">kāvi</language>
 			<language type="kbd">kabardiešu</language>
 			<language type="kbl">kaņembu</language>
@@ -276,7 +243,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">koru</language>
 			<language type="kg">kongu</language>
 			<language type="kha">khasu</language>
-			<language type="khi">hosjanu valodas</language>
 			<language type="kho">hotaniešu</language>
 			<language type="khq">koiračiinī</language>
 			<language type="ki">kikuju</language>
@@ -295,7 +261,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">kanuru</language>
 			<language type="krc">karačaju un balkāru</language>
 			<language type="krl">karēļu</language>
-			<language type="kro">krū</language>
 			<language type="kru">kuruhu</language>
 			<language type="ks">kašmiriešu</language>
 			<language type="ksb">šambalu</language>
@@ -335,7 +300,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">maithili</language>
 			<language type="mak">makasaru</language>
 			<language type="man">mandingu</language>
-			<language type="map">austronēziešu valoda</language>
 			<language type="mas">masaju</language>
 			<language type="mde">mabu</language>
 			<language type="mdf">mokšu</language>
@@ -351,15 +315,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">maoru</language>
 			<language type="mic">mikmaku</language>
 			<language type="min">minangkabavu</language>
-			<language type="mis">dažādas valodas</language>
 			<language type="mk">maķedoniešu</language>
-			<language type="mkh">monkhmeru valodas</language>
 			<language type="ml">malajalu</language>
 			<language type="mn">mongoļu</language>
 			<language type="mnc">mandžūru</language>
 			<language type="mni">manipūru</language>
-			<language type="mno">manobu valodas</language>
-			<language type="mo">moldāvu</language>
 			<language type="moh">mohauku</language>
 			<language type="mos">mosu</language>
 			<language type="mr">maratu</language>
@@ -367,17 +327,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">maltiešu</language>
 			<language type="mua">mundangu</language>
 			<language type="mul">vairākas valodas</language>
-			<language type="mun">mundu valodas</language>
 			<language type="mus">krīku</language>
 			<language type="mwl">mirandiešu</language>
 			<language type="mwr">marvaru</language>
 			<language type="my">birmiešu</language>
 			<language type="mye">mjenu</language>
-			<language type="myn">maiju valodas</language>
 			<language type="myv">erzju</language>
 			<language type="na">nauruiešu</language>
-			<language type="nah">navatlu</language>
-			<language type="nai">Ziemeļamerikas indiāņu valodas</language>
 			<language type="nap">neapoliešu</language>
 			<language type="naq">nama</language>
 			<language type="nb">norvēģu bukmols</language>
@@ -387,7 +343,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">nevaru</language>
 			<language type="ng">ndongu</language>
 			<language type="nia">njasu</language>
-			<language type="nic">nigēriešu-kordofāņu valodas</language>
 			<language type="niu">niuāņu</language>
 			<language type="nl">holandiešu</language>
 			<language type="nl_BE">flāmu</language>
@@ -400,7 +355,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">nko</language>
 			<language type="nr">dienvidndebelu</language>
 			<language type="nso">ziemeļsotu</language>
-			<language type="nub">nūbiešu valodas</language>
 			<language type="nus">nueru</language>
 			<language type="nv">navahu</language>
 			<language type="nwc">klasiskā nevaru</language>
@@ -416,21 +370,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">osetīnu</language>
 			<language type="osa">važāžu</language>
 			<language type="ota">turku osmaņu</language>
-			<language type="oto">otomu valodas</language>
 			<language type="pa">pandžabu</language>
-			<language type="paa">papuasu valodas</language>
 			<language type="pag">pangasinanu</language>
 			<language type="pal">pehlevi</language>
 			<language type="pam">pampanganu</language>
 			<language type="pap">papjamento</language>
 			<language type="pau">palaviešu</language>
 			<language type="peo">senpersu</language>
-			<language type="phi">filipīniešu valodas</language>
 			<language type="phn">feniķiešu</language>
 			<language type="pi">pāli</language>
 			<language type="pl">poļu</language>
 			<language type="pon">ponapiešu</language>
-			<language type="pra">prākrita valodas</language>
 			<language type="pro">senprovansiešu</language>
 			<language type="ps">puštu</language>
 			<language type="pt">portugāļu</language>
@@ -443,7 +393,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">retoromāņu</language>
 			<language type="rn">rundu</language>
 			<language type="ro">rumāņu</language>
-			<language type="roa">romāņu valoda</language>
+			<language type="ro_MD">moldāvu</language>
 			<language type="rof">rombo</language>
 			<language type="rom">čigānu</language>
 			<language type="root">sakne</language>
@@ -454,8 +404,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">sanskrits</language>
 			<language type="sad">sandavu</language>
 			<language type="sah">jakutu</language>
-			<language type="sai">Dienvidamerikas indiāņu</language>
-			<language type="sal">sališu valodas</language>
 			<language type="sam">samārijas aramiešu</language>
 			<language type="saq">samburu</language>
 			<language type="sas">sasaku</language>
@@ -470,25 +418,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see">seneku</language>
 			<language type="seh">senu</language>
 			<language type="sel">selkupu</language>
-			<language type="sem">semītu valodas</language>
 			<language type="ses">koiraboro senni</language>
 			<language type="sg">sango</language>
 			<language type="sga">senīru</language>
-			<language type="sgn">zīmju valodas</language>
 			<language type="sh">serbu-horvātu</language>
 			<language type="shi">šilhu</language>
 			<language type="shn">šanu</language>
 			<language type="shu">Čadas arābu</language>
 			<language type="si">singāļu</language>
 			<language type="sid">sidamu</language>
-			<language type="sio">siū valodas</language>
-			<language type="sit">sinotibetiešu valodas</language>
 			<language type="sk">slovāku</language>
 			<language type="sl">slovēņu</language>
-			<language type="sla">slāvu</language>
 			<language type="sm">samoāņu</language>
 			<language type="sma">dienvidsāmu</language>
-			<language type="smi">sāmu valodas</language>
 			<language type="smj">luleo sāmu</language>
 			<language type="smn">inari sāmu</language>
 			<language type="sms">skoltsāmu</language>
@@ -496,13 +438,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">soninku</language>
 			<language type="so">somāļu</language>
 			<language type="sog">sogdiešu</language>
-			<language type="son">songaju</language>
 			<language type="sq">albāņu</language>
 			<language type="sr">serbu</language>
 			<language type="srn">sranantogo</language>
 			<language type="srr">serēru</language>
 			<language type="ss">svatu</language>
-			<language type="ssa">nīlas-sahāras valodas</language>
 			<language type="ssy">saho</language>
 			<language type="st">dienvidsotu</language>
 			<language type="su">sundaniešu</language>
@@ -516,7 +456,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">klasiskā sīriešu</language>
 			<language type="syr">sīriešu</language>
 			<language type="ta">tamilu</language>
-			<language type="tai">taju valodas</language>
 			<language type="te">telugu</language>
 			<language type="tem">temnu</language>
 			<language type="teo">teso</language>
@@ -543,8 +482,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">cimšiāņu</language>
 			<language type="tt">tatāru</language>
 			<language type="tum">tumbuku</language>
-			<language type="tup">tupu valodas</language>
-			<language type="tut">altajiešu valodas</language>
 			<language type="tvl">tuvaliešu</language>
 			<language type="tw">tvī</language>
 			<language type="twq">tasavaku</language>
@@ -567,11 +504,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun">vundžo</language>
 			<language type="wa">valoņu</language>
 			<language type="wae">Vallisas vācu</language>
-			<language type="wak">vakašu valodas</language>
 			<language type="wal">valamu</language>
 			<language type="war">varaju</language>
 			<language type="was">vašo</language>
-			<language type="wen">sorbu</language>
 			<language type="wo">volofu</language>
 			<language type="xal">kalmiku</language>
 			<language type="xh">khosu</language>
@@ -582,7 +517,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb">jembu</language>
 			<language type="yi">jidišs</language>
 			<language type="yo">jorubu</language>
-			<language type="ypk">jopiku valodas</language>
 			<language type="yue">kantoniešu</language>
 			<language type="za">džuanu</language>
 			<language type="zap">sapoteku</language>
@@ -592,7 +526,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">ķīniešu</language>
 			<language type="zh_Hans">ķīniešu vienkāršotā</language>
 			<language type="zh_Hant">ķīniešu tradicionālā</language>
-			<language type="znd">zandē</language>
 			<language type="zu">zulu</language>
 			<language type="zun">zunju</language>
 			<language type="zxx">bez lingvistiska satura</language>
@@ -2003,9 +1936,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>Palmera</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Dienvidpols</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Sjova</exemplarCity>
 			</zone>
@@ -2257,9 +2187,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Nipigon">
 				<exemplarCity>Nipigona</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>Monreāla</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>Ikaluita</exemplarCity>
@@ -2989,9 +2916,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>Fīniksa</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Šiproka</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>Denvera</exemplarCity>
@@ -4087,7 +4011,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 		<currencyFormats numberSystem="latn">
 			<currencyFormatLength>
 				<currencyFormat type="standard">
-					<pattern>¤#,##0.00;(¤#,##0.00)</pattern>
+					<pattern>¤#,##0.00</pattern>
 				</currencyFormat>
 				<currencyFormat type="accounting">
 					<pattern>¤#,##0.00</pattern>

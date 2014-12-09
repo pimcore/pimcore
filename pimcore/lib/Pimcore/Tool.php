@@ -13,8 +13,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+namespace Pimcore;
 
-class Pimcore_Tool {
+use Pimcore\Model\Cache;
+
+class Tool {
 
     /**
      * @static
@@ -61,7 +64,7 @@ class Pimcore_Tool {
      */
     public static function getValidLanguages() {
 
-        $config = Pimcore_Config::getSystemConfig();
+        $config = Config::getSystemConfig();
         $validLanguages = strval($config->general->validLanguages);
 
         if (empty($validLanguages)) {
@@ -86,7 +89,7 @@ class Pimcore_Tool {
 
         $languages = array();
 
-        $conf = Pimcore_Config::getSystemConfig();
+        $conf = Config::getSystemConfig();
         if($conf->general->fallbackLanguages && $conf->general->fallbackLanguages->$language) {
             $languages = explode(",", $conf->general->fallbackLanguages->$language);
             foreach ($languages as $l) {
@@ -99,6 +102,9 @@ class Pimcore_Tool {
         return $languages;
     }
 
+    /**
+     * @return null
+     */
     public static function getDefaultLanguage() {
         $languages = self::getValidLanguages();
         if(!empty($languages)) {
@@ -112,19 +118,19 @@ class Pimcore_Tool {
      */
     public static function getSupportedLocales() {
 
-        $locale = Zend_Locale::findLocale();
+        $locale = \Zend_Locale::findLocale();
         $cacheKey = "system_supported_locales_" . strtolower((string) $locale);
-        if(!$languageOptions = Pimcore_Model_Cache::load($cacheKey)) {
-            // we use the locale here, because Zend_Translate only supports locales not "languages"
-            $languages = Zend_Locale::getLocaleList();
+        if(!$languageOptions = Cache::load($cacheKey)) {
+            // we use the locale here, because \Zend_Translate only supports locales not "languages"
+            $languages = \Zend_Locale::getLocaleList();
             $languageOptions = array();
             foreach ($languages as $code => $active) {
                 if($active) {
-                    $translation = Zend_Locale::getTranslation($code, "language");
+                    $translation = \Zend_Locale::getTranslation($code, "language");
                     if(!$translation) {
-                        $tmpLocale = new Zend_Locale($code);
-                        $lt = Zend_Locale::getTranslation($tmpLocale->getLanguage(), "language");
-                        $tt = Zend_Locale::getTranslation($tmpLocale->getRegion(), "territory");
+                        $tmpLocale = new \Zend_Locale($code);
+                        $lt = \Zend_Locale::getTranslation($tmpLocale->getLanguage(), "language");
+                        $tt = \Zend_Locale::getTranslation($tmpLocale->getRegion(), "territory");
 
                         if($lt && $tt) {
                             $translation = $lt ." (" . $tt . ")";
@@ -141,10 +147,44 @@ class Pimcore_Tool {
 
             asort($languageOptions);
 
-            Pimcore_Model_Cache::save($languageOptions, $cacheKey, ["system"]);
+            Cache::save($languageOptions, $cacheKey, ["system"]);
         }
 
         return $languageOptions;
+    }
+
+    /**
+     * @param $language
+     * @return string
+     */
+    public static function getLanguageFlagFile($language) {
+        $iconBasePath = PIMCORE_PATH . '/static/img/flags';
+
+        $code = strtolower($language);
+        $code = str_replace("_","-", $code);
+        $countryCode = null;
+        $fallbackLanguageCode = null;
+
+        $parts = explode("-", $code);
+        if(count($parts) > 1) {
+            $countryCode = array_pop($parts);
+            $fallbackLanguageCode = $parts[0];
+        }
+
+        $languagePath = $iconBasePath . "/languages/" . $code . ".png";
+        $countryPath = $iconBasePath . "/countries/" . $countryCode . ".png";
+        $fallbackLanguagePath = $iconBasePath . "/languages/" . $fallbackLanguageCode . ".png";
+
+        $iconPath = $iconBasePath . "/countries/_unknown.png";
+        if(file_exists($languagePath)) {
+            $iconPath = $languagePath;
+        } else if($countryCode && file_exists($countryPath)) {
+            $iconPath = $countryPath;
+        } else if ($fallbackLanguageCode && file_exists($fallbackLanguagePath)) {
+            $iconPath = $fallbackLanguagePath;
+        }
+
+        return $iconPath;
     }
 
     /**
@@ -153,7 +193,7 @@ class Pimcore_Tool {
      */
     public static function getRoutingDefaults() {
 
-        $config = Pimcore_Config::getSystemConfig();
+        $config = Config::getSystemConfig();
 
         if($config) {
             // system default
@@ -218,17 +258,17 @@ class Pimcore_Tool {
 
     /**
      * @static
-     * @param Zend_Controller_Request_Abstract $request
+     * @param \Zend_Controller_Request_Abstract $request
      * @return bool
      */
-    public static function useFrontendOutputFilters(Zend_Controller_Request_Abstract $request) {
+    public static function useFrontendOutputFilters(\Zend_Controller_Request_Abstract $request) {
 
         // check for module
         if (!self::isFrontend()) {
             return false;
         }
 
-        if(Pimcore_Tool::isFrontentRequestByAdmin()) {
+        if(self::isFrontentRequestByAdmin()) {
             return false;
         }
 
@@ -280,10 +320,10 @@ class Pimcore_Tool {
 
             //get it from System settings
             if (!$hostname) {
-                $systemConfig = Pimcore_Config::getSystemConfig()->toArray();
+                $systemConfig = Config::getSystemConfig()->toArray();
                 $hostname = $systemConfig['general']['domain'];
                 if (!$hostname) {
-                    Logger::warn('Couldn\'t determine HTTP Host. No Domain set in "Settings" -> "System" -> "Website" -> "Domain"');
+                    \Logger::warn('Couldn\'t determine HTTP Host. No Domain set in "Settings" -> "System" -> "Website" -> "Domain"');
                     return "";
                 }
             }
@@ -304,7 +344,7 @@ class Pimcore_Tool {
             $cvData = false;
         }
         else {
-            $config = new Zend_Config_Xml($cvConfigFile);
+            $config = new \Zend_Config_Xml($cvConfigFile);
             $confArray = $config->toArray();
 
             if (empty($confArray["views"]["view"])) {
@@ -325,15 +365,15 @@ class Pimcore_Tool {
     }
 
     /**
-     * @static
-     * @param  $sender
-     * @param  $recipients
-     * @param  $subject
-     * @return Pimcore_Mail
+     * @param null $recipients
+     * @param null $subject
+     * @param null $charset
+     * @return Mail
+     * @throws \Zend_Mail_Exception
      */
     public static function getMail($recipients = null, $subject = null, $charset = null) {
 
-        $mail = new Pimcore_Mail($charset);
+        $mail = new Mail($charset);
 
         if($recipients) {
             if(is_string($recipients)) {
@@ -355,10 +395,10 @@ class Pimcore_Tool {
 
     /**
      * @static
-     * @param Zend_Controller_Response_Abstract $response
+     * @param \Zend_Controller_Response_Abstract $response
      * @return bool
      */
-    public static function isHtmlResponse (Zend_Controller_Response_Abstract $response) {
+    public static function isHtmlResponse (\Zend_Controller_Response_Abstract $response) {
         // check if response is html
         $headers = $response->getHeaders();
         foreach ($headers as $header) {
@@ -371,33 +411,36 @@ class Pimcore_Tool {
         
         return true;
     }
-    
+
     /**
-     * @static
-     * @throws Exception
      * @param string $type
-     * @return Zend_Http_Client
+     * @param array $options
+     * @return mixed
+     * @throws \Exception
+     * @throws \Zend_Http_Client_Exception
      */
     public static function getHttpClient ($type = "Zend_Http_Client",$options = array()) {
 
-        $config = Pimcore_Config::getSystemConfig();
+        $config = Config::getSystemConfig();
         $clientConfig = $config->httpclient->toArray();
         $clientConfig["adapter"] = $clientConfig["adapter"] ? $clientConfig["adapter"] : "Zend_Http_Client_Adapter_Socket";
         $clientConfig["maxredirects"] = $options["maxredirects"] ? $options["maxredirects"] : 2;
         $clientConfig["timeout"] = $options["timeout"] ? $options["timeout"] : 3600;
         $type = empty($type) ? "Zend_Http_Client" : $type;
 
-        if(Pimcore_Tool::classExists($type)) {
+        $type = "\\" . ltrim($type, "\\");
+
+        if(self::classExists($type)) {
             $client = new $type(null, $clientConfig);
 
             // workaround/for ZF (Proxy-authorization isn't added by ZF)
             if ($clientConfig['proxy_user']) {
-                $client->setHeaders('Proxy-authorization',  Zend_Http_Client::encodeAuthHeader(
-                    $clientConfig['proxy_user'], $clientConfig['proxy_pass'], Zend_Http_Client::AUTH_BASIC
+                $client->setHeaders('Proxy-authorization',  \Zend_Http_Client::encodeAuthHeader(
+                    $clientConfig['proxy_user'], $clientConfig['proxy_pass'], \Zend_Http_Client::AUTH_BASIC
                     ));
             }
         } else {
-            throw new Exception("Pimcore_Tool::getHttpClient: Unable to create an instance of $type");
+            throw new \Exception("Pimcore_Tool::getHttpClient: Unable to create an instance of $type");
         }
 
         return $client;
@@ -414,7 +457,7 @@ class Pimcore_Tool {
         
         $client = self::getHttpClient();
         $client->setUri($url);
-        $requestType = Zend_Http_Client::GET;
+        $requestType = \Zend_Http_Client::GET;
 
         if(is_array($paramsGet) && count($paramsGet) > 0) {
             foreach ($paramsGet as $key => $value) {
@@ -427,7 +470,7 @@ class Pimcore_Tool {
                 $client->setParameterPost($key, $value);
             }
 
-            $requestType = Zend_Http_Client::POST;
+            $requestType = \Zend_Http_Client::POST;
         }
 
         try {
@@ -436,7 +479,7 @@ class Pimcore_Tool {
             if ($response->isSuccessful()) {
                 return $response->getBody();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
 
@@ -446,7 +489,7 @@ class Pimcore_Tool {
 
     /*
      * Class Mapping Tools
-     * They are used to map all instances of Element_Interface to an defined class (type)
+     * They are used to map all instances of \Element_Interface to an defined class (type)
      */
 
     /**
@@ -457,18 +500,21 @@ class Pimcore_Tool {
     public static function getModelClassMapping($sourceClassName) {
 
         $targetClassName = $sourceClassName;
+        $lookupName = str_replace(["\\Pimcore\\Model\\", "\\"], ["", "_"], $sourceClassName);
+        $lookupName = ltrim($lookupName, "\\_");
 
-        if($map = Pimcore_Config::getModelClassMappingConfig()) {
-            $tmpClassName = $map->{$sourceClassName};
+        if($map = Config::getModelClassMappingConfig()) {
+            $tmpClassName = $map->{$lookupName};
             if($tmpClassName) {
-                if(Pimcore_Tool::classExists($tmpClassName)) {
+                $tmpClassName = "\\" . ltrim($tmpClassName, "\\");
+                if(self::classExists($tmpClassName)) {
                     if(is_subclass_of($tmpClassName, $sourceClassName)) {
-                        $targetClassName = $tmpClassName;
+                        $targetClassName = "\\" . ltrim($tmpClassName, "\\"); // ensure class is in global namespace
                     } else {
-                        Logger::error("Classmapping for " . $sourceClassName . " failed. '" . $tmpClassName . " is not a subclass of '" . $sourceClassName . "'. " . $tmpClassName . " has to extend " . $sourceClassName);
+                        \Logger::error("Classmapping for " . $sourceClassName . " failed. '" . $tmpClassName . " is not a subclass of '" . $sourceClassName . "'. " . $tmpClassName . " has to extend " . $sourceClassName);
                     }
                 } else {
-                    Logger::error("Classmapping for " . $sourceClassName . " failed. Cannot find class '" . $tmpClassName . "'");
+                    \Logger::error("Classmapping for " . $sourceClassName . " failed. Cannot find class '" . $tmpClassName . "'");
                 }
             }
         }
@@ -482,8 +528,8 @@ class Pimcore_Tool {
      */
     public static function registerClassModelMappingNamespaces () {
 
-        $autoloader = Zend_Loader_Autoloader::getInstance();
-        if($map = Pimcore_Config::getModelClassMappingConfig()) {
+        $autoloader = \Zend_Loader_Autoloader::getInstance();
+        if($map = Config::getModelClassMappingConfig()) {
             $map = $map->toArray();
 
             foreach ($map as $targetClass) {
@@ -513,6 +559,9 @@ class Pimcore_Tool {
         return $ip;
     }
 
+    /**
+     * @return string
+     */
     public static function getAnonymizedClientIp() {
         $ip = self::getClientIp();
         $aip = substr($ip, 0, strrpos($ip, ".")+1);
@@ -526,9 +575,48 @@ class Pimcore_Tool {
      * @return bool
      */
     public static function classExists ($class) {
-        Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(true);
+
+        // we need to set a custom error handler here for the time being
+        // unfortunately suppressNotFoundWarnings() doesn't work all the time, it has something to do with the calls in
+        // Pimcore\Tool::ClassMapAutoloader(), but don't know what actual conditions causes this problem.
+        // but to be save we log the errors into the debug.log, so if anything else happens we can see it there
+        // the normal warning is e.g. Warning: include_once(Path/To/Class.php): failed to open stream: No such file or directory in ...
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            \Logger::debug(implode(" ", func_get_args()));
+        });
+
+        \Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(true);
+        $class = "\\" . ltrim($class, "\\");
         $exists = class_exists($class);
-        Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(false);
+        \Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(false);
+
+        restore_error_handler();
+
+        return $exists;
+    }
+
+    /**
+     * @static
+     * @param $class
+     * @return bool
+     */
+    public static function interfaceExists ($class) {
+
+        // we need to set a custom error handler here for the time being
+        // unfortunately suppressNotFoundWarnings() doesn't work all the time, it has something to do with the calls in
+        // Pimcore\Tool::ClassMapAutoloader(), but don't know what actual conditions causes this problem.
+        // but to be save we log the errors into the debug.log, so if anything else happens we can see it there
+        // the normal warning is e.g. Warning: include_once(Path/To/Class.php): failed to open stream: No such file or directory in ...
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            \Logger::debug(implode(" ", func_get_args()));
+        });
+
+        \Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(true);
+        $class = "\\" . ltrim($class, "\\");
+        $exists = interface_exists($class);
+        \Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(false);
+
+        restore_error_handler();
 
         return $exists;
     }

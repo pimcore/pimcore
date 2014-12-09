@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Google_Cse_Item {
+namespace Pimcore\Google\Cse;
+
+class Item {
 
     /**
      * @var array
@@ -87,6 +89,7 @@ class Pimcore_Google_Cse_Item {
 
     /**
      * @param array $data
+     * @return $this
      */
     public function setValues($data = array()) {
         if (is_array($data) && count($data) > 0) {
@@ -111,7 +114,8 @@ class Pimcore_Google_Cse_Item {
     }
 
     /**
-     * @param string $displayLink
+     * @param $displayLink
+     * @return $this
      */
     public function setDisplayLink($displayLink)
     {
@@ -128,7 +132,8 @@ class Pimcore_Google_Cse_Item {
     }
 
     /**
-     * @param string $document
+     * @param $document
+     * @return $this
      */
     public function setDocument($document)
     {
@@ -145,7 +150,8 @@ class Pimcore_Google_Cse_Item {
     }
 
     /**
-     * @param string $formattedUrl
+     * @param $formattedUrl
+     * @return $this
      */
     public function setFormattedUrl($formattedUrl)
     {
@@ -162,7 +168,8 @@ class Pimcore_Google_Cse_Item {
     }
 
     /**
-     * @param string $htmlFormattedUrl
+     * @param $htmlFormattedUrl
+     * @return $this
      */
     public function setHtmlFormattedUrl($htmlFormattedUrl)
     {
@@ -179,7 +186,8 @@ class Pimcore_Google_Cse_Item {
     }
 
     /**
-     * @param string $htmlSnippet
+     * @param $htmlSnippet
+     * @return $this
      */
     public function setHtmlSnippet($htmlSnippet)
     {
@@ -196,7 +204,8 @@ class Pimcore_Google_Cse_Item {
     }
 
     /**
-     * @param string $htmlTitle
+     * @param $htmlTitle
+     * @return $this
      */
     public function setHtmlTitle($htmlTitle)
     {
@@ -213,7 +222,8 @@ class Pimcore_Google_Cse_Item {
     }
 
     /**
-     * @param string $image
+     * @param $image
+     * @return $this
      */
     public function setImage($image)
     {
@@ -230,7 +240,8 @@ class Pimcore_Google_Cse_Item {
     }
 
     /**
-     * @param string $link
+     * @param $link
+     * @return $this
      */
     public function setLink($link)
     {
@@ -247,7 +258,8 @@ class Pimcore_Google_Cse_Item {
     }
 
     /**
-     * @param array $raw
+     * @param $raw
+     * @return $this
      */
     public function setRaw($raw)
     {
@@ -264,7 +276,8 @@ class Pimcore_Google_Cse_Item {
     }
 
     /**
-     * @param string $snippet
+     * @param $snippet
+     * @return $this
      */
     public function setSnippet($snippet)
     {
@@ -281,7 +294,8 @@ class Pimcore_Google_Cse_Item {
     }
 
     /**
-     * @param string $title
+     * @param $title
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -298,7 +312,8 @@ class Pimcore_Google_Cse_Item {
     }
 
     /**
-     * @param string $type
+     * @param $type
+     * @return $this
      */
     public function setType($type)
     {
@@ -313,6 +328,4 @@ class Pimcore_Google_Cse_Item {
     {
         return $this->type;
     }
-
-
 }

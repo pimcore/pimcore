@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Tool_StopWatch {
+namespace Pimcore\Tool;
+
+class StopWatch {
 
     /**
      * @var float

@@ -24,18 +24,23 @@ function gzcompressfile($source,$level=null, $target = null){
 
     $mode='wb'.$level;
     $error=false;
-    if($fp_out=gzopen($dest,$mode)){
-        if($fp_in=fopen($source,'rb')){
+    if ($fp_out=gzopen($dest,$mode)) {
+        if($fp_in=fopen($source,'rb')) {
             while(!feof($fp_in))
                 gzwrite($fp_out,fread($fp_in,1024*512));
             fclose($fp_in);
         }
         else $error=true;
         gzclose($fp_out);
+    } else {
+        $error=true;
     }
-    else $error=true;
-    if($error) return false;
-    else return $dest;
+
+    if ($error) {
+        return false;
+    }  else {
+        return $dest;
+    }
 }
 
 function is_json($string) {
@@ -122,14 +127,13 @@ function array_urlencode ($args) {
   $out = '';
   foreach($args as $name => $value)
   {
-    if(is_array($value))
-    {
+    if(is_array($value))  {
         foreach($value as $key => $val) {
             $out .= urlencode($name).'['.urlencode($key).']'.'=';
             $out .= urlencode($val).'&';
 
         }
-    }else{
+    } else {
         $out .= urlencode($name).'=';
         $out .= urlencode($value).'&';
     }
@@ -177,12 +181,12 @@ function urlencode_ignore_slash($var) {
 }
 
 /**
- * @depricated
+ * @deprecated
  * @param  $filename
  * @return bool
  */
 function is_includeable($filename) {
-    return Pimcore_File::isIncludeable($filename);
+    return \Pimcore\File::isIncludeable($filename);
 }
 
 /**

@@ -163,7 +163,6 @@ class Zend_Auth_Adapter_Http implements Zend_Auth_Adapter_Interface
      *    'alogrithm' => <string> See $_supportedAlgos. Default: MD5
      *    'proxy_auth' => <bool> Whether to do authentication as a Proxy
      * @throws Zend_Auth_Adapter_Exception
-     * @return void
      */
     public function __construct(array $config)
     {

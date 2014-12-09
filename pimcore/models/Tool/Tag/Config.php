@@ -14,9 +14,12 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Tool_Tag_Config {
 
+namespace Pimcore\Model\Tool\Tag;
+
+use Pimcore\Model\Cache; 
+
+class Config {
 
     /**
      * @var array
@@ -66,15 +69,15 @@ class Tool_Tag_Config {
 
 
     /**
-     * @static
-     * @param  $name
-     * @return Tool_Tag_Config
+     * @param $name
+     * @return Config
+     * @throws \Exception
      */
     public static function getByName ($name) {
         $tag = new self();
         $tag->setName($name);
         if(!$tag->load()) {
-            throw new Exception("tag definition : " . $name . " does not exist");
+            throw new \Exception("tag definition : " . $name . " does not exist");
         }
 
         return $tag;
@@ -87,7 +90,7 @@ class Tool_Tag_Config {
     public static function getWorkingDir () {
         $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/tags";
         if(!is_dir($dir)) {
-            Pimcore_File::mkdir($dir);
+            \Pimcore\File::mkdir($dir);
         }
 
         return $dir;
@@ -106,15 +109,15 @@ class Tool_Tag_Config {
         $params = $arrayConfig["params"];
         $arrayConfig["params"] = array("param" => $params);
         
-        $config = new Zend_Config($arrayConfig);
-        $writer = new Zend_Config_Writer_Xml(array(
+        $config = new \Zend_Config($arrayConfig);
+        $writer = new \Zend_Config_Writer_Xml(array(
             "config" => $config,
             "filename" => $this->getConfigFile()
         ));
         $writer->write();
 
         // clear cache tags
-        Pimcore_Model_Cache::clearTags(array("tagmanagement","output"));
+        Cache::clearTags(array("tagmanagement","output"));
 
         return true;
     }
@@ -124,7 +127,7 @@ class Tool_Tag_Config {
      */
     public function load () {
 
-        $configXml = new Zend_Config_Xml($this->getConfigFile());
+        $configXml = new \Zend_Config_Xml($this->getConfigFile());
         $configArray = $configXml->toArray();
 
         if(array_key_exists("items",$configArray) && is_array($configArray["items"]["item"])) {
@@ -161,7 +164,7 @@ class Tool_Tag_Config {
         }
 
         // clear cache tags
-        Pimcore_Model_Cache::clearTags(array("tagmanagement","output"));
+        Cache::clearTags(array("tagmanagement","output"));
     }
 
     /**
@@ -172,8 +175,7 @@ class Tool_Tag_Config {
     }
 
     /**
-     * @param  $name
-     * @param  $parameters
+     * @param $parameters
      * @return bool
      */
     public function addItem ($parameters) {
@@ -183,8 +185,8 @@ class Tool_Tag_Config {
     }
 
     /**
-     * @param  $name
-     * @param  $parameters
+     * @param $position
+     * @param $parameters
      * @return bool
      */
     public function addItemAt ($position, $parameters) {
@@ -203,7 +205,8 @@ class Tool_Tag_Config {
     }
 
     /**
-     * @param string $description
+     * @param $description
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -220,7 +223,8 @@ class Tool_Tag_Config {
     }
 
     /**
-     * @param array $items
+     * @param $items
+     * @return $this
      */
     public function setItems($items)
     {
@@ -237,7 +241,8 @@ class Tool_Tag_Config {
     }
 
     /**
-     * @param string $name
+     * @param $name
+     * @return $this
      */
     public function setName($name)
     {
@@ -254,7 +259,8 @@ class Tool_Tag_Config {
     }
 
     /**
-     * @param string $httpMethod
+     * @param $httpMethod
+     * @return $this
      */
     public function setHttpMethod($httpMethod)
     {
@@ -271,7 +277,8 @@ class Tool_Tag_Config {
     }
 
     /**
-     * @param string $urlPattern
+     * @param $urlPattern
+     * @return $this
      */
     public function setUrlPattern($urlPattern)
     {
@@ -304,7 +311,8 @@ class Tool_Tag_Config {
     }
 
     /**
-     * @param array $params
+     * @param $params
+     * @return $this
      */
     public function setParams($params)
     {
@@ -321,7 +329,8 @@ class Tool_Tag_Config {
     }
 
     /**
-     * @param string $textPattern
+     * @param $textPattern
+     * @return $this
      */
     public function setTextPattern($textPattern)
     {

@@ -53,10 +53,10 @@ class Zend_Cache_Backend_ZendServer_ShMem extends Zend_Cache_Backend_ZendServer 
     /**
      * Store data
      *
-     * @param mixed  $data        Object to store
-     * @param string $id          Cache id
-     * @param int    $timeToLive  Time to live in seconds
-     *
+     * @param mixed  $data       Object to store
+     * @param string $id         Cache id
+     * @param int    $timeToLive Time to live in seconds
+     * @return bool
      */
     protected function _store($data, $id, $timeToLive)
     {
@@ -72,7 +72,8 @@ class Zend_Cache_Backend_ZendServer_ShMem extends Zend_Cache_Backend_ZendServer 
     /**
      * Fetch data
      *
-     * @param string $id          Cache id
+     * @param string $id Cache id
+     * @return mixed|null
      */
     protected function _fetch($id)
     {

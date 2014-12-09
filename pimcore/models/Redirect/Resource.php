@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Redirect;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      * Contains all valid columns in the database table
@@ -73,9 +77,7 @@ class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
-     * Save changes to database, it's an good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
         try {
@@ -95,7 +97,7 @@ class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
 
             $this->db->update("redirects", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
         

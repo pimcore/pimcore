@@ -12,17 +12,31 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Pimcore_Controller_Action_Admin_Reports extends Pimcore_Controller_Action_Admin {
-    
+
+namespace Pimcore\Controller\Action\Admin;
+
+use Pimcore\Controller\Action\Admin;
+use Pimcore\Config;
+
+class Reports extends Admin {
+
+    /**
+     * @var
+     */
     public $conf;
-    
+
+    /**
+     *
+     */
     public function init () {
         
         parent::init();
     }
-    
+
+    /**
+     * @return \Zend_Config
+     */
     public function getConfig () {
-        return Pimcore_Config::getReportConfig();
+        return Config::getReportConfig();
     }
 }

@@ -39,31 +39,74 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
  	 */
  	function loginBegin()
  	{
+		// Initiate the Reverse Auth flow; cf. https://dev.twitter.com/docs/ios/using-reverse-auth
+		if (isset($_REQUEST['reverse_auth']) && ($_REQUEST['reverse_auth'] == 'yes')){
+			$stage1 = $this->api->signedRequest( $this->api->request_token_url, 'POST', array( 'x_auth_mode' => 'reverse_auth' ) ); 
+			if ( $this->api->http_code != 200 ){
+				throw new Exception( "Authentication failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
+			}
+			$responseObj = array( 'x_reverse_auth_parameters' => $stage1, 'x_reverse_auth_target' => $this->config["keys"]["key"] );
+			$response = json_encode($responseObj);
+			header( "Content-Type: application/json", true, 200 ) ;
+			echo $response;
+			die();
+		}
  		$tokens = $this->api->requestToken( $this->endpoint );
  	
- 		// request tokens as recived from provider
+ 		// request tokens as received from provider
  		$this->request_tokens_raw = $tokens;
  	
  		// check the last HTTP status code returned
  		if ( $this->api->http_code != 200 ){
- 			throw new Exception( "Authentification failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
+ 			throw new Exception( "Authentication failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
  		}
  	
  		if ( ! isset( $tokens["oauth_token"] ) ){
- 			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid oauth token.", 5 );
+ 			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid oauth token.", 5 );
  		}
  	
  		$this->token( "request_token"       , $tokens["oauth_token"] );
  		$this->token( "request_token_secret", $tokens["oauth_token_secret"] );
  	
 		// redirect the user to the provider authentication url with force_login
- 		if ( isset( $this->config['force_login'] ) && $this->config['force_login'] ){
+ 		if ( ( isset( $this->config['force_login'] ) && $this->config['force_login'] ) || ( isset( $this->config[ 'force' ] ) && $this->config[ 'force' ] === true ) ){
  			Hybrid_Auth::redirect( $this->api->authorizeUrl( $tokens, array( 'force_login' => true ) ) );
  		}
 
 		// else, redirect the user to the provider authentication url
  		Hybrid_Auth::redirect( $this->api->authorizeUrl( $tokens ) );
  	}
+
+	/**
+	* finish login step 
+	*/ 
+	function loginFinish()
+	{
+		// in case we are completing a Reverse Auth flow; cf. https://dev.twitter.com/docs/ios/using-reverse-auth
+		if(isset($_REQUEST['oauth_token_secret'])){
+			$tokens = $_REQUEST;
+			$this->access_tokens_raw = $tokens;
+
+			// we should have an access_token unless something has gone wrong
+			if ( ! isset( $tokens["oauth_token"] ) ){
+				throw new Exception( "Authentication failed! {$this->providerId} returned an invalid access token.", 5 );
+			}
+
+			// Get rid of tokens we don't need
+			$this->deleteToken( "request_token"        );
+			$this->deleteToken( "request_token_secret" );
+
+			// Store access_token and secret for later use
+			$this->token( "access_token"        , $tokens['oauth_token'] );
+			$this->token( "access_token_secret" , $tokens['oauth_token_secret'] ); 
+
+			// set user as logged in to the current provider
+			$this->setUserConnected(); 
+			return;
+		}
+		parent::loginFinish();
+	}
+	
 
 	/**
 	* load the user profile from the IDp api client
@@ -86,7 +129,7 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 		$this->user->profile->displayName = (property_exists($response,'screen_name'))?$response->screen_name:"";
 		$this->user->profile->description = (property_exists($response,'description'))?$response->description:"";
 		$this->user->profile->firstName   = (property_exists($response,'name'))?$response->name:""; 
-		$this->user->profile->photoURL    = (property_exists($response,'profile_image_url'))?$response->profile_image_url:"";
+		$this->user->profile->photoURL    = (property_exists($response,'profile_image_url'))?(str_replace('_normal', '', $response->profile_image_url)):"";
 		$this->user->profile->profileURL  = (property_exists($response,'screen_name'))?("http://twitter.com/".$response->screen_name):"";
 		$this->user->profile->webSiteURL  = (property_exists($response,'url'))?$response->url:""; 
 		$this->user->profile->region      = (property_exists($response,'location'))?$response->location:"";
@@ -143,19 +186,42 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 		return $contacts;
  	}
 
-	/**
-	* update user status
-	*/ 
-	function setUserStatus( $status )
-	{
-		$parameters = array( 'status' => $status ); 
-		$response  = $this->api->post( 'statuses/update.json', $parameters ); 
+    /**
+    * update user status
+    */ 
+    function setUserStatus( $status )
+    {
 
-		// check the last HTTP status code returned
-		if ( $this->api->http_code != 200 ){
-			throw new Exception( "Update user status failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
-		}
- 	}
+        if( is_array( $status ) && isset( $status[ 'message' ] ) && isset( $status[ 'picture' ] ) ){
+            $response = $this->api->post( 'statuses/update_with_media.json', array( 'status' => $status[ 'message' ], 'media[]' => file_get_contents( $status[ 'picture' ] ) ), null, null, true );
+        }else{
+            $response = $this->api->post( 'statuses/update.json', array( 'status' => $status ) ); 
+        }
+
+        // check the last HTTP status code returned
+        if ( $this->api->http_code != 200 ){
+            throw new Exception( "Update user status failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
+        }
+
+        return $response;
+    }
+
+
+	/**
+	* get user status
+	*/
+    function getUserStatus( $tweetid )
+    {
+        $info = $this->api->get( 'statuses/show.json?id=' . $tweetid . '&include_entities=true' );
+
+        // check the last HTTP status code returned
+        if ( $this->api->http_code != 200 || !isset( $info->id ) ){
+			throw new Exception( "Cannot retrieve user status! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
+        }
+
+        return $info;
+    }
+
 
 	/**
 	* load the user latest activity  

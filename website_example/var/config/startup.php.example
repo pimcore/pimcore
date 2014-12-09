@@ -9,7 +9,7 @@
 /*
 // register a custom ZF controller plugin
 $front = Zend_Controller_Front::getInstance();
-$front->registerPlugin(new Website_Controller_Plugin_Custom(), 700);
+$front->registerPlugin(new Website\Controller\Plugin\Custom(), 700);
 */
 
 /*
