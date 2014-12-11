@@ -41,4 +41,4 @@ class Json extends \Zend_Controller_Action_Helper_Json {
 }
 
 // unfortunately we need this alias here, since ZF plugin loader isn't able to handle namespaces correctly
-class_alias("\\Pimcore\\Controller\\Action\\Helper\\Json", "\\Pimcore_Controller_Action_Helper_Json");
+class_alias("Pimcore\\Controller\\Action\\Helper\\Json", "Pimcore_Controller_Action_Helper_Json");

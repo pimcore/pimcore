@@ -76,7 +76,7 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
                 }
             }
 
-            $namespacedClass = ltrim($class, "\\");
+            $namespacedClass = $class;
             $namespacedClass = str_replace("_List", "_Listing", $namespacedClass);
             $namespacedClass = str_replace("Object_Class", "Object_ClassDefinition", $namespacedClass);
             $namespacedClass = preg_replace("/([^_]+)_Abstract$/", "$1_Abstract$1", $namespacedClass);
@@ -84,13 +84,11 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
             $namespacedClass = str_replace("_", "\\", $namespacedClass);
 
             if(strpos($namespacedClass, "Pimcore") !== 0) {
-                $namespacedClass = "\\Pimcore\\Model\\" . $namespacedClass;
+                $namespacedClass = "Pimcore\\Model\\" . $namespacedClass;
             }
 
             // check if the class is a model, if so, load it
-            $this->loadModel(ltrim($namespacedClass,"\\"));
-
-            $class = "\\" . ltrim($class, "\\"); // ensure that the class is in the global namespace
+            $this->loadModel($namespacedClass);
 
             if(Tool::classExists($namespacedClass) || Tool::interfaceExists($namespacedClass)) {
                 if(!class_exists($class, false) && !interface_exists($class, false)) {
