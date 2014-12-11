@@ -62,11 +62,15 @@ class Resource extends Model\Resource\AbstractResource {
      */
     public function getByNameAndLanguage($name = null, $language = null) {
 
-        if ($key != null) {
+        if ($name != null) {
             $this->model->setName($name);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM assets_metadata_predefined WHERE `name` = ?", $this->model->getName());
+        if ($language != null) {
+            $this->model->setLanguage($language);
+        }
+
+        $data = $this->db->fetchRow("SELECT * FROM assets_metadata_predefined WHERE `name` = ? AND language = ?", [$this->model->getName(), $this->model->getLanguage()]);
         $this->assignVariablesToModel($data);
     }
 

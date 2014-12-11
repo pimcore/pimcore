@@ -377,7 +377,7 @@ abstract class Adapter {
     /**
      * @return self
      */
-    public function mirror () {
+    public function mirror ($mode) {
 
         return $this;
     }
