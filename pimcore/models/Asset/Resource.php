@@ -151,14 +151,15 @@ class Resource extends Model\Element\Resource
             $this->db->delete("assets_metadata", "cid = " . $this->model->getId());
             $metadata = $this->model->getMetadata();
             if(!empty($metadata)) {
-                foreach ($metadata as $metadata) {
-                    $metadata["cid"] = $this->model->getId();
+                foreach ($metadata as $metadataItem) {
+                    $metadataItem["cid"] = $this->model->getId();
+                    unset($metadataItem['config']);
 
-                    if($metadata["data"] instanceof Model\Element\ElementInterface) {
-                        $metadata["data"] = $metadata["data"]->getId();
+                    if($metadataItem["data"] instanceof Model\Element\ElementInterface) {
+                        $metadataItem["data"] = $metadataItem["data"]->getId();
                     }
 
-                    $this->db->insert("assets_metadata", $metadata);
+                    $this->db->insert("assets_metadata", $metadataItem);
                 }
             }
 
