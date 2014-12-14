@@ -83,13 +83,9 @@ class Config {
 
                 foreach ($list as $item) {
                     $key = $item->getName();
-                    $siteId = $item->getSiteId();
+                    $itemSiteId = $item->getSiteId();
 
-                    if(!$siteId && $siteId > 0){
-                        continue;
-                    }
-
-                    if($siteId && $siteId > 0 && $siteId != $siteId){
+                    if ($itemSiteId != 0 && $itemSiteId != $siteId) {
                         continue;
                     }
 
