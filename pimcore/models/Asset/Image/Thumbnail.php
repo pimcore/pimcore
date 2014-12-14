@@ -306,8 +306,7 @@ class Thumbnail {
 
                 // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
                 ksort($mediaConfigs, SORT_NUMERIC);
-                $mediaConfigs = array_reverse($mediaConfigs, true); // the sorting matters!
-                array_unshift($mediaConfigs, $thumbConfig->getItems()); // add the default config at the beginning
+                array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
 
                 foreach ($mediaConfigs as $mediaQuery => $config) {
                     $srcSetValues = [];
