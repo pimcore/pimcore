@@ -13,8 +13,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-use Pimcore\Tool\Session; 
-use Pimcore\Tool; 
+use Pimcore\Tool\Session;
+use Pimcore\Tool;
 Use Pimcore\Config;
 use Pimcore\Model\Document;
 use Pimcore\Model\Version;
@@ -251,8 +251,13 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         } else if ($this->getParam("id")) {
             $document = Document::getById($this->getParam("id"));
             if ($document->isAllowed("delete")) {
-                $document->delete();
-                $this->_helper->json(array("success" => true));
+                try {
+                    $document->delete();
+                    $this->_helper->json(array("success" => true));
+                } catch (\Exception $e) {
+                    \Logger::err($e);
+                    $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                }
             }
         }
 
