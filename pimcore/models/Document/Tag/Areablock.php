@@ -513,7 +513,7 @@ class Areablock extends Model\Document\Tag {
             }
 
 
-            if(empty($options["allowed"]) || in_array($areaName,$options["allowed"])) {
+            if(empty($options["allowed"]) || ($allowedIndex = array_search($areaName, $options["allowed"])) !== FALSE) {
 
                 $n = (string) $areaConfig->name;
                 $d = (string) $areaConfig->description;
@@ -538,18 +538,35 @@ class Areablock extends Model\Document\Tag {
                     "name" => $n,
                     "description" => $d,
                     "type" => $areaName,
-                    "icon" => $icon
+                    "icon" => $icon,
+                    "allowedIndex" => $allowedIndex
                 );
             }
         }
 
-        // sort with translated names
-        usort($availableAreas,function($a, $b) {
-            if ($a["name"] == $b["name"]) {
-                return 0;
-            }
-            return ($a["name"] < $b["name"]) ? -1 : 1;
-        });
+        //set default sorting method
+        $options['sorting'] = empty($options['allowed']) ? 'name' : $options['sorting'];
+
+        // areablock toolbar sorting
+        switch($options['sorting']) {
+            default:
+            case 'name':
+                // sort with translated names
+                usort($availableAreas, function ($a, $b) {
+                    if ($a["name"] == $b["name"]) {
+                        return 0;
+                    }
+
+                    return ($a["name"] < $b["name"]) ? -1 : 1;
+                });
+                break;
+            case 'allowed':
+                // sort by allowed brick config order
+                usort($availableAreas, function ($a, $b) {
+                    return $a['allowedIndex'] - $b['allowedIndex'];
+                });
+                break;
+        }
 
         $options["types"] = $availableAreas;
 
