@@ -496,8 +496,8 @@ class Areablock extends Model\Document\Tag {
 
         // read available types
         $areaConfigs = $this->getBrickConfigs();
-        $availableAreas = array();
-        $availableAreasSort = array();
+        $availableAreas = ["name" => [], "index" => []];
+        $availableAreasSort = is_array($options["sorting"]) && count($options["sorting"]) ? $options["sorting"] : (is_array($options["allowed"]) && count($options["allowed"]) ? $options["allowed"] : FALSE);
 
         if(!isset($options["allowed"]) || !is_array($options["allowed"])) {
             $options["allowed"] = array();
@@ -513,7 +513,7 @@ class Areablock extends Model\Document\Tag {
             }
 
 
-            if(empty($options["allowed"]) || ($allowedIndex = array_search($areaName, $options["allowed"])) !== FALSE) {
+            if (empty($allowed) || in_array($areaName, $options["allowed"])) {
 
                 $n = (string) $areaConfig->name;
                 $d = (string) $areaConfig->description;
@@ -534,12 +534,19 @@ class Areablock extends Model\Document\Tag {
                     }
                 }
 
-                $availableAreas[] = array(
-                    "name" => $n,
-                    "description" => $d,
-                    "type" => $areaName,
-                    "icon" => $icon,
-                    "allowedIndex" => $allowedIndex
+                $sortIndex = FALSE;
+                $sortKey = "name"; //allowed and sorting is not set || areaName is not in allowed
+                if ($availableAreasSort) {
+                    $sortIndex = array_search($areaName, $availableAreasSort);
+                    $sortKey   = $sortIndex === FALSE ? $sortKey : "index";
+                }
+
+                $availableAreas[$sortKey][] = array(
+                        "name" => $n,
+                        "description" => $d,
+                        "type" => $areaName,
+                        "icon" => $icon,
+                        "sortIndex" => $sortIndex
                 );
             }
         }
@@ -547,27 +554,25 @@ class Areablock extends Model\Document\Tag {
         //set default sorting method
         $options['sorting'] = empty($options['allowed']) ? 'name' : $options['sorting'];
 
-        // areablock toolbar sorting
-        switch($options['sorting']) {
-            default:
-            case 'name':
-                // sort with translated names
-                usort($availableAreas, function ($a, $b) {
-                    if ($a["name"] == $b["name"]) {
-                        return 0;
-                    }
+        if (count($availableAreas["name"])) {
+            // sort with translated names
+            usort($availableAreas["name"], function ($a, $b) {
+                if ($a["name"] == $b["name"]) {
+                    return 0;
+                }
 
-                    return ($a["name"] < $b["name"]) ? -1 : 1;
-                });
-                break;
-            case 'allowed':
-                // sort by allowed brick config order
-                usort($availableAreas, function ($a, $b) {
-                    return $a['allowedIndex'] - $b['allowedIndex'];
-                });
-                break;
+                return ($a["name"] < $b["name"]) ? -1 : 1;
+            });
         }
 
+        if (count($availableAreas["index"])) {
+            // sort by allowed brick config order
+            usort($availableAreas["index"], function ($a, $b) {
+                return $a["sortIndex"] - $b["sortIndex"];
+            });
+        }
+
+        $availableAreas = array_merge($availableAreas["index"], $availableAreas["name"]);
         $options["types"] = $availableAreas;
 
         if(isset($options["group"]) && is_array($options["group"])) {
