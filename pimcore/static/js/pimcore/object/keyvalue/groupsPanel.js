@@ -83,8 +83,9 @@ pimcore.object.keyvalue.groupspanel = Class.create({
         var gridColumns = [];
 
         gridColumns.push({header: "ID", width: 40, sortable: true, dataIndex: 'id'});
-        gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name',editor: new Ext.form.TextField({})});
-        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({})});
+        gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name'});
+        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description',
+                                                                            editor: new Ext.form.TextField({})});
 
 
         gridColumns.push(

@@ -271,6 +271,11 @@ abstract class Frontend extends Action {
             $locale = new \Zend_Locale($locale);
             \Zend_Registry::set('Zend_Locale', $locale);
             $this->getResponse()->setHeader("Content-Language",strtolower(str_replace("_","-", (string) $locale)), true);
+
+            if(\Zend_Registry::isRegistered("Zend_Translate")) {
+                $translator = \Zend_Registry::get("Zend_Translate");
+                $translator->setLocale($locale);
+            }
         }
     }
 
