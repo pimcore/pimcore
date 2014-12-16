@@ -551,9 +551,6 @@ class Areablock extends Model\Document\Tag {
             }
         }
 
-        //set default sorting method
-        $options['sorting'] = empty($options['allowed']) ? 'name' : $options['sorting'];
-
         if (count($availableAreas["name"])) {
             // sort with translated names
             usort($availableAreas["name"], function ($a, $b) {
