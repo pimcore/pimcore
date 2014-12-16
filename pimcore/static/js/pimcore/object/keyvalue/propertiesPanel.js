@@ -89,9 +89,8 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
         var gridColumns = [];
 
         gridColumns.push({header: "ID", width: 40, sortable: true, dataIndex: 'id'});
-        gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name'});
-        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description',
-            editor: new Ext.form.TextField({})});
+        gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name',editor: new Ext.form.TextField({})});
+        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description',editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("type"), width: 100, sortable: true, dataIndex: 'type',
             editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
@@ -313,6 +312,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
     },
 
     addFieldComplete: function (button, value, object) {
+
         value = value.trim();
         if (button == "ok" && value.length > 1) {
             Ext.Ajax.request({

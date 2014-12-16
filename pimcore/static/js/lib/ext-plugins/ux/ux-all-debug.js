@@ -360,7 +360,7 @@ Ext.ux.grid.CheckColumn = Ext.extend(Ext.grid.Column, {
     },
 
     renderer : function(v, p, record){
-        p.css += ' x-grid3-check-col-td';
+        p.css += ' x-grid3-check-col-td'; 
         return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', v ? '-on' : '');
     },
 
