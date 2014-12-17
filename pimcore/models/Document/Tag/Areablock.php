@@ -513,7 +513,7 @@ class Areablock extends Model\Document\Tag {
             }
 
 
-            if (empty($allowed) || in_array($areaName, $options["allowed"])) {
+            if (empty($options["allowed"]) || in_array($areaName, $options["allowed"])) {
 
                 $n = (string) $areaConfig->name;
                 $d = (string) $areaConfig->description;
