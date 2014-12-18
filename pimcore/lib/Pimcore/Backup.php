@@ -423,6 +423,8 @@ class Backup {
 
         $dumpData = "\n\n";
 
+        $name = $db->quoteTableAs($name);
+
         if ($type != "VIEW") {
             // backup tables
             $tableData = $db->fetchAll("SELECT * FROM " . $name);
@@ -440,7 +442,7 @@ class Backup {
                     $cells[] = $cell;
                 }
 
-                $dumpData .= "INSERT INTO `" . $name . "` VALUES (" . implode(",", $cells) . ");";
+                $dumpData .= "INSERT INTO " . $name . " VALUES (" . implode(",", $cells) . ");";
                 $dumpData .= "\n";
 
             }
@@ -448,7 +450,7 @@ class Backup {
         else {
             // dump view structure
             $dumpData .= "\n\n";
-            $dumpData .= "DROP VIEW IF EXISTS `" . $name . "`;";
+            $dumpData .= "DROP VIEW IF EXISTS " . $name . ";";
             $dumpData .= "\n";
 
             try {
