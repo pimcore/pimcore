@@ -288,6 +288,16 @@ class Resource extends Model\Element\Resource
     }
 
     /**
+     * deletes all metadata for the object from database
+     *
+     * @return void
+     */
+    public function deleteAllMetadata()
+    {
+        $this->db->delete("assets_metadata", $this->db->quoteInto("cid = ?", $this->model->getId()));
+    }
+
+    /**
      * get versions from database, and assign it to object
      *
      * @return array
