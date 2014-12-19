@@ -357,7 +357,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
         $className = "\\Pimcore\\Model\\Object";
         // get classname
-        if(get_called_class() != "\\Pimcore\\Model\\Object\\AbstractObject" && get_called_class() != "\\Pimcore\\Model\\Object\\Concrete") {
+        if(get_called_class() != "Pimcore\\Model\\Object\\AbstractObject" && get_called_class() != "Pimcore\\Model\\Object\\Concrete") {
             $tmpObject = new static();
             $className = "\\Pimcore\\Model\\Object\\" . ucfirst($tmpObject->getClassName());
         }
