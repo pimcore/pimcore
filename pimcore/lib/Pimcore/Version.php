@@ -20,7 +20,7 @@ class Version {
     /**
      * @var string
      */
-    public static $version = "3.0.0 RC1";
+    public static $version = "3.0.0 RC2";
 
     /**
      * @var int
