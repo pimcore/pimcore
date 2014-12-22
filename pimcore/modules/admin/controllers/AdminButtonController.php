@@ -37,6 +37,8 @@ class Admin_AdminButtonController extends \Pimcore\Controller\Action\Admin {
                 $personas[$persona->getId()] = $persona->getName();
             }
 
+            header("Content-Type: text/javascript");
+
             echo 'try {
                 var pimcore = pimcore || {};
                 pimcore["admin"] = {documentId: ' . $this->getParam("documentId") . '};
