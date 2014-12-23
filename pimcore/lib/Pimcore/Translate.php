@@ -102,6 +102,22 @@ class Translate extends \Zend_Translate_Adapter {
 
 
     /**
+     * @param string|\Zend_Locale $locale
+     * @return \Zend_Translate_Adapter
+     * @throws \Zend_Translate_Exception
+     */
+    public function setLocale($locale) {
+
+        // load data before calling the parent
+        $l = (string) $locale;
+        if(empty($this->_translate[$l])) {
+            $this->_loadTranslationData(null,$l);
+        }
+
+        return parent::setLocale($locale);
+    }
+
+    /**
      * @param array|string $messageId
      * @param null $locale
      * @return array|string
