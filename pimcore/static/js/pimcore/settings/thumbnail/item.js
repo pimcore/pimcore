@@ -1086,6 +1086,54 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
+    itemGaussianBlur: function (panel, data, getName) {
+
+        var niceName = t("gaussianBlur") + " (Imagick)";
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'spinnerfield',
+                name: 'radius',
+                fieldLabel: t('radius'),
+                width: 50,
+                decimalPrecision: 1,
+                minValue: 0,
+                allowDecimals: true,
+                incrementValue: 0.1,
+                value: data.radius || 0
+            },{
+                xtype: 'spinnerfield',
+                name: 'sigma',
+                fieldLabel: t('sigma'),
+                width: 50,
+                decimalPrecision: 1,
+                minValue: 0,
+                allowDecimals: true,
+                incrementValue: 0.1,
+                value: data.sigma || 1
+            },{
+                xtype: 'hidden',
+                name: 'type',
+                value: 'gaussianBlur'
+            }]
+        });
+
+        return item;
+    },
+
     itemTifforiginal: function (panel, data, getName) {
 
         var niceName = t("use_original_tiff");
