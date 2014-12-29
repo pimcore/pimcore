@@ -43,6 +43,7 @@ class Processor {
         "grayscale" => array(),
         "sepia" => array(),
         "sharpen" => array('radius', 'sigma', 'amount', 'threshold'),
+        "gaussianBlur" => array('radius', 'sigma'),
         "mirror" => array("mode")
     );
 

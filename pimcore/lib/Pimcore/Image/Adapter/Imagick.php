@@ -642,6 +642,19 @@ class Imagick extends Adapter {
     }
 
     /**
+     * @param int $radius
+     * @param float $sigma
+     * @return $this|Adapter
+     */
+    public function gaussianBlur($radius = 0, $sigma = 1.0) {
+        $this->preModify();
+        $this->resource->gaussianBlurImage($radius, $sigma);
+        $this->postModify();
+
+        return $this;
+    }
+
+    /**
      * @param $mode
      * @return $this|Adapter
      */
