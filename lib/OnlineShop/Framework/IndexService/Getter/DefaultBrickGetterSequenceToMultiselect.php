@@ -56,9 +56,9 @@ class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMulti
 
         }
         if(!empty($values)) {
-            return OnlineShop_Framework_IndexService_Tenant_Worker::MULTISELECT_DELIMITER .
-                implode(OnlineShop_Framework_IndexService_Tenant_Worker::MULTISELECT_DELIMITER, $values) .
-                OnlineShop_Framework_IndexService_Tenant_Worker::MULTISELECT_DELIMITER;
+            return OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER .
+                implode(OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER, $values) .
+                OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER;
         } else {
             return null;
         }
