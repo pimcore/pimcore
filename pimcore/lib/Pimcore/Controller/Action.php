@@ -54,17 +54,38 @@ class Action extends \Zend_Controller_Action {
     }
 
     /**
+     * @return null|\Zend_Layout
+     */
+    protected function layout() {
+        return $this->enableLayout();
+    }
+
+    /**
+     * @return null|\Zend_Layout
      * @throws \Zend_Controller_Action_Exception
      */
     protected function enableLayout() {
-        \Pimcore\View::enableLayout();
+
+        $viewRenderer = \Zend_Controller_Action_HelperBroker::getExistingHelper("viewRenderer");
+        $viewRenderer->setIsInitialized(false); // reset so that the view get's initialized again, because of error page from other modules
+        $viewRenderer->initView();
+
+        \Zend_Layout::startMvc();
+        $layout = \Zend_Layout::getMvcInstance();
+        $layout->enableLayout();
+        $layout->setViewSuffix(\Pimcore\View::getViewScriptSuffix());
+
+        return $layout;
     }
 
     /**
      *
      */
     protected function disableLayout() {
-        \Pimcore\View::disableLayout();
+        $layout = \Zend_Layout::getMvcInstance();
+        if ($layout) {
+            $layout->disableLayout();
+        }
 
         $this->layoutEnabled = false;
     }

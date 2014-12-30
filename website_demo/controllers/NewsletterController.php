@@ -8,6 +8,8 @@ class NewsletterController extends Action {
 
     public function subscribeAction () {
 
+        $this->enableLayout();
+
         $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
         $params = $this->getAllParams();
 
@@ -41,6 +43,8 @@ class NewsletterController extends Action {
 
     public function confirmAction() {
 
+        $this->enableLayout();
+
         $this->view->success = false;
 
         $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
@@ -51,6 +55,8 @@ class NewsletterController extends Action {
     }
 
     public function unsubscribeAction() {
+
+        $this->enableLayout();
 
         $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
 

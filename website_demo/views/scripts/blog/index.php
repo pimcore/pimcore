@@ -1,10 +1,4 @@
-<?php
-
-    // use the layout "layout.php" (which is the default), in this case we can also just call $this->layout() which has the same effect.
-    $this->layout()->setLayout("layout");
-
-    $this->template("/includes/content-headline.php");
-?>
+<?php $this->template("/includes/content-headline.php"); ?>
 
 <?= $this->areablock("content"); ?>
 

@@ -6,8 +6,7 @@ use Pimcore\Model\Object;
 class BlogController extends Action
 {
     public function indexAction() {
-
-        // layout is enabled / defined in the view ($this->layout()->setLayout("layout"))
+        $this->enableLayout();
 
         // get a list of news objects and order them by date
         $blogList = new Object\BlogArticle\Listing();
@@ -45,8 +44,7 @@ class BlogController extends Action
     }
 
     public function detailAction() {
-
-        // layout is enabled / defined in the view ($this->layout()->setLayout("layout"))
+        $this->enableLayout();
 
         // "id" is the named parameters in "Static Routes"
         $article = Object\BlogArticle::getById($this->getParam("id"));

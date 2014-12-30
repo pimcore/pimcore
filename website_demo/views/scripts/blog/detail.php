@@ -1,8 +1,4 @@
 <?php
-
-    // use the layout "layout.php" (which is the default), in this case we can also just call $this->layout() which has the same effect.
-    $this->layout()->setLayout("layout");
-
     // set page meta-data
     $this->headTitle()->set($this->article->getTitle());
 

@@ -1,5 +1,3 @@
-<?php $this->layout(); ?>
-
 <?php if(!$this->success) { ?>
     <div class="alert alert-danger">
         <h2><?= $this->translate("Sorry, something went wrong, please sign up again!"); ?></h2>

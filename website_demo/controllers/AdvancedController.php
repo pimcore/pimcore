@@ -15,8 +15,6 @@ class AdvancedController extends Action
         // do something on initialization //-> see Zend Framework
 
         // in our case we enable the layout engine (Zend_Layout) for all actions
-        // using this method it's not necessary to specify a layout in the view
-        // if you're using $this->layout() in your view it's not necessary to call $this->enableLayout() here
         $this->enableLayout();
     }
 
