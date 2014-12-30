@@ -86,8 +86,6 @@ class Action extends \Zend_Controller_Action {
         if ($layout) {
             $layout->disableLayout();
         }
-
-        $this->layoutEnabled = false;
     }
 
     /**
