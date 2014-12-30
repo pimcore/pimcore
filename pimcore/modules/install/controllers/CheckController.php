@@ -59,14 +59,6 @@ class Install_CheckController extends \Pimcore\Controller\Action {
         );
 
 
-        // check for safe_mode
-        $safemode = strtolower(ini_get("safe_mode"));
-        $checksPHP[] = array(
-            "name" => "safe_mode (in php.ini)",
-            "link" => "http://www.php.net/safe_mode",
-            "state" => $safemode == "on" ? "error" : "ok"
-        );
-
         // mcrypt
         $checksPHP[] = array(
             "name" => "mcrypt",
@@ -186,27 +178,12 @@ class Install_CheckController extends \Pimcore\Controller\Action {
             "state" => class_exists("Memcache") ? "ok" : "warning"
         );
 
-        // PCNTL
-        $checksPHP[] = array(
-            "name" => "PCNTL",
-            "link" => "http://www.php.net/pcntl",
-            "state" => function_exists("pcntl_exec") ? "ok" : "warning"
-        );
-
         // curl for google api sdk
         $checksPHP[] = array(
             "name" => "curl",
             "link" => "http://www.php.net/curl",
             "state" => function_exists("curl_init") ? "ok" : "warning"
         );
-
-        // Phar to create phar archives
-        /*$checksPHP[] = array(
-            "name" => "Phar (is writeable)",
-            "link" => "http://www.php.net/phar",
-            "state" => ini_get("phar.readonly") == 0 ? "ok" : "warning"
-        );*/
-
 
 
         $db = null;
