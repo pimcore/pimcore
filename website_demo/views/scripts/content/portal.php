@@ -1,3 +1,5 @@
+<?php $this->layout(); // enable the layout engine, it's not necessary to call ->setLayout() if we want to use the default layout ("layout.php") ?>
+
 <div id="myCarousel" class="carousel header slide" data-ride="carousel">
     <!-- Indicators -->
     <ol class="carousel-indicators">

@@ -1,4 +1,10 @@
-<?php $this->template("/content/default.php"); ?>
+<?php
+
+    $this->layout();
+
+    $this->template("/content/default.php");
+
+?>
 
 <?php if(!$this->success) { ?>
 

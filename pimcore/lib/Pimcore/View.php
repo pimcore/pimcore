@@ -412,4 +412,29 @@ class View extends \Zend_View {
         self::$addComponentIds = $addComponentIds;
     }
 
+
+    /**
+     * @throws \Zend_Controller_Action_Exception
+     */
+    public static function enableLayout() {
+
+        $viewRenderer = \Zend_Controller_Action_HelperBroker::getExistingHelper("viewRenderer");
+        $viewRenderer->setIsInitialized(false); // reset so that the view get's initialized again, because of error page from other modules
+        $viewRenderer->initView();
+
+        \Zend_Layout::startMvc();
+        $layout = \Zend_Layout::getMvcInstance();
+        $layout->enableLayout();
+        $layout->setViewSuffix(\Pimcore\View::getViewScriptSuffix());
+    }
+
+    /**
+     *
+     */
+    public static function disableLayout() {
+        $layout = \Zend_Layout::getMvcInstance();
+        if ($layout) {
+            $layout->disableLayout();
+        }
+    }
 }

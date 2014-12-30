@@ -6,27 +6,30 @@ use Pimcore\Model\Asset;
 class ContentController extends Action
 {
     public function defaultAction() {
-        $this->enableLayout();
+        // in this example we're not using $this->enableLayout() here, instead we're enabling it in the view
+        //$this->enableLayout();
     }
 
     public function portalAction() {
-        $this->enableLayout();
+        // nothing do do here ==> see view script (website/views/scripts/content/portal.php)
     }
 
     public function thumbnailsAction() {
+        // enabling the layout engine (Zend_Layout)
+        // using this method it's not necessary to specify a layout in the view ("layout" is used as name)
+        // if you're using $this->layout() in your view it's not necessary to call $this->enableLayout() here
         $this->enableLayout();
     }
 
     public function websiteTranslationsAction() {
-        $this->enableLayout();
+
     }
 
     public function editableRoundupAction() {
-        $this->enableLayout();
+
     }
 
     public function simpleFormAction() {
-        $this->enableLayout();
 
         $success = false;
 
