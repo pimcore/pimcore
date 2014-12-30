@@ -39,11 +39,11 @@
 <body>
 
 <div id="vcenter">
-    <div id="content">
-        <div id="right">
+    <div id="hcenter">
+        <div id="content">
 
             <?php if($this->success) { ?>
-                <div class="info">
+                <div class="body info">
                     <?php echo $this->translate("A temporary login link has been sent to your email address."); ?>
                     <br />
                     <?php echo $this->translate("Please check your mailbox."); ?>
@@ -54,29 +54,31 @@
                     <a href="/admin/login/"><?php echo $this->translate("Back to login"); ?></a>
                 </div>
             <?php } else { ?>
-                <div class="info" style="padding-bottom: 40px;">
+                <div class="body info">
                     <?php echo $this->translate("Enter your username and pimcore will send a login link to your email address"); ?>
                 </div>
-                <form method="post" action="/admin/login/lostpassword">
-                    <label><?php echo $this->translate("Username"); ?></label>
-                    <input type="text" name="username" />
 
-                    <input type="submit" name="submit" value="<?php echo $this->translate("Submit"); ?>" />
+                <div id="loginform">
 
-                    <?php if ($this->error) { ?>
-                        <div class="error">
-                            <?php echo $this->translate($this->error) ?>
+                    <form method="post" action="/admin/login/lostpassword">
+                        <div class="form-fields">
+                            <input type="text" name="username" placeholder="<?= $this->translate("Username"); ?>" />
                         </div>
-                    <?php } ?>
 
-                    <div class="info" style="padding-top: 30px;">
-                        <a href="/admin/login/"><?php echo $this->translate("Back to login"); ?></a>
-                    </div>
-                </form>
+                        <div class="body">
+                            <button type="submit" name="submit"><?= $this->translate("Submit"); ?></button>
+                        </div>
+                    </form>
+                </div>
             <?php } ?>
+
+            <div class="body lostpassword" style="padding-top: 30px;">
+                <a href="/admin/login/"><?php echo $this->translate("Back to login"); ?></a>
+            </div>
         </div>
     </div>
 </div>
+
 <div id="footer">
     <a href="http://www.pimcore.org/">pimcore. Open Source Multichannel Experience and Engagement Platform</a>
     <br />
