@@ -19,5 +19,8 @@ class Category_ExampleController extends Action {
          */
 
         $this->enableLayout();
+
+        // this is needed so that the layout can be rendered
+        $this->setDocument(\Pimcore\Model\Document::getById(1));
     }
 }
