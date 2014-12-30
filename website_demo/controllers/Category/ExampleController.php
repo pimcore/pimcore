@@ -1,0 +1,23 @@
+<?php
+
+use Website\Controller\Action;
+
+class Category_ExampleController extends Action {
+
+    public function testAction () {
+
+        /*
+         * This is an example of a categorization of controllers
+         * you can create folders to structure your controllers into sub-modules
+         *
+         * The controller name is then the name of the folder and the controller, separated by an underscore (_)
+         * in this case this is "category_example"
+         *
+         * For this example there's a static route and a document defined
+         * Name of static route: "category-example"
+         * Path of document: /en/advanced-examples/sub-modules
+         */
+
+        $this->enableLayout();
+    }
+}
