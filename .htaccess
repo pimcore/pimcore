@@ -13,7 +13,7 @@ RewriteBase /
 
 <IfModule mod_status.c>
     RewriteCond %{REQUEST_URI} ^/server-(info|status)
-    RewriteRule . - [last]
+    RewriteRule . - [L]
 </IfModule>
 
 <IfModule pagespeed_module>
@@ -21,7 +21,7 @@ RewriteBase /
     # pimcore automatically disables mod_pagespeed in the following situations: debug-mode on, /admin, preview, editmode, ...
     # if you want to disable pagespeed for specific actions in pimcore you can use $this->disableBrowserCache() in your action
     RewriteCond %{REQUEST_URI} ^/(mod_)?pagespeed_(statistics|message|console|beacon|admin|global_admin)
-    RewriteRule . - [last]
+    RewriteRule . - [L]
 
     #ModPagespeed On
     AddOutputFilterByType MOD_PAGESPEED_OUTPUT_FILTER text/html
