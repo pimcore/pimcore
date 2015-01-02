@@ -15,8 +15,6 @@
 
 namespace Pimcore\Tool;
 
-use Pimcore\Tool\Authentication as AuthService;
-use Pimcore\Tool\Session;
 use Pimcore\Model\User;
 
 // PHP 5.5 Crypt-API password compatibility layer for PHP version < PHP 5.5
@@ -49,13 +47,18 @@ class Authentication {
      */
     public static function authenticateSession () {
 
+        if(!isset($_COOKIE["pimcore_admin_sid"]) && !isset($_REQUEST["pimcore_admin_sid"])) {
+            // if no session cookie / ID no authentication possible, we don't need to start a session
+            return null;
+        }
+
         $session = Session::getReadOnly();
         $user = $session->user;
         if ($user instanceof User) {
             // renew user
             $user = User::getById($user->getId());
 
-            if(AuthService::isValidUser($user)) {
+            if(self::isValidUser($user)) {
                 return $user;
             }
         }
@@ -102,7 +105,7 @@ class Authentication {
             }
 
             $passwordHash = $user->getPassword();
-            $decrypted = AuthService::tokenDecrypt($passwordHash, $token);
+            $decrypted = self::tokenDecrypt($passwordHash, $token);
 
             $timestamp = $decrypted[0];
             $timeZone = date_default_timezone_get();
