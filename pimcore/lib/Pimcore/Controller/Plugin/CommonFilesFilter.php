@@ -27,7 +27,8 @@ class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract {
         "@^/robots.txt$@",
         "@^/crossdomain.xml$@",
         "@^/favicon.ico$@",
-        "@^/apple-touch-icon@"
+        "@^/apple-touch-icon@",
+        "@^/browserconfig.xml$@",
     );
 
     /**
