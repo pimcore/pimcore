@@ -376,7 +376,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $this->checkPermission("http_errors");
 
         $db = Resource::get();
-        $db->delete("http_error_log");
+        $db->query("TRUNCATE TABLE http_error_log"); // much faster then $db->delete()
 
         $this->_helper->json(array(
             "success" => true
