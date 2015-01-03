@@ -137,13 +137,13 @@ class XmlWriter extends \Zend_Config_Writer_Xml {
                 $this->_addBranch($this->_config, $child, $xml);
             } else {
                 foreach ($this->_config as $sectionName => $data) {
-                    if (!($data instanceof Zend_Config)) {
+                    if (!($data instanceof \Zend_Config)) {
                         $xml->addChild($sectionName, (string) $data);
                     } else {
                         $child = $xml->addChild($sectionName);
 
                         if (isset($extends[$sectionName])) {
-                            $child->addAttribute('zf:extends', $extends[$sectionName], Zend_Config_Xml::XML_NAMESPACE);
+                            $child->addAttribute('zf:extends', $extends[$sectionName], \Zend_Config_Xml::XML_NAMESPACE);
                         }
 
                         $this->_addBranch($data, $child, $xml);
