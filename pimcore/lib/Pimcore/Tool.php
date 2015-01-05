@@ -554,7 +554,7 @@ class Tool {
         }
 
         $ips = explode(",", $ip);
-        $ip = trim(array_pop($ips));
+        $ip = trim(array_shift($ips));
 
         return $ip;
     }
