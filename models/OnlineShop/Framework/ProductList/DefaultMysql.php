@@ -498,6 +498,9 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
             $orderByStringArray = array();
             foreach($directionOrderKeys as $keyDirection) {
                 $key = $keyDirection[0];
+                if($key instanceof Object_Data_IndexFieldSelection) {
+                    $key = $key->getField();
+                }
                 $direction = $keyDirection[1];
 
                 if($this->getVariantMode() == OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {

@@ -55,12 +55,12 @@ class OnlineShop_Framework_ProductList_DefaultMockup {
 
         if(substr($method, 0, 3) == "get") {
             $attributeName = lcfirst(substr($method, 3));
-            if(array_key_exists($attributeName, $this->params)) {
+            if(is_array($this->params) && array_key_exists($attributeName, $this->params)) {
                 return $this->params[$attributeName];
             }
 
 
-            if(array_key_exists($attributeName, $this->relations)) {
+            if(is_array($this->relations) && array_key_exists($attributeName, $this->relations)) {
                 $relation = $this->getRelationAttribute($attributeName);
                 if($relation) {
                     return $relation;
