@@ -39,22 +39,23 @@ a, a:hover, a:visited, a:active {
 #vcenter {
     position: absolute;
     top: 50%;
-    height: 500px;
-    margin-top: -250px;
+    height: 450px;
+    margin-top: -225px;
     width:100%;
 }
 
 #hcenter {
     width: 360px;
-    height: 320px;
     margin: 0 auto;
     position: relative;
 }
 
 
 #header {
-    margin-bottom: 20px;
     text-align: center;
+    background: #222;
+    padding: 10px 0 20px 0;
+    border-radius: 5px;
 }
 
 #header img {
@@ -150,12 +151,14 @@ a, a:hover, a:visited, a:active {
 #footer {
     width: 100%;
     position: absolute;
-    bottom: 30px;
+    bottom: 20px;
     color: #fff;
     text-align: center;
     font-size: 13px;
     line-height: 18px;
     text-shadow: 0 0 3px #000;
+    background: #222;
+    padding: 10px 0;
 }
 
 #footer a {
