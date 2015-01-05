@@ -46,9 +46,9 @@ class Install_CheckController extends \Pimcore\Controller\Action {
         $memoryLimit = filesize2bytes($memoryLimit . "B");
         $state = "ok";
 
-        if($memoryLimit < 134217728) {
+        if($memoryLimit < 67108000) {
             $state = "error";
-        } else if ($memoryLimit < 268435456) {
+        } else if ($memoryLimit < 134217000) {
             $state = "warning";
         }
 
