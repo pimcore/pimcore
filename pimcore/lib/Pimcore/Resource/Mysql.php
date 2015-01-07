@@ -60,8 +60,12 @@ class Mysql {
         $config = Config::getSystemConfig()->toArray();
         $config["database"]["params"]["charset"] = $charset;
 
-        $db = \Zend_Db::factory($config["database"]["adapter"],$config["database"]["params"]);
-        $db->query("SET NAMES " . $charset);
+        try {
+            $db = \Zend_Db::factory($config["database"]["adapter"], $config["database"]["params"]);
+            $db->query("SET NAMES " . $charset);
+        } catch (\Exception $e) {
+            \Pimcore\Tool::exitWithError("Database Error! See debug.log for details");
+        }
 
         // try to set innodb as default storage-engine
         try {

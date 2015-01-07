@@ -898,6 +898,10 @@ class Asset extends Element\AbstractElement {
         // remove all properties
         $this->getResource()->deleteAllProperties();
 
+        // remove all metadata
+        $this->getResource()->deleteAllMetadata();
+
+
         // remove all tasks
         $this->getResource()->deleteAllTasks();
 

@@ -807,11 +807,11 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
         if (!empty($condition)) $params["condition"] = $condition;
         if (!empty($groupBy)) $params["groupBy"] = $groupBy;
 
-        $listClassName = "\\Pimcore\\Model\\Object";
+        $listClassName = "\\Pimcore\\Model\\Object\\AbstractObject";
         if(!empty($objectClass)) {
             $listClassName = "\\Pimcore\\Model\\Object\\" . ucfirst($objectClass);
             if(!Tool::classExists($listClassName)) {
-                $listClassName = "\\Pimcore\\Model\\Object";
+                $listClassName = "Pimcore\\Model\\Object\\AbstractObject";
             }
         }
 

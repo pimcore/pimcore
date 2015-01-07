@@ -226,9 +226,7 @@ class Pimcore {
             if (preg_match("@^/plugin/([^/]+)/.*@", $_SERVER["REQUEST_URI"], $matches)) {
                 $pluginName = $matches[1];
                 if(!Pimcore\ExtensionManager::isEnabled("plugin", $pluginName)) {
-                    while (@ob_end_flush());
-                    die("Plugin is disabled. To use this plugin please enable it in the extension manager!");
-                    exit;
+                    \Pimcore\Tool::exitWithError("Plugin is disabled. To use this plugin please enable it in the extension manager!");
                 }
             }
 

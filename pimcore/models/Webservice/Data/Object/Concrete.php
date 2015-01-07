@@ -83,29 +83,25 @@ class Concrete extends Model\Webservice\Data\Object {
 
         if (is_array($this->elements)) {
             foreach ($this->elements as $element) {
-                $class = "\\Pimcore\\Model\\Object\\ClassDefinition\\Data\\" . ucfirst($element->type);
-                if (\Pimcore\Tool::classExists($class)) {
-                    $setter = "set" . ucfirst($element->name);
-                    if (method_exists($object, $setter)) {
-                        $tag = $object->getClass()->getFieldDefinition($element->name);
-                        if($class instanceof Model\Object\ClassDefinition\Data\Fieldcollections){
-                            $object->$setter($tag->getFromWebserviceImport($element->fieldcollection, $object,
-                                                                                        $idMapper));
-                        } else {
-                            $object->$setter($tag->getFromWebserviceImport($element->value, $object, $idMapper));
-                        }
+                $class = $object->getClass();
 
-                        
+                $setter = "set" . ucfirst($element->name);
+                if (method_exists($object, $setter)) {
+                    $tag = $object->getClass()->getFieldDefinition($element->name);
+                    if($class instanceof Model\Object\ClassDefinition\Data\Fieldcollections){
+                        $object->$setter($tag->getFromWebserviceImport($element->fieldcollection, $object,
+                                                                                    $idMapper));
                     } else {
-                        if(!$disableMappingExceptions) {
-                            throw new \Exception("No element [ " . $element->name . " ] of type [ " . $element->type . " ] found in class definition " . $class);
-                        }
+                        $object->$setter($tag->getFromWebserviceImport($element->value, $object, $idMapper));
                     }
+
+
                 } else {
                     if(!$disableMappingExceptions) {
-                        throw new \Exception("Unable to reverse map element [ " . $element->name . " ] of type [ " . $element->type . " ]. Object\\ClassDefinition\\Data type not found. ");
+                        throw new \Exception("No element [ " . $element->name . " ] of type [ " . $element->type . " ] found in class definition " . $class);
                     }
                 }
+
             }
         }
     }

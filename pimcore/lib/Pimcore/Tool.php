@@ -554,7 +554,7 @@ class Tool {
         }
 
         $ips = explode(",", $ip);
-        $ip = trim(array_pop($ips));
+        $ip = trim(array_shift($ips));
 
         return $ip;
     }
@@ -625,6 +625,9 @@ class Tool {
      * @param $message
      */
     public static function exitWithError($message) {
+
+        while (@ob_end_flush());
+
         header('HTTP/1.1 503 Service Temporarily Unavailable');
         die($message);
     }

@@ -486,6 +486,7 @@
 "view_suffix","View Suffix"
 "sepia","Sepia"
 "sharpen","Sharpen"
+"gaussianBlur","Gaussian Blur"
 "radius","Radius"
 "sigma","Sigma"
 "threshold","Threshold"

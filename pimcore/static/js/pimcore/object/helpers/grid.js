@@ -233,7 +233,7 @@ pimcore.object.helpers.grid = Class.create({
                 && fields[i].key != "filename" && fields[i].key != "classname"
                 && fields[i].key != "creationDate" && fields[i].key != "modificationDate") {
 
-                if (fields[i].key = "fullpath") {
+                if (fields[i].key == "fullpath") {
                     configuredFilters.push({
                         type: "string",
                         dataIndex: "fullpath"

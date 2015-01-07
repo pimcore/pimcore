@@ -54,6 +54,14 @@ class Action extends \Zend_Controller_Action {
     }
 
     /**
+     * @return null|\Zend_Layout
+     */
+    protected function layout() {
+        return $this->enableLayout();
+    }
+
+    /**
+     * @return null|\Zend_Layout
      * @throws \Zend_Controller_Action_Exception
      */
     protected function enableLayout() {
@@ -66,6 +74,8 @@ class Action extends \Zend_Controller_Action {
         $layout = \Zend_Layout::getMvcInstance();
         $layout->enableLayout();
         $layout->setViewSuffix(\Pimcore\View::getViewScriptSuffix());
+
+        return $layout;
     }
 
     /**
@@ -76,8 +86,6 @@ class Action extends \Zend_Controller_Action {
         if ($layout) {
             $layout->disableLayout();
         }
-
-        $this->layoutEnabled = false;
     }
 
     /**

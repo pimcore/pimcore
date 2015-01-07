@@ -73,40 +73,68 @@ $config = \Pimcore\Config::getSystemConfig();
             -o-background-size: cover;
             background-size: cover;
         }
+
+        #header {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        #content {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
     </style>
 <?php } ?>
 
 <div id="vcenter" class="<?php echo ($config->general->loginscreencustomimage ? "customimage" : ""); ?>">
-    <div id="content">
-        <div id="right">
-            <form id="loginform" method="post" action="/admin/login/login">
-                <label><?php echo $this->translate("Username"); ?></label>
-                <input id="username" type="text" name="username" required />
+    <div id="hcenter">
+        <div id="header">
+            <img src="/pimcore/static/img/login/logo.png">
+            <p>
+                Your Open Source Multichannel PLatform
+            </p>
+        </div>
+        <div id="content">
+            <div id="loginform">
+                <form method="post" action="/admin/login/login" autocomplete="off">
 
-                <label><?php echo $this->translate("Password"); ?></label>
-                <input type="password" name="password" required />
+                    <?php if ($this->error) { ?>
+                        <div class="body error">
+                            <?= $this->translate($this->error) ?>
+                        </div>
+                    <?php } ?>
 
-                <input type="submit" name="submit" value="<?php echo $this->translate("Login"); ?>" />
-
-                <?php if ($this->error) { ?>
-                    <div class="error">
-                        <?php echo $this->translate($this->error) ?>
+                    <div class="form-fields">
+                        <input type="text" name="username" placeholder="<?= $this->translate("Username"); ?>" required />
+                        <input type="password" name="password" placeholder="<?= $this->translate("Password"); ?>" required />
                     </div>
-                <?php } ?>
-            </form>
+
+                    <div class="body">
+                        <button type="submit"><?php echo $this->translate("Login"); ?></button>
+                    </div>
+                </form>
+
+                <div class="body lostpassword">
+                    <a href="/admin/login/lostpassword" class="lostpassword"><?php echo $this->translate("Forgot your password"); ?>?</a>
+                </div>
+            </div>
 
             <?php if (!$supported) { ?>
                 <div id="browserinfo">
                     <div class="error">
                         <?php echo $this->translate("Your browser is not supported. Please install the latest version of one of the following browsers."); ?>
                     </div>
-                    <div class="links">
-                        <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login/firefox.png"/></a>
-                        <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static/img/login/chrome.png"/></a>
-                        <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login/safari.png"/></a>
-                        <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login/ie.png"/></a>
+
+                    <div class="body">
+                        <div class="links">
+                            <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static/img/login/chrome.png"/></a>
+                            <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login/firefox.png"/></a>
+                            <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login/safari.png"/></a>
+                            <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login/ie.png"/></a>
+                        </div>
+                        <br>
+                        <a href="#" onclick="showLogin();"><?php echo $this->translate("Click here to proceed"); ?></a>
                     </div>
-                    <a href="#" onclick="showLogin();"><?php echo $this->translate("Click here to proceed"); ?></a>
 
                     <script type="text/javascript">
                         function showLogin() {
@@ -123,7 +151,6 @@ $config = \Pimcore\Config::getSystemConfig();
                 </div>
             <?php } ?>
         </div>
-        <a href="/admin/login/lostpassword" class="lostpassword"><?php echo $this->translate("Forgot your password"); ?></a>
     </div>
 </div>
 <div id="footer">

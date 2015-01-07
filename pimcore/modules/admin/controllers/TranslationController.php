@@ -660,9 +660,11 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
                 if($element instanceof Document) {
                     if($fieldType == "tag" && method_exists($element, "getElement")) {
                         $tag = $element->getElement($name);
-                        $tag->setDataFromEditmode($content);
-                        $tag->setInherited(false);
-                        $element->setElement($tag->getName(), $tag);
+                        if($tag) {
+                            $tag->setDataFromEditmode($content);
+                            $tag->setInherited(false);
+                            $element->setElement($tag->getName(), $tag);
+                        }
                     }
 
                     if($fieldType == "settings" && $element instanceof Document\Page) {
