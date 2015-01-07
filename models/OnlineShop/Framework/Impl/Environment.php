@@ -29,6 +29,7 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     }
 
     protected function loadFromSession() {
+        // when $_SESSION[self::SESSION_NAMESPACE] is set, always load environment from session (also within cli scripts)
         if(php_sapi_name() != "cli" || $_SESSION[self::SESSION_NAMESPACE]) {
             $this->session = new Zend_Session_Namespace(self::SESSION_NAMESPACE);
 
@@ -50,6 +51,7 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     }
 
     public function save() {
+        // when $_SESSION[self::SESSION_NAMESPACE] is set, always save environment to session (also within cli scripts)
         if(php_sapi_name() != "cli" || $_SESSION[self::SESSION_NAMESPACE])
         {
             $key = self::SESSION_KEY_CUSTOM_ITEMS;
