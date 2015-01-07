@@ -44,9 +44,9 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_MockupCache {
         $mockup = $this->tenantConfig->createMockupObject($objectId, $data['data'], $data['relations']);
 
         $key = $this->createMockupCacheKey($objectId);
-        Pimcore_Model_Cache::save(serialize($mockup), $key, [$this->getMockupCachePrefix()], null, 0, true);
+        $success = Pimcore_Model_Cache::save(serialize($mockup), $key, [$this->getMockupCachePrefix()], null, 0, true);
         $result = Pimcore_Model_Cache::load($key);
-        if($result) {
+        if($success && $result) {
             $this->db->query("UPDATE " . $this->getStoreTableName() . " SET crc_index = crc_current WHERE id = ? and tenant = ?", array($objectId, $this->name));
         } else {
             Logger::err("Element with ID $objectId could not be added to mockup-cache");
