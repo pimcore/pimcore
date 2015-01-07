@@ -262,6 +262,7 @@ class Processor {
 
         if($contentOptimizedFormat) {
             \Pimcore\Image\Optimizer::optimize($fsPath);
+            // @TODO: asynchronous optimizing images
         }
 
         clearstatcache();

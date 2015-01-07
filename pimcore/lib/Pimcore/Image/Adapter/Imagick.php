@@ -129,7 +129,7 @@ class Imagick extends Adapter {
         $format = strtolower($format);
 
         if($format == "png") {
-            // we need to force imagich to create png32 images, otherwise this can cause some strange effects
+            // we need to force imagick to create png32 images, otherwise this can cause some strange effects
             // when used with gray-scale images
             $format = "png32";
         }
@@ -159,25 +159,49 @@ class Imagick extends Adapter {
             $i->setCompression(\Imagick::COMPRESSION_LZW);
         }
 
-        if(defined("HHVM_VERSION")) {
-            $i->writeImage($path);
-        } else {
-            $i->writeImage($format . ":" . $path);
+        // force progressive JPEG if filesize >= 10k
+        // normally jpeg images are bigger than 10k so we avoid the double compression (baseline => filesize check => if necessary progressive)
+        // and check the dimensions here instead to faster generate the image
+        // progressive JPEG - better compression, smaller filesize, especially for web optimization
+        if($format == "jpeg") {
+            if( ($this->getWidth() * $this->getHeight()) > 35000) {
+                $i->setInterlaceScheme(\Imagick::INTERLACE_PLANE);
+            }
         }
 
-        // force progressive JPEG if filesize >= 10k
-        // better compression, smaller filesize, especially for web optimization
-        if($format == "jpeg") {
-            if(filesize($path) >= 10240) {
-                $i->setinterlacescheme(\Imagick::INTERLACE_PLANE);
-                if(!$i->writeImage($path)) {
-                    throw new \Exception("Unable to write image: " , $path);
-                }
-            }
+        if(defined("HHVM_VERSION")) {
+            $success = $i->writeImage($path);
+        } else {
+            $success = $i->writeImage($format . ":" . $path);
+        }
+
+        if(!$success) {
+            throw new \Exception("Unable to write image: " , $path);
         }
 
         return $this;
     }
+
+    /**
+     * @return $this
+     */
+    // @TODO: Needs further testing => speed improvement especially with bigger images
+    /*protected function reinitializeImage() {
+
+        $i = $this->resource;
+
+        $i->writeImage("mpr:temp");
+        $this->destroy();
+
+        $i = new \Imagick();
+        $i->readImage("mpr:temp");
+
+        $this->resource = $i;
+
+        $this->modified = false;
+
+        return $this;
+    }*/
 
     /**
      * @return  void
