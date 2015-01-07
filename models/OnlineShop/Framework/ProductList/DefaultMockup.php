@@ -80,9 +80,9 @@ class OnlineShop_Framework_ProductList_DefaultMockup {
     }
 
 
-
-
-
-
+    public function getOriginalObject() {
+        Logger::notice("Getting original object {$this->id}.");
+        return Object_Abstract::getById($this->id);
+    }
 
 }
