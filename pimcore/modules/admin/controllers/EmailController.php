@@ -442,4 +442,105 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
 
         $this->_helper->json(false);
     }
+
+
+    protected function getBounceMailbox () {
+
+        $mail = null;
+        $config = \Pimcore\Config::getSystemConfig();
+
+        if($config->email->bounce->type == "Mbox") {
+            $mail = new \Zend_Mail_Storage_Mbox(array(
+                'filename' => $config->email->bounce->mbox
+            ));
+        } else if ($config->email->bounce->type == "Maildir") {
+            $mail = new \Zend_Mail_Storage_Maildir(array(
+                'dirname' => $config->email->bounce->maildir
+            ));
+        } else if ($config->email->bounce->type == "IMAP") {
+            $mail = new \Zend_Mail_Storage_Imap(array(
+                'host' => $config->email->bounce->imap->host,
+                "port" => $config->email->bounce->imap->port,
+                'user' => $config->email->bounce->imap->username,
+                'password' => $config->email->bounce->imap->password,
+                "ssl" => (bool) $config->email->bounce->imap->ssl
+            ));
+        } else {
+            // default
+            $pathes = array(
+                "/var/mail/" . get_current_user(),
+                "/var/spool/mail/" . get_current_user()
+            );
+
+            foreach ($pathes as $path) {
+                if(is_dir($path)) {
+                    $mail = new \Zend_Mail_Storage_Maildir(array(
+                        'dirname' => $path . "/"
+                    ));
+                } else if(is_file($path)) {
+                    $mail = new \Zend_Mail_Storage_Mbox(array(
+                        'filename' => $path
+                    ));
+                }
+            }
+        }
+
+        return $mail;
+    }
+
+    public function bounceMailInboxListAction() {
+
+        $this->checkPermission("emails");
+
+        $offset = ($this->getParam("start")) ? $this->getParam("start")+1 : 1;
+        $limit = ($this->getParam("limit")) ? $this->getParam("limit") : 40;
+
+        $mail = $this->getBounceMailbox();
+        $mail->seek($offset);
+
+        $mails = array();
+        $count = 0;
+        while ($mail->valid()) {
+            $count++;
+
+            $message = $mail->current();
+
+            $mailData = array(
+                "subject" => iconv(mb_detect_encoding($message->subject), "UTF-8", $message->subject),
+                "to" => $message->to,
+                "from" => $message->from,
+                "id" => (int) $mail->key()
+            );
+
+            $date = new \Zend_Date($message->date);
+            $mailData["date"] = $date->get(\Zend_Date::DATETIME_MEDIUM);
+
+            $mails[] = $mailData;
+
+            if($count >= $limit) {
+                break;
+            }
+
+            $mail->next();
+        }
+
+        $this->_helper->json(array(
+            "data" => $mails,
+            "success" => true,
+            "total" => $mail->countMessages()
+        ));
+    }
+
+    public function bounceMailInboxDetailAction() {
+
+        $this->checkPermission("emails");
+
+        $mail = $this->getBounceMailbox();
+
+        $message = $mail->getMessage((int) $this->getParam("id"));
+        $message->getContent();
+
+        $this->view->mail = $mail; // we have to pass $mail too, otherwise the stream is closed
+        $this->view->message = $message;
+    }
 }
