@@ -100,6 +100,10 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
                 height: options["height"] + "px"
             })
         }
+
+        if(options["class"]) {
+            this.element.addClass(options["class"]);
+        }
     },
 
     checkValue: function () {
