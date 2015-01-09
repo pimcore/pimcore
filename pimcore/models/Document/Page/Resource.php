@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Page_Resource extends Document_PageSnippet_Resource {
+namespace Pimcore\Model\Document\Page;
+
+use Pimcore\Model;
+use Pimcore\Tool\Serialize;
+
+class Resource extends Model\Document\PageSnippet\Resource {
 
     /**
      * Contains the valid database colums
@@ -42,7 +47,7 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
      * Get the data for the object by the given id, or by the id which is set in the object
      *
      * @param integer $id
-     * @return void
+     * @throws \Exception
      */
     public function getById($id = null) {
         try {
@@ -56,14 +61,14 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
                     WHERE documents.id = ?", $this->model->getId());
 
             if ($data["id"] > 0) {
-                $data["metaData"] = Pimcore_Tool_Serialize::unserialize($data["metaData"]);
+                $data["metaData"] = Serialize::unserialize($data["metaData"]);
                 $this->assignVariablesToModel($data);
             }
             else {
-                throw new Exception("Page with the ID " . $this->model->getId() . " doesn't exists");
+                throw new \Exception("Page with the ID " . $this->model->getId() . " doesn't exists");
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -71,7 +76,7 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
     /**
      * Create a new record for the object in the database
      *
-     * @return void
+     * @throws \Exception
      */
     public function create() {
         try {
@@ -81,7 +86,7 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
                 "id" => $this->model->getId()
             ));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
 
@@ -90,7 +95,7 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
     /**
      * Updates the data in the object to the database
      *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
         try {
@@ -116,7 +121,7 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
                     $value = (int)$value;
                 }
                 if(is_array($value)) {
-                    $value = Pimcore_Tool_Serialize::serialize($value);
+                    $value = Serialize::serialize($value);
                 }
 
                 if (in_array($key, $this->validColumnsDocument)) {
@@ -132,7 +137,7 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
 
             $this->updateLocks();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -140,7 +145,7 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
     /**
      * Deletes the object (and data) from database
      *
-     * @return void
+     * @throws \Exception
      */
     public function delete() {
         try {
@@ -149,7 +154,7 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
             $this->db->delete("documents_page", $this->db->quoteInto("id = ?", $this->model->getId()));
             parent::delete();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

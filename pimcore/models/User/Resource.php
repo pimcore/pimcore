@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_Resource extends User_UserRole_Resource {
+namespace Pimcore\Model\User;
+
+use Pimcore\Model;
+
+class Resource extends UserRole\Resource {
 
     /**
      * Deletes object from database

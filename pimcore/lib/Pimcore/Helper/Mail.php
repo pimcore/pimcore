@@ -13,23 +13,26 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Helper_Mail
+namespace Pimcore\Helper;
+
+use Pimcore\Mail as MailClient;
+use Pimcore\Tool;
+use Pimcore\Model;
+
+class Mail
 {
     /**
-     * Returns the debug information that is appended to the debug emails
-     *
-     * @static
-     * @param $type 'html' or 'text'
-     * @param Pimcore_Mail $mail
+     * @param $type
+     * @param MailClient $mail
      * @return string
-     * @throws Exception
+     * @throws \Exception
      */
-    public static function getDebugInformation($type, Pimcore_Mail $mail)
+    public static function getDebugInformation($type, MailClient $mail)
     {
         $type = strtolower($type);
 
         if ($type != 'html' && $type != 'text') {
-            throw new Exception('$type has to be "html" or "text"');
+            throw new \Exception('$type has to be "html" or "text"');
         }
 
         $temporaryStorage = $mail->getTemporaryStorage();
@@ -132,17 +135,15 @@ CSS;
 
 
     /**
-     * Helper to log the email to the database and the file system
-     *
-     * @static
-     * @param Pimcore_Mail $mail
+     * @param MailClient $mail
+     * @return Model\Tool\Email\Log
      */
-    public static function logEmail(Pimcore_Mail $mail)
+    public static function logEmail(MailClient $mail)
     {
-        $emailLog = new Tool_Email_Log();
+        $emailLog = new Model\Tool\Email\Log();
         $document = $mail->getDocument();
 
-        if ($document instanceof Document) {
+        if ($document instanceof Model\Document) {
             $emailLog->setDocumentId($document->getId());
         }
 
@@ -165,12 +166,12 @@ CSS;
 
 
         $html = $mail->getBodyHtml();
-        if ($html instanceof Zend_Mime_Part) {
+        if ($html instanceof \Zend_Mime_Part) {
             $emailLog->setBodyHtml($html->getRawContent());
         }
 
         $text = $mail->getBodyText();
-        if ($text instanceof Zend_Mime_Part) {
+        if ($text instanceof \Zend_Mime_Part) {
             $emailLog->setBodyText($text->getRawContent());
         }
 
@@ -189,22 +190,20 @@ CSS;
     }
 
     /**
-     * Replaces URLs with the full path including the Host
-     *
-     * @static
-     * @param string $string - the content to modify
-     * @param null | Document $document
-     * @return string
-     * @throws Exception - if something else than a document is passed
+     * @param $string
+     * @param null $document
+     * @param null $hostUrl
+     * @return mixed
+     * @throws \Exception
      */
     public static function setAbsolutePaths($string, $document = null, $hostUrl = null)
     {
-        if ($document && $document instanceof Document == false) {
-            throw new Exception('$document has to be an instance of Document');
+        if ($document && $document instanceof Model\Document == false) {
+            throw new \Exception('$document has to be an instance of Document');
         }
 
         if(is_null($hostUrl)){
-            $hostUrl = Pimcore_Tool::getHostUrl();
+            $hostUrl = \Pimcore\Tool::getHostUrl();
         }
 
         //matches all links
@@ -220,7 +219,7 @@ CSS;
                     $absolutePath = $hostUrl . $path;
                 } else {
                     $absolutePath = $hostUrl . "/$path";
-                    $netUrl = new Net_URL2($absolutePath);
+                    $netUrl = new \Net_URL2($absolutePath);
                     $absolutePath = $netUrl->getNormalizedURL();
                 }
 
@@ -233,19 +232,15 @@ CSS;
 
 
     /**
-     * Embeds the css stylesheets to the html email and normalizes the url() css tag
-     * In addition .less files are compiled, modified and embedded to html email
-     *
-     * @static
-     * @param $string - the content to modify
-     * @param null | Document $document
-     * @return string
-     * @throws Exception - if something else than a document is passed
+     * @param $string
+     * @param null $document
+     * @return mixed
+     * @throws \Exception
      */
     public static function embedAndModifyCss($string, $document = null)
     {
-        if ($document && $document instanceof Document == false) {
-            throw new Exception('$document has to be an instance of Document');
+        if ($document && $document instanceof Model\Document == false) {
+            throw new \Exception('$document has to be an instance of Document');
         }
 
 
@@ -262,7 +257,7 @@ CSS;
                         if ($fileInfo['fileExtension'] == 'css') {
                             $fileContent = file_get_contents($fileInfo['filePathNormalized']);
                         } else {
-                            $fileContent = Pimcore_Tool_Less::compile($fileInfo['filePathNormalized']);
+                            $fileContent = \Pimcore\Tool\Less::compile($fileInfo['filePathNormalized']);
                             $fileContent = str_replace('/**** compiled with lessphp ****/','',$fileContent);
                         }
                         if ($fileContent) {
@@ -289,7 +284,7 @@ CSS;
     public static function normalizeCssContent($content, Array $fileInfo)
     {
         preg_match_all("@url\s*\(\s*[\"']?(.*?)[\"']?\s*\)@is", $content, $matches);
-        $hostUrl = Pimcore_Tool::getHostUrl();
+        $hostUrl = Tool::getHostUrl();
 
         if (is_array($matches[0])) {
             foreach ($matches[0] as $key => $value) {
@@ -300,7 +295,7 @@ CSS;
                     $imageUrl = $hostUrl . $path;
                 } else {
                     $imageUrl = dirname($fileInfo['fileUrlNormalized']) . "/$path";
-                    $netUrl = new Net_URL2($imageUrl);
+                    $netUrl = new \Net_URL2($imageUrl);
                     $imageUrl = $netUrl->getNormalizedURL();
                 }
 
@@ -313,22 +308,19 @@ CSS;
 
 
     /**
-     * Gets file information for replacement
-     *
-     * @static
-     * @param string $path
-     * @param Document | null $document
+     * @param $path
+     * @param null $document
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public static function getNormalizedFileInfo($path, $document = null)
     {
-        if ($document && $document instanceof Document == false) {
-            throw new Exception('$document has to be an instance of Document');
+        if ($document && $document instanceof Model\Document == false) {
+            throw new \Exception('$document has to be an instance of Document');
         }
 
         $fileInfo = array();
-        $hostUrl = Pimcore_Tool::getHostUrl();
+        $hostUrl = Tool::getHostUrl();
         if ($path[0] != '/') {
             $fileInfo['fileUrl'] = $hostUrl . $document . "/$path"; //relative eg. ../file.css
         } else {
@@ -337,7 +329,7 @@ CSS;
 
 
         $fileInfo['fileExtension'] = substr($path, strrpos($path, '.') + 1);
-        $netUrl = new Net_URL2($fileInfo['fileUrl']);
+        $netUrl = new \Net_URL2($fileInfo['fileUrl']);
         $fileInfo['fileUrlNormalized'] = $netUrl->getNormalizedURL();
         $fileInfo['filePathNormalized'] = PIMCORE_DOCUMENT_ROOT . str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']);
 

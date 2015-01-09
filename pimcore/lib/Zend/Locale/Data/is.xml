@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="is"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,52 +25,41 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">adýge</language>
 			<language type="ae">avestíska</language>
 			<language type="af">afríkanska</language>
-			<language type="afa">afróasísk mál (önnur)</language>
 			<language type="afh">afríhílí</language>
 			<language type="agq" draft="unconfirmed">aghem</language>
 			<language type="ain" draft="unconfirmed">aínu (Japan)</language>
 			<language type="ak">akan</language>
 			<language type="akk">akkadíska</language>
 			<language type="ale">aleúska</language>
-			<language type="alg">algonkvínsk mál</language>
 			<language type="alt" draft="unconfirmed">suðuraltaíska</language>
 			<language type="am">amharíska</language>
 			<language type="an">aragonska</language>
 			<language type="ang">fornenska</language>
 			<language type="anp" draft="unconfirmed">angíka</language>
-			<language type="apa">apatsjamál</language>
 			<language type="ar">arabíska</language>
 			<language type="ar_001">stöðluð nútímaarabíska</language>
 			<language type="arc">arameíska</language>
 			<language type="arn">arákaníska</language>
 			<language type="arp">arapahó</language>
-			<language type="art">alþjóðamál (önnur)</language>
 			<language type="arw">aravakska</language>
 			<language type="as">assamska</language>
 			<language type="asa" draft="unconfirmed">asu (Tanzania)</language>
 			<language type="ast">astúríska</language>
-			<language type="ath">atapaskísk mál</language>
-			<language type="aus">áströlsk mál</language>
 			<language type="av">avaríska</language>
 			<language type="awa">avadí</language>
 			<language type="ay">aímara</language>
 			<language type="az">aserska</language>
 			<language type="az" alt="short">azeri</language>
 			<language type="ba">baskír</language>
-			<language type="bad">banda</language>
-			<language type="bai">bamílekemál</language>
 			<language type="bal">balúkí</language>
 			<language type="ban">balíska</language>
 			<language type="bas">basa</language>
-			<language type="bat">baltnesk mál (önnur)</language>
 			<language type="bax" draft="unconfirmed">bamun</language>
 			<language type="be">hvítrússneska</language>
 			<language type="bej">beja</language>
 			<language type="bem">bemba</language>
-			<language type="ber">berbamál</language>
 			<language type="bez" draft="unconfirmed">bena (Tanzania)</language>
 			<language type="bg">búlgarska</language>
-			<language type="bh">bíharísk mál</language>
 			<language type="bho">bojpúrí</language>
 			<language type="bi">bíslama</language>
 			<language type="bik">bíkol</language>
@@ -78,27 +67,22 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">siksika</language>
 			<language type="bm">bambara</language>
 			<language type="bn">bengalska</language>
-			<language type="bnt">bantúmál</language>
 			<language type="bo">tíbeska</language>
 			<language type="br">bretónska</language>
 			<language type="bra">braí</language>
 			<language type="brx" draft="unconfirmed">bodo</language>
 			<language type="bs">bosníska</language>
 			<language type="bss" draft="unconfirmed">bakossi</language>
-			<language type="btk">batak</language>
 			<language type="bua">búríat</language>
 			<language type="bug">búgíska</language>
 			<language type="byn">blín</language>
 			<language type="ca">katalónska</language>
 			<language type="cad">kaddó</language>
-			<language type="cai">indíánamál mið-ameríku (önnur)</language>
 			<language type="car">karíbamál</language>
-			<language type="cau">kákasusmál (önnur)</language>
 			<language type="cay" draft="unconfirmed">kajúga</language>
 			<language type="cch" draft="unconfirmed">atsam</language>
 			<language type="ce">tsjetsjenska</language>
 			<language type="ceb">kebúanó</language>
-			<language type="cel">keltnesk (önnur)</language>
 			<language type="cgg" draft="unconfirmed">sjíga</language>
 			<language type="ch">kamorró</language>
 			<language type="chb">síbsja</language>
@@ -111,26 +95,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">Cherokee-mál</language>
 			<language type="chy">sjeyen</language>
 			<language type="ckb">sorani-kúrdíska</language>
-			<language type="cmc">kamísk mál</language>
 			<language type="co">korsíska</language>
 			<language type="cop">koptíska</language>
-			<language type="cpe">kreól- og pidginmál á enskum grunni</language>
-			<language type="cpf">kreól- og pidginmál á frönskum grunni</language>
-			<language type="cpp">kreól- og pidginmál á portúgölskum grunni</language>
 			<language type="cr">krí</language>
 			<language type="crh">krímtyrkneska</language>
-			<language type="crp">kreól- og pidginmál (önnur)</language>
 			<language type="cs">tékkneska</language>
 			<language type="csb">kasúbíska</language>
 			<language type="cu">kirkjuslavneska</language>
-			<language type="cus">kúsitísk mál (önnur)</language>
 			<language type="cv">sjúvas</language>
 			<language type="cy">velska</language>
 			<language type="da">danska</language>
 			<language type="dak">dakóta</language>
 			<language type="dar">dargva</language>
 			<language type="dav" draft="unconfirmed">taíta</language>
-			<language type="day">dajak</language>
 			<language type="de">þýska</language>
 			<language type="de_AT">austurrísk þýska</language>
 			<language type="de_CH">svissnesk háþýska</language>
@@ -140,7 +117,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">dinka</language>
 			<language type="dje" draft="unconfirmed">zarma</language>
 			<language type="doi">dogrí</language>
-			<language type="dra">dravidísk mál (önnur)</language>
 			<language type="dsb">lágsorbneska</language>
 			<language type="dua">dúala</language>
 			<language type="dum">miðhollenska</language>
@@ -175,7 +151,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">fúla</language>
 			<language type="fi">finnska</language>
 			<language type="fil">filippseyska</language>
-			<language type="fiu">finnskúgrísk mál (önnur)</language>
 			<language type="fj">fídjeyska</language>
 			<language type="fo">færeyska</language>
 			<language type="fon">fón</language>
@@ -193,7 +168,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">gajó</language>
 			<language type="gba">gbaja</language>
 			<language type="gd">skosk gelíska</language>
-			<language type="gem">germönsk mál (önnur)</language>
 			<language type="gez">gís</language>
 			<language type="gil">gilberska</language>
 			<language type="gl">gallegska</language>
@@ -216,7 +190,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">hebreska</language>
 			<language type="hi">hindí</language>
 			<language type="hil">híligaínon</language>
-			<language type="him">hímasjalí</language>
 			<language type="hit">hettitíska</language>
 			<language type="hmn">hmong</language>
 			<language type="ho">hírímótú</language>
@@ -234,15 +207,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">interlingve</language>
 			<language type="ig">ígbó</language>
 			<language type="ii">sísúanjí</language>
-			<language type="ijo">íjó</language>
 			<language type="ik">ínúpíak</language>
 			<language type="ilo">ílokó</language>
-			<language type="inc">indversk mál (önnur)</language>
-			<language type="ine">indóevrópsk mál (önnur)</language>
 			<language type="inh">ingús</language>
 			<language type="io">ídó</language>
-			<language type="ira">íranska</language>
-			<language type="iro">írókesk mál</language>
 			<language type="is">íslenska</language>
 			<language type="it">ítalska</language>
 			<language type="iu">inúktitút</language>
@@ -258,7 +226,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">kasín</language>
 			<language type="kaj" draft="unconfirmed">jju</language>
 			<language type="kam">kamba</language>
-			<language type="kar">karen</language>
 			<language type="kaw">kaví</language>
 			<language type="kbd">kabardíska</language>
 			<language type="kcg" draft="unconfirmed">tyap</language>
@@ -267,7 +234,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo" draft="unconfirmed">koro</language>
 			<language type="kg">kongóska</language>
 			<language type="kha">kasí</language>
-			<language type="khi">koímál (önnur)</language>
 			<language type="kho">kotaska</language>
 			<language type="ki">kíkújú</language>
 			<language type="kj">kúanjama</language>
@@ -284,7 +250,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">kanúrí</language>
 			<language type="krc">karasaíbalkar</language>
 			<language type="krl" draft="unconfirmed">karélska</language>
-			<language type="kro">krú</language>
 			<language type="kru">kúrúk</language>
 			<language type="ks">kasmírska</language>
 			<language type="ksf" draft="unconfirmed">bafia</language>
@@ -321,7 +286,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">maítílí</language>
 			<language type="mak">makasar</language>
 			<language type="man">mandingó</language>
-			<language type="map">ástrónesíska</language>
 			<language type="mas">masaí</language>
 			<language type="mdf">moksa</language>
 			<language type="mdr">mandar</language>
@@ -333,31 +297,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">maórí</language>
 			<language type="mic">mikmak</language>
 			<language type="min">mínangkabá</language>
-			<language type="mis">ýmis mál</language>
 			<language type="mk">makedónska</language>
-			<language type="mkh">monkmermál (önnur)</language>
 			<language type="ml">malajalam</language>
 			<language type="mn">mongólska</language>
 			<language type="mnc">mansjú</language>
 			<language type="mni">manípúrí</language>
-			<language type="mno">manóbómál</language>
-			<language type="mo">moldóvska</language>
 			<language type="moh">móhíska</language>
 			<language type="mos">mossí</language>
 			<language type="mr">maratí</language>
 			<language type="ms">malaíska</language>
 			<language type="mt">maltneska</language>
 			<language type="mul">margvísleg mál</language>
-			<language type="mun">múndamál</language>
 			<language type="mus">krík</language>
 			<language type="mwl" draft="unconfirmed">mirandesíska</language>
 			<language type="mwr">marvarí</language>
 			<language type="my">burmneska</language>
-			<language type="myn">majamál</language>
 			<language type="myv">ersja</language>
 			<language type="na">nárúska</language>
-			<language type="nah">nahúatl</language>
-			<language type="nai">indíánamál norður-ameríku (önnur)</language>
 			<language type="nap">napólíska</language>
 			<language type="nb">norskt bókmál</language>
 			<language type="nd">norðurndebele</language>
@@ -366,7 +322,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">nevarí</language>
 			<language type="ng">ndonga</language>
 			<language type="nia">nías</language>
-			<language type="nic">nígerkordófanmál (önnur)</language>
 			<language type="niu">níveska</language>
 			<language type="nl">hollenska</language>
 			<language type="nl_BE">flæmska</language>
@@ -377,7 +332,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">n’ko</language>
 			<language type="nr">suðurndebele</language>
 			<language type="nso">norðursótó</language>
-			<language type="nub">núbísk mál</language>
 			<language type="nv">navahó</language>
 			<language type="nwc" draft="unconfirmed">klassísk nevaríska</language>
 			<language type="ny">njanja; sísjeva; sjeva</language>
@@ -392,21 +346,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">ossetíska</language>
 			<language type="osa">ósage</language>
 			<language type="ota">tyrkneska, ottóman</language>
-			<language type="oto">ótommál</language>
 			<language type="pa">púnjabí</language>
-			<language type="paa">papúsk mál (önnur)</language>
 			<language type="pag">pangasínmál</language>
 			<language type="pal">palaví</language>
 			<language type="pam">pampanga</language>
 			<language type="pap">papíamentó</language>
 			<language type="pau">paláska</language>
 			<language type="peo">fornpersneska</language>
-			<language type="phi">filippseysk mál (önnur)</language>
 			<language type="phn">fönikíska</language>
 			<language type="pi">palí</language>
 			<language type="pl">pólska</language>
 			<language type="pon">ponpeiska</language>
-			<language type="pra">prakrítmál</language>
 			<language type="pro">fornpróvensalska</language>
 			<language type="ps">pastú</language>
 			<language type="ps" alt="variant">afghanska</language>
@@ -420,7 +370,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">rómanska</language>
 			<language type="rn">rúndí</language>
 			<language type="ro">rúmenska</language>
-			<language type="roa">rómönsk mál (önnur)</language>
+			<language type="ro_MD">moldóvska</language>
 			<language type="rom">romaní</language>
 			<language type="root">rót</language>
 			<language type="ru">rússneska</language>
@@ -429,8 +379,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">sanskrít</language>
 			<language type="sad">sandave</language>
 			<language type="sah">jakút</language>
-			<language type="sai">indíánamál suður-ameríku (önnur)</language>
-			<language type="sal">salísmál</language>
 			<language type="sam">samversk arameíska</language>
 			<language type="sas">sasak</language>
 			<language type="sat">santalí</language>
@@ -440,22 +388,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sd">sindí</language>
 			<language type="se">norðursamíska</language>
 			<language type="sel">selkúp</language>
-			<language type="sem">semísk mál (önnur)</language>
 			<language type="sg">sangó</language>
 			<language type="sga">fornírska</language>
-			<language type="sgn">táknmál</language>
 			<language type="sh">serbókróatíska</language>
 			<language type="shn">sjan</language>
 			<language type="si">sinhala</language>
 			<language type="sid">sídamó</language>
-			<language type="sio">síúmál</language>
-			<language type="sit" draft="unconfirmed">sínótíbesk mál</language>
 			<language type="sk">slóvakíska</language>
 			<language type="sl">slóvenska</language>
-			<language type="sla">slavnesk mál (önnur)</language>
 			<language type="sm">samóska</language>
 			<language type="sma">suðursamíska</language>
-			<language type="smi">samísk mál (önnur)</language>
 			<language type="smj">lúlesamíska</language>
 			<language type="smn">enaresamíska</language>
 			<language type="sms">skoltesamíska</language>
@@ -463,13 +405,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">sóninke</language>
 			<language type="so">sómalska</language>
 			<language type="sog">sogdíen</language>
-			<language type="son">songhaí</language>
 			<language type="sq">albanska</language>
 			<language type="sr">serbneska</language>
 			<language type="srn" draft="unconfirmed">sranan tongo</language>
 			<language type="srr">serer</language>
 			<language type="ss">svatí</language>
-			<language type="ssa">nílósaharamál (önnur)</language>
 			<language type="ssy" draft="unconfirmed">saho</language>
 			<language type="st">suðursótó</language>
 			<language type="su">súndanska</language>
@@ -482,7 +422,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">klassísk sýrlenska</language>
 			<language type="syr">sýrlenska</language>
 			<language type="ta">tamílska</language>
-			<language type="tai">taímál (önnur)</language>
 			<language type="te">telúgú</language>
 			<language type="tem">tímne</language>
 			<language type="ter">terenó</language>
@@ -507,8 +446,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">tsimsíska</language>
 			<language type="tt">tatarska</language>
 			<language type="tum">túmbúka</language>
-			<language type="tup">túpímál</language>
-			<language type="tut">altaísk mál (önnur)</language>
 			<language type="tvl">túvalúska</language>
 			<language type="tw">tví</language>
 			<language type="ty">tahítíska</language>
@@ -528,11 +465,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vo" draft="unconfirmed">volapyk</language>
 			<language type="vot">votíska</language>
 			<language type="wa">vallónska</language>
-			<language type="wak">vakasmál</language>
 			<language type="wal">valamó</language>
 			<language type="war">varaí</language>
 			<language type="was">vasjó</language>
-			<language type="wen">sorbnesk mál</language>
 			<language type="wo">volof</language>
 			<language type="xal">kalmúkska</language>
 			<language type="xh">sósa</language>
@@ -540,7 +475,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="yap">japíska</language>
 			<language type="yi">jiddíska</language>
 			<language type="yo">jórúba</language>
-			<language type="ypk">júpísk mál</language>
 			<language type="yue" draft="unconfirmed">kantoneska</language>
 			<language type="za">súang</language>
 			<language type="zap">sapótek</language>
@@ -550,7 +484,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">kínverska</language>
 			<language type="zh_Hans">kínverska (einfölduð)</language>
 			<language type="zh_Hant">kínverska (hefðbundin)</language>
-			<language type="znd">sande</language>
 			<language type="zu">súlú</language>
 			<language type="zun">súní</language>
 			<language type="zxx">ekkert tungumálaefni</language>
@@ -1912,9 +1845,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Anguilla">
 				<exemplarCity>Angvilla</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Suðurpóllinn</exemplarCity>
 			</zone>
 			<zone type="Antarctica/DumontDUrville">
 				<exemplarCity>Dumont d’Urville</exemplarCity>

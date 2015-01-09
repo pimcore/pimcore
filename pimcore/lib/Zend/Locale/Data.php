@@ -292,6 +292,10 @@ class Zend_Locale_Data
             throw new Zend_Locale_Exception("Locale (" . (string) $locale . ") is a unknown locale");
         }
 
+        if (Zend_Locale::isAlias($locale)) {
+            // Return a valid CLDR locale so that the XML file can be loaded.
+            return Zend_Locale::getAlias($locale);
+        }
         return (string) $locale;
     }
 

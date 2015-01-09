@@ -53,23 +53,25 @@ pimcore.settings.user.panels.abstract = Class.create({
 
         Ext.MessageBox.show({
             title:t('delete'),
-            msg: t("are_you_sure"),
+            msg: this.hasChildNodes() ? t("are_you_sure_recursive") : t("are_you_sure"),
             buttons: Ext.Msg.OKCANCEL ,
-            icon: Ext.MessageBox.INFO ,
+            icon: this.hasChildNodes() ? Ext.MessageBox.WARNING : Ext.MessageBox.QUESTION,
             fn: function (button) {
                 if (button == "ok") {
                     Ext.Ajax.request({
                         url: "/admin/user/delete",
                         params: {
                             id: this.id
-                        }
+                        },
+                        success: function() {
+                            this.remove();
+                        }.bind(this)
                     });
-
-                    this.remove();
                 }
             }.bind(this)
         });
     },
+
 
     add: function (type, rid) {
         var pid = this.id;

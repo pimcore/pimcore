@@ -3,7 +3,7 @@
 <head>
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script type="text/javascript" src="/pimcore/static/js/lib/jquery.min.js?_dc=<?php echo Pimcore_Version::getVersion(); ?>"></script>
+    <script type="text/javascript" src="/pimcore/static/js/lib/jquery.min.js?_dc=<?php echo \Pimcore\Version::getVersion(); ?>"></script>
 
     <style type="text/css">
 

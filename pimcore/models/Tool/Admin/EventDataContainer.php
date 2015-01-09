@@ -15,7 +15,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Admin_EventDataContainer {
+namespace Pimcore\Model\Tool\Admin;
+
+class EventDataContainer {
 
     protected $data;
 

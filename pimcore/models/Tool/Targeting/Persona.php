@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Tool\Targeting;
+
+use Pimcore\Model;
+
+class Persona extends Model\AbstractModel {
 
     /**
      * @var int
@@ -48,10 +52,8 @@ class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
     public $conditions = array();
 
     /**
-     * Static helper to retrieve an instance of Tool_Targeting_Persona by the given ID
-     *
-     * @param integer $id
-     * @return Tool_Targeting_Persona
+     * @param $id
+     * @return null|Persona
      */
     public static function getById($id) {
         try {
@@ -59,7 +61,7 @@ class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
             $persona->setId(intval($id));
             $persona->getResource()->getById();
             return $persona;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }
@@ -69,18 +71,19 @@ class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
      * @param $id
      */
     public static function fire ($id) {
-        $front = Zend_Controller_Front::getInstance();
-        $plugin = $front->getPlugin("Pimcore_Controller_Plugin_Targeting");
-        if($plugin instanceof Pimcore_Controller_Plugin_Targeting) {
+        $front = \Zend_Controller_Front::getInstance();
+        $plugin = $front->getPlugin("Pimcore\\Controller\\Plugin\\Targeting");
+        if($plugin instanceof \Pimcore\Controller\Plugin\Targeting) {
             $plugin->addPersona($id);
         }
     }
 
     /**
      * @param $id
+     * @return bool
      */
     public static function isIdActive($id) {
-        $persona = Tool_Targeting_Persona::getById($id);
+        $persona = Model\Tool\Targeting\Persona::getById($id);
         if($persona) {
             return $persona->getActive();
         }
@@ -88,7 +91,8 @@ class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $description
+     * @param $description
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -105,7 +109,8 @@ class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $id
+     * @param $id
+     * @return $this
      */
     public function setId($id)
     {
@@ -122,7 +127,8 @@ class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $name
+     * @param $name
+     * @return $this
      */
     public function setName($name)
     {
@@ -140,7 +146,8 @@ class Tool_Targeting_Persona extends Pimcore_Model_Abstract {
 
 
     /**
-     * @param array $conditions
+     * @param $conditions
+     * @return $this
      */
     public function setConditions($conditions)
     {

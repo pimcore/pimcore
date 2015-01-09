@@ -29,7 +29,7 @@ CREATE TABLE `assets_metadata` (
   `cid` int(11) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   `language` varchar(255) DEFAULT NULL,
-  `type` enum('input','textarea','asset','document','object','date') DEFAULT NULL,
+  `type` enum('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
   KEY `cid` (`cid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -42,11 +42,12 @@ CREATE TABLE `assets_metadata_predefined` (
   `name` varchar(255) DEFAULT NULL,
   `description` text,
   `language` varchar(255) DEFAULT NULL,
-  `type` enum('input','textarea','asset','document','object','date') DEFAULT NULL,
+  `type` enum('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
   `targetSubtype` enum('image','text','audio','video','document','archive','unknown') DEFAULT NULL,
   `creationDate` bigint(20) unsigned DEFAULT '0',
   `modificationDate` bigint(20) unsigned DEFAULT '0',
+  `config` text,
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `id` (`id`),
@@ -165,6 +166,7 @@ CREATE TABLE `custom_layouts` (
   `modificationDate` bigint(20) unsigned DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
+  `default` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`,`classId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -204,7 +206,7 @@ CREATE TABLE `documents` (
   KEY `key` (`key`),
   KEY `path` (`path`),
   KEY `published` (`published`)
-) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8;
 
 
 
@@ -342,14 +344,14 @@ DROP TABLE IF EXISTS `email_log`;
 CREATE TABLE `email_log` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `documentId` int(11) DEFAULT NULL,
-  `requestUri` varchar(255) DEFAULT NULL,
+  `requestUri` varchar(500) DEFAULT NULL,
   `params` text,
-  `from` varchar(255) DEFAULT NULL,
-  `to` varchar(255) DEFAULT NULL,
-  `cc` varchar(255) DEFAULT NULL,
-  `bcc` varchar(255) DEFAULT NULL,
+  `from` varchar(500) DEFAULT NULL,
+  `to` longtext,
+  `cc` longtext,
+  `bcc` longtext,
   `sentDate` bigint(20) DEFAULT NULL,
-  `subject` varchar(255) DEFAULT NULL,
+  `subject` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -915,7 +917,7 @@ CREATE TABLE `recyclebin` (
   `date` bigint(20) DEFAULT NULL,
   `deletedby` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -1027,7 +1029,7 @@ CREATE TABLE `staticroutes` (
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`),
   KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 
 
@@ -1161,7 +1163,7 @@ CREATE TABLE `users` (
   KEY `parentId` (`parentId`),
   KEY `name` (`name`),
   KEY `password` (`password`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
 
 
 
@@ -1651,6 +1653,10 @@ INSERT INTO `dependencies` VALUES ('document',71,'document',40);
 INSERT INTO `dependencies` VALUES ('document',71,'document',60);
 INSERT INTO `dependencies` VALUES ('document',71,'document',69);
 INSERT INTO `dependencies` VALUES ('document',71,'asset',69);
+INSERT INTO `dependencies` VALUES ('document',72,'document',5);
+INSERT INTO `dependencies` VALUES ('document',72,'document',40);
+INSERT INTO `dependencies` VALUES ('document',72,'document',60);
+INSERT INTO `dependencies` VALUES ('document',72,'document',69);
 INSERT INTO `dependencies` VALUES ('object',3,'document',19);
 INSERT INTO `dependencies` VALUES ('object',3,'document',24);
 INSERT INTO `dependencies` VALUES ('object',3,'asset',43);
@@ -1742,9 +1748,10 @@ INSERT INTO `documents` VALUES (65,63,'page','unsubscribe','/en/advanced-example
 INSERT INTO `documents` VALUES (66,63,'email','confirmation-email','/en/advanced-examples/newsletter/',3,1,1388409670,1388412587,0,0);
 INSERT INTO `documents` VALUES (67,62,'email','example-mailing','/newsletters/',1,1,1388412605,1388412917,0,0);
 INSERT INTO `documents` VALUES (68,5,'page','asset-thumbnail-list','/en/advanced-examples/',9,1,1388414727,1388414883,0,0);
-INSERT INTO `documents` VALUES (69,5,'snippet','sidebar','/en/advanced-examples/',12,1,1388734403,1388738477,0,0);
-INSERT INTO `documents` VALUES (70,5,'page','product-information-management','/en/advanced-examples/',11,1,1388740191,1388740585,0,0);
-INSERT INTO `documents` VALUES (71,5,'page','e-commerce','/en/advanced-examples/',10,1,1388740265,1388740613,0,0);
+INSERT INTO `documents` VALUES (69,5,'snippet','sidebar','/en/advanced-examples/',13,1,1388734403,1388738477,0,0);
+INSERT INTO `documents` VALUES (70,5,'page','product-information-management','/en/advanced-examples/',12,1,1388740191,1388740585,0,0);
+INSERT INTO `documents` VALUES (71,5,'page','e-commerce','/en/advanced-examples/',11,1,1388740265,1388740613,0,0);
+INSERT INTO `documents` VALUES (72,5,'page','sub-modules','/en/advanced-examples/',10,1,1419933647,1419933980,32,32);
 
 
 
@@ -2642,11 +2649,15 @@ INSERT INTO `documents_elements` VALUES (71,'headTitle','input','');
 INSERT INTO `documents_elements` VALUES (71,'imagecontent2','image','a:9:{s:2:\"id\";i:69;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
 INSERT INTO `documents_elements` VALUES (71,'leadcontent1','wysiwyg','');
 INSERT INTO `documents_elements` VALUES (71,'leadcontent2','wysiwyg','');
+INSERT INTO `documents_elements` VALUES (72,'content','areablock','a:0:{}');
+INSERT INTO `documents_elements` VALUES (72,'headDescription','input','');
+INSERT INTO `documents_elements` VALUES (72,'headline','input','');
+INSERT INTO `documents_elements` VALUES (72,'headTitle','input','');
 
 
 
 
-INSERT INTO `documents_email` VALUES (38,'','default','default','/advanced/email.php','bernhard.rusch@elements.at','webserver@pimcore.org','','','Contact Form');
+INSERT INTO `documents_email` VALUES (38,'','default','default','/advanced/email.php','pimcore@byom.de','webserver@pimcore.org','','','Contact Form');
 INSERT INTO `documents_email` VALUES (66,'','newsletter','standard-mail','','','','','','');
 INSERT INTO `documents_email` VALUES (67,'','newsletter','standard-mail','','','','','','Example Newsletter');
 
@@ -2703,6 +2714,7 @@ INSERT INTO `documents_page` VALUES (65,'','newsletter','unsubscribe','','Unsubs
 INSERT INTO `documents_page` VALUES (68,'','advanced','asset-thumbnail-list','','Asset Thumbnail List','','','a:0:{}','',0,'','');
 INSERT INTO `documents_page` VALUES (70,'','content','default','','Product Information Management','','','a:0:{}','',0,'','');
 INSERT INTO `documents_page` VALUES (71,'','content','default','','E-Commerce','','','a:0:{}','',0,'','');
+INSERT INTO `documents_page` VALUES (72,'','category_example','test','','','','','a:0:{}',NULL,NULL,'','');
 
 
 
@@ -3045,6 +3057,10 @@ INSERT INTO `properties` VALUES (65,'document','/en/advanced-examples/newsletter
 INSERT INTO `properties` VALUES (68,'document','/en/advanced-examples/asset-thumbnail-list','navigation_name','text','Asset Thumbnail List',1);
 INSERT INTO `properties` VALUES (70,'document','/en/advanced-examples/product-information-management','navigation_name','text','Product Information Management',0);
 INSERT INTO `properties` VALUES (71,'document','/en/advanced-examples/e-commerce','navigation_name','text','E-Commerce',1);
+INSERT INTO `properties` VALUES (72,'document','/en/advanced-examples/sub-modules','navigation_exclude','text','',0);
+INSERT INTO `properties` VALUES (72,'document','/en/advanced-examples/sub-modules','navigation_name','text','Sub-Modules',0);
+INSERT INTO `properties` VALUES (72,'document','/en/advanced-examples/sub-modules','navigation_target','text','',0);
+INSERT INTO `properties` VALUES (72,'document','/en/advanced-examples/sub-modules','navigation_title','text','',0);
 
 
 
@@ -3053,26 +3069,6 @@ INSERT INTO `properties_predefined` VALUES (1,'Left Navigation Start Node','Wher
 INSERT INTO `properties_predefined` VALUES (2,'Hide Left Navigation','','leftNavHide','bool','true','','document',0,0,0);
 INSERT INTO `properties_predefined` VALUES (3,'Header Color','','headerColor','select','','orange,blue,green','document',1,0,0);
 INSERT INTO `properties_predefined` VALUES (4,'Sidebar','','sidebar','document','','','document',1,0,0);
-
-
-
-
-INSERT INTO `recyclebin` VALUES (21,'object','object','/bernhard.rusch-pimcore.com~91b',1,1388412013,'admin');
-INSERT INTO `recyclebin` VALUES (22,'object','object','/crm/newsletter/pimcore-byom.de~29b',1,1388412087,'admin');
-INSERT INTO `recyclebin` VALUES (23,'object','object','/crm/newsletter/pimcore-byom.de~af8',1,1388412411,'admin');
-INSERT INTO `recyclebin` VALUES (24,'object','object','/crm/newsletter/pimcore-byom.de~ddb',1,1388412521,'admin');
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -3227,6 +3223,7 @@ INSERT INTO `search_backend_data` VALUES (40,'/blog/articles/cum-sociis-natoque-
 INSERT INTO `search_backend_data` VALUES (41,'/crm/newsletter','object','folder','folder',1,1388408967,1388408967,0,0,'ID: 41  \nPath: /crm/newsletter  \nnewsletter','');
 INSERT INTO `search_backend_data` VALUES (42,'/crm/inquiries','object','folder','folder',1,1388409135,1388409135,0,0,'ID: 42  \nPath: /crm/inquiries  \ninquiries','');
 INSERT INTO `search_backend_data` VALUES (47,'/crm/newsletter/pimcore-byom.de~7a3','object','object','person',1,1388412533,1388412544,0,0,'ID: 47  \nPath: /crm/newsletter/pimcore-byom.de~7a3  \nmale Demo User pimcore@byom.de 1 1 Dec 30, 2013 3:08:54 PM ','token:YTozOntzOjQ6InNhbHQiO3M6MzI6IjNlMGRkYTk3MWU1YTY5MWViYmM0OGVkNGQ5NzA4MDFmIjtzOjU6ImVtYWlsIjtzOjE1OiJwaW1jb3JlQGJ5b20uZGUiO3M6MjoiaWQiO2k6NDc7fQ== ');
+INSERT INTO `search_backend_data` VALUES (72,'/en/advanced-examples/sub-modules','document','page','page',1,1419933647,1419933980,32,32,'ID: 72  \nPath: /en/advanced-examples/sub-modules  \n ','sidebar:/en/advanced-examples/sidebar blog:/en/advanced-examples/blog mainNavStartNode:/en leftNavStartNode:/en/advanced-examples language:en navigation_title: navigation_target: navigation_name:Sub-Modules navigation_exclude: ');
 
 
 
@@ -3237,6 +3234,7 @@ INSERT INTO `search_backend_data` VALUES (47,'/crm/newsletter/pimcore-byom.de~7a
 
 INSERT INTO `staticroutes` VALUES (1,'news','/(.*)_n([\\d]+)/','%prefix/%text_n%id','','news','detail','text,id','',0,1,0,0);
 INSERT INTO `staticroutes` VALUES (2,'blog','/(.*)_b([\\d]+)/','%prefix/%text_b%id','','blog','detail','text,id','',0,1,1388391249,1388391368);
+INSERT INTO `staticroutes` VALUES (3,'category-example','@/category\\-example@','/en/category-example','','category_example','test',NULL,NULL,NULL,1,1419933908,1419933931);
 
 
 

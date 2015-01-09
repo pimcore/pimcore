@@ -46,6 +46,11 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
 
             $class->setLayoutDefinitions($layout);
 
+            $fd = $class->getFieldDefinition("objectswithmetadata");
+            if($fd) {
+                $fd->setAllowedClassId($class->getId());
+            }
+
             $class->setUserModification(1);
             $class->setModificationDate(time());
 
@@ -68,6 +73,11 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
             $class = Object_Class::getById($id);
 
             $class->setLayoutDefinitions($layout);
+
+            $fd = $class->getFieldDefinition("objectswithmetadata");
+            if($fd) {
+                $fd->setAllowedClassId($class->getId());
+            }
 
             $class->setUserModification(1);
             $class->setModificationDate(time());

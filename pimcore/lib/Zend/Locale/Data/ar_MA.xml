@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9280 $"/>
-		<generation date="$Date: 2013-08-27 13:07:13 -0500 (Tue, 27 Aug 2013) $"/>
+		<version number="$Revision: 9625 $"/>
+		<generation date="$Date: 2014-01-08 23:53:23 -0600 (Wed, 08 Jan 2014) $"/>
 		<language type="ar"/>
 		<territory type="MA"/>
 	</identity>
@@ -31,6 +31,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="Md">M/d</dateFormatItem>
 						<dateFormatItem id="MMdd">MM/dd</dateFormatItem>
 						<dateFormatItem id="yyyyM">G y/M</dateFormatItem>
+						<dateFormatItem id="yyyyMd">G y/M/d</dateFormatItem>
 						<dateFormatItem id="yyyyMM">G y/MM</dateFormatItem>
 					</availableFormats>
 					<intervalFormats>
@@ -160,6 +161,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="Md">M/d</dateFormatItem>
 						<dateFormatItem id="MMdd">MM/dd</dateFormatItem>
 						<dateFormatItem id="yM">y/M</dateFormatItem>
+						<dateFormatItem id="yMd">y/M/d</dateFormatItem>
 						<dateFormatItem id="yMM">y/MM</dateFormatItem>
 					</availableFormats>
 					<intervalFormats>

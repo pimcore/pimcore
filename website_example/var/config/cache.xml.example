@@ -12,7 +12,7 @@
 
     <!-- memcached single server (recommended for single instances) -->
     <!--<backend>
-        <type>Pimcore_Cache_Backend_Memcached</type>
+        <type>\Pimcore\Cache\Backend\Memcached</type>
         <custom>true</custom>
         <options>
             <servers>
@@ -25,7 +25,7 @@
     </backend>-->
     <!-- memcached multi server (recommended for clusters) -->
     <!--<backend>
-        <type>Pimcore_Cache_Backend_Memcached</type>
+        <type>\Pimcore\Cache\Backend\Memcached</type>
         <custom>true</custom>
         <options>
             <servers>

@@ -186,7 +186,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                         path: data["fullpath"],
                         type: "asset",
                         subtype: data["type"]
-                    }, this.store.getCount() + 1));
+                    }));
                 }
             } catch (e) {
                 console.log(e);
@@ -221,7 +221,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
 
         // check for existing element
         if (!this.elementAlreadyExists(initData.id, initData.type)) {
-            this.store.add(new this.store.recordType(initData, this.store.getCount() + 1));
+            this.store.add(new this.store.recordType(initData));
             return true;
         }
         return false;
@@ -323,7 +323,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                         path: items[i].fullpath,
                         type: items[i].type,
                         subtype: subtype
-                    }, this.store.getCount() + 1));
+                    }));
                 }
             }
         }

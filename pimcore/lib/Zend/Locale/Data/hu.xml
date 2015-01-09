@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9317 $"/>
-		<generation date="$Date: 2013-09-06 18:00:05 -0500 (Fri, 06 Sep 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="hu"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,54 +25,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">adyghe</language>
 			<language type="ae">avesztán</language>
 			<language type="af">afrikaans</language>
-			<language type="afa">afroázsiai nyelv</language>
 			<language type="afh">afrihili</language>
 			<language type="agq" draft="contributed">agem</language>
 			<language type="ain">ainu</language>
 			<language type="ak">akan</language>
 			<language type="akk">akkád</language>
 			<language type="ale">aleut</language>
-			<language type="alg">algonkin nyelv</language>
 			<language type="alt">dél-altaji</language>
 			<language type="am">amhara</language>
 			<language type="an">aragonéz</language>
 			<language type="ang">óangol</language>
 			<language type="anp">angika</language>
-			<language type="apa">apacs nyelvek</language>
 			<language type="ar">arab</language>
 			<language type="ar_001">modern szabányos arab</language>
 			<language type="arc">arámi</language>
 			<language type="arn">araucani</language>
 			<language type="arp">arapaho</language>
-			<language type="art">mesterséges nyelv</language>
 			<language type="arw">aravak</language>
 			<language type="as">asszámi</language>
 			<language type="asa" draft="contributed">asu</language>
 			<language type="ast">asztúr</language>
-			<language type="ath">atapaszkan nyelvek</language>
-			<language type="aus">ausztrál nyelvek</language>
 			<language type="av">avar</language>
 			<language type="awa">awádi</language>
 			<language type="ay">ajmara</language>
 			<language type="az">azerbajdzsáni</language>
 			<language type="az" alt="short">azeri</language>
 			<language type="ba">baskír</language>
-			<language type="bad">banda</language>
-			<language type="bai">bamileke nyelvek</language>
 			<language type="bal">balucsi</language>
 			<language type="ban">balinéz</language>
 			<language type="bas">basza</language>
-			<language type="bat">balti nyelv</language>
 			<language type="bax" draft="contributed">bamun</language>
 			<language type="bbj" draft="contributed">gomala</language>
 			<language type="be">belorusz</language>
 			<language type="bej">bedzsa</language>
 			<language type="bem">bemba</language>
-			<language type="ber">berber</language>
 			<language type="bez" draft="contributed">bena</language>
 			<language type="bfd" draft="contributed">bafut</language>
 			<language type="bg">bolgár</language>
-			<language type="bh">bihari</language>
 			<language type="bho">bodzspuri</language>
 			<language type="bi">bislama</language>
 			<language type="bik">bikol</language>
@@ -81,14 +70,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">siksika</language>
 			<language type="bm">bambara</language>
 			<language type="bn">bengáli</language>
-			<language type="bnt">bantu</language>
 			<language type="bo">tibeti</language>
 			<language type="br">breton</language>
 			<language type="bra">braj</language>
 			<language type="brx" draft="contributed">bodo</language>
 			<language type="bs">bosnyák</language>
 			<language type="bss" draft="contributed">koszi</language>
-			<language type="btk">batak</language>
 			<language type="bua">burját</language>
 			<language type="bug">buginéz</language>
 			<language type="bum" draft="contributed">bulu</language>
@@ -96,14 +83,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv" draft="contributed">medumba</language>
 			<language type="ca">katalán</language>
 			<language type="cad">caddo</language>
-			<language type="cai">egyéb közép-amerikai indián</language>
 			<language type="car">karib</language>
-			<language type="cau">egyéb kaukázusi</language>
 			<language type="cay" draft="contributed">kajuga</language>
 			<language type="cch">atszam</language>
 			<language type="ce">csecsen</language>
 			<language type="ceb">cebui</language>
-			<language type="cel">egyéb kelta</language>
 			<language type="cgg" draft="contributed">kiga</language>
 			<language type="ch">csamoró</language>
 			<language type="chb">csibcsa</language>
@@ -116,26 +100,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">cseroki</language>
 			<language type="chy">csejen</language>
 			<language type="ckb" draft="contributed">szoráni kurd</language>
-			<language type="cmc">csam nyelv</language>
 			<language type="co">korzikai</language>
 			<language type="cop">kopt</language>
-			<language type="cpe">egyéb angol alapú kreol és pidgin</language>
-			<language type="cpf">egyéb francia alapú kreol és pidgin</language>
-			<language type="cpp">portugál alapú kreol vagy pidgin</language>
 			<language type="cr">krí</language>
 			<language type="crh">krími tatár</language>
-			<language type="crp">kreol és pidzsin</language>
 			<language type="cs">cseh</language>
 			<language type="csb">kasub</language>
 			<language type="cu">egyházi szláv</language>
-			<language type="cus">kusita nyelv</language>
 			<language type="cv">csuvas</language>
 			<language type="cy">walesi</language>
 			<language type="da">dán</language>
 			<language type="dak">dakota</language>
 			<language type="dar">dargva</language>
 			<language type="dav" draft="contributed">taita</language>
-			<language type="day">dajak</language>
 			<language type="de">német</language>
 			<language type="de_AT">osztrák német</language>
 			<language type="de_CH">svájci felnémet</language>
@@ -145,7 +122,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">dinka</language>
 			<language type="dje" draft="contributed">zarma</language>
 			<language type="doi">dogri</language>
-			<language type="dra">egyéb dravida</language>
 			<language type="dsb">alsó szorb</language>
 			<language type="dua">duala</language>
 			<language type="dum">közép holland</language>
@@ -183,7 +159,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">fulani</language>
 			<language type="fi">finn</language>
 			<language type="fil">filippínó</language>
-			<language type="fiu">finnugor nyelv</language>
 			<language type="fj">fidzsi</language>
 			<language type="fo">feröeri</language>
 			<language type="fon">fon</language>
@@ -201,7 +176,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">gajo</language>
 			<language type="gba">gbaja</language>
 			<language type="gd">skót gael</language>
-			<language type="gem">germán nyelv</language>
 			<language type="gez">geez</language>
 			<language type="gil">ikiribati</language>
 			<language type="gl">galíciai</language>
@@ -224,7 +198,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">héber</language>
 			<language type="hi">hindi</language>
 			<language type="hil">hiligajnon</language>
-			<language type="him">himaháli</language>
 			<language type="hit">hittite</language>
 			<language type="hmn">hmong</language>
 			<language type="ho">hiri motu</language>
@@ -242,15 +215,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">interlingue</language>
 			<language type="ig">igbó</language>
 			<language type="ii">szecsuán ji</language>
-			<language type="ijo">idzsó</language>
 			<language type="ik">inupiak</language>
 			<language type="ilo">ilokó</language>
-			<language type="inc">egyéb indiai</language>
-			<language type="ine">indoeurópai nyelv</language>
 			<language type="inh">ingus</language>
 			<language type="io">idó</language>
-			<language type="ira">iráni</language>
-			<language type="iro">irokéz nyelvek</language>
 			<language type="is">izlandi</language>
 			<language type="it">olasz</language>
 			<language type="iu">inuktitut</language>
@@ -267,7 +235,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">kacsin</language>
 			<language type="kaj">jju</language>
 			<language type="kam">kamba</language>
-			<language type="kar">karen</language>
 			<language type="kaw">kawi</language>
 			<language type="kbd">kabardi</language>
 			<language type="kbl" draft="contributed">kanembu</language>
@@ -277,7 +244,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">koro</language>
 			<language type="kg">kongo</language>
 			<language type="kha">kaszi</language>
-			<language type="khi">egyéb koiszan</language>
 			<language type="kho">kotanéz</language>
 			<language type="khq" draft="contributed">kojra-csíni</language>
 			<language type="ki">kikuju</language>
@@ -296,7 +262,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">kanuri</language>
 			<language type="krc">karacsáj-balkár</language>
 			<language type="krl">karelai</language>
-			<language type="kro">kru</language>
 			<language type="kru">kuruh</language>
 			<language type="ks">kásmíri</language>
 			<language type="ksb" draft="contributed">sambala</language>
@@ -336,7 +301,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">maithili</language>
 			<language type="mak">makaszar</language>
 			<language type="man">mandingó</language>
-			<language type="map">ausztronéz</language>
 			<language type="mas">masai</language>
 			<language type="mde" draft="contributed">maba</language>
 			<language type="mdf">moksán</language>
@@ -352,15 +316,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">maori</language>
 			<language type="mic">mikmak</language>
 			<language type="min">minangkabau</language>
-			<language type="mis">egyéb nyelvek</language>
 			<language type="mk">macedón</language>
-			<language type="mkh">egyéb mon-khmer</language>
 			<language type="ml">malajálam</language>
 			<language type="mn">mongol</language>
 			<language type="mnc">mandzsu</language>
 			<language type="mni">manipuri</language>
-			<language type="mno">manobó nyelvek</language>
-			<language type="mo">moldvai</language>
 			<language type="moh">mohawk</language>
 			<language type="mos">moszi</language>
 			<language type="mr">marathi</language>
@@ -368,17 +328,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">máltai</language>
 			<language type="mua" draft="contributed">mundang</language>
 			<language type="mul">többszörös nyelvek</language>
-			<language type="mun">munda nyelvek</language>
 			<language type="mus">krík</language>
 			<language type="mwl">mirandéz</language>
 			<language type="mwr">marvari</language>
 			<language type="my">burmai</language>
 			<language type="mye" draft="contributed">myene</language>
-			<language type="myn">maja nyelvek</language>
 			<language type="myv">erzjány</language>
 			<language type="na">naurui</language>
-			<language type="nah">nahuati</language>
-			<language type="nai">észak-amerikai indián nyelv</language>
 			<language type="nap">nápolyi</language>
 			<language type="naq" draft="contributed">nama</language>
 			<language type="nb">norvég bokmal</language>
@@ -388,7 +344,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">nevari</language>
 			<language type="ng">ndonga</language>
 			<language type="nia">nias</language>
-			<language type="nic">niger-kordofan nyelv</language>
 			<language type="niu">niui</language>
 			<language type="nl">holland</language>
 			<language type="nl_BE">flamand</language>
@@ -401,7 +356,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">n'kó</language>
 			<language type="nr">déli ndebele</language>
 			<language type="nso">északi szotó</language>
-			<language type="nub">núbiai nyelv</language>
 			<language type="nus" draft="contributed">nuer</language>
 			<language type="nv">navahó</language>
 			<language type="nwc">klasszikus newari</language>
@@ -417,21 +371,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">oszét</language>
 			<language type="osa">osage</language>
 			<language type="ota">ottomán török</language>
-			<language type="oto">otomi nyelv</language>
 			<language type="pa">pandzsábi</language>
-			<language type="paa">pápuai nyelv</language>
 			<language type="pag">pangaszinan</language>
 			<language type="pal">pahlavi</language>
 			<language type="pam">pampangan</language>
 			<language type="pap">papiamentó</language>
 			<language type="pau">palaui</language>
 			<language type="peo">óperzsa</language>
-			<language type="phi">Fülöp-szigeteki nyelv</language>
 			<language type="phn">főniciai</language>
 			<language type="pi">pali</language>
 			<language type="pl">lengyel</language>
 			<language type="pon">pohnpei</language>
-			<language type="pra">prakrit nyelvek</language>
 			<language type="pro">óprovánszi</language>
 			<language type="ps">pastu</language>
 			<language type="pt">portugál</language>
@@ -444,7 +394,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">réto-román</language>
 			<language type="rn">kirundi</language>
 			<language type="ro">román</language>
-			<language type="roa">román nyelv</language>
+			<language type="ro_MD">moldvai</language>
 			<language type="rof" draft="contributed">rombo</language>
 			<language type="rom">roma</language>
 			<language type="root">ősi</language>
@@ -455,8 +405,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">szanszkrit</language>
 			<language type="sad">szandave</language>
 			<language type="sah">jakut</language>
-			<language type="sai">dél-amerikai indián nyelv</language>
-			<language type="sal">szelis nyelv</language>
 			<language type="sam">szamaritánus arámi</language>
 			<language type="saq" draft="contributed">szamburu</language>
 			<language type="sas">sasak</language>
@@ -471,25 +419,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see" draft="contributed">szeneka</language>
 			<language type="seh" draft="contributed">szena</language>
 			<language type="sel">szölkup</language>
-			<language type="sem">egyéb szemita</language>
 			<language type="ses" draft="contributed">kojra-szenni</language>
 			<language type="sg">szangó</language>
 			<language type="sga">óír</language>
-			<language type="sgn">jelnyelv</language>
 			<language type="sh">szerbhorvát</language>
 			<language type="shi" draft="contributed">tachelhit</language>
 			<language type="shn">san</language>
 			<language type="shu" draft="contributed">csádi arab</language>
 			<language type="si">szingaléz</language>
 			<language type="sid">szidamó</language>
-			<language type="sio">sziú nyelvek</language>
-			<language type="sit">sinotibeti nyelv</language>
 			<language type="sk">szlovák</language>
 			<language type="sl">szlovén</language>
-			<language type="sla">szláv nyelv</language>
 			<language type="sm">szamoai</language>
 			<language type="sma">déli számi</language>
-			<language type="smi">lapp nyelv</language>
 			<language type="smj">lule számi</language>
 			<language type="smn">inar sami</language>
 			<language type="sms">koltta lapp</language>
@@ -497,13 +439,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">szoninke</language>
 			<language type="so">szomáliai</language>
 			<language type="sog">sogdien</language>
-			<language type="son">szongai</language>
 			<language type="sq">albán</language>
 			<language type="sr">szerb</language>
 			<language type="srn">szranai tongó</language>
 			<language type="srr">szerer</language>
 			<language type="ss">sziszuati</language>
-			<language type="ssa">nílusi-szaharai nyelv</language>
 			<language type="ssy" draft="contributed">szahó</language>
 			<language type="st">szeszotó</language>
 			<language type="su">szundanéz</language>
@@ -517,7 +457,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">klasszikus szír</language>
 			<language type="syr">szíriai</language>
 			<language type="ta">tamil</language>
-			<language type="tai">thai nyelv</language>
 			<language type="te">telugu</language>
 			<language type="tem">temne</language>
 			<language type="teo" draft="contributed">teszó</language>
@@ -544,8 +483,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">csimsiáni</language>
 			<language type="tt">tatár</language>
 			<language type="tum">tumbuka</language>
-			<language type="tup">tupi nyelv</language>
-			<language type="tut">altáji nyelv</language>
 			<language type="tvl">tuvalu</language>
 			<language type="tw">twi</language>
 			<language type="twq" draft="contributed">szavák</language>
@@ -568,11 +505,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun" draft="contributed">vunjo</language>
 			<language type="wa">vallon</language>
 			<language type="wae" draft="contributed">walser</language>
-			<language type="wak">vakas nyelv</language>
 			<language type="wal">valamo</language>
 			<language type="war">varaó</language>
 			<language type="was">vasó</language>
-			<language type="wen">szorb nyelvek</language>
 			<language type="wo">volof</language>
 			<language type="xal">kalmük</language>
 			<language type="xh">hosza</language>
@@ -583,7 +518,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb" draft="contributed">jemba</language>
 			<language type="yi">jiddis</language>
 			<language type="yo">joruba</language>
-			<language type="ypk">jupik nyelv</language>
 			<language type="yue">kantoni</language>
 			<language type="za">zsuang</language>
 			<language type="zap">zapoték</language>
@@ -593,7 +527,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">kínai</language>
 			<language type="zh_Hans">egyszerűsített kínai</language>
 			<language type="zh_Hant">hagyományos kínai</language>
-			<language type="znd">zande</language>
 			<language type="zu">zulu</language>
 			<language type="zun">zuni</language>
 			<language type="zxx">nincs nyelvészeti tartalom</language>
@@ -1876,7 +1809,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 					</dateFormatLength>
 					<dateFormatLength type="medium">
 						<dateFormat>
-							<pattern>y MMM d</pattern>
+							<pattern>y. MMM d.</pattern>
 						</dateFormat>
 					</dateFormatLength>
 					<dateFormatLength type="short">
@@ -2531,9 +2464,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Asia/Yerevan">
 				<exemplarCity>Jereván</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Déli-sark</exemplarCity>
 			</zone>
 			<zone type="Antarctica/Vostok">
 				<exemplarCity>Vosztok</exemplarCity>

@@ -15,7 +15,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Staticroute extends Pimcore_Model_Abstract {
+namespace Pimcore\Model;
+
+class Staticroute extends AbstractModel {
 
     /**
      * @var integer
@@ -123,21 +125,21 @@ class Staticroute extends Pimcore_Model_Abstract {
         $cacheKey = "staticroute_" . $id;
 
         try {
-            $route = Zend_Registry::get($cacheKey);
+            $route = \Zend_Registry::get($cacheKey);
             if(!$route){
-                throw new Exception("Route in registry is null");
+                throw new \Exception("Route in registry is null");
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
 
             try {
                 $route = new self();
-                Zend_Registry::set($cacheKey, $route);
+                \Zend_Registry::set($cacheKey, $route);
                 $route->setId(intval($id));
                 $route->getResource()->getById();
 
-            } catch (Exception $e) {
-                Logger::error($e);
+            } catch (\Exception $e) {
+                \Logger::error($e);
                 return null;
             }
         }
@@ -163,12 +165,12 @@ class Staticroute extends Pimcore_Model_Abstract {
 
         try {
             $route->getResource()->getByName($name, $siteId);
-        } catch (Exception $e) {
-            Logger::warn($e);
+        } catch (\Exception $e) {
+            \Logger::warn($e);
             return null;
         }
 
-        // to have a singleton in a way. like all instances of Element_Interface do also, like Object_Abstract
+        // to have a singleton in a way. like all instances of Element\ElementInterface do also, like Object\AbstractObject
         if($route->getId() > 0) {
             // add it to the mini-per request cache
             self::$nameIdMappingCache[$cacheKey] = $route->getId();
@@ -392,7 +394,7 @@ class Staticroute extends Pimcore_Model_Abstract {
 
         // get request parameters
         $blockedRequestParams = array("controller","action","module","document");
-        $front = Zend_Controller_Front::getInstance();
+        $front = \Zend_Controller_Front::getInstance();
 
         if($reset) {
             $requestParameters = array();
@@ -477,6 +479,12 @@ class Staticroute extends Pimcore_Model_Abstract {
         return $url;
     }
 
+    /**
+     * @param $path
+     * @param array $params
+     * @return array
+     * @throws \Exception
+     */
     public function match($path, $params = array()) {
 
         if (@preg_match($this->getPattern(), $path)) {
@@ -497,7 +505,10 @@ class Staticroute extends Pimcore_Model_Abstract {
             if (is_array($matches) && count($matches) > 1) {
                 foreach ($matches as $index => $match) {
                     if ($variables[$index - 1]) {
-                        $params[$variables[$index - 1]] = urldecode($match[0]);
+                        $paramValue = urldecode($match[0]);
+                        if(!empty($paramValue) || !array_key_exists($variables[$index - 1], $params)) {
+                            $params[$variables[$index - 1]] = $paramValue;
+                        }
                     }
                 }
             }
@@ -539,17 +550,18 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function clearDependentCache() {
         
-        // this is mostly called in Staticroute_Resource not here
+        // this is mostly called in Staticroute\Resource not here
         try {
-            Pimcore_Model_Cache::clearTag("staticroute");
+            \Pimcore\Model\Cache::clearTag("staticroute");
         }
-        catch (Exception $e) {
-            Logger::crit($e);
+        catch (\Exception $e) {
+            \Logger::crit($e);
         }
     }
 
     /**
-     * @param int $modificationDate
+     * @param $modificationDate
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -566,7 +578,8 @@ class Staticroute extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $creationDate
+     * @param $creationDate
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {

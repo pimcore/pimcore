@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Property_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Property\Predefined;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      * Contains all valid columns in the database table
@@ -88,9 +92,7 @@ class Property_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
-     * Save changes to database, it's a good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
         try {
@@ -110,7 +112,7 @@ class Property_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
 
             $this->db->update("properties_predefined", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

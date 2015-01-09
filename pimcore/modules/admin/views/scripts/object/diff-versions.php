@@ -10,7 +10,10 @@
 <body>
 
 
-<?php 
+<?php
+
+use Pimcore\Model\Object;
+
 $fields = $this->object1->getClass()->getFieldDefinitions();
 ?>
 
@@ -36,8 +39,8 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
     <tr class="system">
         <td>Published</td>
         <td>o_published</td>
-        <td><?php echo Zend_Json::encode($this->object1->getPublished()); ?></td>
-        <td><?php echo Zend_Json::encode($this->object2->getPublished()); ?></td>
+        <td><?php echo \Zend_Json::encode($this->object1->getPublished()); ?></td>
+        <td><?php echo \Zend_Json::encode($this->object2->getPublished()); ?></td>
     </tr>
 
     <tr class="">
@@ -48,8 +51,8 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
 <?php
     foreach ($fields as $fieldName => $definition) { ?>
     <?php
-        if($definition instanceof Object_Class_Data_Localizedfields) { ?>
-        <?php foreach(Pimcore_Tool::getValidLanguages() as $language) { ?>
+        if($definition instanceof Object\ClassDefinition\Data\Localizedfields) { ?>
+        <?php foreach(\Pimcore\Tool::getValidLanguages() as $language) { ?>
             <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
                 <?php
                     $v1 = $lfd->getVersionPreview($this->object1->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
@@ -66,11 +69,11 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
             } ?>
         <?php } ?>
     <?php } else
-            if($definition instanceof Object_Class_Data_ObjectBricks) {
+            if($definition instanceof Object\ClassDefinition\Data\ObjectBricks) {
                 ?>
                 <?php foreach($definition->getAllowedTypes() as $asAllowedType) { ?>
                     <?php
-                    $collectionDef = Object_Objectbrick_Definition::getByKey($asAllowedType);
+                    $collectionDef = Object\Objectbrick\Definition::getByKey($asAllowedType);
 
                     foreach ($collectionDef->getFieldDefinitions() as $lfd) { ?>
                         <?php

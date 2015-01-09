@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_Folder extends Asset
+namespace Pimcore\Model\Asset;
+
+use Pimcore\Model;
+
+class Folder extends Model\Asset
 {
 
     /**

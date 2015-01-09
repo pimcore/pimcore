@@ -13,20 +13,23 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_FolderController extends Pimcore_Controller_Action_Admin_Document {
+use Pimcore\Model\Document;
+use Pimcore\Model\Element;
+
+class Admin_FolderController extends \Pimcore\Controller\Action\Admin\Document {
 
     public function getDataByIdAction() {
 
         // check for lock
-        if (Element_Editlock::isLocked($this->getParam("id"), "document")) {
+        if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
             $this->_helper->json(array(
-                "editlock" => Element_Editlock::getByElement($this->getParam("id"), "document")
+                "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
             ));
         }
-        Element_Editlock::lock($this->getParam("id"), "document");
+        Element\Editlock::lock($this->getParam("id"), "document");
 
-        $folder = Document_Folder::getById($this->getParam("id"));
-        $folder->idPath = Element_Service::getIdPath($folder);
+        $folder = Document\Folder::getById($this->getParam("id"));
+        $folder->idPath = Element\Service::getIdPath($folder);
         $folder->userPermissions = $folder->getUserPermissions();
         $folder->setLocked($folder->isLocked());
         $folder->setParent(null);
@@ -42,7 +45,7 @@ class Admin_FolderController extends Pimcore_Controller_Action_Admin_Document {
 
     public function saveAction() {
         if ($this->getParam("id")) {
-            $folder = Document_Folder::getById($this->getParam("id"));
+            $folder = Document\Folder::getById($this->getParam("id"));
             $folder->setModificationDate(time());
             $folder->setUserModification($this->getUser()->getId());
 
@@ -56,7 +59,7 @@ class Admin_FolderController extends Pimcore_Controller_Action_Admin_Document {
         $this->_helper->json(false);
     }
 
-    protected function setValuesToDocument(Document_Folder $folder) {
+    protected function setValuesToDocument(Document\Folder $folder) {
 
         $this->addPropertiesToDocument($folder);
 

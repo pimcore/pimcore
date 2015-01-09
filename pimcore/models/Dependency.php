@@ -15,7 +15,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Dependency extends Pimcore_Model_Abstract {
+namespace Pimcore\Model;
+
+class Dependency extends AbstractModel {
 
     /**
      * The ID of the object to get dependencies for
@@ -77,7 +79,7 @@ class Dependency extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param  Element_Interface $element
+     * @param  Element\ELementInterface $element
      * @return void
      */
     public function cleanAllForElement($element){

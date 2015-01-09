@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_KeyValue_TranslatorConfig extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Object\KeyValue;
+
+use Pimcore\Model;
+
+class TranslatorConfig extends Model\AbstractModel {
 
     /**
      * @var integer
@@ -27,12 +31,14 @@ class Object_KeyValue_TranslatorConfig extends Pimcore_Model_Abstract {
      */
     public $name;
 
+    /**
+     * @var
+     */
     public $translator;
-
 
     /**
      * @param integer $id
-     * @return Object_KeyValue_TranslatorConfig
+     * @return Model\Object\KeyValue\TranslatorConfig
      */
     public static function getById($id) {
         try {
@@ -42,12 +48,14 @@ class Object_KeyValue_TranslatorConfig extends Pimcore_Model_Abstract {
             $config->getResource()->getById();
 
             return $config;
-        } catch (Exception $e) {
-            Logger::warning($e);
+        } catch (\Exception $e) {
+            \Logger::warning($e);
         }
     }
 
-
+    /**
+     * @param $name
+     */
     public static function getByName ($name) {
         try {
             $config = new self();
@@ -55,14 +63,13 @@ class Object_KeyValue_TranslatorConfig extends Pimcore_Model_Abstract {
             $config->getResource()->getByName();
 
             return $config;
-        } catch (Exception $e) {
-            Logger::warning($e);
+        } catch (\Exception $e) {
+            \Logger::warning($e);
         }
     }
 
-
     /**
-     * @return Object_KeyValue_TranslatorConfig
+     * @return Model\Object\KeyValue\TranslatorConfig
      */
     public static function create() {
         $config = new self();
@@ -70,7 +77,6 @@ class Object_KeyValue_TranslatorConfig extends Pimcore_Model_Abstract {
 
         return $config;
     }
-
 
     /**
      * @param integer $id
@@ -113,5 +119,4 @@ class Object_KeyValue_TranslatorConfig extends Pimcore_Model_Abstract {
     public function getName() {
         return $this->name;
     }
-
 }

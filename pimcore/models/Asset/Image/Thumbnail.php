@@ -15,10 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_Image_Thumbnail {
+namespace Pimcore\Model\Asset\Image;
+
+class Thumbnail {
 
     /**
-     * @var Asset_Image
+     * @var Pimcore\Model\Asset\Image
      */
     protected $asset;
 
@@ -53,7 +55,7 @@ class Asset_Image_Thumbnail {
     protected $mimetype;
 
     /**
-     * @var Asset_Image_Thumbnail_Config
+     * @var Thumbnail\Config
      */
     protected $config;
 
@@ -91,11 +93,11 @@ class Asset_Image_Thumbnail {
             } else {
                 try {
                     $deferred = ($deferredAllowed && $this->deferred) ? true : false;
-                    $this->path = Asset_Image_Thumbnail_Processor::process($this->asset, $this->config, null, $deferred);
-                } catch (Exception $e) {
+                    $this->path = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred);
+                } catch (\Exception $e) {
                     $this->path = '/pimcore/static/img/filetype-not-supported.png';
-                    Logger::error("Couldn't create thumbnail of image " . $this->asset->getFullPath());
-                    Logger::error($e);
+                    \Logger::error("Couldn't create thumbnail of image " . $this->asset->getFullPath());
+                    \Logger::error($e);
                 }
             }
         }
@@ -304,8 +306,7 @@ class Asset_Image_Thumbnail {
 
                 // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
                 ksort($mediaConfigs, SORT_NUMERIC);
-                $mediaConfigs = array_reverse($mediaConfigs, true); // the sorting matters!
-                array_unshift($mediaConfigs, $thumbConfig->getItems()); // add the default config at the beginning
+                array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
 
                 foreach ($mediaConfigs as $mediaQuery => $config) {
                     $srcSetValues = [];
@@ -338,7 +339,7 @@ class Asset_Image_Thumbnail {
     /**
      * @param string $name
      * @param int $highRes
-     * @return Asset_Image_Thumbnail
+     * @return Thumbnail
      * @throws \Exception
      */
     public function getMedia($name, $highRes = 1) {
@@ -359,7 +360,7 @@ class Asset_Image_Thumbnail {
     }
 
     /**
-     * @return Asset_Image The original image from which this thumbnail is generated.
+     * @return Pimcore\Model\Asset\Image The original image from which this thumbnail is generated.
     */
     public function getAsset() {
         return $this->asset;
@@ -367,8 +368,7 @@ class Asset_Image_Thumbnail {
 
     /**
      * Get thumbnail image configuration.
-     * @param string $config
-     * @return Asset_Image_Thumbnail_Config
+     * @return Thumbnail\Config
      */
     public function getConfig() {
         return $this->config;
@@ -377,6 +377,7 @@ class Asset_Image_Thumbnail {
     /**
      * @param string $type
      * @return null|string
+     * @throws \Exception
      */
     public function getChecksum($type = "md5") {
         $file = $this->getFileSystemPath();
@@ -403,10 +404,10 @@ class Asset_Image_Thumbnail {
     /**
      * Get a thumbnail image configuration.
      * @param mixed $selector Name, array or object describing a thumbnail configuration.
-     * @return Asset_Image_Thumbnail_Config
+     * @return Thumbnail\Config
     */
     protected function createConfig($selector) {
-        return Asset_Image_Thumbnail_Config::getByAutoDetect($selector);
+        return Thumbnail\Config::getByAutoDetect($selector);
     }
 
     /**

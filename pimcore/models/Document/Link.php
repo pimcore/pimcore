@@ -15,7 +15,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Link extends Document
+namespace Pimcore\Model\Document;
+
+use Pimcore\Model;
+use Pimcore\Model\Document;
+use Pimcore\Model\Asset;
+
+class Link extends Model\Document
 {
 
     /**
@@ -40,7 +46,7 @@ class Document_Link extends Document
     public $object;
 
     /**
-     * Contains the direkt link as plain text
+     * Contains the direct link as plain text
      *
      * @var string
      */
@@ -340,10 +346,8 @@ class Document_Link extends Document
     }
 
     /**
-     * setProperty method should be used instead
-     *
-     * @deprecated
-     * @param string $parameters
+     * @param $parameters
+     * @return $this
      */
     public function setParameters($parameters)
     {
@@ -363,10 +367,8 @@ class Document_Link extends Document
     }
 
     /**
-     * setProperty method should be used instead
-     *
-     * @deprecated
-     * @param string $anchor
+     * @param $anchor
+     * @return $this
      */
     public function setAnchor($anchor)
     {
@@ -383,7 +385,8 @@ class Document_Link extends Document
     }
 
     /**
-     * @param string $title
+     * @param $title
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -403,10 +406,8 @@ class Document_Link extends Document
     }
 
     /**
-     * setProperty method should be used instead
-     *
-     * @deprecated
-     * @param string $accesskey
+     * @param $accesskey
+     * @return $this
      */
     public function setAccesskey($accesskey)
     {
@@ -426,10 +427,8 @@ class Document_Link extends Document
     }
 
     /**
-     * setProperty method should be used instead
-     *
-     * @deprecated
-     * @param string $rel
+     * @param $rel
+     * @return $this
      */
     public function setRel($rel)
     {
@@ -449,10 +448,8 @@ class Document_Link extends Document
     }
 
     /**
-     * setProperty method should be used instead
-     *
-     * @deprecated
-     * @param string $tabindex
+     * @param $tabindex
+     * @return $this
      */
     public function setTabindex($tabindex)
     {

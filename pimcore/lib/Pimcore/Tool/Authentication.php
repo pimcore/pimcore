@@ -13,10 +13,14 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+namespace Pimcore\Tool;
+
+use Pimcore\Model\User;
+
 // PHP 5.5 Crypt-API password compatibility layer for PHP version < PHP 5.5
 include_once("password_compatibility.php");
 
-class Pimcore_Tool_Authentication {
+class Authentication {
 
     /**
      * @param $username
@@ -43,13 +47,18 @@ class Pimcore_Tool_Authentication {
      */
     public static function authenticateSession () {
 
-        $session = Pimcore_Tool_Session::getReadOnly();
+        if(!isset($_COOKIE["pimcore_admin_sid"]) && !isset($_REQUEST["pimcore_admin_sid"])) {
+            // if no session cookie / ID no authentication possible, we don't need to start a session
+            return null;
+        }
+
+        $session = Session::getReadOnly();
         $user = $session->user;
         if ($user instanceof User) {
             // renew user
             $user = User::getById($user->getId());
 
-            if(Pimcore_Tool_Authentication::isValidUser($user)) {
+            if(self::isValidUser($user)) {
                 return $user;
             }
         }
@@ -74,7 +83,7 @@ class Pimcore_Tool_Authentication {
         }
 
         $auth->requireLogin();
-        Logger::error("Authentication Basic (WebDAV) required");
+        \Logger::error("Authentication Basic (WebDAV) required");
         echo "Authentication required\n";
         die();
     }
@@ -96,7 +105,7 @@ class Pimcore_Tool_Authentication {
             }
 
             $passwordHash = $user->getPassword();
-            $decrypted = Pimcore_Tool_Authentication::tokenDecrypt($passwordHash, $token);
+            $decrypted = self::tokenDecrypt($passwordHash, $token);
 
             $timestamp = $decrypted[0];
             $timeZone = date_default_timezone_get();
@@ -113,7 +122,7 @@ class Pimcore_Tool_Authentication {
     }
 
     /**
-     * @param \User $user
+     * @param User $user
      * @param $password
      * @return bool
      */
@@ -139,7 +148,7 @@ class Pimcore_Tool_Authentication {
      */
     public static function isValidUser($user) {
 
-        if($user instanceof \User && $user->isActive() && $user->getId() && $user->getPassword()) {
+        if($user instanceof User && $user->isActive() && $user->getId() && $user->getPassword()) {
             return true;
         }
         return false;
@@ -148,8 +157,8 @@ class Pimcore_Tool_Authentication {
     /**
      * @param $username
      * @param $plainTextPassword
-     * @return string
-     * @throws Exception
+     * @return bool|false|string
+     * @throws \Exception
      */
     public static function getPasswordHash($username, $plainTextPassword) {
         $hash = password_hash(self::preparePlainTextPassword($username, $plainTextPassword), PASSWORD_DEFAULT);
@@ -171,11 +180,8 @@ class Pimcore_Tool_Authentication {
     }
 
     /**
-     * @static
-     * @param  string $username
-     * @param  string $passwordHash
-     * @param  string $algorithm
-     * @param  string $mode
+     * @param $username
+     * @param $passwordHash
      * @return string
      */
     public static function generateToken($username, $passwordHash) {
@@ -227,8 +233,6 @@ class Pimcore_Tool_Authentication {
     /**
      * @param $key
      * @param $token
-     * @param $algorithm
-     * @param $mode
      * @return array
      */
     public static function tokenDecrypt($key, $token) {

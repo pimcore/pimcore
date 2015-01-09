@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_Service {
+namespace Pimcore\Model\User;
+
+use Pimcore\Model;
+
+class Service {
 
     /**
      * Mapping between database types and pimcore class names
@@ -25,10 +29,10 @@ class User_Service {
      */
     public static function getClassNameForType ($type) {
         switch($type) {
-            case "user": return "User";
-            case "userfolder": return "User_Folder";
-            case "role": return "User_Role";
-            case "rolefolder": return "User_Role_Folder";
+            case "user": return "\\Pimcore\\Model\\User";
+            case "userfolder": return "\\Pimcore\\Model\\User\\Folder";
+            case "role": return "\\Pimcore\\Model\\User\\Role";
+            case "rolefolder": return "\\Pimcore\\Model\\User\\Role\\Folder";
         }
     }
 }

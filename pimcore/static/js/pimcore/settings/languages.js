@@ -24,100 +24,58 @@ pimcore.settings.languages = Class.create({
                 direction: 'ASC'
 
             } ,
-            fields: ['key', 'name', 'icon', 'download','percent','exists']
+            fields: ['key', 'name', 'download','percent','exists']
         });
 
         this.availableStore.load();
-
-
     },
-
 
     getTabPanel: function () {
 
         if (!this.panel) {
 
-        this.layout = new Ext.grid.GridPanel({
-            hideHeaders: true,
-            store: this.availableStore,
-            columns: [
-                {header: "", sortable: true, dataIndex: 'key', editable: false, width: 40},
-                {header: "", sortable: true, dataIndex: 'icon', editable: false, width: 40,
-                                renderer: function(data){
-                                    return '<img src="'+data+'" alt="" />';
-                                }
-                },
-
-                {header: "", sortable: true, dataIndex: 'name', editable: false, width: 200},
-                {header: "", sortable: true, dataIndex: 'percent', editable: false, width: 150,
-                                renderer: function(data){
-                                    return data+'% '+t('language_translation_percentage');
-                                }
-                },
-                {
-                    xtype: 'actioncolumn',
-                    width: 30,
-                    tooltip: 'language_download',
-                    items: [
-                        {
-                           
-                            getClass: function(v, meta, rec) {
-                                                    if (rec.get('exists') > 0) {
-                                                        return 'pimcore_icon_language_update';
-                                                    } else {
-                                                        return 'pimcore_icon_language_download';
-                                                    }
-                                                },
-
-                            handler: function(grid, rowIndex, colIndex) {
-                                    this.download(rowIndex);
-                            }.bind(this)
-                        }
-                    ]
-                }    
-
-            ]
-        });
-
-       /*
-            this.layout = new Ext.DataView({
+            this.layout = new Ext.grid.GridPanel({
+                hideHeaders: true,
                 store: this.availableStore,
-                region: 'center',
-                layout: 'fit',
-                tpl  : new Ext.XTemplate(
-                        '<ul>',
-                        '<tpl for=".">',
-                        '<li class="language">',
-                        '<div class="language-key">{key}</div><img src="{icon}" /><div class="language-name">{name}'
-                                    + '</div><div class="language-percent">{percent}%'
-                                    + '{[t(\'language_translation_percentage\')]}</div>',
-                        '<div class="buttons">',
-                        '<tpl if="exists"><input type="button" class="settings" '
-                        + 'name="update" value="{[t(\'update\')]}"/></tpl>',
-                        '<tpl if="!exists"><input type="button" class="settings" '
-                        + 'name="download" value="{[t(\'download\')]}"/></tpl>',
-                        '</div>',
-                        '</li>',
-                        '</tpl>',
-                        '</ul>'
-                        ),
+                columns: [
+                    {header: "", sortable: true, dataIndex: 'key', editable: false, width: 40},
+                    {header: "", sortable: true, dataIndex: 'key', editable: false, width: 40,
+                                    renderer: function(data){
+                                        return '<img src="/admin/misc/get-language-flag?language=' + data + '" alt="" />';
+                                    }
+                    },
 
-                itemSelector: 'li.language',
-                overClass   : 'language-hover',
-                singleSelect: true,
-                multiSelect : true,
-                autoScroll  : true,
-                listeners:{
-                    click: function(dataView, index, node, e) {
-                        var target = e.getTarget();
-                        if (target.name == "update" || target.name == "download") {
-                            this.download(index);
-                        }    
-                    }.bind(this)
-                }
+                    {header: "", sortable: true, dataIndex: 'name', editable: false, width: 200},
+                    {header: "", sortable: true, dataIndex: 'percent', editable: false, width: 150,
+                                    renderer: function(data){
+                                        return data+'% '+t('language_translation_percentage');
+                                    }
+                    },
+                    {
+                        xtype: 'actioncolumn',
+                        width: 30,
+                        tooltip: 'language_download',
+                        items: [
+                            {
 
+                                getClass: function(v, meta, rec) {
+                                                        if (rec.get('exists') > 0) {
+                                                            return 'pimcore_icon_language_update';
+                                                        } else {
+                                                            return 'pimcore_icon_language_download';
+                                                        }
+                                                    },
+
+                                handler: function(grid, rowIndex, colIndex) {
+                                        this.download(rowIndex);
+                                }.bind(this)
+                            }
+                        ]
+                    }
+
+                ]
             });
-*/
+
             this.panel = new Ext.Panel({
                 id: "languages_overview",
                 title: t("language_download"),
@@ -163,11 +121,9 @@ pimcore.settings.languages = Class.create({
             },
             success: this.downloadcomplete.bind(this)
         });
-
     },
 
     downloadcomplete: function(response) {
-
 
         this.downloadMask.hide();
       
@@ -197,9 +153,5 @@ pimcore.settings.languages = Class.create({
                 buttons: Ext.Msg.OK
             });
         }
-
-
     }
-
-
 });

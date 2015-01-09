@@ -26,7 +26,7 @@
 <body>
 
 <script type="text/javascript">
-    var pimcore_version = "<?php echo Pimcore_Version::getVersion() ?>";
+    var pimcore_version = "<?php echo \Pimcore\Version::getVersion() ?>";
 </script>
 
 <?php

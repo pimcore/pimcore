@@ -229,6 +229,8 @@ abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
             } else {
                 $value = $value->__toString();
             }
+        } elseif (is_array($value)) {
+            $value = $this->_implodeRecursive($value);
         } else {
             $value = implode((array) $value);
         }
@@ -252,6 +254,26 @@ abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
         }
 
         return $message;
+    }
+
+    /**
+     * Joins elements of a multidimensional array
+     *
+     * @param array $pieces
+     * @return string
+     */
+    protected function _implodeRecursive(array $pieces)
+    {
+        $values = array();
+        foreach ($pieces as $item) {
+            if (is_array($item)) {
+                $values[] = $this->_implodeRecursive($item);
+            } else {
+                $values[] = $item;
+            }
+        }
+
+        return implode(', ', $values);
     }
 
     /**

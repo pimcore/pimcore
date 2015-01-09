@@ -159,8 +159,6 @@ class Zend_Feed_Reader_Extension_Atom_Entry
             }
         }
 
-        //var_dump($content); exit;
-
         if (!$content) {
             $content = $this->getDescription();
         }

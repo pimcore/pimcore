@@ -15,11 +15,15 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Data_Hotspotimage {
+namespace Pimcore\Model\Object\Data;
 
+use Pimcore\Model;
+use Pimcore\Model\Asset;
+
+class Hotspotimage {
 
     /**
-     * @var Asset_Image
+     * @var Asset\Image
      */
     public $image;
 
@@ -38,12 +42,17 @@ class Object_Data_Hotspotimage {
      */
     public $crop;
 
-
+    /**
+     * @param null $image
+     * @param array $hotspots
+     * @param array $marker
+     * @param array $crop
+     */
     public function __construct($image = null, $hotspots = [], $marker = array(), $crop = array()) {
-        if($image instanceof Asset_Image) {
+        if($image instanceof Asset\Image) {
             $this->image = $image;
         } else if (is_numeric($image)){
-            $this->image = Asset_Image::getById($image);
+            $this->image = Asset\Image::getById($image);
         }
 
         if(is_array($hotspots)) {
@@ -65,20 +74,34 @@ class Object_Data_Hotspotimage {
         }
     }
 
+    /**
+     * @param $hotspots
+     * @return $this
+     */
     public function setHotspots($hotspots) {
         $this->hotspots = $hotspots;
         return $this;
     }
 
+    /**
+     * @return array|\array[]
+     */
     public function getHotspots() {
         return $this->hotspots;
     }
 
+    /**
+     * @param $marker
+     * @return $this
+     */
     public function setMarker($marker) {
         $this->marker = $marker;
         return $this;
     }
 
+    /**
+     * @return array|\array[]
+     */
     public function getMarker() {
         return $this->marker;
     }
@@ -99,15 +122,26 @@ class Object_Data_Hotspotimage {
         return $this->crop;
     }
 
+    /**
+     * @param $image
+     * @return $this
+     */
     public function setImage($image) {
         $this->image = $image;
         return $this;
     }
 
+    /**
+     * @return Asset|Asset\Image
+     */
     public function getImage() {
         return $this->image;
     }
 
+    /**
+     * @param null $thumbnailName
+     * @return mixed
+     */
     public function getThumbnail($thumbnailName = null) {
 
         if(!$this->getImage()) {
@@ -121,7 +155,7 @@ class Object_Data_Hotspotimage {
 
         $thumbConfig = $this->getImage()->getThumbnailConfig($thumbnailName);
         if(!$thumbConfig && $crop) {
-            $thumbConfig = new Asset_Image_Thumbnail_Config();
+            $thumbConfig = new Asset\Image\Thumbnail\Config();
         }
 
         if($crop) {
@@ -132,13 +166,16 @@ class Object_Data_Hotspotimage {
                 "x" => $crop["cropLeft"]
             ));
 
-            $hash = md5(Pimcore_Tool_Serialize::serialize($thumbConfig->getItems()));
+            $hash = md5(\Pimcore\Tool\Serialize::serialize($thumbConfig->getItems()));
             $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);
         }
 
         return $this->getImage()->getThumbnail($thumbConfig);
     }
 
+    /**
+     * @return string
+     */
     public function __toString() {
         if($this->image) {
             return $this->image->__toString();

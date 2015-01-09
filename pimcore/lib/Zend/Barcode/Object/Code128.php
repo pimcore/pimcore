@@ -259,6 +259,8 @@ class Zend_Barcode_Object_Code128 extends Zend_Barcode_Object_ObjectAbstract
 
     /**
      * Convert string to barcode string
+     *
+     * @param $string
      * @return array
      */
     protected function _convertToBarcodeChars($string)
@@ -380,8 +382,10 @@ class Zend_Barcode_Object_Code128 extends Zend_Barcode_Object_ObjectAbstract
 
     /**
      * Standard validation for most of barcode objects
+     *
      * @param string $value
      * @param array  $options
+     * @return bool
      */
     protected function _validateText($value, $options = array())
     {

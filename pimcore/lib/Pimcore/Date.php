@@ -13,11 +13,23 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Date extends Zend_Date {
+namespace Pimcore;
 
+class Date extends \Zend_Date {
+
+    /**
+     *
+     */
     const MYSQL_DATETIME = 'YYYY-MM-dd HH:mm:ss';
+
+    /**
+     *
+     */
     const MYSQL_DATE     = 'YYYY-MM-dd';
 
+    /**
+     * @throws \Zend_Date_Exception
+     */
     public function __wakeup () {
         $this->setLocale(null);
     }

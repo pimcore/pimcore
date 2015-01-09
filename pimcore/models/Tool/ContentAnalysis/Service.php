@@ -15,8 +15,15 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_ContentAnalysis_Service extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Tool\ContentAnalysis;
 
+use Pimcore\Model;
+
+class Service extends Model\AbstractModel {
+
+    /**
+     * @param null $data
+     */
     public function getAggregatedOverviewData($data = null) {
 
     }

@@ -13,32 +13,90 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
-class Pimcore_View_Helper_PimcoreNavigation extends Zend_View_Helper_Abstract
+
+namespace Pimcore\View\Helper;
+
+use Pimcore\Model\Document;
+
+class PimcoreNavigation extends \Zend_View_Helper_Navigation
 {
+    /**
+     * @var PimcoreNavigationController
+     */
     public static $_controller;
 
+    /**
+     * @return PimcoreNavigationController
+     */
     public static function getController()
     {
         if (!self::$_controller) {
-            self::$_controller = new Pimcore_View_Helper_PimcoreNavigation_Controller();
+            self::$_controller = new PimcoreNavigationController();
         }
 
         return self::$_controller;
     }
 
-    public function pimcoreNavigation()
+    /**
+     * @return PimcoreNavigationController
+     */
+    public function pimcoreNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null)
     {
-        return self::getController();
+
+        $controller = self::getController();
+
+        if($activeDocument) {
+            // this is the new more convenient way of creating a navigation
+            $navContainer = $controller->getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix);
+            $this->navigation($navContainer);
+            $this->setUseTranslator(false);
+            $this->setInjectTranslator(false);
+            return $this;
+        } else {
+            // this is the old-style navigation
+            return $controller;
+        }
     }
 
+    /**
+     * @param string $method
+     * @param array $arguments
+     * @return mixed
+     */
+    public function __call($method, array $arguments = array())
+    {
+        $return = parent::__call($method, $arguments);
+
+        // disable the translator per default, because this isn't necessary for pimcore
+        if(is_object($return) && method_exists($return, "setUseTranslator")) {
+            $return->setUseTranslator(false);
+        }
+
+        return $return;
+    }
 }
 
-class Pimcore_View_Helper_PimcoreNavigation_Controller
+class PimcoreNavigationController
 {
+    /**
+     * @var Document
+     */
     protected $_activeDocument;
+
+    /**
+     * @var
+     */
     protected $_navigationContainer;
+
+    /**
+     * @var string
+     */
     protected $_htmlMenuIdPrefix;
-    protected $_pageClass = 'Pimcore_Navigation_Page_Uri';
+
+    /**
+     * @var string
+     */
+    protected $_pageClass = '\\Pimcore\\Navigation\\Page\\Uri';
 
     public function getNavigation($activeDocument, $navigationRootDocument = null, $htmlMenuIdPrefix = null)
     {
@@ -46,7 +104,7 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
         $this->_activeDocument = $activeDocument;
         $this->_htmlMenuIdPrefix = $htmlMenuIdPrefix;
 
-        $this->_navigationContainer = new Zend_Navigation();
+        $this->_navigationContainer = new \Zend_Navigation();
 
         if (!$navigationRootDocument) {
             $navigationRootDocument = Document::getById(1);
@@ -59,10 +117,8 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
     }
 
     /**
-     * sets the name of the pageclass (class must extend Zend_Navigation_Page)
-     * 
-     * @param type $pageClass
-     * @return Pimcore_View_Helper_PimcoreNavigation_Controller fluent interface, returns self
+     * @param $pageClass
+     * @return $this
      */
     public function setPageClass($pageClass)
     {
@@ -90,9 +146,10 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
     }
 
     /**
-     * @param  Document $parentDocument
-     * @param  Pimcore_Navigation_Page_Uri $parentPage
-     * @return void
+     * @param $parentDocument
+     * @param null $parentPage
+     * @param bool $isRoot
+     * @return array
      */
     protected function buildNextLevel($parentDocument, $parentPage = null, $isRoot = false)
     {
@@ -103,11 +160,11 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
             foreach ($childs as $child) {
                 $classes = "";
 
-                if($child instanceof Document_Hardlink) {
-                    $child = Document_Hardlink_Service::wrap($child);
+                if($child instanceof Document\Hardlink) {
+                    $child = Document\Hardlink\Service::wrap($child);
                 }
 
-                if (($child instanceof Document_Page or $child instanceof Document_Link) and $child->getProperty("navigation_name")) {
+                if (($child instanceof Document\Page or $child instanceof Document\Link) and $child->getProperty("navigation_name")) {
 
                     $active = false;
 
@@ -119,14 +176,18 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
 
                     // if the child is a link, check if the target is the same as the active document
                     // if so, mark it as active
-                    if($child instanceof Document_Link) {
-                        if ($this->_activeDocument->getRealFullPath() == $child->getHref()) {
+                    if($child instanceof Document\Link) {
+                        if ($this->_activeDocument->getFullPath() == $child->getHref()) {
                             $active = true;
+                        }
+
+                        if (strpos($this->_activeDocument->getFullPath(), $child->getHref() . "/") === 0) {
+                            $classes .= " active active-trail";
                         }
                     }
 
                     $path = $child->getFullPath();
-                    if ($child instanceof Document_Link) {
+                    if ($child instanceof Document\Link) {
                         $path = $child->getHref();
                     }
                     

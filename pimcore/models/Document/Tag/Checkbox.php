@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Checkbox extends Document_Tag {
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Model;
+
+class Checkbox extends Model\Document\Tag {
 
     /**
      * Contains the checkbox value
@@ -26,7 +30,7 @@ class Document_Tag_Checkbox extends Document_Tag {
 
 
     /**
-     * @see Document_Tag_Interface::getType
+     * @see Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType() {
@@ -34,7 +38,7 @@ class Document_Tag_Checkbox extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData() {
@@ -42,7 +46,7 @@ class Document_Tag_Checkbox extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::frontend
+     * @see Document\Tag\TagInterface::frontend
      * @return string
      */
     public function frontend() {
@@ -50,7 +54,7 @@ class Document_Tag_Checkbox extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
@@ -60,7 +64,7 @@ class Document_Tag_Checkbox extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
@@ -68,7 +72,6 @@ class Document_Tag_Checkbox extends Document_Tag {
         $this->value = $data;
         return $this;
     }
-
 
     /**
      * @return boolean
@@ -84,23 +87,17 @@ class Document_Tag_Checkbox extends Document_Tag {
         return $this->isEmpty();
     }
 
-
     /**
-        * Receives a Webservice_Data_Document_Element from webservice import and fill the current tag's data
-        *
-        * @abstract
-        * @param  Webservice_Data_Document_Element $data
-        * @return void
-        */
-       public function getFromWebserviceImport($wsElement, $idMapper = null){
-           $data = $wsElement->value;
-           if($data->bool === null or is_bool($data)){
-                $this->value = (bool) $data->value;
-           } else {
-               throw new Exception("cannot get values from web service import - invalid data");
-           }
-
+     * @param Model\Document\Webservice\Data\Document\Element $wsElement
+     * @param null $idMapper
+     * @throws \Exception
+     */
+    public function getFromWebserviceImport($wsElement, $idMapper = null){
+       $data = $wsElement->value;
+       if($data->bool === null or is_bool($data)){
+            $this->value = (bool) $data->value;
+       } else {
+           throw new \Exception("cannot get values from web service import - invalid data");
        }
-
-
+    }
 }

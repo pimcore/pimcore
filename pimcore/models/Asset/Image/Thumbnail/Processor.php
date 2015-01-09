@@ -14,8 +14,14 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Asset_Image_Thumbnail_Processor {
+
+namespace Pimcore\Model\Asset\Image\Thumbnail;
+
+use Pimcore\File; 
+use Pimcore\Tool\StopWatch;
+use Pimcore\Model\Asset;
+
+class Processor {
 
 
     protected static $argumentMapping = array(
@@ -37,6 +43,7 @@ class Asset_Image_Thumbnail_Processor {
         "grayscale" => array(),
         "sepia" => array(),
         "sharpen" => array('radius', 'sigma', 'amount', 'threshold'),
+        "gaussianBlur" => array('radius', 'sigma'),
         "mirror" => array("mode")
     );
 
@@ -67,12 +74,12 @@ class Asset_Image_Thumbnail_Processor {
 
     /**
      * @param $asset
-     * @param Asset_Image_Thumbnail_Config $config
+     * @param Config $config
      * @param null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
      * @return mixed|string
      */
-    public static function process ($asset, Asset_Image_Thumbnail_Config $config, $fileSystemPath = null, $deferred = false) {
+    public static function process ($asset, Config $config, $fileSystemPath = null, $deferred = false) {
 
         $format = strtolower($config->getFormat());
         $contentOptimizedFormat = false;
@@ -84,7 +91,9 @@ class Asset_Image_Thumbnail_Processor {
 
         if($asset instanceof Asset) {
             $id = $asset->getId();
-            $modificationDate = $asset->getModificationDate();
+            // do not use the asset modification date because not every modification of an asset has an impact on the
+            // binary data on the hdd (e.g. meta-data, properties, ...), so it's better to use the filemtime instead
+            $modificationDate = filemtime($asset->getFileSystemPath());
         } else {
             $id = "dyn~" . crc32($fileSystemPath);
             if(file_exists($fileSystemPath)) {
@@ -92,7 +101,7 @@ class Asset_Image_Thumbnail_Processor {
             }
         }
 
-        $fileExt = Pimcore_File::getFileExtension(basename($fileSystemPath));
+        $fileExt = File::getFileExtension(basename($fileSystemPath));
 
         // simple detection for source type if SOURCE is selected
         if($format == "source" || empty($format)) {
@@ -103,7 +112,7 @@ class Asset_Image_Thumbnail_Processor {
         if($format == "print") {
             $format = self::getAllowedFormat($fileExt, array("svg","jpeg","png","tiff"), "png");
 
-            if(($format == "tiff" || $format == "svg") && Pimcore_Tool::isFrontentRequestByAdmin()) {
+            if(($format == "tiff" || $format == "svg") && \Pimcore\Tool::isFrontentRequestByAdmin()) {
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = "png";
             } else if($format == "tiff") {
@@ -125,7 +134,7 @@ class Asset_Image_Thumbnail_Processor {
 
 
         $thumbDir = $asset->getImageThumbnailSavePath() . "/thumb__" . $config->getName();
-        $filename = preg_replace("/\." . preg_quote(Pimcore_File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename());
+        $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename());
         // add custom suffix if available
         if($config->getFilenameSuffix()) {
             $filename .= "~-~" . $config->getFilenameSuffix();
@@ -139,7 +148,7 @@ class Asset_Image_Thumbnail_Processor {
         $fsPath = $thumbDir . "/" . $filename;
 
         if(!is_dir(dirname($fsPath))) {
-            Pimcore_File::mkdir(dirname($fsPath));
+            File::mkdir(dirname($fsPath));
         }
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
 
@@ -148,7 +157,7 @@ class Asset_Image_Thumbnail_Processor {
         // so that it can be used also with dynamic configurations
         if($deferred) {
             $configPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/thumb_" . $id . "__" . md5($path) . ".deferred.config";
-            Pimcore_File::put($configPath, Pimcore_Tool_Serialize::serialize($config));
+            File::put($configPath, \Pimcore\Tool\Serialize::serialize($config));
 
             return $path;
         }
@@ -159,7 +168,7 @@ class Asset_Image_Thumbnail_Processor {
         }
 
         // transform image
-        $image = Asset_Image::getImageTransformInstance();
+        $image = Asset\Image::getImageTransformInstance();
         if(!$image->load($fileSystemPath)) {
             return "/pimcore/static/img/filetype-not-supported.png";
         }
@@ -167,7 +176,7 @@ class Asset_Image_Thumbnail_Processor {
         $image->setUseContentOptimizedFormat($contentOptimizedFormat);
 
 
-        $startTime = Pimcore_Tool_StopWatch::microtime_float();
+        $startTime = StopWatch::microtime_float();
 
         $transformations = $config->getItems();
 
@@ -252,12 +261,16 @@ class Asset_Image_Thumbnail_Processor {
         $image->save($fsPath, $format, $config->getQuality());
 
         if($contentOptimizedFormat) {
-            Pimcore_Image_Optimizer::optimize($fsPath);
+            \Pimcore\Image\Optimizer::optimize($fsPath);
+            // @TODO: asynchronous optimizing images
         }
 
         clearstatcache();
 
-        Logger::debug("Thumbnail " . $path . " generated in " . (Pimcore_Tool_StopWatch::microtime_float() - $startTime) . " seconds");
+        \Logger::debug("Thumbnail " . $path . " generated in " . (StopWatch::microtime_float() - $startTime) . " seconds");
+
+        // set proper permissions
+        @chmod($fsPath, File::getDefaultMode());
 
         // quick bugfix / workaround, it seems that imagemagick / image optimizers creates sometimes empty PNG chunks (total size 33 bytes)
         // no clue why it does so as this is not continuous reproducible, and this is the only fix we can do for now

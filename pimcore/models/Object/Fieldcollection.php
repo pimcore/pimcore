@@ -10,12 +10,16 @@
  * http://www.pimcore.org/license
  *
  * @category   Pimcore
- * @package    Object_Fieldcollection
+ * @package    Object\Fieldcollection
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Fieldcollection extends Pimcore_Model_Abstract implements Iterator {
+namespace Pimcore\Model\Object;
+
+use Pimcore\Model;
+
+class Fieldcollection extends Model\AbstractModel implements \Iterator {
 
     /**
      * @var array
@@ -85,7 +89,7 @@ class Object_Fieldcollection extends Pimcore_Model_Abstract implements Iterator 
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      * @param $object
      * @return void
      */
@@ -97,7 +101,7 @@ class Object_Fieldcollection extends Pimcore_Model_Abstract implements Iterator 
         if(is_array($this->getItems())) {
             $index = 0;
             foreach ($this->getItems() as $collection) {
-                if($collection instanceof Object_Fieldcollection_Data_Abstract) {
+                if($collection instanceof Fieldcollection\Data\AbstractData) {
                     if(in_array($collection->getType(),$allowedTypes)) {
                         $collection->setFieldname($this->getFieldname());
                         $collection->setIndex($index++);
@@ -106,7 +110,7 @@ class Object_Fieldcollection extends Pimcore_Model_Abstract implements Iterator 
                         $collection->setObject($object);
                         $collection->save($object);
                     } else {
-                        throw new Exception("Fieldcollection of type " . $collection->getType() . " is not allowed in field: " . $this->getFieldname());
+                        throw new \Exception("Fieldcollection of type " . $collection->getType() . " is not allowed in field: " . $this->getFieldname());
                     }
                 }
             }

@@ -1,5 +1,3 @@
-
-
 <?php $this->template("/includes/content-headline.php"); ?>
 
 
@@ -122,7 +120,10 @@
             <h3>Video</h3>
         </div>
        <?= $this->video("myVideo", [
-            "html5" => true,
+           "attributes" => [
+               "class" => "video-js vjs-default-skin vjs-big-play-centered",
+               "data-setup" => "{}"
+            ],
             "thumbnail" => "content",
             "height" => 380
        ]); ?>

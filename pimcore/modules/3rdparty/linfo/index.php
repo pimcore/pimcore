@@ -30,7 +30,7 @@ include("../../../cli/startup.php");
 chdir($workingDirectory);
 
 // only for logged in users
-$user = Pimcore_Tool_Authentication::authenticateSession();
+$user = \Pimcore\Tool\Authentication::authenticateSession();
 if(!$user instanceof User) {
     die("Authentication failed!");
 }

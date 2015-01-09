@@ -3,6 +3,8 @@
 
     try {
 
+        document.write('<link rel="stylesheet" type="text/css" href="/pimcore/static/js/frontend/admin/admin.css" />');
+
         var openWindow = function (width, height, url) {
 
             var remove = function () {

@@ -34,14 +34,20 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
             header:ts(field.label),
             dataIndex:field.key,
             renderer:function (key, value, metaData, record, rowIndex, colIndex, store) {
+                var key = field.key;
+                var noteditable = field.layout.noteditable;
                 this.applyPermissionStyle(key, value, metaData, record);
 
                 if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.css += " grid_value_inherited";
                 }
+                if (noteditable) {
+                    metaData.css += ' grid_cbx_noteditable';
+
+                }
                 metaData.css += ' x-grid3-check-col-td';
                 return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
-            }.bind(this, field.key)
+            }.bind(this, field)
         });
     },
 

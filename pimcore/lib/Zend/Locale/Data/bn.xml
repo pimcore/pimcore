@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9967 $"/>
+		<generation date="$Date: 2014-03-14 12:20:13 -0500 (Fri, 14 Mar 2014) $"/>
 		<language type="bn"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,48 +25,37 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady" draft="contributed">আদেগে</language>
 			<language type="ae" draft="contributed">আবেস্তীয়</language>
 			<language type="af">আফ্রিকান্স</language>
-			<language type="afa" draft="contributed">অফ্রো-এশিয়াটিক</language>
 			<language type="afh">আফ্রিহিলি</language>
 			<language type="ain">আইনু</language>
 			<language type="ak">আকান</language>
 			<language type="akk">আক্কাদিয়ান</language>
 			<language type="ale" draft="contributed">আলেউত</language>
-			<language type="alg" draft="contributed">আলগোঙকুইআন</language>
 			<language type="alt" draft="contributed">দক্ষিন আলতাই</language>
 			<language type="am">আমহারিক</language>
 			<language type="an" draft="contributed">আর্গোনিজ</language>
 			<language type="ang">প্রাচীন ইংরেজী</language>
 			<language type="anp" draft="contributed">আঙ্গীকা</language>
-			<language type="apa" draft="contributed">অ্যাপাচি</language>
 			<language type="ar">আরবী</language>
 			<language type="ar_001">আধুনিক আদর্শ আরবী</language>
 			<language type="arc">আরামাইক</language>
 			<language type="arn" draft="contributed">অ্যারোকেনিয়</language>
 			<language type="arp">আরাপাহো</language>
-			<language type="art" draft="contributed">কৃত্রিম</language>
 			<language type="arw">আরাওয়াক</language>
 			<language type="as">আসামি</language>
 			<language type="ast" draft="contributed">আস্তুরিয়</language>
-			<language type="ath" draft="contributed">আথাপাস্কান</language>
-			<language type="aus" draft="contributed">অস্ট্রেলিয়</language>
 			<language type="av">আভেরিক</language>
 			<language type="awa" draft="contributed">আওয়াধি</language>
 			<language type="ay">আয়মারা</language>
 			<language type="az">আজারবাইজানীয়</language>
 			<language type="az" alt="short">আজেরি</language>
 			<language type="ba">বাশকির</language>
-			<language type="bad">বান্দা</language>
-			<language type="bai">বামিলেকে ভাষা</language>
 			<language type="bal">বেলুচী</language>
 			<language type="ban" draft="contributed">বালিনীয়</language>
 			<language type="bas">বাসা</language>
-			<language type="bat">বাল্টিক ভাষা</language>
 			<language type="be">বেলারুশিয়</language>
 			<language type="bej">বেজা</language>
 			<language type="bem">বেম্বা</language>
-			<language type="ber">বেরবের</language>
 			<language type="bg">বুলগেরিয়</language>
-			<language type="bh">বিহারি</language>
 			<language type="bho">ভোজপুরি</language>
 			<language type="bi">বিসলামা</language>
 			<language type="bik">বিকোল</language>
@@ -74,24 +63,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">সিকসিকা</language>
 			<language type="bm">বামবারা</language>
 			<language type="bn">বাংলা</language>
-			<language type="bnt">বান্টু</language>
 			<language type="bo">তিব্বতি</language>
 			<language type="br">ব্রেটন</language>
 			<language type="bra">ব্রাজ</language>
 			<language type="bs">বসনীয়</language>
-			<language type="btk" draft="contributed">বাতাক</language>
 			<language type="bua">বুরিয়াত</language>
 			<language type="bug" draft="contributed">বুগিনি</language>
 			<language type="byn">ব্লিন</language>
 			<language type="ca">কাতালান</language>
 			<language type="cad" draft="contributed">ক্যাডো</language>
-			<language type="cai" draft="contributed">মধ্য যুক্তরাষ্ঠের আদিবাসীদের ভাষা</language>
 			<language type="car">ক্যারিব</language>
-			<language type="cau" draft="contributed">ককেশীয</language>
 			<language type="cch">আত্সাম</language>
 			<language type="ce">চেচেন</language>
 			<language type="ceb" draft="contributed">চেবুয়ানো</language>
-			<language type="cel" draft="contributed">কেল্টিক</language>
 			<language type="ch" draft="contributed">চামেরো</language>
 			<language type="chb">চিবচা</language>
 			<language type="chg" draft="contributed">চাগাতাই</language>
@@ -103,25 +87,18 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">চেরোকি</language>
 			<language type="chy" draft="contributed">শাইয়েন</language>
 			<language type="ckb" draft="contributed">সোরানি কুর্দিশ</language>
-			<language type="cmc">চামিক ভাষা</language>
 			<language type="co" draft="contributed">কর্সিকান</language>
 			<language type="cop" draft="contributed">কপটিক</language>
-			<language type="cpe" draft="contributed">ইংরেজি জাত ক্রেওল অথবা পিজিন</language>
-			<language type="cpf" draft="contributed">ফরাসি জাত ক্রেওল অথবা পিজিন</language>
-			<language type="cpp">পোর্তুগিজ-ভিত্তিক ক্রেওল বা পিজন</language>
 			<language type="cr">ক্রি</language>
 			<language type="crh">ক্রিমিয়ান তুর্কি</language>
-			<language type="crp">ক্রেওল অথবা পিজিন</language>
 			<language type="cs">চেক</language>
 			<language type="csb">কাশুবিয়ান</language>
 			<language type="cu" draft="contributed">চার্চ স্লাভিও</language>
-			<language type="cus">কুশিতিক ভাষা</language>
 			<language type="cv" draft="contributed">চুবাস</language>
 			<language type="cy">ওয়েলশ</language>
 			<language type="da">ডেনিশ</language>
 			<language type="dak">ডাকোটা</language>
 			<language type="dar">দার্গওয়া</language>
-			<language type="day" draft="contributed">দায়াক</language>
 			<language type="de">জার্মান</language>
 			<language type="de_AT">অস্ট্রিয়ান জার্মানি</language>
 			<language type="de_CH">সুইস উচ্চ জার্মানি</language>
@@ -130,7 +107,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="dgr">দোগ্রীব</language>
 			<language type="din" draft="contributed">ডিংকা</language>
 			<language type="doi" draft="contributed">দোগরি</language>
-			<language type="dra">দ্রাবীড় ভাষা</language>
 			<language type="dsb" draft="contributed">নিম্নতর সোর্বিয়ান</language>
 			<language type="dua">দুয়ালা</language>
 			<language type="dum">মধ্য ডাচ</language>
@@ -165,7 +141,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff" draft="contributed">ফুলাহ্</language>
 			<language type="fi">ফিনিশ</language>
 			<language type="fil">ফিলিপিনো</language>
-			<language type="fiu" draft="contributed">ফিনো-ইউগ্রিক</language>
 			<language type="fj">ফিজিও</language>
 			<language type="fo">ফেরাউনি</language>
 			<language type="fon" draft="contributed">ফন</language>
@@ -183,7 +158,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay" draft="contributed">গায়ো</language>
 			<language type="gba" draft="contributed">বায়া</language>
 			<language type="gd">স্কটস-গ্যেলিক</language>
-			<language type="gem">জার্মানিক ভাষা</language>
 			<language type="gez" draft="contributed">গীজ</language>
 			<language type="gil">গিলবার্টিজ</language>
 			<language type="gl">গ্যালিশিয়</language>
@@ -205,7 +179,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">হিব্রু</language>
 			<language type="hi">হিন্দি</language>
 			<language type="hil" draft="contributed">হিলিগ্যায়নোন</language>
-			<language type="him">হিমাচালি</language>
 			<language type="hit" draft="contributed">হিট্টিট</language>
 			<language type="hmn" draft="contributed">হ্‌মোঙ</language>
 			<language type="ho">হিরি মোতু</language>
@@ -222,15 +195,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">ইন্টারলিঙ্গ</language>
 			<language type="ig">ইগ্‌বো</language>
 			<language type="ii">সিচুয়ান য়ি</language>
-			<language type="ijo">ইজো</language>
 			<language type="ik">ইনুপিয়াক</language>
 			<language type="ilo">ইলোকো</language>
-			<language type="inc">ভারতীয় ভাষা</language>
-			<language type="ine">ইন্দো-ইউরোপীয় ভাষা</language>
 			<language type="inh">ইঙ্গুশ</language>
 			<language type="io">ইডো</language>
-			<language type="ira">ইরানী ভাষা</language>
-			<language type="iro">ইরোকোইয়ান ভাষা</language>
 			<language type="is">আইসল্যান্ডীয়</language>
 			<language type="it">ইতালীয়</language>
 			<language type="iu">ইনুক্টিটুট</language>
@@ -245,14 +213,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">কাচিন</language>
 			<language type="kaj" draft="contributed">অজ্জু</language>
 			<language type="kam">কাম্বা</language>
-			<language type="kar">কারেন</language>
 			<language type="kaw">কাউই</language>
 			<language type="kbd">কাবার্ডিয়ান</language>
 			<language type="kcg" draft="contributed">টাইয়াপ</language>
 			<language type="kfo">কোরো</language>
 			<language type="kg">কঙ্গো</language>
 			<language type="kha">খাশি</language>
-			<language type="khi" draft="contributed">খোয়েশান ভাষা</language>
 			<language type="kho">খোটানিজ</language>
 			<language type="ki">কিকু্ইয়ু</language>
 			<language type="kj">কোয়ানিয়ামা</language>
@@ -268,7 +234,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">কানুরি</language>
 			<language type="krc">কারচে-বাল্কার</language>
 			<language type="krl">কারেলিয়ান</language>
-			<language type="kro">ক্রু</language>
 			<language type="kru">কুরুখ</language>
 			<language type="ks">কাশ্মীরী</language>
 			<language type="ku">কুর্দি</language>
@@ -302,7 +267,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">মৈথিলি</language>
 			<language type="mak">ম্যাকাসার</language>
 			<language type="man">ম্যান্ডিঙ্গো</language>
-			<language type="map" draft="contributed">অস্ট্রোনেশীয়</language>
 			<language type="mas">মাসাই</language>
 			<language type="mdf">মোকশা</language>
 			<language type="mdr" draft="contributed">ম্যাণ্ডার</language>
@@ -314,31 +278,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">মাওরি</language>
 			<language type="mic">মিকম্যাক</language>
 			<language type="min" draft="contributed">মিনাঙ্গ্‌কাবাউ</language>
-			<language type="mis">বিবিধ ভাষা</language>
 			<language type="mk">ম্যাসেডোনীয়</language>
-			<language type="mkh">মন-খমের ভাষা</language>
 			<language type="ml">মালেয়ালাম</language>
 			<language type="mn" draft="contributed">মঙ্গোলিয়</language>
 			<language type="mnc">মাঞ্চু</language>
 			<language type="mni">মণিপুরী</language>
-			<language type="mno">ম্যানোবো ভাষা</language>
-			<language type="mo">মলদাভিয়</language>
 			<language type="moh">মোহাওক</language>
 			<language type="mos">মসি</language>
 			<language type="mr">মারাঠি</language>
 			<language type="ms">মালে</language>
 			<language type="mt">মল্টিয়</language>
 			<language type="mul">বহুগুণিতক ভাষাসমূহ</language>
-			<language type="mun">মুণ্ডা ভাষা</language>
 			<language type="mus">ক্রিক</language>
 			<language type="mwl">মিরান্ডিজ</language>
 			<language type="mwr" draft="contributed">মারোয়ারি</language>
 			<language type="my">বর্মি</language>
-			<language type="myn">মায়ান ভাষা</language>
 			<language type="myv" draft="contributed">এরজিয়া</language>
 			<language type="na">নাউরু</language>
-			<language type="nah" draft="contributed">নাহুৎল</language>
-			<language type="nai" draft="contributed">উত্তৱ আমেরিকার ইন্ডিয়ান ভাষা</language>
 			<language type="nap">নেয়াপোলিটান</language>
 			<language type="nb">নরওয়ে বোকমাল</language>
 			<language type="nd" draft="contributed">উত্তর এন্দেবিলি</language>
@@ -347,7 +303,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">নেওয়ারি</language>
 			<language type="ng" draft="contributed">এন্দোঙ্গা</language>
 			<language type="nia">নিয়াস</language>
-			<language type="nic">নাইজার-কোর্ডোফানিয়ান ভাষা</language>
 			<language type="niu">নিউয়ান</language>
 			<language type="nl">ডাচ</language>
 			<language type="nl_BE">ফ্লেমিশ</language>
@@ -358,7 +313,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">এন’কো</language>
 			<language type="nr">দক্ষিণ এনডেবেলে</language>
 			<language type="nso">উত্তরাঞ্চলীয় সোথো</language>
-			<language type="nub">নুবিয়ান ভাষা</language>
 			<language type="nv">নাভাজো</language>
 			<language type="nwc" draft="contributed">প্রাচীন নেওয়ারী</language>
 			<language type="ny">নায়াঞ্জা</language>
@@ -373,21 +327,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">ওসেটিক</language>
 			<language type="osa">ওসেজ</language>
 			<language type="ota">অটোমান তুর্কি</language>
-			<language type="oto" draft="contributed">অটোমান ভাষা</language>
 			<language type="pa">পাঞ্জাবী</language>
-			<language type="paa">পাপুয়ান ভাষা</language>
 			<language type="pag">পাঙ্গাসিনান</language>
 			<language type="pal" draft="contributed">পাহ্লাভি</language>
 			<language type="pam">পাম্পাঙ্গা</language>
 			<language type="pap">পাপিয়ামেন্টো</language>
 			<language type="pau">পালায়ুয়ান</language>
 			<language type="peo">প্রাচীন ফার্সি</language>
-			<language type="phi">ফিলিপাইন ভাষা</language>
 			<language type="phn">ফোনিশীয়ান</language>
 			<language type="pi">পালি</language>
 			<language type="pl">পোলিশ</language>
 			<language type="pon">পোহ্নপেইয়ান</language>
-			<language type="pra">প্রাকৃত ভাষা</language>
 			<language type="pro">প্রাচীন প্রোভেনসাল</language>
 			<language type="ps">পশ্তু</language>
 			<language type="ps" alt="variant">পুশতো</language>
@@ -401,7 +351,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">রোমান্স</language>
 			<language type="rn">রুন্দি</language>
 			<language type="ro">রোমানীয়</language>
-			<language type="roa">রোমান ভাষা</language>
+			<language type="ro_MD">মলদাভিয়</language>
 			<language type="rom">রোমানি</language>
 			<language type="root">মূল</language>
 			<language type="ru">রুশ</language>
@@ -410,8 +360,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">সংষ্কৃত</language>
 			<language type="sad">স্যান্ডাওয়ে</language>
 			<language type="sah">ইয়াকুট</language>
-			<language type="sai" draft="contributed">উত্তর আমেরিকান ইন্ডিয়ান ভাষা</language>
-			<language type="sal">শালিশান ভাষা</language>
 			<language type="sam">সামারিটান আরামিক</language>
 			<language type="sas">সাসাক</language>
 			<language type="sat">সাঁওতালি</language>
@@ -421,22 +369,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sd">সিন্ধি</language>
 			<language type="se">উত্তরাঞ্চলীয় সামি</language>
 			<language type="sel">সেল্কুপ</language>
-			<language type="sem">সেমেটিক ভাষা</language>
 			<language type="sg">সাঙ্গো</language>
 			<language type="sga">প্রাচীন আইরিশ</language>
-			<language type="sgn">চিহ্ন ভাষা</language>
 			<language type="sh">সার্বো-ক্রোয়েশিয়</language>
 			<language type="shn">শান</language>
 			<language type="si">সিংহলী</language>
 			<language type="sid">সিডামো</language>
-			<language type="sio">সিওয়ুয়ান ভাষা</language>
-			<language type="sit">সিনো-তিব্বোতীয় ভাষা</language>
 			<language type="sk">স্লোভাক</language>
 			<language type="sl">স্লোভেনীয়</language>
-			<language type="sla">স্ল্যাভিক ভাষা</language>
 			<language type="sm">সামোয়ান</language>
 			<language type="sma">দক্ষিণাঞ্চলীয় সামি</language>
-			<language type="smi">সামি ভাষা</language>
 			<language type="smj">লুলে সামি</language>
 			<language type="smn">ইনারি সামি</language>
 			<language type="sms">স্কোল্ট সামি</language>
@@ -444,13 +386,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">সোনিঙ্কে</language>
 			<language type="so">সোমালী</language>
 			<language type="sog">সোগডিয়ান</language>
-			<language type="son">সোঙ্গহাই</language>
 			<language type="sq">আলবেনীয়</language>
 			<language type="sr">সার্বীয়</language>
 			<language type="srn">স্রানান টোঙ্গো</language>
 			<language type="srr">সেরের</language>
 			<language type="ss">সোয়াতি</language>
-			<language type="ssa">নিলো-সাহারান ভাষা</language>
 			<language type="st" draft="contributed">দক্ষিন সোথো</language>
 			<language type="su">সুদানী</language>
 			<language type="suk">সুকুমা</language>
@@ -462,7 +402,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">প্রাচীন সিরিও</language>
 			<language type="syr">সিরিয়াক</language>
 			<language type="ta">তামিল</language>
-			<language type="tai">তাই ভাষা</language>
 			<language type="te">তেলেগু</language>
 			<language type="tem" draft="contributed">টাইম্নে</language>
 			<language type="ter">তেরেনো</language>
@@ -487,8 +426,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">সিমশিয়ান</language>
 			<language type="tt">তাতার</language>
 			<language type="tum">তুম্বুকা</language>
-			<language type="tup">তুপি ভাষা</language>
-			<language type="tut" draft="contributed">আলতায়ীক ভাষা</language>
 			<language type="tvl">টুভালু</language>
 			<language type="tw">টোয়াই</language>
 			<language type="ty">তাহিতিয়ান</language>
@@ -507,11 +444,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vo">ভোলাপুক</language>
 			<language type="vot">ভোটিক</language>
 			<language type="wa">ওয়ালুন</language>
-			<language type="wak">ওয়াকাশান ভাষা</language>
 			<language type="wal">ওয়ালামো</language>
 			<language type="war">ওয়ারে</language>
 			<language type="was">ওয়াশো</language>
-			<language type="wen">সোরবিয়ান ভাষা</language>
 			<language type="wo">উওলোফ</language>
 			<language type="xal">কাল্মইক</language>
 			<language type="xh">জোসা</language>
@@ -519,7 +454,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="yap" draft="contributed">ইয়াপেসে</language>
 			<language type="yi" draft="contributed">য়িদ্দিশ</language>
 			<language type="yo">ইওরুবা</language>
-			<language type="ypk">ইয়ুপিক ভাষা</language>
 			<language type="yue" draft="provisional">ক্যানটোনীজ</language>
 			<language type="za" draft="contributed">ঝু্য়াঙ</language>
 			<language type="zap">জাপোটেক</language>
@@ -529,7 +463,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">চীনা</language>
 			<language type="zh_Hans">সরলীকৃত চীনা</language>
 			<language type="zh_Hant">ঐতিহ্যবাহি চীনা</language>
-			<language type="znd" draft="contributed">জান্ডে</language>
 			<language type="zu">জুলু</language>
 			<language type="zun">জুনি</language>
 			<language type="zxx">ভাষাতাত্তিক বিষয়সূচী বহির্ভুত</language>
@@ -2001,9 +1934,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>পামার</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>দক্ষিণ মেরু</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>সিওয়া</exemplarCity>
 			</zone>
@@ -2276,9 +2206,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>টোরন্টো</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>মন্ট্রিয়াল</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>ইকুয়ালুইট</exemplarCity>
@@ -3122,9 +3049,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>ফিনিক্স</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>শিপ্রক</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>ডেনভার</exemplarCity>
@@ -4263,7 +4187,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 		<currencyFormats numberSystem="latn">
 			<currencyFormatLength>
 				<currencyFormat type="standard">
-					<pattern>#,##,##0.00¤;(#,##,##0.00¤)</pattern>
+					<pattern>#,##,##0.00¤</pattern>
 				</currencyFormat>
 				<currencyFormat type="accounting">
 					<pattern>#,##,##0.00¤;(#,##,##0.00¤)</pattern>
@@ -5512,8 +5436,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} ইঞ্চি</unitPattern>
 			</unit>
 			<unit type="length-kilometer">
-				<unitPattern count="one">{0} কিমি</unitPattern>
-				<unitPattern count="other">{0} কিমি</unitPattern>
+				<unitPattern count="one">{0} কিলোমিটার</unitPattern>
+				<unitPattern count="other">{0} কিলোমিটার</unitPattern>
 			</unit>
 			<unit type="length-light-year">
 				<unitPattern count="one">{0} আলোকবর্ষ</unitPattern>
@@ -5544,8 +5468,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} গ্রাম</unitPattern>
 			</unit>
 			<unit type="mass-kilogram">
-				<unitPattern count="one">{0} কেজি</unitPattern>
-				<unitPattern count="other">{0} কেজি</unitPattern>
+				<unitPattern count="one">{0} কিলোগ্রাম</unitPattern>
+				<unitPattern count="other">{0} কিলোগ্রাম</unitPattern>
 			</unit>
 			<unit type="mass-ounce">
 				<unitPattern count="one">{0} আউন্স</unitPattern>

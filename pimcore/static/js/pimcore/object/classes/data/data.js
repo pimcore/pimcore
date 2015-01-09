@@ -21,7 +21,7 @@ pimcore.object.classes.data.data = Class.create({
                 "fullpath","childs","values","cachetag","cachetags","parent","published","valuefromparent",
                 "userpermissions","dependencies","modificationdate","usermodification","byid","bypath","data",
                 "versions","properties","permissions","permissionsforuser","childamount","apipluginbroker","resource",
-                "parentClass","definition","locked","language","omitmandatorycheck", "idPath"
+                "parentClass","definition","locked","language","omitmandatorycheck", "idpath", "object", "fieldname"
             ],
 
     /**
@@ -188,26 +188,35 @@ pimcore.object.classes.data.data = Class.create({
             }
         ];
 
+        this.standardSettingsForm = new Ext.form.FormPanel(
+            {
+                xtype: "form",
+                title: t("general_settings") + " (" + niceName + ")",
+                bodyStyle: "padding: 10px;",
+                style: "margin: 10px 0 10px 0",
+                labelWidth: 140,
+                itemId: "standardSettings",
+                items: standardSettings
+            }
+        );
+
+        this.layoutSettingsForm = new Ext.form.FormPanel(
+            {
+                xtype: "form",
+                title: t("layout_settings"),
+                bodyStyle: "padding: 10px;",
+                style: "margin: 10px 0 10px 0",
+                labelWidth: 230,
+                items: layoutSettings
+            }
+        );
+
+
         this.layout = new Ext.Panel({
             bodyStyle: "padding: 10px;",
             items: [
-                {
-                    xtype: "form",
-                    title: t("general_settings") + " (" + niceName + ")",
-                    bodyStyle: "padding: 10px;",
-                    style: "margin: 10px 0 10px 0",
-                    labelWidth: 140,
-                    itemId: "standardSettings",
-                    items: standardSettings
-                },
-                {
-                    xtype: "form",
-                    title: t("layout_settings"),
-                    bodyStyle: "padding: 10px;",
-                    style: "margin: 10px 0 10px 0",
-                    labelWidth: 230,
-                    items: layoutSettings
-                },
+                this.standardSettingsForm,
+                this.layoutSettingsForm,
                 this.specificPanel
             ]
         });

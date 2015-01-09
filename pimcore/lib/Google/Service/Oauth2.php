@@ -19,8 +19,7 @@
  * Service definition for Oauth2 (v2).
  *
  * <p>
- * Lets you access OAuth2 protocol related APIs.
- * </p>
+ * Lets you access OAuth2 protocol related APIs.</p>
  *
  * <p>
  * For more information about this service, see the API
@@ -32,13 +31,17 @@
 class Google_Service_Oauth2 extends Google_Service
 {
   /** Know your basic profile info and list of people in your circles.. */
-  const PLUS_LOGIN = "https://www.googleapis.com/auth/plus.login";
+  const PLUS_LOGIN =
+      "https://www.googleapis.com/auth/plus.login";
   /** Know who you are on Google. */
-  const PLUS_ME = "https://www.googleapis.com/auth/plus.me";
+  const PLUS_ME =
+      "https://www.googleapis.com/auth/plus.me";
   /** View your email address. */
-  const USERINFO_EMAIL = "https://www.googleapis.com/auth/userinfo.email";
-  /** View basic information about your account. */
-  const USERINFO_PROFILE = "https://www.googleapis.com/auth/userinfo.profile";
+  const USERINFO_EMAIL =
+      "https://www.googleapis.com/auth/userinfo.email";
+  /** View your basic profile info. */
+  const USERINFO_PROFILE =
+      "https://www.googleapis.com/auth/userinfo.profile";
 
   public $userinfo;
   public $userinfo_v2_me;
@@ -114,9 +117,7 @@ class Google_Service_Oauth2 extends Google_Service
    * @param array $optParams Optional parameters.
    *
    * @opt_param string access_token
-   *
    * @opt_param string id_token
-   *
    * @return Google_Service_Oauth2_Tokeninfo
    */
   public function tokeninfo($optParams = array())
@@ -163,7 +164,6 @@ class Google_Service_Oauth2_Userinfo_Resource extends Google_Service_Resource
  */
 class Google_Service_Oauth2_UserinfoV2_Resource extends Google_Service_Resource
 {
-
 }
 
 /**
@@ -196,6 +196,13 @@ class Google_Service_Oauth2_UserinfoV2Me_Resource extends Google_Service_Resourc
 
 class Google_Service_Oauth2_Tokeninfo extends Google_Model
 {
+  protected $internal_gapi_mappings = array(
+        "accessType" => "access_type",
+        "expiresIn" => "expires_in",
+        "issuedTo" => "issued_to",
+        "userId" => "user_id",
+        "verifiedEmail" => "verified_email",
+  );
   public $accessType;
   public $audience;
   public $email;
@@ -205,81 +212,67 @@ class Google_Service_Oauth2_Tokeninfo extends Google_Model
   public $userId;
   public $verifiedEmail;
 
+
   public function setAccessType($accessType)
   {
     $this->accessType = $accessType;
   }
-
   public function getAccessType()
   {
     return $this->accessType;
   }
-
   public function setAudience($audience)
   {
     $this->audience = $audience;
   }
-
   public function getAudience()
   {
     return $this->audience;
   }
-
   public function setEmail($email)
   {
     $this->email = $email;
   }
-
   public function getEmail()
   {
     return $this->email;
   }
-
   public function setExpiresIn($expiresIn)
   {
     $this->expiresIn = $expiresIn;
   }
-
   public function getExpiresIn()
   {
     return $this->expiresIn;
   }
-
   public function setIssuedTo($issuedTo)
   {
     $this->issuedTo = $issuedTo;
   }
-
   public function getIssuedTo()
   {
     return $this->issuedTo;
   }
-
   public function setScope($scope)
   {
     $this->scope = $scope;
   }
-
   public function getScope()
   {
     return $this->scope;
   }
-
   public function setUserId($userId)
   {
     $this->userId = $userId;
   }
-
   public function getUserId()
   {
     return $this->userId;
   }
-
   public function setVerifiedEmail($verifiedEmail)
   {
     $this->verifiedEmail = $verifiedEmail;
   }
-
   public function getVerifiedEmail()
   {
     return $this->verifiedEmail;
@@ -288,6 +281,11 @@ class Google_Service_Oauth2_Tokeninfo extends Google_Model
 
 class Google_Service_Oauth2_Userinfoplus extends Google_Model
 {
+  protected $internal_gapi_mappings = array(
+        "familyName" => "family_name",
+        "givenName" => "given_name",
+        "verifiedEmail" => "verified_email",
+  );
   public $email;
   public $familyName;
   public $gender;
@@ -300,111 +298,91 @@ class Google_Service_Oauth2_Userinfoplus extends Google_Model
   public $picture;
   public $verifiedEmail;
 
+
   public function setEmail($email)
   {
     $this->email = $email;
   }
-
   public function getEmail()
   {
     return $this->email;
   }
-
   public function setFamilyName($familyName)
   {
     $this->familyName = $familyName;
   }
-
   public function getFamilyName()
   {
     return $this->familyName;
   }
-
   public function setGender($gender)
   {
     $this->gender = $gender;
   }
-
   public function getGender()
   {
     return $this->gender;
   }
-
   public function setGivenName($givenName)
   {
     $this->givenName = $givenName;
   }
-
   public function getGivenName()
   {
     return $this->givenName;
   }
-
   public function setHd($hd)
   {
     $this->hd = $hd;
   }
-
   public function getHd()
   {
     return $this->hd;
   }
-
   public function setId($id)
   {
     $this->id = $id;
   }
-
   public function getId()
   {
     return $this->id;
   }
-
   public function setLink($link)
   {
     $this->link = $link;
   }
-
   public function getLink()
   {
     return $this->link;
   }
-
   public function setLocale($locale)
   {
     $this->locale = $locale;
   }
-
   public function getLocale()
   {
     return $this->locale;
   }
-
   public function setName($name)
   {
     $this->name = $name;
   }
-
   public function getName()
   {
     return $this->name;
   }
-
   public function setPicture($picture)
   {
     $this->picture = $picture;
   }
-
   public function getPicture()
   {
     return $this->picture;
   }
-
   public function setVerifiedEmail($verifiedEmail)
   {
     $this->verifiedEmail = $verifiedEmail;
   }
-
   public function getVerifiedEmail()
   {
     return $this->verifiedEmail;

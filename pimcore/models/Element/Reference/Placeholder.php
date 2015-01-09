@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Reference_Placeholder {
+namespace Pimcore\Model\Element\Reference;
+
+use Pimcore\Model;
+
+class Placeholder {
 
     /**
      * @var int

@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Folder extends Object_Abstract {
+namespace Pimcore\Model\Object;
+
+use Pimcore\Model;
+
+class Folder extends AbstractObject {
 
     /**
      * @var string
@@ -24,7 +28,7 @@ class Object_Folder extends Object_Abstract {
 
     /**
      * @param array $values
-     * @return Object_Folder
+     * @return Folder
      */
     public static function create($values) {
         $object = new static();
@@ -45,16 +49,14 @@ class Object_Folder extends Object_Abstract {
     }
 
     /**
-     * @return void
+     * @throws \Exception
      */
     public function delete() {
 
         if ($this->getId() == 1) {
-            throw new Exception("root-node cannot be deleted");
+            throw new \Exception("root-node cannot be deleted");
         }
 
         parent::delete();
     }
-
-
 }

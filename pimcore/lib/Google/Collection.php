@@ -1,6 +1,6 @@
 <?php
 
-require_once "Google/Model.php";
+// pimcore modification: removed autoloader include
 
 /**
  * Extension to the regular Google_Model that automatically

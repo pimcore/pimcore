@@ -49,7 +49,6 @@ class Zend_Auth_Adapter_Http_Resolver_File implements Zend_Auth_Adapter_Http_Res
      * Constructor
      *
      * @param  string $path Complete filename where the credentials are stored
-     * @return void
      */
     public function __construct($path = '')
     {

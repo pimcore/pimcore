@@ -13,20 +13,31 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-include_once("simple_html_dom.php");
+namespace Pimcore\View\Helper;
 
-class Pimcore_View_Helper_Glossary extends Zend_View_Helper_Abstract {
+use Pimcore\Model;
 
+class Glossary extends \Zend_View_Helper_Abstract {
+
+    /**
+     * @var GlossaryController
+     */
     public static $_controller;
 
+    /**
+     * @return GlossaryController
+     */
     public static function getController() {
         if (!self::$_controller) {
-            self::$_controller = new Pimcore_View_Helper_Glossary_Controller();
+            self::$_controller = new GlossaryController();
         }
 
         return self::$_controller;
     }
 
+    /**
+     * @return GlossaryController
+     */
     public function glossary() {
         $controller = self::getController();
         $controller->setView($this->view);
@@ -36,18 +47,23 @@ class Pimcore_View_Helper_Glossary extends Zend_View_Helper_Abstract {
 }
 
 
-class Pimcore_View_Helper_Glossary_Controller {
+class GlossaryController {
 
     /**
-     * @var Pimcore_View
+     * @var \Pimcore\View
      */
     protected $view;
 
-
+    /**
+     *
+     */
     public function start() {
         ob_start();
     }
 
+    /**
+     *
+     */
     public function stop() {
 
         $contents = ob_get_clean();
@@ -69,6 +85,7 @@ class Pimcore_View_Helper_Glossary_Controller {
             // why not using a simple str_ireplace(array(), array(), $subject) ?
             // because if you want to replace the terms "Donec vitae" and "Donec" you will get nested links, so the content of the html must be reloaded every searchterm to ensure that there is no replacement within a blocked tag
 
+            include_once("simple_html_dom.php");
 
             // kind of a hack but,
             // changed to this because of that: http://www.pimcore.org/issues/browse/PIMCORE-687
@@ -87,7 +104,7 @@ class Pimcore_View_Helper_Glossary_Controller {
 
 
             // get initial document out of the front controller (requested document, if it was a "document" request)
-            $front = Zend_Controller_Front::getInstance();
+            $front = \Zend_Controller_Front::getInstance();
             $currentDocument = $front->getRequest()->getParam("document");
             if(empty($currentDocument)) {
                 $currentDocument = $this->view->document;
@@ -96,12 +113,12 @@ class Pimcore_View_Helper_Glossary_Controller {
             foreach ($data as $entry) {
 
                 // check if the current document is the target link (id check)
-                if($currentDocument instanceof Document && $entry["linkType"] == "internal" && $currentDocument->getId() == $entry["linkTarget"]) {
+                if($currentDocument instanceof Model\Document && $entry["linkType"] == "internal" && $currentDocument->getId() == $entry["linkTarget"]) {
                     continue;
                 }
 
                 // check if the current document is the target link (path check)
-                if($currentDocument instanceof Document && $currentDocument->getFullPath() == rtrim($entry["linkTarget"], " /")) {
+                if($currentDocument instanceof Model\Document && $currentDocument->getFullPath() == rtrim($entry["linkTarget"], " /")) {
                     continue;
                 }
 
@@ -145,37 +162,41 @@ class Pimcore_View_Helper_Glossary_Controller {
         }
     }
 
+    /**
+     * @return array|mixed
+     * @throws \Zend_Exception
+     */
     protected function getData() {
 
-        if(Zend_Registry::isRegistered("Zend_Locale")) {
-            $locale = (string) Zend_Registry::get("Zend_Locale");
+        if(\Zend_Registry::isRegistered("Zend_Locale")) {
+            $locale = (string) \Zend_Registry::get("Zend_Locale");
         } else {
             return array();
         }
 
         $siteId = "";
         try {
-            $site = Site::getCurrentSite();
-            if($site instanceof Site) {
+            $site = Model\Site::getCurrentSite();
+            if($site instanceof Model\Site) {
                 $siteId = $site->getId();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // not inside a site
         }
 
         $cacheKey = "glossary_" . $locale . "_" . $siteId;
 
         try {
-            $data = Zend_Registry::get($cacheKey);
+            $data = \Zend_Registry::get($cacheKey);
             return $data;
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
         }
 
 
-        if (!$data = Pimcore_Model_Cache::load($cacheKey)) {
+        if (!$data = Model\Cache::load($cacheKey)) {
 
-            $list = new Glossary_List();
+            $list = new Model\Glossary\Listing();
             $list->setCondition("(language = ? OR language IS NULL OR language = '') AND (site = ? OR site IS NULL OR site = '')", array($locale, $siteId));
             $list->setOrderKey("LENGTH(`text`)", false);
             $list->setOrder("DESC");
@@ -183,13 +204,17 @@ class Pimcore_View_Helper_Glossary_Controller {
 
             $data = $this->prepareData($data);
 
-            Pimcore_Model_Cache::save($data, $cacheKey, array("glossary"), null, 995);
-            Zend_Registry::set($cacheKey, $data);
+            Model\Cache::save($data, $cacheKey, array("glossary"), null, 995);
+            \Zend_Registry::set($cacheKey, $data);
         }
 
         return $data;
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     protected function prepareData($data) {
 
         $mappedData = array();
@@ -229,7 +254,7 @@ class Pimcore_View_Helper_Glossary_Controller {
                     $linkTarget = $d["link"];
 
                     if (intval($d["link"])) {
-                        if ($doc = Document::getById($d["link"])) {
+                        if ($doc = Model\Document::getById($d["link"])) {
                             $d["link"] = $doc->getFullPath();
                             $linkType = "internal";
                             $linkTarget = $doc->getId();
@@ -263,7 +288,8 @@ class Pimcore_View_Helper_Glossary_Controller {
     }
 
     /**
-     * @param \Pimcore_View $view
+     * @param $view
+     * @return $this
      */
     public function setView($view)
     {
@@ -272,7 +298,7 @@ class Pimcore_View_Helper_Glossary_Controller {
     }
 
     /**
-     * @return \Pimcore_View
+     * @return \Pimcore\View
      */
     public function getView()
     {

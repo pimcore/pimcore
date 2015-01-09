@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Snippet extends Document_PageSnippet {
+namespace Pimcore\Model\Document;
+
+use Pimcore\Model;
+
+class Snippet extends Model\Document\PageSnippet {
 
     /**
      * Static type of the document

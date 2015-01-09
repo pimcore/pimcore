@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Metadata_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Metadata;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
 
     public function getRawData(){
@@ -41,7 +45,7 @@ class Metadata_Resource extends Pimcore_Model_Resource_Abstract {
 
         if ($this->model->getType() == "object" || $this->model->getType() == "asset" || $this->model->getType() == "document") {
 
-            if ($data instanceof Element_Interface) {
+            if ($data instanceof Model\Element\ElementInterface) {
                 $data = $data->getId();
             }
             else {
@@ -51,7 +55,7 @@ class Metadata_Resource extends Pimcore_Model_Resource_Abstract {
 
 
         if (is_array($data) || is_object($data)) {
-            $data = Pimcore_Tool_Serialize::serialize($data);
+            $data = \Pimcore\Tool\Serialize::serialize($data);
         }
 
         $saveData = array(

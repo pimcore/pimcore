@@ -40,7 +40,7 @@
 
     <link href="/website/static/css/global.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="/website/static/lib/projekktor/theme/style.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="/website/static/lib/video-js/video-js.min.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="/website/static/lib/magnific/magnific.css" type="text/css" media="screen" />
 
     <?= $this->headLink(); ?>
@@ -55,15 +55,6 @@
     <script src="/website/static/js/respond.min.js"></script>
     <![endif]-->
 
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-        ga('create', 'UA-12436865-5', 'pimcore.org');
-        ga('send', 'pageview');
-    </script>
 </head>
 
 <body class="<?= $isPortal ? "portal-page" : "" ?>">
@@ -90,9 +81,11 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <?php
-                        $mainNavigation = $this->pimcoreNavigation()->getNavigation($this->document, $mainNavStartNode);
-                        $this->navigation($mainNavigation);
-                        echo $this->navigation()->menu()->setUseTranslator(false)->renderMenu($mainNavigation, ["maxDepth" => 1, "ulClass" => "nav navbar-nav"]);
+                        $mainNavigation = $this->pimcoreNavigation($this->document, $mainNavStartNode);
+                        echo $mainNavigation->menu()->renderMenu(null, [
+                            "maxDepth" => 1,
+                            "ulClass" => "nav navbar-nav"
+                        ]);
                     ?>
                 </div>
             </div>
@@ -138,10 +131,7 @@
 
             <div>
                 <a href="/"><?= $this->translate("Home"); ?></a> &gt;
-                <?php
-                    $this->navigation($mainNavigation);
-                    echo $this->navigation()->breadcrumbs()->setMinDepth(null);
-                ?>
+                <?= $mainNavigation->breadcrumbs()->setMinDepth(null); ?>
             </div>
         </div>
 
@@ -155,14 +145,10 @@
                         }
                     ?>
                     <h3><?= $startNode->getProperty("navigation_name"); ?></h3>
-                    <?php
-                    $leftNavigation = $this->pimcoreNavigation()->getNavigation($this->document, $startNode);
-                    $this->navigation($leftNavigation);
-                    echo $this->navigation()->menu($leftNavigation)->setUseTranslator(false)->renderMenu($leftNavigation, [
+                    <?= $this->pimcoreNavigation($this->document, $startNode)->menu()->renderMenu(null, [
                         "ulClass" => "nav bs-sidenav",
                         "expandSiblingNodesOfActiveBranch" => true
-                    ]);
-                    ?>
+                    ]); ?>
                 </div>
                 <?= $this->inc($this->document->getProperty("sidebar")); ?>
             </div>
@@ -182,10 +168,12 @@
 <script src="/website/static/js/jquery-1.11.0.min.js"></script>
 <script src="/website/static/bootstrap/js/bootstrap.js"></script>
 
-
-
-<script src="/website/static/lib/projekktor/projekktor-1.2.25r232.min.js"></script>
 <script src="/website/static/lib/magnific/magnific.js"></script>
+<script src="/website/static/lib/video-js/video.js"></script>
+<script>
+    videojs.options.flash.swf = "/website/static/lib/video-js/video-js.swf";
+</script>
+
 <script>
 
     // main menu
@@ -232,24 +220,20 @@
     });
 
     <?php if(!$this->editmode) { ?>
-    $(document).ready(function() {
-        // initialize projekktor, the HTML5 video player
-        projekktor('video', {
-            playerFlashMP4: "/website/static/lib/projekktor/jarisplayer.swf",
-            autoplay: false
+        $(document).ready(function() {
+
+            // lightbox (magnific)
+            $('a.thumbnail').magnificPopup({
+                type:'image',
+                gallery: {
+                    enabled: true
+                }
+            });
+
+            $(".image-hotspot").tooltip();
+            $(".image-marker").tooltip();
         });
 
-        // lightbox (magnific)
-        $('a.thumbnail').magnificPopup({
-            type:'image',
-            gallery: {
-                enabled: true
-            }
-        });
-
-        $(".image-hotspot").tooltip();
-        $(".image-marker").tooltip();
-    });
     <?php } ?>
 </script>
 <script type="text/javascript" src="/website/static/js/srcset-polyfill.min.js"></script>

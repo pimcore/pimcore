@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="bg"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,48 +25,37 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">адиге</language>
 			<language type="ae" draft="contributed">авестски</language>
 			<language type="af">африканс</language>
-			<language type="afa">афро-азиатски</language>
 			<language type="afh">африхили</language>
 			<language type="ain" draft="contributed">айну</language>
 			<language type="ak" draft="contributed">акан</language>
 			<language type="akk" draft="contributed">акадски</language>
 			<language type="ale">алеутски</language>
-			<language type="alg" draft="contributed">алгонквин</language>
 			<language type="alt">южноалтайски</language>
 			<language type="am">амхарски</language>
 			<language type="an" draft="contributed">арагонски</language>
 			<language type="ang">староанглийски</language>
 			<language type="anp">ангика</language>
-			<language type="apa">езици на апахите</language>
 			<language type="ar">арабски</language>
 			<language type="ar_001">съвременен стандартен арабски</language>
 			<language type="arc" draft="contributed">арамейски</language>
 			<language type="arn" draft="contributed">мапуче</language>
 			<language type="arp" draft="contributed">арапахо</language>
-			<language type="art">изкуствен</language>
 			<language type="arw" draft="contributed">аравак</language>
 			<language type="as">асамски</language>
 			<language type="ast" draft="contributed">астурски</language>
-			<language type="ath" draft="contributed">атабаски езици</language>
-			<language type="aus">австралийски езици</language>
 			<language type="av">аварски</language>
 			<language type="awa" draft="contributed">авади</language>
 			<language type="ay">аймара</language>
 			<language type="az">азербайджански</language>
 			<language type="az" alt="short">азерски</language>
 			<language type="ba">башкирски</language>
-			<language type="bad" draft="contributed">банда</language>
-			<language type="bai" draft="contributed">бамикеле</language>
 			<language type="bal">балучи</language>
 			<language type="ban" draft="contributed">балинейски</language>
 			<language type="bas" draft="contributed">баса</language>
-			<language type="bat">балтийски</language>
 			<language type="be">беларуски</language>
 			<language type="bej" draft="contributed">бея</language>
 			<language type="bem" draft="contributed">бемба</language>
-			<language type="ber">берберски</language>
 			<language type="bg">български</language>
-			<language type="bh" draft="contributed">бихари</language>
 			<language type="bho">божпури</language>
 			<language type="bi">бислама</language>
 			<language type="bik" draft="contributed">биколски</language>
@@ -74,24 +63,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">сиксика</language>
 			<language type="bm" draft="contributed">бамбара</language>
 			<language type="bn">бенгалски</language>
-			<language type="bnt">банту</language>
 			<language type="bo">тибетски</language>
 			<language type="br">бретонски</language>
 			<language type="bra" draft="contributed">брадж</language>
 			<language type="bs">босненски</language>
-			<language type="btk" draft="contributed">батак</language>
 			<language type="bua">бурятски</language>
 			<language type="bug">бугински</language>
 			<language type="byn" draft="contributed">биленски</language>
 			<language type="ca">каталонски</language>
 			<language type="cad">каддо</language>
-			<language type="cai">централноамерикански индиански</language>
 			<language type="car">карибски</language>
-			<language type="cau">кавказски</language>
 			<language type="cch">атсам</language>
 			<language type="ce">чеченски</language>
 			<language type="ceb">себуано</language>
-			<language type="cel">келтски</language>
 			<language type="ch">чаморо</language>
 			<language type="chb">чибча</language>
 			<language type="chg">чагатай</language>
@@ -103,25 +87,18 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">чероки</language>
 			<language type="chy">чейенски</language>
 			<language type="ckb" draft="contributed">кюрдски (сорани)</language>
-			<language type="cmc">чамски</language>
 			<language type="co">корсикански</language>
 			<language type="cop">коптски</language>
-			<language type="cpe">креолски или пиджин от английски</language>
-			<language type="cpf">креолски и пиджин от френски</language>
-			<language type="cpp">креолски или пиджин от португалски</language>
 			<language type="cr">крии</language>
 			<language type="crh">кримскотатарски</language>
-			<language type="crp">креолски или пиджини</language>
 			<language type="cs">чешки</language>
 			<language type="csb">кашубски</language>
 			<language type="cu">църковно славянски</language>
-			<language type="cus">кушитски езици</language>
 			<language type="cv">чувашки</language>
 			<language type="cy">уелски</language>
 			<language type="da">датски</language>
 			<language type="dak" draft="contributed">дакотски</language>
 			<language type="dar">даргва</language>
-			<language type="day">даякски</language>
 			<language type="de">немски</language>
 			<language type="de_AT">австрийски немски</language>
 			<language type="de_CH">швейцарски горногермански</language>
@@ -130,7 +107,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="dgr">догриб</language>
 			<language type="din">динка</language>
 			<language type="doi">догри</language>
-			<language type="dra">дравидски езици</language>
 			<language type="dsb">долносербски</language>
 			<language type="dua">дуала</language>
 			<language type="dum">средновековен холандски</language>
@@ -163,7 +139,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">фула</language>
 			<language type="fi">фински</language>
 			<language type="fil">филипински</language>
-			<language type="fiu">угрофински</language>
 			<language type="fj">фиджийски</language>
 			<language type="fo">фарьорски</language>
 			<language type="fon">фон</language>
@@ -181,7 +156,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">гайо</language>
 			<language type="gba">гбая</language>
 			<language type="gd">шотландски галски</language>
-			<language type="gem">германски</language>
 			<language type="gez">гииз</language>
 			<language type="gil">гилбертски</language>
 			<language type="gl">галисийски</language>
@@ -203,7 +177,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">иврит</language>
 			<language type="hi">хинди</language>
 			<language type="hil">хилигайнон</language>
-			<language type="him">химачали</language>
 			<language type="hit">хитски</language>
 			<language type="hmn">хмонг</language>
 			<language type="ho">хири моту</language>
@@ -220,15 +193,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">оксидентал</language>
 			<language type="ig">игбо</language>
 			<language type="ii">сечуански</language>
-			<language type="ijo">иджо</language>
 			<language type="ik">инупиак</language>
 			<language type="ilo">илоко</language>
-			<language type="inc">индийска група</language>
-			<language type="ine">индо-европейски</language>
 			<language type="inh">ингушетски</language>
 			<language type="io">идо</language>
-			<language type="ira">ирански</language>
-			<language type="iro">ироквиански езици</language>
 			<language type="is">исландски</language>
 			<language type="it">италиански</language>
 			<language type="iu">инуктитут</language>
@@ -243,14 +211,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">качински</language>
 			<language type="kaj">жжи</language>
 			<language type="kam">камба</language>
-			<language type="kar">каренски</language>
 			<language type="kaw">кави</language>
 			<language type="kbd">кабардиан</language>
 			<language type="kcg">туап</language>
 			<language type="kfo">коро</language>
 			<language type="kg">конгоански</language>
 			<language type="kha">кхаси</language>
-			<language type="khi">езици коисан</language>
 			<language type="kho">котски</language>
 			<language type="ki">кикуйу</language>
 			<language type="kj">кваняма</language>
@@ -266,7 +232,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">канури</language>
 			<language type="krc">карачай-балкарски</language>
 			<language type="krl">карелски</language>
-			<language type="kro">кру</language>
 			<language type="kru">курук</language>
 			<language type="ks">кашмирски</language>
 			<language type="ku">кюрдски</language>
@@ -300,7 +265,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">майтхили</language>
 			<language type="mak">макасар</language>
 			<language type="man">мандинго</language>
-			<language type="map">австронезийски</language>
 			<language type="mas">масайски</language>
 			<language type="mdf">мокша</language>
 			<language type="mdr">мандар</language>
@@ -312,31 +276,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">маорски</language>
 			<language type="mic">микмак</language>
 			<language type="min">минангбау</language>
-			<language type="mis">други езици</language>
 			<language type="mk">македонски</language>
-			<language type="mkh">мон-кхмерски език</language>
 			<language type="ml">малаялам</language>
 			<language type="mn">монголски</language>
 			<language type="mnc">манчжурски</language>
 			<language type="mni">манипури</language>
-			<language type="mno">манобо</language>
-			<language type="mo">молдовски</language>
 			<language type="moh">мохавк</language>
 			<language type="mos">моси</language>
 			<language type="mr">марати</language>
 			<language type="ms">малайски</language>
 			<language type="mt">малтийски</language>
 			<language type="mul">многоезични</language>
-			<language type="mun">мунда</language>
 			<language type="mus">крик</language>
 			<language type="mwl">мирандийски</language>
 			<language type="mwr">марвари</language>
 			<language type="my">бирмански</language>
-			<language type="myn">майя език</language>
 			<language type="myv">ерзиа</language>
 			<language type="na">науру</language>
-			<language type="nah">нахуатл</language>
-			<language type="nai">северноамерикански индиански</language>
 			<language type="nap">неаполитански</language>
 			<language type="nb">норвежки букмол</language>
 			<language type="nd">северен ндебеле</language>
@@ -345,7 +301,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">неварски</language>
 			<language type="ng">ндонга</language>
 			<language type="nia">ниас</language>
-			<language type="nic">нигер-кордофански</language>
 			<language type="niu">ниуеан</language>
 			<language type="nl">нидерландски</language>
 			<language type="nl_BE">фламандски</language>
@@ -356,7 +311,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">н’ко</language>
 			<language type="nr">южен ндебеле</language>
 			<language type="nso">северен сото</language>
-			<language type="nub">нубийски езици</language>
 			<language type="nv">навахо</language>
 			<language type="nwc">класически невари</language>
 			<language type="ny">чинянджа</language>
@@ -371,21 +325,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">осетски</language>
 			<language type="osa">оседжи</language>
 			<language type="ota">отомански турски</language>
-			<language type="oto">старотурски езици</language>
 			<language type="pa">пенджабски</language>
-			<language type="paa">папуаски</language>
 			<language type="pag">пангасинан</language>
 			<language type="pal">пехлевийски</language>
 			<language type="pam">пампанга</language>
 			<language type="pap">папиаменту</language>
 			<language type="pau">палауан</language>
 			<language type="peo">староперсийски</language>
-			<language type="phi">филипински (други)</language>
 			<language type="phn">финикийски</language>
 			<language type="pi">пали</language>
 			<language type="pl">полски</language>
 			<language type="pon">похнпеиан</language>
-			<language type="pra">пракритски език</language>
 			<language type="pro" draft="contributed">провансалски</language>
 			<language type="ps">пущу</language>
 			<language type="ps" alt="variant">пущунски</language>
@@ -397,7 +347,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">реторомански</language>
 			<language type="rn">рунди</language>
 			<language type="ro">румънски</language>
-			<language type="roa">романски</language>
+			<language type="ro_MD">молдовски</language>
 			<language type="rom">цигански език</language>
 			<language type="root">роот</language>
 			<language type="ru">руски</language>
@@ -406,8 +356,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">санкскритски</language>
 			<language type="sad">сандве</language>
 			<language type="sah">якутски</language>
-			<language type="sai">южноамерикански индиански</language>
-			<language type="sal">салишански език</language>
 			<language type="sam">самаритански арамейски</language>
 			<language type="sas">сасак</language>
 			<language type="sat">сантали</language>
@@ -417,22 +365,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sd">синдхи</language>
 			<language type="se">северен сами</language>
 			<language type="sel">селкуп</language>
-			<language type="sem">семитски</language>
 			<language type="sg">санго</language>
 			<language type="sga">староирландски</language>
-			<language type="sgn">жестомимичен език</language>
 			<language type="sh">сърбохърватски</language>
 			<language type="shn">шан</language>
 			<language type="si">синхалски</language>
 			<language type="sid">сидамо</language>
-			<language type="sio">език сиу</language>
-			<language type="sit">синотибетски</language>
 			<language type="sk">словашки</language>
 			<language type="sl">словенски</language>
-			<language type="sla">славянски</language>
 			<language type="sm">самоански</language>
 			<language type="sma">южносаамски</language>
-			<language type="smi">саамски езици</language>
 			<language type="smj">луле-саамски</language>
 			<language type="smn">инари-саамски</language>
 			<language type="sms">сколт-саамски</language>
@@ -440,13 +382,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">сонинке</language>
 			<language type="so">сомалийски</language>
 			<language type="sog">согдийски</language>
-			<language type="son">сонгхай</language>
 			<language type="sq">албански</language>
 			<language type="sr">сръбски</language>
 			<language type="srn">сранан тонго</language>
 			<language type="srr">серер</language>
 			<language type="ss">суази</language>
-			<language type="ssa">нило-сахарски език</language>
 			<language type="st">сесуто</language>
 			<language type="su">сундански</language>
 			<language type="suk">сукума</language>
@@ -458,7 +398,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">класически сирийски</language>
 			<language type="syr">сирийски</language>
 			<language type="ta">тамилски</language>
-			<language type="tai">тайландски</language>
 			<language type="te">телугу</language>
 			<language type="tem">темне</language>
 			<language type="ter">терено</language>
@@ -483,8 +422,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">цимшиански</language>
 			<language type="tt">татарски</language>
 			<language type="tum">тумбука</language>
-			<language type="tup">тупи</language>
-			<language type="tut">алтайски</language>
 			<language type="tvl">тувалуански</language>
 			<language type="tw">туи</language>
 			<language type="ty">таитянски</language>
@@ -503,11 +440,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vo">волапюк</language>
 			<language type="vot">вотик</language>
 			<language type="wa">валонски</language>
-			<language type="wak">вакашански език</language>
 			<language type="wal">валамо</language>
 			<language type="war">варай</language>
 			<language type="was">уашо</language>
-			<language type="wen">лужишки език</language>
 			<language type="wo">волоф</language>
 			<language type="xal">калмик</language>
 			<language type="xh">ксоса</language>
@@ -515,7 +450,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="yap">япезе</language>
 			<language type="yi">идиш</language>
 			<language type="yo">йоруба</language>
-			<language type="ypk">юпик</language>
 			<language type="yue">кантонски</language>
 			<language type="za">зуанг</language>
 			<language type="zap">запотек</language>
@@ -525,7 +459,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">китайски</language>
 			<language type="zh_Hans">опростен китайски</language>
 			<language type="zh_Hant">традиционен китайски</language>
-			<language type="znd">занде</language>
 			<language type="zu">зулуски</language>
 			<language type="zun">зуни</language>
 			<language type="zxx">без лингвистично съдържание</language>
@@ -1189,9 +1122,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="d">d</dateFormatItem>
 						<dateFormatItem id="Ed">E, d</dateFormatItem>
 						<dateFormatItem id="Gy">y 'г'. G</dateFormatItem>
-						<dateFormatItem id="GyMMM">MMM y 'г'. G</dateFormatItem>
-						<dateFormatItem id="GyMMMd">d MMM y 'г'. G</dateFormatItem>
-						<dateFormatItem id="GyMMMEd">E, d MMM y 'г'. G</dateFormatItem>
+						<dateFormatItem id="GyMMM">MM.y 'г'. G</dateFormatItem>
+						<dateFormatItem id="GyMMMd">d.MM.y 'г'. G</dateFormatItem>
+						<dateFormatItem id="GyMMMEd">E, d.MM.y 'г'. G</dateFormatItem>
+						<dateFormatItem id="GyMMMM">MMMM y 'г'. G</dateFormatItem>
+						<dateFormatItem id="GyMMMMd">d MMMM y 'г'. G</dateFormatItem>
+						<dateFormatItem id="GyMMMMEd">E, d MMMM y 'г'. G</dateFormatItem>
 						<dateFormatItem id="h" draft="contributed">h</dateFormatItem>
 						<dateFormatItem id="H">HH</dateFormatItem>
 						<dateFormatItem id="hm">h:mm a</dateFormatItem>
@@ -1201,21 +1137,24 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="M">M</dateFormatItem>
 						<dateFormatItem id="Md">d.MM</dateFormatItem>
 						<dateFormatItem id="MEd">E, d.MM</dateFormatItem>
-						<dateFormatItem id="MMM">MMM</dateFormatItem>
-						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
-						<dateFormatItem id="MMMEd">E, d MMM</dateFormatItem>
+						<dateFormatItem id="MMM">MM</dateFormatItem>
+						<dateFormatItem id="MMMd">d.MM</dateFormatItem>
+						<dateFormatItem id="MMMEd">E, d.MM</dateFormatItem>
+						<dateFormatItem id="MMMM">LLLL</dateFormatItem>
 						<dateFormatItem id="MMMMd">d MMMM</dateFormatItem>
+						<dateFormatItem id="MMMMEd">E, d MMMM</dateFormatItem>
 						<dateFormatItem id="ms" draft="contributed">mm:ss</dateFormatItem>
 						<dateFormatItem id="y">y 'г'. G</dateFormatItem>
 						<dateFormatItem id="yyyy">y 'г'. G</dateFormatItem>
 						<dateFormatItem id="yyyyM">M.y 'г'. G</dateFormatItem>
 						<dateFormatItem id="yyyyMd">d.MM.y 'г'. G</dateFormatItem>
 						<dateFormatItem id="yyyyMEd">E, d.MM.y 'г'. G</dateFormatItem>
-						<dateFormatItem id="yyyyMM">MM.y G</dateFormatItem>
-						<dateFormatItem id="yyyyMMM">MMM y 'г'. G</dateFormatItem>
-						<dateFormatItem id="yyyyMMMd">d MMM y 'г'. G</dateFormatItem>
-						<dateFormatItem id="yyyyMMMEd">E, d MMM y 'г'. G</dateFormatItem>
+						<dateFormatItem id="yyyyMMM">MM.y 'г'. G</dateFormatItem>
+						<dateFormatItem id="yyyyMMMd">d.MM.y 'г'. G</dateFormatItem>
+						<dateFormatItem id="yyyyMMMEd">E, d.MM.y 'г'. G</dateFormatItem>
 						<dateFormatItem id="yyyyMMMM">MMMM y 'г'. G</dateFormatItem>
+						<dateFormatItem id="yyyyMMMMd">d MMMM y 'г'. G</dateFormatItem>
+						<dateFormatItem id="yyyyMMMMEd">E, d MMMM y 'г'. G</dateFormatItem>
 						<dateFormatItem id="yyyyQQQ">QQQ y 'г'. G</dateFormatItem>
 						<dateFormatItem id="yyyyQQQQ">QQQQ y 'г'. G</dateFormatItem>
 					</availableFormats>
@@ -1225,14 +1164,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="d">d – d</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="h">
-							<greatestDifference id="a" draft="contributed">H – H</greatestDifference>
+							<greatestDifference id="a" draft="contributed">h a – h a</greatestDifference>
 							<greatestDifference id="h">h-h a</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="H">
 							<greatestDifference id="H">HH-HH</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hm">
-							<greatestDifference id="a" draft="contributed">H:mm – H:mm</greatestDifference>
+							<greatestDifference id="a" draft="contributed">h:mm a – h:mm a</greatestDifference>
 							<greatestDifference id="h">h:mm-h:mm a</greatestDifference>
 							<greatestDifference id="m">h:mm-h:mm a</greatestDifference>
 						</intervalFormatItem>
@@ -1241,7 +1180,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="m">HH:mm-HH:mm</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hmv">
-							<greatestDifference id="a" draft="contributed">H:mm – H:mm v</greatestDifference>
+							<greatestDifference id="a" draft="contributed">h:mm a – h:mm a v</greatestDifference>
 							<greatestDifference id="h">h:mm-h:mm a v</greatestDifference>
 							<greatestDifference id="m">h:mm-h:mm a v</greatestDifference>
 						</intervalFormatItem>
@@ -1250,7 +1189,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="m">HH:mm-HH:mm v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hv">
-							<greatestDifference id="a" draft="contributed">H – H v</greatestDifference>
+							<greatestDifference id="a" draft="contributed">h a – h a v</greatestDifference>
 							<greatestDifference id="h">h-h a v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="Hv">
@@ -1268,15 +1207,26 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="M">E, d.MM – E, d.MM</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="MMM">
-							<greatestDifference id="M">MMM – MMM</greatestDifference>
+							<greatestDifference id="M">MM – MM</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="MMMd">
-							<greatestDifference id="d">d – d MMM</greatestDifference>
-							<greatestDifference id="M">d MMM – d MMM</greatestDifference>
+							<greatestDifference id="d">d.MM – d.MM</greatestDifference>
+							<greatestDifference id="M">d.MM – d.MM</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="MMMEd">
-							<greatestDifference id="d">E, d MMM – E, d MMM</greatestDifference>
-							<greatestDifference id="M">E, d MMM – E, d MMM</greatestDifference>
+							<greatestDifference id="d">E, d.MM – E, d.MM</greatestDifference>
+							<greatestDifference id="M">E, d.MM – E, d.MM</greatestDifference>
+						</intervalFormatItem>
+						<intervalFormatItem id="MMMM">
+							<greatestDifference id="M">LLLL – LLLL</greatestDifference>
+						</intervalFormatItem>
+						<intervalFormatItem id="MMMMd">
+							<greatestDifference id="d">d – d MMMM</greatestDifference>
+							<greatestDifference id="M">d MMMM – d MMMM</greatestDifference>
+						</intervalFormatItem>
+						<intervalFormatItem id="MMMMEd">
+							<greatestDifference id="d">E, d MMMM – E, d MMMM</greatestDifference>
+							<greatestDifference id="M">E, d MMMM – E, d MMMM</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="y">
 							<greatestDifference id="y">y – y 'г'.G</greatestDifference>
@@ -1296,22 +1246,32 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="y">E, d.MM.y 'г'. – E, d.MM.y 'г'. G</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="yMMM">
-							<greatestDifference id="M">MMM – MMM y 'г'. G</greatestDifference>
-							<greatestDifference id="y">MMM y 'г'. – MMM y 'г'. G</greatestDifference>
+							<greatestDifference id="M">MM – MM.y 'г'. G</greatestDifference>
+							<greatestDifference id="y">MM 'г'. – MM.y 'г'. G</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="yMMMd">
-							<greatestDifference id="d">d – d MMM y 'г'. G</greatestDifference>
-							<greatestDifference id="M">d MMM – d MMM y 'г'. G</greatestDifference>
-							<greatestDifference id="y">d MMM y 'г'. – d MMM y 'г'. G</greatestDifference>
+							<greatestDifference id="d">d.MM – d.MM.y 'г'. G</greatestDifference>
+							<greatestDifference id="M">d.MM – d.MM.y 'г'. G</greatestDifference>
+							<greatestDifference id="y">d.MM.y 'г'. – d.MM.y 'г'. G</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="yMMMEd">
-							<greatestDifference id="d">E, d MMM – E, d MMM y 'г'. G</greatestDifference>
-							<greatestDifference id="M">E, d MMM – E, d MMM y 'г'. G</greatestDifference>
-							<greatestDifference id="y">E, d MMM y 'г'. – E, d MMM y 'г'. G</greatestDifference>
+							<greatestDifference id="d">E, d.MM – E, d.MM.y 'г'. G</greatestDifference>
+							<greatestDifference id="M">E, d.MM – E, d.MM.y 'г'. G</greatestDifference>
+							<greatestDifference id="y">E, d.MM.y 'г'. – E, d.MM.y 'г'. G</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="yMMMM">
 							<greatestDifference id="M">MMMM – MMMM y 'г'. G</greatestDifference>
 							<greatestDifference id="y">MMMM y 'г'. – MMMM y 'г'. G</greatestDifference>
+						</intervalFormatItem>
+						<intervalFormatItem id="yMMMMd">
+							<greatestDifference id="d">d – d MMMM y 'г'. G</greatestDifference>
+							<greatestDifference id="M">d MMMM – d MMMM y 'г'. G</greatestDifference>
+							<greatestDifference id="y">d MMMM y 'г'. – d MMMM y 'г'. G</greatestDifference>
+						</intervalFormatItem>
+						<intervalFormatItem id="yMMMMEd">
+							<greatestDifference id="d">E, d MMMM – E, d MMMM y 'г'. G</greatestDifference>
+							<greatestDifference id="M">E, d MMMM – E, d MMMM y 'г'. G</greatestDifference>
+							<greatestDifference id="y">E, d MMMM y 'г'. – E, d MMMM y 'г'. G</greatestDifference>
 						</intervalFormatItem>
 					</intervalFormats>
 				</dateTimeFormats>
@@ -1623,9 +1583,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="Ehms">E h:mm:ss a</dateFormatItem>
 						<dateFormatItem id="EHms">E, H:mm:ss</dateFormatItem>
 						<dateFormatItem id="Gy">y 'г'. G</dateFormatItem>
-						<dateFormatItem id="GyMMM">MMM y 'г'. G</dateFormatItem>
-						<dateFormatItem id="GyMMMd">d MMM y 'г'. G</dateFormatItem>
-						<dateFormatItem id="GyMMMEd">E, d MMM y 'г'. G</dateFormatItem>
+						<dateFormatItem id="GyMMM">MM.y 'г'. G</dateFormatItem>
+						<dateFormatItem id="GyMMMd">d.MM.y 'г'. G</dateFormatItem>
+						<dateFormatItem id="GyMMMEd">E, d.MM.y 'г'. G</dateFormatItem>
+						<dateFormatItem id="GyMMMM">MMMM y 'г'. G</dateFormatItem>
+						<dateFormatItem id="GyMMMMd">d MMMM y 'г'. G</dateFormatItem>
+						<dateFormatItem id="GyMMMMEd">E, d MMMM y 'г'. G</dateFormatItem>
 						<dateFormatItem id="h">h a</dateFormatItem>
 						<dateFormatItem id="H">H</dateFormatItem>
 						<dateFormatItem id="hm">h:mm a</dateFormatItem>
@@ -1635,21 +1598,24 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="M">L</dateFormatItem>
 						<dateFormatItem id="Md">d.MM</dateFormatItem>
 						<dateFormatItem id="MEd">E, d.MM</dateFormatItem>
-						<dateFormatItem id="MMM">LLL</dateFormatItem>
-						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
-						<dateFormatItem id="MMMEd">E, d MMM</dateFormatItem>
+						<dateFormatItem id="MMM">MM</dateFormatItem>
+						<dateFormatItem id="MMMd">d.MM</dateFormatItem>
+						<dateFormatItem id="MMMEd">E, d.MM</dateFormatItem>
+						<dateFormatItem id="MMMM">LLLL</dateFormatItem>
 						<dateFormatItem id="MMMMd">d MMMM</dateFormatItem>
 						<dateFormatItem id="MMMMdd">d MMMM</dateFormatItem>
+						<dateFormatItem id="MMMMEd">E, d MMMM</dateFormatItem>
 						<dateFormatItem id="ms">m:ss</dateFormatItem>
 						<dateFormatItem id="y">y 'г'.</dateFormatItem>
 						<dateFormatItem id="yM">M.y 'г'.</dateFormatItem>
 						<dateFormatItem id="yMd">d.MM.y 'г'.</dateFormatItem>
 						<dateFormatItem id="yMEd">E, d.MM.y 'г'.</dateFormatItem>
-						<dateFormatItem id="yMM">MM.y 'г'.</dateFormatItem>
-						<dateFormatItem id="yMMM">MMM y 'г'.</dateFormatItem>
-						<dateFormatItem id="yMMMd">d MMM y 'г'.</dateFormatItem>
-						<dateFormatItem id="yMMMEd">E, d MMM y 'г'.</dateFormatItem>
+						<dateFormatItem id="yMMM">MM.y 'г'.</dateFormatItem>
+						<dateFormatItem id="yMMMd">d.MM.y 'г'.</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E, d.MM.y 'г'.</dateFormatItem>
 						<dateFormatItem id="yMMMM">MMMM y 'г'.</dateFormatItem>
+						<dateFormatItem id="yMMMMd">d MMMM y 'г'.</dateFormatItem>
+						<dateFormatItem id="yMMMMEd">E, d MMMM y 'г'.</dateFormatItem>
 						<dateFormatItem id="yQQQ">QQQ y 'г'.</dateFormatItem>
 						<dateFormatItem id="yQQQQ">QQQQ y 'г'.</dateFormatItem>
 					</availableFormats>
@@ -1662,33 +1628,33 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="d">d – d</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="h">
-							<greatestDifference id="a">H – H</greatestDifference>
-							<greatestDifference id="h">H – H</greatestDifference>
+							<greatestDifference id="a">h a – h a</greatestDifference>
+							<greatestDifference id="h">h-h a</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="H">
 							<greatestDifference id="H">H – H</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hm">
-							<greatestDifference id="a">H:mm – H:mm</greatestDifference>
-							<greatestDifference id="h">H:mm – H:mm</greatestDifference>
-							<greatestDifference id="m">H:mm – H:mm</greatestDifference>
+							<greatestDifference id="a">h:mm a – h:mm a</greatestDifference>
+							<greatestDifference id="h">h:mm-h:mm a</greatestDifference>
+							<greatestDifference id="m">h:mm-h:mm a</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="Hm">
 							<greatestDifference id="H">H:mm – H:mm</greatestDifference>
 							<greatestDifference id="m">H:mm – H:mm</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hmv">
-							<greatestDifference id="a">H:mm – H:mm v</greatestDifference>
-							<greatestDifference id="h">H:mm – H:mm v</greatestDifference>
-							<greatestDifference id="m">H:mm – H:mm v</greatestDifference>
+							<greatestDifference id="a">h:mm a – h:mm a v</greatestDifference>
+							<greatestDifference id="h">h:mm-h:mm a v</greatestDifference>
+							<greatestDifference id="m">h:mm-h:mm a v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="Hmv">
 							<greatestDifference id="H">H:mm – H:mm v</greatestDifference>
 							<greatestDifference id="m">H:mm – H:mm v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hv">
-							<greatestDifference id="a">H – H v</greatestDifference>
-							<greatestDifference id="h">H – H v</greatestDifference>
+							<greatestDifference id="a">h a – h a v</greatestDifference>
+							<greatestDifference id="h">h-h a v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="Hv">
 							<greatestDifference id="H">H – H v</greatestDifference>
@@ -1705,15 +1671,26 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="M">E, d.MM – E, d.MM</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="MMM">
-							<greatestDifference id="M">MMM – MMM</greatestDifference>
+							<greatestDifference id="M">MM – MM</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="MMMd">
-							<greatestDifference id="d">d – d MMM</greatestDifference>
-							<greatestDifference id="M">d MMM – d MMM</greatestDifference>
+							<greatestDifference id="d">d.MM – d.MM</greatestDifference>
+							<greatestDifference id="M">d.MM – d.MM</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="MMMEd">
-							<greatestDifference id="d">E, d MMM – E, d MMM</greatestDifference>
-							<greatestDifference id="M">E, d MMM – E, d MMM</greatestDifference>
+							<greatestDifference id="d">E, d.MM – E, d.MM</greatestDifference>
+							<greatestDifference id="M">E, d.MM – E, d.MM</greatestDifference>
+						</intervalFormatItem>
+						<intervalFormatItem id="MMMM">
+							<greatestDifference id="M">LLLL – LLLL</greatestDifference>
+						</intervalFormatItem>
+						<intervalFormatItem id="MMMMd">
+							<greatestDifference id="d">d – d MMMM</greatestDifference>
+							<greatestDifference id="M">d MMMM – d MMMM</greatestDifference>
+						</intervalFormatItem>
+						<intervalFormatItem id="MMMMEd">
+							<greatestDifference id="d">E, d MMMM – E, d MMMM</greatestDifference>
+							<greatestDifference id="M">E, d MMMM – E, d MMMM</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="y">
 							<greatestDifference id="y">y – y 'г'.</greatestDifference>
@@ -1733,22 +1710,32 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="y">E, d.MM.y 'г'. – E, d.MM.y 'г'.</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="yMMM">
-							<greatestDifference id="M">MMM – MMM y 'г'.</greatestDifference>
-							<greatestDifference id="y">MMM y 'г'. – MMM y 'г'.</greatestDifference>
+							<greatestDifference id="M">MM.y 'г'. – MM.y 'г'.</greatestDifference>
+							<greatestDifference id="y">MM.y 'г'. – MM.y 'г'.</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="yMMMd">
-							<greatestDifference id="d">d – d MMM y 'г'.</greatestDifference>
-							<greatestDifference id="M">d MMM – d MMM y 'г'.</greatestDifference>
-							<greatestDifference id="y">d MMM y 'г'. – d MMM y 'г'.</greatestDifference>
+							<greatestDifference id="d">d.MM – d.MM.y 'г'.</greatestDifference>
+							<greatestDifference id="M">d.MM – d.MM.y 'г'.</greatestDifference>
+							<greatestDifference id="y">d.MM.y 'г'. – d.MM.y 'г'.</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="yMMMEd">
-							<greatestDifference id="d">E, d MMM – E, d MMM y 'г'.</greatestDifference>
-							<greatestDifference id="M">E, d MMM – E, d MMM y 'г'.</greatestDifference>
-							<greatestDifference id="y">E, d MMM y 'г'. – E, d MMM y 'г'.</greatestDifference>
+							<greatestDifference id="d">E, d.MM – E, d.MM.y 'г'.</greatestDifference>
+							<greatestDifference id="M">E, d.MM – E, d.MM.y 'г'.</greatestDifference>
+							<greatestDifference id="y">E, d.MM.y 'г'. – E, d.MM.y 'г'.</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="yMMMM">
 							<greatestDifference id="M">MMMM – MMMM y 'г'.</greatestDifference>
 							<greatestDifference id="y">MMMM y 'г'. – MMMM y 'г'.</greatestDifference>
+						</intervalFormatItem>
+						<intervalFormatItem id="yMMMMd">
+							<greatestDifference id="d">d – d MMMM y 'г'.</greatestDifference>
+							<greatestDifference id="M">d MMMM – d MMMM y 'г'.</greatestDifference>
+							<greatestDifference id="y">d MMMM y 'г'. – d MMMM y 'г'.</greatestDifference>
+						</intervalFormatItem>
+						<intervalFormatItem id="yMMMMEd">
+							<greatestDifference id="d">E, d MMMM – E, d MMMM y 'г'.</greatestDifference>
+							<greatestDifference id="M">E, d MMMM – E, d MMMM y 'г'.</greatestDifference>
+							<greatestDifference id="y">E, d MMMM y 'г'. – E, d MMMM y 'г'.</greatestDifference>
 						</intervalFormatItem>
 					</intervalFormats>
 				</dateTimeFormats>
@@ -1997,9 +1984,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>Палмър</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Южен полюс</exemplarCity>
 			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Шова</exemplarCity>
@@ -2273,9 +2257,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>Торонто</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>Монреал</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>Иквалуит</exemplarCity>
@@ -3119,9 +3100,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>Финикс</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Шипрок</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>Денвър</exemplarCity>

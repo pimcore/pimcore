@@ -15,8 +15,20 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_ContentAnalysis_Service_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Tool\ContentAnalysis\Service;
 
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
+
+    /**
+     * @param $condition
+     * @param $offset
+     * @param $limit
+     * @param $sort
+     * @param $dir
+     * @return array
+     */
     public function listData($condition, $offset, $limit, $sort, $dir) {
 
         $sorting = "";
@@ -36,10 +48,17 @@ class Tool_ContentAnalysis_Service_Resource extends Pimcore_Model_Resource_Abstr
         return $data;
     }
 
+    /**
+     * @param $condition
+     * @return int
+     */
     public function getTotal ($condition) {
         return (int) $this->db->fetchOne("SELECT COUNT(*) FROM content_analysis WHERE " . $condition);
     }
 
+    /**
+     * @param $patterns
+     */
     public function cleanupExistingData($patterns) {
 
         foreach ($patterns as $pattern) {
@@ -53,19 +72,23 @@ class Tool_ContentAnalysis_Service_Resource extends Pimcore_Model_Resource_Abstr
 
             try {
                 $this->db->delete("content_analysis", "url REGEXP(" . $this->db->quote($pattern) . ")");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
 
             }
 
             try {
                 $this->db->delete("content_index", "url REGEXP(" . $this->db->quote($pattern) . ")");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
 
             }
         }
 
     }
 
+    /**
+     * @param null $site
+     * @return array
+     */
     public function getOverviewData ($site = null) {
 
         $summary = array();
@@ -107,6 +130,10 @@ class Tool_ContentAnalysis_Service_Resource extends Pimcore_Model_Resource_Abstr
         return $summary;
     }
 
+    /**
+     * @param $site
+     * @return array
+     */
     public function getSocialSummary($site) {
 
         $category = "pimcore_content_analysis";

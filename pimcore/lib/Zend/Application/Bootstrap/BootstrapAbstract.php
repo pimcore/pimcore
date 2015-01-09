@@ -104,7 +104,6 @@ abstract class Zend_Application_Bootstrap_BootstrapAbstract
      * initializer methods.
      *
      * @param  Zend_Application|Zend_Application_Bootstrap_Bootstrapper $application
-     * @return void
      * @throws Zend_Application_Bootstrap_Exception When invalid application is provided
      */
     public function __construct($application)
@@ -327,8 +326,9 @@ abstract class Zend_Application_Bootstrap_BootstrapAbstract
     /**
      * Get a registered plugin resource
      *
-     * @param  string $resourceName
+     * @param string $resource
      * @return Zend_Application_Resource_Resource
+     * @throws Zend_Application_Bootstrap_Exception
      */
     public function getPluginResource($resource)
     {
@@ -441,6 +441,7 @@ abstract class Zend_Application_Bootstrap_BootstrapAbstract
      *
      * @param  Zend_Application|Zend_Application_Bootstrap_Bootstrapper $application
      * @return Zend_Application_Bootstrap_BootstrapAbstract
+     * @throws Zend_Application_Bootstrap_Exception
      */
     public function setApplication($application)
     {
@@ -491,6 +492,7 @@ abstract class Zend_Application_Bootstrap_BootstrapAbstract
      *
      * @param  object $container
      * @return Zend_Application_Bootstrap_BootstrapAbstract
+     * @throws Zend_Application_Bootstrap_Exception
      */
     public function setContainer($container)
     {
@@ -554,7 +556,7 @@ abstract class Zend_Application_Bootstrap_BootstrapAbstract
     }
 
     /**
-     * Implement PHP's magic to retrieve a ressource
+     * Implement PHP's magic to retrieve a resource
      * in the bootstrap
      *
      * @param string $prop
@@ -567,7 +569,7 @@ abstract class Zend_Application_Bootstrap_BootstrapAbstract
 
     /**
      * Implement PHP's magic to ask for the
-     * existence of a ressource in the bootstrap
+     * existence of a resource in the bootstrap
      *
      * @param string $prop
      * @return bool
@@ -602,7 +604,7 @@ abstract class Zend_Application_Bootstrap_BootstrapAbstract
      *
      * @param  string $method
      * @param  array  $args
-     * @return void
+     * @return Zend_Application_Bootstrap_BootstrapAbstract
      * @throws Zend_Application_Bootstrap_Exception On invalid method name
      */
     public function __call($method, $args)

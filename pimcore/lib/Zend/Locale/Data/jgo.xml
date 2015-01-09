@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9770 $"/>
+		<generation date="$Date: 2014-02-24 11:09:08 -0600 (Mon, 24 Feb 2014) $"/>
 		<language type="jgo"/>
 	</identity>
 	<localeDisplayNames>
@@ -22,9 +22,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">Shinwâ</language>
 		</languages>
 		<scripts>
-			<script type="Latn">mík -ŋwa’nɛ yi ɛ́ líŋɛ́nɛ Latɛ̂ŋ</script>
-			<script type="Zxxx">ntúu yi pɛ́ ká ŋwa’nε</script>
-			<script type="Zzzz">ntɛ-ŋwa’nɛ yí pɛ́ ká kɛ́ jí</script>
+			<script type="Latn">mík -ŋwaꞌnɛ yi ɛ́ líŋɛ́nɛ Latɛ̂ŋ</script>
+			<script type="Zxxx">ntúu yi pɛ́ ká ŋwaꞌnε</script>
+			<script type="Zzzz">ntɛ-ŋwaꞌnɛ yí pɛ́ ká kɛ́ jí</script>
 		</scripts>
 		<territories>
 			<territory type="001">Mbí</territory>
@@ -115,7 +115,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<key type="numbers">Pɛnɔ́mba</key>
 		</keys>
 		<types>
-			<type type="gregorian" key="calendar">mɛlɛ́’-mɛkát</type>
+			<type type="gregorian" key="calendar">mɛlɛ́ꞌ-mɛkát</type>
 			<type type="latn" key="numbers">pɛnɔ́mba</type>
 		</types>
 	</localeDisplayNames>
@@ -343,15 +343,15 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<dayPeriods>
 					<dayPeriodContext type="format">
 						<dayPeriodWidth type="wide">
-							<dayPeriod type="am">mba’mba’</dayPeriod>
+							<dayPeriod type="am">mbaꞌmbaꞌ</dayPeriod>
 							<dayPeriod type="pm">ŋka mbɔ́t nji</dayPeriod>
 						</dayPeriodWidth>
 					</dayPeriodContext>
 				</dayPeriods>
 				<eras>
 					<eraAbbr>
-						<era type="0">tsɛttsɛt mɛŋgu’ mi ɛ́ lɛɛnɛ Kɛlísɛtɔ gɔ ńɔ́</era>
-						<era type="1">tsɛttsɛt mɛŋgu’ mi ɛ́ fúnɛ Kɛlísɛtɔ tɔ́ mɔ́</era>
+						<era type="0">tsɛttsɛt mɛŋguꞌ mi ɛ́ lɛɛnɛ Kɛlísɛtɔ gɔ ńɔ́</era>
+						<era type="1">tsɛttsɛt mɛŋguꞌ mi ɛ́ fúnɛ Kɛlísɛtɔ tɔ́ mɔ́</era>
 					</eraAbbr>
 				</eras>
 				<dateFormats>

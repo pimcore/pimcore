@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="sk"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,54 +25,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">adygčina</language>
 			<language type="ae">avestčina</language>
 			<language type="af">afrikánčina</language>
-			<language type="afa">afroázijské jazyky</language>
 			<language type="afh">afrihili</language>
 			<language type="agq" draft="contributed">aghem</language>
 			<language type="ain">ainčina</language>
 			<language type="ak">akančina</language>
 			<language type="akk">akkadčina</language>
 			<language type="ale">aleutčina</language>
-			<language type="alg">algonkinské jazyky</language>
 			<language type="alt" draft="contributed">južná altajčina</language>
 			<language type="am">amharčina</language>
 			<language type="an">aragónčina</language>
 			<language type="ang" draft="contributed">stará angličtina</language>
 			<language type="anp">angika</language>
-			<language type="apa">apačské jazyky</language>
 			<language type="ar">arabčina</language>
 			<language type="ar_001" draft="contributed">moderná štandardná arabčina</language>
 			<language type="arc" draft="contributed">aramejčina</language>
 			<language type="arn">araukánčina</language>
 			<language type="arp">arapaho</language>
-			<language type="art">umelý jazyk</language>
 			<language type="arw">arawačtina</language>
 			<language type="as">ásámčina</language>
 			<language type="asa" draft="contributed">asu</language>
 			<language type="ast">astúrčina</language>
-			<language type="ath">athabaské jazyky</language>
-			<language type="aus">austrálske jazyky</language>
 			<language type="av">avarčina</language>
 			<language type="awa">avadhčina</language>
 			<language type="ay">aymarčina</language>
 			<language type="az">azerbajdžančina</language>
 			<language type="az" alt="short" draft="contributed">azerčina</language>
 			<language type="ba">baskirčina</language>
-			<language type="bad" draft="contributed">banda</language>
-			<language type="bai">bamileke</language>
 			<language type="bal">balúčtina</language>
 			<language type="ban">balijčina</language>
 			<language type="bas">basa</language>
-			<language type="bat">baltské jazyky</language>
 			<language type="bax" draft="contributed">bamun</language>
 			<language type="bbj" draft="contributed">ghomala</language>
 			<language type="be">bieloruština</language>
 			<language type="bej">bedža</language>
 			<language type="bem">bemba</language>
-			<language type="ber">berberské jazyky</language>
 			<language type="bez" draft="contributed">bena</language>
 			<language type="bfd" draft="contributed">bafut</language>
 			<language type="bg">bulharčina</language>
-			<language type="bh">bihárske jazyky</language>
 			<language type="bho">bhódžpurčina</language>
 			<language type="bi">bislama</language>
 			<language type="bik">bikol</language>
@@ -81,14 +70,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla" draft="contributed">siksika</language>
 			<language type="bm">bambarčina</language>
 			<language type="bn">bengálčina</language>
-			<language type="bnt">bantuské jazyky</language>
 			<language type="bo">tibetčina</language>
 			<language type="br">bretónčina</language>
 			<language type="bra">bradžčina</language>
 			<language type="brx" draft="contributed">bodo</language>
 			<language type="bs">bosniačtina</language>
 			<language type="bss" draft="contributed">akoose</language>
-			<language type="btk">batacké jazyky</language>
 			<language type="bua">buriatčina</language>
 			<language type="bug">bugiština</language>
 			<language type="bum" draft="contributed">bulu</language>
@@ -96,14 +83,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv" draft="contributed">medumba</language>
 			<language type="ca">katalánčina</language>
 			<language type="cad" draft="contributed">kaddo</language>
-			<language type="cai" draft="contributed">jazyk stredoamerických indiánov</language>
 			<language type="car" draft="contributed">karibský</language>
-			<language type="cau">kaukazské jazyky</language>
 			<language type="cay" draft="contributed">cayuga</language>
 			<language type="cch" draft="contributed">atsam</language>
 			<language type="ce">čečenčina</language>
 			<language type="ceb">cebuánčina</language>
-			<language type="cel">keltské jazyky</language>
 			<language type="cgg" draft="contributed">čiga</language>
 			<language type="ch">čamorčina</language>
 			<language type="chb">čibča</language>
@@ -116,26 +100,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">čerokí</language>
 			<language type="chy">čejenčina</language>
 			<language type="ckb">kurdčina (sorání)</language>
-			<language type="cmc">čamaské jazyky</language>
 			<language type="co">korzičtina</language>
 			<language type="cop" draft="contributed">koptčina</language>
-			<language type="cpe" draft="contributed">anglická kreolčina alebo pidžin</language>
-			<language type="cpf" draft="contributed">francúzska kreolčina alebo pidžin</language>
-			<language type="cpp" draft="contributed">portugalská kreolčina alebo pidžin</language>
 			<language type="cr">krí</language>
 			<language type="crh" draft="contributed">krymská turečtina</language>
-			<language type="crp" draft="contributed">kreolčina alebo pidžin</language>
 			<language type="cs">čeština</language>
 			<language type="csb" draft="contributed">kašubčina</language>
 			<language type="cu">cirkevná slovančina</language>
-			<language type="cus" draft="contributed">kušitské jazyky</language>
 			<language type="cv">čuvaština</language>
 			<language type="cy">waleština</language>
 			<language type="da">dánčina</language>
 			<language type="dak">dakotčina</language>
 			<language type="dar">darginčina</language>
 			<language type="dav" draft="contributed">taita</language>
-			<language type="day" draft="contributed">dajačtina</language>
 			<language type="de">nemčina</language>
 			<language type="de_AT">rakúska nemčina</language>
 			<language type="de_CH">švajčiarska spisovná nemčina</language>
@@ -145,7 +122,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">dinka</language>
 			<language type="dje" draft="contributed">zarma</language>
 			<language type="doi">dógrí</language>
-			<language type="dra">drávidské jazyky</language>
 			<language type="dsb" draft="contributed">dolnolužická srbčina</language>
 			<language type="dua">duala</language>
 			<language type="dum" draft="contributed">stredná holandčina</language>
@@ -183,7 +159,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">fulbčina</language>
 			<language type="fi">fínčina</language>
 			<language type="fil">filipínčina</language>
-			<language type="fiu">ugrofínske jazyky</language>
 			<language type="fj">fidžijčina</language>
 			<language type="fo">faerčina</language>
 			<language type="fon">fončina</language>
@@ -201,7 +176,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">gayo</language>
 			<language type="gba">gbaja</language>
 			<language type="gd">škótska gaelčina</language>
-			<language type="gem">germánske jazyky</language>
 			<language type="gez" draft="contributed">etiópčina</language>
 			<language type="gil" draft="contributed">kiribatčina</language>
 			<language type="gl">galícijčina</language>
@@ -224,7 +198,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">hebrejčina</language>
 			<language type="hi">hindčina</language>
 			<language type="hil" draft="contributed">hiligajnončina</language>
-			<language type="him" draft="contributed">himachali</language>
 			<language type="hit" draft="contributed">chetitčina</language>
 			<language type="hmn" draft="contributed">hmong</language>
 			<language type="ho">hiri motu</language>
@@ -242,15 +215,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">interlingue</language>
 			<language type="ig">igboština</language>
 			<language type="ii" draft="contributed">s’čchuanská ioština</language>
-			<language type="ijo" draft="contributed">idžo</language>
 			<language type="ik" draft="contributed">inupiaq</language>
 			<language type="ilo" draft="contributed">ilokánčina</language>
-			<language type="inc" draft="contributed">indické jazyky</language>
-			<language type="ine">indoeurópske jazyky</language>
 			<language type="inh" draft="contributed">inguština</language>
 			<language type="io" draft="contributed">ido</language>
-			<language type="ira">iránske jazyky</language>
-			<language type="iro" draft="contributed">irokézske jazyky</language>
 			<language type="is">islandčina</language>
 			<language type="it">taliančina</language>
 			<language type="iu" draft="contributed">inuktitut</language>
@@ -267,7 +235,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac" draft="contributed">kačjinčina</language>
 			<language type="kaj" draft="contributed">jju</language>
 			<language type="kam">kamba</language>
-			<language type="kar" draft="contributed">karenčina</language>
 			<language type="kaw" draft="contributed">kawi</language>
 			<language type="kbd" draft="contributed">kabardčina</language>
 			<language type="kbl" draft="contributed">kanembu</language>
@@ -277,7 +244,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo" draft="contributed">koro</language>
 			<language type="kg">kongčina</language>
 			<language type="kha" draft="contributed">khasijčina</language>
-			<language type="khi" draft="contributed">kojsanské jazyky</language>
 			<language type="kho" draft="contributed">chotančina</language>
 			<language type="khq" draft="contributed">západná songhajčina</language>
 			<language type="ki" draft="contributed">kikuju</language>
@@ -296,7 +262,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">kanurijčina</language>
 			<language type="krc" draft="contributed">karačajevsko-balkarský jazyk</language>
 			<language type="krl" draft="contributed">karelčina</language>
-			<language type="kro" draft="contributed">kru</language>
 			<language type="kru" draft="contributed">kurukhčina</language>
 			<language type="ks">kašmírčina</language>
 			<language type="ksb" draft="contributed">šambala</language>
@@ -336,7 +301,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai" draft="contributed">maithilčina</language>
 			<language type="mak" draft="contributed">makasarčina</language>
 			<language type="man" draft="contributed">mandingo</language>
-			<language type="map">austronézske jazyky</language>
 			<language type="mas" draft="contributed">masajčina</language>
 			<language type="mde" draft="contributed">maba</language>
 			<language type="mdf" draft="contributed">mokšiančina</language>
@@ -352,15 +316,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">maorijčina</language>
 			<language type="mic" draft="contributed">mikmakčina</language>
 			<language type="min" draft="contributed">minangkabaučina</language>
-			<language type="mis" draft="contributed">rôznorodý jazyk</language>
 			<language type="mk">macedónčina</language>
-			<language type="mkh" draft="contributed">mon-khmérsky jazyk</language>
 			<language type="ml">malajálamčina</language>
 			<language type="mn">mongolčina</language>
 			<language type="mnc" draft="contributed">mandžuština</language>
 			<language type="mni" draft="contributed">manípurčina</language>
-			<language type="mno" draft="contributed">jazyk manobo</language>
-			<language type="mo">moldavčina</language>
 			<language type="moh" draft="contributed">mohawk</language>
 			<language type="mos" draft="contributed">mossi</language>
 			<language type="mr">maráthčina</language>
@@ -368,17 +328,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">maltčina</language>
 			<language type="mua" draft="contributed">mundang</language>
 			<language type="mul" draft="contributed">viaceré jazyky</language>
-			<language type="mun" draft="contributed">mundský jazyk</language>
 			<language type="mus" draft="contributed">kríkčina</language>
 			<language type="mwl" draft="contributed">mirandčina</language>
 			<language type="mwr" draft="contributed">marawari</language>
 			<language type="my">barmčina</language>
 			<language type="mye" draft="contributed">myene</language>
-			<language type="myn">mayské jazyky</language>
 			<language type="myv">erzjančina</language>
 			<language type="na">nauru</language>
-			<language type="nah" draft="contributed">nahuaský jazyk</language>
-			<language type="nai" draft="contributed">jazyk severoamerických indiánov</language>
 			<language type="nap" draft="contributed">neapolčina</language>
 			<language type="naq" draft="contributed">nama</language>
 			<language type="nb">nórsky bokmål</language>
@@ -388,7 +344,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new" draft="contributed">nevárčina</language>
 			<language type="ng">ndonga</language>
 			<language type="nia" draft="contributed">niasánčina</language>
-			<language type="nic" draft="contributed">nigersko-konžský jazyk</language>
 			<language type="niu" draft="contributed">niueština</language>
 			<language type="nl">holandčina</language>
 			<language type="nl_BE">flámčina</language>
@@ -401,7 +356,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo" draft="contributed">n’ko</language>
 			<language type="nr" draft="contributed">južná ndebelčina</language>
 			<language type="nso" draft="contributed">severná sothčina</language>
-			<language type="nub" draft="contributed">núbijský jazyk</language>
 			<language type="nus" draft="contributed">nuer</language>
 			<language type="nv">navajo</language>
 			<language type="nwc" draft="contributed">klasická nevárčina</language>
@@ -417,21 +371,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">osetčina</language>
 			<language type="osa" draft="contributed">osagčina</language>
 			<language type="ota" draft="contributed">osmanská turečtina</language>
-			<language type="oto" draft="contributed">oto-pameský jazyk</language>
 			<language type="pa">pandžábčina</language>
-			<language type="paa" draft="contributed">papuánsky</language>
 			<language type="pag" draft="contributed">pangasinančina</language>
 			<language type="pal" draft="contributed">pahlaví</language>
 			<language type="pam" draft="contributed">pampanga</language>
 			<language type="pap" draft="contributed">papiamento</language>
 			<language type="pau" draft="contributed">palaučina</language>
 			<language type="peo" draft="contributed">stará perzština</language>
-			<language type="phi" draft="contributed">filipínsky jazyk</language>
 			<language type="phn" draft="contributed">feničtina</language>
 			<language type="pi">pálí</language>
 			<language type="pl">poľština</language>
 			<language type="pon" draft="contributed">pohnpeičina</language>
-			<language type="pra" draft="contributed">prakrity</language>
 			<language type="pro" draft="contributed">stará okcitánčina</language>
 			<language type="ps">paštúnčina</language>
 			<language type="ps" alt="variant" draft="contributed">paštčina</language>
@@ -445,7 +395,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">rétorománčina</language>
 			<language type="rn">rundčina</language>
 			<language type="ro">rumunčina</language>
-			<language type="roa" draft="contributed">románsky jazyk</language>
+			<language type="ro_MD">moldavčina</language>
 			<language type="rof" draft="contributed">rombo</language>
 			<language type="rom" draft="contributed">rómčina</language>
 			<language type="root" draft="contributed">koreň</language>
@@ -456,8 +406,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">sanskrit</language>
 			<language type="sad" draft="contributed">sandawe</language>
 			<language type="sah" draft="contributed">jakutčina</language>
-			<language type="sai" draft="contributed">jazyk juhoamerických indiánov</language>
-			<language type="sal" draft="contributed">sališský jazyk</language>
 			<language type="sam" draft="contributed">samaritánska aramejčina</language>
 			<language type="saq" draft="contributed">samburu</language>
 			<language type="sas" draft="contributed">sasačtina</language>
@@ -472,25 +420,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see" draft="contributed">seneca</language>
 			<language type="seh" draft="contributed">sena</language>
 			<language type="sel" draft="contributed">selkupčina</language>
-			<language type="sem" draft="contributed">semitský jazyk</language>
 			<language type="ses" draft="contributed">koyraboro senni</language>
 			<language type="sg">sango</language>
 			<language type="sga" draft="contributed">stará írčina</language>
-			<language type="sgn" draft="contributed">znaková reč</language>
 			<language type="sh">srbochorvátčina</language>
 			<language type="shi" draft="contributed">tachelhit</language>
 			<language type="shn" draft="contributed">šančina</language>
 			<language type="shu" draft="contributed">čadská arabčina</language>
 			<language type="si">sinhalčina</language>
 			<language type="sid" draft="contributed">sidamo</language>
-			<language type="sio" draft="contributed">siouský jazyk</language>
-			<language type="sit" draft="contributed">sinotibetský jazyk</language>
 			<language type="sk">slovenčina</language>
 			<language type="sl">slovinčina</language>
-			<language type="sla">slovenský jazyk</language>
 			<language type="sm">samojčina</language>
 			<language type="sma" draft="contributed">južná saamčina</language>
-			<language type="smi" draft="contributed">saamský jazyk</language>
 			<language type="smj" draft="contributed">luleská saamčina</language>
 			<language type="smn" draft="contributed">inariská saamčina</language>
 			<language type="sms" draft="contributed">skolt</language>
@@ -498,13 +440,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk" draft="contributed">soninke</language>
 			<language type="so">somálčina</language>
 			<language type="sog" draft="contributed">sogdijčina</language>
-			<language type="son" draft="contributed">songhajčina</language>
 			<language type="sq">albánčina</language>
 			<language type="sr">srbčina</language>
 			<language type="srn" draft="contributed">sranan</language>
 			<language type="srr" draft="contributed">serer</language>
 			<language type="ss">svazijčina</language>
-			<language type="ssa" draft="contributed">nilosaharský jazyk</language>
 			<language type="ssy" draft="contributed">saho</language>
 			<language type="st">južná sothčina</language>
 			<language type="su">sundčina</language>
@@ -518,7 +458,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc" draft="contributed">klasická sýrčina</language>
 			<language type="syr">sýrčina</language>
 			<language type="ta">tamilčina</language>
-			<language type="tai" draft="contributed">thajský jazyk</language>
 			<language type="te">telugčina</language>
 			<language type="tem" draft="contributed">temne</language>
 			<language type="teo" draft="contributed">teso</language>
@@ -545,8 +484,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi" draft="contributed">tsimshijské jazyky</language>
 			<language type="tt">tatárčina</language>
 			<language type="tum" draft="contributed">tumbuka</language>
-			<language type="tup" draft="contributed">jazyk tupi</language>
-			<language type="tut">altajské jazyky</language>
 			<language type="tvl" draft="contributed">tuvalčina</language>
 			<language type="tw">twi</language>
 			<language type="twq" draft="contributed">tasawak</language>
@@ -569,11 +506,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun" draft="contributed">vunjo</language>
 			<language type="wa">valónčina</language>
 			<language type="wae" draft="contributed">walserčina</language>
-			<language type="wak" draft="contributed">wakašský jazyk</language>
 			<language type="wal" draft="contributed">walamo</language>
 			<language type="war" draft="contributed">waray</language>
 			<language type="was" draft="contributed">washo</language>
-			<language type="wen" draft="contributed">lužickosrbský jazyk</language>
 			<language type="wo">wolof</language>
 			<language type="xal" draft="contributed">kalmyčtina</language>
 			<language type="xh">xhosa</language>
@@ -584,7 +519,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb" draft="contributed">yemba</language>
 			<language type="yi">jidiš</language>
 			<language type="yo">jorubčina</language>
-			<language type="ypk" draft="contributed">juitsko-jupický jazyk</language>
 			<language type="yue" draft="contributed">kantončina</language>
 			<language type="za">čuangčina</language>
 			<language type="zap" draft="contributed">zapotéčtina</language>
@@ -594,7 +528,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">čínština</language>
 			<language type="zh_Hans">zjednodušená čínština</language>
 			<language type="zh_Hant">tradičná čínština</language>
-			<language type="znd" draft="contributed">zandský jazyk</language>
 			<language type="zu">zuluština</language>
 			<language type="zun" draft="contributed">zuniština</language>
 			<language type="zxx" draft="contributed">bez jazykového obsahu</language>
@@ -1907,9 +1840,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Asia/Yerevan">
 				<exemplarCity draft="contributed">Jerevan</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Južný pól</exemplarCity>
-			</zone>
 			<zone type="Antarctica/DumontDUrville">
 				<exemplarCity draft="contributed">Dumont D'Urville</exemplarCity>
 			</zone>
@@ -2576,6 +2506,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<standard>Stredoeurópsky štandardný čas</standard>
 					<daylight>Stredoeurópsky letný čas</daylight>
 				</long>
+				<short>
+					<generic>SEČ</generic>
+					<standard>SEČ</standard>
+					<daylight>SELČ</daylight>
+				</short>
 			</metazone>
 			<metazone type="Europe_Eastern">
 				<long>

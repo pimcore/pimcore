@@ -84,10 +84,9 @@ class Zend_Auth_Result
     /**
      * Sets the result code, identity, and failure messages
      *
-     * @param  int     $code
-     * @param  mixed   $identity
-     * @param  array   $messages
-     * @return void
+     * @param int   $code
+     * @param mixed $identity
+     * @param array $messages
      */
     public function __construct($code, $identity, array $messages = array())
     {

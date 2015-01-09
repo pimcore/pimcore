@@ -13,9 +13,22 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
+namespace Pimcore\View\Helper;
 
+use Pimcore\Config; 
+use Pimcore\Model\Site;
+use Pimcore\Model\Staticroute;
 
+class Url extends \Zend_View_Helper_Url {
+
+    /**
+     * @param array $urlOptions
+     * @param null $name
+     * @param bool $reset
+     * @param bool $encode
+     * @return string|void
+     * @throws \Exception
+     */
     public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
     {
         if(!$urlOptions) {
@@ -36,7 +49,7 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
         // check for a site in the options, if valid remove it from the options
         $hostname = null;
         if(isset($urlOptions["site"])) {
-            $config = Pimcore_Config::getSystemConfig();
+            $config = Config::getSystemConfig();
             $site = $urlOptions["site"];
             if(!empty($site)) {
                 try {
@@ -45,8 +58,8 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
                     $hostname = $site->getMainDomain();
                     $siteId = $site->getId();
                 } catch (\Exception $e) {
-                    Logger::warn("passed site doesn't exists");
-                    Logger::warn($e);
+                    \Logger::warn("passed site doesn't exists");
+                    \Logger::warn($e);
                 }
             } else if ($config->general->domain) {
                 $hostname = $config->general->domain;
@@ -63,7 +76,7 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
                 $url = "//" . $hostname . $url;
             }
 
-            if(Pimcore_Config::getSystemConfig()->documents->allowcapitals == 'no'){
+            if(Config::getSystemConfig()->documents->allowcapitals == 'no'){
                 $urlParts = parse_url($url);
                 $url = str_replace($urlParts["path"], strtolower($urlParts["path"]), $url);
             }
@@ -71,7 +84,7 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
         }
 
 
-        // this is to add support for arrays as values for the default Zend_View_Helper_Url
+        // this is to add support for arrays as values for the default \Zend_View_Helper_Url
         $unset = array(); 
         foreach ($urlOptions as $optionName => $optionValues) {
             if (is_array($optionValues)) {
@@ -88,8 +101,8 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
         
         try {
             return parent::url($urlOptions, $name, $reset, $encode);
-        } catch (Exception $e) {
-            throw new Exception("Route '".$name."' for building the URL not found");
+        } catch (\Exception $e) {
+            throw new \Exception("Route '".$name."' for building the URL not found");
         }
     }    
 }

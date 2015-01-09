@@ -13,14 +13,19 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_Maintenance extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
 
-    public function routeStartup(Zend_Controller_Request_Abstract $request) {
+class Maintenance extends \Zend_Controller_Plugin_Abstract {
+
+    /**
+     * @param \Zend_Controller_Request_Abstract $request
+     */
+    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
         $maintenance = false;
-        $file = Pimcore_Tool_Admin::getMaintenanceModeFile();
+        $file = \Pimcore\Tool\Admin::getMaintenanceModeFile();
 
         if(is_file($file)) {
-            $conf = new Zend_Config_Xml($file);
+            $conf = new \Zend_Config_Xml($file);
             if($conf->sessionId) {
                 if($conf->sessionId != $_COOKIE["pimcore_admin_sid"]) {
                     $maintenance = true;
@@ -34,7 +39,7 @@ class Pimcore_Controller_Plugin_Maintenance extends Zend_Controller_Plugin_Abstr
         // this is to avoid problems with monitoring agents
         $serverIps = array("127.0.0.1");
 
-        if($maintenance && !in_array(Pimcore_Tool::getClientIp(), $serverIps)) {
+        if($maintenance && !in_array(\Pimcore\Tool::getClientIp(), $serverIps)) {
             header("HTTP/1.1 503 Service Temporarily Unavailable",503);
             echo file_get_contents(PIMCORE_PATH . "/static/html/maintenance.html");
             exit;

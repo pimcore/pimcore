@@ -20,9 +20,6 @@
  * @version    $Id$
  */
 
-/** @see PHPUnit_Framework_Constraint */
-// require_once 'PHPUnit/Framework/Constraint.php';
-
 /**
  * Response header PHPUnit Constraint
  *

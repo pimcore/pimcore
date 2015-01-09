@@ -71,9 +71,10 @@ class Zend_Crypt_Math_BigInteger
     /**
      * Redirect all public method calls to the wrapped extension object.
      *
-     * @param   string $methodName
-     * @param   array $args
-     * @throws  Zend_Crypt_Math_BigInteger_Exception
+     * @param  string $methodName
+     * @param  array  $args
+     * @return mixed
+     * @throws Zend_Crypt_Math_BigInteger_Exception
      */
     public function __call($methodName, $args)
     {

@@ -13,10 +13,18 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_View_Helper_EditmodeTooltip extends Zend_View_Helper_Abstract {
+namespace Pimcore\View\Helper;
 
+class EditmodeTooltip extends \Zend_View_Helper_Abstract {
+
+    /**
+     * @var int
+     */
     protected static $editmodeTooltipsIncrementer = 0;
 
+    /**
+     * @return array
+     */
     protected function getDefaultEditmodeTooltipOptions(){
         return array("autoHide" => true,
                      "title" => null,
@@ -24,6 +32,10 @@ class Pimcore_View_Helper_EditmodeTooltip extends Zend_View_Helper_Abstract {
         );
     }
 
+    /**
+     * @param $id
+     * @return string
+     */
     protected function getTooltipIdentifier($id){
         return "editmode_tooltip_" . $id;
     }
@@ -48,7 +60,7 @@ class Pimcore_View_Helper_EditmodeTooltip extends Zend_View_Helper_Abstract {
             }
 
             $s = "<img id='" . $options["target"] . "' src='" . $options["icon"] . "' alt='' class='pimcore_editmode_tooltip' />";
-            $s .= "<script type='text/javascript'>new Ext.ToolTip(" . Zend_Json::encode($options) .");</script>";
+            $s .= "<script type='text/javascript'>new Ext.ToolTip(" . \Zend_Json::encode($options) .");</script>";
             return $s;
         }
     }

@@ -93,12 +93,13 @@ class Zend_Xml_Security
         $result = $dom->loadXml($xml, LIBXML_NONET);
         restore_error_handler();
 
+        // Entity load to previous setting
+        if (!self::isPhpFpm()) {
+            libxml_disable_entity_loader($loadEntities);
+            libxml_use_internal_errors($useInternalXmlErrors);
+        }
+
         if (!$result) {
-            // Entity load to previous setting
-            if (!self::isPhpFpm()) {
-                libxml_disable_entity_loader($loadEntities);
-                libxml_use_internal_errors($useInternalXmlErrors);
-            }
             return false;
         }
 
@@ -112,12 +113,6 @@ class Zend_Xml_Security
                     }
                 }
             }
-        }
-
-        // Entity load to previous setting
-        if (!self::isPhpFpm()) {
-            libxml_disable_entity_loader($loadEntities);
-            libxml_use_internal_errors($useInternalXmlErrors);
         }
 
         if (isset($simpleXml)) {

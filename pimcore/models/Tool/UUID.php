@@ -1,15 +1,27 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: Christian Kogler
- * Date: 05.06.13
- * Time: 18:42
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @category   Pimcore
+ * @package    Tool
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     New BSD License
  */
 
+namespace Pimcore\Model\Tool;
+
+use Pimcore\Model;
 
 include_once ("UUID.php");
 
-class Tool_UUID extends Pimcore_Model_Abstract {
+class UUID extends Model\AbstractModel {
 
     public $itemId;
     public $type;
@@ -27,16 +39,17 @@ class Tool_UUID extends Pimcore_Model_Abstract {
     }
 
     public function setSystemInstanceIdentifier(){
-        $instanceIdentifier = Pimcore_Config::getSystemConfig()->general->instanceIdentifier;
+        $instanceIdentifier = \Pimcore\Config::getSystemConfig()->general->instanceIdentifier;
         if(!$instanceIdentifier){
-            throw new Exception("No instance identier set in system config!");
+            throw new \Exception("No instance identier set in system config!");
         }
         $this->setInstanceIdentifier($instanceIdentifier);
         return $this;
     }
 
     /**
-     * @param mixed $id
+     * @param $id
+     * @return $this
      */
     public function setItemId($id)
     {
@@ -53,7 +66,8 @@ class Tool_UUID extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param mixed $type
+     * @param $type
+     * @return $this
      */
     public function setType($type)
     {
@@ -69,26 +83,34 @@ class Tool_UUID extends Pimcore_Model_Abstract {
         return $this->type;
     }
 
+    /**
+     * @return string
+     * @throws \Exception
+     */
     public function getUuidResourceName(){
         if(!$this->getType()){
-            throw new Exception("Couldn't create UUID - no 'type' specified.");
+            throw new \Exception("Couldn't create UUID - no 'type' specified.");
         }
 
         if(!$this->getItemId()){
-            throw new Exception("Couldn't create UUID - no 'itemId' specified.");
+            throw new \Exception("Couldn't create UUID - no 'itemId' specified.");
         }
 
         $resourceName =  implode('_',array_filter(array($this->getType(),$this->getItemId())));
         return $resourceName;
     }
 
+    /**
+     * @return mixed
+     * @throws \Exception
+     */
     public function createUuid(){
 
         if(!$this->getInstanceIdentifier()){
-            throw new Exception("No instance identifier specified.");
+            throw new \Exception("No instance identifier specified.");
         }
 
-        $uuid = UUID::generate(UUID::UUID_NAME_SHA1,UUID::FMT_STRING,$this->getUuidResourceName(),$this->getInstanceIdentifier());
+        $uuid = \UUID::generate(\UUID::UUID_NAME_SHA1,\UUID::FMT_STRING,$this->getUuidResourceName(),$this->getInstanceIdentifier());
         return $uuid;
     }
     /**
@@ -99,19 +121,30 @@ class Tool_UUID extends Pimcore_Model_Abstract {
         return $this->uuid;
     }
 
+    /**
+     * @param $uuid
+     */
     public function setUuid($uuid){
         $this->uuid = $uuid;
     }
 
+    /**
+     * @param $item
+     * @return $this
+     */
     public function setItem($item){
         $this->setItemId($item->getId());
-        $this->setType(Element_Service::getElementType($item));
+        $this->setType(Model\Element\Service::getElementType($item));
 
         $this->item = $item;
         return $this;
     }
 
-
+    /**
+     * @param $item
+     * @return UUID
+     * @throws \Exception
+     */
     public static function getByItem($item){
         $self = new self;
         $self->setSystemInstanceIdentifier();
@@ -119,11 +152,20 @@ class Tool_UUID extends Pimcore_Model_Abstract {
         return $self;
     }
 
+    /**
+     * @param $uuid
+     * @return mixed
+     */
     public static function getByUuid($uuid){
         $self = new self;
         return $self->getResource()->getByUuid($uuid);
     }
 
+    /**
+     * @param $item
+     * @return static
+     * @throws \Exception
+     */
     public static function create($item){
         $uuid = new static;
         $uuid->setSystemInstanceIdentifier()->setItem($item);

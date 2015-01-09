@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="pa"/>
 	</identity>
 	<localeDisplayNames>
@@ -22,13 +22,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ach" draft="contributed">ਅਕੋਲੀ</language>
 			<language type="af">ਅਫ਼ਰੀਕੀ</language>
 			<language type="am">ਅਮਹਾਰਿਕ</language>
-			<language type="apa" draft="contributed">ਅਪਾਚੇ ਭਾਸ਼ਾ</language>
 			<language type="ar">ਅਰਬੀ</language>
 			<language type="ar_001">ਆਧੁਨਿਕ ਸਟੈਂਡਰਡ ਅਰਬੀ</language>
 			<language type="as">ਅਸਾਮੀ</language>
-			<language type="aus" draft="contributed">ਆਸਟਰੇਲੀਅਨ ਭਾਸ਼ਾ</language>
 			<language type="az">ਅਜ਼ਰਬੈਜਾਨੀ</language>
-			<language type="bat" draft="contributed">ਬੈਲਟਿਕ ਭਾਸ਼ਾ</language>
 			<language type="be">ਬੇਲਾਰੂਸੀ</language>
 			<language type="bg">ਬੁਲਗਾਰੀਅਨ</language>
 			<language type="bn">ਬੰਗਾਲੀ</language>
@@ -1329,9 +1326,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>ਪਾਮਰ</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>ਦੱਖਣੀ ਧਰੁੱਵ</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>ਸਵੋਯਾ</exemplarCity>
 			</zone>
@@ -1604,9 +1598,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>ਟੋਰੰਟੋ</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>ਮੋਂਟਰੀਅਲ</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>ਇਕਾਲੁਈਟ</exemplarCity>
@@ -2450,9 +2441,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>ਫੋਨਿਕਸ</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>ਸ਼ਿਪਰੌਕ</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>ਡੇਨਵਰ</exemplarCity>

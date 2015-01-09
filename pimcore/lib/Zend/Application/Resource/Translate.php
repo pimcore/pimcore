@@ -88,10 +88,7 @@ class Zend_Application_Resource_Translate extends Zend_Application_Resource_Reso
 
             if (isset($options['log'])) {
                 if (is_array($options['log'])) {
-                    $log = Zend_Log::factory($options['log']);
-                }
-                if ($log instanceof Zend_Log) {
-                    $options['log'] = $log;
+                    $options['log'] = Zend_Log::factory($options['log']);
                 }
             }
 

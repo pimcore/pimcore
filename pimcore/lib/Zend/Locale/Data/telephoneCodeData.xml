@@ -6,8 +6,8 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 For terms of use, see http://www.unicode.org/copyright.html
 -->
 <supplementalData>
-    <version number="$Revision: 8242 $"/>
-    <generation date="$Date: 2013-02-24 21:06:02 -0600 (Sun, 24 Feb 2013) $"/>
+    <version number="$Revision: 9034 $"/>
+    <generation date="$Date: 2013-07-15 13:48:35 -0500 (Mon, 15 Jul 2013) $"/>
 	<telephoneCodeData>
 		<!--
 		References:
@@ -15,8 +15,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 			available at <http://www.itu.int/opb/publications.aspx?parent=T-SP&view=T-SP2>
 		2.	World Telephone Numbering Guide <http://www.wtng.info/>
 		
-		Special cases below: 001, AC, AQ, AS, GU, PS, VA, YT
-		Unknown telephoneCountryCode for territories: BV, EH, GS, HM, MF, PN, UM
+		Special cases below: 001, AC, AQ, AS, GU, PS, VA, XK, YT
+		Unknown telephoneCountryCode for territories: BV, HM
 		-->
 	
 		<codesByTerritory territory="001">
@@ -101,9 +101,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 		<codesByTerritory territory="AM">	<!-- Armenia -->
 			<telephoneCountryCode code="374"/>
 		</codesByTerritory>
-		<codesByTerritory territory="AN">	<!-- Netherlands Antilles -->
-			<telephoneCountryCode code="599"/>
-		</codesByTerritory>
 		<codesByTerritory territory="AO">	<!-- Angola -->
 			<telephoneCountryCode code="244"/>
 		</codesByTerritory>
@@ -172,6 +169,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 		<codesByTerritory territory="BO">	<!-- Bolivia -->
 			<telephoneCountryCode code="591"/>
 		</codesByTerritory>
+		<codesByTerritory territory="BQ">	<!-- Caribbean Netherlands: Bonaire, Saint Eustatius and Saba -->
+			<telephoneCountryCode code="599"/>
+		</codesByTerritory>
 		<codesByTerritory territory="BR">	<!-- Brazil -->
 			<telephoneCountryCode code="55"/>
 		</codesByTerritory>
@@ -237,6 +237,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 		<codesByTerritory territory="CV">	<!-- Cape Verde -->
 			<telephoneCountryCode code="238"/>
 		</codesByTerritory>
+		<codesByTerritory territory="CW">	<!-- Curacao -->
+			<telephoneCountryCode code="599"/>
+		</codesByTerritory>
 		<codesByTerritory territory="CX">	<!-- Christmas Island -->
 			<telephoneCountryCode code="61"/>	<!-- Australia -->
 		</codesByTerritory>
@@ -273,7 +276,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 		<codesByTerritory territory="EG">	<!-- Egypt (Arab Republic of) -->
 			<telephoneCountryCode code="20"/>
 		</codesByTerritory>
-		<!-- telephoneCodes territory="EH" -->	<!-- Western Sahara -->	<!-- telephoneCountryCode unknown -->
+		<codesByTerritory territory="EH">	<!-- Western Sahara -->
+			<telephoneCountryCode code="212"/> <!-- via Morocco -->
+		</codesByTerritory>
 		<codesByTerritory territory="ER">	<!-- Eritrea -->
 			<telephoneCountryCode code="291"/>
 		</codesByTerritory>
@@ -343,7 +348,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 		<codesByTerritory territory="GR">	<!-- Greece -->
 			<telephoneCountryCode code="30"/>
 		</codesByTerritory>
-		<!-- telephoneCodes territory="GS" -->	<!-- South Georgia and the South Sandwich Islands -->	<!-- telephoneCountryCode unknown -->
+		<codesByTerritory territory="GS">	<!-- South Georgia and the South Sandwich Islands -->
+			<telephoneCountryCode code="500"/>	<!-- Falkland Islands -->
+		</codesByTerritory>
 		<codesByTerritory territory="GT">	<!-- Guatemala -->
 			<telephoneCountryCode code="502"/>
 		</codesByTerritory>
@@ -493,7 +500,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 		<codesByTerritory territory="ME">	<!-- Montenegro -->
 			<telephoneCountryCode code="382"/>
 		</codesByTerritory>
-		<!-- telephoneCodes territory="MF" -->	<!-- Saint Martin -->	<!-- telephoneCountryCode unknown -->
+		<codesByTerritory territory="MF">	<!-- Saint Martin -->
+			<telephoneCountryCode code="590"/> <!-- French Antilles -->
+		</codesByTerritory>
 		<codesByTerritory territory="MG">	<!-- Madagascar -->
 			<telephoneCountryCode code="261"/>
 		</codesByTerritory>
@@ -611,7 +620,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 		<codesByTerritory territory="PM">	<!-- Saint Pierre and Miquelon (Collectivité territoriale de la République française) -->
 			<telephoneCountryCode code="508"/>
 		</codesByTerritory>
-		<!-- telephoneCodes territory="PN" -->	<!-- Pitcairn -->	<!-- telephoneCountryCode unknown -->
+		<codesByTerritory territory="PN">	<!-- Pitcairn Islands -->
+			<telephoneCountryCode code="870"/>
+		</codesByTerritory>
 		<codesByTerritory territory="PR">	<!-- Puerto Rico -->
 			<telephoneCountryCode code="1"/><!-- +1 787/939 -->	<!-- North America Numbering Plan -->
 		</codesByTerritory>
@@ -701,6 +712,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 		<codesByTerritory territory="SV">	<!-- El Salvador -->
 			<telephoneCountryCode code="503"/>
 		</codesByTerritory>
+		<codesByTerritory territory="SX">	<!-- Sint Maarten -->
+			<telephoneCountryCode code="1"/><!-- +1 721 -->	<!-- North America Numbering Plan -->
+		</codesByTerritory>
 		<codesByTerritory territory="SY">	<!-- Syrian Arab Republic -->
 			<telephoneCountryCode code="963"/>
 		</codesByTerritory>
@@ -761,7 +775,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 		<codesByTerritory territory="UG">	<!-- Uganda -->
 			<telephoneCountryCode code="256"/>
 		</codesByTerritory>
-		<!-- telephoneCodes territory="UM" -->	<!-- United States Minor Outlying Islands -->	<!-- telephoneCountryCode unknown -->
+		<codesByTerritory territory="UM">	<!-- United States Minor Outlying Islands -->
+			<telephoneCountryCode code="1"/>	<!-- North America Numbering Plan -->
+		</codesByTerritory>
 		<codesByTerritory territory="US">	<!-- United States -->
 			<telephoneCountryCode code="1"/>	<!-- North America Numbering Plan -->
 		</codesByTerritory>
@@ -799,6 +815,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 		<codesByTerritory territory="WS">	<!-- Samoa -->
 			<telephoneCountryCode code="685"/>
 		</codesByTerritory>
+        <codesByTerritory territory="XK">   <!-- Kosovo -->
+            <telephoneCountryCode code="377"/> <!-- mobile phone networks -->
+            <telephoneCountryCode code="381"/> <!--  official (Serbia), used for landlines -->
+            <telephoneCountryCode code="386"/> <!--  mobile phone networks, partial (Slovenia) -->
+        </codesByTerritory>
 		<codesByTerritory territory="YE">	<!-- Yemen -->
 			<telephoneCountryCode code="967"/>	<!-- (originally just for Yemen Arab Republic, before merge) -->
 		</codesByTerritory>

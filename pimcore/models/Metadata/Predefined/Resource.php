@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Metadata_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Metadata\Predefined;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      * Contains all valid columns in the database table
@@ -51,18 +55,22 @@ class Metadata_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
 
 
     /**
-     * Get the data for the object from database for the given key, or from the key which is set in the object
+     * Get the data for the object from database for the given name, or from the name which is set in the object
      *
-     * @param string $key
+     * @param string $name
      * @return void
      */
-    public function getByKeyAndLanguage($key = null, $language = null) {
+    public function getByNameAndLanguage($name = null, $language = null) {
 
-        if ($key != null) {
-            $this->model->setKey($key);
+        if ($name != null) {
+            $this->model->setName($name);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM assets_metadata_predefined WHERE `key` = ?", $this->model->getKey());
+        if ($language != null) {
+            $this->model->setLanguage($language);
+        }
+
+        $data = $this->db->fetchRow("SELECT * FROM assets_metadata_predefined WHERE `name` = ? AND language = ?", [$this->model->getName(), $this->model->getLanguage()]);
         $this->assignVariablesToModel($data);
     }
 
@@ -88,9 +96,7 @@ class Metadata_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
-     * Save changes to database, it's a good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
         try {
@@ -110,7 +116,7 @@ class Metadata_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
 
             $this->db->update("assets_metadata_predefined", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

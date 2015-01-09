@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE supplementalData SYSTEM "../../common/dtd/ldmlSupplemental.dtd">
 <!--
-Copyright © 1991-2013 Unicode, Inc.
+Copyright © 1991-2014 Unicode, Inc.
 CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
 For terms of use, see http://www.unicode.org/copyright.html
 -->
 <supplementalData>
-    <version number="$Revision: 8663 $"/>
-    <generation date="$Date: 2013-05-02 15:03:19 -0500 (Thu, 02 May 2013) $"/>
+    <version number="$Revision: 9732 $"/>
+    <generation date="$Date: 2014-02-13 11:57:02 -0600 (Thu, 13 Feb 2014) $"/>
     <numberingSystems>
         <numberingSystem id="arab" type="numeric" digits="٠١٢٣٤٥٦٧٨٩"/>
         <numberingSystem id="arabext" type="numeric" digits="۰۱۲۳۴۵۶۷۸۹"/>
@@ -26,6 +26,7 @@ For terms of use, see http://www.unicode.org/copyright.html
         <numberingSystem id="greklow" type="algorithmic" rules="greek-lower"/>
         <numberingSystem id="gujr" type="numeric" digits="૦૧૨૩૪૫૬૭૮૯"/>
         <numberingSystem id="guru" type="numeric" digits="੦੧੨੩੪੫੬੭੮੯"/>
+        <numberingSystem id="hanidays" type="algorithmic" rules="zh/SpelloutRules/spellout-numbering-days"/>
         <numberingSystem id="hanidec" type="numeric" digits="〇一二三四五六七八九"/>
         <numberingSystem id="hans" type="algorithmic" rules="zh/SpelloutRules/spellout-cardinal"/>
         <numberingSystem id="hansfin" type="algorithmic" rules="zh/SpelloutRules/spellout-cardinal-financial"/>

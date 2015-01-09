@@ -13,26 +13,70 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_CDN extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
 
+use Pimcore\Tool;
+use Pimcore\Model\Cache as CacheManager;
+
+class CDN extends \Zend_Controller_Plugin_Abstract {
+
+    /**
+     * @var bool
+     */
     protected $enabled = true;
+
+    /**
+     * @var
+     */
     protected $hostnames;
+
+    /**
+     * @var
+     */
     protected $patterns;
+
+    /**
+     * @var
+     */
     protected $cachedItems;
+
+    /**
+     * @var
+     */
     protected $conf;
+
+    /**
+     * @var array
+     */
     protected $cdnhostnames = array();
+
+    /**
+     * @var array
+     */
     protected $cdnpatterns = array();
-    
+
+    /**
+     *
+     */
     const cacheKey = "cdn_pathes";
 
+    /**
+     *
+     */
     public function enable () {
         $this->enabled = true;
     }
 
+    /**
+     *
+     */
     public function disable() {
         $this->enabled = false;
     }
-    
+
+    /**
+     * @return array
+     */
     protected function getHostnames () {
         if($this->hostnames === null) {
             $this->hostnames = array();
@@ -43,7 +87,10 @@ class Pimcore_Controller_Plugin_CDN extends Zend_Controller_Plugin_Abstract {
         }
         return $this->hostnames;
     }
-    
+
+    /**
+     * @return array
+     */
     protected function getPatterns () {
         if($this->patterns === null) {
             $this->patterns = array();
@@ -54,7 +101,11 @@ class Pimcore_Controller_Plugin_CDN extends Zend_Controller_Plugin_Abstract {
         }
         return $this->patterns;
     }
-    
+
+    /**
+     * @param $path
+     * @return bool
+     */
     protected function pathMatch ($path) {
         foreach ($this->getPatterns() as $pattern) {
             if(@preg_match($pattern,$path)) {
@@ -66,17 +117,24 @@ class Pimcore_Controller_Plugin_CDN extends Zend_Controller_Plugin_Abstract {
         }
         return false;
     }
-    
+
+    /**
+     * @return array|mixed
+     */
     protected function getStorage () {
         if($this->cachedItems === null) {
             $this->cachedItems = array();
-            if ($items = Pimcore_Model_Cache::load(self::cacheKey)) {
+            if ($items = CacheManager::load(self::cacheKey)) {
                 $this->cachedItems = $items; 
             }
         }
         return $this->cachedItems;
     }
-    
+
+    /**
+     * @param $path
+     * @return string
+     */
     protected function rewritePath ($path) {
         $store = $this->getStorage();
         if($store[$path]) {
@@ -92,9 +150,12 @@ class Pimcore_Controller_Plugin_CDN extends Zend_Controller_Plugin_Abstract {
         return $new;
     }
 
+    /**
+     *
+     */
     public function dispatchLoopShutdown() {
         
-        if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
+        if(!Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
         
@@ -134,28 +195,42 @@ class Pimcore_Controller_Plugin_CDN extends Zend_Controller_Plugin_Abstract {
                 $this->getResponse()->setBody($body);
 
                 // save storage
-                Pimcore_Model_Cache::save($this->cachedItems, self::cacheKey, array(), 3600);
+                CacheManager::save($this->cachedItems, self::cacheKey, array(), 3600);
             }
         }
     }
 
+    /**
+     * @param $cdnhostnames
+     * @return $this
+     */
     public function setCdnhostnames($cdnhostnames)
     {
         $this->cdnhostnames = $cdnhostnames;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getCdnhostnames()
     {
         return $this->cdnhostnames;
     }
 
+    /**
+     * @param $cdnpatterns
+     * @return $this
+     */
     public function setCdnpatterns($cdnpatterns)
     {
         $this->cdnpatterns = $cdnpatterns;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getCdnpatterns()
     {
         return $this->cdnpatterns;

@@ -11,6 +11,8 @@ MULTI-CHANNEL EXPERIENCE AND ENGAGEMENT MANAGEMENT PLATFORM
 * Issue Tracker: - [Issues](http://www.pimcore.org/issues) - Report bugs here
 * Forums: - http://www.pimcore.org/board/ - Get help
 
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/pimcore/pimcore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 ## Getting started
 
 Download the [latest release](http://www.pimcore.org/download) and extract the archive in document root.
@@ -23,5 +25,5 @@ Run the pimcore installation by accessing the URL where you uploaded the pimcore
 ## Copyright and license
 
 Copyright [pimcore](http://www.pimcore.org) GmbH under a modified [BSD license](LICENSE.txt).  
-For licencing details please visit http://www.pimcore.org/license
+For licensing details please visit http://www.pimcore.org/license
 

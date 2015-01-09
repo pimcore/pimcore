@@ -14,8 +14,10 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Asset_Video_Thumbnail_Config {
+
+namespace Pimcore\Model\Asset\Video\Thumbnail;
+
+class Config {
 
     /**
      * format of array:
@@ -55,15 +57,15 @@ class Asset_Video_Thumbnail_Config {
     public $audioBitrate;
 
     /**
-     * @static
-     * @param  $name
-     * @return Asset_Image_Thumbnail_Config
+     * @param $name
+     * @return Config
+     * @throws \Exception
      */
     public static function getByName ($name) {
         $pipe = new self();
         $pipe->setName($name);
         if(!is_readable($pipe->getConfigFile()) || !$pipe->load()) {
-            throw new Exception("video thumbnail definition : " . $name . " does not exist");
+            throw new \Exception("video thumbnail definition : " . $name . " does not exist");
         }
 
         return $pipe;
@@ -76,14 +78,14 @@ class Asset_Video_Thumbnail_Config {
     public static function getWorkingDir () {
         $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/videopipelines";
         if(!is_dir($dir)) {
-            Pimcore_File::mkdir($dir);
+            \Pimcore\File::mkdir($dir);
         }
 
         return $dir;
     }
 
     /**
-     * @return Asset_Video_Thumbnail_Config
+     * @return Config
      */
     public static function getPreviewConfig () {
         $config = new self();
@@ -113,8 +115,8 @@ class Asset_Video_Thumbnail_Config {
         $items = $arrayConfig["items"];
         $arrayConfig["items"] = array("item" => $items);
         
-        $config = new Zend_Config($arrayConfig);
-        $writer = new Zend_Config_Writer_Xml(array(
+        $config = new \Zend_Config($arrayConfig);
+        $writer = new \Zend_Config_Writer_Xml(array(
             "config" => $config,
             "filename" => $this->getConfigFile()
         ));
@@ -128,7 +130,7 @@ class Asset_Video_Thumbnail_Config {
      */
     public function load () {
 
-        $configXml = new Zend_Config_Xml($this->getConfigFile());
+        $configXml = new \Zend_Config_Xml($this->getConfigFile());
         $configArray = $configXml->toArray();
 
         if(array_key_exists("items",$configArray) && is_array($configArray["items"]["item"])) {
@@ -205,7 +207,8 @@ class Asset_Video_Thumbnail_Config {
     }
 
     /**
-     * @param string $description
+     * @param $description
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -222,7 +225,8 @@ class Asset_Video_Thumbnail_Config {
     }
 
     /**
-     * @param array $items
+     * @param $items
+     * @return $this
      */
     public function setItems($items)
     {
@@ -239,7 +243,8 @@ class Asset_Video_Thumbnail_Config {
     }
 
     /**
-     * @param string $name
+     * @param $name
+     * @return $this
      */
     public function setName($name)
     {
@@ -256,7 +261,8 @@ class Asset_Video_Thumbnail_Config {
     }
 
     /**
-     * @param int $audioBitrate
+     * @param $audioBitrate
+     * @return $this
      */
     public function setAudioBitrate($audioBitrate)
     {
@@ -273,7 +279,8 @@ class Asset_Video_Thumbnail_Config {
     }
 
     /**
-     * @param int $videoBitrate
+     * @param $videoBitrate
+     * @return $this
      */
     public function setVideoBitrate($videoBitrate)
     {
@@ -289,6 +296,9 @@ class Asset_Video_Thumbnail_Config {
         return $this->videoBitrate;
     }
 
+    /**
+     * @return array
+     */
     public function getEstimatedDimensions() {
 
         $dimensions = array();

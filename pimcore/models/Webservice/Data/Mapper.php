@@ -15,49 +15,48 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-abstract class Webservice_Data_Mapper {
+namespace Pimcore\Model\Webservice\Data;
+
+use Pimcore\Tool; 
+use Pimcore\Model;
+
+abstract class Mapper {
 
     /**
-     * @static
-     * @param  $object
-     * @param  string $type "in" or "out"
-     * @return string
+     * @param $object
+     * @param $type
+     * @return null|string
+     * @throws \Exception
      */
     public static function findWebserviceClass($object, $type) {
 
         $mappingClasses = array(
-            "Asset_File",
-            "Asset_Folder",
-            "Document_Folder",
-            "Document_Page",
-            "Document_Snippet",
-            "Document_Link",
-            "Document_Hardlink",
-            "Document_Email",
-            "Object_Folder",
-            "Object_Concrete"
+            "Asset\\File",
+            "Asset\\Folder",
+            "Document\\Folder",
+            "Document\\Page",
+            "Document\\Snippet",
+            "Document\\Link",
+            "Document\\Hardlink",
+            "Document\\Email",
+            "Object\\Folder",
+            "Object\\Concrete"
         );
 
         $retVal = null;
-        if($object instanceof Property){
-            $retVal = "Webservice_Data_Property";
-        } else if ($object instanceof Document_Tag) {
-            $retVal = "Webservice_Data_Document_Element";
-        }
-// commented this out as it causes problems with the REST class definition API - not sure
-// what the original intention was.
-//        else if ($object instanceof Object_Class_Data) {
-//            $retVal = "Webservice_Data_Object_Element";
-//        }
-        else if (is_object($object)) {
-            $orgclass = get_class($object);
+        if($object instanceof Model\Property){
+            $retVal = "\\Pimcore\\Model\\Webservice\\Data\\Property";
+        } else if ($object instanceof Model\Document\Tag) {
+            $retVal = "\\Pimcore\\Model\\Webservice\\Data\\Document\\Element";
+        } else if (is_object($object)) {
+            $orgclass = str_replace("Pimcore\\Model\\", "", get_class($object));
 
             if (in_array($orgclass,$mappingClasses)) {
-                $apiclass = "Webservice_Data_" . $orgclass . "_" . ucfirst($type);
-                if (!Pimcore_Tool::classExists($apiclass)) {
-                    $apiclass = "Webservice_Data_" . $orgclass;
-                    if (!Pimcore_Tool::classExists($apiclass)) {
-                        throw new Exception("Webservice_Data_Mapper: no API class found for [ " . $orgclass . " ]");
+                $apiclass = "\\Pimcore\\Model\\Webservice\\Data\\" . $orgclass . "\\" . ucfirst($type);
+                if (!Tool::classExists($apiclass)) {
+                    $apiclass = "\\Pimcore\\Model\\Webservice\\Data\\" . $orgclass;
+                    if (!Tool::classExists($apiclass)) {
+                        throw new \Exception("Webservice\\Data\\Mapper: no API class found for [ " . $orgclass . " ]");
                     }
                 }
             } else {
@@ -66,29 +65,28 @@ abstract class Webservice_Data_Mapper {
             $retVal = $apiclass;
         } else $retVal = "Array";
         return $retVal;
-
-
     }
 
     /**
-     * @static
-     * @param Element_Interface $object
-     * @param string $type  "in" or "out"
-     * @param  string $class
-     * @return array
+     * @param $object
+     * @param $apiclass
+     * @param $type
+     * @param null $options
+     * @return array|string
+     * @throws \Exception
      */
     public static function map($object, $apiclass, $type, $options = null) {
-        if($object instanceof Zend_Date){
+        if($object instanceof \Zend_Date){
             $object=$object->toString();
         } else if (is_object($object)) {
-            if (Pimcore_Tool::classExists($apiclass)) {
+            if (Tool::classExists($apiclass)) {
                 $new = new $apiclass();
                 if (method_exists($new, "map")) {
                     $new->map($object, $options);
                     $object = $new;
                 }
             } else {
-                throw new Exception("Webservice_Data_Mapper: Cannot map [ $apiclass ] - class does not exist");
+                throw new \Exception("Webservice\\Data\\Mapper: Cannot map [ $apiclass ] - class does not exist");
             }
         }
         else if (is_array($object)) {
@@ -103,12 +101,16 @@ abstract class Webservice_Data_Mapper {
         return $object;
     }
 
+    /**
+     * @param $el
+     * @return \stdClass
+     */
     public static function toObject($el) {
         if (is_object($el)) {
             $el = object2array($el);
         }
 
-        $obj = new stdClass();
+        $obj = new \stdClass();
         foreach ($el as $key => $value) {
             $obj->$key = $value;
         }

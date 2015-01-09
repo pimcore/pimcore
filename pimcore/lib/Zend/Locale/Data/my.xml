@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9316 $"/>
-		<generation date="$Date: 2013-09-06 12:21:36 -0500 (Fri, 06 Sep 2013) $"/>
+		<version number="$Revision: 9862 $"/>
+		<generation date="$Date: 2014-03-03 17:35:05 -0600 (Mon, 03 Mar 2014) $"/>
 		<language type="my"/>
 	</identity>
 	<localeDisplayNames>
@@ -17,31 +17,25 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<localeKeyTypePattern>{0} ၊ {1}</localeKeyTypePattern>
 		</localeDisplayPattern>
 		<languages>
-			<language type="ab">အက္ခါဇူအန်</language>
+			<language type="ab">အက်ခါဇူအနျ</language>
 			<language type="af">အာဖရိကန်းစ်</language>
-			<language type="am">အန္ဟာရစ်ခ်</language>
+			<language type="am">အန်ဟာရစျချ</language>
 			<language type="ang">အင်္ဂလိပ်စာဟောင်း</language>
 			<language type="ar">အာရေဗီ</language>
 			<language type="ar_001">အရေဗီ(ပုံမှန်)</language>
-			<language type="art">အယောင်ဆောင် ဘာသာစကား</language>
 			<language type="as">အက္စမီစ်</language>
 			<language type="az">အော်ဇောဘိုင်ဂျောနီ</language>
 			<language type="ban">ဘာလီ</language>
 			<language type="bas">ဘာဆာ</language>
-			<language type="bat">ဘော်လတစ် ဘာသာစကား</language>
 			<language type="be">ဘီလာရု</language>
 			<language type="bg">ဘူဂေးရီးယား</language>
 			<language type="bn">ဘင်္ဂါလီ</language>
 			<language type="bo">တိဘက်</language>
 			<language type="bs">ဘော့စ်နီးယား</language>
 			<language type="ca">ကာတာလန်</language>
-			<language type="cai" draft="unconfirmed">အလယ်ပိုင်း အမေရိကန် အိန္ဒြိယ ဘာသာစကား</language>
-			<language type="cau">ကောက်ကေးရှပ် ဘာသာစကား</language>
 			<language type="ce">ချေချင်း</language>
 			<language type="chr">ချာရိုကီ</language>
-			<language type="cpp">ပေါ်တူဂီ အခြေခံ အနောက်အိန္ဒြိယ ကျွန်းစုသား သို့မဟုတ် ဗန်းစကား</language>
 			<language type="cr">ခရီး</language>
-			<language type="crp" draft="unconfirmed">အနောက်အိန္ဒြိယ ကျွန်းစုသား သို့မဟုတ် ဗန်းစကား</language>
 			<language type="cs">ချက်</language>
 			<language type="cy">ဝေလ</language>
 			<language type="da">ဒိန်းမတ်</language>
@@ -82,7 +76,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="frs">အရှေ့ပိုင်း ဖရီစီရန်</language>
 			<language type="fy">အနောက်ပိုင်း ဖရီစီရန်</language>
 			<language type="ga">အိုင်းရစ်</language>
-			<language type="gem">ဂျာမန် အခြေခံဘာသာစကား</language>
 			<language type="gl">ဂါလာစီယံ</language>
 			<language type="gmh">အလယ်ပိုင်းအမြင့်ဂျာမန်</language>
 			<language type="gn">ဂူအာရာနီ</language>
@@ -100,8 +93,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="id">အင်ဒိုနီးရှား</language>
 			<language type="ig">အစ္ဂဘို</language>
 			<language type="ii">စီချွမ် ရီ</language>
-			<language type="ine">အင်ဒို ဥရောပ ဘာသာစကား</language>
-			<language type="ira">အီရန် အခြေခံ ဘာသာစကား</language>
 			<language type="is">အိုင်စ်လန္ဒီ</language>
 			<language type="it">အီတလီ</language>
 			<language type="ja">ဂျပန်</language>
@@ -110,7 +101,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="jv">ဂျာဗားနီးစ်</language>
 			<language type="ka">ဂျော်ဂျီယန်</language>
 			<language type="kac">ကချင်</language>
-			<language type="kar">ကရင်</language>
 			<language type="kg">ကွန်ဂို</language>
 			<language type="kha">ခါစီ</language>
 			<language type="kk">ခါဇါခ်</language>
@@ -127,15 +117,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="lv">လက္ဘီအံ</language>
 			<language type="mg">အာလာဂါစီ</language>
 			<language type="mga">အလယ်ပိုင်း အိုင်းရစ်</language>
-			<language type="mi" draft="contributed">ေမာင္းရီ (နယူးဇီလန္ကၽြန္းရွိ ပင္ရင္းတိုင္းရင္းသားလူမ်ိဳး)</language>
-			<language type="mis">အမျိုးမျိုးသော ဘာသာစကား</language>
+			<language type="mi" draft="contributed">မောင်းရီ (နယူးဇီလန်ကျွန်းရှိ ပင်ရင်းတိုင်းရင်းသားလူမျိုး)</language>
 			<language type="mk">မာစီဒိုနီယံ</language>
-			<language type="mkh">မွန်-ခမာ ဘာသာစကား</language>
 			<language type="ml">မလေးရာလမ်</language>
 			<language type="mn">မွန်ဂိုလီးယန်း</language>
 			<language type="mnc">မန်ချူး</language>
 			<language type="mni" draft="unconfirmed">မနိပူရီ</language>
-			<language type="mno">မနိုဘို ဘာသာစကား</language>
 			<language type="mr">မာရသီ</language>
 			<language type="ms">မလေး</language>
 			<language type="mt">မောလ္တီစ်</language>
@@ -150,9 +137,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="no">နော်ဝေး</language>
 			<language type="or">အိုရီရာ</language>
 			<language type="pa">ပန်ချာပီ</language>
-			<language type="paa">ပါပူရန် ဘာသာစကား</language>
 			<language type="peo">ပါရှန် အဟောင်း</language>
-			<language type="phi">ဖိလစ်ပိုင် ဘာသာစကား</language>
 			<language type="pi">ပါဠိ</language>
 			<language type="pl">ပိုလန်</language>
 			<language type="ps">ပါရှ်တို</language>
@@ -164,19 +149,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="root">မူလရင်းမြစ်</language>
 			<language type="ru">ရုရှ</language>
 			<language type="sa">သင်္သကရိုက်</language>
-			<language type="sai">တောင် အမေရိကန် အိန္ဒြိယ ဘာသာစကား</language>
 			<language type="sco">စကော့</language>
 			<language type="sd">စင်ဒီ</language>
 			<language type="sga">အိုင်းရစ် ဟောင်း</language>
-			<language type="sgn">အချက်ပြ ဘာသာစကား</language>
 			<language type="shn">ရှမ်း</language>
 			<language type="si">ဆင်ဟာလ</language>
-			<language type="sit">တရုတ်-တိဘက် ဘာသာစကား</language>
 			<language type="sk">စလိုဗက်</language>
 			<language type="sl">စလိုဗေးနီးယမ်း</language>
-			<language type="sla">စလိုဗစ် ဘာသာစကား</language>
 			<language type="sma">တောင်ပိုင်း ဆာမိ</language>
-			<language type="smi">ဆာမိ ဘာသာစကား</language>
 			<language type="so">ဆိုမာလီ</language>
 			<language type="sq">အယ်လ်ဘေးနီးယန်း</language>
 			<language type="sr">ဆားဗီးယန်း</language>
@@ -184,7 +164,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sv">ဆွီဒင်</language>
 			<language type="sw">ဆြာဟီလီ</language>
 			<language type="ta">တမီးလ်</language>
-			<language type="tai">တိုင် ဘာသာစကား</language>
 			<language type="te">တီလီဂု</language>
 			<language type="tg">တာဂွီခ်</language>
 			<language type="th">ထိုင်း</language>
@@ -193,7 +172,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="to">တွန်ဂါ</language>
 			<language type="tr">တာကစ်</language>
 			<language type="tt">တတာ</language>
-			<language type="tup">တူပီ ဘာသာစကား</language>
 			<language type="ug">ဝီဂါ</language>
 			<language type="uk">ယူကရိန်း</language>
 			<language type="und">မသိ သို့မဟုတ် မရှိ သော ဘာသာစကား</language>
@@ -252,7 +230,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<script type="Taml">တမီးလ်</script>
 			<script type="Telu">တီလု</script>
 			<script type="Tglg">တဂလော့ဂ်</script>
-			<script type="Thaa">သာအ္</script>
+			<script type="Thaa">သာအ်</script>
 			<script type="Thai">ထိုင်း</script>
 			<script type="Tibt">တိဘက်</script>
 			<script type="Visp">မြင်နိုင်သော စကား</script>
@@ -1398,9 +1376,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>ပါလ်မာ</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>စောက်သ်ပိုလ်</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>ရှိုးဝါ</exemplarCity>
 			</zone>
@@ -1673,9 +1648,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>တိုရွန်တို</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>မွန်ထရီအာ</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>အီကာလူအီတ်</exemplarCity>
@@ -2519,9 +2491,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>ဖီးနစ်</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>ရှီးပ်ရို့ခ်</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>ဒင်ဗာ</exemplarCity>
@@ -3722,8 +3691,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<displayName count="other">ကော့စ်တာရီကာ ခိုလုံး</displayName>
 			</currency>
 			<currency type="CUC">
-				<displayName draft="contributed">ႏိုင္ငံျခားေငြလဲလွယ္ႏိုင္ေသာ က်ဴးဘားပီဆို ေငြ။</displayName>
-				<displayName count="other" draft="contributed">ႏိုင္ငံျခားေငြလဲလွယ္ႏိုင္ေသာ က်ဴးဘားပီဆို ေငြ။</displayName>
+				<displayName draft="contributed">နိုင်ငျံခားငွေလဲလှယ်နိုင်သော ကျူးဘားပီဆို ငွေ။</displayName>
+				<displayName count="other" draft="contributed">နိုင်ငျံခားငွေလဲလှယ်နိုင်သော ကျူးဘားပီဆို ငွေ။</displayName>
 			</currency>
 			<currency type="CUP">
 				<displayName>ကျူးဘား ပီဆို</displayName>
@@ -3955,8 +3924,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<displayName count="other">မောလ်ဒိုဗာလယ်အို</displayName>
 			</currency>
 			<currency type="MGA">
-				<displayName draft="contributed">မလာဂစ္စီ အရီရရီ ေငြေႀကး။</displayName>
-				<displayName count="other" draft="contributed">မလာဂစ္စီ အရီရရီ ေငြေႀကး။</displayName>
+				<displayName draft="contributed">မလာဂစ်စီ အရီရရီ ငွေႀကး။</displayName>
+				<displayName count="other" draft="contributed">မလာဂစ်စီ အရီရရီ ငွေႀကး။</displayName>
 			</currency>
 			<currency type="MKD">
 				<displayName>မာစီဒိုးနီးယားဒီနာ</displayName>
@@ -4358,7 +4327,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} ပေ</unitPattern>
 			</unit>
 			<unit type="length-inch">
-				<unitPattern count="other">{0} လက္မ</unitPattern>
+				<unitPattern count="other">{0} လက်မ</unitPattern>
 			</unit>
 			<unit type="length-kilometer">
 				<unitPattern count="other">{0} ကီလိုမီတာ</unitPattern>
@@ -4406,7 +4375,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0}ဟက်တိုပါစကယ်</unitPattern>
 			</unit>
 			<unit type="pressure-inch-hg">
-				<unitPattern count="other">ပြဒါး{0}လက္မ</unitPattern>
+				<unitPattern count="other">ပွဒါး{0}လက်မ</unitPattern>
 			</unit>
 			<unit type="pressure-millibar">
 				<unitPattern count="other">{0}မီလီဘား</unitPattern>
@@ -4501,7 +4470,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} ပေ</unitPattern>
 			</unit>
 			<unit type="length-inch">
-				<unitPattern count="other">{0} လက္မ</unitPattern>
+				<unitPattern count="other">{0} လက်မ</unitPattern>
 			</unit>
 			<unit type="length-kilometer">
 				<unitPattern count="other">{0} km</unitPattern>

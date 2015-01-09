@@ -1,12 +1,16 @@
 <?php
 
-class NewsletterController extends Website_Controller_Action {
+use Website\Controller\Action;
+use Pimcore\Tool\Newsletter;
+use Pimcore\Model;
+
+class NewsletterController extends Action {
 
     public function subscribeAction () {
 
         $this->enableLayout();
 
-        $newsletter = new Pimcore_Tool_Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
+        $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
         $params = $this->getAllParams();
 
         $this->view->success = false;
@@ -14,7 +18,7 @@ class NewsletterController extends Website_Controller_Action {
         if($newsletter->checkParams($params)) {
             try {
                 $params["parentId"] = 1; // default folder (home) where we want to save our subscribers
-                $newsletterFolder = Object_Abstract::getByPath("/crm/newsletter");
+                $newsletterFolder = Model\Object::getByPath("/crm/newsletter");
                 if($newsletterFolder) {
                     $params["parentId"] = $newsletterFolder->getId();
                 }
@@ -24,10 +28,10 @@ class NewsletterController extends Website_Controller_Action {
                 // user and email document
                 // parameters available in the email: gender, firstname, lastname, email, token, object
                 // ==> see mailing framework
-                $newsletter->sendConfirmationMail($user, Document::getByPath("/en/advanced-examples/newsletter/confirmation-email"), array("additional" => "parameters"));
+                $newsletter->sendConfirmationMail($user, Model\Document::getByPath("/en/advanced-examples/newsletter/confirmation-email"), array("additional" => "parameters"));
 
                 // do some other stuff with the new user
-                $user->setDateRegister(Zend_Date::now());
+                $user->setDateRegister(\Zend_Date::now());
                 $user->save();
 
                 $this->view->success = true;
@@ -43,7 +47,7 @@ class NewsletterController extends Website_Controller_Action {
 
         $this->view->success = false;
 
-        $newsletter = new Pimcore_Tool_Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
+        $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
 
         if($newsletter->confirm($this->getParam("token"))) {
             $this->view->success = true;
@@ -54,7 +58,7 @@ class NewsletterController extends Website_Controller_Action {
 
         $this->enableLayout();
 
-        $newsletter = new Pimcore_Tool_Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
+        $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
 
         $unsubscribeMethod = null;
         $success = false;

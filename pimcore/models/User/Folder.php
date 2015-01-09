@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_Folder extends User_UserRole_Folder {
+namespace Pimcore\Model\User;
+
+use Pimcore\Model;
+
+class Folder extends UserRole\Folder {
 
     /**
      * @var string

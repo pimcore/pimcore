@@ -12,8 +12,13 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Pimcore_Image {
+
+namespace Pimcore;
+
+use Pimcore\Tool; 
+use Pimcore\Image\Adapter;
+
+class Image {
 
     /**
      * @var string
@@ -22,8 +27,8 @@ class Pimcore_Image {
 
     /**
      * @param null $adapter
-     * @return null|Pimcore_Image_Adapter_GD|Pimcore_Image_Adapter_Imagick
-     * @throws Exception
+     * @return null|Adapter\GD|Adapter\Imagick
+     * @throws \Exception
      */
     public static function getInstance ($adapter = null) {
 
@@ -34,23 +39,23 @@ class Pimcore_Image {
 
         try {
             if($adapter) {
-                $adapterClass = "Pimcore_Image_Adapter_" . $adapter;
-                if(Pimcore_Tool::classExists($adapterClass)) {
+                $adapterClass = "\\Pimcore\\Image\\Adapter\\" . $adapter;
+                if(Tool::classExists($adapterClass)) {
                     return new $adapterClass();
-                } else if (Pimcore_Tool::classExists($adapter)) {
+                } else if (Tool::classExists($adapter)) {
                     return new $adapter();
                 } else {
-                    throw new Exception("Image-transform adapter `" . $adapter . "´ does not exist.");
+                    throw new \Exception("Image-transform adapter `" . $adapter . "´ does not exist.");
                 }
             } else {
                 if(extension_loaded("imagick")) {
-                    return new Pimcore_Image_Adapter_Imagick();
+                    return new Adapter\Imagick();
                 } else {
-                    return new Pimcore_Image_Adapter_GD();
+                    return new Adapter\GD();
                 }
             }
-        } catch (Exception $e) {
-            Logger::crit("Unable to load image extensions: " . $e->getMessage());
+        } catch (\Exception $e) {
+            \Logger::crit("Unable to load image extensions: " . $e->getMessage());
             throw $e;
         }
 

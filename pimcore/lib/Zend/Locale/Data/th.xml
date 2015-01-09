@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9318 $"/>
-		<generation date="$Date: 2013-09-06 18:00:35 -0500 (Fri, 06 Sep 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="th"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,54 +25,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">อะดืยเก</language>
 			<language type="ae">อเวสตะ</language>
 			<language type="af">แอฟริกานส์</language>
-			<language type="afa">ภาษาแอฟโร-เอเชียติก</language>
 			<language type="afh">แอฟริฮีลี</language>
 			<language type="agq" draft="contributed">อักเฮม</language>
 			<language type="ain">ไอนุ</language>
 			<language type="ak">อาคัน</language>
 			<language type="akk">อักกาด</language>
 			<language type="ale">อาลิวต์</language>
-			<language type="alg">ภาษาอัลกองเควียน</language>
 			<language type="alt">อัลไตใต้</language>
 			<language type="am">อัมฮารา</language>
 			<language type="an">อารากอน</language>
 			<language type="ang">อังกฤษโบราณ</language>
 			<language type="anp">อังคิกา</language>
-			<language type="apa">ภาษาอาปาเช่</language>
 			<language type="ar">อาหรับ</language>
 			<language type="ar_001">อาหรับมาตรฐานสมัยใหม่</language>
 			<language type="arc">อราเมอิก</language>
 			<language type="arn">อาเราคาเนียน</language>
 			<language type="arp">อาราปาโฮ</language>
-			<language type="art">ภาษาประดิษฐ์</language>
 			<language type="arw">อาราวัก</language>
 			<language type="as">อัสสัม</language>
 			<language type="asa" draft="contributed">อาซู</language>
 			<language type="ast">อัสตูเรียส</language>
-			<language type="ath">ภาษาอาทาพาสกาน</language>
-			<language type="aus">ภาษาออสเตรเลีย</language>
 			<language type="av">อาวาร์</language>
 			<language type="awa">อวธี</language>
 			<language type="ay">ไอย์มารา</language>
 			<language type="az">อาเซอร์ไบจาน</language>
 			<language type="az" alt="short">อะเซอรี</language>
 			<language type="ba">บัชคีร์</language>
-			<language type="bad">บันดา</language>
-			<language type="bai">ภาษาบามีเลก์</language>
 			<language type="bal">บาลูชิ</language>
 			<language type="ban">บาหลี</language>
 			<language type="bas">บาสา</language>
-			<language type="bat">ภาษาบอลติก</language>
 			<language type="bax" draft="contributed">บามัน</language>
 			<language type="bbj" draft="contributed">โคมาลา</language>
 			<language type="be">เบลารุส</language>
 			<language type="bej">เบจา</language>
 			<language type="bem">เบมบา</language>
-			<language type="ber">เบอร์เบอร์</language>
 			<language type="bez" draft="contributed">เบนา</language>
 			<language type="bfd" draft="contributed">บาฟัต</language>
 			<language type="bg">บัลแกเรีย</language>
-			<language type="bh">พิหาร</language>
 			<language type="bho">โภชปุรี</language>
 			<language type="bi">บิสลามา</language>
 			<language type="bik">บิกอล</language>
@@ -81,14 +70,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">สิกสิกา</language>
 			<language type="bm">บัมบารา</language>
 			<language type="bn">เบงกาลี</language>
-			<language type="bnt">บันตู</language>
 			<language type="bo">ทิเบต</language>
 			<language type="br">เบรตัน</language>
 			<language type="bra">พัรช</language>
 			<language type="brx" draft="contributed">โพโฑ</language>
 			<language type="bs">บอสเนีย</language>
 			<language type="bss" draft="contributed">อาโคซี</language>
-			<language type="btk">บาตัก</language>
 			<language type="bua">บูเรียต</language>
 			<language type="bug">บูกิส</language>
 			<language type="bum" draft="contributed">บูลู</language>
@@ -96,14 +83,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv" draft="contributed">เมดุมบา</language>
 			<language type="ca">กาตาลัง</language>
 			<language type="cad">คัดโด</language>
-			<language type="cai">ภาษาอเมริกันอินเดียนกลาง</language>
 			<language type="car">คาริบ</language>
-			<language type="cau">ภาษาคอเคเซียน</language>
 			<language type="cay" draft="contributed">คายูกา</language>
 			<language type="cch">แอตแซม</language>
 			<language type="ce">เชเชน</language>
 			<language type="ceb">เซบู</language>
-			<language type="cel">ภาษาเซลติก</language>
 			<language type="cgg" draft="contributed">คีกา</language>
 			<language type="ch">ชามอร์โร</language>
 			<language type="chb">ชิบชา</language>
@@ -116,26 +100,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">เชอโรกี</language>
 			<language type="chy">เชเยนเน</language>
 			<language type="ckb">เคิร์ดโซรานี</language>
-			<language type="cmc">ภาษาชามิก</language>
 			<language type="co">คอร์ซิกา</language>
 			<language type="cop">คอปติก</language>
-			<language type="cpe">ครีโอลหรือพิดจิ้นที่มาจากภาษาอังกฤษ</language>
-			<language type="cpf">ครีโอลหรือพิดจิ้นที่มาจากภาษาฝรั่งเศส</language>
-			<language type="cpp">ครีโอลหรือพิดจิ้นที่มาจากภาษาโปรตุเกส</language>
 			<language type="cr">ครี</language>
 			<language type="crh">ตุรกีไครเมีย</language>
-			<language type="crp">ครีโอลหรือพิดจิ้น</language>
 			<language type="cs">เช็ก</language>
 			<language type="csb">คาซูเบียน</language>
 			<language type="cu">เชอร์ชสลาวิก</language>
-			<language type="cus">ภาษาคูชิทิก</language>
 			<language type="cv">ชูวัช</language>
 			<language type="cy">เวลส์</language>
 			<language type="da">เดนมาร์ก</language>
 			<language type="dak">ดาโกทา</language>
 			<language type="dar">ดาร์กิน</language>
 			<language type="dav" draft="contributed">ไททา</language>
-			<language type="day">ดายัก</language>
 			<language type="de">เยอรมัน</language>
 			<language type="de_AT">เยอรมัน - ออสเตรีย</language>
 			<language type="de_CH">เยอรมันสูง (สวิส)</language>
@@ -145,7 +122,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">ดิงกา</language>
 			<language type="dje" draft="contributed">ซาร์มา</language>
 			<language type="doi">โฑครี</language>
-			<language type="dra">ภาษาดราวิเดียน</language>
 			<language type="dsb">ซอร์บส์ตอนล่าง</language>
 			<language type="dua">ดัวลา</language>
 			<language type="dum">ดัตช์กลาง</language>
@@ -181,7 +157,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">ฟูลาฮ์</language>
 			<language type="fi">ฟินแลนด์</language>
 			<language type="fil">ฟิลิปปินส์</language>
-			<language type="fiu">ภาษาฟินโน-อูกริก</language>
 			<language type="fj">ฟิจิ</language>
 			<language type="fo">แฟโร</language>
 			<language type="fon">ฟอน</language>
@@ -198,7 +173,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">กาโย</language>
 			<language type="gba">กบายา</language>
 			<language type="gd">สกอตส์กาลิก</language>
-			<language type="gem">ภาษาเจอร์เมนิก</language>
 			<language type="gez">กีซ</language>
 			<language type="gil">กิลเบอร์ต</language>
 			<language type="gl">กาลิเซีย</language>
@@ -221,7 +195,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">ฮิบรู</language>
 			<language type="hi">ฮินดี</language>
 			<language type="hil">ฮีลีกัยนน</language>
-			<language type="him">หิมาจัล</language>
 			<language type="hit">ฮิตไตต์</language>
 			<language type="hmn">ม้ง</language>
 			<language type="ho">ฮีรีโมตู</language>
@@ -239,20 +212,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">อินเตอร์ลิงกิว</language>
 			<language type="ig">อิกโบ</language>
 			<language type="ii">เสฉวนยิ</language>
-			<language type="ijo">อิโจ</language>
 			<language type="ik">อีนูเปียก</language>
 			<language type="ilo">อีโลโก</language>
-			<language type="inc">ภาษาอินดิก</language>
-			<language type="ine">ภาษาอินโด-ยุโรป</language>
 			<language type="inh">อินกุช</language>
 			<language type="io">อีโด</language>
-			<language type="ira">ภาษาอิหร่าน</language>
-			<language type="iro">ภาษาอีโรกัวส์</language>
 			<language type="is">ไอซ์แลนด์</language>
 			<language type="it">อิตาลี</language>
 			<language type="iu">อินุกติตุต</language>
 			<language type="ja">ญี่ปุ่น</language>
 			<language type="jbo">โลชบัน</language>
+			<language type="jgo" draft="contributed">อึนกอมบา</language>
 			<language type="jmc" draft="contributed">มาชาเม</language>
 			<language type="jpr">ยิว-เปอร์เซีย</language>
 			<language type="jrb">ยิว-อาหรับ</language>
@@ -263,7 +232,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">กะฉิ่น</language>
 			<language type="kaj">คจู</language>
 			<language type="kam">คัมบา</language>
-			<language type="kar">กะเหรี่ยง</language>
 			<language type="kaw">กวี</language>
 			<language type="kbd">คาร์บาเดีย</language>
 			<language type="kbl" draft="contributed">คาเนมบู</language>
@@ -273,7 +241,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">โคโร</language>
 			<language type="kg">คองโก</language>
 			<language type="kha">กาสี</language>
-			<language type="khi">ภาษาคอยซาน</language>
 			<language type="kho">โคตัน</language>
 			<language type="khq" draft="contributed">โคย์ราชีนี</language>
 			<language type="ki">กีกูยู</language>
@@ -292,7 +259,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">คานูรี</language>
 			<language type="krc">คาราไช-บัลคาร์</language>
 			<language type="krl">แกรเลียน</language>
-			<language type="kro">ครู</language>
 			<language type="kru">กุรุข</language>
 			<language type="ks">กัศมีร์</language>
 			<language type="ksb" draft="contributed">ชัมบาลา</language>
@@ -332,7 +298,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">ไมถิลี</language>
 			<language type="mak">มากาซาร์</language>
 			<language type="man">มันดิงกา</language>
-			<language type="map">ออสโตรนีเซียน</language>
 			<language type="mas">มาไซ</language>
 			<language type="mde" draft="contributed">มาบา</language>
 			<language type="mdf">มอคชา</language>
@@ -343,19 +308,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mg">มาลากาซี</language>
 			<language type="mga">ไอริชกลาง</language>
 			<language type="mgh" draft="contributed">มากัววา-มีทโท</language>
+			<language type="mgo" draft="contributed">เมตา</language>
 			<language type="mh">มาร์แชลลิส</language>
 			<language type="mi">เมารี</language>
 			<language type="mic">มิกแมก</language>
 			<language type="min">มีนังกาเบา</language>
-			<language type="mis">ภาษาอื่นๆ</language>
 			<language type="mk">มาซิโดเนีย</language>
-			<language type="mkh">ภาษามอญ-เขมร</language>
 			<language type="ml">มาลายาลัม</language>
 			<language type="mn">มองโกเลีย</language>
 			<language type="mnc">แมนจู</language>
 			<language type="mni">มณีปุระ</language>
-			<language type="mno">ภาษามาโนโบ</language>
-			<language type="mo">มอลโดวา</language>
 			<language type="moh">โมฮอว์ก</language>
 			<language type="mos">โมซี</language>
 			<language type="mr">มราฐี</language>
@@ -363,17 +325,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">มอลตา</language>
 			<language type="mua" draft="contributed">มันดัง</language>
 			<language type="mul">หลายภาษา</language>
-			<language type="mun">ภาษามันดา</language>
 			<language type="mus">ครีก</language>
 			<language type="mwl">มีรันดา</language>
 			<language type="mwr">มารวาฑี</language>
 			<language type="my">พม่า</language>
 			<language type="mye" draft="contributed">มยีน</language>
-			<language type="myn">ภาษามายา</language>
 			<language type="myv">เอียร์ซยา</language>
 			<language type="na">นาอูรู</language>
-			<language type="nah">นาฮัว</language>
-			<language type="nai">ภาษาอินเดียอเมริกาเหนือ</language>
 			<language type="nap">นาโปลี</language>
 			<language type="naq" draft="contributed">นามา</language>
 			<language type="nb">นอร์เวย์บุคมอล</language>
@@ -383,7 +341,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">เนวาร์</language>
 			<language type="ng">ดองกา</language>
 			<language type="nia">นีอัส</language>
-			<language type="nic">ภาษาไนเจอร์-คอร์โดฟาเนียน</language>
 			<language type="niu">นีอู</language>
 			<language type="nl">ดัตช์</language>
 			<language type="nl_BE">เฟลมิช</language>
@@ -396,7 +353,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">เอ็นโก</language>
 			<language type="nr">เอ็นเดเบเลใต้</language>
 			<language type="nso">โซโทเหนือ</language>
-			<language type="nub">ภาษานูเบียน</language>
 			<language type="nus" draft="contributed">เนือร์</language>
 			<language type="nv">นาวาโฮ</language>
 			<language type="nwc">เนวาร์ดั้งเดิม</language>
@@ -412,21 +368,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">ออสเซเตีย</language>
 			<language type="osa">โอซากี</language>
 			<language type="ota">ตุรกีออตโตมัน</language>
-			<language type="oto">ภาษาโอโตมี</language>
 			<language type="pa">ปัญจาบ</language>
-			<language type="paa">ภาษาปาปัว</language>
 			<language type="pag">ปางาซีนัน</language>
 			<language type="pal">ปะห์ลาวี</language>
 			<language type="pam">ปัมปางา</language>
 			<language type="pap">ปาเปียเมนโต</language>
 			<language type="pau">ปาเลา</language>
 			<language type="peo">เปอร์เซียโบราณ</language>
-			<language type="phi">ภาษาฟิลิปปิน</language>
 			<language type="phn">ฟินิเชีย</language>
 			<language type="pi">บาลี</language>
 			<language type="pl">โปแลนด์</language>
 			<language type="pon">พอห์นเพ</language>
-			<language type="pra">ภาษาปรากฤต</language>
 			<language type="pro">โปรวองซาลโบราณ</language>
 			<language type="ps">พาชตู</language>
 			<language type="ps" alt="variant">พุชโต</language>
@@ -440,7 +392,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">โรแมนซ์</language>
 			<language type="rn">บุรุนดี</language>
 			<language type="ro">โรมาเนีย</language>
-			<language type="roa">ภาษาโรมานซ์</language>
+			<language type="ro_MD">มอลโดวา</language>
 			<language type="rof" draft="contributed">รอมโบ</language>
 			<language type="rom">โรมานี</language>
 			<language type="root">รูท</language>
@@ -451,8 +403,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">สันสกฤต</language>
 			<language type="sad">ซันดาเว</language>
 			<language type="sah">ซาฮา</language>
-			<language type="sai">ภาษาอเมริกันอินเดียนใต้</language>
-			<language type="sal">ภาษาชาลิช</language>
 			<language type="sam">อราเมอิกซามาเรีย</language>
 			<language type="saq" draft="contributed">แซมบูรู</language>
 			<language type="sas">ซาซัก</language>
@@ -467,25 +417,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see" draft="contributed">เซนิกา</language>
 			<language type="seh" draft="contributed">เซนา</language>
 			<language type="sel">เซลคุป</language>
-			<language type="sem">ภาษาเซมิติก</language>
 			<language type="ses" draft="contributed">โคย์ราโบโรเซนนี</language>
 			<language type="sg">แซงโก</language>
 			<language type="sga">ไอริชโบราณ</language>
-			<language type="sgn">ภาษาสัญญาณ</language>
 			<language type="sh">เซอร์โบ-โครเอเชีย</language>
 			<language type="shi" draft="contributed">ทาเชลีห์ท</language>
 			<language type="shn">ไทใหญ่</language>
 			<language type="shu" draft="contributed">อาหรับ-ชาด</language>
 			<language type="si">สิงหล</language>
 			<language type="sid">ซิดาโม</language>
-			<language type="sio">ภาษาซิอวน</language>
-			<language type="sit">ภาษาซิโน-ทิเบต</language>
 			<language type="sk">สโลวัก</language>
 			<language type="sl">สโลวีเนีย</language>
-			<language type="sla">ภาษาสลาวิก</language>
 			<language type="sm">ซามัว</language>
 			<language type="sma">ซามิใต้</language>
-			<language type="smi">ภาษาซามิ</language>
 			<language type="smj">ซามิลูเล</language>
 			<language type="smn">ซามิอีนารี</language>
 			<language type="sms">ซามิสคอลต์</language>
@@ -493,13 +437,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">โซนีนเก</language>
 			<language type="so">โซมาลี</language>
 			<language type="sog">ซอกดีน</language>
-			<language type="son">ซองไฮ</language>
 			<language type="sq">แอลเบเนีย</language>
 			<language type="sr">เซอร์เบีย</language>
 			<language type="srn">ซูรินาเม</language>
 			<language type="srr">เซแรร์</language>
 			<language type="ss">สวาติ</language>
-			<language type="ssa">ภาษานิโล-ซาฮารัน</language>
 			<language type="ssy" draft="contributed">ซาโฮ</language>
 			<language type="st">โซโทใต้</language>
 			<language type="su">ซุนดา</language>
@@ -513,7 +455,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">ซีเรียแบบดั้งเดิม</language>
 			<language type="syr">ซีเรีย</language>
 			<language type="ta">ทมิฬ</language>
-			<language type="tai">ภาษาไท</language>
 			<language type="te">เตลูกู</language>
 			<language type="tem">ทิมเน</language>
 			<language type="teo" draft="contributed">เตโซ</language>
@@ -540,8 +481,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">ซิมชีแอน</language>
 			<language type="tt">ตาตาร์</language>
 			<language type="tum">ทุมบูกา</language>
-			<language type="tup">ภาษาตูปี</language>
-			<language type="tut">ภาษาอัลตาอิก</language>
 			<language type="tvl">ตูวาลู</language>
 			<language type="tw">ทวิ</language>
 			<language type="twq" draft="contributed">ตัสซาวัค</language>
@@ -565,11 +504,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun" draft="contributed">วุนจู</language>
 			<language type="wa">วาโลนี</language>
 			<language type="wae" draft="contributed">วัลเซอร์</language>
-			<language type="wak">ภาษาวากาชาน</language>
 			<language type="wal">วาลาโม</language>
 			<language type="war">วาเรย์</language>
 			<language type="was">วาโช</language>
-			<language type="wen">ภาษาซอร์บส์</language>
 			<language type="wo">โวลอฟ</language>
 			<language type="xal">คัลมืยค์</language>
 			<language type="xh">คะห์โอซา</language>
@@ -580,7 +517,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb" draft="contributed">เยมบา</language>
 			<language type="yi">ยิว</language>
 			<language type="yo">โยรูบา</language>
-			<language type="ypk">ภาษาอูย์ปิค</language>
 			<language type="yue">กวางตุ้ง</language>
 			<language type="za">จ้วง</language>
 			<language type="zap">ซาโปเตก</language>
@@ -590,7 +526,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">จีน</language>
 			<language type="zh_Hans">จีนตัวย่อ</language>
 			<language type="zh_Hant">จีนตัวเต็ม</language>
-			<language type="znd">ซันเด</language>
 			<language type="zu">ซูลู</language>
 			<language type="zun">ซูนิ</language>
 			<language type="zxx">ไม่มีข้อมูลภาษา</language>
@@ -3675,9 +3610,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>พาล์เมอร์</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>ขั้วโลกใต้</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>เซียวา</exemplarCity>
 			</zone>
@@ -3950,9 +3882,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>โทรอนโต</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>มอนทรีอัล</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>อีกวาลิต</exemplarCity>
@@ -4796,9 +4725,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>ฟินิกซ์</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>ชิปร็อก</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>เดนเวอร์</exemplarCity>

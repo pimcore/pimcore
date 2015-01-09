@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Placeholder_Text extends Pimcore_Placeholder_Abstract
+namespace Pimcore\Placeholder;
+
+class Text extends AbstractPlaceholder
 {
 
     /**

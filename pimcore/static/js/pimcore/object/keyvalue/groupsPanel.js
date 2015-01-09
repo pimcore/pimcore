@@ -83,9 +83,8 @@ pimcore.object.keyvalue.groupspanel = Class.create({
         var gridColumns = [];
 
         gridColumns.push({header: "ID", width: 40, sortable: true, dataIndex: 'id'});
-        gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name'});
-        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description',
-                                                                            editor: new Ext.form.TextField({})});
+        gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name',editor: new Ext.form.TextField({})});
+        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({})});
 
 
         gridColumns.push(
@@ -226,8 +225,8 @@ pimcore.object.keyvalue.groupspanel = Class.create({
 
     addFieldComplete: function (button, value, object) {
 
-        var regresult = value.match(/[a-zA-Z0-9_\-]+/);
-        if (button == "ok" && value.length > 2 && regresult == value) {
+        value = value.trim();
+        if (button == "ok" && value.length > 1) {
             Ext.Ajax.request({
                 url: "/admin/key-value/addgroup",
                 params: {

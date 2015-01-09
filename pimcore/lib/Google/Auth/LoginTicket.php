@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-require_once "Google/Auth/Exception.php";
+// pimcore modification: removed autoloader include
 
 /**
  * Class to hold information about an authenticated login.

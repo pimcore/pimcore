@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9876 $"/>
+		<generation date="$Date: 2014-03-05 23:14:25 -0600 (Wed, 05 Mar 2014) $"/>
 		<language type="gl"/>
 	</identity>
 	<localeDisplayNames>
@@ -20,35 +20,25 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ab">abkhazo</language>
 			<language type="ach">acoli</language>
 			<language type="af">afrikaans</language>
-			<language type="afa" draft="contributed">lingua afro-asiática</language>
 			<language type="ak">akán</language>
-			<language type="alg">lingua algonquina</language>
 			<language type="am">amárico</language>
 			<language type="an">aragonés</language>
-			<language type="apa">lingua apache</language>
 			<language type="ar">árabe</language>
 			<language type="ar_001">árabe estándar moderno</language>
 			<language type="arc">arameo</language>
-			<language type="art">lingua artificial</language>
 			<language type="as">assamés</language>
 			<language type="ast">asturiano</language>
-			<language type="aus">lingua australiana</language>
 			<language type="ay">aimará</language>
 			<language type="az" draft="contributed">azerbaiano</language>
 			<language type="az" alt="short">acerbaixano</language>
-			<language type="bat">lingua báltica</language>
 			<language type="be">bielorruso</language>
 			<language type="bem">bemba</language>
 			<language type="bg">búlgaro</language>
-			<language type="bh">bihari</language>
 			<language type="bn">bengalí</language>
 			<language type="bo">tibetano</language>
 			<language type="br">bretón</language>
 			<language type="bs">bosnio</language>
 			<language type="ca">catalán</language>
-			<language type="cai" draft="contributed">lingua india centroamericana</language>
-			<language type="cau">lingua caucásica</language>
-			<language type="cel">lingua céltica</language>
 			<language type="chr">cheroqui</language>
 			<language type="ckb">curdo soraní</language>
 			<language type="co">corso</language>
@@ -82,7 +72,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="fa">persa</language>
 			<language type="fi">finés</language>
 			<language type="fil">filipino</language>
-			<language type="fiu" draft="contributed">lingua finno-úgrica</language>
 			<language type="fj">fixiano</language>
 			<language type="fo" draft="contributed">faroés</language>
 			<language type="fr">francés</language>
@@ -92,7 +81,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ga">irlandés</language>
 			<language type="gaa">ga</language>
 			<language type="gd">gaélico escocés</language>
-			<language type="gem">lingua xermánica</language>
 			<language type="gl">galego</language>
 			<language type="gn">guaraní</language>
 			<language type="grc">grego antigo</language>
@@ -109,8 +97,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ia">interlingua</language>
 			<language type="id">indonesio</language>
 			<language type="ig">ibo</language>
-			<language type="inc">lingua índica</language>
-			<language type="ine">lingua indoeuropea</language>
 			<language type="is">islandés</language>
 			<language type="it">italiano</language>
 			<language type="ja">xaponés</language>
@@ -136,7 +122,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mfe">crioulo mauritano</language>
 			<language type="mg">malgaxe</language>
 			<language type="mi">maorí</language>
-			<language type="mis" draft="contributed">lingua miscelánea</language>
 			<language type="mk">macedonio</language>
 			<language type="ml">malabar</language>
 			<language type="mn">mongol</language>
@@ -145,7 +130,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">maltés</language>
 			<language type="mul">varias linguas</language>
 			<language type="my">birmano</language>
-			<language type="nai" draft="contributed">lingua india norteamericana</language>
 			<language type="nb">noruegués bokmal</language>
 			<language type="nd">ndebele do norte</language>
 			<language type="ne">nepalí</language>
@@ -154,7 +138,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nn">noruegués nynorsk</language>
 			<language type="no">noruegués</language>
 			<language type="nso">sesotho sa leboa</language>
-			<language type="nub">lingua nubia</language>
 			<language type="ny">chewa</language>
 			<language type="nyn">nyankole</language>
 			<language type="oc">occitano</language>
@@ -162,7 +145,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="or">oriya</language>
 			<language type="os">osetio</language>
 			<language type="pa" draft="contributed">punjabi</language>
-			<language type="phi">lingua filipina</language>
 			<language type="pl">polaco</language>
 			<language type="ps">paxtún</language>
 			<language type="pt">portugués</language>
@@ -172,28 +154,22 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">romanche</language>
 			<language type="rn">rundi</language>
 			<language type="ro">romanés</language>
-			<language type="roa">lingua románica</language>
 			<language type="ru">ruso</language>
 			<language type="rw">ruandés</language>
 			<language type="sa">sánscrito</language>
-			<language type="sai" draft="contributed">lingua india sudamericana</language>
 			<language type="sd">sindhi</language>
 			<language type="se">sami do norte</language>
-			<language type="sem">lingua semita</language>
 			<language type="sg">sango</language>
-			<language type="sgn">lingua de signos</language>
 			<language type="sh">serbocroata</language>
 			<language type="si">cingalés</language>
 			<language type="sk">eslovaco</language>
 			<language type="sl">esloveno</language>
-			<language type="sla" draft="contributed">lingua eslávica</language>
 			<language type="sm">samoano</language>
 			<language type="sn">shona</language>
 			<language type="so">somalí</language>
 			<language type="sq">albanés</language>
 			<language type="sr">serbio</language>
 			<language type="ss">swati</language>
-			<language type="ssa" draft="contributed">lingua do nilo-sáhara</language>
 			<language type="st">sesoto</language>
 			<language type="su">sondanés</language>
 			<language type="sv">sueco</language>
@@ -214,7 +190,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ts">xitsonga</language>
 			<language type="tt">tártaro</language>
 			<language type="tum">tumbuka</language>
-			<language type="tut">lingua altaica</language>
 			<language type="tw" draft="unconfirmed">twi</language>
 			<language type="ty">tahitiano</language>
 			<language type="ug">uigur</language>
@@ -795,7 +770,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
 						<dateFormatItem id="MMMEd">E d MMM</dateFormatItem>
 						<dateFormatItem id="MMMMd">d MMMM</dateFormatItem>
-						<dateFormatItem id="MMMMdd" draft="contributed">dd MMMM</dateFormatItem>
 						<dateFormatItem id="MMMMEd">E d MMMM</dateFormatItem>
 						<dateFormatItem id="ms" draft="contributed">mm:ss</dateFormatItem>
 						<dateFormatItem id="y">G y</dateFormatItem>
@@ -1245,7 +1219,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
 						<dateFormatItem id="MMMEd">E d MMM</dateFormatItem>
 						<dateFormatItem id="MMMMd">d MMMM</dateFormatItem>
-						<dateFormatItem id="MMMMdd">dd MMMM</dateFormatItem>
 						<dateFormatItem id="MMMMEd">E d MMMM</dateFormatItem>
 						<dateFormatItem id="ms">mm:ss</dateFormatItem>
 						<dateFormatItem id="y">y</dateFormatItem>
@@ -1527,9 +1500,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Asia/Yerevan">
 				<exemplarCity>Iereván</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Polo Sur</exemplarCity>
 			</zone>
 			<zone type="Antarctica/DumontDUrville">
 				<exemplarCity draft="contributed">Dumont-d'Urville</exemplarCity>
@@ -2249,6 +2219,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<standard>Horario estándar de Europa Central</standard>
 					<daylight>Horario de verán de Europa Central</daylight>
 				</long>
+				<short>
+					<generic>CET</generic>
+					<standard>CET</standard>
+					<daylight>CEST</daylight>
+				</short>
 			</metazone>
 			<metazone type="Europe_Eastern">
 				<long>
@@ -2256,6 +2231,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<standard>Horario estándar de Europa Oriental</standard>
 					<daylight>Horario de verán de Europa Oriental</daylight>
 				</long>
+				<short>
+					<generic>EET</generic>
+					<standard>EET</standard>
+					<daylight>EEST</daylight>
+				</short>
 			</metazone>
 			<metazone type="Europe_Western">
 				<long>
@@ -2263,6 +2243,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<standard>Horario estándar de Europa Occidental</standard>
 					<daylight>Horario de verán de Europa Occidental</daylight>
 				</long>
+				<short>
+					<generic>WET</generic>
+					<standard>WET</standard>
+					<daylight>WEST</daylight>
+				</short>
 			</metazone>
 			<metazone type="Falkland">
 				<long>
@@ -2314,6 +2299,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<long>
 					<standard>Horario do meridiano de Greenwich</standard>
 				</long>
+				<short>
+					<standard>GMT</standard>
+				</short>
 			</metazone>
 			<metazone type="Greenland_Eastern">
 				<long>
@@ -3899,6 +3887,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<unit type="temperature-celsius">
 				<unitPattern count="one">{0}°</unitPattern>
 				<unitPattern count="other">{0}°</unitPattern>
+			</unit>
+			<unit type="temperature-fahrenheit">
+				<unitPattern count="one">{0}°F</unitPattern>
+				<unitPattern count="other">{0}°F</unitPattern>
 			</unit>
 			<unit type="volume-liter">
 				<unitPattern count="one">{0} l</unitPattern>

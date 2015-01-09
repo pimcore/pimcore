@@ -29,3 +29,26 @@
     <?php } ?>
 <?php } ?>
 
+
+<?php // language icons ?>
+
+<?php
+    $languages = \Pimcore\Tool::getValidLanguages();
+?>
+
+<?php foreach ($languages as $language) {
+        $iconFile = \Pimcore\Tool::getLanguageFlagFile($language);
+        $iconFile = preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", $iconFile);
+    ?>
+    /* tab icon for localized fields [ <?= $language ?> ] */
+    .pimcore_icon_language_<?= strtolower($language) ?> {
+        background: url(<?= $iconFile ?>) left center no-repeat;
+    }
+
+    /* grid column header icon in translations [ <?= $language ?> ] */
+    .x-grid3-hd-translation_column_<?= strtolower($language) ?> {
+        background: url(<?= $iconFile ?>) no-repeat 3px 3px ! important;
+        padding-left:22px !important;
+    }
+
+<?php } ?>

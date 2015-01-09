@@ -21,11 +21,6 @@
  */
 
 /**
- * @see PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection
- */
-// require_once "PHPUnit/Extensions/Database/DB/DefaultDatabaseConnection.php";
-
-/**
  * @see Zend_Test_PHPUnit_Db_DataSet_QueryTable
  */
 // require_once "Zend/Test/PHPUnit/Db/DataSet/QueryTable.php";

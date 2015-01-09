@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_Workspace_Document extends User_Workspace_Abstract {
+namespace Pimcore\Model\User\Workspace;
+
+use Pimcore\Model;
+
+class Document extends AbstractWorkspace {
 
     /**
      * @var bool
@@ -28,7 +32,8 @@ class User_Workspace_Document extends User_Workspace_Abstract {
     public $unpublish = false;
 
     /**
-     * @param boolean $save
+     * @param $save
+     * @return $this
      */
     public function setSave($save)
     {
@@ -45,7 +50,8 @@ class User_Workspace_Document extends User_Workspace_Abstract {
     }
 
     /**
-     * @param boolean $unpublish
+     * @param $unpublish
+     * @return $this
      */
     public function setUnpublish($unpublish)
     {

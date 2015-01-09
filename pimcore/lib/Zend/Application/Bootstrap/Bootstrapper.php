@@ -35,7 +35,6 @@ interface Zend_Application_Bootstrap_Bootstrapper
      * Constructor
      *
      * @param  Zend_Application $application
-     * @return void
      */
     public function __construct($application);
 

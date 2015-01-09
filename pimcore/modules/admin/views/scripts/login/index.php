@@ -13,8 +13,8 @@
     <?php
     // load plugin scripts
     try {
-        $pluginBroker = Zend_Registry::get("Pimcore_API_Plugin_Broker");
-        if ($pluginBroker instanceof Pimcore_API_Plugin_Broker) {
+        $pluginBroker = \Zend_Registry::get("Pimcore_API_Plugin_Broker");
+        if ($pluginBroker instanceof \Pimcore\API\Plugin\Broker) {
             foreach ($pluginBroker->getPlugins() as $plugin) {
                 if ($plugin->isInstalled()) {
                     $cssPaths = $plugin->getCssPaths();
@@ -33,7 +33,7 @@
             }
         }
     }
-    catch (Exception $e) {}
+    catch (\Exception $e) {}
     ?>
 
 </head>
@@ -43,24 +43,24 @@
 
 //detect browser
 $supported = false;
-$browser = new Pimcore_Browser();
+$browser = new \Pimcore\Browser();
 $browserVersion = (int) $browser->getVersion();
 $platform = $browser->getPlatform();
 
-if ($browser->getBrowser() == Pimcore_Browser::BROWSER_FIREFOX && $browserVersion >= 4) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_FIREFOX && $browserVersion >= 4) {
     $supported = true;
 }
-if ($browser->getBrowser() == Pimcore_Browser::BROWSER_IE && $browserVersion >= 9) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_IE && $browserVersion >= 9) {
     $supported = true;
 }
-if ($browser->getBrowser() == Pimcore_Browser::BROWSER_CHROME && $browserVersion >= 6) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_CHROME && $browserVersion >= 6) {
     $supported = true;
 }
-if ($browser->getBrowser() == Pimcore_Browser::BROWSER_SAFARI && $browserVersion >= 5) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_SAFARI && $browserVersion >= 5) {
     $supported = true;
 }
 
-$config = Pimcore_Config::getSystemConfig();
+$config = \Pimcore\Config::getSystemConfig();
 
 ?>
 
@@ -73,40 +73,68 @@ $config = Pimcore_Config::getSystemConfig();
             -o-background-size: cover;
             background-size: cover;
         }
+
+        #header {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        #content {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
     </style>
 <?php } ?>
 
 <div id="vcenter" class="<?php echo ($config->general->loginscreencustomimage ? "customimage" : ""); ?>">
-    <div id="content">
-        <div id="right">
-            <form id="loginform" method="post" action="/admin/login/login">
-                <label><?php echo $this->translate("Username"); ?></label>
-                <input id="username" type="text" name="username" />
+    <div id="hcenter">
+        <div id="header">
+            <img src="/pimcore/static/img/login/logo.png">
+            <p>
+                Your Open Source Multichannel PLatform
+            </p>
+        </div>
+        <div id="content">
+            <div id="loginform">
+                <form method="post" action="/admin/login/login" autocomplete="off">
 
-                <label><?php echo $this->translate("Password"); ?></label>
-                <input type="password" name="password" />
+                    <?php if ($this->error) { ?>
+                        <div class="body error">
+                            <?= $this->translate($this->error) ?>
+                        </div>
+                    <?php } ?>
 
-                <input type="submit" name="submit" value="<?php echo $this->translate("Login"); ?>" />
-
-                <?php if ($this->error) { ?>
-                    <div class="error">
-                        <?php echo $this->translate($this->error) ?>
+                    <div class="form-fields">
+                        <input type="text" name="username" placeholder="<?= $this->translate("Username"); ?>" required />
+                        <input type="password" name="password" placeholder="<?= $this->translate("Password"); ?>" required />
                     </div>
-                <?php } ?>
-            </form>
+
+                    <div class="body">
+                        <button type="submit"><?php echo $this->translate("Login"); ?></button>
+                    </div>
+                </form>
+
+                <div class="body lostpassword">
+                    <a href="/admin/login/lostpassword" class="lostpassword"><?php echo $this->translate("Forgot your password"); ?>?</a>
+                </div>
+            </div>
 
             <?php if (!$supported) { ?>
                 <div id="browserinfo">
                     <div class="error">
                         <?php echo $this->translate("Your browser is not supported. Please install the latest version of one of the following browsers."); ?>
                     </div>
-                    <div class="links">
-                        <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login/firefox.png"/></a>
-                        <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static/img/login/chrome.png"/></a>
-                        <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login/safari.png"/></a>
-                        <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login/ie.png"/></a>
+
+                    <div class="body">
+                        <div class="links">
+                            <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static/img/login/chrome.png"/></a>
+                            <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login/firefox.png"/></a>
+                            <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login/safari.png"/></a>
+                            <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login/ie.png"/></a>
+                        </div>
+                        <br>
+                        <a href="#" onclick="showLogin();"><?php echo $this->translate("Click here to proceed"); ?></a>
                     </div>
-                    <a href="#" onclick="showLogin();"><?php echo $this->translate("Click here to proceed"); ?></a>
 
                     <script type="text/javascript">
                         function showLogin() {
@@ -123,7 +151,6 @@ $config = Pimcore_Config::getSystemConfig();
                 </div>
             <?php } ?>
         </div>
-        <a href="/admin/login/lostpassword" class="lostpassword"><?php echo $this->translate("Forgot your password"); ?></a>
     </div>
 </div>
 <div id="footer">
@@ -141,7 +168,7 @@ $config = Pimcore_Config::getSystemConfig();
     $("#username").select();
 </script>
 
-<script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1&build=<?php echo Pimcore_Version::getRevision(); ?>"></script>
+<script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1"></script>
 
 </body>
 </html>

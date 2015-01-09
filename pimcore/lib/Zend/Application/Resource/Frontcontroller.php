@@ -46,6 +46,7 @@ class Zend_Application_Resource_Frontcontroller extends Zend_Application_Resourc
      * Initialize Front Controller
      *
      * @return Zend_Controller_Front
+     * @throws Zend_Application_Exception
      */
     public function init()
     {

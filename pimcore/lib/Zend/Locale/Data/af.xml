@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="af"/>
 	</identity>
 	<localeDisplayNames>
@@ -20,30 +20,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ab">Abkasies</language>
 			<language type="ach">Akoli</language>
 			<language type="af">Afrikaans</language>
-			<language type="afa" draft="contributed">Ander Afro-Asiaties</language>
 			<language type="ak">Akan</language>
 			<language type="am">Amharies</language>
 			<language type="ar">Arabies</language>
 			<language type="ar_001">Moderne Standaard Arabies</language>
 			<language type="arc">Aramees</language>
-			<language type="art">Kunsmatige taal</language>
 			<language type="as">Assamees</language>
 			<language type="ay">Aymara</language>
 			<language type="az">Azerbeidjaans</language>
 			<language type="az" alt="short">Azeri</language>
-			<language type="bat" draft="unconfirmed">Baltiese taal</language>
 			<language type="be">Wit-Russies</language>
 			<language type="bem">Bemba</language>
-			<language type="ber" draft="provisional">Berbers</language>
 			<language type="bg">Bulgaars</language>
-			<language type="bh">Bihari</language>
 			<language type="bn">Bengaals</language>
-			<language type="bnt" draft="provisional">Bantoe</language>
 			<language type="bo">Tibettaans</language>
 			<language type="br">Bretons</language>
 			<language type="bs">Bosnies</language>
 			<language type="ca">Katalaans</language>
-			<language type="cel">Keltiese taal</language>
 			<language type="chr">Cherokees</language>
 			<language type="ckb">Sorani Koerdies</language>
 			<language type="co">Korsikaans</language>
@@ -87,7 +80,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ga">Iers</language>
 			<language type="gaa">Gaa</language>
 			<language type="gd">Skotse Gallies</language>
-			<language type="gem">Germaanse taal</language>
 			<language type="gl">Galisies</language>
 			<language type="gn">Guarani</language>
 			<language type="got">Goties</language>
@@ -108,14 +100,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="id">Indonesies</language>
 			<language type="ie" draft="provisional">Interlingue</language>
 			<language type="ig">Igbo</language>
-			<language type="ine">Indo-Europese taal</language>
 			<language type="is">Yslands</language>
 			<language type="it">Italiaans</language>
 			<language type="ja">Japannees</language>
 			<language type="jv">Javaans</language>
 			<language type="ka">Georgies</language>
 			<language type="kg">Kongolees</language>
-			<language type="khi" draft="unconfirmed">Khoi-San taal</language>
 			<language type="kk">Kazak</language>
 			<language type="km">Khmer</language>
 			<language type="kn">Kannada</language>
@@ -180,14 +170,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sco" draft="unconfirmed">Skots</language>
 			<language type="sd">Sindhi</language>
 			<language type="se">Noordelike Sami</language>
-			<language type="sem" draft="unconfirmed">Semitiese taal</language>
 			<language type="sg">Sango</language>
-			<language type="sgn" draft="unconfirmed">Gebaretaal</language>
 			<language type="sh" draft="unconfirmed">Serwo-Kroaties</language>
 			<language type="si">Sinhala</language>
 			<language type="sk">Slowaaks</language>
 			<language type="sl">Sloweens</language>
-			<language type="sla">Slawiese taal</language>
 			<language type="sm">Samoaans</language>
 			<language type="sn">Shona</language>
 			<language type="so">Somalies</language>
@@ -1514,9 +1501,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<fallbackFormat>{1} ({0})</fallbackFormat>
 			<zone type="Etc/Unknown">
 				<exemplarCity>Onbekende stad</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Suidpool</exemplarCity>
 			</zone>
 			<zone type="Antarctica/DumontDUrville">
 				<exemplarCity>Dumont d’Urville</exemplarCity>
@@ -3385,12 +3369,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} sentimeter</unitPattern>
 			</unit>
 			<unit type="length-foot">
-				<unitPattern count="one">{0} vt.</unitPattern>
-				<unitPattern count="other">{0} vt.</unitPattern>
+				<unitPattern count="one">{0} voet</unitPattern>
+				<unitPattern count="other">{0} voete</unitPattern>
 			</unit>
 			<unit type="length-inch">
-				<unitPattern count="one">{0} dm.</unitPattern>
-				<unitPattern count="other">{0} dm.</unitPattern>
+				<unitPattern count="one">{0} duim</unitPattern>
+				<unitPattern count="other">{0} duim</unitPattern>
 			</unit>
 			<unit type="length-kilometer">
 				<unitPattern count="one">{0} kilometer</unitPattern>
@@ -3578,8 +3562,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} vt.</unitPattern>
 			</unit>
 			<unit type="length-inch">
-				<unitPattern count="one">{0} dm.</unitPattern>
-				<unitPattern count="other">{0} dm.</unitPattern>
+				<unitPattern count="one">{0} duim</unitPattern>
+				<unitPattern count="other">{0} duim</unitPattern>
 			</unit>
 			<unit type="length-kilometer">
 				<unitPattern count="one">{0} km</unitPattern>
@@ -3763,8 +3747,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} vt.</unitPattern>
 			</unit>
 			<unit type="length-inch">
-				<unitPattern count="one">{0} dm.</unitPattern>
-				<unitPattern count="other">{0} dm.</unitPattern>
+				<unitPattern count="one">{0} duim</unitPattern>
+				<unitPattern count="other">{0} duim</unitPattern>
 			</unit>
 			<unit type="length-kilometer">
 				<unitPattern count="one">{0}km</unitPattern>

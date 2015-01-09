@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9308 $"/>
-		<generation date="$Date: 2013-09-04 14:41:52 -0500 (Wed, 04 Sep 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="ka"/>
 	</identity>
 	<localeDisplayNames>
@@ -30,7 +30,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ak">აკანი</language>
 			<language type="akk">აქადური</language>
 			<language type="ale">ალეუტური</language>
-			<language type="alg">ალგონკინური ენა</language>
 			<language type="alt">სამხრეთ ალთაური</language>
 			<language type="am">ამჰარული</language>
 			<language type="an">არაგონული</language>
@@ -41,12 +40,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="arc">არამეული</language>
 			<language type="arn">მაპუდუნგუნი</language>
 			<language type="arp">არაპაჰო</language>
-			<language type="art">ხელოვნური ენა</language>
 			<language type="arw">არავაკი</language>
 			<language type="as">ასამური</language>
 			<language type="asa">ასუ</language>
 			<language type="ast">ასტურიული</language>
-			<language type="ath">ათაბასკური ენა</language>
 			<language type="av" draft="unconfirmed">ხუნძური</language>
 			<language type="awa">ავადი</language>
 			<language type="ay">აიმარა</language>
@@ -55,18 +52,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bal">ბელუჯი</language>
 			<language type="ban">ბალინური</language>
 			<language type="bas">ბასა</language>
-			<language type="bat">ბალტიური ენა</language>
 			<language type="bax">ბამუნი</language>
 			<language type="be">ბელორუსული</language>
 			<language type="bej">ბეჯა</language>
 			<language type="bem">ბემბა</language>
-			<language type="ber">ბერბერული</language>
 			<language type="bez">ბენა</language>
 			<language type="bg">ბულგარული</language>
-			<language type="bh">ბიჰარი</language>
 			<language type="bho">ბოჯპური</language>
 			<language type="bn">ბენგალური</language>
-			<language type="bnt">ბანტუ</language>
 			<language type="bo">ტიბეტური</language>
 			<language type="br">ბრეტონული</language>
 			<language type="bra">ბრაჯი</language>
@@ -75,10 +68,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bua">ბურიატული</language>
 			<language type="byn">ბილინი</language>
 			<language type="ca">კატალანური</language>
-			<language type="cau">კავკასიური ენა</language>
 			<language type="cay">კაიუგა</language>
 			<language type="ce">ჩეჩნური</language>
-			<language type="cel">კელტური ენა</language>
 			<language type="chb">ჩიბჩა</language>
 			<language type="chm">მარიული</language>
 			<language type="chn" draft="unconfirmed">ჩინუკი ვავა</language>
@@ -154,7 +145,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ga">ირლანდიური</language>
 			<language type="gba">გბაია</language>
 			<language type="gd">შოტლანდიური გელური</language>
-			<language type="gem">გერმანიკული ენა</language>
 			<language type="gez">გეეზი</language>
 			<language type="gl">გალისიური</language>
 			<language type="gmh" draft="unconfirmed">საშუალო ზემოგერმანული</language>
@@ -181,12 +171,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="id">ინდონეზიური</language>
 			<language type="ie">ინტერლინგი</language>
 			<language type="ig">იგბო</language>
-			<language type="inc">ინდური ენა</language>
-			<language type="ine">ინდოევროპული ენა</language>
 			<language type="inh">ინგუშური</language>
 			<language type="io">იდო</language>
-			<language type="ira">ირანული ენა</language>
-			<language type="iro">იროკეზული ენა</language>
 			<language type="is">ისლანდიური</language>
 			<language type="it">იტალიური</language>
 			<language type="iu">ინუკტიტუტი</language>
@@ -202,7 +188,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kbd">ყაბარდოული</language>
 			<language type="kea">კაბუვერდიანუ</language>
 			<language type="kg">კონგო</language>
-			<language type="khi">კოისანური ენა</language>
 			<language type="kk">ყაზახური</language>
 			<language type="kl">გრენლანდიური</language>
 			<language type="kln">კალენჯინი</language>
@@ -251,7 +236,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="maf">მაფა</language>
 			<language type="mag">მაგაჰი</language>
 			<language type="mai">მაითილი</language>
-			<language type="map">ავსტრონეზიური ენა</language>
 			<language type="mde">მაბა</language>
 			<language type="mdf">მოქშა</language>
 			<language type="men">მენდე</language>
@@ -263,29 +247,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mic" draft="unconfirmed">მიკმაკი</language>
 			<language type="min" draft="unconfirmed">მინანგკაბაუ</language>
 			<language type="mk">მაკედონური</language>
-			<language type="mkh">მონ-ქმერული ენა</language>
 			<language type="ml">მალაიალამური</language>
 			<language type="mn">მონღოლური</language>
 			<language type="mnc">მანჯურიული</language>
 			<language type="mni">მანიპური</language>
-			<language type="mno">მანობო ენა</language>
-			<language type="mo">მოლდავური</language>
 			<language type="moh" draft="unconfirmed">მოჰავკი</language>
 			<language type="mos" draft="unconfirmed">მოორე</language>
 			<language type="mr">მარათჰი</language>
 			<language type="ms">მალაიური</language>
 			<language type="mt">მალტური</language>
 			<language type="mua">მუნდანგი</language>
-			<language type="mun">მუნდა ენა</language>
 			<language type="mus">კრიკი</language>
 			<language type="mwl">მირანდული</language>
 			<language type="mwr">მარვარი</language>
 			<language type="my">ბირმული</language>
 			<language type="mye">მიენე</language>
-			<language type="myn">მაია ენა</language>
 			<language type="myv">ერზია</language>
 			<language type="na">ნაურუ</language>
-			<language type="nah">ნაუატლი</language>
 			<language type="nap">ნეაპოლიტანური</language>
 			<language type="naq">ნამა</language>
 			<language type="nb">ნორვეგიული ბუკმოლი</language>
@@ -310,14 +288,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="oj">ოჯიბვე</language>
 			<language type="or">ორია</language>
 			<language type="os">ოსური</language>
-			<language type="oto">ოტომანგური ენა</language>
 			<language type="pa">პენჯაბური</language>
 			<language type="pal">ფალაური</language>
 			<language type="peo">ძველი სპარსული</language>
 			<language type="phn">ფინიკიური</language>
 			<language type="pi">პალი</language>
 			<language type="pl">პოლონური</language>
-			<language type="pra">პრაკრიტის ენა</language>
 			<language type="pro">ძველი პროვანსული</language>
 			<language type="ps">პუშტუ</language>
 			<language type="pt">პორტუგალიური</language>
@@ -330,30 +306,25 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">რეტორომანული</language>
 			<language type="rn">რუნდი</language>
 			<language type="ro">რუმინული</language>
-			<language type="roa">რომანული ენა</language>
+			<language type="ro_MD">მოლდავური</language>
 			<language type="rom">ბოშური</language>
 			<language type="ru">რუსული</language>
 			<language type="sa">სანსკრიტი</language>
 			<language type="sah">იაკუტური</language>
-			<language type="sal">სალიშური ენა</language>
 			<language type="sam">სამარიულ-არამეული</language>
 			<language type="sc">სარდინიული</language>
 			<language type="scn">სიცილიური</language>
 			<language type="sd">სინდჰური</language>
 			<language type="see">სენეკა</language>
 			<language type="sel">სელკუპური</language>
-			<language type="sem">სემიტური ენა</language>
 			<language type="sga">ძველი ირლანდიური</language>
 			<language type="sh">სერბულ-ხორვატული</language>
 			<language type="shi" draft="unconfirmed">შილჰა</language>
 			<language type="shn">შანი</language>
 			<language type="shu">ჩადური არაბული</language>
 			<language type="si">სინჰალური</language>
-			<language type="sio">სიუ ენა</language>
-			<language type="sit">ჩინურ-ტიბეტური ენა</language>
 			<language type="sk">სლოვაკური</language>
 			<language type="sl">სლოვენური</language>
-			<language type="sla">სლავური ენა</language>
 			<language type="sm">სამოა</language>
 			<language type="so">სომალიური</language>
 			<language type="sq">ალბანური</language>
@@ -367,7 +338,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">კლასიკური სირიული</language>
 			<language type="syr">სირიული</language>
 			<language type="ta">ტამილური</language>
-			<language type="tai">ტაი ენა</language>
 			<language type="te">ტელუგუ</language>
 			<language type="tg">ტაჯიკური</language>
 			<language type="th">ტაი</language>
@@ -379,8 +349,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="to">ტონგანური</language>
 			<language type="tr">თურქული</language>
 			<language type="tt">თათრული</language>
-			<language type="tup">ტუპი ენა</language>
-			<language type="tut">ალთაური</language>
 			<language type="tw">თუი</language>
 			<language type="tyv">ტუვა</language>
 			<language type="udm">უდმურტული</language>
@@ -392,14 +360,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="uz">უზბეკური</language>
 			<language type="vai">ვაი</language>
 			<language type="vi">ვიეტნამური</language>
-			<language type="wak">ვაკაშური ენა</language>
 			<language type="wal">ველაითა</language>
 			<language type="wo">ვოლოფური</language>
 			<language type="xal">ყალმუხური</language>
 			<language type="xh">ქჰოსა</language>
 			<language type="yi">იდიში</language>
 			<language type="yo">იორუბა</language>
-			<language type="ypk">იუპიკური ენა</language>
 			<language type="yue">კანტონური</language>
 			<language type="zbl">ბლისსიმბოლოები</language>
 			<language type="zen">ზენაგა</language>
@@ -407,7 +373,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">ჩინური</language>
 			<language type="zh_Hans">გამარტივებული ჩინური</language>
 			<language type="zh_Hant">ტრადიციული ჩინური</language>
-			<language type="znd">ზანდე</language>
 			<language type="zu">ზულუ</language>
 			<language type="zxx">ლინგვისტური შიგთავსი არ არის</language>
 			<language type="zza">ზაზაკი</language>
@@ -2125,9 +2090,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>პალმერი</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>სამხრეთი პოლუსი</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>სიოუა</exemplarCity>
 			</zone>
@@ -2400,9 +2362,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>ტორონტო</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>მონრეალი</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>იქალუიტი</exemplarCity>
@@ -3246,9 +3205,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>ფენიქსი</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>შიპროკი</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>დენვერი</exemplarCity>

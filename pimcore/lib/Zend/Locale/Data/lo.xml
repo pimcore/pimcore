@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="lo"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,53 +25,42 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">ເອດີຮິ</language>
 			<language type="ae">ອາເວັສແຕນ</language>
 			<language type="af">ອາຟຣິການ</language>
-			<language type="afa">ພາສາ ແອໂຟຣ-ເອເຊຍຕິກ</language>
 			<language type="afh">ແອຟີຮີລີ</language>
 			<language type="agq">ອາເຮັມ</language>
 			<language type="ain">ໄອນູ</language>
 			<language type="ak">ອາການ</language>
 			<language type="akk">ອັກກາດຽມ</language>
 			<language type="ale">ອາເລີດ</language>
-			<language type="alg">ພາສາອໍກອນຄຽນ</language>
 			<language type="alt">ອານໄຕໃຕ້</language>
 			<language type="am">ອຳຮາຣິກ</language>
 			<language type="an">ອາຣາໂກເນັດ</language>
 			<language type="ang">ອັງກິດໂບຮານ</language>
 			<language type="anp">ແອນຈີກາ</language>
-			<language type="apa">ພາສາອາປາເຊ</language>
 			<language type="ar">ອາຣັບ</language>
 			<language type="ar_001">ອາຣາບິກມາດຕະຖານສະໄໝໃໝ່</language>
 			<language type="arc">ອາລາມິກ</language>
 			<language type="arn">ອາຣົວຄານຽນ</language>
 			<language type="arp">ອາຣາປາໂຮ</language>
-			<language type="art">ພາສາປະດິດ</language>
 			<language type="arw">ອາຣາແວກ</language>
 			<language type="as">ອັສຊຳມີສ</language>
 			<language type="asa">ອາຊູ</language>
 			<language type="ast">ອັສຕູຮຽນ</language>
-			<language type="ath">ພາສາອາທາພະສະຖານ</language>
-			<language type="aus">ພາສາອອດສເຕເລຍ</language>
 			<language type="av">ອາວາຣິກ</language>
 			<language type="awa">ອາວາຮິ</language>
 			<language type="ay">ອາຍມາລາ</language>
 			<language type="az">ອາເຊີໄບຈານິ</language>
 			<language type="ba">ບາຣກີ</language>
-			<language type="bad">ບານດາ</language>
-			<language type="bai">ພາສາບາມາລີກ</language>
 			<language type="bal">ບາລູຊີ</language>
 			<language type="ban">ບາລີເນັດ</language>
 			<language type="bas">ບາຊາ</language>
-			<language type="bat">ພາສາບໍຕິກ</language>
 			<language type="bax">ບາມຸນ</language>
 			<language type="bbj">ໂຄມາລາ</language>
 			<language type="be">ເບລາຣັສຊຽນ</language>
 			<language type="bej">ບີເຈ</language>
 			<language type="bem">ເບັມບາ</language>
-			<language type="ber">ເບີເບີ</language>
 			<language type="bez">ບີນາ</language>
 			<language type="bfd">ບາຟັດ</language>
 			<language type="bg">ບັງກາຣຽນ</language>
-			<language type="bh">ບິຫາລິ</language>
 			<language type="bho">ໂບພູຣິ</language>
 			<language type="bi">ບິສລະມາ</language>
 			<language type="bik">ບີຄອນ</language>
@@ -80,14 +69,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">ຊິກຊິກາ</language>
 			<language type="bm">ບາມບາຣາ</language>
 			<language type="bn">ເບັງກາລີ</language>
-			<language type="bnt">ບັນຕູ</language>
 			<language type="bo">ທິເບທັນ</language>
 			<language type="br">ເບຣຕັນ</language>
 			<language type="bra">ບຣາ</language>
 			<language type="brx">ໂບດູ</language>
 			<language type="bs">ບອສນຽນ</language>
 			<language type="bss">ອາຄຸດ</language>
-			<language type="btk">ບາຕັກ</language>
 			<language type="bua">ບູຣຽດ</language>
 			<language type="bug">ບູຈີເນັດ</language>
 			<language type="bum">ບູລູ</language>
@@ -95,14 +82,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv">ເມດູມບາ</language>
 			<language type="ca">ຄາຕາລານ</language>
 			<language type="cad">ແຄດໂດ</language>
-			<language type="cai">ພາສາອາເມລິກັນອິນເດຍກາງ</language>
 			<language type="car">ຄາຣິບ</language>
-			<language type="cau">ພາສາຄໍຄັດຊຽມ</language>
 			<language type="cay">ຄາຢູກາ</language>
 			<language type="cch">ອາດແຊມ</language>
 			<language type="ce">ຊີເຄນ</language>
 			<language type="ceb">ຊີບູໂນ</language>
-			<language type="cel">ພາສາເຊວຕິກ</language>
 			<language type="cgg">ຊີກາ</language>
 			<language type="ch">ຊາມໍໂຣ</language>
 			<language type="chb">ຊິບຊາ</language>
@@ -115,26 +99,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">ຊີໂຣກີ</language>
 			<language type="chy">ຊີເຢນນີ</language>
 			<language type="ckb">ໂຊນານີເຄີດີຊ</language>
-			<language type="cmc">ພາສາຊາມິກ</language>
 			<language type="co">ຄໍຊິກາ</language>
 			<language type="cop">ຄອບຕິກ</language>
-			<language type="cpe">ເຄຣິນພື້ນຖານອັງກິດ ຫລືພິດກິນ</language>
-			<language type="cpf">ຄີໂອຫຼືພິດຈິນທີມາຈາກພາສາຟຮັ່ງເສດ</language>
-			<language type="cpp">ຄີໂອຫຼືພິດຈິນທີມາພາສາໂປຕູເກດ</language>
 			<language type="cr">ຄີ</language>
 			<language type="crh">ຄຣີເມນເຕີຄິຊ</language>
-			<language type="crp">ຄີໂອຫຼືພິດຈິນ</language>
 			<language type="cs">ເຊກ</language>
 			<language type="csb">ກາຊູບຽນ</language>
 			<language type="cu">ໂບດສລາວິກ</language>
-			<language type="cus">ພາສາຄູຊີຕິກ</language>
 			<language type="cv">ຊູວາຊ</language>
 			<language type="cy">ເວວ</language>
 			<language type="da">ແດນິຊ</language>
 			<language type="dak">ດາໂກຕາ</language>
 			<language type="dar">ດາກວາ</language>
 			<language type="dav">ໄຕຕາ</language>
-			<language type="day">ດາຍັກ</language>
 			<language type="de">ເຢຍລະມັນ</language>
 			<language type="de_AT">ອອສຕຣຽນ ເຈີແມນ</language>
 			<language type="de_CH">ສະວິສ ໄຮ ເຈີແມນ</language>
@@ -144,7 +121,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">ດິນກາ</language>
 			<language type="dje">ຊາມາ</language>
 			<language type="doi">ດອກຣີ</language>
-			<language type="dra">ພາສາດາວີດຽມ</language>
 			<language type="dsb">ຊໍບຽນຕໍ່ກວ່າ</language>
 			<language type="dua">ດົວລາ</language>
 			<language type="dum">ດັກກາງ</language>
@@ -182,7 +158,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">ຟູລາ</language>
 			<language type="fi">ຟິນນິຊ</language>
 			<language type="fil">ຟີລິປີໂນ</language>
-			<language type="fiu">ພາສາຟິນໂນ-ອູຣຽນ</language>
 			<language type="fj">ຟິຈຽນ</language>
 			<language type="fo">ຟາໂຣສ</language>
 			<language type="fon">ຟອນ</language>
@@ -200,7 +175,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">ກາໂຢ</language>
 			<language type="gba">ບາຍາ</language>
 			<language type="gd">ສະກັອດເກລິກ</language>
-			<language type="gem">ພາສາເຈີມານິກ</language>
 			<language type="gez">ກີ</language>
 			<language type="gil">ກິນເບີເທັດ</language>
 			<language type="gl">ກາລິຊຽນ</language>
@@ -223,7 +197,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">ຮີບຣິວ</language>
 			<language type="hi">ຮິນດິ</language>
 			<language type="hil">ຮິຣິໄກນອນ</language>
-			<language type="him">ຫິມາຈັດສ</language>
 			<language type="hit">ຮິດໄຕ</language>
 			<language type="hmn">ມອງ</language>
 			<language type="ho">ຮິຣິໂມຕູ</language>
@@ -241,15 +214,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">ອິນເຕີລິງກຣີ</language>
 			<language type="ig">ອິກໂບ</language>
 			<language type="ii">ເຊສວຍຢີ</language>
-			<language type="ijo">ອີໂຈ</language>
 			<language type="ik">ອິນນູປຽກ</language>
 			<language type="ilo">ໄອໂລໂກ</language>
-			<language type="inc">ພາສາອີດິກ</language>
-			<language type="ine">ພາສາອິນໂດ-ເອີລົບ</language>
 			<language type="inh">ອິນກັຊ</language>
 			<language type="io">ອີໂດ</language>
-			<language type="ira">ພາສາອີ່ຣານ</language>
-			<language type="iro">ພາສາອີໂລກົວ</language>
 			<language type="is">ໄອສແລນດິກ</language>
 			<language type="it">ອິຕາລຽນ</language>
 			<language type="iu">ອິນນຸກຕິຕັດ</language>
@@ -265,7 +233,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">ກາຊິນ</language>
 			<language type="kaj">ຈຣູ</language>
 			<language type="kam" draft="provisional">ກາມບາ</language>
-			<language type="kar">ກາຫຼຽງ</language>
 			<language type="kaw">ກະວີ</language>
 			<language type="kbd">ກາບາດຽນ</language>
 			<language type="kbl">ຄາແນມບູ</language>
@@ -275,7 +242,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">ໂຄໂລ</language>
 			<language type="kg">ຄອງໂກ</language>
 			<language type="kha">ຄາສິ</language>
-			<language type="khi">ພາສາຄອຍຊານ</language>
 			<language type="kho">ໂຄຕັນ</language>
 			<language type="khq" draft="provisional">ຄອຍຣາຊິນີ</language>
 			<language type="ki" draft="provisional">ຄິຄູຢຸ</language>
@@ -294,7 +260,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">ຄານຸລິ</language>
 			<language type="krc">ກາຣາໄຊ-ບານກາ</language>
 			<language type="krl">ກາເຣລຽນ</language>
-			<language type="kro">ຄູ</language>
 			<language type="kru">ກູຣູກ</language>
 			<language type="ks">ຄັດຊະມີຣີ</language>
 			<language type="ksb">ຊຳບາລ້າ</language>
@@ -334,7 +299,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">ໄມທີລິ</language>
 			<language type="mak">ມາກາຊາຣ</language>
 			<language type="man">ມັນດິງກາ</language>
-			<language type="map">ອອດໂຕນີຊຽມ</language>
 			<language type="mas">ມາໄຊ</language>
 			<language type="mde">ມາບາ</language>
 			<language type="mdf">ມອກຊາ</language>
@@ -349,15 +313,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">ມາວຣິ</language>
 			<language type="mic">ມິກແມກ</language>
 			<language type="min">ທີແນງກາບູ</language>
-			<language type="mis">ພາສາອື່ນໆ</language>
 			<language type="mk">ແມັກເຊໂດນຽນ</language>
-			<language type="mkh">ພາສາມອນ-ຂະເມນ</language>
 			<language type="ml">ມາເລອາລຳ</language>
 			<language type="mn">ມ່ອງໂກເລ້ຍ</language>
 			<language type="mnc">ແມນຈູ</language>
 			<language type="mni">ມານີພູຣິ</language>
-			<language type="mno">ພາສາມາໂນໂບ</language>
-			<language type="mo">ໂມດາເວຍ</language>
 			<language type="moh">ໂມຫາ</language>
 			<language type="mos">ມອສຊີ</language>
 			<language type="mr">ມາຣາທິ</language>
@@ -365,17 +325,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">ມອລທີສ</language>
 			<language type="mua">ມັນດັງ</language>
 			<language type="mul">ຫລາຍພາສາ</language>
-			<language type="mun">ພາສາມັນດາ</language>
 			<language type="mus">ຄຣິກ</language>
 			<language type="mwl">ມີລັນດາ</language>
 			<language type="mwr">ມາວາຣິ</language>
 			<language type="my">ມຽນມາ</language>
 			<language type="mye">ມໍຢິນ</language>
-			<language type="myn">ພາສາມາແຢນ</language>
 			<language type="myv">ເອີຍາ</language>
 			<language type="na">ນາຢູລູ</language>
-			<language type="nah">ນາຮົວ</language>
-			<language type="nai">ພາສາອິນເດຍອາເມລິກາເໜືອ</language>
 			<language type="nap">ນາໂປລີ</language>
 			<language type="naq">ນາມາ</language>
 			<language type="nb">ນໍເວຈຽນ ບັອກມອລ</language>
@@ -385,7 +341,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">ນີວາຣິ</language>
 			<language type="ng">ເອັນດອງກາ</language>
 			<language type="nia">ນີ່ອັດ</language>
-			<language type="nic">ພາສາໄນເຈີ-ໂກໂດເຟນຽມ</language>
 			<language type="niu">ນີ່ອູ</language>
 			<language type="nl">ດັຊ</language>
 			<language type="nl_BE">ຟລີມິຊ</language>
@@ -398,7 +353,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">ເອັນໂກ</language>
 			<language type="nr">ນີບີລີໃຕ້</language>
 			<language type="nso">ໂຊໂທເໜືອ</language>
-			<language type="nub">ພາສານູບຽນ</language>
 			<language type="nus">ເນີ</language>
 			<language type="nv">ນາວາໂຈ</language>
 			<language type="nwc">ເນວາດັ້ງເດີມ</language>
@@ -414,21 +368,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">ອອດເຊຕິກ</language>
 			<language type="osa">ໂອແຊກ</language>
 			<language type="ota">ຕູກີອອດໂຕມັນ</language>
-			<language type="oto">ພາສາໂອໂຕມີ</language>
 			<language type="pa">ປັນຈາບີ</language>
-			<language type="paa">ພາສາປາປົວ</language>
 			<language type="pag">ປານກາຊີມານ</language>
 			<language type="pal">ພາລາວີ</language>
 			<language type="pam">ປາມປານກາ</language>
 			<language type="pap">ປາມເປຍເມັນໂທ</language>
 			<language type="pau">ປາລົວອານ</language>
 			<language type="peo">ເປີເຊຍໂບຮານ</language>
-			<language type="phi">ພາສາຟີລາປິນ</language>
 			<language type="phn">ຟີນີເຊຍ</language>
 			<language type="pi">ປາລີ</language>
 			<language type="pl">ໂປລິຊ</language>
 			<language type="pon">ພອນເພ</language>
-			<language type="pra">ພາສາປຣາກຣິດ</language>
 			<language type="pro">ໂປວອງຊານໂບຮານ</language>
 			<language type="ps">ປາສໂຕ</language>
 			<language type="pt">ປໍຕູກີສ</language>
@@ -441,7 +391,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">ໂຣແມນ</language>
 			<language type="rn">ບຸລຸນດີ</language>
 			<language type="ro">ໂຣແມນຽນ</language>
-			<language type="roa">ພາສາໂລມານ</language>
+			<language type="ro_MD">ໂມດາເວຍ</language>
 			<language type="rof">ຣົມໂບ</language>
 			<language type="rom">ໂຣເມນີ</language>
 			<language type="root">ລູດ</language>
@@ -452,8 +402,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">ສັນສະກິດ</language>
 			<language type="sad">ຊັນດາວ</language>
 			<language type="sah">ຊາກາ</language>
-			<language type="sai">ພາສາອາເມລິກັນອິນດຽນໃຕ້</language>
-			<language type="sal">ພາສາຊາລີດ</language>
 			<language type="sam">ສາມາຣິແຕນ-</language>
 			<language type="saq">ຊຳບູລູ</language>
 			<language type="sas">ຊາຊັກ</language>
@@ -468,25 +416,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see" draft="provisional">ຊີນີກາ</language>
 			<language type="seh" draft="provisional">ຊີນາ</language>
 			<language type="sel">ເຊນຄັບ</language>
-			<language type="sem">ພາສາເຊມີຕິກ</language>
 			<language type="ses" draft="provisional">ໂຄຣຍລາໂບໂລເຊນນິ</language>
 			<language type="sg">ແຊງໂກ</language>
 			<language type="sga">ອີຣິຊເກົ່າ</language>
-			<language type="sgn">ພາສາໄບ້</language>
 			<language type="sh">ເຊີໂບ-ໂກເຊຍ</language>
 			<language type="shi">ທາເຊວຫິດ</language>
 			<language type="shn">ໄທໃຫ່ຍ</language>
 			<language type="shu">ອາລັບ-ຊາດ</language>
 			<language type="si">ສິນຫາລາ</language>
 			<language type="sid">ຊິດາໂມ</language>
-			<language type="sio">ພາສາຊີອວນ</language>
-			<language type="sit">ພາສາຊີໂນ-ທິເບດ</language>
 			<language type="sk">ສະໂລແວັກ</language>
 			<language type="sl">ສະໂລເວນຽນ</language>
-			<language type="sla">ພາສາສະລາວິກ</language>
 			<language type="sm">ຊາມົວ</language>
 			<language type="sma">ຊາມິໃຕ້</language>
-			<language type="smi">ພາສາຊາມິ</language>
 			<language type="smj">ລຸນຊາມິ</language>
 			<language type="smn">ອີນາຣິຊາມິ</language>
 			<language type="sms">ສກອດຊາມິ</language>
@@ -494,13 +436,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">ໂຊນິນກີ</language>
 			<language type="so">ໂຊມາລີ</language>
 			<language type="sog">ຊອກດິນ</language>
-			<language type="son">ຊອງໄຮ</language>
 			<language type="sq">ອານບານຽນ</language>
 			<language type="sr">ເຊີບຽນ</language>
 			<language type="srn">ສຣານນານຕອນໂກ</language>
 			<language type="srr">ເຊເລີ</language>
 			<language type="ss">ຊຣາຕິ</language>
-			<language type="ssa">ພາສານີໂລ-ຊາຮາລັນ</language>
 			<language type="ssy">ຊາໂຮ</language>
 			<language type="st">ໂຊໂທໃຕ້</language>
 			<language type="su">ຊຸນແດນນີສ</language>
@@ -514,7 +454,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">ຊີເລຍແບບດັ້ງເດີມ</language>
 			<language type="syr">ຊີເລຍ</language>
 			<language type="ta">ທາມິວ</language>
-			<language type="tai">ພາສາໄທ</language>
 			<language type="te">ເຕລູກູ</language>
 			<language type="tem">ທີມເນ</language>
 			<language type="teo">ເຕໂຊ</language>
@@ -541,8 +480,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">ຊີມຊີແອນ</language>
 			<language type="tt">ທາທາ</language>
 			<language type="tum">ຕຳບູກາ</language>
-			<language type="tup">ພາສາຕູປິດ</language>
-			<language type="tut">ພາສາອານຕາອີກ</language>
 			<language type="tvl">ຕູວາລູ</language>
 			<language type="tw">ທວີ</language>
 			<language type="twq">ຕາຊາວາ</language>
@@ -565,11 +502,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun">ວັນໂຈ</language>
 			<language type="wa">ວໍລູມ</language>
 			<language type="wae">ວາເຊີ</language>
-			<language type="wak">ພາສາວາກາຊານ</language>
 			<language type="wal">ວາລາໂມ</language>
 			<language type="war">ວາເລ</language>
 			<language type="was">ວາໂຊ</language>
-			<language type="wen">ພາສາຊໍບຽນ</language>
 			<language type="wo">ວໍລອບ</language>
 			<language type="xal">ການມິກ</language>
 			<language type="xh">ໂຮຊາ</language>
@@ -580,7 +515,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb">ແຢມບາ</language>
 			<language type="yi">ຢິວ</language>
 			<language type="yo">ໂຢຣູບາ</language>
-			<language type="ypk">ພາສາຢູປິດ</language>
 			<language type="yue">ກວາງຕຸ້ງ</language>
 			<language type="za">ຊວາງ</language>
 			<language type="zap">ຊາໂປແຕບ</language>
@@ -590,7 +524,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">ຈີນ</language>
 			<language type="zh_Hans">ຈີນແບບຮຽບງ່າຍ</language>
 			<language type="zh_Hant">ຈີນແບບດັ້ງເດີມ</language>
-			<language type="znd">ແຊນເດ</language>
 			<language type="zu">ຊູລູ</language>
 			<language type="zun">ຊູນີ</language>
 			<language type="zxx">ບໍ່ມີເນື້ອຫາພາສາ</language>
@@ -3085,9 +3018,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>ພາມເມີ</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>ຂົ້ວໂລກໃຕ້</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>ເຊຍວາ</exemplarCity>
 			</zone>
@@ -3360,9 +3290,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>ໂທຣອນໂຕ</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>ມອນທຣຽວ</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>ອີກົວລິດ</exemplarCity>
@@ -4206,9 +4133,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>ໂພນິກ</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>ຊີພຣອກ</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>ເດັນເວີ</exemplarCity>

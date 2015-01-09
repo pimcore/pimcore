@@ -15,8 +15,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+namespace Pimcore\Model\Webservice;
 
-class Webservice_Tool {
+class Tool {
 
     /**
      * @static
@@ -37,7 +38,7 @@ class Webservice_Tool {
                 $file = str_replace(".php","",$file);
                 $class = str_replace(DIRECTORY_SEPARATOR,"_",$file);
                 
-                if(Pimcore_Tool::classExists($class)) {
+                if(\Pimcore\Tool::classExists($class)) {
                     $match = false;
                     foreach ($includePatterns as $pattern) {
                        if(preg_match($pattern,$file)) {
@@ -54,7 +55,7 @@ class Webservice_Tool {
                         continue;
                     }
 
-                    $classMap[str_replace("Webservice_Data_","",$class)] = $class;
+                    $classMap[str_replace("\\Pimcore\\Model\\Webservice\\Data\\","",$class)] = $class;
                 }
             }
         }
@@ -69,7 +70,7 @@ class Webservice_Tool {
 
             }
             return $values;
-        } else if ($data instanceof stdClass) {
+        } else if ($data instanceof \stdClass) {
             if($data->key) {
                 return array($data->key => self::keyValueReverseMapping($data->value));
             }

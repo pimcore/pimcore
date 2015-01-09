@@ -267,6 +267,10 @@ class Zend_Mobile_Push_Message_Gcm extends Zend_Mobile_Push_Message_Abstract
         if ($this->_ttl !== 2419200) {
             $json['time_to_live'] = $this->_ttl;
         }
-        return json_encode($json);
+        if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
+            return json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        } else {
+            return json_encode($json);
+        }
     }
 }

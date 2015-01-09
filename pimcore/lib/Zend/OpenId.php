@@ -529,7 +529,7 @@ class Zend_OpenId
 //        // require_once "Zend/Crypt/Hmac.php";
 //        return Zend_Crypt_Hmac::compute($secret, $macFunc, $data, Zend_Crypt_Hmac::BINARY);
         if (function_exists('hash_hmac')) {
-            return hash_hmac($macFunc, $data, $secret, 1);
+            return hash_hmac($macFunc, $data, $secret, true);
         } else {
             if (Zend_OpenId::strlen($secret) > 64) {
                 $secret = self::digest($macFunc, $secret);

@@ -15,6 +15,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Folder_Resource extends Object_Abstract_Resource {
+namespace Pimcore\Model\Object\Folder;
+
+use Pimcore\Model;
+
+class Resource extends Model\Object\AbstractObject\Resource {
 
 }

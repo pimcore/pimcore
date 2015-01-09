@@ -15,7 +15,16 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Renderlet extends Document_Tag {
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Model;
+use Pimcore\Config;
+use Pimcore\Model\Document;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Object;
+use Pimcore\Model\Element;
+
+class Renderlet extends Model\Document\Tag {
 
     /**
      * Contains the ID of the linked object
@@ -27,7 +36,7 @@ class Document_Tag_Renderlet extends Document_Tag {
     /**
      * Contains the object
      *
-     * @var Document | Asset | Object_Abstract
+     * @var Document | Asset | Object\AbstractObject
      */
     public $o;
 
@@ -48,7 +57,7 @@ class Document_Tag_Renderlet extends Document_Tag {
     public $subtype;
 
     /**
-     * @see Document_Tag_Interface::getType
+     * @see Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType() {
@@ -56,7 +65,7 @@ class Document_Tag_Renderlet extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData() {
@@ -73,7 +82,7 @@ class Document_Tag_Renderlet extends Document_Tag {
      * @return mixed
      */
     public function getDataEditmode() {
-        if ($this->o instanceof Element_Interface) {
+        if ($this->o instanceof Element\ElementInterface) {
             return array(
                 "id" => $this->id,
                 "type" => $this->getObjectType(),
@@ -84,14 +93,14 @@ class Document_Tag_Renderlet extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::frontend
+     * @see Document\Tag\TagInterface::frontend
      * @return string
      */
     public function frontend() {
 
         if (!$this->options["controller"] && !$this->options["action"]) {
-            $this->options["controller"] = Pimcore_Config::getSystemConfig()->documents->default_controller;
-            $this->options["action"] = Pimcore_Config::getSystemConfig()->documents->default_action;
+            $this->options["controller"] = Config::getSystemConfig()->documents->default_controller;
+            $this->options["action"] = Config::getSystemConfig()->documents->default_action;
         }
 
         $document = null;
@@ -105,7 +114,7 @@ class Document_Tag_Renderlet extends Document_Tag {
             }
         }
 
-        if ($this->o instanceof Element_Interface) {
+        if ($this->o instanceof Element\ElementInterface) {
 
             $blockparams = array("action", "controller", "module", "template");
 
@@ -129,28 +138,34 @@ class Document_Tag_Renderlet extends Document_Tag {
 
             if ($this->getView() != null) {
                 try {
-                    return $this->getView()->action($this->options["action"],
+                    $content = $this->getView()->action($this->options["action"],
                         $this->options["controller"],
                         isset($this->options["module"]) ? $this->options["module"] : null,
                         $params);
-                } catch (Exception $e) {
-                    if(Pimcore::inDebugMode()) {
+
+                    // we need to add a component id to all first level html containers
+                    $componentId = 'document:' . $this->getDocumentId() . '.type:tag-renderlet.name:' . $this->type . "-" . $this->subtype . "-" . $this->id;
+                    $content = \Pimcore\Tool\Frontend::addComponentIdToHtml($content, $componentId);
+
+                    return $content;
+                } catch (\Exception $e) {
+                    if(\Pimcore::inDebugMode()) {
                         return "ERROR: " . $e->getMessage() . " (for details see debug.log)";
                     }
-                    Logger::error($e);
+                    \Logger::error($e);
                 }
             }
         }
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
     public function setDataFromResource($data) {
 
-        $data = Pimcore_Tool_Serialize::unserialize($data);
+        $data = \Pimcore\Tool\Serialize::unserialize($data);
 
         $this->id = $data["id"];
         $this->type = $data["type"];
@@ -161,7 +176,7 @@ class Document_Tag_Renderlet extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
@@ -181,7 +196,7 @@ class Document_Tag_Renderlet extends Document_Tag {
      * @return void
      */
     public function setElement() {
-        $this->o = Element_Service::getElementById($this->type, $this->id);
+        $this->o = Element\Service::getElementById($this->type, $this->id);
         return $this;
     }
 
@@ -194,9 +209,9 @@ class Document_Tag_Renderlet extends Document_Tag {
 
         $dependencies = array();
 
-        if ($this->o instanceof Element_Interface) {
+        if ($this->o instanceof Element\ElementInterface) {
 
-            $elementType = Element_Service::getElementType($this->o);
+            $elementType = Element\Service::getElementType($this->o);
             $key = $elementType . "_" . $this->o->getId();
 
             $dependencies[$key] = array(
@@ -220,8 +235,8 @@ class Document_Tag_Renderlet extends Document_Tag {
         if (!$object) {
             $object = $this->o;
         }
-        if($object instanceof Element_Interface){
-            return Element_Service::getType($object);
+        if($object instanceof Element\ElementInterface){
+            return Element\Service::getType($object);
         } else {
             return false;
         } 
@@ -235,18 +250,16 @@ class Document_Tag_Renderlet extends Document_Tag {
 
         $this->load();
 
-        if($this->o instanceof Element_Interface) {
+        if($this->o instanceof Element\ElementInterface) {
             return false;
         }
         return true;
     }
 
     /**
-     * Receives a Webservice_Data_Document_Element from webservice import and fill the current tag's data
-     *
-     * @abstract
-     * @param  Webservice_Data_Document_Element $data
-     * @return void
+     * @param Document\Webservice\Data\Document\Element $wsElement
+     * @param null $idMapper
+     * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
@@ -265,7 +278,7 @@ class Document_Tag_Renderlet extends Document_Tag {
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
                             $idMapper->recordMappingFailure($this->getDocumentId(),$this->type, $this->id);
                         } else {
-                            throw new Exception("cannot get values from web service import - referenced asset with id [ ".$this->id." ] is unknown");
+                            throw new \Exception("cannot get values from web service import - referenced asset with id [ ".$this->id." ] is unknown");
                         }
                     }
                 } else if ($this->type == "document") {
@@ -274,24 +287,24 @@ class Document_Tag_Renderlet extends Document_Tag {
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
                             $idMapper->recordMappingFailure($this->getDocumentId(),$this->type, $this->id);
                         } else {
-                            throw new Exception("cannot get values from web service import - referenced document with id [ ".$this->id." ] is unknown");
+                            throw new \Exception("cannot get values from web service import - referenced document with id [ ".$this->id." ] is unknown");
                         }
                     }
                 } else if ($this->type == "object") {
-                    $this->o = Object_Abstract::getById($id);
-                    if(!$this->o instanceof Object_Abstract){
+                    $this->o = Object::getById($id);
+                    if(!$this->o instanceof Object\AbstractObject){
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
                             $idMapper->recordMappingFailure($this->getDocumentId(),$this->type, $this->id);
                         } else {
-                            throw new Exception("cannot get values from web service import - referenced object with id [ ".$this->id." ] is unknown");
+                            throw new \Exception("cannot get values from web service import - referenced object with id [ ".$this->id." ] is unknown");
                         }
                     }
                 } else {
                     p_r($this);
-                    throw new Exception("cannot get values from web service import - type is not valid");
+                    throw new \Exception("cannot get values from web service import - type is not valid");
                 }
             } else {
-                throw new Exception("cannot get values from web service import - id is not valid");
+                throw new \Exception("cannot get values from web service import - id is not valid");
             }
         }
     }
@@ -302,10 +315,10 @@ class Document_Tag_Renderlet extends Document_Tag {
     public function checkValidity() {
         $sane = true;
         if($this->id){
-            $el = Element_Service::getElementById($this->type, $this->id);
-            if(!$el instanceof Element_Interface){
+            $el = Element\Service::getElementById($this->type, $this->id);
+            if(!$el instanceof Element\ElementInterface){
                 $sane = false;
-                Logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
+                \Logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
                 $this->id = null;
                 $this->type = null;
                 $this->o=null;
@@ -314,8 +327,6 @@ class Document_Tag_Renderlet extends Document_Tag {
         }
         return $sane;
     }
-
-
 
     /**
      * @return array
@@ -334,9 +345,8 @@ class Document_Tag_Renderlet extends Document_Tag {
         return $finalVars;
     }
 
-
     /**
-     * this method is called by Document_Service::loadAllDocumentFields() to load all lazy loading fields
+     * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields
      *
      * @return void
      */
@@ -348,7 +358,7 @@ class Document_Tag_Renderlet extends Document_Tag {
 
     /**
      * @param int $id
-     * @return Document_Tag_Renderlet
+     * @return Document\Tag\Renderlet
      */
     public function setId($id)
     {
@@ -365,8 +375,8 @@ class Document_Tag_Renderlet extends Document_Tag {
     }
 
     /**
-     * @param \Asset|\Document|\Object_Abstract $o
-     * @return Document_Tag_Renderlet
+     * @param Asset|Document|Object $o
+     * @return Document\Tag\Renderlet
      */
     public function setO($o)
     {
@@ -375,7 +385,7 @@ class Document_Tag_Renderlet extends Document_Tag {
     }
 
     /**
-     * @return \Asset|\Document|\Object_Abstract
+     * @return Asset|Document|Object
      */
     public function getO()
     {
@@ -384,7 +394,7 @@ class Document_Tag_Renderlet extends Document_Tag {
 
     /**
      * @param string $subtype
-     * @return Document_Tag_Renderlet
+     * @return Document\Tag\Renderlet
      */
     public function setSubtype($subtype)
     {
