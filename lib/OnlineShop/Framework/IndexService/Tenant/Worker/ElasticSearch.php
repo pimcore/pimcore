@@ -80,6 +80,8 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
             'type' => 'product',
             'body' => [
                 'product' => [
+                    '_parent' => ['type' => 'product'],
+                    '_routing' => ['path' => 'system.o_virtualProductId'],
                     'dynamic' => false,
                     //'_source' => ['enabled' => false ],
                     'properties' => $this->createMappingAttributes()
@@ -234,7 +236,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
      * @param $objectId
      * @param null $data
      */
-    protected  function doUpdateIndex($objectId, $data = null) {
+    protected function doUpdateIndex($objectId, $data = null) {
 
         if(empty($data)) {
             $data = $this->db->fetchOne("SELECT data FROM " . $this->getStoreTableName() . " WHERE id = ? AND tenant = ?", array($objectId, $this->name));
@@ -299,9 +301,12 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
 
         if($responses['errors']) {
-            Logger::err(print_r($responses, true));
             throw new Exception("Indexing threw an Exception");
         }
+
+
+        // reset
+        $this->bulkIndexData = [];
     }
 
     /**

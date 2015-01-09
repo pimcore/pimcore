@@ -319,8 +319,6 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
     public function setVariantMode($variantMode) {
         $this->variantMode = $variantMode;
         $this->preparedGroupByValuesLoaded = false;
-        throw new Exception("Setting Variantmode not implemented yet.");
-        //TODO consider variant mode in buildup of filter
     }
 
     /**
@@ -336,90 +334,35 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      * @return OnlineShop_Framework_ProductInterfaces_IIndexable[]
      */
     public function load() {
-        $objectRaws = array();
+
+        $objectRaws = [];
 
         //First case: no price filtering and no price sorting
-        if(!$this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
-
-            $boolFilters = array();
-            $queryFilters = array();
-
-            //pre conditions
-            $boolFilters = $this->buildSystemConditions($boolFilters);
-
-
-            //user specific filters
-            $boolFilters = $this->buildFilterConditions($boolFilters, array());
-
-            //relation conditions
-            $boolFilters = $this->buildRelationConditions($boolFilters, array());
-
-
-            //query conditions
-            $queryFilters = $this->buildQueryConditions($queryFilters, array());
-
-            $params = array();
-            $params['index'] = strtolower($this->tenantConfig->getTenantName());
-            $params['type'] = "product";
-            $params['body']['size'] = $this->getLimit();
-            $params['body']['from'] = $this->getOffset();
-
-            if($this->orderKey) {
-
-                if(is_array($this->orderKey)) {
-                    foreach($this->orderKey as $orderKey) {
-                        $params['body']['sort'][] = [$orderKey[0] => $orderKey[1]];
-                    }
-                } else {
-                    $params['body']['sort'][] = [$this->orderKey => $this->order];
-                }
-
-            }
-
-            $params['body']['query']['filtered']['query']['bool']['must'] = $queryFilters;
-            $params['body']['query']['filtered']['filter']['bool']['must'] = $boolFilters;
-
-            /**
-             * @var $esClient \Elasticsearch\Client
-             */
-//            $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
-//            $result = $esClient->search($params);
-
-
-            $esClient = new Zend_Http_Client("http://localhost:9200/" . strtolower($this->tenantConfig->getTenantName()) . "/product/_search");
-            $esClient->setMethod(Zend_Http_Client::GET);
-            $esClient->setRawData(json_encode($params['body']));
-            $result = $esClient->request();
-            $result = json_decode($result->getBody(), true);
-
-
-
-            if($result['hits']) {
-                $this->totalCount = $result['hits']['total'];
-                foreach($result['hits']['hits'] as $hit) {
-                    $objectRaws[] = $hit['_id'];
-                }
-            }
+        if(!$this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null)
+        {
+            $objectRaws = $this->loadWithoutPriceFilterWithoutPriceSorting();
         }
 
         //Second case: no price filtering but price sorting
-        else if($this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
-            //TODO implement this
-            throw new Exception("Not implemented yet");
+        else if($this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null)
+        {
+            $objectRaws = $this->loadWithoutPriceFilterWithPriceSorting();
         }
 
         //Third case: price filtering but no price sorting
-        else if(!$this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null)) {
-            //TODO implement this
-            throw new Exception("Not implemented yet");
+        else if(!$this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null))
+        {
+            $objectRaws = $this->loadWithPriceFilterWithoutPriceSorting();
         }
 
         //Forth case: price filtering and price sorting
-        else if($this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null)) {
-            //TODO implement this
-            throw new Exception("Not implemented yet");
+        else if($this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null))
+        {
+            $objectRaws = $this->loadWithPriceFilterWithPriceSorting();
         }
 
+
+        // load elements
         $this->products = array();
         foreach($objectRaws as $raw) {
             $product = $this->loadElementById($raw);
@@ -433,12 +376,150 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
 
 
     /**
-     * builds system conditions
+     * First case: no price filtering and no price sorting
      *
-     * @param $boolFilters
      * @return array
      */
-    protected function buildSystemConditions($boolFilters) {
+    protected function loadWithoutPriceFilterWithoutPriceSorting()
+    {
+        $boolFilters = array();
+        $queryFilters = array();
+
+        //pre conditions
+        $boolFilters = $this->buildSystemConditions($boolFilters);
+
+
+        //user specific filters
+        $boolFilters = $this->buildFilterConditions($boolFilters, array());
+
+        //relation conditions
+        $boolFilters = $this->buildRelationConditions($boolFilters, array());
+
+
+        //query conditions
+        $queryFilters = $this->buildQueryConditions($queryFilters, array());
+
+        $params = array();
+        $params['index'] = strtolower($this->tenantConfig->getTenantName());
+        $params['type'] = "product";
+        $params['body']['size'] = $this->getLimit();
+        $params['body']['from'] = $this->getOffset();
+
+        if($this->orderKey) {
+
+            if(is_array($this->orderKey)) {
+                foreach($this->orderKey as $orderKey) {
+                    $params['body']['sort'][] = [$orderKey[0] => ($orderKey[1] ?: "asc")];
+                }
+            } else {
+                $params['body']['sort'][] = [$this->orderKey => ($this->order ?: "asc")];
+            }
+
+        }
+
+
+        // build query for request
+        $params = $this->buildQuery($params, $boolFilters, $queryFilters);
+
+
+        // send request
+        $result = $this->sendRequest( $params );
+
+
+
+        $objectRaws = array();
+        if($result['hits']) {
+            $this->totalCount = $result['hits']['total'];
+            foreach($result['hits']['hits'] as $hit) {
+                $objectRaws[] = $hit['_id'];
+            }
+        }
+
+
+        return $objectRaws;
+    }
+
+
+    /**
+     * Second case: no price filtering but price sorting
+     *
+     * @return array
+     * @throws Exception
+     * @todo Not implemented yet
+     */
+    protected function loadWithoutPriceFilterWithPriceSorting()
+    {
+        //TODO implement this
+        throw new Exception("Not implemented yet");
+    }
+
+
+    /**
+     * Third case: price filtering but no price sorting
+     *
+     * @return array
+     * @throws Exception
+     * @todo Not implemented yet
+     */
+    protected function loadWithPriceFilterWithoutPriceSorting()
+    {
+        //TODO implement this
+        throw new Exception("Not implemented yet");
+    }
+
+
+    /**
+     * Forth case: price filtering and price sorting
+     *
+     * @return array
+     * @throws Exception
+     * @todo Not implemented yet
+     */
+    protected function loadWithPriceFilterWithPriceSorting()
+    {
+        //TODO implement this
+        throw new Exception("Not implemented yet");
+    }
+
+
+
+    /**
+     * build the complete query
+     * @param array $params
+     * @param array $boolFilters
+     * @param array $queryFilters
+     *
+     * @return array
+     */
+    protected function buildQuery(array $params, array $boolFilters, array $queryFilters)
+    {
+        // create query
+        if($this->getVariantMode() == OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT)
+        {
+            $params['body']['query']['filtered']['query']['has_child']['type'] = 'product';
+            $params['body']['query']['filtered']['query']['has_child']['query']['bool']['must'] = $queryFilters;
+
+            $params['body']['query']['filtered']['filter']['has_child']['type'] = 'product';
+            $params['body']['query']['filtered']['filter']['has_child']['filter']['bool']['must'] = $boolFilters;
+        }
+        else
+        {
+            $params['body']['query']['filtered']['query']['bool']['must'] = $queryFilters;
+            $params['body']['query']['filtered']['filter']['bool']['must'] = $boolFilters;
+        }
+
+
+        return $params;
+    }
+
+
+    /**
+     * builds system conditions
+     *
+     * @param array $boolFilters
+     * @return array
+     */
+    protected function buildSystemConditions(array $boolFilters) {
         $boolFilters[] = ['term' => ['system.active' => true]];
         $boolFilters[] = ['term' => ['system.o_virtualProductActive' => true]];
         if($this->inProductList) {
@@ -457,10 +538,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
 
         //variant handling
         $variantMode = $this->getVariantMode();
-        if($variantMode == OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-            //TODO implement this
-            throw new Exception("Variantmode VARIANT_MODE_INCLUDE_PARENT_OBJECT not implemented yet");
-        } else if($variantMode == OnlineShop_Framework_IProductList::VARIANT_MODE_HIDE) {
+        if($variantMode == OnlineShop_Framework_IProductList::VARIANT_MODE_HIDE) {
             $boolFilters[] = ['term' => ['system.o_type' => 'object']];
         }
 
@@ -728,17 +806,9 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
             $params['body']['query']['filtered']['filter']['bool']['must'] = $boolFilters;
             $params['body']['aggs'] = $aggregations;
 
-            /**
-             * @var $esClient \Elasticsearch\Client
-             */
-//            $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
-//            $result = $esClient->search($params);
 
-            $esClient = new Zend_Http_Client("http://localhost:9200/" . strtolower($this->tenantConfig->getTenantName()) . "/product/_search?search_type=count");
-            $esClient->setMethod(Zend_Http_Client::GET);
-            $esClient->setRawData(json_encode($params['body']));
-            $result = $esClient->request();
-            $result = json_decode($result->getBody(), true);
+            // send request
+            $result = $this->sendRequest( $params );
 
 
             if($result['aggregations']) {
@@ -765,6 +835,44 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
 
 
         $this->preparedGroupByValuesLoaded = true;
+    }
+
+
+    /**
+     * send a request to elasticsearch
+     * @param array $params
+     *
+     * @return array
+     */
+    protected function sendRequest(array $params)
+    {
+        /**
+         * @var $esClient \Elasticsearch\Client
+         */
+        //TODO
+//        $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
+//        $result = $esClient->search($params);
+
+        // FIXME dummy
+        $esClient = new Zend_Http_Client(sprintf('http://elasticsearch:9200/%s/%s/_search?%s'
+            , $params['index']
+            , $params['type']
+            , $params['search_type'] ?: ''
+        ));
+
+
+
+        /* @var \Elasticsearch\Client $esClient */
+
+        $esClient->setMethod(Zend_Http_Client::GET);
+        $esClient->setRawData(json_encode( $params['body'] ));
+
+        print_r(json_encode( $params['body'] ));
+
+        $result = $esClient->request();
+        $result = json_decode($result->getBody(), true);
+
+        return $result;
     }
 
 

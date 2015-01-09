@@ -257,48 +257,27 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
         $objectRaws = array();
 
         //First case: no price filtering and no price sorting
-        if(!$this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
-            $objectRaws = $this->resource->load($this->buildQueryFromConditions(), $this->buildOrderBy(), $this->getLimit(), $this->getOffset());
-            $this->totalCount = $this->resource->getLastRecordCount();
+        if(!$this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null)
+        {
+            $objectRaws = $this->loadWithoutPriceFilterWithoutPriceSorting();
         }
 
         //Second case: no price filtering but price sorting
-        else if($this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
-            $objectRaws = $this->resource->load($this->buildQueryFromConditions());
-            $this->totalCount = $this->resource->getLastRecordCount();
-
-            $priceSystemArrays = array();
-            foreach($objectRaws as $raw) {
-                $priceSystemArrays[$raw['priceSystemName']][] = $raw['o_id'];
-            }
-            if(count($priceSystemArrays) == 1) {
-                $priceSystemName = key($priceSystemArrays);
-                $priceSystem = OnlineShop_Framework_Factory::getInstance()->getPriceSystem($priceSystemName);
-                $objectRaws = $priceSystem->filterProductIds($priceSystemArrays[$raw['priceSystemName']], null, null, $this->order, $this->getOffset(), $this->getLimit());
-            } else if(count($priceSystemArrays) == 0) {
-                //nothing to do
-            } else {
-                throw new Exception("Not implemented yet - multiple pricing systems are not supported yet");
-                foreach($priceSystemArrays as $priceSystemName => $priceSystemArray) {
-
-                }
-            }
+        else if($this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null)
+        {
+            $objectRaws = $this->loadWithoutPriceFilterWithPriceSorting();
         }
 
         //Third case: price filtering but no price sorting
-        else if(!$this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null)) {
-            //TODO check number of price systems
-
-            //TODO set $this->totalCount
-            throw new Exception("Not implemented yet");
+        else if(!$this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null))
+        {
+            $objectRaws = $this->loadWithPriceFilterWithoutPriceSorting();
         }
 
         //Forth case: price filtering and price sorting
-        else if($this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null)) {
-            //TODO check number of price systems
-
-            //TODO set $this->totalCount
-            throw new Exception("Not implemented yet");
+        else if($this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null))
+        {
+            $objectRaws = $this->loadWithPriceFilterWithPriceSorting();
         }
 
 
@@ -312,6 +291,90 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
 
         return $this->products;
     }
+
+
+
+    /**
+     * First case: no price filtering and no price sorting
+     *
+     * @return array
+     */
+    protected function loadWithoutPriceFilterWithoutPriceSorting()
+    {
+        $objectRaws = $this->resource->load($this->buildQueryFromConditions(), $this->buildOrderBy(), $this->getLimit(), $this->getOffset());
+        $this->totalCount = $this->resource->getLastRecordCount();
+
+        return $objectRaws;
+    }
+
+
+    /**
+     * Second case: no price filtering but price sorting
+     *
+     * @return array
+     * @throws Exception
+     * @todo Not implemented yet
+     */
+    protected function loadWithoutPriceFilterWithPriceSorting()
+    {
+        $objectRaws = $this->resource->load($this->buildQueryFromConditions());
+        $this->totalCount = $this->resource->getLastRecordCount();
+
+        $priceSystemArrays = array();
+        foreach($objectRaws as $raw) {
+            $priceSystemArrays[$raw['priceSystemName']][] = $raw['o_id'];
+        }
+        if(count($priceSystemArrays) == 1) {
+            $priceSystemName = key($priceSystemArrays);
+            $priceSystem = OnlineShop_Framework_Factory::getInstance()->getPriceSystem($priceSystemName);
+            $objectRaws = $priceSystem->filterProductIds($priceSystemArrays[$raw['priceSystemName']], null, null, $this->order, $this->getOffset(), $this->getLimit());
+        } else if(count($priceSystemArrays) == 0) {
+            //nothing to do
+        } else {
+            throw new Exception("Not implemented yet - multiple pricing systems are not supported yet");
+            foreach($priceSystemArrays as $priceSystemName => $priceSystemArray) {
+
+            }
+        }
+
+
+        return $objectRaws;
+    }
+
+
+    /**
+     * Third case: price filtering but no price sorting
+     *
+     * @return array
+     * @throws Exception
+     * @todo Not implemented yet
+     */
+    protected function loadWithPriceFilterWithoutPriceSorting()
+    {
+        //TODO check number of price systems
+
+        //TODO set $this->totalCount
+        throw new Exception("Not implemented yet");
+    }
+
+
+    /**
+     * Forth case: price filtering and price sorting
+     *
+     * @return array
+     * @throws Exception
+     * @todo Not implemented yet
+     */
+    protected function loadWithPriceFilterWithPriceSorting()
+    {
+        //TODO check number of price systems
+
+        //TODO set $this->totalCount
+        throw new Exception("Not implemented yet");
+    }
+
+
+
 
     /**
      * loads element by id

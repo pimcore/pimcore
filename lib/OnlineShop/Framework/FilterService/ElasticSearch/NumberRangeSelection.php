@@ -32,7 +32,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_NumberRangeSelection exte
             if(!empty($value['to'])) {
                 $range['lte'] = $value['from'];
             }
-            $productList->addCondition($field, ['range' => [$field => $range]]);
+            $productList->addCondition(['range' => [$field => $range]], $field);
         }
         return $currentFilter;
     }
