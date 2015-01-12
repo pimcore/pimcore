@@ -100,7 +100,11 @@ class TmpStore extends Model\AbstractModel {
     public static function get($id) {
         $item = new self;
         if($item->getById($id)) {
-            return $item;
+            if($item->getExpiryDate() < time()) {
+                self::delete($id);
+            } else {
+                return $item;
+            }
         }
         return null;
     }
@@ -191,5 +195,21 @@ class TmpStore extends Model\AbstractModel {
     public function setSerialized($serialized)
     {
         $this->serialized = $serialized;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExpiryDate()
+    {
+        return $this->expiryDate;
+    }
+
+    /**
+     * @param int $expiryDate
+     */
+    public function setExpiryDate($expiryDate)
+    {
+        $this->expiryDate = $expiryDate;
     }
 }
