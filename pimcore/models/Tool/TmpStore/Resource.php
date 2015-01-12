@@ -91,4 +91,11 @@ class Resource extends Model\Resource\AbstractResource {
 
         return false;
     }
+
+    /**
+     * @param $expiryTime
+     */
+    public function cleanup($expiryTime) {
+        $this->db->delete("tmp_store", "date < " . (time()-$expiryTime));
+    }
 }

@@ -95,6 +95,17 @@ class TmpStore extends Model\AbstractModel {
     }
 
     /**
+     * @param int $expiryTime
+     */
+    public static function cleanup($expiryTime = null) {
+        if(!$expiryTime) {
+            $expiryTime = 86400;
+        }
+        $instance = self::getInstance();
+        $instance->getResource()->cleanup($expiryTime);
+    }
+
+    /**
      * @return string
      */
     public function getId()
