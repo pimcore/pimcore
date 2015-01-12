@@ -42,6 +42,11 @@ class TmpStore extends Model\AbstractModel {
     public $date;
 
     /**
+     * @var int
+     */
+    public $expiryDate;
+
+    /**
      * @var bool
      */
     public $serialized = false;
@@ -66,11 +71,17 @@ class TmpStore extends Model\AbstractModel {
      * @param $id
      * @param $data
      * @param null $tag
+     * @param null $lifetime
      * @return mixed
      */
-    public static function add ($id, $data, $tag = null) {
+    public static function add ($id, $data, $tag = null, $lifetime = null) {
         $instance = self::getInstance();
-        return $instance->getResource()->add($id, $data, $tag);
+
+        if(!$lifetime) {
+            $lifetime = 86400;
+        }
+
+        return $instance->getResource()->add($id, $data, $tag, $lifetime);
     }
 
     /**
@@ -95,14 +106,11 @@ class TmpStore extends Model\AbstractModel {
     }
 
     /**
-     * @param int $expiryTime
+     *
      */
-    public static function cleanup($expiryTime = null) {
-        if(!$expiryTime) {
-            $expiryTime = 86400;
-        }
+    public static function cleanup() {
         $instance = self::getInstance();
-        $instance->getResource()->cleanup($expiryTime);
+        $instance->getResource()->cleanup();
     }
 
     /**

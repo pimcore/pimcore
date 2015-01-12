@@ -40,10 +40,11 @@ class Resource extends Model\Resource\AbstractResource {
     /**
      * @param $id
      * @param $data
-     * @param null $tag
+     * @param $tag
+     * @param $lifetime
      * @return bool
      */
-    public function add ($id, $data, $tag = null) {
+    public function add ($id, $data, $tag, $lifetime) {
 
         try {
             $serialized = false;
@@ -57,6 +58,7 @@ class Resource extends Model\Resource\AbstractResource {
                 "data" => $data,
                 "tag" => $tag,
                 "date" => time(),
+                "expiryDate" => (time()+$lifetime),
                 "serialized" => (int) $serialized
             ]);
             return true;
@@ -93,9 +95,9 @@ class Resource extends Model\Resource\AbstractResource {
     }
 
     /**
-     * @param $expiryTime
+     *
      */
-    public function cleanup($expiryTime) {
-        $this->db->delete("tmp_store", "date < " . (time()-$expiryTime));
+    public function cleanup() {
+        $this->db->delete("tmp_store", "expiryDate < " . time());
     }
 }
