@@ -52,7 +52,7 @@ class Resource extends Model\Resource\AbstractResource {
                 $data = serialize($data);
             }
 
-            $this->db->insert("tmp_store", [
+            $this->db->insertOrUpdate("tmp_store", [
                 "id" => $id,
                 "data" => $data,
                 "tag" => $tag,
