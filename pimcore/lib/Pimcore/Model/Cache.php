@@ -145,6 +145,8 @@ class Cache {
                         self::$defaultLifetime = $config["frontendConfig"]["lifetime"];
                     }
 
+                    $config = self::normalizeConfig($config);
+
                     // here you can use the cache backend you like
                     try {
                         self::$instance = self::initializeCache($config);
@@ -175,6 +177,28 @@ class Cache {
         }
 
         self::setZendFrameworkCaches(self::$instance);
+    }
+
+    /**
+     * @param $config
+     * @return mixed
+     */
+    protected static function normalizeConfig($config) {
+
+        foreach ($config as $key => &$value) {
+            if($value === "true") {
+                $value = true;
+            }
+            if($value === "false") {
+                $value = false;
+            }
+
+            if(is_array($value)) {
+                $value = self::normalizeConfig($value);
+            }
+        }
+
+        return $config;
     }
 
     /**
