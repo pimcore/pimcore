@@ -16,6 +16,7 @@
 namespace Pimcore\Controller\Plugin;
 
 use Pimcore\Model\Asset;
+use Pimcore\Model\Tool\TmpStore;
 
 class Thumbnail extends \Zend_Controller_Plugin_Abstract {
 
@@ -35,10 +36,11 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract {
                 try {
 
                     $thumbnailConfig = null;
-                    $deferredConfig = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/thumb_" . $assetId . "__" . md5($request->getPathInfo()) . ".deferred.config";
-                    if(file_exists($deferredConfig)) {
-                        $thumbnailConfig = unserialize(file_get_contents($deferredConfig));
-                        @unlink($deferredConfig); // cleanup, this isn't needed anymore
+                    $deferredConfigId = "thumb_" . $assetId . "__" . md5($request->getPathInfo());
+                    if($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
+                        $thumbnailConfig = $thumbnailConfigItem->getData();
+                        TmpStore::delete($deferredConfigId);
+
                         if(!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
                             throw new \Exception("Deferred thumbnail config file doesn't contain a valid \\Asset\\Image\\Thumbnail\\Config object");
                         }
