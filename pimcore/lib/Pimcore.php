@@ -917,10 +917,16 @@ class Pimcore {
             return $data;
         }
 
-        // cleanup headers, ensure all headers are unique
-        // this is necessary since eg. session_start() sends Set-Cookie headers again and again, which causes problems with e.g. varnish and other HTTP clients
-        foreach(headers_list() as $header) {
-            header($header, true);
+        // cleanup admin session Set-Cookie headers if needed
+        // a detailed description why this is necessary can be found in the doc-block of \Pimcore\Tool\Session::$sessionCookieCleanupNeeded
+        if(Tool\Session::isSessionCookieCleanupNeeded()) {
+            $headers = headers_list();
+            foreach($headers as $header) {
+                if(strpos($header, Tool\Session::getOption("name")) !== false) {
+                    header($header, true); // setting the header again with 2nd arg = true, overrides all duplicates
+                    break;
+                }
+            }
         }
 
         // force closing the connection at the client, this enables to do certain tasks (writing the cache) in the "background"
