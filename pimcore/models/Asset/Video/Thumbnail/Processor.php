@@ -18,9 +18,9 @@
 namespace Pimcore\Model\Asset\Video\Thumbnail;
 
 use Pimcore\File; 
-use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Console;
 use Pimcore\Model;
+use Pimcore\Model\Tool\TmpStore;
 
 class Processor {
 
@@ -80,7 +80,7 @@ class Processor {
         $existingFormats = array();
         if(is_array($customSetting) && array_key_exists($config->getName(), $customSetting)) {
             if ($customSetting[$config->getName()]["status"] == "inprogress") {
-                if(is_file($instance->getJobFile($customSetting[$config->getName()]["processId"]))) {
+                if(TmpStore::get($instance->getJobStoreId($customSetting[$config->getName()]["processId"]))) {
                     return;
                 }
             } else if($customSetting[$config->getName()]["status"] == "finished") {
@@ -176,7 +176,10 @@ class Processor {
     public static function execute ($processId) {
         $instance = new self();
         $instance->setProcessId($processId);
-        $instance = Serialize::unserialize(file_get_contents($instance->getJobFile()));
+
+        $instanceItem = TmpStore::get($instance->getJobStoreId($processId));
+        $instance = $instanceItem->getData();
+
         $formats = array();
         $overallStatus = array();
         $conversionStatus = "finished";
@@ -246,7 +249,7 @@ class Processor {
             $asset->save();
         }
 
-        @unlink($instance->getJobFile());
+        TmpStore::delete($instance->getJobStoreId());
     }
 
     /**
@@ -258,8 +261,10 @@ class Processor {
         $instance = new self();
         $instance->setProcessId($processId);
 
-        if(is_file($instance->getJobFile())) {
-            $i = Serialize::unserialize(file_get_contents($instance->getJobFile()));
+        $instanceItem = TmpStore::get($instance->getJobStoreId());
+
+        if($instanceItem) {
+            $i = $instanceItem->getData();
             if($i instanceof Processor) {
                 $instance = $i;
             }
@@ -281,18 +286,19 @@ class Processor {
      * @return bool
      */
     public function save() {
-        File::put($this->getJobFile(), Serialize::serialize($this));
+        TmpStore::add($this->getJobStoreId(), $this, "video-job");
         return true;
     }
 
     /**
+     * @param $processId
      * @return string
      */
-    protected function getJobFile ($processId = null) {
+    protected function getJobStoreId($processId = null) {
         if(!$processId) {
             $processId = $this->getProcessId();
         }
-        return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/video-job-" . $processId . ".psf";
+        return "video-job-" . $processId;
     }
 
     /**
