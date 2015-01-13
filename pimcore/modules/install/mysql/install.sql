@@ -611,6 +611,19 @@ CREATE TABLE `targeting_rules` (
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
+CREATE TABLE `tmp_store` (
+  `id` varchar(255) NOT NULL DEFAULT '',
+  `tag` varchar(255) DEFAULT NULL,
+  `data` longtext,
+  `serialized` tinyint(2) NOT NULL DEFAULT '0',
+  `date` int(10) DEFAULT NULL,
+  `expiryDate` int(10) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tag` (`tag`),
+  KEY `date` (`date`),
+  KEY `expiryDate` (`expiryDate`)
+) DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `tracking_events`;
 CREATE TABLE `tracking_events` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,

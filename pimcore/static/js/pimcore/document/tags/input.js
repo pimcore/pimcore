@@ -75,11 +75,16 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
                 "white-space": "nowrap"
             });
         }
+
         if(options["nowrap"]) {
             this.element.applyStyles({
                 "white-space": "nowrap",
                 overflow: "auto"
             });
+        }
+
+        if(options["class"]) {
+            this.element.addClass(options["class"]);
         }
     },
 

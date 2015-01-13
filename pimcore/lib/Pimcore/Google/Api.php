@@ -15,7 +15,8 @@
 
 namespace Pimcore\Google;
 
-use Pimcore\Config; 
+use Pimcore\Config;
+use Pimcore\Model\Tool\TmpStore;
 
 class Api {
 
@@ -114,19 +115,20 @@ class Api {
         $client->setClientId($config->client_id);
 
         // token cache
-        $tokenFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/google-api.token";
-        if(file_exists($tokenFile)) {
-            $tokenData = file_get_contents($tokenFile);
-            $tokenInfo = \Zend_Json::decode($tokenData);
+        $tokenId =  "google-api.token";
+        if($tokenData = TmpStore::get($tokenId)) {
+            $tokenInfo = \Zend_Json::decode($tokenData->getData());
             if( ($tokenInfo["created"] + $tokenInfo["expires_in"]) > (time()-900) )  {
-                $token = $tokenData;
+                $token = $tokenData->getData();
             }
         }
 
         if(!$token) {
             $client->getAuth()->refreshTokenWithAssertion();
             $token = $client->getAuth()->getAccessToken();
-            \Pimcore\File::put($tokenFile, $token);
+
+            // 1 hour (3600s) is the default expiry time
+            TmpStore::add($tokenId, $token, null, 3600);
         }
 
         $client->setAccessToken($token);

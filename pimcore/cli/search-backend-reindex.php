@@ -27,6 +27,10 @@ $types = array("asset","document","object");
 foreach ($types as $type) {
     $listClassName = "\\Pimcore\\Model\\" . ucfirst($type) . "\\Listing";
     $list = new $listClassName();
+    if(method_exists($list, "setUnpublished")) {
+        $list->setUnpublished(true);
+    }
+
     $elementsTotal = $list->getTotalCount();
 
     for($i=0; $i<(ceil($elementsTotal/$elementsPerLoop)); $i++) {

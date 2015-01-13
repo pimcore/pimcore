@@ -186,6 +186,21 @@ class ExtensionManager {
                 );
             }
 
+            // include area repositories from active plugins
+            $configs = ExtensionManager::getPluginConfigs();
+            foreach ($configs as $config) {
+                $className = $config["plugin"]["pluginClassName"];
+
+                if (!empty($className)) {
+                    $isEnabled = ExtensionManager::isEnabled("plugin", $config["plugin"]["pluginName"]);
+                    $areaDir = PIMCORE_PLUGINS_PATH . "/" . $config["plugin"]["pluginName"] . "/views/areas";
+
+                    if ($isEnabled && file_exists($areaDir)) {
+                        $areaRepositories[] = $areaDir;
+                    }
+                }
+            }
+
             // get directories
             foreach ($areaRepositories as $respository) {
 

@@ -927,7 +927,7 @@ class Asset extends Element\AbstractElement {
     public function clearDependentCache($additionalTags = array()) {
 
         try {
-            $tags = array("asset_" . $this->getId(), "properties", "output");
+            $tags = array("asset_" . $this->getId(), "output");
             $tags = array_merge($tags, $additionalTags);
 
             Cache::clearTags($tags);

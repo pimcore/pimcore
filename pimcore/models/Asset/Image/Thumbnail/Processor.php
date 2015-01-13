@@ -152,18 +152,18 @@ class Processor {
         }
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
 
-        // deferred means that the image will be generated on-the-fly (when requested by the browser)
-        // the configuration is saved for later use in Pimcore_Controller_Plugin_Thumbnail::routeStartup()
-        // so that it can be used also with dynamic configurations
-        if($deferred) {
-            $configPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/thumb_" . $id . "__" . md5($path) . ".deferred.config";
-            File::put($configPath, \Pimcore\Tool\Serialize::serialize($config));
-
+        // check for existing and still valid thumbnail
+        if (is_file($fsPath) and filemtime($fsPath) >= $modificationDate) {
             return $path;
         }
 
-        // check for existing and still valid thumbnail
-        if (is_file($fsPath) and filemtime($fsPath) >= $modificationDate) {
+        // deferred means that the image will be generated on-the-fly (when requested by the browser)
+        // the configuration is saved for later use in Pimcore\Controller\Plugin\Thumbnail::routeStartup()
+        // so that it can be used also with dynamic configurations
+        if($deferred) {
+            $configId = "thumb_" . $id . "__" . md5($path);
+            \Pimcore\Model\Tool\TmpStore::add($configId, $config, "thumbnail_deferred");
+
             return $path;
         }
 
@@ -262,6 +262,7 @@ class Processor {
 
         if($contentOptimizedFormat) {
             \Pimcore\Image\Optimizer::optimize($fsPath);
+            // @TODO: asynchronous optimizing images
         }
 
         clearstatcache();

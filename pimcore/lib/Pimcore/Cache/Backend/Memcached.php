@@ -30,6 +30,16 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
     protected $checkedCacheConsistency = false;
 
     /**
+     * @param array $options
+     */
+    public function __construct(array $options = array()) {
+
+        $this->_options["tags_do_not_switch_to_innodb"] = null;
+
+        parent::__construct($options);
+    }
+
+    /**
      * @return void
      */
     protected function checkCacheConsistency() {
@@ -95,9 +105,13 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
 
                         \Logger::warning($e);
 
-                        // it seems that the MEMORY table is on the limit an full
-                        // change the storage engine of the cache tags table to InnoDB
-                        $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
+                        if($this->_options["tags_do_not_switch_to_innodb"]) {
+                            $this->clean();
+                        } else {
+                            // it seems that the MEMORY table is on the limit an full
+                            // change the storage engine of the cache tags table to InnoDB
+                            $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
+                        }
 
                         // try it again
                         $tags[] = $tag;

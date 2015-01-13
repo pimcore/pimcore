@@ -145,6 +145,8 @@ class Cache {
                         self::$defaultLifetime = $config["frontendConfig"]["lifetime"];
                     }
 
+                    $config = self::normalizeConfig($config);
+
                     // here you can use the cache backend you like
                     try {
                         self::$instance = self::initializeCache($config);
@@ -175,6 +177,28 @@ class Cache {
         }
 
         self::setZendFrameworkCaches(self::$instance);
+    }
+
+    /**
+     * @param $config
+     * @return mixed
+     */
+    protected static function normalizeConfig($config) {
+
+        foreach ($config as $key => &$value) {
+            if($value === "true") {
+                $value = true;
+            }
+            if($value === "false") {
+                $value = false;
+            }
+
+            if(is_array($value)) {
+                $value = self::normalizeConfig($value);
+            }
+        }
+
+        return $config;
     }
 
     /**
@@ -283,17 +307,21 @@ class Cache {
                 return;
             }
 
-            self::storeToCache($data, $key, $tags, $lifetime, $priority, $force);
+            return self::storeToCache($data, $key, $tags, $lifetime, $priority, $force);
         } else {
             self::addToSaveStack(array($data, $key, $tags, $lifetime, $priority, $force));
         }
     }
-    
+
     /**
      * Write's an item to the cache // don't use the logger inside here
-     *
-     * @param array $config
-     * @return void
+     * @param $data
+     * @param $key
+     * @param array $tags
+     * @param null $lifetime
+     * @param null $priority
+     * @param bool $force
+     * @return bool|void
      */
     public static function storeToCache ($data, $key, $tags = array(), $lifetime = null, $priority = null, $force = false) {
         if (!self::$enabled) {
@@ -371,6 +399,8 @@ class Cache {
             }
 
             \Logger::debug("Added " . $key . " to cache");
+
+            return $success;
         }
     }
 

@@ -11,15 +11,17 @@
     </frontend>-->
 
     <!-- memcached single server (recommended for single instances) -->
+    <!-- "compatibility" and "tags_do_not_switch_to_innodb" are of course optional -->
     <!--<backend>
         <type>\Pimcore\Cache\Backend\Memcached</type>
         <custom>true</custom>
         <options>
+            <tags_do_not_switch_to_innodb>true</tags_do_not_switch_to_innodb>
+            <compatibility>true</compatibility>
             <servers>
                 <host>localhost</host>
                 <port>11211</port>
                 <persistent>true</persistent>
-                <compatibility>true</compatibility>
             </servers>
         </options>
     </backend>-->
@@ -28,23 +30,21 @@
         <type>\Pimcore\Cache\Backend\Memcached</type>
         <custom>true</custom>
         <options>
+            <compatibility>true</compatibility>
             <servers>
                 <host>memcache1.your-host.com</host>
                 <port>11211</port>
                 <persistent>true</persistent>
-                <compatibility>true</compatibility>
             </servers>
             <servers>
                 <host>memcache2.your-host.com</host>
                 <port>11211</port>
                 <persistent>true</persistent>
-                <compatibility>true</compatibility>
             </servers>
             <servers>
                 <host>memcache3.your-host.com</host>
                 <port>11211</port>
                 <persistent>true</persistent>
-                <compatibility>true</compatibility>
             </servers>
         </options>
     </backend>-->

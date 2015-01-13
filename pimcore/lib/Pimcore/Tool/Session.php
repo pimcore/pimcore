@@ -31,27 +31,61 @@ class Session {
     protected static $openedSessions = 0;
 
     /**
+     * when using mod_php, session_start() always adds an Set-Cookie header when called,
+     * this is the case in self::get(), so depending on how often self::get() is called the more
+     * header will get added to the response, so we clean them up in Pimcore::outputBufferEnd()
+     * to avoid problems with (reverse-)proxies such as Varnish who do not like too much Set-Cookie headers
+     * @var bool
+     */
+    protected static $sessionCookieCleanupNeeded = false;
+
+    /**
+     * @var array
+     */
+    protected static $options = [
+        "throw_startup_exceptions" => false,
+        "gc_maxlifetime" => 7200,
+        "name" => "pimcore_admin_sid",
+        "strict" => false,
+        "use_trans_sid" => false,
+        "use_only_cookies" => false,
+        "cookie_httponly" => true
+    ];
+
+    /**
+     * @param $name
+     * @param $value
+     */
+    public static function setOption($name, $value) {
+        self::$options[$name] = $value;
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public static function getOption($name) {
+        if(isset(self::$options[$name])) {
+            return self::$options[$name];
+        }
+
+        return null;
+    }
+
+    /**
      * @static
      * @return void
      */
     public static function initSession() {
 
         if(!\Zend_Session::isStarted()) {
-            \Zend_Session::setOptions(array(
-                "throw_startup_exceptions" => false,
-                "gc_maxlifetime" => 7200,
-                "name" => "pimcore_admin_sid",
-                "strict" => false,
-                "use_trans_sid" => false,
-                "use_only_cookies" => false,
-                "cookie_httponly" => true
-            ));
+            \Zend_Session::setOptions(self::$options);
         }
 
         try {
             try {
                 if(!\Zend_Session::isStarted()) {
-                    $sName = \Zend_Session::getOptions("name");
+                    $sName = self::getOption("name");
 
                     // only set the session id if the cookie isn't present, otherwise Set-Cookie is always in the headers
                     if (array_key_exists($sName, $_REQUEST) && !empty($_REQUEST[$sName]) && (!array_key_exists($sName, $_COOKIE) || empty($_COOKIE[$sName]))) {
@@ -78,10 +112,7 @@ class Session {
      */
     public static function useSession($func, $namespace = "pimcore_admin") {
 
-        self::initSession();
-
         $ret = $func(self::get($namespace));
-
         self::writeClose();
 
         return $ret;
@@ -102,6 +133,7 @@ class Session {
 
         if(!$readOnly) { // we don't force the session to start in read-only mode
             @session_start();
+            self::$sessionCookieCleanupNeeded = true;
         }
 
         if(!array_key_exists($namespace, self::$sessions) || !self::$sessions[$namespace] instanceof \Zend_Session_Namespace) {
@@ -147,4 +179,10 @@ class Session {
         \Zend_Session::regenerateId();
     }
 
+    /**
+     * @return bool
+     */
+    public static function isSessionCookieCleanupNeeded() {
+        return self::$sessionCookieCleanupNeeded;
+    }
 }
