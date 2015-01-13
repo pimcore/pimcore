@@ -18,6 +18,7 @@
 namespace Pimcore\Model;
 
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
 
 class Property extends AbstractModel {
 
@@ -202,6 +203,12 @@ class Property extends AbstractModel {
      * @return static
      */
     public function setData($data) {
+
+        if($data instanceof ElementInterface) {
+            $this->setType(Service::getElementType($data));
+            $data = $data->getId();
+        }
+
         $this->data = $data;
         return $this;
     }
