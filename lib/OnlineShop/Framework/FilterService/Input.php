@@ -19,8 +19,8 @@ class OnlineShop_Framework_FilterService_Input extends OnlineShop_Framework_Filt
     }
 
     public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
-        $field = $filterDefinition->getField($filterDefinition);
-        $preSelect = $filterDefinition->getPreSelect($filterDefinition);
+        $field = $this->getField($filterDefinition);
+        $preSelect = $this->getPreSelect($filterDefinition);
 
         $value = $params[$field];
 
