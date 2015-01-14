@@ -130,11 +130,15 @@ class Pdf extends Model\Document\Tag
             $pages = $asset->getPageCount();
         }
 
+        $texts = $this->texts;
+        // force an object when converting to JSON
+        $texts["__dummy"] = "__dummy";
+
         return array(
             "id" => $this->id,
             "pageCount" => $pages,
             "hotspots" => empty($hotspots) ? null : $hotspots,
-            "texts" => $this->texts,
+            "texts" => $texts,
             "chapters" => $this->chapters
         );
     }
@@ -311,7 +315,6 @@ class Pdf extends Model\Document\Tag
      */
     public function setDataFromEditmode($data)
     {
-//        var_dump($data); Exit;
         $pdf = Asset::getById($data["id"]);
         if($pdf instanceof Asset\Document) {
             $this->id = $pdf->getId();
