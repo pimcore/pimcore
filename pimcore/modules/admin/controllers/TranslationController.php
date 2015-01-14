@@ -431,9 +431,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $id . ".xliff";
         if(!is_file($exportFile)) {
             // create initial xml file structure
-            $xliff = new \SimpleXMLElement('<xliff></xliff>');
-            $xliff->addAttribute('version', '1.2');
-            $xliff->asXML($exportFile);
+            File::put($exportFile, '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . '<xliff version="1.2"></xliff>');
         }
 
         $xliff = simplexml_load_file($exportFile, null, LIBXML_NOCDATA);
