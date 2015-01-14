@@ -879,5 +879,17 @@ class Mail extends \Zend_Mail
         }
     }
 
+    /**
+     * Sets From-header and sender of the message
+     *
+     * @param  string $email
+     * @return \Zend_Mail Provides fluent interface
+     */
+    public function setSender($email) {
+        $email = $this->_filterEmail($email);
+        $this->sender = $email;
+        $this->_storeHeader('Sender', $this->_formatAddress($email,null), true);
+        return $this;
+    }
 
 }
