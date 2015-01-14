@@ -337,12 +337,6 @@ pimcore.layout.toolbar = Class.create({
             });
 
             extrasItems.push({
-                text: t("systemlog"),
-                iconCls: "pimcore_icon_systemlog",
-                handler: this.showLog
-            });
-
-            extrasItems.push({
                 text: t("system_infos_and_tools"),
                 iconCls: "pimcore_icon_info",
                 hideOnClick: false,
@@ -1123,16 +1117,6 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("redirects", new pimcore.settings.redirects());
-        }
-    },
-
-    showLog: function () {
-
-        try {
-            pimcore.globalmanager.get("systemlog").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("systemlog", new pimcore.settings.systemlog());
         }
     },
 

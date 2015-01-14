@@ -194,11 +194,6 @@
     background: url(/pimcore/static/img/panel-loader.gif) left center no-repeat !important;
 }
 
-
-.pimcore_icon_systemlog {
-    background: url(/pimcore/static/img/icon/text_padding_bottom.png) left center no-repeat !important;
-}
-
 .pimcore_icon_menu_file {
     background: url(/pimcore/static/img/icon/application.png) no-repeat !important;
 }
