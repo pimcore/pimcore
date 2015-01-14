@@ -1034,7 +1034,7 @@ class Service
         try {
             $class = Object\ClassDefinition::getById($id);
             if ($class instanceof Object\ClassDefinition) {
-                $apiClass = Webservice\Data\Mapper::map($class, "\\Pimcore\\Model\\Webservice\\Data\\Class\\Out", "out");
+                $apiClass = Webservice\Data\Mapper::map($class, "\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out", "out");
                 unset($apiClass->fieldDefinitions);
                 return $apiClass;
             }
