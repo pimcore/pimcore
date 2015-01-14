@@ -8,7 +8,7 @@
     height: 20px;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
-    background: url(/pimcore/static/img/background.png);
+    background: #222;
     overflow: hidden;
     color: #fff;
     z-index: 10000;
