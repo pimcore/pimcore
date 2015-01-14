@@ -609,7 +609,7 @@ class Mail extends \Zend_Mail
 
         $result = parent::send($transport);
 
-        if ($this->loggingIsEnabled() && $this->getDocument()) {
+        if ($this->loggingIsEnabled()) {
             try {
                 MailHelper::logEmail($this);
             } catch (\Exception $e) {
