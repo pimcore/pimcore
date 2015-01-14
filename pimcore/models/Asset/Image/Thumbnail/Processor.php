@@ -17,7 +17,8 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
-use Pimcore\File; 
+use Pimcore\File;
+use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\StopWatch;
 use Pimcore\Model\Asset;
 
@@ -261,8 +262,8 @@ class Processor {
         $image->save($fsPath, $format, $config->getQuality());
 
         if($contentOptimizedFormat) {
-            \Pimcore\Image\Optimizer::optimize($fsPath);
-            // @TODO: asynchronous optimizing images
+            $tmpStoreKey = str_replace(PIMCORE_TEMPORARY_DIRECTORY . "/", "", $fsPath);
+            TmpStore::add($tmpStoreKey, "-", "image-optimize-queue");
         }
 
         clearstatcache();
@@ -280,5 +281,27 @@ class Processor {
         }
 
         return $path;
+    }
+
+    /**
+     *
+     */
+    public static function processOptimizeQueue() {
+
+        $ids = TmpStore::getIdsByTag("image-optimize-queue");
+
+        // id = path of image relative to PIMCORE_TEMPORARY_DIRECTORY
+        foreach($ids as $id) {
+            $file = PIMCORE_TEMPORARY_DIRECTORY . "/" . $id;
+            if(file_exists($file)) {
+                $originalFilesize = filesize($file);
+                \Pimcore\Image\Optimizer::optimize($file);
+                \Logger::debug("Optimized image: " . $file . " saved " . formatBytes($originalFilesize-filesize($file)));
+            } else {
+                \Logger::debug("Skip optimizing of " . $file . " because it doesn't exist anymore");
+            }
+
+            TmpStore::delete($id);
+        }
     }
 }

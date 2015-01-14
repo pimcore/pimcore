@@ -105,6 +105,7 @@ $manager->registerJob(new Schedule\Maintenance\Job("contentanalysis", "\\Pimcore
 $manager->registerJob(new Schedule\Maintenance\Job("downloadmaxminddb", "\\Pimcore\\Update", "updateMaxmindDb"));
 $manager->registerJob(new Schedule\Maintenance\Job("cleanupcache", "\\Pimcore\\Model\\Cache", "maintenance"));
 $manager->registerJob(new Schedule\Maintenance\Job("tmpstorecleanup", "\\Pimcore\\Model\\Tool\\TmpStore", "cleanup"));
+$manager->registerJob(new Schedule\Maintenance\Job("imageoptimize", "\\Pimcore\\Model\\Asset\\Image\\Thumbnail\\Processor", "processOptimizeQueue"));
 
 
 \Pimcore::getEventManager()->trigger("system.maintenance", $manager);

@@ -118,6 +118,16 @@ class TmpStore extends Model\AbstractModel {
     }
 
     /**
+     * @param $tag
+     * @return array
+     */
+    public static function getIdsByTag($tag) {
+        $instance = self::getInstance();
+        $items = $instance->getResource()->getIdsByTag($tag);
+        return $items;
+    }
+
+    /**
      * @return string
      */
     public function getId()

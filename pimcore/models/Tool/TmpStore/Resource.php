@@ -100,4 +100,13 @@ class Resource extends Model\Resource\AbstractResource {
     public function cleanup() {
         $this->db->delete("tmp_store", "expiryDate < " . time());
     }
+
+    /**
+     * @param $tag
+     * @return array
+     */
+    public function getIdsByTag($tag) {
+        $items = $this->db->fetchCol("SELECT id FROM tmp_store WHERE tag = ?", [$tag]);
+        return $items;
+    }
 }
