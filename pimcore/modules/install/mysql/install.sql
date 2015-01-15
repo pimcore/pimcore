@@ -348,7 +348,7 @@ CREATE TABLE `http_error_log` (
 
 DROP TABLE IF EXISTS `keyvalue_groups`;
 CREATE TABLE `keyvalue_groups` (
-    `id` INT NOT NULL AUTO_INCREMENT,
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL DEFAULT '',
     `description` VARCHAR(255),
     `creationDate` bigint(20) unsigned DEFAULT '0',
