@@ -1030,7 +1030,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
         $classes = $classes->load();
 
         foreach ($classes as $class) {
-            $data = Model\Webservice\Data\Mapper::map($class, "Webservice_Data_Class_Out", "out");
+            $data = Model\Webservice\Data\Mapper::map($class, "\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out", "out");
             unset($data->fieldDefinitions);
             $result["class"][] = $data;
         }
