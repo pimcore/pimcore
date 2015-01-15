@@ -921,6 +921,7 @@ class Pimcore {
         // a detailed description why this is necessary can be found in the doc-block of \Pimcore\Tool\Session::$sessionCookieCleanupNeeded
         if(Tool\Session::isSessionCookieCleanupNeeded()) {
             $headers = headers_list();
+            $headers = array_reverse($headers);
             foreach($headers as $header) {
                 if(strpos($header, Tool\Session::getOption("name")) !== false) {
                     header($header, true); // setting the header again with 2nd arg = true, overrides all duplicates
