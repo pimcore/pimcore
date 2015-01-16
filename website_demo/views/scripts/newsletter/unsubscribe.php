@@ -18,7 +18,7 @@
         <div class="form-group">
             <label class="col-lg-2 control-label"><?= $this->translate("E-Mail"); ?></label>
             <div class="col-lg-10">
-                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?= $this->getParam("email"); ?>">
+                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?= $this->escape($this->getParam("email")); ?>">
             </div>
         </div>
 
