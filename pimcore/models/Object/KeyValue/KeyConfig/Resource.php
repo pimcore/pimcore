@@ -120,7 +120,11 @@ class Resource extends Model\Resource\AbstractResource {
                         $value = (int) $value;
                     }
                     if(is_array($value) || is_object($value)) {
-                        $value = \Pimcore\Tool\Serialize::serialize($value);
+                        if($this->model->getType() == 'select'){
+                            $value = \Zend_Json::encode($value);
+                        }else{
+                            $value = \Pimcore\Tool\Serialize::serialize($value);
+                        }
                     }
 
                     $data[$key] = $value;
