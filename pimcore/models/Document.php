@@ -584,7 +584,7 @@ class Document extends Element\AbstractElement {
      */
     public function clearDependentCache($additionalTags = array()) {
         try {
-            $tags = array("document_" . $this->getId(), "output");
+            $tags = array("document_" . $this->getId(), "properties", "output");
             $tags = array_merge($tags, $additionalTags);
 
             Cache::clearTags($tags);

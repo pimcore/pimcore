@@ -720,7 +720,7 @@ class AbstractObject extends Model\Element\AbstractElement {
      */
     public function clearDependentCache($additionalTags = array()) {
         try {
-            $tags = array("object_" . $this->getId(), "output");
+            $tags = array("object_" . $this->getId(), "properties", "output");
             $tags = array_merge($tags, $additionalTags);
 
             Cache::clearTags($tags);
