@@ -1277,6 +1277,12 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
         }
         $tag->setParams($params);
 
+        if($this->getParam("name") != $data["name"]) {
+            $tag->setName($this->getParam("name")); // set the old name again, so that the old file get's deleted
+            $tag->delete(); // delete the old config / file
+            $tag->setName($data["name"]);
+        }
+
         $tag->save();
 
         $this->_helper->json(array("success" => true));
