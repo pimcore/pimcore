@@ -19,6 +19,16 @@ Download the [latest release](http://www.pimcore.org/download) and extract the a
 Create a database for pimcore (charset: utf8). If you have a website_example (empty installation) or a website_demo (boilerplate) folder please rename one of them to website.
 Run the pimcore installation by accessing the URL where you uploaded the pimcore files in a browser.
 
+```
+cd /your/document/root
+wget https://www.pimcore.org/download/pimcore-latest.zip
+unzip pimcore-latest.zip
+
+mysql -u root -p -D information_schema -e "CREATE DATABASE pimcore charset=utf8;"
+
+# now launch http://yourhostname.tld/install
+```
+
 [A detailed installation guide can be found here.](http://www.pimcore.org/wiki/pages/viewpage.action?pageId=12124463)
 
 
