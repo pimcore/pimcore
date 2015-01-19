@@ -58,13 +58,16 @@ class Install_IndexController extends \Pimcore\Controller\Action {
 
         // try to establish a mysql connection
         try {
-
+           
+           $socket = $this->getParam('use_socket', false);
+           
             $db = \Zend_Db::factory($this->getParam("mysql_adapter"),array(
-                'host' => $this->getParam("mysql_host"),
+                'host' => (($socket) ? null : $this->getParam("mysql_host")),
+                'unix_socket' => (($socket) ? $this->getParam("mysql_socket_path") : null),
                 'username' => $this->getParam("mysql_username"),
                 'password' => $this->getParam("mysql_password"),
                 'dbname' => $this->getParam("mysql_database"),
-                "port" => $this->getParam("mysql_port")
+                'port' => (($socket) ? null : $this->getParam("mysql_port"))
             ));
 
             $db->getConnection();
@@ -74,6 +77,7 @@ class Install_IndexController extends \Pimcore\Controller\Action {
             if ($result['Value'] != "utf8") {
                 $errors[] = "Database charset is not utf-8";
             }
+            
         }
         catch (\Exception $e) {
             $errors[] = "Couldn't establish connection to mysql: " . $e->getMessage();
@@ -104,11 +108,12 @@ class Install_IndexController extends \Pimcore\Controller\Action {
                 "database" => array(
                     "adapter" => $this->getParam("mysql_adapter"),
                     "params" => array(
-                        "host" => $this->getParam("mysql_host"),
+                        "host" => (($socket) ? null : $this->getParam("mysql_host")),
+                        "unix_socket" => (($socket) ? $this->getParam("mysql_socket_path") : null),
                         "username" => $this->getParam("mysql_username"),
                         "password" => $this->getParam("mysql_password"),
                         "dbname" => $this->getParam("mysql_database"),
-                        "port" => $this->getParam("mysql_port"),
+                        "port" => (($socket) ? null : $this->getParam("mysql_port"))
                     )
                 ),
             ));

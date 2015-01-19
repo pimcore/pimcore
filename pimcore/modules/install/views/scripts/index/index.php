@@ -64,7 +64,7 @@ $scripts = array(
         });
 
         var win = new Ext.Window({
-            width: 300,
+            width: 320,
             closable: false,
             title: "PIMCORE Installer",
             closeable: false,
@@ -94,7 +94,7 @@ $scripts = array(
                             title: "MySQL Settings",
                             xtype: "fieldset",
                             defaults: {
-                                width: 130
+                                width: 150
                             },
                             items: [{
                                     xtype: "combo",
@@ -106,7 +106,7 @@ $scripts = array(
                                     ],
                                     mode: "local",
                                     value: "Mysqli",
-                                    width: 120,
+                                    width: 150,
                                     triggerAction: "all"
                                 },
                                 {
@@ -115,6 +115,35 @@ $scripts = array(
                                     fieldLabel: "Host",
                                     value: "localhost"
                                 },
+                                {
+                                    xtype: "textfield",
+                                    name: "mysql_port",
+                                    fieldLabel: "Port",
+                                    value: "3306"
+                                },
+                                {
+									xtype: "textfield",
+									name: "mysql_socket_path",
+									fieldLabel: "Socket Path",
+									value: "/var/run/mysqld/mysqld.sock",
+									hidden: true
+								},
+								{
+									xtype: "checkbox",
+									name: "use_socket",
+									fieldLabel: "Use a MySQL socket",
+									checked: false,
+									listeners: {
+										check: function(self, checked) {
+											if(checked) {
+										      self.previousSibling().show().previousSibling().hide().previousSibling().hide();
+											} else {
+											  self.previousSibling().hide().previousSibling().show().previousSibling().show();
+											}
+										}
+									}
+								},
+								
                                 {
                                     xtype: "textfield",
                                     name: "mysql_username",
@@ -129,12 +158,6 @@ $scripts = array(
                                     xtype: "textfield",
                                     name: "mysql_database",
                                     fieldLabel: "Database"
-                                },
-                                {
-                                    xtype: "textfield",
-                                    name: "mysql_port",
-                                    fieldLabel: "Port",
-                                    value: "3306"
                                 }
                             ]
                         },
@@ -142,7 +165,7 @@ $scripts = array(
                             title: "Admin User",
                             xtype: "fieldset",
                             defaults: {
-                                width: 130
+                                width: 150
                             },
                             items: [
                                 {
