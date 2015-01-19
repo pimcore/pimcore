@@ -228,9 +228,16 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin {
                 $values["password"] = Tool\Authentication::getPasswordHash($user->getName(),$values["password"]);
             }
 
-            if(method_exists($user, "setAllAclToFalse")) {
-                $user->setAllAclToFalse();
+            // check if there are permissions transmitted, if so reset them all to false (they will be set later)
+            foreach($values as $key => $value) {
+                if(strpos($key, "permission_") === 0) {
+                    if(method_exists($user, "setAllAclToFalse")) {
+                        $user->setAllAclToFalse();
+                    }
+                    break;
+                }
             }
+
             $user->setValues($values);
 
             // only admins are allowed to create admin users
@@ -244,7 +251,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin {
             $availableUserPermissions = $availableUserPermissionsList->load();
 
             foreach($availableUserPermissions as $permission) {
-                if($values["permission_" . $permission->getKey()]) {
+                if(isset($values["permission_" . $permission->getKey()])) {
                     $user->setPermission($permission->getKey(), (bool) $values["permission_" . $permission->getKey()]);
                 }
             }
