@@ -246,4 +246,15 @@ class Console {
             throw new \Exception("The current system user is not allowed to execute this script. Allowed users: '" . implode(',',$allowedUsers) ."' Executing user: '$scriptExecutingUser'.");
         }
     }
+
+    /**
+     * @throws \Exception
+     */
+    public static function checkCliExecution() {
+        if (php_sapi_name() != 'cli') {
+            throw new \Exception("Script execution is restricted to CLI");
+        }
+    }
+
+
 }
