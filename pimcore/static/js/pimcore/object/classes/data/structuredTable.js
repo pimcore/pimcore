@@ -127,7 +127,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 value = trim(value);
                 var regresult = value.match(/[a-zA-Z0-9_]+/);
 
-                if (value.length > 1 && regresult == value && in_array(value.toLowerCase(),
+                if (value.length >= 1 && regresult == value && in_array(value.toLowerCase(),
                                     ["id","key","path","type","index","classname","creationdate","userowner",
                                      "value","class","list","fullpath","childs","values","cachetag","cachetags",
                                      "parent","published","valuefromparent","userpermissions","dependencies",
