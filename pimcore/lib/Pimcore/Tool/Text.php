@@ -92,14 +92,14 @@ class Text
                         preg_match("/height=\"([^\"]+)*\"/", $oldTag, $heightAttr);
                         preg_match("/style=\"([^\"]+)*\"/", $oldTag, $styleAttr);
 
-                        if ($widthAttr[1] || $heightAttr[1]) {
+                        if ((isset($widthAttr[1]) && $widthAttr[1]) || (isset($heightAttr[1]) && $heightAttr[1])) {
                             $config = array(
                                 "width" => intval($widthAttr[1]),
                                 "height" => intval($heightAttr[1])
                             );
                         }
 
-                        if ($styleAttr[1] && preg_match("/(width|height)/",$styleAttr[1])) {
+                        if (isset($styleAttr[1]) && $styleAttr[1] && preg_match("/(width|height)/",$styleAttr[1])) {
 
                             $config = array(); // reset the config if it was set already before (attributes)
 
