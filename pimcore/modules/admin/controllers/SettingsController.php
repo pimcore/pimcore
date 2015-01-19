@@ -510,7 +510,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
         $files = scandir(PIMCORE_CACHE_DIRECTORY);
         foreach ($files as $file) {
             if ($file == ".dummy") {
-                // PIMCORE-1854 Deleting cache cleans whole folder inclusive .dummy
+                // PIMCORE-1854 - .dummy file should remain
                 continue;
             }
             $filename = PIMCORE_CACHE_DIRECTORY . "/" . $file;
@@ -545,6 +545,10 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         // system files
         recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY, false);
+
+        // recreate .dummy files # PIMCORE-2629
+        \Pimcore\File::put(PIMCORE_TEMPORARY_DIRECTORY . "/.dummy", "");
+        \Pimcore\File::put(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/.dummy", "");
 
         $this->_helper->json(array("success" => true));
     }
