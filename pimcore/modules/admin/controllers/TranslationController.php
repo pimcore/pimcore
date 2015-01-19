@@ -35,7 +35,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
         $overwrite = $merge ? false : true;
 
         if($admin){
-            $delta = Translation\Admin::importTranslationsFromFile($tmpFile, $overwrite);
+            $delta = Translation\Admin::importTranslationsFromFile($tmpFile, $overwrite, Tool\Admin::getLanguages());
         } else {
             $delta = Translation\Website::importTranslationsFromFile($tmpFile, $overwrite);
         }
