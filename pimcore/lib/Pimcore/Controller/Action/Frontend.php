@@ -44,6 +44,11 @@ abstract class Frontend extends Action {
     /**
      * @var bool
      */
+    protected $viewRendered = false;
+
+    /**
+     * @var bool
+     */
     public static $isInitial = true;
 
     /**
