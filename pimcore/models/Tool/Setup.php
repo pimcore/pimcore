@@ -36,6 +36,10 @@ class Setup extends Model\AbstractModel {
 				$configTemplate = new \Zend_Config_Xml($configTemplatePath);
 				if($configTemplate->general) { // check if the template contains a valid configuration
 					$settings = $configTemplate->toArray();
+
+					// unset database configuration
+					unset($settings["database"]["params"]["host"]);
+					unset($settings["database"]["params"]["port"]);
 				}
 			} catch (\Exception $e) {
 				
@@ -57,11 +61,9 @@ class Setup extends Model\AbstractModel {
 				"database" => array(
 					"adapter" => "Mysqli",
 					"params" => array(
-						"host" => "localhost",
 						"username" => "root",
 						"password" => "",
 						"dbname" => "",
-						"port" => "3306",
 					)
 				),
 				"documents" => array(

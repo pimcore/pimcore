@@ -56,16 +56,25 @@ class Install_IndexController extends \Pimcore\Controller\Action {
 
     public function installAction() {
 
+        // database configuration host/unix socket
+        $dbConfig = [
+            'username' => $this->getParam("mysql_username"),
+            'password' => $this->getParam("mysql_password"),
+            'dbname' => $this->getParam("mysql_database")
+        ];
+
+        $hostSocketValue = $this->getParam("mysql_host_socket");
+        if(file_exists($hostSocketValue)) {
+            $dbConfig["unix_socket"] = $hostSocketValue;
+        } else {
+            $dbConfig["host"] = $hostSocketValue;
+            $dbConfig["port"] = $this->getParam("mysql_port");
+        }
+
         // try to establish a mysql connection
         try {
 
-            $db = \Zend_Db::factory($this->getParam("mysql_adapter"),array(
-                'host' => $this->getParam("mysql_host"),
-                'username' => $this->getParam("mysql_username"),
-                'password' => $this->getParam("mysql_password"),
-                'dbname' => $this->getParam("mysql_database"),
-                "port" => $this->getParam("mysql_port")
-            ));
+            $db = \Zend_Db::factory($this->getParam("mysql_adapter"), $dbConfig);
 
             $db->getConnection();
 
@@ -103,13 +112,7 @@ class Install_IndexController extends \Pimcore\Controller\Action {
             $setup->config(array(
                 "database" => array(
                     "adapter" => $this->getParam("mysql_adapter"),
-                    "params" => array(
-                        "host" => $this->getParam("mysql_host"),
-                        "username" => $this->getParam("mysql_username"),
-                        "password" => $this->getParam("mysql_password"),
-                        "dbname" => $this->getParam("mysql_database"),
-                        "port" => $this->getParam("mysql_port"),
-                    )
+                    "params" => $dbConfig
                 ),
             ));
 
