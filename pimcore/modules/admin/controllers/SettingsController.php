@@ -507,17 +507,9 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
         $db->query("truncate table cache");
 
         // empty cache directory
-        $files = scandir(PIMCORE_CACHE_DIRECTORY);
-        foreach ($files as $file) {
-            if ($file == ".dummy") {
-                // PIMCORE-1854 - .dummy file should remain
-                continue;
-            }
-            $filename = PIMCORE_CACHE_DIRECTORY . "/" . $file;
-            if (is_file($filename)) {
-                unlink($filename);
-            }
-        }
+        recursiveDelete(PIMCORE_CACHE_DIRECTORY, false);
+        // PIMCORE-1854 - recreate .dummy file => should remain
+        \Pimcore\File::put(PIMCORE_CACHE_DIRECTORY . "/.dummy", "");
 
         $this->_helper->json(array("success" => true));
 
