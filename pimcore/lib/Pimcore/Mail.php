@@ -546,10 +546,13 @@ class Mail extends \Zend_Mail
             }
 
             //if more than one "from" email address is defined -> we set the first one
-            list($from) = $document->getFromAsArray();
-            if ($from) {
-                $this->clearFrom();
-                $this->setFrom($from);
+            $fromArray = $document->getFromAsArray();
+            if(!empty($fromArray)) {
+                list($from) = $fromArray;
+                if ($from) {
+                    $this->clearFrom();
+                    $this->setFrom($from);
+                }
             }
         }
 

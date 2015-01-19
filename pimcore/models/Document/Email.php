@@ -156,6 +156,7 @@ class Email extends Model\Document\PageSnippet
     {
         if (is_null(self::$validator)) {
             self::$validator = new \Zend_Validate_EmailAddress();
+            self::$validator->setDomainCheck(false);
         }
 
         $emailAddress = trim($emailAddress);
