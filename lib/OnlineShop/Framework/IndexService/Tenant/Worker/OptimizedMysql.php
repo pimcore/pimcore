@@ -64,10 +64,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends Onl
 
         $this->prepareDataForIndex($object);
 
-        $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
-        foreach($subObjectIds as $subObjectId => $object) {
-            $this->doUpdateIndex($subObjectId);
-        }
+        $this->doUpdateIndex($object->getId());
 
         $this->fillupPreparationQueue($object);
     }

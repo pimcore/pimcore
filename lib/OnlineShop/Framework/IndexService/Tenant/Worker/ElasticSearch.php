@@ -313,7 +313,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
      * first run processUpdateIndexQueue of trait and then commit updated entries if there are some
      *
      * @param int $limit
-     * @return $int number of entries processed
+     * @return int number of entries processed
      */
     public function processUpdateIndexQueue($limit = 200) {
         $entriesUpdated = $this->traitProcessUpdateIndexQueue($limit);

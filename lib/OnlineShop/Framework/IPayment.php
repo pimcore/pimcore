@@ -24,6 +24,8 @@ interface OnlineShop_Framework_IPayment
     /**
      * handle response / execute payment
      * @param OnlineShop_Framework_Payment_IStatus $response
+     *
+     * @return OnlineShop_Framework_Payment_IStatus
      */
     public function handleResponse($response);
 
