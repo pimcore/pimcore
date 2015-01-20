@@ -48,26 +48,34 @@ class StopWatch {
     /**
      * @static
      * @param bool $html
-     * @return void
+     * @return string
      */
-    public static function display ($html = false) {
-
+    public static function getTime($html = false) {
         $text = "";
 
         $lastLap = self::$startTime;
         foreach (self::$laps as $label => $time) {
-            $text .= "Lap " . $label . "\tAccum: " . ($time-self::$startTime) . "\t Self: " . ($time-$lastLap) . "\n";
+            $text .= "Lap " . $label . "\tAccum: " . ($time - self::$startTime) . "\t Self: " . ($time - $lastLap)
+                . "\n";
 
             $lastLap = $time;
         }
 
         $text .= "Total Time: " . (self::microtime_float() - self::$startTime) . "\n";
 
-        if($html) {
-            $text = "<pre>".$text."</pre>";
+        if ($html) {
+            $text = "<pre>" . $text . "</pre>";
         }
+        return $text;
+    }
 
-        echo $text;
+    /**
+     * @static
+     * @param bool $html
+     * @return void
+     */
+    public static function display($html = false) {
+        echo self::getTime($html);
     }
 
     /**
