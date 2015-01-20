@@ -68,6 +68,11 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data {
      * @var string
      */
     public $toolbarConfig = "";
+    
+     /**
+     * @var string
+     */
+    public $customConfigPath = "";
 
     /**
      * @return integer
@@ -119,6 +124,28 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data {
     public function getToolbarConfig()
     {
         return $this->toolbarConfig;
+    }
+    
+        /**
+     * @param string $toolbarConfigPath
+     */
+    public function setCustomConfigPath($customConfigPath)
+    {
+
+        if(is_string($customConfigPath)) {
+            $this->customConfigPath = $customConfigPath;
+        } else {
+            $this->customConfigPath = "";
+        }
+
+    }
+
+    /**
+     * @return string
+     */
+    public function getCustomConfigPath()
+    {
+        return $this->customConfigPath;
     }
 
     /**
