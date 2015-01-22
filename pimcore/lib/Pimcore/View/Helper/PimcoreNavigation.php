@@ -51,6 +51,13 @@ class PimcoreNavigation extends \Zend_View_Helper_Navigation
             $this->navigation($navContainer);
             $this->setUseTranslator(false);
             $this->setInjectTranslator(false);
+
+            // now we need to refresh the container in all helpers, since the container can change from call to call
+            // see also https://www.pimcore.org/issues/browse/PIMCORE-2636 which describes this problem in detail
+            foreach($this->_helpers as $helper) {
+                $helper->setContainer($this->getContainer());
+            }
+
             return $this;
         } else {
             // this is the old-style navigation
