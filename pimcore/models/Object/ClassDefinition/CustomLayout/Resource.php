@@ -134,7 +134,7 @@ class Resource extends Model\Resource\AbstractResource {
      * @return boolean
      */
     public function create() {
-        $this->db->insert("custom_layouts", array("name" => $this->model->getName()));
+        $this->db->insert("custom_layouts", array("name" => $this->model->getName(), "classId" => $this->model->getClassId()));
 
         $this->model->setId($this->db->lastInsertId());
         $this->model->setCreationDate(time());
