@@ -7,6 +7,11 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig im
     protected $searchAttributeConfig;
 
     /**
+     * @var Zend_Config
+     */
+    protected $filterTypeConfig;
+
+    /**
      * @param string $tenantName
      * @param $tenantConfigXml
      * @param null $totalConfigXml
@@ -14,6 +19,7 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig im
     public function __construct($tenantName, $tenantConfigXml, $totalConfigXml = null) {
         $this->tenantName = $tenantName;
         $this->attributeConfig = $tenantConfigXml->columns;
+        $this->filterTypeConfig = $tenantConfigXml->filtertypes;
 
         $this->searchAttributeConfig = array();
         if($tenantConfigXml->generalSearchColumns->column) {
@@ -47,6 +53,17 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig im
     public function getSearchAttributeConfig() {
         return $this->searchAttributeConfig;
     }
+
+    /**
+     * return all supported filter types for product index
+     *
+     * @return array|null
+     */
+    public function getFilterTypeConfig()
+    {
+        return $this->filterTypeConfig;
+    }
+
 
     /**
      * @return bool

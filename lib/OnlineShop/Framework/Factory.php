@@ -391,8 +391,21 @@ class OnlineShop_Framework_Factory {
         return $this->allTenants;
     }
 
+
+    /**
+     * @param Zend_View $view
+     *
+     * @return OnlineShop_Framework_FilterService
+     */
     public function getFilterService(Zend_View $view) {
-        return new OnlineShop_Framework_FilterService($this->config->onlineshop->filtertypes, $view);
+
+        $filterTypes = $this->getIndexService()->getCurrentTenantConfig()->getFilterTypeConfig();
+        if(!$filterTypes)
+        {
+            $filterTypes = $this->config->onlineshop->filtertypes;
+        }
+
+        return new OnlineShop_Framework_FilterService($filterTypes, $view);
     }
 
 

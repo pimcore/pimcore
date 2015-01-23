@@ -32,6 +32,14 @@ interface OnlineShop_Framework_IndexService_Tenant_IConfig {
 
 
     /**
+     * return all supported filter types for product index
+     *
+     * @return array
+     */
+    public function getFilterTypeConfig();
+
+
+    /**
      * returns if given product is active for this tenant
      *
      * @return bool
