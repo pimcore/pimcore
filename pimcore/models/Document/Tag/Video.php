@@ -538,29 +538,28 @@ class Video extends Model\Document\Tag
         $uid = "video_" . uniqid();
 
         // get vimeo id
-        $parts = parse_url($this->id);
-        $pathParts = explode("/", $parts["path"]);
-        $vimeoId = intval($pathParts[1]);
+        if(preg_match("@vimeo.*/([\d]+)@i", $this->id, $matches)) {
+            $vimeoId = intval($matches[1]);
 
-        if (!$vimeoId || strpos($parts["host"], "vimeo.com") === false) {
-            return $this->getEmptyCode();
+            $width = "100%";
+            if(array_key_exists("width", $options)) {
+                $width = $options["width"];
+            }
+
+            $height = "300";
+            if(array_key_exists("height", $options)) {
+                $height = $options["height"];
+            }
+
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
+                <iframe src="//player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            </div>';
+
+            return $code;
         }
 
-        $width = "100%";
-        if(array_key_exists("width", $options)) {
-            $width = $options["width"];
-        }
-
-        $height = "300";
-        if(array_key_exists("height", $options)) {
-            $height = $options["height"];
-        }
-
-        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
-            <iframe src="//player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-        </div>';
-
-        return $code;
+        // default => return the empty code
+        return $this->getEmptyCode();
     }
 
     public function getHtml5Code($urls = array(), $thumbnail = null)
