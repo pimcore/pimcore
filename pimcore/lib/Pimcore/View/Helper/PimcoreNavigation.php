@@ -58,6 +58,12 @@ class PimcoreNavigation extends \Zend_View_Helper_Navigation
                 $helper->setContainer($this->getContainer());
             }
 
+            // just to be sure, ... load the menu helper and set the container
+            $menu = $this->findHelper("menu");
+            if($menu) {
+                $menu->setContainer($this->getContainer());
+            }
+
             return $this;
         } else {
             // this is the old-style navigation
