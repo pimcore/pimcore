@@ -87,11 +87,13 @@ pimcore.layout.portal = Class.create({
 
         for (var i = 0; i < portlets.length; i++) {
             if (portlets[i] != "abstract") {
-                portletMenu.push({
-                    text: pimcore.layout.portlets[portlets[i]].prototype.getName(),
-                    iconCls: pimcore.layout.portlets[portlets[i]].prototype.getIcon(),
-                    handler: this.addPortlet.bind(this, pimcore.layout.portlets[portlets[i]].prototype.getType())
-                });
+                if(pimcore.layout.portlets[portlets[i]].prototype.isAllowed(pimcore.globalmanager.get("user"))) {
+                    portletMenu.push({
+                        text: pimcore.layout.portlets[portlets[i]].prototype.getName(),
+                        iconCls: pimcore.layout.portlets[portlets[i]].prototype.getIcon(),
+                        handler: this.addPortlet.bind(this, pimcore.layout.portlets[portlets[i]].prototype.getType())
+                    });
+                }
             }
         }
 

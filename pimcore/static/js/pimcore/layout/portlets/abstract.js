@@ -58,6 +58,16 @@ pimcore.layout.portlets.abstract = Class.create({
 
     setConfig: function (config) {
         this.config = config;
+    },
+
+    /**
+     * checks, if portlet is available for current user. default is to true.
+     *
+     * @param user
+     * @returns {boolean}
+     */
+    isAllowed: function(user) {
+        return true;
     }
 
 });
