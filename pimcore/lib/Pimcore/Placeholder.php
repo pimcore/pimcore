@@ -15,7 +15,7 @@
 
 namespace Pimcore;
 
-use Pimcore\Model\Document;
+use Pimcore\Model;
 
 class Placeholder
 {
@@ -44,7 +44,7 @@ class Placeholder
     /**
      * Contains the document object
      *
-     * @var Document | null
+     * @var Model\Document | null
      */
     protected $document;
 
@@ -164,7 +164,7 @@ class Placeholder
      *
      * @param string $contentString
      * @param null | array $params
-     * @param null | Document $document
+     * @param null | Model\Document $document
      * @return array
      */
     public function detectPlaceholders($contentString, $params, $document = null)
@@ -212,19 +212,19 @@ class Placeholder
     /**
      * Helper to simply replace the placeholders with their value
      *
-     * @param string | Document $mixed
+     * @param string | Model\Document $mixed
      * @param array $params
-     * @param null | Document $document
+     * @param null | Model\Document $document
      * @return string
      */
     public function replacePlaceholders($mixed, $params = array(), $document = null,$enableLayoutOnPlaceholderReplacement = true)
     {
         if (is_string($mixed)) {
             $contentString = $mixed;
-        } elseif ($mixed instanceof Document) {
-            $contentString = Document\Service::render($mixed, $params, $enableLayoutOnPlaceholderReplacement);
+        } elseif ($mixed instanceof Model\Document) {
+            $contentString = Model\Document\Service::render($mixed, $params, $enableLayoutOnPlaceholderReplacement);
         }
-        if ($document instanceof Document === false) {
+        if ($document instanceof Model\Document === false) {
             $document = null;
         }
 
