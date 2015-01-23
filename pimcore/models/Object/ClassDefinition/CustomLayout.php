@@ -153,15 +153,6 @@ class CustomLayout extends Model\AbstractModel {
      * @return void
      */
     public function delete() {
-        // delete all custom layouts using this class
-        $list = new Object\Listing();
-        $list->setCondition("o_classId = ?", $this->getId());
-        $list->load();
-
-        foreach ($list->getObjects() as $o) {
-            $o->delete();
-        }
-
         // empty object cache
         try {
             Cache::clearTag("customlayout_" . $this->getId());
