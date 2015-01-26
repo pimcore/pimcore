@@ -13,6 +13,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+chdir(__DIR__);
+
 include_once("startup.php");
 
 use Pimcore\Cache\Tool\Warming as Warmer;

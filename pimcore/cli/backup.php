@@ -13,9 +13,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-echo "\n";
+chdir(__DIR__);
 
 include_once("startup.php");
+
+echo "\n";
 
 try {
     $opts = new \Zend_Console_Getopt(array(
