@@ -518,19 +518,6 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         exit;
     }
 
-    public function robohashAction() {
-
-        $hash = Tool\Misc::roboHash([
-            "seed" => $this->getParam("seed", rand(0,20000)),
-            "width" => $this->getParam("width"),
-            "height" => $this->getParam("height")
-        ]);
-
-        header("Content-Type: image/png");
-        echo readfile($hash);
-        exit;
-    }
-
     public function testAction()
     {
 

@@ -452,13 +452,6 @@ class User extends User\UserRole {
             return $thumb;
         }
 
-        $seed = $this->getName() . "-" . \Pimcore\Tool::getHostUrl();
-        $hash = \Pimcore\Tool\Misc::roboHash([
-            "seed" => $seed,
-            "width" => $width,
-            "height" => $height
-        ]);
-
-        return $hash;
+        return PIMCORE_PATH . "/static/img/avatar.png";
     }
 }
