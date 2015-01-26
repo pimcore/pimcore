@@ -49,7 +49,7 @@ abstract class AbstractPluginUpdater {
      * Runs all revision updates
      */
     public function updateRevisionAll(){
-        foreach(get_class_methods(__CLASS__) as $method){
+        foreach(get_class_methods(get_class($this)) as $method){
             if(stripos($method,'updateRevision') !== false && $method != __FUNCTION__){
                 $this->$method();
             }
