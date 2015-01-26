@@ -943,17 +943,18 @@ class Service
     protected function updateDocument($wsDocument)
     {
         $document = Document::getById($wsDocument->id);
-        $this->setModificationParams($document, false);
 
+        if ($document === NULL)
+            throw new \Exception("Document with given ID (" . $wsDocument->id . ") does not exist.");
+
+        $this->setModificationParams($document, false);
 
         if ($document instanceof Document and strtolower($wsDocument->type) == $document->getType()) {
             $wsDocument->reverseMap($document);
             $document->save();
             return true;
-        } else if ($document instanceof Document) {
-            throw new \Exception("Type mismatch for given document with ID [" . $wsDocument->id . "] and existing document with id [" . $document->getId() . "]");
         } else {
-            throw new \Exception("Document with given ID (" . $wsDocument->id . ") does not exist.");
+            throw new \Exception("Type mismatch for given document with ID [" . $wsDocument->id . "] and existing document with id [" . $document->getId() . "]");
         }
     }
 
@@ -966,6 +967,9 @@ class Service
     {
         $object = Object\AbstractObject::getById($wsDocument->id);
 
+        if ($object === NULL)
+            throw new \Exception("Object with given ID (" . $wsDocument->id . ") does not exist.");
+
         $this->setModificationParams($object, false);
         if ($object instanceof Object\Concrete and $object->getClassName() == $wsDocument->className) {
 
@@ -976,10 +980,8 @@ class Service
             $wsDocument->reverseMap($object);
             $object->save();
             return true;
-        } else if ($object instanceof Object\AbstractObject) {
-            throw new \Exception("Type/Class mismatch for given object with ID [" . $wsDocument->id . "] and existing object with id [" . $object->getId() . "]");
         } else {
-            throw new \Exception("Object with given ID (" . $wsDocument->id . ") does not exist.");
+            throw new \Exception("Type/Class mismatch for given object with ID [" . $wsDocument->id . "] and existing object with id [" . $object->getId() . "]");
         }
     }
 
@@ -992,15 +994,17 @@ class Service
     {
 
         $asset = Asset::getById($wsDocument->id);
+
+        if ($asset === NULL)
+            throw new \Exception("Asset with given ID (" . $wsDocument->id . ") does not exist.");
+
         $this->setModificationParams($asset, false);
         if ($asset instanceof Asset and $asset->getType() == strtolower($wsDocument->type)) {
             $wsDocument->reverseMap($asset);
             $asset->save();
             return true;
-        } else if ($asset instanceof Asset) {
-            throw new \Exception("Type mismatch for given asset with ID [" . $wsDocument->id . "] and existing asset with id [" . $asset->getId() . "]");
         } else {
-            throw new \Exception("Asset with given ID (" . $wsDocument->id . ") does not exist.");
+            throw new \Exception("Type mismatch for given asset with ID [" . $wsDocument->id . "] and existing asset with id [" . $asset->getId() . "]");
         }
 
     }
