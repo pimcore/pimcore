@@ -68,7 +68,7 @@ pimcore.object.helpers.grid = Class.create({
         readerFields.push({name: "classname", allowBlank: true});
         readerFields.push({name: "creationDate", allowBlank: true});
         readerFields.push({name: "modificationDate", allowBlank: true});
-        readerFields.push({name: "inheritedFields", allowBlank: false});
+        readerFields.push({name: "inheritedFields", allowBlank: true});
         readerFields.push({name: "metadata", allowBlank: true});
         readerFields.push({name: "#kv-tr", allowBlank: true});
 
