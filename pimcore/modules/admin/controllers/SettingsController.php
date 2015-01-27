@@ -331,6 +331,16 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
             }
         }
 
+        // delete views from old languages
+        $oldLanguages = explode(",",$oldConfig->get("general")->toArray()["validLanguages"]);
+        $newLanguages = $languages;
+        $dbName = $oldConfig->get("database")->toArray()["params"]["dbname"];
+        foreach ($oldLanguages as $oldLanguage){
+            if (in_array($oldLanguage, $newLanguages))
+                continue;
+            $this->deleteViews($oldLanguage, $dbName);
+        }
+
         $settings = array(
             "general" => array(
                 "timezone" => $values["general.timezone"],
@@ -1426,6 +1436,27 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $this->_helper->json($result);
 
+    }
+
+    /**
+     * deleteViews
+     * delete views for localized fields when languages are removed to
+     * prevent mysql errors
+     * @param $language
+     * @param $dbName
+     */
+    public function deleteViews ($language, $dbName) {
+
+        $sql = "SHOW FULL TABLES IN $dbName WHERE TABLE_TYPE LIKE 'VIEW';";
+        $connection = Pimcore_Resource::getConnection();
+        $answer = $connection->query($sql);
+
+        while ($row = $answer->fetch()) {
+            if (preg_match("/(object_localized_[0-9]+_$language)/",$row["Tables_in_$dbName"])){
+                $sql = "DROP VIEW ".$row["Tables_in_$dbName"];
+                $connection->query($sql);
+            }
+        }
     }
 
 }
