@@ -23,4 +23,4 @@ before_script:
   - cd tests
   - sudo chmod 0755 alltests.sh phpunit
 
-script: alltests.sh
+script: ./alltests.sh
