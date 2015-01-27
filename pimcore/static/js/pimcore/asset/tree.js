@@ -214,6 +214,12 @@ pimcore.asset.tree = Class.create({
                 }
             }.bind(this);
 
+            var uploadErrorHandler = function (transport) {
+                finishedErrorHandler();
+
+                pimcore.helpers.showNotification(t("error"), t("error_general"), "error", transport.responseText);
+            }.bind(this);
+
             pimcore.helpers.uploadAssetFromFileObject(file,
                 "/admin/asset/add-asset/?pimcore_admin_sid="
                     + pimcore.settings.sessionId + "&parentId=" + parentNode.id + "&dir=" + path,
@@ -230,7 +236,7 @@ pimcore.asset.tree = Class.create({
                         pbar.updateProgress(percentComplete, progressText);
                     }
                 },
-                finishedErrorHandler
+                uploadErrorHandler
             );
         }.bind(this);
 
