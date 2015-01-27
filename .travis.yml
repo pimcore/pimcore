@@ -9,9 +9,11 @@ php:
 before_script:
   # install apache
   - sudo apt-get install apache2 libapache2-mod-fastcgi
+  - sudo a2enmod rewrite actions fastcgi alias
   # customize php settings
-  - sudo chmod 0755 build/travis/setup-fpm.sh
-  - if [[ "$TRAVIS_PHP_VERSION" != "hhvm" ]]; then build/travis/setup-fpm-sh; fi
+  - sudo chmod 0755 build/travis/setup-fpm.sh build/travis/setup-hhvm.sh
+  - if [[ "$TRAVIS_PHP_VERSION" != "hhvm" ]]; then build/travis/setup-fpm.sh; fi
+  - if [[ "$TRAVIS_PHP_VERSION" == "hhvm" ]]; then build/travis/setup-hhvm.sh; fi
   # configure apache virtual hosts
   - sudo cp -f build/travis/apache.conf /etc/apache2/sites-available/default
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
