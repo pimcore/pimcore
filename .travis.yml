@@ -8,7 +8,7 @@ php:
 
 before_script:
   # customize php settings
-  - phpenv config-add build/travis/php.ini
+  - if [[ "$TRAVIS_PHP_VERSION" != "hhvm" ]]; then phpenv config-add build/travis/php.ini; fi
   # install apache
   - sudo apt-get install apache2 libapache2-mod-fastcgi
   # enable php-fpm
