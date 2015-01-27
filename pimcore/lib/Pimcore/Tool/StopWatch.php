@@ -18,9 +18,9 @@ namespace Pimcore\Tool;
 class StopWatch {
 
     /**
-     * @var float
+     * @var array
      */
-    protected static $startTime;
+    protected static $startTime = array();
 
     /**
      * @var array
@@ -28,40 +28,43 @@ class StopWatch {
     protected static $laps = array();
 
     /**
+     * @param $component string
      * @static
      * @return void
      */
-    public static function start () {
-        self::$startTime = self::microtime_float();
-        self::$laps = array();
+    public static function start ($component = 'default') {
+        self::$startTime[$component] = self::microtime_float();
+        self::$laps[$component] = array();
     }
 
     /**
      * @static
      * @param $label
+     * @param string $component
      * @return void
      */
-    public static function lap ($label) {
-        self::$laps[$label] = self::microtime_float();
+    public static function lap ($label,$component = 'default') {
+        self::$laps[$component][$label] = self::microtime_float();
     }
 
     /**
      * @static
      * @param bool $html
+     * @param string $component
      * @return string
      */
-    public static function getTime($html = false) {
+    public static function getTime($html = false, $component = 'default') {
         $text = "";
 
-        $lastLap = self::$startTime;
-        foreach (self::$laps as $label => $time) {
-            $text .= "Lap " . $label . "\tAccum: " . ($time - self::$startTime) . "\t Self: " . ($time - $lastLap)
+        $lastLap = self::$startTime[$component];
+        foreach (self::$laps[$component] as $label => $time) {
+            $text .= "Lap " . $label . "\tAccum: " . ($time - self::$startTime[$component]) . "\t Self: " . ($time - $lastLap)
                 . "\n";
 
             $lastLap = $time;
         }
 
-        $text .= "Total Time: " . (self::microtime_float() - self::$startTime) . "\n";
+        $text .= "Total Time: " . (self::microtime_float() - self::$startTime[$component]) . "\n";
 
         if ($html) {
             $text = "<pre>" . $text . "</pre>";
@@ -71,11 +74,12 @@ class StopWatch {
 
     /**
      * @static
+     * @param string $component
      * @param bool $html
      * @return void
      */
-    public static function display($html = false) {
-        echo self::getTime($html);
+    public static function display($html = false, $component = 'default') {
+        echo self::getTime($html,$component);
     }
 
     /**
