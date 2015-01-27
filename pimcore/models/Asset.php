@@ -587,6 +587,9 @@ class Asset extends Element\AbstractElement {
             }
         }
 
+        if(strlen($this->getPath()) > 255) {
+            throw new \Exception("Parent path (property 'path') is limited to 255 characters, reduce the length of your parent's path (total length incl. filename = 510)");
+        }
     }
 
     /**

@@ -659,6 +659,10 @@ class AbstractObject extends Model\Element\AbstractElement {
                 throw new \Exception("Duplicate full path [ ".$this->getFullPath()." ] - cannot save object");
             }
         }
+
+        if(strlen($this->getPath()) > 255) {
+            throw new \Exception("Parent path (property 'path') is limited to 255 characters, reduce the length of your parent's path (total length incl. key = 510)");
+        }
     }
 
     /**
