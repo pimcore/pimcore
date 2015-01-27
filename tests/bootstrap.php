@@ -31,12 +31,13 @@ Zend_Registry::set("pimcore_config_test", $testConfig);
 $testConfig = $testConfig->toArray();
 
 // get configuration from main project
-$systemConfigFile = realpath(dirname(__FILE__)) . "/../website/var/config/system.xml";
+$systemConfigFile = realpath(__DIR__ . "/../website/var/config/system.xml");
 $systemConfig = null;
 if(is_file($systemConfigFile)) {
     $systemConfig = new Zend_Config_Xml($systemConfigFile);
     $systemConfig = $systemConfig->toArray();
 
+    // this is to allow localhost tests
     $testConfig["rest"]["host"] = "pimcore-local-unittest";
 }
 
@@ -115,9 +116,7 @@ $autoloader->registerNamespace('TestSuite');
  * We can start running our tests against the phpunit_pimcore instance
  */
 
-#Pimcore_Tool_RestClient::setBaseUrl("http://" . $testConfig["rest"]["host"] . $testConfig["rest"]["base"]);
-#Pimcore_Tool_RestClient::setHost($testConfig["rest"]["host"]);
-#Pimcore_Tool_RestClient::enableTestMode();
+Test_BaseRest::setTestConfig($testConfig);
 
 print("include path: " . get_include_path() . "\n");
 print("bootstrap    done\n");

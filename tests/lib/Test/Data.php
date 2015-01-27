@@ -512,10 +512,11 @@ class Test_Data
 
             $getter = "get" . ucfirst($field);
 
-            print_r($object->$getter());
-            print_r($comparisonObject->$getter());
+            echo "\n\n";
+            echo "'" . serialize($object->$getter()) . "'\n";
+            echo "'" . serialize($comparisonObject->$getter()) . "'\n\n";
 
-            print("   expected:\n" . print_r(unserialize(base64_decode($expected)), true) . " \n\nbut was:\n" . print_r(unserialize(base64_decode($value)), true) . "\n\n\n");
+            print("   expected:\n" . print_r($object->$getter(), true) . " \n\nbut was:\n" . print_r($object->$comparisonObject(), true) . "\n\n\n");
             return false;
         }
         return true;
