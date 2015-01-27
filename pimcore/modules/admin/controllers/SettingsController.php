@@ -336,9 +336,9 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
         $newLanguages = $languages;
         $dbName = $oldConfig->get("database")->toArray()["params"]["dbname"];
         foreach ($oldLanguages as $oldLanguage){
-            if (in_array($oldLanguage, $newLanguages))
-                continue;
-            $this->deleteViews($oldLanguage, $dbName);
+            if (!in_array($oldLanguage, $newLanguages)) {
+                $this->deleteViews($oldLanguage, $dbName);
+            }
         }
 
         $settings = array(
@@ -1445,18 +1445,16 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
      * @param $language
      * @param $dbName
      */
-    public function deleteViews ($language, $dbName) {
+    protected function deleteViews ($language, $dbName) {
 
-        $sql = "SHOW FULL TABLES IN $dbName WHERE TABLE_TYPE LIKE 'VIEW';";
-        $connection = Pimcore_Resource::getConnection();
-        $answer = $connection->query($sql);
+        $db = \Pimcore\Resource::get();
+        $views = $db->fetchAll("SHOW FULL TABLES IN " . $dbName . " WHERE TABLE_TYPE LIKE 'VIEW'");
 
-        while ($row = $answer->fetch()) {
-            if (preg_match("/(object_localized_[0-9]+_$language)/",$row["Tables_in_$dbName"])){
-                $sql = "DROP VIEW ".$row["Tables_in_$dbName"];
-                $connection->query($sql);
+        foreach($views as $view) {
+            if (preg_match("/^object_localized_[0-9]+_" . $language . "$/", $view["Tables_in_" . $dbName])){
+                $sql = "DROP VIEW " . $view["Tables_in_" . $dbName];
+                $db->query($sql);
             }
         }
     }
-
 }
