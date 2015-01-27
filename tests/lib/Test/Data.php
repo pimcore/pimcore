@@ -509,7 +509,13 @@ class Test_Data
         $expected = Test_Tool::getComparisonDataForField($field, $fd, $comparisonObject);
 
         if ($value != $expected) {
-            print("   expected:\n" . print_r(unserialize(base64_decode($expected))) . " \n\nbut was:\n" .print_r(unserialize(base64_decode($value))) . "\n\n\n");
+
+            $getter = "get" . ucfirst($field);
+
+            print_r($object->$getter());
+            print_r($comparisonObject->$getter());
+
+            print("   expected:\n" . print_r(unserialize(base64_decode($expected)), true) . " \n\nbut was:\n" . print_r(unserialize(base64_decode($value)), true) . "\n\n\n");
             return false;
         }
         return true;

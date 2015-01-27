@@ -36,6 +36,8 @@ $systemConfig = null;
 if(is_file($systemConfigFile)) {
     $systemConfig = new Zend_Config_Xml($systemConfigFile);
     $systemConfig = $systemConfig->toArray();
+
+    $testConfig["rest"]["host"] = "pimcore-local-unittest";
 }
 
 $includePathBak = get_include_path();
@@ -46,7 +48,7 @@ set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
 try {
 
-    // use the default db configuration if there's no main project (eg. jenkins automated builds)
+    // use the default db configuration if there's no main project (eg. travis automated builds)
     $dbConfig = $testConfig["database"];
     if(is_array($systemConfig) && array_key_exists("database", $systemConfig)) {
         // if there's a configuration for the main project, use that one and replace the database name
