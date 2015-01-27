@@ -5,13 +5,13 @@
         <params>
             <host>127.0.0.1</host>
             <username>root</username>
-            <password>elements</password>
+            <password></password>
             <dbname>pimcore_phpunit</dbname>
             <port></port>
         </params>
     </database>
     <rest>
-        <host>pimcore.elements.pm</host>
+        <host>localhost</host>
         <base>/webservice/rest/</base>
     </rest>
 </zend-config>
