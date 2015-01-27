@@ -339,7 +339,7 @@ class RestClient
      * @throws Exception
      * @throws \Zend_Http_Client_Exception
      */
-    private function doRequest($uri, $method = "GET", $body = null)
+    public function doRequest($uri, $method = "GET", $body = null)
     {
         $client = $this->client;
         $client->setMethod($method);
