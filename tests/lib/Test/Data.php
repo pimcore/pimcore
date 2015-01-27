@@ -508,11 +508,8 @@ class Test_Data
         $value = Test_Tool::getComparisonDataForField($field, $fd, $object);
         $expected = Test_Tool::getComparisonDataForField($field, $fd, $comparisonObject);
 
-        $getter = "get" . ucfirst($field);
-        print("   expected:\n" . print_r($object->$getter(), true) . " \n\nbut was:\n" . print_r($comparisonObject->$getter(), true) . "\n\n\n");
-
-
         if ($value != $expected) {
+            $getter = "get" . ucfirst($field);
             print("   expected:\n" . print_r($object->$getter(), true) . " \n\nbut was:\n" . print_r($comparisonObject->$getter(), true) . "\n\n\n");
             return false;
         }
