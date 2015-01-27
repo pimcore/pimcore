@@ -20,6 +20,7 @@ before_script:
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
   - sudo service apache2 restart
   # make tests executable
-  - sudo chmod 0755 tests/alltests.sh tests/phpunit
+  - cd tests
+  - sudo chmod 0755 alltests.sh phpunit
 
-script: tests/alltests.sh
+script: alltests.sh
