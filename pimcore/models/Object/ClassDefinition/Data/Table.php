@@ -344,6 +344,7 @@ class Table extends Model\Object\ClassDefinition\Data {
             $result = array();
             foreach ($value as $item) {
                 $item = (array) $item;
+                $item = array_values($item);
                 $result[] = $item;
             }
 
