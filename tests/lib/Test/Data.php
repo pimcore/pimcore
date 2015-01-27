@@ -516,7 +516,11 @@ class Test_Data
             echo "'" . serialize($object->$getter()) . "'\n";
             echo "'" . serialize($comparisonObject->$getter()) . "'\n\n";
 
-            print("   expected:\n" . print_r($object->$getter(), true) . " \n\nbut was:\n" . print_r($object->$comparisonObject(), true) . "\n\n\n");
+
+            echo "'" . base64_encode(serialize($object->$getter())) . "'\n";
+            echo "'" . base64_encode(serialize($comparisonObject->$getter())) . "'\n\n";
+
+            print("   expected:\n" . print_r($object->$getter(), true) . " \n\nbut was:\n" . print_r($comparisonObject->$getter(), true) . "\n\n\n");
             return false;
         }
         return true;
