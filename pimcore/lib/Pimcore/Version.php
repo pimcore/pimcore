@@ -25,7 +25,7 @@ class Version {
     /**
      * @var int
      */
-    public static $revision = 3394;
+    public static $revision = 3395;
 
     /**
      * @var array
@@ -35,11 +35,11 @@ class Version {
   'URL' => 'http',
   'Repository Root' => 'http',
   'Repository UUID' => '1f8fe7d8-47f0-464c-8d0a-336f4953ab05',
-  'Revision' => '5826',
+  'Revision' => '5827',
   'Node Kind' => 'directory',
   'Last Changed Author' => 'pimcore-team',
-  'Last Changed Rev' => '5826',
-  'Last Changed Date' => '2015-01-28 08',
+  'Last Changed Rev' => '5827',
+  'Last Changed Date' => '2015-01-28 09',
 );
 
     /**
