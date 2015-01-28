@@ -982,6 +982,7 @@
 "basic_configuration","Basic configuration"
 "allow_inherit","Allow inheritance"
 "parent_class","Parent class"
+"use_traits", "Use (traits)"
 "general_settings","General Settings"
 "layout_settings","Layout Settings (Pimcore Admin)"
 "region","Region"

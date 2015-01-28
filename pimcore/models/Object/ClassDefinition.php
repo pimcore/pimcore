@@ -66,6 +66,8 @@ class ClassDefinition extends Model\AbstractModel {
      */
     public $parentClass;
 
+    public $useTraits;
+
     /**
      * @var boolean
      */
@@ -266,6 +268,11 @@ class ClassDefinition extends Model\AbstractModel {
 
         $cd .= "class " . ucfirst($this->getName()) . " extends " . $extendClass . " {";
         $cd .= "\n\n";
+
+        if ($this->getUseTraits()) {
+          $cd .= 'use ' . $this->getUseTraits() . ";\n";
+          $cd .= "\n";
+        }
 
         $cd .= 'public $o_classId = ' . $this->getId() . ";\n";
         $cd .= 'public $o_className = "' . $this->getName() . '"' . ";\n";
@@ -622,6 +629,22 @@ class ClassDefinition extends Model\AbstractModel {
      */
     public function getParentClass() {
         return $this->parentClass;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUseTraits() {
+      return $this->useTraits;
+    }
+
+    /**
+     * @param string $useTraits
+     * @return ClassDefinition
+     */
+    public function setUseTraits($useTraits) {
+      $this->useTraits = $useTraits;
+      return $this;
     }
 
     /**
