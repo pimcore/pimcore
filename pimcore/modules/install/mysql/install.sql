@@ -4,7 +4,7 @@ CREATE TABLE `assets` (
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` varchar(20) DEFAULT NULL,
   `filename` varchar(255) DEFAULT '',
-  `path` varchar(255) DEFAULT NULL,
+  `path` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `mimetype` varchar(255) DEFAULT NULL,
   `creationDate` bigint(20) unsigned DEFAULT NULL,
   `modificationDate` bigint(20) unsigned DEFAULT NULL,
@@ -169,7 +169,7 @@ CREATE TABLE `documents` (
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` enum('page','link','snippet','folder','hardlink','email') DEFAULT NULL,
   `key` varchar(255) DEFAULT '',
-  `path` varchar(255) DEFAULT NULL,
+  `path` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `index` int(11) unsigned DEFAULT '0',
   `published` tinyint(1) unsigned DEFAULT '1',
   `creationDate` bigint(20) unsigned DEFAULT NULL,
@@ -421,7 +421,7 @@ CREATE TABLE `objects` (
   `o_parentId` int(11) unsigned DEFAULT NULL,
   `o_type` enum('object','folder','variant') DEFAULT NULL,
   `o_key` varchar(255) default '',
-  `o_path` varchar(255) DEFAULT NULL,
+  `o_path` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `o_index` int(11) unsigned DEFAULT '0',
   `o_published` tinyint(1) unsigned DEFAULT '1',
   `o_creationDate` bigint(20) unsigned DEFAULT NULL,
