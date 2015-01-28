@@ -513,8 +513,8 @@ class Document extends Element\AbstractElement {
             }
         }
 
-        if(strlen($this->getPath()) > 765) {
-            throw new \Exception("Parent path (property 'path') is limited to 765 characters, reduce the length of your parent's path");
+        if(strlen($this->getRealFullPath()) > 765) {
+            throw new \Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
         }
     }
 

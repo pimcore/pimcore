@@ -869,7 +869,7 @@ DROP TABLE IF EXISTS `properties`;
 CREATE TABLE `properties` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `ctype` enum('document','asset','object') NOT NULL DEFAULT 'document',
-  `cpath` varchar(255) DEFAULT NULL,
+  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL,
   `name` varchar(255) NOT NULL DEFAULT '',
   `type` enum('text','date','document','asset','object','bool','select') DEFAULT NULL,
   `data` text,
@@ -912,7 +912,7 @@ CREATE TABLE `recyclebin` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(20) DEFAULT NULL,
   `subtype` varchar(20) DEFAULT NULL,
-  `path` varchar(255) DEFAULT NULL,
+  `path` varchar(765) default NULL,
   `amount` int(3) DEFAULT NULL,
   `date` bigint(20) DEFAULT NULL,
   `deletedby` varchar(50) DEFAULT NULL,
@@ -970,7 +970,7 @@ CREATE TABLE `schedule_tasks` (
 DROP TABLE IF EXISTS `search_backend_data`;
 CREATE TABLE `search_backend_data` (
   `id` int(11) NOT NULL,
-  `fullpath` varchar(330) DEFAULT NULL,
+  `fullpath` varchar(765) CHARACTER SET ascii DEFAULT NULL,
   `maintype` varchar(8) NOT NULL DEFAULT '',
   `type` varchar(20) DEFAULT NULL,
   `subtype` varchar(255) DEFAULT NULL,
@@ -1191,7 +1191,7 @@ CREATE TABLE `users_permission_definitions` (
 DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(255) DEFAULT NULL,
+  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL,
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) DEFAULT '0',
   `view` tinyint(1) DEFAULT '0',
@@ -1212,7 +1212,7 @@ CREATE TABLE `users_workspaces_asset` (
 DROP TABLE IF EXISTS `users_workspaces_document`;
 CREATE TABLE `users_workspaces_document` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(255) DEFAULT NULL,
+  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL,
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -1235,7 +1235,7 @@ CREATE TABLE `users_workspaces_document` (
 DROP TABLE IF EXISTS `users_workspaces_object`;
 CREATE TABLE `users_workspaces_object` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(255) DEFAULT NULL,
+  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL,
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
