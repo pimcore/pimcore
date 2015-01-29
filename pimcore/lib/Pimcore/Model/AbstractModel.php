@@ -186,7 +186,7 @@ abstract class AbstractModel {
 
     /**
      * @param array $data
-     * @return void
+     * @return $this
      */
     public function setValues($data = array()) {
         if (is_array($data) && count($data) > 0) {
@@ -200,7 +200,7 @@ abstract class AbstractModel {
     /**
      * @param  $key
      * @param  $value
-     * @return void
+     * @return $this
      */
     public function setValue($key, $value) {
         $method = "set" . $key;
