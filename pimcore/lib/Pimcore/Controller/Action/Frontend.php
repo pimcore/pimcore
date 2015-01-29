@@ -467,7 +467,7 @@ abstract class Frontend extends Action {
                     $this->getResponse()->setHttpResponseCode(503);
                 }
 
-                \Logger::error("Unable to load URL: " . $_SERVER["REQUEST_URI"]);
+                \Logger::error("Unable to find URL: " . $_SERVER["REQUEST_URI"]);
                 \Logger::error($error->exception);
 
                 try {
