@@ -300,8 +300,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
         );
 
         $this->_helper->json($response);
-
-        $this->_helper->json(false);
     }
 
     public function setSystemAction() {
