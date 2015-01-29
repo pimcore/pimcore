@@ -127,6 +127,11 @@ class Resource extends Model\Resource\AbstractResource {
      */
     public function update() {
         try {
+
+            if(strlen($this->model->getName()) < 2) {
+                throw new \Exception("Name of user/role must be at least 2 characters long");
+            }
+
             $data = array();
             $dataRaw = get_object_vars($this->model);
             foreach ($dataRaw as $key => $value) {
