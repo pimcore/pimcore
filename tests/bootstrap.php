@@ -58,7 +58,7 @@ try {
     }
 
     // use mysqli for that, because Zend_Db requires a DB for a connection
-    $db = new mysqli($dbConfig["params"]["host"], $dbConfig["params"]["username"], $dbConfig["params"]["password"], null, (int) $dbConfig["params"]["port"]);
+    $db = new PDO('mysql:host=' . $dbConfig["params"]["host"] . ';port=' . (int) $dbConfig["params"]["port"] . ';', $dbConfig["params"]["username"], $dbConfig["params"]["password"]);
     $db->query("SET NAMES utf8");
 
     $db->query("DROP database IF EXISTS " . $dbConfig["params"]["dbname"] . ";");
@@ -68,6 +68,14 @@ catch (Exception $e) {
     echo $e->getMessage() . "\n";
     die("Couldn't establish connection to mysql" . "\n");
 }
+
+
+if (defined('HHVM_VERSION')) {
+    // always use PDO in hhvm environment (mysqli is not supported)
+    $dbConfig["adapter"] = "Pdo_Mysql";
+}
+
+echo "\n\nDatabase Config: ". print_r($dbConfig, true) . "\n\n";
 
 $setup = new Tool_Setup();
 $setup->config(array(
