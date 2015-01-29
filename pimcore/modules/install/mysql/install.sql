@@ -77,6 +77,7 @@ CREATE TABLE `classes` (
   `allowInherit` tinyint(1) unsigned DEFAULT '0',
   `allowVariants` tinyint(1) unsigned DEFAULT '0',
   `parentClass` varchar(255) DEFAULT NULL,
+  `useTraits` varchar(255) DEFAULT NULL,
   `icon` varchar(255) DEFAULT NULL,
   `previewUrl` varchar(255) DEFAULT NULL,
   `propertyVisibility` text,

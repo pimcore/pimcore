@@ -77,6 +77,7 @@ class Service  {
         $class->setAllowVariants($importData["allowVariants"]);
         $class->setShowVariants($importData["showVariants"]);
         $class->setParentClass($importData["parentClass"]);
+        $class->setUseTraits($importData["useTraits"]);
         $class->setPreviewUrl($importData["previewUrl"]);
         $class->setPropertyVisibility($importData["propertyVisibility"]);
 

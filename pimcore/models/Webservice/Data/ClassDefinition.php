@@ -64,6 +64,13 @@ class ClassDefinition extends Model\Webservice\Data {
     public $parentClass;
 
     /**
+     * Name of the traits to use if set
+     *
+     * @var string
+     */
+    public $useTraits;
+
+    /**
      * @var boolean
      */
     public $allowInherit = false;
