@@ -63,6 +63,7 @@ try {
 
     $db->query("DROP database IF EXISTS " . $dbConfig["params"]["dbname"] . ";");
     $db->query("CREATE DATABASE " . $dbConfig["params"]["dbname"] . " charset=utf8");
+    $db = null;
 }
 catch (Exception $e) {
     echo $e->getMessage() . "\n";
