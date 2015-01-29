@@ -92,6 +92,7 @@ CREATE TABLE `classes` (
   `allowInherit` tinyint(1) unsigned DEFAULT '0',
   `allowVariants` tinyint(1) unsigned DEFAULT '0',
   `parentClass` varchar(255) DEFAULT NULL,
+  `useTraits` varchar(255) DEFAULT NULL,
   `icon` varchar(255) DEFAULT NULL,
   `previewUrl` varchar(255) DEFAULT NULL,
   `propertyVisibility` text,
@@ -912,7 +913,7 @@ CREATE TABLE `recyclebin` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(20) DEFAULT NULL,
   `subtype` varchar(20) DEFAULT NULL,
-  `path` varchar(765) default NULL,
+  `path` varchar(765) DEFAULT NULL,
   `amount` int(3) DEFAULT NULL,
   `date` bigint(20) DEFAULT NULL,
   `deletedby` varchar(50) DEFAULT NULL,
@@ -1059,6 +1060,8 @@ CREATE TABLE `targeting_rules` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+
+DROP TABLE IF EXISTS `tmp_store`;
 CREATE TABLE `tmp_store` (
   `id` varchar(255) NOT NULL DEFAULT '',
   `tag` varchar(255) DEFAULT NULL,
@@ -1070,7 +1073,8 @@ CREATE TABLE `tmp_store` (
   KEY `tag` (`tag`),
   KEY `date` (`date`),
   KEY `expiryDate` (`expiryDate`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 DROP TABLE IF EXISTS `tracking_events`;
@@ -1176,7 +1180,7 @@ CREATE TABLE `users` (
   KEY `parentId` (`parentId`),
   KEY `name` (`name`),
   KEY `password` (`password`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
 
 
 
@@ -1370,11 +1374,11 @@ INSERT INTO `assets` VALUES (70,34,'image','pim1.png','/screenshots/','image/png
 
 
 
-INSERT INTO `classes` VALUES (2,'news','',1368613289,1382958417,0,0,0,0,'','','/%title_n%o_id','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
-INSERT INTO `classes` VALUES (3,'inquiry','',1368620413,1368622807,0,0,0,0,'','','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
-INSERT INTO `classes` VALUES (4,'person','',1368620452,1368621909,0,0,0,0,'','','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
-INSERT INTO `classes` VALUES (5,'blogArticle','',1388389165,1388389849,7,7,0,0,'','','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
-INSERT INTO `classes` VALUES (6,'blogCategory','',1388389401,1388389839,7,7,0,0,'','','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
+INSERT INTO `classes` VALUES (2,'news','',1368613289,1382958417,0,0,0,0,'',NULL,'','/%title_n%o_id','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
+INSERT INTO `classes` VALUES (3,'inquiry','',1368620413,1368622807,0,0,0,0,'',NULL,'','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
+INSERT INTO `classes` VALUES (4,'person','',1368620452,1368621909,0,0,0,0,'',NULL,'','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
+INSERT INTO `classes` VALUES (5,'blogArticle','',1388389165,1388389849,7,7,0,0,'',NULL,'','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
+INSERT INTO `classes` VALUES (6,'blogCategory','',1388389401,1388389839,7,7,0,0,'',NULL,'','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}',0);
 
 
 
@@ -3086,6 +3090,22 @@ INSERT INTO `properties_predefined` VALUES (4,'Sidebar','','sidebar','document',
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 INSERT INTO `search_backend_data` VALUES (1,'/','asset','folder','folder',1,1368522989,1368522989,1,1,'ID: 1  \nPath: /  \n','');
 INSERT INTO `search_backend_data` VALUES (3,'/portal-sujets','asset','folder','folder',1,1368530371,1368632469,0,0,'ID: 3  \nPath: /portal-sujets  \nportal-sujets','');
 INSERT INTO `search_backend_data` VALUES (4,'/portal-sujets/slide-01.jpg','asset','image','image',1,1368530684,1370432846,0,0,'ID: 4  \nPath: /portal-sujets/slide-01.jpg  \nslide-01.jpg','');
@@ -3248,6 +3268,10 @@ INSERT INTO `search_backend_data` VALUES (72,'/en/advanced-examples/sub-modules'
 INSERT INTO `staticroutes` VALUES (1,'news','/(.*)_n([\\d]+)/','%prefix/%text_n%id','','news','detail','text,id','',0,1,0,0);
 INSERT INTO `staticroutes` VALUES (2,'blog','/(.*)_b([\\d]+)/','%prefix/%text_b%id','','blog','detail','text,id','',0,1,1388391249,1388391368);
 INSERT INTO `staticroutes` VALUES (3,'category-example','@/category\\-example@','/en/category-example','','category_example','test',NULL,NULL,NULL,1,1419933908,1419933931);
+
+
+
+
 
 
 
@@ -3504,7 +3528,7 @@ INSERT INTO `tree_locks` VALUES (56,'document','self');
 
 
 INSERT INTO `users` VALUES (0,0,'user','system','','','','','',1,1,'','',0,0,0,'','','');
-INSERT INTO `users` VALUES (30,0,'user','admin','$2y$10$i1n34aLVvCDRnrgq6s5JRuFcLAkr3o2qngfkEGBEwjsFPb1boiDLq',NULL,NULL,NULL,'en',1,1,'','',1,1,1,'','',NULL);
+INSERT INTO `users` VALUES (34,0,'user','admin','$2y$10$gJm4yAkp4FSyDP3mpmK/RuafFxl3MHUkZ9GYc18pmfyNx3kDWxPrm',NULL,NULL,NULL,'en',1,1,'','',1,1,1,'','',NULL);
 
 
 
