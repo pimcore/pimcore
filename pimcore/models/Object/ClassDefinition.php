@@ -265,6 +265,15 @@ class ClassDefinition extends Model\AbstractModel {
         $cd .= "namespace Pimcore\\Model\\Object;";
         $cd .= "\n\n";
         $cd .= "\n\n";
+        $cd .= "/**\n";
+        if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
+            foreach ($this->getFieldDefinitions() as $key => $def) {
+                if (!(method_exists($def,"isRemoteOwner") and $def->isRemoteOwner())) {
+                    $cd .= $def->getClassPhpDoc($this);
+                }
+            }
+        }
+        $cd .= "*/\n";
 
         $cd .= "class " . ucfirst($this->getName()) . " extends " . $extendClass . " {";
         $cd .= "\n\n";
@@ -349,6 +358,10 @@ class ClassDefinition extends Model\AbstractModel {
         $cd .= "namespace Pimcore\\Model\\Object\\" . ucfirst($this->getName()) . ";";
         $cd .= "\n\n";
         $cd .= "use Pimcore\\Model\\Object;";
+        $cd .= "\n\n";
+        $cd .= "/**\n";
+        $cd .= " * @method Object\\" . ucfirst($this->getName()) . " current()\n";
+        $cd .= " */";
         $cd .= "\n\n";
         $cd .= "class Listing extends Object\\Listing\\Concrete {";
         $cd .= "\n\n";
