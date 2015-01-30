@@ -472,6 +472,7 @@ abstract class Frontend extends Action {
         // restore the previois set locale if available
         // for a detailed description on this, please have a look at $this->setLocaleFromDocument()
         if($this->previousLocale) {
+            $this->forceRender();
             $this->setLocale($this->previousLocale);
             $this->previousLocale = null;
         }
