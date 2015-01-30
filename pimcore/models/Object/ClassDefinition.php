@@ -269,11 +269,11 @@ class ClassDefinition extends Model\AbstractModel {
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if (!(method_exists($def,"isRemoteOwner") and $def->isRemoteOwner())) {
-                    $cd .= $def->getClassPhpDoc($this);
+                    $cd .= "* @method static \\Pimcore\\Model\\Object\\" . ucfirst($this->getName()) . ' getBy' . ucfirst($def->getName()) . ' ($value, $limit = 0) ' ."\n";
                 }
             }
         }
-        $cd .= "*/\n";
+        $cd .= "*/\n\n";
 
         $cd .= "class " . ucfirst($this->getName()) . " extends " . $extendClass . " {";
         $cd .= "\n\n";

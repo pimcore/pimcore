@@ -1012,16 +1012,4 @@ abstract class Data
             }
         }
     }
-
-    /**
-     * @param $class
-     * @return string
-     */
-    public function getClassPhpDoc($class) {
-        $code = "";
-        $key = $this->getName();
-        $code .= "* @method static \\Pimcore\\Model\\Object\\" . ucfirst($class->getName()) . ' getBy' . ucfirst($key) . ' ($value, $limit = 0) ' ."\n";
-        return $code;
-    }
-
 }
