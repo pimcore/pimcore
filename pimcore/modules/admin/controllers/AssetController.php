@@ -1273,7 +1273,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
                 $assetList = new Asset\Listing();
                 $assetList->setCondition("path LIKE ?", $parentPath . "/%");
-                $assetList->setOrderKey("LENGTH(path)", false);
+                $assetList->setOrderKey("LENGTH(path), id", false);
                 $assetList->setOrder("ASC");
                 $assetList->setOffset((int)$this->getParam("offset"));
                 $assetList->setLimit((int)$this->getParam("limit"));
