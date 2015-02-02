@@ -81,7 +81,7 @@ class Resource extends Model\Resource\AbstractResource {
     public function getById($id) {
         $item = $this->db->fetchRow("SELECT * FROM tmp_store WHERE id = ?", $id);
 
-        if(array_key_exists("id", $item)) {
+        if(is_array($item) && array_key_exists("id", $item)) {
 
             if($item["serialized"]) {
                 $item["data"] = unserialize($item["data"]);
