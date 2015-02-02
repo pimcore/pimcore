@@ -666,6 +666,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      */
     public function count()
     {
+        $this->getProducts();
         return $this->totalCount;
     }
 
