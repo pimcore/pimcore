@@ -17,15 +17,16 @@ MULTI-CHANNEL EXPERIENCE AND ENGAGEMENT MANAGEMENT PLATFORM
 ## Getting started
 
 Download the [latest release](http://www.pimcore.org/download) and extract the archive in document root.
-Create a database for pimcore (charset: utf8). If you have a website_example (empty installation) or a website_demo (boilerplate) folder please rename one of them to website.
+Create a database for pimcore (charset: utf8). If you have a website_example (empty installation) or a website_demo (boilerplate) folder please rename one of them to website (only if cloning from git).
 Run the pimcore installation by accessing the URL where you uploaded the pimcore files in a browser.
 
 ```
+
 cd /your/document/root
 wget https://www.pimcore.org/download/pimcore-latest.zip
 unzip pimcore-latest.zip
 
-mysql -u root -p -D information_schema -e "CREATE DATABASE pimcore charset=utf8;"
+mysql -u root -p -e "CREATE DATABASE pimcore charset=utf8;"
 
 # now launch http://yourhostname.tld/install
 ```
