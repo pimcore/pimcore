@@ -918,8 +918,16 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      * @return array
      */
     public function getItems($offset, $itemCountPerPage) {
+
+        // clear current items
+        if($this->getOffset() != $offset || $this->getLimit() != $itemCountPerPage)
+        {
+            $this->products = null;
+        }
+
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
+
         return $this->getProducts();
     }
 
