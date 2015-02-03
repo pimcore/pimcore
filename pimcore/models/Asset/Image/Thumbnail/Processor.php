@@ -84,25 +84,22 @@ class Processor {
 
         $format = strtolower($config->getFormat());
         $contentOptimizedFormat = false;
-        $modificationDate = 0;
 
-        if(!$fileSystemPath) {
+        if(!$fileSystemPath && $asset instanceof Asset) {
             $fileSystemPath = $asset->getFileSystemPath();
         }
 
         if($asset instanceof Asset) {
             $id = $asset->getId();
-            // do not use the asset modification date because not every modification of an asset has an impact on the
-            // binary data on the hdd (e.g. meta-data, properties, ...), so it's better to use the filemtime instead
-            if(file_exists($asset->getFileSystemPath())) {
-                $modificationDate = filemtime($asset->getFileSystemPath());
-            }
         } else {
             $id = "dyn~" . crc32($fileSystemPath);
-            if(file_exists($fileSystemPath)) {
-                $modificationDate = filemtime($fileSystemPath);
-            }
         }
+
+        if(!file_exists($fileSystemPath)) {
+            return "/pimcore/static/img/filetype-not-supported.png";
+        }
+
+        $modificationDate = filemtime($fileSystemPath);
 
         $fileExt = File::getFileExtension(basename($fileSystemPath));
 
