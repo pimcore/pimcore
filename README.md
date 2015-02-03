@@ -21,7 +21,6 @@ Create a database for pimcore (charset: utf8). If you have a website_example (em
 Run the pimcore installation by accessing the URL where you uploaded the pimcore files in a browser.
 
 ```
-
 cd /your/document/root
 wget https://www.pimcore.org/download/pimcore-latest.zip
 unzip pimcore-latest.zip
