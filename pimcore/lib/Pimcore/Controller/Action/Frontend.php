@@ -284,7 +284,9 @@ abstract class Frontend extends Action {
         // the effect that the parent document will have a wrong language from the point on where the document with
         // the different locale was included, so e.g. $this->translate() would end in wrong translations
         if(\Zend_Registry::isRegistered("Zend_Locale")) {
-            $this->previousLocale = \Zend_Registry::get("Zend_Locale");
+            if( (string) \Zend_Registry::get("Zend_Locale") != (string) $locale) {
+                $this->previousLocale = \Zend_Registry::get("Zend_Locale");
+            }
         }
         self::setLocale($locale);
     }
