@@ -691,6 +691,11 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
             }
 
             try {
+                // allow to save objects although there are mandatory fields
+                if($element instanceof Object\AbstractObject) {
+                    $element->setOmitMandatoryCheck(true);
+                }
+
                 $element->save();
             } catch (\Exception $e) {
                 throw new \Exception("Unable to save " . Element\Service::getElementType($element) . " with id " . $element->getId() . " because of the following reason: " . $e->getMessage());
