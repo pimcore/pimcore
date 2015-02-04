@@ -91,10 +91,10 @@ class Link extends Model\Object\ClassDefinition\Data {
             }
 
             try {
-                $this->checkValidity($data, true);
+                $this->checkValidity($link, true);
             } catch (\Exception $e) {
-                $data->setInternalType(null);
-                $data->setInternal(null);
+                $link->setInternalType(null);
+                $link->setInternal(null);
             }
         }
 
