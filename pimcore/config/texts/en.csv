@@ -1566,3 +1566,5 @@
 "translation_merger_csv","Text from CSV"
 "nothing_to_merge","There is nothing to merge"
 "are_you_sure_recursive","There child nodes which will be deleted as well! Are you sure?"
+"custom_configuration_path","Custom config path"
+"custom_configuration_path_warning","Custom config wil overwrite 'Toolbar config' if set in the custom config file."

@@ -138,7 +138,11 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         if(this.fieldConfig.toolbarConfig) {
             eConfig.toolbarGroups = Ext.decode("[" + this.fieldConfig.toolbarConfig + "]")
         }
-
+		
+        if(this.fieldConfig.customConfigPath) {
+        	eConfig.customConfig = this.fieldConfig.customConfigPath;
+        }
+        
         eConfig.allowedContent = true; // disables CKEditor ACF (will remove pimcore_* attributes from links, etc.)
         eConfig.removePlugins = "tableresize";
 

@@ -56,25 +56,35 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
 
         this.specificPanel.removeAll();
         this.specificPanel.add([
-            {
+        	{
                 xtype: "spinnerfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
-            },
-            {
+            },{
                 xtype: "spinnerfield",
                 fieldLabel: t("height"),
                 name: "height",
                 value: this.datax.height
-            }, {
+            },{
                 xtype: "textarea",
                 fieldLabel: t("toolbar_configuration"),
                 name: "toolbarConfig",
                 value: this.datax.toolbarConfig,
                 width:400,
                 height:150
+            },{
+	            xtype: "textfield",
+	            fieldLabel: t("custom_configuration_path"),
+	            name: "customConfigPath",
+	            value: this.datax.customConfigPath,
+	            width:700
+            },{
+                xtype: "displayfield",
+                hideLabel:true,
+                html:'<span class="object_field_setting_warning">' +t('custom_configuration_path_warning')+'</span>'
             }
+           
         ]);
 
         return this.layout;
@@ -85,12 +95,13 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
             if (!this.datax) {
                 this.datax =  {};
             }
-            Ext.apply(this.datax,
-                {
-                    width: source.datax.width,
-                    height: source.datax.height,
-                    toolbarConfig: source.datax.toolbarConfig
-                });
+
+            Ext.apply(this.datax,{
+                width: source.datax.width,
+                height: source.datax.height,
+                toolbarConfig: source.datax.toolbarConfig,
+                customConfigPath: source.datax.customConfigPath
+            });
         }
     }
 });
