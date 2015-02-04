@@ -27,19 +27,25 @@ pimcore.edithelpers = {
 
 pimcore.edithelpers.setBodyHeight = function () {
     try {
-        var body = document.body,
-            html = document.documentElement,
-            lastPageHeight = pimcore.edithelpers.__lastPageHeight;
+        var lastPageHeight = pimcore.edithelpers.__lastPageHeight;
 
-        var height = Math.max(body.scrollHeight, body.offsetHeight,
-            html.clientHeight, html.scrollHeight, html.offsetHeight);
+        var getCurrentHeight = function () {
+            var body = document.body,
+                html = document.documentElement;
 
+            return Math.max(body.scrollHeight, body.offsetHeight,
+                html.clientHeight, html.scrollHeight, html.offsetHeight);
+        };
+
+        var height = getCurrentHeight();
 
         if(!lastPageHeight || lastPageHeight < (height-100)) {
             Ext.getBody().setHeight(height);
             Ext.get(Ext.query("html")[0]).setHeight(height);
 
-            pimcore.edithelpers.__lastPageHeight = height;
+            // set the current height based based on the new height read from the dom
+            // (not the value in variable height, because the setHeight() above may changes the total height again)
+            pimcore.edithelpers.__lastPageHeight = getCurrentHeight();
         }
     } catch (e) {
         console.log(e);
