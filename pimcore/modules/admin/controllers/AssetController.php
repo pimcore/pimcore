@@ -132,11 +132,11 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 $userIds = $this->getUser()->getRoles();
                 $userIds[] = $this->getUser()->getId();
                 $childsList->setCondition("parentId = ? and
-                                                    (
-                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(CONCAT(path,filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    or
-                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(path,filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    )", $asset->getId());
+                    (
+                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(CONCAT(path,filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                    or
+                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(path,filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                    )", $asset->getId());
             }
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
@@ -1273,8 +1273,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
                 $assetList = new Asset\Listing();
                 $assetList->setCondition("path LIKE ?", $parentPath . "/%");
-                $assetList->setOrderKey("LENGTH(path), id", false);
-                $assetList->setOrder("ASC");
+                $assetList->setOrderKey("LENGTH(path) ASC, id ASC", false);
                 $assetList->setOffset((int)$this->getParam("offset"));
                 $assetList->setLimit((int)$this->getParam("limit"));
 
