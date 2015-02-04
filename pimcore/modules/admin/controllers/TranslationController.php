@@ -690,7 +690,11 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
                 }
             }
 
-            $element->save();
+            try {
+                $element->save();
+            } catch (\Exception $e) {
+                throw new \Exception("Unable to save " . Element\Service::getElementType($element) . " with id " . $element->getId() . " because of the following reason: " . $e->getMessage());
+            }
         }
 
         $this->_helper->json(array(
