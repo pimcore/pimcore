@@ -403,15 +403,12 @@ abstract class Frontend extends Action {
      *
      */
     protected function forceRender() {
-
         if (!$this->viewRendered) {
             if ($script = $this->getRenderScript()) {
                 $this->renderScript($script);
-                $this->viewRendered = true;
             }
-            else {
+        else {
                 $this->render();
-                $this->viewRendered = true;
             }
         }
     }
@@ -422,8 +419,10 @@ abstract class Frontend extends Action {
      * @param bool $noController
      */
     public function render($action = null, $name = null, $noController = false) {
-        parent::render($action, $name, $noController);
-        $this->viewRendered = true;
+        if(!$this->viewRendered) {
+            $this->viewRendered = true;
+            parent::render($action, $name, $noController);
+        }
     }
 
     /**
@@ -431,8 +430,10 @@ abstract class Frontend extends Action {
      * @param null $name
      */
     public function renderScript($script, $name = null) {
-        parent::renderScript($script, $name);
-        $this->viewRendered = true;
+        if(!$this->viewRendered) {
+            $this->viewRendered = true;
+            parent::renderScript($script, $name);
+        }
     }
 
     /**
