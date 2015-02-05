@@ -1566,3 +1566,5 @@
 "translation_merger_csv","Text from CSV"
 "nothing_to_merge","There is nothing to merge"
 "are_you_sure_recursive","There child nodes which will be deleted as well! Are you sure?"
+"csv_seperated_options","CSV seperated options"
+"csv_seperated_options_info","The list of available options can be specified as comma-seperated list, as single-column values or  mixed. For the single-column way, the key will also be used as the value."

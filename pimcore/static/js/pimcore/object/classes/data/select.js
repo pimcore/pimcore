@@ -82,7 +82,15 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     this.valueStore.insert(idx, u);
                     this.selectionModel.selectRow(idx);
                 }.bind(this)
-            }],
+            },
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_tab_edit",
+                    handler: this.showoptioneditor.bind(this)
+
+                }
+
+            ],
             disabled: this.isInCustomLayoutEditor(),
             style: "margin-top: 10px",
             store: this.valueStore,
@@ -223,5 +231,10 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     width: source.datax.width
                 });
         }
+    },
+
+    showoptioneditor: function() {
+        var editor = new pimcore.object.helpers.optionEditor(this.valueStore);
+        editor.edit();
     }
 });

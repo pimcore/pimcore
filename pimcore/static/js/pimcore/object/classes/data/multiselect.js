@@ -86,7 +86,14 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     this.valueStore.insert(idx, u);
                     this.selectionModel.selectRow(idx);
                 }.bind(this)
-            }],
+            },
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_tab_edit",
+                    handler: this.showoptioneditor.bind(this)
+
+                }
+            ],
             style: "margin-top: 10px",
             store: this.valueStore,
             disabled: this.isInCustomLayoutEditor(),
@@ -232,5 +239,10 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     height: source.datax.height
                 });
         }
+    },
+
+    showoptioneditor: function() {
+        var editor = new pimcore.object.helpers.optionEditor(this.valueStore);
+        editor.edit();
     }
 });
