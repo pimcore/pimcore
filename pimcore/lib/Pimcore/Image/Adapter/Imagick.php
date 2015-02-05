@@ -709,9 +709,9 @@ class Imagick extends Adapter {
         } else {
             try {
                 $type = $this->resource->getimageformat();
-                $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","SVG","SVGZ");
+                $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","SVG","SVGZ","MVG");
 
-                if(in_array($type,$vectorTypes)) {
+                if(in_array(strtoupper($type),$vectorTypes)) {
                     return true;
                 }
             } catch (\Exception $e) {
