@@ -38,6 +38,8 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFactFinder
         // TODO: Implement deleteFromIndex() method.
     }
 
+
+
     /**
      * updates given element in index
      *
@@ -99,6 +101,17 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFactFinder
     {
 
     }
+
+
+    /**
+     * @param int $objectId
+     * @todo
+     */
+    protected function doDeleteFromIndex($objectId)
+    {
+
+    }
+
 
 
     protected function getStoreTableName()
