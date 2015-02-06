@@ -19,6 +19,7 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Model\Cache;
 use Pimcore\Model;
+use Pimcore\Tool;
 
 class Document extends Model\Asset {
 
@@ -109,8 +110,14 @@ class Document extends Model\Asset {
                     \Pimcore\File::mkdir(dirname($path));
                 }
 
-                if(!is_file($path)) {
+                $lockKey = "document-thumbnail-" . $this->getId() . "-" . $page;
+
+                if(!is_file($path) && !Model\Tool\Lock::isLocked($lockKey)) {
+                    Model\Tool\Lock::lock($lockKey);
                     $converter->saveImage($path, $page);
+                    Model\Tool\Lock::release($lockKey);
+                } else if(Model\Tool\Lock::isLocked($lockKey)) {
+                    return "/pimcore/static/img/please-wait.png";
                 }
             }
 
