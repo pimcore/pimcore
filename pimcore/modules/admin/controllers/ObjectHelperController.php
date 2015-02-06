@@ -611,7 +611,12 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
             $object->setCreationDate(time());
             $object->setUserOwner($this->getUser()->getId());
             $object->setUserModification($this->getUser()->getId());
-            $object->setType($data[$mapping["type"]]);
+
+            if(in_array($data[$mapping["type"]], ["object","variant"])) {
+                $object->setType($data[$mapping["type"]]);
+            } else {
+                $object->setType($data[$mapping["type"]]);
+            }
 
             if ($data[$mapping["published"]] === "1") {
                 $object->setPublished(true);
