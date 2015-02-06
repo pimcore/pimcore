@@ -235,7 +235,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             this.batchParameters = {
                 name: fieldInfo.dataIndex,
                 value: newValue,
-                valueType: valueType
+                valueType: valueType,
+                language: this.gridLanguage
             };
 
 

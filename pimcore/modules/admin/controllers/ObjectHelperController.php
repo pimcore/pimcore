@@ -859,6 +859,17 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
                     if($field) {
                         $object->setValue($name, $field->getDataFromEditmode($value, $object));
                     } else {
+                        // check if it is a localized field
+                        if($this->getParam("language")) {
+                            $localizedField = $class->getFieldDefinition("localizedfields");
+                            if($localizedField) {
+                                $field = $localizedField->getFieldDefinition($name);
+                                if($field) {
+                                    $object->{"set" . $name}($value, $this->getParam("language"));
+                                }
+                            }
+                        }
+
                         // seems to be a system field, this is actually only possible for the "published" field yet
                         if($name == "published") {
                             if($value == "false" || empty($value)) {
