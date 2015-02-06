@@ -615,7 +615,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
             if(in_array($data[$mapping["type"]], ["object","variant"])) {
                 $object->setType($data[$mapping["type"]]);
             } else {
-                $object->setType($data[$mapping["type"]]);
+                $object->setType("object");
             }
 
             if ($data[$mapping["published"]] === "1") {
