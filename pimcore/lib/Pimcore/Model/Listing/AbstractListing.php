@@ -190,9 +190,7 @@ abstract class AbstractListing extends AbstractModel {
      * @return $this
      */
     public function addConditionParam($key, $value = null, $concatenator = 'AND'){
-        if(!is_null($value)){
-            $this->conditionParams[$key] = array('value' => $value,'concatenator' => $concatenator);
-        }
+        $this->conditionParams[$key] = array('value' => $value,'concatenator' => $concatenator);
         return $this;
     }
 
