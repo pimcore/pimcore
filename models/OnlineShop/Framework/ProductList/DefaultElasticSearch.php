@@ -643,7 +643,33 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      * @return void
      */
     public function prepareGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        $this->preparedGroupByValues[$fieldname] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
+        $this->preparedGroupByValues['attributes.' . $fieldname] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
+        $this->preparedGroupByValuesLoaded = false;
+    }
+
+
+    /**
+     * prepares all group by values for given field names and cache them in local variable
+     * considers both - normal values and relation values
+     *
+     * @param string $fieldname
+     * @return void
+     */
+    public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
+        $this->preparedGroupByValues['relations.' . $fieldname] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
+        $this->preparedGroupByValuesLoaded = false;
+    }
+
+
+    /**
+     * prepares all group by values for given field names and cache them in local variable
+     * considers both - normal values and relation values
+     *
+     * @param string $fieldname
+     * @return void
+     */
+    public function prepareGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
+        $this->preparedGroupByValues['system.' . $fieldname] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
         $this->preparedGroupByValuesLoaded = false;
     }
 
@@ -660,6 +686,20 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
     }
 
     /**
+     * loads group by values based on system either from local variable if prepared or directly from product index
+     *
+     * @param $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
+        return $this->doGetGroupByValues('system.' . $fieldname, $countValues, $fieldnameShouldBeExcluded);
+    }
+
+    /**
      * loads group by values based on fieldname either from local variable if prepared or directly from product index
      *
      * @param $fieldname
@@ -670,7 +710,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      * @throws Exception
      */
     public function getGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        return $this->doGetGroupByValues($fieldname, $countValues, $fieldnameShouldBeExcluded);
+        return $this->doGetGroupByValues('attributes.' . $fieldname, $countValues, $fieldnameShouldBeExcluded);
     }
 
     /**
@@ -684,7 +724,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      * @throws Exception
      */
     public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        return $this->doGetGroupByValues($fieldname, $countValues, $fieldnameShouldBeExcluded);
+        return $this->doGetGroupByValues('relations.' . $fieldname, $countValues, $fieldnameShouldBeExcluded);
     }
 
     /**
@@ -867,7 +907,8 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
         $esClient->setMethod(Zend_Http_Client::GET);
         $esClient->setRawData(json_encode( $params['body'] ));
 
-        print_r(json_encode( $params['body'] ));
+
+//        print_r(json_encode( $params['body'] ));
 
         $result = $esClient->request();
         $result = json_decode($result->getBody(), true);

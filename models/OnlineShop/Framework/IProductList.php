@@ -207,6 +207,26 @@ interface OnlineShop_Framework_IProductList extends Zend_Paginator_Adapter_Inter
 
 
     /**
+     * prepares all group by values for given field names and cache them in local variable
+     * considers both - normal values and relation values
+     *
+     * @param string $fieldname
+     * @return void
+     */
+    public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true);
+
+
+    /**
+     * prepares all group by values for given field names and cache them in local variable
+     * considers both - normal values and relation values
+     *
+     * @param string $fieldname
+     * @return void
+     */
+    public function prepareGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true);
+
+
+    /**
      * resets all set prepared group by values
      *
      * @return void
@@ -238,4 +258,17 @@ interface OnlineShop_Framework_IProductList extends Zend_Paginator_Adapter_Inter
      * @throws Exception
      */
     public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true);
+
+
+    /**
+     * loads group by values based on relation fieldname either from local variable if prepared or directly from product index
+     *
+     * @param      $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true);
 }
