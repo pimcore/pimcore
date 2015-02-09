@@ -495,7 +495,7 @@ abstract class Frontend extends Action {
 
                     // check if the resource that wasn't found is a common static file
                     // for them we don't show the error page, as generating this is very heavy in terms of performance
-                    if(preg_match("/\.(js|css|png|jpe?g|gif|eot|ttf|woff|svg|ico|map|swf|txt)$/", $_SERVER["REQUEST_URI"])) {
+                    if(preg_match("/\.(js|css|png|jpe?g|gif|eot|ttf|woff|svg|ico|map|swf|txt)$/", $this->getRequest()->getPathInfo())) {
                         echo "HTTP/1.1 404 Not Found\nFiltered by error handler (static file exception)";
                         exit;
                     }
