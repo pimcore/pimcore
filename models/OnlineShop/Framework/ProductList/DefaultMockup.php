@@ -4,6 +4,7 @@ class OnlineShop_Framework_ProductList_DefaultMockup {
 
     protected $id;
     protected $params;
+    protected $relations;
 
     public function __construct($id, $params, $relations) {
         $this->id = $id;
@@ -17,6 +18,46 @@ class OnlineShop_Framework_ProductList_DefaultMockup {
         }
 
     }
+
+    /**
+     * @return mixed
+     */
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+    /**
+     * @param mixed $params
+     *
+     * @return $this
+     */
+    public function setParams($params)
+    {
+        $this->params = $params;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRelations()
+    {
+        return $this->relations;
+    }
+
+    /**
+     * @param array $relations
+     *
+     * @return $this
+     */
+    public function setRelations($relations)
+    {
+        $this->relations = $relations;
+        return $this;
+    }
+
+
 
     /**
      * @return mixed
