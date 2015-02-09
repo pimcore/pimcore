@@ -492,6 +492,13 @@ abstract class Frontend extends Action {
                     header('HTTP/1.1 404 Not Found');
                     //$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found');
                     $this->getResponse()->setHttpResponseCode(404);
+
+                    // check if the resource that wasn't found is a common static file
+                    // for them we don't show the error page, as generating this is very heavy in terms of performance
+                    if(preg_match("/\.(js|css|png|jpe?g|gif|eot|ttf|woff)$/", $_SERVER["REQUEST_URI"])) {
+                        echo "HTTP/1.1 404 Not Found\nFiltered by error handler (static file exception)";
+                        exit;
+                    }
                 }
                 else {
                     header('HTTP/1.1 503 Service Temporarily Unavailable');
