@@ -762,6 +762,10 @@
     vertical-align: middle;
 }
 
+.x-grid3-row-table {
+    table-layout: fixed;
+}
+
 .x-grid3-row {
     border-bottom: 1px solid #ccc;
 }
