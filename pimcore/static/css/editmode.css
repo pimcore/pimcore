@@ -762,8 +762,12 @@
     vertical-align: middle;
 }
 
-.x-grid3-row-table {
+.x-grid3-row-table, .x-grid3-header-offset table {
     table-layout: fixed;
+}
+
+.x-grid3-resize-marker, .x-grid3-resize-proxy {
+    display: none !important;
 }
 
 .x-grid3-row {
