@@ -183,9 +183,10 @@ class Hardlink extends Document
     }
 
     /**
+     * @param bool $unpublished
      * @return array|null
      */
-    public function getChilds() {
+    public function getChilds($unpublished = false) {
 
         if ($this->childs === null) {
             $childs = parent::getChilds();
