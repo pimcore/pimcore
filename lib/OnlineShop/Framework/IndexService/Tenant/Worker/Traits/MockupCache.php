@@ -72,7 +72,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_MockupCache {
         }
 
         Logger::info("Element with ID $objectId was not found in cache, trying to put it there.");
-        $this->saveToMockupCache($objectId);
+        return $this->saveToMockupCache($objectId);
     }
 
 }

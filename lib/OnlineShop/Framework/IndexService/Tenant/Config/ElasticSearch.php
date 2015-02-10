@@ -121,14 +121,6 @@ class OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch extends Onli
      * @return OnlineShop_Framework_ProductInterfaces_IIndexable | array
      */
     public function getObjectMockupById($objectId) {
-        $mockup = $this->getTenantWorker()->getMockupFromCache($objectId);
-
-        if(empty($mockup)) {
-            Logger::warn("Could not load element with ID $objectId as mockup, loading complete object");
-            return $this->getObjectById($objectId);
-        } else {
-            return $mockup;
-        }
-
+        return $this->getTenantWorker()->getMockupFromCache($objectId);
     }
 }
