@@ -142,8 +142,19 @@ class Area extends Model\Document\Tag {
             if(is_file($action)) {
                 include_once($action);
 
+
+                $actionClassFound = true;
+
                 $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . ucfirst($options["type"]);
-                if(\Pimcore\Tool::classExists($actionClassname)) {
+                if(!class_exists($actionClassname, false)) {
+                    // also check the legacy prefixed class name, as this is used by some plugins
+                    $actionClassname = "\\Document_Tag_Area_" . ucfirst($options["type"]);
+                    if(!class_exists($actionClassname, false)) {
+                        $actionClassFound = false;
+                    }
+                }
+
+                if($actionClassFound) {
                     $actionObject = new $actionClassname();
 
                     if($actionObject instanceof Area\AbstractArea) {
