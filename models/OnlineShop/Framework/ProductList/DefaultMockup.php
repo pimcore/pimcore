@@ -28,6 +28,14 @@ class OnlineShop_Framework_ProductList_DefaultMockup {
     }
 
     /**
+     * @param $key
+     *
+     * @return mixed
+     */
+    public function getParam($key){
+        return $this->params[$key];
+    }
+    /**
      * @param mixed $params
      *
      * @return $this
