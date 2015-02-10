@@ -651,6 +651,12 @@ class AbstractObject extends Model\Element\AbstractElement {
                 $this->setParentId(1);
                 $this->setPath("/");
             }
+        } else if($this->getId() == 1) {
+            // some data in root node should always be the same
+            $this->setParentId(0);
+            $this->setPath("/");
+            $this->setKey("");
+            $this->setType("folder");
         }
 
         if(Service::pathExists($this->getFullPath())) {

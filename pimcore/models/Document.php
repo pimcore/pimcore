@@ -504,6 +504,12 @@ class Document extends Element\AbstractElement {
                 $this->setParentId(1);
                 $this->setPath("/");
             }
+        } else if($this->getId() == 1) {
+            // some data in root node should always be the same
+            $this->setParentId(0);
+            $this->setPath("/");
+            $this->setKey("");
+            $this->setType("page");
         }
 
         if(Document\Service::pathExists($this->getRealFullPath())) {

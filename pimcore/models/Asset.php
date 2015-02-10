@@ -32,7 +32,6 @@ class Asset extends Element\AbstractElement {
      */
     public static $types = array("folder", "image", "text", "audio", "video", "document", "archive", "unknown");
 
-
     /**
      * Unique ID
      *
@@ -208,7 +207,6 @@ class Asset extends Element\AbstractElement {
      * @param string $path
      * @return Asset
      */
-
     public static function getByPath($path) {
 
         $path = Element\Service::correctPath($path);
@@ -572,7 +570,12 @@ class Asset extends Element\AbstractElement {
                 $this->setParentId(1);
                 $this->setPath("/");
             }
-
+        } else if($this->getId() == 1) {
+            // some data in root node should always be the same
+            $this->setParentId(0);
+            $this->setPath("/");
+            $this->setFilename("");
+            $this->setType("folder");
         }
 
         // do not allow PHP and .htaccess files
