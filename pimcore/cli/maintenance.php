@@ -17,8 +17,7 @@ chdir(__DIR__);
 
 include_once("startup.php");    
 
-use Pimcore\Log; 
-use Pimcore\Version; 
+use Pimcore\Log;
 use Pimcore\Model\Schedule; 
 
 try {
@@ -99,8 +98,8 @@ $manager->registerJob(new Schedule\Maintenance\Job("cleanuplogfiles", new \Pimco
 $manager->registerJob(new Schedule\Maintenance\Job("httperrorlog", new \Pimcore\Log\Maintenance(), "httpErrorLogCleanup"));
 $manager->registerJob(new Schedule\Maintenance\Job("usagestatistics", new \Pimcore\Log\Maintenance(), "usageStatistics"));
 $manager->registerJob(new Schedule\Maintenance\Job("sanitycheck", "\\Pimcore\\Model\\Element\\Service", "runSanityCheck"));
-$manager->registerJob(new Schedule\Maintenance\Job("versioncleanup", new Version(), "maintenanceCleanUp"));
-$manager->registerJob(new Schedule\Maintenance\Job("versioncompress", new Version(), "maintenanceCompress"));
+$manager->registerJob(new Schedule\Maintenance\Job("versioncleanup", new \Pimcore\Model\Version(), "maintenanceCleanUp"));
+$manager->registerJob(new Schedule\Maintenance\Job("versioncompress", new \Pimcore\Model\Version(), "maintenanceCompress"));
 $manager->registerJob(new Schedule\Maintenance\Job("redirectcleanup", "\\Pimcore\\Model\\Redirect", "maintenanceCleanUp"));
 $manager->registerJob(new Schedule\Maintenance\Job("cleanupbrokenviews", "\\Pimcore\\Resource", "cleanupBrokenViews"));
 $manager->registerJob(new Schedule\Maintenance\Job("contentanalysis", "\\Pimcore\\Model\\Tool\\ContentAnalysis", "run"));
