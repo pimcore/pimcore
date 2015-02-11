@@ -1,0 +1,135 @@
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+ 
+html,body{
+	font-family:arial,tahoma,verdana,sans-serif;
+	font-size:11px;
+        margin: 0;
+        padding: 0;
+    
+}
+
+#pimcore_installer_header{
+    background:transparent url(/pimcore/static/img/toolbar-bg.jpg) repeat-x scroll left top;
+    height: 50px;
+    widht: 100%;
+    overflow:hidden;
+}
+
+#pimcore_installer_header_logo{
+    background:transparent url(/pimcore/static/img/logo.png) no-repeat scroll right top;
+    float:right;
+    margin: 5px 0 0 0 ;
+    width: 184px;
+    height: 42px;
+}
+
+#pimcore_installer{
+    padding: 10px 30px;
+
+}
+#pimcore_installer a,
+#pimcore_installer a:visited{
+    color:#606060;
+}
+#pimcore_installer a:hover {
+   	color:#FF6600;
+}
+
+ul.errors{
+  color:#FF6600;
+}
+
+fieldset {
+    border:1px solid #DEDEDE;
+    width: 420px;
+    padding: 10px;
+    margin:0px;
+}
+fieldset legend {
+    padding: 6px;
+    font-weight: bold;
+    color:#606060;
+}
+
+#pimcore_installer input{
+    background:url(/pimcore/static/js/lib/ext/resources/images/gray-extend/form/text-bg.gif) repeat-x ;
+    border: 1px solid #B5B8C8;
+    padding-top:2px;
+    height: 18px;
+    width: 200px;
+}
+
+#Submit-element{
+    background:transparent url(/pimcore/static/img/installer/submit_left.gif)  no-repeat top left;
+    overflow: hidden;
+    float:left;
+    display:inline;
+    width: 202px;
+    margin:0 0 20px 162px;
+}
+#pimcore_installer input#Submit{
+   
+    padding: 3px;
+    height: auto;
+    cursor:pointer;
+    background:transparent url(/pimcore/static/img/installer/submit_right.gif)  no-repeat top right;
+    border:none;
+    width: 202px;
+    overflow: hidden;
+
+
+}
+#Submit-element:hover{
+    background:transparent url(/pimcore/static/img/installer/submit_left_hover.gif)  no-repeat top left;
+
+}
+#pimcore_installer input#Submit:hover{
+
+    background:transparent url(/pimcore/static/img/installer/submit_right_hover.gif)  no-repeat top right;
+
+}
+dd{
+    margin: 3px 0 0 0;
+    width: 450px;
+}
+
+
+dd dl{
+    width: 400px;
+    overflow: hidden;
+}
+dd dt{
+    width: 150px;
+    float:left;
+    overflow: hidden;
+    padding: 3px 0;
+    margin:3px 0 0 0;
+}
+
+dd dd{
+    width: 250px;
+    float:left;
+    padding:0;
+}
+#pimcore_installer select{
+    background:url(/pimcore/static/js/lib/ext/resources/images/gray-extend/form/text-bg.gif) repeat-x ;
+    border: 1px solid #B5B8C8;
+    padding: 2px;
+    width: 200px;
+}
+
+.error{
+	color:#FF6600;
+}

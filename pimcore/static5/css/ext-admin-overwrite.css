@@ -1,0 +1,81 @@
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+
+#pimcore_panel_toolbar {
+    background: #323232; /* Old browsers */
+    background: -moz-linear-gradient(top, #323232 0%, #3f3f3f 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#323232), color-stop(100%,#3f3f3f)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #323232 0%,#3f3f3f 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #323232 0%,#3f3f3f 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #323232 0%,#3f3f3f 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #323232 0%,#3f3f3f 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#323232', endColorstr='#3f3f3f',GradientType=0 ); /* IE6-9 */
+
+    border-bottom: 1px solid #606060;
+
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+.pimcore_panel_toolbar_container {
+    border-bottom: 1px solid #000;
+}
+
+.pimcore_main_menu button {
+	font-weight: bold !important;
+	font-size: 12px;
+    color:#e7e7e7;
+}
+
+.pimcore_main_menu.x-btn-over button {
+    color:#000 !important;
+}
+
+.pimcore_main_menu .x-btn-arrow {
+    background-image: none !important;
+}
+
+.x-tbar-loading {
+background-image:url("/pimcore/static/img/icon/arrow_refresh.png") !important;
+}
+
+/*
+    this fixes problem when the default background of the browser is not white
+    http://www.pimcore.org/issues/browse/PIMCORE-1208
+*/
+.x-form-field {
+    color: #000000;
+}
+
+/* FF >= 10 fix for menu seperator */
+.x-menu-sep {
+    height: 1px;
+}
+
+
+
+/* composite field inside tab panel fix for chrome */
+.x-tab-panel-body .x-form-composite .x-box-inner {
+    min-height: 24px;
+}
+
+.x-tab-panel-body .x-form-composite .x-box-inner:first-child {
+    position: relative !important;
+}
+
+/* webkit has 12px here, ... gecko not */
+.x-toolbar .x-form-field {
+    font-size: 11px !important;
+}

@@ -1,0 +1,87 @@
+/*************************
+DaisyDiff
+*************************/
+/*
+ * Styles for the Tag Diff
+ */
+span.diff-tag-html {
+    font-family: "Andale Mono" monospace;
+    font-size: 80%;
+}
+
+span.diff-tag-removed {
+    font-size: 100%;
+    text-decoration: line-through;
+    background-color: #fdc6c6; /* light red */
+}
+
+span.diff-tag-added {
+    font-size: 100%;
+    background-color: #ccffcc; /* light green */
+}
+
+/*
+ * Styles for the HTML Diff
+ */
+span.diff-html-added {
+    font-size: 100%;
+    background-color: #ccffcc; /* light green */
+    cursor: pointer;
+}
+
+span.diff-html-removed {
+    font-size: 100%;
+    text-decoration: line-through;
+    background-color: #fdc6c6; /* light red */
+    cursor: pointer;
+}
+
+span.diff-html-changed {
+    position: relative;
+    background-color: #c6c6fd; /* light blue */
+    cursor: pointer;
+}
+
+span.diff-html-selected {
+    background-color: #FF8800; /* light orange */
+    cursor: pointer;
+}
+
+span.diff-html-selected img{
+    border: 2px solid #FF8800; /* light orange */
+}
+
+span.diff-html-added img{
+    border: 2px solid #ccffcc;
+}
+
+span.diff-html-removed img{
+    border: 2px solid #fdc6c6;
+}
+
+span.diff-html-changed img{
+    border: 2px dotted #000099;
+}
+ 
+span.diff-html-changed span.tip {
+    display: none;        /* so is this */
+}
+
+/* tooltip will display on :hover event */
+ 
+span.diff-html-changed:hover span.tip {
+    display: block;
+    position: absolute;
+    top: 2em; left: 2em; width: 15em;
+    text-align: left;
+    z-index: 100;
+    padding: 3px 7px 4px 6px;
+    border: 1px solid #336;
+    background-color: #f7f7ee;
+    font: normal 0.9em/1.2em arial, helvetica, sans-serif;
+    color: #000;
+}
+
+span.tip ul.changelist {
+    padding-left: 0px;
+}

@@ -1,0 +1,6 @@
+body {overflow: hidden;}
+.x-icon-error{background-image:url(exclamation.gif) ! important;}
+.x-icon-information{background-image:url(information.gif) ! important;}
+.x-notification .x-window-body{margin: 0;padding:1em ! important; width: auto ! important;}
+.x-notification .x-tool-close{display: none}
+.x-notification.fixed .x-tool-close{display: block}

@@ -1,0 +1,54 @@
+.x-boxselect.x-form-text {
+    height: auto;
+	cursor: text;
+    padding: 0;
+    overflow-y: auto;
+}
+.x-boxselect ul.x-boxselect-list {
+    padding: 1px 3px;
+}
+ul.x-boxselect-list.x-boxselect-singleselect {
+    white-space: nowrap;
+    overflow: hidden;
+}
+.x-boxselect input {
+	border: none;
+	background: none;
+	line-height: 18px;
+	height: 20px;
+	width: 100%;
+}
+.x-boxselect-input, .x-boxselect-item {
+	display: inline-block;
+	position: relative;
+	*display:inline; /* IE7 */
+	zoom:1; /* IE */
+}
+.x-boxselect-stacked .x-boxselect-item {
+	display: block;
+}
+.x-boxselect-item {
+	-moz-border-radius: 6px; -webkit-border-radius: 6px; border-radius: 6px; o-border-radius: 6px; khtml-border-radius: 6px; border: 1px solid #CAD8F3;
+	padding: 0px 1px 0px 5px !important;
+	margin: 1px 1px 1px 0;
+	background-color: #DEE7F8;
+	cursor: default;
+}
+.x-field:not(.x-item-disabled) .x-boxselect-item:hover {
+	background: #BBCEF1;
+	border: 1px solid #6D95E0;
+}
+.x-field:not(.x-item-disabled) .x-boxselect-item.selected {
+	border: 1px solid #316AD3 !important;
+	background: #658FDC !important;
+}
+.x-boxselect-item-text {
+	line-height: 16px;
+	padding-right: 20px !important;
+}
+.x-boxselect-item-close {
+	cursor: pointer;
+}
+.x-boxselect-hideselections .x-boundlist-selected {
+    display: none;
+}

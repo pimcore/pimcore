@@ -1,0 +1,42 @@
+
+
+# CKEDITOR (use builder: http://ckeditor.com/builder);
+
++ select "full" distribution
+
+Add plugins:
++ plugin sourcedialog
++ plugin tableresize
+
+Remove plugins:
+- About CKEditor
+- Content Templates
+- File Browser
+- Flash Dialog
+- Form Elements
+- Insert Smiley
+- Magic Line
+- Maximize
+- New Page
+- Preview
+- Print
+- Save
+- SpellCheckAsYouType (SCAYT)
+
+
+# EXT JS
+- moved folder /ext/examples/ux/ to /ext-plugins/ux/
+- moved folder /ext/src/locale/ to /ext/locale/
+- removed the following files / directories
+    /ext/docs/
+    /ext/src/
+    /ext/test/
+    /ext/welcome/
+    /ext/pkgs/
+    /ext/examples/
+
+- change date format in ext-lang-en.js in Ext.form.DateField.format
+from "m/d/y" to "m/d/Y"
+
+- removed "cursor: default" from ".x-unselectable, .x-unselectable *" selector in ext-all.css
+
