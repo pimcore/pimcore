@@ -152,9 +152,9 @@ Ext.onReady(function () {
         for (var e=0; e<editablesForTooltip.length; e++) {
             tmpEl = Ext.get(editablesForTooltip[e]);
             if(tmpEl) {
-                if(tmpEl.hasClass("pimcore_tag_inc") || tmpEl.hasClass("pimcore_tag_href")
-                                    || tmpEl.hasClass("pimcore_tag_image") || tmpEl.hasClass("pimcore_tag_renderlet")
-                                    || tmpEl.hasClass("pimcore_tag_snippet")) {
+                if(tmpEl.hasCls("pimcore_tag_inc") || tmpEl.hasCls("pimcore_tag_href")
+                                    || tmpEl.hasCls("pimcore_tag_image") || tmpEl.hasCls("pimcore_tag_renderlet")
+                                    || tmpEl.hasCls("pimcore_tag_snippet")) {
                     new Ext.ToolTip({
                         target: tmpEl,
                         showDelay: 100,
@@ -164,8 +164,8 @@ Ext.onReady(function () {
                 }
 
 
-                if(tmpEl.hasClass("pimcore_tag_snippet") || tmpEl.hasClass("pimcore_tag_renderlet")
-                                    || tmpEl.hasClass("pimcore_tag_inc") ) {
+                if(tmpEl.hasCls("pimcore_tag_snippet") || tmpEl.hasCls("pimcore_tag_renderlet")
+                                    || tmpEl.hasCls("pimcore_tag_inc") ) {
                     tmpEl.on("mouseenter", function (e) {
                         pimcore.edithelpers.frameElement(this, Ext.getBody());
                     });
@@ -211,7 +211,7 @@ Ext.onReady(function () {
     editWindow.maskFrames();
 
     // enable the edit tab again
-    editWindow.loadMask.hide();
+    editWindow.loadMask.disable();
 });
 
 
