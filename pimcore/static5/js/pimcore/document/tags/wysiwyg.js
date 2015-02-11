@@ -53,8 +53,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             inactiveContainerWidth = options.width;
         }
 
-        Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
-        Ext.get(this.textarea).addClass("pimcore_wysiwyg");
+        Ext.get(this.textarea).addCls("pimcore_wysiwyg_inactive");
+        Ext.get(this.textarea).addCls("pimcore_wysiwyg");
         Ext.get(this.textarea).applyStyles("width: " + inactiveContainerWidth  + "; min-height: " + textareaHeight
                                                                                                 + "px;");
 
