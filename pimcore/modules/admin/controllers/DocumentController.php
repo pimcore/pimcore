@@ -884,6 +884,9 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
         // add icon
         $tmpDocument["iconCls"] = "pimcore_icon_" . $childDocument->getType();
+        if (\Pimcore\Tool\Admin::isExtJS5()) {
+            $tmpDocument["expandable"] = $childDocument->hasChilds();
+        }
 
         // set type specific settings
         if ($childDocument->getType() == "page") {

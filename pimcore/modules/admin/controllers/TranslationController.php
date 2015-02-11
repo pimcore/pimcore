@@ -222,7 +222,11 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
             if ($this->getParam("xaction") == "destroy") {
                 $data = \Zend_Json::decode($this->getParam("data"));
-                $t = $class::getByKey($data);
+                if (\Pimcore\Tool\Admin::isExtJS5()) {
+                    $t = $class::getByKey($data["key"]);
+                } else {
+                    $t = $class::getByKey($data);
+                }
                 $t->delete();
 
                 $this->_helper->json(array("success" => true, "data" => array()));

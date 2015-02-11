@@ -167,7 +167,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
         $tmpObject["allowChildren"] = true;
 
-        $tmpObject["leaf"] = false;
+        if (\Pimcore\Tool\Admin::isExtJS5()) {
+            $tmpObject["leaf"] = $child->hasNoChilds();
+        } else {
+            $tmpObject["leaf"] = false;
+        }
         $tmpObject["cls"] = "";
 
         if ($child->getType() == "folder") {
