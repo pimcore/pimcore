@@ -32,7 +32,7 @@ class Optimizer {
 
         $format = getimagesize($path);
 
-        if(array_key_exists("mime", $format)) {
+        if(is_array($format) && array_key_exists("mime", $format)) {
             $format = strtolower(str_replace("image/", "",$format["mime"]));
 
             if($format == "png") {
