@@ -43,18 +43,18 @@ class Editmode extends \Zend_Controller_Plugin_Abstract {
 
         if (\Pimcore\Tool\Admin::isExtJS5()) {
             $editmodeLibraries = array(
-                "/pimcore/static/js/pimcore/namespace.js",
+                "/pimcore/static5/js/pimcore/namespace.js",
 
-                "/pimcore/static/js/lib/prototype-light.js",
-                "/pimcore/static/js/lib/jquery.min.js",
-                //            "/pimcore/static/js/lib/ext/adapter/jquery/ext-jquery-adapter-debug.js",
+                "/pimcore/static5/js/lib/prototype-light.js",
+                "/pimcore/static5/js/lib/jquery.min.js",
+                //            "/pimcore/static5/js/lib/ext/adapter/jquery/ext-jquery-adapter-debug.js",
 
-                "/pimcore/static/js/lib/ext/ext-all-debug.js",
-                //            "/pimcore/static/js/lib/ext-plugins/ux/Spinner.js",
-                //            "/pimcore/static/js/lib/ext-plugins/ux/SpinnerField.js",
-                //            "/pimcore/static/js/lib/ext-plugins/ux/MultiSelect.js",
-                //            "/pimcore/static/js/lib/ext-plugins/GridRowOrder/roworder.js",
-                "/pimcore/static/js/lib/ckeditor/ckeditor.js"
+                "/pimcore/static5/js/lib/ext/ext-all-debug.js",
+                //            "/pimcore/static5/js/lib/ext-plugins/ux/Spinner.js",
+                //            "/pimcore/static5/js/lib/ext-plugins/ux/SpinnerField.js",
+                //            "/pimcore/static5/js/lib/ext-plugins/ux/MultiSelect.js",
+                //            "/pimcore/static5/js/lib/ext-plugins/GridRowOrder/roworder.js",
+                "/pimcore/static5/js/lib/ckeditor/ckeditor.js"
                 //            "/pimcore/static/js/pimcore/libfixes.js"
             );
         } else {
