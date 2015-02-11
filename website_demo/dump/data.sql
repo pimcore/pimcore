@@ -380,18 +380,18 @@ CREATE TABLE `glossary` (
 
 DROP TABLE IF EXISTS `http_error_log`;
 CREATE TABLE `http_error_log` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `path` varchar(1000) DEFAULT NULL,
+  `uri` varchar(3000) CHARACTER SET ascii DEFAULT NULL,
   `code` int(3) DEFAULT NULL,
   `parametersGet` longtext,
   `parametersPost` longtext,
   `cookies` longtext,
   `serverVars` longtext,
   `date` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `path` (`path`(255)),
+  `count` bigint(20) DEFAULT NULL,
+  KEY (`uri` (765)),
   KEY `code` (`code`),
-  KEY `date` (`date`)
+  KEY `date` (`date`),
+  KEY `count` (`count`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

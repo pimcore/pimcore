@@ -41,7 +41,7 @@
 
 <body>
 
-<h2><?php echo $this->data["code"]; ?> | <?php echo $this->data["path"]; ?></h2>
+<h2><?php echo $this->data["code"]; ?> | <?php echo $this->data["uri"]; ?></h2>
 
 <?php foreach ($this->data as $key => $value) { ?>
     <?php if(in_array($key, array("parametersGet", "parametersPost", "serverVars", "cookies"))) { ?>

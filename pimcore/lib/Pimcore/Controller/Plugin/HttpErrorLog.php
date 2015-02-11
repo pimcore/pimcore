@@ -44,15 +44,23 @@ class HttpErrorLog extends \Zend_Controller_Plugin_Abstract {
         $db = \Pimcore\Resource::get();
 
         try {
-            $db->insert("http_error_log", array(
-                "path" => $this->getRequest()->getPathInfo(),
-                "code" => (int) $code,
-                "parametersGet" => serialize($_GET),
-                "parametersPost" => serialize($_POST),
-                "cookies" => serialize($_COOKIE),
-                "serverVars" => serialize($_SERVER),
-                "date" => time()
-            ));
+            $uri = $this->getRequest()->getScheme() . "://" . $this->getRequest()->getHttpHost() . $this->getRequest()->getRequestUri();
+
+            $exists = $db->fetchOne("SELECT date FROM http_error_log WHERE uri = ?", $uri);
+            if($exists) {
+                $db->query("UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?", [time(), $uri]);
+            } else {
+                $db->insert("http_error_log", array(
+                    "uri" => $uri,
+                    "code" => (int) $code,
+                    "parametersGet" => serialize($_GET),
+                    "parametersPost" => serialize($_POST),
+                    "cookies" => serialize($_COOKIE),
+                    "serverVars" => serialize($_SERVER),
+                    "date" => time(),
+                    "count" => 1
+                ));
+            }
         } catch (\Exception $e) {
             \Logger::error("Unable to log http error");
             \Logger::error($e);

@@ -330,15 +330,14 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $sort = $this->getParam("sort");
         $dir = $this->getParam("dir");
         $filter = $this->getParam("filter");
-        $group = $this->getParam("group");
         if(!$limit) {
             $limit = 20;
         }
         if(!$offset) {
             $offset = 0;
         }
-        if(!$sort || !in_array($sort, array("id","code","path","date","amount"))) {
-            $sort = "date";
+        if(!$sort || !in_array($sort, array("code","uri","date","count"))) {
+            $sort = "count";
         }
         if(!$dir || !in_array($dir, array("DESC","ASC"))) {
             $dir = "DESC";
@@ -349,20 +348,14 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             $filter = $db->quote("%" . $filter . "%");
 
             $conditionParts = array();
-            foreach (array("path", "code", "parametersGet", "parametersPost", "serverVars", "cookies") as $field) {
+            foreach (array("uri", "code", "parametersGet", "parametersPost", "serverVars", "cookies") as $field) {
                 $conditionParts[] = $field . " LIKE " . $filter;
             }
             $condition = " WHERE " . implode(" OR ", $conditionParts);
         }
 
-        if($group) {
-            $logs = $db->fetchAll("SELECT id,code,path,date,count(*) as amount,concat(code,path) as `group` FROM http_error_log " . $condition . " GROUP BY `group` ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
-            $total = $db->fetchOne("SELECT count(*) FROM (SELECT concat(code,path) as `group` FROM http_error_log " . $condition . " GROUP BY `group`) as counting");
-        } else {
-            $sort = ($sort == "amount") ? "date" : $sort;
-            $logs = $db->fetchAll("SELECT id,code,path,date FROM http_error_log " . $condition . " ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
-            $total = $db->fetchOne("SELECT count(*) FROM http_error_log " . $condition);
-        }
+        $logs = $db->fetchAll("SELECT code,uri,`count`,date FROM http_error_log " . $condition . " ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
+        $total = $db->fetchOne("SELECT count(*) FROM http_error_log " . $condition);
 
         $this->_helper->json(array(
             "items" => $logs,
@@ -388,7 +381,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $this->checkPermission("http_errors");
 
         $db = Resource::get();
-        $data = $db->fetchRow("SELECT * FROM http_error_log WHERE id = ?", array($this->getParam("id")));
+        $data = $db->fetchRow("SELECT * FROM http_error_log WHERE uri = ?", array($this->getParam("uri")));
 
         foreach ($data as $key => &$value) {
             if(in_array($key, array("parametersGet", "parametersPost", "serverVars", "cookies"))) {
