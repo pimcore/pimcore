@@ -29,7 +29,7 @@ class Admin {
     public static function getLanguageFile($language){
 
         //first try website languages dir, as fallback the core dir
-       $languageFile = PIMCORE_CONFIGURATION_DIRECTORY . "/texts/" . $language . ".csv";
+        $languageFile = PIMCORE_CONFIGURATION_DIRECTORY . "/texts/" . $language . ".csv";
         if(!is_file($languageFile)){
             $languageFile =  PIMCORE_PATH . "/config/texts/" . $language . ".csv";
         }
@@ -147,18 +147,18 @@ class Admin {
         if(empty($sessionId)) {
             $sessionId = session_id();
         }
-        
+
         if(empty($sessionId)) {
             throw new \Exception("It's not possible to activate the maintenance mode without a session-id");
         }
 
         $config = new \Zend_Config(array(
-               "sessionId" => $sessionId
+            "sessionId" => $sessionId
         ), true);
 
         $writer = new \Zend_Config_Writer_Xml(array(
-              "config" => $config,
-              "filename" => self::getMaintenanceModeFile()
+            "config" => $config,
+            "filename" => self::getMaintenanceModeFile()
         ));
         $writer->write();
         @chmod(self::getMaintenanceModeFile(), 0777); // so it can be removed also via FTP, ...
@@ -203,5 +203,17 @@ class Admin {
         }
 
         return null;
+    }
+
+
+    /**
+     * @return true if in EXT JS5 mode
+     */
+    public static function isExtJS5() {
+        if ($_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"] == 5 || $_REQUEST["extjs5"]) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
