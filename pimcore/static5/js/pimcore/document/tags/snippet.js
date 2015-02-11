@@ -43,17 +43,24 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
         this.element = new Ext.Panel(this.options);
 
         this.element.on("render", function (el) {
-            // register at global DnD manager
-            dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+            try {
+                // register at global DnD manager
+                //TODO EXTJS 5
+                if (typeof dndManager != "undefined") {
+                    dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+                }
 
-            this.getBody().setStyle({
-                overflow: "auto"
-            });
+                this.getBody().setStyle({
+                    overflow: "auto"
+                });
 
-            this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
-            this.getBody().addClass("pimcore_tag_snippet_empty");
+                this.getBody().insertHtml("beforeEnd", '<div class="pimcore_tag_droptarget"></div>');
+                this.getBody().addCls("pimcore_tag_snippet_empty");
 
-            el.getEl().on("contextmenu", this.onContextMenu.bind(this));
+                el.getEl().on("contextmenu", this.onContextMenu.bind(this));
+            } catch (e) {
+                console.log(e);
+            }
 
         }.bind(this));
 
@@ -135,7 +142,7 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
             height: "auto"
         });
 
-        this.getBody().removeClass("pimcore_tag_snippet_empty");
+        this.getBody().removeCls("pimcore_tag_snippet_empty");
     },
 
     onContextMenu: function (e) {
@@ -159,7 +166,7 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
                     this.data = {};
                     this.getBody().dom.innerHTML = '';
                     this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
-                    this.getBody().addClass("pimcore_tag_snippet_empty");
+                    this.getBody().addCls("pimcore_tag_snippet_empty");
                     this.getBody().setStyle(height + "px");
 
                     if (this.options.reload) {

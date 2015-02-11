@@ -106,9 +106,9 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
         var value = this.element.dom.innerHTML;
 
         if(trim(strip_tags(value)).length < 1) {
-            this.element.addClass("empty");
+            this.element.addCls("empty");
         } else {
-            this.element.removeClass("empty");
+            this.element.removeCls("empty");
         }
     },
 

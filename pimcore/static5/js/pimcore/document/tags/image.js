@@ -53,7 +53,10 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
             // register at global DnD manager
-            dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+            //TODO ExtJS 5
+            if (typeof dndManager != 'undefined') {
+                dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+            }
 
             el.getEl().setStyle({
                 position: "relative"
@@ -64,7 +67,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             this.getBody().appendChild(this.altBar);
 
             this.altBar = Ext.get(this.altBar);
-            this.altBar.addClass("pimcore_tag_image_alt");
+            this.altBar.addCls("pimcore_tag_image_alt");
             this.altBar.setStyle({
                 opacity: 0.8,
                 display: "none"
@@ -89,7 +92,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
             this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
 
-            this.getBody().addClass("pimcore_tag_image_empty");
+            this.getBody().addCls("pimcore_tag_image_empty");
 
             // add additional drop targets
             if (this.options["dropClass"]) {
@@ -331,7 +334,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             display: "block"
         });
 
-        this.getBody().removeClass("pimcore_tag_image_empty");
+        this.getBody().removeCls("pimcore_tag_image_empty");
 
         this.updateCounter = 0;
         this.updateDimensionsInterval = window.setInterval(this.updateDimensions.bind(this), 1000);
