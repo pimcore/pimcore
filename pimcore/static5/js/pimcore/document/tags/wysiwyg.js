@@ -59,7 +59,10 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                                                                                                 + "px;");
 
         // register at global DnD manager
-        dndManager.addDropTarget(Ext.get(id), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+        if (typeof dndManager !== 'undefined') {
+            //TODO EXTJS5
+            dndManager.addDropTarget(Ext.get(id), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+        }
 
         this.startCKeditor();
 
@@ -239,9 +242,9 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         var value = this.getValue();
 
         if(trim(strip_tags(value)).length < 1) {
-            Ext.get(this.textarea).addClass("empty");
+            Ext.get(this.textarea).addCls("empty");
         } else {
-            Ext.get(this.textarea).removeClass("empty");
+            Ext.get(this.textarea).removeCls("empty");
         }
     },
 

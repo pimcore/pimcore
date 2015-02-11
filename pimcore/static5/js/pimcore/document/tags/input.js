@@ -90,10 +90,10 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
         var textLength = trim(strip_tags(value)).length;
 
         if(textLength < 1) {
-            this.element.addClass("empty");
+            this.element.addCls("empty");
             value = ""; // set to "" since it can contain an <br> at the end
         } else {
-            this.element.removeClass("empty");
+            this.element.removeCls("empty");
         }
 
         if(value != origValue) {
