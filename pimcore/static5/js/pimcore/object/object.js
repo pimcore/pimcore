@@ -577,7 +577,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             try {
                 pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI()
                     .addClass("pimcore_unpublished");
-            } catch (e) {}
+            } catch (e) {
+                console.log(e);
+            }
         }
     },
 

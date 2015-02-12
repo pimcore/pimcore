@@ -195,7 +195,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         // set class in tree panel
         try {
             pimcore.globalmanager.get("layout_document_tree").tree.getNodeById(this.data.id).getUI()
-                                                                                    .addClass("pimcore_unpublished");
+                                                                                    .addCls("pimcore_unpublished");
         } catch (e) {
         }
 

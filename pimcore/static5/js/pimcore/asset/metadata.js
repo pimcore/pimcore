@@ -274,7 +274,7 @@ pimcore.asset.metadata = Class.create({
                 var data = this.grid.getStore().getAt(storeIndex).data;
 
                 if(in_array(data.name, this.disallowedKeys)) {
-                    Ext.get(rows[i]).addClass("pimcore_properties_hidden_row");
+                    Ext.get(rows[i]).addCls("pimcore_properties_hidden_row");
                 }
 
                 if (data.type == "document" || data.type == "asset" || data.type == "object") {

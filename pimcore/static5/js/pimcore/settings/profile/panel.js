@@ -64,11 +64,11 @@ pimcore.settings.profile.panel = Class.create({
 
         passwordCheck = function (el) {
             if(/^(?=.*\d)(?=.*[a-zA-Z]).{6,100}$/.test(el.getValue())) {
-                el.getEl().addClass("password_valid");
-                el.getEl().removeClass("password_invalid");
+                el.getEl().addCls("password_valid");
+                el.getEl().removeCls("password_invalid");
             } else {
-                el.getEl().addClass("password_invalid");
-                el.getEl().removeClass("password_valid");
+                el.getEl().addCls("password_invalid");
+                el.getEl().removeCls("password_valid");
             }
         };
 

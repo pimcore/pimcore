@@ -120,7 +120,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
             height: 110,
             modal: true,
             bodyStyle:"padding:10px",
-            items: [{
+            items: [Ext.create('Ext.form.ComboBox' , {
                 xtype: "combo",
                 store: store,
                 displayField:'name',
@@ -147,7 +147,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                         this.focus(true,500);
                     }
                 }
-            }],
+            })],
             buttons: [{
                 text: t("close"),
                 iconCls: "pimcore_icon_delete",

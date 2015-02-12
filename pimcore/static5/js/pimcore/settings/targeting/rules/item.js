@@ -267,10 +267,10 @@ pimcore.settings.targeting.rules.item = Class.create({
                 '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
 
             if(data["bracketLeft"]){
-                leftBracket.addClass("pimcore_targeting_bracket_active");
+                leftBracket.addCls("pimcore_targeting_bracket_active");
             }
             if(data["bracketRight"]){
-                rightBracket.addClass("pimcore_targeting_bracket_active");
+                rightBracket.addCls("pimcore_targeting_bracket_active");
             }
 
             // open

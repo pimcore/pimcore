@@ -287,7 +287,7 @@ pimcore.document.edit = Class.create({
                     top: 0
                 });              
                 
-                element.addClass("pimcore_iframe_mask");
+                element.addCls("pimcore_iframe_mask");
             }
         }
         catch (e) {
