@@ -83,7 +83,7 @@ footer .links a {
     margin-bottom: 20px;
 
     /* Negative margin to pull up carousel. 90px is roughly margins and height of navbar. */
-    margin-top: -90px;
+    margin-top: -91px;
     height: 400px;
 }
 
