@@ -219,7 +219,7 @@ class Actions {
     public function setRedirectUrl($redirectUrl)
     {
         if(is_string($redirectUrl)) {
-            if($doc = Document::getByPath($redirectUrl)) {
+            if($doc = Model\Document::getByPath($redirectUrl)) {
                 $redirectUrl = $doc->getId();
             }
         }
