@@ -171,7 +171,7 @@ pimcore.element.dependencies = Class.create({
             store: this.requiredByStore,
             columns: [
                 {header: "ID", sortable: true, dataIndex: 'id'},
-                {header: t("path"), sortable: true, dataIndex: 'path', },
+                {header: t("path"), sortable: true, dataIndex: 'path', flex: 1},
                 {header: t("type"), sortable: true, dataIndex: 'type'},
                 {header: t("subtype"), sortable: true, dataIndex: 'subtype'}
             ],
