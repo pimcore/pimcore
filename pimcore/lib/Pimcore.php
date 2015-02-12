@@ -119,6 +119,7 @@ class Pimcore {
             $front->registerPlugin(new Controller\Plugin\Analytics(), 798);
             $front->registerPlugin(new Controller\Plugin\TagManagement(), 804);
             $front->registerPlugin(new Controller\Plugin\Targeting(), 805);
+            $front->registerPlugin(new Controller\Plugin\EuCookieLawNotice(), 807);
             $front->registerPlugin(new Controller\Plugin\HttpErrorLog(), 850);
             $front->registerPlugin(new Controller\Plugin\ContentLog(), 851);
             $front->registerPlugin(new Controller\Plugin\Cache(), 901); // for caching

@@ -705,6 +705,11 @@ pimcore.settings.system = Class.create({
                                         });
                                     }
                                 }
+                            },{
+                                xtype: "checkbox",
+                                fieldLabel: t("show_cookie_notice"),
+                                name: "general.show_cookie_notice",
+                                checked: this.getValue("general.show_cookie_notice")
                             }
                         ]
                     },

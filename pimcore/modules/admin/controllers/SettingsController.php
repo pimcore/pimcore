@@ -366,6 +366,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
                 "logrecipient" => $values["general.logrecipient"],
                 "viewSuffix" => $values["general.viewSuffix"],
                 "instanceIdentifier" => $values["general.instanceIdentifier"],
+                "show_cookie_notice" => $values["general.show_cookie_notice"],
             ),
             "database" => $oldValues["database"], // db cannot be changed here
             "documents" => array(
