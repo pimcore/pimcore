@@ -28,7 +28,7 @@
         <logrecipient/>
         <viewSuffix/>
         <instanceIdentifier/>
-        <show_cookie_notice>1</show_cookie_notice>
+        <show_cookie_notice/>
     </general>
     <database>
         <adapter>Mysqli</adapter>
