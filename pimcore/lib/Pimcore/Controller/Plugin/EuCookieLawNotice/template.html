@@ -17,10 +17,8 @@
 
     #pc-cookie-notice #pc-icon {
         position: absolute;
-        top: 0;
+        top: 5px;
         left: 5px;
-        font-size: 20px;
-        line-height: 26px;
     }
 
     #pc-cookie-notice #pc-message {
@@ -39,12 +37,32 @@
         background: #008d4c;
         border-radius: 2px;
         border:1px solid #000;
+        padding: 1px 5px;
+    }
+
+    @media (max-width: 750px) {
+        #pc-cookie-notice #pc-icon {
+            display: none;
+        }
+
+        #pc-cookie-notice #pc-message {
+            padding-left: 5px;
+        }
+
+        #pc-cookie-notice #pc-button {
+            right:5px;
+            top:5px;
+        }
+
+        #pc-cookie-notice #pc-button button {
+            padding: 5px 3px;
+        }
     }
 
 </style>
 
 <div id="pc-cookie-notice">
-    <div id="pc-icon">&#9654;</div>
+    <div id="pc-icon">&#9733;</div>
     <div id="pc-message">
         %text% %link%
     </div>
