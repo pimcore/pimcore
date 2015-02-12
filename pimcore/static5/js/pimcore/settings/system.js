@@ -288,7 +288,8 @@ pimcore.settings.system = Class.create({
                                     xtype: "button",
                                     iconCls: "pimcore_icon_add",
                                     handler: function () {
-                                        this.addLanguage(Ext.get("system_settings_general_languageSelectio").getValue());
+                                        var combo = Ext.getCmp("system_settings_general_languageSelection");
+                                        this.addLanguage(combo.getValue());
                                     }.bind(this)
                                 }]
                             }, {
