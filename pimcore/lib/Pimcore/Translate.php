@@ -184,6 +184,12 @@ class Translate extends \Zend_Translate_Adapter {
         } else {
             // look for a fallback translation
             foreach(Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
+
+                // check if data for fallback language is loaded, if not force it
+                if(empty($this->_translate[$fallbackLanguage])) {
+                    $this->_loadTranslationData(null,$fallbackLanguage);
+                }
+
                 if (!empty($this->_translate[$fallbackLanguage][$messageId])) {
                     return $this->_translate[$fallbackLanguage][$messageId];
                 }
