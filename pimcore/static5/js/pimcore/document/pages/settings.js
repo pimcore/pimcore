@@ -136,7 +136,7 @@ pimcore.document.pages.settings = Class.create({
                     contentValue = "";
                 }
 
-                var count = this.metaDataPanel.findByType("button").length+1;
+                var count = this.metaDataPanel.query("button").length+1;
 
                 var combolisteners = {
                     "afterrender": function (el) {

@@ -146,7 +146,6 @@ pimcore.settings.system = Class.create({
                     labelWidth: 250
 
                 },
-                layout: "pimcoreform",
                 buttons: [
                     {
                         text: "Save",
