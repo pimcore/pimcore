@@ -189,7 +189,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     store: [["JPEG", "JPEG"],["PNG","PNG"]],
                     mode: "local",
                     value: "JPEG",
-                    width: 80
+                    width: 180
                 }, {
                     xtype: "numberfield",
                     name: "width",
