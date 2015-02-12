@@ -32,7 +32,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
      * @param $objectId
      */
     protected function deleteFromStoreTable($objectId) {
-        $this->db->delete($this->getStoreTableName(), "id = " . $this->db->quote($objectId) . " AND tenant = " . $this->db->quote($this->name));
+        $this->db->delete($this->getStoreTableName(), "id = " . $this->db->quote((string)$objectId) . " AND tenant = " . $this->db->quote($this->name));
     }
 
 
@@ -190,7 +190,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
                 if(!$currentEntry) {
                     $this->db->insert($this->getStoreTableName(), $insertData);
                 } else if($currentEntry['crc_current'] != $crc) {
-                    $this->db->update($this->getStoreTableName(), $insertData, "id = " . $this->db->quote($subObjectId) . " AND tenant = " . $this->db->quote($this->name));
+                    $this->db->update($this->getStoreTableName(), $insertData, "id = " . $this->db->quote((string)$subObjectId) . " AND tenant = " . $this->db->quote($this->name));
                 } else if($currentEntry['in_preparation_queue']) {
                     $this->db->query("UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 0, preparation_worker_timestamp = 0, preparation_worker_id = null WHERE id = ? AND tenant = ?", array($subObjectId, $this->name));
                 }
@@ -219,11 +219,17 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
      */
     public function fillupPreparationQueue(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
         if($object instanceof Object_Concrete) {
-            $updateStatement =
-                "UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 1 WHERE tenant = ? AND id IN
+
+            //need check, if there are sub objects because update on empty result set is too slow
+            $objects = $this->db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", array($object->getFullPath() . "/%"));
+            if($objects) {
+                $updateStatement =
+                    "UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 1 WHERE tenant = ? AND id IN
                  (SELECT o_id FROM objects WHERE o_path LIKE ?)";
 
-            $this->db->query($updateStatement, array($this->name, $object->getFullPath() . "/%"));
+                $this->db->query($updateStatement, array($this->name, $object->getFullPath() . "/%"));
+            }
+
         }
     }
 
