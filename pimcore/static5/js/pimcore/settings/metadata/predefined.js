@@ -368,12 +368,12 @@ pimcore.settings.metadata.predefined = Class.create({
     },
 
     updateRows: function (event) {
-        var rows = Ext.get(this.grid.getEl().dom).query(".x-grid3-row");
+        var rows = Ext.get(this.grid.getEl().dom).query(".x-grid-row");
 
         for (var i = 0; i < rows.length; i++) {
 
             try {
-                var list = Ext.get(rows[i]).query(".x-grid3-cell-first div div");
+                var list = Ext.get(rows[i]).query(".x-grid-cell-first div div");
                 var firstItem = list[0];
                 if (!firstItem) {
                     continue;
@@ -402,8 +402,12 @@ pimcore.settings.metadata.predefined = Class.create({
                             return this.getEl();
                         },
 
-                        onNodeOver : function(dataRow, target, dd, e, data) {
-                            if(dataRow.type == data.node.attributes.elementType) {
+                        onNodeOver: function(dataRow, target, dd, e, data) {
+
+                            var record = data.records[0];
+                            var data = record.data;
+
+                            if(dataRow.type == data.elementType) {
                                 return Ext.dd.DropZone.prototype.dropAllowed;
                             }
                             return Ext.dd.DropZone.prototype.dropNotAllowed;
@@ -413,16 +417,19 @@ pimcore.settings.metadata.predefined = Class.create({
 
                             var rec = this.grid.getStore().getById(recordid);
 
-                            if(data.node.attributes.elementType != rec.get("type")) {
+                            var record = data.records[0];
+                            var data = record.data;
+
+                            if(data.elementType != rec.get("type")) {
                                 return false;
                             }
 
 
-                            rec.set("data", data.node.attributes.path);
+                            rec.set("data", data.path);
                             rec.set("all",{
                                 data: {
-                                    id: data.node.attributes.id,
-                                    type: data.node.attributes.type
+                                    id: data.id,
+                                    type: data.type
                                 }
                             });
 
