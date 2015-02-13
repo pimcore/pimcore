@@ -21,7 +21,6 @@ pimcore.settings.email.log = Class.create({
         this.document = document;
 
         this.filterField = new Ext.form.TextField({
-            xtype: "textfield",
             width: 200,
             style: "margin: 0 10px 0 0;",
             enableKeyEvents: true,
@@ -335,13 +334,17 @@ pimcore.settings.email.log = Class.create({
 
 
 
-       this.store = new Ext.data.JsonStore({
+       this.store = new Ext.data.Store({
             proxy: {
                url: "/admin/email/email-logs/",
                type: 'ajax',
                 extraParams: {
                     limit: itemsPerPage,
                     documentId: this.document ? this.document.id : null
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: 'data'
                 }
             },
             remoteSort: true,
