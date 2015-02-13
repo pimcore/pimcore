@@ -22,19 +22,25 @@ pimcore.settings.user.workspace.language = Class.create({
     },
 
     getLayout: function() {
-        var data = [];
+        var storeData = [];
         var nrOfLanguages = pimcore.settings.websiteLanguages.length;
         for (var i = 0; i < nrOfLanguages; i++) {
             var language = pimcore.settings.websiteLanguages[i];
-            data.push([language, pimcore.available_languages[language]]);
+            storeData.push([language, pimcore.available_languages[language]]);
         }
+
+        var store = Ext.create('Ext.data.ArrayStore', {
+            fields: ['id', 'text'],
+            data: storeData
+        });
 
 
         var options = {
             name: "languages",
             triggerAction: "all",
             editable: false,
-            store: data,
+            store: store,
+            valueField: "id",
             hideLabel: true,
             width: 350,
             height: 480,
@@ -45,7 +51,6 @@ pimcore.settings.user.workspace.language = Class.create({
         this.box = new Ext.ux.form.MultiSelect(options);
 
         this.window = new Ext.Panel({
-            xtype: "form",
             bodyStyle: "padding: 10px;",
             items: [this.box]
         });

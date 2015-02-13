@@ -24,7 +24,8 @@ pimcore.settings.user.workspace.customlayouts = Class.create({
     },
 
     getLayout: function() {
-        var store = [];
+
+        var storeData = [];
         var i;
         for (i = 0; i < this.allLayouts.length; i++) {
             var name = this.allLayouts[i].name;
@@ -33,15 +34,21 @@ pimcore.settings.user.workspace.customlayouts = Class.create({
             } else {
                 name = "&nbsp;&nbsp;&nbsp;" + name;
             }
-            store.push([this.allLayouts[i].id, name]);
+            storeData.push([this.allLayouts[i].id, name]);
         }
+
+        var store = Ext.create('Ext.data.ArrayStore', {
+            fields: ['id', 'text'],
+            data: storeData
+        });
+
 
         var options = {
             triggerAction: "all",
             editable: false,
             store: store,
             valueField: "id",
-            displayField: "name",
+            //displayField: "name",
             hideLabel: true,
             width: 330,
             height: 470,
@@ -51,7 +58,6 @@ pimcore.settings.user.workspace.customlayouts = Class.create({
         this.box = new Ext.ux.form.MultiSelect(options);
 
         this.window = new Ext.Panel({
-            xtype: "form",
             bodyStyle: "padding: 10px;",
             items: [this.box],
             autoScroll: true
