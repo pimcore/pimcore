@@ -55,15 +55,31 @@ pimcore.settings.metadata.predefined = Class.create({
     getRowEditor: function () {
         var itemsPerPage = 20;
 
+        var url =  '/admin/settings/metadata?';
+
         var proxy = {
             type: 'ajax',
-            url: '/admin/settings/metadata',
             reader: {
                 type: 'json',
                 rootProperty: 'data'
             },
             writer: {
-                type: 'json'
+                type: 'json',
+                writeAllFields: true,
+                rootProperty: 'data',
+                encode: 'true'
+            },
+            api: {
+                create  : url + "xaction=create",
+                read    : url + "xaction=read",
+                update  : url + "xaction=update",
+                destroy : url + "xaction=destroy"
+            },
+            actionMethods: {
+                create : 'POST',
+                read   : 'POST',
+                update : 'POST',
+                destroy: 'POST'
             },
             extraParams: {
                 limit: itemsPerPage,
@@ -77,7 +93,7 @@ pimcore.settings.metadata.predefined = Class.create({
             proxy: proxy,
             remoteSort: true,
             autoLoad: true,
-
+            autoSync: true,
             listeners: {
                 exception : function(proxy, mode, action, options, response) {
                     Ext.Msg.show({
@@ -447,10 +463,10 @@ pimcore.settings.metadata.predefined = Class.create({
         }
     },
 
-    getCellEditor: function (record, defaultField ) {
+    getCellEditor: function (record) {
 
         var store = this.grid.getStore();
-        var data = store.getAt(rowIndex).data;
+        var data = record.data;
 
         var type = data.type;
         var property;
@@ -464,7 +480,6 @@ pimcore.settings.metadata.predefined = Class.create({
             property = new Ext.form.TextField({
                 disabled: true,
                 propertyGrid: this.grid,
-                myRowIndex: rowIndex,
                 style: {
                     visibility: "hidden"
                 }
@@ -475,7 +490,7 @@ pimcore.settings.metadata.predefined = Class.create({
             return null;
         }
 
-        return new Ext.grid.GridEditor(property);
+        return property;
     }
 
 
