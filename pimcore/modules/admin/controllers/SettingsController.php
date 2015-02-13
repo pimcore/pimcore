@@ -141,7 +141,12 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
             if ($this->getParam("xaction") == "destroy") {
 
-                $id = \Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
+                if (\Pimcore\Tool\Admin::isExtJS5()) {
+                    $id = $data["id"];
+                } else {
+                    $id = $data;
+                }
 
                 $property = Property\Predefined::getById($id);
                 $property->delete();
