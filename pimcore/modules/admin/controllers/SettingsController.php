@@ -580,7 +580,14 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
             }
 
             if ($this->getParam("xaction") == "destroy") {
-                $route = Staticroute::getById($data);
+                $data = \Zend_Json::decode($this->getParam("data"));
+                if (\Pimcore\Tool\Admin::isExtJS5()) {
+                    $id = $data["id"];
+                } else {
+                    $id = $data;
+                }
+
+                $route = Staticroute::getById($id);
                 $route->delete();
 
                 $this->_helper->json(array("success" => true, "data" => array()));
@@ -672,8 +679,12 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
             $this->checkPermission("redirects");
 
             if ($this->getParam("xaction") == "destroy") {
-
-                $id = \Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
+                if (\Pimcore\Tool\Admin::isExtJS5()) {
+                    $id = $data["id"];
+                } else {
+                    $id = $data;
+                }
 
                 $redirect = Redirect::getById($id);
                 $redirect->delete();
@@ -780,7 +791,12 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
             if ($this->getParam("xaction") == "destroy") {
 
-                $id = \Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
+                if (\Pimcore\Tool\Admin::isExtJS5()) {
+                    $id = $data["id"];
+                } else {
+                    $id = $data;
+                }
 
                 $glossary = Glossary::getById($id);
                 $glossary->delete();
@@ -1319,7 +1335,13 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
                 }
 
                 if ($this->getParam("xaction") == "destroy") {
-                    $setting = WebsiteSetting::getById($data);
+                    if (\Pimcore\Tool\Admin::isExtJS5()) {
+                        $id = $data["id"];
+                    } else {
+                        $id = $data;
+                    }
+
+                    $setting = WebsiteSetting::getById($id);
                     $setting->delete();
 
                     $this->_helper->json(array("success" => true, "data" => array()));
