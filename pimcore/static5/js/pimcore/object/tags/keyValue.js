@@ -548,13 +548,12 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         this.dataChanged = true;
     },
 
-    getCellEditor: function (col, rowIndex) {
+    getCellEditor: function (col, record) {
         var parent = this;
         if (col == "metadata") {
             property = new Ext.form.TextField();
         } else {
-            var store = this.store;
-            var data = store.getAt(rowIndex).data;
+            var data = record.data;
 
             var type = data.type;
             var property;
