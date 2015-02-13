@@ -149,23 +149,31 @@ abstract class AbstractModel {
      * @param $className
      */
     protected function determineResourceClass ($className) {
-        $fileToInclude = str_replace(["_","\\"], "/", $className) . ".php";
-        $fileToInclude = preg_replace("@^Pimcore/Model/@", "", $fileToInclude);
 
-        if($fileToInclude == "Resource.php" || $fileToInclude == "Resource/Mysql.php") {
-            return;
-        }
+        $filesToInclude = [];
 
-        if (File::isIncludeable($fileToInclude)) {
-            include_once($fileToInclude);
-            if(Tool::classExists($className)) {
-                return $className;
+        $filePath = str_replace(["_","\\"], "/", $className) . ".php";
+        $filesToInclude[] = preg_replace("@^Pimcore/Model/@", "", $filePath);
+        $filesToInclude[] = $filePath;
+
+        foreach($filesToInclude as $fileToInclude) {
+            if($fileToInclude == "Resource.php" || $fileToInclude == "Resource/Mysql.php") {
+                return;
             }
-        } else {
-            \Logger::debug("Couldn't find resource implementation " . $className . " for " . get_class($this));
+
+            if (File::isIncludeable($fileToInclude)) {
+                include_once($fileToInclude);
+                if(Tool::classExists($className)) {
+                    return $className;
+                }
+            } else {
+                \Logger::debug("Couldn't find resource implementation " . $className . " for " . get_class($this));
+            }
         }
+
         return;
     }
+
 
     /**
      * @param  $class
