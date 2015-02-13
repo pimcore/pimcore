@@ -23,7 +23,7 @@ pimcore.settings.website = Class.create({
 
     activate:function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_website_settings");
+        tabPanel.setActiveItem("pimcore_website_settings");
     },
 
 
@@ -386,10 +386,9 @@ pimcore.settings.website = Class.create({
             + 'height: 16px;" data-id="' + record.get("id") + '">&nbsp;</div>';
     },
 
-    getCellEditor: function (rowIndex) {
+    getCellEditor: function (record) {
 
-        var store = this.grid.getStore();
-        var data = store.getAt(rowIndex).data;
+        var data = record.data;
         var value = data.all;
 
         var type = data.type;
@@ -435,7 +434,8 @@ pimcore.settings.website = Class.create({
                 var propertyName = Ext.get(rows[i]).query(".x-grid-cell-first div div")[0].getAttribute("data-id");
                 var storeIndex = this.grid.getStore().find("id", propertyName);
 
-                var data = this.grid.getStore().getAt(storeIndex).data;
+                var record = this.grid.getStore().getAt(storeIndex);
+                var data = record.data;
 
                 if (data.type == "document" || data.type == "asset" || data.type == "object") {
 
@@ -578,7 +578,7 @@ pimcore.settings.website = Class.create({
         });
 
         store.add(newRecord);
-        this.grid.getView().refresh();
+        //this.grid.getView().refresh();
     }
 
 });

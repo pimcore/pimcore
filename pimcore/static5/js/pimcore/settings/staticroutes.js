@@ -22,7 +22,7 @@ pimcore.settings.staticroutes = Class.create({
 
     activate:function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_staticroutes");
+        tabPanel.setActiveItem("pimcore_staticroutes");
     },
 
     getTabPanel:function () {
