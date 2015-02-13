@@ -342,30 +342,25 @@ class View extends \Zend_View {
     public function __call($method, $arguments) {
 
         $class = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst(strtolower($method));
-        $tagFile = "Document/Tag/" . ucfirst(strtolower($method)) . ".php";
 
-        if (File::isIncludeable($tagFile)) {
-            include_once($tagFile);
+        $classFound = true;
+        if(!\Pimcore\Tool::classExists($class)) {
+            $oldStyleClass = "Document_Tag_" . ucfirst(strtolower($method));
+            if(!\Pimcore\Tool::classExists($oldStyleClass)) {
+                $classFound = false;
+            }
+        }
 
-            $classFound = true;
-            if(!\Pimcore\Tool::classExists($class)) {
-                $oldStyleClass = "Document_Tag_" . ucfirst(strtolower($method));
-                if(!\Pimcore\Tool::classExists($oldStyleClass)) {
-                    $classFound = false;
-                }
+        if ($classFound) {
+            if(!isset($arguments[0])) {
+                throw new \Exception ("You have to set a name for the called tag (editable): " . $method);
             }
 
-            if ($classFound) {
-                if(!isset($arguments[0])) {
-                    throw new \Exception ("You have to set a name for the called tag (editable): " . $method);
-                }
-
-                // set default if there is no editable configuration provided
-                if(!isset($arguments[1])) {
-                    $arguments[1] = array();
-                }
-                return $this->tag($method, $arguments[0], $arguments[1]);
+            // set default if there is no editable configuration provided
+            if(!isset($arguments[1])) {
+                $arguments[1] = array();
             }
+            return $this->tag($method, $arguments[0], $arguments[1]);
         }
 
         if ($this->document instanceof Model\Document) {
