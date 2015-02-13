@@ -41,13 +41,13 @@ pimcore.object.helpers.classTree = Class.create({
                 isTarget: true
             },
             viewConfig: {
-                plugins: {
-                    ptype: 'treeviewdragdrop',
-                    enableDrag: true,
-                    enableDrop: false,
-                    //appendOnly: true,
-                    ddGroup: "columnconfigelement"
-                }
+                    plugins: {
+                        ptype: 'treeviewdragdrop',
+                        enableDrag: true,
+                        enableDrop: false,
+                        //appendOnly: true,
+                        ddGroup: "columnconfigelement"
+                    }
             }
         });
 

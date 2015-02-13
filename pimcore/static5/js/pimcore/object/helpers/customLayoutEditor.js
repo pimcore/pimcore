@@ -267,7 +267,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     getSelectionPanel: function () {
         if(!this.selectionPanel) {
 
-            this.selectionPanel = new Ext.tree.TreePanel({
+            this.selectionPanel = Ext.create('Ext.tree.Panel', {
                 root: {
                     hidden: true
                 },
@@ -279,20 +279,9 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 split:true,
                 autoScroll:true,
                 listeners:{
-                    beforenodedrop: function(e) {
-                        if(e.source.tree.el != e.target.ownerTree.el) {
-                            if(e.dropNode.attributes.type != "layout"
-                                && this.selectionPanel.getRootNode().findChild("key", e.dropNode.attributes.key)) {
-                                e.cancel= true;
-                            } else {
-                                var n = e.dropNode; // the node that was dropped
+                    itemcontextmenu: this.onTreeNodeContextmenu.bind(this),
+                    itemclick: this.onTreeNodeClick.bind(this)
 
-                                var copy = this.recursiveCloneNode(n);
-                                e.dropNode = copy; // assign the copy as the new dropNode
-                            }
-                        }
-                    }.bind(this),
-                    contextmenu: this.onTreeNodeContextmenu
                 },
                 viewConfig: {
                     plugins: {
@@ -302,6 +291,33 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 }
             });
         }
+
+        this.selectionPanel.getView().on({
+            beforedrop: {
+                fn: function (node, data, overModel, dropPosition, dropHandlers, eOpts) {
+                    var target = eOpts.options.target;
+                    var source = data.view;
+
+                    if (target != source) {
+                        var record = data.records[0];
+                        if (record.data.type != "layout"
+                            && this.selectionPanel.getRootNode().findChild("key", record.data.key)) {
+                            dropHandlers.cancelDrop();
+                        } else {
+                            var n = record;
+
+                            var copy = this.recursiveCloneNode(record);
+                            data.records = [copy]; // assign the copy as the new dropNode
+                        }
+                    }
+                }.bind(this),
+                options: {
+                    target: this.selectionPanel
+                }
+            }
+        });
+
+
 
         return this.selectionPanel;
     },
@@ -313,7 +329,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             } else {
                 // save root node data
                 if (this.rootPanel) {
-                    var items = this.rootPanel.findBy(function() {
+                    var items = this.rootPanel.queryBy(function() {
                         return true;
                     });
 
@@ -329,10 +345,9 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     recursiveCloneNode: function(n) {
         var config =  // copy it
-            Ext.apply({}, n.attributes);
+            Ext.apply({}, n.data);
 
-        var copy = new Ext.tree.TreeNode(config);
-        copy.addListener("click", this.onTreeNodeClick);
+        var copy = n.createNode(config);
 
         if (n.hasChildNodes()) {
             var childs = n.childNodes;
@@ -345,8 +360,9 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         return copy;
     },
 
-    onTreeNodeContextmenu: function (node) {
-        node.select();
+    onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
+        e.stopEvent();
+        tree.select();
 
         var menu = new Ext.menu.Menu();
 
@@ -364,8 +380,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
         var parentType = "root";
 
-        if (node.attributes.object) {
-            parentType = node.attributes.object.type;
+        if (record.data.object) {
+            parentType = record.data.type;
         }
 
         var childsAllowed = false;
@@ -384,7 +400,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                         layoutMenu.push({
                             text: pimcore.object.classes.layout[layouts[i]].prototype.getTypeName(),
                             iconCls: pimcore.object.classes.layout[layouts[i]].prototype.getIconClass(),
-                            handler: node.attributes.reference.addLayoutChild.bind(node, layouts[i], null, true)
+                            handler: this.addLayoutChild.bind(this, record, layouts[i], null, true)
                         });
                     }
                 }
@@ -404,7 +420,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         dataMenu.push({
             text: pimcore.object.classes.data.localizedfields.prototype.getTypeName(),
             iconCls: pimcore.object.classes.data.localizedfields.prototype.getIconClass(),
-            handler: node.attributes.reference.addDataChild.bind(node, "localizedfields", {name: "localizedfields"},
+            handler: this.addDataChild.bind(this, record, "localizedfields", {name: "localizedfields"},
                 null, true, true)
         });
 
@@ -419,14 +435,13 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             menu.add(new Ext.menu.Item({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",
-                handler: function(node) {
-                    // node.attributes.reference.selectionPanel.getRootNode().removeChild( node, true);
-                    node.remove(true);
-                }.bind(this, node)
+                handler: function(record) {
+                    record.remove();
+                }.bind(this, record)
             }));
         }
 
-        menu.show(node.ui.getEl());
+        menu.showAt(e.pageX, e.pageY);
     },
 
 
@@ -541,15 +556,10 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             id: "0",
             root: true,
             text: t("base"),
-            reference: this,
             leaf: false,
             isTarget: true,
             expanded: true,
-            draggable: isCustom,
-            listeners: {
-                click: this.onTreeNodeClick
-            }
-
+            draggable: isCustom
         };
 
         if (isCustom) {
@@ -624,21 +634,20 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             type: "layout",
             draggable: this.layoutDraggable,
             iconCls: "pimcore_icon_" + type,
-            text: nodeLabel
+            text: nodeLabel,
+            leaf: true
         };
 
 
-        if (addListener) {
-            newNode.addListener("click", this.onTreeNodeClick);
-        }
-
         newNode = record.appendChild(newNode);
+
+        //if (addListener) {
+        //    newNode.addListener("click", this.onTreeNodeClick);
+        //}
+
         newNode.data.editor = new pimcore.object.classes.layout[type](newNode, initData);
 
-
-        if(this.rendered) {
-            record.expand();
-        }
+        record.expand();
 
         return newNode;
     },
@@ -673,9 +682,9 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             iconCls: "pimcore_icon_" + type
         };
 
-        if (addListener) {
-            newNode.addListener("click", this.onTreeNodeClick);
-        }
+        //if (addListener) {
+        //    newNode.addListener("click", this.onTreeNodeClick);
+        //}
 
         newNode = record.appendChild(newNode);
         newNode.data.editor = new pimcore.object.classes.data[type](newNode, initData);
@@ -687,31 +696,31 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         return newNode;
     },
 
-    onTreeNodeClick: function () {
+    onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
 
-        this.attributes.reference.saveCurrentNode();
-        this.attributes.reference.editPanel.removeAll();
+        this.saveCurrentNode();
+        this.editPanel.removeAll();
 
-        if (this.attributes.object) {
+        if (record.data.object) {
 
-            if (this.attributes.object.datax.locked) {
+            if (record.data.object.datax.locked) {
                 return;
             }
 
-            if (typeof(this.attributes.object.setInCustomLayoutEditor) == "function") {
-                this.attributes.object.setInCustomLayoutEditor(true);
+            if (typeof(record.data.object.setInCustomLayoutEditor) == "function") {
+                record.data.object.setInCustomLayoutEditor(true);
             }
-            this.attributes.reference.editPanel.add(this.attributes.object.getLayout());
-            this.attributes.reference.setCurrentNode(this.attributes.object);
+            this.editPanel.add(this.attributes.object.getLayout());
+            this.setCurrentNode(this.attributes.object);
         }
 
-        if (this.attributes.root) {
-            var rootPanel = this.attributes.reference.getRootPanel();
-            this.attributes.reference.editPanel.add(rootPanel);
-            this.attributes.reference.setCurrentNode("root");
+        if (record.data.root) {
+            var rootPanel = this.getRootPanel();
+            this.editPanel.add(rootPanel);
+            this.setCurrentNode("root");
         }
 
-        this.attributes.reference.editPanel.doLayout();
+        this.editPanel.doLayout();
     },
 
     setCurrentNode: function (cn) {
