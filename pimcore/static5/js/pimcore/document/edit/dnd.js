@@ -96,7 +96,9 @@ pimcore.document.edit.dnd = Class.create({
         scrollTop = doc.documentElement.scrollTop || doc.body.scrollTop;
         scrollLeft = doc.documentElement.scrollLeft || doc.body.scrollLeft;
 
-        e.xy = [e.xy[0] + this.iframeOffset[0] - scrollLeft, e.xy[1] + this.iframeOffset[1] - scrollTop];
+        var xy = e.getXY();
+        e.pageX = e.pageX + this.iframeOffset[0] - scrollLeft;
+        e.pageY = e.pageY + this.iframeOffset[1] - scrollTop;
     },
     
     setIframeOffset: function () {
@@ -104,7 +106,7 @@ pimcore.document.edit.dnd = Class.create({
             this.iframeOffset = parent.Ext.get('document_iframe_'
                                                     + window.editWindow.document.id).getOffsetsTo(parent.Ext.getBody());
         } catch (e) {
-            
+            console.log(e);
         }
     },
 
