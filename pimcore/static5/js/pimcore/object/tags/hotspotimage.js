@@ -123,7 +123,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         this.panel = new Ext.Panel({
             width: this.fieldConfig.width,
             height: this.fieldConfig.height-27,
-            cls: pimcore_droptarget_image,
+            cls: "pimcore_droptarget_image",
             bodyCls: "pimcore_droptarget_image pimcore_image_container",
             bodyStyle: "text-align: center; "
         });
