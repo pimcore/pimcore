@@ -367,11 +367,11 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             },
 
             onNodeEnter : function(target, dd, e, data){
-                Ext.fly(target).addClass('pimcore_area_dropzone_hover');
+                Ext.fly(target).addCls('pimcore_area_dropzone_hover');
             },
 
             onNodeOut : function(target, dd, e, data){
-                Ext.fly(target).removeClass('pimcore_area_dropzone_hover');
+                Ext.fly(target).removeCls('pimcore_area_dropzone_hover');
             },
 
             onNodeOver : function(target, dd, e, data){

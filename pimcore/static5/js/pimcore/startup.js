@@ -483,9 +483,11 @@ Ext.onReady(function () {
                             enableTabScroll:true,
                             hideMode:"offsets",
                             cls:"tab_panel",
-                            listeners: {
-                                add: pimcore.helpers.handleTabRightClick
-                            }
+                            plugins: Ext.create('Ext.ux.TabCloseMenu', {
+                                showCloseAll: false,
+                                showCloseOthers: false,
+                                extraItemsTail: pimcore.helpers.getMainTabMenuItems()
+                            })
                         })
                         ,
                         {

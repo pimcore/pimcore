@@ -1555,56 +1555,94 @@ pimcore.helpers.insertTextAtCursorPosition = function (text) {
 };
 
 
-pimcore.helpers.handleTabRightClick = function (tabPanel, el, index) {
+
+pimcore.helpers.getMainTabMenuItems = function () {
+
+    items = [{
+        text: t('close_others'),
+        iconCls: "",
+        handler: function (item) {
+            pimcore.helpers.closeAllElements(el);
+            // clear the opentab store, so that also non existing elements are flushed
+            pimcore.helpers.clearOpenTab();
+        }.bind(this)
+    }, {
+        text: t('close_unmodified'),
+        iconCls: "",
+        handler: function (item) {
+            pimcore.helpers.closeAllUnmodified();
+            // clear the opentab store, so that also non existing elements are flushed
+            pimcore.helpers.clearOpenTab();
+        }.bind(this)
+    }];
 
 
-    if(Ext.get(el.tabEl)) {
-        Ext.get(el.tabEl).on("contextmenu", function (e) {
+    // every tab panel can get this
+    items.push({
+        text: t('close_all'),
+        iconCls: "",
+        handler: function (item) {
+            pimcore.helpers.closeAllElements(null,tabPanel);
+            // clear the opentab store, so that also non existing elements are flushed
+            pimcore.helpers.clearOpenTab();
+        }.bind(this)
+    });
 
-            var items = [];
-
-            // this is only for the main tab panel
-            if(tabPanel.getId() == "pimcore_panel_tabs") {
-                items = [{
-                    text: t('close_others'),
-                    iconCls: "",
-                    handler: function (item) {
-                        pimcore.helpers.closeAllElements(el);
-                        // clear the opentab store, so that also non existing elements are flushed
-                        pimcore.helpers.clearOpenTab();
-                    }.bind(this)
-                }, {
-                    text: t('close_unmodified'),
-                    iconCls: "",
-                    handler: function (item) {
-                        pimcore.helpers.closeAllUnmodified();
-                        // clear the opentab store, so that also non existing elements are flushed
-                        pimcore.helpers.clearOpenTab();
-                    }.bind(this)
-                }];
-            }
-
-            // every tab panel can get this
-            items.push({
-                text: t('close_all'),
-                iconCls: "",
-                handler: function (item) {
-                    pimcore.helpers.closeAllElements(null,tabPanel);
-                    // clear the opentab store, so that also non existing elements are flushed
-                    pimcore.helpers.clearOpenTab();
-                }.bind(this)
-            });
-
-
-            var menu = new Ext.menu.Menu({
-                items: items
-            });
-
-            menu.showAt(e.getXY());
-            e.stopEvent();
-        });
-    }
+    return items;
 };
+
+
+
+//pimcore.helpers.handleTabRightClick = function (tabPanel, el, index) {
+//
+//
+//    if(Ext.get(el.tab)) {
+//        Ext.get(el.tab).on("contextmenu", function (e) {
+//
+//            var items = [];
+//
+//            // this is only for the main tab panel
+//            if(tabPanel.getId() == "pimcore_panel_tabs") {
+//                items = [{
+//                    text: t('close_others'),
+//                    iconCls: "",
+//                    handler: function (item) {
+//                        pimcore.helpers.closeAllElements(el);
+//                        // clear the opentab store, so that also non existing elements are flushed
+//                        pimcore.helpers.clearOpenTab();
+//                    }.bind(this)
+//                }, {
+//                    text: t('close_unmodified'),
+//                    iconCls: "",
+//                    handler: function (item) {
+//                        pimcore.helpers.closeAllUnmodified();
+//                        // clear the opentab store, so that also non existing elements are flushed
+//                        pimcore.helpers.clearOpenTab();
+//                    }.bind(this)
+//                }];
+//            }
+//
+//            // every tab panel can get this
+//            items.push({
+//                text: t('close_all'),
+//                iconCls: "",
+//                handler: function (item) {
+//                    pimcore.helpers.closeAllElements(null,tabPanel);
+//                    // clear the opentab store, so that also non existing elements are flushed
+//                    pimcore.helpers.clearOpenTab();
+//                }.bind(this)
+//            });
+//
+//
+//            var menu = new Ext.menu.Menu({
+//                items: items
+//            });
+//
+//            menu.showAt(e.getXY());
+//            e.stopEvent();
+//        });
+//    }
+//};
 
 pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess, callbackProgress, callbackFailure) {
 
