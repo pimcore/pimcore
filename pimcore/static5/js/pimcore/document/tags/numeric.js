@@ -30,7 +30,7 @@ pimcore.document.tags.numeric = Class.create(pimcore.document.tag, {
         options.name = id + "_editable";
         options.decimalPrecision = 20;
 
-        this.element = new Ext.ux.form.SpinnerField(options);
+        this.element = new Ext.form.Number(options);
         this.element.render(id);
     },
 

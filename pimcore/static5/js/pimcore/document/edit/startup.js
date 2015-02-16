@@ -62,6 +62,7 @@ Ext.require([
     'Ext.dom.Element'
 ]);
 
+var dndManager;
 
 Ext.onReady(function () {
     var body = Ext.getBody();
@@ -78,7 +79,7 @@ Ext.onReady(function () {
 
     try {
         // init cross frame drag & drop handler
-        var dndManager = new pimcore.document.edit.dnd(parent.Ext, Ext.getBody(),
+        dndManager = new pimcore.document.edit.dnd(parent.Ext, Ext.getBody(),
             parent.Ext.get('document_iframe_' + window.editWindow.document.id));
     } catch (e) {
         console.log(e);
@@ -211,7 +212,9 @@ Ext.onReady(function () {
     editWindow.maskFrames();
 
     // enable the edit tab again
-    editWindow.loadMask.disable();
+    if (typeof editWindow.loadMask != 'undefined') {
+        editWindow.loadMask.disable();
+    }
 });
 
 

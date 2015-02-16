@@ -35,7 +35,7 @@ pimcore.document.tags.multiselect = Class.create(pimcore.document.tag, {
             options.listeners.change = this.reloadDocument;
         }
 
-        this.element = new Ext.ux.form.MultiSelect(options);
+        this.element = Ext.create('Ext.ux.form.MultiSelect', options);
 
         this.element.render(id);
     },

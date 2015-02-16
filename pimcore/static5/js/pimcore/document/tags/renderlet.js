@@ -22,6 +22,11 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
         this.name = name;
         this.options = this.parseOptions(options);
 
+
+        //TODO maybe there is a nicer way, the Panel doesn't like this
+        this.controller = options.controller;
+        delete(options.controller);
+
         this.data = {};
 
         if (!data) {
@@ -55,7 +60,7 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
             });
 
             this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
-            this.getBody().addClass("pimcore_tag_snippet_empty");
+            this.getBody().addCls("pimcore_tag_snippet_empty");
 
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
@@ -103,10 +108,11 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
 
     updateContent: function (path) {
 
-        this.getBody().removeClass("pimcore_tag_snippet_empty");
+        this.getBody().removeCls("pimcore_tag_snippet_empty");
         this.getBody().dom.innerHTML = '<br />&nbsp;&nbsp;Loading ...';
 
         var params = this.data;
+        params.controller = this.controller;
         Ext.apply(params, this.options);
 
         try {
@@ -151,7 +157,7 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
                     this.data = {};
                     this.getBody().update('');
                     this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
-                    this.getBody().addClass("pimcore_tag_snippet_empty");
+                    this.getBody().addCls("pimcore_tag_snippet_empty");
                     this.getBody().setHeight(height + "px");
 
                     if (this.options.reload) {
