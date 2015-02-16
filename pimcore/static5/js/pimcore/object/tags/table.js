@@ -135,8 +135,11 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
+        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 1
+        });
 
-        this.grid = new Ext.grid.EditorGridPanel({
+        this.grid = Ext.create('Ext.grid.Panel', {
             store: this.store,
             width: 700,
             height: 300,
@@ -145,6 +148,9 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             columnLines: true,
             clicksToEdit: 2,
             autoHeight: true,
+            plugins: [
+                this.cellEditing
+            ],
             tbar: [
                 {
                     iconCls: "pimcore_tag_table_addcol",
