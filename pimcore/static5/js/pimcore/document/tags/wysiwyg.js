@@ -109,11 +109,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
             this.ckeditor.on('focus', function () {
-                Ext.get(this.textarea).removeClass("pimcore_wysiwyg_inactive");
+                Ext.get(this.textarea).removeCls("pimcore_wysiwyg_inactive");
             }.bind(this));
 
             this.ckeditor.on('blur', function () {
-                Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
+                Ext.get(this.textarea).addCls("pimcore_wysiwyg_inactive");
             }.bind(this));
 
             this.ckeditor.on('change', this.checkValue.bind(this));
