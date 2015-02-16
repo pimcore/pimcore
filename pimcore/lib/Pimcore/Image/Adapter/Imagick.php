@@ -265,7 +265,15 @@ class Imagick extends Adapter {
             $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
         } else if (!in_array($imageColorspace, array(\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB))) {
             $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
+        } else {
+            // this is to handle embedded icc profiles in the RGB/sRGB colorspace
+            $profiles = $this->resource->getImageProfiles('*', false);
+            $has_icc_profile = (array_search('icc', $profiles) !== false);
+            if($has_icc_profile) {
+                $this->resource->profileImage('icc', self::getRGBColorProfile());
+            }
         }
+
         // this is a HACK to force grayscale images to be real RGB - truecolor, this is important if you want to use
         // thumbnails in PDF's because they do not support "real" grayscale JPEGs or PNGs
         // problem is described here: http://imagemagick.org/Usage/basics/#type
