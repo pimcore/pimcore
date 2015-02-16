@@ -624,7 +624,7 @@ pimcore.document.tree = Class.create({
                         iconCls: "pimcore_icon_lock_delete",
                         handler: function () {
                             this.updateDocument(record.data.id, {locked: null}, function () {
-                                this.tree.getRootNode().reload();
+                                this.refresh(this.tree.getRootNode());
                             }.bind(this));
                         }.bind(this)
                     });
@@ -634,7 +634,7 @@ pimcore.document.tree = Class.create({
                         iconCls: "pimcore_icon_lock_add",
                         handler: function () {
                             this.updateDocument(record.data.id, {locked: "self"}, function () {
-                                this.getRootNode().reload();
+                                this.refresh(this.tree.getRootNode());
                             }.bind(this));
                         }.bind(this)
                     });
@@ -646,7 +646,7 @@ pimcore.document.tree = Class.create({
                             handler: function () {
                                 this.updateDocument(this, tree, record, {locked: "propagate"},
                                     function () {
-                                        this.getRootNode().reload();
+                                        this.refresh(this.tree.getRootNode());
                                     }.bind(this));
                             }.bind(this)
                         });
@@ -666,7 +666,7 @@ pimcore.document.tree = Class.create({
                                     type: "document"
                                 },
                                 success: function () {
-                                    this.parentNode.reload();
+                                    this.refresh(this.parentNode);
                                 }.bind(this)
                             });
                         }.bind(this)
@@ -696,7 +696,7 @@ pimcore.document.tree = Class.create({
             menu.add(new Ext.menu.Item({
                 text: t('refresh'),
                 iconCls: "pimcore_icon_reload",
-                handler: this.reload.bind(this, record)
+                handler: this.refresh.bind(this, record)
             }));
         }
 
@@ -735,8 +735,10 @@ pimcore.document.tree = Class.create({
             } catch(e) {
                 pimcore.helpers.showNotification(t("error"), t("error_moving_document"), "error");
             }
-            oldParent.reload();
-            newParent.reload();
+
+            this.refresh(oldParent);
+            this.refresh(newParent);
+
             tree.loadMask.hide();
 
         }.bind(document, newParent, oldParent, tree));
@@ -834,7 +836,7 @@ pimcore.document.tree = Class.create({
 
         //this.tree.loadMask.hide();
         pimcore.helpers.removeTreeNodeLoadingIndicator("document", node.id);
-        node.reload();
+        this.refresh(node);
     },
 
     removeSite: function (tree, record) {
