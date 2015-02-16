@@ -160,8 +160,8 @@ pimcore.settings.system = Class.create({
                         collapsible: true,
                         collapsed: true,
                         autoHeight:true,
-                        //labelWidth: 250,
                         defaultType: 'textfield',
+                        defaults: {width: 450},
                         items :[
                             {
                                 fieldLabel: t('timezone'),
@@ -177,7 +177,7 @@ pimcore.settings.system = Class.create({
                             {
                                 fieldLabel: t("view_suffix"),
                                 xtype: "combo",
-                                width: 250,
+                                width: 450,
                                 //editable: true, // If typeAhead is enabled the combo must be editable: true -- please change one of those settings.
                                 name: "general.viewSuffix",
                                 value: this.getValue("general.viewSuffix"),
@@ -192,7 +192,7 @@ pimcore.settings.system = Class.create({
                                 xtype: "textfield",
                                 name: "general.php_cli",
                                 value: this.getValue("general.php_cli"),
-                                width: 300
+                                width: 600
                             },
                             {
                                 xtype:'combo',
@@ -213,7 +213,7 @@ pimcore.settings.system = Class.create({
                                 xtype: "textfield",
                                 name: "general.contactemail",
                                 value: this.getValue("general.contactemail"),
-                                width: 300
+                                width: 450
                             },
                             {
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
@@ -239,7 +239,7 @@ pimcore.settings.system = Class.create({
                                 xtype: "textfield",
                                 name: "general.instanceIdentifier",
                                 value: this.getValue("general.instanceIdentifier"),
-                                width: 300
+                                width: 450
                             },
                             {
                                 xtype: "displayfield",
@@ -259,7 +259,7 @@ pimcore.settings.system = Class.create({
                         autoHeight:true,
                         labelWidth: 150,
                         defaultType: 'textfield',
-                        defaults: {width: 150},
+                        defaults: {width: 300},
                         items :[{
                             xtype: "displayfield",
                             hideLabel: true,
@@ -325,9 +325,39 @@ pimcore.settings.system = Class.create({
                         defaults: {width: 600},
                         items :[
                             {
+                                fieldLabel: t("environment"),
+                                xtype: "combo",
+                                name: "general.environment",
+                                value: this.getValue("general.environment"),
+                                width: 400,
+                                store: [
+                                    ["production", t("production")],
+                                    ["stage", t("stage")],
+                                    ["test", t("test")],
+                                    ["development", t("development")],
+                                    ["local", t("local")]
+                                ],
+                                mode: "local",
+                                triggerAction: "all",
+                                listeners: {
+                                    "select": function (el) {
+                                        if(el.getValue() == "production") {
+                                            var ipField = Ext.getCmp("system.settings.general.debug_ip");
+                                            if(empty(ipField.getValue())) {
+                                                Ext.getCmp("system.settings.general.debug").setValue(false);
+                                            }
+
+                                            Ext.getCmp("system.settings.general.debugloglevel").setValue("error");
+                                            Ext.getCmp("system.settings.general.devmode").setValue(false);
+                                        }
+                                    }
+                                }
+                            },
+                            {
                                 fieldLabel: "DEBUG",
                                 xtype: "checkbox",
                                 name: "general.debug",
+                                id: "system_settings_general_debug",
                                 checked: this.getValue("general.debug"),
                                 listeners: {
                                     check: function (el, checked) {
@@ -393,6 +423,7 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: "debug.log Log-Level",
                                 xtype: "combo",
                                 name: "general.debugloglevel",
+                                width: 400,
                                 value: this.getValue("general.debugloglevel"),
                                 store: [
                                     ["debug", "DEBUG"],
@@ -411,7 +442,6 @@ pimcore.settings.system = Class.create({
                                 triggerAction: 'all',
                                 store: this.adminUsersStore,
                                 value: this.getValue("general.logrecipient"),
-                                width: 200,
                                 listWidth: 200,
                                 displayField: 'username',
                                 valueField: 'id',
@@ -955,49 +985,40 @@ pimcore.settings.system = Class.create({
                             {
                                 fieldLabel: t('absolute_path_to_ffmpeg_binary'),
                                 name: 'assets.ffmpeg',
-                                value: this.getValue("assets.ffmpeg"),
-                                width: 300
+                                value: this.getValue("assets.ffmpeg")
                             },{
                                 fieldLabel: t('absolute_path_to_ghostscript'),
                                 name: 'assets.ghostscript',
-                                value: this.getValue("assets.ghostscript"),
-                                width: 300
+                                value: this.getValue("assets.ghostscript")
                             },{
                                 fieldLabel: t('absolute_path_to_libreoffice'),
                                 name: 'assets.libreoffice',
-                                value: this.getValue("assets.libreoffice"),
-                                width: 300
+                                value: this.getValue("assets.libreoffice")
                             },{
                                 fieldLabel: t('absolute_path_to_pngcrush'),
                                 name: 'assets.pngcrush',
-                                value: this.getValue("assets.pngcrush"),
-                                width: 300
+                                value: this.getValue("assets.pngcrush")
                             },{
                                 fieldLabel: t('absolute_path_to_imgmin'),
                                 name: 'assets.imgmin',
-                                value: this.getValue("assets.imgmin"),
-                                width: 300
+                                value: this.getValue("assets.imgmin")
                             },{
                                 fieldLabel: t('absolute_path_to_jpegoptim'),
                                 name: 'assets.jpegoptim',
-                                value: this.getValue("assets.jpegoptim"),
-                                width: 300
+                                value: this.getValue("assets.jpegoptim")
                             },{
                                 fieldLabel: t('absolute_path_to_pdftotext'),
                                 name: 'assets.pdftotext',
-                                value: this.getValue("assets.pdftotext"),
-                                width: 300
+                                value: this.getValue("assets.pdftotext")
                             },{
                                 fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (imagick)",
                                 name: 'assets.icc_rgb_profile',
-                                value: this.getValue("assets.icc_rgb_profile"),
-                                width: 300
+                                value: this.getValue("assets.icc_rgb_profile")
                             },
                             {
                                 fieldLabel: t('absolute_path_to_icc_cmyk_profile') + " (imagick)",
                                 name: 'assets.icc_cmyk_profile',
-                                value: this.getValue("assets.icc_cmyk_profile"),
-                                width: 300
+                                value: this.getValue("assets.icc_cmyk_profile")
                             },
                             {
                                 fieldLabel: t("hide_edit_image_tab"),
@@ -1190,7 +1211,7 @@ pimcore.settings.system = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'checkbox',
-                        defaults: {width: 300},
+                        defaults: {width: 600},
                         items :[
                             {
                                 fieldLabel: "LESS",
@@ -1245,6 +1266,7 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t("select_connectivity_type"),
                                 xtype: "combo",
                                 name: "httpclient.adapter",
+                                width: 400,
                                 value: this.getValue("httpclient.adapter"),
                                 store: [
                                     ["Zend_Http_Client_Adapter_Socket", t("direct_socket")],
