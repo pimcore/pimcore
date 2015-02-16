@@ -311,9 +311,38 @@ pimcore.settings.system = Class.create({
                         defaults: {width: 150},
                         items :[
                             {
+                                fieldLabel: t("environment"),
+                                xtype: "combo",
+                                name: "general.environment",
+                                value: this.getValue("general.environment"),
+                                store: [
+                                    ["production", t("production")],
+                                    ["stage", t("stage")],
+                                    ["test", t("test")],
+                                    ["development", t("development")],
+                                    ["local", t("local")]
+                                ],
+                                mode: "local",
+                                triggerAction: "all",
+                                listeners: {
+                                    "select": function (el) {
+                                        if(el.getValue() == "production") {
+                                            var ipField = Ext.getCmp("system.settings.general.debug_ip");
+                                            if(empty(ipField.getValue())) {
+                                                Ext.getCmp("system.settings.general.debug").setValue(false);
+                                            }
+
+                                            Ext.getCmp("system.settings.general.debugloglevel").setValue("error");
+                                            Ext.getCmp("system.settings.general.devmode").setValue(false);
+                                        }
+                                    }
+                                }
+                            },
+                            {
                                 fieldLabel: "DEBUG",
                                 xtype: "checkbox",
                                 name: "general.debug",
+                                id: "system.settings.general.debug",
                                 checked: this.getValue("general.debug"),
                                 listeners: {
                                     check: function (el, checked) {
@@ -379,6 +408,7 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: "debug.log Log-Level",
                                 xtype: "combo",
                                 name: "general.debugloglevel",
+                                id: "system.settings.general.debugloglevel",
                                 value: this.getValue("general.debugloglevel"),
                                 store: [
                                     ["debug", "DEBUG"],
@@ -429,6 +459,7 @@ pimcore.settings.system = Class.create({
                                     + 'DON`T ACTIVATE IT!</span>)',
                                 xtype: "checkbox",
                                 name: "general.devmode",
+                                id: "system.settings.general.devmode",
                                 checked: this.getValue("general.devmode")
                             }
                         ]
