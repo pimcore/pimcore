@@ -119,7 +119,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                         height: 16,
                         cls: "pimcore_icon_droptarget"
                     }),
-                    Ext.create('Ext.toolbar.Text', {
+                    Ext.create('Ext.toolbar.TextItem', {
                         text: "<b>" + (this.options.title ? this.options.title : "") + "</b>"
                     }),
                     "->",
