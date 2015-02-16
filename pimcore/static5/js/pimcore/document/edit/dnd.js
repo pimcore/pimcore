@@ -97,8 +97,10 @@ pimcore.document.edit.dnd = Class.create({
         scrollLeft = doc.documentElement.scrollLeft || doc.body.scrollLeft;
 
         var xy = e.getXY();
-        e.pageX = e.pageX + this.iframeOffset[0] - scrollLeft;
-        e.pageY = e.pageY + this.iframeOffset[1] - scrollTop;
+
+
+        e.xy = [e.pageX + this.iframeOffset[0] - scrollLeft, e.pageY + this.iframeOffset[1] - scrollTop];
+
     },
     
     setIframeOffset: function () {
