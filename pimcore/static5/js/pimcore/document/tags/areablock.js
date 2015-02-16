@@ -75,7 +75,9 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     });
                     editButton.render(editDiv);
                     }
-                } catch (e) {}
+                } catch (e) {
+                    console.log(e);
+                }
 
                 if(!limitReached) {
                     // plus button
@@ -83,7 +85,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     plusButton = new Ext.Button({
                         cls: "pimcore_block_button_plus",
                         iconCls: "pimcore_icon_plus",
-                        menu: [this.getTypeMenu(this, this.elements[i])],
+                        menu: this.getTypeMenu(this, this.elements[i]),
                         listeners: {
                             /*"menushow": function () {
                                 Ext.get(this).addClass("pimcore_tag_areablock_force_show_buttons");
@@ -420,7 +422,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         var plusButton = new Ext.Button({
             cls: "pimcore_block_button_plus",
             iconCls: "pimcore_icon_plus",
-            menu: [this.getTypeMenu(this, null)]
+            menu: this.getTypeMenu(this, null)
         });
         plusButton.render(plusEl);
 
@@ -463,6 +465,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element));
             }
         }
+
+        var typeMenu = new Ext.menu.Menu({
+            items: menu
+        });
 
         return menu;
     },
