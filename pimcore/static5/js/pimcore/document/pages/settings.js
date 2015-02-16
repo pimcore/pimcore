@@ -381,9 +381,9 @@ pimcore.document.pages.settings = Class.create({
                                             success: function (res) {
                                                 res = Ext.decode(res.responseText);
                                                 if(!res.success) {
-                                                    el.getEl().addClass("pimcore_error_input");
+                                                    el.getEl().addCls("pimcore_error_input");
                                                 } else {
-                                                    el.getEl().removeClass("pimcore_error_input");
+                                                    el.getEl().removeCls("pimcore_error_input");
                                                 }
                                             }
                                         });

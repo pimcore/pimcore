@@ -127,18 +127,18 @@ Ext.onReady(function () {
 
         if (response.status == 503) {
             // show wait info
-            if (!pimcore.maintenanceWindow) {
-                pimcore.maintenanceWindow = new Ext.Window({
-                    closable:false,
-                    title:t("please_wait"),
-                    bodyStyle:"padding: 20px;",
-                    html:t("the_system_is_in_maintenance_mode_please_wait"),
-                    closeAction:"close",
-                    modal:true
-                });
-                pimcore.viewport.add(pimcore.maintenanceWindow);
-                pimcore.maintenanceWindow.show();
-            }
+            //if (!pimcore.maintenanceWindow) {
+            //    pimcore.maintenanceWindow = new Ext.Window({
+            //        closable:false,
+            //        title:t("please_wait"),
+            //        bodyStyle:"padding: 20px;",
+            //        html:t("the_system_is_in_maintenance_mode_please_wait"),
+            //        closeAction:"close",
+            //        modal:true
+            //    });
+            //    pimcore.viewport.add(pimcore.maintenanceWindow);
+            //    pimcore.maintenanceWindow.show();
+            //}
 
         } else {
             //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot
