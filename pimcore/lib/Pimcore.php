@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -16,8 +16,8 @@
 use Pimcore\Config;
 use Pimcore\Model\Cache;
 use Pimcore\Controller;
-use Pimcore\Tool; 
-use Pimcore\File; 
+use Pimcore\Tool;
+use Pimcore\File;
 use Pimcore\Resource;
 use Pimcore\ExtensionManager;
 use Pimcore\Model\User;
@@ -220,7 +220,7 @@ class Pimcore {
             $router->addRoute('reports', $routeReports);
             $router->addRoute('searchadmin', $routeSearchAdmin);
             if ($conf instanceof \Zend_Config and $conf->webservice and $conf->webservice->enabled) {
-                    $router->addRoute('webservice', $routeWebservice);
+                $router->addRoute('webservice', $routeWebservice);
             }
 
             // check if this request routes into a plugin, if so check if the plugin is enabled
@@ -383,7 +383,7 @@ class Pimcore {
         \Logger::setPriorities($prios);
 
         if (is_writable(PIMCORE_LOG_DEBUG)) {
-            
+
             // check for big logfile, empty it if it's bigger than about 200M
             if (filesize(PIMCORE_LOG_DEBUG) > 200000000) {
                 rename(PIMCORE_LOG_DEBUG, PIMCORE_LOG_DEBUG . "-archive-" . date("m-d-Y-H-i")); // archive log (will be cleaned up by maintenance)
@@ -536,7 +536,7 @@ class Pimcore {
                         if (is_array($p['plugin']['pluginNamespaces']['namespace'])) {
                             foreach ($p['plugin']['pluginNamespaces']['namespace'] as $namespace) {
                                 $autoloader->registerNamespace($namespace);
-                    }
+                            }
                         }
                         else if ($p['plugin']['pluginNamespaces']['namespace'] != null) {
                             $autoloader->registerNamespace($p['plugin']['pluginNamespaces']['namespace']);
@@ -557,7 +557,17 @@ class Pimcore {
                     }
 
                     $jsPaths = array();
-                    if (is_array($p['plugin']['pluginJsPaths'])
+                    $isExtJs5 = \Pimcore\Tool\Admin::isExtJS5();
+
+                    if ($isExtJs5 && is_array($p['plugin']['pluginJsPaths-extjs5'])
+                        && isset($p['plugin']['pluginJsPaths-extjs5']['path'])
+                        && is_array($p['plugin']['pluginJsPaths-extjs5']['path'])) {
+                        $jsPaths = $p['plugin']['pluginJsPaths-extjs5']['path'];
+                    }
+                    else if ($isExtJs5 && is_array($p['plugin']['pluginJsPaths-extjs5'])
+                        && $p['plugin']['pluginJsPaths-extjs5']['path'] != null) {
+                        $jsPaths[0] = $p['plugin']['pluginJsPaths-extjs5']['path'];
+                    } else  if (is_array($p['plugin']['pluginJsPaths'])
                         && isset($p['plugin']['pluginJsPaths']['path'])
                         && is_array($p['plugin']['pluginJsPaths']['path'])) {
                         $jsPaths = $p['plugin']['pluginJsPaths']['path'];
@@ -576,7 +586,15 @@ class Pimcore {
                     }
 
                     $cssPaths = array();
-                    if (is_array($p['plugin']['pluginCssPaths'])
+                    if ($isExtJs5 && is_array($p['plugin']['pluginCssPaths-extjs5'])
+                        && isset($p['plugin']['pluginCssPaths-extjs5']['path'])
+                        && is_array($p['plugin']['pluginCssPaths-extjs5']['path'])) {
+                        $cssPaths = $p['plugin']['pluginCssPaths-extjs5']['path'];
+                    }
+                    else if ($isExtJs5 && is_array($p['plugin']['pluginCssPaths-extjs5'])
+                        && $p['plugin']['pluginCssPaths-extjs5']['path'] != null) {
+                        $cssPaths[0] = $p['plugin']['pluginCssPaths-extjs5']['path'];
+                    } else  if (is_array($p['plugin']['pluginCssPaths'])
                         && isset($p['plugin']['pluginCssPaths']['path'])
                         && is_array($p['plugin']['pluginCssPaths']['path'])) {
                         $cssPaths = $p['plugin']['pluginCssPaths']['path'];
@@ -598,7 +616,7 @@ class Pimcore {
                     try {
                         $className = $p['plugin']['pluginClassName'];
                         if (!empty($className) && Tool::classExists($className)) {
-                         
+
                             $plugin = new $className($jsPaths, $cssPaths);
                             if ($plugin instanceof \Pimcore\API\Plugin\AbstractPlugin) {
                                 $broker->registerPlugin($plugin);
@@ -665,7 +683,7 @@ class Pimcore {
      * @return bool
      */
     public static function initConfiguration() {
-               
+
         // init configuration
         try {
             $conf = Config::getSystemConfig();
@@ -678,7 +696,7 @@ class Pimcore {
             }
 
             $debug = self::inDebugMode();
-            
+
             if (!defined("PIMCORE_DEBUG")) define("PIMCORE_DEBUG", $debug);
             if (!defined("PIMCORE_DEVMODE")) define("PIMCORE_DEVMODE", (bool) $conf->general->devmode);
 
@@ -694,7 +712,7 @@ class Pimcore {
         catch (\Exception $e) {
             $m = "Couldn't load system configuration";
             \Logger::err($m);
-            
+
             //@TODO check here for /install otherwise exit here
         }
 
