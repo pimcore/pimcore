@@ -103,7 +103,7 @@ pimcore.object.helpers.edit = {
         };
 
         var validKeys = ["xtype","title","layout","items","region","width","height","name","text","html","handler",
-                                        "labelWidth","collapsible","collapsed","bodyStyle"];
+            "labelWidth","collapsible","collapsed","bodyStyle"];
 
         var tmpItems;
 
@@ -118,7 +118,16 @@ pimcore.object.helpers.edit = {
                     l.items = [];
                     for (var i = 0; i < l.childs.length; i++) {
                         tmpItems = this.getRecursiveLayout(l.childs[i], noteditable);
+
                         if (tmpItems) {
+                            if (typeof tmpItems.width != "undefined") {
+                                if (typeof l.labelWidth != "undefined") {
+                                    tmpItems.width += l.labelWidth;
+                                } else {
+                                    tmpItems.width = 100;
+                                }
+                            }
+
                             l.items.push(tmpItems);
                         }
                     }
@@ -138,7 +147,7 @@ pimcore.object.helpers.edit = {
                     }
 
                     if(l[configKeys[u]]) {
-                    //if (typeof l[configKeys[u]] != "undefined") {
+                        //if (typeof l[configKeys[u]] != "undefined") {
                         if(configKeys[u] == "html"){
                             newConfig[configKeys[u]] = ts(l[configKeys[u]]);
                         } else {
@@ -149,6 +158,13 @@ pimcore.object.helpers.edit = {
             }
 
             newConfig = Object.extend(newConfig, xTypeLayoutMapping[l.fieldtype]);
+            if (typeof newConfig.labelWidth != "undefined") {
+                newConfig = Ext.applyIf(newConfig, {
+                    defaults: {
+                        labelWidth: newConfig.labelWidth
+                    }
+                });
+            }
 
             newConfig.forceLayout = true;
 
