@@ -89,10 +89,10 @@ pimcore.element.metainfo = Class.create({
                     }
 
                     item = {
-                        xtype: "label",
+                        xtype: "displayfield",
                         fieldLabel: name,
                         readOnly: true,
-                        html: htmlValue,
+                        value: htmlValue,
                         width: 600
                     };
                     if (user.admin) {
