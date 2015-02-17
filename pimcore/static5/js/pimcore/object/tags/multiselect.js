@@ -56,7 +56,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         // generate store
-        var store = [];
+        var storeData = [];
         var validValues = [];
 
         var restrictTo = null;
@@ -72,9 +72,15 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            store.push([value, this.fieldConfig.options[i].key]);
+            storeData.push([value, this.fieldConfig.options[i].key]);
             validValues.push(value);
         }
+
+        var store = Ext.create('Ext.data.ArrayStore', {
+            fields: ['id', 'text'],
+            data: storeData
+        });
+
 
         var options = {
             name: this.fieldConfig.name,
