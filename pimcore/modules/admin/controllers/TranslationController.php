@@ -653,7 +653,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
         list($type, $id) = explode("-", $file["original"]);
         $element = Element\Service::getElementById($type, $id);
 
-        if($element) {
+        if(true || $element) {
             foreach($file->body->{"trans-unit"} as $transUnit) {
                 list($fieldType, $name) = explode("~-~", $transUnit["id"]);
                 $content = $transUnit->target->asXml();
@@ -728,6 +728,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
     protected function unescapeXliff($content) {
 
         $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>/i", "", $content);
+        // we have to do this again but with html entities because of CDATA content
+        $content = preg_replace("/&lt;\/?(target|mrk)((?!&gt;).)*&gt;/i", "", $content);
 
         if(preg_match("/<\/?(bpt|ept)/", $content)) {
             $xml = str_get_html($content);
