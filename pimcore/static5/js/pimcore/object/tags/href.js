@@ -17,7 +17,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
     type: "href",
     dataChanged:false,
-    
+
     initialize: function (data, fieldConfig) {
 
         this.data = {};
@@ -31,19 +31,19 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
 
     getGridColumnConfig:function (field) {
-            var renderer = function (key, value, metaData, record) {
-                this.applyPermissionStyle(key, value, metaData, record);
+        var renderer = function (key, value, metaData, record) {
+            this.applyPermissionStyle(key, value, metaData, record);
 
-                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                    metaData.css += " grid_value_inherited";
-                }
-                return value;
+            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                metaData.css += " grid_value_inherited";
+            }
+            return value;
 
-            }.bind(this, field.key);
+        }.bind(this, field.key);
 
-            return {header:ts(field.label), sortable:false, dataIndex:field.key, renderer:renderer,
-                                                                editor:this.getGridColumnEditor(field)};
-        },
+        return {header:ts(field.label), sortable:false, dataIndex:field.key, renderer:renderer,
+            editor:this.getGridColumnEditor(field)};
+    },
 
 
     getLayoutEdit: function () {
@@ -131,9 +131,13 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         this.composite = Ext.create('Ext.form.FieldSet', {
             layout: 'hbox',
             items: items,
-            itemCls: "object_field"
+            itemCls: "object_field",
+            border: false,
+            style: {
+                padding: 0
+            }
         });
-        
+
         return this.composite;
     },
 
@@ -159,13 +163,18 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
         this.component = new Ext.form.TextField(href);
 
-        this.composite = new Ext.form.CompositeField({
+        this.composite = Ext.create('Ext.form.FieldSet', {
+            layout: 'hbox',
             items: [this.component, {
                 xtype: "button",
                 iconCls: "pimcore_icon_edit",
                 handler: this.openElement.bind(this)
             }],
-            itemCls: "object_field"
+            itemCls: "object_field",
+            border: false,
+            style: {
+                padding: 0
+            }
         });
 
         return this.composite;
@@ -228,7 +237,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                 this.openElement();
             }.bind(this)
         }));
-        
+
         menu.add(new Ext.menu.Item({
             text: t('search'),
             iconCls: "pimcore_icon_search",
@@ -255,13 +264,13 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
         e.stopEvent();
     },
-    
+
     openSearchEditor: function () {
         var allowedTypes = [];
         var allowedSpecific = {};
         var allowedSubtypes = {};
         var i;
-        
+
         if (this.fieldConfig.objectsAllowed) {
             allowedTypes.push("object");
             if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
@@ -281,8 +290,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                 for (i = 0; i < this.fieldConfig.assetTypes.length; i++) {
                     allowedSubtypes.asset.push(this.fieldConfig.assetTypes[i].assetTypes);
                 }
-            }            
-        } 
+            }
+        }
         if (this.fieldConfig.documentsAllowed) {
             allowedTypes.push("document");
             if (this.fieldConfig.documentTypes != null && this.fieldConfig.documentTypes.length > 0) {
@@ -292,14 +301,14 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                 }
             }
         }
-        
+
         pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
             type: allowedTypes,
             subtype: allowedSubtypes,
             specific: allowedSpecific
         });
     },
-    
+
     addDataFromSelector: function (data) {
         this.data.id = data.id;
         this.data.type = data.type;
@@ -308,13 +317,13 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
         this.component.setValue(data.fullpath);
     },
-    
+
     openElement: function () {
         if(this.data.id && this.data.type && this.data.subtype) {
             pimcore.helpers.openElement(this.data.id, this.data.type, this.data.subtype);
         }
     },
-    
+
     empty: function () {
         this.data = {};
         this.dataChanged=true;
