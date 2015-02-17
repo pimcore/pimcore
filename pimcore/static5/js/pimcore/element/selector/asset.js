@@ -154,7 +154,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                     forceFit: true
                 },
                 listeners: {
-                    rowcontextmenu: function (grid, rowIndex, event) {
+                    rowcontextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
                         var menu = new Ext.menu.Menu();
                         var data = grid.getStore().getAt(rowIndex);
 
@@ -167,8 +167,8 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                             }.bind(this, rowIndex)
                         }));
 
-                        event.stopEvent();
-                        menu.showAt(event.getXY());
+                        e.stopEvent();
+                        menu.showAt(e.getXY());
                     }.bind(this)
                 },
                 selModel: Ext.create('Ext.selection.RowModel', {})
