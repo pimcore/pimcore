@@ -184,8 +184,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                width: 200,
                store: this.selectionStore,
                columns: [
-                    {header: t("type"), width: 25, sortable: true, dataIndex: 'subtype'},
-                    {header: t("filename"), width: 40, sortable: true, dataIndex: 'filename'}
+                    {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype'},
+                    {header: t("filename"), flex: 1, sortable: true, dataIndex: 'filename'}
                 ],
                 viewConfig: {
                     forceFit: true

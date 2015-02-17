@@ -142,13 +142,13 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 width: 200,
                 store: this.selectionStore,
                 columns: [
-                    {header: t("type"), width: 25, sortable: true, dataIndex: 'subtype', renderer:
+                    {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype', renderer:
                         function (value, metaData, record, rowIndex, colIndex, store) {
                             return '<div style="height: 16px;" class="pimcore_icon_asset pimcore_icon_' + value
                                 + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                         }
                     },
-                    {header: t("filename"), width: 40, sortable: false, dataIndex: 'filename'}
+                    {header: t("filename"), flex: 1, sortable: false, dataIndex: 'filename'}
                 ],
                 viewConfig: {
                     forceFit: true

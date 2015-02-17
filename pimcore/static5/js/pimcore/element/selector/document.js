@@ -144,14 +144,14 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 width: 200,
                 store: this.selectionStore,
                 columns: [
-                    {header: t("type"), width: 25, sortable: true, dataIndex: 'subtype',
+                    {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                         renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                             return '<div style="background: url(/pimcore/static/img/icon/'
                                 + value + '.png) center center no-repeat; height: 16px;" name="'
                                 + t(record.data.subtype) + '">&nbsp;</div>';
                         }
                     },
-                    {header: t("filename"), width: 40, sortable: true, dataIndex: 'filename'}
+                    {header: t("filename"), flex: 1, sortable: true, dataIndex: 'filename'}
                 ],
                 viewConfig: {
                     forceFit: true
