@@ -157,7 +157,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                         value = false;
                     }
                     return String.format('<div class="x-grid3-check-col{0}"'
-                        + 'style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
+                    + 'style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
                 };
                 editor = new Ext.form.Checkbox({});
 
@@ -283,22 +283,22 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         }
 
 
+        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 1
+        });
 
 
-        this.component = new Ext.grid.EditorGridPanel({
+        this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
             enableDragDrop: true,
             ddGroup: 'element',
             trackMouseOver: true,
-            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+            selModel: Ext.create('Ext.selection.RowModel', {}),
             columnLines: true,
             stripeRows: true,
-            colModel: new Ext.grid.ColumnModel({
-                defaults: {
-                    sortable: false
-                },
-                columns: columns
-            }),
+            columns : {
+                items: columns
+            },
             viewConfig: {
                 markDirty: false
             },
@@ -312,7 +312,10 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 cls: "pimcore_force_auto_width"
             },
             autoHeight: autoHeight,
-            bodyCssClass: "pimcore_object_tag_objects"
+            bodyCssClass: "pimcore_object_tag_objects",
+            plugins: [
+                this.cellEditing
+            ]
         });
 
         this.component.on("rowcontextmenu", this.onRowContextmenu);
