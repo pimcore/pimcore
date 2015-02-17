@@ -93,10 +93,13 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
 
         if (this.fieldConfig.width) {
             options.width = this.fieldConfig.width;
+        } else {
+            options.width = 100;
         }
         if (this.fieldConfig.height) {
             options.height = this.fieldConfig.height;
         }
+
 
         if (typeof this.data == "string" || typeof this.data == "number") {
             options.value = this.data;
