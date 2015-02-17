@@ -270,7 +270,7 @@ pimcore.object.helpers.edit = {
 
                             try {
                                 var el = this.getEl();
-                                if(!el.hasClass("object_field")) {
+                                if(!el.hasCls("object_field")) {
                                     el = el.parent(".object_field");
                                 }
                             } catch (e4) {
