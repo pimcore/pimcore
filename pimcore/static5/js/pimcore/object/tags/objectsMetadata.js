@@ -332,7 +332,11 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                         //return e.getTarget(this.grid.getView().rowSelector);
                     }.bind(this),
                     onNodeOver: function (overHtmlNode, ddSource, e, data) {
-                        if (this.dndAllowed(data)) {
+                        var record = data.records[0];
+                        var data = record.data;
+                        var fromTree = this.isFromTree(ddSource);
+
+                        if (this.dndAllowed(data, fromTree)) {
                             return Ext.dd.DropZone.prototype.dropAllowed;
                         } else {
                             return Ext.dd.DropZone.prototype.dropNotAllowed;
@@ -340,7 +344,11 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     }.bind(this),
                     onNodeDrop : function(target, dd, e, data) {
 
-                        if (this.dndAllowed(data)) {
+                        var record = data.records[0];
+                        var data = record.data;
+                        var fromTree = this.isFromTree(dd);
+
+                        if (this.dndAllowed(data, fromTree)) {
                             if(data["grid"] && data["grid"] == this.component) {
                                 var rowIndex = this.component.getView().findRowIndex(e.target);
                                 if(rowIndex !== false) {
@@ -350,7 +358,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                                 }
                             } else {
                                 var initData = {
-                                    id: data.node.attributes.id,
+                                    id: data.id,
                                     metadata: '',
                                     inheritedFields: {}
                                 };
@@ -379,9 +387,9 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         return this.createLayout(true);
     },
 
-    dndAllowed: function(data) {
+    dndAllowed: function(data, fromTree) {
         // check if data is a treenode, if not allow drop because of the reordering
-        if (!this.sourceIsTreeNode(data)) {
+        if (!fromTree) {
             if(data["grid"] && data["grid"] == this.component) {
                 return true;
             }
@@ -389,11 +397,11 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         }
 
         // only allow objects not folders
-        if (data.node.attributes.type == "folder" || data.node.attributes.elementType != "object") {
+        if (data.type == "folder" || data.elementType != "object") {
             return false;
         }
 
-        var classname = data.node.attributes.className;
+        var classname = data.className;
 
         var classStore = pimcore.globalmanager.get("object_types_store");
         var classId = classStore.getAt(classStore.findExact("text", classname));
@@ -421,7 +429,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
     loadObjectData: function(item, fields) {
 
-        this.store.add(new this.store.recordType(item, item.id));
+        this.store.add(item);
 
         Ext.Ajax.request({
             url: "/admin/object-helper/load-object-data",
