@@ -65,7 +65,10 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
 
         if (this.fieldConfig.width) {
             input.width = this.fieldConfig.width;
+        } else {
+            input.width = 150;
         }
+
         if(this.fieldConfig.columnLength) {
             input.autoCreate = {tag: 'input', type: 'text', maxlength: this.fieldConfig.columnLength};
         }

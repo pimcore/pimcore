@@ -66,6 +66,9 @@ pimcore.object.helpers.edit = {
                 forceLayout: true,
                 monitorResize: true,
                 border: false,
+                defaults: {
+                    width: "auto"
+                },
                 //layout: "pimcoreform",
                 hideMode: "offsets",
                 listeners: panelListenerConfig
@@ -124,7 +127,7 @@ pimcore.object.helpers.edit = {
                                 if (typeof l.labelWidth != "undefined") {
                                     tmpItems.width += l.labelWidth;
                                 } else {
-                                    tmpItems.width = 100;
+                                    tmpItems.width += 100;
                                 }
                             }
 
@@ -161,9 +164,10 @@ pimcore.object.helpers.edit = {
             if (typeof newConfig.labelWidth != "undefined") {
                 newConfig = Ext.applyIf(newConfig, {
                     defaults: {
-                        labelWidth: newConfig.labelWidth
                     }
                 });
+                newConfig.defaults.labelWidth = newConfig.labelWidth;
+
             }
 
             newConfig.forceLayout = true;
