@@ -588,8 +588,8 @@ pimcore.object.tree = Class.create({
                         text: t("paste_cut_element"),
                         iconCls: "pimcore_icon_paste",
                         handler: function () {
-                            this.pasteCutObject(record.data.cutObject,
-                                this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
+                            this.pasteCutObject(this.cutObject,
+                                this.cutParentNode, record, this.tree);
                             this.cutParentNode = null;
                             this.cutObject = null;
                         }.bind(this)
@@ -833,10 +833,10 @@ pimcore.object.tree = Class.create({
     },
 
 
-    pasteCutObject: function (tree, record, object, oldParent, newParent, tree) {
+    pasteCutObject: function (record, oldParent, newParent, tree) {
         this.updateObject(tree, record, {
             parentId: newParent.id
-        }, function (newParent, oldParent, tree, response) {
+        }, function (record, newParent, oldParent, tree, response) {
             try {
                 var rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {
@@ -846,7 +846,7 @@ pimcore.object.tree = Class.create({
                         newBasePath = "";
                     }
                     record.basePath = newBasePath;
-                    record.path = this.attributes.basePath + "/" + record.data.text;
+                    record.path = record.data.basePath + "/" + record.data.text;
                 }
                 else {
                     tree.loadMask.hide();
@@ -856,10 +856,11 @@ pimcore.object.tree = Class.create({
                 tree.loadMask.hide();
                 pimcore.helpers.showNotification(t("error"), t("error_moving_object"), "error");
             }
-            oldParent.reload();
-            newParent.reload();
+            this.refresh(oldParent);
+            this.refresh(newParent);
+
             tree.loadMask.hide();
-        }.bind(object, newParent, oldParent, tree));
+        }.bind(this, record, newParent, oldParent, tree));
     },
 
     pasteInfo: function (tree, record, type) {
