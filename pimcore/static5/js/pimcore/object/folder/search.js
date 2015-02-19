@@ -21,7 +21,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     icon: "pimcore_icon_tab_search",
     onlyDirectChildren: false,
 
-    sortInfo: {},
+    sortinfo: {},
     initialize: function(object) {
         this.object = object;
         this.element = object;
@@ -276,8 +276,11 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 //this.updateGridHeaderContextMenu(grid);
             }.bind(this));
 
-            this.grid.on("sortchange", function (grid, sortinfo) {
-                this.sortinfo = sortinfo;
+            this.grid.on("sortchange", function (ct, column, direction, eOpts ) {
+                this.sortinfo = {
+                    field: column.dataIndex,
+                    direction: direction
+                };
             }.bind(this));
 
             // check for filter updates
@@ -419,9 +422,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     ids = ids.join(',');
 
                     pimcore.helpers.deleteObject(ids, function() {
-                        this.getStore().reload();
-                        pimcore.globalmanager.get("layout_object_tree").tree.getRootNode().reload();
-                    }.bind(this)
+                            this.getStore().reload();
+                            pimcore.globalmanager.get("layout_object_tree").tree.getRootNode().reload();
+                        }.bind(this)
                     );
                 }.bind(grid, data)
             }));
