@@ -167,6 +167,7 @@ pimcore.object.helpers.grid = Class.create({
             gridColumns.push(selectionColumn);
         }
 
+        var gridFilters = this.getGridFilters();
 
         var fields = this.fields;
         for (var i = 0; i < fields.length; i++) {
@@ -197,7 +198,7 @@ pimcore.object.helpers.grid = Class.create({
                 }));
             } else if(field.key == "fullpath") {
                 gridColumns.push({header: t("path"), flex: this.getColumnWidth(field, 200), sortable: true,
-                    dataIndex: 'fullpath'/*, hidden: !propertyVisibility.path*/});
+                    dataIndex: 'fullpath', filter: "string"});
             } else if(field.key == "filename") {
                 gridColumns.push({header: t("filename"), flex: this.getColumnWidth(field, 200), sortable: true,
                     dataIndex: 'filename', hidden: !showKey});
@@ -206,19 +207,24 @@ pimcore.object.helpers.grid = Class.create({
                     dataIndex: 'classname',renderer: function(v){return ts(v);}/*, hidden: true*/});
             } else if(field.key == "creationDate") {
                 gridColumns.push({header: t("creationdate") + " (System)", flex: this.getColumnWidth(field, 200), sortable: true,
-                    dataIndex: "creationDate", editable: false, renderer: function(d) {
+                    dataIndex: "creationDate", filter: 'date', editable: false, renderer: function(d) {
                         var date = new Date(d * 1000);
                         return Ext.Date.format(date, "Y-m-d H:i:s");
                     }/*, hidden: !propertyVisibility.creationDate*/});
             } else if(field.key == "modificationDate") {
                 gridColumns.push({header: t("modificationdate") + " (System)", flex: this.getColumnWidth(field, 200), sortable: true,
-                    dataIndex: "modificationDate", editable: false, renderer: function(d) {
+                    dataIndex: "modificationDate", filter: 'date', editable: false, renderer: function(d) {
                         var date = new Date(d * 1000);
                         return Ext.Date.format(date, "Y-m-d H:i:s");
                     }/*, hidden: !propertyVisibility.modificationDate*/});
             } else {
-                var fc = pimcore.object.tags[fields[i].type].prototype.getGridColumnConfig(field);
+                var fc = pimcore.object.tags[field.type].prototype.getGridColumnConfig(field);
                 fc.flex = this.getColumnWidth(field, 100);
+
+                if (typeof gridFilters[field.key] !== 'undefined') {
+                    fc.filter = gridFilters[field.key];
+                }
+
                 gridColumns.push(fc);
                 gridColumns[gridColumns.length-1].hidden = false;
                 gridColumns[gridColumns.length-1].layout = fields[i];
@@ -237,14 +243,10 @@ pimcore.object.helpers.grid = Class.create({
     },
 
     getGridFilters: function() {
-        var configuredFilters = [{
-            type: "date",
-            dataIndex: "creationDate"
-        },{
-            type: "date",
-            dataIndex: "modificationDate"
-        }
-        ];
+        var configuredFilters = {
+            creationDate: "date",
+            modificationDate: "date"
+        };
 
         var fields = this.fields;
         for (var i = 0; i < fields.length; i++) {
@@ -254,14 +256,13 @@ pimcore.object.helpers.grid = Class.create({
                 && fields[i].key != "creationDate" && fields[i].key != "modificationDate") {
 
                 if (fields[i].key == "fullpath") {
-                    configuredFilters.push({
-                        type: "string",
-                        dataIndex: "fullpath"
-                    });
+                    configuredFilters.fullpath = {
+                        type: "string"
+                    };
                 } else {
                     var filter = pimcore.object.tags[fields[i].type].prototype.getGridColumnFilter(fields[i]);
                     if (filter) {
-                        configuredFilters.push(filter);
+                        configuredFilters[filter.dataIndex] = filter;
                     }
                 }
             }
@@ -269,13 +270,13 @@ pimcore.object.helpers.grid = Class.create({
         }
 
         // filters
-        var gridfilters = {
-            encode: true,
-            local: false,
-            filters: configuredFilters
-        };
+        //var gridfilters = {
+        //    encode: true,
+        //    local: false,
+        //    filters: configuredFilters
+        //};
 
-        return gridfilters;
+        return configuredFilters;
 
     },
 
