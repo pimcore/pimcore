@@ -2,6 +2,7 @@
 <html lang="<?= $this->language; ?>">
 <head>
     <meta charset="utf-8">
+    <link rel="icon" type="image/png" href="/pimcore/static/img/favicon/favicon-32x32.png" />
 
     <?php
         // portal detection => portal needs an adapted version of the layout
