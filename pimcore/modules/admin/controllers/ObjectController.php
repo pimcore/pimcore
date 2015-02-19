@@ -14,7 +14,7 @@
  */
 
 use Pimcore\Tool;
-use Pimcore\File; 
+use Pimcore\File;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Model;
@@ -1376,20 +1376,36 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             $sortParam = $this->getParam("sort");
-            if (strlen($sortParam) > 0) {
-                if (!(substr($sortParam, 0, 1) == "~")) {
-                    if ($this->getParam("sort")) {
-                        if (array_key_exists($this->getParam("sort"), $colMappings)) {
-                            $orderKey = $colMappings[$this->getParam("sort")];
-                        } else {
-                            $orderKey = $this->getParam("sort");
+            if (\Pimcore\Tool\Admin::isExtJS5()) {
+                if ($sortParam) {
+                    $sortParam = json_decode($sortParam, true);
+                    $sortParam = $sortParam[0];
+                    $orderKey = $sortParam["property"];
+                    $order = $sortParam["direction"];
+
+                    if (!(substr($orderKey, 0, 1) == "~")) {
+                        if (array_key_exists($orderKey, $colMappings)) {
+                            $orderKey = $colMappings[$orderKey];
                         }
                     }
                 }
-            }
 
-            if ($this->getParam("dir")) {
-                $order = $this->getParam("dir");
+            } else {
+                if (strlen($sortParam) > 0) {
+                    if (!(substr($sortParam, 0, 1) == "~")) {
+                        if ($this->getParam("sort")) {
+                            if (array_key_exists($this->getParam("sort"), $colMappings)) {
+                                $orderKey = $colMappings[$this->getParam("sort")];
+                            } else {
+                                $orderKey = $this->getParam("sort");
+                            }
+                        }
+                    }
+                }
+
+                if ($this->getParam("dir")) {
+                    $order = $this->getParam("dir");
+                }
             }
 
             $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
