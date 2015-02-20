@@ -19,7 +19,6 @@ namespace Pimcore\Model\Tool;
 
 use Pimcore\Model;
 use Pimcore\Model\Tool;
-use Pimcore\Helper\SocialMedia;
 
 class ContentAnalysis extends Model\AbstractModel {
 
@@ -136,31 +135,6 @@ class ContentAnalysis extends Model\AbstractModel {
                 $urls[] = $item["url"];
             }
 
-            try {
-                $fbShares = SocialMedia::getFacebookShares($urls);
-                if($fbShares && is_array($fbShares) && count($fbShares) > 0) {
-                    foreach ($fbShares as $url => $shares) {
-                        if(array_key_exists($url, $data)) {
-                            $data[$url]["facebookShares"] = $shares;
-                        }
-                    }
-                }
-            } catch (\Exception $e) {
-
-            }
-
-            try {
-                $googlePlus = SocialMedia::getGooglePlusShares($urls);
-                if($googlePlus && is_array($googlePlus) && count($googlePlus) > 0) {
-                    foreach ($googlePlus as $url => $shares) {
-                        if(array_key_exists($url, $data)) {
-                            $data[$url]["googlePlusOne"] = $shares;
-                        }
-                    }
-                }
-            } catch (\Exception $e) {
-
-            }
 
             foreach ($data as $set) {
                 $instance->update($set);

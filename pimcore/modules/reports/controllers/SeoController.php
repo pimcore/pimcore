@@ -17,19 +17,6 @@ use Pimcore\Model\Tool\ContentAnalysis;
 
 class Reports_SeoController extends \Pimcore\Controller\Action\Admin\Reports {
 
-
-    public function socialOverviewAction() {
-
-        $site = $this->getParam("site");
-        if($site == "default") {
-            $site = null;
-        }
-
-        $service = new ContentAnalysis\Service();
-        $summary = $service->getSocialSummary($site);
-        $this->view->summary = $summary;
-    }
-
     public function detailAction() {
 
         $conditions = array("1=1");
