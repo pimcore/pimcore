@@ -45,7 +45,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
                 if(filterData[i].data.value && typeof filterData[i].data.value == "object") {
                     filterStringConfig.push(filterData[i].field + " " + operator + " ("
-                        + filterData[i].data.value.join(" OR ") + ")");
+                    + filterData[i].data.value.join(" OR ") + ")");
                 } else {
                     filterStringConfig.push(filterData[i].field + " " + operator + " " + filterData[i].data.value);
                 }
@@ -362,6 +362,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             classId: this.classId,
             columns: {}
         };
+
+        //var header = this.grid.getHeader();
         var cm = this.grid.getView().getHeaderCt().getGridColumns();
         //var cm = this.grid.getColumnModel();
         for (var i=0; i < cm.length; i++) {
@@ -387,10 +389,28 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         if(this.sqlButton.pressed) {
             condition = this.sqlEditor.getValue();
         } else {
-            var filterData = this.gridfilters.getFilterData();
-            if(filterData.length > 0) {
-                filters = this.gridfilters.buildQuery(filterData).filter;
+            var store = this.grid.getStore();
+            var filterData = store.getFilters();
+
+            var filters = [];
+            for (i = 0; i < filterData.length; i++) {
+                var filterItem = filterData.getAt(i);
+                var filterConfig = filterItem.getConfig();
+
+                var fieldname = filterItem.getProperty();
+                var type = this.gridfilters[fieldname];
+                if (typeof type == 'object') {
+                    type = type.type;
+                }
+                filters.push({
+                    field: fieldname,
+                    type: type,
+                    comparison: filterItem.getOperator(),
+                    value: filterItem.getValue()
+                });
             }
+            filters = Ext.encode(filters);
+
         }
 
         var path = "/admin/object-helper/export/classId/" + this.classId + "/folderId/" + this.element.id ;

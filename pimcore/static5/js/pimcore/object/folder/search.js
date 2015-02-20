@@ -155,7 +155,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 clicksToEdit: 1
             });
 
-            var plugins = [this.cellEditing ];
+            var plugins = [this.cellEditing, 'gridfilters'];
 
             // get current class
             var classStore = pimcore.globalmanager.get("object_types_store");
@@ -188,13 +188,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
             var gridColumns = gridHelper.getGridColumns();
 
-
             // add filters
             this.gridfilters = gridHelper.getGridFilters();
-
-            //TODO EXTJS5 filters
-            //plugins.push(this.gridfilters);
-
 
             this.languageInfo = new Ext.Toolbar.TextItem({
                 text: t("grid_current_language") + ": " + pimcore.available_languages[this.gridLanguage]
@@ -230,11 +225,11 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 columns: gridColumns,
                 columnLines: true,
                 stripeRows: true,
-                plugins: plugins,
                 border: true,
                 selModel: gridHelper.getSelectionColumn(),
                 trackMouseOver: true,
                 loadMask: true,
+                plugins: plugins,
                 viewConfig: {
                     forceFit: false
                 },

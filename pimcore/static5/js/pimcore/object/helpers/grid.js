@@ -244,6 +244,7 @@ pimcore.object.helpers.grid = Class.create({
 
     getGridFilters: function() {
         var configuredFilters = {
+            filter: "string",
             creationDate: "date",
             modificationDate: "date"
         };
@@ -269,12 +270,6 @@ pimcore.object.helpers.grid = Class.create({
 
         }
 
-        // filters
-        //var gridfilters = {
-        //    encode: true,
-        //    local: false,
-        //    filters: configuredFilters
-        //};
 
         return configuredFilters;
 
