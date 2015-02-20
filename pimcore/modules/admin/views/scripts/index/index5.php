@@ -449,8 +449,6 @@ $scripts = array(
     "pimcore/report/analytics/elementexplorer.js",
     "pimcore/report/analytics/elementnavigation.js",
     "pimcore/report/webmastertools/settings.js",
-    "pimcore/report/contentanalysis/settings.js",
-    "pimcore/report/seo/detail.js",
     "pimcore/report/custom/item.js",
     "pimcore/report/custom/panel.js",
     "pimcore/report/custom/settings.js",

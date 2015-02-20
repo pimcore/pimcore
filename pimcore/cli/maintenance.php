@@ -22,7 +22,7 @@ use Pimcore\Model\Schedule;
 
 try {
     $optsConfig = array(
-        'job|j=s' => 'call just a specific job(s), use "," (comma) to execute more than one job (valid options: scheduledtasks, cleanupcache, logmaintenance, sanitycheck, cleanuplogfiles, versioncleanup, versioncompress, redirectcleanup, cleanupbrokenviews, contentanalysis, usagestatistics, downloadmaxminddb, tmpstorecleanup and plugin classes if you want to call a plugin maintenance)',
+        'job|j=s' => 'call just a specific job(s), use "," (comma) to execute more than one job (valid options: scheduledtasks, cleanupcache, logmaintenance, sanitycheck, cleanuplogfiles, versioncleanup, versioncompress, redirectcleanup, cleanupbrokenviews, usagestatistics, downloadmaxminddb, tmpstorecleanup and plugin classes if you want to call a plugin maintenance)',
         'manager|m=s' => 'force a specific manager (valid options: procedural, daemon)',
         'ignore-maintenance-mode' => 'forces the script execution even when the maintenance mode is activated',
         'verbose|v' => 'show detailed information during the maintenance (for debug, ...)',
@@ -102,7 +102,6 @@ $manager->registerJob(new Schedule\Maintenance\Job("versioncleanup", new \Pimcor
 $manager->registerJob(new Schedule\Maintenance\Job("versioncompress", new \Pimcore\Model\Version(), "maintenanceCompress"));
 $manager->registerJob(new Schedule\Maintenance\Job("redirectcleanup", "\\Pimcore\\Model\\Redirect", "maintenanceCleanUp"));
 $manager->registerJob(new Schedule\Maintenance\Job("cleanupbrokenviews", "\\Pimcore\\Resource", "cleanupBrokenViews"));
-$manager->registerJob(new Schedule\Maintenance\Job("contentanalysis", "\\Pimcore\\Model\\Tool\\ContentAnalysis", "run"));
 $manager->registerJob(new Schedule\Maintenance\Job("downloadmaxminddb", "\\Pimcore\\Update", "updateMaxmindDb"));
 $manager->registerJob(new Schedule\Maintenance\Job("cleanupcache", "\\Pimcore\\Model\\Cache", "maintenance"));
 $manager->registerJob(new Schedule\Maintenance\Job("tmpstorecleanup", "\\Pimcore\\Model\\Tool\\TmpStore", "cleanup"));

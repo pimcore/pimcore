@@ -21,7 +21,7 @@ if(empty($initInfo["errors"])) {
         if(array_key_exists($step[0], $stepMethodMapping)) {
 
             // skip these tables
-            if(in_array($step[1]["name"], ["tracking_events", "cache", "cache_tags", "http_error_log", "versions", "edit_lock", "content_analysis", "content_index", "locks", "email_log", "tmp_store"])) {
+            if(in_array($step[1]["name"], ["tracking_events", "cache", "cache_tags", "http_error_log", "versions", "edit_lock", "locks", "email_log", "tmp_store"])) {
                 continue;
             }
 

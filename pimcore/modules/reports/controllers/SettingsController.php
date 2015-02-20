@@ -13,8 +13,6 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-use Pimcore\Model\Tool\ContentAnalysis;
-
 class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Reports {
     
     public function getAction () {
@@ -43,19 +41,6 @@ class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Report
             "filename" => PIMCORE_CONFIGURATION_DIRECTORY . "/reports.xml"
         ));
         $writer->write();
-
-        $this->_helper->json(array("success" => true));
-    }
-
-    public function cleanupExistingContentAnalysisDataAction() {
-
-
-        $patterns = explode("\n", $this->getParam("excludePatterns"));
-
-        if(count($patterns) > 0) {
-            $service = new ContentAnalysis\Service();
-            $service->cleanupExistingData($patterns);
-        }
 
         $this->_helper->json(array("success" => true));
     }
