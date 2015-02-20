@@ -157,10 +157,13 @@ pimcore.document.tree = Class.create({
         //this.tree.on("startdrag", this.onDragStart.bind(this));
         //this.tree.on("enddrag", this.onDragEnd.bind(this));
         //this.tree.on("nodedragover", this.onTreeNodeOver.bind(this));
-        //this.tree.on("afterrender", function () {
-        //    this.tree.loadMask = new Ext.LoadMask(this.tree.getEl(), {msg: t("please_wait")});
-        //    this.tree.loadMask.enable();
-        //}.bind(this));
+        this.tree.on("afterrender", function () {
+            this.tree.loadMask = new Ext.LoadMask(
+                {
+                    target: Ext.getCmp(this.config.treeId),
+                    msg:t("please_wait")
+                });
+        }.bind(this));
         //
         //this.tree.on("append", pimcore.helpers.treeNodeThumbnailPreview.bind(this));
 
@@ -1172,32 +1175,34 @@ pimcore.document.tree = Class.create({
 
     editDocumentKey : function (tree, record) {
         Ext.MessageBox.prompt(t('edit_key'), t('please_enter_the_new_key'),
-            this.editDocumentKeyComplete.bind(this, tree, record));
+            this.editDocumentKeyComplete.bind(this, tree, record), window, false, record.data.text);
     },
 
     editDocumentKeyComplete: function (tree, record, button, value, object) {
         if (button == "ok") {
 
             // check for ident filename in current level
-            if(this.attributes.reference.isExistingKeyInLevel(this.parentNode, value, this)) {
+            if(this.isExistingKeyInLevel(record.parentNode, value, record)) {
                 return;
             }
 
-            if(this.attributes.reference.isDisallowedKey(this.parentNode.id, value)) {
+            if(this.isDisallowedKey(record.parentNode, value)) {
                 return;
             }
 
             value = pimcore.helpers.getValidFilename(value);
 
-            this.setText(value);
-            this.attributes.path = this.attributes.basePath + value;
+            record.set("text", value);
+            record.data.path = record.data.basePath + value;
 
-            this.getOwnerTree().loadMask.show();
 
-            this.attributes.reference.updateDocument(this.id, {key: value}, function (response) {
+            var tree = record.getOwnerTree();
+            tree.loadMask.show();
 
-                this.getOwnerTree().loadMask.hide();
-                this.reload();
+            this.updateDocument(record.data.id, {key: value}, function (response) {
+
+                record.getOwnerTree().loadMask.hide();
+                this.refresh(record);
 
                 try {
                     var rdata = Ext.decode(response.responseText);
@@ -1214,11 +1219,11 @@ pimcore.document.tree = Class.create({
                     else {
                         pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error",
                             t(rdata.message));
-                        this.parentNode.reload();
+                        this.refresh(record.parentNode);
                     }
                 } catch(e) {
                     pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error");
-                    this.parentNode.reload();
+                    this.refresh(record.parentNode);
                 }
             }.bind(this));
         }

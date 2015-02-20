@@ -1139,7 +1139,7 @@ pimcore.asset.tree = Class.create({
 
     editAssetFilename: function (tree, record) {
         Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
-                            this.editAssetFilenameComplete.bind(this, tree, record));
+                            this.editAssetFilenameComplete.bind(this, tree, record), window, false, record.data.text);
     },
 
     editAssetFilenameComplete: function (tree, record, button, value, object) {

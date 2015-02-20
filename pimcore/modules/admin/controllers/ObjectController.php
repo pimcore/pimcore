@@ -43,6 +43,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
     {
         $object = Object::getById($this->getParam("node"));
         $objectTypes = null;
+        $objects = [];
 
         if ($object instanceof Object\Concrete) {
             $class = $object->getClass();

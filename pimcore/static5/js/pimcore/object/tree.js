@@ -164,7 +164,7 @@ pimcore.object.tree = Class.create({
         this.tree.on("afterrender", function () {
             this.tree.loadMask = new Ext.LoadMask(
                 {
-                    target: Ext.getCmp("pimcore_viewport"),
+                    target: Ext.getCmp(this.config.treeId),
                     msg:t("please_wait")
                 });
             //this.tree.loadMask.enable();
@@ -1051,32 +1051,16 @@ pimcore.object.tree = Class.create({
 
     editKey: function (tree, record) {
         Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
-            this.editKeyComplete.bind(this, tree, record));
+            this.editKeyComplete.bind(this, tree, record), window, false, record.data.text);
     },
 
     editKeyComplete: function (tree, record, button, value, object) {
-
-        // check for ident filename in current level
-        if (this.isExistingKeyInLevel(record.parentNode, value, record)) {
-            return;
-        }
-
         if (button == "ok") {
 
             // check for ident filename in current level
-            var parentChilds = record.parentNode.childNodes;
-            for (var i = 0; i < parentChilds.length; i++) {
-                if (parentChilds[i].text == value && this != parentChilds[i]) {
-                    Ext.MessageBox.alert(t('rename'), t('the_filename_is_already_in_use'));
-                    return;
-                }
+            if (this.isExistingKeyInLevel(record.parentNode, value, record)) {
+                return;
             }
-
-            // validate filename
-            /*if(pimcore.helpers.isValidFilename(value) == false) {
-             Ext.MessageBox.alert(t('rename'), t('filename_not_valid'));
-             return;
-             }*/
 
             value = pimcore.helpers.getValidFilename(value);
 
