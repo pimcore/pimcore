@@ -522,7 +522,7 @@ class Config {
         }
 
         // set name
-        $hash = md5(Serialize::serialize($config));
+        $hash = md5(Serialize::serialize($pipe));
         $pipe->setName("auto_" . $hash);
 
         return $pipe;
@@ -538,25 +538,14 @@ class Config {
     public static function getByLegacyConfig ($config) {
 
         $pipe = new self();
-        $hash = md5(Serialize::serialize($config));
-        $pipe->setName("auto_" . $hash);
 
         if(isset($config["format"])) {
             $pipe->setFormat($config["format"]);
         }
+
         if(isset($config["quality"])) {
             $pipe->setQuality($config["quality"]);
         }
-        /*if ($config["cropPercent"]) {
-            $pipe->addItem("cropPercent", array(
-                "width" => $config["cropWidth"],
-                "height" => $config["cropHeight"],
-                "y" => $config["cropTop"],
-                "x" => $config["cropLeft"]
-            ));
-        }*/
-
-
 
         if (isset($config["cover"])) {
             $pipe->addItem("cover", array(
@@ -616,6 +605,9 @@ class Config {
         if(isset($config["highResolution"])) {
             $pipe->setHighResolution($config["highResolution"]);
         }
+
+        $hash = md5(Serialize::serialize($pipe));
+        $pipe->setName("auto_" . $hash);
 
         return $pipe;
     }
