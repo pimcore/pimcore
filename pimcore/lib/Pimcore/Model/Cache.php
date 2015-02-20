@@ -295,6 +295,34 @@ class Cache {
     }
 
     /**
+     * Get the last modified time for the requested cache entry
+     *
+     * @param  string $key Cache key
+     * @return int|bool Last modified time of cache entry if it is available, false otherwise
+     */
+    public static function test ($key) {
+        if (!self::$enabled) {
+            \Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
+            return;
+        }
+
+        $lastModified = false;
+
+        if($cache = self::getInstance()) {
+            $key = self::$cachePrefix . $key;
+            $data = $cache->test($key);
+
+            if ($data !== false) {
+                $lastModified = $data;
+            } else {
+                \Logger::debug("Key " . $key . " doesn't exist in cache");
+            }
+        }
+
+        return $lastModified;
+    }
+
+    /**
      * Puts content into the cache
      * @param mixed $data
      * @param string $key
