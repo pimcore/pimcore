@@ -35,6 +35,7 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract {
             if($asset = Asset::getById($assetId)) {
                 try {
 
+                    $thumbnailFile = null;
                     $thumbnailConfig = null;
                     $deferredConfigId = "thumb_" . $assetId . "__" . md5($request->getPathInfo());
                     if($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
@@ -71,18 +72,21 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract {
                         $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getThumbnail($thumbnailConfig);
                     }
 
-                    $imageContent = file_get_contents($thumbnailFile);
-                    $fileExtension = \Pimcore\File::getFileExtension($thumbnailFile);
-                    if(in_array($fileExtension, array("gif","jpeg","jpeg","png","pjpeg"))) {
-                        header("Content-Type: image/".$fileExtension, true);
-                    } else {
-                        header("Content-Type: " . $asset->getMimetype(), true);
+                    if($thumbnailFile && file_exists($thumbnailFile)) {
+                        $fileExtension = \Pimcore\File::getFileExtension($thumbnailFile);
+                        if(in_array($fileExtension, array("gif","jpeg","jpeg","png","pjpeg"))) {
+                            header("Content-Type: image/".$fileExtension, true);
+                        } else {
+                            header("Content-Type: " . $asset->getMimetype(), true);
+                        }
+
+                        header("Content-Length: " . filesize($thumbnailFile), true);
+                        while (@ob_end_flush()) ;
+                        flush();
+
+                        readfile($thumbnailFile);
+                        exit;
                     }
-
-                    header("Content-Length: " . filesize($thumbnailFile), true);
-                    echo $imageContent;
-                    exit;
-
                 } catch (\Exception $e) {
                     // nothing to do
                     \Logger::error("Thumbnail with name '" . $thumbnailName . "' doesn't exist");
