@@ -64,4 +64,3 @@ require realpath(dirname(__FILE__)) . "/lib/PHPUnit/Autoload.php";
 
 
 PHPUnit_TextUI_Command::main();
-?>
