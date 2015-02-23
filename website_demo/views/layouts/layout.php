@@ -233,6 +233,8 @@
 
             $(".image-hotspot").tooltip();
             $(".image-marker").tooltip();
+
+            $("#portalHeader img").height($(window).height());
         });
 
     <?php } ?>
