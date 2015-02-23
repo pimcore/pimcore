@@ -33,7 +33,7 @@
                     <?php if(!$this->image("image_" . $i)->isEmpty() || $this->editmode) { ?>
                         <?= $this->image("image_" . $i, [
                             "dropClass" => $id . "-" . $i,
-                            "thumbnail" => ""
+                            "thumbnail" => "portalCarousel"
                         ]); ?>
                     <?php } ?>
                     <div class="carousel-caption">

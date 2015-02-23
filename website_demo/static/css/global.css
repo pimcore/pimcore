@@ -487,7 +487,7 @@ section img {
         min-height: 600px;
     }
 
-    .carousel-caption h1 {
+    #portalHeader .carousel-caption h1 {
         font-size: 75px;
     }
 
