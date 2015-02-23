@@ -17,7 +17,10 @@ pimcore.settings.translation.translationmerger = Class.create({
         this.languages = mergeResult.languages;
         this.callback = callback;
 
-        this.store = new Ext.data.JsonStore({
+        this.store = new Ext.data.Store({
+            proxy: {
+                type: 'memory'
+            },
             autoDestroy: true,
             sortInfo: {
                 field    : 'key',
@@ -37,11 +40,9 @@ pimcore.settings.translation.translationmerger = Class.create({
         if (!this.panel) {
 
 
-            this.gridfilters = this.getGridFilters();
-
             this.layout = new Ext.grid.GridPanel({
             store: this.store,
-            plugins: [this.gridfilters],
+            plugins: ['gridfilters'],
             columns: [
                 {header: t("language"), sortable: true, dataIndex: 'lgname', editable: false},
                 {header: "", sortable: true, dataIndex: 'icon', editable: false, width: 20,
@@ -49,8 +50,8 @@ pimcore.settings.translation.translationmerger = Class.create({
                                     return '<img src="'+data+'" alt="" />';
                                 }
                 },
-                {header: t("key"), sortable: true, dataIndex: 'key', editable: false, width: 150},
-                {header: t("translation_merger_csv"), sortable: true, dataIndex: 'csv', editable: false, width: 200},
+                {header: t("key"), sortable: true, dataIndex: 'key', editable: false, flex: 150, filter: 'string'},
+                {header: t("translation_merger_csv"), sortable: true, dataIndex: 'csv', editable: false, flex: 200, filter: 'string'},
                 {
                     header: t("action"),
                     xtype: 'actioncolumn',
@@ -68,9 +69,6 @@ pimcore.settings.translation.translationmerger = Class.create({
                             },
 
                             handler: function(grid, rowIndex, colIndex) {
-                                // this.download(rowIndex);
-                                //this.store.removeAt(rowIndex);
-
                                 var rec = this.store.getAt(rowIndex);
                                 var state =  rec.get("dirty");
                                 var current = rec.get("current");
@@ -116,7 +114,7 @@ pimcore.settings.translation.translationmerger = Class.create({
                     ]
                 },
 
-                {header: t("translation_merger_current"), sortable: true, dataIndex: 'current', editable: false, width: 200}
+                {header: t("translation_merger_current"), sortable: true, dataIndex: 'current', editable: false, flex: 200, filter: 'string'}
                 ],
                 viewConfig: {
                     forceFit: true,
@@ -126,7 +124,6 @@ pimcore.settings.translation.translationmerger = Class.create({
             });
 
             this.panel = new Ext.Panel({
-                id: uniqid(),
                 title: t("translation_merger_" + this.translationType),
                 iconCls: "pimcore_icon_translations",
                 border: false,
@@ -138,7 +135,7 @@ pimcore.settings.translation.translationmerger = Class.create({
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
 
-            tabPanel.activate(this.panel.getId());
+            tabPanel.setActiveItem(this.panel.getId());
 
             this.panel.add(this.layout);
             pimcore.layout.refresh();
@@ -152,27 +149,6 @@ pimcore.settings.translation.translationmerger = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate(this.panel.getId());
-    },
-
-    getGridFilters: function() {
-        var configuredFilters = [{
-            type: "string",
-            dataIndex: "csv"
-        },{
-            type: "string",
-            dataIndex: "current"
-        },{
-            type: "string",
-            dataIndex: "key"
-        }];
-
-        // filters
-        var gridfilters = new Ext.ux.grid.GridFilters({
-            local: true,
-            filters: configuredFilters
-        });
-
-        return gridfilters;
+        tabPanel.setActiveItem(this.panel.getId());
     }
 });
