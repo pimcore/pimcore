@@ -66,14 +66,16 @@ pimcore.object.helpers.grid = Class.create({
         readerFields.push({name: "subtype", allowBlank: true});
         readerFields.push({name: "filename", allowBlank: true});
         readerFields.push({name: "classname", allowBlank: true});
-        readerFields.push({name: "creationDate", allowBlank: true});
-        readerFields.push({name: "modificationDate", allowBlank: true});
+        readerFields.push({name: "creationDate", allowBlank: true, type: 'date', dateFormat: 'timestamp'});
+        readerFields.push({name: "modificationDate", allowBlank: true, type: 'date', dateFormat: 'timestamp'});
         readerFields.push({name: "inheritedFields", allowBlank: false});
         readerFields.push({name: "metadata", allowBlank: true});
         readerFields.push({name: "#kv-tr", allowBlank: true});
 
         for (var i = 0; i < this.fields.length; i++) {
-            readerFields.push({name: this.fields[i].key, allowBlank: true});
+            if (!in_array(this.fields[i].key, ["creationDate", "modificationDate"])) {
+                readerFields.push({name: this.fields[i].key, allowBlank: true});
+            }
         }
 
 
@@ -171,9 +173,8 @@ pimcore.object.helpers.grid = Class.create({
 
         var fields = this.fields;
         for (var i = 0; i < fields.length; i++) {
-
             var field = fields[i];
-//            console.log(field);
+
             if(field.key == "subtype") {
                 gridColumns.push({header: t("type"), flex: this.getColumnWidth(field, 40), sortable: true, dataIndex: 'subtype',
                     hidden: !this.showSubtype,
@@ -208,14 +209,13 @@ pimcore.object.helpers.grid = Class.create({
             } else if(field.key == "creationDate") {
                 gridColumns.push({header: t("creationdate") + " (System)", flex: this.getColumnWidth(field, 200), sortable: true,
                     dataIndex: "creationDate", filter: 'date', editable: false, renderer: function(d) {
-                        var date = new Date(d * 1000);
-                        return Ext.Date.format(date, "Y-m-d H:i:s");
+                        return Ext.Date.format(d, "Y-m-d H:i:s");
                     }/*, hidden: !propertyVisibility.creationDate*/});
             } else if(field.key == "modificationDate") {
                 gridColumns.push({header: t("modificationdate") + " (System)", flex: this.getColumnWidth(field, 200), sortable: true,
                     dataIndex: "modificationDate", filter: 'date', editable: false, renderer: function(d) {
-                        var date = new Date(d * 1000);
-                        return Ext.Date.format(date, "Y-m-d H:i:s");
+
+                        return Ext.Date.format(d, "Y-m-d H:i:s");
                     }/*, hidden: !propertyVisibility.modificationDate*/});
             } else {
                 var fc = pimcore.object.tags[field.type].prototype.getGridColumnConfig(field);
