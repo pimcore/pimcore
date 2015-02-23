@@ -948,79 +948,82 @@ class Pimcore {
             }
         }
 
-        // force closing the connection at the client, this enables to do certain tasks (writing the cache) in the "background"
-        header("Connection: close\r\n");
-
-        // check for supported content-encodings
-        if(strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false) {
-            $contentEncoding = "gzip";
-        }
-
         // only send this headers in the shutdown-function, so that it is also possible to get the contents of this buffer earlier without sending headers
-        if(self::$inShutdown && !headers_sent() && !empty($data) && $contentEncoding) {
-            ignore_user_abort(true);
+        if(self::$inShutdown) {
 
-            // find the content-type of the response
-            $front = \Zend_Controller_Front::getInstance();
-            $a = $front->getResponse()->getHeaders();
-            $b = array_merge(headers_list(), $front->getResponse()->getRawHeaders());
+            // force closing the connection at the client, this enables to do certain tasks (writing the cache) in the "background"
+            header("Connection: close\r\n");
 
-            $contentType = null;
+            // check for supported content-encodings
+            if(strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false) {
+                $contentEncoding = "gzip";
+            }
 
-            // first check headers in headers_list() because they overwrite all other headers => see SOAP controller
-            foreach ($b as $header) {
-                if(stripos($header, "content-type") !== false) {
-                    $parts = explode(":", $header);
-                    if(strtolower(trim($parts[0])) == "content-type") {
-                        $contentType = trim($parts[1]);
+            if (!empty($data) && $contentEncoding) {
+                ignore_user_abort(true);
+
+                // find the content-type of the response
+                $front = \Zend_Controller_Front::getInstance();
+                $a = $front->getResponse()->getHeaders();
+                $b = array_merge(headers_list(), $front->getResponse()->getRawHeaders());
+
+                $contentType = null;
+
+                // first check headers in headers_list() because they overwrite all other headers => see SOAP controller
+                foreach ($b as $header) {
+                    if (stripos($header, "content-type") !== false) {
+                        $parts = explode(":", $header);
+                        if (strtolower(trim($parts[0])) == "content-type") {
+                            $contentType = trim($parts[1]);
+                            break;
+                        }
+                    }
+                }
+
+                if (!$contentType) {
+                    foreach ($a as $header) {
+                        if (strtolower(trim($header["name"])) == "content-type") {
+                            $contentType = $header["value"];
+                            break;
+                        }
+                    }
+                }
+
+                // prepare the response to be sent (gzip or not)
+                // do not add text/xml or a wildcard for text/* here because this causes problems with the SOAP server
+                $gzipContentTypes = array("@text/html@i", "@application/json@", "@text/javascript@", "@text/css@");
+                $gzipIt = false;
+                foreach ($gzipContentTypes as $type) {
+                    if (@preg_match($type, $contentType)) {
+                        $gzipIt = true;
                         break;
                     }
                 }
-            }
 
-            if(!$contentType) {
-                foreach ($a as $header) {
-                    if(strtolower(trim($header["name"])) == "content-type") {
-                        $contentType = $header["value"];
-                        break;
-                    }
+                // gzip the contents and send connection close tthat the process can run in the background to finish
+                // some tasks like writing the cache ...
+                // using mb_strlen() because of PIMCORE-1509
+                if ($gzipIt) {
+                    $output = "\x1f\x8b\x08\x00\x00\x00\x00\x00" .
+                        substr(gzcompress($data, 2), 0, -4) .
+                        pack('V', crc32($data)) . // packing the CRC and the strlen is still required
+                        pack('V', mb_strlen($data, "latin1")); // (although all modern browsers don't need it anymore) to work properly with google adwords check & co.
+
+                    header("Content-Encoding: $contentEncoding\r\n");
                 }
             }
 
-            // prepare the response to be sent (gzip or not)
-            // do not add text/xml or a wildcard for text/* here because this causes problems with the SOAP server
-            $gzipContentTypes = array("@text/html@i","@application/json@","@text/javascript@","@text/css@");
-            $gzipIt = false;
-            foreach ($gzipContentTypes as $type) {
-                if(@preg_match($type, $contentType)) {
-                    $gzipIt = true;
-                    break;
-                }
+            // no gzip/deflate encoding
+            if (!$output) {
+                $output = $data;
             }
 
-            // gzip the contents and send connection close tthat the process can run in the background to finish
-            // some tasks like writing the cache ...
-            // using mb_strlen() because of PIMCORE-1509
-            if($gzipIt) {
-                $output = "\x1f\x8b\x08\x00\x00\x00\x00\x00".
-                    substr(gzcompress($data, 2), 0, -4).
-                    pack('V', crc32($data)). // packing the CRC and the strlen is still required
-                    pack('V', mb_strlen($data, "latin1")); // (although all modern browsers don't need it anymore) to work properly with google adwords check & co.
-
-                header("Content-Encoding: $contentEncoding\r\n");
+            if (strlen($output) > 0) {
+                // check here if there is actually content, otherwise readfile() and similar functions are not working anymore
+                header("Content-Length: " . mb_strlen($output, "latin1"));
             }
+            header("X-Powered-By: pimcore", true);
         }
-
-        // no gzip/deflate encoding
-        if(!$output) {
-            $output = $data;
-        }
-
-        if(strlen($output) > 0) {
-            // check here if there is actually content, otherwise readfile() and similar functions are not working anymore
-            header("Content-Length: " . mb_strlen($output, "latin1"));
-        }
-        header("X-Powered-By: pimcore");
 
         // return the data unchanged
         return $output;

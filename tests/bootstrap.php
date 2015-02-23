@@ -95,6 +95,8 @@ $setup->contents(array(
     "password" => microtime()
 ));
 
+echo "\nSetup done...\n";
+
 // to be sure => reset the database
 Pimcore_Resource::reset();
 
