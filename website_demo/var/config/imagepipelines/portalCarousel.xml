@@ -2,12 +2,9 @@
 <zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
   <items>
     <item>
-      <method>cover</method>
+      <method>scaleByWidth</method>
       <arguments>
         <width>1500</width>
-        <height>400</height>
-        <positioning>center</positioning>
-        <doNotScaleUp/>
       </arguments>
     </item>
   </items>

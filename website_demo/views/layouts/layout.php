@@ -220,7 +220,13 @@
         clickEvent = false;
     });
 
+    $("#portalHeader img").height($(window).height());
+
     <?php if(!$this->editmode) { ?>
+
+        // center the caption on the portal page
+        $("#portalHeader .carousel-caption").css("bottom", Math.round(($(window).height() - $("#portalHeader .carousel-caption").height())/3) + "px");
+
         $(document).ready(function() {
 
             // lightbox (magnific)
@@ -233,8 +239,6 @@
 
             $(".image-hotspot").tooltip();
             $(".image-marker").tooltip();
-
-            $("#portalHeader img").height($(window).height());
         });
 
     <?php } ?>
