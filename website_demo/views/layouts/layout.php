@@ -220,7 +220,7 @@
         clickEvent = false;
     });
 
-    $("#portalHeader img, #portalHeader .item").height($(window).height());
+    $("#portalHeader img, #portalHeader .item, #portalHeader").height($(window).height());
 
     <?php if(!$this->editmode) { ?>
 

@@ -87,6 +87,12 @@ footer .links a {
     min-height: 300px;
 }
 
+#portalHeader .carousel-inner {
+    position: absolute !important;
+    top:0;
+    left: 0;
+}
+
 /* Since positioning the image, we need to help out the caption */
 #portalHeader .carousel-caption {
     z-index: 10;
