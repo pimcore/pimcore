@@ -1,4 +1,4 @@
-<div id="myCarousel" class="carousel header slide" data-ride="carousel">
+<div id="myCarousel" class="carousel header slide" data-ride="carousel" <?php if($this->editmode) { ?>data-interval="false"<?php } ?>>
     <!-- Indicators -->
     <ol class="carousel-indicators">
         <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -13,16 +13,18 @@
         }
         for($i=0; $i<$count; $i++) { ?>
             <div class="item<?php if(!$i) { ?> active<?php } ?>">
-                <?= $this->image("cImage_".$i)->frontend(); ?>
+                <?= $this->image("cImage_".$i, ["thumbnail" => "portalCarousel"])->frontend(); ?>
                 <div class="container">
                     <div class="carousel-caption">
                         <?php
                         if($this->editmode) {
                             echo $this->image("cImage_".$i, [
+                                "thumbnail" => "portalCarousel",
                                 "reload" => true,
                                 "hidetext" => true,
                                 "title" => "Drag Image Here",
-                                "height" => 30
+                                "width" => 150,
+                                "height" => 70
                             ]);
                             echo "<br /><br />";
                         }
