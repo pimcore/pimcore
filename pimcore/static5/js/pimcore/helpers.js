@@ -1156,7 +1156,7 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
                 iconCls: 'pimcore_icon_upload_single'
             },
             listeners: {
-                fileselected: function () {
+                change: function () {
                     uploadForm.getForm().submit({
                         url: url,
                         waitMsg: t("please_wait"),
@@ -1222,7 +1222,7 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
                 iconCls: 'pimcore_icon_upload_single'
             },
             listeners: {
-                fileselected: function () {
+                change: function () {
                     uploadForm.getForm().submit({
                         url: url,
                         waitMsg: t("please_wait"),

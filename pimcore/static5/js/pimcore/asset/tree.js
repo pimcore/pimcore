@@ -1133,7 +1133,7 @@ pimcore.asset.tree = Class.create({
 
         this.leaf = false;
         //this.renderIndent();
-        this.expand();
+        record.expand();
         this.refresh(record);
     },
 
