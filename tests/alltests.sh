@@ -2,5 +2,5 @@
 
 mkdir -p output
 
-./phpunit --verbose --bootstrap bootstrap.php --log-json output/log.xml AllTests
+php phpunit.php --verbose --bootstrap bootstrap.php --log-json output/log.xml AllTests
 
