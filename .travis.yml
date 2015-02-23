@@ -23,7 +23,7 @@ before_script:
   - sudo service apache2 restart
   # make tests executable
   - cd tests
-  - sudo chmod 0755 alltests.sh phpunit
+  - sudo chmod 0755 alltests.sh hhvm-all.sh
 
 script:
   - if [[ "$TRAVIS_PHP_VERSION" != "hhvm" ]]; then ./alltests.sh; fi
