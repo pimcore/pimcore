@@ -433,7 +433,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             listeners: {
                 "keydown" : function (field, key) {
                     if (key.getKey() == key.ENTER) {
-                        this.gridfilters.clearFilters();
+                        this.grid.filters.clearFilters();
 
                         this.store.baseparams = {};
                         this.store.setBaseParam("condition", field.getValue());
@@ -450,7 +450,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             tooltip: t("direct_sql_query"),
             handler: function (button) {
 
-                this.gridfilters.clearFilters();
+                this.grid.filters.clearFilters();
+
                 this.sqlEditor.setValue("");
 
                 // reset base params, because of the condition

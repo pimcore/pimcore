@@ -143,7 +143,7 @@ pimcore.asset.listfolder = Class.create({
             checked: this.onlyDirectChildren,
             listeners: {
                 "change" : function (field, checked) {
-                    this.gridfilters.clearFilters();
+                    this.grid.filters.clearFilters();
 
                     this.store.baseparams = {};
                     this.store.setBaseParam("only_direct_children", checked);
