@@ -263,7 +263,7 @@ abstract class Document extends Admin {
         if($doc instanceof Model\Document\PageSnippet) {
             $doc->setElements(array());
             $doc->setContentMasterDocumentId($this->getParam("contentMasterDocumentPath"));
-            $doc->saveVersion();
+            $doc->saveVersion(true, true, true);
         }
 
         $this->_helper->json(array("success" => true));
