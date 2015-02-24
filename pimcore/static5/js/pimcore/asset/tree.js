@@ -604,7 +604,7 @@ pimcore.asset.tree = Class.create({
                         iconCls: "pimcore_icon_lock_delete",
                         handler: function () {
                             this.updateAsset(record.data.id, {locked: null}, function () {
-                                this.tree.getRootNode().reload();
+                                this.refresh(this.tree.getRootNode());
                             }.bind(this));
                         }.bind(this)
                     });
@@ -614,7 +614,7 @@ pimcore.asset.tree = Class.create({
                         iconCls: "pimcore_icon_lock_add",
                         handler: function () {
                             this.updateAsset(record.data.id, {locked: "self"}, function () {
-                                this.tree.getRootNode().reload();
+                                this.refresh(this.tree.getRootNode());
                             }.bind(this));
                         }.bind(this)
                     });
@@ -626,7 +626,7 @@ pimcore.asset.tree = Class.create({
                             handler: function () {
                                 this.updateAsset(tree, record, {locked: "propagate"},
                                     function () {
-                                        this.tree.getRootNode().reload();
+                                        this.refresh(this.tree.getRootNode());
                                     }.bind(this));
                             }.bind(this)
                         });
@@ -646,7 +646,7 @@ pimcore.asset.tree = Class.create({
                                     type: "asset"
                                 },
                                 success: function () {
-                                    this.parentNode.reload();
+                                    this.refresh(this.tree.getRootNode());
                                 }.bind(this)
                             });
                         }.bind(this)
