@@ -107,7 +107,7 @@ pimcore.extensionmanager.admin = Class.create({
             {
                 header: t('enable') + " / " + t("disable"),
                 xtype: 'actioncolumn',
-                width: 30,
+                width: 70,
                 items: [{
                     tooltip: t('enable') + " / " + t("disable"),
                     getClass: function (v, meta, rec) {
@@ -151,7 +151,7 @@ pimcore.extensionmanager.admin = Class.create({
             {
                 header: t('install') + "/" + t("uninstall"),
                 xtype: 'actioncolumn',
-                width: 30,
+                width: 70,
                 items: [{
                     tooltip: t('install') + "/" + t("uninstall"),
                     getClass: function (v, meta, rec) {
@@ -207,7 +207,7 @@ pimcore.extensionmanager.admin = Class.create({
             {
                 header: t('configure'),
                 xtype: 'actioncolumn',
-                width: 30,
+                width: 70,
                 items: [{
                     tooltip: t('configure'),
                     getClass: function (v, meta, rec) {
@@ -247,7 +247,7 @@ pimcore.extensionmanager.admin = Class.create({
             {
                 header: t('delete'),
                 xtype: 'actioncolumn',
-                width: 30,
+                width: 70,
                 items: [{
                     tooltip: t('delete'),
                     getClass: function (v, meta, rec) {
