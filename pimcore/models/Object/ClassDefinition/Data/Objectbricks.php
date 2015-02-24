@@ -225,10 +225,10 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                     }
                     $brick->setValues($collectionData);
                     $brick->setFieldname($this->getName());
-                }
 
-                $setter = "set" . ucfirst($collectionRaw["type"]);
-                $container->$setter($brick);
+                    $setter = "set" . ucfirst($collectionRaw["type"]);
+                    $container->$setter($brick);
+                }
             }
         }
 
