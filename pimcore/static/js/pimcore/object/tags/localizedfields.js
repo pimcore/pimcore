@@ -223,6 +223,11 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                         return;
                     }
 
+                    // if there's already an interval => clear it!
+                    if(this.tabPanelAdjustInterval) {
+                        clearInterval(this.tabPanelAdjustInterval);
+                    }
+
                     this.tabPanelAdjustIntervalCounter = 0;
                     this.tabPanelAdjustInterval = window.setInterval(function () {
                         if(!this.fieldConfig.height && !this.fieldConfig.region) {
