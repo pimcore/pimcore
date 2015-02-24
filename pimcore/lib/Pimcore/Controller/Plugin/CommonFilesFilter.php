@@ -30,6 +30,7 @@ class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract {
         "@^/apple-touch-icon@",
         "@^/browserconfig.xml$@",
         "@^/wpad.dat$@",
+        "@^/.crl$@",
     );
 
     /**
