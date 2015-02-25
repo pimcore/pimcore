@@ -58,6 +58,7 @@ class InheritanceHelper {
         $this->fields = array();
         $this->relations = array();
         $this->fieldIds = array();
+        $this->fieldDefinitions = [];
 
         if($storetable == null) {
             $this->storetable = self::STORE_TABLE . $classId;
@@ -90,22 +91,24 @@ class InheritanceHelper {
     public function resetFieldsToCheck() {  
         $this->fields = array();
         $this->relations = array();
-        $this->fieldIds = array();         
+        $this->fieldIds = array();
+        $this->fieldDefinitions = [];
     }
 
     /**
      * @param $fieldname
      */
-    public function addFieldToCheck($fieldname) {
+    public function addFieldToCheck($fieldname, $fieldDefinition) {
         $this->fields[$fieldname] = $fieldname;
         $this->fieldIds[$fieldname] = array();
+        $this->fieldDefinitions[$fieldname] = $fieldDefinition;
     }
 
     /**
      * @param $fieldname
      * @param null $queryfields
      */
-    public function addRelationToCheck($fieldname, $queryfields = null) {
+    public function addRelationToCheck($fieldname, $fieldDefinition, $queryfields = null) {
         if($queryfields == null) {
             $this->relations[$fieldname] = $fieldname;
         } else {
@@ -113,6 +116,7 @@ class InheritanceHelper {
         }
 
         $this->fieldIds[$fieldname] = array();
+        $this->fieldDefinitions[$fieldname] = $fieldDefinition;
     }
 
     /**
@@ -220,7 +224,7 @@ class InheritanceHelper {
      */
     private function getIdsToUpdateForValuefields($currentNode, $fieldname) {
         $value = $currentNode->values[$fieldname];
-        if($value == null) {
+        if($this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             $this->fieldIds[$fieldname][] = $currentNode->id;
             if(!empty($currentNode->childs)) {
                 foreach($currentNode->childs as $c) {
@@ -236,7 +240,7 @@ class InheritanceHelper {
      */
     private function getIdsToUpdateForRelationfields($currentNode, $fieldname) {
         $value = $currentNode->relations[$fieldname];
-        if($value == null) {
+        if($this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             $this->fieldIds[$fieldname][] = $currentNode->id;
             if(!empty($currentNode->childs)) {
                 foreach($currentNode->childs as $c) {

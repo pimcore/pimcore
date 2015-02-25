@@ -264,11 +264,11 @@ class Resource extends Model\Object\AbstractObject\Resource {
                                 }
 
                                 if($doInsert) {
-                                    $this->inheritanceHelper->addRelationToCheck($key, array_keys($insertData));
+                                    $this->inheritanceHelper->addRelationToCheck($key, $fd, array_keys($insertData));
                                 }
                             } else {
                                 if($oldData[$key] != $insertData) {
-                                    $this->inheritanceHelper->addRelationToCheck($key);
+                                    $this->inheritanceHelper->addRelationToCheck($key, $fd);
                                 }
                             }
 
@@ -276,12 +276,12 @@ class Resource extends Model\Object\AbstractObject\Resource {
                             if (is_array($insertData)) {
                                 foreach($insertData as $insertDataKey => $insertDataValue) {
                                     if($oldData[$insertDataKey] != $insertDataValue) {
-                                        $this->inheritanceHelper->addFieldToCheck($insertDataKey);
+                                        $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
                                     }
                                 }
                             } else {
                                 if($oldData[$key] != $insertData) {
-                                    $this->inheritanceHelper->addFieldToCheck($key);
+                                    $this->inheritanceHelper->addFieldToCheck($key, $fd);
                                 }
                             }
                         }
