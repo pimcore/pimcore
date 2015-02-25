@@ -22,7 +22,8 @@ class OnlineShop_Framework_Impl_Pricing_Condition_ClientIp implements OnlineShop
      */
     public function check(OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
-        return $_SERVER['REMOTE_ADDR'] == $this->getIp();
+        $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?: $_SERVER['REMOTE_ADDR'];
+        return $clientIp == $this->getIp();
     }
 
     /**
