@@ -173,6 +173,11 @@ class Resource extends Model\Element\Resource
                 }
             }
 
+            // use the real document path, just for the case that a documents gets saved in the frontend
+            // and the page is within a site. see also: PIMCORE-2684
+            $dataDocument["path"] = $this->model->getRealPath();
+
+            // update the values in the database
             $this->db->insertOrUpdate("documents", $dataDocument);
 
             if($typeSpecificTable) {
