@@ -95,53 +95,6 @@ class Resource extends Model\Document\PageSnippet\Resource {
     }
 
     /**
-     * Updates the object's data to the database, it's an good idea to use save() instead
-     *
-     * @throws \Exception
-     */
-    public function update() {
-        try {
-            $this->model->setModificationDate(time());
-            $document = get_object_vars($this->model);
-
-            foreach ($document as $key => $value) {
-
-                // check if the getter exists
-                $getter = "get" . ucfirst($key);
-                if(!method_exists($this->model,$getter)) {
-                    continue;
-                }
-
-                // get the value from the getter
-                if(in_array($key, $this->validColumnsDocument) || in_array($key, $this->validColumnsSnippet)) {
-                    $value = $this->model->$getter();
-                } else {
-                    continue;
-                }
-
-
-                if(is_bool($value)) {
-                    $value = (int)$value;
-                }
-                if (in_array($key, $this->validColumnsDocument)) {
-                    $dataDocument[$key] = $value;
-                }
-                if (in_array($key, $this->validColumnsSnippet)) {
-                    $dataSnippet[$key] = $value;
-                }
-            }
-            
-            $this->db->insertOrUpdate("documents", $dataDocument);
-            $this->db->insertOrUpdate("documents_snippet", $dataSnippet);
-
-            $this->updateLocks();
-        }
-        catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
      * Deletes the object from database
      *
      * @throws \Exception

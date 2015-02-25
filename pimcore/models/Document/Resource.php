@@ -18,16 +18,23 @@
 namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
+use Pimcore\Tool\Serialize;
 
 class Resource extends Model\Element\Resource
 {
 
     /**
-     * Contains the valid database colums
+     * Contains the valid database columns
      *
      * @var array
      */
     protected $validColumnsDocument = array();
+
+    /**
+     * contains the valid database columns depending on the actual type
+     * @var array
+     */
+    protected $validColumnsTypeSpecific = [];
 
     /**
      * Get the valid database columns from database
@@ -122,30 +129,55 @@ class Resource extends Model\Element\Resource
     public function update()
     {
         try {
+
+            $typeSpecificTable = null;
+            if(in_array($this->model->getType(), ["email","hardlink","link","page","snippet"])) {
+                $typeSpecificTable = "documents_" . $this->model->getType();
+                $this->validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
+            }
+
             $this->model->setModificationDate(time());
 
             $document = get_object_vars($this->model);
 
+            $dataDocument = [];
+            $dataTypeSpecific = [];
+
             foreach ($document as $key => $value) {
-                if (in_array($key, $this->validColumnsDocument)) {
 
-                    // check if the getter exists
-                    $getter = "get" . ucfirst($key);
-                    if (!method_exists($this->model, $getter)) {
-                        continue;
-                    }
+                // check if the getter exists
+                $getter = "get" . ucfirst($key);
+                if(!method_exists($this->model,$getter)) {
+                    continue;
+                }
 
-                    // get the value from the getter
+                // get the value from the getter
+                if(in_array($key, $this->validColumnsDocument) || in_array($key, $this->validColumnsTypeSpecific)) {
                     $value = $this->model->$getter();
+                } else {
+                    continue;
+                }
 
-                    if (is_bool($value)) {
-                        $value = (int)$value;
-                    }
-                    $data[$key] = $value;
+                if(is_bool($value)) {
+                    $value = (int)$value;
+                }
+                if(is_array($value)) {
+                    $value = Serialize::serialize($value);
+                }
+
+                if (in_array($key, $this->validColumnsDocument)) {
+                    $dataDocument[$key] = $value;
+                }
+                if (in_array($key, $this->validColumnsTypeSpecific)) {
+                    $dataTypeSpecific[$key] = $value;
                 }
             }
 
-            $this->db->insertOrUpdate("documents", $data);
+            $this->db->insertOrUpdate("documents", $dataDocument);
+
+            if($typeSpecificTable) {
+                $this->db->insertOrUpdate($typeSpecificTable, $dataTypeSpecific);
+            }
 
             $this->updateLocks();
         } catch (\Exception $e) {
