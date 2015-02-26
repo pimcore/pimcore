@@ -333,6 +333,7 @@
 
 .pimcore_tag_textarea {
     white-space: pre-line;
+    width: 100%;
 }
 
 
