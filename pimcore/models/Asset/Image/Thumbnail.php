@@ -255,13 +255,13 @@ class Thumbnail {
                 $attr[$key] = $key . '="' . htmlspecialchars($value) . '"';
 
                 // do not include all attributes
-                if(!in_array($key, ["width","height"])) {
+                if(!in_array($key, ["width","height","alt"])) {
                     $pictureAttribs[$key] = $key . '="' . htmlspecialchars($value) . '"';
+                }
 
-                    // some attributes need to be added also as data- attribute, this is specific to picturePolyfill
-                    if(in_array($key, ["alt"])) {
-                        $pictureAttribs["data-" . $key] = "data-" . $key . '="' . htmlspecialchars($value) . '"';
-                    }
+                // some attributes need to be added also as data- attribute, this is specific to picturePolyfill
+                if(in_array($key, ["alt"])) {
+                    $pictureAttribs["data-" . $key] = "data-" . $key . '="' . htmlspecialchars($value) . '"';
                 }
             }
         }
