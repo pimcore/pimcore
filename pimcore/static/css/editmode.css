@@ -565,6 +565,14 @@
     margin-right: 5px;
 }
 
+.x-dd-drag-proxy .x-menu-item-active {
+    background: #363636;
+}
+
+.x-dd-drag-proxy .x-menu-item {
+    color: #fff;
+}
+
 .x-tip {
     background: #000;
     color: #fff;

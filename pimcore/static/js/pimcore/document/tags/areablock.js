@@ -839,9 +839,14 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             listeners: {
                 "afterrender": function (brick, v) {
 
-                    v.dragZone = new Ext.dd.DragZone(v.getEl(), {
+                    var el = v.getEl();
+                    if(el.hasClass("x-menu-item")) {
+                        el = el.parent();
+                    }
+
+                    v.dragZone = new Ext.dd.DragZone(el, {
                         getDragData: function(e) {
-                            var sourceEl = v.getEl().dom;
+                            var sourceEl = el.dom;
                             if (sourceEl) {
                                 d = sourceEl.cloneNode(true);
                                 d.id = Ext.id();
