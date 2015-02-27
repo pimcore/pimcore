@@ -176,6 +176,16 @@ class Translate extends \Zend_Translate_Adapter {
                     }
                 }
             }
+
+            // check if there is a translation in a lower step (without reverting the keys)
+            $tmpKey = $messageId;
+            if(strrpos($tmpKey,':')){
+                while($tmpKey = substr($tmpKey,0,strrpos($tmpKey,':'))){
+                    if (!empty($this->_translate[$locale][$tmpKey])) {
+                        return $this->_translate[$locale][$tmpKey];
+                    }
+                }
+            }
         }
 
         // do not create a new translation if it is only empty, but do not return empty values
