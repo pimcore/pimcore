@@ -429,7 +429,9 @@ class Link {
         $attributes = array("rel", "tabindex", "accesskey", "title","target","class");
         $attribs = array();
         foreach ($attributes as $a) {
-            $attribs[] = $a . '="' . $this->$a . '"';
+            if($this->$a) {
+                $attribs[] = $a . '="' . $this->$a . '"';
+            }
         }
 
         if($this->getAttributes()) {
