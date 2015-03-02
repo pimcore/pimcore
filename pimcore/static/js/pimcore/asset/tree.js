@@ -251,7 +251,9 @@ pimcore.asset.tree = Class.create({
                     // Get file
                     item.file(function(file) {
                         doFileUpload(file, path);
-                    }.bind(this));
+                    }.bind(this), function (e) {
+                        console.log(e);
+                    });
                 } else if (item.isDirectory) {
                     // Get folder contents
                     var dirReader = item.createReader();
