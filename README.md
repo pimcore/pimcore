@@ -1,7 +1,12 @@
 # pimcore
 
-THE PREMIER OPEN-SOURCE  
-MULTI-CHANNEL EXPERIENCE AND ENGAGEMENT MANAGEMENT PLATFORM
+THE PREMIER OPEN-SOURCE CMS/CMF, PIM, ECOMMERCE-SUITE
+
+[![Software License](https://img.shields.io/badge/license-BSD-brightgreen.svg?style=flat)](LICENSE.txt)
+![Current Release](https://img.shields.io/packagist/v/pimcore/pimcore.svg?style=flat)
+[![Build Status](https://travis-ci.org/pimcore/pimcore.svg?branch=master)](https://travis-ci.org/pimcore/pimcore)
+[![HHVM Status](https://img.shields.io/hhvm/pimcore/pimcore.svg)](https://travis-ci.org/pimcore/pimcore)
+[![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 
 ![Editing Interface](website_demo/static/screenshots/1.png)
@@ -11,8 +16,6 @@ MULTI-CHANNEL EXPERIENCE AND ENGAGEMENT MANAGEMENT PLATFORM
 * Issue Tracker: - [Issues](http://www.pimcore.org/issues) - Report bugs here
 * Forums: - http://www.pimcore.org/board/ - Get help
 
-[![Build Status](https://travis-ci.org/pimcore/pimcore.svg?branch=master)](https://travis-ci.org/pimcore/pimcore)
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/pimcore/pimcore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Getting started
 
