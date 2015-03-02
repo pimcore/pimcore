@@ -78,7 +78,7 @@ $styles = array(
 //    "/pimcore/static5/js/lib/ext-plugins/ux/gridfilters/css/GridFilters.css",
 //    "/pimcore/static5/js/lib/ext-plugins/ux/gridfilters/css/RangeMenu.css",
 //    "/pimcore/static5/js/lib/ext-plugins/ux/fileuploadfield/css/fileuploadfield.css",
-    "/pimcore/static5/css/ext5-admin-overwrite.css",
+    "/pimcore/static5/css/ext-admin-overwrite.css",
     "/pimcore/static5/css/fontello.css"
 );
 ?>
