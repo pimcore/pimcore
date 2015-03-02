@@ -17,6 +17,7 @@ filter:
         - pimcore/lib/Sabre/*
         - pimcore/lib/Whoops/*
         - pimcore/lib/Zend/*
+        - pimcore/lib/Pimcore/Tool/Transliteration/Data/*
         - pimcore/lib/html2text.php
         - pimcore/lib/less.inc.php
         - pimcore/lib/password_compatibility.php
