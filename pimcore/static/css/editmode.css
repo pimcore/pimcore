@@ -332,6 +332,13 @@
     box-shadow: none;
 }
 
+.pimcore_tag_input[contenteditable=true]:empty:before{
+    /* PIMCORE-2688 */
+    content: attr(data-placeholder);
+    display: block; /* For Firefox */
+    color:#BABABA;
+}
+
 .pimcore_tag_textarea {
     white-space: pre-line;
     width: 100%;
