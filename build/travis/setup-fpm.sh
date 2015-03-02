@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Setting up FPM ..."
+
 phpenv config-add build/travis/php.ini
 
 sudo cp -f build/travis/php-fpm.conf ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf

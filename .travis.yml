@@ -33,8 +33,8 @@ before_script:
   - sudo chmod 0755 alltests.sh hhvm-all.sh
 
 script:
-  - if [[ "$TRAVIS_PHP_VERSION" != "hhvm" ]]; then ./alltests.sh; fi
-  - if [[ "$TRAVIS_PHP_VERSION" == "hhvm" ]]; then ./hhvm-all.sh; fi
+  - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then ./alltests.sh; fi
+  - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then ./hhvm-all.sh; fi
 
 after_script: cat $TRAVIS_BUILD_DIR/apache-error.log $TRAVIS_BUILD_DIR/apache-access.log /tmp/hhvm.log
 
