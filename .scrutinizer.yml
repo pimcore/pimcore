@@ -10,6 +10,7 @@ filter:
         - pimcore/static/*
         - pimcore/static5/*
         - pimcore/lib/Csv/*
+        - pimcore/lib/DaisyDiff/*
         - pimcore/lib/Google/*
         - pimcore/lib/Hybrid/*
         - pimcore/lib/Net/*
