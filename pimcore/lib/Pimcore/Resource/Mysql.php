@@ -64,6 +64,7 @@ class Mysql {
             $db = \Zend_Db::factory($config["database"]["adapter"], $config["database"]["params"]);
             $db->query("SET NAMES " . $charset);
         } catch (\Exception $e) {
+            \Logger::emerg($e);
             \Pimcore\Tool::exitWithError("Database Error! See debug.log for details");
         }
 
