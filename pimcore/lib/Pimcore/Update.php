@@ -216,7 +216,8 @@ class Update {
         
         $xml = Tool::getHttpData($url);
         if($xml) {
-            $updateFiles = simplexml_load_string($xml, null, LIBXML_NOCDATA);
+            $parserOptions = LIBXML_VERSION >= 20900 ? LIBXML_NOCDATA | LIBXML_PARSEHUGE : LIBXML_NOCDATA;
+            $updateFiles = simplexml_load_string($xml, null, $parserOptions);
             
             foreach ($updateFiles->file as $file) {
                 
