@@ -61,14 +61,14 @@ $config = array(
 
 
 // display help message
-if($opts->getOption("help")) {
+if ($opts->getOption("help")) {
     echo $opts->getUsageMessage();
     exit;
 }
 
 $tmpConfig = $config;
 foreach ($config as $key => $value) {
-    if($opts->getOption($key)) {
+    if ($opts->getOption($key)) {
         $tmpConfig[$key] = $opts->getOption($key);
     }
 }
@@ -79,7 +79,7 @@ $backupFile = $config["directory"] . "/" . $config["filename"] . ".zip";
 
 
 // check for existing file
-if(is_file($backupFile) && !$config["overwrite"]) {
+if (is_file($backupFile) && !$config["overwrite"]) {
     echo "backup-file already exists, please use --overwrite=true or -o true to overwrite it";
     exit;
 } else if (is_file($backupFile)) {
@@ -87,12 +87,12 @@ if(is_file($backupFile) && !$config["overwrite"]) {
 }
 
 // cleanup
-if($config["cleanup"] != "false") {
+if ($config["cleanup"] != "false") {
     $files = scandir($config["directory"]);
     $lifetime = (int) $config["cleanup"] * 86400;
     foreach ($files as $file) {
-        if(is_file($config["directory"] . "/" . $file) && preg_match("/\.zip$/",$file)) {
-            if(filemtime($config["directory"] . "/" . $file) < (time()-$lifetime) ) {
+        if (is_file($config["directory"] . "/" . $file) && preg_match("/\.zip$/", $file)) {
+            if (filemtime($config["directory"] . "/" . $file) < (time() - $lifetime)) {
                 verboseMessage("delete: " . $config["directory"] . "/" . $file . "\n");
                 unlink($config["directory"] . "/" . $file);
             }
@@ -104,7 +104,7 @@ verboseMessage("------------------------------------------------");
 verboseMessage("------------------------------------------------");
 verboseMessage("starting backup into file: " . $backupFile);
 $options = array();
-if($mysqlTables = $opts->getOption("mysql-tables")){
+if ($mysqlTables = $opts->getOption("mysql-tables")) {
     $options["mysql-tables"] = $mysqlTables;
 }
 $options['only-mysql-related-tasks'] = $opts->getOption('only-mysql-related-tasks');
@@ -122,14 +122,14 @@ $stepMethodMapping = array(
     "complete" => "complete"
 );
 
-if(empty($initInfo["errors"])) {
+if (empty($initInfo["errors"])) {
     foreach ($initInfo["steps"] as $step) {
-        if(!is_array($step[1])) {
+        if (!is_array($step[1])) {
             $step[1] = array();
         }
-        verboseMessage("execute: " . $step[0] . " | with the following parameters: " . implode(",",$step[1]));
+        verboseMessage("execute: " . $step[0] . " | with the following parameters: " . implode(",", $step[1]));
         $return = call_user_func_array(array($backup, $stepMethodMapping[$step[0]]), $step[1]);
-        if($return["filesize"]) {
+        if ($return["filesize"]) {
             verboseMessage("current filesize of the backup is: " . $return["filesize"]);
         }
     }
@@ -147,9 +147,9 @@ verboseMessage("------------------------------------------------");
 verboseMessage("backup finished, you can find your backup here: " . $backupFile);
 
 
-function verboseMessage ($m) {
+function verboseMessage($m) {
     $config = \Zend_Registry::get("config");
-    if($config["verbose"]) {
+    if ($config["verbose"]) {
         echo $m . "\n";
     }
 }
