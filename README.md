@@ -3,7 +3,7 @@
 THE PREMIER OPEN-SOURCE CMS/CMF, PIM, ECOMMERCE-SUITE
 
 [![Software License](https://img.shields.io/badge/license-BSD-brightgreen.svg?style=flat)](LICENSE.txt)
-![Current Release](https://img.shields.io/packagist/v/pimcore/pimcore.svg?style=flat)
+[![Current Release](https://img.shields.io/packagist/v/pimcore/pimcore.svg?style=flat)](https://packagist.org/packages/pimcore/pimcore)
 [![Build Status](https://travis-ci.org/pimcore/pimcore.svg?branch=master)](https://travis-ci.org/pimcore/pimcore)
 [![HHVM Status](https://img.shields.io/hhvm/pimcore/pimcore.svg)](https://travis-ci.org/pimcore/pimcore)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
