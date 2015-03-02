@@ -1575,3 +1575,8 @@
 "are_you_sure_recursive","There child nodes which will be deleted as well! Are you sure?"
 "csv_seperated_options","CSV seperated options"
 "csv_seperated_options_info","The list of available options can be specified as comma-seperated list, as single-column values or  mixed. For the single-column way, the key will also be used as the value."
+"first_page","First Page"
+"previous_page","Previous Page"
+"next_page","Next Page",
+"last_page","Last Page"
+"no_data_to_display","No data to display"

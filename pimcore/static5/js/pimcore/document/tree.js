@@ -81,7 +81,7 @@ pimcore.document.tree = Class.create({
         rootNodeConfig.expanded = true;
 
 
-        var store = Ext.create('Ext.data.TreeStore', {
+        var store = Ext.create('pimcore.data.PagingTreeStore', {
             autoLoad: false,
             autoSync: false,
             proxy: {
@@ -92,6 +92,9 @@ pimcore.document.tree = Class.create({
                     totalProperty : 'total',
                     rootProperty: 'nodes'
 
+                },
+                extraParams: {
+                    limit: itemsPerPage
                 }
             },
             pageSize: itemsPerPage,
@@ -105,7 +108,7 @@ pimcore.document.tree = Class.create({
 
 
         // documents
-        this.tree = Ext.create('Ext.tree.Panel', {
+        this.tree = Ext.create('pimcore.tree.Panel', {
             region: "center",
             id: this.config.treeId,
             title: this.config.treeTitle,
@@ -130,7 +133,8 @@ pimcore.document.tree = Class.create({
                         console.log("beforedrop");
                     },
                     nodedragover: this.onTreeNodeOver.bind(this)
-                }
+                },
+                xtype: 'pimcoretreeview'
             },
             //tools: [{
             //    id: "right",
@@ -142,14 +146,15 @@ pimcore.document.tree = Class.create({
             //}],
             root: rootNodeConfig,
             store: store,
-            listeners: this.getTreeNodeListeners(),
-            dockedItems: [{
-                xtype: 'pagingtoolbar',
-                store: store,   // same store GridPanel is using
-                //dock: 'bottom',
-                displayInfo: true,
-                pageSize: itemsPerPage
-            }]
+            listeners: this.getTreeNodeListeners()
+            //,
+            //dockedItems: [{
+            //    xtype: 'pagingtoolbar',
+            //    store: store,   // same store GridPanel is using
+            //    //dock: 'bottom',
+            //    displayInfo: true,
+            //    pageSize: itemsPerPage
+            //}]
         });
 
 
@@ -157,13 +162,10 @@ pimcore.document.tree = Class.create({
         //this.tree.on("startdrag", this.onDragStart.bind(this));
         //this.tree.on("enddrag", this.onDragEnd.bind(this));
         //this.tree.on("nodedragover", this.onTreeNodeOver.bind(this));
-        this.tree.on("afterrender", function () {
-            this.tree.loadMask = new Ext.LoadMask(
-                {
-                    target: Ext.getCmp(this.config.treeId),
-                    msg:t("please_wait")
-                });
-        }.bind(this));
+        //this.tree.on("afterrender", function () {
+        //    this.tree.loadMask = new Ext.LoadMask(this.tree.getEl(), {msg: t("please_wait")});
+        //    this.tree.loadMask.enable();
+        //}.bind(this));
         //
         //this.tree.on("append", pimcore.helpers.treeNodeThumbnailPreview.bind(this));
 
@@ -1062,10 +1064,10 @@ pimcore.document.tree = Class.create({
                     this.addDocumentCreate(
                         tree, record,
                         {
-                        key: value,
-                        type: type,
-                        docTypeId: docTypeId
-                    });
+                            key: value,
+                            type: type,
+                            docTypeId: docTypeId
+                        });
                 }
             }.bind(this, tree, record, type, docTypeId));
         }
@@ -1175,34 +1177,32 @@ pimcore.document.tree = Class.create({
 
     editDocumentKey : function (tree, record) {
         Ext.MessageBox.prompt(t('edit_key'), t('please_enter_the_new_key'),
-            this.editDocumentKeyComplete.bind(this, tree, record), window, false, record.data.text);
+            this.editDocumentKeyComplete.bind(this, tree, record));
     },
 
     editDocumentKeyComplete: function (tree, record, button, value, object) {
         if (button == "ok") {
 
             // check for ident filename in current level
-            if(this.isExistingKeyInLevel(record.parentNode, value, record)) {
+            if(this.attributes.reference.isExistingKeyInLevel(this.parentNode, value, this)) {
                 return;
             }
 
-            if(this.isDisallowedKey(record.parentNode, value)) {
+            if(this.attributes.reference.isDisallowedKey(this.parentNode.id, value)) {
                 return;
             }
 
             value = pimcore.helpers.getValidFilename(value);
 
-            record.set("text", value);
-            record.data.path = record.data.basePath + value;
+            this.setText(value);
+            this.attributes.path = this.attributes.basePath + value;
 
+            this.getOwnerTree().loadMask.show();
 
-            var tree = record.getOwnerTree();
-            tree.loadMask.show();
+            this.attributes.reference.updateDocument(this.id, {key: value}, function (response) {
 
-            this.updateDocument(record.data.id, {key: value}, function (response) {
-
-                record.getOwnerTree().loadMask.hide();
-                this.refresh(record);
+                this.getOwnerTree().loadMask.hide();
+                this.reload();
 
                 try {
                     var rdata = Ext.decode(response.responseText);
@@ -1219,11 +1219,11 @@ pimcore.document.tree = Class.create({
                     else {
                         pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error",
                             t(rdata.message));
-                        this.refresh(record.parentNode);
+                        this.parentNode.reload();
                     }
                 } catch(e) {
                     pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error");
-                    this.refresh(record.parentNode);
+                    this.parentNode.reload();
                 }
             }.bind(this));
         }

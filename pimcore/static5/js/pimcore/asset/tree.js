@@ -36,9 +36,9 @@ pimcore.asset.tree = Class.create({
         else {
             this.config = config;
         }
-        
+
         pimcore.layout.treepanelmanager.register(this.config.treeId);
-        
+
         // get root node config
         Ext.Ajax.request({
             url: "/admin/asset/tree-get-root",
@@ -52,7 +52,7 @@ pimcore.asset.tree = Class.create({
                     callback = this.init.bind(this, res);
                 }
                 pimcore.layout.treepanelmanager.initPanel(this.config.treeId, callback);
-            }.bind(this) 
+            }.bind(this)
         });
     },
 
@@ -65,7 +65,7 @@ pimcore.asset.tree = Class.create({
         rootNodeConfig.iconCls = "pimcore_icon_home";
         rootNodeConfig.expanded = true;
 
-        var store = Ext.create('Ext.data.TreeStore', {
+        var store = Ext.create('pimcore.data.PagingTreeStore', {
             autoLoad: false,
             autoSync: false,
             proxy: {
@@ -76,16 +76,17 @@ pimcore.asset.tree = Class.create({
                     totalProperty : 'total',
                     rootProperty: 'nodes'
 
+                },
+                extraParams: {
+                    limit: itemsPerPage
                 }
             },
             pageSize: itemsPerPage,
             root: rootNodeConfig
-            //folderSort: true,
-            //extraParams: this.config.loaderBaseParams
         });
 
         // assets
-        this.tree = Ext.create('Ext.tree.Panel', {
+        this.tree = Ext.create('pimcore.tree.Panel', {
             store: store,
             autoLoad: false,
             id: this.config.treeId,
@@ -99,15 +100,15 @@ pimcore.asset.tree = Class.create({
             containerScroll: true,
             ddAppendOnly: true,
             rootVisible: this.config.rootVisible,
-            forceLayout: true,            
+            forceLayout: true,
             border: false,
-            dockedItems: [{
-                xtype: 'pagingtoolbar',
-                store: store,   // same store GridPanel is using
-                //dock: 'bottom',
-                displayInfo: true,
-                pageSize: itemsPerPage
-            }],
+            //dockedItems: [{
+            //    xtype: 'pagingtoolbar',
+            //    store: store,   // same store GridPanel is using
+            //    //dock: 'bottom',
+            //    displayInfo: true,
+            //    pageSize: itemsPerPage
+            //}],
             viewConfig: {
                 plugins: {
                     ptype: 'treeviewdragdrop',
@@ -122,7 +123,8 @@ pimcore.asset.tree = Class.create({
                     startdrag: function() {
                         console.log("startdrag");
                     }
-                }
+                },
+                xtype: 'pimcoretreeview'
 
             },
 
@@ -218,7 +220,7 @@ pimcore.asset.tree = Class.create({
 
         this.config.parentPanel.insert(this.config.index, this.tree);
         this.config.parentPanel.doLayout();
-        
+
     },
 
     uploadFileList: function (files, parentNode) {
@@ -273,7 +275,7 @@ pimcore.asset.tree = Class.create({
 
             pimcore.helpers.uploadAssetFromFileObject(file,
                 "/admin/asset/add-asset/?pimcore_admin_sid="
-                    + pimcore.settings.sessionId + "&parentId=" + parentNode.id + "&dir=" + path,
+                + pimcore.settings.sessionId + "&parentId=" + parentNode.id + "&dir=" + path,
                 finishedErrorHandler,
                 function (evt) {
                     //progress
@@ -432,13 +434,13 @@ pimcore.asset.tree = Class.create({
                 else {
                     tree.loadMask.hide();
                     pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),
-                                                                                "error",t(rdata.message));
+                        "error",t(rdata.message));
                     this.refresh(oldParent);
                     this.refresh(newParent);
                 }
             } catch(e){
-                 tree.loadMask.hide();
-                 pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
+                tree.loadMask.hide();
+                pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
                 this.refresh(oldParent);
                 this.refresh(newParent);
             }
@@ -457,7 +459,7 @@ pimcore.asset.tree = Class.create({
             return false;
         }
 
-         // check new parent's permission
+        // check new parent's permission
         if(!newParent.attributes.permissions.create){
             Ext.MessageBox.alert(t('missing_permission'), t('element_cannot_be_moved'));
             return false;
@@ -544,7 +546,7 @@ pimcore.asset.tree = Class.create({
 
         //paste
         if (this.cacheDocumentId
-                                && (record.data.permissions.create ||record.data.permissions.publish)) {
+            && (record.data.permissions.create ||record.data.permissions.publish)) {
             var pasteMenu = [];
 
             if (record.data.type == "folder") {
@@ -564,13 +566,13 @@ pimcore.asset.tree = Class.create({
         }
 
         if (record.data.type == "folder" && this.cutAsset
-                                    && (record.data.permissions.create || record.data.permissions.publish)) {
+            && (record.data.permissions.create || record.data.permissions.publish)) {
             menu.add(new Ext.menu.Item({
                 text: t('paste_cut_element'),
                 iconCls: "pimcore_icon_paste",
                 handler: function() {
                     this.pasteCutAsset(this.cutAsset,
-                                    this.cutParentNode, this, this.tree);
+                        this.cutParentNode, this, this.tree);
                     this.cutParentNode = null;
                     this.cutAsset = null;
                 }.bind(this)
@@ -701,15 +703,15 @@ pimcore.asset.tree = Class.create({
                 else {
                     tree.loadMask.hide();
                     pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),
-                                                                            "error",t(rdata.message));
+                        "error",t(rdata.message));
                 }
             } catch(e){
-                 tree.loadMask.hide();
-                 pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
+                tree.loadMask.hide();
+                pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
             }
             tree.loadMask.hide();
-             oldParent.reload();
-             newParent.reload();
+            oldParent.reload();
+            newParent.reload();
         }.bind(asset, newParent, oldParent, tree));
 
     },
@@ -817,7 +819,7 @@ pimcore.asset.tree = Class.create({
 
     addFolder : function (tree, record) {
         Ext.MessageBox.prompt(t('add_folder'), t('please_enter_the_name_of_the_folder'),
-                                                                this.addFolderCreate.bind(this, tree, record));
+            this.addFolderCreate.bind(this, tree, record));
     },
 
     addFolderCreate: function (tree, record, button, value, object) {
@@ -844,7 +846,7 @@ pimcore.asset.tree = Class.create({
             }
             else {
                 pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_creating_a_folder"),
-                                                                                        "error",t(rdata.message));
+                    "error",t(rdata.message));
             }
         } catch(e){
             pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_creating_a_folder"), "error");
@@ -932,18 +934,18 @@ pimcore.asset.tree = Class.create({
             console.log("failed");
         }.bind(this));
     },
-    
+
     enableHtml5Upload: function (tree, parent, node, index) {
 
         if (!window["FileList"]) {
             return;
         }
-        
+
         // only for folders
         if(node.attributes.type != "folder") {
             return;
         }
-        
+
         // timeout because there is no afterrender function
         window.setTimeout(this.addHtml5DragListener.bind(this, node),2000);
     },
@@ -1203,7 +1205,7 @@ pimcore.asset.tree = Class.create({
         }
 
         data.id = id;
-        
+
         Ext.Ajax.request({
             url: "/admin/asset/update/",
             method: "post",

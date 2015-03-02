@@ -96,6 +96,8 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
         if ($this->getParam("limit")) {
             $this->_helper->json(array(
+                "offset" => $offset,
+                "limit" => $limit,
                 "total" => $document->getChildAmount($this->getUser()),
                 "nodes" => $documents
             ));

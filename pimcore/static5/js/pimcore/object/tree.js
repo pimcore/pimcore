@@ -68,9 +68,10 @@ pimcore.object.tree = Class.create({
         rootNodeConfig.iconCls = "pimcore_icon_home";
         rootNodeConfig.expanded = true;
 
-        var store = Ext.create('Ext.data.TreeStore', {
+        var store = Ext.create('pimcore.data.PagingTreeStore', {
             autoLoad: true,
             autoSync: false,
+            //model: 'pimcore.data.PagingTreeModel',
             proxy: {
                 type: 'ajax',
                 url: "/admin/object/tree-get-childs-by-id/",
@@ -78,7 +79,9 @@ pimcore.object.tree = Class.create({
                     type: 'json',
                     totalProperty : 'total',
                     rootProperty: 'nodes'
-
+                },
+                extraParams: {
+                    limit: itemsPerPage
                 }
             },
             pageSize: itemsPerPage,
@@ -89,7 +92,7 @@ pimcore.object.tree = Class.create({
 
 
         // documents
-        this.tree = Ext.create('Ext.tree.Panel', {
+        this.tree = Ext.create('pimcore.tree.Panel', {
             store: store,
             border: true,
             region: "center",
@@ -108,20 +111,21 @@ pimcore.object.tree = Class.create({
             //rootVisible: this.config.rootVisible,
             rootVisible: true,
             border: true,
-            dockedItems: [{
-                xtype: 'pagingtoolbar',
-                store: store,   // same store GridPanel is using
-                //dock: 'bottom',
-                displayInfo: true,
-                pageSize: itemsPerPage
-            }],
+            //dockedItems: [{
+            //    xtype: 'pagingtoolbar',
+            //    store: store,   // same store GridPanel is using
+            //    //dock: 'bottom',
+            //    displayInfo: true,
+            //    pageSize: itemsPerPage
+            //}],
             listeners: this.getTreeNodeListeners(),
             viewConfig: {
                 plugins: {
                     ptype: 'treeviewdragdrop',
                     appendOnly: true,
                     ddGroup: "element"
-                }
+                },
+                xtype: 'pimcoretreeview'
             },
 
             //tools: [
@@ -307,11 +311,11 @@ pimcore.object.tree = Class.create({
 
 
         /**
-        * case-insensitive string comparison
-        * @param f_string1
-        * @param f_string2
-        * @returns {number}
-        */
+         * case-insensitive string comparison
+         * @param f_string1
+         * @param f_string2
+         * @returns {number}
+         */
         function strcasecmp(f_string1, f_string2) {
             var string1 = (f_string1 + '').toLowerCase();
             var string2 = (f_string2 + '').toLowerCase();
@@ -326,11 +330,11 @@ pimcore.object.tree = Class.create({
         }
 
         /**
-        *
-        * @param str1
-        * @param str2
-        * @returns {number}
-        */
+         *
+         * @param str1
+         * @param str2
+         * @returns {number}
+         */
         function getEqual(str1, str2) {
             var count = 0;
             for (var c = 0; c < str1.length; c++) {
@@ -480,7 +484,7 @@ pimcore.object.tree = Class.create({
                 classGroupRecord = classGroups[groupName][0];
 
                 if (this.config.allowedClasses == "all" || in_array(classGroupRecord.get("id"),
-                    this.config.allowedClasses)) {
+                        this.config.allowedClasses)) {
 
                     /* == menu entry: create new object == */
                     tmpMenuEntry = {
@@ -589,8 +593,8 @@ pimcore.object.tree = Class.create({
                         iconCls: "pimcore_icon_paste",
                         handler: function () {
                             this.pasteCutObject(this.cutObject,
-                                this.cutParentNode, record, this.tree);
-                            this.cutParentNode = null;
+                                       this.cutParentNode, record, this.tree);
+                     this.cutParentNode = null;
                             this.cutObject = null;
                         }.bind(this)
                     });
@@ -1057,10 +1061,10 @@ pimcore.object.tree = Class.create({
     editKeyComplete: function (tree, record, button, value, object) {
         if (button == "ok") {
 
-            // check for ident filename in current level
-            if (this.isExistingKeyInLevel(record.parentNode, value, record)) {
-                return;
-            }
+        // check for ident filename in current level
+        if (this.isExistingKeyInLevel(record.parentNode, value, record)) {
+            return;
+        }
 
             value = pimcore.helpers.getValidFilename(value);
 

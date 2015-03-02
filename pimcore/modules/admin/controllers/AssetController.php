@@ -154,6 +154,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
         if ($this->getParam("limit")) {
             $this->_helper->json(array(
+                "offset" => $offset,
+                "limit" => $limit,
                 "total" => $asset->getChildAmount($this->getUser()),
                 "nodes" => $assets
             ));
