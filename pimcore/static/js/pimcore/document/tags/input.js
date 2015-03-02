@@ -86,6 +86,10 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
         if(options["class"]) {
             this.element.addClass(options["class"]);
         }
+
+        if (options["placeholder"]) {
+            this.element.dom.setAttribute('data-placeholder', options["placeholder"]);
+        }
     },
 
     checkValue: function () {
