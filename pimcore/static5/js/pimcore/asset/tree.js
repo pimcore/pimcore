@@ -883,7 +883,7 @@ pimcore.asset.tree = Class.create({
     },
 
     uploadZip: function (tree, record) {
-        pimcore.helpers.uploadDialog("/admin/asset/import-zip?parentId=" + this.id, "Filedata", function (response) {
+        pimcore.helpers.uploadDialog("/admin/asset/import-zip?parentId=" + record.id, "Filedata", function (response) {
             // this.attributes.reference
             var res = Ext.decode(response.response.responseText);
 
@@ -913,7 +913,7 @@ pimcore.asset.tree = Class.create({
                     this.downloadProgressBar = null;
                     this.downloadProgressWin = null;
 
-                    this.reload();
+                    this.refresh(record);
                 }.bind(this, res.jobId),
                 update: function (currentStep, steps, percent) {
                     if(this.downloadProgressBar) {
