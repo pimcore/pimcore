@@ -17,6 +17,7 @@ CREATE TABLE `assets` (
   `userModification` int(11) unsigned DEFAULT NULL,
   `customSettings` text,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `fullpath` (`path`,`filename`),
   KEY `parentId` (`parentId`),
   KEY `filename` (`filename`),
   KEY `path` (`path`)
@@ -149,6 +150,7 @@ CREATE TABLE `documents` (
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `fullpath` (`path`,`key`),
   KEY `parentId` (`parentId`),
   KEY `key` (`key`),
   KEY `path` (`path`),
@@ -803,6 +805,7 @@ CREATE TABLE `objects` (
   `o_classId` int(11) unsigned DEFAULT NULL,
   `o_className` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`o_id`),
+  UNIQUE KEY `fullpath` (`o_path`,`o_key`),
   KEY `key` (`o_key`),
   KEY `path` (`o_path`),
   KEY `published` (`o_published`),
