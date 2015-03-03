@@ -79,10 +79,13 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
 
     onNodeDrop: function (target, dd, e, data) {
 
+        var record = data.records[0];
+        data = record.data;
+
         // get path from nodes data
-        this.data.id = data.node.attributes.id;
-        this.data.type = data.node.attributes.elementType;
-        this.data.subtype = data.node.attributes.type;
+        this.data.id = data.id;
+        this.data.type = data.elementType;
+        this.data.subtype = data.type;
 
         if (this.options.reload) {
             this.reloadDocument();

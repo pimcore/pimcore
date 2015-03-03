@@ -142,6 +142,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
+        var record = data.records[0];
+        data = record.data;
 
         if (!this.ckeditor ||!this.dndAllowed(data)) {
             return;
@@ -150,7 +152,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         // we have to foxus the editor otherwise an error is thrown in the case the editor wasn't opend before a drop element
         this.ckeditor.focus();
 
-        var wrappedText = data.node.attributes.text;
+        var wrappedText = data.text;
         var textIsSelected = false;
         
         try {
@@ -187,28 +189,28 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         });
 
         var insertEl = null;
-        var id = data.node.attributes.id;
-        var uri = data.node.attributes.path;
+        var id = data.id;
+        var uri = data.path;
         var browserPossibleExtensions = ["jpg","jpeg","gif","png"];
 
-        if (data.node.attributes.elementType == "asset") {
-            if (data.node.attributes.type == "image" && textIsSelected == false) {
+        if (data.elementType == "asset") {
+            if (data.type == "image" && textIsSelected == false) {
                 // images bigger than 600px or formats which cannot be displayed by the browser directly will be
                 // converted by the pimcore thumbnailing service so that they can be displayed in the editor
                 var defaultWidth = 600;
                 var additionalAttributes = "";
 
-                if(typeof data.node.attributes.imageWidth != "undefined") {
+                if(typeof data.imageWidth != "undefined") {
                     uri = "/admin/asset/get-image-thumbnail/id/" + id + "/width/" + defaultWidth + "/aspectratio/true";
-                    if(data.node.attributes.imageWidth < defaultWidth
-                            && in_arrayi(pimcore.helpers.getFileExtension(data.node.attributes.text),
+                    if(data.imageWidth < defaultWidth
+                            && in_arrayi(pimcore.helpers.getFileExtension(data.text),
                                         browserPossibleExtensions)) {
-                        uri = data.node.attributes.path;
+                        uri = data.path;
                         additionalAttributes += ' pimcore_disable_thumbnail="true"';
                     }
 
-                    if(data.node.attributes.imageWidth < defaultWidth) {
-                        defaultWidth = data.node.attributes.imageWidth;
+                    if(data.imageWidth < defaultWidth) {
+                        defaultWidth = data.imageWidth;
                     }
 
                     additionalAttributes += ' style="width:' + defaultWidth + 'px;"';
@@ -227,8 +229,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             }
         }
 
-        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page"
-                            || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
+        if (data.elementType == "document" && (data.type=="page"
+                            || data.type=="hardlink" || data.type=="link")){
             insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="'
                                                                         + id + '">' + wrappedText + '</a>');
             this.ckeditor.insertElement(insertEl);
@@ -249,6 +251,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function(target, dd, e, data) {
+        var record = data.records[0];
+        data = record.data;
         if (this.dndAllowed(data)) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
@@ -260,10 +264,10 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
     dndAllowed: function(data) {
 
-        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page"
-                            || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
+        if (data.elementType == "document" && (data.type=="page"
+                            || data.ype=="hardlink" || data.type=="link")){
             return true;
-        } else if (data.node.attributes.elementType=="asset" && data.node.attributes.type != "folder"){
+        } else if (data.elementType=="asset" && data.type != "folder"){
             return true;
         }
 

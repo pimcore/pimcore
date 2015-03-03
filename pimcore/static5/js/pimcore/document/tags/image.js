@@ -189,7 +189,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             }.bind(this)
         }));
 
-        menu.showAt(e.getXY());
+        menu.showAt(e.pageX, e.pageY);
         e.stopEvent();
     },
 
@@ -211,6 +211,9 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function(target, dd, e, data) {
+        var record = data.records[0];
+        data = record.data;
+
         if (this.dndAllowed(data)) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
@@ -220,10 +223,12 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
+        var record = data.records[0];
+        data = record.data;
 
-        if (data.node.attributes.type == "image") {
+        if (data.type == "image") {
             this.resetData();
-            this.datax.id = data.node.attributes.id;
+            this.datax.id = data.id;
 
             this.updateImage();
             this.reload();
@@ -234,7 +239,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
     dndAllowed: function(data) {
 
-        if(data.node.attributes.elementType!="asset" || data.node.attributes.type!="image"){
+        if(data.elementType!="asset" || data.type!="image"){
             return false;
         } else {
             return true;

@@ -96,6 +96,8 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function(target, dd, e, data) {
+        var record = data.records[0];
+        data = record.data;
         if (this.dndAllowed(data)) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
@@ -106,7 +108,7 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
 
     dndAllowed: function(data) {
 
-        if (data.node.attributes.type != "snippet") {
+        if (data.type != "snippet") {
             return false;
         } else {
             return true;

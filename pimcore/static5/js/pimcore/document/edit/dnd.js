@@ -21,11 +21,13 @@ pimcore.document.edit.dnd = Class.create({
 
     initialize: function(parentExt, body, iframeElement) {
 
+        parentExt.dd.DragDropMgr.notifyOccluded = true;
         this.dndManager = parentExt.dd.DragDropMgr;
         var iFrameElement = parent.Ext.get('document_iframe_' + window.editWindow.document.id);
-        
+
         parentExt.EventManager.on(body, 'mousemove', this.ddMouseMove.bind(this));
         parentExt.EventManager.on(body, 'mouseup', this.ddMouseUp.bind(this));
+
 
         this.globalDropZone = new parent.Ext.dd.DropZone(iframeElement, {
             ddGroup: "element",
@@ -49,7 +51,7 @@ pimcore.document.edit.dnd = Class.create({
                 }
             }
         });
-        
+
         window.setInterval(this.setIframeOffset.bind(this),1000);
         this.setIframeOffset();
     },
@@ -102,11 +104,11 @@ pimcore.document.edit.dnd = Class.create({
         e.xy = [e.pageX + this.iframeOffset[0] - scrollLeft, e.pageY + this.iframeOffset[1] - scrollTop];
 
     },
-    
+
     setIframeOffset: function () {
         try {
             this.iframeOffset = parent.Ext.get('document_iframe_'
-                                                    + window.editWindow.document.id).getOffsetsTo(parent.Ext.getBody());
+            + window.editWindow.document.id).getOffsetsTo(parent.Ext.getBody());
         } catch (e) {
             console.log(e);
         }
