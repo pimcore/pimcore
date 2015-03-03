@@ -163,7 +163,6 @@ pimcore.settings.update = Class.create({
                         name: "update_releases",
                         id: "update_releases",
                         width: 400,
-                        mode: "local",
                         store: storeReleases,
                         triggerAction: "all",
                         displayField: "version",
@@ -214,11 +213,9 @@ pimcore.settings.update = Class.create({
                         fieldLabel: t('select_update'),
                         name: "update_revisions",
                         id: "update_revisions",
-                        mode: "local",
                         width: 400,
                         store: storeRevisions,
                         triggerAction: "all",
-                        displayField: "text",
                         valueField: "id"
                     }
                 ],
