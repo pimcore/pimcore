@@ -210,7 +210,22 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $parent = Asset::getById($this->getParam("parentId"));
             $newPath = $parent->getFullPath() . "/" . trim($this->getParam("dir"), "/ ");
 
-            $newParent = Asset\Service::createFolderByPath($newPath);
+            $maxRetries = 5;
+            for ($retries=0; $retries<$maxRetries; $retries++) {
+                try {
+                    $newParent = Asset\Service::createFolderByPath($newPath);
+                    break;
+                } catch (\Exception $e) {
+                    if($retries < ($maxRetries-1)) {
+                        $waitTime = rand(100000, 900000); // microseconds
+                        usleep($waitTime); // wait specified time until we restart the transaction
+                    } else {
+                        // if the transaction still fail after $maxRetries retries, we throw out the exception
+                        throw $e;
+                    }
+                }
+            }
+
             $this->setParam("parentId", $newParent->getId());
         } else if (!$this->getParam("parentId") && $this->getParam("parentPath")) {
             $parent = Asset::getByPath($this->getParam("parentPath"));

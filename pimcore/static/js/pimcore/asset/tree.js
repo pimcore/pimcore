@@ -166,8 +166,10 @@ pimcore.asset.tree = Class.create({
 
     uploadFileList: function (files, parentNode) {
 
-        var file;
+        var file, pbar;
         this.activeUploads = 0;
+        this.activeQueue = [];
+        this.uploadErros = [];
 
         if(files.length < 1) {
             return;
@@ -187,20 +189,13 @@ pimcore.asset.tree = Class.create({
 
         var doFileUpload = function (file, path) {
 
+            var pbar;
+
             if(typeof path == "undefined") {
                 path = "";
             }
 
             this.activeUploads++;
-
-            var pbar = new Ext.ProgressBar({
-                width:465,
-                text: file.name,
-                style: "margin-bottom: 5px"
-            });
-
-            win.add(pbar);
-            win.doLayout();
 
             var finishedErrorHandler = function () {
                 // success
@@ -208,36 +203,72 @@ pimcore.asset.tree = Class.create({
 
                 win.remove(pbar);
 
+                if(this.activeQueue.length > 0) {
+                    var nextFile = this.activeQueue.shift();
+                    startUpload(nextFile.file, nextFile.path);
+                }
+
                 if(this.activeUploads < 1) {
                     win.close();
                     parentNode.reload();
+
+                    if(this.uploadErros.length) {
+                        var text = t("upload_failed_files") + ": \n\n";
+
+                        for(var i=0; i<this.uploadErros.length; i++) {
+                            text += "\n";
+                            text += this.uploadErros[i];
+                        }
+
+                        pimcore.helpers.showNotification(t("error"), t("error_general"), "error", text);
+                    }
                 }
             }.bind(this);
 
             var uploadErrorHandler = function (transport) {
                 finishedErrorHandler();
-
-                pimcore.helpers.showNotification(t("error"), t("error_general"), "error", transport.responseText);
+                this.uploadErros.push(file.name);
             }.bind(this);
 
-            pimcore.helpers.uploadAssetFromFileObject(file,
-                "/admin/asset/add-asset/?pimcore_admin_sid="
-                    + pimcore.settings.sessionId + "&parentId=" + parentNode.id + "&dir=" + path,
-                finishedErrorHandler,
-                function (evt) {
-                    //progress
-                    if (evt.lengthComputable) {
-                        var percentComplete = evt.loaded / evt.total;
-                        var progressText = file.name + " ( " + Math.floor(percentComplete*100) + "% )";
-                        if(percentComplete == 1) {
-                            progressText = file.name + " " + t("converting") + "... ";
-                        }
+            var startUpload = function (file, path) {
 
-                        pbar.updateProgress(percentComplete, progressText);
-                    }
-                },
-                uploadErrorHandler
-            );
+                pbar = new Ext.ProgressBar({
+                    width:465,
+                    text: file.name,
+                    style: "margin-bottom: 5px"
+                });
+
+                win.add(pbar);
+                win.doLayout();
+
+                pimcore.helpers.uploadAssetFromFileObject(file,
+                    "/admin/asset/add-asset/?pimcore_admin_sid="
+                    + pimcore.settings.sessionId + "&parentId=" + parentNode.id + "&dir=" + path,
+                    finishedErrorHandler,
+                    function (evt) {
+                        //progress
+                        if (evt.lengthComputable) {
+                            var percentComplete = evt.loaded / evt.total;
+                            var progressText = file.name + " ( " + Math.floor(percentComplete * 100) + "% )";
+                            if (percentComplete == 1) {
+                                progressText = file.name + " " + t("converting") + "... ";
+                            }
+
+                            pbar.updateProgress(percentComplete, progressText);
+                        }
+                    },
+                    uploadErrorHandler
+                );
+            };
+
+            if(this.activeUploads < 5) {
+                startUpload(file, path);
+            } else {
+                this.activeQueue.push({
+                    file: file,
+                    path: path
+                });
+            }
         }.bind(this);
 
 
@@ -252,8 +283,11 @@ pimcore.asset.tree = Class.create({
                     item.file(function(file) {
                         doFileUpload(file, path);
                     }.bind(this), function (e) {
+                        console.log("Unable to upload file: " + path + item.name);
                         console.log(e);
-                    });
+
+                        this.uploadErros.push(path + item.name);
+                    }.bind(this));
                 } else if (item.isDirectory) {
                     // Get folder contents
                     var dirReader = item.createReader();
