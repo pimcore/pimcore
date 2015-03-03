@@ -82,6 +82,7 @@ Ext.require([
     'Ext.tree.plugin.TreeViewDragDrop',
     'Ext.tree.Panel',
     'Ext.ux.form.MultiSelect',
+    'Ext.ux.TabCloseMenu',
     'Ext.ux.DataTip',
     'Ext.window.Toast'
 ]);
