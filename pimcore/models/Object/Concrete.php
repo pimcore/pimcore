@@ -423,7 +423,7 @@ class Concrete extends AbstractObject {
 
     /**
      * @param boolean $o_published
-     * @return void
+     * @return this
      */
     public function setPublished($o_published) {
         $this->o_published = (bool) $o_published;
