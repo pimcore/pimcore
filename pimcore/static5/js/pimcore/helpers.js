@@ -406,9 +406,9 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
 
         if(errorText != null && errorText != undefined){
             text = text + '<br /><hr /><br />' +
-                '<pre style="font-size:11px;word-wrap: break-word;">'
-                + strip_tags(errorText) +
-                "</pre>";
+            '<pre style="font-size:11px;word-wrap: break-word;">'
+            + strip_tags(errorText) +
+            "</pre>";
         }
 
         var errWin = new Ext.Window({
@@ -590,7 +590,7 @@ pimcore.helpers.activateMaintenance = function () {
     });
 
     var button = Ext.get("pimcore_menu_maintenance");
-    if(!button.isDisplayed()) {
+    if(!button.isVisible()) {
         pimcore.helpers.showMaintenanceDisableButton();
     }
 };
@@ -608,7 +608,7 @@ pimcore.helpers.deactivateMaintenance = function () {
 pimcore.helpers.showMaintenanceDisableButton = function () {
     var button = Ext.get("pimcore_menu_maintenance");
     button.show();
-    button.removeAllListeners();
+    button.clearListeners();
     button.on("click", pimcore.helpers.deactivateMaintenance);
 };
 
@@ -1313,7 +1313,7 @@ pimcore.helpers.getClassForIcon = function (icon) {
     var styleContainer = Ext.get(styleContainerId);
     if(!styleContainer) {
         styleContainer = Ext.getBody().insertHtml("beforeEnd", '<style type="text/css" id="' + styleContainerId
-            + '"></style>', true);
+        + '"></style>', true);
     }
 
     var content = styleContainer.dom.innerHTML;
@@ -1394,7 +1394,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, node, index, eOpts ) 
                         imageHtml += '<div class="thumbnails">';
                         for(var i=0; i<thumbnails.length; i++) {
                             imageHtml += '<div class="thumb small"><img src="' + uriPrefix + thumbnails[i]
-                                + '" onload="this.parentNode.className += \' complete\';" /></div>';
+                            + '" onload="this.parentNode.className += \' complete\';" /></div>';
                         }
                         imageHtml += '</div>';
                     }
@@ -1402,7 +1402,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, node, index, eOpts ) 
                     var thumbnail = node.data.thumbnail;
                     if(thumbnail) {
                         imageHtml = '<div class="thumb big"><img src="' + uriPrefix + thumbnail
-                                        + '" onload="this.parentNode.className += \' complete\';" /></div>';
+                        + '" onload="this.parentNode.className += \' complete\';" /></div>';
                     }
 
                     if(imageHtml) {
@@ -1447,16 +1447,16 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, node, index, eOpts ) 
 
                         imageHtml =
                             '<style type="text/css">' +
-                                'body { margin:0; padding: 0; } ' +
-                                '.thumbnails { width: 410px; } ' +
-                                '.thumb { border: 1px solid #999; border-radius: 5px; background: url(' + uriPrefix + '/pimcore/static/img/loading.gif) no-repeat center center; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing:border-box; } ' +
-                                '.big { min-height: 300px; } ' +
-                                '.complete { border:none; border-radius: 0; background:none; }' +
-                                '.small { width: 130px; height: 130px; float: left; overflow: hidden; margin: 0 5px 5px 0; } ' +
-                                '.small.complete img { min-width: 100%; max-height: 100%; } ' +
-                                '/* firefox fix: remove loading/broken image icon */ @-moz-document url-prefix() { img:-moz-loading { visibility: hidden; } img:-moz-broken { -moz-force-broken-image-icon: 0;}} ' +
-                                '</style>' +
-                                imageHtml;
+                            'body { margin:0; padding: 0; } ' +
+                            '.thumbnails { width: 410px; } ' +
+                            '.thumb { border: 1px solid #999; border-radius: 5px; background: url(' + uriPrefix + '/pimcore/static/img/loading.gif) no-repeat center center; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing:border-box; } ' +
+                            '.big { min-height: 300px; } ' +
+                            '.complete { border:none; border-radius: 0; background:none; }' +
+                            '.small { width: 130px; height: 130px; float: left; overflow: hidden; margin: 0 5px 5px 0; } ' +
+                            '.small.complete img { min-width: 100%; max-height: 100%; } ' +
+                            '/* firefox fix: remove loading/broken image icon */ @-moz-document url-prefix() { img:-moz-loading { visibility: hidden; } img:-moz-broken { -moz-force-broken-image-icon: 0;}} ' +
+                            '</style>' +
+                            imageHtml;
 
                         iframe.onload = function () {
                             this.contentWindow.document.body.innerHTML = imageHtml;
@@ -1689,9 +1689,9 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
     if (type == "object") {
         config = {
             type: ["object"],
-                subtype: {
-            object: ["object", "folder"]
-        },
+            subtype: {
+                object: ["object", "folder"]
+            },
             specific: {
                 classes: null
             }
@@ -1909,9 +1909,9 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
     }.bind(this));
 
     /*fieldPath.on("render", function (el) {
-        // register at global DnD manager
-        dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
-    }.bind(this));*/
+     // register at global DnD manager
+     dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+     }.bind(this));*/
 
     var form = new Ext.FormPanel({
         itemId: "form",
