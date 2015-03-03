@@ -51,6 +51,11 @@ class XmlWriter extends \Zend_Config_Writer_Xml {
     }
 
     /**
+     * @var bool
+     */
+    protected $formatOutput = true;
+
+    /**
      * @return array
      */
     public function getRootElementAttributes()
@@ -119,6 +124,27 @@ class XmlWriter extends \Zend_Config_Writer_Xml {
     }
 
     /**
+     * @return boolean
+     */
+    public function getFormatOutput()
+    {
+        return $this->formatOutput;
+    }
+
+    /**
+     * @param boolean $formatOutput
+     *
+     * @return $this
+     */
+    public function setFormatOutput($formatOutput)
+    {
+        $this->formatOutput = $formatOutput;
+        return $this;
+    }
+
+
+
+    /**
      * returns the XML string
      *
      * @return string
@@ -127,7 +153,7 @@ class XmlWriter extends \Zend_Config_Writer_Xml {
     public function render()
     {
 
-        $xml         = new \SimpleXMLElement('<'.$this->getRootElementName().' encoding="' . $this->getEncoding().'"/>');
+        $xml         = new \SimpleXMLElement('<'.$this->getRootElementName().' />');
         if($this->_config){
             $extends     = $this->_config->getExtends();
             $sectionName = $this->_config->getSectionName();
@@ -153,7 +179,11 @@ class XmlWriter extends \Zend_Config_Writer_Xml {
         }
 
         $dom = dom_import_simplexml($xml)->ownerDocument;
-        $dom->formatOutput = true;
+        if($encoding = $this->getEncoding()){
+            $dom->encoding = $encoding;
+        }
+
+        $dom->formatOutput = $this->getFormatOutput();
 
         $xmlString = $dom->saveXML();
 
