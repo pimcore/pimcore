@@ -882,7 +882,7 @@ pimcore.asset.tree = Class.create({
         jQuery("#multiUploadField").trigger("click");
     },
 
-    uploadZip: function () {
+    uploadZip: function (tree, record) {
         pimcore.helpers.uploadDialog("/admin/asset/import-zip?parentId=" + this.id, "Filedata", function (response) {
             // this.attributes.reference
             var res = Ext.decode(response.response.responseText);
@@ -930,7 +930,7 @@ pimcore.asset.tree = Class.create({
             });
         }.bind(this), function (res) {
             // failed
-            this.parentNode.reload();
+            this.refresh(record.parentNode);
             console.log("failed");
         }.bind(this));
     },
@@ -1141,7 +1141,7 @@ pimcore.asset.tree = Class.create({
 
     editAssetFilename: function (tree, record) {
         Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
-                            this.editAssetFilenameComplete.bind(this, tree, record), window, false, record.data.text);
+            this.editAssetFilenameComplete.bind(this, tree, record), window, false, record.data.text);
     },
 
     editAssetFilenameComplete: function (tree, record, button, value, object) {
