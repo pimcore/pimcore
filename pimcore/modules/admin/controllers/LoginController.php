@@ -187,6 +187,9 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin {
 
         $controller = $this;
 
+        // clear open edit locks for this session
+        \Pimcore\Model\Element\Editlock::clearSession(session_id());
+
         Tool\Session::useSession(function($adminSession) use ($controller) {
             if ($adminSession->user instanceof User) {
                 \Pimcore::getEventManager()->trigger("admin.login.logout", $controller, ["user" => $adminSession->user]);

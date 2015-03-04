@@ -56,7 +56,11 @@ class Editlock extends Model\AbstractModel {
      */
     public $cpath;
 
-
+    /**
+     * @param $cid
+     * @param $ctype
+     * @return bool
+     */
     public static function isLocked($cid, $ctype) {
 
         if ($lock = self::getByElement($cid, $ctype)) {
@@ -71,6 +75,11 @@ class Editlock extends Model\AbstractModel {
         return false;
     }
 
+    /**
+     * @param $cid
+     * @param $ctype
+     * @return null|Editlock
+     */
     public static function getByElement($cid, $ctype) {
 
         try {
@@ -83,6 +92,26 @@ class Editlock extends Model\AbstractModel {
         }
     }
 
+    /**
+     * @param $sessionId
+     * @return bool|null
+     */
+    public static function clearSession($sessionId) {
+        try {
+            $lock = new self();
+            $lock->getResource()->clearSession($sessionId);
+            return true;
+        }
+        catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param $cid
+     * @param $ctype
+     * @return bool|Editlock
+     */
     public static function lock($cid, $ctype) {
 
         // try to get user
@@ -101,6 +130,11 @@ class Editlock extends Model\AbstractModel {
         return $lock;
     }
 
+    /**
+     * @param $cid
+     * @param $ctype
+     * @return bool
+     */
     public static function unlock($cid, $ctype) {
         if ($lock = self::getByElement($cid, $ctype)) {
             $lock->delete();
@@ -225,7 +259,8 @@ class Editlock extends Model\AbstractModel {
     }
 
     /**
-     * @param  $cpath
+     * @param $cpath
+     * @return $this
      */
     public function setCpath($cpath)
     {

@@ -92,4 +92,11 @@ class Resource extends Model\Resource\AbstractResource {
     public function delete() {
         $this->db->delete("edit_lock", $this->db->quoteInto("id = ?", $this->model->getId() ));
     }
+
+    /**
+     * @param $sessionId
+     */
+    public function clearSession($sessionId) {
+        $this->db->delete("edit_lock", $this->db->quoteInto("sessionId = ?", $sessionId ));
+    }
 }
