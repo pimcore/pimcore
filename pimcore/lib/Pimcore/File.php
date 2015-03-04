@@ -46,11 +46,12 @@ class File {
     /**
      * @static
      * @param  $tmpFilename
+     * @param null $language
      * @return string
      */
-    public static function getValidFilename($tmpFilename) {
+    public static function getValidFilename($tmpFilename,$language = null) {
         
-        $tmpFilename = \Pimcore\Tool\Transliteration::toASCII($tmpFilename);
+        $tmpFilename = \Pimcore\Tool\Transliteration::toASCII($tmpFilename,$language);
         $tmpFilename = strtolower($tmpFilename);
         $tmpFilename = preg_replace('/[^a-z0-9\-\.~_]+/', '-', $tmpFilename);
 
