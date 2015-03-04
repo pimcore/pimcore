@@ -107,11 +107,13 @@ class File extends DAV\File {
     function put($data) {
 
         if($this->asset->isAllowed("publish")) {
+            // read from resource -> default for SabreDAV
+            $data = stream_get_contents($data);
 
             $user = AdminTool::getCurrentUser();
             $this->asset->setUserModification($user->getId());
 
-            $this->asset->setStream($data);
+            $this->asset->setData($data);
             $this->asset->save();
         } else {
             throw new DAV\Exception\Forbidden();
