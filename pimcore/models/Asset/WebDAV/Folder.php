@@ -114,13 +114,12 @@ class Folder extends DAV\Collection {
      */
     function createFile($name, $data = null) {
 
-        $data = stream_get_contents($data);
         $user = AdminTool::getCurrentUser();
 
         if($this->asset->isAllowed("create")) {
             $asset = Asset::create($this->asset->getId(), array(
                 "filename" => File::getValidFilename($name),
-                "data" => $data,
+                "stream" => $data,
                 "userModification" => $user->getId(),
                 "userOwner" => $user->getId()
             ));
