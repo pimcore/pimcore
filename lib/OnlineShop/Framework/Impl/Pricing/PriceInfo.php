@@ -29,8 +29,15 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
      */
     protected $validRules = array();
 
-
+    /**
+     * @var bool
+     */
     protected $rulesApplied = false;
+
+    /**
+     * @var OnlineShop_Framework_Pricing_IEnvironment
+     */
+    protected $environment;
 
 
     /**
@@ -39,7 +46,18 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     public function __construct(OnlineShop_Framework_IPriceInfo $priceInfo)
     {
         $this->priceInfo = $priceInfo;
-        $this->setAmount(  $priceInfo->getPrice() ? $priceInfo->getPrice()->getAmount() : 0  );
+
+
+        // init default environment
+        $env = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getEnvironment();
+        $env->setProduct( $this->getProduct() )
+            ->setPriceInfo( $this );
+        if(method_exists($this->getProduct(), 'getCategories'))
+        {
+            $env->setCategories( (array)$this->getProduct()->getCategories() );
+        }
+
+        $this->setEnvironment( $env );
     }
 
 
@@ -53,16 +71,26 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
         $this->rules[] = $rule;
     }
 
-    private function getEnvironment() {
-        $env = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getEnvironment();
-        $env->setProduct( $this->getProduct() )
-            ->setPriceInfo( $this );
-        if(method_exists($this->getProduct(), "getCategories")) {
-            $env->setCategories( (array)$this->getProduct()->getCategories() );
-        }
-
-        return $env;
+    /**
+     * @return OnlineShop_Framework_Pricing_IEnvironment
+     */
+    public function getEnvironment()
+    {
+        return $this->environment;
     }
+
+    /**
+     * @param OnlineShop_Framework_Pricing_IEnvironment $environment
+     *
+     * @return $this
+     */
+    public function setEnvironment(OnlineShop_Framework_Pricing_IEnvironment $environment)
+    {
+        $this->environment = $environment;
+
+        return $this;
+    }
+
 
     /**
      * returns all valid rules, if forceRecalc, recalculation of valid rules is forced
@@ -172,21 +200,25 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     /**
      * @param OnlineShop_Framework_IPriceSystem $priceSystem
      *
-     * @return void
+     * @return OnlineShop_Framework_Pricing_IPriceInfo
      */
     public function setPriceSystem($priceSystem)
     {
-        return $this->priceInfo->setPriceSystem($priceSystem);
+        $this->priceInfo->setPriceSystem($priceSystem);
+
+        return $this;
     }
 
     /**
      * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      *
-     * @return void
+     * @return OnlineShop_Framework_Pricing_IPriceInfo
      */
     public function setProduct(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product)
     {
-        return $this->priceInfo->setProduct($product);
+        $this->priceInfo->setProduct($product);
+
+        return $this;
     }
 
     /**

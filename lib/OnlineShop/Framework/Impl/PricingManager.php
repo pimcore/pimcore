@@ -16,11 +16,6 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
     protected $config;
 
     /**
-     * @var OnlineShop_Framework_Impl_Pricing_Rule_List
-     */
-    private $rules;
-
-    /**
      * @param Zend_Config $config
      */
     public function __construct(Zend_Config $config)
@@ -49,6 +44,7 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
 
         // create new price info with pricing rules
         $priceInfoWithRules = $this->getPriceInfo( $priceInfo );
+        $priceInfoWithRules->setEnvironment( $env );
 
         // add all valid rules to the price info
         foreach($this->getValidRules($env) as $rule)
@@ -113,10 +109,7 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
         return $this;
     }
 
-
-    /**
-     * @return OnlineShop_Framework_Impl_Pricing_Rule_List
-     */
+    private $rules;
     private function getRulesFromDatabase() {
         if(empty($this->rules)) {
             $rules = new OnlineShop_Framework_Impl_Pricing_Rule_List();
@@ -132,7 +125,7 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
     /**
      * @param OnlineShop_Framework_Pricing_IEnvironment $environment
      *
-     * @return OnlineShop_Framework_Pricing_IRule[]
+     * @return array|OnlineShop_Framework_Pricing_IRule
      */
     public function getValidRules(OnlineShop_Framework_Pricing_IEnvironment $environment)
     {

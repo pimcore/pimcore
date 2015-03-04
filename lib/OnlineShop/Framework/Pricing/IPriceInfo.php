@@ -51,4 +51,15 @@ interface OnlineShop_Framework_Pricing_IPriceInfo extends OnlineShop_Framework_I
      */
     public function getOriginalTotalPrice();
 
+    /**
+     * @return OnlineShop_Framework_Pricing_IEnvironment
+     */
+    public function getEnvironment();
+
+    /**
+     * @param OnlineShop_Framework_Pricing_IEnvironment $environment
+     *
+     * @return OnlineShop_Framework_IPriceInfo
+     */
+    public function setEnvironment(OnlineShop_Framework_Pricing_IEnvironment $environment);
 }
