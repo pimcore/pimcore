@@ -360,6 +360,10 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                 //IE missing image placeholder
                 return;
             }
+            if(Ext.isGecko && width==24 && height==24){
+                // firefox missing image placeholder
+                return;
+            }
 
             var dimensionError = false;
             if(typeof this.options.minWidth != "undefined") {
