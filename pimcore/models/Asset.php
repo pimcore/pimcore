@@ -640,8 +640,6 @@ class Asset extends Element\AbstractElement {
                     }
                 }
 
-                $this->stream = null; // set stream to null, so that the source stream isn't used anymore after saving
-
                 @chmod($destinationPath, File::getDefaultMode());
 
                 // check file exists

@@ -114,20 +114,16 @@ class Folder extends DAV\Collection {
      */
     function createFile($name, $data = null) {
 
-        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-dav-tmp-file-" . uniqid();
-        file_put_contents($tmpFile, $data);
-
+        $data = stream_get_contents($data);
         $user = AdminTool::getCurrentUser();
 
         if($this->asset->isAllowed("create")) {
             $asset = Asset::create($this->asset->getId(), array(
                 "filename" => File::getValidFilename($name),
-                "sourcePath" => $tmpFile,
+                "data" => $data,
                 "userModification" => $user->getId(),
                 "userOwner" => $user->getId()
             ));
-
-            unlink($tmpFile);
         } else {
             throw new DAV\Exception\Forbidden();
         }
