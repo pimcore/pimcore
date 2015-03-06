@@ -24,7 +24,6 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
 
         this.setupWrapper();
 
-
         this.store = new Ext.data.ArrayStore({
             data: this.data,
             fields: [
@@ -34,7 +33,6 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                 "subtype"
             ]
         });
-
 
         var elementConfig = {
             store: this.store,
@@ -46,7 +44,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                 },
                 items: [
                     {header: 'ID', dataIndex: 'id', width: 50},
-                    {header: t("path"), dataIndex: 'path', width: 200},
+                    {header: t("path"), dataIndex: 'path', flex: 200},
                     {header: t("type"), dataIndex: 'type', width: 100},
                     {header: t("subtype"), dataIndex: 'subtype', width: 100},
                     {
@@ -155,12 +153,10 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
             elementConfig.width = this.options.width;
         }
 
-
-
         this.element = new Ext.grid.GridPanel(elementConfig);
 
-        this.element.on("rowcontextmenu", this.onRowContextmenu);
-        this.element.reference = this;
+        this.element.on("rowcontextmenu", this.onRowContextmenu.bind(this));
+        //this.element.reference = this;
 
         this.element.on("render", function (el) {
             // register at global DnD manager
@@ -227,30 +223,29 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
 
     },
 
-    onRowContextmenu: function (grid, rowIndex, event) {
+    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
 
         var menu = new Ext.menu.Menu();
-        var data = grid.getStore().getAt(rowIndex);
 
         menu.add(new Ext.menu.Item({
             text: t('remove'),
             iconCls: "pimcore_icon_delete",
-            handler: this.reference.removeElement.bind(this, rowIndex)
+            handler: this.removeElement.bind(this, rowIndex)
         }));
 
         menu.add(new Ext.menu.Item({
             text: t('open'),
             iconCls: "pimcore_icon_open",
-            handler: function (data, item) {
+            handler: function (record, item) {
 
                 item.parentMenu.destroy();
 
-                var subtype = data.data.subtype;
-                if (data.data.type == "object" && data.data.subtype != "folder") {
+                var subtype = record.data.subtype;
+                if (record.data.type == "object" && record.data.subtype != "folder") {
                     subtype = "object";
                 }
-                pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
-            }.bind(this, data)
+                pimcore.helpers.openElement(record.data.id, record.data.type, subtype);
+            }.bind(this, record)
         }));
 
         menu.add(new Ext.menu.Item({
@@ -259,21 +254,11 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
             handler: function (item) {
                 item.parentMenu.destroy();
                 this.openSearchEditor();
-            }.bind(this.reference)
+            }.bind(this)
         }));
 
-        menu.add(new Ext.menu.Item({
-            text: t('upload'),
-            cls: "pimcore_inline_upload",
-            iconCls: "pimcore_icon_upload_single",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                this.uploadDialog();
-            }.bind(this.reference)
-        }));
-
-        event.stopEvent();
-        menu.showAt(event.getXY());
+        e.stopEvent();
+        menu.showAt(e.pageX, e.pageY);
     },
 
     openSearchEditor: function () {
@@ -333,7 +318,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
     },
 
     removeElement: function (index, item) {
-        this.getStore().removeAt(index);
+        this.store.removeAt(index);
         item.parentMenu.destroy();
     },
 
