@@ -108,13 +108,18 @@ class File extends DAV\File {
 
         if($this->asset->isAllowed("publish")) {
             // read from resource -> default for SabreDAV
-            $data = stream_get_contents($data);
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-dav-tmp-file-" . uniqid();
+            file_put_contents($tmpFile, $data);
+            $file = fopen($tmpFile, "r+");
 
             $user = AdminTool::getCurrentUser();
             $this->asset->setUserModification($user->getId());
 
-            $this->asset->setData($data);
+            $this->asset->setStream($file);
             $this->asset->save();
+
+            fclose($file);
+            unlink($tmpFile);
         } else {
             throw new DAV\Exception\Forbidden();
         }
