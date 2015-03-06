@@ -315,7 +315,7 @@
 }
 
 .pimcore_tag_input.empty, .pimcore_wysiwyg.empty, .pimcore_tag_textarea.empty {
-    box5-shadow: 0 0 5px 2px #E8E8E8;
+    box-shadow: 0 0 5px 2px #E8E8E8;
 }
 
 .pimcore_wysiwyg.empty:after {
@@ -324,11 +324,11 @@
 }
 
 .pimcore_tag_input:hover, .pimcore_wysiwyg:hover, .pimcore_tag_textarea:hover {
-    box5-shadow: 0 0 5px 2px #BABABA;
+    box-shadow: 0 0 5px 2px #BABABA;
 }
 
 .pimcore_tag_input:focus, .pimcore_wysiwyg:focus, .pimcore_tag_textarea:focus {
-    box5-shadow: none;
+    box-shadow: none;
 }
 
 .pimcore_tag_textarea {
@@ -341,7 +341,7 @@
 /* ext component styles */
 
 *[class^="x5-"], *[class*=" x5-"], *[class^="ux5-"], *[class*=" ux5-"] {
-    box5-sizing: border-box;
+    box-sizing: border-box;
     font-family: Arial , Tahoma, Verdana, sans-serif;
     font-size: 11px;
     padding: 0;
@@ -370,7 +370,7 @@
     padding: 5px;
     border-radius: 2px;
     border:1px solid #363636;
-    box5-shadow: 0px 0px 70px 0px #000;
+    box-shadow: 0px 0px 70px 0px #000;
 }
 
 .x5-window-header {
@@ -570,7 +570,7 @@
     padding: 5px;
     border-radius: 2px;
     width: auto !important;
-    box5-shadow: 0px 0px 20px 5px #fff;
+    box-shadow: 0px 0px 20px 5px #fff;
 
     /*display: block !important;
     visibility: visible !important;*/
@@ -684,10 +684,6 @@
     border-top-right-radius: 2px;
 }
 
-.x5-form-field-wrap .x5-form-date-trigger {
-    background-image: url(/pimcore/static5/img/icon/calendar.png);
-}
-
 .x5-form-field-wrap .x5-form-arrow-trigger {
     background-image: url(/pimcore/static5/img/icon/bullet_arrow_down.png);
     background-repeat: no-repeat;
@@ -740,9 +736,9 @@
     height: 197px;
 }
 
-.x5-panel-tbar {
-    background: #000;
-}
+/*.x5-panel-tbar {*/
+    /*background: #000;*/
+/*}*/
 
 .x5-toolbar {
     color: #fff;
@@ -854,7 +850,7 @@
 }
 
 .ux5-form-multiselect .x5-fieldset {
-    box5-sizing: content-box;
+    box-sizing: content-box;
 }
 
 .x5-list-body .ux5-mselect-selected {
@@ -865,7 +861,7 @@
     background: #000;
     padding: 5px;
     overflow: hidden;
-    box5-sizing: content-box;
+    box-sizing: content-box;
 }
 
 .x5-combo-list .x5-combo-list-inner {
@@ -969,7 +965,7 @@
 .x5-masked {
     /* reset the css that is set to x5-*  above for all ext elements */
     font:inherit;
-    box5-sizing: inherit;
+    box-sizing: inherit;
     padding: inherit;
     margin: inherit;
     outline: inherit;
@@ -1004,4 +1000,23 @@
     -webkit-user-select:ignore;
     overflow:hidden;
     display:block;
+}
+
+/** new */
+.x5-toolbar-default {
+    background-image: none;
+    background: #000;
+}
+
+.x5-form-date-trigger {
+    background: #363636;
+    background-image: url(/pimcore/static5/img/icon/calendar.png);
+}
+
+.x5-form-trigger-default {
+    border-color: #000000;
+}
+
+.x5-menu-body {
+    background: #000;
 }

@@ -35,6 +35,13 @@ pimcore.document.tags.multiselect = Class.create(pimcore.document.tag, {
             options.listeners.change = this.reloadDocument;
         }
 
+        if (typeof options.store !== "undefined") {
+            options.store = Ext.create('Ext.data.ArrayStore', {
+                fields: ['id', 'text'],
+                data: options.store
+            });
+        }
+
         this.element = Ext.create('Ext.ux.form.MultiSelect', options);
 
         this.element.render(id);
