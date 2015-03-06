@@ -87,6 +87,21 @@ CREATE TABLE `classes` (
   UNIQUE KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `custom_layouts` ;
+CREATE TABLE `custom_layouts` (
+	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`classId` INT(11) UNSIGNED NOT NULL,
+	`name` VARCHAR(255) NULL DEFAULT NULL,
+	`description` TEXT NULL,
+	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+	`userOwner` INT(11) UNSIGNED NULL DEFAULT NULL,
+	`userModification` INT(11) UNSIGNED NULL DEFAULT NULL,
+	`default` tinyint(4) NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `name` (`name`, `classId`)
+) DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `dependencies` ;
 CREATE TABLE `dependencies` (
   `sourcetype` enum('document','asset','object') NOT NULL DEFAULT 'document',
