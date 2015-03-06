@@ -196,16 +196,18 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
+        var record = data.records[0];
+        var data = record.data;
 
         var initData = {
-            id: data.node.attributes.id,
-            path: data.node.attributes.path,
-            type: data.node.attributes.elementType
+            id: data.id,
+            path: data.path,
+            type: data.elementType
         };
 
         if (initData.type == "object") {
-            if (data.node.attributes.className) {
-                initData.subtype = data.node.attributes.className;
+            if (data.className) {
+                initData.subtype = data.className;
             }
             else {
                 initData.subtype = "folder";
@@ -213,12 +215,12 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         }
 
         if (initData.type == "document" || initData.type == "asset") {
-            initData.subtype = data.node.attributes.type;
+            initData.subtype = data.type;
         }
 
         // check for existing element
         if (!this.elementAlreadyExists(initData.id, initData.type)) {
-            this.store.add(new this.store.recordType(initData));
+            this.store.add(initData);
             return true;
         }
         return false;

@@ -59,7 +59,8 @@ Ext.Loader.setConfig({
 Ext.Loader.setPath('Ext.ux', '/pimcore/static5/js/lib/ext/examples/ux');
 
 Ext.require([
-    'Ext.dom.Element'
+    'Ext.dom.Element',
+    'Ext.ux.form.MultiSelect'
 ]);
 
 var dndManager;
