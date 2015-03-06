@@ -259,7 +259,7 @@ class View extends \Zend_View {
 
         // write contents to the cache, if output-cache is enabled
         if($cacheConfig) {
-            Model\Cache::save($content, $cacheKey, array("output"), $cacheConfig["lifetime"]);
+            Model\Cache::save($content, $cacheKey, array("output", "output_inline"), $cacheConfig["lifetime"]);
         }
 
         return $content;

@@ -120,7 +120,7 @@ class Snippet extends Model\Document\Tag {
 
                         // write contents to the cache, if output-cache is enabled
                         if($cacheConfig) {
-                            Cache::save($content, $cacheKey, array("output"), $cacheConfig["lifetime"]);
+                            Cache::save($content, $cacheKey, array("output","output_inline"), $cacheConfig["lifetime"]);
                         }
 
                         // we need to add a component id to all first level html containers
