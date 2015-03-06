@@ -98,6 +98,7 @@
 "fallback_languages","Fallback Languages (CSV eg. de_CH,de)"
 "languages","Languages"
 "add_language","Add Language"
+"default_language", "Default language"
 "localization_and_internationalization","Localization &amp; Internationalization"
 "contact_email","Contact E-Mail"
 "password_was_not_changed","Password wasn't changed because it isn't secure enough"

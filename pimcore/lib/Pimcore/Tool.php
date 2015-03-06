@@ -106,8 +106,14 @@ class Tool {
      * @return null
      */
     public static function getDefaultLanguage() {
+        $config = Config::getSystemConfig();
+        $defaultLanguage = $config->general->defaultLanguage;
         $languages = self::getValidLanguages();
-        if(!empty($languages)) {
+
+        if (!empty($languages) && in_array($defaultLanguage, $languages)) {
+            return $defaultLanguage;
+        }
+        else {
             return $languages[0];
         }
         return null;

@@ -284,6 +284,11 @@ pimcore.settings.system = Class.create({
                                 name: 'general.validLanguages',
                                 value: this.getValue("general.validLanguages")
                             }, {
+                                xtype: "hidden",
+                                id: "system.settings.general.defaultLanguage",
+                                name: "general.defaultLanguage",
+                                value: this.getValue("general.defaultLanguage")
+                            }, {
                                 xtype: "container",
                                 width: 450,
                                 style: "margin-top: 20px;",
@@ -1611,6 +1616,21 @@ pimcore.settings.system = Class.create({
                     name: "general.fallbackLanguages." + language,
                     value: this.getValue("general.fallbackLanguages." + language)
                 },{
+                    xtype: "radio",
+                    name: "general.defaultLanguageRadio",
+                    fieldLabel: t("default_language"),
+                    boxLabel: t("default"),
+                    inputValue: language,
+                    checked: this.getValue("general.defaultLanguage") == language || (!this.getValue("general.defaultLanguage") && container.items.length == 0 ),
+                    listeners: {
+                        check: function (el, checked) {
+                            if (checked) {
+                                var defaultLanguageField = Ext.getCmp("system.settings.general.defaultLanguage");
+                                defaultLanguageField.setValue(language);
+                            }
+                        }.bind(this)
+                    }
+                },{
                     xtype: "button",
                     title: t("delete"),
                     iconCls: "pimcore_icon_delete",
@@ -1630,6 +1650,12 @@ pimcore.settings.system = Class.create({
         if(in_array(language, addedLanguages)) {
             addedLanguages.splice(array_search(language, addedLanguages),1);
             languageField.setValue(addedLanguages.join(","));
+        }
+
+        // remove the default language from hidden field
+        var defaultLanguageField = Ext.getCmp("system.settings.general.defaultLanguage");
+        if (defaultLanguageField.getValue() == language) {
+            defaultLanguageField.setValue("");
         }
 
         // remove the language from the container
