@@ -230,7 +230,11 @@ pimcore.document.edit = Class.create({
             console.log(e);
         }
 
-        this.loadMask.show();
+        try {
+            this.loadMask.show();
+        } catch (e) {
+            console.log(e);
+        }
 
         if (disableSaveToSession === true) {
             this.frame = null;

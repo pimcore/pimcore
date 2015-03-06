@@ -50,12 +50,16 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
                     dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
                 }
 
-                this.getBody().setStyle({
+                var body = this.getBody();
+                var style = {
                     overflow: "auto"
-                });
 
-                this.getBody().insertHtml("beforeEnd", '<div class="pimcore_tag_droptarget"></div>');
-                this.getBody().addCls("pimcore_tag_snippet_empty");
+                };
+                body.setStyle(style);
+                body.getFirstChild().setStyle(style);
+
+                body.insertHtml("beforeEnd", '<div class="pimcore_tag_droptarget"></div>');
+                body.addCls("pimcore_tag_snippet_empty");
 
                 el.getEl().on("contextmenu", this.onContextMenu.bind(this));
             } catch (e) {
@@ -77,12 +81,14 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
+        var record = data.records[0];
+        data = record.data;
 
         if (this.dndAllowed(data)) {
             // get path from nodes data
-            var uri = data.node.attributes.path;
+            var uri = data.path;
 
-            this.data.id = data.node.attributes.id;
+            this.data.id = data.id;
             this.data.path = uri;
 
             if (this.options.reload) {
@@ -119,7 +125,8 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
         // get the id from the body element of the panel because there is no method to set body's html
         // (only in configure)
         var bodyId = Ext.get(this.element.getEl().dom).query("." + Ext.baseCSSPrefix + "panel-body")[0].getAttribute("id");
-        return Ext.get(bodyId);
+        var body = Ext.get(bodyId);
+        return body;
     },
 
     updateContent: function (path) {
@@ -131,8 +138,9 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
             method: "get",
             url: path,
             success: function (response) {
-                this.getBody().dom.innerHTML = response.responseText;
-                this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
+                var body = this.getBody();
+                body.getFirstChild().dom.innerHTML = response.responseText;
+                body.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
                 this.updateDimensions();
             }.bind(this),
             params: params
@@ -140,11 +148,11 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
     },
 
     updateDimensions: function () {
-        this.getBody().setStyle({
-            height: "auto"
-        });
-
-        this.getBody().removeCls("pimcore_tag_snippet_empty");
+        var body = this.getBody();
+        var parent = body.getParent();
+        body.setStyle("height", "auto");
+        parent.setStyle("height", "auto");
+        body.removeCls("pimcore_tag_snippet_empty");
     },
 
     onContextMenu: function (e) {
@@ -166,10 +174,11 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
                     this.element.setHeight(height);
 
                     this.data = {};
-                    this.getBody().dom.innerHTML = '';
-                    this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
-                    this.getBody().addCls("pimcore_tag_snippet_empty");
-                    this.getBody().setStyle(height + "px");
+                    var body = this.getBody();
+                    body.getFirstChild().dom.innerHTML = '';
+                    body.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
+                    body.addCls("pimcore_tag_snippet_empty");
+                    body.setStyle(height + "px");
 
                     if (this.options.reload) {
                         this.reloadDocument();
