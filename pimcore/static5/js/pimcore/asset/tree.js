@@ -375,17 +375,14 @@ pimcore.asset.tree = Class.create({
     },
 
     onDragStart : function () {
-        console.log("onDragStart");
         pimcore.helpers.treeNodeThumbnailPreviewHide();
     },
 
     onDragEnd : function () {
-        console.log("onDragEnd");
         // nothing to do
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
-        console.log("onTreeNodeClick");
         if (record.data.expandable && !record.data.expanded) {
             record.expand();
         }
