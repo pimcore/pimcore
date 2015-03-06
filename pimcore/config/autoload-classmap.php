@@ -11,6 +11,7 @@ return array (
   'Pimcore\\Db\\Profiler' => $pdr . '/pimcore/lib/Pimcore/Db/Profiler.php',
   'Pimcore\\Tool\\Serialize' => $pdr . '/pimcore/lib/Pimcore/Tool/Serialize.php',
   'Pimcore\\Tool\\Admin' => $pdr . '/pimcore/lib/Pimcore/Tool/Admin.php',
+  'Pimcore\\Tool\\SimpleXMLExtended' => $pdr . '/pimcore/lib/Pimcore/Tool/SimpleXMLExtended.php',
   'Pimcore\\Tool\\StopWatch' => $pdr . '/pimcore/lib/Pimcore/Tool/StopWatch.php',
   'Pimcore\\Tool\\Mime' => $pdr . '/pimcore/lib/Pimcore/Tool/Mime.php',
   'Pimcore\\Tool\\Frontend' => $pdr . '/pimcore/lib/Pimcore/Tool/Frontend.php',

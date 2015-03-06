@@ -15,13 +15,6 @@
 
 namespace Pimcore\Tool;
 
-class SimpleXMLExtended extends \SimpleXMLElement {
-  public function addCData($cdata_text) {
-    $node = dom_import_simplexml($this);
-    $no   = $node->ownerDocument;
-    $node->appendChild($no->createCDATASection($cdata_text));
-  }
-}
 class XmlWriter extends \Zend_Config_Writer_Xml {
 
     /**
