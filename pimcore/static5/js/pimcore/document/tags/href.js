@@ -98,8 +98,10 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function(target, dd, e, data) {
-        data = this.getCustomPimcoreDropData(data);
-        if (this.dndAllowed(data)) {
+        var record = data.records[0];
+
+        record = this.getCustomPimcoreDropData(record);
+        if (this.dndAllowed(record)) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
         else {
@@ -108,19 +110,21 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
-        data = this.getCustomPimcoreDropData(data);
+        var record = data.records[0];
 
-        if(!this.dndAllowed(data)){
+        record = this.getCustomPimcoreDropData(record);
+
+        if(!this.dndAllowed(record)){
             return false;
         }
 
 
-        this.data.id = data.node.attributes.id;
-        this.data.subtype = data.node.attributes.type;
-        this.data.elementType = data.node.attributes.elementType;
-        this.data.path = data.node.attributes.path;
+        this.data.id = record.data.id;
+        this.data.subtype = record.data.type;
+        this.data.elementType = record.data.elementType;
+        this.data.path = record.data.path;
 
-        this.element.setValue(this.data.path);
+        this.element.setValue(record.data.path);
 
         if (this.options.reload) {
             this.reloadDocument();
@@ -143,7 +147,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
         if (this.options.types) {
             found = false;
             for (i = 0; i < this.options.types.length; i++) {
-                if (this.options.types[i] == data.node.attributes.elementType) {
+                if (this.options.types[i] == data.data.elementType) {
                     found = true;
                     break;
                 }
@@ -159,7 +163,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
             var typeKeys = Object.keys(this.options.subtypes);
             for (var st = 0; st < typeKeys.length; st++) {
                 for (i = 0; i < this.options.subtypes[typeKeys[st]].length; i++) {
-                    if (this.options.subtypes[typeKeys[st]][i] == data.node.attributes.type) {
+                    if (this.options.subtypes[typeKeys[st]][i] == data.data.type) {
                         found = true;
                         break;
                     }
@@ -171,10 +175,10 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
         }
 
         //object class check
-        if (data.node.attributes.elementType == "object" && this.options.classes) {
+        if (data.data.elementType == "object" && this.options.classes) {
             found = false;
             for (i = 0; i < this.options.classes.length; i++) {
-                if (this.options.classes[i] == data.node.attributes.className) {
+                if (this.options.classes[i] == data.data.className) {
                     found = true;
                     break;
                 }
