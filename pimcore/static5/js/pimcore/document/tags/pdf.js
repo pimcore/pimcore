@@ -47,8 +47,9 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
                 position: "relative"
             });
 
-            this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
-            this.getBody().addClass("pimcore_tag_image_empty");
+            var body = this.getBody();
+            body.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
+            body.addCls("pimcore_tag_image_empty");
         }.bind(this));
 
         this.element.render(id);
@@ -215,7 +216,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
     getBody: function () {
         // get the id from the body element of the panel because there is no method to set body's html
         // (only in configure)
-        var body = Ext.get(this.element.getEl().query(".x-panel-body")[0]);
+        var body = Ext.get(this.element.getEl().query("." + Ext.baseCSSPrefix + "autocontainer-innerCt")[0]);
         return body;
     },
 
@@ -238,7 +239,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         image.src = path;
 
         this.getBody().appendChild(image);
-        this.getBody().removeClass("pimcore_tag_image_empty");
+        this.getBody().removeCls("pimcore_tag_image_empty");
 
         this.updateCounter = 0;
         this.updateDimensionsInterval = window.setInterval(this.updateDimensions.bind(this), 1000);
