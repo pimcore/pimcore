@@ -66,7 +66,6 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
                                 metaData.css += " grid_value_inherited";
                             }
 
-
                             if (value && value.length > 0) {
                                 var table = '<table cellpadding="2" cellspacing="0" border="1">';
                                 for (var i = 0; i < value.length; i++) {
@@ -84,7 +83,6 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
-
 
         var options = {};
         options.name = this.fieldConfig.name;
@@ -122,22 +120,21 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         });
         var columns = [];
 
-        if (data.items[0]) {
-            var keys = Object.keys(data.items[0].data);
+        var fields = this.store.getInitialConfig().fields;
 
-            for (var i = 0; i < keys.length; i++) {
+        if (data.items[0]) {
+            for (var i = 0; i < fields.length; i++) {
                 columns.push({
-                    dataIndex: keys[i],
+                    dataIndex: fields[i].name,
                     editor: new Ext.form.TextField({
                         allowBlank: true
-                    })
+                    }),
+                    sortable: false
                 });
             }
         }
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
-        });
+        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {});
 
         this.grid = Ext.create('Ext.grid.Panel', {
             store: this.store,
@@ -146,8 +143,8 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             columns:columns,
             stripeRows: true,
             columnLines: true,
-            clicksToEdit: 2,
             autoHeight: true,
+            selModel: Ext.create('Ext.selection.CellModel'),
             plugins: [
                 this.cellEditing
             ],
@@ -240,7 +237,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         var selected = this.grid.getSelectionModel();
 
         if (selected.selection) {
-            var column = selected.selection.cell[1];
+            var column = selected.selection.colIdx;
 
             var currentData = this.getValue();
 
@@ -258,14 +255,15 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             return true;
         });
 
+        var fields = this.store.getInitialConfig().fields;
+
         var storedData = [];
         var tmData = [];
         for (var i = 0; i < data.items.length; i++) {
             tmData = [];
 
-            var keys = Object.keys(data.items[i].data);
-            for (var u = 0; u < keys.length; u++) {
-                tmData.push(data.items[i].data[keys[u]]);
+            for (var u = 0; u < fields.length; u++) {
+                tmData.push(data.items[i].data[fields[u].name]);
             }
             storedData.push(tmData);
         }

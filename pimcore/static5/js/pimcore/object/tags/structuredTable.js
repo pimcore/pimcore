@@ -115,7 +115,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         var columns = [
             {header: this.fieldConfig.labelFirstCell, width: this.fieldConfig.labelWidth, sortable: false,
                                 dataIndex: '__row_label', editor: null, renderer: function(value, metaData) {
-                    metaData.css = 'x-grid3-hd-row';
+                    metaData.css = 'x-grid-hd-row';
                     return ts(value);
                }
             }
@@ -161,18 +161,18 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
             });
         }
 
-        this.component = new Ext.grid.EditorGridPanel({
+        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 1
+        });
+
+        this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
             enableColumnMove: false,
-            colModel: new Ext.grid.ColumnModel({
-                defaults: {
-                    sortable: false
-                },
-                columns: columns
-            }),
+            columns: columns,
             cls: 'object_field',
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
+            selModel: Ext.create('Ext.selection.CellModel'),
             tbar: [
                 {
                     xtype: "tbtext",
@@ -223,14 +223,13 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
                                                 dataIndex: this.fieldConfig.cols[i].key, editor: null});
         }
 
-        this.component = new Ext.grid.EditorGridPanel({
+        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 1
+        });
+
+        this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
-            colModel: new Ext.grid.ColumnModel({
-                defaults: {
-                    sortable: false
-                },
-                columns: columns
-            }),
+            columns: columns,
             cls: cls,
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
