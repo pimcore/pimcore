@@ -210,10 +210,14 @@ class Admin {
      * @return true if in EXT JS5 mode
      */
     public static function isExtJS5() {
-        if ($_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"] == 5 || $_REQUEST["extjs5"]) {
+        if (isset($_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"]) && $_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"] == 5) {
             return true;
-        } else {
-            return false;
         }
+
+        if(isset($_REQUEST["extjs5"]) && $_REQUEST["extjs5"]) {
+            return true;
+        }
+
+        return false;
     }
 }
