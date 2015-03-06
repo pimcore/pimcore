@@ -1619,8 +1619,6 @@ pimcore.settings.system = Class.create({
                     xtype: "radio",
                     name: "general.defaultLanguageRadio",
                     fieldLabel: t("default_language"),
-                    boxLabel: t("default"),
-                    inputValue: language,
                     checked: this.getValue("general.defaultLanguage") == language || (!this.getValue("general.defaultLanguage") && container.items.length == 0 ),
                     listeners: {
                         check: function (el, checked) {
