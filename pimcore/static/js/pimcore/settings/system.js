@@ -292,7 +292,7 @@ pimcore.settings.system = Class.create({
                                 xtype: "container",
                                 width: 450,
                                 style: "margin-top: 20px;",
-                                id: "system.settings.general.languageConainer",
+                                id: "system.settings.general.languageContainer",
                                 items: [],
                                 listeners: {
                                     beforerender: function () {
@@ -1596,7 +1596,7 @@ pimcore.settings.system = Class.create({
             }
 
             // add the language to the container, so that further settings for the language can be set (eg. fallback, ...)
-            var container = Ext.getCmp("system.settings.general.languageConainer");
+            var container = Ext.getCmp("system.settings.general.languageContainer");
             var lang = container.getComponent(language);
             if(lang) {
                 return;
@@ -1657,7 +1657,7 @@ pimcore.settings.system = Class.create({
         }
 
         // remove the language from the container
-        var container = Ext.getCmp("system.settings.general.languageConainer");
+        var container = Ext.getCmp("system.settings.general.languageContainer");
         var lang = container.getComponent(language);
         if(lang) {
             container.remove(lang);
