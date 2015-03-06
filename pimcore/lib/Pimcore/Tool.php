@@ -113,9 +113,10 @@ class Tool {
         if (!empty($languages) && in_array($defaultLanguage, $languages)) {
             return $defaultLanguage;
         }
-        else {
+        else if (!empty($languages)) {
             return $languages[0];
         }
+
         return null;
     }
 
