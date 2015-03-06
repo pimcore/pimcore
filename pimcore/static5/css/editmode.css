@@ -88,23 +88,23 @@
 }
 
 .pimcore_icon_plus {
-	background: url(/pimcore/static/img/icon/add.png) !important;
+	background: url(/pimcore/static5/img/icon/add.png) !important;
 }
 
 .pimcore_icon_minus {
-	background: url(/pimcore/static/img/icon/delete.png) !important;
+	background: url(/pimcore/static5/img/icon/delete.png) !important;
 }
 
 .pimcore_icon_up {
-	background: url(/pimcore/static/img/icon/arrow_up.png) !important;
+	background: url(/pimcore/static5/img/icon/arrow_up.png) !important;
 }
 
 .pimcore_icon_down {
-	background: url(/pimcore/static/img/icon/arrow_down.png) !important;
+	background: url(/pimcore/static5/img/icon/arrow_down.png) !important;
 }
 
 .pimcore_icon_edit {
-	background: url(/pimcore/static/img/icon/pencil_go.png) !important;
+	background: url(/pimcore/static5/img/icon/pencil_go.png) !important;
 }
 
 
@@ -154,28 +154,28 @@
 
 .pimcore_tag_snippet_empty {
 	border: 1px solid #d0d0d0 !important;
-	background:url(/pimcore/static/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
+	background:url(/pimcore/static5/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
 }
 
 .pimcore_tag_image_empty {
 	border: 1px solid #d0d0d0 !important;
-	background:url(/pimcore/static/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
+	background:url(/pimcore/static5/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
 }
 
 .pimcore_tag_video_empty {
 	border: 1px solid #d0d0d0 !important;
-	/*background:url(/pimcore/static/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;*/
-    background:url(/pimcore/static/img/icon/video-icon-big.png) center center no-repeat #f9fbfb !important;
+	/*background:url(/pimcore/static5/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;*/
+    background:url(/pimcore/static5/img/icon/video-icon-big.png) center center no-repeat #f9fbfb !important;
     cursor: pointer;
 }
 
 .pimcore_tag_href input{
-	background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat #fff;
+	background: url(/pimcore/static5/img/icon/drop-16.png) right 2px no-repeat #fff;
 	cursor: default;
 }
 
 .pimcore_tag_droptarget {
-    background: url(/pimcore/static/img/icon/drop-16.png) center center no-repeat;
+    background: url(/pimcore/static5/img/icon/drop-16.png) center center no-repeat;
     position:absolute;
     width:20px;
     height:20px;
@@ -215,7 +215,7 @@
 }
 
 .pimcore_droptarget_input  {
-	background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat #fff !important;
+	background: url(/pimcore/static5/img/icon/drop-16.png) right 2px no-repeat #fff !important;
 	cursor: default;
 }
 
@@ -279,7 +279,7 @@
 }
 
 .pimcore_image_marker {
-    background: url(/pimcore/static/img/icon/marker.png);
+    background: url(/pimcore/static5/img/icon/marker.png);
     width: 20px;
     height: 35px;
     cursor: pointer;
@@ -685,17 +685,17 @@
 }
 
 .x5-form-field-wrap .x5-form-date-trigger {
-    background-image: url(/pimcore/static/img/icon/calendar.png);
+    background-image: url(/pimcore/static5/img/icon/calendar.png);
 }
 
 .x5-form-field-wrap .x5-form-arrow-trigger {
-    background-image: url(/pimcore/static/img/icon/bullet_arrow_down.png);
+    background-image: url(/pimcore/static5/img/icon/bullet_arrow_down.png);
     background-repeat: no-repeat;
     background-position: center center;
 }
 
 .x5-form-field-wrap .x5-form-spinner-trigger {
-    background-image: url(/pimcore/static/img/icon/arrow_ns.png);
+    background-image: url(/pimcore/static5/img/icon/arrow_ns.png);
     background-repeat: no-repeat;
     background-position: center center;
     width: 15px;
@@ -916,11 +916,11 @@
 }
 
 .x5-date-right a {
-    background: url(/pimcore/static/img/icon/bullet_right.png) center center no-repeat;
+    background: url(/pimcore/static5/img/icon/bullet_right.png) center center no-repeat;
 }
 
 .x5-date-left a {
-    background: url(/pimcore/static/img/icon/bullet_left.png) center center no-repeat;
+    background: url(/pimcore/static5/img/icon/bullet_left.png) center center no-repeat;
 }
 
 .x5-date-mp {

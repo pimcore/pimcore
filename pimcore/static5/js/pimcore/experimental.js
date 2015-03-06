@@ -93,12 +93,12 @@
                 total = 0;
             }
 
-            if (!node.decorated) {
-                node.decorated = true;
-                if (node.data && node.data.text) {
-                    node.data.text = node.data.text + " (" + total + ")" ;
-                }
-            }
+            //if (!node.decorated) {
+            //    node.decorated = true;
+            //    if (node.data && node.data.text) {
+            //        node.data.text = node.data.text + " (" + total + ")" ;
+            //    }
+            //}
 
             node.addListener("expand", function(node) {
                 console.log("expand " + node.id);
