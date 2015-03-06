@@ -161,7 +161,8 @@ pimcore.element.tag.imagecropper = Class.create({
                             }
                         };
 
-                        this.resizer = new Ext.Resizable('selector', {
+                        this.resizer = Ext.create('Ext.resizer.Resizer', {
+                            target: 'selector',
                             pinned:true,
                             minWidth:50,
                             minHeight: 50,
