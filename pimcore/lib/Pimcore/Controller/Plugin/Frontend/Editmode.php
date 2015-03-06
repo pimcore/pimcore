@@ -45,18 +45,11 @@ class Editmode extends \Zend_Controller_Plugin_Abstract {
         if (\Pimcore\Tool\Admin::isExtJS5()) {
             $editmodeLibraries = array(
                 "/pimcore/static5/js/pimcore/namespace.js",
-
+                "/pimcore/static5/js/pimcore/document/edit/sandbox.js",
                 "/pimcore/static5/js/lib/prototype-light.js",
                 "/pimcore/static5/js/lib/jquery.min.js",
-                //            "/pimcore/static5/js/lib/ext/adapter/jquery/ext-jquery-adapter-debug.js",
-
                 "/pimcore/static5/js/lib/ext/ext-all-debug.js",
-                //            "/pimcore/static5/js/lib/ext-plugins/ux/Spinner.js",
-                //            "/pimcore/static5/js/lib/ext-plugins/ux/SpinnerField.js",
-                //            "/pimcore/static5/js/lib/ext-plugins/ux/MultiSelect.js",
-                //            "/pimcore/static5/js/lib/ext-plugins/GridRowOrder/roworder.js",
                 "/pimcore/static5/js/lib/ckeditor/ckeditor.js"
-                //            "/pimcore/static/js/pimcore/libfixes.js"
             );
 
             $editmodeScripts = array(
@@ -90,13 +83,9 @@ class Editmode extends \Zend_Controller_Plugin_Abstract {
             );
 
             $editmodeStylesheets = array(
-                /*"/pimcore/static5/js/lib/ext/resources/css/ext-all.css",
-                "/pimcore/static5/js/lib/ext/resources/css/xtheme-gray.css",
-                "/pimcore/static5/js/lib/ext-plugins/ux/css/Spinner.css",
-                "/pimcore/static5/js/lib/ext-plugins/ux/css/MultiSelect.css",
-                "/pimcore/static5/css/ext-admin-overwrite.css",*/
                 "/pimcore/static5/css/icons.css",
                 "/pimcore/static5/css/editmode.css?asd=" . time(),
+                "/pimcore/static5/js/lib/ext/packages/ext-theme-classic-sandbox/build/resources/ext-theme-classic-sandbox-all-debug.css"
             );
 
 

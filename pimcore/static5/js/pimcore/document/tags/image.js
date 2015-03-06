@@ -289,7 +289,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     getBody: function () {
         // get the id from the body element of the panel because there is no method to set body's html
         // (only in configure)
-        var body = Ext.get(this.element.getEl().query(".x-panel-body")[0]);
+        var body = Ext.get(this.element.getEl().query("." + Ext.baseCSSPrefix + "autocontainer-innerCt")[0]);
         return body;
     },
 
