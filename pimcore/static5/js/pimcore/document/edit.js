@@ -68,8 +68,8 @@ pimcore.document.edit = Class.create({
                     var ed;
                     for(var i=0; i<editables.length; i++) {
                         ed = Ext.get(editables[i]);
-                        if(!ed.hasClass("pimcore_tag_inc") && !ed.hasClass("pimcore_tag_areablock")
-                            && !ed.hasClass("pimcore_tag_block") && !ed.hasClass("pimcore_tag_area")) {
+                        if(!ed.hasCls("pimcore_tag_inc") && !ed.hasCls("pimcore_tag_areablock")
+                            && !ed.hasCls("pimcore_tag_block") && !ed.hasCls("pimcore_tag_area")) {
                             if(el.pressed) {
                                 var mask = ed.mask();
                                 mask.setStyle("background-color","#f5d833");
