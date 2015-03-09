@@ -153,19 +153,17 @@ pimcore.document.edit = Class.create({
                     // this is to hide the mask if edit/startup.js isn't executed (eg. in case an error is shown)
                     // otherwise edit/startup.js will disable the loading mask
                     if(!this["frame"]) {
-                        //this.loadMask.hide();
+                        this.loadMask.hide();
                     }
                 }.bind(this));
 
-                //this.loadMask = new Ext.LoadMask(
-                //    {
-                //        target: this.layout.body,
-                //        msg: t("please_wait"),
-                //        hidden: true
-                //    });
-                //this.loadMask.enable();
-                //TODO EXTJS5
-                //this.loadMask.show();
+                this.loadMask = new Ext.LoadMask(
+                    {
+                        target: this.layout,
+                        msg: t("please_wait")
+                    });
+
+                this.loadMask.show();
             }.bind(this));
         }
 

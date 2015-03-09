@@ -214,7 +214,7 @@ Ext.onReady(function () {
 
     // enable the edit tab again
     if (typeof editWindow.loadMask != 'undefined') {
-        editWindow.loadMask.disable();
+        editWindow.loadMask.hide();
     }
 });
 
