@@ -758,36 +758,36 @@
     vertical-align: middle;
 }
 
-.x5-grid3-row {
+.x5-grid-row {
     border-bottom: 1px solid #ccc;
 }
 
-.x5-grid3-row-last {
+.x5-grid-row-last {
     border:0;
 }
 
-.x5-grid3-header {
+.x5-grid-header {
     background: #EDEDED;
     border-bottom: 1px solid #ccc;
 }
 
-.x5-grid3-header {
+.x5-grid-header {
     padding: 0;
 }
 
-.x5-grid3-scroller {
+.x5-grid-scroller {
     padding: 0;
 }
 
-.x5-grid3-body {
+.x5-grid-body {
     border-bottom: 1px solid #ccc;
 }
 
-.x5-grid3-resize-marker, .x5-grid3-resize-proxy {
+.x5-grid-resize-marker, .x5-grid-resize-proxy {
     display: none;
 }
 
-.x5-grid3-cell {
+.x5-grid-cell {
     border-right: 1px solid #ccc;
 
     -moz-user-select: none;
@@ -796,7 +796,7 @@
 }
 
 
-.x5-grid3-cell-inner, .x5-grid3-hd-inner {
+.x5-grid-cell-inner, .x5-grid-hd-inner {
     height: 25px;
     padding: 5px;
     overflow: hidden;
@@ -804,19 +804,19 @@
     white-space: nowrap;
 }
 
-.x5-grid3-hd-row td, .x5-grid3-row td, .x5-grid3-summary-row td {
+.x5-grid-hd-row td, .x5-grid-row td, .x5-grid-summary-row td {
     outline:0;
 }
 
-.x5-grid3-cell-selected {
+.x5-grid-cell-selected {
     background-color: #DEDEDE;
 }
 
-.x5-grid3-row-selected {
+.x5-grid-row-selected {
     background-color: #DEDEDE;
 }
 
-.x5-grid3-row-over {
+.x5-grid-row-over {
     background-color: #EDEDED;
 }
 
