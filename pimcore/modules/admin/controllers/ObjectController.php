@@ -156,12 +156,13 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             "lockOwner" => $child->getLocked() ? true : false
         );
 
+        $hasChildren = $child->hasChilds([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
+
         $tmpObject["isTarget"] = false;
         $tmpObject["allowDrop"] = false;
         $tmpObject["allowChildren"] = false;
 
-        $tmpObject["leaf"] = $child->hasNoChilds();
-//        $tmpObject["iconCls"] = "pimcore_icon_object";
+        $tmpObject["leaf"] = !$hasChildren;
 
         $tmpObject["isTarget"] = true;
         if ($tmpObject["type"] != "variant") {
@@ -171,14 +172,13 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         $tmpObject["allowChildren"] = true;
 
         if (\Pimcore\Tool\Admin::isExtJS5()) {
-            $tmpObject["leaf"] = $child->hasNoChilds();
+            $tmpObject["leaf"] = !$hasChildren;
         } else {
             $tmpObject["leaf"] = false;
         }
         $tmpObject["cls"] = "";
 
         if ($child->getType() == "folder") {
-//            $tmpObject["iconCls"] = "pimcore_icon_folder";
             $tmpObject["qtipCfg"] = array(
                 "title" => "ID: " . $child->getId()
             );
@@ -213,7 +213,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         }
 
 
-        $tmpObject["expanded"] = $child->hasNoChilds();
+        $tmpObject["expanded"] = !$hasChildren;
         $tmpObject["permissions"] = $child->getUserPermissions($this->getUser());
 
 
