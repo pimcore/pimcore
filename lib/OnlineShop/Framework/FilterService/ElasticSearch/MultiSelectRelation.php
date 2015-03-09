@@ -4,7 +4,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectRelation exten
 
     public function prepareGroupByValues(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList) {
         $field = $this->getField($filterDefinition);
-        $productList->prepareGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
+        $productList->prepareGroupByRelationValues($field, true, !$filterDefinition->getUseAndCondition());
     }
 
     public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {

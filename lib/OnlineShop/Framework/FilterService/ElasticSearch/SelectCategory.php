@@ -3,7 +3,7 @@
 class OnlineShop_Framework_FilterService_ElasticSearch_SelectCategory extends OnlineShop_Framework_FilterService_SelectCategory {
 
     public function prepareGroupByValues(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList) {
-        $productList->prepareGroupByValues($filterDefinition->getField(), true);
+        $productList->prepareGroupBySystemValues($filterDefinition->getField(), true);
     }
 
     public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
@@ -13,7 +13,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_SelectCategory extends On
             $script = $this->script;
         }
 
-        $rawValues = $productList->getGroupByValues($filterDefinition->getField(), true);
+        $rawValues = $productList->getGroupBySystemValues($filterDefinition->getField(), true);
         $values = array();
 
         $availableRelations = array();
