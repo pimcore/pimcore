@@ -273,7 +273,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
      * can be run in parallel since each thread marks the entries it is working on and only processes these entries
      *
      * @param int $limit
-     * @return $int number of entries processed
+     * @return int number of entries processed
      */
     public function processUpdateIndexQueue($limit = 200) {
 
