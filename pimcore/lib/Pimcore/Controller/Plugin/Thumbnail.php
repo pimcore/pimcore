@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -34,7 +34,7 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract {
 
             if($asset = Asset::getById($assetId)) {
                 try {
-
+                    $page = 1;
                     $thumbnailFile = null;
                     $thumbnailConfig = null;
                     $deferredConfigId = "thumb_" . $assetId . "__" . md5($request->getPathInfo());
@@ -45,19 +45,22 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract {
                         if(!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
                             throw new \Exception("Deferred thumbnail config file doesn't contain a valid \\Asset\\Image\\Thumbnail\\Config object");
                         }
-                    } else {
-                        // just check if the thumbnail exists -> throws exception otherwise
-                        $thumbnailConfig = Asset\Image\Thumbnail\Config::getByName($thumbnailName);
-                    }
-
-                    if($asset instanceof Asset\Document) {
-                        $page = 1;
 
                         $tmpPage = array_pop(explode("-", $thumbnailName));
                         if(is_numeric($tmpPage)) {
                             $page = $tmpPage;
                         }
+                    } else {
+                        //get thumbnail for e.g. pdf page thumb__document_pdfPage-5
+                        if(preg_match("|document_(.*)\-(\d+)$|",$thumbnailName,$matches)){
+                            $thumbnailName = $matches[1];
+                            $page = (int)$matches[2];
+                        }
+                        // just check if the thumbnail exists -> throws exception otherwise
+                        $thumbnailConfig = Asset\Image\Thumbnail\Config::getByName($thumbnailName);
+                    }
 
+                    if($asset instanceof Asset\Document) {
                         $thumbnailConfig->setName(preg_replace("/\-[\d]+/","",$thumbnailConfig->getName()));
                         $thumbnailConfig->setName(str_replace("document_","",$thumbnailConfig->getName()));
 
