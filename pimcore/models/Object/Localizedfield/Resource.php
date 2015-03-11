@@ -240,25 +240,116 @@ class Resource extends Model\Resource\AbstractResource {
         }
     }
 
+
     /**
      *
      */
     public function createLocalizedViews () {
 
+        // init
         $languages = Tool::getValidLanguages();
-
         $defaultTable = 'object_query_' . $this->model->getClass()->getId();
+
+
+        /**
+         * macro for creating ifnull statement
+         * @param string $field
+         * @param array  $languages
+         *
+         * @return string
+         */
+        $getFallbackValue = function ($field, array $languages) use (&$getFallbackValue) {
+
+            // init
+            $lang = array_shift($languages);
+
+            // get fallback for current language
+            $fallback = count($languages) > 0
+                ? $getFallbackValue( $field, $languages )
+                : 'null'
+            ;
+
+            // create query
+            $sql = sprintf('ifnull(%s.%s, %s)'
+                , $lang
+                , $field
+                , $fallback
+            );
+
+            return $fallback !== 'null'
+                ? $sql
+                : $lang . '.' . $field
+                ;
+        };
+
 
         foreach ($languages as $language) {
             try {
                 $tablename = $this->getQueryTableName() . "_" . $language;
-                $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $defaultTable . '`.`oo_id` left JOIN `' . $tablename . '` ON `' . $defaultTable . '`.`oo_id` = `' . $tablename . '`.`ooo_id`;');
+
+
+                // get available columns
+                $viewColumns = array_merge(
+                    $this->db->fetchAll('SHOW COLUMNS FROM `' . $defaultTable . '`')
+                    , $this->db->fetchAll('SHOW COLUMNS FROM `objects`')
+                );
+                $localizedColumns = $this->db->fetchAll('SHOW COLUMNS FROM `' . $tablename . '`');
+
+
+                // get view fields
+                $viewFields = [];
+                foreach($viewColumns as $row)
+                {
+                    $viewFields[] = $row['Field'];
+                }
+
+
+                // create fallback select
+                $localizedFields = [];
+                $fallbackLanguages = array_unique(Tool::getFallbackLanguagesFor($language));
+                array_unshift($fallbackLanguages, $language);
+                foreach($localizedColumns as $row)
+                {
+                    $localizedFields[] = $getFallbackValue($row['Field'], $fallbackLanguages) . sprintf(' as "%s"', $row['Field']);
+                }
+
+
+                // create view select fields
+                $selectViewFields = implode(',', array_merge($viewFields, $localizedFields));
+
+
+                // create view
+                $viewQuery = <<<QUERY
+CREATE OR REPLACE VIEW `object_localized_{$this->model->getClass()->getId()}_{$language}` AS
+
+SELECT {$selectViewFields}
+FROM `{$defaultTable}`
+    JOIN `objects`
+        ON (`objects`.`o_id` = `{$defaultTable}`.`oo_id`)
+QUERY;
+
+
+                // join fallback languages
+                foreach($fallbackLanguages as $lang)
+                {
+                    $viewQuery .= <<<QUERY
+LEFT JOIN {$this->getQueryTableName()}_{$lang} as {$lang}
+    ON( 1
+        AND {$defaultTable}.oo_id = {$lang}.ooo_id
+    )
+QUERY;
+
+                }
+
+                // execute
+                $this->db->query( $viewQuery );
             }
             catch (\Exception $e) {
                 \Logger::error($e);
             }
         }
     }
+
 
     /**
      *

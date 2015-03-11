@@ -339,15 +339,15 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
             }
         }
 
-        // delete views from old languages
-        $oldLanguages = explode(",",$oldConfig->get("general")->toArray()["validLanguages"]);
-        $newLanguages = $languages;
+
+        // delete views if fallback languages has changed or the language is no more available
+        $fallbackLanguagesChanged = array_diff_assoc ($oldValues['general']['fallbackLanguages'], $fallbackLanguages);
         $dbName = $oldConfig->get("database")->toArray()["params"]["dbname"];
-        foreach ($oldLanguages as $oldLanguage){
-            if (!in_array($oldLanguage, $newLanguages)) {
-                $this->deleteViews($oldLanguage, $dbName);
-            }
+        foreach($fallbackLanguagesChanged as $language => $dummy)
+        {
+            $this->deleteViews($language, $dbName);
         }
+
 
         $settings = array(
             "general" => array(
