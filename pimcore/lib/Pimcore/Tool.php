@@ -207,7 +207,7 @@ class Tool {
             $systemRoutingDefaults = $config->documents->toArray();
 
             foreach ($routeingDefaults as $key => $value) {
-                if ($systemRoutingDefaults["default_" . $key]) {
+                if (isset($systemRoutingDefaults["default_" . $key]) && $systemRoutingDefaults["default_" . $key]) {
                     $routeingDefaults[$key] = $systemRoutingDefaults["default_" . $key];
                 }
             }
