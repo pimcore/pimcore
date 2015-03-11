@@ -23,7 +23,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
     /**
      * @var string
      */
-    protected $cacheKey;
+    protected $defaultCacheKey;
 
     /**
      * @var bool
@@ -166,20 +166,24 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
             }
         }
 
-        $appendKey = "";
-        // this is for example for the image-data-uri plugin
-        if ($request->getParam("pimcore_cache_tag_suffix")) {
-            $tags = $request->getParam("pimcore_cache_tag_suffix");
-            if (is_array($tags)) {
-                $appendKey = "_" . implode("_", $tags);
-            }
+        $deviceDetector = Tool\DeviceDetector::getInstance();
+        $device = $deviceDetector->getDevice();
+        $deviceDetector->setWasUsed(false);
+
+        $this->defaultCacheKey = "output_" . md5(Tool::getHostname() . $requestUri);
+        $cacheKeys = [
+            $this->defaultCacheKey . "_" . $device,
+            $this->defaultCacheKey,
+        ];
+
+        $cacheItem = null;
+        foreach($cacheKeys as $cacheKey) {
+            $cacheItem = CacheManager::load($cacheKey, true);
+            if($cacheItem) break;
         }
 
-        $this->cacheKey = "output_" . md5(Tool::getHostname() . $requestUri) . $appendKey;
-
-        $cacheItem = CacheManager::load($this->cacheKey, true);
         if (is_array($cacheItem) && !empty($cacheItem)) {
-            header("X-Pimcore-Output-Cache-Tag: " . $this->cacheKey, true, 200);
+            header("X-Pimcore-Output-Cache-Tag: " . $cacheKey, true, 200);
             header("X-Pimcore-Output-Cache-Date: " . $cacheItem["date"]);
             
             foreach ($cacheItem["rawHeaders"] as $header) {
@@ -232,7 +236,13 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
                     "date" => \Zend_Date::now()->getIso()
                 );
 
-                CacheManager::save($cacheItem, $this->cacheKey, array("output"), $this->lifetime, 1000);
+                $cacheKey = $this->defaultCacheKey;
+                $deviceDetector = Tool\DeviceDetector::getInstance();
+                if($deviceDetector->wasUsed()) {
+                    $cacheKey .= "_" . $deviceDetector->getDevice();
+                }
+
+                CacheManager::save($cacheItem, $cacheKey, array("output"), $this->lifetime, 1000);
             }
             catch (\Exception $e) {
                 \Logger::error($e);
