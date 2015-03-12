@@ -45,10 +45,11 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
     /**
      * @return string
      */
-    public function getCartClassName() {
+    public function getCartClassName()
+    {
         // check if we need a guest cart
-        if( $this->config->cart->guest
-            && OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentUserId() === -1)
+        if( OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getUseGuestCart()
+            && $this->config->cart->guest)
         {
             $cartClass = $this->config->cart->guest->class;
         }

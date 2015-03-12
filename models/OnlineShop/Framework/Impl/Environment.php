@@ -6,6 +6,7 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     const SESSION_KEY_USERID = "userid";
     const SESSION_KEY_TENANT = "currenttenant";
     const SESSION_KEY_SUB_TENANT = "currentsubtenant";
+    const USER_ID_NOT_SET = -1;
 
     /**
      * @var Zend_Session_Namespace
@@ -13,7 +14,18 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     protected $session;
 
     protected $customItems = array();
-    protected $userId = -1;
+
+    /**
+     * @var int
+     */
+    protected $userId = self::USER_ID_NOT_SET;
+
+    /**
+     * @var bool
+     */
+    protected $useGuestCart = false;
+
+
     protected $currentTenant = null;
     protected $currentSubTenant = null;
 
@@ -83,20 +95,32 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     /**
      * @return int
      */
-    public function getCurrentUserId() {
-        if(empty($this->userId)) {
-            return -1; 
-        }
+    public function getCurrentUserId()
+    {
         return $this->userId;
     }
 
     /**
-     * @param int $user
-     * @return void
+     * @param int $userId
+     *
+     * @return $this
      */
-    public function setCurrentUserId($userId) {
-        $this->userId = $userId;
+    public function setCurrentUserId($userId)
+    {
+        $this->userId = (int)$userId;
+
+        return $this;
     }
+
+
+    /**
+     * @return bool
+     */
+    public function hasCurrentUserId()
+    {
+        return $this->getCurrentUserId() !== self::USER_ID_NOT_SET;
+    }
+
 
     public function removeCustomItem($key) {
         unset($this->customItems[$key]);
@@ -151,6 +175,19 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
         return $this->currencyLocale;
     }
 
+    /**
+     * @return boolean
+     */
+    public function getUseGuestCart()
+    {
+        return $this->useGuestCart;
+    }
 
+    /**
+     * @param boolean $useGuestCart
+     */
+    public function setUseGuestCart($useGuestCart)
+    {
+        $this->useGuestCart = (bool)$useGuestCart;
+    }
 }
-

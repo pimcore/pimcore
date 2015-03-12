@@ -4,6 +4,11 @@ abstract class OnlineShop_Framework_AbstractCart extends Pimcore_Model_Abstract 
     private $ignoreReadonly = false;
 
     /**
+     * @var int
+     */
+    protected $userId;
+
+    /**
      * @var OnlineShop_Framework_ICartItem[]
      */
     protected $items = array();
@@ -559,8 +564,17 @@ abstract class OnlineShop_Framework_AbstractCart extends Pimcore_Model_Abstract 
     /**
      * @return int
      */
-    public function getUserId() {
-        return OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentUserId();
+    public function getUserId()
+    {
+        return $this->userId ?: OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentUserId();
+    }
+
+    /**
+     * @param int $userId
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = (int)$userId;
     }
 
 

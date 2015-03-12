@@ -22,6 +22,13 @@ interface OnlineShop_Framework_IEnvironment extends OnlineShop_Framework_ICompon
     public function setCurrentUserId($userId);
 
     /**
+     * check if a user id is set
+     *
+     * @return bool
+     */
+    public function hasCurrentUserId();
+
+    /**
      * sets custom item to environment - which is saved to the session then
      * save()-call is needed to save the custom items
      *
@@ -94,4 +101,14 @@ interface OnlineShop_Framework_IEnvironment extends OnlineShop_Framework_ICompon
      * @return Zend_Locale
      */
     public function getCurrencyLocale();
+
+    /**
+     * @return boolean
+     */
+    public function getUseGuestCart();
+
+    /**
+     * @param boolean $useGuestCart
+     */
+    public function setUseGuestCart($useGuestCart);
 }
