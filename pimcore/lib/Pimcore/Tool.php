@@ -583,6 +583,11 @@ class Tool {
      */
     public static function classExists ($class) {
 
+        // if the class is already loaded we can skip right here
+        if(class_exists($class, false)) {
+            return true;
+        }
+
         // we need to set a custom error handler here for the time being
         // unfortunately suppressNotFoundWarnings() doesn't work all the time, it has something to do with the calls in
         // Pimcore\Tool::ClassMapAutoloader(), but don't know what actual conditions causes this problem.
