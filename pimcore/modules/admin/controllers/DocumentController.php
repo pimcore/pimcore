@@ -187,7 +187,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                             }
                         }
 
-                        if (class_exists($classname)) {
+                        if (Tool::classExists($classname)) {
                             $document = $classname::create($this->getParam("parentId"), $createValues);
                             try {
                                 $document->save();
@@ -1129,7 +1129,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
         $type = $this->getParam("type");
         $class = "\\Pimcore\\Model\\Document\\" . ucfirst($type);
-        if (class_exists($class)) {
+        if (Tool::classExists($class)) {
             $new = new $class;
 
             // overwrite internal store to avoid "duplicate full path" error

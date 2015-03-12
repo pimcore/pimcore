@@ -20,6 +20,11 @@ use Pimcore\Model\Cache;
 class Tool {
 
     /**
+     * @var array
+     */
+    protected static $notFoundClassNames = [];
+
+    /**
      * @static
      * @param string $key
      * @return bool
@@ -582,10 +587,37 @@ class Tool {
      * @return bool
      */
     public static function classExists ($class) {
+        return self::classInterfaceExists($class, "class");
+    }
+
+    /**
+     * @static
+     * @param $class
+     * @return bool
+     */
+    public static function interfaceExists ($class) {
+        return self::classInterfaceExists($class, "interface");
+    }
+
+    /**
+     * @param $class
+     * @param $type
+     * @return bool
+     */
+    protected static function classInterfaceExists($class, $type) {
+
+        $functionName = $type . "_exists";
 
         // if the class is already loaded we can skip right here
-        if(class_exists($class, false)) {
+        if($functionName($class, false)) {
             return true;
+        }
+
+        $class = "\\" . ltrim($class, "\\");
+
+        // let's test if we have seens this class already before
+        if(isset(self::$notFoundClassNames[$class])) {
+            return false;
         }
 
         // we need to set a custom error handler here for the time being
@@ -598,42 +630,14 @@ class Tool {
         });
 
         \Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(true);
-        $class = "\\" . ltrim($class, "\\");
-        $exists = class_exists($class);
+        $exists = $functionName($class);
         \Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(false);
 
         restore_error_handler();
 
-        return $exists;
-    }
-
-    /**
-     * @static
-     * @param $class
-     * @return bool
-     */
-    public static function interfaceExists ($class) {
-
-        // if the interface is already loaded we can skip right here
-        if(interface_exists($class, false)) {
-            return true;
+        if(!$exists) {
+            self::$notFoundClassNames[$class] = true; // value doesn't matter, key lookups are faster ;-)
         }
-
-        // we need to set a custom error handler here for the time being
-        // unfortunately suppressNotFoundWarnings() doesn't work all the time, it has something to do with the calls in
-        // Pimcore\Tool::ClassMapAutoloader(), but don't know what actual conditions causes this problem.
-        // but to be save we log the errors into the debug.log, so if anything else happens we can see it there
-        // the normal warning is e.g. Warning: include_once(Path/To/Class.php): failed to open stream: No such file or directory in ...
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-            //\Logger::debug(implode(" ", func_get_args()));
-        });
-
-        \Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(true);
-        $class = "\\" . ltrim($class, "\\");
-        $exists = interface_exists($class);
-        \Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(false);
-
-        restore_error_handler();
 
         return $exists;
     }

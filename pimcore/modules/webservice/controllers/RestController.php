@@ -608,7 +608,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                     } else {
                         // check if the getter is implemented by a plugin
                         $class = "\\Pimcore\\Model\\Webservice\\Data\\Document\\" . ucfirst($type) . "\\Out";
-                        if (class_exists($class)) {
+                        if (Tool::classExists($class)) {
                             Document\Service::loadAllDocumentFields($doc);
                             $object = Webservice\Data\Mapper::map($doc, $class, "out");
                         } else {
