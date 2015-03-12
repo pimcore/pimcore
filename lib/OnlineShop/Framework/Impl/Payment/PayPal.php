@@ -165,6 +165,8 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
 
 
         // execute
+        //TODO do not call this in handle response, but call it in the controller!
+        //TODO return a 'intermediate' status
         return $this->executeDebit($price, $response['internal_id']);
     }
 

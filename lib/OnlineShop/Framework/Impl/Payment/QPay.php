@@ -82,12 +82,11 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         $paymentData['orderDescription'] = $config['orderDescription'];
         $paymentData['successURL'] = $config['successURL'];
         $paymentData['duplicateRequestCheck'] = 'yes';
-        $paymentData['requestfingerprintorder'] = '';
-
         if(array_key_exists('displayText', $config)) {
             $paymentData['displayText'] = $config['displayText'];
         }
 
+        $paymentData['requestfingerprintorder'] = '';
 
         // generate fingerprint
         $paymentData['requestfingerprintorder'] = implode(',', array_keys($paymentData));
@@ -140,11 +139,11 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         $fingerprint = '';
         foreach($fields as $field)
         {
-            $fingerprint .= $field == 'secret' ? $this->secret : $response[ $field ];
+            $fingerprint .= $field == 'secret' ? $this->secret : utf8_encode($response[ $field ]);
         }
 
         $fingerprint = md5($fingerprint);
-        if($fingerprint != $response['responseFingerprint'])
+        if($response["paymentState"] !== "FAILURE" && $fingerprint != $response['responseFingerprint'])
         {
             // fingerprint is wrong, ignore this response
             throw new Exception( 'fingerprint is invalid' );
@@ -155,8 +154,10 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         $price = new OnlineShop_Framework_Impl_Price($response['amount'], new Zend_Currency($response['currency']));
 
 
-        return new OnlineShop_Framework_Impl_Payment_Status(
-            base64_decode($response['internal_id'])
+        //TODO make this right
+        //HACK save status
+        $this->status = new OnlineShop_Framework_Impl_Payment_Status(
+            $response['internal_id']
             , $response['orderNumber']
             , $response['avsResponseMessage']
             , $response['orderNumber'] !== NULL
@@ -168,6 +169,8 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
                 , 'qpay_paymentState' => $response['paymentState']
             ]
         );
+
+        return $this->status;
     }
 
     /**
@@ -200,6 +203,8 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
      */
     public function executeDebit(OnlineShop_Framework_IPrice $price = null, $reference = null)
     {
+        //TODO make this right
+        return $this->status;
         // TODO: Implement executeDebit() method.
     }
 
