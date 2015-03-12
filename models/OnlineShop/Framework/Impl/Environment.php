@@ -4,6 +4,7 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     const SESSION_NAMESPACE = "onlineshop";
     const SESSION_KEY_CUSTOM_ITEMS = "customitems";
     const SESSION_KEY_USERID = "userid";
+    const SESSION_KEY_USE_GUEST_CART = "useguestcart";
     const SESSION_KEY_TENANT = "currenttenant";
     const SESSION_KEY_SUB_TENANT = "currentsubtenant";
     const USER_ID_NOT_SET = -1;
@@ -59,6 +60,9 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
 
             $key = self::SESSION_KEY_SUB_TENANT;
             $this->currentSubTenant = $this->session->$key;
+
+            $key = self::SESSION_KEY_USE_GUEST_CART;
+            $this->useGuestCart = $this->session->$key;
         }
     }
 
@@ -77,6 +81,9 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
 
             $key = self::SESSION_KEY_SUB_TENANT;
             $this->session->$key = $this->currentSubTenant;
+
+            $key = self::SESSION_KEY_USE_GUEST_CART;
+            $this->session->$key = $this->useGuestCart;
         }
     }
 
@@ -143,6 +150,10 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
         $key = self::SESSION_KEY_SUB_TENANT;
         unset($this->session->$key);
         $this->currentSubTenant = null;
+
+        $key = self::SESSION_KEY_USE_GUEST_CART;
+        unset($this->session->$key);
+        $this->useGuestCart = false;
     }
 
     public function setCurrentTenant($currentTenant) {
