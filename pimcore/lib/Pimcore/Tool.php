@@ -614,13 +614,18 @@ class Tool {
      */
     public static function interfaceExists ($class) {
 
+        // if the interface is already loaded we can skip right here
+        if(interface_exists($class, false)) {
+            return true;
+        }
+
         // we need to set a custom error handler here for the time being
         // unfortunately suppressNotFoundWarnings() doesn't work all the time, it has something to do with the calls in
         // Pimcore\Tool::ClassMapAutoloader(), but don't know what actual conditions causes this problem.
         // but to be save we log the errors into the debug.log, so if anything else happens we can see it there
         // the normal warning is e.g. Warning: include_once(Path/To/Class.php): failed to open stream: No such file or directory in ...
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-            \Logger::debug(implode(" ", func_get_args()));
+            //\Logger::debug(implode(" ", func_get_args()));
         });
 
         \Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(true);
