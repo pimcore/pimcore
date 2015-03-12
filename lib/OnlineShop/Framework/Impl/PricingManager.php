@@ -40,19 +40,12 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
             return $priceInfo;
         }
 
-        // configure environment
-        $env = $this->getEnvironment();
-        $env->setProduct( $priceInfo->getProduct() );
-        if(method_exists($priceInfo->getProduct(), "getCategories")) {
-            $env->setCategories( (array)$priceInfo->getProduct()->getCategories() );
-        }
-
         // create new price info with pricing rules
         $priceInfoWithRules = $this->getPriceInfo( $priceInfo );
-        $priceInfoWithRules->setEnvironment( $env );
+
 
         // add all valid rules to the price info
-        foreach($this->getValidRules($env) as $rule)
+        foreach($this->getValidRules() as $rule)
         {
             /* @var OnlineShop_Framework_Pricing_IRule $rule */
             $priceInfoWithRules->addRule($rule);
@@ -92,7 +85,7 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
 
 
         // execute all valid rules
-        foreach($this->getValidRules($env) as $rule)
+        foreach($this->getValidRules() as $rule)
         {
             /* @var OnlineShop_Framework_Pricing_IRule $rule */
             $env->setRule($rule);
@@ -116,29 +109,20 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
 
 
     /**
-     * @return OnlineShop_Framework_Impl_Pricing_Rule_List
+     * @return OnlineShop_Framework_Pricing_IRule[]
      */
-    private function getRulesFromDatabase() {
-        if(empty($this->rules)) {
+    public function getValidRules()
+    {
+        if(empty($this->rules))
+        {
             $rules = new OnlineShop_Framework_Impl_Pricing_Rule_List();
             $rules->setCondition('active = 1');
             $rules->setOrderKey('prio');
             $rules->setOrder('ASC');
             $this->rules = $rules->getRules();
         }
+
         return $this->rules;
-    }
-
-
-    /**
-     * @param OnlineShop_Framework_Pricing_IEnvironment $environment
-     *
-     * @return OnlineShop_Framework_Pricing_IRule[]
-     */
-    public function getValidRules(OnlineShop_Framework_Pricing_IEnvironment $environment)
-    {
-        // load all active rules from database
-        return $this->getRulesFromDatabase();
     }
 
     /**
@@ -203,8 +187,22 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
 
         $class = $this->config->priceInfo->class;
         if($class == '')
+        {
             throw new OnlineShop_Framework_Exception_InvalidConfigException(sprintf('getPriceInfo class "%s" not found.', $class));
+        }
 
-        return new $class( $priceInfo );
+
+        // create environment
+        $environment = $this->getEnvironment();
+        $environment->setProduct( $priceInfo->getProduct() );
+        if(method_exists($priceInfo->getProduct(), "getCategories")) {
+            $environment->setCategories( (array)$priceInfo->getProduct()->getCategories() );
+        }
+
+
+        $priceInfoWithRules = new $class( $priceInfo, $environment );
+        $environment->setPriceInfo( $priceInfoWithRules );
+
+        return $priceInfoWithRules;
     }
 }

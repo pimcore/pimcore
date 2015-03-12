@@ -41,23 +41,13 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
 
 
     /**
-     * @param OnlineShop_Framework_IPriceInfo $priceInfo
+     * @param OnlineShop_Framework_IPriceInfo           $priceInfo
+     * @param OnlineShop_Framework_Pricing_IEnvironment $environment
      */
-    public function __construct(OnlineShop_Framework_IPriceInfo $priceInfo)
+    public function __construct(OnlineShop_Framework_IPriceInfo $priceInfo, OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
         $this->priceInfo = $priceInfo;
-
-
-        // init default environment
-        $env = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getEnvironment();
-        $env->setProduct( $this->getProduct() )
-            ->setPriceInfo( $this );
-        if(method_exists($this->getProduct(), 'getCategories'))
-        {
-            $env->setCategories( (array)$this->getProduct()->getCategories() );
-        }
-
-        $this->setEnvironment( $env );
+        $this->environment = $environment;
     }
 
 

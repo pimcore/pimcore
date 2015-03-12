@@ -10,9 +10,10 @@
 interface OnlineShop_Framework_Pricing_IPriceInfo extends OnlineShop_Framework_IPriceInfo
 {
     /**
-     * @param OnlineShop_Framework_IPriceInfo $priceInfo
+     * @param OnlineShop_Framework_IPriceInfo           $priceInfo
+     * @param OnlineShop_Framework_Pricing_IEnvironment $environment
      */
-    public function __construct(OnlineShop_Framework_IPriceInfo $priceInfo);
+    public function __construct(OnlineShop_Framework_IPriceInfo $priceInfo, OnlineShop_Framework_Pricing_IEnvironment $environment);
 
     /**
      * @param OnlineShop_Framework_Pricing_IRule $rule
