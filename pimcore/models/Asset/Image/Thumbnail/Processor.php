@@ -162,7 +162,7 @@ class Processor {
         // so that it can be used also with dynamic configurations
         if($deferred) {
             $configId = "thumb_" . $id . "__" . md5($path);
-            \Pimcore\Model\Tool\TmpStore::add($configId, $config, "thumbnail_deferred");
+            TmpStore::add($configId, $config, "thumbnail_deferred");
 
             return $path;
         }

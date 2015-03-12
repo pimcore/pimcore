@@ -81,6 +81,10 @@ class TmpStore extends Model\AbstractModel {
             $lifetime = 86400;
         }
 
+        if(self::get($id)) {
+            return true;
+        }
+
         return $instance->getResource()->add($id, $data, $tag, $lifetime);
     }
 
