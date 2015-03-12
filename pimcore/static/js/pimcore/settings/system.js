@@ -284,10 +284,15 @@ pimcore.settings.system = Class.create({
                                 name: 'general.validLanguages',
                                 value: this.getValue("general.validLanguages")
                             }, {
+                                xtype: "hidden",
+                                id: "system.settings.general.defaultLanguage",
+                                name: "general.defaultLanguage",
+                                value: this.getValue("general.defaultLanguage")
+                            }, {
                                 xtype: "container",
                                 width: 450,
                                 style: "margin-top: 20px;",
-                                id: "system.settings.general.languageConainer",
+                                id: "system.settings.general.languageContainer",
                                 items: [],
                                 listeners: {
                                     beforerender: function () {
@@ -1591,7 +1596,7 @@ pimcore.settings.system = Class.create({
             }
 
             // add the language to the container, so that further settings for the language can be set (eg. fallback, ...)
-            var container = Ext.getCmp("system.settings.general.languageConainer");
+            var container = Ext.getCmp("system.settings.general.languageContainer");
             var lang = container.getComponent(language);
             if(lang) {
                 return;
@@ -1610,6 +1615,19 @@ pimcore.settings.system = Class.create({
                     fieldLabel: t("fallback_languages"),
                     name: "general.fallbackLanguages." + language,
                     value: this.getValue("general.fallbackLanguages." + language)
+                },{
+                    xtype: "radio",
+                    name: "general.defaultLanguageRadio",
+                    fieldLabel: t("default_language"),
+                    checked: this.getValue("general.defaultLanguage") == language || (!this.getValue("general.defaultLanguage") && container.items.length == 0 ),
+                    listeners: {
+                        check: function (el, checked) {
+                            if (checked) {
+                                var defaultLanguageField = Ext.getCmp("system.settings.general.defaultLanguage");
+                                defaultLanguageField.setValue(language);
+                            }
+                        }.bind(this)
+                    }
                 },{
                     xtype: "button",
                     title: t("delete"),
@@ -1632,8 +1650,14 @@ pimcore.settings.system = Class.create({
             languageField.setValue(addedLanguages.join(","));
         }
 
+        // remove the default language from hidden field
+        var defaultLanguageField = Ext.getCmp("system.settings.general.defaultLanguage");
+        if (defaultLanguageField.getValue() == language) {
+            defaultLanguageField.setValue("");
+        }
+
         // remove the language from the container
-        var container = Ext.getCmp("system.settings.general.languageConainer");
+        var container = Ext.getCmp("system.settings.general.languageContainer");
         var lang = container.getComponent(language);
         if(lang) {
             container.remove(lang);
