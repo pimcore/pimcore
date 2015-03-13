@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class OnlineShop_Framework_Impl_Checkout_AbstractStep
+ */
 abstract class OnlineShop_Framework_Impl_Checkout_AbstractStep implements OnlineShop_Framework_ICheckoutStep {
 
     /**

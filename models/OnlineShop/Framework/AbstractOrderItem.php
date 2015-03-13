@@ -3,7 +3,7 @@
 /**
  * Abstract base class for order item pimcore objects
  */
-class OnlineShop_Framework_AbstractOrderItem extends Object_Concrete {
+class OnlineShop_Framework_AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @throws OnlineShop_Framework_Exception_UnsupportedException

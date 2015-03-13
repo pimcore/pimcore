@@ -1,80 +1,111 @@
 <?php
 
+/**
+ * Interface OnlineShop_Framework_ICheckoutManager
+ */
 interface OnlineShop_Framework_ICheckoutManager {
 
     /**
-     * @abstract
-     * @return array(OnlineShop_Framework_ICheckoutStep)
+     * returns all checkout steps defined for this checkout
+     *
+     * @return OnlineShop_Framework_ICheckoutStep[]
      */
     public function getCheckoutSteps();
 
     /**
-     * @abstract
-     * @param  $stepname
+     * returns checkout step with given name
+     *
+     * @param  string $stepName
      * @return OnlineShop_Framework_ICheckoutStep
      */
-    public function getCheckoutStep($stepname);
+    public function getCheckoutStep($stepName);
 
     /**
-     * @abstract
+     * returns current checkout step
+     *
      * @return OnlineShop_Framework_ICheckoutStep
      */
     public function getCurrentStep();
 
     /**
-     * @abstract
+     * returns the cart the checkout is started with
+     *
      * @return OnlineShop_Framework_ICart
      */
     public function getCart();
 
     /**
-     * @abstract
+     * commits checkout step
+     * all previous steps must be committed, otherwise committing step is not allowed
+     *
      * @param OnlineShop_Framework_ICheckoutStep $step
-     * @param  $data
+     * @param  mixed                             $data
      * @return bool
      */
     public function commitStep(OnlineShop_Framework_ICheckoutStep $step, $data);
 
     /**
-     * @abstract
+     * checks if checkout is finished (= all checkout steps are committed)
+     * only a finished checkout can be committed
+     *
      * @return bool
      */
     public function isFinished();
 
     /**
+     * starts payment for checkout - only possible if payment provider is configured
+     * sets cart to read only mode since it must not changed during ongoing payment process
+     *
      * @return OnlineShop_Framework_AbstractPaymentInformation
      */
     public function startOrderPayment();
 
     /**
+     * returns order (creates it if not available yet)
+     * - delegates to commit order processor
+     *
      * @return OnlineShop_Framework_AbstractOrder
      */
     public function getOrder();
 
     /**
+     * commits order payment
+     *   - updates order payment information in order object
+     *   - only when payment status == [ORDER_STATE_COMMITTED, ORDER_STATE_PAYMENT_AUTHORIZED] -> order is committed
+     *
+     * use this for committing order when payment is activated
+     *
      * @param OnlineShop_Framework_Payment_IStatus $status
      * @return OnlineShop_Framework_AbstractOrder
      */
     public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $status);
 
     /**
-     * @abstract
+     * commits order - does not consider any payment
+     *
+     * use this for committing order when no payment is activated
+     *
      * @return OnlineShop_Framework_AbstractOrder
      */
     public function commitOrder();
 
     /**
-     * @abstract
+     * returns if checkout process and subsequently order is committed
+     *
      * @return bool
      */
     public function isCommitted();
 
     /**
+     * returns payment adapter
+     *
      * @return OnlineShop_Framework_IPayment|null
      */
     public function getPayment();
 
     /**
+     * cleans up orders with state pending payment after 1h -> delegates this to commit order processor
+     *
      * @return void
      */
     public function cleanUpPendingOrders();

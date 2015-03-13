@@ -22,25 +22,35 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
      */
     protected $confirmationMail = "/emails/order-confirmation";
 
+    /**
+     * @param int $id
+     */
     public function setParentOrderFolder($id) {
         $this->parentFolderId = $id;
     }
 
+    /**
+     * @param string $classname
+     */
     public function setOrderClass($classname) {
         $this->orderClass = $classname;
     }
 
+    /**
+     * @param string $classname
+     */
     public function setOrderItemClass($classname) {
         $this->orderItemClass = $classname;
     }
 
+    /**
+     * @param string $confirmationMail
+     */
     public function setConfirmationMail($confirmationMail) {
         if(!empty($confirmationMail)) {
             $this->confirmationMail = $confirmationMail;
         }
     }
-
-
 
     /**
      * @return OnlineShop_Framework_AbstractOrder
@@ -48,7 +58,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     public function getOrCreateOrder(OnlineShop_Framework_ICart $cart) {
 
         $orderListClass = $this->orderClass . "_List";
-        if(!class_exists($orderListClass)) {
+        if(!\Pimcore\Tool::classExists($orderListClass)) {
             throw new Exception("Class $orderListClass does not exist.");
         }
 
@@ -62,7 +72,6 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             throw new Exception("No unique order found for $cartId.");
         }
 
-
         if(count($orders) == 1) {
             $order = $orders[0];
         } else {
@@ -72,7 +81,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
             $order = $this->getNewOrderObject();
 
-            $order->setParent( Object_Folder::getById($this->parentFolderId) );
+            $order->setParent( \Pimcore\Model\Object\Folder::getById($this->parentFolderId) );
             $order->setCreationDate(Zend_Date::now()->get());
             $order->setKey($tempOrdernumber);
             $order->setPublished(true);
@@ -88,12 +97,12 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             return $order;
         }
 
-
+        //update order from cart
         $order->setTotalPrice($cart->getPriceCalculator()->getGrandTotal()->getAmount());
 
-        $modificationItems = new Object_Fieldcollection();
+        $modificationItems = new \Pimcore\Model\Object\Fieldcollection();
         foreach ($cart->getPriceCalculator()->getPriceModifications() as $name => $modification) {
-            $modificationItem = new Object_Fieldcollection_Data_OrderPriceModifications();
+            $modificationItem = new \Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications();
             $modificationItem->setName($modification->getDescription() ? $modification->getDescription() : $name);
             $modificationItem->setAmount($modification->getAmount());
             $modificationItems->add($modificationItem);
@@ -102,13 +111,15 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
         $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
 
-        if(@class_exists("Object_Customer")) {
-            $customer = Object_Customer::getById($env->getCurrentUserId());
+        //sets customer to order - if available
+        if(@\Pimcore\Tool::classExists("\\Pimcore\\Model\\Object\\Customer")) {
+            $customer = \Pimcore\Model\Object\Customer::getById($env->getCurrentUserId());
             $order->setCustomer($customer);
         }
 
         $order->save();
 
+        //for each cart item and cart sub item create corresponding order items
         $orderItems = array();
         $i = 0;
         foreach($cart->getItems() as $item) {
@@ -142,6 +153,8 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     }
 
     /**
+     * hook for creating order number - can be overwritten
+     *
      * @return string
      */
     protected function createOrderNumber() {
@@ -162,12 +175,12 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
                 }
             }
         } else {
-            $paymentInformation = new Object_Fieldcollection();
+            $paymentInformation = new \Pimcore\Model\Object\Fieldcollection();
             $order->setPaymentInfo($paymentInformation);
         }
 
         if(empty($currentPaymentInformation) && $createNew) {
-            $currentPaymentInformation = new Object_Fieldcollection_Data_PaymentInfo();
+            $currentPaymentInformation = new \Pimcore\Model\Object\Fieldcollection\Data\PaymentInfo();
             $currentPaymentInformation->setPaymentStart(Zend_Date::now());
             $currentPaymentInformation->setPaymentState(OnlineShop_Framework_AbstractOrder::ORDER_STATE_PAYMENT_PENDING);
             $currentPaymentInformation->setInternalPaymentId(uniqid("payment_") . "~" . $order->getId());
@@ -267,8 +280,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         $params["customer"] = $order->getCustomer();
         $params["ordernumber"] = $order->getOrdernumber();
 
-        //TODO multilanguage with mailing framework?
-        $mail = new Pimcore_Mail(array("document" => $this->confirmationMail, "params" => $params));
+        $mail = new \Pimcore\Mail(array("document" => $this->confirmationMail, "params" => $params));
         if($order->getCustomer()) {
             $mail->addTo($order->getCustomer()->getEmail());
             $mail->send();
@@ -301,9 +313,9 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
     /**
      * implementation-specific processing of order, must be implemented in subclass (e.g. sending order to ERP-system)
-     * @abstract
-     * @param Object_OnlineShopOrder $order
-     * @return void
+     *
+     * @param OnlineShop_Framework_ICart $cart
+     * @param OnlineShop_Framework_AbstractOrder $order
      */
     protected function processOrder(OnlineShop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order) {
         //nothing to do
@@ -325,7 +337,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             throw new Exception("Class $orderItemListClass does not exist.");
         }
 
-        $key = Pimcore_File::getValidFilename($item->getProduct()->getId() . "_" . $item->getItemKey());
+        $key = \Pimcore\File::getValidFilename($item->getProduct()->getId() . "_" . $item->getItemKey());
 
         $orderItemList = new $orderItemListClass;
         $orderItemList->setCondition("o_parentId = ? AND o_key = ?", array($parent->getId(), $key));
@@ -365,10 +377,10 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         $priceInfo = $item->getPriceInfo();
         if($priceInfo instanceof OnlineShop_Framework_Pricing_IPriceInfo && method_exists($orderItem, 'setPricingRules'))
         {
-            $priceRules = new Object_Fieldcollection();
+            $priceRules = new \Pimcore\Model\Object\Fieldcollection();
             foreach($priceInfo->getRules() as $rule)
             {
-                $priceRule = new Object_Fieldcollection_Data_PricingRule();
+                $priceRule = new \Pimcore\Model\Object\Fieldcollection\Data\PricingRule();
                 $priceRule->setRuleId( $rule->getId() );
                 $priceRule->setName( $rule->getName() );
 
@@ -383,7 +395,9 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         return $orderItem;
     }
 
-
+    /**
+     * @throws Exception
+     */
     public function cleanUpPendingOrders() {
         $orderListClass = $this->orderClass . "_List";
         if(!class_exists($orderListClass)) {

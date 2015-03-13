@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class OnlineShop_Framework_Impl_Checkout_DeliveryAddress
+ *
+ * sample implementation for delivery address
+ */
 class OnlineShop_Framework_Impl_Checkout_DeliveryAddress extends OnlineShop_Framework_Impl_Checkout_AbstractStep implements OnlineShop_Framework_ICheckoutStep {
 
     /**

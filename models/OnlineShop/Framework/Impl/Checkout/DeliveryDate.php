@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class OnlineShop_Framework_Impl_Checkout_DeliveryDate
+ *
+ * sample implementation for delivery date
+ */
 class OnlineShop_Framework_Impl_Checkout_DeliveryDate extends OnlineShop_Framework_Impl_Checkout_AbstractStep implements OnlineShop_Framework_ICheckoutStep {
 
     CONST INSTANTLY = "delivery_instantly";

@@ -3,7 +3,7 @@
 /**
  * Abstract base class for order pimcore objects
  */
-class OnlineShop_Framework_AbstractOrder extends Object_Concrete {
+class OnlineShop_Framework_AbstractOrder extends \Pimcore\Model\Object\AbstractObject {
 
     const ORDER_STATE_COMMITTED = "committed";
     const ORDER_STATE_CANCELLED = "cancelled";
@@ -94,14 +94,14 @@ class OnlineShop_Framework_AbstractOrder extends Object_Concrete {
 
     /**
      * @throws OnlineShop_Framework_Exception_UnsupportedException
-     * @return Object_Fieldcollection
+     * @return \Pimcore\Model\Object\Fieldcollection
      */
     public function getPriceModifications() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getPriceModifications is not implemented for " . get_class($this));
     }
 
     /**
-     * @param Object_Fieldcollection $priceModifications
+     * @param \Pimcore\Model\Object\Fieldcollection $priceModifications
      * @return void
      */
     public function setPriceModifications ($priceModifications) {
@@ -141,14 +141,14 @@ class OnlineShop_Framework_AbstractOrder extends Object_Concrete {
 
     /**
      * @throws OnlineShop_Framework_Exception_UnsupportedException
-     * @return Object_Fieldcollection
+     * @return \Pimcore\Model\Object\Fieldcollection
      */
     public function getPaymentInfo() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getPaymentInfo is not implemented for " . get_class($this));
     }
 
     /**
-     * @param Object_Fieldcollection $paymentInfo
+     * @param \Pimcore\Model\Object\Fieldcollection $paymentInfo
      * @return void
      */
     public function setPaymentInfo ($paymentInfo) {

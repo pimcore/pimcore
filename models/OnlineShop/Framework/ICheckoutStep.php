@@ -6,13 +6,13 @@
 interface OnlineShop_Framework_ICheckoutStep {
 
     /**
-     * @abstract
      * @return string
      */
     public function getName();
 
     /**
-     * @abstract
+     * returns saved data of step
+     *
      * @return mixed
      */
     public function getData();
@@ -20,7 +20,6 @@ interface OnlineShop_Framework_ICheckoutStep {
     /**
      * sets delivered data and commits step
      *
-     * @abstract
      * @param  $data
      * @return bool
      */

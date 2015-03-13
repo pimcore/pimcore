@@ -3,7 +3,7 @@
 /**
  * Abstract base class for payment information field collection
  */
-abstract class OnlineShop_Framework_AbstractPaymentInformation extends Object_Fieldcollection_Data_Abstract {
+abstract class OnlineShop_Framework_AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData {
 
     /**
      * @return Zend_Date

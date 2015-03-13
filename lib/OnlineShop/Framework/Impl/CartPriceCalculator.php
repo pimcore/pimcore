@@ -26,7 +26,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
     protected $modificators;
 
     /**
-     * @var OnlineShop_Framework_IPrice[]
+     * @var OnlineShop_Framework_IModificatedPrice[]
      */
     protected $modifications;
 
@@ -130,7 +130,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
     }
 
     /**
-     * @return OnlineShop_Framework_IPrice[] $priceModification
+     * @return OnlineShop_Framework_IModificatedPrice[] $priceModification
      */
     public function getPriceModifications() {
         if(!$this->isCalculated) {

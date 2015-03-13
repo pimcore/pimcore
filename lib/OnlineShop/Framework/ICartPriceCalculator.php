@@ -32,7 +32,7 @@ interface OnlineShop_Framework_ICartPriceCalculator {
     /**
      * returns all price modifications which apply for this cart
      *
-     * @return OnlineShop_Framework_IPrice[] $priceModification
+     * @return OnlineShop_Framework_IModificatedPrice[] $priceModification
      */
     public function getPriceModifications();
 

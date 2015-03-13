@@ -1,6 +1,7 @@
 {
 	"description":null,
 	"parentClass":"OnlineShop_Framework_AbstractOrderItem",
+	"useTraits":null,
 	"allowInherit":false,
 	"allowVariants":false,
 	"showVariants":false,
@@ -45,7 +46,7 @@
 							"id":"int(11)",
 							"type":"enum('document','asset','object')"
 						},
-						"phpdocType":"Document_Page | Document_Snippet | Document | Asset | Object_Abstract",
+						"phpdocType":"\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\Object\\AbstractObject",
 						"objectsAllowed":true,
 						"assetsAllowed":false,
 						"assetTypes":"",
@@ -77,6 +78,7 @@
 						"columnType":"varchar",
 						"columnLength":"255",
 						"phpdocType":"string",
+						"regex":"",
 						"name":"productNumber",
 						"title":"Produktnummer",
 						"tooltip":"",
@@ -99,6 +101,7 @@
 						"columnType":"varchar",
 						"columnLength":"255",
 						"phpdocType":"string",
+						"regex":"",
 						"name":"productName",
 						"title":"Produktname",
 						"tooltip":"",
@@ -121,6 +124,11 @@
 						"queryColumnType":"double",
 						"columnType":"double",
 						"phpdocType":"float",
+						"integer":false,
+						"unsigned":false,
+						"minValue":null,
+						"maxValue":null,
+						"decimalPrecision":null,
 						"name":"amount",
 						"title":"Amount",
 						"tooltip":"",
@@ -143,6 +151,11 @@
 						"queryColumnType":"double",
 						"columnType":"double",
 						"phpdocType":"float",
+						"integer":false,
+						"unsigned":false,
+						"minValue":null,
+						"maxValue":null,
+						"decimalPrecision":null,
 						"name":"totalPrice",
 						"title":"Preis",
 						"tooltip":"",
@@ -208,6 +221,35 @@
 						"invisible":false,
 						"visibleGridView":false,
 						"visibleSearch":false
+					},
+					{
+						"fieldtype":"fieldcollections",
+						"phpdocType":"\\Pimcore\\Model\\Object\\Fieldcollection",
+						"allowedTypes":[
+							"PricingRule"
+						],
+						"lazyLoading":false,
+						"maxItems":"",
+						"disallowAddRemove":false,
+						"disallowReorder":false,
+						"collapsed":false,
+						"collapsible":false,
+						"name":"pricingRules",
+						"title":"Pricing Rules",
+						"tooltip":"",
+						"mandatory":false,
+						"noteditable":false,
+						"index":false,
+						"locked":null,
+						"style":"",
+						"permissions":null,
+						"datatype":"data",
+						"columnType":null,
+						"queryColumnType":null,
+						"relationType":false,
+						"invisible":false,
+						"visibleGridView":false,
+						"visibleSearch":false
 					}
 				],
 				"locked":false
@@ -216,5 +258,21 @@
 		"locked":null
 	},
 	"icon":null,
-	"previewUrl":null
+	"previewUrl":null,
+	"propertyVisibility":{
+		"grid":{
+			"id":true,
+			"path":true,
+			"published":true,
+			"modificationDate":true,
+			"creationDate":true
+		},
+		"search":{
+			"id":true,
+			"path":true,
+			"published":true,
+			"modificationDate":true,
+			"creationDate":true
+		}
+	}
 }
