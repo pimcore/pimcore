@@ -32,22 +32,6 @@ class Resource extends Model\Resource\AbstractResource {
      * @var array
      */
     protected $_sqlChangeLog = array();
-    
-    /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("custom_layouts");
-    }
 
     /**
      * @param null $id
@@ -107,7 +91,7 @@ class Resource extends Model\Resource\AbstractResource {
         $data = array();
 
         foreach ($class as $key => $value) {
-            if (in_array($key, $this->validColumns)) {
+            if (in_array($key, $this->getValidTableColumns("custom_layouts"))) {
 
                 if (is_array($value) || is_object($value)) {
                     $value = Serialize::serialize($value);

@@ -23,24 +23,6 @@ use Pimcore\Model\Element;
 class Resource extends Model\Resource\AbstractResource {
 
     /**
-     * List of valid columns in database table
-     * This is used for automatic matching the objects properties to the database
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("dependencies");
-    }
-
-    /**
      * Loads the relations for the given sourceId and type
      *
      * @param integer $id

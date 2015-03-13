@@ -22,22 +22,6 @@ use Pimcore\Model;
 class Resource extends Model\Resource\AbstractResource {
 
     /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("edit_lock");
-    }
-
-    /**
      * @param $cid
      * @param $ctype
      * @throws \Exception
@@ -68,7 +52,7 @@ class Resource extends Model\Resource\AbstractResource {
         $version = get_object_vars($this->model);
 
         foreach ($version as $key => $value) {
-            if (in_array($key, $this->validColumns)) {
+            if (in_array($key, $this->getValidTableColumns("edit_lock"))) {
                 $data[$key] = $value;
             }
         }

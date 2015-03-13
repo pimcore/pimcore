@@ -25,28 +25,6 @@ use Pimcore\Model\Object;
 class Resource extends Model\Resource\AbstractResource {
 
     /**
-     * Contains all valid columns in the database table
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Contains all valid columns in the database table
-     * @var array
-     */
-    protected $validColumnsData = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("notes");
-        $this->validColumnsData = $this->getValidTableColumns("notes_data");
-    }
-
-    /**
      * @param $id
      * @throws \Exception
      */
@@ -108,7 +86,7 @@ class Resource extends Model\Resource\AbstractResource {
 
         // save main table
         foreach ($version as $key => $value) {
-            if (in_array($key, $this->validColumns)) {
+            if (in_array($key, $this->getValidTableColumns("notes"))) {
                 $data[$key] = $value;
             }
         }

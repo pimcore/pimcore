@@ -23,13 +23,6 @@ use Pimcore\Model\Object;
 class Resource extends Model\Object\AbstractObject\Resource {
 
     /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumnsObjectConcrete = array();
-
-    /**
      * @var Object\Concrete\Resource\InheritanceHelper
      */
     protected $inheritanceHelper = null;
@@ -38,7 +31,6 @@ class Resource extends Model\Object\AbstractObject\Resource {
      *
      */
     public function init() {  
-        parent::init();
         $this->inheritanceHelper = new Object\Concrete\Resource\InheritanceHelper($this->model->getClassId());
     }
 

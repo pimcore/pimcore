@@ -20,22 +20,6 @@ namespace Pimcore\Model\User\AbstractUser;
 use Pimcore\Model;
 
 class Resource extends Model\Resource\AbstractResource {
-    /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("users");
-    }
-
 
     /**
      * @param $id
@@ -135,7 +119,7 @@ class Resource extends Model\Resource\AbstractResource {
             $data = array();
             $dataRaw = get_object_vars($this->model);
             foreach ($dataRaw as $key => $value) {
-                if (in_array($key, $this->validColumns)) {
+                if (in_array($key, $this->getValidTableColumns("users"))) {
 
                     if (is_bool($value)) {
                         $value = (int) $value;

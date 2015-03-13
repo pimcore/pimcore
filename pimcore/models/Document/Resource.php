@@ -22,30 +22,6 @@ use Pimcore\Tool\Serialize;
 
 class Resource extends Model\Element\Resource
 {
-
-    /**
-     * Contains the valid database columns
-     *
-     * @var array
-     */
-    protected $validColumnsDocument = array();
-
-    /**
-     * contains the valid database columns depending on the actual type
-     * @var array
-     */
-    protected $validColumnsTypeSpecific = [];
-
-    /**
-     * Get the valid database columns from database
-     *
-     * @return void
-     */
-    public function init()
-    {
-        $this->validColumnsDocument = $this->getValidTableColumns("documents");
-    }
-
     /**
      * @param $id
      * @throws \Exception
@@ -131,9 +107,10 @@ class Resource extends Model\Element\Resource
         try {
 
             $typeSpecificTable = null;
+            $validColumnsTypeSpecific = [];
             if(in_array($this->model->getType(), ["email","hardlink","link","page","snippet"])) {
                 $typeSpecificTable = "documents_" . $this->model->getType();
-                $this->validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
+                $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
             }
 
             $this->model->setModificationDate(time());
@@ -152,7 +129,7 @@ class Resource extends Model\Element\Resource
                 }
 
                 // get the value from the getter
-                if(in_array($key, $this->validColumnsDocument) || in_array($key, $this->validColumnsTypeSpecific)) {
+                if(in_array($key, $this->getValidTableColumns("documents")) || in_array($key, $validColumnsTypeSpecific)) {
                     $value = $this->model->$getter();
                 } else {
                     continue;
@@ -165,10 +142,10 @@ class Resource extends Model\Element\Resource
                     $value = Serialize::serialize($value);
                 }
 
-                if (in_array($key, $this->validColumnsDocument)) {
+                if (in_array($key, $this->getValidTableColumns("documents"))) {
                     $dataDocument[$key] = $value;
                 }
-                if (in_array($key, $this->validColumnsTypeSpecific)) {
+                if (in_array($key, $validColumnsTypeSpecific)) {
                     $dataTypeSpecific[$key] = $value;
                 }
             }

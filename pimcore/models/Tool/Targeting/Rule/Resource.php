@@ -23,22 +23,6 @@ use Pimcore\Tool\Serialize;
 class Resource extends Model\Resource\AbstractResource {
 
     /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("targeting_rules");
-    }
-
-    /**
      * @param null $id
      * @throws \Exception
      */
@@ -108,7 +92,7 @@ class Resource extends Model\Resource\AbstractResource {
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
-                if (in_array($key, $this->validColumns)) {
+                if (in_array($key, $this->getValidTableColumns("targeting_rules"))) {
                     if(is_array($value) || is_object($value)) {
                         $value = Serialize::serialize($value);
                     }

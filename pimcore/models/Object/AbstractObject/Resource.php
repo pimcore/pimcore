@@ -22,24 +22,6 @@ use Pimcore\Model\Object;
 
 class Resource extends Model\Element\Resource
 {
-
-    /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumnsBase = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init()
-    {
-        $this->validColumnsBase = $this->getValidTableColumns("objects");
-    }
-
     /**
      * Get the data for the object from database for the given id
      *
@@ -114,7 +96,7 @@ class Resource extends Model\Element\Resource
 
         $data = array();
         foreach ($object as $key => $value) {
-            if (in_array($key, $this->validColumnsBase)) {
+            if (in_array($key, $this->getValidTableColumns("objects"))) {
                 if (is_bool($value)) {
                     $value = (int)$value;
                 }

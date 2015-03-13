@@ -28,22 +28,6 @@ class Resource extends Model\Resource\AbstractResource {
     protected static $dbTable = 'email_log';
 
      /**
-     * Contains the valid database columns
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid database columns from database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns(self::$dbTable);
-    }
-
-     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
      * @param integer $id
@@ -70,7 +54,7 @@ class Resource extends Model\Resource\AbstractResource {
         $emailLog = get_object_vars($this->model);
 
         foreach ($emailLog as $key => $value) {
-            if (in_array($key, $this->validColumns)) {
+            if (in_array($key, $this->getValidTableColumns(self::$dbTable))) {
 
                 // check if the getter exists
                 $getter = "get" . ucfirst($key);

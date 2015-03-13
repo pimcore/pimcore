@@ -22,23 +22,6 @@ use Pimcore\Model;
 class Resource extends Model\Resource\AbstractResource {
 
     /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("schedule_tasks");
-    }
-
-    /**
      * @param $id
      * @throws \Exception
      */
@@ -85,7 +68,7 @@ class Resource extends Model\Resource\AbstractResource {
         $site = get_object_vars($this->model);
 
         foreach ($site as $key => $value) {
-            if (in_array($key, $this->validColumns)) {
+            if (in_array($key, $this->getValidTableColumns("schedule_tasks"))) {
 
                 if (is_array($value) || is_object($value)) {
                     $value = \Pimcore\Tool\Serialize::serialize($value);

@@ -34,22 +34,6 @@ class Resource extends Model\Resource\AbstractResource {
     protected $tableDefinitions = null;
 
     /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("classes");
-    }
-
-    /**
      * @param null $id
      * @throws \Exception
      */
@@ -125,7 +109,7 @@ class Resource extends Model\Resource\AbstractResource {
         $data = array();
 
         foreach ($class as $key => $value) {
-            if (in_array($key, $this->validColumns)) {
+            if (in_array($key, $this->getValidTableColumns("classes"))) {
 
                 if (is_array($value) || is_object($value)) {
                     $value = Serialize::serialize($value);

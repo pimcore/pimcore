@@ -22,26 +22,6 @@ use Pimcore\Model;
 class Resource extends Model\Document\Resource {
 
     /**
-     * Contains the valid database colums
-     *
-     * @var array
-     */
-    protected $validColumnsHardlink = array();
-
-    /**
-     * Get the valid database columns from database
-     *
-     * @return void
-     */
-    public function init() {
-
-        // document
-        parent::init();
-
-        $this->validColumnsHardlink = $this->getValidTableColumns("documents_hardlink");
-    }
-
-    /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
      * @param integer $id

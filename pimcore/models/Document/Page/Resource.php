@@ -23,27 +23,6 @@ use Pimcore\Tool\Serialize;
 class Resource extends Model\Document\PageSnippet\Resource {
 
     /**
-     * Contains the valid database colums
-     *
-     * @var array
-     */
-    protected $validColumnsPage = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-
-        // document
-        parent::init();
-
-        // page
-        $this->validColumnsPage = $this->getValidTableColumns("documents_page");
-    }
-
-    /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
      * @param integer $id

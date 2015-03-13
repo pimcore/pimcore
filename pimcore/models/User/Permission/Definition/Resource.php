@@ -20,22 +20,6 @@ namespace Pimcore\Model\User\Permission\Definition;
 use Pimcore\Model;
 
 class Resource extends Model\Resource\AbstractResource {
-    /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("users_permission_definitions");
-    }
-
 
     /**
      *

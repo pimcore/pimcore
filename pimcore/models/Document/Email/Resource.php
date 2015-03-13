@@ -22,26 +22,6 @@ use Pimcore\Model;
 class Resource extends Model\Document\PageSnippet\Resource {
 
     /**
-     * Contains the valid database columns
-     *
-     * @var array
-     */
-    protected $validColumnsPage = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        // document
-        parent::init();
-
-        // page
-        $this->validColumnsPage = $this->getValidTableColumns("documents_email");
-    }
-
-    /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
      * @param integer $id
