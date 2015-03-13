@@ -254,7 +254,7 @@ class Service extends Model\Element\Service {
      * @param $metadata
      * @return array
      */
-    public static function expandMetadata($metadata) {
+    public static function expandMetadataForEditmode($metadata) {
         if (!is_array($metadata)) {
             return $metadata;
         }
@@ -282,6 +282,13 @@ class Service extends Model\Element\Service {
                 default:
                     //nothing to do
             }
+
+            //get the config from an predefined property-set (eg. select)
+            $predefined = Model\Metadata\Predefined::getByName($item['name']);
+            if ($predefined && $predefined->getType() == $item['type'] && $predefined->getConfig()) {
+                $item['config'] = $predefined->getConfig();
+            }
+
             $result[] = $item;
         }
         return $result;

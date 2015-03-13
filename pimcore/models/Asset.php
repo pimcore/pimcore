@@ -146,6 +146,11 @@ class Asset extends Element\AbstractElement {
     public $customSettings = array();
 
     /**
+     * @var bool
+     */
+    public $hasMetaData = false;
+
+    /**
      * Dependencies of this asset
      *
      * @var Dependency
@@ -1401,8 +1406,27 @@ class Asset extends Element\AbstractElement {
     public function setMetadata($metadata)
     {
         $this->metadata = $metadata;
+
+        if(!empty($metadata)) {
+            $this->setHasMetaData(true);
+        }
     }
 
+    /**
+     * @return boolean
+     */
+    public function getHasMetaData()
+    {
+        return $this->hasMetaData;
+    }
+
+    /**
+     * @param boolean $hasMetaData
+     */
+    public function setHasMetaData($hasMetaData)
+    {
+        $this->hasMetaData = (bool) $hasMetaData;
+    }
 
     /**
      * @param $name
@@ -1429,6 +1453,8 @@ class Asset extends Element\AbstractElement {
                 "language" => $language
             );
             $this->metadata = $tmp;
+
+            $this->setHasMetaData(true);
         }
     }
 

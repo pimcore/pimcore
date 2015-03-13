@@ -57,7 +57,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $this->_helper->json(array("success" => false, "message" => "asset doesn't exist"));
         }
 
-        $asset->setMetadata(Asset\Service::expandMetadata($asset->getMetadata()));
+        $asset->setMetadata(Asset\Service::expandMetadataForEditmode($asset->getMetadata()));
         $asset->setProperties(Element\Service::minimizePropertiesForEditmode($asset->getProperties()));
         //$asset->getVersions();
         $asset->getScheduledTasks();
