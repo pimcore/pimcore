@@ -37,7 +37,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $phpdocType = "\\Object\\Fieldcollection";
+    public $phpdocType = "\\Pimcore\\Model\\Object\\Fieldcollection";
 
     /**
      * @var string
