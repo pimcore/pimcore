@@ -141,7 +141,7 @@ abstract class Data {
                     $dat = $propertyWs["data"];
                 }
 
-                $object->setProperty($propertyWs["name"], $propertyWs["type"], $dat, $propertyWs["inherited"]);
+                $object->setProperty($propertyWs["name"], $propertyWs["type"], $dat, $propertyWs["inherited"], $propertyWs["inheritable"]);
             }
         }
     }

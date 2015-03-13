@@ -993,9 +993,10 @@ class AbstractObject extends Model\Element\AbstractElement {
      * @param $type
      * @param $data
      * @param bool $inherited
+     * @param bool $inheritable
      * @return $this
      */
-    public function setProperty($name, $type, $data, $inherited = false) {
+    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false) {
 
         $this->getProperties();
 
@@ -1006,6 +1007,7 @@ class AbstractObject extends Model\Element\AbstractElement {
         $property->setCtype("object");
         $property->setData($data);
         $property->setInherited($inherited);
+        $property->setInheritable($inheritable);
 
         $this->o_properties[$name] = $property;
         return $this;
