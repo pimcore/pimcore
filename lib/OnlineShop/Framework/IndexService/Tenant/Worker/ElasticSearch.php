@@ -279,6 +279,8 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
             }
             $this->bulkIndexData[] = array_filter(['system' => array_filter($indexSystemData), 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
 
+            //save new indexed element to mockup cache
+            $this->saveToMockupCache($objectId, $data);
         }
 
 

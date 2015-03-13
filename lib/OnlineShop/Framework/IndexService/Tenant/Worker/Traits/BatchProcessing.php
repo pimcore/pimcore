@@ -289,7 +289,6 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
                 Logger::info("Worker $workerId updating index for element " . $entry['id']);
                 $data = json_decode($entry['data'], true);
                 $this->doUpdateIndex($entry['id'], $data);
-                $this->saveToMockupCache($entry['id'], $data);
             }
             return count($entries);
         } else {

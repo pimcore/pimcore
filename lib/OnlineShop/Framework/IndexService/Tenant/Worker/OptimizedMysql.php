@@ -112,6 +112,9 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends Onl
                 //insert sub tenant data
                 $this->tenantConfig->updateSubTenantEntries($objectId, $data['subtenants'], $data['data']['o_id']);
 
+                //save new indexed element to mockup cache
+                $this->saveToMockupCache($objectId, $data);
+
                 $this->db->commit();
             } catch(Exception $e) {
                 $this->db->rollBack();
