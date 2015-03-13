@@ -1232,9 +1232,10 @@ class Asset extends Element\AbstractElement {
      * @param $type
      * @param $data
      * @param bool $inherited
+     * @param bool $inheritable
      * @return $this
      */
-    public function setProperty($name, $type, $data, $inherited = false) {
+    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false) {
 
         $this->getProperties();
 
@@ -1245,6 +1246,7 @@ class Asset extends Element\AbstractElement {
         $property->setCtype("asset");
         $property->setData($data);
         $property->setInherited($inherited);
+        $property->setInheritable($inheritable);
 
         $this->properties[$name] = $property;
         return $this;
