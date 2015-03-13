@@ -37,7 +37,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
             $columns[$d["Field"]] = $d["Field"];
         }
 
-        $systemColumns = $this->getSystemColumns();
+        $systemColumns = $this->getSystemAttributes();
 
         $columnsToDelete = $columns;
         $columnsToAdd = array();
@@ -323,7 +323,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
         }
     }
 
-    protected function getSystemColumns() {
+    protected function getSystemAttributes() {
         return array("o_id", "o_classId", "o_parentId", "o_virtualProductId", "o_virtualProductActive", "o_type", "categoryIds", "parentCategoryIds", "priceSystemName", "active", "inProductList");
     }
 

@@ -2,25 +2,56 @@
 <zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
     <onlineshop>
 
+        <!-- general settings for onlineshop environment -->
         <environment class="OnlineShop_Framework_Impl_Environment">
-            <config defaultlocale="en_GB" />
+            <config>
+                <!--
+                    default locale defines locale for currency for the whole system.
+                    if not defined on other place, this locale is used when creating price objects.
+                    locale with region required.
+                -->
+                <defaultlocale>de_AT</defaultlocale>
+            </config>
         </environment>
 
+        <!-- general settings for cart manager -->
         <cartmanager class="OnlineShop_Framework_Impl_MultiCartManager">
             <config>
+                <!-- default cart implementation that is used -->
                 <cart class="OnlineShop_Framework_Impl_Cart">
+                    <!--
+                        cart implementation that is used when system is in guest-checkout mode
+                        -> OnlineShop_Framework_IEnvironment::getUseGuestCart()
+                    -->
                     <guest class="OnlineShop_Framework_Impl_SessionCart"/>
                 </cart>
 
-                <pricecalcualtor class="OnlineShop_Framework_Impl_CartPriceCalculator">
+                <!-- default price calculator for cart -->
+                <pricecalculator class="OnlineShop_Framework_Impl_CartPriceCalculator">
                     <config>
+                        <!-- price modificators for cart, e.g. for shipping-cost, special discounts, ... -->
                         <modificators>
                             <shipping class="OnlineShop_Framework_Impl_CartPriceModificator_Shipping">
-                                <config charge="55.90"/>
+                                <config charge="5.90"/>
                             </shipping>
                         </modificators>
                     </config>
-                </pricecalcualtor>
+                </pricecalculator>
+
+                <!-- special configuration for specific checkout tenants -->
+                <tenants>
+                    <noShipping>
+                        <pricecalculator class="OnlineShop_Framework_Impl_CartPriceCalculator">
+                            <config>
+                                <modificators>
+                                </modificators>
+                            </config>
+                        </pricecalculator>
+                    </noShipping>
+
+                    <expensiveShipping file="/website/var/plugins/OnlineShopConfig/carmanager-expensiveShipping.xml" />
+                </tenants>
+
             </config>
         </cartmanager>
 
@@ -57,7 +88,7 @@
                        activation="/emails/order-activation"
                        dealer="/emails/order-dealer"
                        printer="/emails/order-print"/>
-                <parentorderfolder>11166</parentorderfolder>
+                <parentorderfolder>/order/%Y/%m/%d</parentorderfolder>
             </config>
         </checkoutmanager>
 

@@ -74,7 +74,7 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
             self::log($loggername, "=========================");
 
             $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
-            $env->setCurrentTenant($tenant);
+            $env->setCurrentAssortmentTenant($tenant);
 
             $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
             $worker = $indexService->getCurrentTenantWorker();
@@ -124,7 +124,7 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
             self::log($loggername, "=========================");
 
             $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
-            $env->setCurrentTenant($tenant);
+            $env->setCurrentAssortmentTenant($tenant);
 
             $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
             $worker = $indexService->getCurrentTenantWorker();

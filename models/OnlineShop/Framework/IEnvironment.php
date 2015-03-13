@@ -76,26 +76,49 @@ interface OnlineShop_Framework_IEnvironment extends OnlineShop_Framework_ICompon
     public function clearEnvironment();
 
     /**
+     * sets current assortment tenant which is used for indexing and product lists
+     *
      * @param $tenant string
      * @return mixed
      */
-    public function setCurrentTenant($tenant);
+    public function setCurrentAssortmentTenant($tenant);
 
     /**
+     * gets current assortment tenant which is used for indexing and product lists
+     *
      * @return string
      */
-    public function getCurrentTenant();
+    public function getCurrentAssortmentTenant();
 
     /**
+     * sets current assortment sub tenant which is used for indexing and product lists
+     *
+     * @param $subTenant string
+     * @return mixed
+     */
+    public function setCurrentAssortmentSubTenant($subTenant);
+
+    /**
+     * gets current assortment tenant which is used for indexing and product lists
+     *
+     * @return string
+     */
+    public function getCurrentAssortmentSubTenant();
+
+    /**
+     * sets current checkout tenant which is used for cart and checkout manager
+     *
      * @param $tenant string
      * @return mixed
      */
-    public function setCurrentSubTenant($tenant);
+    public function setCurrentCheckoutTenant($tenant);
 
     /**
+     * gets current assortment tenant which is used for cart and checkout manager
+     *
      * @return string
      */
-    public function getCurrentSubTenant();
+    public function getCurrentCheckoutTenant();
 
     /**
      * @return Zend_Locale
@@ -111,4 +134,54 @@ interface OnlineShop_Framework_IEnvironment extends OnlineShop_Framework_ICompon
      * @param boolean $useGuestCart
      */
     public function setUseGuestCart($useGuestCart);
+
+
+
+
+    /** ===========================================
+     *
+     *  deprecated functions
+     *
+     *  ===========================================
+     */
+
+    /**
+     * @deprecated
+     *
+     * use setCurrentAssortmentTenant instead
+     *
+     * @param $tenant string
+     * @return mixed
+     */
+    public function setCurrentTenant($tenant);
+
+    /**
+     * @deprecated
+     *
+     * use getCurrentAssortmentTenant instead
+     *
+     * @return string
+     */
+    public function getCurrentTenant();
+
+    /**
+     * @deprecated
+     *
+     * use setCurrentAssortmentSubTenant instead
+     *
+     * @param $tenant string
+     * @return mixed
+     */
+    public function setCurrentSubTenant($tenant);
+
+    /**
+     * @deprecated
+     *
+     * use getCurrentAssortmentSubTenant instead
+     *
+     * @return string
+     */
+    public function getCurrentSubTenant();
+
+
 }

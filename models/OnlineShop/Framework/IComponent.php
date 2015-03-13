@@ -2,5 +2,9 @@
 
  
 interface OnlineShop_Framework_IComponent {
-    function save();
+
+    /**
+     * @return mixed
+     */
+    public function save();
 }

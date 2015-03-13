@@ -5,8 +5,9 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     const SESSION_KEY_CUSTOM_ITEMS = "customitems";
     const SESSION_KEY_USERID = "userid";
     const SESSION_KEY_USE_GUEST_CART = "useguestcart";
-    const SESSION_KEY_TENANT = "currenttenant";
-    const SESSION_KEY_SUB_TENANT = "currentsubtenant";
+    const SESSION_KEY_ASSORTMENT_TENANT = "currentassortmenttenant";
+    const SESSION_KEY_ASSORTMENT_SUB_TENANT = "currentassortmentsubtenant";
+    const SESSION_KEY_CHECKOUT_TENANT = "currentcheckouttenant";
     const USER_ID_NOT_SET = -1;
 
     /**
@@ -27,8 +28,9 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     protected $useGuestCart = false;
 
 
-    protected $currentTenant = null;
-    protected $currentSubTenant = null;
+    protected $currentAssortmentTenant = null;
+    protected $currentAssortmentSubTenant = null;
+    protected $currentCheckoutTenant = null;
 
     public function __construct($config) {
         $this->loadFromSession();
@@ -55,11 +57,14 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
             $key = self::SESSION_KEY_USERID;
             $this->userId = $this->session->$key;
 
-            $key = self::SESSION_KEY_TENANT;
-            $this->currentTenant = $this->session->$key;
+            $key = self::SESSION_KEY_ASSORTMENT_TENANT;
+            $this->currentAssortmentTenant = $this->session->$key;
 
-            $key = self::SESSION_KEY_SUB_TENANT;
-            $this->currentSubTenant = $this->session->$key;
+            $key = self::SESSION_KEY_ASSORTMENT_SUB_TENANT;
+            $this->currentAssortmentSubTenant = $this->session->$key;
+
+            $key = self::SESSION_KEY_CHECKOUT_TENANT;
+            $this->currentCheckoutTenant = $this->session->$key;
 
             $key = self::SESSION_KEY_USE_GUEST_CART;
             $this->useGuestCart = $this->session->$key;
@@ -76,11 +81,14 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
             $key = self::SESSION_KEY_USERID;
             $this->session->$key = $this->userId;
 
-            $key = self::SESSION_KEY_TENANT;
-            $this->session->$key = $this->currentTenant;
+            $key = self::SESSION_KEY_ASSORTMENT_TENANT;
+            $this->session->$key = $this->currentAssortmentTenant;
 
-            $key = self::SESSION_KEY_SUB_TENANT;
-            $this->session->$key = $this->currentSubTenant;
+            $key = self::SESSION_KEY_ASSORTMENT_SUB_TENANT;
+            $this->session->$key = $this->currentAssortmentSubTenant;
+
+            $key = self::SESSION_KEY_CHECKOUT_TENANT;
+            $this->session->$key = $this->currentCheckoutTenant;
 
             $key = self::SESSION_KEY_USE_GUEST_CART;
             $this->session->$key = $this->useGuestCart;
@@ -143,40 +151,68 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
         unset($this->session->$key);
         $this->userId = null;
 
-        $key = self::SESSION_KEY_TENANT;
+        $key = self::SESSION_KEY_ASSORTMENT_TENANT;
         unset($this->session->$key);
-        $this->currentTenant = null;
+        $this->currentAssortmentTenant = null;
 
-        $key = self::SESSION_KEY_SUB_TENANT;
+        $key = self::SESSION_KEY_ASSORTMENT_SUB_TENANT;
         unset($this->session->$key);
-        $this->currentSubTenant = null;
+        $this->currentAssortmentSubTenant = null;
+
+        $key = self::SESSION_KEY_CHECKOUT_TENANT;
+        unset($this->session->$key);
+        $this->currentCheckoutTenant = null;
 
         $key = self::SESSION_KEY_USE_GUEST_CART;
         unset($this->session->$key);
         $this->useGuestCart = false;
     }
 
+    /**
+     * @deprecated
+     *
+     * use setCurrentAssortmentTenant instead
+     *
+     * @param string $currentTenant
+     * @return mixed|void
+     */
     public function setCurrentTenant($currentTenant) {
-        $this->currentTenant = $currentTenant;
+        $this->setCurrentAssortmentTenant($currentTenant);
     }
 
     /**
+     * @deprecated
+     *
+     * use getCurrentAssortmentTenant instead
+     *
      * @return string
      */
     public function getCurrentTenant() {
-        return $this->currentTenant;
+        return $this->getCurrentAssortmentTenant();
     }
 
+    /**
+     * @deprecated
+     *
+     * use setCurrentAssortmentSubTenant instead
+     *
+     * @param string $currentSubTenant
+     * @return mixed|void
+     */
     public function setCurrentSubTenant($currentSubTenant) {
-        $this->currentSubTenant = $currentSubTenant;
+        $this->setCurrentAssortmentSubTenant($currentSubTenant);
     }
 
 
     /**
+     * @deprecated
+     *
+     * use getCurrentAssortmentSubTenant instead
+     *
      * @return string
      */
     public function getCurrentSubTenant() {
-        return $this->currentSubTenant;
+        return $this->getCurrentAssortmentSubTenant();
     }
 
     /**
@@ -200,5 +236,68 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     public function setUseGuestCart($useGuestCart)
     {
         $this->useGuestCart = (bool)$useGuestCart;
+    }
+
+    /**
+     * sets current assortment tenant which is used for indexing and product lists
+     *
+     * @param $tenant string
+     * @return mixed
+     */
+    public function setCurrentAssortmentTenant($tenant)
+    {
+        $this->currentAssortmentTenant = $tenant;
+    }
+
+    /**
+     * gets current assortment tenant which is used for indexing and product lists
+     *
+     * @return string
+     */
+    public function getCurrentAssortmentTenant()
+    {
+        return $this->currentAssortmentTenant;
+    }
+
+    /**
+     * sets current assortment sub tenant which is used for indexing and product lists
+     *
+     * @param $subTenant string
+     * @return mixed
+     */
+    public function setCurrentAssortmentSubTenant($subTenant)
+    {
+        $this->currentAssortmentSubTenant = $subTenant;
+    }
+
+    /**
+     * gets current assortment tenant which is used for indexing and product lists
+     *
+     * @return string
+     */
+    public function getCurrentAssortmentSubTenant()
+    {
+        return $this->currentAssortmentSubTenant;
+    }
+
+    /**
+     * sets current checkout tenant which is used for cart and checkout manager
+     *
+     * @param $tenant string
+     * @return mixed
+     */
+    public function setCurrentCheckoutTenant($tenant)
+    {
+        $this->currentCheckoutTenant = $tenant;
+    }
+
+    /**
+     * gets current assortment tenant which is used for cart and checkout manager
+     *
+     * @return string
+     */
+    public function getCurrentCheckoutTenant()
+    {
+        return $this->currentCheckoutTenant;
     }
 }

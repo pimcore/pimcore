@@ -12,6 +12,12 @@ interface OnlineShop_Framework_ICart {
     public function getId();
 
     /**
+     * @param $id int
+     * @return void
+     */
+    public function setId($id);
+
+    /**
      * @abstract
      * @return OnlineShop_Framework_ICartItem[]
      */

@@ -55,7 +55,7 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Worker_Abstract implemen
     public function getAllFilterGroups() {
         if(empty($this->filterGroups)) {
             $this->filterGroups = array();
-            $this->filterGroups['system'] = array_diff($this->getSystemColumns(), array("categoryIds"));
+            $this->filterGroups['system'] = array_diff($this->getSystemAttributes(), array("categoryIds"));
             $this->filterGroups['category'] = array("categoryIds");
 
 
@@ -69,6 +69,10 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Worker_Abstract implemen
         }
 
         return array_keys($this->filterGroups);
+    }
+
+    protected function getSystemAttributes() {
+        return array();
     }
 
 

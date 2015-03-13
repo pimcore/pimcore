@@ -1,13 +1,18 @@
 <?php
 
+/**
+ * Class OnlineShop_Framework_Impl_CartPriceModificator_Shipping
+ */
 class OnlineShop_Framework_Impl_CartPriceModificator_Shipping implements OnlineShop_Framework_CartPriceModificator_IShipping
 {
     /**
      * @var float
      */
-    protected $charge = 5.99; # sample
+    protected $charge = 0;
 
-
+    /**
+     * @param $config
+     */
     public function __construct($config) {
         if($config->charge) {
             $this->charge = floatval($config->charge);
@@ -26,7 +31,7 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Shipping implements OnlineS
      * @param OnlineShop_Framework_IPrice $currentSubTotal
      * @param OnlineShop_Framework_ICart  $cart
      *
-     * @return OnlineShop_Framework_IPrice
+     * @return OnlineShop_Framework_IModificatedPrice
      */
     public function modify(OnlineShop_Framework_IPrice $currentSubTotal, OnlineShop_Framework_ICart $cart)
     {
@@ -36,7 +41,7 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Shipping implements OnlineS
     /**
      * @param float $charge
      *
-     * @return return OnlineShop_Framework_ICartPriceModificator
+     * @return OnlineShop_Framework_ICartPriceModificator
      */
     public function setCharge($charge)
     {

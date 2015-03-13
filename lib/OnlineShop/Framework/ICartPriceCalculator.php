@@ -1,41 +1,51 @@
 <?php
 
+/**
+ * Interface OnlineShop_Framework_ICartPriceCalculator
+ */
 interface OnlineShop_Framework_ICartPriceCalculator {
 
     public function __construct($config, OnlineShop_Framework_ICart $cart);
 
     /**
-     * @abstract
+     * calculates cart sums and saves results
+     *
      * @return void
      */
     public function calculate();
 
     /**
-     * @abstract
+     * reset calculations
+     *
      * @return void
      */
     public function reset();
 
 
     /**
-     * @abstract
+     * returns sub total of cart
+     *
      * @return OnlineShop_Framework_IPrice $price
      */
     public function getSubTotal();
 
     /**
-     * @abstract
+     * returns all price modifications which apply for this cart
+     *
      * @return OnlineShop_Framework_IPrice[] $priceModification
      */
     public function getPriceModifications();
 
     /**
-     * @abstract
+     * returns grand total of cart
+     *
      * @return OnlineShop_Framework_IPrice $price
      */
     public function getGrandTotal();
 
     /**
+     * manually add a modificator to this cart. by default they are loaded from the configuration
+     *
      * @param OnlineShop_Framework_ICartPriceModificator $modificator
      *
      * @return OnlineShop_Framework_ICartPriceCalculator
@@ -43,11 +53,15 @@ interface OnlineShop_Framework_ICartPriceCalculator {
     public function addModificator(OnlineShop_Framework_ICartPriceModificator $modificator);
 
     /**
-     * @return array|OnlineShop_Framework_ICartPriceCalculator
+     * returns all modificators
+     *
+     * @return OnlineShop_Framework_ICartPriceModificator[]
      */
     public function getModificators();
 
     /**
+     * manually remove a modificator from this cart.
+     *
      * @param OnlineShop_Framework_ICartPriceModificator $modificator
      *
      * @return OnlineShop_Framework_ICartPriceCalculator

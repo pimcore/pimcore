@@ -24,10 +24,10 @@ class OnlineShop_Framework_IndexService {
 
                 $tenantConfig = $tenant;
                 if($tenant->file) {
-                    if(!$tenantConfig = Pimcore_Model_Cache::load("onlineshop_config_tenant_" . $tenantConfigClass)) {
+                    if(!$tenantConfig = Pimcore_Model_Cache::load("onlineshop_config_assortment_tenant_" . $tenantConfigClass)) {
                         $tenantConfig = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file), null, true);
                         $tenantConfig = $tenantConfig->tenant;
-                        Pimcore_Model_Cache::save($tenantConfig, "onlineshop_config_tenant_" . $tenantConfigClass, array("ecommerceconfig"), 9999);
+                        Pimcore_Model_Cache::save($tenantConfig, "onlineshop_config_assortment_tenant_" . $tenantConfigClass, array("ecommerceconfig"), 9999);
                     }
                 }
 
@@ -61,7 +61,7 @@ class OnlineShop_Framework_IndexService {
      */
     public function getGeneralSearchAttributes($tenant = null) {
         if(empty($tenant)) {
-            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentTenant();
+            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
         if($tenant) {
@@ -137,7 +137,7 @@ class OnlineShop_Framework_IndexService {
      */
     public function getIndexAttributes($considerHideInFieldList = false, $tenant = null) {
         if(empty($tenant)) {
-            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentTenant();
+            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
         if($tenant) {
@@ -176,7 +176,7 @@ class OnlineShop_Framework_IndexService {
      */
     public function getAllFilterGroups($tenant = null) {
         if(empty($tenant)) {
-            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentTenant();
+            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
         if($tenant) {
@@ -205,7 +205,7 @@ class OnlineShop_Framework_IndexService {
      */
     public function getIndexAttributesByFilterGroup($filterType, $tenant = null) {
         if(empty($tenant)) {
-            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentTenant();
+            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
         if($tenant) {
@@ -251,7 +251,7 @@ class OnlineShop_Framework_IndexService {
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
      */
     public function getCurrentTenantWorker() {
-        $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentTenant();
+        $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {

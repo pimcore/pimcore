@@ -33,7 +33,7 @@ class OnlineShop_IndexController extends Pimcore_Controller_Action_Admin {
             if($this->getParam("field")) {
 
                 if($this->getParam("tenant")) {
-                    OnlineShop_Framework_Factory::getInstance()->getEnvironment()->setCurrentTenant($this->getParam("tenant"));
+                    OnlineShop_Framework_Factory::getInstance()->getEnvironment()->setCurrentAssortmentTenant($this->getParam("tenant"));
                 }
 
                 $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();

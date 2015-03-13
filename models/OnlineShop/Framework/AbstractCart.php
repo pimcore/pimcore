@@ -624,7 +624,7 @@ abstract class OnlineShop_Framework_AbstractCart extends Pimcore_Model_Abstract 
     public function getPriceCalculator() {
 
         if(empty($this->priceCalcuator)) {
-            $this->priceCalcuator = OnlineShop_Framework_Factory::getInstance()->getCartManager()->getCartPriceCalcuator($this);
+            $this->priceCalcuator = OnlineShop_Framework_Factory::getInstance()->getCartManager()->getCartPriceCalculator($this);
         }
 
         return $this->priceCalcuator;
