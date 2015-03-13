@@ -13,7 +13,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelect extends Onlin
 
         $value = $params[$field];
 
-        if(empty($value) && !$params['is_reload']) {
+        if(empty($value) && !$params['is_reload'] && $preSelect) {
             $value = explode(",", $preSelect);
         } else if(!empty($value) && in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
