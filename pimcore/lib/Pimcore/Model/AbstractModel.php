@@ -98,7 +98,7 @@ abstract class AbstractModel {
                     }
 
                     if($className && $className != "Pimcore\\Resource") {
-                        \Logger::debug("Found resource implementation " . $className . " for " . $myClass);
+                        //\Logger::debug("Found resource implementation " . $className . " for " . $myClass);
                         $resource = $className;
                         self::$resourceClassCache[$myClass] = $resource;
 
@@ -167,7 +167,7 @@ abstract class AbstractModel {
                     return $className;
                 }
             } else {
-                \Logger::debug("Couldn't find resource implementation " . $className . " for " . get_class($this));
+                //\Logger::debug("Couldn't find resource implementation " . $className . " for " . get_class($this));
             }
         }
 
