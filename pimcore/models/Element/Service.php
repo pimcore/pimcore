@@ -401,6 +401,15 @@ class Service extends Model\AbstractModel {
             else {
                 $properties[$key] = object2array($p);
             }
+
+            // add config from predefined properties
+            if ($p->getName() && $p->getType()) {
+                $predefined = Model\Property\Predefined::getByKey($p->getName());
+
+                if ($predefined && $predefined->getType() == $p->getType()) {
+                    $properties[$key]["config"] = $predefined->getConfig();
+                }
+            }
         }
 
         return $properties;

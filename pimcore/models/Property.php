@@ -63,11 +63,6 @@ class Property extends AbstractModel {
     public $inherited = false;
 
     /**
-     * @var string
-     */
-    public $config;
-
-    /**
      * Takes data from editmode and convert it to internal objects
      *
      * @param mixed $data
@@ -119,22 +114,6 @@ class Property extends AbstractModel {
         else {
             // plain text
             $this->data = $data;
-        }
-        return $this;
-    }
-
-    /**
-     * get the config from an predefined property-set (eg. select)
-     *
-     * @return static
-     */
-    public function setConfigFromPredefined() {
-        if ($this->getName() && $this->getType()) {
-            $predefined = Property\Predefined::getByKey($this->getName());
-
-            if ($predefined && $predefined->getType() == $this->getType()) {
-                $this->config = $predefined->getConfig();
-            }
         }
         return $this;
     }
@@ -219,7 +198,6 @@ class Property extends AbstractModel {
      */
     public function setName($name) {
         $this->name = $name;
-        $this->setConfigFromPredefined();
         return $this;
     }
 
@@ -229,7 +207,6 @@ class Property extends AbstractModel {
      */
     public function setType($type) {
         $this->type = $type;
-        $this->setConfigFromPredefined();
         return $this;
     }
 
