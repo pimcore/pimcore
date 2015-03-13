@@ -1,21 +1,9 @@
-<?php 
-/**
- * Pimcore
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://www.pimcore.org/license
- *
- * @category   Pimcore
- * @package    Object_Class
- * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
- * @license    http://www.pimcore.org/license     New BSD License
- */
+<?php
 
-class Object_Class_Data_IndexFieldSelection extends Object_Class_Data {
+namespace Pimcore\Model\Object\ClassDefinition\Data;
+
+
+class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
 
     /**
      * Static type of this element
@@ -61,25 +49,6 @@ class Object_Class_Data_IndexFieldSelection extends Object_Class_Data {
 
     public function __construct() {
 
-//        $indexColumns = array();
-//        try {
-//            $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
-//            $indexColumns = $indexService->getIndexColumns(true);
-//        } catch (Exception $e) {
-//            Logger::err($e);
-//        }
-
-        /*$options = array();
-
-        foreach ($indexColumns as $c) {
-            $options[] = array(
-                "key" => $c,
-                "value" => $c
-            );
-        }
-
-//        p_r($options); die();
-        $this->setOptions($options);*/
     }
 
     public function setConsiderTenants($considerTenants) {
@@ -139,7 +108,7 @@ class Object_Class_Data_IndexFieldSelection extends Object_Class_Data {
      * @return float
      */
     public function getDataForResource($data, $object = null) {
-        if ($data instanceof Object_Data_IndexFieldSelection) {
+        if ($data instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
             return array(
                 $this->getName() . "__tenant" => $data->getTenant(),
                 $this->getName() . "__field" => $data->getField(),
@@ -157,13 +126,13 @@ class Object_Class_Data_IndexFieldSelection extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataFromResource
      * @param float $data
-     * @return float
+     * @return mixed
      */
     public function getDataFromResource($data) {
         if($data[$this->getName() . "__field"]) {
-            return new Object_Data_IndexFieldSelection($data[$this->getName() . "__tenant"], $data[$this->getName() . "__field"], $data[$this->getName() . "__preSelect"]);
+            return new \Pimcore\Model\Object\Data\IndexFieldSelection($data[$this->getName() . "__tenant"], $data[$this->getName() . "__field"], $data[$this->getName() . "__preSelect"]);
         }
-        return;
+        return null;
     }
 
     /**
@@ -178,10 +147,10 @@ class Object_Class_Data_IndexFieldSelection extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param float $data
-     * @return float
+     * @return mixed
      */
     public function getDataForEditmode($data, $object = null) {
-        if ($data instanceof Object_Data_IndexFieldSelection) {
+        if ($data instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
             return array(
                 "tenant" => $data->getTenant(),
                 "field" => $data->getField(),
@@ -189,19 +158,19 @@ class Object_Class_Data_IndexFieldSelection extends Object_Class_Data {
             );
         }
 
-        return;
+        return null;
     }
 
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param float $data
-     * @return float
+     * @return mixed
      */
     public function getDataFromEditmode($data, $object = null) {
         if($data["field"]) {
-            return new Object_Data_IndexFieldSelection($data["tenant"], $data["field"], $data["preSelect"]);
+            return new \Pimcore\Model\Object\Data\IndexFieldSelection($data["tenant"], $data["field"], $data["preSelect"]);
         }
-        return;
+        return null;
     }
 
     /**
@@ -210,7 +179,7 @@ class Object_Class_Data_IndexFieldSelection extends Object_Class_Data {
      * @return float
      */
     public function getVersionPreview($data) {
-        if($data instanceof Object_Data_IndexFieldSelection) {
+        if($data instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
             return $data->getTenant() . " " . $data->getField() . " " . $data->getPreSelect();
         }
         return "";
@@ -221,13 +190,13 @@ class Object_Class_Data_IndexFieldSelection extends Object_Class_Data {
      *
      * @param mixed $data
      * @param boolean $omitMandatoryCheck
-     * @throws Exception
+     * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false){
 
         if(!$omitMandatoryCheck && $this->getMandatory() &&
             ($data === NULL || $data->getField() === NULL)){
-            throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
+            throw new \Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
         }
 
     }
@@ -235,14 +204,14 @@ class Object_Class_Data_IndexFieldSelection extends Object_Class_Data {
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object_Abstract $object
+     * @param \Pimcore\Model\Object\AbstractObject $object
      * @return string
      */
     public function getForCsvExport($object) {
 
         $key = $this->getName();
         $getter = "get".ucfirst($key);
-        if($object->$getter() instanceof Object_Data_IndexFieldSelection){
+        if($object->$getter() instanceof \Pimcore\Model\Object\Data\IndexFieldSelection){
             $preSelect = $object->$getter()->getPreSelect();
             if(is_array($preSelect)) {
                 $preSelect = implode("%%", $preSelect);
@@ -263,7 +232,7 @@ class Object_Class_Data_IndexFieldSelection extends Object_Class_Data {
         $value = null;
         if ($values[0] && $values[1] && $values[2]) {
             $preSelect = explode("%%", $value[2]);
-            $value = new Object_Data_IndexFieldSelection($value[0], $values[1], $preSelect);
+            $value = new \Pimcore\Model\Object\Data\IndexFieldSelection($value[0], $values[1], $preSelect);
         }
         return $value;
     }
@@ -279,7 +248,7 @@ class Object_Class_Data_IndexFieldSelection extends Object_Class_Data {
         $key = $this->getName();
         $getter = "get".ucfirst($key);
 
-        if ($object->$getter() instanceof Object_Data_IndexFieldSelection) {
+        if ($object->$getter() instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
             return array(
                 "tenant" => $object->$getter()->getTenant(),
                 "field" => $object->$getter()->getField(),
@@ -297,9 +266,9 @@ class Object_Class_Data_IndexFieldSelection extends Object_Class_Data {
         if(empty($value)){
             return null;
         }else if($value["field"] !== null) {
-            return new Object_Data_DimensionUnitField($value["tenant"], $value["field"], explode("%%", $value["preSelect"]));
+            return new \Pimcore\Model\Object\Data\IndexFieldSelection($value["tenant"], $value["field"], explode("%%", $value["preSelect"]));
         } else {
-            throw new Exception(get_class($this).": cannot get values from web service import - invalid data");
+            throw new \Exception(get_class($this).": cannot get values from web service import - invalid data");
         }
     }
 

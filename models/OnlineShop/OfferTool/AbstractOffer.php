@@ -2,7 +2,7 @@
 /**
  * Abstract base class for offer pimcore objects
  */
-class OnlineShop_OfferTool_AbstractOffer extends Object_Concrete {
+class OnlineShop_OfferTool_AbstractOffer extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @return string

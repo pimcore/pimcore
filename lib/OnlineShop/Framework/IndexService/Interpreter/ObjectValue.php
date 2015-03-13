@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by elements.at New Media Solutions GmbH
- * Wenzel Wondra
- * User: wwondra
- * Date: 23.07.13
- * Time: 14:08
- */
 
 class OnlineShop_Framework_IndexService_Interpreter_ObjectValue implements OnlineShop_Framework_IndexService_Interpreter
 {
@@ -18,7 +11,7 @@ class OnlineShop_Framework_IndexService_Interpreter_ObjectValue implements Onlin
             throw new Exception("target fieldname missing.");
         }
 
-        if ($value instanceof Object_Abstract) {
+        if ($value instanceof \Pimcore\Model\Object\AbstractObject) {
 
             $fieldGetter = "get" . ucfirst($targetList->fieldname);
 

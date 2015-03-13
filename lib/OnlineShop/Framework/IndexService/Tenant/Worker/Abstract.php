@@ -19,7 +19,7 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Worker_Abstract implemen
         $this->tenantConfig = $tenantConfig;
         $this->columnConfig = $tenantConfig->getAttributeConfig();
         $this->searchColumnConfig = $tenantConfig->getSearchAttributeConfig();
-        $this->db = Pimcore_Resource::get();
+        $this->db = \Pimcore\Resource::get();
     }
 
     public function getTenantConfig() {

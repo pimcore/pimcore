@@ -1,6 +1,6 @@
 <?php
 
-class OnlineShop_AdminController extends Pimcore_Controller_Action_Admin {
+class OnlineShop_AdminController extends \Pimcore\Controller\Action\Admin {
 
     public function settingsAction() {
         if($this->getRequest()->isPost()) {
@@ -12,7 +12,7 @@ class OnlineShop_AdminController extends Pimcore_Controller_Action_Admin {
     }
 
     public function clearCacheAction() {
-        Pimcore_Model_Cache::clearTag("ecommerceconfig");
+        \Pimcore\Model\Cache::clearTag("ecommerceconfig");
         exit;
     }
 

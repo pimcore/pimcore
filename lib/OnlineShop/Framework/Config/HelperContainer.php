@@ -34,10 +34,10 @@ class OnlineShop_Framework_Config_HelperContainer {
 
                     $cacheKey = "onlineshop_config_" . $identifier . "_checkout_tenant_" . $tenantName;
 
-                    if(!$tenantConfigFile = Pimcore_Model_Cache::load($cacheKey)) {
+                    if(!$tenantConfigFile =  \Pimcore\Model\Cache::load($cacheKey)) {
                         $tenantConfigFile = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . ((string)$tenantConfig->file), null, true);
                         $tenantConfigFile = $tenantConfigFile->tenant;
-                        Pimcore_Model_Cache::save($tenantConfigFile, $cacheKey, array("ecommerceconfig"), 9999);
+                        \Pimcore\Model\Cache::save($tenantConfigFile, $cacheKey, array("ecommerceconfig"), 9999);
                     }
 
                     $this->tenantConfigs[$tenantName] = $tenantConfigFile;

@@ -1,6 +1,6 @@
 <?php
 
-class OnlineShop_Framework_Impl_CartCheckoutData_List extends Pimcore_Model_List_Abstract {
+class OnlineShop_Framework_Impl_CartCheckoutData_List extends \Pimcore\Model\Listing\AbstractListing {
 
     /**
      * @var array

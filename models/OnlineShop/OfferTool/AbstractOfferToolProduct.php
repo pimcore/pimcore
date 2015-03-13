@@ -3,7 +3,7 @@
 /**
  * Abstract base class for pimcore objects who should be used as custom products in the offer tool
  */
-class OnlineShop_OfferTool_AbstractOfferToolProduct extends Object_Concrete implements OnlineShop_Framework_ProductInterfaces_ICheckoutable {
+class OnlineShop_OfferTool_AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements OnlineShop_Framework_ProductInterfaces_ICheckoutable {
 
 // =============================================
 //     ICheckoutable Methods
@@ -119,10 +119,10 @@ class OnlineShop_OfferTool_AbstractOfferToolProduct extends Object_Concrete impl
     /**
      * @static
      * @param int $id
-     * @return null|Object_Abstract
+     * @return null|\Pimcore\Model\Object\AbstractObject
      */
     public static function getById($id) {
-        $object = Object_Abstract::getById($id);
+        $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
         if ($object instanceof OnlineShop_OfferTool_AbstractOfferToolProduct) {
             return $object;

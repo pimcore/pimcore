@@ -1,6 +1,6 @@
 <?php
 
-class OnlineShop_IndexController extends Pimcore_Controller_Action_Admin {
+class OnlineShop_IndexController extends Pimcore\Controller\Action\Admin {
 
     public function getFilterGroupsAction() {
         $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
@@ -98,7 +98,7 @@ class OnlineShop_IndexController extends Pimcore_Controller_Action_Admin {
         }
 
         $_REQUEST['systemLocale'] = $this->getUser()->getLanguage();
-        $adminTranslator = new Pimcore_View_Helper_TranslateAdmin();
+        $adminTranslator = new Pimcore\View\Helper\TranslateAdmin();
 
         foreach($indexColumns as $c) {
             $fields[$c] = array("key" => $c, "name" => $adminTranslator->translateAdmin($c));
@@ -115,7 +115,7 @@ class OnlineShop_IndexController extends Pimcore_Controller_Action_Admin {
 
 
     public function getAllTenantsAction() {
-        $adminTranslator = new Pimcore_View_Helper_TranslateAdmin();
+        $adminTranslator = new Pimcore\View\Helper\TranslateAdmin();
 
         $tenants = OnlineShop_Framework_Factory::getInstance()->getAllTenants();
         $data = array(array("key" => "", "name" => $adminTranslator->translateAdmin("default")));

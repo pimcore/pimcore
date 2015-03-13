@@ -1,6 +1,8 @@
-<?php 
+<?php
 
-class Object_Class_Data_IndexFieldSelectionField extends Object_Class_Data_Textarea {
+namespace Pimcore\Model\Object\ClassDefinition\Data;
+
+class IndexFieldSelectionField extends Textarea {
 
     /**
      * Static type of this element

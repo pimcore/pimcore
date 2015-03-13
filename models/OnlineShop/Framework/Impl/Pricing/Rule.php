@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-class OnlineShop_Framework_Impl_Pricing_Rule extends Pimcore_Model_Abstract implements OnlineShop_Framework_Pricing_IRule
+class OnlineShop_Framework_Impl_Pricing_Rule extends \Pimcore\Model\AbstractModel implements OnlineShop_Framework_Pricing_IRule
 {
 
     /**
@@ -90,7 +90,7 @@ class OnlineShop_Framework_Impl_Pricing_Rule extends Pimcore_Model_Abstract impl
      * load model with serializes data from db
      * @param  $key
      * @param  $value
-     * @return Pimcore_Model_Abstract
+     * @return \Pimcore\Model\AbstractModel
      */
     public function setValue($key, $value)
     {

@@ -143,11 +143,11 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
 
             if($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = Pimcore::inAdmin();
-                $b = Object_Abstract::doGetInheritedValues();
+                $b = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
                 Pimcore::unsetAdminMode();
-                Object_Abstract::setGetInheritedValues(true);
-                $hidePublishedMemory = Object_Abstract::doHideUnpublished();
-                Object_Abstract::setHideUnpublished(false);
+                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
+                $hidePublishedMemory = \Pimcore\Model\Object\AbstractObject::doHideUnpublished();
+                \Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
                 $categories = $object->getCategories();
                 $categoryIds = array();
                 $parentCategoryIds = array();
@@ -178,7 +178,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
                     $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
                 }
 
-                $virtualProduct = Object_Abstract::getById($virtualProductId);
+                $virtualProduct = \Pimcore\Model\Object\AbstractObject::getById($virtualProductId);
                 if($virtualProduct && method_exists($virtualProduct, "isActive")) {
                     $virtualProductActive = $virtualProduct->isActive();
                 }
@@ -258,8 +258,8 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
                 if($a) {
                     Pimcore::setAdminMode();
                 }
-                Object_Abstract::setGetInheritedValues($b);
-                Object_Abstract::setHideUnpublished($hidePublishedMemory);
+                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($b);
+                \Pimcore\Model\Object\AbstractObject::setHideUnpublished($hidePublishedMemory);
 
                 try {
 

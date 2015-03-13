@@ -3,15 +3,15 @@
 /**
  * Abstract base class for pimcore objects who should be used as product categories in the online shop framework
  */
-class OnlineShop_Framework_AbstractCategory extends Object_Concrete {
+class OnlineShop_Framework_AbstractCategory extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @static
      * @param int $id
-     * @return null|Object_Abstract
+     * @return null|\Pimcore\Model\Object\AbstractObject
      */
     public static function getById($id) {
-        $object = Object_Abstract::getById($id);
+        $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
         if($object instanceof OnlineShop_Framework_AbstractCategory) {
             return $object;

@@ -20,7 +20,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql_Resource {
 
     public function __construct(OnlineShop_Framework_IProductList $model) {
         $this->model = $model;
-        $this->db = Pimcore_Resource::get();
+        $this->db = \Pimcore\Resource::get();
     }
 
 

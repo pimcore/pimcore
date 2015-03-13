@@ -162,10 +162,10 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct implements Onli
     /**
      * @param $id
      *
-     * @return Object_Abstract|null
+     * @return \Pimcore\Model\Object\Concrete|null
      */
     protected function loadProduct($id)
     {
-        return Object_Concrete::getById($id);
+        return \Pimcore\Model\Object\Concrete::getById($id);
     }
 }

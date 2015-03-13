@@ -1,6 +1,6 @@
 <?php
 
-class OnlineShop_Framework_Impl_Cart_Resource extends Pimcore_Model_Resource_Abstract {
+class OnlineShop_Framework_Impl_Cart_Resource extends \Pimcore\Model\Resource\AbstractResource {
 
     const TABLE_NAME = "plugin_onlineshop_cart";
 

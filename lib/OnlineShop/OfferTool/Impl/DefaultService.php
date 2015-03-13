@@ -7,7 +7,7 @@ class OnlineShop_OfferTool_Impl_DefaultService implements OnlineShop_OfferTool_I
         $this->offerClass = $offerClass;
         $this->offerItemClass = $offerItemClass;
         $this->parentFolderPath = strftime($parentFolderPath, time());
-        Object_Service::createFolderByPath($this->parentFolderPath);
+        \Pimcore\Model\Object\Service::createFolderByPath($this->parentFolderPath);
 
     }
 
@@ -70,7 +70,7 @@ class OnlineShop_OfferTool_Impl_DefaultService implements OnlineShop_OfferTool_I
         /**
          * @var $offer OnlineShop_OfferTool_AbstractOffer
          */
-        $offer->setParent(Object_Folder::getByPath($this->parentFolderPath));
+        $offer->setParent(\Pimcore\Model\Object\Folder::getByPath($this->parentFolderPath));
         $offer->setCreationDate(Zend_Date::now()->get());
         $offer->setKey($tempOfferNumber);
         $offer->setPublished(true);
@@ -202,7 +202,7 @@ class OnlineShop_OfferTool_Impl_DefaultService implements OnlineShop_OfferTool_I
         $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
 
         if(@class_exists("Object_Customer")) {
-            $customer = Object_Customer::getById($env->getCurrentUserId());
+            $customer = \Pimcore\Model\Object\Customer::getById($env->getCurrentUserId());
             $offer->setCustomer($customer);
         }
 

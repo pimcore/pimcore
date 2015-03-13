@@ -62,7 +62,7 @@ class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfi
     }
 
     public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null) {
-        $db = Pimcore_Resource::get();
+        $db = \Pimcore\Resource::get();
         $db->delete($this->getTenantRelationTablename(), "o_id = " . $db->quote($subObjectId ? $subObjectId : $objectId));
 
         if($subTenantData) {

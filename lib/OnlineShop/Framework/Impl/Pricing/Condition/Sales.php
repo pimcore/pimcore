@@ -131,12 +131,12 @@ LIMIT 1
 SQL;
 
             $query = sprintf($query
-                , \Object_OnlineShopOrderItem::classId()
-                , \Object_OnlineShopOrder::classId()
+                , \Pimcore\Model\Object\OnlineShopOrderItem::classId()
+                , \Pimcore\Model\Object\OnlineShopOrder::classId()
                 , $rule->getId()
             );
 
-            $conn = \Pimcore_Resource::getConnection();
+            $conn = \Pimcore\Resource::getConnection();
 
             $this->currentSalesAmount[ $rule->getId() ] = (int)$conn->fetchRow( $query )['amount'];
         }

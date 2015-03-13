@@ -8,7 +8,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_SelectRelation extends On
 
     protected function loadAllAvailableRelations($availableRelations, $availableRelationsArray = array()) {
         foreach($availableRelations as $rel) {
-            if($rel instanceof Object_Folder) {
+            if($rel instanceof \Pimcore\Model\Object\Folder) {
                 $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChilds(), $availableRelationsArray);
             } else {
                 $availableRelationsArray[$rel->getId()] = true;

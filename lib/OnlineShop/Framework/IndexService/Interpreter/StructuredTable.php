@@ -13,7 +13,7 @@ class OnlineShop_Framework_IndexService_Interpreter_StructuredTable implements O
 
         $getter = "get" . ucfirst($config->tablerow) . "__" . ucfirst($config->tablecolumn);
 
-        if($value && $value instanceof Object_Data_StructuredTable) {
+        if($value && $value instanceof \Pimcore\Model\Object\Data\StructuredTable) {
             if(!empty($config->defaultUnit)) {
                 return $value->$getter() . " " . $config->defaultUnit;
             } else {

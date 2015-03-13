@@ -3,15 +3,15 @@
 /**
  * Abstract base class for filter definition pimcore objects
  */
-abstract class OnlineShop_Framework_AbstractFilterDefinition extends Object_Concrete {
+abstract class OnlineShop_Framework_AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @static
      * @param int $id
-     * @return null|Object_Abstract
+     * @return null|\Pimcore\Model\Object\AbstractObject
      */
     public static function getById($id) {
-        $object = Object_Abstract::getById($id);
+        $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
         if($object instanceof OnlineShop_Framework_AbstractFilterDefinition) {
             return $object;
@@ -47,7 +47,7 @@ abstract class OnlineShop_Framework_AbstractFilterDefinition extends Object_Conc
     * return array of field collections for preconditions
     *
     * @abstract
-    * @return Object_Fieldcollection
+    * @return \Pimcore\Model\Object\Fieldcollection
     */
    public abstract function getConditions();
 
@@ -55,7 +55,7 @@ abstract class OnlineShop_Framework_AbstractFilterDefinition extends Object_Conc
      * return array of field collections for filters
      *
      * @abstract
-     * @return Object_Fieldcollection
+     * @return \Pimcore\Model\Object\Fieldcollection
      */
    public abstract function getFilters();
 
@@ -64,13 +64,13 @@ abstract class OnlineShop_Framework_AbstractFilterDefinition extends Object_Conc
      * enables inheritance for field collections, if xxxInheritance field is available and set to string 'true'
      *
      * @param string $key
-     * @return mixed|Object_Fieldcollection
+     * @return mixed|\Pimcore\Model\Object\Fieldcollection
      */
     public function preGetValue($key) {
 
         if ($this->getClass()->getAllowInherit()
-            && Object_Abstract::doGetInheritedValues()
-            && $this->getClass()->getFieldDefinition($key) instanceof Object_Class_Data_Fieldcollections
+            && \Pimcore\Model\Object\AbstractObject::doGetInheritedValues()
+            && $this->getClass()->getFieldDefinition($key) instanceof \Pimcore\Model\Object\ClassDefinition\Data\Fieldcollections
         ) {
 
             $checkInheritanceKey = $key . "Inheritance";
@@ -87,14 +87,14 @@ abstract class OnlineShop_Framework_AbstractFilterDefinition extends Object_Conc
                     return $parentValue;
                 } else {
                     if (!empty($parentValue)) {
-                        $value = new Object_Fieldcollection($parentValue->getItems());
+                        $value = new \Pimcore\Model\Object\Fieldcollection($parentValue->getItems());
                         if (!empty($data)) {
                             foreach ($data as $entry) {
                                 $value->add($entry);
                             }
                         }
                     } else {
-                        $value = new Object_Fieldcollection($data->getItems());
+                        $value = new \Pimcore\Model\Object\Fieldcollection($data->getItems());
                     }
                     return $value;
                 }

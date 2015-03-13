@@ -120,7 +120,7 @@ class OnlineShop_Framework_ProductList_DefaultMockup {
 
         Logger::warn("Method $method not in Mockup implemented, delegating to object with id {$this->id}.");
 
-        $object = Object_Abstract::getById($this->id);
+        $object = \Pimcore\Model\Object\AbstractObject::getById($this->id);
         if($object) {
             return call_user_func_array(array($object, $method), $args);
         } else {
@@ -131,7 +131,7 @@ class OnlineShop_Framework_ProductList_DefaultMockup {
 
     public function getOriginalObject() {
         Logger::notice("Getting original object {$this->id}.");
-        return Object_Abstract::getById($this->id);
+        return \Pimcore\Model\Object\AbstractObject::getById($this->id);
     }
 
 }

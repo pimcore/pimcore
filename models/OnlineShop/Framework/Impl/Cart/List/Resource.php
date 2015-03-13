@@ -1,6 +1,6 @@
 <?php
 
-class OnlineShop_Framework_Impl_Cart_List_Resource extends Pimcore_Model_List_Resource_Abstract {
+class OnlineShop_Framework_Impl_Cart_List_Resource extends \Pimcore\Model\Listing\Resource\AbstractResource {
 
     protected $cartClass = 'OnlineShop_Framework_Impl_Cart';
 

@@ -16,21 +16,6 @@ class OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField implement
 
                 return $value;
 
-//                    if($unit->getBaseunit()) {
-//
-//                        $baseUnit = DimensionUnitField_Unit::getByAbbreviation($unit->getBaseunit());
-////                        p_r($baseUnit);
-//
-//                        echo $value->getValue() * $unit->getFactor();
-//
-//                        die("sfdsdsdf");
-//
-//                    }
-//
-//
-//
-//                    return $value->getValue();
-
             } else {
                 return $value->__toString();
             }

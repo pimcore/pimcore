@@ -1,6 +1,6 @@
 <?php
 
-abstract class OnlineShop_Framework_AbstractCartItem extends Pimcore_Model_Abstract implements OnlineShop_Framework_ICartItem {
+abstract class OnlineShop_Framework_AbstractCartItem extends \Pimcore\Model\AbstractModel implements OnlineShop_Framework_ICartItem {
 
     /**
      * @var OnlineShop_Framework_ProductInterfaces_ICheckoutable
@@ -52,7 +52,7 @@ abstract class OnlineShop_Framework_AbstractCartItem extends Pimcore_Model_Abstr
         if ($this->product) {
             return $this->product;
         }
-        $this->product = Object_Abstract::getById($this->productId);
+        $this->product = \Pimcore\Model\Object\AbstractObject::getById($this->productId);
         return $this->product;
     }
 

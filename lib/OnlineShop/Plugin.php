@@ -1,6 +1,6 @@
 <?php
 
-class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_API_Plugin_Interface {
+class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\Plugin\PluginInterface {
 
     public static $configFile = "/OnlineShop/config/plugin_config.xml";
 
@@ -34,7 +34,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
      */
     public static function install() {
         //Cart
-        Pimcore_API_Plugin_Abstract::getDb()->query(
+        \Pimcore\Resource::get()->query(
             "CREATE TABLE `plugin_onlineshop_cart` (
               `id` int(20) NOT NULL AUTO_INCREMENT,
               `userid` int(20) NOT NULL,
@@ -46,7 +46,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         );
 
         //CartCheckoutData
-        Pimcore_API_Plugin_Abstract::getDb()->query(
+        \Pimcore\Resource::get()->query(
             "CREATE TABLE `plugin_onlineshop_cartcheckoutdata` (
               `cartId` int(20) NOT NULL,
               `key` varchar(150) COLLATE utf8_bin NOT NULL,
@@ -56,7 +56,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         );
 
         //CartItem
-        Pimcore_API_Plugin_Abstract::getDb()->query(
+        \Pimcore\Resource::get()->query(
             "CREATE TABLE `plugin_onlineshop_cartitem` (
               `productId` int(20) NOT NULL,
               `cartId` int(20) NOT NULL,
@@ -70,7 +70,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         );
 
         //OrderEvent
-        Pimcore_API_Plugin_Abstract::getDb()->query("
+        \Pimcore\Resource::get()->query("
             CREATE TABLE `plugin_customerdb_event_orderEvent` (
               `eventid` int(11) NOT NULL DEFAULT '0',
               `orderObject__id` int(11) DEFAULT NULL,
@@ -90,14 +90,14 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
                 $key = $matches[1];
 
                 try {
-                    $fieldCollection = Object_Fieldcollection_Definition::getByKey($key);
+                    $fieldCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($key);
                 } catch(Exception $e) {
-                    $fieldCollection = new Object_Fieldcollection_Definition();
+                    $fieldCollection = new \Pimcore\Model\Object\Fieldcollection\Definition();
                     $fieldCollection->setKey($key);
                 }
 
                 $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources/' . $filename);
-                $success = Object_Class_Service::importFieldCollectionFromJson($fieldCollection, $data);
+                $success = \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
                 if(!$success){
                     Logger::err("Could not import $key FieldCollection.");
                 }
@@ -144,14 +144,14 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
     }
 
     private static function createClass($classname, $filepath) {
-        $class = Object_Class::getByName($classname);
+        $class = \Pimcore\Model\Object\ClassDefinition::getByName($classname);
         if(!$class) {
-            $class = new Object_Class();
+            $class = new \Pimcore\Model\Object\ClassDefinition();
             $class->setName($classname);
         }
         $json = file_get_contents($filepath);
 
-        $success = Object_Class_Service::importClassDefinitionFromJson($class, $json);
+        $success = \Pimcore\Model\Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
         if(!$success){
             Logger::err("Could not import $classname Class.");
         }
@@ -172,7 +172,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
     public static function isInstalled() {
         $result = null;
         try{
-            $result = Pimcore_API_Plugin_Abstract::getDb()->describeTable("plugin_onlineshop_cartitem");
+            $result = \Pimcore\Resource::get()->describeTable("plugin_onlineshop_cartitem");
         } catch(Exception $e){}
         return !empty($result);
     }
@@ -183,10 +183,10 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
      */
     public static function uninstall() {
 
-        Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cart`");
-        Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartcheckoutdata`");
-        Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartitem`");
-        Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_customerdb_event_orderEvent`");
+        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cart`");
+        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartcheckoutdata`");
+        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartitem`");
+        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugin_customerdb_event_orderEvent`");
 
 
         // execute uninstallation from subsystems
@@ -236,10 +236,10 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
     }
 
     /**
-     * @param Object_Abstract $object
+     * @param \Pimcore\Model\Object\AbstractObject $object
      * @return void
      */
-    public function postAddObject(Object_Abstract $object) {
+    public function postAddObject(\Pimcore\Model\Object\AbstractObject $object) {
         if ($object instanceof OnlineShop_Framework_ProductInterfaces_IIndexable) {
             $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
             $indexService->updateIndex($object);
@@ -247,17 +247,17 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
     }
 
     /**
-     * @param Object_Abstract $object
+     * @param \Pimcore\Model\Object\AbstractObject $object
      * @return void
      */
-    public function postUpdateObject(Object_Abstract $object) {
+    public function postUpdateObject(\Pimcore\Model\Object\AbstractObject $object) {
         if ($object instanceof OnlineShop_Framework_ProductInterfaces_IIndexable) {
             $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
             $indexService->updateIndex($object);
         }
     }
 
-    public function preDeleteObject(Object_Abstract $object) {
+    public function preDeleteObject(\Pimcore\Model\Object\AbstractObject $object) {
         if ($object instanceof OnlineShop_Framework_ProductInterfaces_IIndexable) {
             $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
             $indexService->deleteFromIndex($object);
@@ -294,7 +294,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
             );
 
             $prios = array();
-            $conf = Pimcore_Config::getSystemConfig();
+            $conf = \Pimcore\Config::getSystemConfig();
             if($conf && $conf->general->debugloglevel) {
                 $prioMapping = array_reverse($prioMapping);
                 foreach ($prioMapping as $level => $state) {
@@ -334,7 +334,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
     private static function installPricingRules()
     {
         // PricingRules
-        Pimcore_API_Plugin_Abstract::getDb()->query("
+        \Pimcore\Resource::get()->query("
             CREATE TABLE IF NOT EXISTS `plugin_onlineshop_pricing_rule` (
             `id` INT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             `name` VARCHAR(50) NULL DEFAULT NULL,
@@ -359,7 +359,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         $permission->setKey( $key );
 
         $res = new User_Permission_Definition_Resource();
-        $res->configure( Pimcore_Resource::get() );
+        $res->configure( \Pimcore\Resource::get() );
         $res->setModel( $permission );
         $res->save();
 
@@ -374,12 +374,13 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
      */
     private static function uninstallPricingRules()
     {
+        $db = \Pimcore\Resource::get();
         // remove tables
-        Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_pricing_rule`");
+        $db->query("DROP TABLE IF EXISTS `plugin_onlineshop_pricing_rule`");
 
         // remove permissions
         $key = 'plugin_onlineshop_pricing_rules';
-        $db = Pimcore_Resource::get();
+
         $db->delete('users_permission_definitions', '`key` = ' . $db->quote($key) );
 
         return true;

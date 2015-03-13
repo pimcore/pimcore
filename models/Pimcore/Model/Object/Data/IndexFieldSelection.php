@@ -1,6 +1,8 @@
 <?php
 
-class Object_Data_IndexFieldSelection {
+namespace Pimcore\Model\Object\Data;
+
+class IndexFieldSelection {
 
     /**
      * @var string

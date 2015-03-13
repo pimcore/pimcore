@@ -17,7 +17,7 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_
 
         foreach($values as $v) {
             if(empty($availableRelations) || $availableRelations[$v['value']] === true) {
-                $objects[$v['value']] = Object_Abstract::getById($v['value']);
+                $objects[$v['value']] = \Pimcore\Model\Object\AbstractObject::getById($v['value']);
             }
         }
         Logger::log("done.", Zend_Log::INFO);
@@ -39,7 +39,7 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_
 
     private function loadAllAvailableRelations($availableRelations, $availableRelationsArray = array()) {
         foreach($availableRelations as $rel) {
-            if($rel instanceof Object_Folder) {
+            if($rel instanceof \Pimcore\Model\Object\Folder) {
                 $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChilds(), $availableRelationsArray);
             } else {
                 $availableRelationsArray[$rel->getId()] = true;

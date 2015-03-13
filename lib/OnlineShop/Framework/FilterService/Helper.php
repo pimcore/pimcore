@@ -9,7 +9,7 @@
 class OnlineShop_Framework_FilterService_Helper
 {
 
-    public static function setupProductList(Object_FilterDefinition $filterDefinition, $productList, $params, $view, $filterService, $loadFullPage, $excludeLimitOfFirstpage = false) {
+    public static function setupProductList(\Pimcore\Model\Object\FilterDefinition $filterDefinition, $productList, $params, $view, $filterService, $loadFullPage, $excludeLimitOfFirstpage = false) {
         $orderByOptions = array();
         $orderKeysAsc = explode(",", $filterDefinition->getOrderByAsc());
         if(!empty($orderKeysAsc)) {
@@ -119,7 +119,7 @@ class OnlineShop_Framework_FilterService_Helper
     public static function getFirstFilteredCategory($conditions) {
         if(!empty($conditions)) {
             foreach($conditions as $c) {
-                if($c instanceof Object_Fieldcollection_Data_FilterCategory) {
+                if($c instanceof \Pimcore\Model\Object\Fieldcollection\Data\FilterCategory) {
                     return $c->getPreSelect();
                 }
             }

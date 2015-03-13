@@ -3,7 +3,7 @@
 /**
  * Abstract base class for pimcore objects who should be used as products in the online shop framework
  */
-class OnlineShop_Framework_AbstractProduct extends Object_Concrete implements OnlineShop_Framework_ProductInterfaces_IIndexable, OnlineShop_Framework_ProductInterfaces_ICheckoutable {
+class OnlineShop_Framework_AbstractProduct extends \Pimcore\Model\Object\Concrete implements OnlineShop_Framework_ProductInterfaces_IIndexable, OnlineShop_Framework_ProductInterfaces_ICheckoutable {
 
 // =============================================
 //     IIndexable Methods
@@ -194,10 +194,10 @@ class OnlineShop_Framework_AbstractProduct extends Object_Concrete implements On
     /**
      * @static
      * @param int $id
-     * @return null|Object_Abstract
+     * @return null|\Pimcore\Model\Object\AbstractObject
      */
     public static function getById($id) {
-        $object = Object_Abstract::getById($id);
+        $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
         if ($object instanceof OnlineShop_Framework_AbstractProduct) {
             return $object;

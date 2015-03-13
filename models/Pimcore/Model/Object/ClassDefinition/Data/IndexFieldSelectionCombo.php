@@ -1,21 +1,8 @@
-<?php 
-/**
- * Pimcore
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://www.pimcore.org/license
- *
- * @category   Pimcore
- * @package    Object_Class
- * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
- * @license    http://www.pimcore.org/license     New BSD License
- */
+<?php
 
-class Object_Class_Data_IndexFieldSelectionCombo extends Object_Class_Data_Select {
+namespace Pimcore\Model\Object\ClassDefinition\Data;
+
+class IndexFieldSelectionCombo extends Select {
 
     /**
      * Static type of this element
@@ -35,10 +22,10 @@ class Object_Class_Data_IndexFieldSelectionCombo extends Object_Class_Data_Selec
 
         $indexColumns = array();
         try {
-            $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
-            $indexColumns = $indexService->getIndexColumns(true);
-        } catch (Exception $e) {
-            Logger::err($e);
+            $indexService = \OnlineShop_Framework_Factory::getInstance()->getIndexService();
+            $indexColumns = $indexService->getIndexAttributes(true);
+        } catch (\Exception $e) {
+            \Logger::err($e);
         }
 
         $options = array();
@@ -52,8 +39,8 @@ class Object_Class_Data_IndexFieldSelectionCombo extends Object_Class_Data_Selec
 
         if($this->getSpecificPriceField()) {
             $options[] = array(
-                "key" => OnlineShop_Framework_IProductList::ORDERKEY_PRICE,
-                "value" => OnlineShop_Framework_IProductList::ORDERKEY_PRICE
+                "key" => \OnlineShop_Framework_IProductList::ORDERKEY_PRICE,
+                "value" => \OnlineShop_Framework_IProductList::ORDERKEY_PRICE
             );            
         }
 

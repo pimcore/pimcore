@@ -22,7 +22,7 @@ abstract class OnlineShop_Framework_FilterService_AbstractFilterType {
 
     protected function getField(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition) {
         $field = $filterDefinition->getField();
-        if($field instanceof Object_Data_IndexFieldSelection) {
+        if($field instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
             return $field->getField();
         }
         return $field;
@@ -30,7 +30,7 @@ abstract class OnlineShop_Framework_FilterService_AbstractFilterType {
 
     protected function getPreSelect(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition) {
         $field = $filterDefinition->getField();
-        if($field instanceof Object_Data_IndexFieldSelection) {
+        if($field instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
             return $field->getPreSelect();
         } else if(method_exists($filterDefinition, "getPreSelect")) {
             return $filterDefinition->getPreSelect();

@@ -28,7 +28,7 @@ class OnlineShop_MyController extends Website_Controller_Action {
 //        $key = $cm->createCart(array("name" => "mycart"));
 
 
-        $cm->addToCart(Object_Concrete::getById(430), 4, 14, array()); //array("key" => 'mycart', "itemid" => 4459, "count" => 4));
+        $cm->addToCart(\Pimcore\Model\Object\Concrete::getById(430), 4, 14, array()); //array("key" => 'mycart', "itemid" => 4459, "count" => 4));
 
 
 

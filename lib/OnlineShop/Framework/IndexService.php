@@ -24,10 +24,10 @@ class OnlineShop_Framework_IndexService {
 
                 $tenantConfig = $tenant;
                 if($tenant->file) {
-                    if(!$tenantConfig = Pimcore_Model_Cache::load("onlineshop_config_assortment_tenant_" . $tenantConfigClass)) {
+                    if(!$tenantConfig = \Pimcore\Model\Cache::load("onlineshop_config_assortment_tenant_" . $tenantConfigClass)) {
                         $tenantConfig = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file), null, true);
                         $tenantConfig = $tenantConfig->tenant;
-                        Pimcore_Model_Cache::save($tenantConfig, "onlineshop_config_assortment_tenant_" . $tenantConfigClass, array("ecommerceconfig"), 9999);
+                        \Pimcore\Model\Cache::save($tenantConfig, "onlineshop_config_assortment_tenant_" . $tenantConfigClass, array("ecommerceconfig"), 9999);
                     }
                 }
 

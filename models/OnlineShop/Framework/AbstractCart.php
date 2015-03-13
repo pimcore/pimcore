@@ -1,5 +1,5 @@
 <?php
-abstract class OnlineShop_Framework_AbstractCart extends Pimcore_Model_Abstract implements OnlineShop_Framework_ICart {
+abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\AbstractModel implements OnlineShop_Framework_ICart {
 
     private $ignoreReadonly = false;
 

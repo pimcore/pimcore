@@ -65,7 +65,7 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
 
                 $itemList = new OnlineShop_Framework_Impl_CartItem_List();
                 $itemList->setCartItemClassName( $cart->getCartItemClassName() );
-                $db = Pimcore_Resource::get();
+                $db = \Pimcore\Resource::get();
                 $itemList->setCondition("cartId = " . $db->quote($cart->getId()) . " AND parentItemKey = ''");
                 $items = array();
                 foreach ($itemList->getCartItems() as $item) {
@@ -107,7 +107,7 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
      */
     public static function getAllCartsForUser($userId) {
         $list = new OnlineShop_Framework_Impl_Cart_List();
-        $db = Pimcore_Resource::get();
+        $db = \Pimcore\Resource::get();
         $list->setCondition("userid = " . $db->quote($userId));
         $list->setCartClass( get_called_class() );
         return $list->getCarts();

@@ -14,7 +14,7 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
     public static function updateIndex($objectListClass, $condition = "", $updateIndexStructures = false, $loggername = "indexupdater") {
         $updater = OnlineShop_Framework_Factory::getInstance()->getIndexService();
         if($updateIndexStructures) {
-            Pimcore_Model_Cache::clearTag("ecommerceconfig");
+            \Pimcore\Model\Cache::clearTag("ecommerceconfig");
             $updater->createOrUpdateIndexStructures();
         }
 
@@ -152,7 +152,7 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
     }
 
     private static function log($loggername, $message) {
-        Pimcore_Log_Simple::log($loggername, $message);
+        \Pimcore\Log\Simple::log($loggername, $message);
         echo $message . "\n";
     }
 

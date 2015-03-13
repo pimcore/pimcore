@@ -22,7 +22,7 @@ class OnlineShop_Framework_FilterService_FilterGroupHelper
             $values = $productList->getGroupByRelationValues($field);
 
             foreach($values as $v) {
-                $obj = Object_Abstract::getById($v);
+                $obj = \Pimcore\Model\Object\AbstractObject::getById($v);
                 if($obj) {
                     $name = $obj->getKey();
                     if(method_exists($obj, "getName")) {
@@ -38,7 +38,7 @@ class OnlineShop_Framework_FilterService_FilterGroupHelper
             sort($values);
 
             foreach($values as $v) {
-                $helper = explode(OnlineShop_Framework_IndexService_Tenant_Worker::MULTISELECT_DELIMITER, $v);
+                $helper = explode(OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER, $v);
                 foreach($helper as $h) {
                     $data[$h] = array("key" => $h, "value" => $h);
                 }
@@ -49,7 +49,7 @@ class OnlineShop_Framework_FilterService_FilterGroupHelper
             foreach($values as $v) {
                 $helper = explode(",", $v);
                 foreach($helper as $h) {
-                    $obj = Object_Abstract::getById($h);
+                    $obj = \Pimcore\Model\Object\AbstractObject::getById($h);
                     if($obj) {
                         $name = $obj->getKey();
                         if(method_exists($obj, "getName")) {

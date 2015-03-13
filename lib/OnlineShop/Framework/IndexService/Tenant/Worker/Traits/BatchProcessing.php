@@ -45,14 +45,17 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
 
         foreach($subObjectIds as $subObjectId => $object) {
+            /**
+             * @var OnlineShop_Framework_ProductInterfaces_IIndexable $object
+             */
 
             if($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = Pimcore::inAdmin();
-                $b = Object_Abstract::doGetInheritedValues();
+                $b = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
                 Pimcore::unsetAdminMode();
-                Object_Abstract::setGetInheritedValues(true);
-                $hidePublishedMemory = Object_Abstract::doHideUnpublished();
-                Object_Abstract::setHideUnpublished(false);
+                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
+                $hidePublishedMemory = \Pimcore\Model\Object\AbstractObject::doHideUnpublished();
+                \Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
                 $categories = $object->getCategories();
                 $categoryIds = array();
                 $parentCategoryIds = array();
@@ -83,7 +86,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
                     $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
                 }
 
-                $virtualProduct = Object_Abstract::getById($virtualProductId);
+                $virtualProduct = \Pimcore\Model\Object\AbstractObject::getById($virtualProductId);
                 if($virtualProduct && method_exists($virtualProduct, "isActive")) {
                     $virtualProductActive = $virtualProduct->isActive();
                 }
@@ -164,8 +167,8 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
                 if($a) {
                     Pimcore::setAdminMode();
                 }
-                Object_Abstract::setGetInheritedValues($b);
-                Object_Abstract::setHideUnpublished($hidePublishedMemory);
+                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($b);
+                \Pimcore\Model\Object\AbstractObject::setHideUnpublished($hidePublishedMemory);
 
 
                 $subTenantData = $this->tenantConfig->prepareSubTenantEntries($object, $subObjectId);
@@ -218,7 +221,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
      * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
      */
     public function fillupPreparationQueue(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
-        if($object instanceof Object_Concrete) {
+        if($object instanceof \Pimcore\Model\Object\Concrete) {
 
             //need check, if there are sub objects because update on empty result set is too slow
             $objects = $this->db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", array($object->getFullPath() . "/%"));
@@ -255,7 +258,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
             foreach($entries as $objectId) {
                 Logger::info("Worker $workerId preparing data for index for element " . $objectId);
 
-                $object = Object_Abstract::getById($objectId);
+                $object = \Pimcore\Model\Object\AbstractObject::getById($objectId);
                 if($object instanceof OnlineShop_Framework_ProductInterfaces_IIndexable) {
                     $this->prepareDataForIndex($object);
                 } else {

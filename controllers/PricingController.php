@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
  
-class OnlineShop_PricingController extends Pimcore_Controller_Action_Admin
+class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
 {
     /**
      * init pricing config system
@@ -77,7 +77,7 @@ class OnlineShop_PricingController extends Pimcore_Controller_Action_Admin
         {
             // get data
             $condition = $rule->getCondition();
-            foreach(Pimcore_Tool::getValidLanguages() as $lang)
+            foreach(\Pimcore\Tool::getValidLanguages() as $lang)
             {
                 $localizedLabel[ $lang ] = $rule->getLabel( $lang );
                 $localizedDescription[ $lang ] = $rule->getDescription( $lang );
@@ -186,7 +186,7 @@ class OnlineShop_PricingController extends Pimcore_Controller_Action_Admin
                 ->setActive( (bool)$data->settings->active );
 
             // apply lang fields
-            foreach(Pimcore_Tool::getValidLanguages() as $lang)
+            foreach(\Pimcore\Tool::getValidLanguages() as $lang)
             {
                 $rule->setLabel( $data->settings->{'label.' . $lang}, $lang );
                 $rule->setDescription( $data->settings->{'description.' . $lang}, $lang );

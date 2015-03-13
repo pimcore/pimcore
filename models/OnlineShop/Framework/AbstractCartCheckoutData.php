@@ -1,6 +1,6 @@
 <?php
 
-abstract class OnlineShop_Framework_AbstractCartCheckoutData extends Pimcore_Model_Abstract {
+abstract class OnlineShop_Framework_AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel {
 
     protected $key;
     protected $data;

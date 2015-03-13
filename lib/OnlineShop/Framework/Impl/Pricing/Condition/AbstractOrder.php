@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: tballmann
- * Date: 11.04.13
- * Time: 10:27
- * To change this template use File | Settings | File Templates.
- */
 
 abstract class OnlineShop_Framework_Impl_Pricing_Condition_AbstractOrder implements OnlineShop_Framework_Pricing_ICondition
 {
@@ -69,12 +62,12 @@ SQL;
             try
             {
                 $query = sprintf($query
-                    , \Object_OnlineShopOrderItem::classId()
-                    , \Object_OnlineShopOrder::classId()
+                    , \Pimcore\Model\Object\OnlineShopOrderItem::classId()
+                    , \Pimcore\Model\Object\OnlineShopOrder::classId()
                     , $rule->getId()
                 );
 
-                $conn = \Pimcore_Resource::getConnection();
+                $conn = \Pimcore\Resource::getConnection();
                 self::$cache[ $rule->getId() ] = $conn->fetchRow( $query );
             }
             catch(Exception $e)

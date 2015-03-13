@@ -10,7 +10,7 @@
                 <span class="value"></span>
                 <?php
                     $current = "";
-                    $currentCategory = Object_ProductCategory::getById($this->currentValue);
+                    $currentCategory = \Pimcore\Model\Object\ProductCategory::getById($this->currentValue);
                     if($currentCategory) {
                         $current = $currentCategory->getName();
                     }
@@ -21,7 +21,7 @@
         <div class="options js_options">
             <ul>
                 <?php foreach($this->values as $value) { ?>
-                    <?php $cat = Object_ProductCategory::getById($value['value']); ?>
+                    <?php $cat = \Pimcore\Model\Object\ProductCategory::getById($value['value']); ?>
                     <?php if($cat->isPublished()) { ?>
                         <li><span class="option js_optionfilter_option" rel="<?= $value['value'] ?>"><?= $cat->getName() ?>  ( <?= $value['count'] ?> ) </span></li>
                     <?php } ?>

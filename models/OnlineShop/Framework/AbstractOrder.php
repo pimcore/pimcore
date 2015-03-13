@@ -3,7 +3,7 @@
 /**
  * Abstract base class for order pimcore objects
  */
-class OnlineShop_Framework_AbstractOrder extends \Pimcore\Model\Object\AbstractObject {
+class OnlineShop_Framework_AbstractOrder extends \Pimcore\Model\Object\Concrete {
 
     const ORDER_STATE_COMMITTED = "committed";
     const ORDER_STATE_CANCELLED = "cancelled";

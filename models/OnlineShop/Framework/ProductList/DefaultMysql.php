@@ -601,7 +601,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
             $orderByStringArray = array();
             foreach($directionOrderKeys as $keyDirection) {
                 $key = $keyDirection[0];
-                if($key instanceof Object_Data_IndexFieldSelection) {
+                if($key instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
                     $key = $key->getField();
                 }
                 $direction = $keyDirection[1];

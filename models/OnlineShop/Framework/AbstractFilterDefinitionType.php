@@ -3,7 +3,7 @@
 /**
  * Abstract base class for filter definition type field collections
  */
-abstract class OnlineShop_Framework_AbstractFilterDefinitionType extends Object_Fieldcollection_Data_Abstract {
+abstract class OnlineShop_Framework_AbstractFilterDefinitionType extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData {
 
     /**
     * @return string

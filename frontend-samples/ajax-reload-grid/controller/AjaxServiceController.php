@@ -4,9 +4,9 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
 
     public function reloadProductsAction() {
         /**
-         * @var $filterDefinition Object_FilterDefinition
+         * @var $filterDefinition \Pimcore\Model\Object\Fieldcollection
          */
-        $filterDefinition = Object_FilterDefinition::getById(intval($this->_getParam("filterdef")));
+        $filterDefinition = \Pimcore\Model\Object\Fieldcollection::getById(intval($this->_getParam("filterdef")));
         $this->view->filterDefinitionObject = $filterDefinition;
 
         $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
@@ -38,11 +38,11 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
         }
 
         /**
-         * @var $filterDefinition Object_FilterDefinition
+         * @var $filterDefinition \Pimcore\Model\Object\FilterDefinition
          */
         $filterDefinition = $this->_getParam("filterdefinition");
-        if(!$filterDefinition instanceof Object_FilterDefinition) {
-            $filterDefinition = Object_FilterDefinition::getById(intval($this->_getParam("filterdef")));
+        if(!$filterDefinition instanceof \Pimcore\Model\Object\FilterDefinition) {
+            $filterDefinition = \Pimcore\Model\Object\FilterDefinition::getById(intval($this->_getParam("filterdef")));
             if(!$filterDefinition) {
                 throw new Exception("Filter Definition not found!");
             }

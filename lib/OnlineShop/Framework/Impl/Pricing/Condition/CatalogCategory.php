@@ -136,10 +136,10 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory implements Onl
     /**
      * @param $id
      *
-     * @return Object_Abstract|null
+     * @return \Pimcore\Model\Object\Concrete|null
      */
     protected function loadCategory($id)
     {
-        return Object_Concrete::getById($id);
+        return \Pimcore\Model\Object\Concrete::getById($id);
     }
 }

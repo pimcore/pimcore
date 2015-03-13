@@ -25,7 +25,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_MockupCache {
      */
     protected function deleteFromMockupCache($objectId) {
         $key = $this->getMockupCachePrefix() . "_" . $this->name . "_" . $objectId;
-        Pimcore_Model_Cache::remove($key);
+        \Pimcore\Model\Cache::remove($key);
     }
 
     /**
@@ -44,8 +44,8 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_MockupCache {
         $mockup = $this->tenantConfig->createMockupObject($objectId, $data['data'], $data['relations']);
 
         $key = $this->createMockupCacheKey($objectId);
-        $success = Pimcore_Model_Cache::save(serialize($mockup), $key, [$this->getMockupCachePrefix()], null, 0, true);
-        $result = Pimcore_Model_Cache::load($key);
+        $success = \Pimcore\Model\Cache::save(serialize($mockup), $key, [$this->getMockupCachePrefix()], null, 0, true);
+        $result = \Pimcore\Model\Cache::load($key);
         if($success && $result) {
             $this->db->query("UPDATE " . $this->getStoreTableName() . " SET crc_index = crc_current WHERE id = ? and tenant = ?", array($objectId, $this->name));
         } else {
@@ -63,7 +63,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_MockupCache {
      */
     public function getMockupFromCache($objectId) {
         $key = $this->createMockupCacheKey($objectId);
-        $cachedItem = Pimcore_Model_Cache::load($key);
+        $cachedItem = \Pimcore\Model\Cache::load($key);
         if($cachedItem) {
             $mockup = unserialize($cachedItem);
             if($mockup instanceof OnlineShop_Framework_ProductList_DefaultMockup) {
