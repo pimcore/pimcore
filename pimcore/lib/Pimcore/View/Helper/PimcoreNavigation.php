@@ -17,6 +17,8 @@
 namespace Pimcore\View\Helper;
 
 use Pimcore\Model\Document;
+use Pimcore\Model\Cache;
+use Pimcore\Model\Site;
 
 class PimcoreNavigation extends \Zend_View_Helper_Navigation
 {
@@ -38,7 +40,11 @@ class PimcoreNavigation extends \Zend_View_Helper_Navigation
     }
 
     /**
-     * @return PimcoreNavigationController
+     * @param null $activeDocument
+     * @param null $navigationRootDocument
+     * @param null $htmlMenuIdPrefix
+     * @return $this|PimcoreNavigationController
+     * @throws \Zend_View_Exception
      */
     public function pimcoreNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null)
     {
@@ -92,16 +98,6 @@ class PimcoreNavigation extends \Zend_View_Helper_Navigation
 class PimcoreNavigationController
 {
     /**
-     * @var Document
-     */
-    protected $_activeDocument;
-
-    /**
-     * @var
-     */
-    protected $_navigationContainer;
-
-    /**
      * @var string
      */
     protected $_htmlMenuIdPrefix;
@@ -113,20 +109,97 @@ class PimcoreNavigationController
 
     public function getNavigation($activeDocument, $navigationRootDocument = null, $htmlMenuIdPrefix = null)
     {
-
-        $this->_activeDocument = $activeDocument;
         $this->_htmlMenuIdPrefix = $htmlMenuIdPrefix;
-
-        $this->_navigationContainer = new \Zend_Navigation();
 
         if (!$navigationRootDocument) {
             $navigationRootDocument = Document::getById(1);
         }
 
-        if ($navigationRootDocument->hasChilds()) {
-            $this->buildNextLevel($navigationRootDocument, null, true);
+        $siteSuffix = "";
+        if(Site::isSiteRequest()) {
+            $site = Site::getCurrentSite();
+            $siteSuffix = "__site_" . $site->getId();
         }
-        return $this->_navigationContainer;
+        $cacheKey = "navigation_" . $navigationRootDocument->getId() . $siteSuffix;
+
+        if(!$navigation = Cache::load($cacheKey)) {
+            $navigation = new \Zend_Navigation();
+
+            if ($navigationRootDocument->hasChilds()) {
+                $rootPage = $this->buildNextLevel($navigationRootDocument, true);
+                $navigation->addPages($rootPage);
+            }
+
+            // we need to force caching here, otherwise the active classes and other settings will be set and later
+            // also written into cache (pass-by-reference) ... when serializing the data directly here, we don't have this problem
+            Cache::save($navigation, $cacheKey, ["output","navigation"], null, 999, true);
+        }
+
+        // set active path
+        $activePage = $navigation->findOneBy("realFullPath", $activeDocument->getRealFullPath());
+        if(!$activePage) {
+            // find by link target
+            $activePage = $navigation->findOneBy("uri", $activeDocument->getRealFullPath());
+        }
+
+        if($activePage) {
+            // we found an active document, so we can build the active trail by getting respectively the parent
+            $this->addActiveCssClasses($activePage, true);
+        } else {
+            // we don't have an active document, so we try to build the trail on our own
+            $allPages = $navigation->findAllBy("uri", "/.*/", true);
+
+            foreach($allPages as $page) {
+                $activeTrail = false;
+
+                if (strpos($activeDocument->getRealFullPath(), $page->getRealFullPath() . "/") === 0) {
+                    $activeTrail = true;
+                }
+
+                if($page->getDocumentType() == "link") {
+                    if (strpos($activeDocument->getFullPath(), $page->getUri() . "/") === 0) {
+                        $activeTrail = true;
+                    }
+                }
+
+                if($activeTrail) {
+                    $page->setActive(true);
+                    $page->setClass($page->getClass() . " active active-trail");
+                }
+            }
+        }
+
+        return $navigation;
+    }
+
+    /**
+     * @param \Pimcore\Navigation\Page\Uri $page
+     */
+    protected function addActiveCssClasses($page, $isActive = false) {
+        $page->setActive(true);
+
+        $parent = $page->getParent();
+        $isRoot = false;
+        $classes = "";
+
+        if($parent instanceof \Pimcore\Navigation\Page\Uri) {
+            $this->addActiveCssClasses($parent);
+        } else {
+            $isRoot = true;
+        }
+
+        $classes .= " active";
+
+        if(!$isActive) {
+            $classes .= " active-trail";
+        }
+
+        if ($isRoot && $isActive) {
+            $classes .= " mainactive";
+        }
+
+
+        $page->setClass($page->getClass() . $classes);
     }
 
     /**
@@ -160,11 +233,10 @@ class PimcoreNavigationController
 
     /**
      * @param $parentDocument
-     * @param null $parentPage
      * @param bool $isRoot
      * @return array
      */
-    protected function buildNextLevel($parentDocument, $parentPage = null, $isRoot = false)
+    protected function buildNextLevel($parentDocument, $isRoot = false)
     {
         $pages = array();
 
@@ -179,26 +251,6 @@ class PimcoreNavigationController
 
                 if (($child instanceof Document\Page or $child instanceof Document\Link) and $child->getProperty("navigation_name")) {
 
-                    $active = false;
-
-                    if ($this->_activeDocument->getRealFullPath() == $child->getRealFullPath()) {
-                        $active = true;
-                    } else if (strpos($this->_activeDocument->getRealFullPath(), $child->getRealFullPath() . "/") === 0) {
-                      $classes .= " active active-trail";
-                    }
-
-                    // if the child is a link, check if the target is the same as the active document
-                    // if so, mark it as active
-                    if($child instanceof Document\Link) {
-                        if ($this->_activeDocument->getFullPath() == $child->getHref()) {
-                            $active = true;
-                        }
-
-                        if (strpos($this->_activeDocument->getFullPath(), $child->getHref() . "/") === 0) {
-                            $classes .= " active active-trail";
-                        }
-                    }
-
                     $path = $child->getFullPath();
                     if ($child instanceof Document\Link) {
                         $path = $child->getHref();
@@ -207,7 +259,7 @@ class PimcoreNavigationController
                     $page = new $this->_pageClass();
                     $page->setUri($path . $child->getProperty("navigation_parameters") . $child->getProperty("navigation_anchor"));
                     $page->setLabel($child->getProperty("navigation_name"));
-                    $page->setActive($active);
+                    $page->setActive(false);
                     $page->setId($this->_htmlMenuIdPrefix . $child->getId());
                     $page->setClass($child->getProperty("navigation_class"));
                     $page->setTarget($child->getProperty("navigation_target"));
@@ -221,25 +273,18 @@ class PimcoreNavigationController
                         $page->setVisible(false);
                     }
 
-                    if ($active and !$isRoot) {
-                        $classes .= " active";
-                    } else if ($active and $isRoot) {
-                        $classes .= " main mainactive active";
-                    } else if ($isRoot) {
-                       $classes .= " main";
+                    if ($isRoot) {
+                        $classes .= " main";
                     }
+
                     $page->setClass($page->getClass() . $classes);
 
                     if ($child->hasChilds()) {
-                        $childPages = $this->buildNextLevel($child, $page, false);
+                        $childPages = $this->buildNextLevel($child, false);
                         $page->setPages($childPages);
                     }
 
                     $pages[] = $page;
-
-                    if ($isRoot) {
-                        $this->_navigationContainer->addPage($page);
-                    }
                 }
             }
         }

@@ -27,6 +27,11 @@ trait Wrapper {
      */
     protected $hardLinkSource;
 
+    /**
+     * @var Document
+     */
+    protected $sourceDocument;
+
     // OVERWRITTEN METHODS
     public function save() {
         $this->raiseHardlinkError();
@@ -48,6 +53,14 @@ trait Wrapper {
                 $sourceProperties = $this->getResource()->getProperties();
             } else {
                 $sourceProperties = array();
+            }
+
+            if($this->getSourceDocument()) {
+                // if we have a source document, that means that this document is not directly linked, it's a
+                // child of a hardlink that uses "childFromSource", so in this case we use the source properties
+                // this is especially important for the navigation, otherwise all children will have the same
+                // navigation_name as the source hardlink, which doesn't make sense at all
+                $sourceProperties = $this->getSourceDocument()->getProperties();
             }
 
             $hardLinkProperties = array();
@@ -84,8 +97,10 @@ trait Wrapper {
             if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
                 $childs = parent::getChilds();
                 foreach($childs as &$c) {
+                    $sourceDocument = $c;
                     $c = Service::wrap($c);
                     $c->setHardLinkSource($hardLink);
+                    $c->setSourceDocument($sourceDocument);
                     $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . "@", $hardLink->getRealFullpath(), $c->getRealPath()));
                 }
             }
@@ -130,5 +145,21 @@ trait Wrapper {
     public function getHardLinkSource()
     {
         return $this->hardLinkSource;
+    }
+
+    /**
+     * @return Document
+     */
+    public function getSourceDocument()
+    {
+        return $this->sourceDocument;
+    }
+
+    /**
+     * @param Document $sourceDocument
+     */
+    public function setSourceDocument($sourceDocument)
+    {
+        $this->sourceDocument = $sourceDocument;
     }
 }

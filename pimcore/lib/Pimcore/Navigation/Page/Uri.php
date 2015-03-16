@@ -41,6 +41,17 @@ class Uri extends \Zend_Navigation_Page_Uri
     protected $_documentId;
 
     /**
+     * @var string
+     */
+    protected $documentType;
+
+    /**
+     * @var string
+     */
+    protected $realFullPath;
+
+
+    /**
      * @param  $tabindex
      * @return void
      */
@@ -102,8 +113,12 @@ class Uri extends \Zend_Navigation_Page_Uri
     {
         if($document instanceof Document\Hardlink\Wrapper\WrapperInterface) {
             $this->setDocumentId($document->getHardlinkSource()->getId());
+            $this->setDocumentType($document->getHardlinkSource()->getType());
+            $this->setRealFullPath($document->getHardlinkSource()->getRealFullPath());
         } else if($document instanceof Document) {
             $this->setDocumentId($document->getId());
+            $this->setDocumentType($document->getType());
+            $this->setRealFullPath($document->getRealFullPath());
         }
         return $this;
     }
@@ -139,5 +154,37 @@ class Uri extends \Zend_Navigation_Page_Uri
     public function setDocumentId($documentId)
     {
         $this->_documentId = $documentId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDocumentType()
+    {
+        return $this->documentType;
+    }
+
+    /**
+     * @param mixed $documentType
+     */
+    public function setDocumentType($documentType)
+    {
+        $this->documentType = $documentType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRealFullPath()
+    {
+        return $this->realFullPath;
+    }
+
+    /**
+     * @param string $realFullPath
+     */
+    public function setRealFullPath($realFullPath)
+    {
+        $this->realFullPath = $realFullPath;
     }
 }
