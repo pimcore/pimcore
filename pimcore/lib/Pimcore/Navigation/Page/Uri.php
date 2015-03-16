@@ -50,6 +50,11 @@ class Uri extends \Zend_Navigation_Page_Uri
      */
     protected $realFullPath;
 
+    /**
+     * @var array
+     */
+    protected $customSettings = [];
+
 
     /**
      * @param  $tabindex
@@ -186,5 +191,27 @@ class Uri extends \Zend_Navigation_Page_Uri
     public function setRealFullPath($realFullPath)
     {
         $this->realFullPath = $realFullPath;
+    }
+
+    /**
+     * @param $name
+     * @param $value
+     * @return $this
+     */
+    public function setCustomSetting($name, $value) {
+        $this->customSettings[$name] = $value;
+        return $this;
+    }
+
+    /**
+     * @param $name
+     * @return null
+     */
+    public function getCustomSetting($name) {
+        if(array_key_exists($name, $this->customSettings)) {
+            return $this->customSettings[$name];
+        }
+
+        return null;
     }
 }

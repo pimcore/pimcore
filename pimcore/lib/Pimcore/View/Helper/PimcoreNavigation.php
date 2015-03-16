@@ -46,14 +46,14 @@ class PimcoreNavigation extends \Zend_View_Helper_Navigation
      * @return $this|PimcoreNavigationController
      * @throws \Zend_View_Exception
      */
-    public function pimcoreNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null)
+    public function pimcoreNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null)
     {
 
         $controller = self::getController();
 
         if($activeDocument) {
             // this is the new more convenient way of creating a navigation
-            $navContainer = $controller->getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix);
+            $navContainer = $controller->getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback);
             $this->navigation($navContainer);
             $this->setUseTranslator(false);
             $this->setInjectTranslator(false);
@@ -107,7 +107,7 @@ class PimcoreNavigationController
      */
     protected $_pageClass = '\\Pimcore\\Navigation\\Page\\Uri';
 
-    public function getNavigation($activeDocument, $navigationRootDocument = null, $htmlMenuIdPrefix = null)
+    public function getNavigation($activeDocument, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null)
     {
         $this->_htmlMenuIdPrefix = $htmlMenuIdPrefix;
 
@@ -126,7 +126,7 @@ class PimcoreNavigationController
             $navigation = new \Zend_Navigation();
 
             if ($navigationRootDocument->hasChilds()) {
-                $rootPage = $this->buildNextLevel($navigationRootDocument, true);
+                $rootPage = $this->buildNextLevel($navigationRootDocument, true, $pageCallback);
                 $navigation->addPages($rootPage);
             }
 
@@ -236,7 +236,7 @@ class PimcoreNavigationController
      * @param bool $isRoot
      * @return array
      */
-    protected function buildNextLevel($parentDocument, $isRoot = false)
+    protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null)
     {
         $pages = array();
 
@@ -278,6 +278,10 @@ class PimcoreNavigationController
                     }
 
                     $page->setClass($page->getClass() . $classes);
+
+                    if($pageCallback) {
+                        $pageCallback($page, $child);
+                    }
 
                     if ($child->hasChilds()) {
                         $childPages = $this->buildNextLevel($child, false);
