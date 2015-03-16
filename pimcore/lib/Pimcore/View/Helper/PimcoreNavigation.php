@@ -43,8 +43,9 @@ class PimcoreNavigation extends \Zend_View_Helper_Navigation
      * @param null $activeDocument
      * @param null $navigationRootDocument
      * @param null $htmlMenuIdPrefix
+     * @param callable $pageCallback
      * @return $this|PimcoreNavigationController
-     * @throws \Zend_View_Exception
+     * @throws \Zend_View_Exception+
      */
     public function pimcoreNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null)
     {
@@ -107,6 +108,15 @@ class PimcoreNavigationController
      */
     protected $_pageClass = '\\Pimcore\\Navigation\\Page\\Uri';
 
+    /**
+     * @param $activeDocument
+     * @param null $navigationRootDocument
+     * @param null $htmlMenuIdPrefix
+     * @param callable $pageCallback
+     * @return mixed|\Zend_Navigation
+     * @throws \Exception
+     * @throws \Zend_Navigation_Exception
+     */
     public function getNavigation($activeDocument, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null)
     {
         $this->_htmlMenuIdPrefix = $htmlMenuIdPrefix;
@@ -234,6 +244,7 @@ class PimcoreNavigationController
     /**
      * @param $parentDocument
      * @param bool $isRoot
+     * @param callable $pageCallback
      * @return array
      */
     protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null)
