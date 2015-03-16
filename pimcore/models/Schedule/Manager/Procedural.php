@@ -73,7 +73,6 @@ class Procedural {
 
         if (!$job->isLocked() || $force || $this->getForce()) {
             $this->jobs[] = $job;
-            $job->lock();
 
             \Logger::info("Registered job with ID: " . $job->getId());
 
@@ -92,6 +91,7 @@ class Procedural {
         $this->setLastExecution();
 
         foreach ($this->jobs as $job) {
+            $job->lock();
             \Logger::info("Executing job with ID: " . $job->getId());
             try {
                 $job->execute();
