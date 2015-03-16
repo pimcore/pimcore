@@ -170,7 +170,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
         $device = $deviceDetector->getDevice();
         $deviceDetector->setWasUsed(false);
 
-        $this->defaultCacheKey = "output_" . md5(Tool::getHostname() . $requestUri);
+        $this->defaultCacheKey = "output_" . md5($request->getHttpHost() . $requestUri);
         $cacheKeys = [
             $this->defaultCacheKey . "_" . $device,
             $this->defaultCacheKey,
