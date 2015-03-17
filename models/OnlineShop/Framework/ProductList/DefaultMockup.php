@@ -82,7 +82,7 @@ class OnlineShop_Framework_ProductList_DefaultMockup {
         $relationObjectArray = array();
         if($this->relations[$attributeName]) {
             foreach($this->relations[$attributeName] as $relation) {
-                $relationObject = Element_Service::getElementById($relation['type'], $relation['id']);
+                $relationObject = \Pimcore\Model\Element\Service::getElementById($relation['type'], $relation['id']);
                 if($relationObject) {
                     $relationObjectArray[] = $relationObject;
                 }

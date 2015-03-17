@@ -7,10 +7,10 @@ class OnlineShop_Framework_IndexService_Interpreter_DefaultRelations implements 
 
         if(is_array($value)) {
             foreach($value as $v) {
-                $result[] = array("dest" => $v->getId(), "type" => Element_Service::getElementType($v));
+                $result[] = array("dest" => $v->getId(), "type" => \Pimcore\Model\Element\Service::getElementType($v));
             }
-        } else if($value instanceof Element_Abstract) {
-            $result[] = array("dest" => $value->getId(), "type" => Element_Service::getElementType($value));
+        } else if($value instanceof \Pimcore\Model\Element\AbstractElement) {
+            $result[] = array("dest" => $value->getId(), "type" => \Pimcore\Model\Element\Service::getElementType($value));
         }
         return $result;
     }
