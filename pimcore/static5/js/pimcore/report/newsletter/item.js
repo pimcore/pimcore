@@ -67,15 +67,21 @@ pimcore.report.newsletter.item = Class.create({
         var store;
 
         if(pimcore.settings.google_analytics_enabled) {
-            store = new Ext.data.JsonStore({
+            store = new Ext.data.Store({
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/reports/analytics/chartmetricdata',
+                    extraParams: {
+                        "metric[]": "visits",
+                        filters: "ga:campaign==" + this.data.name + ";ga:medium==Email;ga:source==Newsletter"
+                    },
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'data'
+                    }
+                },
                 autoDestroy: true,
                 autoLoad: true,
-                url: '/admin/reports/analytics/chartmetricdata',
-                baseParams: {
-                    "metric[]": "visits",
-                    filters: "ga:campaign==" + this.data.name + ";ga:medium==Email;ga:source==Newsletter"
-                },
-                root: 'data',
                 fields: ['timestamp','datetext','visits']
             });
         } else {
@@ -91,17 +97,40 @@ pimcore.report.newsletter.item = Class.create({
             hidden: !this.getAnalyticsVisiblity(),
             title: t("google_analytics"),
             items: [{
-                xtype: 'linechart',
+                xtype: 'cartesian',
                 store: store,
-                xField: 'datetext',
+
                 height: 240,
+                axes: [{
+                    type: 'numeric',
+                    fields: ['visits' ],
+                    position: 'left',
+                    grid: true
+                }
+                    , {
+                        type: 'category',
+                        fields: 'datetext',
+                        position: 'bottom',
+                        grid: true,
+                        label: {
+                            rotate: {
+                                degrees: -45
+                            }
+                        }
+                    }
+                ],
                 series: [
                     {
                         type:'line',
                         displayName: t("visits"),
+                        xField: 'datetext',
                         yField: 'visits',
                         style: {
-                            color: 0x15428B
+                            lineWidth: 2,
+                            color:0x15428B
+                        },
+                        marker: {
+                            radius: 4
                         }
                     }
                 ]
@@ -152,7 +181,7 @@ pimcore.report.newsletter.item = Class.create({
         });
 
         this.form = new Ext.form.FormPanel({
-            layout: "pimcoreform",
+            //layout: "pimcoreform",
             region: "center",
             bodyStyle: "padding:10px",
             labelWidth: 150,
@@ -167,21 +196,21 @@ pimcore.report.newsletter.item = Class.create({
                     name: "name",
                     value: this.data.name,
                     fieldLabel: t("name"),
-                    width: 300,
+                    width: 450,
                     disabled: true
                 },{
                     xtype: "textarea",
                     name: "description",
                     value: this.data.description,
                     fieldLabel: t("description"),
-                    width: 300,
+                    width: 450,
                     height: 50
                 },{
                     xtype: "textfield",
                     name: "document",
                     value: this.data.document,
                     fieldLabel: t("document"),
-                    width: 300,
+                    width: 450,
                     cls: "input_drop_target",
                     enableKeyEvents: true,
                     listeners: {
@@ -198,8 +227,9 @@ pimcore.report.newsletter.item = Class.create({
                                 },
 
                                 onNodeDrop : function (el, target, dd, e, data) {
-                                    if (data.node.attributes.elementType == "document") {
-                                        el.setValue(data.node.attributes.path);
+                                    var record = data.records[0];
+                                    if (record.data.elementType == "document") {
+                                        el.setValue(record.data.path);
                                         return true;
                                     }
                                     return false;
@@ -222,7 +252,7 @@ pimcore.report.newsletter.item = Class.create({
                     name: "objectFilterSQL",
                     value: this.data.objectFilterSQL,
                     fieldLabel: t("object_filter") + " (SQL)",
-                    width: 300,
+                    width: 450,
                     itemId: "objectFilterSQL",
                     enableKeyEvents: true,
                     listeners: {
@@ -267,14 +297,14 @@ pimcore.report.newsletter.item = Class.create({
                     displayField: "text",
                     valueField: "id",
                     name: 'personas',
-                    width: 200,
+                    width: 300,
                     value: this.data["personas"]
                 }, {
                     xtype: "textfield",
                     name: "testEmailAddress",
                     value: this.data.testEmailAddress,
                     fieldLabel: t("test_email_address"),
-                    width: 300
+                    width: 450
                 },{
                     xtype: "checkbox",
                     name: "googleAnalytics",
@@ -314,7 +344,7 @@ pimcore.report.newsletter.item = Class.create({
         });
 
         this.parentPanel.getEditPanel().add(this.panel);
-        this.parentPanel.getEditPanel().activate(this.panel);
+        this.parentPanel.getEditPanel().setActiveItem(this.panel);
 
         pimcore.layout.refresh();
 
@@ -369,7 +399,10 @@ pimcore.report.newsletter.item = Class.create({
     },
 
     saveOnComplete: function () {
-        this.parentPanel.tree.getRootNode().reload();
+        var tree = this.parentPanel.tree;
+        tree.getStore().load({
+            node: tree.getRootNode()
+        });
         pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
     },
 

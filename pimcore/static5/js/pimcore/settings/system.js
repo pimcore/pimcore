@@ -63,27 +63,6 @@ pimcore.settings.system = Class.create({
                     });
                 }
 
-                //cache exclude patterns
-                try {
-                    this.cacheExcludeStore = new Ext.data.Store({
-                        autoDestroy: true,
-                        data: this.data.values.cache,
-                        proxy: {
-                            type: 'memory',
-                            reader: {
-                                type: 'json',
-                                rootProperty: 'excludePatternsArray'
-                            }
-                        },
-
-                        fields: ['value']
-                    });
-                } catch(e4) {
-                    this.cacheExcludeStore = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        fields: ['value']
-                    });
-                }
 
                 this.getTabPanel();
 
@@ -1158,32 +1137,31 @@ pimcore.settings.system = Class.create({
                                 cls: "pimcore_extra_label_bottom"
                             }
                             ,
-                            //TODO look for alternive for superboxselect
                             {
                                 xtype: 'tagfield',
-
-
-                                allowBlank:true,
-                                anyMatch: true,
-                                grow: true,
+                                width: 800,
                                 //
                                 //queryDelay: 100,
                                 //triggerAction: 'all',
-                                //resizable: true,
-                                //mode: 'local',
-                                //anchor:'100%',
-                                //minChars: 2,
+                                resizable: true,
+                                minChars: 2,
+                                store: Ext.create('Ext.data.Store', {
+                                    proxy: {
+                                        type: 'memory'
+                                    },
+                                    fields: ['value']
+                                }),
                                 fieldLabel: t('exclude_patterns'),
                                 name: 'cache.excludePatterns',
                                 value: this.getValue("cache.excludePatterns"),
                                 //emptyText: t("superselectbox_empty_text"),
-                                //store: this.cacheExcludeStore,
-                                //fields: ['value'],
                                 displayField: 'value',
-                                valueField: 'value'
+                                valueField: 'value',
+                                forceSelection: false,
+                                delimiter: ',',
+                                createNewOnEnter: true,
+                                componentCls: 'superselect-no-drop-down'
 
-                                //allowAddNewData: true,
-                                //ctCls: 'superselect-no-drop-down',
                                 //listeners: {
                                 //    newitem: function(bs, v, f) {
                                 //        v = v + '';

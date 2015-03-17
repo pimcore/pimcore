@@ -348,6 +348,10 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
             $this->deleteViews($language, $dbName);
         }
 
+        $cacheExcludePatterns = $values["cache.excludePatterns"];
+        if (\Pimcore\Tool\Admin::isExtJS5()) {
+            $cacheExcludePatterns = implode(',', $cacheExcludePatterns);
+        }
 
         $settings = array(
             "general" => array(
@@ -437,7 +441,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
             "cache" => array(
                 "enabled" => $values["cache.enabled"],
                 "lifetime" => $values["cache.lifetime"],
-                "excludePatterns" => $values["cache.excludePatterns"],
+                "excludePatterns" => $cacheExcludePatterns,
                 "excludeCookie" => $values["cache.excludeCookie"]
             ),
             "outputfilters" => array(
