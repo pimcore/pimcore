@@ -120,18 +120,22 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
      */
     public function getPrice()
     {
+        // init
         $price = $this->priceInfo->getPrice();
-        if($price == null) {
+        if($price == null)
+        {
             return null;
         }
-        else
+
+
+        // apply pricing rules
+        if(!$this->rulesApplied)
         {
+            // set original price
             $this->setAmount( $price->getAmount() );
-        }
 
-        if(!$this->rulesApplied) {
+            // apply
             $env = $this->getEnvironment();
-
             foreach($this->getRules() as $rule)
             {
                 /* @var OnlineShop_Framework_Pricing_IRule $rule */
@@ -143,8 +147,8 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
             $this->rulesApplied = true;
         }
 
-
-        $price->setAmount($this->getAmount());
+        // update pricing rule price
+        $price->setAmount( $this->getAmount() );
         return $price;
     }
 
