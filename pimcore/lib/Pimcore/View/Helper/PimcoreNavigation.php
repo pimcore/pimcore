@@ -17,7 +17,7 @@
 namespace Pimcore\View\Helper;
 
 use Pimcore\Model\Document;
-use Pimcore\Model\CacheManager;
+use Pimcore\Model\Cache as CacheManager;
 use Pimcore\Model\Site;
 
 class PimcoreNavigation extends \Zend_View_Helper_Navigation
