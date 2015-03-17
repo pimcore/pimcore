@@ -40,8 +40,8 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
         $subtypes = explode(",", $this->getParam("subtype"));
         $classnames = explode(",", $this->getParam("class"));
 
-        if (is_array($classnames) and !empty($classnames[0])) {
-            $subtypes = array("object","variant");
+        if (is_array($classnames) and empty($classnames[0])) {
+            $subtypes = array("object","variant","folder");
         }
 
         $offset = intval($this->getParam("start"));
@@ -155,6 +155,9 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
         if (is_array($types) and !empty($types[0])) {
             foreach ($types as $type) {
                 $conditionTypeParts[] = $db->quote($type);
+            }
+            if(in_array("folder",$subtypes)){
+                $conditionTypeParts[] = $db->quote('folder');
             }
             $conditionParts[] = "( maintype IN (" . implode(",", $conditionTypeParts) . ") )";
         }
