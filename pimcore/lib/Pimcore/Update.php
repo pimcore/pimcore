@@ -265,7 +265,9 @@ class Update {
             }
             else if ($file["action"] == "delete") {
                 if(!self::$dryRun) {
-                    unlink(PIMCORE_DOCUMENT_ROOT . $file["path"]);
+                    if (file_exists(PIMCORE_DOCUMENT_ROOT . $file["path"])) {
+                        unlink(PIMCORE_DOCUMENT_ROOT . $file["path"]);
+                    }
         
                     // remove also directory if its empty
                     if (count(glob(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]) . "/*")) === 0) {
