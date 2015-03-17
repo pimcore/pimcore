@@ -17,7 +17,7 @@
 namespace Pimcore\View\Helper;
 
 use Pimcore\Model\Document;
-use Pimcore\Model\Cache;
+use Pimcore\Model\CacheManager;
 use Pimcore\Model\Site;
 
 class PimcoreNavigation extends \Zend_View_Helper_Navigation
@@ -132,7 +132,7 @@ class PimcoreNavigationController
         }
         $cacheKey = "navigation_" . $navigationRootDocument->getId() . $siteSuffix;
 
-        if(!$navigation = Cache::load($cacheKey)) {
+        if(!$navigation = CacheManager::load($cacheKey)) {
             $navigation = new \Zend_Navigation();
 
             if ($navigationRootDocument->hasChilds()) {
@@ -142,7 +142,7 @@ class PimcoreNavigationController
 
             // we need to force caching here, otherwise the active classes and other settings will be set and later
             // also written into cache (pass-by-reference) ... when serializing the data directly here, we don't have this problem
-            Cache::save($navigation, $cacheKey, ["output","navigation"], null, 999, true);
+            CacheManager::save($navigation, $cacheKey, ["output","navigation"], null, 999, true);
         }
 
         // set active path
