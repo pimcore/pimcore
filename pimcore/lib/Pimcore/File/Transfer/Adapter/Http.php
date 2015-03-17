@@ -19,16 +19,7 @@ use Pimcore\File;
 
 class Http extends \Zend_File_Transfer_Adapter_Http {
 
-    /**
-     * @var null
-     */
-    protected $sourceFile = null;
-
-    /**
-     * @var null
-     */
-    protected $destinationFile = null;
-
+    use \Pimcore\File\Transfer\Adapter\AdapterTrait;
     /**
      * @var null
      */
@@ -46,36 +37,6 @@ class Http extends \Zend_File_Transfer_Adapter_Http {
      */
     public function getHttpClient(){
         return $this->httpClient;
-    }
-
-    /**
-     * @param $sourceFile
-     * @return $this
-     */
-    public function setSourceFile($sourceFile){
-        $this->sourceFile = $sourceFile;
-        return $this;
-    }
-
-    /**
-     * @return null
-     */
-    public function getSourceFile(){
-        return $this->sourceFile;
-    }
-
-    /**
-     * @param $destinationFile
-     */
-    public function setDestinationFile($destinationFile){
-        $this->destinationFile  = $destinationFile;
-    }
-
-    /**
-     * @return null
-     */
-    public function getDestinationFile(){
-        return $this->destinationFile;
     }
 
     /**
