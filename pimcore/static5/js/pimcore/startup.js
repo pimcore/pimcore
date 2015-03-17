@@ -484,11 +484,15 @@ Ext.onReady(function () {
                             enableTabScroll:true,
                             hideMode:"offsets",
                             cls:"tab_panel",
-                            plugins: Ext.create('Ext.ux.TabCloseMenu', {
-                                showCloseAll: false,
-                                showCloseOthers: false,
-                                extraItemsTail: pimcore.helpers.getMainTabMenuItems()
-                            })
+                            plugins:
+                                [
+                                Ext.create('Ext.ux.TabCloseMenu', {
+                                        showCloseAll: false,
+                                        showCloseOthers: false,
+                                        extraItemsTail: pimcore.helpers.getMainTabMenuItems()
+                                    }),
+                                    Ext.create('Ext.ux.TabReorderer', {})
+                                ]
                         })
                         ,
                         {
