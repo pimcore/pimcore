@@ -58,20 +58,20 @@ pimcore.object.tags.abstract = Class.create({
 
     applyPermissionStyle: function (key, value, metaData, record) {
         var metadata = record.data.metadata;
-        if (metadata !== undefined) {
-            if (metadata.permission !== undefined) {
-                // evaluate permissions
-                if (metadata.permission[key] !== undefined) {
-                    if (metadata.permission[key].noView) {
-                        metaData.css += " grid_value_noview";
-                    }
 
-                    if (metadata.permission[key].noEdit) {
-                        metaData.css += " grid_value_noedit";
-                    }
+        if (metadata && metadata.permission !== undefined) {
+            // evaluate permissions
+            if (metadata.permission[key] !== undefined) {
+                if (metadata.permission[key].noView) {
+                    metaData.css += " grid_value_noview";
+                }
+
+                if (metadata.permission[key].noEdit) {
+                    metaData.css += " grid_value_noedit";
                 }
             }
         }
+
 
     },
 
@@ -79,7 +79,7 @@ pimcore.object.tags.abstract = Class.create({
         var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);
 
-            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+            if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 metaData.css += " grid_value_inherited";
             }
             return value;
@@ -87,7 +87,7 @@ pimcore.object.tags.abstract = Class.create({
         }.bind(this, field.key);
 
         return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
-                                                            editor:this.getGridColumnEditor(field)};
+            editor:this.getGridColumnEditor(field)};
     },
 
     getGridColumnFilter:function (field) {
@@ -104,7 +104,7 @@ pimcore.object.tags.abstract = Class.create({
         }
 
         throw "the component `" + this.getName()
-                                        + "´ doesn't implement the method getEl() and is not standard-compliant!";
+        + "´ doesn't implement the method getEl() and is not standard-compliant!";
     },
 
     unmarkInherited:function () {
@@ -201,7 +201,7 @@ pimcore.object.tags.abstract = Class.create({
         }
 
         throw "it seems that the field -" + this.getName()
-                                + "- does not implement the isRendered() method and doesn't contain this.component";
+        + "- does not implement the isRendered() method and doesn't contain this.component";
     },
 
 
