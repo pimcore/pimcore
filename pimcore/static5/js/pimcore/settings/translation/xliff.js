@@ -150,8 +150,9 @@ pimcore.settings.translation.xliff = Class.create({
                     //return e.getTarget(this.grid.getView().rowSelector);
                 }.bind(this),
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
+                    var record = data.records[0];
 
-                    var type = data.node.attributes.elementType;
+                    var type = record.data.elementType;
 
                     if (type == "document" || type == "object") {
                         return Ext.dd.DropZone.prototype.dropAllowed;
@@ -163,15 +164,16 @@ pimcore.settings.translation.xliff = Class.create({
 
                 }.bind(this),
                 onNodeDrop : function(target, dd, e, data) {
+                    data = data.records[0].data;
 
-                    var type = data.node.attributes.elementType;
+                    var type = data.elementType;
                     if (type == "document" || type == "object") {
-                        this.exportStore.add(new this.exportStore.recordType({
-                            id: data.node.attributes.id,
-                            path: data.node.attributes.path,
-                            type: data.node.attributes.elementType,
+                        this.exportStore.add({
+                            id: data.id,
+                            path: data.path,
+                            type: data.elementType,
                             children: true
-                        }, this.exportStore.getCount() + 1));
+                        });
                         return true;
                     }
                     return false;
