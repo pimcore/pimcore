@@ -68,6 +68,10 @@ pimcore.report.qrcode.item = Class.create({
                     extraParams: {
                         "metric[]": "visits",
                         filters: "ga:campaign==" + this.data.name + ";ga:medium==QR-Code;ga:source==Mobile"
+                    },
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'data'
                     }
                 },
                 fields: ['timestamp','datetext','visits']
@@ -84,36 +88,68 @@ pimcore.report.qrcode.item = Class.create({
         this.analytics = new Ext.form.FieldSet({
             hidden: !this.getAnalyticsVisiblity(),
             title: t("google_analytics"),
+            height: 240,
+            layout: 'fit',
             items: [{
-                xtype: 'chart',
+                xtype: 'cartesian',
                 store: store,
-                xField: 'datetext',
-                height: 240,
+                interactions: 'itemhighlight',
+                axes: [
+                        {
+                            type: 'numeric',
+                            fields: ['visits' ],
+                            position: 'left',
+                            grid: true,
+                            minimum: 0
+                        },
+                        {
+                            type: 'category',
+                            fields: 'datetext',
+                            position: 'bottom',
+                            grid: true,
+                            label: {
+                                rotate: {
+                                    degrees: -45
+                                }
+                            }
+                    }
+                ],
                 series: [
                     {
-                        type:'line',
-                        displayName: t("visits"),
+                        type: 'line',
+                        axis: 'left',
+                        title: t('visits'),
+                        xField: 'datetext',
                         yField: 'visits',
                         style: {
-                            color: 0x15428B
+                            lineWidth: 2,
+                            stroke: '#15428B',
+                            fill: '#15428B'
+                        },
+                        marker: {
+                            radius: 4
                         }
                     }
                 ]
-            }],
+            }]
+        });
+
+        this.analytics = new Ext.panel.Panel({
+            border: false,
+            items: [this.analytics],
             buttons: [{
                 text: t("show_in_google_anaytics"),
                 iconCls: "pimcore_icon_analytics",
                 handler: function () {
                     var analyticsUrl = "#report/trafficsources-campaigns/a{accountId}w{internalWebPropertyId}p{id}/"
                         + "%3F_r.drilldown%3Danalytics.campaign%3A" + this.data.name
-                                                                    + "%2Canalytics.sourceMedium%3AQR-Code/";
+                        + "%2Canalytics.sourceMedium%3AQR-Code/";
                     window.open("/admin/reports/analytics/deeplink?url=" + encodeURIComponent(analyticsUrl));
                 }.bind(this)
             }]
         });
 
         this.form = new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             region: "center",
             bodyStyle: "padding:10px",
             labelWidth: 150,
