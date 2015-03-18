@@ -67,8 +67,8 @@ while (empty($plainPassword)) {
     $plainPassword = prompt_silent();
 }
 
-$password = Pimcore\Tool\Authentication::getPasswordHash($user->getName(), $config['password']);
-$user->setValue('password', $password);
+$password = Pimcore\Tool\Authentication::getPasswordHash($user->getName(), $plainPassword);
+$user->setPassword($password);
 $user->save();
 
 echo sprintf("Password for user '%s' reset successfully.\n", $user->getName());
