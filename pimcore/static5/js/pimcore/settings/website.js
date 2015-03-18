@@ -123,7 +123,6 @@ pimcore.settings.website = Class.create({
 
         }
 
-
         this.store = new Ext.data.Store({
             id:'settings_website_store',
             model: this.modelName,
@@ -131,17 +130,16 @@ pimcore.settings.website = Class.create({
             remoteSort:true
         });
 
-
         this.filterField = new Ext.form.TextField({
-            xtype:"textfield",
-            width:200,
-            style:"margin: 0 10px 0 0;",
+            width: 200,
+            style: "margin: 0 10px 0 0;",
             enableKeyEvents:true,
             listeners:{
                 "keydown":function (field, key) {
                     if (key.getKey() == key.ENTER) {
                         var input = field;
-                        this.store.baseParams.filter = input.getValue();
+                        var proxy = this.store.getProxy();
+                        proxy.extraParams.filter = input.getValue();
                         this.store.load();
                     }
                 }.bind(this)
@@ -201,7 +199,6 @@ pimcore.settings.website = Class.create({
                 sortable: true
             },
             {
-                //id: "property_value_col",
                 header: t("value"),
                 dataIndex: 'data',
                 getCellEditor: this.getCellEditor.bind(this),
