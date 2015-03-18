@@ -98,7 +98,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
         }.bind(this));
 
         this.tab.on("afterrender", function (tabId) {
-            this.tabPanel.activate(tabId);
+            this.tabPanel.setActiveItem(tabId);
             pimcore.plugin.broker.fireEvent("postOpenDocument", this, "link");
         }.bind(this, tabId));
 
