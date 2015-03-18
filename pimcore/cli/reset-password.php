@@ -1,0 +1,62 @@
+<?php
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+
+chdir(__DIR__);
+
+include_once("startup.php");
+
+use Pimcore\Model\User;
+
+echo "\n";
+
+function prompt_silent($prompt = "Enter new password:") {
+    $command = "/usr/bin/env bash -c 'echo OK'";
+    if (rtrim(shell_exec($command)) !== 'OK') {
+        trigger_error("Can't invoke bash");
+        return false;
+    }
+    $command = "/usr/bin/env bash -c 'read -s -p \""
+        . addslashes($prompt)
+        . "\" mypassword && echo \$mypassword'";
+    $password = rtrim(shell_exec($command));
+    echo "\n";
+    return $password;
+}
+
+if ($argc <= 1) { // if no arguments
+    echo 'Usage: ' . $argv[0] . ' id/name';
+    echo "\n";
+    exit;
+}
+
+$method = is_numeric($argv[1]) ? 'getById' : 'getByName';
+/** @var User $user */
+$user = User::$method($argv[1]);
+
+if(!$user) {
+    echo sprintf("User with name '%s' could not be found. Exiting.\n", $argv[1]);
+    exit;
+}
+
+$plainPassword = false;
+while (empty($plainPassword)) {
+    $plainPassword = prompt_silent();
+}
+
+$password = Pimcore\Tool\Authentication::getPasswordHash($user->getName(), $config['password']);
+$user->setValue('password', $password);
+$user->save();
+
+echo sprintf("Password for user '%s' reset successfully.\n", $user->getName());
