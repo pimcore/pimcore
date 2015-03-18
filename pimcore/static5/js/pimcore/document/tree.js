@@ -310,7 +310,7 @@ pimcore.document.tree = Class.create({
 
         var menu = new Ext.menu.Menu();
 
-        if ((record.data == "page" || record.data.type == "email" || record.data.type == "folder"
+        if ((record.data.type == "page" || record.data.type == "email" || record.data.type == "folder"
             || record.data.type == "link" || record.data.type == "hardlink")
             && record.data.permissions.create) {
 
