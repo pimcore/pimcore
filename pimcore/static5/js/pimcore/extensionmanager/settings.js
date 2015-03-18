@@ -42,7 +42,7 @@ pimcore.extensionmanager.settings = Class.create({
 
 
             tabPanel.add(this.panel);
-            tabPanel.activate("pimcore_extension_" + id + "_" + type);
+            tabPanel.setActiveItem("pimcore_extension_" + id + "_" + type);
 
             this.panel.on("destroy", function () {
                 pimcore.globalmanager.remove("extension_settings_" + this.id + "_" + this.type);
@@ -53,6 +53,6 @@ pimcore.extensionmanager.settings = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_extension_" + this.id + "_" + type);
+        tabPanel.setActiveItem("pimcore_extension_" + this.id + "_" + type);
     }
 });
