@@ -251,9 +251,15 @@ pimcore.element.notes = Class.create({
         var rec = this.store.getAt(rowIndex);
 
         var keyValueStore = new Ext.data.Store({
+            proxy: {
+                type: 'memory',
+                reader: {
+                    type: 'json',
+                    rootProperty: 'data'
+                }
+            },
             autoDestroy: true,
             data: rec.data,
-            rootProperty: 'data',
             fields: ['data', 'name', 'type']
         });
 
