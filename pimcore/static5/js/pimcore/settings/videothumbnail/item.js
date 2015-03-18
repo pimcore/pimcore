@@ -74,7 +74,7 @@ pimcore.settings.videothumbnail.item = Class.create({
 //            layout: "fit",
             closable: true,
             autoScroll: true,
-            //layout: "pimcoreform",
+
             bodyStyle: "padding: 20px;",
             title: this.data.name,
             id: "pimcore_videothumbnail_panel_" + this.data.name,
@@ -89,14 +89,14 @@ pimcore.settings.videothumbnail.item = Class.create({
                 name: "name",
                 value: this.data.name,
                 fieldLabel: t("name"),
-                width: 300,
+                width: 450,
                 disabled: true
             }, {
                 xtype: "textarea",
                 name: "description",
                 value: this.data.description,
                 fieldLabel: t("description"),
-                width: 300,
+                width: 450,
                 height: 100
             }, {
                 xtype: "combo",
@@ -104,6 +104,7 @@ pimcore.settings.videothumbnail.item = Class.create({
                 fieldLabel: t("select_presetting"),
                 triggerAction: "all",
                 mode: "local",
+                width: 300,
                 store: [["average",t("average")],["good", t("good")],["best",t("best")]],
                 listeners: {
                     select: function (el) {
@@ -132,14 +133,14 @@ pimcore.settings.videothumbnail.item = Class.create({
                 itemId: "videoBitrate",
                 value: this.data.videoBitrate,
                 fieldLabel: t("video_bitrate"),
-                width: 150
+                width: 250
             }, {
                 xtype: "numberfield",
                 name: "audioBitrate",
                 itemId: "audioBitrate",
                 value: this.data.audioBitrate,
                 fieldLabel: t("audio_bitrate"),
-                width: 150
+                width: 250
             }, this.itemContainer],
             buttons: panelButtons
         });
