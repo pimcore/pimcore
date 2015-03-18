@@ -244,7 +244,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                 name: "sourcePath",
                 fieldLabel: t("source_path"),
                 value: path,
-                cls: "input_drop_target"
+                fieldCls: "input_drop_target"
             });
 
             pathField.on("render", function (el) {
@@ -260,7 +260,8 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                     },
 
                     onNodeDrop : function(target, dd, e, data) {
-                        this.setValue(data.node.attributes.path);
+                        data = data.records[0].data;
+                        this.setValue(data.path);
                         return true;
                     }.bind(this)
                 });
@@ -269,7 +270,6 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
             this.panel = new Ext.form.FormPanel({
                 title: t('hardlink_properties'),
                 autoHeight:true,
-                layout: "pimcoreform",
                 labelWidth: 120,
                 defaultType: 'textfield',
                 defaults: {width:500},
