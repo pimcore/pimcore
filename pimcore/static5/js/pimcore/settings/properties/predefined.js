@@ -258,7 +258,6 @@ pimcore.settings.properties.predefined = Class.create({
             columns : propertiesColumns,
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
-                inheritableCheck,
                 this.cellEditing
             ],
             bbar: this.pagingtoolbar,
