@@ -85,26 +85,10 @@ pimcore.settings.videothumbnail.panel = Class.create({
                 width: 200,
                 split: true,
                 root: {
-                    //nodeType: 'async',
                     id: '0',
-                    expanded: true,
-                    iconCls: "pimcore_icon_thumbnails"
-
+                    expanded: true
                 },
                 listeners: this.getTreeNodeListeners(),
-                //loader: new Ext.tree.TreeLoader({
-                //    dataUrl: '/admin/settings/video-thumbnail-tree',
-                //    requestMethod: "GET",
-                //    baseAttrs: {
-                //        listeners: this.getTreeNodeListeners(),
-                //        reference: this,
-                //        allowDrop: false,
-                //        allowChildren: false,
-                //        isTarget: false,
-                //        iconCls: "pimcore_icon_videothumbnails",
-                //        leaf: true
-                //    }
-                //}),
                 rootVisible: false,
                 tbar: {
                     items: [
@@ -141,9 +125,8 @@ pimcore.settings.videothumbnail.panel = Class.create({
             'itemclick' : this.onTreeNodeClick.bind(this),
             'itemcontextmenu': this.onTreeNodeContextmenu.bind(this),
             'beforeitemappend': function( thisNode, newChildNode, index, eOpts ) {
-                //newChildNode.data.expanded = true;
                 newChildNode.data.leaf = true;
-                newChildNode.data.iconCls = "pimcore_icon_thumbnails";
+                newChildNode.data.iconCls = "pimcore_icon_videothumbnails";
             }
         };
 
@@ -155,7 +138,6 @@ pimcore.settings.videothumbnail.panel = Class.create({
     },
 
     openThumbnail: function (id) {
-
         var existingPanel = Ext.getCmp("pimcore_videothumbnail_panel_" + id);
         if(existingPanel) {
             this.editPanel.setActiveItem(existingPanel);
