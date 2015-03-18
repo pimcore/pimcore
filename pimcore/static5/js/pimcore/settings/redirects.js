@@ -408,7 +408,10 @@ pimcore.settings.redirects = Class.create({
         this.wizardForm = new Ext.form.FormPanel({
             bodyStyle: "padding:10px;",
             items: [{
-                xtype:"compositefield",
+                xtype:"fieldset",
+                layout: 'hbox',
+                border: false,
+                padding: 0,
                 items: [{
                     xtype: "combo",
                     name: "mode",
@@ -424,12 +427,13 @@ pimcore.settings.redirects = Class.create({
                     editable: false,
                     forceSelection: true,
                     triggerAction: "all",
+                    fieldLabel: t("pattern"),
                     emptyText: t("select")
                 }, {
                     xtype: "textfield",
                     name: "pattern",
-                    fieldLabel: t("pattern"),
-                    width: 320,
+                    margin: "0 0 0 20",
+                    width: 330,
                     emptyText: "/some/example/path"
                 }]
             }]
