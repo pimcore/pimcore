@@ -326,25 +326,25 @@ pimcore.document.tree = Class.create({
             document_types.sort([ { property : 'priority', direction: 'DESC' },
                 { property : 'name', direction: 'ASC' } ]);
 
-            document_types.each(function(documentMenu, record) {
-                if (record.get("type") == "page") {
+            document_types.each(function(documentMenu, typeRecord) {
+                if (typeRecord.get("type") == "page") {
                     documentMenu.page.push({
-                        text: ts(record.get("name")),
+                        text: ts(typeRecord.get("name")),
                         iconCls: "pimcore_icon_page_add",
-                        handler: this.addDocument.bind(this, "page", record.get("id"))
+                        handler: this.addDocument.bind(this, tree, record, "page")
                     });
                 }
-                else if (record.get("type") == "snippet") {
+                else if (typeRecord.get("type") == "snippet") {
                     documentMenu.snippet.push({
-                        text: ts(record.get("name")),
+                        text: ts(typeRecord.get("name")),
                         iconCls: "pimcore_icon_snippet_add",
-                        handler: this.addDocument.bind(this, "snippet", record.get("id"))
+                        handler: this.addDocument.bind(this, tree, record, "snippet")
                     });
-                }else if (record.get("type") == "email") { //ckogler
+                }else if (typeRecord.get("type") == "email") { //ckogler
                     documentMenu.email.push({
-                        text: ts(record.get("name")),
+                        text: ts(typeRecord.get("name")),
                         iconCls: "pimcore_icon_email_add",
-                        handler: this.addDocument.bind(this, "email", record.get("id"))
+                        handler: this.addDocument.bind(this, tree, record, "email")
                     });
                 }
             }.bind(this, documentMenu), documentMenu);
@@ -883,7 +883,7 @@ pimcore.document.tree = Class.create({
                 labelWidth: 250,
                 itemId: "form",
                 defaults: {
-                    width: 550,
+                    width: 550
                 },
                 items: [{
                     xtype: "textfield",
