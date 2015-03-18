@@ -158,6 +158,7 @@ pimcore.settings.email.blacklist = Class.create({
             {header:t("email_address"), flex:50, sortable:true, dataIndex:'address', editable: false},
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: false,
+                width: 150,
                 renderer: function(d) {
                     if (d !== undefined) {
                         var date = new Date(d * 1000);
@@ -169,6 +170,7 @@ pimcore.settings.email.blacklist = Class.create({
             },
             {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
                 hidden: true,
+                width: 150,
                 renderer: function(d) {
                     if (d !== undefined) {
                         var date = new Date(d * 1000);
