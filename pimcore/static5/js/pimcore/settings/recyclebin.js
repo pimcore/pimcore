@@ -151,8 +151,7 @@ pimcore.settings.recyclebin = Class.create({
             value: 20,
             triggerAction: "all",
             listeners: {
-                select: function (box, records, index) {
-                    rec = records[0];
+                select: function (box, rec, index) {
                     var store = this.pagingtoolbar.getStore();
                     store.setPageSize(intval(rec.data.field1));
                     this.pagingtoolbar.moveFirst();
