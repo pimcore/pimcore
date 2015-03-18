@@ -196,7 +196,7 @@ pimcore.settings.glossary = Class.create({
         var typesColumns = [
             {header: t("text"), flex: 200, sortable: true, dataIndex: 'text', editor: new Ext.form.TextField({})},
             {header: t("link"), flex: 200, sortable: true, dataIndex: 'link', editor: new Ext.form.TextField({}),
-                                css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"},
+                                tdCls: "pimcore_droptarget_input"},
             {header: t("abbr"), flex: 200, sortable: true, dataIndex: 'abbr', editor: new Ext.form.TextField({})},
             {header: t("acronym"), flex: 200, sortable: true, dataIndex: 'acronym',
                                 editor: new Ext.form.TextField({})},
