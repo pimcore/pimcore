@@ -56,7 +56,7 @@ pimcore.document.snippets.settings = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 150},
+                        defaults: {width: 600},
                         items :[
                             {
                                 fieldLabel: t('predefined_document_type'),
@@ -68,8 +68,8 @@ pimcore.document.snippets.settings = Class.create({
                                 editable: false,
                                 lazyInit: false,
                                 triggerAction: 'all',
-                                width: 400,
-                                listWidth: 400,
+                                width: 600,
+                                listWidth: 600,
                                 value: docTypeValue,
                                 listeners: {
                                     "select": this.setDocumentType.bind(this)
@@ -78,7 +78,8 @@ pimcore.document.snippets.settings = Class.create({
                             {
                                 fieldLabel: t('module_optional'),
                                 name: 'module',
-                                value: this.snippet.data.module
+                                value: this.snippet.data.module,
+                                width: 400
                             },
                             {
                                 xtype:'combo',
@@ -103,7 +104,7 @@ pimcore.document.snippets.settings = Class.create({
                                 mode: "local",
                                 id: "pimcore_document_settings_controller_" + this.snippet.id,
                                 value: this.snippet.data.controller,
-                                width: 250,
+                                width: 450,
                                 listeners: {
                                     afterrender: function (el) {
                                         el.getStore().load();
@@ -117,7 +118,7 @@ pimcore.document.snippets.settings = Class.create({
                                 valueField: 'name',
                                 name: "action",
                                 disableKeyFilter: true,
-                                store: new Ext.data.JsonStore({
+                                store: new Ext.data.Store({
                                     autoDestroy: true,
                                     proxy: {
                                         type: 'ajax',
@@ -132,7 +133,7 @@ pimcore.document.snippets.settings = Class.create({
                                 triggerAction: "all",
                                 mode: "local",
                                 value: this.snippet.data.action,
-                                width: 250,
+                                width: 450,
                                 listeners: {
                                     "focus": function (el) {
                                         el.getStore().reload({
@@ -166,7 +167,7 @@ pimcore.document.snippets.settings = Class.create({
                                 triggerAction: "all",
                                 mode: "local",
                                 value: this.snippet.data.template,
-                                width: 250,
+                                width: 450,
                                 listeners: {
                                     afterrender: function (el) {
                                         el.getStore().load();
@@ -182,7 +183,7 @@ pimcore.document.snippets.settings = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 400},
+                        defaults: {width: 600},
                         items :[
                             {
                                 fieldLabel: t('path'),
@@ -210,7 +211,7 @@ pimcore.document.snippets.settings = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 400},
+                        defaults: {width: 600},
                         items :[
                             {
                                 fieldLabel: t("document"),
