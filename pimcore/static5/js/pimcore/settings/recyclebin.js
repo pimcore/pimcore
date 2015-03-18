@@ -95,8 +95,6 @@ pimcore.settings.recyclebin = Class.create({
             pageSize: itemsPerPage,
             remoteSort: true,
             listeners: {
-                write : function(store, action, result, response, rs) {
-                },
                 load: function () {
                     if(this.store.getCount() > 0) {
                         Ext.getCmp("pimcore_recyclebin_button_flush").enable();
@@ -117,7 +115,7 @@ pimcore.settings.recyclebin = Class.create({
                     if (key.getKey() == key.ENTER) {
                         var input = field;
                         var proxy = this.store.getProxy();
-                        proxy.extraParams.filter = input.getValue();
+                        proxy.extraParams.filterFullText = input.getValue();
                         this.store.load();
                     }
                 }.bind(this)
