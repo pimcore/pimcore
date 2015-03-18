@@ -882,16 +882,17 @@ pimcore.document.tree = Class.create({
                 bodyStyle: "padding: 10px;",
                 labelWidth: 250,
                 itemId: "form",
+                defaults: {
+                    width: 550,
+                },
                 items: [{
                     xtype: "textfield",
                     name: "mainDomain",
-                    width: 300,
                     fieldLabel: t("main_domain"),
                     value: data["mainDomain"]
                 }, {
                     xtype: "textarea",
                     name: "domains",
-                    width: 300,
                     height: 150,
                     style: "word-wrap: normal;",
                     fieldLabel: t("additional_domains") + "<br /><br />RegExp are supported. eg. .*example.com",
@@ -899,7 +900,6 @@ pimcore.document.tree = Class.create({
                 }, {
                     xtype: "textfield",
                     name: "errorDocument",
-                    width: 300,
                     cls: "input_drop_target",
                     fieldLabel: t("error_page"),
                     value: data["errorDocument"],
