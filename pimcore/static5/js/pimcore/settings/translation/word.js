@@ -42,7 +42,6 @@ pimcore.settings.translation.word = Class.create({
             tabPanel.add(this.panel);
             tabPanel.setActiveItem("pimcore_word");
 
-
             this.panel.on("destroy", function () {
                 pimcore.globalmanager.remove("word");
             }.bind(this));
@@ -75,7 +74,7 @@ pimcore.settings.translation.word = Class.create({
                 },
                 items: [
                     {header: 'ID', dataIndex: 'id', width: 50},
-                    {header: t("path"), dataIndex: 'path', width: 200},
+                    {header: t("path"), dataIndex: 'path', flex: 200},
                     {header: t("type"), dataIndex: 'type', width: 100},
                     Ext.create('Ext.grid.column.Check', {
                         header: t("children"),
@@ -145,9 +144,10 @@ pimcore.settings.translation.word = Class.create({
                     return this.component.getEl().dom;
                     //return e.getTarget(this.grid.getView().rowSelector);
                 }.bind(this),
-                onNodeOver: function (overHtmlNode, ddSource, e, data) {
 
-                    var type = data.node.attributes.elementType;
+                onNodeOver: function (overHtmlNode, ddSource, e, data) {
+                    data = data.records[0].data;
+                    var type = data.elementType;
 
                     if (type == "document" || type == "object") {
                         return Ext.dd.DropZone.prototype.dropAllowed;
@@ -155,19 +155,19 @@ pimcore.settings.translation.word = Class.create({
                     else {
                         return Ext.dd.DropZone.prototype.dropNotAllowed;
                     }
-
-
                 }.bind(this),
-                onNodeDrop : function(target, dd, e, data) {
 
-                    var type = data.node.attributes.elementType;
+                onNodeDrop : function(target, dd, e, data) {
+                    data = data.records[0].data;
+
+                    var type = data.elementType;
                     if (type == "document" || type == "object") {
-                        this.exportStore.add(new this.exportStore.recordType({
-                            id: data.node.attributes.id,
-                            path: data.node.attributes.path,
-                            type: data.node.attributes.elementType,
+                        this.exportStore.add({
+                            id: data.id,
+                            path: data.path,
+                            type: data.elementType,
                             children: true
-                        }, this.exportStore.getCount() + 1));
+                        });
                         return true;
                     }
                     return false;
