@@ -165,13 +165,17 @@ pimcore.settings.recyclebin = Class.create({
             {header: t("type"), flex: 50, sortable: true, dataIndex: 'subtype', renderer: function(d) {
                 return '<img src="/pimcore/static/img/icon/' + d + '.png" />';
             }},
-            {header: t("path"), flex: 200, sortable: true, dataIndex: 'path'},
+            {header: t("path"), flex: 200, sortable: true, dataIndex: 'path', filter: 'string'},
             {header: t("amount"), flex: 60, sortable: true, dataIndex: 'amount'},
-            {header: t("deletedby"), flex:80,sortable: true, dataIndex: 'deletedby'},
-            {header: t("date"), flex: 140, sortable: true, dataIndex: 'date', renderer: function(d) {
-                var date = new Date(d * 1000);
-                return Ext.Date.format(date, "Y-m-d H:i:s");
-            }},
+            {header: t("deletedby"), flex:80,sortable: true, dataIndex: 'deletedby', filter: 'string'},
+            {header: t("date"), flex: 140, sortable: true, dataIndex: 'date',
+                renderer: function(d) {
+                    var date = new Date(d * 1000);
+                    return Ext.Date.format(date, "Y-m-d H:i:s");
+                },
+                filter: 'date'
+
+            },
             {
                 xtype: 'actioncolumn',
                 width: 30,
@@ -185,7 +189,6 @@ pimcore.settings.recyclebin = Class.create({
             }
         ];
 
-        this.gridfilters = this.getGridFilters();
 
         this.grid = new Ext.grid.GridPanel({
             frame: false,
@@ -194,10 +197,9 @@ pimcore.settings.recyclebin = Class.create({
             columnLines: true,
             bbar: this.pagingtoolbar,
             stripeRows: true,
-            //plugins: [this.gridfilters],                  // TODO grid filters
-            sm: Ext.create('Ext.selection.RowModel', {}),
+            selModel: Ext.create('Ext.selection.RowModel', {}),
+            plugins: ['gridfilters'],
             columns : typesColumns,
-            autoExpandColumn: "recyclebin_path_col",
             tbar: [
                 {
                     text: t('restore'),
@@ -307,30 +309,5 @@ pimcore.settings.recyclebin = Class.create({
 
         Ext.getCmp("pimcore_recyclebin_button_restore").disable();
         Ext.getCmp("pimcore_recyclebin_button_delete").disable();
-    },
-
-
-    getGridFilters: function() {
-        var configuredFilters = [{
-            type: "string",
-            dataIndex: "path"
-        },{
-            type: "string",
-            dataIndex: "deletedby"
-        },
-            {
-            type: "date",
-            dataIndex: "date"
-        }];
-
-        // filters
-        //var gridfilters = new Ext.ux.grid.GridFilters({
-        //    encode: true,
-        //    local: false,
-        //    filters: configuredFilters
-        //});
-        var gridfilters = null;
-
-        return gridfilters;
     }
 });
