@@ -47,7 +47,7 @@ pimcore.document.pages.settings = Class.create({
                     id = "";
                 }
 
-                var count = this.urlAliasPanel.findByType("textfield").length+1;
+                var count = this.urlAliasPanelInner.query("textfield").length+1;
 
                 var compositeField = new Ext.Container({
                     hideLabel: true,
@@ -92,21 +92,27 @@ pimcore.document.pages.settings = Class.create({
                 }]);
 
 
-                this.urlAliasPanel.add(compositeField);
+                this.urlAliasPanelInner.add(compositeField);
 
-                this.urlAliasPanel.doLayout();
+                this.urlAliasPanelInner.doLayout();
             }.bind(this);
 
             var user = pimcore.globalmanager.get("user");
 
-            this.urlAliasPanel = new Ext.form.FieldSet({
+            this.urlAliasPanelInner = new Ext.form.FieldSet({
                 title: t("path_aliases") + " (" + t("redirects") + ")",
                 collapsible: false,
-                autoHeight:true,
-                width: 700,
+                autoHeight: true,
                 style: "margin-top: 20px;",
                 disabled: !user.isAllowed("redirects"),
-                items: [],
+                items: []
+            });
+
+            this.urlAliasPanel = new Ext.panel.Panel({
+                border: false,
+                layout: 'fit',
+                width: 700,
+                items: [this.urlAliasPanelInner],
                 buttons: [{
                     text: t("add"),
                     iconCls: "pimcore_icon_add",
@@ -117,8 +123,6 @@ pimcore.document.pages.settings = Class.create({
             for(var r=0; r<this.page.data.redirects.length; r++) {
                 addUrlAlias(this.page.data.redirects[r].source, this.page.data.redirects[r]["id"]);
             }
-
-
 
             // meta-data
             var addMetaData = function (idName, idValue, contentName, contentValue) {
