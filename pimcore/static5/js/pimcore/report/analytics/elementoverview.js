@@ -241,32 +241,44 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
             }
         });
         
-        this.summaryStore = new Ext.data.JsonStore({
+        this.summaryStore = new Ext.data.Store({
             autoDestroy: true,
-            url: '/admin/reports/analytics/summary',
-            root: 'data',
-            fields: ['chart','value',"label","metric"],
-            baseParams: {
-                type: type,
-                id: id,
-                path: path
+            proxy: {
+                type: 'ajax',
+                url: '/admin/reports/analytics/summary',
+                reader: {
+                    type: 'json',
+                    rootProperty: 'data'
+                },
+                extraParams: {
+                    type: type,
+                    id: id,
+                    path: path
+                }
             },
+            fields: ['chart','value',"label","metric"],
             listeners: {
                 load: this.storeFinished.bind(this),
                 beforeload: this.storeStart.bind(this)
             }
         });
 
-        this.sourceStore = new Ext.data.JsonStore({
+        this.sourceStore = new Ext.data.Store({
             autoDestroy: true,
-            url: '/admin/reports/analytics/source',
-            root: 'data',
-            fields: ['source','pageviews'],
-            baseParams: {
-                type: type,
-                id: id,
-                path: path
+            proxy: {
+                type: 'ajax',
+                url: '/admin/reports/analytics/source',
+                reader: {
+                    type: 'json',
+                    rootProperty: 'data'
+                },
+                extraParams: {
+                    type: type,
+                    id: id,
+                    path: path
+                }
             },
+            fields: ['source','pageviews'],
             listeners: {
                 load: this.storeFinished.bind(this),
                 beforeload: this.storeStart.bind(this)

@@ -40,7 +40,7 @@ pimcore.report.custom.item = Class.create({
             fields: ["name", "filter", "filter_drilldown", "display", "export", "order", "width", "label"]
         });
 
-        var checkDisplay = new Ext.grid.CheckColumn({
+        var checkDisplay = new Ext.grid.column.Check({
             header: t("display"),
             dataIndex: "display",
             width: 50
@@ -58,8 +58,15 @@ pimcore.report.custom.item = Class.create({
             width: 50
         });
 
-        this.columnGrid = new Ext.grid.EditorGridPanel({
+        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 1
+        });
+
+        this.columnGrid = Ext.create('Ext.grid.Panel', {
             store: this.columnStore,
+            plugins: [
+                this.cellEditing
+            ],
             columns: [
                 {header: t("name"), sortable: false, dataIndex: 'name', editable: false, width: 200},
                 checkDisplay,
@@ -92,7 +99,7 @@ pimcore.report.custom.item = Class.create({
                     forceSelection: true,
                     triggerAction: "all"
                 })},
-                {header: t("width"), sortable: false, dataIndex: 'width', editable: true, width: 70, editor: new Ext.ux.form.SpinnerField({
+                {header: t("width"), sortable: false, dataIndex: 'width', editable: true, width: 70, editor: new Ext.form.field.Number({
                     decimalPrecision: 0
                 })},
                 {header: t("label"), sortable: false, dataIndex: 'label', editable: true, width: 150, editor: new Ext.form.TextField({})},
@@ -135,7 +142,6 @@ pimcore.report.custom.item = Class.create({
             trackMouseOver: true,
             stripeRows: true,
             autoHeight: true,
-            plugins: [checkDisplay,checkExport, checkOrder],
             title: t('column_configuration')
         });
 
@@ -170,49 +176,45 @@ pimcore.report.custom.item = Class.create({
     getGeneralDefinitionPanel: function() {
         this.generalDefinitionForm = new Ext.form.FormPanel({
             border:false,
-            layout: "pimcoreform",
             items: [{
                 xtype: "fieldset",
                 itemId: "generalFieldset",
                 title: t("general"),
                 collapsible: false,
+                defaults: {
+                    width: 400
+                },
                 items: [{
                     xtype: "textfield",
                     name: "name",
                     value: this.data.name,
                     fieldLabel: t("name"),
-                    width: 300,
                     disabled: true
                 },{
                     xtype: "textfield",
                     name: "niceName",
                     value: this.data.niceName,
-                    fieldLabel: t("nice_name"),
-                    width: 300
+                    fieldLabel: t("nice_name")
                 },{
                     xtype: "textfield",
                     name: "iconClass",
                     value: this.data.iconClass,
-                    fieldLabel: t("icon_class"),
-                    width: 300
+                    fieldLabel: t("icon_class")
                 },{
                     xtype: "textfield",
                     name: "group",
                     value: this.data.group,
-                    fieldLabel: t("group"),
-                    width: 300
+                    fieldLabel: t("group")
                 },{
                     xtype: "textfield",
                     name: "groupIconClass",
                     value: this.data.groupIconClass,
-                    fieldLabel: t("group_icon_class"),
-                    width: 300
+                    fieldLabel: t("group_icon_class")
                 },{
                     xtype: "checkbox",
                     name: "menuShortcut",
                     checked: this.data.menuShortcut,
-                    fieldLabel: t("create_menu_shortcut"),
-                    width: 300
+                    fieldLabel: t("create_menu_shortcut")
                 }]
             }]
         });
@@ -349,7 +351,7 @@ pimcore.report.custom.item = Class.create({
                     valueField: 'name',
                     displayField: 'name'
                 }),{
-                    xtype: "compositefield",
+                    xtype: "fieldset",
                     fieldLabel: t("custom_report_y_axis"),
                     width: 360,
                     items: [{
@@ -424,7 +426,7 @@ pimcore.report.custom.item = Class.create({
                     xtype: "displayfield",
                     name: "errorMessage",
                     itemId: "errorMessage",
-                    style: "color: red;"
+                    fieldStyle: "color: red;"
                 }
             ]
         });

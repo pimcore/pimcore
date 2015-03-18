@@ -65,19 +65,20 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
         
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
-            url: '/admin/reports/analytics/data-explorer',
-            root: 'data',
-            fields: ['dimension','metric'],
-            baseParams: {
-                type: type,
-                id: id,
-                path: path
+            proxy: {
+                type: 'ajax',
+                url: '/admin/reports/analytics/data-explorer',
+                extraParams: {
+                    type: type,
+                    id: id,
+                    path: path
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: 'data'
+                }
             },
-            listeners: {
-                load: function () {
-                    
-                }.bind(this)
-            }
+            fields: ['dimension','metric']
         });
         this.store.load();
         

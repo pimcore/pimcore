@@ -26,22 +26,24 @@ pimcore.report.analytics.settings = Class.create({
     getLayout: function () {
 
         this.panel = new Ext.FormPanel({
-            layout: "pimcoreform",
+            //layout: "pimcoreform",
             title: "Google Analytics",
             bodyStyle: "padding: 10px;",
             autoScroll: true,
             items: [
                 {
                     xtype: "displayfield",
-                    width: 300,
+                    width: 400,
                     hideLabel: true,
                     value: t("analytics_notice"),
                     cls: "pimcore_extra_label",
-                    style: "color: #ff0000"
+                    fieldStyle: {
+                        color: "#ff0000"
+                    }
                 },
                 {
                     xtype: "displayfield",
-                    width: 300,
+                    width: 400,
                     hideLabel: true,
                     value: "&nbsp;<br />" + t("analytics_settings_description") + "<br /><br />"
                                            + t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
@@ -75,71 +77,77 @@ pimcore.report.analytics.settings = Class.create({
             configs.push(this.getConfiguration(key, record.data.domain, id));
         }, this);
 
-
         return configs;
     },
 
     getConfiguration: function (key, name, id) {
 
+        id = id + "";
+        var itemId = id.replace(/\./g, '_');
         var config = {
             xtype: "fieldset",
-            labelWidth: 300,
+            defaults: {
+                labelWidth: 300
+            },
             title: name,
             items: [
                 {
                     xtype: "textfield",
                     fieldLabel: t("analytics_trackid_code"),
                     name: "trackid_" + id,
-                    id: "report_settings_analytics_trackid_" + id,
+                    id: "report_settings_analytics_trackid_" + itemId,
                     value: this.parent.getValue("analytics.sites." + key + ".trackid")
                 },{
                     xtype: "fieldset",
                     collapsible: true,
                     collapsed: true,
                     title: t("code_settings"),
+                    defaults: {
+                        labelWidth: 300
+                    },
                     items: [{
                         xtype: "textarea",
                         fieldLabel: t("analytics_universal_configuration"),
                         name: "universal_configuration_" + id,
                         height: 100,
-                        width: 350,
-                        id: "report_settings_analytics_universal_configuration_" + id,
+                        width: 650,
+                        id: "report_settings_analytics_universal_configuration_" + itemId,
                         value: this.parent.getValue("analytics.sites." + key + ".universal_configuration")
                     },{
                         xtype: "textarea",
                         fieldLabel: t("code_before_init"),
                         name: "additionalcodebeforeinit" + id,
                         height: 100,
-                        width: 350,
-                        id: "report_settings_analytics_additionalcodebeforeinit_" + id,
+                        width: 650,
+                        id: "report_settings_analytics_additionalcodebeforeinit_" + itemId,
                         value: this.parent.getValue("analytics.sites." + key + ".additionalcodebeforeinit")
                     },{
                         xtype: "textarea",
                         fieldLabel: t("code_before_pageview"),
                         name: "additionalcodebeforepageview" + id,
                         height: 100,
-                        width: 350,
-                        id: "report_settings_analytics_additionalcodebeforepageview_" + id,
+                        width: 650,
+                        id: "report_settings_analytics_additionalcodebeforepageview_" + itemId,
                         value: this.parent.getValue("analytics.sites." + key + ".additionalcodebeforepageview")
                     },{
                         xtype: "textarea",
                         fieldLabel: t("code_after_pageview"),
                         name: "additionalcode_" + id,
                         height: 100,
-                        width: 350,
-                        id: "report_settings_analytics_additionalcode_" + id,
+                        width: 650,
+                        id: "report_settings_analytics_additionalcode_" + itemId,
                         value: this.parent.getValue("analytics.sites." + key + ".additionalcode")
                     },{
                         xtype: "checkbox",
                         fieldLabel: t("analytics_asynchronous_code"),
                         name: "asynchronouscode_" + id,
-                        id: "report_settings_analytics_asynchronouscode_" + id,
+                        id: "report_settings_analytics_asynchronouscode_" + itemId,
                         checked: this.parent.getValue("analytics.sites." + key + ".asynchronouscode")
                     },{
                         xtype: "checkbox",
                         fieldLabel: t("analytics_retargeting_code"),
                         name: "retargetingcode_" + id,
-                        id: "report_settings_analytics_retargetingcode_" + id,
+                        id: "report_settings_analytics_retargetingcode_" + itemId,
                         checked: this.parent.getValue("analytics.sites." + key + ".retargetingcode")
                     }]
                 },{
@@ -147,6 +155,9 @@ pimcore.report.analytics.settings = Class.create({
                     collapsible: true,
                     collapsed: true,
                     title: t("advanced_integration"),
+                    defaults: {
+                        labelWidth: 300
+                    },
                     items: [{
                         xtype: "displayfield",
                         hideLabel: true,
@@ -159,17 +170,23 @@ pimcore.report.analytics.settings = Class.create({
                         fieldLabel: t('profile'),
                         typeAhead:true,
                         displayField: 'name',
-                        store: new Ext.data.JsonStore({
+                        store: new Ext.data.Store({
                             autoDestroy: true,
-                            autoLoad: true,
-                            url: "/admin/reports/analytics/get-profiles",
-                            root: "data",
-                            idProperty: "id",
+                            autoLoad: false,
+                            proxy: {
+                                type: 'ajax',
+                                url: "/admin/reports/analytics/get-profiles",
+                                reader: {
+                                    type: 'json',
+                                    rootProperty: "data"
+                                }
+                            },
                             fields: ["name","id","trackid","accountid","internalid"],
                             listeners: {
-                                load: function() {
-                                    Ext.getCmp("report_settings_analytics_profile_" + id).setValue(this.parent.getValue("analytics.sites." + key + ".profile"));
-                                }.bind(this, id)
+                                load: function(id) {
+                                    var cmp = Ext.getCmp("report_settings_analytics_profile_" + id);
+                                    cmp.setValue(this.parent.getValue("analytics.sites." + key + ".profile"));
+                                }.bind(this, itemId)
                             }
                         }),
                         listeners: {
@@ -177,26 +194,26 @@ pimcore.report.analytics.settings = Class.create({
                                 Ext.getCmp("report_settings_analytics_trackid_" + id).setValue(record.get("trackid"));
                                 Ext.getCmp("report_settings_analytics_accountid_" + id).setValue(record.get("accountid"));
                                 Ext.getCmp("report_settings_analytics_internalid_" + id).setValue(record.get("internalid"));
-                            }.bind(this, id)
+                            }.bind(this, itemId)
                         },
                         valueField: 'id',
-                        width: 250,
+                        width: 550,
                         forceSelection: true,
                         triggerAction: 'all',
                         hiddenName: 'profile_' + id,
-                        id: "report_settings_analytics_profile_" + id,
+                        id: "report_settings_analytics_profile_" + itemId,
                         value: this.parent.getValue("analytics.sites." + key + ".profile")
                     },{
                         xtype: "textfield",
                         fieldLabel: t("analytics_accountid"),
                         name: "accountid_" + id,
-                        id: "report_settings_analytics_accountid_" + id,
+                        id: "report_settings_analytics_accountid_" + itemId,
                         value: this.parent.getValue("analytics.sites." + key + ".accountid")
                     },{
                         xtype: "textfield",
                         fieldLabel: t("analytics_internalid"),
                         name: "internalid_" + id,
-                        id: "report_settings_analytics_internalid_" + id,
+                        id: "report_settings_analytics_internalid_" + itemId,
                         value: this.parent.getValue("analytics.sites." + key + ".internalid")
                     }]
                 }

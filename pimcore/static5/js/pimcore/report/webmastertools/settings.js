@@ -26,7 +26,6 @@ pimcore.report.webmastertools.settings = Class.create({
     getLayout: function () {
 
         this.panel = new Ext.FormPanel({
-            layout: "pimcoreform",
             title: "Google Webmastertools",
             bodyStyle: "padding: 10px;",
             autoScroll: true,
@@ -73,18 +72,21 @@ pimcore.report.webmastertools.settings = Class.create({
 
     getConfiguration: function (key, name, id) {
 
+        id = id + "";
+        var itemId = id.replace(/\./g, '_');
+
         var config = {
             xtype: "fieldset",
-            labelWidth: 250,
             title: name,
             items: [
                 {
                     xtype: "textfield",
                     fieldLabel: t("verification_filename_text") + " (google1d765d927ceexxxx.html)",
                     name: "verification",
-                    width: 250,
+                    labelWidth: 250,
+                    width: 500,
                     value: this.parent.getValue("webmastertools.sites." + key + ".verification"),
-                    id: "report_settings_webmastertools_verification_" + id
+                    id: "report_settings_webmastertools_verification_" + itemId
                 }
             ]
         };
