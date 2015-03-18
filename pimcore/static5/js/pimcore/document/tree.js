@@ -917,8 +917,9 @@ pimcore.document.tree = Class.create({
                                 },
 
                                 onNodeDrop : function (target, dd, e, data) {
-                                    if (data.node.attributes.elementType == "document") {
-                                        this.setValue(data.node.attributes.path);
+                                    data = data.records[0].data;
+                                    if (data.elementType == "document") {
+                                        this.setValue(data.path);
                                         return true;
                                     }
                                     return false;
