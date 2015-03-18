@@ -48,7 +48,8 @@ function prompt_silent($prompt = "Enter new password:") {
 }
 
 if ($argc <= 1) { // if no arguments
-    echo 'Usage: ' . $argv[0] . ' id/name';
+    echo 'Usage: ' . $argv[0] . ' user ID or name. ';
+    echo "\nExample: php reset-password.php myusername";
     echo "\n";
     exit;
 }
