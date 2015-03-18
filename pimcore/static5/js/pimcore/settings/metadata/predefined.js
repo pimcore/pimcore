@@ -87,7 +87,6 @@ pimcore.settings.metadata.predefined = Class.create({
             }
         };
 
-
         this.store = new Ext.data.Store({
             id: 'predefined_metadata',
             proxy: proxy,
@@ -112,14 +111,12 @@ pimcore.settings.metadata.predefined = Class.create({
                 {name: 'type', allowBlank: true},
                 {name: 'data', allowBlank: true,
                     convert: function (v, r) {
-                        if (r.type == "date") {
+                        if (r.data.type == "date") {
                             var d = new Date(intval(v) * 1000);
                             return d;
                         }
                         return v;
                     }
-
-
                 },
                 {name: 'config', allowBlank: true},
                 {name: 'targetSubtype', allowBlank: true},
@@ -127,9 +124,7 @@ pimcore.settings.metadata.predefined = Class.create({
                 {name: 'creationDate', allowBlank: true},
                 {name: 'modificationDate', allowBlank: true}
             ]
-
         });
-
 
         this.filterField = new Ext.form.TextField({
             xtype: "textfield",
@@ -140,7 +135,8 @@ pimcore.settings.metadata.predefined = Class.create({
                 "keydown" : function (field, key) {
                     if (key.getKey() == key.ENTER) {
                         var input = field;
-                        this.store.baseParams.filter = input.getValue();
+                        var proxy = this.store.getPropxy();
+                        proxy.extraParams.filter = input.getValue();
                         this.store.load();
                     }
                 }.bind(this)
@@ -222,7 +218,7 @@ pimcore.settings.metadata.predefined = Class.create({
 
             })},
             {header: t("value"),
-                width: 510,
+                flex: 510,
                 sortable: true,
                 dataIndex: 'data',
                 editable: true,
@@ -269,9 +265,8 @@ pimcore.settings.metadata.predefined = Class.create({
                     if (d !== undefined) {
                         var date = new Date(d * 1000);
                         return date.format("Y-m-d H:i:s");
-                    } else {
-                        return "";
                     }
+                    return "";
                 }
             },
             {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
@@ -280,9 +275,8 @@ pimcore.settings.metadata.predefined = Class.create({
                     if (d !== undefined) {
                         var date = new Date(d * 1000);
                         return date.format("Y-m-d H:i:s");
-                    } else {
-                        return "";
                     }
+                    return "";
                 }
             }
         ];
@@ -290,7 +284,6 @@ pimcore.settings.metadata.predefined = Class.create({
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
         });
-
 
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,
@@ -301,7 +294,7 @@ pimcore.settings.metadata.predefined = Class.create({
             trackMouseOver: true,
             columns : metadataColumns,
             clicksToEdit: 1,
-            sm: Ext.create('Ext.selection.RowModel', {}),
+            selModel: Ext.create('Ext.selection.RowModel', {}),
             bbar: this.pagingtoolbar,
             autoExpandColumn: "value_col",
             plugins: [
@@ -364,7 +357,7 @@ pimcore.settings.metadata.predefined = Class.create({
             }
         } else if (type == "date") {
             if (value) {
-                return value.format("Y-m-d");
+                return Ext.Date.format(value, "Y-m-d");
             }
         }
 
