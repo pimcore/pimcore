@@ -222,11 +222,17 @@ pimcore.settings.user.user.settings = Class.create({
                 name: "apiKey",
                 style: "font-family: courier;",
                 value: this.currentUser.apiKey,
-                width: 460
+                width: 560
             });
 
             this.apiKeyFieldContainer = new Ext.form.FieldSet({
-                items: [this.apiKeyField, {
+                border: false,
+                layout: 'hbox',
+                style: {
+                    padding: 0
+                },
+                items: [this.apiKeyField,
+                    {
                     xtype: "button",
                     test: t("Generate"),
                     iconCls: "pimcore_icon_menu_clear_cache",
