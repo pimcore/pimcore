@@ -28,7 +28,10 @@ pimcore.document.emails.settings = Class.create({
                 proxy: {
                     type: 'ajax',
                     url: '/admin/document/get-doc-types?type=email',
-                    rootProperty: "docTypes"
+                    reader: {
+                        type: 'json',
+                        rootProperty: "docTypes"
+                    }
                 },
                 fields: ["id","name","controller","action","template","to","from","cc","bcc","subject"]
             });
@@ -53,7 +56,7 @@ pimcore.document.emails.settings = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 400},
+                        defaults: {width: 600},
                         items :[
                             {
                                 fieldLabel: t('email_subject'),
@@ -82,7 +85,6 @@ pimcore.document.emails.settings = Class.create({
                             },
                             {
                                 xtype: "displayfield",
-                                width: 600,
                                 value: t("email_settings_receiver_description"),
                                 style: "font-size: 10px;"
                             }
@@ -95,7 +97,7 @@ pimcore.document.emails.settings = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 150},
+                        defaults: {width: 350},
                         items :[
                             {
                                 fieldLabel: t('predefined_document_type'),
@@ -129,17 +131,20 @@ pimcore.document.emails.settings = Class.create({
                                 store: new Ext.data.Store({
                                     proxy: {
                                         type: 'ajax',
-                                        url: "/admin/misc/get-available-controllers"
+                                        url: "/admin/misc/get-available-controllers",
+                                        reader: {
+                                            type: 'json',
+                                            rootProperty: 'data'
+                                        }
                                     },
                                     autoDestroy: true,
-                                    //root: "data",
                                     fields: ["name"]
                                 }),
                                 triggerAction: "all",
                                 mode: "local",
                                 id: "pimcore_document_settings_controller_" + this.email.id,
                                 value: this.email.data.controller,
-                                width: 250,
+                                width: 350,
                                 listeners: {
                                     afterrender: function (el) {
                                         el.getStore().load();
@@ -156,16 +161,19 @@ pimcore.document.emails.settings = Class.create({
                                 store: new Ext.data.Store({
                                     proxy: {
                                         type: 'ajax',
-                                        url: "/admin/misc/get-available-actions"
+                                        url: "/admin/misc/get-available-actions",
+                                        reader: {
+                                            type: 'json',
+                                            rootProperty: 'data'
+                                        }
                                     },
                                     autoDestroy: true,
-                                    //root: "data",
                                     fields: ["name"]
                                 }),
                                 triggerAction: "all",
                                 mode: "local",
                                 value: this.email.data.action,
-                                width: 250,
+                                width: 350,
                                 listeners: {
                                     "focus": function (el) {
                                         el.getStore().reload({
@@ -187,17 +195,19 @@ pimcore.document.emails.settings = Class.create({
                                 store: new Ext.data.Store({
                                     proxy: {
                                         type: 'ajax',
-                                        url: "/admin/misc/get-available-templates"
+                                        url: "/admin/misc/get-available-templates",
+                                        reader: {
+                                            type: 'json',
+                                            rootProperty: 'data'
+                                        }
                                     },
                                     autoDestroy: true,
-
-                                    //root: "data",
                                     fields: ["path"]
                                 }),
                                 triggerAction: "all",
                                 mode: "local",
                                 value: this.email.data.template,
-                                width: 250,
+                                width: 350,
                                 listeners: {
                                     afterrender: function (el) {
                                         el.getStore().load();
