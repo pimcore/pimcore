@@ -86,10 +86,12 @@ pimcore.element.replace_assignments = Class.create({
                                     },
 
                                     onNodeDrop : function (target, dd, e, data) {
-                                        this.setValue(data.node.attributes.path);
+                                        var record = data.records[0];
 
-                                        var type = data.node.attributes.elementType;
-                                        var id = data.node.attributes.id;
+                                        this.setValue(record.data.path);
+
+                                        var type = record.data.elementType;
+                                        var id = record.data.id;
 
                                         var form = this.findParentByType("form");
                                         form.getComponent("type").setValue(type);
@@ -148,10 +150,11 @@ pimcore.element.replace_assignments = Class.create({
                                     },
 
                                     onNodeDrop : function (target, dd, e, data) {
-                                        this.setValue(data.node.attributes.path);
+                                        var record = data.records[0];
+                                        this.setValue(record.data.path);
 
-                                        var type = data.node.attributes.elementType;
-                                        var id = data.node.attributes.id;
+                                        var type = record.data.elementType;
+                                        var id = record.data.id;
 
                                         var form = this.findParentByType("form");
                                         form.getComponent("targetType").setValue(type);
