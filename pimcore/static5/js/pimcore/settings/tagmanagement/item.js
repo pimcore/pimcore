@@ -58,8 +58,6 @@ pimcore.settings.tagmanagement.item = Class.create({
 
         this.panel = new Ext.form.FormPanel({
             border: false,
-//            layout: "fit",
-//            layout: "pimcoreform",
             closable: true,
             autoScroll: true,
             bodyStyle: "padding: 20px;",
@@ -98,7 +96,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                     value: this.data.urlPattern,
                     fieldLabel: t("url_pattern"),
                     width: 550,
-                    cls: "input_drop_target",
+                    fieldCls: "input_drop_target",
                     listeners: {
                         "render": function (el) {
                             new Ext.dd.DropZone(el.getEl(), {
@@ -159,6 +157,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                     xtype: "fieldset",
                     layout: "hbox",
                     border: false,
+                    padding: 0,
                     items: [{
                         xtype: "textfield",
                         fieldLabel: t("name"),
@@ -166,6 +165,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                         value: this.data.params[0]["name"]
                     },{
                         xtype: "textfield",
+                        margin: '0 0 0 20',
                         fieldLabel: t("value"),
                         name: "params.value0",
                         value: this.data.params[0]["value"]
@@ -174,6 +174,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                     xtype: "fieldset",
                     layout: "hbox",
                     border: false,
+                    padding: 0,
                     items: [{
                         xtype: "textfield",
                         fieldLabel: t("name"),
@@ -181,6 +182,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                         value: this.data.params[1]["name"]
                     },{
                         xtype: "textfield",
+                        margin: '0 0 0 20',
                         fieldLabel: t("value"),
                         name: "params.value1",
                         value: this.data.params[1]["value"]
@@ -189,6 +191,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                     xtype: "fieldset",
                     layout: "hbox",
                     border: false,
+                    padding: 0,
                     items: [{
                         xtype: "textfield",
                         fieldLabel: t("name"),
@@ -196,6 +199,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                         value: this.data.params[2]["name"]
                     },{
                         xtype: "textfield",
+                        margin: '0 0 0 20',
                         fieldLabel: t("value"),
                         name: "params.value2",
                         value: this.data.params[2]["value"]
@@ -204,6 +208,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                     xtype: "fieldset",
                     layout: "hbox",
                     border: false,
+                    padding: 0,
                     items: [{
                         xtype: "textfield",
                         fieldLabel: t("name"),
@@ -211,6 +216,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                         value: this.data.params[3]["name"]
                     },{
                         xtype: "textfield",
+                        margin: '0 0 0 20',
                         fieldLabel: t("value"),
                         name: "params.value3",
                         value: this.data.params[3]["value"]
@@ -219,6 +225,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                     xtype: "fieldset",
                     layout: "hbox",
                     border: false,
+                    padding: 0,
                     items: [{
                         xtype: "textfield",
                         fieldLabel: t("name"),
@@ -226,6 +233,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                         value: this.data.params[4]["name"]
                     },{
                         xtype: "textfield",
+                        margin: '0 0 0 20',
                         fieldLabel: t("value"),
                         name: "params.value4",
                         value: this.data.params[4]["value"]
