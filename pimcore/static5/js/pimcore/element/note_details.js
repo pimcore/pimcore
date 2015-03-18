@@ -62,16 +62,14 @@ pimcore.element.note_details = Class.create({
             xtype: "textfield",
             fieldLabel: t('type'),
             readOnly: true,
-            value: this.data.type,
-            width: 500
+            value: this.data.type
         });
 
         items.push({
             xtype: "textfield",
             fieldLabel: t('title'),
             readOnly: true,
-            value: this.data.title,
-            width: 500
+            value: this.data.title
         });
 
         items.push({
@@ -79,7 +77,6 @@ pimcore.element.note_details = Class.create({
             fieldLabel: t('description'),
             readOnly: true,
             value: this.data.description,
-            width: 500,
             height: 200
         });
 
@@ -96,8 +93,7 @@ pimcore.element.note_details = Class.create({
                 xtype: "textfield",
                 fieldLabel: t('fields'),
                 readOnly: true,
-                value: v,
-                width: 500
+                value: v
             }
         );
 
@@ -116,8 +112,7 @@ pimcore.element.note_details = Class.create({
                 xtype: "textfield",
                 fieldLabel: t('user'),
                 readOnly: true,
-                value: user,
-                width: 500
+                value: user
             }
         );
 
@@ -128,8 +123,7 @@ pimcore.element.note_details = Class.create({
                 xtype: "textfield",
                 fieldLabel: t('date'),
                 readOnly: true,
-                value: Ext.Date.format(date, "Y-m-d H:i:s"),
-                width: 500
+                value: Ext.Date.format(date, "Y-m-d H:i:s")
             }
         );
 
@@ -138,9 +132,12 @@ pimcore.element.note_details = Class.create({
             frame:false,
             bodyStyle: 'padding:10px',
             items: items,
-            labelWidth: 130,
             collapsible: false,
-            autoScroll: true
+            autoScroll: true,
+            defaults: {
+                labelWidth: 130,
+                width: 600
+            }
         });
 
         this.detailWindow.add(panel);
