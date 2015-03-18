@@ -159,8 +159,9 @@ pimcore.report.qrcode.item = Class.create({
                                 },
 
                                 onNodeDrop : function (el, target, dd, e, data) {
-                                    if (data.node.attributes.elementType == "document") {
-                                        el.setValue(data.node.attributes.path);
+                                    var data = data.records[0].data;
+                                    if (data.elementType == "document") {
+                                        el.setValue(data.path);
                                         return true;
                                     }
                                     return false;
