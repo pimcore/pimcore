@@ -93,48 +93,56 @@ pimcore.report.newsletter.item = Class.create({
             });
         }
 
-        this.analytics = new Ext.form.FieldSet({
-            hidden: !this.getAnalyticsVisiblity(),
-            title: t("google_analytics"),
+        this.analytics = new Ext.panel.Panel(
+            {
+            border: false,
+            layout: 'fit',
             items: [{
-                xtype: 'cartesian',
-                store: store,
-
-                height: 240,
-                axes: [{
-                    type: 'numeric',
-                    fields: ['visits' ],
-                    position: 'left',
-                    grid: true
-                }
-                    , {
-                        type: 'category',
-                        fields: 'datetext',
-                        position: 'bottom',
+                xtype: 'fieldset',
+                hidden: !this.getAnalyticsVisiblity(),
+                title: t("google_analytics"),
+                items: [
+                    {
+                    xtype: 'cartesian',
+                    store: store,
+                    height: 240,
+                    axes: [{
+                        type: 'numeric',
+                        fields: ['visits' ],
+                        position: 'left',
                         grid: true,
-                        label: {
-                            rotate: {
-                                degrees: -45
+                        minimum: 0
+                    }
+                        , {
+                            type: 'category',
+                            fields: 'datetext',
+                            position: 'bottom',
+                            grid: true,
+                            label: {
+                                rotate: {
+                                    degrees: -45
+                                }
                             }
                         }
-                    }
-                ],
-                series: [
-                    {
-                        type:'line',
-                        displayName: t("visits"),
-                        xField: 'datetext',
-                        yField: 'visits',
-                        style: {
-                            lineWidth: 2,
-                            color:0x15428B
-                        },
-                        marker: {
-                            radius: 4
+                    ],
+                    series: [
+                        {
+                            type:'line',
+                            displayName: t("visits"),
+                            xField: 'datetext',
+                            yField: 'visits',
+                            style: {
+                                lineWidth: 2,
+                                stroke: '#15428B',
+                                fill: '#15428B'
+                            },
+                            marker: {
+                                radius: 4
+                            }
                         }
-                    }
-                ]
-            }],
+                    ]
+                }
+            ]}],
             buttons: [{
                 text: t("show_in_google_anaytics"),
                 iconCls: "pimcore_icon_analytics",
@@ -181,7 +189,6 @@ pimcore.report.newsletter.item = Class.create({
         });
 
         this.form = new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             region: "center",
             bodyStyle: "padding:10px",
             labelWidth: 150,
@@ -245,7 +252,7 @@ pimcore.report.newsletter.item = Class.create({
                     triggerAction: 'all',
                     editable: false,
                     store: this.data.availableClasses,
-                    width: 180
+                    width: 280
 
                 },{
                     xtype: "textfield",
