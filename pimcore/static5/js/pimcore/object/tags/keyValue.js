@@ -240,7 +240,6 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
         var columns = [];
 
-        // var visibleFields = ['key','description', 'value','type','possiblevalues'];
         var visibleFields = ['group', 'groupDesc', 'keyName', 'keyDesc', 'value', 'unit'];
         if (this.fieldConfig.metaVisible) {
             visibleFields.push('metadata');
@@ -378,30 +377,6 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         }
 
         gridWidth += actionColWidth;
-
-        //var configuredFilters = [
-        //    {
-        //        type: "string",
-        //        dataIndex: "group"
-        //    },
-        //    {
-        //        type: "string",
-        //        dataIndex: "description"
-        //    },
-        //    {
-        //        type: "string",
-        //        dataIndex: "value"
-        //    }
-        //];
-
-        //if (this.fieldConfig.metaVisible) {
-        //    configuredFilters.push(            {
-        //            type: "string",
-        //            dataIndex: "metadata"
-        //        }
-        //    );
-        //}
-
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
