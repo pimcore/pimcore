@@ -81,7 +81,7 @@ pimcore.object.classes.data.data = Class.create({
                 xtype: "textfield",
                 fieldLabel: t("name"),
                 name: "name",
-                width: 400,
+                width: 540,
                 maxLength: 70,
                 itemId: "name",
                 autoCreate: {tag: 'input', type: 'text', maxlength: '70', autocomplete: 'off'},
@@ -103,7 +103,7 @@ pimcore.object.classes.data.data = Class.create({
                 fieldLabel: t("title") + " (" + t("label") + ")",
                 name: "title",
                 itemId: "title",
-                width: 400,
+                width: 540,
                 value: this.datax.title,
                 disabled: !in_array("title",this.availableSettingsFields),
                 enableKeyEvents: true,
@@ -122,7 +122,7 @@ pimcore.object.classes.data.data = Class.create({
                 xtype: "textarea",
                 fieldLabel: t("tooltip"),
                 name: "tooltip",
-                width: 400,
+                width: 540,
                 height: 100,
                 value: this.datax.tooltip,
                 disabled: !in_array("tooltip",this.availableSettingsFields)
@@ -183,7 +183,7 @@ pimcore.object.classes.data.data = Class.create({
                 fieldLabel: t("css_style") + " (float: left; margin:10px; ...)",
                 name: "style",
                 value: this.datax.style,
-                width: 500,
+                width: 740,
                 disabled: !in_array("style",this.availableSettingsFields)
             }
         ];
@@ -193,7 +193,9 @@ pimcore.object.classes.data.data = Class.create({
                 title: t("general_settings") + " (" + niceName + ")",
                 bodyStyle: "padding: 10px;",
                 style: "margin: 10px 0 10px 0",
-                labelWidth: 140,
+                defaults: {
+                    labelWidth: 140
+                },
                 itemId: "standardSettings",
                 items: standardSettings
             }
@@ -204,7 +206,9 @@ pimcore.object.classes.data.data = Class.create({
                 title: t("layout_settings"),
                 bodyStyle: "padding: 10px;",
                 style: "margin: 10px 0 10px 0",
-                labelWidth: 230,
+                defaults: {
+                    labelWidth: 230
+                },
                 items: layoutSettings
             }
         );
