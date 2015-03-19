@@ -100,11 +100,7 @@ pimcore.document.tree = Class.create({
             pageSize: itemsPerPage,
             root: rootNodeConfig
             //folderSort: true,
-            //extraParams: this.config.loaderBaseParams
         });
-
-
-        // specify segment of data you want to load using params
 
 
         // documents
@@ -136,25 +132,9 @@ pimcore.document.tree = Class.create({
                 },
                 xtype: 'pimcoretreeview'
             },
-            //tools: [{
-            //    id: "right",
-            //    handler: pimcore.layout.treepanelmanager.toRight.bind(this)
-            //},{
-            //    id: "left",
-            //    handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
-            //    hidden: true
-            //}],
             root: rootNodeConfig,
             store: store,
             listeners: this.getTreeNodeListeners()
-            //,
-            //dockedItems: [{
-            //    xtype: 'pagingtoolbar',
-            //    store: store,   // same store GridPanel is using
-            //    //dock: 'bottom',
-            //    displayInfo: true,
-            //    pageSize: itemsPerPage
-            //}]
         });
 
 
@@ -217,8 +197,6 @@ pimcore.document.tree = Class.create({
     },
 
     onTreeNodeOver: function (targetNode, position, dragData, e, eOpts ) {
-        console.log("onTreeNodeOver");
-
         var node = dragData.records[0];
         // check for permission
         try {
@@ -235,7 +213,6 @@ pimcore.document.tree = Class.create({
 
 
     onTreeNodeMove: function (node, oldParent, newParent, index, eOpts ) {
-        console.log("onTreeNodeMove " + node.data.id);
         var tree = node.getOwnerTree();
 
         this.updateDocument(node.data.id, {
@@ -1300,7 +1277,7 @@ pimcore.document.tree = Class.create({
                             type: type
                         },
                         success: function () {
-                            this.parentNode.reload();
+                            this.refresh(record.parentNode);
                         }.bind(this)
                     });
                 }
