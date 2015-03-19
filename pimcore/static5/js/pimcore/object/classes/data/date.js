@@ -55,7 +55,7 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
             fieldLabel:t("default_value"),
             name:"defaultValue",
             itemCls:"object_field",
-            width:100,
+            width: 200,
             disabled: this.datax.useCurrentDate
         };
 
@@ -104,8 +104,6 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
         } else {
             this.component.enable();
         }
-
-
     },
 
     applySpecialData: function(source) {
