@@ -43,6 +43,9 @@ class Resource extends Model\Resource\AbstractResource {
             }
         }
 
+        // set table search_backend_data to InnoDB if MySQL Version is > 5.6
+        $this->db->query("ALTER TABLE search_backend_data /*!50600 ENGINE=InnoDB */;");
+
         // reset the database connection
         \Pimcore\Resource::reset();
     }

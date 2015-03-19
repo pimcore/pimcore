@@ -1,3 +1,7 @@
+
+SET NAMES UTF8;
+
+
 DROP TABLE IF EXISTS `assets`;
 CREATE TABLE `assets` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
