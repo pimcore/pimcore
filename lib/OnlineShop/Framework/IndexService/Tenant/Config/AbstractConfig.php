@@ -100,10 +100,10 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig im
      * always returns object itself - see als getObjectMockupById
      *
      * @param $objectId
-     * @return \Pimcore\Model\Object\AbstractObject | array
+     * @return Object_Abstract | array
      */
     public function getObjectById($objectId) {
-        return \Pimcore\Model\Object\AbstractObject::getById($objectId);
+        return Object_Abstract::getById($objectId);
     }
 
 
