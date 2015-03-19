@@ -674,7 +674,7 @@ pimcore.document.tree = Class.create({
             }));
         }
 
-        if (this.reload) {
+        if (!record.data.leaf) {
             menu.add(new Ext.menu.Item({
                 text: t('refresh'),
                 iconCls: "pimcore_icon_reload",
