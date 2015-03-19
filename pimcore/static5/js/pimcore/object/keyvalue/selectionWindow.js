@@ -181,7 +181,8 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
                 ];
 
                 this.encodedFilter = Ext.util.JSON.encode(filter);
-                this.store.setBaseParam("filter", this.encodedFilter);
+                var proxy = this.store.getProxy();
+                proxy.extraParams.filter = this.encodedFilter;
 
 
                 var lastOptions = this.store.lastOptions;

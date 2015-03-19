@@ -417,7 +417,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 items: columns
             },
             viewConfig: {
-                markDirty: false
+                markDirty: false,
+                forceFit: true
             },
             cls: cls,
             width: gridWidth,
@@ -449,8 +450,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                         handler: this.openSearchEditor.bind(this)
                     }
                 ],
-                ctCls: "pimcore_force_auto_width",
-                cls: "pimcore_force_auto_width"
+
+
             },
             autoHeight: autoHeight,
             //maxHeight: 10,
@@ -751,7 +752,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     colData.groupDesc = keyDef.groupdescription;
                     colData.unit = keyDef.unit;
                     colData.mandatory = keyDef.mandatory;
-                    this.store.add(new this.store.recordType(colData));
+                    this.store.add(colData);
 
                     if (this.fieldConfig.multivalent) {
                         // iterate over the store and remove all inherited pairs
