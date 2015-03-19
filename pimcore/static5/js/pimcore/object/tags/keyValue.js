@@ -477,7 +477,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         pimcore.helpers.openObject(data.source, "object");
     },
 
-    cellMousedown: function (col, grid, rowIndex, event) {
+    cellMousedown: function (grid, el, rowIndex, colIndex, event, record) {
 
 
         var store = grid.getStore();
