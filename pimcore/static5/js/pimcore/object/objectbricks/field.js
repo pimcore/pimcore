@@ -207,12 +207,15 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         }
 
         var classTextfield = new Ext.form.TextField({
+            fieldLabel: t('allowed_class_field'),
+            labelWidth: 200,
             value: translatedText,
             readOnly: true
         });
 
         return new Ext.form.FieldSet({
-            fieldLabel: t('allowed_class_field'),
+            layout: 'hbox',
+            border: false,
             combineErrors: false,
             items: [classTextfield, fieldCombo],
             itemCls: "object_field"
@@ -233,7 +236,6 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
         var element = new Ext.Panel({
             bodyStyle: "padding:10px;",
-            //layout: "pimcoreform",
             autoHeight: true,
             border: false,
             tbar: this.getDeleteControl(currentData),
