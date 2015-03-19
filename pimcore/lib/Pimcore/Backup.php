@@ -372,9 +372,10 @@ class Backup {
     }
 
     /**
+     * @param array $exclude
      * @return array
      */
-    public function mysqlTables () {
+    public function mysqlTables ($exclude = []) {
         $db = Resource::get();
 
         $tables = $this->getTables();
@@ -386,6 +387,10 @@ class Backup {
 
             $name = current($table);
             $type = next($table);
+
+            if(in_array($name, $exclude)) {
+                continue;
+            }
 
             if ($type != "VIEW") {
                 $dumpData .= "\n\n";

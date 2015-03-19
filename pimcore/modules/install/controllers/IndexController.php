@@ -129,6 +129,7 @@ class Install_IndexController extends \Pimcore\Controller\Action {
                 \Pimcore::initConfiguration();
 				$setup->contents($contentConfig);
 			} else {
+                $setup->database();
 				$setup->insertDump($dbDataFile);
                 \Pimcore::initConfiguration();
 				$setup->createOrUpdateUser($contentConfig);
