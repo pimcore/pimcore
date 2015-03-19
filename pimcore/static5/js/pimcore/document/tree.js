@@ -1051,7 +1051,7 @@ pimcore.document.tree = Class.create({
         }
     },
 
-    publishDocument: function (tree, record, type, id, task) {
+    publishDocument: function (tree, record, task) {
         var id = record.data.id;
         var type = record.data.type;
 
@@ -1066,28 +1066,30 @@ pimcore.document.tree = Class.create({
                 try {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
+                        var view = tree;
+                        var nodeEl = Ext.fly(view.getNodeByRecord(record));
 
                         if (task == 'unpublish') {
-                            this.setCls('pimcore_unpublished');
-                            this.attributes.published = false;
-                            if (pimcore.globalmanager.exists("document_" + this.id)) {
-                                pimcore.globalmanager.get("document_" + this.id).toolbarButtons.unpublish.hide();
+                            nodeEl.setCls('pimcore_unpublished');
+                            record.data.published = false;
+                            if (pimcore.globalmanager.exists("document_" + record.data.id)) {
+                                pimcore.globalmanager.get("document_" + record.data.id).toolbarButtons.unpublish.hide();
                             }
 
                         } else {
-                            this.setCls('');
-                            this.attributes.published = true;
-                            if (pimcore.globalmanager.exists("document_" + this.id)) {
-                                pimcore.globalmanager.get("document_" + this.id).toolbarButtons.unpublish.show();
+                            nodeEl.setCls('');
+                            record.data.published = true;
+                            if (pimcore.globalmanager.exists("document_" + record.data.id)) {
+                                pimcore.globalmanager.get("document_" + record.data.id).toolbarButtons.unpublish.show();
                             }
                         }
 
-                        if (pimcore.globalmanager.exists("document_" + this.id)) {
+                        if (pimcore.globalmanager.exists("document_" + record.data.id)) {
                             // reload versions
-                            if (pimcore.globalmanager.get("document_" + this.id).versions) {
-                                if (typeof pimcore.globalmanager.get("document_" + this.id).versions.reload
+                            if (pimcore.globalmanager.get("document_" + record.data.id).versions) {
+                                if (typeof pimcore.globalmanager.get("document_" + record.data.id).versions.reload
                                     == "function") {
-                                    pimcore.globalmanager.get("document_" + this.id).versions.reload();
+                                    pimcore.globalmanager.get("document_" + record.data.id).versions.reload();
                                 }
                             }
                         }
