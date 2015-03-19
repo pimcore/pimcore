@@ -568,21 +568,22 @@ pimcore.object.classes.klass = Class.create({
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
-            //layout: "pimcoreform",
-            labelWidth: 200,
+            defaults: {
+                labelWidth: 200
+            },
             items: [
                 {
                     xtype: "textfield",
                     fieldLabel: t("name"),
                     name: "name",
-                    width: 300,
+                    width: 500,
                     value: this.data.name
                 },
                 {
                     xtype: "textarea",
                     fieldLabel: t("description"),
                     name: "description",
-                    width: 300,
+                    width: 500,
                     value: this.data.description
                 },
                 this.allowInheritance,
@@ -592,23 +593,22 @@ pimcore.object.classes.klass = Class.create({
                     xtype: "textfield",
                     fieldLabel: t("parent_class"),
                     name: "parentClass",
-                    width: 400,
+                    width: 600,
                     value: this.data.parentClass
                 },
                 {
                     xtype: "textfield",
                     fieldLabel: t("icon"),
                     name: "icon",
-                    width: 400,
+                    width: 600,
                     value: this.data.icon,
-                    style: "padding-right: 30px;",
                     enableKeyEvents: true,
                     listeners: {
                         "keyup": function (el) {
-                            el.getEl().applyStyles("background:url(" + el.getValue() + ") right center no-repeat;");
+                            el.inputEl.applyStyles("background:url(" + el.getValue() + ") right center no-repeat;");
                         },
                         "afterrender": function (el) {
-                            el.getEl().applyStyles("background:url(" + el.getValue() + ") right center no-repeat;");
+                            el.inputEl.applyStyles("background:url(" + el.getValue() + ") right center no-repeat;");
                         }
                     }
                 },
@@ -616,7 +616,7 @@ pimcore.object.classes.klass = Class.create({
                     xtype: "textfield",
                     fieldLabel: t("preview_url"),
                     name: "previewUrl",
-                    width: 400,
+                    width: 600,
                     value: this.data.previewUrl
                 },
                 {

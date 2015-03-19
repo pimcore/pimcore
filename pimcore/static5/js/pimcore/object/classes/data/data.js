@@ -81,7 +81,7 @@ pimcore.object.classes.data.data = Class.create({
                 xtype: "textfield",
                 fieldLabel: t("name"),
                 name: "name",
-                width: 300,
+                width: 400,
                 maxLength: 70,
                 itemId: "name",
                 autoCreate: {tag: 'input', type: 'text', maxlength: '70', autocomplete: 'off'},
@@ -103,7 +103,7 @@ pimcore.object.classes.data.data = Class.create({
                 fieldLabel: t("title") + " (" + t("label") + ")",
                 name: "title",
                 itemId: "title",
-                width: 300,
+                width: 400,
                 value: this.datax.title,
                 disabled: !in_array("title",this.availableSettingsFields),
                 enableKeyEvents: true,
@@ -122,7 +122,7 @@ pimcore.object.classes.data.data = Class.create({
                 xtype: "textarea",
                 fieldLabel: t("tooltip"),
                 name: "tooltip",
-                width: 300,
+                width: 400,
                 height: 100,
                 value: this.datax.tooltip,
                 disabled: !in_array("tooltip",this.availableSettingsFields)
@@ -183,7 +183,7 @@ pimcore.object.classes.data.data = Class.create({
                 fieldLabel: t("css_style") + " (float: left; margin:10px; ...)",
                 name: "style",
                 value: this.datax.style,
-                width: 400,
+                width: 500,
                 disabled: !in_array("style",this.availableSettingsFields)
             }
         ];
