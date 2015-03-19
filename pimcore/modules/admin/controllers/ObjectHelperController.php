@@ -775,7 +775,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
             $conditionFilters[] = Object\Service::getFilterCondition($this->getParam("filter"), $class);
         }
         if ($this->getParam("condition")) {
-            $conditionFilters[] = " AND (" . $this->getParam("condition") . ")";
+            $conditionFilters[] = " (" . $this->getParam("condition") . ")";
         }
 
         $className = $class->getName();
