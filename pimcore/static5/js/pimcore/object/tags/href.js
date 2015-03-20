@@ -49,7 +49,6 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         var href = {
-            fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name
         };
 
@@ -128,7 +127,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         }
 
 
-        this.composite = Ext.create('Ext.form.FieldSet', {
+        this.composite = Ext.create('Ext.form.FieldContainer', {
+            fieldLabel: this.fieldConfig.title,
             layout: 'hbox',
             items: items,
             itemCls: "object_field",
@@ -163,8 +163,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
         this.component = new Ext.form.TextField(href);
 
-        this.composite = Ext.create('Ext.form.FieldSet', {
-            layout: 'hbox',
+        this.composite = Ext.create('Ext.form.FieldContainer', {
+            layout: 'vbox',
             items: [this.component, {
                 xtype: "button",
                 iconCls: "pimcore_icon_edit",
