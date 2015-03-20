@@ -33,7 +33,7 @@ pimcore.layout.portal = Class.create({
             params: {
                 key: this.key
             },
-            success: this.initConfiguration.bind(this) 
+            success: this.initConfiguration.bind(this)
         });
     },
 
@@ -86,7 +86,7 @@ pimcore.layout.portal = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.setActiveItem("pimcore_portal_" + key);
+        tabPanel.setActiveItem("pimcore_portal_" + this.key);
     },
 
     getTabPanel: function (config) {
@@ -106,7 +106,7 @@ pimcore.layout.portal = Class.create({
 
         if (!this.panel) {
             this.panel = Ext.create('Portal.view.PortalPanel', {
-                //id: "pimcore_portal_" + this.key,
+                id: "pimcore_portal_" + this.key,
                 layout: 'column',
                 title: this.key == "welcome" ? t("welcome") : this.key,
                 border: true,
@@ -115,47 +115,46 @@ pimcore.layout.portal = Class.create({
                 closable:true,
                 autoScroll: true,
                 tbar: [
-                        "->",
-                        {
-                            type: 'button',
-                            text: t("add_portlet"),
-                            iconCls: "pimcore_icon_portlet_add",
-                            menu: portletMenu
-                        }
-
+                    "->",
+                    {
+                        type: 'button',
+                        text: t("add_portlet"),
+                        iconCls: "pimcore_icon_portlet_add",
+                        menu: portletMenu
+                    }
                 ]
                 ,
                 items:[
-                            {
-                                id: "pimcore_portal_col0_" + this.key,
-                                xtype: 'portalcolumn',
-                                //columnWidth: 0.5,
-                                style:'padding:10px',
-                                items: config[0],
-                                title: 'left'
-                            },
-                            {
-                                id: "pimcore_portal_col1_" + this.key,
-                                xtype: 'portalcolumn',
-                                //columnWidth: 0.5,
-                                style:'padding:10px 10px 10px 0',
-                                items: config[1],
-                                title: 'right'
-                            }
-                        ]
+                    {
+                        id: "pimcore_portal_col0_" + this.key,
+                        xtype: 'portalcolumn',
+                        //columnWidth: 0.5,
+                        style:'padding:10px',
+                        items: config[0],
+                        title: 'left'
+                    },
+                    {
+                        id: "pimcore_portal_col1_" + this.key,
+                        xtype: 'portalcolumn',
+                        //columnWidth: 0.5,
+                        style:'padding:10px 10px 10px 0',
+                        items: config[1],
+                        title: 'right'
+                    }
+                ]
             });
 
 
             this.panel.on('drop', function(e) {
-                        Ext.Ajax.request({
-                            url: "/admin/portal/reorder-widget",
-                            params: {
-                                key: this.key,
-                                id: e.panel.portletId,
-                                column: e.columnIndex,
-                                row: e.position
-                            }
-                        });
+                Ext.Ajax.request({
+                    url: "/admin/portal/reorder-widget",
+                    params: {
+                        key: this.key,
+                        id: e.panel.portletId,
+                        column: e.columnIndex,
+                        row: e.position
+                    }
+                });
 
             });
 
