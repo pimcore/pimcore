@@ -131,9 +131,8 @@ pimcore.element.scheduler = Class.create({
                     displayField:'name',
                     valueField: "key",
                     mode: 'local'
-                }),renderer: function(value, b) {
+                }),renderer: function(value, cellValues, record, recordIndex) {
                     try {
-                        var record = this.editor.getStore().getAt(this.editor.getStore().findExact("key", value));
                         if (record) {
                             return record.data.name;
                         }
