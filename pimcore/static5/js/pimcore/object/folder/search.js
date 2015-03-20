@@ -98,7 +98,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             });
 
             if (this.currentClass) {
-                //this.layout.on("afterrender", this.setClass.bind(this, this.currentClass));
+                this.layout.on("afterrender", this.setClass.bind(this, this.currentClass));
             }
         }
 
