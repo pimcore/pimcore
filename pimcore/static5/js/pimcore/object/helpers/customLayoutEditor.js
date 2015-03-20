@@ -139,7 +139,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
                     if(node.attributes.object.invalidFieldNames){
                         invalidFieldsText = t("reserved_field_names_error")
-                            +(implode(',',node.attributes.object.forbiddenNames));
+                        +(implode(',',node.attributes.object.forbiddenNames));
                     }
                     pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error",
                         invalidFieldsText);
@@ -475,14 +475,15 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
-            //layout: "pimcoreform",
-            labelWidth: 200,
+            defaults: {
+                labelWidth: 200
+            },
             items: [
                 {
                     xtype: "textfield",
                     fieldLabel: t("name"),
                     name: "name",
-                    width: 300,
+                    width: 500,
                     value: this.data.name
                 },
                 {
@@ -496,7 +497,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     xtype: "textarea",
                     fieldLabel: t("description"),
                     name: "description",
-                    width: 300,
+                    width: 500,
                     value: this.data.description
                 }
             ]
