@@ -115,8 +115,8 @@ pimcore.settings.tagmanagement.item = Class.create({
                                         var record = data.records[0];
                                         var data = record.data;
 
-                                        if (data.node.attributes.elementType == "document") {
-                                            var pattern = preg_quote(data.node.attributes.path);
+                                        if (data.elementType == "document") {
+                                            var pattern = preg_quote(data.path);
                                             pattern = str_replace("@", "\\@", pattern);
                                             pattern = "@^" + pattern + "$@";
                                             el.setValue(pattern);
