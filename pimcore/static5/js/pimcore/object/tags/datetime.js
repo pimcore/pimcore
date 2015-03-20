@@ -79,7 +79,7 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
         this.datefield = Ext.create('Ext.form.field.Date', date);
         this.timefield = Ext.create('Ext.form.field.Time', time);
 
-        this.component = Ext.create('Ext.form.FieldSet', {
+        this.component = Ext.create('Ext.form.FieldContainer', {
             layout: 'hbox',
             fieldLabel:this.fieldConfig.title,
             combineErrors:false,
