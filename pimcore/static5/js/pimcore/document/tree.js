@@ -1070,14 +1070,14 @@ pimcore.document.tree = Class.create({
                         var nodeEl = Ext.fly(view.getNodeByRecord(record));
 
                         if (task == 'unpublish') {
-                            nodeEl.setCls('pimcore_unpublished');
+                            nodeEl.addCls('pimcore_unpublished');
                             record.data.published = false;
                             if (pimcore.globalmanager.exists("document_" + record.data.id)) {
                                 pimcore.globalmanager.get("document_" + record.data.id).toolbarButtons.unpublish.hide();
                             }
 
                         } else {
-                            nodeEl.setCls('');
+                            nodeEl.removeCls('pimcore_unpublished');
                             record.data.published = true;
                             if (pimcore.globalmanager.exists("document_" + record.data.id)) {
                                 pimcore.globalmanager.get("document_" + record.data.id).toolbarButtons.unpublish.show();
