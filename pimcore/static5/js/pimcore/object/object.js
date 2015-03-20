@@ -557,9 +557,17 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             // remove class in tree panel
             try {
-                pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI()
-                    .removeClass("pimcore_unpublished");
-            } catch (e) { }
+                var tree = pimcore.globalmanager.get("layout_object_tree").tree;
+                var store = tree.getStore();
+                var record = store.getById(this.id);
+                var view = tree.getView();
+                var nodeEl = Ext.fly(view.getNodeByRecord(record));
+                if (nodeEl) {
+                    nodeEl.removeCls("pimcore_unpublished");
+                }
+            } catch (e) {
+                console.log(e);
+            }
         }
 
         return state;
@@ -575,8 +583,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             // set class in tree panel
             try {
-                pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI()
-                    .addClass("pimcore_unpublished");
+                var tree = pimcore.globalmanager.get("layout_object_tree").tree;
+                var store = tree.getStore();
+                var record = store.getById(this.id);
+                var view = tree.getView();
+                var nodeEl = Ext.fly(view.getNodeByRecord(record));
+                if (nodeEl) {
+                    nodeEl.addCls("pimcore_unpublished");
+                }
             } catch (e) {
                 console.log(e);
             }
