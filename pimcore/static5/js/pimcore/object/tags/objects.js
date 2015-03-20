@@ -516,7 +516,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     }
     ,
 
-    onRowContextmenu: function (grid, rowIndex, event) {
+    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
 
         //Ext.get(grid.getView().getRow(rowIndex)).frame();
         //grid.getSelectionModel().selectRow(rowIndex);
@@ -548,8 +548,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             }.bind(this.reference)
         }));
 
-        event.stopEvent();
-        menu.showAt(event.getXY());
+        e.stopEvent();
+        menu.showAt(e.getXY());
     }
     ,
 
