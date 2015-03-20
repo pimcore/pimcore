@@ -63,7 +63,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             href.width = this.fieldConfig.width;
         }
         href.enableKeyEvents = true;
-        href.cls = "pimcore_droptarget_input";
+        href.fieldCls = "pimcore_droptarget_input";
         this.component = new Ext.form.TextField(href);
 
         this.component.on("render", function (el) {
