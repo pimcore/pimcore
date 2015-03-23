@@ -43,8 +43,12 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
         });
         
         panel.on("afterrender", function (panel) {
-            this.loadMask = new Ext.LoadMask(panel.getEl(), {msg: t("please_wait")});
-            this.loadMask.enable();
+            this.loadMask = new Ext.LoadMask(
+                {
+                    target: panel,
+                    msg: t("please_wait")
+                });
+            //this.loadMask.show();
             
             
         }.bind(this));
@@ -88,16 +92,27 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
             items: [{
                 height: 350,
                 items: [{
-                    xtype: 'columnchart',
+                    xtype: 'cartesian',
                     store: this.store,
                     height: 350,
-                    xField: 'dimension',
+                    axes: [{
+                        type: 'numeric',
+                        position: 'left',
+                        fields: 'metric'
+                    }, {
+                        type: 'category',
+                        position: 'bottom',
+                        fields: 'dimension'
+                    }],
+                    interactions: 'itemhighlight',
                     series: [
                         {
-                            type: 'column',
+                            type: 'bar',
+                            xField: 'dimension',
                             yField: 'metric',
                             style: {
-                                color:0x01841c
+                                minGapWidth: 20,
+                                fillStyle: "#018410"
                             }
                         }
                     ]
@@ -108,11 +123,13 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                 autoHeight: true,
                 autoScroll: true,
                 columns: [
-                    {dataIndex: 'dimension',id: "dimension", header: t("dimension")},
+                    {dataIndex: 'dimension',id: "dimension", header: t("dimension"), flex: 1},
                     {dataIndex: 'metric',header: t("metric")}
                 ],
                 stripeRows: true,
-                autoExpandColumn: 'dimension'
+                viewConfig: {
+                    forceFit: true
+                }
             }]
         });
         
@@ -156,9 +173,15 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                         store: new Ext.data.JsonStore({
                             autoDestroy: true,
                             autoLoad: true,
-                            url: "/admin/reports/analytics/get-dimensions",
-                            root: "data",
-                            idProperty: "id",
+                            proxy: {
+                                type: 'ajax',
+                                url: "/admin/reports/analytics/get-dimensions",
+                                reader: {
+                                    type: 'json',
+                                    rootProperty: "data",
+                                    idProperty: "id"
+                                }
+                            },
                             fields: ["name", "id"],
                             forceSelection: true
                         }),
@@ -176,9 +199,15 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                         store: new Ext.data.JsonStore({
                             autoDestroy: true,
                             autoLoad: true,
-                            url: "/admin/reports/analytics/get-metrics",
-                            root: "data",
-                            idProperty: "id",
+                            proxy: {
+                                type: 'ajax',
+                                url: "/admin/reports/analytics/get-metrics",
+                                reader: {
+                                    type: 'json',
+                                    rootProperty: "data",
+                                    idProperty: "id"
+                                }
+                            },
                             fields: ["name", "id"],
                             lazyInit: false,
                             forceSelection: true

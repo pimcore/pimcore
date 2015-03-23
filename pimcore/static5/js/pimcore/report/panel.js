@@ -34,7 +34,7 @@ pimcore.report.panel = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_reports");
+        tabPanel.setActiveItem("pimcore_reports");
     },
 
     getLayout: function () {

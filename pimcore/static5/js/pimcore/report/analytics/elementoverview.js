@@ -46,8 +46,11 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
         });
         
         panel.on("afterrender", function (panel) {
-            this.loadMask = new Ext.LoadMask(panel.getEl(), {msg: t("please_wait")});
-            this.loadMask.enable();
+            this.loadMask = new Ext.LoadMask({
+                target: panel,
+                msg: t("please_wait")
+            });
+            this.loadMask.show();
             
             this.sourceStore.load();
             this.summaryStore.load();
@@ -67,11 +70,9 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
         var summary = new Ext.grid.GridPanel({
             store: this.summaryStore,
             flex: 1,
-            height: 250,
+            height: 300,
             autoScroll: true,
-            viewConfig: {
-                headersDisabled: true
-            },
+            hideHeaders: true,
             columns: [
                 {dataIndex: 'chart', sortable: false, renderer: function (d) {
                     return '<img src="' + d + '" />';
@@ -79,7 +80,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                 {dataIndex: 'value', sortable: false, renderer: function (d) {
                     return '<span class="pimcore_analytics_gridvalue">' + d + '</span>';
                 }},
-                {dataIndex: 'label', id: "label", sortable: false, renderer: function (d) {
+                {dataIndex: 'label', sortable: false, renderer: function (d) {
                     return '<span class="pimcore_analytics_gridlabel">' + t(d) + '</span>';
                 }}
             ],
@@ -105,16 +106,47 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
             items: [{
                 height: 350,
                 items: [{
-                    xtype: 'linechart',
+                    xtype: 'cartesian',
                     store: this.chartStore,
                     height: 350,
-                    xField: 'datetext',
+                    interactions: 'itemhighlight',
+                    axes: [{
+                        type: 'numeric',
+                        fields: ['data' ],
+                        position: 'left',
+                        grid: true,
+                        minimum: 0
+                    }
+                        , {
+                            type: 'category',
+                            fields: 'datetext',
+                            position: 'bottom',
+                            grid: true,
+                            label: {
+                                rotate: {
+                                    degrees: -45
+                                }
+                            }
+                        }
+                    ],
                     series: [
                         {
                             type: 'line',
+                            xField: 'datetext',
                             yField: 'data',
+                            marker: {
+                                radius: 4
+                            },
                             style: {
-                                color:0x01841c
+                                lineWidth: 2,
+                                strokeStyle: "#01841c"
+                            },
+                            tooltip: {
+                                trackMouse: true,
+                                style: 'background: #00bfff',
+                                renderer: function(storeItem, item) {
+                                    this.setHtml(storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
+                                }
                             }
                         }
                     ]
@@ -123,26 +155,45 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                 autoScroll: true,
                 items: [{
                     layout:'hbox',
-                    layoutConfig: {
-                        padding: 10,
-                        align: "stretch"
-                    },
+                    //layoutConfig: {
+                    //    padding: 10,
+                    //    align: "stretch"
+                    //},
                     border: true,
                     height: 300,
-                    items: [summary,{
-                        xtype: 'piechart',
+                    items: [summary,
+                        {
+                        xtype: 'polar',
+                        width: '100%',
+                        height: 300,
                         store: this.sourceStore,
                         flex: 1,
                         autoScroll: true,
-                        dataField: 'pageviews',
-                        categoryField: 'source',
-                        extraStyle: {
-                            legend: {
-                                display: 'bottom',
-                                padding: 5
+                        series: [{
+                            type: 'pie',
+                            angleField: 'pageviews',
+                            label: {
+                                field: 'source',
+                                display: 'source',
+                                calloutLine: {
+                                    length: 60,
+                                    width: 3
+                                }
+                            },
+                            highlight: true,
+                            tooltip: {
+                                trackMouse: true,
+                                renderer: function(storeItem, item) {
+                                    this.setHtml(storeItem.get('source') + ' ' + storeItem.get('pageviews') + '%');
+                                }
                             }
-                        }         
-                    }]
+                        }],
+                        legend: {
+                            docked: 'bottom',
+                            border: 0
+                        }
+                    }
+                    ]
                  }]
              }]      
         });
@@ -160,17 +211,22 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
 
             this.filterPanel = new Ext.FormPanel({
                 region: 'north',
-                labelWidth: 40,
+                defaults: {
+                    labelWidth: 40
+                },
                 height: 40,
-                layout: 'form',
+                layout: 'hbox',
                 bodyStyle: 'padding:7px 0 0 5px',
-                items: [{
+                items: [
+                    {
                         xtype: "datefield",
                         fieldLabel: t('from'),
                         name: 'dateFrom',
                         value: fromDate,
                         itemCls: "pimcore_analytics_filter_form_item"
-                    },{
+                    }
+                    ,
+                    {
                         xtype: "datefield",
                         fieldLabel: t('to'),
                         name: 'dateTo',
@@ -226,14 +282,20 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
         }
         
         this.chartStore = new Ext.data.JsonStore({
-            url: "/admin/reports/analytics/chartmetricdata",
-            baseParams: {
-                type: type,
-                id: id,
-                path: path,
-                dataField: "data"
+            proxy: {
+                type: 'ajax',
+                url: "/admin/reports/analytics/chartmetricdata",
+                reader: {
+                    type: 'json',
+                    rootProperty: 'data'
+                },
+                extraParams: {
+                    type: type,
+                    id: id,
+                    path: path,
+                    dataField: "data"
+                }
             },
-            root: 'data',
             fields: ["timestamp","datetext","data"],
             listeners: {
                 load: this.storeFinished.bind(this),

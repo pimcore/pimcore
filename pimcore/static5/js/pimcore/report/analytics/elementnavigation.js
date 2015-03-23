@@ -42,7 +42,9 @@ pimcore.report.analytics.elementnavigation = Class.create(pimcore.report.abstrac
         });
         
         panel.on("afterrender", function (panel) {
-            this.loadMask = new Ext.LoadMask(panel.getEl(), {msg: t("please_wait")});
+            this.loadMask = new Ext.LoadMask({
+                target: panel,
+                msg: t("please_wait")});
             this.loadMask.enable();
             
         }.bind(this));
