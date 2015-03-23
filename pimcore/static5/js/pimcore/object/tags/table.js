@@ -138,13 +138,12 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
         this.grid = Ext.create('Ext.grid.Panel', {
             store: this.store,
-            width: 700,
-            height: 300,
             columns:columns,
             stripeRows: true,
             columnLines: true,
             autoHeight: true,
             selModel: Ext.create('Ext.selection.CellModel'),
+            hideHeaders: true,
             plugins: [
                 this.cellEditing
             ],
