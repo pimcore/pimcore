@@ -254,7 +254,7 @@ pimcore.helpers.recordElement = function(id, type, name) {
                 }
             }
 
-            historyPanel.store.insert(0, new historyPanel.store.recordType(thePair));
+            historyPanel.store.insert(0, thePair);
             historyPanel.resultpanel.getView().refresh();
         }
     }
