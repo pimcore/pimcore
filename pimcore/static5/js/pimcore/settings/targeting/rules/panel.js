@@ -208,7 +208,15 @@ pimcore.settings.targeting.rules.panel= Class.create({
         if (!this.panel) {
             this.panel = new Ext.TabPanel({
                 region: "center",
-                border: false
+                border: false,
+                plugins:
+                    [
+                        Ext.create('Ext.ux.TabCloseMenu', {
+                            showCloseAll: true,
+                            showCloseOthers: true
+                        }),
+                        Ext.create('Ext.ux.TabReorderer', {})
+                    ]
             });
         }
 

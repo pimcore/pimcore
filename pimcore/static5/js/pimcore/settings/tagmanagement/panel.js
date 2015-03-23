@@ -62,10 +62,6 @@ pimcore.settings.tagmanagement.panel = Class.create({
                     url: "/admin/settings/tag-management-tree",
                     reader: {
                         type: 'json'
-                        //,
-                        //totalProperty : 'total',
-                        //rootProperty: 'nodes'
-
                     }
                 },
                 root: {
@@ -107,7 +103,15 @@ pimcore.settings.tagmanagement.panel = Class.create({
     getEditPanel: function () {
         if (!this.editPanel) {
             this.editPanel = new Ext.TabPanel({
-                region: "center"
+                region: "center",
+                plugins:
+                    [
+                        Ext.create('Ext.ux.TabCloseMenu', {
+                            showCloseAll: true,
+                            showCloseOthers: true
+                        }),
+                        Ext.create('Ext.ux.TabReorderer', {})
+                    ]
             });
         }
 
