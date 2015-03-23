@@ -110,7 +110,14 @@ pimcore.object.klass = Class.create({
         if (!this.editPanel) {
             this.editPanel = new Ext.TabPanel({
                 region: "center",
-                enableTabScroll:true
+                plugins:
+                    [
+                        Ext.create('Ext.ux.TabCloseMenu', {
+                            showCloseAll: true,
+                            showCloseOthers: true
+                        }),
+                        Ext.create('Ext.ux.TabReorderer', {})
+                    ]
             });
         }
 

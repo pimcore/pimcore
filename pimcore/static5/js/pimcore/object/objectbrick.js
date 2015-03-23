@@ -128,12 +128,6 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
     addFieldPanel: function (response) {
 
         var data = Ext.decode(response.responseText);
-
-        /*if (this.fieldPanel) {
-            this.getEditPanel().removeAll();
-            delete this.fieldPanel;
-        }*/
-
         var fieldPanel = new pimcore.object.objectbricks.field(data, this, this.openBrick.bind(this, data.key));
         pimcore.layout.refresh();
         

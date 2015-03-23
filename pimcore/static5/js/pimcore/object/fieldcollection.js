@@ -108,7 +108,15 @@ pimcore.object.fieldcollection = Class.create({
     getEditPanel: function () {
         if (!this.editPanel) {
             this.editPanel = Ext.create('Ext.tab.Panel', {
-                region: "center"
+                region: "center",
+                plugins:
+                    [
+                        Ext.create('Ext.ux.TabCloseMenu', {
+                            showCloseAll: true,
+                            showCloseOthers: true
+                        }),
+                        Ext.create('Ext.ux.TabReorderer', {})
+                    ]
             });
         }
 
