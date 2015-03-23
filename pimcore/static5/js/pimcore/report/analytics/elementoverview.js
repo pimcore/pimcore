@@ -88,11 +88,11 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
             autoExpandColumn: 'label'
         });
 
-        summary.on("rowclick", function (grid, rowIndex, event) {
-            var data = grid.getStore().getAt(rowIndex);     
+        summary.on("rowclick", function (grid, record, tr, rowIndex, e, eOpts ) {
+            var record = grid.getStore().getAt(rowIndex);
             
             var values = this.filterPanel.getForm().getFieldValues();
-            values.metric = data.data.metric;
+            values.metric = record.data.metric;
                    
             this.chartStore.load({
                 params: values
