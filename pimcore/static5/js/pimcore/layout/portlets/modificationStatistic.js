@@ -53,7 +53,12 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
                 legend: {
                     docked: 'right'
                 },
-                interactions: 'itemhighlight',
+                interactions: ['itemhighlight',
+                    {
+                        type: 'panzoom',
+                        zoomOnPanGesture: true
+                    }
+                ],
                 axes: [{
                     type: 'numeric',
                     fields: ['documents', 'assets', 'objects' ],
