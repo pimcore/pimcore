@@ -80,12 +80,11 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                 {dataIndex: 'value', sortable: false, renderer: function (d) {
                     return '<span class="pimcore_analytics_gridvalue">' + d + '</span>';
                 }},
-                {dataIndex: 'label', sortable: false, renderer: function (d) {
+                {flex: 1, dataIndex: 'label', sortable: false, renderer: function (d) {
                     return '<span class="pimcore_analytics_gridlabel">' + t(d) + '</span>';
                 }}
             ],
-            stripeRows: true,
-            autoExpandColumn: 'label'
+            stripeRows: true
         });
 
         summary.on("rowclick", function (grid, record, tr, rowIndex, e, eOpts ) {
