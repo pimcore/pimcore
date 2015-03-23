@@ -140,22 +140,6 @@ pimcore.object.tree = Class.create({
             //    }
             //],
             root: rootNodeConfig
-            //,
-            ////TODO removed
-            //// plugins: new Ext.ux.tree.TreeNodeMouseoverPlugin(),
-            //loader: new Ext.ux.tree.PagingTreeLoader({
-            //    dataUrl: this.treeDataUrl,
-            //    pageSize: 30,
-            //    enableTextPaging: false,
-            //    pagingModel: 'remote',
-            //    requestMethod: "GET",
-            //    baseAttrs: {
-            //        listeners: this.getTreeNodeListeners(),
-            //        reference: this,
-            //        nodeType: "async"
-            //    },
-            //    baseParams: this.config.loaderBaseParams
-            //})
         });
 
         //this.tree.on("render", function () {
@@ -534,7 +518,7 @@ pimcore.object.tree = Class.create({
                 menu.add(new Ext.menu.Item({
                     text: t("add_variant"),
                     iconCls: "pimcore_icon_tree_variant",
-                    handler: this.createVariant.bind(this)
+                    handler: this.createVariant.bind(this, tree, record)
                 }));
             }
 
@@ -782,22 +766,11 @@ pimcore.object.tree = Class.create({
     addVariantCreate: function (tree, record, button, value, object) {
 
         // check for identical filename in current level
-        if (this.isExistingKeyInLevel(this, value)) {
+        if (this.isExistingKeyInLevel(record, value)) {
             return;
         }
 
         if (button == "ok") {
-//            Ext.Ajax.request({
-//                url: "/admin/object/add",
-//                params: {
-//                    className: className,
-//                    classId: classId,
-//                    parentId: this.id,
-//                    key: pimcore.helpers.getValidFilename(value)
-//                },
-//                success: this.attributes.reference.addObjectComplete.bind(this)
-//            });
-
             Ext.Ajax.request({
                 url: "/admin/object/add",
                 params: {
@@ -814,7 +787,7 @@ pimcore.object.tree = Class.create({
         }
     },
 
-    addVariantComplete: function (response) {
+    addVariantComplete: function (tree, record, response) {
         try {
             var rdata = Ext.decode(response.responseText);
             if (rdata && rdata.success) {
