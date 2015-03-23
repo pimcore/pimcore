@@ -1899,8 +1899,9 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
             }.bind(this),
 
             onNodeDrop : function (target, dd, e, data) {
-                if (data.node.attributes.elementType == "asset" || data.node.attributes.elementType == "document") {
-                    fieldPath.setValue(data.node.attributes.path);
+                var record = data.records[0];
+                if (record.data.elementType == "asset" || record.data.elementType == "document") {
+                    fieldPath.setValue(record.data.path);
                     return true;
                 }
                 return false;
@@ -1935,7 +1936,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                 value: data.text
                             },
                             {
-                                xtype: "fieldset",
+                                xtype: "fieldcontainer",
                                 layout: 'hbox',
                                 border: false,
                                 items: [fieldPath, {
@@ -1954,14 +1955,14 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                 }]
                             },
                             {
-                                xtype:'fieldset',
+                                xtype:'fieldcontainer',
                                 layout: 'vbox',
                                 title: t('properties'),
                                 collapsible: false,
                                 autoHeight:true,
                                 defaultType: 'textfield',
                                 defaults: {
-                                    width: 300
+                                    width: 400
                                 },
                                 items :[
                                     {
