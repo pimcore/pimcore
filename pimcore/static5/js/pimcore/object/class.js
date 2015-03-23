@@ -16,7 +16,7 @@ pimcore.registerNS("pimcore.object.klass");
 pimcore.object.klass = Class.create({
 
     forbiddennames: ["abstract","class","data","folder","list","permissions","resource","concrete","interface",
-                    "service", "fieldcollection", "localizedfield", "objectbrick"],
+        "service", "fieldcollection", "localizedfield", "objectbrick"],
 
 
     initialize: function () {
@@ -61,9 +61,7 @@ pimcore.object.klass = Class.create({
                     type: 'ajax',
                     url: '/admin/class/get-tree/',
                     reader: {
-                        type: 'json',
-                        totalProperty : 'total',
-                        rootProperty: 'nodes'
+                        type: 'json'
 
                     },
                     extraParams: {
@@ -85,7 +83,6 @@ pimcore.object.klass = Class.create({
                 width: 200,
                 split: true,
                 root: {
-                    //nodeType: 'async',
                     id: '0'
                 },
                 listeners: this.getTreeNodeListeners(),
@@ -173,9 +170,9 @@ pimcore.object.klass = Class.create({
         var data = Ext.decode(response.responseText);
 
         /*if (this.classPanel) {
-            this.getEditPanel().removeAll();
-            delete this.classPanel;
-        }*/
+         this.getEditPanel().removeAll();
+         delete this.classPanel;
+         }*/
 
         var classPanel = new pimcore.object.classes.klass(data, this, this.openClass.bind(this, data.id));
         pimcore.layout.refresh();
@@ -203,7 +200,7 @@ pimcore.object.klass = Class.create({
 
     addClass: function () {
         Ext.MessageBox.prompt(t('add_class'), t('enter_the_name_of_the_new_class'), this.addClassComplete.bind(this),
-                                                        null, null, "");
+            null, null, "");
     },
 
     addClassComplete: function (button, value, object) {
@@ -211,7 +208,7 @@ pimcore.object.klass = Class.create({
         var regresult = value.match(/[a-zA-Z][a-zA-Z0-9]+/);
 
         if (button == "ok" && value.length > 2 && regresult == value
-                                                && !in_array(value.toLowerCase(), this.forbiddennames)) {
+            && !in_array(value.toLowerCase(), this.forbiddennames)) {
             Ext.Ajax.request({
                 url: "/admin/class/add",
                 params: {
