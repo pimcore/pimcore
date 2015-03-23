@@ -61,8 +61,6 @@ pimcore.report.panel = Class.create({
                 rootVisible: false,
                 root: {
                     id: 0
-                    //,
-                    //root: true
                 },
                 bodyStyle: "padding: 5px;",
                 listeners: {
@@ -76,52 +74,53 @@ pimcore.report.panel = Class.create({
 
             var rootNode = this.tree.getRootNode();
 
-            //this.tree.on("afterrender", function () {
-                // add report groups
-                var groupNode;
-                var group;
-                var reportClass, reportConfig;
-                var reportCount;
+            // add report groups
+            var groupNode;
+            var group;
+            var reportClass, reportConfig;
+            var reportCount;
 
-                for (var i = 0; i < pimcore.report.broker.groups.length; i++) {
+            for (var i = 0; i < pimcore.report.broker.groups.length; i++) {
 
-                    group = pimcore.report.broker.groups[i];
-                    groupNode = rootNode.appendChild({
-                        text: group.name,
-                        iconCls: group.iconCls,
-                        leaf: false
+                group = pimcore.report.broker.groups[i];
+                var groupNodeConfig = {
+                    text: group.name,
+                    iconCls: group.iconCls,
+                    leaf: false
 
-                    });
+                };
+                groupNode = rootNode.createNode(groupNodeConfig);
 
-                    reportCount = 0;
+                reportCount = 0;
 
-                    // add reports to group
-                    if (typeof pimcore.report.broker.reports[group.id] == "object") {
-                        for (var r = 0; r < pimcore.report.broker.reports[group.id].length; r++) {
-                            reportClass = pimcore.report.broker.reports[group.id][r]["class"];
-                            reportConfig = pimcore.report.broker.reports[group.id][r]["config"];
-                            if(!reportConfig) {
-                                reportConfig = {};
-                            }
-
-                            if (reportClass.prototype.matchType(this.type)) {
-                                groupNode.appendChild({
-                                    text: reportConfig["text"] ? ts(reportConfig["text"]) : t(reportClass.prototype.getName()),
-                                    iconCls: reportConfig["iconCls"] ? reportConfig["iconCls"] : reportClass.prototype.getIconCls(),
-                                    leaf: true,
-                                    xdata: {
-                                        reportClass: reportClass,
-                                        reportConfig: reportConfig
-                                    }
-                                });
-                                reportCount++;
-                            }
+                // add reports to group
+                if (typeof pimcore.report.broker.reports[group.id] == "object") {
+                    for (var r = 0; r < pimcore.report.broker.reports[group.id].length; r++) {
+                        reportClass = pimcore.report.broker.reports[group.id][r]["class"];
+                        reportConfig = pimcore.report.broker.reports[group.id][r]["config"];
+                        if(!reportConfig) {
+                            reportConfig = {};
                         }
-                        if (reportCount > 0) {
-                            this.tree.getRootNode().appendChild(groupNode);
+
+                        if (reportClass.prototype.matchType(this.type)) {
+                            var childConfig = {
+                                text: reportConfig["text"] ? ts(reportConfig["text"]) : t(reportClass.prototype.getName()),
+                                iconCls: reportConfig["iconCls"] ? reportConfig["iconCls"] : reportClass.prototype.getIconCls(),
+                                leaf: true,
+                                xdata: {
+                                    reportClass: reportClass,
+                                    reportConfig: reportConfig
+                                }
+                            };
+                            groupNode.appendChild(childConfig);
+                            reportCount++;
                         }
                     }
+                    if (reportCount > 0) {
+                        this.tree.getRootNode().appendChild(groupNode);
+                    }
                 }
+            }
 
             this.tree.expandAll();
             this.tree.doLayout();
