@@ -68,7 +68,13 @@ pimcore.object.importer = Class.create({
         var dataStore = new Ext.data.JsonStore({
             autoDestroy: true,
             data: data,
-            root: 'dataPreview',
+            proxy: {
+                type: 'memory',
+                reader: {
+                    type: 'json',
+                    rootProperty: 'dataPreview'
+                }
+            },
             fields: data.dataFields
         });
 
@@ -78,7 +84,7 @@ pimcore.object.importer = Class.create({
         }
 
 
-        var dataGrid = new Ext.grid.GridPanel({
+        var dataGrid = new Ext.grid.Panel({
             store: dataStore,
             columns: dataGridCols,
             viewConfig: {
@@ -98,7 +104,7 @@ pimcore.object.importer = Class.create({
                     name: "hasHeadRow",
                     fieldLabel: t("importFileHasHeadRow"),
                     listeners: {
-                        check: function(headRecord, dataGrid, checkbox, checked) {
+                        change: function(headRecord, dataGrid, checkbox, checked) {
                             var i;
                             if (checked) {
                                 dataGrid.store.remove(headRecord);
@@ -106,14 +112,22 @@ pimcore.object.importer = Class.create({
                                 this.settingsForm.getForm().findField('skipHeadRow').setValue(true);
                                 for (i = 0; i < headRecord.fields.items.length; i++) {
                                     var value = headRecord.get("field_" + i);
-                                    dataGrid.getColumnModel().setColumnHeader(i, value);
+                                    var view = dataGrid.getView();
+                                    var header = view.getHeaderAtIndex(i);
+                                    if (header) {
+                                        header.setText(value);
+                                    }
                                 }
                             } else {
                                 dataGrid.store.insert(0, headRecord);
                                 this.importJobTotal = data.rows;
                                 this.settingsForm.getForm().findField('skipHeadRow').setValue(false);
                                 for (i = 0; i < headRecord.fields.items.length; i++) {
-                                    dataGrid.getColumnModel().setColumnHeader(i, "field_" + i);
+                                    var view = dataGrid.getView();
+                                    var header = view.getHeaderAtIndex(i);
+                                    if (header) {
+                                        header.setText("field_" + i);
+                                    }
                                 }
                             }
                             dataGrid.getView().refresh();
@@ -121,47 +135,61 @@ pimcore.object.importer = Class.create({
                     }
                 }
             ],
-            labelWidth: 200,
-            autoHeight:true,
+            defaults: {
+                labelWidth: 200
+            },
+            //autoHeight:true,
             bodyStyle: "padding: 10px;"
         });
 
-        var mappingStore = new Ext.data.JsonStore({
+        var mappingStore = new Ext.data.Store({
             autoDestroy: true,
             data: data,
-            root: 'mappingStore',
+            proxy: {
+                type: 'memory',
+                reader: {
+                    type: 'json',
+                    rootProperty: 'mappingStore'
+                }
+            },
             fields: ["source", "firstRow", "target"]
         });
 
         var targetFields = data.targetFields;
         targetFields.push(["",t("ignore")]);
 
+        targetFields = new Ext.data.ArrayStore({
+            data: targetFields,
+            fields: ['value','text']
+        });
 
         var sourceFields = [];
         for (i = 0; i < data.cols; i++) {
             sourceFields.push([i,t("field") + " " + i]);
         }
 
+        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 1
+        });
 
-        this.mappingGrid = new Ext.grid.EditorGridPanel({
+
+        this.mappingGrid = new Ext.grid.Panel({
             store: mappingStore,
+            plugins: [this.cellEditing],
             columns: [
                 {
                     header: t("source"),sortable: false,
                     dataIndex: "source",
                     renderer: function(value, p, r) {
                         return r.data.source + " (" + r.data.firstRow + ")";
-                    }.bind(this)
-                    /*,editor: new Ext.form.ComboBox({
-                     store: sourceFields,
-                     mode: "local",
-                     triggerAction: "all"
-                     })*/
+                    }.bind(this),
+                    flex: 1
                 },
                 {header: t("target"),sortable: false, dataIndex: "target", editor: new Ext.form.ComboBox({
                     store: targetFields,
                     mode: "local",
-                    triggerAction: "all"
+                    triggerAction: "all",
+                    flex: 1
                 })}
             ],
             viewConfig: {
@@ -221,10 +249,9 @@ pimcore.object.importer = Class.create({
                     activeTab: 0,
                     items: [
                         {
-                            xtype: "panel",
+                            xtype: "form",
                             title: t("preview"),
-                            layout: "fit",
-                            items: [formPanel,dataGrid]
+                            items: [formPanel, dataGrid]
                         },
                         {
                             xtype: "panel",
