@@ -46,141 +46,155 @@ pimcore.element.replace_assignments = Class.create({
                     ,
                 items: [
                     {
-                    itemId: "form",
-                    xtype: "form",
-                    region: "north",
-                    height: 170,
-                    bodyStyle: "padding: 10px;",
-                    labelWidth: 250,
-                    items: [
-                        {
-                        xtype: "hidden",
-                        name: "type",
-                        itemId: "type"
-                    },
-                        {
-                        xtype: "hidden",
-                        name: "id",
-                        itemId: "id"
-                    },
-                        {
-                        xtype: "textfield",
-                        fieldLabel: t("search"),
-                        cls: "input_drop_target",
-                        name: "path",
-                        itemId: "path",
-                        //itemCls: "pimcore_form_elements_float_left",
-                        width: 400
-                            ,
-                        listeners: {
-                            "render": function (el) {
-                                new Ext.dd.DropZone(el.getEl(), {
-                                    reference: this,
-                                    ddGroup: "element",
-                                    getTargetFromEvent: function(e) {
-                                        return this.getEl();
-                                    }.bind(el),
-
-                                    onNodeOver : function(target, dd, e, data) {
-                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                        itemId: "form",
+                        xtype: "form",
+                        region: "north",
+                        height: 170,
+                        bodyStyle: "padding: 10px;",
+                        items: [
+                            {
+                                xtype: 'fieldcontainer',
+                                layout: 'hbox',
+                                defaults: {
+                                    labelWidth: 250
+                                },
+                                items: [
+                                    {
+                                        xtype: "hidden",
+                                        name: "type",
+                                        itemId: "type"
                                     },
-
-                                    onNodeDrop : function (target, dd, e, data) {
-                                        var record = data.records[0];
-
-                                        this.setValue(record.data.path);
-
-                                        var type = record.data.elementType;
-                                        var id = record.data.id;
-
-                                        var form = this.findParentByType("form");
-                                        form.getComponent("type").setValue(type);
-                                        form.getComponent("id").setValue(id);
-                                        return true;
-                                    }.bind(el)
-                                });
-                            }
-                        }
-                    }, {
-                        xtype: "button",
-                        //cls: "pimcore_form_elements_float_left",
-                        iconCls: "pimcore_icon_search",
-                        handler: function () {
-                            pimcore.helpers.itemselector(false, function (selection) {
-                                var form = this.panel.getComponent("form");
-                                form.getComponent("type").setValue(selection.type);
-                                form.getComponent("id").setValue(selection.id);
-                                form.getComponent("path").setValue(selection.fullpath);
-                            }.bind(this));
-                        }.bind(this)
-                    }, {
-                        xtype: "button",
-                        text: t("search"),
-                        iconCls: "pimcore_icon_apply",
-                        style: "padding-left: 20px;",
-                        handler: this.search.bind(this)
-                    }, {
-                        xtype: "hidden",
-                        name: "targetType",
-                        itemId: "targetType"
-                    },{
-                        xtype: "hidden",
-                        name: "targetId",
-                        itemId: "targetId"
-                    }, {
-                        xtype: "textfield",
-                        fieldLabel: t("replace") + " (" + t("optional") + ")",
-                        cls: "input_drop_target",
-                        name: "targetPath",
-                        itemId: "targetPath",
-                        itemCls: "pimcore_form_elements_clear_both",
-                        width: 400
-                        ,
-                        listeners: {
-                            "render": function (el) {
-                                new Ext.dd.DropZone(el.getEl(), {
-                                    reference: this,
-                                    ddGroup: "element",
-                                    getTargetFromEvent: function(e) {
-                                        return this.getEl();
-                                    }.bind(el),
-
-                                    onNodeOver : function(target, dd, e, data) {
-                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                    {
+                                        xtype: "hidden",
+                                        name: "id",
+                                        itemId: "id"
                                     },
+                                    {
+                                        xtype: "textfield",
+                                        fieldLabel: t("search"),
+                                        fieldCls: "input_drop_target",
+                                        name: "path",
+                                        itemId: "path",
+                                        width: 650,
+                                        listeners: {
+                                            "render": function (el) {
+                                                new Ext.dd.DropZone(el.getEl(), {
+                                                    reference: this,
+                                                    ddGroup: "element",
+                                                    getTargetFromEvent: function (e) {
+                                                        return this.getEl();
+                                                    }.bind(el),
 
-                                    onNodeDrop : function (target, dd, e, data) {
-                                        var record = data.records[0];
-                                        this.setValue(record.data.path);
+                                                    onNodeOver: function (target, dd, e, data) {
+                                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                                    },
 
-                                        var type = record.data.elementType;
-                                        var id = record.data.id;
+                                                    onNodeDrop: function (target, dd, e, data) {
+                                                        var record = data.records[0];
 
-                                        var form = this.findParentByType("form");
-                                        form.getComponent("targetType").setValue(type);
-                                        form.getComponent("targetId").setValue(id);
-                                        return true;
-                                    }.bind(el)
-                                });
+                                                        this.setValue(record.data.path);
+
+                                                        var type = record.data.elementType;
+                                                        var id = record.data.id;
+
+                                                        var form = this.findParentByType("form");
+                                                        form.queryById("type").setValue(type);
+                                                        form.queryById("id").setValue(id);
+                                                        return true;
+                                                    }.bind(el)
+                                                });
+                                            }
+                                        }
+                                    },
+                                    {
+                                        xtype: "button",
+                                        iconCls: "pimcore_icon_search",
+                                        handler: function () {
+                                            pimcore.helpers.itemselector(false, function (selection) {
+                                                var form = this.panel.getComponent("form");
+                                                form.queryById("type").setValue(selection.type);
+                                                form.queryById("id").setValue(selection.id);
+                                                form.queryById("path").setValue(selection.fullpath);
+                                            }.bind(this));
+                                        }.bind(this)
+                                    },
+                                    {
+                                        xtype: "button",
+                                        text: t("search"),
+                                        iconCls: "pimcore_icon_apply",
+                                        style: "padding-left: 20px;",
+                                        handler: this.search.bind(this)
+                                    }, {
+                                        xtype: "hidden",
+                                        name: "targetType",
+                                        itemId: "targetType"
+                                    },{
+                                        xtype: "hidden",
+                                        name: "targetId",
+                                        itemId: "targetId"
+                                    }
+                                ]
+                            },
+                            {
+                                xtype: 'fieldcontainer',
+                                layout: 'hbox',
+                                defaults: {
+                                    labelWidth: 250
+                                },
+                                items: [
+                                    {
+                                        xtype: "textfield",
+                                        fieldLabel: t("replace") + " (" + t("optional") + ")",
+                                        fieldCls: "input_drop_target",
+                                        name: "targetPath",
+                                        itemId: "targetPath",
+                                        width: 650,
+                                        listeners: {
+                                            "render": function (el) {
+                                                new Ext.dd.DropZone(el.getEl(), {
+                                                    reference: this,
+                                                    ddGroup: "element",
+                                                    getTargetFromEvent: function (e) {
+                                                        return this.getEl();
+                                                    }.bind(el),
+
+                                                    onNodeOver: function (target, dd, e, data) {
+                                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                                    },
+
+                                                    onNodeDrop: function (target, dd, e, data) {
+                                                        var record = data.records[0];
+                                                        this.setValue(record.data.path);
+
+                                                        var type = record.data.elementType;
+                                                        var id = record.data.id;
+
+                                                        var form = this.findParentByType("form");
+                                                        form.queryById("targetType").setValue(type);
+                                                        form.queryById("targetId").setValue(id);
+                                                        return true;
+                                                    }.bind(el)
+                                                });
+                                            }
+                                        }
+                                    }
+                                    ,
+                                    {
+                                        xtype: "button",
+                                        iconCls: "pimcore_icon_search",
+                                        handler: function () {
+                                            pimcore.helpers.itemselector(false, function (selection) {
+                                                var form = this.panel.getComponent("form");
+                                                form.queryById("targetType").setValue(selection.type);
+                                                form.queryById("targetId").setValue(selection.id);
+                                                form.queryById("targetPath").setValue(selection.fullpath);
+                                            }.bind(this));
+                                        }.bind(this)
+                                    }
+                                ]
                             }
-                        }
+                        ]
                     }
-                    ,
-                    {
-                        xtype: "button",
-                        //cls: "pimcore_form_elements_float_left",
-                        iconCls: "pimcore_icon_search",
-                        handler: function () {
-                            pimcore.helpers.itemselector(false, function (selection) {
-                                var form = this.panel.getComponent("form");
-                                form.getComponent("targetType").setValue(selection.type);
-                                form.getComponent("targetId").setValue(selection.id);
-                                form.getComponent("targetPath").setValue(selection.fullpath);
-                            }.bind(this));
-                        }.bind(this)
-                    }
-                    ]
-                }
                     ,
                     {
                     title: t("results"),
@@ -194,7 +208,7 @@ pimcore.element.replace_assignments = Class.create({
                         //selectionColumn,
                         {header: "ID", sortable: true, dataIndex: 'id', width: 60},
                         {header: t("type"), sortable: true, dataIndex: 'type', width: 60},
-                        {header: t("path"), sortable: true, dataIndex: 'path', id:"path"}
+                        {header: t("path"), sortable: true, dataIndex: 'path', id:"path", flex: 1}
                     ],
                     columnLines: true,
                     autoExpandColumn: "path",
