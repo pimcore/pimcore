@@ -274,7 +274,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             try {
                 items.push(this.variants.getLayout());
             } catch (e) {
-
+                console.log(e);
             }
         }
 

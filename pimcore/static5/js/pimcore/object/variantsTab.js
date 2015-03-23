@@ -145,7 +145,6 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             store: this.store,
             border: true,
             columns: gridColumns,
-            loadMask: true,
             columnLines: true,
             plugins: plugins,
             stripeRows: true,
@@ -219,9 +218,9 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         this.layout.doLayout();
     },
 
-    onRowContextmenu: function (grid, rowIndex, event) {
-        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
-                                                        .animate( { backgroundColor: '#fff' }, 400);
+    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
+        //$(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
+        //                                                .animate( { backgroundColor: '#fff' }, 400);
 
         var menu = new Ext.menu.Menu();
         var data = grid.getStore().getAt(rowIndex);
@@ -235,8 +234,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             }.bind(this, data)
         }));
 
-        event.stopEvent();
-        menu.showAt(event.getXY());
+        e.stopEvent();
+        menu.showAt(e.getXY());
     },
 
     editKey: function (id, button, value) {

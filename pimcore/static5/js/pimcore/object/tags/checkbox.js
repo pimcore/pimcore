@@ -30,7 +30,7 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig:function (field) {
-        return new Ext.grid.column.Check({
+        return {
             header:ts(field.label),
             dataIndex:field.key,
             renderer:function (key, value, metaData, record, rowIndex, colIndex, store) {
@@ -45,10 +45,10 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
                     metaData.css += ' grid_cbx_noteditable';
 
                 }
-                metaData.css += ' x-grid3-check-col-td';
-                return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
+                metaData.css += ' x-grid-check-col-td';
+                return Ext.String.format('<div class="x-grid-checkcolumn{0}">&#160;</div>', value ? '-checked' : '');
             }.bind(this, field)
-        });
+        };
     },
 
     getGridColumnFilter:function (field) {

@@ -81,16 +81,15 @@ Ext.require([
     'Ext.toolbar.Spacer',
     'Ext.tree.plugin.TreeViewDragDrop',
     'Ext.tree.Panel',
+    'Ext.ux.DataTip',
     'Ext.ux.form.MultiSelect',
     'Ext.ux.TabCloseMenu',
-    'Ext.ux.DataTip',
+    'Ext.ux.TabReorderer',
     'Ext.window.Toast'
 ]);
 
 
 Ext.onReady(function () {
-
-    //console.log("ready");
 
     // confirmation to close pimcore
     window.onbeforeunload = function () {
@@ -109,7 +108,6 @@ Ext.onReady(function () {
         }
     };
 
-
     // define some globals
     //Ext.chart.Chart.CHART_URL = '/pimcore/static/js/lib/ext/resources/charts.swf';
 
@@ -127,20 +125,19 @@ Ext.onReady(function () {
         console.log("xhr request failed");
 
         if (response.status == 503) {
-            // show wait info
-            //if (!pimcore.maintenanceWindow) {
-            //    pimcore.maintenanceWindow = new Ext.Window({
-            //        closable:false,
-            //        title:t("please_wait"),
-            //        bodyStyle:"padding: 20px;",
-            //        html:t("the_system_is_in_maintenance_mode_please_wait"),
-            //        closeAction:"close",
-            //        modal:true
-            //    });
-            //    pimcore.viewport.add(pimcore.maintenanceWindow);
-            //    pimcore.maintenanceWindow.show();
-            //}
-
+            //show wait info
+            if (!pimcore.maintenanceWindow) {
+                pimcore.maintenanceWindow = new Ext.Window({
+                    closable:false,
+                    title:t("please_wait"),
+                    bodyStyle:"padding: 20px;",
+                    html:t("the_system_is_in_maintenance_mode_please_wait"),
+                    closeAction:"close",
+                    modal:true
+                });
+                pimcore.viewport.add(pimcore.maintenanceWindow);
+                pimcore.maintenanceWindow.show();
+            }
         } else {
             //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot
             // be saved due to HTTP 500 Response)
