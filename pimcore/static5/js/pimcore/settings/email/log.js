@@ -29,7 +29,8 @@ pimcore.settings.email.log = Class.create({
                 "keydown" : function (field, key) {
                     if (key.getKey() == key.ENTER) {
                         var input = field;
-                        this.store.baseParams.filter = input.getValue();
+                        var proxy = this.store.getProxy();
+                        proxy.extraParams.filter = input.getValue();
                         this.store.load();
                     }
                 }.bind(this)
