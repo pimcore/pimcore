@@ -106,7 +106,7 @@ pimcore.object.keyvalue.specialconfigwindow = Class.create({
     onAdd: function () {
         var thePair = {"key" : "",
             "value" : ""};
-        this.store.add(new this.store.recordType(thePair));
+        this.store.add(thePair);
     },
 
     getGridPanel: function() {

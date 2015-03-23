@@ -353,12 +353,12 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             try {
                 var data = Ext.decode(res.response.responseText);
                 if(data["id"]) {
-                    this.store.add(new this.store.recordType({
+                    this.store.add({
                         id: data["id"],
                         path: data["fullpath"],
                         type: "asset",
                         subtype: data["type"]
-                    }));
+                    });
                 }
             } catch (e) {
                 console.log(e);

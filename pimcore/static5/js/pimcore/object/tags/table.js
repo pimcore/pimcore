@@ -220,7 +220,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             initData["col_" + o] = "";
         }
 
-        this.store.add(new this.store.recordType(initData, this.store.getCount() + 1));
+        this.store.add(initData);
         this.dirty = true;
     },
 

@@ -221,12 +221,12 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
 
 
     onAdd: function (store, hasType, btn, ev) {
-        var u = new store.recordType();
+        var u = {}
         if(hasType) {
-            u.data.type = "text";
+            u.type = "text";
         }
-        u.data.position = store.getCount() + 1;
-        u.data.key = "name";
+        u.position = store.getCount() + 1;
+        u.key = "name";
         store.add(u);
     },
 

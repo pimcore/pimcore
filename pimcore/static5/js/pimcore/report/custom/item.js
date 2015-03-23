@@ -607,8 +607,7 @@ pimcore.report.custom.item = Class.create({
                         }
                     }
 
-                    var u = new this.columnStore.recordType(insertData);
-                    this.columnStore.add([u]);
+                    this.columnStore.add(insertData);
                 }
             }
         }

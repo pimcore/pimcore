@@ -555,13 +555,13 @@ pimcore.asset.metadata = Class.create({
                 if (item.type == "date" && value) {
                     value = new Date(intval(value) * 1000);
                 }
-                var newRecord = new store.recordType({
+                var newRecord = {
                     name: key,
                     data: value,
                     type: item.type,
                     config: item.config,
                     language: language
-                });
+                };
 
                 store.add(newRecord);
                 added = true;

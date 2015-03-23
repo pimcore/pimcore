@@ -322,11 +322,11 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                         Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails,
                                 function (lock, buttonValue) {
                                     if (buttonValue == "yes") {
-                                        this.store.add(new this.store.recordType({
+                                        this.store.add({
                                             id: item.id,
                                             path: item.fullpath,
                                             type: item.classname
-                                        }, this.store.getCount() + 1));
+                                        });
                                     }
                                 }.bind(this, arguments));
 

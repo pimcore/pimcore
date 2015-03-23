@@ -98,7 +98,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             }
 
             if (add) {
-                this.store.add(new this.store.recordType(pair));
+                this.store.add(pair);
             }
         }
 

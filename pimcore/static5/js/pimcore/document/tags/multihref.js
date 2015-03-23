@@ -174,12 +174,12 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
             try {
                 var data = Ext.decode(res.response.responseText);
                 if(data["id"]) {
-                    this.store.add(new this.store.recordType({
+                    this.store.add({
                         id: data["id"],
                         path: data["fullpath"],
                         type: "asset",
                         subtype: data["type"]
-                    }));
+                    });
                 }
             } catch (e) {
                 console.log(e);

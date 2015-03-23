@@ -485,11 +485,11 @@ pimcore.settings.redirects = Class.create({
             priority = 99;
         }
 
-        var u = new this.grid.store.recordType({
+        var u = {
             source: source,
             sourceEntireUrl: sourceEntireUrl,
             priority: priority
-        });
+        };
         this.grid.store.insert(0, u);
 
 		this.updateRows();

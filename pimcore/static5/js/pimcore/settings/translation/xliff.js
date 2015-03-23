@@ -122,12 +122,12 @@ pimcore.settings.translation.xliff = Class.create({
                         pimcore.helpers.itemselector(true, function (items) {
                             if (items.length > 0) {
                                 for (var i = 0; i < items.length; i++) {
-                                    this.exportStore.add(new this.exportStore.recordType({
+                                    this.exportStore.add({
                                         id: items[i].id,
                                         path: items[i].fullpath,
                                         type: items[i].type,
                                         children: true
-                                    }, this.exportStore.getCount() + 1));
+                                    });
                                 }
                             }
                         }.bind(this), {
