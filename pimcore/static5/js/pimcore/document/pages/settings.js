@@ -298,7 +298,7 @@ pimcore.document.pages.settings = Class.create({
                                 enableKeyEvents: true,
                                 listeners: {
                                     "keyup": function (el) {
-                                        el.label.update(t("title") + " (" + el.getValue().length + "):");
+                                        el.labelEl.update(t("title") + " (" + el.getValue().length + "):");
                                     }
                                 }
                             },
@@ -312,7 +312,7 @@ pimcore.document.pages.settings = Class.create({
                                 enableKeyEvents: true,
                                 listeners: {
                                     "keyup": function (el) {
-                                        el.label.update(t("description") + " (" + el.getValue().length + "):");
+                                        el.labelEl.update(t("description") + " (" + el.getValue().length + "):");
                                     }
                                 }
                             },
@@ -326,7 +326,7 @@ pimcore.document.pages.settings = Class.create({
                                 enableKeyEvents: true,
                                 listeners: {
                                     "keyup": function (el) {
-                                        el.label.update(t("keywords") + " (" + el.getValue().length + "):");
+                                        el.labelEl.update(t("keywords") + " (" + el.getValue().length + "):");
                                     }
                                 }
                             },
