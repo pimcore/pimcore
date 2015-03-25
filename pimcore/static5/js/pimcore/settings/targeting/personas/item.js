@@ -52,7 +52,6 @@ pimcore.settings.targeting.personas.item = Class.create({
     getSettings: function () {
 
         this.settingsForm = new Ext.form.FormPanel({
-            layout: "pimcoreform",
             title: t("settings"),
             bodyStyle: "padding:10px;",
             autoScroll: true,
@@ -192,9 +191,9 @@ pimcore.settings.targeting.personas.item = Class.create({
 
             // get the brackets
             condition["bracketLeft"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_left")[0])
-                                                                .hasClass("pimcore_targeting_bracket_active");
+                                                                .hasCls("pimcore_targeting_bracket_active");
             condition["bracketRight"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_right")[0])
-                                                                .hasClass("pimcore_targeting_bracket_active");
+                                                                .hasCls("pimcore_targeting_bracket_active");
 
             conditionsData.push(condition);
         }

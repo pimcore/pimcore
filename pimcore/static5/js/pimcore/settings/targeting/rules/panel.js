@@ -46,14 +46,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
                     url: this.treeDataUrl,
                     reader: {
                         type: 'json'
-                        //,
-                        //totalProperty : 'total',
-                        //rootProperty: 'nodes'
-
                     }
-                },
-                root: {
-                    iconCls: "pimcore_icon_targeting"
                 }
             });
 
@@ -143,7 +136,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
 
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
-        this.openTarget.bind(record.data);
+        this.openTarget(record.data);
     },
 
 
