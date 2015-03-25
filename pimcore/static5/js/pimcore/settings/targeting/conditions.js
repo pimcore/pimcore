@@ -138,7 +138,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -173,7 +172,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -217,7 +215,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -231,8 +228,14 @@ pimcore.settings.targeting.conditions = {
                 name: "country",
                 store: new Ext.data.JsonStore({
                     autoDestroy: true,
-                    url: "/admin/misc/country-list",
-                    root: "data",
+                    proxy: {
+                        type: 'ajax',
+                        url: "/admin/misc/country-list",
+                        reader: {
+                            type: 'json',
+                            rootProperty: 'data'
+                        }
+                    },
                     fields: ["code", "name"]
                 }),
                 triggerAction: "all",
@@ -267,7 +270,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -281,8 +283,14 @@ pimcore.settings.targeting.conditions = {
                 name: "language",
                 store: new Ext.data.JsonStore({
                     autoDestroy: true,
-                    url: "/admin/misc/language-list",
-                    root: "data",
+                    proxy: {
+                        type: 'ajax',
+                        url: "/admin/misc/language-list",
+                        reader: {
+                            type: 'json',
+                            rootProperty: 'data'
+                        }
+                    },
                     fields: ["code", "name"]
                 }),
                 triggerAction: "all",
@@ -317,7 +325,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -382,7 +389,6 @@ pimcore.settings.targeting.conditions = {
         });
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -541,7 +547,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -576,7 +581,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -615,7 +619,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -650,7 +653,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -685,7 +687,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -732,7 +733,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -767,7 +767,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -802,7 +801,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -841,7 +839,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
@@ -881,7 +878,6 @@ pimcore.settings.targeting.conditions = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            layout: "pimcoreform",
             id: myId,
             forceLayout: true,
             style: "margin: 10px 0 0 0",
