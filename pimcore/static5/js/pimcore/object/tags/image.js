@@ -82,7 +82,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                     iconCls: "pimcore_icon_search",
                     handler: this.openSearchEditor.bind(this)
                 }],
-            cls: "object_field",
+            componentCls: "object_field",
             bodyCls: "pimcore_droptarget_image pimcore_image_container"
         };
 

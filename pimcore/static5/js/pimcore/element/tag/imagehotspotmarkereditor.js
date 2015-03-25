@@ -470,7 +470,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
                 valueField = new Ext.form.CompositeField({
                     items: items,
-                    itemCls: "object_field"
+                    componentCls: "object_field"
                 });
 
             } else {

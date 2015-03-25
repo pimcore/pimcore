@@ -92,7 +92,7 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
             editable: false,
             fieldLabel: t("restrict_selection_to"),
             store: countryStore,
-            itemCls: "object_field",
+            componentCls: "object_field",
             height: 200,
             width: 300,
             valueField: 'value',

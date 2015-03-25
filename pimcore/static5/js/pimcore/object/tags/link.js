@@ -64,11 +64,11 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
         var input = {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
-            itemCls: "object_field"
+            componentCls: "object_field"
         };
 
         this.button = new Ext.Button({
-            iconCls: "pimcore_icon_edit_link",
+            componentCls: "pimcore_icon_edit_link",
             handler: this.openEditor.bind(this)
         });
 

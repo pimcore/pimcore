@@ -61,7 +61,7 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             fieldLabel: this.fieldConfig.title,
-            itemCls: "object_field"
+            componentCls: "object_field"
         };
 
         if (this.data) {

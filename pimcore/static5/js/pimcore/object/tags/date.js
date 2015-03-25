@@ -65,7 +65,7 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         var date = {
             fieldLabel:this.fieldConfig.title,
             name:this.fieldConfig.name,
-            itemCls:"object_field",
+            componentCls:"object_field",
             width:100
         };
 

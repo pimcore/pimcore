@@ -142,7 +142,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             selectOnFocus: true,
             fieldLabel: this.fieldConfig.title,
             store: store,
-            itemCls: "object_field",
+            componentCls: "object_field",
             width: 300
         };
 

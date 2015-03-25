@@ -302,8 +302,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             viewConfig: {
                 markDirty: false
             },
-            cls: cls,
-            //autoExpandColumn: 'id',
+            componentCls: cls,
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             tbar: {

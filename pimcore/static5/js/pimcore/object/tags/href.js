@@ -131,7 +131,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: this.fieldConfig.title,
             layout: 'hbox',
             items: items,
-            itemCls: "object_field",
+            componentCls: "object_field",
             border: false,
             style: {
                 padding: 0
@@ -170,7 +170,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                 iconCls: "pimcore_icon_edit",
                 handler: this.openElement.bind(this)
             }],
-            itemCls: "object_field",
+            componentCls: "object_field",
             border: false,
             style: {
                 padding: 0

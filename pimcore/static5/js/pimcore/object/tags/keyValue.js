@@ -395,7 +395,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 markDirty: false,
                 forceFit: true
             },
-            cls: cls,
+            componentCls: cls,
             width: gridWidth,
             stripeRows: true,
             plugins: [

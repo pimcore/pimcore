@@ -89,7 +89,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         options.frame = true;
         options.layout = "fit";
         options.title = this.fieldConfig.title;
-        options.cls = "object_field";
+        options.componentCls = "object_field";
 
         if (!this.component) {
             this.component = new Ext.Panel(options);

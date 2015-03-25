@@ -33,7 +33,7 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
             emptyText: "",
             width: 60,
             value: this.data,
-            itemCls: "object_field"
+            componentCls: "object_field"
         });
 
         return this.component;

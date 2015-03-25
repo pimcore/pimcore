@@ -60,7 +60,6 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit:function () {
 
         var date = {
-            itemCls:"object_field",
             width:100
         };
 
@@ -84,7 +83,7 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
             fieldLabel:this.fieldConfig.title,
             combineErrors:false,
             items:[this.datefield, this.timefield],
-            itemCls:"object_field"
+            componentCls:"object_field"
         });
 
         return this.component;

@@ -60,7 +60,7 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
         var checkbox = {
             fieldLabel:this.fieldConfig.title,
             name:this.fieldConfig.name,
-            itemCls:"object_field"
+            componentCls:"object_field"
         };
 
 

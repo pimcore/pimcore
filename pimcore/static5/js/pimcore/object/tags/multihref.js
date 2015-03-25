@@ -203,7 +203,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     }
                 ]
             },
-            cls: cls,
+            componentCls: cls,
             //autoExpandColumn: 'path',
             tbar: {
                 items: toolbarItems,

@@ -31,7 +31,7 @@ pimcore.object.tags.password = Class.create(pimcore.object.tags.abstract, {
         var input = {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
-            itemCls: "object_field"
+            componentCls: "object_field"
         };
 
         input.value = "********";

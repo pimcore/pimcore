@@ -141,7 +141,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                     }
                 ]
             },
-            cls: cls,
+            componentCls: cls,
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             tbar: {

@@ -218,7 +218,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             border: false,
             combineErrors: false,
             items: [classTextfield, fieldCombo],
-            itemCls: "object_field"
+            componentCls: "object_field"
         });
     },
 
