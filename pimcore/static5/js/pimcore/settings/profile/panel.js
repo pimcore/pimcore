@@ -59,7 +59,7 @@ pimcore.settings.profile.panel = Class.create({
             fieldLabel:t("old_password"),
             name:"old_password",
             inputType:"password",
-            width:300
+            width:400
         });
 
         passwordCheck = function (el) {
@@ -77,7 +77,7 @@ pimcore.settings.profile.panel = Class.create({
             fieldLabel:t("new_password"),
             name:"new_password",
             inputType:"password",
-            width:300,
+            width:400,
             enableKeyEvents: true,
             listeners: {
                 keyup: passwordCheck
@@ -88,7 +88,7 @@ pimcore.settings.profile.panel = Class.create({
             fieldLabel:t("retype_password"),
             name:"retype_password",
             inputType:"password",
-            width:300,
+            width:400,
             style:"margin-bottom: 20px;",
             enableKeyEvents: true,
             listeners: {
@@ -101,14 +101,14 @@ pimcore.settings.profile.panel = Class.create({
             fieldLabel:t("firstname"),
             name:"firstname",
             value:this.currentUser.firstname,
-            width:300
+            width:400
         });
         generalItems.push({
             xtype:"textfield",
             fieldLabel:t("lastname"),
             name:"lastname",
             value:this.currentUser.lastname,
-            width:300
+            width:400
         });
 
         var date = new Date();
@@ -116,6 +116,7 @@ pimcore.settings.profile.panel = Class.create({
         generalItems.push({
             xtype: "fieldset",
             title: t("image"),
+            width: '100%',
             items: [{
                 xtype: "container",
                 id: "pimcore_user_image_" + this.currentUser.id,
@@ -143,7 +144,7 @@ pimcore.settings.profile.panel = Class.create({
             fieldLabel:t("email"),
             name:"email",
             value:this.currentUser.email,
-            width:300
+            width:400
         });
 
 
@@ -186,7 +187,6 @@ pimcore.settings.profile.panel = Class.create({
 
         this.userPanel = new Ext.form.FormPanel({
             border:false,
-            layout:"pimcoreform",
             items:generalItems,
             labelWidth:130,
             buttons:[
