@@ -1872,8 +1872,8 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         fieldLabel: t('path'),
         value: data.path,
         name: "path",
-        width: 320,
-        cls: "pimcore_droptarget_input",
+        width: 420,
+        fieldCls: "pimcore_droptarget_input",
         enableKeyEvents: true,
         listeners: {
             keyup: function (el) {
@@ -1919,7 +1919,6 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         items: [
             {
                 xtype:'tabpanel',
-                activeTab: 0,
                 deferredRender: false,
                 defaults:{autoHeight:true, bodyStyle:'padding:10px'},
                 border: false,
@@ -1955,14 +1954,14 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                 }]
                             },
                             {
-                                xtype:'fieldcontainer',
+                                xtype:'fieldset',
                                 layout: 'vbox',
                                 title: t('properties'),
                                 collapsible: false,
-                                autoHeight:true,
                                 defaultType: 'textfield',
+                                width: '100%',
                                 defaults: {
-                                    width: 400
+                                    width: 250
                                 },
                                 items :[
                                     {
@@ -1973,7 +1972,8 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                         editable: true,
                                         mode: "local",
                                         store: ["","_blank","_self","_top","_parent"],
-                                        value: data.target
+                                        value: data.target,
+                                        width: 300
                                     },
                                     {
                                         fieldLabel: t('parameters'),
