@@ -1265,7 +1265,7 @@ pimcore.layout.toolbar = Class.create({
     showTargeting: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         try {
-            tabPanel.activate(pimcore.globalmanager.get("targeting").getLayout());
+            tabPanel.setActiveTab(pimcore.globalmanager.get("targeting").getLayout());
         }
         catch (e) {
             var targeting = new pimcore.settings.targeting.rules.panel();
@@ -1285,7 +1285,7 @@ pimcore.layout.toolbar = Class.create({
     showPersonas: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         try {
-            tabPanel.activate(pimcore.globalmanager.get("personasPanel").getLayout());
+            tabPanel.setActiveTab(pimcore.globalmanager.get("personasPanel").getLayout());
         }
         catch (e) {
             var personas = new pimcore.settings.targeting.personas.panel();
