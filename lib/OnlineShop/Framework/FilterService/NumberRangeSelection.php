@@ -55,7 +55,8 @@ class OnlineShop_Framework_FilterService_NumberRangeSelection extends OnlineShop
             "unit" => $filterDefinition->getUnit(),
             "values" => $values,
             "definition" => $filterDefinition,
-            "fieldname" => $filterDefinition->getField()
+            "fieldname" => $filterDefinition->getField(),
+            "metaData" => $filterDefinition->getMetaData()
         ));
     }
 

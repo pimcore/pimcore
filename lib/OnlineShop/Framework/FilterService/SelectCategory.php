@@ -39,7 +39,8 @@ class OnlineShop_Framework_FilterService_SelectCategory extends OnlineShop_Frame
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$filterDefinition->getField()],
             "values" => array_values($values),
-            "fieldname" => $filterDefinition->getField()
+            "fieldname" => $filterDefinition->getField(),
+            "metaData" => $filterDefinition->getMetaData()
         ));
     }
 

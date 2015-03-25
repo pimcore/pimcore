@@ -16,7 +16,8 @@ class OnlineShop_Framework_FilterService_Select extends OnlineShop_Framework_Fil
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$field],
             "values" => $productList->getGroupByValues($field, true),
-            "fieldname" => $field
+            "fieldname" => $field,
+            "metaData" => $filterDefinition->getMetaData()
         ));
     }
 

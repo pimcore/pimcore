@@ -33,7 +33,8 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_
             "currentValue" => $currentFilter[$field],
             "values" => $values,
             "objects" => $objects,
-            "fieldname" => $field
+            "fieldname" => $field,
+            "metaData" => $filterDefinition->getMetaData()
         ));
     }
 

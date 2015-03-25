@@ -41,7 +41,8 @@ class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends Onli
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$field],
             "values" => array_values($values),
-            "fieldname" => $field
+            "fieldname" => $field,
+            "metaData" => $filterDefinition->getMetaData()
         ));
     }
 

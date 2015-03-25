@@ -14,7 +14,8 @@ class OnlineShop_Framework_FilterService_NumberRange extends OnlineShop_Framewor
                                                   "currentValue" => $currentFilter[$this->getField($filterDefinition)],
                                                   "values" => $productList->getGroupByValues($this->getField($filterDefinition), true),
                                                   "definition" => $filterDefinition,
-                                                  "fieldname" => $this->getField($filterDefinition)
+                                                  "fieldname" => $this->getField($filterDefinition),
+                                                  "metaData" => $filterDefinition->getMetaData()
                                              ));
     }
 

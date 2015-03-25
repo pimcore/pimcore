@@ -34,7 +34,8 @@ class OnlineShop_Framework_FilterService_SelectRelation extends OnlineShop_Frame
             "currentValue" => $currentFilter[$field],
             "values" => $values,
             "objects" => $objects,
-            "fieldname" => $field
+            "fieldname" => $field,
+            "metaData" => $filterDefinition->getMetaData()
         ));
     }
 
