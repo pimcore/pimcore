@@ -199,10 +199,10 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var gridHeight = 150;
         var keyWidth = 150;
         var descWidth = 300;
-        var groupWidth = 200;
-        var groupDescWidth = 200;
+        var groupWidth = 190;
+        var groupDescWidth = 190;
         var valueWidth = 600;
-        var metaWidth = 200;
+        var metaWidth = 190;
         var maxHeight = 190;
         var metawidth = 100;
 
@@ -316,8 +316,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 xtype: 'actioncolumn',
                 width: actionColWidth,
                 hideable: false,
-                items: [
-                    {
+                //items: [
+                //    {
                         getClass: function (v, meta, rec) {
                             var klass = "pimcore_action_column";
                             if (!rec.data.inherited) {
@@ -371,8 +371,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                                 }
                             }
                         }.bind(this)
-                    }
-                ]
+                //    }
+                //]
             });
         }
 
@@ -396,7 +396,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 forceFit: true
             },
             componentCls: cls,
-            width: gridWidth,
+            //width: gridWidth,
             stripeRows: true,
             plugins: [
                 this.cellEditing
@@ -424,7 +424,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                         iconCls: "pimcore_icon_add",
                         handler: this.openSearchEditor.bind(this)
                     }
-                ],
+                ]
 
 
             },
