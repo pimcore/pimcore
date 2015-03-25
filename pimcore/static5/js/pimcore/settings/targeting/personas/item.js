@@ -141,7 +141,7 @@ pimcore.settings.targeting.personas.item = Class.create({
             // open
             leftBracket.on("click", function (ev, el) {
                 var bracket = Ext.get(el);
-                bracket.toggleClass("pimcore_targeting_bracket_active");
+                bracket.toggleCls("pimcore_targeting_bracket_active");
 
                 tab.recalculateBracketIdent(tab.conditionsContainer.items);
             });
@@ -149,7 +149,7 @@ pimcore.settings.targeting.personas.item = Class.create({
             // close
             rightBracket.on("click", function (ev, el) {
                 var bracket = Ext.get(el);
-                bracket.toggleClass("pimcore_targeting_bracket_active");
+                bracket.toggleCls("pimcore_targeting_bracket_active");
 
                 tab.recalculateBracketIdent(tab.conditionsContainer.items);
             });
@@ -179,7 +179,7 @@ pimcore.settings.targeting.personas.item = Class.create({
             condition = conditions[i].getForm().getFieldValues();
 
             // get the operator (AND, OR, AND_NOT)
-            tb = conditions[i].getTopToolbar();
+            var tb = conditions[i].getDockedItems()[0];
             if (tb.getComponent("toggle_or").pressed) {
                 operator = "or";
             } else if (tb.getComponent("toggle_and_not").pressed) {
