@@ -137,7 +137,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             height: this.fieldConfig.height,
             title: this.fieldConfig.title,
             cls: "object_field",
-            bodyCssClass: "pimcore_droptarget_image pimcore_image_container"
+            bodyCls: "pimcore_droptarget_image pimcore_image_container"
         };
 
         this.component = new Ext.Panel(conf);

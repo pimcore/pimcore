@@ -62,13 +62,11 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         var input = {
-            fieldLabel: this.fieldConfig.title,
-            name: this.fieldConfig.name,
-            componentCls: "object_field"
+            name: this.fieldConfig.name
         };
 
         this.button = new Ext.Button({
-            componentCls: "pimcore_icon_edit_link",
+            iconCls: "pimcore_icon_edit_link",
             handler: this.openEditor.bind(this)
         });
 
@@ -80,13 +78,14 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             value: textValue
         });
 
-        this.component = new Ext.form.FieldSet({
+        this.component = new Ext.form.FieldContainer({
+            fieldLabel: this.fieldConfig.title,
             layout: 'hbox',
             border: false,
             fieldLabel: this.fieldConfig.title,
             combineErrors: false,
             items: [this.displayField, this.button],
-            itemCls: "object_field"
+            componentCls: "object_field"
         });
 
         return this.component;
@@ -96,7 +95,6 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
     getLayoutShow: function () {
 
         this.component = this.getLayoutEdit();
-        //this.layout.disable();
         this.button.hide();
         
         return this.component;
