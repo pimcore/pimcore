@@ -50,16 +50,25 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
             readerFields.push({name: this.fields[i]});
         }
 
+        var url = "/admin/key-value/properties?";
 
         var proxy = {
             type: 'ajax',
-            url: "/admin/key-value/properties",
             reader: {
                 type: 'json',
                 rootProperty: 'data'
             },
+            api: {
+                create  : url + "xaction=create",
+                read    : url + "xaction=read",
+                update  : url + "xaction=update",
+                destroy : url + "xaction=destroy"
+            },
             writer: {
-                type: 'json'
+                type: 'json',
+                writeAllFields: true,
+                rootProperty: 'data',
+                encode: 'true'
             },
             extraParams: this.baseParams
         };

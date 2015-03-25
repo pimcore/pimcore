@@ -42,16 +42,24 @@ pimcore.object.keyvalue.groupspanel = Class.create({
             readerFields.push({name: this.fields[i], allowBlank: true});
         }
 
-
+        var url =  "/admin/key-value/groups?";
         var proxy = {
             type: 'ajax',
-            url: "/admin/key-value/groups",
+            api: {
+                create  : url + "xaction=create",
+                read    : url + "xaction=read",
+                update  : url + "xaction=update",
+                destroy : url + "xaction=destroy"
+            },
             reader: {
                 type: 'json',
                 rootProperty: 'data'
             },
             writer: {
-                type: 'json'
+                type: 'json',
+                writeAllFields: true,
+                rootProperty: 'data',
+                encode: 'true'
             },
             extraParams: this.baseParams
         };
@@ -59,7 +67,6 @@ pimcore.object.keyvalue.groupspanel = Class.create({
 
         var listeners = {};
 
-        listeners.write = function(store, action, result, response, rs) {};
         listeners.exception = function (conn, mode, action, request, response, store) {
             if(action == "update") {
                 Ext.MessageBox.alert(t('error'), t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
@@ -74,8 +81,7 @@ pimcore.object.keyvalue.groupspanel = Class.create({
             remoteSort: true,
             proxy: proxy,
             fields: readerFields,
-            listeners: listeners,
-
+            listeners: listeners
         });
 
 
