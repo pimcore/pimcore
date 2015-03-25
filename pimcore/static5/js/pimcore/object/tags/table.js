@@ -216,7 +216,9 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     addRow: function  () {
         var initData = {};
 
-        for (var o = 0; o < this.grid.getColumnModel().config.length; o++) {
+        var columnnManager = this.grid.getColumnManager();
+        var columns = columnnManager.getColumns();
+        for (var o = 0; o < columns.length; o++) {
             initData["col_" + o] = "";
         }
 
