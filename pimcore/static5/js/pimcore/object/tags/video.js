@@ -128,11 +128,10 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
     openEdit: function () {
 
         this.fieldData = new Ext.form.TextField({
-            fieldLabel: t('path'),
             value: this.data.data,
             name: "data",
             width: 320,
-            cls: "pimcore_droptarget_input",
+            fieldCls: "pimcore_droptarget_input",
             enableKeyEvents: true,
             listeners: {
                 keyup: function (el) {
@@ -206,8 +205,8 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: t('poster_image'),
             value: this.data.poster,
             name: "poster",
-            width: 320,
-            cls: "pimcore_droptarget_input",
+            width: 420,
+            fieldCls: "pimcore_droptarget_input",
             enableKeyEvents: true,
             listeners: {
                 keyup: function (el) {
@@ -244,7 +243,8 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                     }.bind(this)
                 }
             }, {
-                xtype: "fieldset",
+                fieldLabel: t('path'),
+                xtype: "fieldcontainer",
                 layout: 'hbox',
                 border: false,
                 itemId: "dataContainer",
@@ -253,13 +253,13 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                 xtype: "textfield",
                 name: "title",
                 fieldLabel: t('title'),
-                width: 320,
+                width: 420,
                 value: this.data.title
             },{
                 xtype: "textarea",
                 name: "description",
                 fieldLabel: t('description'),
-                width: 320,
+                width: 420,
                 height: 50,
                 value: this.data.description
             }],
