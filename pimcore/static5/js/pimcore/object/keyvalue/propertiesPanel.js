@@ -285,12 +285,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
                     handler: this.onAdd.bind(this),
                     iconCls: "pimcore_icon_add"
                 }
-            ],
-            listeners: {
-                rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
-
-                }.bind(this)
-            }
+            ]
         } ;
 
         this.grid = Ext.create('Ext.grid.Panel' ,gridConfig);
