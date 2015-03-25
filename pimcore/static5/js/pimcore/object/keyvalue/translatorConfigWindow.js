@@ -47,15 +47,19 @@ pimcore.object.keyvalue.translatorconfigwindow = Class.create({
         var availableTranslators = Ext.decode(response.responseText);
 
         var panelConfig = {
-//            title: t('select_keyvalue_translator'),
             items: []
         };
 
-        var storeConfigs = new Ext.data.JsonStore({
+        var storeConfigs = new Ext.data.Store({
             autoDestroy: true,
-            root: 'configurations',
+            proxy: {
+                type: 'memory',
+                reader: {
+                    type: 'json',
+                    rootProperty: 'configurations'
+                }
+            },
             data: availableTranslators,
-            idProperty: 'id',
             fields: ["id","name","translator"]
         });
 
